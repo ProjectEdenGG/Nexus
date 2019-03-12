@@ -88,7 +88,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 								sendInventoryRestoreSuccessMessage(restorer, owner, "ender chest");
 								break;
 							case "exp":
-								owner.setExp((float) (owner.getExp() + getExp(gamemode)));
+								owner.setExp((float) (owner.getTotalExperience() + getExp(gamemode)));
 								sendExperienceRestoreSuccessMessage(restorer, owner);
 								break;
 							default:
@@ -99,7 +99,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 					}
 				}, 3);
 
-				SkriptFunctions.log(PREFIX + owner.getName() + " restored " + owner.getName() + "'s " + args[1].toLowerCase()
+				SkriptFunctions.log(PREFIX + restorer.getName() + " restored " + owner.getName() + "'s " + args[1].toLowerCase()
 						+ " " + args[2].toLowerCase() + " from <https://paste.bnn.gg/" + code + ".json>");
 			} else {
 				Optional<? extends Player> match = Bukkit.getOnlinePlayers().stream()
@@ -110,18 +110,23 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 					throw new InvalidInputException("Player not found");
 
 				Player owner = match.get();
-
 				String code = args[1];
-				String data = getPaste(code);
 
-				JsonConfiguration jsonConfig = new JsonConfiguration();
-				try {
-					jsonConfig.loadFromString(data);
-				} catch (InvalidConfigurationException ex) {
-					throw new InvalidInputException("An error occurred while loading the json configuration: " + ex.getMessage());
-				}
+				BNCore.runTaskAsync(() -> {
+					try {
+						String data = getPaste(code);
 
-				RestoreInventory.add(player, new RestoreInventoryPlayer(player, owner, jsonConfig, code));
+						JsonConfiguration jsonConfig = new JsonConfiguration();
+						jsonConfig.loadFromString(data);
+
+						RestoreInventory.add(player, new RestoreInventoryPlayer(player, owner, jsonConfig, code));
+
+					} catch (InvalidConfigurationException ex) {
+						sender.sendMessage(PREFIX + "An error occurred while loading the json configuration: " + ex.getMessage());
+					} catch (InvalidInputException ex) {
+						sender.sendMessage(PREFIX + ex.getMessage());
+					}
+				});
 
 				sendRestoreButtons(player, "Survival");
 				sendRestoreButtons(player, "Creative");
@@ -143,10 +148,6 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 				"||  &e|&e|  ||");
 	}
 
-	private double getExp(ConfigurationSection gamemode) {
-		return Double.parseDouble(gamemode.getConfigurationSection("stats").getString("xp"));
-	}
-
 	private void sendInventoryRestoreNotEmptyMessage(Player restorer, Player owner, String type) throws InvalidInputException {
 		owner.sendMessage(PREFIX + ChatColor.RED + restorer.getName() + " is trying to restore your " + type + ", " +
 				" your current " + type + " must be " + ChatColor. YELLOW + "empty " + ChatColor.RED + "to avoid lost items!");
@@ -155,9 +156,9 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendInventoryRestoreSuccessMessage(Player restorer, Player owner, String type) {
-		restorer.sendMessage(PREFIX + "Successfully restored " + type + " of " + ChatColor.YELLOW + owner.getName());
 		owner.sendMessage(PREFIX + ChatColor.YELLOW + restorer.getName() + ChatColor.DARK_AQUA + " has successfully restored your " + type + ". " +
 				"Please confirm that all your items are present.");
+		restorer.sendMessage(PREFIX + "Successfully restored " + type + " of " + ChatColor.YELLOW + owner.getName());
 	}
 
 	private void sendExperienceRestoreSuccessMessage(Player restorer, Player owner) {
@@ -191,11 +192,15 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 		return Sharables.OFF_HAND.getSerializer().deserialize(gamemode.get("offHandItem"));
 	}
 
-	public String getPaste(String id) throws InvalidInputException {
-		try {
-			URL search = new URL("https://paste.bnn.gg/raw/" + id);
+	private double getExp(ConfigurationSection gamemode) {
+		return Double.parseDouble(gamemode.getConfigurationSection("stats").getString("txp"));
+	}
 
-			HttpURLConnection connection = (HttpURLConnection) search.openConnection();
+	public String getPaste(String code) throws InvalidInputException {
+		try {
+			URL paste = new URL("https://paste.bnn.gg/raw/" + code);
+
+			HttpURLConnection connection = (HttpURLConnection) paste.openConnection();
 			BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String line;
 			StringBuilder response = new StringBuilder();
