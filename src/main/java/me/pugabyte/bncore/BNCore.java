@@ -29,6 +29,7 @@ import me.pugabyte.bncore.features.tab.Tab;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.wiki.Wiki;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -85,6 +86,10 @@ public class BNCore extends JavaPlugin {
 		return instance;
 	}
 
+	public static void log(String message) {
+		getInstance().getLogger().info(message);
+	}
+
 	public static String getPrefix(String prefix) {
 		return "§8§l[§e" + prefix + "§8§l]§3 ";
 	}
@@ -98,19 +103,29 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public static void registerCommand(String command, CommandExecutor executor) {
-		getInstance().getCommand(command).setExecutor(executor);
+		if (BNCore.getInstance().isEnabled()) {
+			PluginCommand pluginCommand = getInstance().getCommand(command);
+			pluginCommand.setExecutor(executor);
+		} else {
+			log("Could not register command /" + command+ "!");
+		}
 	}
 
 	public static void registerTabCompleter(String command, TabCompleter tabCompleter) {
-		getInstance().getCommand(command).setTabCompleter(tabCompleter);
+		if (BNCore.getInstance().isEnabled()) {
+			PluginCommand pluginCommand = getInstance().getCommand(command);
+			pluginCommand.setTabCompleter(tabCompleter);
+		} else {
+			log("Could not register tab completer for command /" + command+ "!");
+		}
 	}
 
 	public static void callEvent(Event event) {
 		getInstance().getServer().getPluginManager().callEvent(event);
 	}
 
-	public static void runTaskLater(Runnable runnable, long delay) {
-		getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay);
+	public static void runTaskLater(Runnable runnable, long startDelay) {
+		getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, startDelay);
 	}
 
 	public static int scheduleSyncRepeatingTask(Runnable runnable, long delay, long startDelay) {
@@ -146,12 +161,14 @@ public class BNCore extends JavaPlugin {
 				TimeZone.getDefault().toZoneId());
 	}
 
-	public static void log(String message) {
-		getInstance().getLogger().info(message);
-	}
-
 	public static ProtocolManager getProtocolManager() {
 		return protocolManager;
+	}
+
+	@Override
+	public void onEnable() {
+		setupConfig();
+		enableFeatures();
 	}
 
 	private void setupConfig() {
@@ -168,10 +185,7 @@ public class BNCore extends JavaPlugin {
 		saveConfig();
 	}
 
-	@Override
-	public void onEnable() {
-		setupConfig();
-
+	private void enableFeatures() {
 		antiBots = new AntiBots();
 		chat = new Chat();
 		clearInventory = new ClearInventory();
