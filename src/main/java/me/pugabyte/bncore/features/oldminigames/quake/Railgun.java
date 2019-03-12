@@ -31,7 +31,7 @@ public class Railgun extends Gun {
 			}
 		}
 
-		player.getPlayer().playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1, 0.8F);
+		player.getPlayer().playSound(player.getLocation(), Sound.ENTITY_FIREWORK_LAUNCH, 1, 0.8F);
 
 		Location observerPos = player.getPlayer().getEyeLocation();
 		Vector3D observerDir = new Vector3D(observerPos.getDirection());
@@ -50,7 +50,7 @@ public class Railgun extends Gun {
 			boolean notTargetingSelf = target != player.getPlayer();
 			if (notTargetingSelf && hasIntersection) {
 				boolean inGunRange = block_distance > target.getPlayer().getLocation().distance(player.getLocation());
-				boolean playerNotNull = this.player.getMinigame().getPlayers().contains(Minigames.getPlugin().getPlayerManager().getMinigamePlayer(Bukkit.getPlayer(target.getUniqueId())));
+				boolean playerNotNull = this.player.getMinigame().getPlayers().contains(Minigames.plugin.getPlayerData().getMinigamePlayer(Bukkit.getPlayer(target.getUniqueId())));
 				if (inGunRange && playerNotNull) {
 					final int finalI = i;
 					Bukkit.getScheduler().runTaskLater(BNCore.getInstance(), () -> {

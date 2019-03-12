@@ -2,7 +2,6 @@ name: BNCore
 main: me.pugabyte.bncore.BNCore
 version: ${project.version}
 softdepend: [PermissionsEx, Minigames, Herochat, Skript, PlayerPoints]
-api-version: 1.13
 commands:
   alerts:
     description: Alerts command
@@ -22,8 +21,6 @@ commands:
     aliases: dw
   invited:
     description: InviteRewards command
-  itemeditor:
-    description: ItemEditor command
   mcwiki:
     description: MinecraftWiki command
     aliases: mcw
@@ -40,9 +37,6 @@ commands:
   restoreinventory:
     description: RestoreInventory command
     aliases: restoreinv
-  scoreboards:
-    description: Scoreboards command
-    aliases: [sb, status]
   showenchants:
     description: ShowEnchants command
   sidewayslogs:
@@ -51,13 +45,9 @@ commands:
   sidewaysstairs:
     description: SidewaysStairs command
     aliases: sws
-  stattrack:
-    description: StatTrack command
   tab:
     description: Tab command
   tameables:
     description: Tameables command
-  warps:
-    description: Warps command
   wiki:
     description: Wiki command

@@ -11,7 +11,7 @@ public class FunctionUtils {
 		}
 
 		Object[] val = function.execute(params);
-		function.resetReturnValue();
+		//function.resetReturnValue(); // Will be needed in future release
 		return val;
 	}
 }

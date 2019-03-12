@@ -3,7 +3,6 @@ package me.pugabyte.bncore;
 import ch.njol.skript.variables.Variables;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import me.pugabyte.bncore.features.antibots.AntiBots;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.alerts.Alerts;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
@@ -12,19 +11,15 @@ import me.pugabyte.bncore.features.damagetracker.DamageTracker;
 import me.pugabyte.bncore.features.documentation.Documentation;
 import me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning;
 import me.pugabyte.bncore.features.inviterewards.InviteRewards;
-import me.pugabyte.bncore.features.menus.itemeditor.ItemEditor;
-import me.pugabyte.bncore.features.menus.warps.Warps;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
 import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
-import me.pugabyte.bncore.features.scoreboards.Scoreboards;
 import me.pugabyte.bncore.features.showenchants.ShowEnchants;
 import me.pugabyte.bncore.features.sideways.logs.SidewaysLogs;
 import me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs;
 import me.pugabyte.bncore.features.sleep.Sleep;
-import me.pugabyte.bncore.features.permhelper.PermHelper;
-import me.pugabyte.bncore.features.stattrack.StatTrack;
+import me.pugabyte.bncore.features.staff.admins.permhelper.PermHelper;
+import me.pugabyte.bncore.features.staff.antibots.AntiBots;
 import me.pugabyte.bncore.features.tab.Tab;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.wiki.Wiki;
@@ -53,21 +48,16 @@ public class BNCore extends JavaPlugin {
 	public static Documentation documentation;
 	public static DurabilityWarning durabilityWarning;
 	public static InviteRewards inviteRewards;
-	public static ItemEditor itemEditor;
-	public static Minigames minigames;
 	public static OldMinigames oldMinigames;
 	public static PermHelper permHelper;
 	public static RainbowArmour rainbowArmour;
 	public static RestoreInventory restoreInventory;
-	public static Scoreboards scoreboards;
 	public static ShowEnchants showEnchants;
 	public static SidewaysLogs sidewaysLogs;
 	public static SidewaysStairs sidewaysStairs;
 	public static Sleep sleep;
-	public static StatTrack statTrack;
 	public static Tab tab;
 	public static Tameables tameables;
-	public static Warps warps;
 	public static Wiki wiki;
 	private static BNCore instance;
 	private static ProtocolManager protocolManager;
@@ -94,7 +84,10 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public static void registerListener(Listener listener) {
-		getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
+		if (BNCore.getInstance().isEnabled())
+			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
+		else
+			log("Could not register listener " + listener.toString() + "!");
 	}
 
 	public static void registerCommand(String command, CommandExecutor executor) {
@@ -113,8 +106,8 @@ public class BNCore extends JavaPlugin {
 		getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay);
 	}
 
-	public static int scheduleSyncRepeatingTask(Runnable runnable, long delay, long startDelay) {
-		return getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, delay, startDelay);
+	public static int scheduleSyncRepeatingTask(Runnable runnable, long startDelay, long interval) {
+		return getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
 	}
 
 	public static int runTaskAsync(Runnable runnable) {
@@ -176,25 +169,20 @@ public class BNCore extends JavaPlugin {
 		chat = new Chat();
 		clearInventory = new ClearInventory();
 		connect4 = new Connect4();
-		damageTracker = new DamageTracker();
+//		damageTracker = new DamageTracker();
 		durabilityWarning = new DurabilityWarning();
 		documentation = new Documentation();
 		inviteRewards = new InviteRewards();
-		itemEditor = new ItemEditor();
-		minigames = new Minigames();
 		oldMinigames = new OldMinigames();
 		permHelper = new PermHelper();
 		rainbowArmour = new RainbowArmour();
 		restoreInventory = new RestoreInventory();
-//		scoreboards = new Scoreboards();
 		showEnchants = new ShowEnchants();
-//		sidewaysLogs = new SidewaysLogs();
-//		sidewaysStairs = new SidewaysStairs();
+		sidewaysLogs = new SidewaysLogs();
+		sidewaysStairs = new SidewaysStairs();
 		sleep = new Sleep();
-//		statTrack = new StatTrack();
 //		tab = new Tab();
 		tameables = new Tameables();
-		warps = new Warps();
 		wiki = new Wiki();
 
 		protocolManager = ProtocolLibrary.getProtocolManager();

@@ -7,7 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 
 import static me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning.disabledPlayers;
 
@@ -34,9 +33,8 @@ public class DurabilityWarningListener implements Listener {
 		if (disabledPlayers.contains(player)) return;
 
 		int maxDurability = item.getType().getMaxDurability();
-		Damageable damageable = (Damageable) item.getItemMeta();
-		int oldDurability = maxDurability - (damageable.getDamage());
-		int newDurability = maxDurability - (damageable.getDamage() + event.getDamage());
+		int oldDurability = maxDurability - (item.getDurability());
+		int newDurability = maxDurability - (item.getDurability() + event.getDamage());
 		double oldPercentage = (double) oldDurability / (double) maxDurability;
 		double newPercentage = (double) newDurability / (double) maxDurability;
 

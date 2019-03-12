@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.oldminigames.murder.runnables;
 
 import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
+import au.com.mineauz.minigames.PlayerData;
 import au.com.mineauz.minigames.minigame.Minigame;
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
@@ -17,7 +18,8 @@ public class Locator {
 
 			// Find the closest player by looping all minigame
 			// players and saving the shortest distance
-			MinigamePlayer mgPlayer = Minigames.getPlugin().getPlayerManager().getMinigamePlayer(player);
+			PlayerData playerData = Minigames.plugin.getPlayerData();
+			MinigamePlayer mgPlayer = playerData.getMinigamePlayer(player);
 			List<MinigamePlayer> players = minigame.getPlayers();
 			for (MinigamePlayer _i : players) {
 				if (_i.getPlayer() != player) {
