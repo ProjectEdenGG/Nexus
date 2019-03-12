@@ -1,0 +1,8 @@
+.settings
+.idea/
+*.iml
+bin/
+target/
+.classpath
+.project
+dependency-reduced-pom.xml

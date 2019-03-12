@@ -1,0 +1,59 @@
+package me.pugabyte.bncore.features.durabilitywarning;
+
+import me.pugabyte.bncore.BNCore;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+
+import static me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning.disabledPlayers;
+
+/**
+ * @author shannon
+ */
+public class DurabilityWarningListener implements Listener {
+
+	//All checkpoints with colors. More points can be added to this list.
+	double[] checkPoints = {0.10, 0.05};
+	ChatColor[] colors = {ChatColor.RED, ChatColor.DARK_RED};
+
+	public DurabilityWarningListener() {
+		BNCore.registerListener(this);
+	}
+
+	@EventHandler
+	public void onItemDamage(PlayerItemDamageEvent event) {
+
+		Player player = event.getPlayer();
+		ItemStack item = event.getItem();
+
+		if (!player.hasPermission("durabilitywarning.use")) return;
+		if (disabledPlayers.contains(player)) return;
+
+		int maxDurability = item.getType().getMaxDurability();
+		Damageable damageable = (Damageable) item.getItemMeta();
+		int oldDurability = maxDurability - (damageable.getDamage());
+		int newDurability = maxDurability - (damageable.getDamage() + event.getDamage());
+		double oldPercentage = (double) oldDurability / (double) maxDurability;
+		double newPercentage = (double) newDurability / (double) maxDurability;
+
+		String itemName = item.getItemMeta().hasDisplayName() ?
+				item.getItemMeta().getDisplayName() :
+				item.getType().name().replaceAll("_", " ").toLowerCase();
+
+		for (int i = 0; i < checkPoints.length; i++) {
+			if (hasDroppedBelowPercentage(checkPoints[i], oldPercentage, newPercentage)) {
+				player.sendMessage(DurabilityWarningCommand.PREFIX + colors[i] + "Your " + itemName + "'s durability "
+						+ "has dropped below " + (int) (checkPoints[i] * 100) + "% (" + newDurability + " uses left)");
+			}
+		}
+	}
+
+	private boolean hasDroppedBelowPercentage(double percent, double previous, double current) {
+		return previous >= percent && current < percent;
+	}
+
+}
