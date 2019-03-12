@@ -23,12 +23,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -192,7 +192,7 @@ public class MurderListener implements Listener {
 			case IRON_SWORD:
 				throwKnife(player);
 				return;
-			case ENDER_EYE:
+			case EYE_OF_ENDER:
 				retrieveKnife(player);
 				return;
 			case ENDER_PEARL:
@@ -216,7 +216,7 @@ public class MurderListener implements Listener {
 	}
 
 	private void useTeleporter(Player player) {
-		Minigame minigame = Minigames.getPlugin().getPlayerManager().getMinigamePlayer(player).getMinigame();
+		Minigame minigame = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame();
 		Utils.shufflePlayers(minigame, true);
 
 		player.sendMessage(MurderCommand.PREFIX + "You used the teleporter!");
@@ -232,8 +232,8 @@ public class MurderListener implements Listener {
 		player.getInventory().remove(Material.IRON_SWORD);
 
 		// Retrieval mechanics
-		if (player.getInventory().contains(Material.ENDER_EYE)) {
-			player.getInventory().remove(Material.ENDER_EYE);
+		if (player.getInventory().contains(Material.EYE_OF_ENDER)) {
+			player.getInventory().remove(Material.EYE_OF_ENDER);
 			player.getInventory().setItem(1, MurderUtils.getRetriever());
 			// Start countdown
 			ItemMeta meta = player.getInventory().getItem(1).getItemMeta();
@@ -304,7 +304,7 @@ public class MurderListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onDeath(PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		MinigamePlayer minigamePlayer = Minigames.getPlugin().getPlayerManager().getMinigamePlayer(player);
+		MinigamePlayer minigamePlayer = Minigames.plugin.getPlayerData().getMinigamePlayer(player);
 		Minigame minigame = minigamePlayer.getMinigame();
 
 		if (!MurderUtils.isPlayingMurder(player)) {
@@ -333,11 +333,9 @@ public class MurderListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPickup(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-
+	public void onPickup(PlayerPickupItemEvent event) {
 		try {
-			Player player = (Player) event.getEntity();
+			Player player = event.getPlayer();
 
 			if (!MurderUtils.isPlayingMurder(player)) return;
 
@@ -406,7 +404,7 @@ public class MurderListener implements Listener {
 					// If they already have a knife, don't pick it up
 					if (player.getInventory().contains(Material.IRON_SWORD)) return;
 
-					if (player.getInventory().contains(Material.ENDER_EYE)) {
+					if (player.getInventory().contains(Material.EYE_OF_ENDER)) {
 						// They didn't use their retriever, move it back to their inventoryContents
 						player.getInventory().setItem(17, MurderUtils.getRetriever());
 					}

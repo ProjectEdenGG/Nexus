@@ -35,7 +35,7 @@ public class Utils {
 				_minigamePlayer.getPlayer().teleport(locs.get(n));
 				_minigamePlayer.setAllowTeleport(false);
 				if (teleporter) {
-					_minigamePlayer.getPlayer().sendMessage(MurderCommand.PREFIX + "The murderer used the teleporter!");
+					_minigamePlayer.sendMessage(MurderCommand.PREFIX + "The murderer used the teleporter!");
 				}
 			}
 		}

@@ -100,11 +100,7 @@ public abstract class Gun extends Weapon {
 
 	void setPassthroughMaterials(Set<Material> passthroughMaterials) {
 		passthroughMaterials.add(Material.AIR);
-		passthroughMaterials.add(Material.ROSE_BUSH);
-		passthroughMaterials.add(Material.LILAC);
-		passthroughMaterials.add(Material.PEONY);
-		passthroughMaterials.add(Material.TALL_GRASS);
-		passthroughMaterials.add(Material.FERN);
+		passthroughMaterials.add(Material.DOUBLE_PLANT);
 		this.passthroughMaterials = passthroughMaterials;
 	}
 

@@ -21,17 +21,10 @@ public class SidewaysLogsListener implements Listener {
 		Block block = event.getBlockPlaced();
 		Player player = event.getPlayer();
 
-		if (!(block.getType() == Material.OAK_LOG ||
-				block.getType() == Material.SPRUCE_LOG ||
-				block.getType() == Material.BIRCH_LOG ||
-				block.getType() == Material.JUNGLE_LOG ||
-				block.getType() == Material.ACACIA_LOG ||
-				block.getType() == Material.DARK_OAK_LOG
-		)) return;
-
+		if (!(block.getType() == Material.LOG || block.getType() == Material.LOG_2)) return;
 		if (!enabledPlayers.contains(player)) return;
 
-//		block.setData((byte) (block.getData() % 4));
+		block.setData((byte) (block.getData() % 4));
 	}
 
 }
