@@ -83,7 +83,7 @@ public class Match {
 			started = true;
 			clearEntities();
 			balance();
-			initalizeScores();
+			initializeScores();
 			teleportIn();
 			startTimer();
 			arena.getMechanic().onStart(this);
@@ -119,7 +119,7 @@ public class Match {
 		minigamers.forEach(minigamer -> minigamer.tell("You are on team " + minigamer.getTeam().getColor() + minigamer.getTeam().getName()));
 	}
 
-	private void initalizeScores() {
+	private void initializeScores() {
 		arena.getTeams().forEach(team -> scores.put(team, 0));
 	}
 

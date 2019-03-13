@@ -43,7 +43,7 @@ public class MinigamesCommand implements CommandExecutor, TabCompleter {
 						if (args.length > 1) {
 							minigamer.join(args[1]);
 						} else {
-							minigamer.tell("You must supply an arena displayName to join");
+							minigamer.tell("You must supply an arena name to join");
 						}
 						break;
 					case "quit":
@@ -61,13 +61,30 @@ public class MinigamesCommand implements CommandExecutor, TabCompleter {
 							throw new NotInAMatchException();
 						}
 						break;
-					case "reload":
+					case "reload": {
+						long startTime = System.currentTimeMillis();
 						if (args.length > 1) {
-							new Arena.Reader(args[1]);
+							Arena.read(args[1]);
 						} else {
-							minigamer.tell("You must supply an arena name");
+							Arena.read();
 						}
+						long stopTime = System.currentTimeMillis();
+						long elapsedTime = stopTime - startTime;
+						BNCore.log("Reload time took " + elapsedTime + "ms");
 						break;
+					}
+					case "save": {
+						long startTime = System.currentTimeMillis();
+						if (args.length > 1) {
+							Arena.write(args[1]);
+						} else {
+							Arena.write();
+						}
+						long stopTime = System.currentTimeMillis();
+						long elapsedTime = stopTime - startTime;
+						BNCore.log("Save time took " + elapsedTime + "ms");
+						break;
+					}
 					case "dump":
 						if (args.length > 1) {
 							Optional<Arena> optionalArena = ArenaManager.get(args[1]);
@@ -95,9 +112,10 @@ public class MinigamesCommand implements CommandExecutor, TabCompleter {
 			completions.add("join");
 			completions.add("quit");
 			completions.add("scores");
-			completions.add("read");
+			completions.add("reload");
+			completions.add("save");
 			completions.add("dump");
-		} else if (args.length == 2 && args[0].equalsIgnoreCase("join")) {
+		} else if (args.length == 2 && (args[0].equalsIgnoreCase("join") || args[0].equalsIgnoreCase("save"))) {
 			ArenaManager.getAll().forEach(arena -> completions.add(arena.getName()));
 		}
 

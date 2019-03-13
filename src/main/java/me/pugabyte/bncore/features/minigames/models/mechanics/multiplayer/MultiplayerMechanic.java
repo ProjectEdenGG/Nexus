@@ -15,7 +15,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		minigamer.setRespawning(true);
 		minigamer.clearState();
 		minigamer.teleport(minigamer.getMatch().getArena().getRespawnLocation());
-		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40,2, false, false));
+		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
 		BNCore.runTaskLater(() -> {
 			if (!minigamer.getMatch().isOver()) {
 				minigamer.getTeam().spawn(Collections.singletonList(minigamer));
