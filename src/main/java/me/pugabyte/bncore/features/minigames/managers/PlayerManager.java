@@ -6,11 +6,9 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-import static me.pugabyte.bncore.features.minigames.Minigames.getMatchManager;
-
 public class PlayerManager {
 	public static Minigamer get(Player player) {
-		Optional<Match> optionalMatch = getMatchManager().getAll().stream()
+		Optional<Match> optionalMatch = MatchManager.getAll().stream()
 				.filter(match -> match.getMinigamers().stream()
 						.anyMatch(minigamer -> minigamer.getPlayer().equals(player)))
 				.findFirst();
@@ -23,4 +21,5 @@ public class PlayerManager {
 		}
 		return new Minigamer(player);
 	}
+
 }

@@ -32,13 +32,13 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		String announcement;
 		if (winningScore == 0) {
-			announcement = "No teams scored in " + arena.getName();
+			announcement = "No teams scored in " + arena.getDisplayName();
 			match.broadcast(announcement);
 		} else {
 			if (arena.getTeams().size() == winners.size()) {
-				announcement = "All teams tied in " + arena.getName();
+				announcement = "All teams tied in " + arena.getDisplayName();
 			} else {
-				announcement = getWinnersString(winners) + arena.getName();
+				announcement = getWinnersString(winners) + arena.getDisplayName();
 			}
 			match.broadcast(announcement + getScoreList(scoreList));
 		}
@@ -72,13 +72,13 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	private String getScoreList(Map<ChatColor, Integer> scores) {
-		StringBuilder scoreList = new StringBuilder(" (");
+		StringBuilder scoreList = new StringBuilder(" ( ");
 		int counter = 0;
 		for (ChatColor color : scores.keySet()) {
 			scoreList.append(color)
 					.append(scores.get(color).toString())
 					.append(ChatColor.DARK_AQUA)
-					.append(++counter != scores.size() ? " | " : ")");
+					.append(++counter != scores.size() ? " | " : " )");
 		}
 		return scoreList.toString();
 	}

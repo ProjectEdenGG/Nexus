@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.minigames.models.Team;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public abstract class BalancedTeamMechanic extends TeamMechanic {
 
@@ -20,9 +19,9 @@ public abstract class BalancedTeamMechanic extends TeamMechanic {
 		Collections.shuffle(minigamers);
 		Collections.shuffle(teams);
 
-		while (minigamers.stream().anyMatch(minigamer -> minigamer.getTeam() == null)) {
-			Optional<Minigamer> next = minigamers.stream().filter(minigamer -> minigamer.getTeam() == null).findAny();
-			next.ifPresent(minigamer -> minigamer.setTeam(getSmallestTeam(minigamers, teams)));
+		for (Minigamer minigamer : minigamers) {
+			if (minigamer.getTeam() != null) continue;
+			minigamer.setTeam(getSmallestTeam(minigamers, teams));
 		}
 
 		return minigamers;
@@ -35,4 +34,5 @@ public abstract class BalancedTeamMechanic extends TeamMechanic {
 		}
 		return minigamers;
 	}
+
 }

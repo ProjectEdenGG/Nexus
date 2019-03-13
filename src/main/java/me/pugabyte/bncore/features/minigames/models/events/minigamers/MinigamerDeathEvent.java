@@ -16,4 +16,5 @@ public class MinigamerDeathEvent extends MinigamerEvent {
 		super(match, victim);
 		this.attacker = attacker;
 	}
+
 }

@@ -1,11 +1,11 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.minigamers.MinigamerDeathEvent;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
-import static me.pugabyte.bncore.features.minigames.Minigames.getPlayerManager;
 
 public abstract class Mechanic implements Listener {
 
@@ -47,21 +45,19 @@ public abstract class Mechanic implements Listener {
 
 	public void onDeath(Minigamer victim) {
 		// TODO: Autobalancing
-		victim.getMatch().broadcast(victim.getTeam().getColor() + victim.getPlayer().getName() +
-				ChatColor.DARK_AQUA + " was killed");
+		victim.getMatch().broadcast(victim.getTeam().getColor() + victim.getPlayer().getName() + " &3was killed");
 	}
 
 	public void onDeath(Minigamer victim, Minigamer killer) {
 		// TODO: Autobalancing
 		victim.getMatch().broadcast(victim.getTeam().getColor() + victim.getPlayer().getName() +
-				ChatColor.DARK_AQUA + " was killed by " + killer.getTeam().getColor() + killer.getPlayer().getName());
+				" &3was killed by " + killer.getTeam().getColor() + killer.getPlayer().getName());
 	}
 
 	public void onJoin(Minigamer minigamer) {
-		minigamer.getMatch().broadcast(minigamer.getPlayer().getName() + " has joined");
+		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has joined");
 		Arena arena = minigamer.getMatch().getArena();
-		minigamer.tell("You are playing " + ChatColor.YELLOW + arena.getMechanic().getName()
-				+ ChatColor.DARK_AQUA + " on " + ChatColor.YELLOW + arena.getName());
+		minigamer.tell("You are playing &e" + arena.getMechanic().getName() + " &3on &e" + arena.getDisplayName());
 	}
 
 	public void onQuit(Minigamer minigamer) {
@@ -85,17 +81,17 @@ public abstract class Mechanic implements Listener {
 		Minigamer victim, attacker;
 
 		if (event.getEntity() instanceof Player) {
-			victim = getPlayerManager().get((Player) event.getEntity());
+			victim = PlayerManager.get((Player) event.getEntity());
 		} else {
 			return;
 		}
 
 		if (event.getDamager() instanceof Player) {
-			attacker = getPlayerManager().get((Player) event.getDamager());
+			attacker = PlayerManager.get((Player) event.getDamager());
 		} else if (event.getDamager() instanceof Projectile) {
 			Projectile projectile = (Projectile) event.getDamager();
 			if (projectile.getShooter() instanceof Player) {
-				attacker = getPlayerManager().get((Player) projectile.getShooter());
+				attacker = PlayerManager.get((Player) projectile.getShooter());
 			} else {
 				return;
 			}

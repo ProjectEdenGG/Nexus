@@ -24,6 +24,7 @@ public class Team {
 	private Loadout loadout;
 	@NonNull
 	private List<Location> spawnpoints;
+	private int balancePercentage = -1;
 
 	public void spawn(List<Minigamer> minigamers) {
 		List<Minigamer> members = new ArrayList<>(minigamers);
@@ -46,4 +47,15 @@ public class Team {
 			members.removeAll(toRemove);
 		}
 	}
+
+	public int getScore(Match match) {
+		return match.getScores().get(this);
+	}
+
+	public List<Minigamer> getMinigamers(Match match) {
+		return match.getMinigamers().stream()
+				.filter(minigamer -> minigamer.getTeam().equals(this))
+				.collect(Collectors.toList());
+	}
+
 }

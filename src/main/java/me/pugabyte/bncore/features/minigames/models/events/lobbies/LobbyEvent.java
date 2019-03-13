@@ -19,4 +19,5 @@ public class LobbyEvent extends MinigameEvent {
 		this.lobby = lobby;
 		this.match = match;
 	}
+
 }

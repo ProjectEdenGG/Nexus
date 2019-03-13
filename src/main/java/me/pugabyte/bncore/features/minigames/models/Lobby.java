@@ -30,7 +30,6 @@ public class Lobby {
 		private Arena arena;
 		private int time;
 		private List<Integer> broadcasts = Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1);
-		private BNCore bnCore = BNCore.getInstance();
 		private int taskId;
 
 		LobbyTimer(Lobby lobby, Match match, int time) {
@@ -42,12 +41,12 @@ public class Lobby {
 		}
 
 		private void start() {
-			taskId = bnCore.getServer().getScheduler().scheduleSyncRepeatingTask(bnCore, () -> {
+			taskId = BNCore.scheduleSyncRepeatingTask(() -> {
 				int current = match.getMinigamers().size();
 				int min = arena.getMinPlayers();
 				int left = min - current;
 				if (current < min) {
-					match.broadcast("Waiting for " + left + " more players");
+					match.broadcast("&7Waiting for &e" + left + " &7more players");
 					stop();
 					return;
 				}
@@ -59,7 +58,7 @@ public class Lobby {
 					LobbyTimerTickEvent event = new LobbyTimerTickEvent(lobby, match, time);
 					BNCore.callEvent(event);
 					if (broadcasts.contains(time)) {
-						match.broadcast(time + " seconds left...");
+						match.broadcast("&e" + time + " &7seconds left...");
 					}
 				} else if (time == 0) {
 					match.start();
@@ -70,7 +69,9 @@ public class Lobby {
 
 		private void stop() {
 			timerStarted = false;
-			bnCore.getServer().getScheduler().cancelTask(taskId);
+			BNCore.cancelTask(taskId);
 		}
+
 	}
+
 }

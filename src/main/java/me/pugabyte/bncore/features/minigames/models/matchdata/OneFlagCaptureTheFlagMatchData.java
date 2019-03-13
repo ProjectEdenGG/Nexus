@@ -18,4 +18,5 @@ public class OneFlagCaptureTheFlagMatchData extends MatchData {
 	public OneFlagCaptureTheFlagMatchData(Match match) {
 		super(match);
 	}
+
 }

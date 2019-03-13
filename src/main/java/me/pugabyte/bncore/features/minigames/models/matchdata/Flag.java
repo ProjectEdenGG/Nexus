@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.Team;
 import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.MaterialData;
@@ -28,6 +29,10 @@ public class Flag {
 	@Setter
 	@NonNull
 	private String[] lines;
+	@Getter
+	@Setter
+	@NonNull
+	private Team team;
 
 	// Carrier data
 	@Getter

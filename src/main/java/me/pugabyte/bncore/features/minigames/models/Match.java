@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.models;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.features.minigames.Minigames.getMatchManager;
+import static me.pugabyte.bncore.BNCore.colorize;
 
 @Data
 public class Match {
@@ -82,7 +83,7 @@ public class Match {
 			started = true;
 			clearEntities();
 			balance();
-			initiateScores();
+			initalizeScores();
 			teleportIn();
 			startTimer();
 			arena.getMechanic().onStart(this);
@@ -100,7 +101,7 @@ public class Match {
 			toLobby();
 			clearStates();
 			arena.getMechanic().onEnd(this);
-			getMatchManager().remove(this);
+			MatchManager.remove(this);
 		}
 	}
 
@@ -115,10 +116,10 @@ public class Match {
 
 	private void balance() {
 		minigamers = arena.getMechanic().balance(minigamers);
-		minigamers.forEach(minigamer -> minigamer.tell("You are on team " + minigamer.getTeam().getName()));
+		minigamers.forEach(minigamer -> minigamer.tell("You are on team " + minigamer.getTeam().getColor() + minigamer.getTeam().getName()));
 	}
 
-	private void initiateScores() {
+	private void initalizeScores() {
 		arena.getTeams().forEach(team -> scores.put(team, 0));
 	}
 
@@ -155,7 +156,7 @@ public class Match {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		BNCore.callEvent(event);
 		if (!event.isCancelled()) {
-			minigamers.forEach(minigamer -> minigamer.tell(event.getMessage()));
+			minigamers.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
 		}
 	}
 
@@ -166,7 +167,7 @@ public class Match {
 			minigamers.stream()
 					.filter(minigamer -> minigamer.getTeam().equals(event.getTeam()))
 					.collect(Collectors.toSet())
-					.forEach(minigamer -> minigamer.tell(event.getMessage()));
+					.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
 		}
 	}
 
@@ -189,7 +190,7 @@ public class Match {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
 					BNCore.callEvent(event);
 					if (broadcasts.contains(time)) {
-						match.broadcast(time + " seconds left...");
+						match.broadcast("&e" + time + " &7seconds left...");
 					}
 				} else {
 					match.end();
@@ -201,6 +202,7 @@ public class Match {
 		private void stop() {
 			bnCore.getServer().getScheduler().cancelTask(taskId);
 		}
+
 	}
 
 }

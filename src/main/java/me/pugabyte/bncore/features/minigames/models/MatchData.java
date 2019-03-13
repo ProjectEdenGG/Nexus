@@ -14,4 +14,5 @@ public class MatchData {
 	public void setMatch(Match match) {
 		this.match = match;
 	}
+
 }

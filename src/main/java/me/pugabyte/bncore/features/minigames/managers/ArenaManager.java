@@ -9,11 +9,25 @@ import java.util.Optional;
 public class ArenaManager {
 	private static List<Arena> arenas = new ArrayList<>();
 
+	public static List<Arena> getAll() {
+		return arenas;
+	}
+
 	public static Optional<Arena> get(String name) {
 		return arenas.stream().filter(arena -> arena.getName().equalsIgnoreCase(name)).findFirst();
 	}
 
+	public static Optional<Arena> get(int id) {
+		return arenas.stream().filter(arena -> arena.getId() == id).findFirst();
+	}
+
 	public static void add(Arena arena) {
+		Optional<Arena> previous;
+		previous = get(arena.getId());
+		previous.ifPresent(arenas::remove);
+		previous = get(arena.getName());
+		previous.ifPresent(arenas::remove);
 		arenas.add(arena);
 	}
+
 }

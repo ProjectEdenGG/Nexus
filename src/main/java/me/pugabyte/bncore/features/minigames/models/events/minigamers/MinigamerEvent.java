@@ -19,4 +19,5 @@ public class MinigamerEvent extends MinigameEvent {
 		this.match = match;
 		this.minigamer = minigamer;
 	}
+
 }
