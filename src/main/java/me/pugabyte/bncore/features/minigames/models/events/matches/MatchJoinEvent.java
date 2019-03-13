@@ -14,4 +14,5 @@ public class MatchJoinEvent extends MatchEvent {
 		super(match);
 		this.minigamer = minigamer;
 	}
+
 }

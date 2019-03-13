@@ -41,6 +41,8 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
@@ -90,6 +92,14 @@ public class BNCore extends JavaPlugin {
 		getInstance().getLogger().info(message);
 	}
 
+	public static void warn(String message) {
+		getInstance().getLogger().warning(message);
+	}
+
+	public static void severe(String message) {
+		getInstance().getLogger().severe(message);
+	}
+
 	public static String getPrefix(String prefix) {
 		return "§8§l[§e" + prefix + "§8§l]§3 ";
 	}
@@ -128,12 +138,16 @@ public class BNCore extends JavaPlugin {
 		getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, startDelay);
 	}
 
-	public static int scheduleSyncRepeatingTask(Runnable runnable, long delay, long startDelay) {
-		return getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, delay, startDelay);
-	}
-
 	public static int runTaskAsync(Runnable runnable) {
 		return getInstance().getServer().getScheduler().runTaskAsynchronously(getInstance(), runnable).getTaskId();
+	}
+
+	public static int scheduleSyncRepeatingTask(Runnable runnable, long startDelay, long interval) {
+		return getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
+	}
+
+	public static void cancelTask(int taskId) {
+		getInstance().getServer().getScheduler().cancelTask(taskId);
 	}
 
 	public static boolean isVanished(Player player) {
@@ -144,6 +158,20 @@ public class BNCore extends JavaPlugin {
 
 	public static boolean isAfk(Player player) {
 		return (boolean) Variables.getVariable("afk::" + player.getUniqueId().toString(), null, false);
+	}
+
+	public static void dump(Object object) {
+		Method[] methods = object.getClass().getDeclaredMethods();
+		BNCore.log("================");
+		for (Method method : methods) {
+			if (method.getName().startsWith("get") && method.getParameterCount() == 0) {
+				try {
+					BNCore.log(method.getName() + ": " + method.invoke(object));
+				} catch (IllegalAccessException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public static String getRankDisplay(Player player) {
@@ -200,13 +228,13 @@ public class BNCore extends JavaPlugin {
 		permHelper = new PermHelper();
 		rainbowArmour = new RainbowArmour();
 		restoreInventory = new RestoreInventory();
-//		scoreboards = new Scoreboards();
+		//scoreboards = new Scoreboards();
 		showEnchants = new ShowEnchants();
-//		sidewaysLogs = new SidewaysLogs();
-//		sidewaysStairs = new SidewaysStairs();
+		//sidewaysLogs = new SidewaysLogs();
+		//sidewaysStairs = new SidewaysStairs();
 		sleep = new Sleep();
-//		statTrack = new StatTrack();
-//		tab = new Tab();
+		//statTrack = new StatTrack();
+		//tab = new Tab();
 		tameables = new Tameables();
 		warps = new Warps();
 		wiki = new Wiki();

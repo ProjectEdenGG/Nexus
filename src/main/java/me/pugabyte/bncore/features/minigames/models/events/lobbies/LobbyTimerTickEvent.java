@@ -12,4 +12,5 @@ public class LobbyTimerTickEvent extends LobbyEvent {
 		super(lobby, match);
 		this.time = time;
 	}
+
 }

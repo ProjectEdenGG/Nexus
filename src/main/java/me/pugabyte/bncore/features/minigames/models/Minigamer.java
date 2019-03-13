@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -11,8 +13,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.Optional;
 
-import static me.pugabyte.bncore.features.minigames.Minigames.getArenaManager;
-import static me.pugabyte.bncore.features.minigames.Minigames.getMatchManager;
+import static me.pugabyte.bncore.BNCore.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
@@ -25,7 +26,7 @@ public class Minigamer {
 	private int score = 0;
 
 	public void join(String name) {
-		Optional<Arena> arena = getArenaManager().get(name);
+		Optional<Arena> arena = ArenaManager.get(name);
 		if (arena.isPresent()) {
 			join(arena.get());
 		} else {
@@ -35,7 +36,7 @@ public class Minigamer {
 
 	public void join(Arena arena) {
 		if (match == null) {
-			match = getMatchManager().get(arena);
+			match = MatchManager.get(arena);
 			match.join(this);
 		} else {
 			tell("You are already in a match");
@@ -63,7 +64,7 @@ public class Minigamer {
 	}
 
 	public void tell(String message) {
-		player.sendMessage(BNCore.getPrefix("Minigames") + message);
+		player.sendMessage(BNCore.getPrefix("Minigames") + colorize(message));
 	}
 
 	public void teleport(Location location) {

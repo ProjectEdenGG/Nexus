@@ -14,4 +14,5 @@ public class MatchEvent extends MinigameEvent {
 		super(match.getArena());
 		this.match = match;
 	}
+
 }

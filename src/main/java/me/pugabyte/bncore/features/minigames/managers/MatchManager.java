@@ -35,4 +35,5 @@ public class MatchManager {
 	public static void add(Match match) {
 		matches.add(match);
 	}
+
 }

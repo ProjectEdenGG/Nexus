@@ -39,4 +39,5 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 	public void dropFlag(PlayerDeathEvent event) {
 
 	}
+
 }

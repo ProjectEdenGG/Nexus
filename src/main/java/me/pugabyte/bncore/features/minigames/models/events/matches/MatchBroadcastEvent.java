@@ -25,4 +25,5 @@ public class MatchBroadcastEvent extends MatchEvent {
 		this.message = message;
 		this.team = team;
 	}
+
 }

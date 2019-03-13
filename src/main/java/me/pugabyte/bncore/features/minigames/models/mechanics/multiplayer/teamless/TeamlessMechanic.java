@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 public abstract class TeamlessMechanic extends MultiplayerMechanic {
 
 	@Override
+	public boolean isTeamGame() {
+		return false;
+	}
+
+	@Override
 	public List<Minigamer> balance(List<Minigamer> minigamers) {
 		Arena arena = minigamers.get(0).getMatch().getArena();
 
@@ -34,13 +39,13 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 
 		String announcement;
 		if (winningScore == 0) {
-			announcement = "No players scored in " + arena.getName();
+			announcement = "No players scored in " + arena.getDisplayName();
 			match.broadcast(announcement);
 		} else {
 			if (match.getMinigamers().size() == winners.size()) {
-				announcement = "All players tied in " + arena.getName();
+				announcement = "All players tied in " + arena.getDisplayName();
 			} else {
-				announcement = getWinnersString(winners) + arena.getName();
+				announcement = getWinnersString(winners) + arena.getDisplayName();
 			}
 			match.broadcast(announcement + " (" + winningScore + ")");
 		}
@@ -79,4 +84,5 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 			match.end();
 		}
 	}
+
 }

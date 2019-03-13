@@ -6,7 +6,6 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.Flag;
-import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
@@ -26,6 +25,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	@Override
 	public void onFlagInteract(Minigamer minigamer, Sign sign) {
 		Match match = minigamer.getMatch();
+		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
 		Arena arena = match.getArena();
 
 		if (!minigamer.isPlaying(CaptureTheFlag.class)) return;
@@ -35,22 +35,22 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 				.findFirst();
 
 		if (optionalTeam.isPresent()) {
-			Team team = optionalTeam.get();
-			CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
-			Flag flag = null;
-			if (matchData.getFlag(team) == null) {
-				flag = new Flag(sign.getLocation(), sign.getData(), sign.getBlock().getState(), sign.getLines());
+			Team clickedTeam = optionalTeam.get();
+			Flag clickedFlag = matchData.getFlag(clickedTeam);
+			if (clickedFlag == null) {
+				clickedFlag = new Flag(sign.getLocation(), sign.getData(), sign.getBlock().getState(), sign.getLines(), clickedTeam);
+				matchData.addFlag(clickedTeam, clickedFlag);
 			}
 
-			if (minigamer.getTeam() == team) {
-				if (flag != null && minigamer.equals(flag.getCarrier())) {
-//					Team otherTeam = matchData.getFlagCarriers().get(minigamer);
-//					captureFlag(minigamer, otherTeam);
+			Flag carriedFlag = matchData.getFlagFromCarrier(minigamer);
+
+			if (clickedTeam == minigamer.getTeam()) {
+				if (carriedFlag != null) {
+					captureFlag(minigamer, carriedFlag.getTeam());
 				}
-			} else {
-				takeFlag(minigamer, team);
+			} else if (carriedFlag == null) {
+				takeFlag(clickedFlag, minigamer);
 			}
-			matchData.addFlag(team, flag);
 		}
 	}
 
@@ -58,25 +58,27 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Match match = minigamer.getMatch();
 		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
 
-		minigamer.tell("You captured " + team.getName() + "'s " + ChatColor.DARK_AQUA + "flag");
+		match.broadcast(minigamer.getTeam().getColor() + minigamer.getPlayer().getName() + " &3captured " +
+				team.getName() + "&3's flag");
 
 		minigamer.scored();
 		minigamer.getMatch().scored(minigamer.getTeam());
 
-//		matchData.removeFlagCarrier(minigamer);
+		matchData.removeFlagCarrier(minigamer);
 
 		// TODO: Respawn sign
 	}
 
-	private void takeFlag(Minigamer minigamer, Team team) {
+	private void takeFlag(Flag flag, Minigamer minigamer) {
 		Match match = minigamer.getMatch();
 		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
 
-		minigamer.tell("You took " + team.getName() + "'s " + ChatColor.DARK_AQUA + "flag");
+		match.broadcast(minigamer.getTeam().getColor() + minigamer.getPlayer().getName() + " &3took " +
+				flag.getTeam().getName() + "&3's flag");
 
-//		matchData.addFlagCarrier(minigamer, team);
+		matchData.addFlagCarrier(flag, minigamer);
 
-
+		// TODO: Despawn sign (client side only?)
 	}
 
 	@Override
