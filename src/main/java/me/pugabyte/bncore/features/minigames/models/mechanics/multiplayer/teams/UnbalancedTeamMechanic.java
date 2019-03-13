@@ -32,22 +32,7 @@ public abstract class UnbalancedTeamMechanic extends TeamMechanic {
 		Collections.shuffle(minigamers);
 		Collections.shuffle(teams);
 
-		for (Optional<Minigamer> next; (next = minigamers.stream().filter(minigamer -> minigamer.getTeam() == null).findAny()).isPresent();) {
-			Minigamer minigamer = next.get();
-			Match match = minigamer.getMatch();
-
-			Team team = getSmallestTeam(minigamers, teams);
-
-
-		}
-
-//		for (Team team : teams) {
-//			if (team.getBalancePercentage() == 1) {
-//				Random rand = new Random();
-//				minigamers.get(rand.nextInt(minigamers.size())).setTeam(team);
-//				teams.remove(team);
-//			}
-//		}
+		// TODO: Balance
 
 		return minigamers;
 	}

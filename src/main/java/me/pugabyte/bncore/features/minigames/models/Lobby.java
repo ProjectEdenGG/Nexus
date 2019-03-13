@@ -1,16 +1,23 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.events.lobbies.LobbyTimerTickEvent;
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
-public class Lobby {
+@Builder
+@SerializableAs("Lobby")
+public class Lobby implements ConfigurationSerializable {
 	@NonNull
 	private Location location;
 	@NonNull
@@ -22,6 +29,23 @@ public class Lobby {
 		minigamer.clearState();
 		if (!timerStarted)
 			new Lobby.LobbyTimer(this, minigamer.getMatch(), waitTime);
+	}
+
+
+	@Override
+	public Map<String, Object> serialize() {
+		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+		map.put("location", getLocation());
+		map.put("waitTime", getWaitTime());
+
+		return map;
+	}
+
+	public static Lobby deserialize(Map<String, Object> map) {
+		return Lobby.builder()
+				.location((Location) map.get("location"))
+				.waitTime((int) map.get("waitTime"))
+				.build();
 	}
 
 	private class LobbyTimer {

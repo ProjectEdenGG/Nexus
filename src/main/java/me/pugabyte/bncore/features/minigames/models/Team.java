@@ -5,19 +5,24 @@ import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 @Builder
 @Data
-public class Team {
-	@NonNull
-	private ChatColor color;
+@SerializableAs("Team")
+public class Team implements ConfigurationSerializable {
 	@NonNull
 	private String name;
+	@NonNull
+	private ChatColor color;
 	@NonNull
 	private String objective;
 	@NonNull
@@ -56,6 +61,28 @@ public class Team {
 		return match.getMinigamers().stream()
 				.filter(minigamer -> minigamer.getTeam().equals(this))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+		map.put("name", ChatColor.stripColor(getName()));
+		map.put("color", getColor().name());
+		map.put("objective", getObjective());
+		map.put("loadout", getLoadout());
+		map.put("spawnpoints", getSpawnpoints());
+
+		return map;
+	}
+
+	public static Team deserialize(Map<String, Object> map) {
+		return Team.builder()
+				.name((String) map.get("name"))
+				.color(ChatColor.valueOf(((String) map.get("color")).toUpperCase()))
+				.objective((String) map.get("objective"))
+				.loadout((Loadout) map.get("loadout"))
+				.spawnpoints((List<Location>) map.get("spawnpoints"))
+				.build();
 	}
 
 }

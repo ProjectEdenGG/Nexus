@@ -5,7 +5,7 @@ import me.pugabyte.bncore.features.minigames.mechanics.deathmatch.FourTeamDeathm
 import me.pugabyte.bncore.features.minigames.mechanics.deathmatch.TeamDeathmatch;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 
-public enum Mechanics {
+public enum MechanicType {
 	CAPTURE_THE_FLAG(new CaptureTheFlag()),
 	FOUR_TEAM_DEATHMATCH(new FourTeamDeathmatch()),
 	ONE_IN_THE_QUIVER(new OneInTheQuiver()),
@@ -14,7 +14,7 @@ public enum Mechanics {
 
 	private Mechanic mechanic;
 
-	Mechanics(Mechanic mechanic) {
+	MechanicType(Mechanic mechanic) {
 		this.mechanic = mechanic;
 	}
 
