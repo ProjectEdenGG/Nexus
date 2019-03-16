@@ -8,6 +8,8 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.bncore.features.minigames.models.exceptions.NotInAMatchException;
 import me.pugabyte.bncore.models.exceptions.InvalidInputException;
+import org.bukkit.Location;
+import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -96,6 +98,18 @@ public class MinigamesCommand implements CommandExecutor, TabCompleter {
 						} else {
 							minigamer.tell("You must supply an arena name");
 						}
+						break;
+					case "clientblock":
+						Location location = player.getLocation();
+						Location newLocation = location.clone().add(0, 2, 0);
+
+						newLocation.getBlock().setType(location.getBlock().getType());
+						newLocation.getBlock().setBlockData(location.getBlock().getBlockData());
+
+						Sign newSign = (Sign) newLocation.getBlock().getState();
+
+						newSign.setLine(1, "hi");
+						newSign.update();
 						break;
 				}
 			}

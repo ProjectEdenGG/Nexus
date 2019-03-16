@@ -85,8 +85,8 @@ public class Lobby implements ConfigurationSerializable {
 						match.broadcast("&e" + time + " &7seconds left...");
 					}
 				} else if (time == 0) {
-					match.start();
 					stop();
+					match.start();
 				}
 			}, 1, 20);
 		}

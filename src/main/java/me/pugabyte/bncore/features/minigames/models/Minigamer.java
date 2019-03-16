@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import org.bukkit.GameMode;
@@ -60,7 +61,7 @@ public class Minigamer {
 	}
 
 	public void toLobby() {
-		teleport(BNCore.minigames.getGamelobby());
+		teleport(Minigames.getGamelobby());
 	}
 
 	public void tell(String message) {

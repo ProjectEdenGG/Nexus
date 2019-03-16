@@ -91,6 +91,8 @@ public class Match {
 	}
 
 	public void end() {
+		if (!started) return;
+
 		MatchEndEvent event = new MatchEndEvent(this);
 		BNCore.callEvent(event);
 		if (!event.isCancelled()) {
@@ -184,7 +186,7 @@ public class Match {
 			start();
 		}
 
-		private void start() {
+		void start() {
 			taskId = bnCore.getServer().getScheduler().scheduleSyncRepeatingTask(bnCore, () -> {
 				if (--time > 0) {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
@@ -199,7 +201,7 @@ public class Match {
 			}, 0, 20);
 		}
 
-		private void stop() {
+		void stop() {
 			bnCore.getServer().getScheduler().cancelTask(taskId);
 		}
 
