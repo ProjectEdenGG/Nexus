@@ -95,10 +95,10 @@ public class ShowEnchantsCommand implements CommandExecutor {
 
 				String format = color + "[" + prefix + "] " + SkriptFunctions.getFullChatFormat(player);
 
-				ComponentBuilder herochat = new ComponentBuilder(format + color + ChatColor.BOLD + " > ").append(ChatColor.WHITE + message.trim());//ComponentBuilder json = new ComponentBuilder("{id:\"minecraft:" + itemId + "\",Count:1b,Damage:" + durability + ",tag:" + enchants + ",display:{Lore:[" + lore + "]}}}");
+				ComponentBuilder herochat = new ComponentBuilder(format + color + ChatColor.BOLD + " > ").append(ChatColor.WHITE + message.trim());
 				ComponentBuilder json = new ComponentBuilder("{\"id\":\"minecraft:" + itemId.toLowerCase() + "\",\"Count\":1,\"tag\":{\"display\":{\"Lore\":[" + lore + "]},\"Damage\":" + durability + ",\"Enchantments\":[" + enchants + "]}}");
 				ComponentBuilder hover = new ComponentBuilder(itemName).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, json.create()));
-				ComponentBuilder enchantedItem = new ComponentBuilder("").append("[").bold(true).append(hover.create()).bold(true).append("]").bold(true);
+				ComponentBuilder enchantedItem = new ComponentBuilder(" ").append("[").bold(true).append(hover.create()).bold(true).append("]").bold(true);
 
 				BaseComponent[] component = herochat.append(enchantedItem.create()).append((amount > 1 ? " x" + amount : "")).create();
 

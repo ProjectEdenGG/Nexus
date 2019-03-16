@@ -88,7 +88,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 								sendInventoryRestoreSuccessMessage(restorer, owner, "ender chest");
 								break;
 							case "exp":
-								owner.setExp((float) (owner.getTotalExperience() + getExp(gamemode)));
+								owner.setTotalExperience((int) (owner.getTotalExperience() + getExp(gamemode)));
 								sendExperienceRestoreSuccessMessage(restorer, owner);
 								break;
 							default:

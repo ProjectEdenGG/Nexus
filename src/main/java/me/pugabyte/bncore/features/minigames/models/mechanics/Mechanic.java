@@ -61,7 +61,7 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void onQuit(Minigamer minigamer) {
-		minigamer.getMatch().broadcast(minigamer.getPlayer().getName() + " has quit");
+		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has quit");
 		// Reminder: Check if match has started for most logic
 		checkIfShouldBeOver(minigamer.getMatch());
 	}
