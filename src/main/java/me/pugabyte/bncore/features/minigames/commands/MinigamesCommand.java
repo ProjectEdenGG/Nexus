@@ -1,139 +1,71 @@
 package me.pugabyte.bncore.features.minigames.commands;
 
-import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
-import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
-import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
-import me.pugabyte.bncore.features.minigames.models.exceptions.NotInAMatchException;
 import me.pugabyte.bncore.models.exceptions.InvalidInputException;
-import org.bukkit.Location;
-import org.bukkit.block.Sign;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import me.pugabyte.bncore.models.exceptions.NoPermissionException;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static me.pugabyte.bncore.features.minigames.Minigames.PREFIX;
 
-public class MinigamesCommand implements CommandExecutor, TabCompleter {
-	public MinigamesCommand() {
-		BNCore.registerCommand("newminigames", this);
-		BNCore.registerTabCompleter("newminigames", this);
-	}
+public abstract class MinigamesCommand {
+	@Getter
+	@Setter
+	@NonNull
+	protected String name, permission;
+	@Getter
+	@Setter
+	protected String[] args;
+	@Getter
+	@Setter
+	protected Minigamer minigamer;
+	@Getter
+	@Setter
+	@NonNull
+	protected boolean playerOnly = true;
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	protected abstract void execute(MinigamesCommandEvent event) throws InvalidInputException;
+
+	public final void run(MinigamesCommandEvent event) {
+		args = event.getArgs();
+
 		try {
-			if (!(sender instanceof Player)) {
-				throw new InvalidInputException("You must be in-game to run this command");
+			CommandSender sender = event.getSender();
+			if (playerOnly) {
+				if (!(sender instanceof Player))
+					throw new InvalidInputException("You must be in-game to use this command!");
+
+				if (!sender.hasPermission("minigames." + permission))
+					throw new NoPermissionException();
+
+				minigamer = PlayerManager.get((Player) sender);
 			}
 
-			Player player = (Player) sender;
-			Minigamer minigamer = PlayerManager.get(player);
-			if (args.length == 0) {
-				minigamer.tell("Help menu");
-			} else {
-				switch (args[0].toLowerCase()) {
-					case "join":
-						if (args.length > 1) {
-							minigamer.join(args[1]);
-						} else {
-							minigamer.tell("You must supply an arena name to join");
-						}
-						break;
-					case "quit":
-						if (minigamer.getMatch() != null) {
-							minigamer.quit();
-						} else {
-							throw new NotInAMatchException();
-						}
-						break;
-					case "scores":
-						if (minigamer.getMatch() != null) {
-							minigamer.tell("Your score: " + minigamer.getScore());
-							minigamer.tell("Your team's score: " + minigamer.getTeam().getScore(minigamer.getMatch()));
-						} else {
-							throw new NotInAMatchException();
-						}
-						break;
-					case "reload": {
-						long startTime = System.currentTimeMillis();
-						if (args.length > 1) {
-							Arena.read(args[1]);
-						} else {
-							Arena.read();
-						}
-						long stopTime = System.currentTimeMillis();
-						long elapsedTime = stopTime - startTime;
-						BNCore.log("Reload time took " + elapsedTime + "ms");
-						break;
-					}
-					case "save": {
-						long startTime = System.currentTimeMillis();
-						if (args.length > 1) {
-							Arena.write(args[1]);
-						} else {
-							Arena.write();
-						}
-						long stopTime = System.currentTimeMillis();
-						long elapsedTime = stopTime - startTime;
-						BNCore.log("Save time took " + elapsedTime + "ms");
-						break;
-					}
-					case "dump":
-						if (args.length > 1) {
-							Optional<Arena> optionalArena = ArenaManager.get(args[1]);
-							if (optionalArena.isPresent()) {
-								BNCore.dump(optionalArena.get());
-							} else {
-								minigamer.tell("Arena not found");
-							}
-						} else {
-							minigamer.tell("You must supply an arena name");
-						}
-						break;
-					case "clientblock":
-						Location location = player.getLocation();
-						Location newLocation = location.clone().add(0, 2, 0);
-
-						newLocation.getBlock().setType(location.getBlock().getType());
-						newLocation.getBlock().setBlockData(location.getBlock().getBlockData());
-
-						Sign newSign = (Sign) newLocation.getBlock().getState();
-
-						newSign.setLine(1, "hi");
-						newSign.update();
-						break;
-				}
-			}
-		} catch (InvalidInputException | MinigameException ex) {
-			sender.sendMessage(PREFIX + ex.getMessage());
+			execute(event);
+		} catch (InvalidInputException | NoPermissionException ex) {
+			event.reply(PREFIX + ex.getMessage());
 		}
-		return true;
 	}
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		List<String> completions = new ArrayList<>();
-		if (args.length == 1) {
-			completions.add("join");
-			completions.add("quit");
-			completions.add("scores");
-			completions.add("reload");
-			completions.add("save");
-			completions.add("dump");
-		} else if (args.length == 2 && (args[0].equalsIgnoreCase("join") || args[0].equalsIgnoreCase("save"))) {
-			ArenaManager.getAll().forEach(arena -> completions.add(arena.getName()));
-		}
-
-		return completions;
+	protected List<String> tab(MinigamesTabEvent event) {
+		return null;
 	}
+
+	public final List<String> run(MinigamesTabEvent event) {
+		args = event.getArgs();
+		CommandSender sender = event.getSender();
+
+		if (!sender.hasPermission("minigames." + permission))
+			return null;
+
+		return tab(event);
+	}
+
 
 }

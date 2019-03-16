@@ -13,6 +13,21 @@ public class ArenaManager {
 		return arenas;
 	}
 
+	public static List<String> getNames() {
+		List<String> names = new ArrayList<>();
+		for (Arena arena : arenas)
+			names.add(arena.getName());
+		return names;
+	}
+
+	public static List<String> getNames(String filter) {
+		List<String> names = new ArrayList<>();
+		for (Arena arena : arenas)
+			if (arena.getName().startsWith(filter))
+				names.add(arena.getName());
+		return names;
+	}
+
 	public static Optional<Arena> get(String name) {
 		return arenas.stream().filter(arena -> arena.getName().equalsIgnoreCase(name)).findFirst();
 	}

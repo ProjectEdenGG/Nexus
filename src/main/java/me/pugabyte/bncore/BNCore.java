@@ -244,7 +244,7 @@ public class BNCore extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		AntiBots.write();
 		Alerts.write();
+		AntiBots.write();
 	}
 }
