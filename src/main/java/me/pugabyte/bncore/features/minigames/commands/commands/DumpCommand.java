@@ -1,0 +1,41 @@
+package me.pugabyte.bncore.features.minigames.commands.commands;
+
+import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.commands.MinigamesCommand;
+import me.pugabyte.bncore.features.minigames.commands.MinigamesCommandEvent;
+import me.pugabyte.bncore.features.minigames.commands.MinigamesTabEvent;
+import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.models.exceptions.InvalidInputException;
+
+import java.util.List;
+import java.util.Optional;
+
+public class DumpCommand extends MinigamesCommand {
+
+	public DumpCommand() {
+		this.name = "dump";
+		this.permission = "manage";
+	}
+
+	@Override
+	protected void execute(MinigamesCommandEvent event) throws InvalidInputException {
+		if (args.length == 0)
+			throw new InvalidInputException("You must supply an arena name");
+
+		Optional<Arena> optionalArena = ArenaManager.get(args[1]);
+		if (!optionalArena.isPresent())
+			throw new InvalidInputException("Arena not found");
+
+		BNCore.dump(optionalArena.get());
+	}
+
+	@Override
+	protected List<String> tab(MinigamesTabEvent event) {
+		if (args.length != 1)
+			return null;
+
+		return ArenaManager.getNames(args[0]);
+	}
+
+}

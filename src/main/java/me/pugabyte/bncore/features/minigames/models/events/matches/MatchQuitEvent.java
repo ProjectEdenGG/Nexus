@@ -5,12 +5,12 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 
-public class MatchLeaveEvent extends MatchEvent {
+public class MatchQuitEvent extends MatchEvent {
 	@NonNull
 	@Getter
 	private Minigamer minigamer;
 
-	public MatchLeaveEvent(Match match, Minigamer minigamer) {
+	public MatchQuitEvent(Match match, Minigamer minigamer) {
 		super(match);
 		this.minigamer = minigamer;
 	}

@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.minigames;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.commands.MinigamesCommand;
+import me.pugabyte.bncore.features.minigames.commands.MinigamesCommands;
 import me.pugabyte.bncore.features.minigames.listeners.MatchListener;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Loadout;
@@ -23,7 +23,7 @@ public class Minigames {
 	private static String arenasFolder;
 
 	public Minigames() {
-		new MinigamesCommand();
+		new MinigamesCommands();
 		new MatchListener();
 		ConfigurationSerialization.registerClass(Arena.class, "Arena");
 		ConfigurationSerialization.registerClass(Lobby.class, "Lobby");

@@ -7,7 +7,7 @@ import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.bncore.features.minigames.models.events.matches.MatchLeaveEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
 import org.bukkit.entity.Player;
@@ -65,7 +65,7 @@ public class Match {
 
 	void quit(Minigamer minigamer) {
 		if (minigamers.contains(minigamer)) {
-			MatchLeaveEvent event = new MatchLeaveEvent(this, minigamer);
+			MatchQuitEvent event = new MatchQuitEvent(this, minigamer);
 			BNCore.callEvent(event);
 			if (!event.isCancelled()) {
 				minigamers.remove(minigamer);
