@@ -32,7 +32,7 @@ public class BearNationTabList extends SimpleTabList implements Listener {
 		super.enable();
 		BNCore.registerListener(this);
 
-		int taskId = BNCore.scheduleSyncRepeatingTask(() -> {
+		int taskId = BNCore.scheduleSyncRepeatingTask(0, 5, () -> {
 			for (Player _player : Bukkit.getOnlinePlayers()) {
 				if (!players.containsKey(_player))
 					continue;
@@ -44,7 +44,7 @@ public class BearNationTabList extends SimpleTabList implements Listener {
 
 				players.put(_player, getDisplay(player));
 			}
-		}, 0, 5);
+		});
 
 		return this;
 	}
@@ -85,7 +85,7 @@ public class BearNationTabList extends SimpleTabList implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		BNCore.runTaskLater(() -> {
+		BNCore.runTaskLater(2, () -> {
 			Player _player = event.getPlayer();
 			if (BNCore.isVanished(_player)) {
 				if (!player.hasPermission("vanish.see")) {
@@ -94,7 +94,7 @@ public class BearNationTabList extends SimpleTabList implements Listener {
 			} else {
 				add(_player);
 			}
-		}, 2);
+		});
 	}
 
 	@EventHandler

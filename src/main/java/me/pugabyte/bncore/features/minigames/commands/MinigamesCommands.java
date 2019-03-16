@@ -1,11 +1,14 @@
 package me.pugabyte.bncore.features.minigames.commands;
 
 import me.pugabyte.bncore.features.minigames.commands.commands.DumpCommand;
+import me.pugabyte.bncore.features.minigames.commands.commands.EndCommand;
 import me.pugabyte.bncore.features.minigames.commands.commands.HelpCommand;
 import me.pugabyte.bncore.features.minigames.commands.commands.JoinCommand;
 import me.pugabyte.bncore.features.minigames.commands.commands.QuitCommand;
 import me.pugabyte.bncore.features.minigames.commands.commands.ReloadCommand;
 import me.pugabyte.bncore.features.minigames.commands.commands.SaveCommand;
+import me.pugabyte.bncore.features.minigames.commands.commands.StartCommand;
+import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommand;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,11 +22,13 @@ public class MinigamesCommands {
 		new MinigamesCommandHandler();
 
 		add(new DumpCommand());
+		add(new EndCommand());
 		add(new HelpCommand());
 		add(new JoinCommand());
 		add(new QuitCommand());
 		add(new ReloadCommand());
 		add(new SaveCommand());
+		add(new StartCommand());
 	}
 
 	public static MinigamesCommand get(String command) {
@@ -41,7 +46,7 @@ public class MinigamesCommands {
 	public static List<String> getNames(String filter) {
 		List<String> names = new ArrayList<>();
 		for (Map.Entry<String, MinigamesCommand> commandEntry : commands.entrySet())
-			if (commandEntry.getValue().getName().startsWith(filter))
+			if (commandEntry.getValue().getName().toLowerCase().startsWith(filter.toLowerCase()))
 				names.add(commandEntry.getValue().getName());
 		return names;
 	}

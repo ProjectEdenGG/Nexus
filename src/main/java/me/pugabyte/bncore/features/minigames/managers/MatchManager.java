@@ -10,18 +10,10 @@ import java.util.Optional;
 public class MatchManager {
 	private static List<Match> matches = new ArrayList<>();
 
-	public static Match get(Arena arena) {
-		Match match;
-		Optional<Match> optionalMatch = matches.stream()
+	public static Optional<Match> get(Arena arena) {
+		return matches.stream()
 				.filter(_match -> _match.getArena().equals(arena))
 				.findFirst();
-		if (!optionalMatch.isPresent()) {
-			match = new Match(arena);
-			add(match);
-		} else {
-			match = optionalMatch.get();
-		}
-		return match;
 	}
 
 	public static List<Match> getAll() {

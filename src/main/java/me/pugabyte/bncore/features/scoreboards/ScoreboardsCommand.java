@@ -31,7 +31,7 @@ public class ScoreboardsCommand implements CommandExecutor, TabCompleter {
 		board.set(colorize("&bHello 2"), 2);
 		for (int i = 0; i < 200; i = i + 5) {
 			final int finalI = i;
-			BNCore.runTaskLater(() -> board.setName("Bear Nation :O " + finalI), i);
+			BNCore.runTaskLater(i, () -> board.setName("Bear Nation :O " + finalI));
 		}
 
 		return true;
@@ -45,4 +45,5 @@ public class ScoreboardsCommand implements CommandExecutor, TabCompleter {
 	public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
 		return null;
 	}
+
 }

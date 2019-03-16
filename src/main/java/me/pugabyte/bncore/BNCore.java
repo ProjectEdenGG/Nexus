@@ -117,7 +117,7 @@ public class BNCore extends JavaPlugin {
 			PluginCommand pluginCommand = getInstance().getCommand(command);
 			pluginCommand.setExecutor(executor);
 		} else {
-			log("Could not register command /" + command+ "!");
+			log("Could not register command /" + command + "!");
 		}
 	}
 
@@ -126,7 +126,7 @@ public class BNCore extends JavaPlugin {
 			PluginCommand pluginCommand = getInstance().getCommand(command);
 			pluginCommand.setTabCompleter(tabCompleter);
 		} else {
-			log("Could not register tab completer for command /" + command+ "!");
+			log("Could not register tab completer for command /" + command + "!");
 		}
 	}
 
@@ -134,7 +134,7 @@ public class BNCore extends JavaPlugin {
 		getInstance().getServer().getPluginManager().callEvent(event);
 	}
 
-	public static void runTaskLater(Runnable runnable, long startDelay) {
+	public static void runTaskLater(long startDelay, Runnable runnable) {
 		getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, startDelay);
 	}
 
@@ -142,7 +142,7 @@ public class BNCore extends JavaPlugin {
 		return getInstance().getServer().getScheduler().runTaskAsynchronously(getInstance(), runnable).getTaskId();
 	}
 
-	public static int scheduleSyncRepeatingTask(Runnable runnable, long startDelay, long interval) {
+	public static int scheduleSyncRepeatingTask(long startDelay, long interval, Runnable runnable) {
 		return getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
 	}
 
@@ -247,4 +247,5 @@ public class BNCore extends JavaPlugin {
 		Alerts.write();
 		AntiBots.write();
 	}
+
 }

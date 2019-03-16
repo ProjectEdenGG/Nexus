@@ -1,9 +1,9 @@
 package me.pugabyte.bncore.features.minigames.commands.commands;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.commands.MinigamesCommand;
-import me.pugabyte.bncore.features.minigames.commands.MinigamesCommandEvent;
-import me.pugabyte.bncore.features.minigames.commands.MinigamesTabEvent;
+import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommand;
+import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommandEvent;
+import me.pugabyte.bncore.features.minigames.commands.models.MinigamesTabEvent;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.models.exceptions.InvalidInputException;
@@ -32,10 +32,10 @@ public class DumpCommand extends MinigamesCommand {
 
 	@Override
 	protected List<String> tab(MinigamesTabEvent event) {
-		if (args.length != 1)
-			return null;
+		if (args.length == 1)
+			return ArenaManager.getNames(args[0]);
 
-		return ArenaManager.getNames(args[0]);
+		return null;
 	}
 
 }

@@ -40,7 +40,8 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void onEnd(Match match) {
-		announceWinners(match);
+		if (match.isStarted())
+			announceWinners(match);
 	}
 
 	public void onDeath(Minigamer victim) {
@@ -62,8 +63,8 @@ public abstract class Mechanic implements Listener {
 
 	public void onQuit(Minigamer minigamer) {
 		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has quit");
-		// Reminder: Check if match has started for most logic
-		checkIfShouldBeOver(minigamer.getMatch());
+		if (minigamer.getMatch().isStarted())
+			checkIfShouldBeOver(minigamer.getMatch());
 	}
 
 	public abstract void kill(Minigamer minigamer);
@@ -128,7 +129,7 @@ public abstract class Mechanic implements Listener {
 					BNCore.callEvent(deathEvent);
 					if (!deathEvent.isCancelled()) {
 						mechanic.onDeath(victim, attacker);
-						if (!victim.getMatch().isOver()) {
+						if (!victim.getMatch().isEnded()) {
 							mechanic.kill(victim);
 						}
 					}

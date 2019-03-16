@@ -18,7 +18,7 @@ public class DamageTracker {
 
 	public DamageTracker() {
 		new DamageTrackerListener();
-		BNCore.scheduleSyncRepeatingTask(this::janitor, (60 * 20), (60 * 20));
+		BNCore.scheduleSyncRepeatingTask(1200, 1200, this::janitor);
 	}
 
 	public static void log(DamageEvent event) {

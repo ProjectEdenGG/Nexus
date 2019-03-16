@@ -7,9 +7,9 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Team;
 
 public class MatchBroadcastEvent extends MatchEvent {
-	@NonNull
 	@Getter
 	@Setter
+	@NonNull
 	private String message;
 	@Getter
 	@Setter

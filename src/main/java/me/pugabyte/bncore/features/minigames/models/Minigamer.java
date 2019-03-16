@@ -37,7 +37,14 @@ public class Minigamer {
 
 	public void join(Arena arena) {
 		if (match == null) {
-			match = MatchManager.get(arena);
+			Optional<Match> optionalMatch = MatchManager.get(arena);
+			if (!optionalMatch.isPresent()) {
+				match = new Match(arena);
+				MatchManager.add(match);
+			} else {
+				match = optionalMatch.get();
+			}
+
 			match.join(this);
 		} else {
 			tell("You are already in a match");
@@ -78,6 +85,8 @@ public class Minigamer {
 	}
 
 	public void clearState() {
+		// TODO: Possibly edit ConditionalPerms to disallow voxel?
+		// TODO: Unvanish
 		player.setGameMode(GameMode.ADVENTURE);
 		player.setHealth(20);
 		for (PotionEffect effect : player.getActivePotionEffects()) {

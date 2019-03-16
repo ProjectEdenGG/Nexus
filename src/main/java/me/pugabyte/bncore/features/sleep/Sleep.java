@@ -37,14 +37,14 @@ public class Sleep {
 
 		if (percentage >= 49) {
 			setHandling(true);
-			BNCore.runTaskLater(() -> {
+			BNCore.runTaskLater(20, () -> {
 				world.setTime(0);
 
 				world.setStorm(false);
 				world.setThundering(false);
 
 				setHandling(false);
-			}, 20);
+			});
 
 		}
 	}
@@ -56,4 +56,5 @@ public class Sleep {
 	boolean isHandling() {
 		return handling;
 	}
+
 }

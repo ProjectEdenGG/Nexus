@@ -6,8 +6,8 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 
 public class MatchJoinEvent extends MatchEvent {
-	@NonNull
 	@Getter
+	@NonNull
 	private Minigamer minigamer;
 
 	public MatchJoinEvent(Match match, Minigamer minigamer) {

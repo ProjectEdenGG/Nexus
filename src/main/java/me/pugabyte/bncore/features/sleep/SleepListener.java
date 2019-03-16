@@ -15,10 +15,10 @@ public class SleepListener implements Listener {
 	public void onBedEnter(PlayerBedEnterEvent event) {
 		if (sleep.isHandling()) {
 
-			BNCore.runTaskLater(() -> {
+			BNCore.runTaskLater(1, () -> {
 				World world = event.getPlayer().getWorld();
 				sleep.calculate(world);
-			}, 1);
+			});
 
 		}
 	}
@@ -29,9 +29,9 @@ public class SleepListener implements Listener {
 
 			World world = event.getPlayer().getWorld();
 			if (world.getTime() >= 12541 && world.getTime() <= 23458) {
-				BNCore.runTaskLater(() -> {
+				BNCore.runTaskLater(1, () -> {
 					sleep.calculate(world);
-				}, 1);
+				});
 			}
 
 		}
