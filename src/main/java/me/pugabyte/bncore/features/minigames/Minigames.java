@@ -25,16 +25,22 @@ public class Minigames {
 	public Minigames() {
 		new MinigamesCommands();
 		new MatchListener();
+
+		registerConfigurationTypes();
+
+		gameworld = Bukkit.getWorld("gameworld");
+		gamelobby = new Location(gameworld, 1861.5, 38.1, 247.5, 0, 0);
+
+		arenasFolder = "plugins/BNCore/minigames/arenas/";
+
+		Arena.read();
+	}
+
+	private void registerConfigurationTypes() {
 		ConfigurationSerialization.registerClass(Arena.class, "Arena");
 		ConfigurationSerialization.registerClass(Lobby.class, "Lobby");
 		ConfigurationSerialization.registerClass(Team.class, "Team");
 		ConfigurationSerialization.registerClass(Loadout.class, "Loadout");
-
-		gameworld = Bukkit.getWorld("gameworld");
-		gamelobby = new Location(gameworld, 1861.5, 38.1, 247.5, 0, 0);
-		arenasFolder = "plugins/BNCore/minigames/arenas/";
-
-		Arena.read();
 	}
 
 }

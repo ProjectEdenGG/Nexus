@@ -23,7 +23,7 @@ public class ArenaManager {
 	public static List<String> getNames(String filter) {
 		List<String> names = new ArrayList<>();
 		for (Arena arena : arenas)
-			if (arena.getName().startsWith(filter))
+			if (arena.getName().toLowerCase().startsWith(filter.toLowerCase()))
 				names.add(arena.getName());
 		return names;
 	}

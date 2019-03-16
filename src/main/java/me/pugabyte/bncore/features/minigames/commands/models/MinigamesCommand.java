@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.minigames.commands;
+package me.pugabyte.bncore.features.minigames.commands.models;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -11,8 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-
-import static me.pugabyte.bncore.features.minigames.Minigames.PREFIX;
 
 public abstract class MinigamesCommand {
 	@Getter
@@ -49,7 +47,7 @@ public abstract class MinigamesCommand {
 
 			execute(event);
 		} catch (InvalidInputException | NoPermissionException ex) {
-			event.reply(PREFIX + ex.getMessage());
+			event.reply(ex.getMessage());
 		}
 	}
 

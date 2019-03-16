@@ -66,7 +66,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 
 				owner.setGameMode(GameMode.valueOf(args[1].toUpperCase()));
 
-				BNCore.runTaskLater(() -> {
+				BNCore.runTaskLater(3, () -> {
 					try {
 						switch (args[2].toLowerCase()) {
 							case "inventory":
@@ -97,7 +97,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 					} catch (InvalidInputException ex) {
 						sender.sendMessage(PREFIX + ex.getMessage());
 					}
-				}, 3);
+				});
 
 				SkriptFunctions.log(PREFIX + restorer.getName() + " restored " + owner.getName() + "'s " + args[1].toLowerCase()
 						+ " " + args[2].toLowerCase() + " from <https://paste.bnn.gg/" + code + ".json>");
@@ -150,7 +150,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 
 	private void sendInventoryRestoreNotEmptyMessage(Player restorer, Player owner, String type) throws InvalidInputException {
 		owner.sendMessage(PREFIX + ChatColor.RED + restorer.getName() + " is trying to restore your " + type + ", " +
-				" your current " + type + " must be " + ChatColor. YELLOW + "empty " + ChatColor.RED + "to avoid lost items!");
+				" your current " + type + " must be " + ChatColor.YELLOW + "empty " + ChatColor.RED + "to avoid lost items!");
 		throw new InvalidInputException(ChatColor.RED + "The player's " + type + " contents must be empty to complete a restore. " +
 				"They have been asked to empty their " + type + ".");
 	}

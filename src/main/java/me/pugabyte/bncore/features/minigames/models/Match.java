@@ -29,7 +29,7 @@ public class Match {
 	private Arena arena;
 	private List<Minigamer> minigamers = new ArrayList<>();
 	private boolean started = false;
-	private boolean over = false;
+	private boolean ended = false;
 	private Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;
 	private MatchData matchData;
@@ -43,73 +43,75 @@ public class Match {
 	public void join(Minigamer minigamer) {
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
 		BNCore.callEvent(event);
-		if (!event.isCancelled()) {
+		if (event.isCancelled()) return;
 
-			if (started) {
-				if (arena.canJoinLate()) {
-					minigamers.add(minigamer);
-					balance();
-					teleportIn(minigamer);
-				} else {
-					minigamer.tell("This match has already started");
-					return;
-				}
-			} else {
+		if (started) {
+			if (arena.canJoinLate()) {
 				minigamers.add(minigamer);
-				arena.getLobby().join(minigamer);
+				balance();
+				teleportIn(minigamer);
+			} else {
+				minigamer.tell("This match has already started");
+				return;
 			}
-
-			arena.getMechanic().onJoin(minigamer);
+		} else {
+			minigamers.add(minigamer);
+			arena.getLobby().join(minigamer);
 		}
+
+		arena.getMechanic().onJoin(minigamer);
 	}
 
 	void quit(Minigamer minigamer) {
-		if (minigamers.contains(minigamer)) {
-			MatchQuitEvent event = new MatchQuitEvent(this, minigamer);
-			BNCore.callEvent(event);
-			if (!event.isCancelled()) {
-				minigamers.remove(minigamer);
-				minigamer.toLobby();
-				minigamer.clearState();
-				arena.getMechanic().onQuit(minigamer);
-			}
-		}
+		if (!minigamers.contains(minigamer)) return;
+
+		MatchQuitEvent event = new MatchQuitEvent(this, minigamer);
+		BNCore.callEvent(event);
+		if (event.isCancelled()) return;
+
+		minigamers.remove(minigamer);
+		minigamer.toLobby();
+		minigamer.clearState();
+		arena.getMechanic().onQuit(minigamer);
 	}
 
-	void start() {
+	public void start() {
 		MatchStartEvent event = new MatchStartEvent(this);
 		BNCore.callEvent(event);
-		if (!event.isCancelled()) {
-			started = true;
-			clearEntities();
-			balance();
-			initializeScores();
-			teleportIn();
-			startTimer();
-			arena.getMechanic().onStart(this);
-		}
+		if (event.isCancelled()) return;
+
+		started = true;
+		clearEntities();
+		balance();
+		initializeScores();
+		teleportIn();
+		startTimer();
+		arena.getMechanic().onStart(this);
 	}
 
 	public void end() {
-		if (!started) return;
-
 		MatchEndEvent event = new MatchEndEvent(this);
 		BNCore.callEvent(event);
-		if (!event.isCancelled()) {
-			over = true;
-			broadcast("Match has ended");
-			timer.stop();
-			clearEntities();
-			toLobby();
-			clearStates();
-			arena.getMechanic().onEnd(this);
-			MatchManager.remove(this);
-		}
+		if (event.isCancelled()) return;
+
+		ended = true;
+		broadcast("Match has ended");
+		stopTimer();
+		clearEntities();
+		clearStates();
+		toLobby();
+		arena.getMechanic().onEnd(this);
+		MatchManager.remove(this);
 	}
 
 	private void startTimer() {
 		if (arena.getSeconds() > 0)
 			timer = new MatchTimer(this, arena.getSeconds());
+	}
+
+	private void stopTimer() {
+		if (timer != null)
+			timer.stop();
 	}
 
 	private void clearEntities() {
@@ -134,8 +136,6 @@ public class Match {
 	}
 
 	private void clearStates() {
-		// TODO: Possibly edit ConditionalPerms to disallow voxel?
-		// TODO: Unvanish
 		minigamers.forEach(Minigamer::clearState);
 	}
 
@@ -187,7 +187,7 @@ public class Match {
 		}
 
 		void start() {
-			taskId = bnCore.getServer().getScheduler().scheduleSyncRepeatingTask(bnCore, () -> {
+			taskId = BNCore.scheduleSyncRepeatingTask(0, 20, () -> {
 				if (--time > 0) {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
 					BNCore.callEvent(event);
@@ -198,7 +198,7 @@ public class Match {
 					match.end();
 					stop();
 				}
-			}, 0, 20);
+			});
 		}
 
 		void stop() {

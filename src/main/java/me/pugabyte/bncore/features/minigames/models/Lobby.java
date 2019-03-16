@@ -65,7 +65,7 @@ public class Lobby implements ConfigurationSerializable {
 		}
 
 		private void start() {
-			taskId = BNCore.scheduleSyncRepeatingTask(() -> {
+			taskId = BNCore.scheduleSyncRepeatingTask(1, 20, () -> {
 				int current = match.getMinigamers().size();
 				int min = arena.getMinPlayers();
 				int left = min - current;
@@ -88,7 +88,7 @@ public class Lobby implements ConfigurationSerializable {
 					stop();
 					match.start();
 				}
-			}, 1, 20);
+			});
 		}
 
 		private void stop() {

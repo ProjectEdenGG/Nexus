@@ -1,6 +1,9 @@
 package me.pugabyte.bncore.features.minigames.commands;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommand;
+import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommandEvent;
+import me.pugabyte.bncore.features.minigames.commands.models.MinigamesTabEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
