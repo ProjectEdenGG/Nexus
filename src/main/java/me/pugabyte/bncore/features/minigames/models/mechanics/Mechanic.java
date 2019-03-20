@@ -12,6 +12,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,7 +47,7 @@ public abstract class Mechanic implements Listener {
 
 	public void onDeath(Minigamer victim) {
 		// TODO: Autobalancing
-		victim.getMatch().broadcast(victim.getTeam().getColor() + victim.getPlayer().getName() + " &3was killed");
+		victim.getMatch().broadcast(victim.getTeam().getColor() + victim.getPlayer().getName() + " &3died");
 	}
 
 	public void onDeath(Minigamer victim, Minigamer killer) {
@@ -139,6 +140,42 @@ public abstract class Mechanic implements Listener {
 			// Different matches
 			event.setCancelled(true);
 		}
+	}
+
+	@EventHandler
+	public void onDeath(EntityDamageEvent event) {
+		Minigamer victim;
+
+		if (event.getEntity() instanceof Player) {
+			victim = PlayerManager.get((Player) event.getEntity());
+		} else {
+			return;
+		}
+
+		// Ignore damage by entity (see above)
+		if (event.getCause().name().contains("ENTITY")) return;
+		if (victim.getMatch() == null || victim.getTeam() == null) return;
+
+		if (victim.isRespawning()) {
+			event.setCancelled(true);
+			return;
+		}
+
+		Mechanic mechanic = victim.getMatch().getArena().getMechanic();
+
+		if (event.getDamage() < victim.getPlayer().getHealth()) return;
+
+		event.setCancelled(true);
+
+		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim.getMatch(), victim);
+		BNCore.callEvent(deathEvent);
+		if (deathEvent.isCancelled()) return;
+
+		mechanic.onDeath(victim);
+
+		if (victim.getMatch().isEnded()) return;
+
+		mechanic.kill(victim);
 	}
 
 	public abstract void checkIfShouldBeOver(Match match);

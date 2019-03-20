@@ -31,7 +31,7 @@ public class CaptureTheFlagMatchData extends MatchData {
 		flags.put(team, flag);
 	}
 
-	public Flag getFlagFromCarrier(Minigamer minigamer) {
+	public Flag getFlagByCarrier(Minigamer minigamer) {
 		Optional<Map.Entry<Team, Flag>> optionalFlag = getFlags().entrySet().stream()
 				.filter(teamFlagEntry -> {
 					Flag _flag = teamFlagEntry.getValue();
@@ -41,7 +41,7 @@ public class CaptureTheFlagMatchData extends MatchData {
 	}
 
 	public void removeFlagCarrier(Minigamer minigamer) {
-		Flag flag = getFlagFromCarrier(minigamer);
+		Flag flag = getFlagByCarrier(minigamer);
 		if (flag == null) return;
 
 		flag.setCarrier(null);

@@ -4,27 +4,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
-import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.Minigames;
-import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
-import me.pugabyte.bncore.features.minigames.mechanics.MechanicType;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 @Data
 @Builder
@@ -56,49 +44,6 @@ public class Arena implements ConfigurationSerializable {
 
 	public Mechanic getMechanic() {
 		return getMechanicType().get();
-	}
-
-	private static String getFile(String name) {
-		return Minigames.getArenasFolder() + name + ".yml";
-	}
-
-	private static FileConfiguration getConfig(String name) {
-		return YamlConfiguration.loadConfiguration(new File(getFile(name)));
-	}
-
-	public static void read() {
-		try (Stream<Path> paths = Files.walk(Paths.get(Minigames.getArenasFolder()))) {
-			paths.forEach(filePath -> {
-				if (!Files.isRegularFile(filePath)) return;
-
-				String name = filePath.getFileName().toString().replace(".yml", "");
-				read(name);
-			});
-		} catch (IOException ex) {
-			BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
-		}
-	}
-
-	public static void read(String name) {
-		ArenaManager.add((Arena) getConfig(name).get("arena"));
-	}
-
-	public static void write() {
-		ArenaManager.getAll().forEach(arena -> write(arena.getName()));
-	}
-
-	public static void write(String name) {
-		Optional<Arena> optionalArena = ArenaManager.get(name);
-		if (!optionalArena.isPresent()) return;
-
-		FileConfiguration arenaConfig = getConfig(name);
-		arenaConfig.set("arena", optionalArena.get());
-
-		try {
-			arenaConfig.save(getFile(name));
-		} catch (IOException ex) {
-			BNCore.severe("An error occurred while trying to write arena configuration files: " + ex.getMessage());
-		}
 	}
 
 	@Override
