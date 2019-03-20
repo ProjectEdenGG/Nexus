@@ -1,12 +1,12 @@
-package me.pugabyte.bncore.features.minigames.mechanics.capturetheflag;
+package me.pugabyte.bncore.features.minigames.mechanics;
 
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.mechanics.CaptureTheFlagMechanic;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
-import org.bukkit.event.entity.PlayerDeathEvent;
 
 public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 
@@ -33,11 +33,6 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 		} else if ((ChatColor.GREEN + "Capture").equalsIgnoreCase(sign.getLine(2))) {
 			// TODO: Capturing neutral flag
 		}
-	}
-
-	@Override
-	public void dropFlag(PlayerDeathEvent event) {
-
 	}
 
 }

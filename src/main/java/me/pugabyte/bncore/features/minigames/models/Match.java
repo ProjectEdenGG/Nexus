@@ -177,7 +177,6 @@ public class Match {
 		private Match match;
 		private int time;
 		private List<Integer> broadcasts = Arrays.asList((60 * 10), (60 * 5), 60, 30, 15, 5, 4, 3, 2, 1);
-		private BNCore bnCore = BNCore.getInstance();
 		private int taskId;
 
 		MatchTimer(Match match, int time) {
@@ -202,7 +201,7 @@ public class Match {
 		}
 
 		void stop() {
-			bnCore.getServer().getScheduler().cancelTask(taskId);
+			BNCore.cancelTask(taskId);
 		}
 
 	}

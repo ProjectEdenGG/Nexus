@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.commands.MinigamesCommands;
 import me.pugabyte.bncore.features.minigames.listeners.MatchListener;
+import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Loadout;
 import me.pugabyte.bncore.features.minigames.models.Lobby;
@@ -19,8 +20,6 @@ public class Minigames {
 	private static World gameworld;
 	@Getter
 	private static Location gamelobby;
-	@Getter
-	private static String arenasFolder;
 
 	public Minigames() {
 		new MinigamesCommands();
@@ -31,9 +30,7 @@ public class Minigames {
 		gameworld = Bukkit.getWorld("gameworld");
 		gamelobby = new Location(gameworld, 1861.5, 38.1, 247.5, 0, 0);
 
-		arenasFolder = "plugins/BNCore/minigames/arenas/";
-
-		Arena.read();
+		ArenaManager.read();
 	}
 
 	private void registerConfigurationTypes() {

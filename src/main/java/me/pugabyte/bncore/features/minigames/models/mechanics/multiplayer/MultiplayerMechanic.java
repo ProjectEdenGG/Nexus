@@ -12,6 +12,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	@Override
 	public void kill(Minigamer minigamer) {
+		if (minigamer.isRespawning()) return;
 		minigamer.setRespawning(true);
 		minigamer.clearState();
 		minigamer.teleport(minigamer.getMatch().getArena().getRespawnLocation());

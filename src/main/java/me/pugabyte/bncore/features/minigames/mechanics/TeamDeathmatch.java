@@ -1,18 +1,18 @@
-package me.pugabyte.bncore.features.minigames.mechanics.deathmatch;
+package me.pugabyte.bncore.features.minigames.mechanics;
 
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 
-public class FourTeamDeathmatch extends BalancedTeamMechanic {
+public class TeamDeathmatch extends BalancedTeamMechanic {
 
 	@Override
 	public String getName() {
-		return "Four Team Deathmatch";
+		return "Team Deathmatch";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Kill the other teams";
+		return "Kill the other team";
 	}
 
 	@Override
