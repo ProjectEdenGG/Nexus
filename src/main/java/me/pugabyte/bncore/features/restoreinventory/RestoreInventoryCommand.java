@@ -175,7 +175,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 
 	private ItemStack[] getEnderChest(ConfigurationSection gamemode) {
 		ConfigurationSection enderChestContents = gamemode.getConfigurationSection("enderChestContents");
-		return Sharables.ARMOR.getSerializer().deserialize(convertSection(enderChestContents));
+		return Sharables.ENDER_CHEST.getSerializer().deserialize(convertSection(enderChestContents));
 	}
 
 	private ItemStack[] getInventory(ConfigurationSection gamemode) {
