@@ -22,4 +22,5 @@ public interface IDatabase {
 			if (connection != null) connection.close();
 		} catch (Exception ex) { /* ignored */ }
 	}
+
 }

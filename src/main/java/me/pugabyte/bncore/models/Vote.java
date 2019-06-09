@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.nerds;
+package me.pugabyte.bncore.models;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -13,4 +13,5 @@ public class Vote {
 	private int extra;
 	@NonNull
 	private LocalDateTime timestamp;
+
 }

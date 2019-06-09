@@ -118,6 +118,25 @@
             <version>1.18.2</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Norm -->
+        <dependency>
+            <groupId>com.dieselpoint</groupId>
+            <artifactId>norm</artifactId>
+            <version>0.8.6</version>
+        </dependency>
+        <!-- MySQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+        </dependency>
+        <!-- Helper -->
+        <dependency>
+            <groupId>me.lucko</groupId>
+            <artifactId>helper</artifactId>
+            <version>5.5.0</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Minigames -->
         <dependency>
             <groupId>au.com.mineauz</groupId>

@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.models.persistence;
 
 public enum BearNationDatabase {
+	BEARNATION(""),
 	ALERTS("smp_alerts"),
 	ANTIBOTS("antibots"),
 	NAMELESS("nameless");
@@ -12,6 +13,9 @@ public enum BearNationDatabase {
 	}
 
 	public String getDatabase() {
-		return database;
+		if (database.length() > 0)
+			return "bearnation_" + database;
+
+		return "bearnation";
 	}
 }

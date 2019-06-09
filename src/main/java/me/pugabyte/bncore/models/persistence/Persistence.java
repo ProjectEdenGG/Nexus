@@ -1,51 +1,50 @@
 package me.pugabyte.bncore.models.persistence;
 
+import com.dieselpoint.norm.Database;
+import com.dieselpoint.norm.sqlmakers.MySqlMaker;
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Persistence {
 	private static final BNCore bnCore = BNCore.getInstance();
-	private static Map<BearNationDatabase, Connection> connections = new HashMap<>();
+	private static Map<BearNationDatabase, Database> databases = new HashMap<>();
 
-	private static void openConnection(BearNationDatabase db) throws SQLException, ClassNotFoundException {
-		if (connections.get(db) != null && !connections.get(db).isClosed()) {
-			return;
-		}
-
+	private static void openConnection(BearNationDatabase bndb) throws ClassNotFoundException {
 		FileConfiguration config = bnCore.getConfig();
 		String host = config.getString("databases.host");
 		int port = config.getInt("databases.port");
 		String username = config.getString("databases.username");
 		String password = config.getString("databases.password");
 
-		String database = db.getDatabase();
+		Class.forName("com.mysql.jdbc.Driver");
 
-		synchronized (bnCore) {
-			Class.forName("com.mysql.jdbc.Driver");
-
-			String url = "jdbc:mysql://" + host + ":" + port + "/bearnation_" + database + "?useSSL=false&relaxAutoCommit=true";
-			try {
-				Connection connection = DriverManager.getConnection(url, username, password);
-				connections.put(db, connection);
-			} catch (Exception ex) {
-				bnCore.getLogger().severe("Could not establish connection to the \"bearnation_" + database + "\" database");
-			}
-		}
+		Database database = new Database();
+		database.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + bndb.getDatabase() + "?useSSL=false&relaxAutoCommit=true");
+		database.setUser(username);
+		database.setPassword(password);
+		database.setSqlMaker(new MySqlMaker());
+		database.setMaxPoolSize(3);
+		databases.put(bndb, database);
 	}
 
-	public static Connection getConnection(BearNationDatabase db) {
+	public static Database getConnection(BearNationDatabase bndb) {
 		try {
-			openConnection(db);
-			return connections.get(db);
+			if (databases.get(bndb) == null) {
+				openConnection(bndb);
+			}
+			return databases.get(bndb);
 		} catch (Exception ex) {
-			bnCore.getLogger().severe("Could not establish connection to the Achievements database");
+			bnCore.getLogger().severe("Could not establish connection to the \"" + bndb.getDatabase() + "\" database: " + ex.getMessage());
 			return null;
 		}
 	}
+
+	public static void shutdown() {
+		databases.values().forEach(Database::close);
+	}
+
 }

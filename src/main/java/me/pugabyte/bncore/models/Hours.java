@@ -1,7 +1,7 @@
-package me.pugabyte.bncore.models.nerds;
+package me.pugabyte.bncore.models;
 
 import lombok.Data;
-import lombok.NonNull;
+import me.pugabyte.bncore.models.nerds.Nerd;
 
 @Data
 public class Hours {
@@ -13,4 +13,5 @@ public class Hours {
 	public static Hours read(Nerd nerd) {
 		return new Hours();
 	}
+
 }
