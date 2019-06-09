@@ -1,4 +1,6 @@
-package me.pugabyte.bncore.models.nerds;
+package me.pugabyte.bncore.models;
+
+import me.pugabyte.bncore.models.nerds.Nerd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,4 +12,5 @@ public class DailyRewards {
 	public static DailyRewards read(Nerd nerd) {
 		return new DailyRewards();
 	}
+
 }

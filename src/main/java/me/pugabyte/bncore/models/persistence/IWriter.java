@@ -17,7 +17,7 @@ public interface IWriter extends IDatabase {
 		PreparedStatement statement = null;
 
 		try {
-			connection = Persistence.getConnection(getDatabase());
+			connection = OldPersistence.getConnection(getDatabase());
 			if (connection != null) {
 				connection.setAutoCommit(false);
 				if (object == null) {
@@ -42,8 +42,8 @@ public interface IWriter extends IDatabase {
 			bnCore.getLogger().severe("Error saving; rolling back data");
 			connection.rollback();
 		} catch (SQLException ex) {
-			ex.printStackTrace();
 			bnCore.getLogger().severe("Error rolling back data");
+			ex.printStackTrace();
 		}
 	}
 

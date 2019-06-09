@@ -19,7 +19,7 @@ public interface IReader extends IDatabase {
 		Object data = null;
 
 		try {
-			connection = Persistence.getConnection(getDatabase());
+			connection = OldPersistence.getConnection(getDatabase());
 			if (connection != null) {
 				if (object == null) {
 					statement = prepare(connection);

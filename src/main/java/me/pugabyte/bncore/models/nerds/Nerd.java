@@ -1,34 +1,26 @@
 package me.pugabyte.bncore.models.nerds;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.entity.Player;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import javax.persistence.Table;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "nerds")
 public class Nerd {
 	@NonNull
-	private UUID uuid;
-	private Hours hours;
-	private DailyRewards dailyRewards;
-	private LocalDate birthday;
-	private LocalDateTime joined;
-	private Alerts alerts;
-
-	public Nerd(UUID uuid) {
-		this.uuid = uuid;
-
-		read();
-	}
-
-	private void read() {
-		hours = Hours.read(this);
-		dailyRewards = DailyRewards.read(this);
-		// TODO: Read database
-	}
-
+	private String uuid;
+	@NonNull
+	private String name;
+	private Date birthday;
+	private Timestamp firstJoin;
+	private Timestamp lastJoin;
+	private Timestamp lastQuit;
 
 }

@@ -4,7 +4,6 @@ import ch.njol.skript.variables.Variables;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import me.pugabyte.bncore.features.chat.Chat;
-import me.pugabyte.bncore.features.chat.alerts.Alerts;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
 import me.pugabyte.bncore.features.connect4.Connect4;
 import me.pugabyte.bncore.features.damagetracker.DamageTracker;
@@ -14,6 +13,7 @@ import me.pugabyte.bncore.features.inviterewards.InviteRewards;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
 import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
+import me.pugabyte.bncore.features.rtp.RTP;
 import me.pugabyte.bncore.features.showenchants.ShowEnchants;
 import me.pugabyte.bncore.features.sideways.logs.SidewaysLogs;
 import me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs;
@@ -23,6 +23,7 @@ import me.pugabyte.bncore.features.staff.antibots.AntiBots;
 import me.pugabyte.bncore.features.tab.Tab;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.wiki.Wiki;
+import me.pugabyte.bncore.models.persistence.Persistence;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -52,6 +53,7 @@ public class BNCore extends JavaPlugin {
 	public static PermHelper permHelper;
 	public static RainbowArmour rainbowArmour;
 	public static RestoreInventory restoreInventory;
+	public static RTP rtp;
 	public static ShowEnchants showEnchants;
 	public static SidewaysLogs sidewaysLogs;
 	public static SidewaysStairs sidewaysStairs;
@@ -147,6 +149,12 @@ public class BNCore extends JavaPlugin {
 		return protocolManager;
 	}
 
+	@Override
+	public void onEnable() {
+		setupConfig();
+		enableFeatures();
+	}
+
 	private void setupConfig() {
 		if (!BNCore.getInstance().getDataFolder().exists()) {
 			BNCore.getInstance().getDataFolder().mkdir();
@@ -161,10 +169,7 @@ public class BNCore extends JavaPlugin {
 		saveConfig();
 	}
 
-	@Override
-	public void onEnable() {
-		setupConfig();
-
+	private void enableFeatures() {
 		antiBots = new AntiBots();
 		chat = new Chat();
 		clearInventory = new ClearInventory();
@@ -177,6 +182,7 @@ public class BNCore extends JavaPlugin {
 		permHelper = new PermHelper();
 		rainbowArmour = new RainbowArmour();
 		restoreInventory = new RestoreInventory();
+		rtp = new RTP();
 		showEnchants = new ShowEnchants();
 		sidewaysLogs = new SidewaysLogs();
 		sidewaysStairs = new SidewaysStairs();
@@ -191,6 +197,7 @@ public class BNCore extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		AntiBots.write();
-		Alerts.write();
+		Persistence.shutdown();
 	}
+
 }
