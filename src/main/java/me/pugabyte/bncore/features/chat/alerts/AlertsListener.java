@@ -5,6 +5,8 @@ import com.dthielke.herochat.Chatter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.alerts.models.DiscordMessageEvent;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
+import me.pugabyte.bncore.models.alerts.Alerts;
+import me.pugabyte.bncore.models.alerts.AlertsService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,9 +17,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.BNCore.colorize;
-import static me.pugabyte.bncore.features.chat.Chat.alerts;
+import static me.pugabyte.bncore.features.chat.Chat.alertsFeature;
 
 public class AlertsListener implements Listener {
+	AlertsService alertsService = new AlertsService();
 
 	AlertsListener() {
 		BNCore.registerListener(this);
@@ -33,32 +36,33 @@ public class AlertsListener implements Listener {
 
 		try {
 			if (event.getResult().toString().equals("ALLOWED")) {
-				List<String> uuids = recipients.stream()
-						.map(recipient -> recipient.getPlayer().getUniqueId().toString())
-						.collect(Collectors.toList());
-				alerts.tryAlerts(uuids, message);
+				if (channelName.toLowerCase().contains("convo")) {
+					recipients.forEach(chatter -> ((Alerts) alertsService.get(chatter.getPlayer())).playSound());
+				} else {
+					List<String> uuids = recipients.stream()
+							.map(recipient -> recipient.getPlayer().getUniqueId().toString())
+							.collect(Collectors.toList());
+					alertsFeature.tryAlerts(uuids, message);
 
-				if (channelName.matches("(Global|Broadcast|Staff|Operator|Admin)")) {
-					count++;
-				}
-				for (Chatter chatter : recipients) {
-					Player loopPlayer = chatter.getPlayer();
-
-					if (!BNCore.isVanished(loopPlayer)) {
-						count++;
-					} else if (sender.hasPermission("vanish.see")) {
-						count++;
-					} else if (channelName.toLowerCase().contains("convo")) {
+					if (channelName.matches("(Global|Broadcast|Staff|Operator|Admin)")) {
 						count++;
 					}
-				}
-			}
 
-			if (count == 0) {
-				String warning = colorize("&eNo one can hear you! Type &c/ch g &eto talk globally.");
-				BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-								sender.getPlayer().sendMessage(warning)
-						, 2L);
+					for (Chatter chatter : recipients) {
+						if (!BNCore.isVanished(chatter.getPlayer())) {
+							count++;
+						} else if (sender.hasPermission("vanish.see")) {
+							count++;
+						}
+					}
+
+					if (count == 0) {
+						String warning = colorize("&eNo one can hear you! Type &c/ch g &eto talk globally.");
+						BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
+										sender.getPlayer().sendMessage(warning)
+								, 2L);
+					}
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -72,7 +76,7 @@ public class AlertsListener implements Listener {
 				.map(player -> player.getUniqueId().toString())
 				.collect(Collectors.toList());
 
-		alerts.tryAlerts(uuids, e.getMessage());
+		alertsFeature.tryAlerts(uuids, e.getMessage());
 	}
 
 }

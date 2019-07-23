@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.chat.alerts;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.alerts.Alerts;
 import me.pugabyte.bncore.models.alerts.AlertsService;
+import me.pugabyte.bncore.models.exceptions.InvalidInputException;
 import me.pugabyte.bncore.models.exceptions.MustBeIngameException;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -47,7 +48,7 @@ public class AlertsCommand implements CommandExecutor {
 			}
 
 			Player player = (Player) sender;
-			Alerts alerts = alertsService.get(player);
+			Alerts alerts = (Alerts) alertsService.get(player);
 
 			switch (args[0]) {
 				case "list":
@@ -92,7 +93,7 @@ public class AlertsCommand implements CommandExecutor {
 								sender.sendMessage("");
 								sender.sendMessage(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " " + (partialMatching ? "enabled" : "disabled"));
 								sender.sendMessage("");
-								Bukkit.dispatchCommand(sender, "alerts edit");
+								BNCore.wait(1, () -> Bukkit.dispatchCommand(sender, "alerts edit"));
 							} else {
 								sender.sendMessage(PREFIX + "I could not find that alert in your alerts list");
 							}
@@ -159,6 +160,8 @@ public class AlertsCommand implements CommandExecutor {
 				default:
 					helpMenu(sender);
 			}
+		} catch (MustBeIngameException ex) {
+			sender.sendMessage(ex.getMessage());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,13 +18,9 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class Alerts {
-	@NonNull
 	private String uuid;
 	private List<Highlight> highlights;
-	@Transient
 	private boolean muted;
 
 	public Alerts(String uuid, List<Highlight> highlights) {
@@ -124,6 +119,8 @@ public class Alerts {
 	@AllArgsConstructor
 	@Table(name = "alerts")
 	public static class Highlight implements Comparable<Highlight> {
+		@Id
+		@NonNull
 		public String uuid;
 		public String highlight;
 		public boolean partialMatching;
@@ -136,6 +133,3 @@ public class Alerts {
 	}
 
 }
-
-
-

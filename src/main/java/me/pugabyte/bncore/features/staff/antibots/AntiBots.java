@@ -16,7 +16,7 @@ public class AntiBots {
 			new AntiBotsCommand();
 			new AntiBotsListener();
 
-			BNCore.scheduleSyncRepeatingTask(AntiBots::write, 1200L, 1200L);
+			BNCore.scheduleSyncRepeatingTask(1200L, 1200L, AntiBots::write);
 		}
 	}
 

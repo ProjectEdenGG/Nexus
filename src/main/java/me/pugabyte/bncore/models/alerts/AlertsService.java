@@ -3,10 +3,9 @@ package me.pugabyte.bncore.models.alerts;
 import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.Transaction;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.models.BaseService;
 import me.pugabyte.bncore.models.persistence.BearNationDatabase;
 import me.pugabyte.bncore.models.persistence.Persistence;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,29 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AlertsService {
+public class AlertsService extends BaseService {
 	private Database database = Persistence.getConnection(BearNationDatabase.BEARNATION);
 
-	public Alerts get(Player player) {
-		return get(player.getUniqueId().toString());
-	}
-
+	@Override
 	public Alerts get(String uuid) {
 		List<Alerts.Highlight> highlights = database.where("uuid = ?", uuid).results(Alerts.Highlight.class);
 		return new Alerts(uuid, highlights);
 	}
 
-	public List<Alerts> getAll() {
-		List<String> uuids = Bukkit.getOnlinePlayers().stream()
-				.map(p -> p.getUniqueId().toString())
-				.collect(Collectors.toList());
-		return getAll(uuids);
-	}
-
 	public List<Alerts> getAll(List<String> uuids) {
-		List<Alerts.Highlight> highlights = database
-				.where("uuid IN (\"" + String.join("\",\"", uuids) + "\")")
-				.results(Alerts.Highlight.class);
+		List<Alerts.Highlight> highlights = database.where("uuid in (" +  asList(uuids) + ")").results(Alerts.Highlight.class);
 
 		Map<String, Alerts> alertsMap = new HashMap<>();
 		for (Alerts.Highlight highlight : highlights) {
@@ -53,9 +40,9 @@ public class AlertsService {
 	}
 
 	public void save(Alerts alerts) {
-		BNCore.runTaskAsync(() -> {
+		BNCore.async(() -> {
 			Transaction trans = database.startTransaction();
-			database.transaction(trans).sql("delete from alerts where uuid = ?", alerts.getUuid()).execute();
+			database.transaction(trans).table("alerts").where("uuid = ?", alerts.getUuid()).delete();
 			alerts.getHighlights().forEach(highlight -> database.transaction(trans).insert(highlight));
 			trans.commit();
 		});

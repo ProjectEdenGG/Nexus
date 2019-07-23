@@ -4,7 +4,7 @@ version: ${project.version}
 softdepend: [PermissionsEx, Minigames, Herochat, Skript, PlayerPoints]
 commands:
   alerts:
-    description: Alerts command
+    description: AlertsFeature command
   antibots:
     description: AntiBots command
   clearinventory:
@@ -16,11 +16,16 @@ commands:
   connect4:
     description: Connect4 command
     aliases: c4
+  jdailyrewards:
+    description: DailyRewards command
   durabilitywarning:
     description: DurabilityWarning command
     aliases: dw
   invited:
     description: InviteRewards command
+  leash:
+    description: Leash command
+    aliases: playerleash
   mcwiki:
     description: MinecraftWiki command
     aliases: mcw
@@ -37,6 +42,8 @@ commands:
   restoreinventory:
     description: RestoreInventory command
     aliases: restoreinv
+  jrtp:
+    description: RTP command
   showenchants:
     description: ShowEnchants command
   sidewayslogs:
