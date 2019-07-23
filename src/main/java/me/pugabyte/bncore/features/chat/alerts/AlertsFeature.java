@@ -4,8 +4,8 @@ import me.pugabyte.bncore.models.alerts.AlertsService;
 
 import java.util.List;
 
-public class Alerts {
-	public Alerts() {
+public class AlertsFeature {
+	public AlertsFeature() {
 		new AlertsListener();
 		new AlertsCommand();
 	}

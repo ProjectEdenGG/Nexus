@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolManager;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
 import me.pugabyte.bncore.features.connect4.Connect4;
+import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
 import me.pugabyte.bncore.features.damagetracker.DamageTracker;
 import me.pugabyte.bncore.features.documentation.Documentation;
 import me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning;
@@ -20,13 +21,17 @@ import me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs;
 import me.pugabyte.bncore.features.sleep.Sleep;
 import me.pugabyte.bncore.features.staff.admins.permhelper.PermHelper;
 import me.pugabyte.bncore.features.staff.antibots.AntiBots;
+import me.pugabyte.bncore.features.staff.leash.Leash;
 import me.pugabyte.bncore.features.tab.Tab;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.wiki.Wiki;
+import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
 import me.pugabyte.bncore.models.persistence.Persistence;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
@@ -38,17 +43,22 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 public class BNCore extends JavaPlugin {
 	public static AntiBots antiBots;
 	public static Chat chat;
 	public static ClearInventory clearInventory;
 	public static Connect4 connect4;
+	public static DailyRewardsFeature dailyRewards;
 	public static DamageTracker damageTracker;
 	public static Documentation documentation;
 	public static DurabilityWarning durabilityWarning;
 	public static InviteRewards inviteRewards;
+	public static Leash leash;
 	public static OldMinigames oldMinigames;
 	public static PermHelper permHelper;
 	public static RainbowArmour rainbowArmour;
@@ -75,6 +85,18 @@ public class BNCore extends JavaPlugin {
 			log("Somethin dun fucked up");
 		}
 		return instance;
+	}
+
+	public static void log(String message) {
+		getInstance().getLogger().info(message);
+	}
+
+	public static void warn(String message) {
+		getInstance().getLogger().warning(message);
+	}
+
+	public static void severe(String message) {
+		getInstance().getLogger().severe(message);
 	}
 
 	public static String getPrefix(String prefix) {
@@ -104,16 +126,20 @@ public class BNCore extends JavaPlugin {
 		getInstance().getServer().getPluginManager().callEvent(event);
 	}
 
-	public static void runTaskLater(Runnable runnable, long delay) {
+	public static void wait(long delay, Runnable runnable) {
 		getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay);
 	}
 
-	public static int scheduleSyncRepeatingTask(Runnable runnable, long startDelay, long interval) {
+	public static int scheduleSyncRepeatingTask(long startDelay, long interval, Runnable runnable) {
 		return getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
 	}
 
-	public static int runTaskAsync(Runnable runnable) {
+	public static int async(Runnable runnable) {
 		return getInstance().getServer().getScheduler().runTaskAsynchronously(getInstance(), runnable).getTaskId();
+	}
+
+	public static void cancelTask(int taskId) {
+		getInstance().getServer().getScheduler().cancelTask(taskId);
 	}
 
 	public static boolean isVanished(Player player) {
@@ -124,6 +150,26 @@ public class BNCore extends JavaPlugin {
 
 	public static boolean isAfk(Player player) {
 		return (boolean) Variables.getVariable("afk::" + player.getUniqueId().toString(), null, false);
+	}
+
+	public static List<String> getOnlineUuids() {
+		return Bukkit.getOnlinePlayers().stream()
+				.map(p -> p.getUniqueId().toString())
+				.collect(Collectors.toList());
+	}
+
+	public static Optional<Player> getPlayer(String partialName) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (player.getName().toLowerCase().startsWith(partialName.toLowerCase())) {
+				return Optional.of(player);
+			}
+		}
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (player.getName().toLowerCase().contains((partialName.toLowerCase()))) {
+				return Optional.of(player);
+			}
+		}
+		return Optional.empty();
 	}
 
 	public static String getRankDisplay(Player player) {
@@ -139,10 +185,6 @@ public class BNCore extends JavaPlugin {
 		return LocalDateTime.ofInstant(
 				Instant.ofEpochMilli(timestamp),
 				TimeZone.getDefault().toZoneId());
-	}
-
-	public static void log(String message) {
-		getInstance().getLogger().info(message);
 	}
 
 	public static ProtocolManager getProtocolManager() {
@@ -174,10 +216,12 @@ public class BNCore extends JavaPlugin {
 		chat = new Chat();
 		clearInventory = new ClearInventory();
 		connect4 = new Connect4();
+		dailyRewards = new DailyRewardsFeature();
 //		damageTracker = new DamageTracker();
 		durabilityWarning = new DurabilityWarning();
 		documentation = new Documentation();
 		inviteRewards = new InviteRewards();
+		leash = new Leash();
 		oldMinigames = new OldMinigames();
 		permHelper = new PermHelper();
 		rainbowArmour = new RainbowArmour();

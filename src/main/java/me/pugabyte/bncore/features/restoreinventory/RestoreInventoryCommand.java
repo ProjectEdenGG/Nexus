@@ -19,6 +19,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -66,11 +67,11 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 
 				owner.setGameMode(GameMode.valueOf(args[1].toUpperCase()));
 
-				BNCore.runTaskLater(() -> {
+				BNCore.wait(3, () -> {
 					try {
 						switch (args[2].toLowerCase()) {
 							case "inventory":
-								if (!inventoryIsEmpty(player.getInventory())) {
+								if (!inventoryIsEmpty(owner.getInventory())) {
 									sendInventoryRestoreNotEmptyMessage(restorer, owner, "inventory");
 								}
 
@@ -80,7 +81,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 								sendInventoryRestoreSuccessMessage(restorer, owner, "inventory");
 								break;
 							case "enderchest":
-								if (!inventoryIsEmpty(player.getEnderChest())) {
+								if (!inventoryIsEmpty(owner.getEnderChest())) {
 									sendInventoryRestoreNotEmptyMessage(restorer, owner, "ender chest");
 								}
 
@@ -97,7 +98,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 					} catch (InvalidInputException ex) {
 						sender.sendMessage(PREFIX + ex.getMessage());
 					}
-				}, 3);
+				});
 
 				SkriptFunctions.log(PREFIX + restorer.getName() + " restored " + owner.getName() + "'s " + args[1].toLowerCase()
 						+ " " + args[2].toLowerCase() + " from <https://paste.bnn.gg/" + code + ".json>");
@@ -112,7 +113,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 				Player owner = match.get();
 				String code = args[1];
 
-				BNCore.runTaskAsync(() -> {
+				BNCore.async(() -> {
 					try {
 						String data = getPaste(code);
 
