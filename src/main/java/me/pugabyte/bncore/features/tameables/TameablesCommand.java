@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.tameables;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.tameables.models.TameablesAction;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
+import me.pugabyte.bncore.models.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

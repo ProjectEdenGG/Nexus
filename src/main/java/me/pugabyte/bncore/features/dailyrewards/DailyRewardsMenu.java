@@ -13,7 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class DailyRewardsProvider extends MenuUtils implements InventoryProvider {
+public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private DailyRewardsService service = new DailyRewardsService();
 	private DailyRewards dailyRewards;
 
@@ -22,13 +22,13 @@ public class DailyRewardsProvider extends MenuUtils implements InventoryProvider
 	private ItemStack forward = new ItemStack(Material.ARROW);
 	private ItemStack forward7 = new ItemStack(Material.ARROW, 7);
 
+	private final int MAX_DAY = 60;
 	private ItemStack claimed = new ItemStack(Material.WOOL, 1);
 	private ItemStack unclaimed = new ItemStack(Material.WOOL, 1);
 	private ItemStack locked = new ItemStack(Material.WOOL, 1, (short) 15);
-	private int maxDay = 60;
 
-	public DailyRewardsProvider(Player player) {
-		this.dailyRewards = (DailyRewards) service.get(player);
+	public DailyRewardsMenu(DailyRewards dailyRewards) {
+		this.dailyRewards = dailyRewards;
 	}
 
 	@Override
@@ -45,9 +45,9 @@ public class DailyRewardsProvider extends MenuUtils implements InventoryProvider
 	private void scroll(InventoryContents contents, int change, int day) {
 		day += change;
 		if (day < 1) day = 1;
-		if (day > maxDay - 6) day = maxDay - 6;
+		if (day > MAX_DAY - 6) day = MAX_DAY - 6;
 
-		int initialDay = day;
+		final int initialDay = day;
 		contents.set(new SlotPos(0, 0), ClickableItem.of(back, e -> scroll(contents, -1, initialDay)));
 		contents.set(new SlotPos(2, 0), ClickableItem.of(back7, e -> scroll(contents, -7, initialDay)));
 		contents.set(new SlotPos(0, 8), ClickableItem.of(forward, e -> scroll(contents, 1, initialDay)));
@@ -64,10 +64,11 @@ public class DailyRewardsProvider extends MenuUtils implements InventoryProvider
 					contents.set(new SlotPos(1, column), ClickableItem.empty(item));
 				} else {
 					ItemStack item = nameItem(unclaimed.clone(), "&eDay " + day, "&6&lClick to claim" + reward, day);
-					int currentDay = day;
+					final int currentDay = day;
 					contents.set(new SlotPos(1, column), ClickableItem.of(item, e -> {
 						dailyRewards.claim(currentDay);
 						service.save(dailyRewards);
+						scroll(contents, 0, initialDay);
 					}));
 				}
 			} else {

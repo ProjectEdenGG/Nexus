@@ -4,8 +4,9 @@ import com.onarandombox.multiverseinventories.share.Sharables;
 import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfiguration;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.restoreinventory.models.RestoreInventoryPlayer;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
-import me.pugabyte.bncore.models.exceptions.NoPermissionException;
+import me.pugabyte.bncore.models.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.models.exceptions.preconfigured.PreConfiguredException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,7 +20,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -73,6 +73,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 							case "inventory":
 								if (!inventoryIsEmpty(owner.getInventory())) {
 									sendInventoryRestoreNotEmptyMessage(restorer, owner, "inventory");
+									break;
 								}
 
 								owner.getInventory().setContents(getInventory(gamemode));
@@ -83,6 +84,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 							case "enderchest":
 								if (!inventoryIsEmpty(owner.getEnderChest())) {
 									sendInventoryRestoreNotEmptyMessage(restorer, owner, "ender chest");
+									break;
 								}
 
 								owner.getEnderChest().setContents(getEnderChest(gamemode));
@@ -132,7 +134,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 				sendRestoreButtons(player, "Survival");
 				sendRestoreButtons(player, "Creative");
 			}
-		} catch (NoPermissionException | InvalidInputException ex) {
+		} catch (PreConfiguredException | InvalidInputException ex) {
 			sender.sendMessage(PREFIX + ex.getMessage());
 		} catch (ArrayIndexOutOfBoundsException ex) {
 			sender.sendMessage(PREFIX + USAGE);

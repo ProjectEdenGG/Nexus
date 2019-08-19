@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.inviterewards;
 import ch.njol.skript.util.Timespan;
 import ch.njol.skript.variables.Variables;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
+import me.pugabyte.bncore.models.exceptions.postconfigured.InvalidInputException;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

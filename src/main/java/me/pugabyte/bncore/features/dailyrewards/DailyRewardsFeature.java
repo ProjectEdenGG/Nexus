@@ -2,30 +2,45 @@ package me.pugabyte.bncore.features.dailyrewards;
 
 import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.models.dailyrewards.DailyReward;
+import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
+import me.pugabyte.bncore.models.dailyrewards.DailyRewardsService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DailyRewardsFeature {
+public class DailyRewardsFeature implements Listener {
 	private List<DailyReward> dailyRewards = new ArrayList<>();
 
 	public DailyRewardsFeature() {
-		new DailyRewardsCommand();
 		setupDailyRewards();
 	}
 
-	public static void menu(Player player) {
+	public static void menu(Player player, DailyRewards dailyRewards) {
 		SmartInventory inv = SmartInventory.builder()
-				.provider(new DailyRewardsProvider(player))
+				.provider(new DailyRewardsMenu(dailyRewards))
 				.size(3, 9)
 				.title(ChatColor.DARK_AQUA + "Daily Rewards")
 				.build();
 
 		inv.open(player);
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		DailyRewardsService service = new DailyRewardsService();
+		DailyRewards dailyReward = (DailyRewards) service.get(event.getPlayer());
+		if (!dailyReward.isEarnedToday()) {
+			dailyReward.setEarnedToday(true);
+			dailyReward.increaseStreak();
+			service.save(dailyReward);
+		}
 	}
 
 	public DailyReward getDailyReward(int day) {
