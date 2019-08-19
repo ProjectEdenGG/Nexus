@@ -7,7 +7,6 @@ import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
 import me.pugabyte.bncore.features.connect4.Connect4;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
-import me.pugabyte.bncore.features.damagetracker.DamageTracker;
 import me.pugabyte.bncore.features.documentation.Documentation;
 import me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning;
 import me.pugabyte.bncore.features.inviterewards.InviteRewards;
@@ -22,16 +21,15 @@ import me.pugabyte.bncore.features.sleep.Sleep;
 import me.pugabyte.bncore.features.staff.admins.permhelper.PermHelper;
 import me.pugabyte.bncore.features.staff.antibots.AntiBots;
 import me.pugabyte.bncore.features.staff.leash.Leash;
-import me.pugabyte.bncore.features.tab.Tab;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.wiki.Wiki;
-import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
+import me.pugabyte.bncore.models.commands.Commands;
 import me.pugabyte.bncore.models.persistence.Persistence;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
@@ -44,17 +42,17 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class BNCore extends JavaPlugin {
+	private Commands commands = new Commands(this, "me.pugabyte.bncore.features");
 	public static AntiBots antiBots;
 	public static Chat chat;
 	public static ClearInventory clearInventory;
 	public static Connect4 connect4;
 	public static DailyRewardsFeature dailyRewards;
-	public static DamageTracker damageTracker;
 	public static Documentation documentation;
 	public static DurabilityWarning durabilityWarning;
 	public static InviteRewards inviteRewards;
@@ -68,7 +66,6 @@ public class BNCore extends JavaPlugin {
 	public static SidewaysLogs sidewaysLogs;
 	public static SidewaysStairs sidewaysStairs;
 	public static Sleep sleep;
-	public static Tab tab;
 	public static Tameables tameables;
 	public static Wiki wiki;
 	private static BNCore instance;
@@ -105,6 +102,27 @@ public class BNCore extends JavaPlugin {
 
 	public static String colorize(String string) {
 		return string.replaceAll("&", "§");
+	}
+
+	public static String right(String string, int number) {
+		return string.substring(Math.max(string.length() - number, 0));
+	}
+
+	public static String left(String string, int number) {
+		return string.substring(0, number);
+	}
+
+	public static String listFirst(String string, String delimiter) {
+		return string.split(delimiter)[0];
+	}
+
+	public static String listLast(String string, String delimiter) {
+		return string.substring(string.lastIndexOf(delimiter) + 1);
+	}
+
+	public static String listGetAt(String string, int index, String delimiter) {
+		String[] split = string.split(delimiter);
+		return split[index - 1];
 	}
 
 	public static void registerListener(Listener listener) {
@@ -158,18 +176,19 @@ public class BNCore extends JavaPlugin {
 				.collect(Collectors.toList());
 	}
 
-	public static Optional<Player> getPlayer(String partialName) {
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (player.getName().toLowerCase().startsWith(partialName.toLowerCase())) {
-				return Optional.of(player);
-			}
-		}
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (player.getName().toLowerCase().contains((partialName.toLowerCase()))) {
-				return Optional.of(player);
-			}
-		}
-		return Optional.empty();
+	public static OfflinePlayer getPlayer(String partialName) {
+		if (partialName.length() == 36)
+			return Bukkit.getOfflinePlayer(UUID.fromString(partialName));
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (player.getName().toLowerCase().startsWith(partialName.toLowerCase()))
+				return player;
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (player.getName().toLowerCase().contains((partialName.toLowerCase())))
+				return player;
+		for (OfflinePlayer player : Bukkit.getOfflinePlayers())
+			if (player.getName().toLowerCase().startsWith(partialName.toLowerCase()))
+				return player;
+		return null;
 	}
 
 	public static String getRankDisplay(Player player) {
@@ -195,6 +214,14 @@ public class BNCore extends JavaPlugin {
 	public void onEnable() {
 		setupConfig();
 		enableFeatures();
+		commands.registerAll();
+	}
+
+	@Override
+	public void onDisable() {
+		AntiBots.write();
+		Persistence.shutdown();
+		commands.unregisterAll();
 	}
 
 	private void setupConfig() {
@@ -217,7 +244,6 @@ public class BNCore extends JavaPlugin {
 		clearInventory = new ClearInventory();
 		connect4 = new Connect4();
 		dailyRewards = new DailyRewardsFeature();
-//		damageTracker = new DamageTracker();
 		durabilityWarning = new DurabilityWarning();
 		documentation = new Documentation();
 		inviteRewards = new InviteRewards();
@@ -231,17 +257,10 @@ public class BNCore extends JavaPlugin {
 		sidewaysLogs = new SidewaysLogs();
 		sidewaysStairs = new SidewaysStairs();
 		sleep = new Sleep();
-//		tab = new Tab();
 		tameables = new Tameables();
 		wiki = new Wiki();
 
 		protocolManager = ProtocolLibrary.getProtocolManager();
-	}
-
-	@Override
-	public void onDisable() {
-		AntiBots.write();
-		Persistence.shutdown();
 	}
 
 }

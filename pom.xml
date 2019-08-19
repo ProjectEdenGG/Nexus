@@ -99,8 +99,8 @@
             <url>http://repo.onarandombox.com/content/groups/public</url>
         </repository>
         <repository>
-            <id>holographicdisplaysapi-repo</id>
-            <url>https://repo.codemc.org/repository/maven-public/</url>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -117,6 +117,12 @@
             <artifactId>lombok</artifactId>
             <version>1.18.2</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Reflections -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.11</version>
         </dependency>
         <!-- Norm -->
         <dependency>
@@ -279,11 +285,11 @@
             <artifactId>ProtocolLib-API</artifactId>
             <version>4.4.0</version>
         </dependency>
-        <!-- HolographicDisplays API -->
+        <!-- TaskChain -->
         <dependency>
-            <groupId>com.gmail.filoghost.holographicdisplays</groupId>
-            <artifactId>holographicdisplays-api</artifactId>
-            <version>2.2.7-20180327.195640-7</version>
+            <groupId>co.aikar</groupId>
+            <artifactId>taskchain-bukkit</artifactId>
+            <version>3.7.2</version>
         </dependency>
     </dependencies>
 </project>

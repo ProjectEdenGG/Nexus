@@ -1,10 +1,11 @@
 package me.pugabyte.bncore.features.staff.leash;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
-import me.pugabyte.bncore.models.exceptions.MustBeIngameException;
-import me.pugabyte.bncore.models.exceptions.NoPermissionException;
+import me.pugabyte.bncore.models.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.bncore.models.exceptions.preconfigured.NoPermissionException;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -46,10 +47,10 @@ public class Leash implements CommandExecutor {
 			if (args.length < 1)
 				throw new InvalidInputException("&cPlease specify a player to follow.");
 
-			Optional<Player> target = BNCore.getPlayer(args[0]);
-			if (target.isPresent()) {
-				player.sendMessage(colorize(PREFIX + "&3You are now leashed to &e" + target.get().getDisplayName()));
-				runnable(player, target.get());
+			OfflinePlayer target = BNCore.getPlayer(args[0]);
+			if (target != null) {
+				player.sendMessage(colorize(PREFIX + "&3You are now leashed to &e" + target.getPlayer().getDisplayName()));
+				runnable(player, target.getPlayer());
 			} else {
 				try {
 					velocityMultiplier = Double.parseDouble(args[0]);

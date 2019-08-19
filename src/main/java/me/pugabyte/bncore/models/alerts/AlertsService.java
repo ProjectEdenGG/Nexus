@@ -1,11 +1,8 @@
 package me.pugabyte.bncore.models.alerts;
 
-import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.Transaction;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.BaseService;
-import me.pugabyte.bncore.models.persistence.BearNationDatabase;
-import me.pugabyte.bncore.models.persistence.Persistence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,8 +11,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AlertsService extends BaseService {
-	private Database database = Persistence.getConnection(BearNationDatabase.BEARNATION);
-
 	@Override
 	public Alerts get(String uuid) {
 		List<Alerts.Highlight> highlights = database.where("uuid = ?", uuid).results(Alerts.Highlight.class);
