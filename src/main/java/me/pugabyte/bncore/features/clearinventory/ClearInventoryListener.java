@@ -15,8 +15,7 @@ public class ClearInventoryListener implements Listener {
 
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
-		Player player = event.getEntity();
-		ClearInventoryPlayer ciPlayer = BNCore.clearInventory.getPlayer(player);
+		ClearInventoryPlayer ciPlayer = BNCore.clearInventory.getPlayer(event.getEntity());
 		ciPlayer.removeCache();
 	}
 }

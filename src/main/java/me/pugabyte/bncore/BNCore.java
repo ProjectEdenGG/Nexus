@@ -1,8 +1,6 @@
 package me.pugabyte.bncore;
 
 import ch.njol.skript.variables.Variables;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
 import me.pugabyte.bncore.features.connect4.Connect4;
@@ -18,6 +16,7 @@ import me.pugabyte.bncore.features.sideways.logs.SidewaysLogs;
 import me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs;
 import me.pugabyte.bncore.features.sleep.Sleep;
 import me.pugabyte.bncore.features.staff.leash.Leash;
+import me.pugabyte.bncore.features.staff.leash.LeashCommand;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.wiki.Wiki;
 import me.pugabyte.bncore.framework.commands.Commands;
@@ -143,7 +142,7 @@ public class BNCore extends JavaPlugin {
 		getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay);
 	}
 
-	public static int scheduleSyncRepeatingTask(long startDelay, long interval, Runnable runnable) {
+	public static int repeat(long startDelay, long interval, Runnable runnable) {
 		return getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
 	}
 

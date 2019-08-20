@@ -1,6 +1,12 @@
 package me.pugabyte.bncore.features.sideways.logs;
 
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -8,28 +14,27 @@ import org.bukkit.entity.Player;
 
 import static me.pugabyte.bncore.features.sideways.logs.SidewaysLogs.enabledPlayers;
 
-public class SidewaysLogsCommand implements CommandExecutor {
-	private final static String PREFIX = BNCore.getPrefix("SidewaysLogs");
+@Aliases({"sidewayslogs", "swl"})
+@NoArgsConstructor
+public class SidewaysLogsCommand extends CustomCommand {
 
-	SidewaysLogsCommand() {
-		BNCore.registerCommand("sidewayslogs", this);
+	SidewaysLogsCommand(CommandEvent event) {
+		super(event);
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage("You must be in-game to run this command");
-			return true;
-		}
+	@Path
+	void toggle() {
+		toggle(enabledPlayers.contains(player()));
+	}
 
-		Player player = (Player) sender;
-
-		if (enabledPlayers.contains(player)) {
-			enabledPlayers.remove(player);
-			sender.sendMessage(PREFIX + "Now placing logs normally");
+	@Path("{boolean}")
+	void toggle(@Arg boolean normal) {
+		if (normal) {
+			enabledPlayers.remove(player());
+			reply(PREFIX + "Now placing logs normally");
 		} else {
-			enabledPlayers.add(player);
-			sender.sendMessage(PREFIX + "Now placing logs vertically");
+			enabledPlayers.add(player());
+			reply(PREFIX + "Now placing logs vertically only");
 		}
-		return true;
 	}
 }

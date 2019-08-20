@@ -55,20 +55,16 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Path("streak {offlineplayer}")
 	void streak(@Arg("self") OfflinePlayer player) {
 		int streak = dailyRewards.getStreak();
-		String name = sender().getName();
-		OfflinePlayer playerArg = playerArg(2);
-		if (playerArg == null) player();
-		else {
+		if (!player().getUniqueId().equals(player.getUniqueId())) {
 			streak = ((DailyRewards) service.get(playerArg(2))).getStreak();
-			name = playerArg.getName();
 		}
-		reply(PREFIX + name + "'s streak: &e" + streak);
+		reply(PREFIX + player.getName() + "'s streak: &e" + streak);
 	}
 
 	@Path("today {offlineplayer}")
 	void today(@Arg("self") OfflinePlayer player) {
 		boolean earnedToday = dailyRewards.isEarnedToday();
-		if (!player().getName().equals(player.getName())) {
+		if (!player().getUniqueId().equals(player.getUniqueId())) {
 			earnedToday = ((DailyRewards) service.get(player)).isEarnedToday();
 		}
 		reply(PREFIX + player.getName() + " has "  + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
@@ -98,7 +94,6 @@ public class DailyRewardsCommand extends CustomCommand {
 		BNCore.async(() -> {
 			List<DailyRewards> results = service.getPage(page);
 			if (results.size() == 0) {
-				// Cant throw inside lambdas...
 				reply(PREFIX + "&cNo results on page " + page);
 				return;
 			}

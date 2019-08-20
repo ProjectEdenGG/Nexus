@@ -37,6 +37,8 @@ public class TameablesCommand extends CustomCommand {
 
 	@Path("transfer {offlineplayer}")
 	void untame(@Arg OfflinePlayer transfer) {
+		if (player().getUniqueId().equals(transfer.getUniqueId()))
+			error("You can't transfer an animal to yourself");
 		BNCore.tameables.addPendingAction(player(), TameablesAction.TRANSFER.withPlayer(transfer));
 		reply(PREFIX + "Punch the animal you wish to transfer to " + transfer.getName());
 	}

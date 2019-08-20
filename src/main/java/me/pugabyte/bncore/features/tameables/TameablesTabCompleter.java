@@ -20,7 +20,7 @@ import static me.pugabyte.bncore.features.tameables.Tameables.PREFIX;
 public class TameablesTabCompleter implements TabCompleter {
 
 	TameablesTabCompleter() {
-		BNCore.registerTabCompleter("tameables", this);
+		// BNCore.registerTabCompleter("tameables", this);
 	}
 
 	@Override

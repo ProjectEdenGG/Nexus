@@ -41,7 +41,7 @@ public class Commands {
 	private void register(CustomCommand customCommand) {
 		for (String alias : customCommand.getAliases()) {
 			try {
-				plugin.getLogger().info("Registering command " + alias);
+				// plugin.getLogger().info("Registering command " + alias);
 				mapUtils.register(alias, customCommand);
 				commands.put(alias, customCommand);
 			} catch (Exception e) {
@@ -64,7 +64,7 @@ public class Commands {
 	private void unregister(CustomCommand customCommand) {
 		for (String alias : customCommand.getAliases()) {
 			try {
-				plugin.getLogger().info("Unregistering command " + alias);
+				// plugin.getLogger().info("Unregistering command " + alias);
 				mapUtils.unregister(alias);
 				commands.remove(alias);
 			} catch (Exception e) {
