@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.clearinventory;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.clearinventory.models.ClearInventoryPlayer;
-import me.pugabyte.bncore.models.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

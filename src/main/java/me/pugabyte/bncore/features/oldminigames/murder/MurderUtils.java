@@ -60,7 +60,7 @@ public class MurderUtils {
 		new CorpseTeleporter(armorStand);
 
 		Bukkit.getServer().dispatchCommand(victim, "mgm quit");
-		victim.sendMessage(MurderCommand.PREFIX + "You were killed!");
+		victim.sendMessage(Murder.PREFIX + "You were killed!");
 	}
 
 	public static void intoxicate(Player player) {

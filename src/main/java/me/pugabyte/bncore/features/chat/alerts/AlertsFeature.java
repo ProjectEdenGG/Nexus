@@ -7,7 +7,6 @@ import java.util.List;
 public class AlertsFeature {
 	public AlertsFeature() {
 		new AlertsListener();
-		new AlertsCommand();
 	}
 
 	public void tryAlerts(List<String> uuids, String message) {

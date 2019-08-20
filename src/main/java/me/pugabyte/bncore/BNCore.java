@@ -13,18 +13,16 @@ import me.pugabyte.bncore.features.inviterewards.InviteRewards;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
 import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
-import me.pugabyte.bncore.features.rtp.RTP;
 import me.pugabyte.bncore.features.showenchants.ShowEnchants;
 import me.pugabyte.bncore.features.sideways.logs.SidewaysLogs;
 import me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs;
 import me.pugabyte.bncore.features.sleep.Sleep;
-import me.pugabyte.bncore.features.staff.admins.permhelper.PermHelper;
-import me.pugabyte.bncore.features.staff.antibots.AntiBots;
 import me.pugabyte.bncore.features.staff.leash.Leash;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.wiki.Wiki;
-import me.pugabyte.bncore.models.commands.Commands;
-import me.pugabyte.bncore.models.persistence.Persistence;
+import me.pugabyte.bncore.framework.commands.Commands;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.framework.persistence.Persistence;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
@@ -48,7 +46,7 @@ import java.util.stream.Collectors;
 
 public class BNCore extends JavaPlugin {
 	private Commands commands = new Commands(this, "me.pugabyte.bncore.features");
-	public static AntiBots antiBots;
+
 	public static Chat chat;
 	public static ClearInventory clearInventory;
 	public static Connect4 connect4;
@@ -58,10 +56,8 @@ public class BNCore extends JavaPlugin {
 	public static InviteRewards inviteRewards;
 	public static Leash leash;
 	public static OldMinigames oldMinigames;
-	public static PermHelper permHelper;
 	public static RainbowArmour rainbowArmour;
 	public static RestoreInventory restoreInventory;
-	public static RTP rtp;
 	public static ShowEnchants showEnchants;
 	public static SidewaysLogs sidewaysLogs;
 	public static SidewaysStairs sidewaysStairs;
@@ -69,7 +65,6 @@ public class BNCore extends JavaPlugin {
 	public static Tameables tameables;
 	public static Wiki wiki;
 	private static BNCore instance;
-	private static ProtocolManager protocolManager;
 
 	public BNCore() {
 		if (instance == null) {
@@ -188,7 +183,7 @@ public class BNCore extends JavaPlugin {
 		for (OfflinePlayer player : Bukkit.getOfflinePlayers())
 			if (player.getName().toLowerCase().startsWith(partialName.toLowerCase()))
 				return player;
-		return null;
+		throw new PlayerNotFoundException();
 	}
 
 	public static String getRankDisplay(Player player) {
@@ -206,10 +201,6 @@ public class BNCore extends JavaPlugin {
 				TimeZone.getDefault().toZoneId());
 	}
 
-	public static ProtocolManager getProtocolManager() {
-		return protocolManager;
-	}
-
 	@Override
 	public void onEnable() {
 		setupConfig();
@@ -219,7 +210,6 @@ public class BNCore extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		AntiBots.write();
 		Persistence.shutdown();
 		commands.unregisterAll();
 	}
@@ -239,7 +229,6 @@ public class BNCore extends JavaPlugin {
 	}
 
 	private void enableFeatures() {
-		antiBots = new AntiBots();
 		chat = new Chat();
 		clearInventory = new ClearInventory();
 		connect4 = new Connect4();
@@ -249,18 +238,14 @@ public class BNCore extends JavaPlugin {
 		inviteRewards = new InviteRewards();
 		leash = new Leash();
 		oldMinigames = new OldMinigames();
-		permHelper = new PermHelper();
 		rainbowArmour = new RainbowArmour();
 		restoreInventory = new RestoreInventory();
-		rtp = new RTP();
 		showEnchants = new ShowEnchants();
 		sidewaysLogs = new SidewaysLogs();
 		sidewaysStairs = new SidewaysStairs();
 		sleep = new Sleep();
 		tameables = new Tameables();
 		wiki = new Wiki();
-
-		protocolManager = ProtocolLibrary.getProtocolManager();
 	}
 
 }

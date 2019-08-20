@@ -1,9 +1,13 @@
 package me.pugabyte.bncore.features.staff.admins.permhelper;
 
-import me.pugabyte.bncore.BNCore;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -14,16 +18,33 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
-public class PermHelperCommand implements CommandExecutor {
-	private final static String PREFIX = BNCore.getPrefix("PermHelper");
+@Aliases("permhelper")
+@Permission("permissions.manage")
+@NoArgsConstructor
+public class PermHelperCommand extends CustomCommand {
+	String test = "hi";
 
-	PermHelperCommand() {
-		BNCore.registerCommand("permhelper", this);
+	PermHelperCommand(CommandEvent event) {
+		super(event);
 	}
 
-	private static void modify(String which, CommandSender sender, PermissionUser user, int adding) {
+	@Path
+	void help() {
+		reply(PREFIX + "Correct usage: /permhelper <npcs|homes|plots|vaults> <add|remove> <player> <amount>");
+	}
+
+	@Path("(npcs|homes|plots|vaults) (add|remove) {offlineplayer} {int}")
+	void modify(@Arg OfflinePlayer player, @Arg int amount) {
+		PermissionUser user = PermissionsEx.getUser(player.getName());
+		if (arg(2).equals("remove")) {
+			amount = 0 - amount;
+		}
+
+		modify(arg(1).toLowerCase(), user, amount);
+	}
+
+	private void modify(String which, PermissionUser user, int adding) {
 		String permission = "";
 		String pattern = (which.equalsIgnoreCase("homes") ? "(g{1,101})" : "([1-9][0-9]{0,3}|10000)");
 		String world = (which.equalsIgnoreCase("plots") ? "creative" : "");
@@ -55,7 +76,7 @@ public class PermHelperCommand implements CommandExecutor {
 		}
 
 		user.addPermission(finalPermission);
-		sender.sendMessage(PREFIX + "New " + which + " limit for " + user.getName() + ": " + newLimit);
+		reply(PREFIX + "New " + which + " limit for " + user.getName() + ": " + newLimit);
 	}
 
 	private static int getNewLimit(String which, PermissionUser user, String permission, String pattern, String world, int adding) {
@@ -78,31 +99,6 @@ public class PermHelperCommand implements CommandExecutor {
 			currentLimit = Collections.max(ints);
 		}
 		return currentLimit + adding;
-	}
-
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (sender instanceof Player && !sender.hasPermission("permissions.manage")) {
-			sender.sendMessage("No permission");
-			return true;
-		}
-
-		if (!Stream.of("npcs", "homes", "plots", "vaults").anyMatch(args[0]::equalsIgnoreCase)
-				|| !(args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("remove"))
-				|| !args[3].matches("\\d+")
-				|| args.length != 4) {
-			sender.sendMessage(PREFIX + "Correct usage: /permhelper <npcs|homes|plots|vaults> <add|remove> <player> <amount>");
-			return true;
-		}
-
-		PermissionUser user = PermissionsEx.getUser(args[2]);
-		int adding = Integer.parseInt(args[3]);
-		if (args[1].equals("remove")) {
-			adding = 0 - adding;
-		}
-
-		modify(args[0].toLowerCase(), sender, user, adding);
-
-		return true;
 	}
 }
 

@@ -23,12 +23,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -37,10 +37,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import static me.pugabyte.bncore.features.oldminigames.murder.Murder.PREFIX;
+
 @SuppressWarnings("unused")
 public class MurderListener implements Listener {
 	private static HashMap<Player, Integer> locators = new HashMap<>();
 	private final String MINIGAMEPREFIX = ChatColor.AQUA + "[Minigames] " + ChatColor.WHITE;
+
+
+	MurderListener() {
+		BNCore.registerListener(this);
+	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	private void onMinigameQuit(QuitMinigameEvent event) {
@@ -219,7 +226,7 @@ public class MurderListener implements Listener {
 		Minigame minigame = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame();
 		Utils.shufflePlayers(minigame, true);
 
-		player.sendMessage(MurderCommand.PREFIX + "You used the teleporter!");
+		player.sendMessage(PREFIX + "You used the teleporter!");
 		player.getInventory().remove(Material.ENDER_PEARL);
 	}
 
@@ -333,9 +340,12 @@ public class MurderListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPickup(PlayerPickupItemEvent event) {
+	public void onPickup(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player))
+			return;
+
 		try {
-			Player player = event.getPlayer();
+			Player player = (Player) event.getEntity();
 
 			if (!MurderUtils.isPlayingMurder(player)) return;
 
@@ -368,7 +378,7 @@ public class MurderListener implements Listener {
 				if (amount == 0) {
 					// First scrap
 					player.getInventory().setItem(8, MurderUtils.getScrap());
-					player.sendMessage(MurderCommand.PREFIX + "You collected a scrap " + ChatColor.GRAY + "(1/10)");
+					player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(1/10)");
 					return;
 				}
 
@@ -376,13 +386,13 @@ public class MurderListener implements Listener {
 					// Craft a gun
 					player.getInventory().remove(Material.IRON_INGOT);
 					player.getInventory().setItem(1, MurderUtils.getGun());
-					player.sendMessage(MurderCommand.PREFIX + "You collected enough scrap to craft a gun!");
+					player.sendMessage(PREFIX + "You collected enough scrap to craft a gun!");
 					return;
 				}
 
 				// Normal pick up
 				player.getInventory().addItem(MurderUtils.getScrap());
-				player.sendMessage(MurderCommand.PREFIX + "You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
+				player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
 				return;
 			}
 

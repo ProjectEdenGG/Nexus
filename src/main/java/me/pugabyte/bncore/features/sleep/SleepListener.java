@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.sleep;
 
 import me.pugabyte.bncore.BNCore;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

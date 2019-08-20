@@ -27,7 +27,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private ItemStack unclaimed = new ItemStack(Material.WOOL, 1);
 	private ItemStack locked = new ItemStack(Material.WOOL, 1, (short) 15);
 
-	public DailyRewardsMenu(DailyRewards dailyRewards) {
+	DailyRewardsMenu(DailyRewards dailyRewards) {
 		this.dailyRewards = dailyRewards;
 	}
 

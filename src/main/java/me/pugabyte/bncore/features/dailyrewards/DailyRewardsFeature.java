@@ -22,16 +22,6 @@ public class DailyRewardsFeature implements Listener {
 		setupDailyRewards();
 	}
 
-	public static void menu(Player player, DailyRewards dailyRewards) {
-		SmartInventory inv = SmartInventory.builder()
-				.provider(new DailyRewardsMenu(dailyRewards))
-				.size(3, 9)
-				.title(ChatColor.DARK_AQUA + "Daily Rewards")
-				.build();
-
-		inv.open(player);
-	}
-
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		DailyRewardsService service = new DailyRewardsService();
@@ -41,6 +31,16 @@ public class DailyRewardsFeature implements Listener {
 			dailyReward.increaseStreak();
 			service.save(dailyReward);
 		}
+	}
+
+	public static void menu(Player player, DailyRewards dailyRewards) {
+		SmartInventory inv = SmartInventory.builder()
+				.provider(new DailyRewardsMenu(dailyRewards))
+				.size(3, 9)
+				.title(ChatColor.DARK_AQUA + "Daily Rewards")
+				.build();
+
+		inv.open(player);
 	}
 
 	public DailyReward getDailyReward(int day) {

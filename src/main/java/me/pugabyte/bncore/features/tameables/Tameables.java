@@ -12,7 +12,7 @@ public class Tameables {
 	private Map<Player, TameablesAction> actions = new HashMap<>();
 
 	public Tameables() {
-		new TameablesCommand();
+		new TameablesTabCompleter();
 		new TameablesListener();
 	}
 

@@ -59,13 +59,9 @@ public class Railgun extends Gun {
 					EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player.getPlayer(), target.getPlayer(), EntityDamageEvent.DamageCause.ENTITY_ATTACK, this.getDamage());
 					Bukkit.getServer().getPluginManager().callEvent(event);
 					if (this.shouldDamageWithConsole()) {
-						BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-										target.damage(this.getDamage()),
-								2L);
+						BNCore.wait(2, () -> target.damage(this.getDamage()));
 					} else {
-						BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-										target.damage(this.getDamage(), player.getPlayer()),
-								2L);
+						BNCore.wait(2, () -> target.damage(this.getDamage(), player.getPlayer()));
 					}
 				}
 			}

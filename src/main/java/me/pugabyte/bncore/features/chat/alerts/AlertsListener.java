@@ -20,7 +20,6 @@ import static me.pugabyte.bncore.BNCore.colorize;
 import static me.pugabyte.bncore.features.chat.Chat.alertsFeature;
 
 public class AlertsListener implements Listener {
-	AlertsService alertsService = new AlertsService();
 
 	AlertsListener() {
 		BNCore.registerListener(this);
@@ -37,7 +36,7 @@ public class AlertsListener implements Listener {
 		try {
 			if (event.getResult().toString().equals("ALLOWED")) {
 				if (channelName.toLowerCase().contains("convo")) {
-					recipients.forEach(chatter -> ((Alerts) alertsService.get(chatter.getPlayer())).playSound());
+					recipients.forEach(chatter -> ((Alerts) new AlertsService().get(chatter.getPlayer())).playSound());
 				} else {
 					List<String> uuids = recipients.stream()
 							.map(recipient -> recipient.getPlayer().getUniqueId().toString())
