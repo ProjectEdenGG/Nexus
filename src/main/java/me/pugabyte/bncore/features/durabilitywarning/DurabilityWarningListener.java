@@ -11,15 +11,14 @@ import org.bukkit.inventory.ItemStack;
 import static me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning.disabledPlayers;
 
 /**
- * @author shannon
+ * @author Camaros
  */
 public class DurabilityWarningListener implements Listener {
-
 	//All checkpoints with colors. More points can be added to this list.
-	double[] checkPoints = {0.10, 0.05};
-	ChatColor[] colors = {ChatColor.RED, ChatColor.DARK_RED};
+	private double[] checkPoints = {0.10, 0.05};
+	private ChatColor[] colors = {ChatColor.RED, ChatColor.DARK_RED};
 
-	public DurabilityWarningListener() {
+	DurabilityWarningListener() {
 		BNCore.registerListener(this);
 	}
 
@@ -44,7 +43,7 @@ public class DurabilityWarningListener implements Listener {
 
 		for (int i = 0; i < checkPoints.length; i++) {
 			if (hasDroppedBelowPercentage(checkPoints[i], oldPercentage, newPercentage)) {
-				player.sendMessage(DurabilityWarningCommand.PREFIX + colors[i] + "Your " + itemName + "'s durability "
+				player.sendMessage(BNCore.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + "'s durability "
 						+ "has dropped below " + (int) (checkPoints[i] * 100) + "% (" + newDurability + " uses left)");
 			}
 		}

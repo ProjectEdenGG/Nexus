@@ -1,9 +1,9 @@
 package me.pugabyte.bncore.features.staff.leash;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.models.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.models.exceptions.preconfigured.MustBeIngameException;
-import me.pugabyte.bncore.models.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.BNCore.colorize;

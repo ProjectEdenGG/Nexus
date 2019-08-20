@@ -16,9 +16,7 @@ public class ShowEnchants {
 			"Luck of the Sea", "Lure", "Loyalty", "Impaling", "Riptide", "Channeling", "Mending", "Curse Of Vanishing"};
 	static Map<Player, LocalDateTime> coolDownMap = new HashMap<>();
 
-	public ShowEnchants() {
-		new ShowEnchantsCommand();
-	}
+	public ShowEnchants() {}
 
 	static String getPrettyName(String item) {
 		String out = "";

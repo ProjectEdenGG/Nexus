@@ -1,23 +1,44 @@
 package me.pugabyte.bncore.features.rainbowarmour;
 
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.rainbowarmour.models.RainbowArmourPlayer;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-public class RainbowArmourCommand implements CommandExecutor {
+@Aliases({"rainbowarmour", "rainbowarmor", "rba"})
+@Permission("rainbow.armour")
+@NoArgsConstructor
+public class RainbowArmourCommand extends CustomCommand {
 	private int rate = 9;
 	private int id = 0;
 
-	RainbowArmourCommand() {
-		BNCore.registerCommand("rainbowarmour", this);
+	RainbowArmourCommand(CommandEvent event) {
+		super(event);
+	}
+
+	@Path
+	void toggle() {
+		RainbowArmourPlayer rbaPlayer = BNCore.rainbowArmour.getPlayer(player());
+		if (rbaPlayer.isEnabled()) {
+			stopArmour(rbaPlayer);
+			reply("§cRainbow armour unequipped!");
+			rbaPlayer.setEnabled(false);
+		} else {
+			rbaPlayer.setTaskID(startArmour(rbaPlayer));
+			rbaPlayer.setEnabled(true);
+			reply("§cR§6a§ei§an§bb§5o§dw §earmour equipped!");
+			BNCore.rainbowArmour.enabledPlayers.put(player(), rbaPlayer);
+		}
 	}
 
 	static ItemStack removeColor(ItemStack itemStack) {
@@ -39,39 +60,6 @@ public class RainbowArmourCommand implements CommandExecutor {
 		}
 
 		inv.setArmorContents(armour);
-	}
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (sender instanceof Player) {
-			Player player = (Player) sender;
-
-			if (sender.hasPermission("rainbowarmour.use")) {
-				RainbowArmourPlayer rbaPlayer = BNCore.rainbowArmour.getPlayer(player);
-
-				if (rbaPlayer.isEnabled()) {
-					stopArmour(rbaPlayer);
-					player.sendMessage("§cRainbow armour unequipped!");
-
-					rbaPlayer.setEnabled(false);
-					return true;
-				} else {
-					id = startArmour(rbaPlayer);
-					player.sendMessage("§cR§6a§ei§an§bb§5o§dw §earmour equipped!");
-
-					rbaPlayer.setTaskID(id);
-					rbaPlayer.setEnabled(true);
-					BNCore.rainbowArmour.enabledPlayers.put(player, rbaPlayer);
-					return true;
-				}
-			} else {
-				player.sendMessage("§cYou do not have permission to use this command.");
-				return false;
-			}
-		} else {
-			sender.sendMessage("You must be a player to execute this command.");
-			return false;
-		}
 	}
 
 	private ItemStack getColor(ItemStack itemStack, Color color) {

@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.models;
 
 import com.dieselpoint.norm.Database;
-import me.pugabyte.bncore.models.persistence.BearNationDatabase;
-import me.pugabyte.bncore.models.persistence.Persistence;
+import me.pugabyte.bncore.framework.persistence.BearNationDatabase;
+import me.pugabyte.bncore.framework.persistence.Persistence;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 

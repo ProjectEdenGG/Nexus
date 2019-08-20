@@ -2,12 +2,12 @@ package me.pugabyte.bncore.features.dailyrewards;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.models.commands.models.CustomCommand;
-import me.pugabyte.bncore.models.commands.models.annotations.Aliases;
-import me.pugabyte.bncore.models.commands.models.annotations.Arg;
-import me.pugabyte.bncore.models.commands.models.annotations.Path;
-import me.pugabyte.bncore.models.commands.models.annotations.Permission;
-import me.pugabyte.bncore.models.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewardsService;
 import org.bukkit.OfflinePlayer;
@@ -52,8 +52,8 @@ public class DailyRewardsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("streak [player]")
-	void streak() {
+	@Path("streak {offlineplayer}")
+	void streak(@Arg("self") OfflinePlayer player) {
 		int streak = dailyRewards.getStreak();
 		String name = sender().getName();
 		OfflinePlayer playerArg = playerArg(2);
@@ -65,17 +65,13 @@ public class DailyRewardsCommand extends CustomCommand {
 		reply(PREFIX + name + "'s streak: &e" + streak);
 	}
 
-	@Path("today [player]")
-	void today() {
+	@Path("today {offlineplayer}")
+	void today(@Arg("self") OfflinePlayer player) {
 		boolean earnedToday = dailyRewards.isEarnedToday();
-		String name = sender().getName();
-		OfflinePlayer playerArg = playerArg(2);
-		if (playerArg == null) player();
-		else {
-			earnedToday = ((DailyRewards) service.get(playerArg)).isEarnedToday();
-			name = playerArg.getName();
+		if (!player().getName().equals(player.getName())) {
+			earnedToday = ((DailyRewards) service.get(player)).isEarnedToday();
 		}
-		reply(PREFIX + name + " has "  + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
+		reply(PREFIX + player.getName() + " has "  + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
 
 	@Path("unclaim {player} {int}")

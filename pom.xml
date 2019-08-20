@@ -264,14 +264,14 @@
             <artifactId>netherboard-bukkit</artifactId>
             <version>1.0.6</version>
         </dependency>
-        <!-- Tabbed -->
+        <!-- Tabbed
         <dependency>
             <groupId>com.github.DungeonRealms</groupId>
             <artifactId>tabbed</artifactId>
             <version>1.8.1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/Tabbed-1.8.1-SNAPSHOT.jar</systemPath>
-        </dependency>
+        </dependency> -->
         <!-- NuVotifier -->
         <dependency>
             <groupId>com.vexsoftware</groupId>
@@ -284,12 +284,6 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
             <version>4.4.0</version>
-        </dependency>
-        <!-- TaskChain -->
-        <dependency>
-            <groupId>co.aikar</groupId>
-            <artifactId>taskchain-bukkit</artifactId>
-            <version>3.7.2</version>
         </dependency>
     </dependencies>
 </project>

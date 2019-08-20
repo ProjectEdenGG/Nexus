@@ -1,19 +1,24 @@
 package me.pugabyte.bncore.features.tameables.models;
 
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 public enum TameablesAction {
 	TRANSFER,
 	UNTAME,
 	INFO;
 
-	private Player player;
+	private OfflinePlayer player;
 
-	public Player getPlayer() {
+	public TameablesAction withPlayer(OfflinePlayer player) {
+		this.player = player;
+		return this;
+	}
+
+	public OfflinePlayer getPlayer() {
 		return player;
 	}
 
-	public void setPlayer(Player player) {
+	public void setPlayer(OfflinePlayer player) {
 		this.player = player;
 	}
 
