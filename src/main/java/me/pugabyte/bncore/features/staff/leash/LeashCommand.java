@@ -15,8 +15,6 @@ import org.bukkit.util.Vector;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.BNCore.colorize;
-
 @Aliases("leash")
 @Permission("playerleash.followplayer")
 @NoArgsConstructor

@@ -9,9 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -21,7 +19,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static me.pugabyte.bncore.BNCore.*;
+import static me.pugabyte.bncore.BNCore.listLast;
+import static me.pugabyte.bncore.BNCore.right;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
