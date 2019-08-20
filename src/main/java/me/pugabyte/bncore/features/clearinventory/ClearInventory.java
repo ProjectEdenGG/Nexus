@@ -12,8 +12,7 @@ public class ClearInventory {
 	private Map<Player, ClearInventoryPlayer> players = new HashMap<>();
 
 	public ClearInventory() {
-		new ClearInventoryCommand();
-		new ClearInventoryToggleCommand();
+		new ClearInventoryTabCompleter();
 		new ClearInventoryListener();
 	}
 

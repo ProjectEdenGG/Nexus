@@ -1,16 +1,11 @@
 package me.pugabyte.bncore.features.sideways.logs;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import static me.pugabyte.bncore.features.sideways.logs.SidewaysLogs.enabledPlayers;
 

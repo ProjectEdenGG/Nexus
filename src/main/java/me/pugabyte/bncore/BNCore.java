@@ -16,7 +16,6 @@ import me.pugabyte.bncore.features.sideways.logs.SidewaysLogs;
 import me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs;
 import me.pugabyte.bncore.features.sleep.Sleep;
 import me.pugabyte.bncore.features.staff.leash.Leash;
-import me.pugabyte.bncore.features.staff.leash.LeashCommand;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.wiki.Wiki;
 import me.pugabyte.bncore.framework.commands.Commands;
