@@ -16,6 +16,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+
 import static me.pugabyte.bncore.BNCore.*;
 
 @NoArgsConstructor
@@ -81,7 +83,10 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 			if ("self".equalsIgnoreCase(value)) value = ((OfflinePlayer) event.getSender()).getUniqueId().toString();
 			return getPlayer(value);
 		}
-		if (Boolean.class == type || Boolean.TYPE == type) return Boolean.parseBoolean(value);
+		if (Boolean.class == type || Boolean.TYPE == type) {
+			if (Arrays.asList("enable", "on", "yes").contains(value)) value = "true";
+			return Boolean.parseBoolean(value);
+		}
 		if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
 		if (Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
 		if (Float.class == type || Float.TYPE == type) return Float.parseFloat(value);

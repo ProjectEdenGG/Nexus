@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.sideways.stairs.models;
 
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.entity.Player;
 
 /**
@@ -43,20 +44,11 @@ public class SidewaysStairsPlayer {
 		this.angle = angle;
 	}
 
-	public boolean trySetAngle(String angleString) {
-		try {
-			byte angle = Byte.valueOf(angleString);
-			if (angle > 7 || angle < 0) {
-				this.angle = 0;
-				return false;
-			} else {
-				this.angle = angle;
-				return true;
-			}
-		} catch (Exception ex) {
-			player.sendMessage(ex.toString());
-			return false;
-		}
+	public void trySetAngle(byte angle) {
+		if (angle > 7 || angle < 0)
+			throw new InvalidInputException("Invalid angle (Must be a number between 0-7)");
+
+		this.angle = angle;
 	}
 
 	public int rotate() {

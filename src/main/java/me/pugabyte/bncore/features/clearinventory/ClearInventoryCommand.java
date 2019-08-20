@@ -1,7 +1,12 @@
 package me.pugabyte.bncore.features.clearinventory;
 
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.clearinventory.models.ClearInventoryPlayer;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,47 +21,26 @@ import java.util.List;
 
 import static me.pugabyte.bncore.features.clearinventory.ClearInventory.PREFIX;
 
-public class ClearInventoryCommand implements CommandExecutor, TabCompleter {
-	private final static String USAGE = "Correct usage: " + ChatColor.RED + "/%command% [undo]";
+@Aliases({"clean", "clear", "ci", "clearinvent", "eclean", "eclear", "eci", "eclearinvent", "eclearinventory"})
+@NoArgsConstructor
+public class ClearInventoryCommand extends CustomCommand {
+	private ClearInventoryPlayer ciPlayer;
 
-	ClearInventoryCommand() {
-		BNCore.registerCommand("clearinventory", this);
-		BNCore.registerTabCompleter("clearinventory", this);
+	ClearInventoryCommand(CommandEvent event) {
+		super(event);
+		ciPlayer = BNCore.clearInventory.getPlayer(player());
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		try {
-			if (!(sender instanceof Player)) {
-				sender.sendMessage("You must be in-game to run this command");
-				return true;
-			}
-
-			Player player = (Player) sender;
-			ClearInventoryPlayer ciPlayer = BNCore.clearInventory.getPlayer(player);
-
-			if (args.length == 0) {
-				ciPlayer.addCache();
-				player.getInventory().setContents(new ItemStack[0]);
-				player.sendMessage(PREFIX + "Inventory cleared");
-			} else {
-				if (args[0].equalsIgnoreCase("undo")) {
-					ciPlayer.restoreCache();
-				} else {
-					throw new InvalidInputException(USAGE.replace("%command%", cmd.getName()));
-				}
-			}
-
-			return true;
-		} catch (InvalidInputException ex) {
-			sender.sendMessage(PREFIX + ex.getMessage());
-			return true;
-		}
+	@Path
+	void clear() {
+		ciPlayer.addCache();
+		player().getInventory().setContents(new ItemStack[0]);
+		reply(PREFIX + "Inventory cleared. Undo with &c/clear undo");
 	}
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		List<String> completions = new ArrayList<>();
-		completions.add("undo");
-		return completions;
+	@Path("undo")
+	void undo() {
+		ciPlayer.restoreCache();
 	}
+
 }

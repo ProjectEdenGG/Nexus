@@ -9,7 +9,6 @@ public class SidewaysLogs {
 	static Set<Player> enabledPlayers = new HashSet<>();
 
 	public SidewaysLogs() {
-		new SidewaysLogsCommand();
 		new SidewaysLogsListener();
 	}
 

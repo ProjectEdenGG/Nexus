@@ -32,7 +32,7 @@ public class ClearInventoryPlayer {
 		if (cache.containsKey(getKey())) {
 			for (ItemStack itemStack : player.getInventory().getContents()) {
 				if (itemStack != null) {
-					player.sendMessage(PREFIX + "Your inventoryContents must be empty to restore an undo");
+					player.sendMessage(PREFIX + "Your inventory must be empty to restore an undo");
 					return;
 				}
 			}

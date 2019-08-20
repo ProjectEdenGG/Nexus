@@ -3,58 +3,11 @@ main: me.pugabyte.bncore.BNCore
 version: ${project.version}
 softdepend: [PermissionsEx, Minigames, Herochat, Skript, PlayerPoints]
 commands:
-  alerts:
-    description: AlertsFeature command
-  antibots:
-    description: AntiBots command
-  clearinventory:
-    description: ClearInventory command
-    aliases: [clean, clear, ci, clearinvent, eclean, eclear, eci, eclearinvent, eclearinventory]
-  clearinventorytoggle:
-    description: ClearInventoryToggle command
-    aliases: [eclearinventorytoggle, clearinventoryconfirmtoggle, eclearinventoryconfirmtoggle, clearinventoryconfirmoff, eclearinventoryconfirmoff, clearconfirmoff, eclearconfirmoff, clearconfirmon, eclearconfirmon, clearconfirm, eclearconfirm]
-  connect4:
-    description: Connect4 command
-    aliases: c4
-  jdailyrewards:
-    description: DailyRewards command
-  durabilitywarning:
-    description: DurabilityWarning command
-    aliases: dw
-  invited:
-    description: InviteRewards command
-  leash:
-    description: Leash command
-    aliases: playerleash
-  mcwiki:
-    description: MinecraftWiki command
-    aliases: mcw
   newminigames:
     description: Minigames command
     aliases: newmgm
-  murder:
-    description: Murder command
-  permhelper:
-    description: PermHelper command
-  rainbowarmour:
-    description: RainbowArmour command
-    aliases: [rainbowarmor, rainbowarmour, rba]
   restoreinventory:
     description: RestoreInventory command
     aliases: restoreinv
-  jrtp:
-    description: RTP command
   showenchants:
     description: ShowEnchants command
-  sidewayslogs:
-    description: SidewaysLogs command
-    aliases: swl
-  sidewaysstairs:
-    description: SidewaysStairs command
-    aliases: sws
-  tab:
-    description: Tab command
-  tameables:
-    description: Tameables command
-  wiki:
-    description: Wiki command

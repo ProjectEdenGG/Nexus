@@ -14,7 +14,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import static me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs.playerData;
 
 /**
- * @author shannon
+ * @author Camaros
  */
 public class SidewaysStairsListener implements Listener {
 
@@ -40,9 +40,9 @@ public class SidewaysStairsListener implements Listener {
 						swsPlayer.setAction("set_angle");
 						swsPlayer.setAngle(block.getData());
 						swsPlayer.setEnabled(true);
-						player.sendMessage(SidewaysStairsCommand.PREFIX + "Angle succesfully copied (" + block.getData() + ")");
+						player.sendMessage(SidewaysStairs.PREFIX + "Angle succesfully copied (" + block.getData() + ")");
 					} else {
-						player.sendMessage(SidewaysStairsCommand.PREFIX + "Can only copy angle of a stair block.");
+						player.sendMessage(SidewaysStairs.PREFIX + "Can only copy angle of a stair block.");
 					}
 				}
 			}
