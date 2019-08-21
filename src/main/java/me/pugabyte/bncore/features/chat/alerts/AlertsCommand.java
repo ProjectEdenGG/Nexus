@@ -16,6 +16,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
@@ -30,7 +31,8 @@ public class AlertsCommand extends CustomCommand {
 
 	public AlertsCommand(CommandEvent event) {
 		super(event);
-		alerts = (Alerts) service.get(event.getPlayer());
+		if (sender() instanceof Player)
+			alerts = (Alerts) service.get(player());
 	}
 
 	@Path
