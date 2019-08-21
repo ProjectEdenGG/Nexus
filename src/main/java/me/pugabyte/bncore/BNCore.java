@@ -35,6 +35,8 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -197,6 +199,20 @@ public class BNCore extends JavaPlugin {
 		return LocalDateTime.ofInstant(
 				Instant.ofEpochMilli(timestamp),
 				TimeZone.getDefault().toZoneId());
+	}
+
+	public static void dump(Object object) {
+		Method[] methods = object.getClass().getDeclaredMethods();
+		BNCore.log("================");
+		for (Method method : methods) {
+			if (method.getName().startsWith("get") && method.getParameterCount() == 0) {
+				try {
+					BNCore.log(method.getName() + ": " + method.invoke(object));
+				} catch (IllegalAccessException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	@Override

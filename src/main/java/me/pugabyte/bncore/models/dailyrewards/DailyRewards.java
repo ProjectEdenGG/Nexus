@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static me.pugabyte.bncore.BNCore.colorize;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,9 +39,8 @@ public class DailyRewards {
 
 	public void increaseStreak() {
 		++streak;
-		if (getPlayer().getPlayer().hasPermission("rank.owner"))
-			getPlayer().getPlayer().sendMessage(BNCore.getPrefix("DailyRewards") + "Your streak has &eincreased&3! " +
-				"Use &c/dailyrewards &3to claim your reward");
+		String message = colorize("Your streak has &eincreased&3! Use &c/dailyrewards &3to claim your reward");
+		getPlayer().getPlayer().sendMessage(BNCore.getPrefix("DailyRewards") + message);
 	}
 
 	public boolean hasClaimed(int day) {

@@ -43,7 +43,6 @@ public class CommandEvent extends Event implements Cancellable {
 	}
 
 	public void handleException(Exception ex) {
-		log("Handling exception");
 		if (ex instanceof BNException)
 			reply(command.getPrefix() + "&c" + ex.getMessage());
 		else if (ex.getCause() instanceof BNException)

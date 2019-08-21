@@ -80,11 +80,11 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 
 	public Object convert(String value, Class<?> type) {
 		if (Player.class == type || OfflinePlayer.class == type) {
-			if ("self".equalsIgnoreCase(value)) value = ((OfflinePlayer) event.getSender()).getUniqueId().toString();
+			if ("self".equalsIgnoreCase(value)) value = ((Player) event.getSender()).getUniqueId().toString();
 			return getPlayer(value);
 		}
 		if (Boolean.class == type || Boolean.TYPE == type) {
-			if (Arrays.asList("enable", "on", "yes").contains(value)) value = "true";
+			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
 			return Boolean.parseBoolean(value);
 		}
 		if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);

@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.staff.admins.permhelper;
+package me.pugabyte.bncore.features.staff.permhelper;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;

@@ -24,7 +24,8 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	public DailyRewardsCommand(CommandEvent event) {
 		super(event);
-		dailyRewards = (DailyRewards) service.get(player());
+		if (sender() instanceof Player)
+			dailyRewards = (DailyRewards) service.get(player());
 	}
 
 	@Path

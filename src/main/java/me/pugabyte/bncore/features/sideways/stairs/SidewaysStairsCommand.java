@@ -18,7 +18,7 @@ import static me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs.playerD
 @Aliases({"sidewaysstairs", "sws"})
 @NoArgsConstructor
 public class SidewaysStairsCommand extends CustomCommand {
-	SidewaysStairsPlayer swsPlayer;
+	private SidewaysStairsPlayer swsPlayer;
 
 	SidewaysStairsCommand(CommandEvent event) {
 		super(event);
@@ -38,12 +38,14 @@ public class SidewaysStairsCommand extends CustomCommand {
 		reply(ChatColor.RED + "/sws upsidedown [true|false] &7- Toggle upsidedown stairs");
 	}
 
-	@Path("(enable|on|disable|off|toggle)")
+	@Path("toggle")
 	void toggle() {
-		if (arg(1).equalsIgnoreCase("toggle"))
-			swsPlayer.setEnabled(!swsPlayer.isEnabled());
-		else
-			swsPlayer.setEnabled("enable".equalsIgnoreCase(arg(1)) || "on".equalsIgnoreCase(arg(1)));
+		toggle(!swsPlayer.isEnabled());
+	}
+
+	@Path("{boolean}")
+	void toggle(@Arg boolean enable) {
+		swsPlayer.setEnabled(enable);
 		reply(PREFIX + (swsPlayer.isEnabled() ? "Enabled" : "Disabled"));
 	}
 
