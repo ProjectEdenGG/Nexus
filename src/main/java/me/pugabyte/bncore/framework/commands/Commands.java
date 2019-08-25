@@ -2,6 +2,7 @@ package me.pugabyte.bncore.framework.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import org.bukkit.plugin.Plugin;
+import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
@@ -29,12 +30,7 @@ public class Commands {
 
 	public void registerAll() {
 		for (Class<? extends CustomCommand> command : commandSet) {
-			try {
-				register(command.newInstance());
-			} catch (InstantiationException | IllegalAccessException ex) {
-				plugin.getLogger().info("Error registering command " + command.getName());
-				ex.printStackTrace();
-			}
+			register(new ObjenesisStd().newInstance(command));
 		}
 	}
 
@@ -52,12 +48,7 @@ public class Commands {
 
 	public void unregisterAll() {
 		for (Class<? extends CustomCommand> command : commandSet) {
-			try {
-				unregister(command.newInstance());
-			} catch (InstantiationException | IllegalAccessException ex) {
-				plugin.getLogger().info("Error registering command " + command.getName());
-				ex.printStackTrace();
-			}
+			unregister(new ObjenesisStd().newInstance(command));
 		}
 	}
 

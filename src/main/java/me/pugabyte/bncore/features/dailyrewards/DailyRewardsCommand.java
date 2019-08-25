@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.dailyrewards;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -17,7 +16,6 @@ import java.util.List;
 
 @Aliases({"jdailyrewards", "jdr"})
 @Permission("daily.rewards")
-@NoArgsConstructor
 public class DailyRewardsCommand extends CustomCommand {
 	private DailyRewardsService service = new DailyRewardsService();
 	private DailyRewards dailyRewards;

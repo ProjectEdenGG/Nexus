@@ -12,7 +12,6 @@ public class SidewaysStairs {
 	static Map<Player, SidewaysStairsPlayer> playerData = new HashMap<>();
 
 	public SidewaysStairs() {
-		new SidewaysStairsCommand();
 		new SidewaysStairsListener();
 	}
 

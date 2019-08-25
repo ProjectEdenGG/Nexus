@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.staff.leash;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -17,7 +16,6 @@ import java.util.UUID;
 
 @Aliases("leash")
 @Permission("playerleash.followplayer")
-@NoArgsConstructor
 public class LeashCommand extends CustomCommand {
 	private HashMap<UUID, Integer> playerRunnables = BNCore.leash.playerRunnables;
 

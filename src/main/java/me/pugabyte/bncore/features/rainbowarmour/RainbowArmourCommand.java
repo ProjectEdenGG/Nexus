@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.rainbowarmour;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.rainbowarmour.models.RainbowArmourPlayer;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -17,7 +16,6 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 @Aliases({"rainbowarmour", "rainbowarmor", "rba"})
 @Permission("rainbow.armour")
-@NoArgsConstructor
 public class RainbowArmourCommand extends CustomCommand {
 	private int rate = 9;
 	private int id = 0;

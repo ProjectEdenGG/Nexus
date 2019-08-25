@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.connect4;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.connect4.models.Connect4Game;
 import me.pugabyte.bncore.features.connect4.models.Connect4Team;
@@ -14,7 +13,6 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 
 @Aliases({"connect4", "c4"})
 @Permission("connect4.admin")
-@NoArgsConstructor
 public class Connect4Command extends CustomCommand {
 	private Connect4Game game = BNCore.connect4.game;
 

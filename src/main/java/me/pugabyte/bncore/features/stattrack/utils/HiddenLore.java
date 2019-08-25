@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.features.stattrack.utils;
 
-import java.nio.charset.Charset;
-
 import org.bukkit.ChatColor;
+
+import java.nio.charset.Charset;
 
 public class HiddenLore {
 

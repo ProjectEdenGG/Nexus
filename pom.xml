@@ -124,6 +124,12 @@
             <artifactId>reflections</artifactId>
             <version>0.9.11</version>
         </dependency>
+        <!-- Objenesis -->
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>3.0.1</version>
+        </dependency>
         <!-- Norm -->
         <dependency>
             <groupId>com.dieselpoint</groupId>

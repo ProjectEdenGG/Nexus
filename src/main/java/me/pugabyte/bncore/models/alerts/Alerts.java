@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.models.alerts;
 
-import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor

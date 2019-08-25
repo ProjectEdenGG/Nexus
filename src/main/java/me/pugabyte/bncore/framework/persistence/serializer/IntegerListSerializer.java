@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.framework.persistence.serializer;
 
 import com.dieselpoint.norm.serialize.DbSerializable;
-import me.pugabyte.bncore.BNCore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
