@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.sideways.stairs;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.sideways.stairs.models.SidewaysStairsPlayer;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -16,7 +15,6 @@ import static me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs.playerD
  */
 
 @Aliases({"sidewaysstairs", "sws"})
-@NoArgsConstructor
 public class SidewaysStairsCommand extends CustomCommand {
 	private SidewaysStairsPlayer swsPlayer;
 

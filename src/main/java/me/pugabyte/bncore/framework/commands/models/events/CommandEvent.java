@@ -13,7 +13,8 @@ import org.bukkit.event.HandlerList;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.BNCore.*;
+import static me.pugabyte.bncore.BNCore.colorize;
+import static me.pugabyte.bncore.BNCore.listLast;
 
 @Data
 public class CommandEvent extends Event implements Cancellable {

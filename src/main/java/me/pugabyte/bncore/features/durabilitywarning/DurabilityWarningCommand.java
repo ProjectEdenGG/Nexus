@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.durabilitywarning;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -14,7 +13,6 @@ import static me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning.di
  */
 @Aliases({"durabilitywarning", "dw"})
 @Permission("durabilitywarning.use")
-@NoArgsConstructor
 public class DurabilityWarningCommand extends CustomCommand {
 
 	public DurabilityWarningCommand(CommandEvent event) {

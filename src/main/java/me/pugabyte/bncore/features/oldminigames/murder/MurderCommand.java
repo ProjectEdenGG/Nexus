@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.oldminigames.murder;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -10,7 +9,6 @@ import org.bukkit.Bukkit;
 
 @Aliases("murder")
 @Permission("murder")
-@NoArgsConstructor
 public class MurderCommand extends CustomCommand {
 
 	MurderCommand(CommandEvent event) {

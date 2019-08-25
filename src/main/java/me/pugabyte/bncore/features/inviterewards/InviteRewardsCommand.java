@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.inviterewards;
 
 import ch.njol.skript.util.Timespan;
 import ch.njol.skript.variables.Variables;
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -20,7 +19,6 @@ import static me.pugabyte.bncore.BNCore.colorize;
 
 @Aliases("invited")
 @Permission("invite.rewards")
-@NoArgsConstructor
 public class InviteRewardsCommand extends CustomCommand {
 
 	InviteRewardsCommand(CommandEvent event) {

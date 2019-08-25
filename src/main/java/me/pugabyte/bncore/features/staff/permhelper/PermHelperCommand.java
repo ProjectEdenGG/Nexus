@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.staff.permhelper;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -20,7 +19,6 @@ import java.util.regex.Pattern;
 
 @Aliases("permhelper")
 @Permission("permissions.manage")
-@NoArgsConstructor
 public class PermHelperCommand extends CustomCommand {
 	String test = "hi";
 

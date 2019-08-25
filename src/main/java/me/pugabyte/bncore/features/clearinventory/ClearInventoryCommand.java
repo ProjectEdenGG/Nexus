@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.clearinventory;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.clearinventory.models.ClearInventoryPlayer;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -10,7 +9,6 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.inventory.ItemStack;
 
 @Aliases({"clean", "clear", "ci", "clearinvent", "eclean", "eclear", "eci", "eclearinvent", "eclearinventory"})
-@NoArgsConstructor
 public class ClearInventoryCommand extends CustomCommand {
 	private ClearInventoryPlayer ciPlayer;
 
