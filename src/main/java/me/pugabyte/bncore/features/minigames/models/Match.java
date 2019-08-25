@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -40,10 +41,10 @@ public class Match {
 				.findFirst();
 	}
 
-	public void join(Minigamer minigamer) {
+	public boolean join(Minigamer minigamer) {
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
 		BNCore.callEvent(event);
-		if (event.isCancelled()) return;
+		if (event.isCancelled()) return false;
 
 		if (started) {
 			if (arena.canJoinLate()) {
@@ -52,7 +53,7 @@ public class Match {
 				teleportIn(minigamer);
 			} else {
 				minigamer.tell("This match has already started");
-				return;
+				return false;
 			}
 		} else {
 			minigamers.add(minigamer);
@@ -60,6 +61,7 @@ public class Match {
 		}
 
 		arena.getMechanic().onJoin(minigamer);
+		return true;
 	}
 
 	void quit(Minigamer minigamer) {
@@ -120,7 +122,8 @@ public class Match {
 
 	private void balance() {
 		minigamers = arena.getMechanic().balance(minigamers);
-		minigamers.forEach(minigamer -> minigamer.tell("You are on team " + minigamer.getTeam().getColor() + minigamer.getTeam().getName()));
+		if (arena.getMechanic() instanceof MultiplayerMechanic)
+			minigamers.forEach(minigamer -> minigamer.tell("You are on team " + minigamer.getTeam().getColoredName()));
 	}
 
 	private void initializeScores() {

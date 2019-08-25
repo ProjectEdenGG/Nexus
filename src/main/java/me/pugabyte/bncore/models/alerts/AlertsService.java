@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class AlertsService extends BaseService {
@@ -37,7 +38,7 @@ public class AlertsService extends BaseService {
 	public void save(Alerts alerts) {
 		BNCore.async(() -> {
 			Transaction trans = database.startTransaction();
-			database.transaction(trans).table("alerts").where("uuid = ?", alerts.getUuid()).delete();
+			database.transaction(trans).table("alerts").where("uuid = ?", alerts.getUuid().toString()).delete();
 			alerts.getHighlights().forEach(highlight -> database.transaction(trans).insert(highlight));
 			trans.commit();
 		});

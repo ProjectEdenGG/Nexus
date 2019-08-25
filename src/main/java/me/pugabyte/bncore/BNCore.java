@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
 import me.pugabyte.bncore.features.documentation.Documentation;
 import me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning;
 import me.pugabyte.bncore.features.inviterewards.InviteRewards;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
 import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
@@ -55,6 +56,7 @@ public class BNCore extends JavaPlugin {
 	public static DurabilityWarning durabilityWarning;
 	public static InviteRewards inviteRewards;
 	public static Leash leash;
+	public static Minigames minigames;
 	public static OldMinigames oldMinigames;
 	public static RainbowArmour rainbowArmour;
 	public static RestoreInventory restoreInventory;
@@ -171,6 +173,10 @@ public class BNCore extends JavaPlugin {
 				.collect(Collectors.toList());
 	}
 
+	public static OfflinePlayer getPlayer(UUID uuid) {
+		return Bukkit.getOfflinePlayer(uuid);
+	}
+
 	public static OfflinePlayer getPlayer(String partialName) {
 		if (partialName.length() == 36)
 			return Bukkit.getOfflinePlayer(UUID.fromString(partialName));
@@ -251,6 +257,7 @@ public class BNCore extends JavaPlugin {
 		documentation = new Documentation();
 		inviteRewards = new InviteRewards();
 		leash = new Leash();
+		minigames = new Minigames();
 		oldMinigames = new OldMinigames();
 		rainbowArmour = new RainbowArmour();
 		restoreInventory = new RestoreInventory();

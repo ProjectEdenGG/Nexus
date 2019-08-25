@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.showenchants;
 
-/*
+/* 1.13
 import com.dthielke.herochat.Channel;
 import com.dthielke.herochat.Chatter;
 import com.dthielke.herochat.Herochat;

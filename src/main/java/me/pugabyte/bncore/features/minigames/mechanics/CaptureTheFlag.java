@@ -63,8 +63,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Match match = minigamer.getMatch();
 		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
 
-		match.broadcast(minigamer.getTeam().getColor() + minigamer.getPlayer().getName() + " &3returned " +
-				minigamer.getTeam().getColor() + minigamer.getTeam().getName() + "&3's flag");
+		match.broadcast(minigamer.getColoredName() + " &3returned " + minigamer.getTeam().getColoredName() + "&3's flag");
 
 		Flag flag = matchData.getFlag(minigamer.getTeam());
 		flag.respawn();
@@ -74,8 +73,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Match match = minigamer.getMatch();
 		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
 
-		match.broadcast(minigamer.getTeam().getColor() + minigamer.getPlayer().getName() + " &3captured " +
-				team.getColor() + team.getName() + "&3's flag");
+		match.broadcast(minigamer.getColoredName() + " &3captured " + team.getColoredName() + "&3's flag");
 
 		minigamer.scored();
 		minigamer.getMatch().scored(minigamer.getTeam());
@@ -90,8 +88,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Match match = minigamer.getMatch();
 		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
 
-		match.broadcast(minigamer.getTeam().getColor() + minigamer.getPlayer().getName() + " &3took " +
-				flag.getTeam().getColor() + flag.getTeam().getName() + "&3's flag");
+		match.broadcast(minigamer.getColoredName() + " &3took " + flag.getTeam().getColoredName() + "&3's flag");
 
 		matchData.addFlagCarrier(flag, minigamer);
 

@@ -47,13 +47,12 @@ public abstract class Mechanic implements Listener {
 
 	public void onDeath(Minigamer victim) {
 		// TODO: Autobalancing
-		victim.getMatch().broadcast(victim.getTeam().getColor() + victim.getPlayer().getName() + " &3died");
+		victim.getMatch().broadcast(victim.getColoredName() + " &3died");
 	}
 
 	public void onDeath(Minigamer victim, Minigamer killer) {
 		// TODO: Autobalancing
-		victim.getMatch().broadcast(victim.getTeam().getColor() + victim.getPlayer().getName() +
-				" &3was killed by " + killer.getTeam().getColor() + killer.getPlayer().getName());
+		victim.getMatch().broadcast(victim.getColoredName() + " &3was killed by " + killer.getColoredName());
 	}
 
 	public void onJoin(Minigamer minigamer) {
