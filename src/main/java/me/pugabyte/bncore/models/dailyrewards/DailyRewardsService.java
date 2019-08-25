@@ -12,8 +12,7 @@ public class DailyRewardsService extends BaseService {
 	}
 
 	public List<DailyRewards> getPage(int page) {
-		return database.sql("select * from dailyrewards order by streak desc limit 10 offset " + ((page - 1) * 10))
-				.results(DailyRewards.class);
+		return database.orderBy("streak desc").limit(10).offset((page - 1) * 10).results(DailyRewards.class);
 	}
 
 	public List<DailyRewards> getAll() {

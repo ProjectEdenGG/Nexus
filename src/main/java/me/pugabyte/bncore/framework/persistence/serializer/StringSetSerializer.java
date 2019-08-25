@@ -2,20 +2,21 @@ package me.pugabyte.bncore.framework.persistence.serializer;
 
 import com.dieselpoint.norm.serialize.DbSerializable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class CommaSeparatedSetSerializer implements DbSerializable {
+public class StringSetSerializer implements DbSerializable {
 	@Override
 	public String serialize(Object in) {
-		// if (in == null) return null;
-		return String.join(",", (Set) in);
+		return String.join(",", ((Set<String>) in));
 	}
 
 	@Override
-	public Object deserialize(String in, Class<?> targetClass) {
-		// if (in == null) return null;
+	public Set<String> deserialize(String in) {
 		return new HashSet<>(Arrays.asList(in.split(",")));
 	}
 }

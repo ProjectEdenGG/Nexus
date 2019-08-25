@@ -34,6 +34,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 		Map<Minigamer, Integer> scores = new HashMap<>();
 
 		match.getMinigamers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
+		if (scores.size() == 0) return;
 		int winningScore = getWinningScore(scores);
 		List<Minigamer> winners = getWinners(winningScore, scores);
 
@@ -54,7 +55,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 	private String getWinnersString(List<Minigamer> winners) {
 		if (winners.size() > 1) {
 			String result = winners.stream()
-					.map(minigamer -> minigamer.getTeam().getColor() + minigamer.getPlayer().getName() + ChatColor.DARK_AQUA)
+					.map(minigamer -> minigamer.getColoredName() + "&3")
 					.collect(Collectors.joining(", "));
 			int lastCommaIndex = result.lastIndexOf(", ");
 			if (lastCommaIndex >= 0) {
@@ -62,7 +63,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 			}
 			return result + " have tied in ";
 		} else {
-			return winners.get(0).getTeam().getColor() + winners.get(0).getPlayer().getName() + ChatColor.DARK_AQUA + " has won ";
+			return winners.get(0).getTeam().getColoredName() + " &3has won ";
 		}
 	}
 

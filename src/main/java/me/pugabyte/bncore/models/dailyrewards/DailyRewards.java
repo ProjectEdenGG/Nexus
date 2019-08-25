@@ -1,38 +1,32 @@
 package me.pugabyte.bncore.models.dailyrewards;
 
+import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.persistence.serializer.IntegerListSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import static me.pugabyte.bncore.BNCore.colorize;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "dailyrewards")
 public class DailyRewards {
 	private String uuid;
 	private int streak;
 	private boolean earnedToday = false;
-	private String claimed;
+	@DbSerializer(IntegerListSerializer.class)
+	private List<Integer> claimed = new ArrayList<>();
 
-	@Transient
 	public OfflinePlayer getPlayer() {
 		return BNCore.getPlayer(uuid);
 	}
@@ -44,7 +38,7 @@ public class DailyRewards {
 	}
 
 	public boolean hasClaimed(int day) {
-		return deserializeClaimed().contains(day);
+		return claimed != null && claimed.contains(day);
 	}
 
 	public void claim(int day) {
@@ -52,21 +46,16 @@ public class DailyRewards {
 	}
 
 	public void claim(int day, boolean applyReward) {
-		List<Integer> claimed = deserializeClaimed();
-		claimed.add(day);
-		this.claimed = serializeClaimed(claimed);
-
 		if (applyReward) applyReward(day);
+		claimed.add(day);
 	}
 
 	public void unclaim(Integer day) {
-		List<Integer> claimed = deserializeClaimed();
 		claimed.remove(day);
-		this.claimed = serializeClaimed(claimed);
 	}
 
-	public void applyReward(int day) {
-		Player player = Bukkit.getPlayer(UUID.fromString(uuid));
+	private void applyReward(int day) {
+		Player player = (Player) getPlayer();
 
 		DailyReward dailyReward = BNCore.dailyRewards.getDailyReward(day);
 		List<ItemStack> items = dailyReward.getItems();
@@ -86,23 +75,6 @@ public class DailyRewards {
 			// TODO: Hook into vault
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + player.getName() + " " + money.toString());
 		}
-	}
-
-	private String serializeClaimed(List<Integer> claimed) {
-		Set<String> serialized = new HashSet<>();
-		Collections.sort(claimed);
-		for (int claim : claimed) {
-			serialized.add(String.valueOf(claim));
-		}
-		return String.join(",", serialized);
-	}
-
-	private List<Integer> deserializeClaimed() {
-		List<Integer> days = new ArrayList<>();
-		if (claimed != null && !claimed.isEmpty())
-			Arrays.asList(claimed.split(",")).forEach(string -> days.add(Integer.parseInt(string)));
-		Collections.sort(days);
-		return days;
 	}
 
 }

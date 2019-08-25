@@ -26,6 +26,10 @@ public class Minigamer {
 	private boolean respawning = false;
 	private int score = 0;
 
+	public String getColoredName() {
+		return team.getColor() + player.getName();
+	}
+
 	public void join(String name) {
 		Optional<Arena> arena = ArenaManager.get(name);
 		if (arena.isPresent()) {
@@ -45,7 +49,8 @@ public class Minigamer {
 				match = optionalMatch.get();
 			}
 
-			match.join(this);
+			if (!match.join(this))
+				match = null;
 		} else {
 			tell("You are already in a match");
 		}

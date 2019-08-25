@@ -23,7 +23,6 @@ import java.util.Optional;
 import static me.pugabyte.bncore.BNCore.colorize;
 
 @Aliases("alerts")
-@Permission("alerts.use")
 @NoArgsConstructor
 public class AlertsCommand extends CustomCommand {
 	private AlertsService service = new AlertsService();
@@ -37,9 +36,8 @@ public class AlertsCommand extends CustomCommand {
 
 	@Path
 	void main() {
-		TextComponent message = new TextComponent(PREFIX
-				+ colorize("Receive a &e'ping' noise &3whenever a word or phrase in your &c/alerts list &3is said in chat. " +
-				"Make sure you have your 'Players' sound on!"));
+		TextComponent message = new TextComponent(PREFIX + colorize("Receive a &e'ping' noise &3whenever a " +
+				"word or phrase in your &c/alerts list &3is said in chat. Make sure you have your 'Players' sound on!"));
 		message.setColor(ChatColor.DARK_AQUA);
 		TextComponent edit = new TextComponent("You can edit your alerts with the following commands:");
 		edit.setColor(ChatColor.DARK_AQUA);
@@ -98,6 +96,39 @@ public class AlertsCommand extends CustomCommand {
 		}
 	}
 
+	@Path("add")
+	void addHelp() {
+		reply(PREFIX + "Enter a word or phrase to set as an alert");
+		reply(PREFIX + "Example: &c/alerts add hockey");
+	}
+
+	@Path("add {string...}")
+	void add(@Arg String highlight) {
+		if (highlight.equalsIgnoreCase(player().getName()))
+			error("Your name is automatically included in your alerts list");
+
+		if (!alerts.add(highlight))
+			error("You already had &e" + highlight + " &3in your alerts list");
+
+		service.save(alerts);
+		reply(PREFIX + "Added &e" + highlight + " &3to your alerts list");
+	}
+
+	@Path("delete")
+	void deleteHelp() {
+		reply(PREFIX + "Enter a word or phrase to set as an alert");
+		reply(PREFIX + "Example: &c/alerts delete hockey");
+	}
+
+	@Path("delete {string...}")
+	void delete(@Arg String highlight) {
+		if (!alerts.delete(highlight))
+			error("You did not have &e" + highlight + " &3in your alerts list");
+
+		service.save(alerts);
+		reply(PREFIX + "Removed &e" + highlight + " &3from your alerts list");
+	}
+
 	// TODO: Create @Usage?
 	@Path("(partialmatch|partialmatching)")
 	void partialMatchingHelp() {
@@ -114,61 +145,29 @@ public class AlertsCommand extends CustomCommand {
 		alerts.add(highlight, partialMatching);
 		service.save(alerts);
 		newline();
-		reply(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " " + (partialMatching ? "enabled" : "disabled"));
+		reply(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
+				+ (partialMatching ? "enabled" : "disabled"));
 		newline();
-		BNCore.wait(1, () -> Bukkit.dispatchCommand(player(), "alerts edit"));
-	}
-
-	@Path("add")
-	void addHelp() {
-		reply(PREFIX + "Enter a word or phrase to set as an alert.");
-		reply(PREFIX + "Example: &c/alerts add hockey");
-	}
-
-	@Path("add {string...}")
-	void add(@Arg String highlight) {
-		if (highlight.equalsIgnoreCase(player().getName()))
-			error("Your name is automatically included in your alerts list.");
-
-		if (!alerts.add(highlight))
-			error("You already had &e" + highlight + " &3in your alerts list.");
-
-		service.save(alerts);
-		reply(PREFIX + "Added &e" + highlight + " &3to your alerts list.");
-	}
-
-	@Path("delete")
-	void deleteHelp() {
-		reply(PREFIX + "Enter a word or phrase to set as an alert.");
-		reply(PREFIX + "Example: &c/alerts delete hockey");
-	}
-
-	@Path("delete {string...}")
-	void delete(@Arg String highlight) {
-		if (!alerts.delete(highlight))
-			error("You did not have &e" + highlight + " &3in your alerts list.");
-
-		service.save(alerts);
-		reply(PREFIX + "Removed &e" + highlight + " &3from your alerts list.");
+		BNCore.wait(2, () -> Bukkit.dispatchCommand(player(), "alerts edit"));
 	}
 
 	@Path("clear")
 	void clear() {
 		alerts.clear();
 		service.save(alerts);
-		reply(PREFIX + "Cleared your alerts.");
+		reply(PREFIX + "Cleared your alerts");
 	}
 
 	@Path("mute")
 	void mute() {
 		alerts.setMuted(true);
-		reply(PREFIX + "Alerts muted.");
+		reply(PREFIX + "Alerts muted");
 	}
 
 	@Path("unmute")
 	void unmute() {
 		alerts.setMuted(false);
-		reply(PREFIX + "Alerts unmuted.");
+		reply(PREFIX + "Alerts unmuted");
 	}
 
 	@Path("toggle")
@@ -180,7 +179,7 @@ public class AlertsCommand extends CustomCommand {
 	@Path("sound")
 	void sound() {
 		alerts.playSound();
-		reply(PREFIX + "Test sound sent.");
+		reply(PREFIX + "Test sound sent");
 	}
 
 }

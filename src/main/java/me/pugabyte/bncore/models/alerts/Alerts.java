@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.models.alerts;
 
+import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -80,7 +81,7 @@ public class Alerts {
 	}
 
 	public void tryAlerts(String message) {
-		Player player = Bukkit.getPlayer(UUID.fromString(uuid));
+		Player player = Bukkit.getPlayer(uuid);
 
 		if (message.toLowerCase().contains(player.getName().toLowerCase())) {
 			playSound();
@@ -109,7 +110,7 @@ public class Alerts {
 
 	public void playSound() {
 		if (!isMuted()) {
-			Player player = Bukkit.getPlayer(UUID.fromString(uuid));
+			Player player = Bukkit.getPlayer(uuid);
 			player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0F, 1.0F);
 		}
 	}
@@ -121,9 +122,11 @@ public class Alerts {
 	public static class Highlight implements Comparable<Highlight> {
 		@Id
 		@NonNull
-		public String uuid;
-		public String highlight;
-		public boolean partialMatching;
+		private String uuid;
+		@NonNull
+		private String highlight;
+		@NonNull
+		private boolean partialMatching;
 
 		@Override
 		public int compareTo(Highlight other) {

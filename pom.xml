@@ -264,14 +264,6 @@
             <artifactId>netherboard-bukkit</artifactId>
             <version>1.0.6</version>
         </dependency>
-        <!-- Tabbed
-        <dependency>
-            <groupId>com.github.DungeonRealms</groupId>
-            <artifactId>tabbed</artifactId>
-            <version>1.8.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Tabbed-1.8.1-SNAPSHOT.jar</systemPath>
-        </dependency> -->
         <!-- NuVotifier -->
         <dependency>
             <groupId>com.vexsoftware</groupId>

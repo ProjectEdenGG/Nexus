@@ -40,7 +40,7 @@ public class DailyRewardsCommand extends CustomCommand {
 		for (DailyRewards dailyReward : dailyRewards) {
 			if (!dailyReward.isEarnedToday()) {
 				dailyReward.setStreak(0);
-				dailyReward.setClaimed("");
+				dailyReward.setClaimed(null);
 			}
 
 			dailyReward.setEarnedToday(false);
@@ -71,6 +71,8 @@ public class DailyRewardsCommand extends CustomCommand {
 		reply(PREFIX + player.getName() + " has "  + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
 
+	// TODO: Optional arguments in the middle if default value exists
+	// TODO: Conditional default values? e.g. /speed [type = isFlying ? fly : walk] <int>
 	@Path("unclaim {player} {int}")
 	@Permission("unclaim")
 	void unclaim(@Arg Player player, @Arg int day) {

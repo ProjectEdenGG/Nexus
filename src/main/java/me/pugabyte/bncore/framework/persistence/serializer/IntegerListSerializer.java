@@ -6,19 +6,16 @@ import me.pugabyte.bncore.BNCore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class IntegerCommaListSerializer implements DbSerializable {
+public class IntegerListSerializer implements DbSerializable {
 	@Override
 	public String serialize(Object in) {
-		BNCore.log("Hi! " + in);
-		if (in == null) return null;
-		return String.join(",", (List) in);
+		return ((List<Integer>) in).stream().map(String::valueOf).collect(Collectors.joining(","));
 	}
 
 	@Override
-	public Object deserialize(String in, Class<?> targetClass) {
-		BNCore.log("Hi! " + in);
-		if (in == null) return null;
+	public List<Integer> deserialize(String in) {
 		List<Integer> ints = new ArrayList<>();
 		Arrays.asList(in.split(",")).forEach(string -> ints.add(Integer.parseInt(string)));
 		return ints;

@@ -1,21 +1,15 @@
 package me.pugabyte.bncore.framework.persistence;
 
 public enum BearNationDatabase {
-	BEARNATION(""),
-	ALERTS("smp_alerts"),
-	ANTIBOTS("antibots"),
-	NAMELESS("nameless");
-
-	String database;
-
-	BearNationDatabase(String database) {
-		this.database = database;
-	}
+	BEARNATION,
+	NAMELESS;
 
 	public String getDatabase() {
-		if (database.length() > 0)
-			return "bearnation_" + database;
+		String name = name().toLowerCase();
 
-		return "bearnation";
+		if (name.equals("bearnation"))
+			return name;
+
+		return "bearnation_" + name;
 	}
 }

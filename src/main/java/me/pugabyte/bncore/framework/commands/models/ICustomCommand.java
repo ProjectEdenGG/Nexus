@@ -144,7 +144,8 @@ public interface ICustomCommand {
 		}
 
 		if (method == null)
-			throw new InvalidInputException("No matching method"); // TODO
+			// TODO No default path, what do?
+			throw new InvalidInputException("No matching method");
 
 		return method;
 	}
