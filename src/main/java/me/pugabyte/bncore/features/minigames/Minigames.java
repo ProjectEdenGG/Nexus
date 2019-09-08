@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.minigames;
 
 import lombok.Getter;
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.commands.MinigamesCommands;
 import me.pugabyte.bncore.features.minigames.listeners.MatchListener;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
@@ -15,7 +15,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 public class Minigames {
-	public static final String PREFIX = BNCore.getPrefix("Minigames");
+	public static final String PREFIX = Utils.getPrefix("Minigames");
 	@Getter
 	private static World gameworld;
 	@Getter

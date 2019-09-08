@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.restoreinventory;
 import com.onarandombox.multiverseinventories.share.Sharables;
 import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfiguration;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.restoreinventory.models.RestoreInventoryPlayer;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
@@ -32,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
-	private final static String PREFIX = BNCore.getPrefix("RestoreInventory");
+	private final static String PREFIX = Utils.getPrefix("RestoreInventory");
 	private final static String USAGE = ChatColor.RED + "/restoreinv <player> <paste code>";
 
 	public RestoreInventoryCommand() {
@@ -67,7 +68,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 
 				owner.setGameMode(GameMode.valueOf(args[1].toUpperCase()));
 
-				BNCore.wait(3, () -> {
+				Utils.wait(3, () -> {
 					try {
 						switch (args[2].toLowerCase()) {
 							case "inventory":
@@ -115,7 +116,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 				Player owner = match.get();
 				String code = args[1];
 
-				BNCore.async(() -> {
+				Utils.async(() -> {
 					try {
 						String data = getPaste(code);
 

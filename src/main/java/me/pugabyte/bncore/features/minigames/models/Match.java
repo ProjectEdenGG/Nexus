@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.minigames.models;
 
 import lombok.Data;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.BNCore.colorize;
+import static me.pugabyte.bncore.Utils.colorize;
 
 @Data
 public class Match {
@@ -43,7 +43,7 @@ public class Match {
 
 	public boolean join(Minigamer minigamer) {
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (event.isCancelled()) return false;
 
 		if (started) {
@@ -68,7 +68,7 @@ public class Match {
 		if (!minigamers.contains(minigamer)) return;
 
 		MatchQuitEvent event = new MatchQuitEvent(this, minigamer);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
@@ -79,7 +79,7 @@ public class Match {
 
 	public void start() {
 		MatchStartEvent event = new MatchStartEvent(this);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
 		started = true;
@@ -93,7 +93,7 @@ public class Match {
 
 	public void end() {
 		MatchEndEvent event = new MatchEndEvent(this);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
 		ended = true;
@@ -159,7 +159,7 @@ public class Match {
 
 	public void broadcast(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (!event.isCancelled()) {
 			minigamers.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
 		}
@@ -167,7 +167,7 @@ public class Match {
 
 	public void broadcast(String message, Team team) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message, team);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (!event.isCancelled()) {
 			minigamers.stream()
 					.filter(minigamer -> minigamer.getTeam().equals(event.getTeam()))
@@ -189,10 +189,10 @@ public class Match {
 		}
 
 		void start() {
-			taskId = BNCore.repeat(0, 20, () -> {
+			taskId = Utils.repeat(0, 20, () -> {
 				if (--time > 0) {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
-					BNCore.callEvent(event);
+					Utils.callEvent(event);
 					if (broadcasts.contains(time)) {
 						match.broadcast("&e" + time + " &7seconds left...");
 					}
@@ -204,7 +204,7 @@ public class Match {
 		}
 
 		void stop() {
-			BNCore.cancelTask(taskId);
+			Utils.cancelTask(taskId);
 		}
 
 	}

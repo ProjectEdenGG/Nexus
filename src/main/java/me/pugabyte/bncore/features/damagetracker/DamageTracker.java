@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.damagetracker;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.damagetracker.models.DamageEvent;
 import org.bukkit.entity.LivingEntity;
 
@@ -18,7 +18,7 @@ public class DamageTracker {
 
 	public DamageTracker() {
 		new DamageTrackerListener();
-		BNCore.repeat((60 * 20), (60 * 20), this::janitor);
+		Utils.repeat((60 * 20), (60 * 20), this::janitor);
 	}
 
 	public static void log(DamageEvent event) {

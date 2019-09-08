@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.models.alerts;
 
 import com.dieselpoint.norm.Transaction;
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.models.BaseService;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class AlertsService extends BaseService {
 	}
 
 	public void save(Alerts alerts) {
-		BNCore.async(() -> {
+		Utils.async(() -> {
 			Transaction trans = database.startTransaction();
 			database.transaction(trans).table("alerts").where("uuid = ?", alerts.getUuid()).delete();
 			alerts.getHighlights().forEach(highlight -> database.transaction(trans).insert(highlight));

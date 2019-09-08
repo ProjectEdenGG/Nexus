@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.persistence.serializer.IntegerListSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.bncore.BNCore.colorize;
+import static me.pugabyte.bncore.Utils.colorize;
 
 @Data
 @NoArgsConstructor
@@ -28,13 +29,13 @@ public class DailyRewards {
 	private List<Integer> claimed = new ArrayList<>();
 
 	public OfflinePlayer getPlayer() {
-		return BNCore.getPlayer(uuid);
+		return Utils.getPlayer(uuid);
 	}
 
 	public void increaseStreak() {
 		++streak;
 		String message = colorize("Your streak has &eincreased&3! Use &c/dailyrewards &3to claim your reward");
-		getPlayer().getPlayer().sendMessage(BNCore.getPrefix("DailyRewards") + message);
+		getPlayer().getPlayer().sendMessage(Utils.getPrefix("DailyRewards") + message);
 	}
 
 	public boolean hasClaimed(int day) {

@@ -4,6 +4,7 @@ import com.dthielke.herochat.Channel;
 import com.dthielke.herochat.Chatter;
 import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
@@ -31,7 +32,7 @@ import java.util.Map;
 import static me.pugabyte.bncore.features.showenchants.ShowEnchants.coolDownMap;
 
 public class ShowEnchantsCommand implements CommandExecutor {
-	private final static String PREFIX = BNCore.getPrefix("ShowEnchants");
+	private final static String PREFIX = Utils.getPrefix("ShowEnchants");
 	private final static String USAGE = "Correct usage: " + ChatColor.RED + "/showenchants <hand|offhand|hat|chest|pants|boots> [text]";
 
 	private Player player;

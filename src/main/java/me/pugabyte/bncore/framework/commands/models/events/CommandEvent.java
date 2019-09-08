@@ -13,8 +13,8 @@ import org.bukkit.event.HandlerList;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.BNCore.colorize;
-import static me.pugabyte.bncore.BNCore.listLast;
+import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.Utils.listLast;
 
 @Data
 public class CommandEvent extends Event implements Cancellable {
@@ -49,8 +49,9 @@ public class CommandEvent extends Event implements Cancellable {
 		else if (ex.getCause() instanceof BNException)
 			reply(command.getPrefix() + "&c" + ex.getCause().getMessage());
 		else {
+			Exception exception = ex.getCause() != null ? (Exception) ex.getCause() : ex;
 			reply("&cAn internal error occurred while attempting to execute this command: "
-					+ listLast(ex.getCause().getClass().getName(), ".") + ": " + ex.getMessage());
+					+ listLast(exception.getClass().getName(), ".") + ": " + ex.getMessage());
 			ex.printStackTrace();
 		}
 	}

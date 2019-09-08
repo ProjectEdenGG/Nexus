@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.minigames.models;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.Optional;
 
-import static me.pugabyte.bncore.BNCore.colorize;
+import static me.pugabyte.bncore.Utils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
@@ -77,7 +77,7 @@ public class Minigamer {
 	}
 
 	public void tell(String message) {
-		player.sendMessage(BNCore.getPrefix("Minigames") + colorize(message));
+		player.sendMessage(Utils.getPrefix("Minigames") + colorize(message));
 	}
 
 	public void teleport(Location location) {

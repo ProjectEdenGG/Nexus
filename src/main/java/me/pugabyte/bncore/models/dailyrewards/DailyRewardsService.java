@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.models.dailyrewards;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.models.BaseService;
 
 import java.util.List;
@@ -20,6 +20,6 @@ public class DailyRewardsService extends BaseService {
 	}
 
 	public void save(DailyRewards dailyRewards) {
-		BNCore.async(() -> database.upsert(dailyRewards).execute());
+		Utils.async(() -> database.upsert(dailyRewards).execute());
 	}
 }
