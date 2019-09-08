@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -79,7 +80,7 @@ public class Alerts {
 	}
 
 	public void tryAlerts(String message) {
-		Player player = Bukkit.getPlayer(uuid);
+		Player player = (Player) BNCore.getPlayer(uuid);
 
 		if (message.toLowerCase().contains(player.getName().toLowerCase())) {
 			playSound();
@@ -108,7 +109,7 @@ public class Alerts {
 
 	public void playSound() {
 		if (!isMuted()) {
-			Player player = Bukkit.getPlayer(uuid);
+			Player player = (Player) BNCore.getPlayer(uuid);
 			player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0F, 1.0F);
 		}
 	}
