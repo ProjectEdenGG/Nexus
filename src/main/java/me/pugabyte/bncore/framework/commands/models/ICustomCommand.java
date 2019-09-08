@@ -30,6 +30,7 @@ public interface ICustomCommand {
 	default void execute(CommandEvent event) {
 		try {
 			CustomCommand command = getCommand(event);
+			event.setCommand(command);
 			Method method = getMethod(command, event.getArgs());
 			checkPermission(event.getSender(), method);
 			command.invoke(method, event);
