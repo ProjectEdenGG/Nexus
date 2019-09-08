@@ -19,8 +19,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static me.pugabyte.bncore.BNCore.listLast;
-import static me.pugabyte.bncore.BNCore.right;
+import static me.pugabyte.bncore.Utils.listLast;
+import static me.pugabyte.bncore.Utils.right;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 

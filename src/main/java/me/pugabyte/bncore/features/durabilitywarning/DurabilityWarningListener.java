@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.durabilitywarning;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,7 +44,7 @@ public class DurabilityWarningListener implements Listener {
 
 		for (int i = 0; i < checkPoints.length; i++) {
 			if (hasDroppedBelowPercentage(checkPoints[i], oldPercentage, newPercentage)) {
-				player.sendMessage(BNCore.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + "'s durability "
+				player.sendMessage(Utils.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + "'s durability "
 						+ "has dropped below " + (int) (checkPoints[i] * 100) + "% (" + newDurability + " uses left)");
 			}
 		}

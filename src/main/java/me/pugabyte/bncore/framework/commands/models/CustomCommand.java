@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeCommandBlockException;
@@ -18,8 +18,6 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.BNCore.*;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -27,18 +25,18 @@ import static me.pugabyte.bncore.BNCore.*;
 public abstract class CustomCommand extends TabCompleter implements ICustomCommand {
 	@NonNull
 	protected CommandEvent event;
-	protected String PREFIX = BNCore.getPrefix(listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
+	protected String PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
 
 	public String getPrefix() {
 		return PREFIX;
 	}
 
 	protected void send(Player player, String message) {
-		player.sendMessage(colorize(message));
+		player.sendMessage(Utils.colorize(message));
 	}
 
 	protected void send(int delay, Player player, String message) {
-		BNCore.wait(delay, () -> player.sendMessage(colorize(message)));
+		Utils.wait(delay, () -> player.sendMessage(Utils.colorize(message)));
 	}
 
 	protected void reply(String message) {
@@ -81,7 +79,7 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 	public Object convert(String value, Class<?> type) {
 		if (Player.class == type || OfflinePlayer.class == type) {
 			if ("self".equalsIgnoreCase(value)) value = ((Player) event.getSender()).getUniqueId().toString();
-			return getPlayer(value);
+			return Utils.getPlayer(value);
 		}
 		if (Boolean.class == type || Boolean.TYPE == type) {
 			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
@@ -132,7 +130,7 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 
 	protected OfflinePlayer playerArg(int i) {
 		if (event.getArgs().size() < i) return null;
-		return getPlayer(event.getArgs().get(i - 1));
+		return Utils.getPlayer(event.getArgs().get(i - 1));
 	}
 
 }

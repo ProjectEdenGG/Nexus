@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.dailyrewards;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -92,7 +92,7 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path("top {int}")
 	void top(@Arg("1") int page) {
-		BNCore.async(() -> {
+		Utils.async(() -> {
 			List<DailyRewards> results = service.getPage(page);
 			if (results.size() == 0) {
 				reply(PREFIX + "&cNo results on page " + page);

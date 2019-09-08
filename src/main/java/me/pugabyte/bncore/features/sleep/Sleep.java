@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.sleep;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -10,10 +10,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.BNCore.colorize;
+import static me.pugabyte.bncore.Utils.colorize;
 
 public class Sleep {
-	private final String PREFIX = BNCore.getPrefix("Sleep");
+	private final String PREFIX = Utils.getPrefix("Sleep");
 	public boolean handling = false;
 
 	public Sleep() {
@@ -32,9 +32,9 @@ public class Sleep {
 			if (player.isSleeping()) {
 				sleepers.add(player);
 				sleeping++;
-			} else if (BNCore.isVanished(player)) {
+			} else if (Utils.isVanished(player)) {
 				sleeping++;
-			} else if (BNCore.isAfk(player)) {
+			} else if (Utils.isAfk(player)) {
 				sleeping++;
 			}
 		}
@@ -50,7 +50,7 @@ public class Sleep {
 
 		if (percentage >= 49) {
 			setHandling(true);
-			BNCore.wait(20, () -> {
+			Utils.wait(20, () -> {
 				players.forEach(player -> player.sendMessage(colorize(PREFIX + "The night was skipped because 50% of players slept!")));
 				world.setTime(0);
 				world.setStorm(false);

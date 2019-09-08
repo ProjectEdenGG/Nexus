@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.chat.alerts;
 import com.dthielke.herochat.ChannelChatEvent;
 import com.dthielke.herochat.Chatter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.chat.alerts.models.DiscordMessageEvent;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
 import me.pugabyte.bncore.models.alerts.Alerts;
@@ -16,7 +17,7 @@ import org.bukkit.event.Listener;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.BNCore.colorize;
+import static me.pugabyte.bncore.Utils.colorize;
 import static me.pugabyte.bncore.features.chat.Chat.alertsFeature;
 
 public class AlertsListener implements Listener {
@@ -48,7 +49,7 @@ public class AlertsListener implements Listener {
 					}
 
 					for (Chatter chatter : recipients) {
-						if (!BNCore.isVanished(chatter.getPlayer())) {
+						if (!Utils.isVanished(chatter.getPlayer())) {
 							count++;
 						} else if (sender.hasPermission("vanish.see")) {
 							count++;

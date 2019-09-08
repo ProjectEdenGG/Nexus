@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.minigames.managers;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 
@@ -12,7 +12,7 @@ public class MatchManager {
 	private static List<Match> matches = new ArrayList<>();
 
 	static {
-		BNCore.repeat(100, 100, MatchManager::janitor);
+		Utils.repeat(100, 100, MatchManager::janitor);
 	}
 
 	public static Optional<Match> get(Arena arena) {

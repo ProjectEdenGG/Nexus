@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.sleep;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,7 +19,7 @@ public class SleepListener implements Listener {
 	@EventHandler
 	public void onBedEnter(PlayerBedEnterEvent event) {
 		if (!sleep.isHandling()) {
-			BNCore.wait(1, () -> sleep.calculate(event.getPlayer().getWorld()));
+			Utils.wait(1, () -> sleep.calculate(event.getPlayer().getWorld()));
 		}
 	}
 
@@ -27,7 +28,7 @@ public class SleepListener implements Listener {
 		if (!sleep.isHandling()) {
 			World world = event.getPlayer().getWorld();
 			if (world.getTime() >= 12541 && world.getTime() <= 23458) {
-				BNCore.wait(1, () -> sleep.calculate(world));
+				Utils.wait(1, () -> sleep.calculate(world));
 			}
 		}
 	}

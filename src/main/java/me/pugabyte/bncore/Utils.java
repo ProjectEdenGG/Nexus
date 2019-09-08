@@ -1,0 +1,143 @@
+package me.pugabyte.bncore;
+
+import ch.njol.skript.variables.Variables;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.nerds.NerdService;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.metadata.MetadataValue;
+import ru.tehkode.permissions.PermissionGroup;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+public class Utils {
+	public static String getPrefix(String prefix) {
+		return "§8§l[§e" + prefix + "§8§l]§3 ";
+	}
+
+	public static String colorize(String string) {
+		return string.replaceAll("&", "§");
+	}
+
+	public static String right(String string, int number) {
+		return string.substring(Math.max(string.length() - number, 0));
+	}
+
+	public static String left(String string, int number) {
+		return string.substring(0, number);
+	}
+
+	public static String listFirst(String string, String delimiter) {
+		return string.split(delimiter)[0];
+	}
+
+	public static String listLast(String string, String delimiter) {
+		return string.substring(string.lastIndexOf(delimiter) + 1);
+	}
+
+	public static String listGetAt(String string, int index, String delimiter) {
+		String[] split = string.split(delimiter);
+		return split[index - 1];
+	}
+
+	public static void callEvent(Event event) {
+		BNCore.getInstance().getServer().getPluginManager().callEvent(event);
+	}
+
+	public static void wait(long delay, Runnable runnable) {
+		BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay);
+	}
+
+	public static int repeat(long startDelay, long interval, Runnable runnable) {
+		return BNCore.getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
+	}
+
+	public static int async(Runnable runnable) {
+		return BNCore.getInstance().getServer().getScheduler().runTaskAsynchronously(BNCore.getInstance(), runnable).getTaskId();
+	}
+
+	public static void cancelTask(int taskId) {
+		BNCore.getInstance().getServer().getScheduler().cancelTask(taskId);
+	}
+
+	public static boolean isVanished(Player player) {
+		for (MetadataValue meta : player.getMetadata("vanished"))
+			return (meta.asBoolean());
+		return false;
+	}
+
+	public static boolean isAfk(Player player) {
+		return (boolean) Variables.getVariable("afk::" + player.getUniqueId().toString(), null, false);
+	}
+
+	public static List<String> getOnlineUuids() {
+		return Bukkit.getOnlinePlayers().stream()
+				.map(p -> p.getUniqueId().toString())
+				.collect(Collectors.toList());
+	}
+
+	public static OfflinePlayer getPlayer(UUID uuid) {
+		return Bukkit.getOfflinePlayer(uuid);
+	}
+
+	public static OfflinePlayer getPlayer(String partialName) {
+		partialName = partialName.toLowerCase();
+
+		if (partialName.length() == 36)
+			return getPlayer(UUID.fromString(partialName));
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (player.getName().toLowerCase().startsWith(partialName))
+				return player;
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (player.getName().toLowerCase().contains((partialName)))
+				return player;
+
+		Nerd nerd = new NerdService().find(partialName);
+		if (nerd != null)
+			return nerd.getOfflinePlayer();
+
+		throw new PlayerNotFoundException();
+	}
+
+	public static String getRankDisplay(Player player) {
+		PermissionUser user = PermissionsEx.getUser(player);
+		PermissionGroup[] ranks = user.getGroups();
+		for (PermissionGroup rank : ranks) {
+			return rank.getPrefix() + rank.getSuffix();
+		}
+		return null;
+	}
+
+	public static LocalDateTime timestamp(long timestamp) {
+		return LocalDateTime.ofInstant(
+				Instant.ofEpochMilli(timestamp),
+				TimeZone.getDefault().toZoneId());
+	}
+
+	public static void dump(Object object) {
+		Method[] methods = object.getClass().getDeclaredMethods();
+		BNCore.log("================");
+		for (Method method : methods) {
+			if (method.getName().startsWith("get") && method.getParameterCount() == 0) {
+				try {
+					BNCore.log(method.getName() + ": " + method.invoke(object));
+				} catch (IllegalAccessException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+}

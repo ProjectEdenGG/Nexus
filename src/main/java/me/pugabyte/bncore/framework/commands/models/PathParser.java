@@ -6,7 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.BNCore.left;
+import static me.pugabyte.bncore.Utils.left;
 
 @Data
 class PathParser {

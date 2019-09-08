@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.chat.alerts;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-import static me.pugabyte.bncore.BNCore.colorize;
+import static me.pugabyte.bncore.Utils.colorize;
 
 @Aliases("alerts")
 public class AlertsCommand extends CustomCommand {
@@ -145,7 +145,7 @@ public class AlertsCommand extends CustomCommand {
 		reply(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
 				+ (partialMatching ? "enabled" : "disabled"));
 		newline();
-		BNCore.wait(2, () -> Bukkit.dispatchCommand(player(), "alerts edit"));
+		Utils.wait(2, () -> Bukkit.dispatchCommand(player(), "alerts edit"));
 	}
 
 	@Path("clear")
