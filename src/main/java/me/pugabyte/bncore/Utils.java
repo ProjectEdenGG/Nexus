@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
@@ -17,7 +18,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,6 +41,16 @@ public class Utils {
 
 	public static String left(String string, int number) {
 		return string.substring(0, number);
+	}
+
+	public static String camelCase(String text) {
+		if (text == null || text.isEmpty()) {
+			return text;
+		}
+
+		return Arrays.stream(text.replaceAll("_", " ").split(" "))
+				.map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase())
+				.collect(Collectors.joining(" "));
 	}
 
 	public static String listFirst(String string, String delimiter) {
@@ -82,6 +96,10 @@ public class Utils {
 		return (boolean) Variables.getVariable("afk::" + player.getUniqueId().toString(), null, false);
 	}
 
+	public static boolean isAfk(Nerd nerd) {
+		return isAfk(nerd.getPlayer());
+	}
+
 	public static List<String> getOnlineUuids() {
 		return Bukkit.getOnlinePlayers().stream()
 				.map(p -> p.getUniqueId().toString())
@@ -111,6 +129,19 @@ public class Utils {
 		throw new PlayerNotFoundException();
 	}
 
+	public static void giveItem(Player player, ItemStack item) {
+		giveItems(player, Collections.singletonList(item));
+	}
+
+	public static void giveItems(Player player, List<ItemStack> items) {
+		for (ItemStack item : items) {
+			Map<Integer, ItemStack> excess = player.getInventory().addItem(item);
+			if (!excess.isEmpty()) {
+				excess.values().forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
+			}
+		}
+	}
+
 	public static String getRankDisplay(Player player) {
 		PermissionUser user = PermissionsEx.getUser(player);
 		PermissionGroup[] ranks = user.getGroups();
@@ -124,6 +155,31 @@ public class Utils {
 		return LocalDateTime.ofInstant(
 				Instant.ofEpochMilli(timestamp),
 				TimeZone.getDefault().toZoneId());
+	}
+
+	public static String timespanFormat(int seconds) {
+		int original = seconds;
+		int years = seconds / 60 / 60 / 24 / 365;
+		seconds -= years * 60 * 60 * 24 * 365;
+		int days = seconds / 60 / 60 / 24;
+		seconds -= days * 60 * 60 * 24;
+		int hours = seconds / 60 / 60;
+		seconds -= hours * 60 * 60;
+		int minutes = seconds / 60;
+
+		String result = "";
+		if (years > 0)
+			result += years + "y ";
+		if (days > 0)
+			result += days + "d ";
+		if (hours > 0)
+			result += hours + "h ";
+		if (minutes > 0)
+			result += minutes + "m ";
+		if (result.length() > 0)
+			return result.trim();
+		else
+			return original + "s";
 	}
 
 	public static void dump(Object object) {

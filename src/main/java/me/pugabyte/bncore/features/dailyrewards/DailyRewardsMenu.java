@@ -5,6 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.ItemStackBuilder;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.dailyrewards.DailyReward;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
@@ -17,12 +18,12 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private DailyRewardsService service = new DailyRewardsService();
 	private DailyRewards dailyRewards;
 
-	private ItemStack back = new ItemStack(Material.BARRIER);
-	private ItemStack back7 = new ItemStack(Material.BARRIER, 7);
-	private ItemStack forward = new ItemStack(Material.ARROW);
-	private ItemStack forward7 = new ItemStack(Material.ARROW, 7);
+	private ItemStack back = new ItemStackBuilder(Material.BARRIER).name("&cScroll back 1 day").build();
+	private ItemStack back7 = new ItemStackBuilder(Material.BARRIER).amount(7).name("&cScroll back 7 days").build();
+	private ItemStack forward = new ItemStackBuilder(Material.ARROW).name("&2Scroll forward 1 day").build();
+	private ItemStack forward7 = new ItemStackBuilder(Material.ARROW).amount(7).name("&2Scroll forward 7 days").build();
 
-	private final int MAX_DAY = 60;
+	private final int MAX_DAY = BNCore.dailyRewards.getMaxDays();
 	private ItemStack claimed = new ItemStack(Material.WOOL, 1);
 	private ItemStack unclaimed = new ItemStack(Material.WOOL, 1);
 	private ItemStack locked = new ItemStack(Material.WOOL, 1, (short) 15);
