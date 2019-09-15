@@ -14,7 +14,6 @@ import org.bukkit.util.Vector;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.Utils.cancelTask;
 import static me.pugabyte.bncore.Utils.repeat;
 
 @Aliases("leash")

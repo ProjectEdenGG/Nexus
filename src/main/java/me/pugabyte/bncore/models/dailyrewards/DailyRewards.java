@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static me.pugabyte.bncore.Utils.colorize;
 
@@ -61,20 +60,19 @@ public class DailyRewards {
 		DailyReward dailyReward = BNCore.dailyRewards.getDailyReward(day);
 		List<ItemStack> items = dailyReward.getItems();
 		Integer money = dailyReward.getMoney();
+		String command = dailyReward.getCommand();
 
 		if (items != null) {
-			for (ItemStack reward : items) {
-
-				Map<Integer, ItemStack> excess = player.getInventory().addItem(reward);
-				if (!excess.isEmpty()) {
-					excess.values().forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
-				}
-			}
+			Utils.giveItems(player, items);
 		}
 
 		if (money != null) {
 			// TODO: Hook into vault
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + player.getName() + " " + money.toString());
+		}
+
+		if (command != null && !command.isEmpty()) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("%player%", player.getName()));
 		}
 	}
 

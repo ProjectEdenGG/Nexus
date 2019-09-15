@@ -3,6 +3,7 @@ package me.pugabyte.bncore.models;
 import com.dieselpoint.norm.Database;
 import me.pugabyte.bncore.framework.persistence.BearNationDatabase;
 import me.pugabyte.bncore.framework.persistence.Persistence;
+import me.pugabyte.bncore.models.nerds.Nerd;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -21,11 +22,15 @@ public class BaseService {
 	}
 
 	public Object get(Player player) {
-		return get(player.getUniqueId().toString());
+		return get(player.getUniqueId());
 	}
 
 	public Object get(OfflinePlayer player) {
-		return get(player.getUniqueId().toString());
+		return get(player.getUniqueId());
+	}
+
+	public Object get(Nerd nerd) {
+		return get(nerd.getOfflinePlayer().getUniqueId());
 	}
 
 	protected String asList(List<String> list) {
