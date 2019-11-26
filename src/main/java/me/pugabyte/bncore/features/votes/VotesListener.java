@@ -43,7 +43,8 @@ public class VotesListener implements Listener {
 	public void onVote(VotifierEvent event) {
 		String service = event.getVote().getServiceName();
 		int extra = extraVotePoints();
-		LocalDateTime timestamp = Utils.timestamp(event.getVote().getLocalTimestamp());
+//		LocalDateTime timestamp = Utils.timestamp(event.getVote().getLocalTimestamp());
+		LocalDateTime timestamp = LocalDateTime.now();
 
 		Vote vote = new Vote(service, extra, timestamp);
 		Votes.save(vote);

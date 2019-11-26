@@ -63,16 +63,12 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>cnaude-repo</id>
-            <url>http://cnaude.org/repo/</url>
+            <id>bn-repo</id>
+            <url>http://maven.bnn.gg/repo/</url>
         </repository>
         <repository>
             <id>bensku-repo</id>
             <url>https://raw.githubusercontent.com/bensku/mvn-repo/master</url>
-        </repository>
-        <repository>
-            <id>bn-repo</id>
-            <url>http://maven.bnn.gg/repo/</url>
         </repository>
         <repository>
             <id>jitpack-repo</id>
@@ -134,7 +130,8 @@
         <dependency>
             <groupId>com.dieselpoint</groupId>
             <artifactId>norm</artifactId>
-            <version>0.8.6</version>
+            <version>0.8.7</version>
+            <systemPath>${project.basedir}/libs/norm-0.8.7.jar</systemPath>
         </dependency>
         <!-- MySQL -->
         <dependency>
