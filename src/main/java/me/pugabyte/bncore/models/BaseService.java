@@ -30,7 +30,7 @@ public class BaseService {
 	}
 
 	public Object get(Nerd nerd) {
-		return get(nerd.getOfflinePlayer().getUniqueId());
+		return get(nerd.getOfflinePlayer());
 	}
 
 	protected String asList(List<String> list) {

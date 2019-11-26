@@ -8,7 +8,9 @@ import java.util.HashMap;
 public class RestoreInventory {
 	public static HashMap<Player, RestoreInventoryPlayer> restorers = new HashMap<>();
 
-	public RestoreInventory() {}
+	public RestoreInventory() {
+		new RestoreInventoryCommand();
+	}
 
 	public static void add(Player restorer, RestoreInventoryPlayer restoreInventoryPlayer) {
 		restorers.put(restorer, restoreInventoryPlayer);

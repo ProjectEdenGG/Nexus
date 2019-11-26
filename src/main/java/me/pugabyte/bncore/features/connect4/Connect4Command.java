@@ -33,7 +33,7 @@ public class Connect4Command extends CustomCommand {
 
 	@Path("place {string} {int}")
 	void place(@Arg String team, @Arg int column) {
-		place(Connect4Team.valueOf(team), validate(column));
+		place(Connect4Team.valueOf(team.toUpperCase()), validate(column));
 	}
 
 	private int validate(int column) {
