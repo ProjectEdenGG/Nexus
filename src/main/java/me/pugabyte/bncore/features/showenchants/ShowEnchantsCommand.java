@@ -45,7 +45,7 @@ public class ShowEnchantsCommand implements CommandExecutor {
 	private List<String> customEnchantsList;
 	private List<String> loreList;
 
-	ShowEnchantsCommand() {
+	public ShowEnchantsCommand() {
 		BNCore.registerCommand("showenchants", this);
 	}
 
