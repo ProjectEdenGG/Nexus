@@ -3,9 +3,11 @@ package me.pugabyte.bncore.features.restoreinventory;
 import com.onarandombox.multiverseinventories.share.Sharables;
 import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfiguration;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.restoreinventory.models.RestoreInventoryPlayer;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
-import me.pugabyte.bncore.models.exceptions.NoPermissionException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.PreConfiguredException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
-	private final static String PREFIX = BNCore.getPrefix("RestoreInventory");
+	private final static String PREFIX = Utils.getPrefix("RestoreInventory");
 	private final static String USAGE = ChatColor.RED + "/restoreinv <player> <paste code>";
 
 	public RestoreInventoryCommand() {
@@ -66,12 +68,13 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 
 				owner.setGameMode(GameMode.valueOf(args[1].toUpperCase()));
 
-				BNCore.runTaskLater(3, () -> {
+				Utils.wait(3, () -> {
 					try {
 						switch (args[2].toLowerCase()) {
 							case "inventory":
-								if (!inventoryIsEmpty(player.getInventory())) {
+								if (!inventoryIsEmpty(owner.getInventory())) {
 									sendInventoryRestoreNotEmptyMessage(restorer, owner, "inventory");
+									break;
 								}
 
 								owner.getInventory().setContents(getInventory(gamemode));
@@ -80,8 +83,9 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 								sendInventoryRestoreSuccessMessage(restorer, owner, "inventory");
 								break;
 							case "enderchest":
-								if (!inventoryIsEmpty(player.getEnderChest())) {
+								if (!inventoryIsEmpty(owner.getEnderChest())) {
 									sendInventoryRestoreNotEmptyMessage(restorer, owner, "ender chest");
+									break;
 								}
 
 								owner.getEnderChest().setContents(getEnderChest(gamemode));
@@ -112,7 +116,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 				Player owner = match.get();
 				String code = args[1];
 
-				BNCore.runTaskAsync(() -> {
+				Utils.async(() -> {
 					try {
 						String data = getPaste(code);
 
@@ -131,7 +135,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 				sendRestoreButtons(player, "Survival");
 				sendRestoreButtons(player, "Creative");
 			}
-		} catch (NoPermissionException | InvalidInputException ex) {
+		} catch (PreConfiguredException | InvalidInputException ex) {
 			sender.sendMessage(PREFIX + ex.getMessage());
 		} catch (ArrayIndexOutOfBoundsException ex) {
 			sender.sendMessage(PREFIX + USAGE);
@@ -150,7 +154,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 
 	private void sendInventoryRestoreNotEmptyMessage(Player restorer, Player owner, String type) throws InvalidInputException {
 		owner.sendMessage(PREFIX + ChatColor.RED + restorer.getName() + " is trying to restore your " + type + ", " +
-				" your current " + type + " must be " + ChatColor.YELLOW + "empty " + ChatColor.RED + "to avoid lost items!");
+				" your current " + type + " must be " + ChatColor. YELLOW + "empty " + ChatColor.RED + "to avoid lost items!");
 		throw new InvalidInputException(ChatColor.RED + "The player's " + type + " contents must be empty to complete a restore. " +
 				"They have been asked to empty their " + type + ".");
 	}

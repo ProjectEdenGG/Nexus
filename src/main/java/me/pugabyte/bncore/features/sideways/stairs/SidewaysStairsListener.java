@@ -14,7 +14,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import static me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs.playerData;
 
 /**
- * @author shannon
+ * @author Camaros
  */
 public class SidewaysStairsListener implements Listener {
 
@@ -40,9 +40,9 @@ public class SidewaysStairsListener implements Listener {
 						swsPlayer.setAction("set_angle");
 						swsPlayer.setAngle(block.getData());
 						swsPlayer.setEnabled(true);
-//						player.sendMessage(SidewaysStairsCommand.PREFIX + "Angle succesfully copied (" + block.getData() + ")");
+						player.sendMessage(SidewaysStairs.PREFIX + "Angle succesfully copied (" + block.getData() + ")");
 					} else {
-						player.sendMessage(SidewaysStairsCommand.PREFIX + "Can only copy angle of a stair block.");
+						player.sendMessage(SidewaysStairs.PREFIX + "Can only copy angle of a stair block.");
 					}
 				}
 			}
@@ -61,11 +61,11 @@ public class SidewaysStairsListener implements Listener {
 
 			if (swsPlayer.getAction().equals("set_angle")) {
 				if (blockName.toLowerCase().endsWith("stairs")) {
-//					block.setData(swsPlayer.getAngle());
+					block.setData(swsPlayer.getAngle());
 				}
 			} else if (swsPlayer.getAction().equals("disable_upsidedown_placement")) {
 				if ((int) (block.getData()) > 3) {
-//					block.setData((byte) (block.getData() - 4));
+					block.setData((byte) (block.getData() - 4));
 				}
 			}
 

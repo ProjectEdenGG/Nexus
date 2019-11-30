@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.stattrack.models;
 
+/*
 import me.pugabyte.bncore.features.stattrack.utils.HiddenLore;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
@@ -81,3 +82,4 @@ public class StatItem {
 		item.setItemMeta(meta);
 	}
 }
+*/

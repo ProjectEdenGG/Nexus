@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.stattrack.models;
 
+/* 1.13
 import org.bukkit.Material;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public enum Stat {
 			Material.RED_TULIP, Material.ORANGE_TULIP, Material.WHITE_TULIP, Material.PINK_TULIP, Material.OXEYE_DAISY,
 			Material.SUNFLOWER, Material.LILAC, Material.ROSE_BUSH, Material.PEONY);
 
+
 	private Tool tool = null;
 	private List<Tool> tools = new ArrayList<>();
 	private List<Material> materials = new ArrayList<>();
@@ -65,3 +67,4 @@ public enum Stat {
 		return (name().charAt(0) + name().substring(1).toLowerCase()).replaceAll("_", " ");
 	}
 }
+*/

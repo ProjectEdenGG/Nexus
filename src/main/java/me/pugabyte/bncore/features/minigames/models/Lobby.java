@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.minigames.models;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.models.events.lobbies.LobbyTimerTickEvent;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -65,7 +65,7 @@ public class Lobby implements ConfigurationSerializable {
 		}
 
 		private void start() {
-			taskId = BNCore.scheduleSyncRepeatingTask(1, 20, () -> {
+			taskId = Utils.repeat(1, 20, () -> {
 				int current = match.getMinigamers().size();
 				int min = arena.getMinPlayers();
 				int left = min - current;
@@ -80,7 +80,7 @@ public class Lobby implements ConfigurationSerializable {
 
 				if (--time > 0) {
 					LobbyTimerTickEvent event = new LobbyTimerTickEvent(lobby, match, time);
-					BNCore.callEvent(event);
+					Utils.callEvent(event);
 					if (broadcasts.contains(time)) {
 						match.broadcast("&e" + time + " &7seconds left...");
 					}
@@ -93,7 +93,7 @@ public class Lobby implements ConfigurationSerializable {
 
 		private void stop() {
 			timerStarted = false;
-			BNCore.cancelTask(taskId);
+			Utils.cancelTask(taskId);
 		}
 
 	}

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class RainbowArmourPlayer {
 	private final Player player;
 	private int taskId;
-	private boolean enabled;
+	private boolean enabled = false;
 	@Getter
 	@Setter
 	private int r = 255;
@@ -19,7 +19,7 @@ public class RainbowArmourPlayer {
 	public RainbowArmourPlayer(Player player, int taskId) {
 		this.player = player;
 		this.taskId = taskId;
-		this.enabled = true;
+		this.enabled = taskId > 0;
 	}
 
 	public Player getPlayer() {

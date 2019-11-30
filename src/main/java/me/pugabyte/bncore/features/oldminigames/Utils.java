@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.oldminigames;
 
 import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.minigame.Minigame;
-import me.pugabyte.bncore.features.oldminigames.murder.MurderCommand;
+import me.pugabyte.bncore.features.oldminigames.murder.Murder;
 import me.pugabyte.bncore.features.oldminigames.murder.MurderUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,7 +35,7 @@ public class Utils {
 				_minigamePlayer.getPlayer().teleport(locs.get(n));
 				_minigamePlayer.setAllowTeleport(false);
 				if (teleporter) {
-					_minigamePlayer.getPlayer().sendMessage(MurderCommand.PREFIX + "The murderer used the teleporter!");
+					_minigamePlayer.sendMessage(Murder.PREFIX + "The murderer used the teleporter!");
 				}
 			}
 		}

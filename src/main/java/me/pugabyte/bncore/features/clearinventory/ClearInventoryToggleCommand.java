@@ -1,21 +1,23 @@
 package me.pugabyte.bncore.features.clearinventory;
 
-import me.pugabyte.bncore.BNCore;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-import static me.pugabyte.bncore.features.clearinventory.ClearInventory.PREFIX;
+// What the fuck essentials
+@Aliases({"eclearinventorytoggle", "clearinventoryconfirmtoggle", "eclearinventoryconfirmtoggle",
+		"clearinventoryconfirmoff", "eclearinventoryconfirmoff", "clearconfirmoff", "eclearconfirmoff",
+		"clearconfirmon", "eclearconfirmon", "clearconfirm", "eclearconfirm"})
+public class ClearInventoryToggleCommand extends CustomCommand {
 
-public class ClearInventoryToggleCommand implements CommandExecutor {
-
-	ClearInventoryToggleCommand() {
-		BNCore.registerCommand("clearinventorytoggle", this);
+	ClearInventoryToggleCommand(CommandEvent event) {
+		super(event);
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		sender.sendMessage(PREFIX + "Use " + ChatColor.RED + "/ci undo " + ChatColor.DARK_AQUA + "to revert an inventoryContents clear");
-		return true;
+	@Path
+	void info() {
+		reply(PREFIX + "Use &c/clear undo &3to revert an inventory clear");
 	}
+
 }

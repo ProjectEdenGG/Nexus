@@ -1,40 +1,35 @@
 package me.pugabyte.bncore.features.oldminigames.murder;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-public class MurderCommand implements CommandExecutor {
-	public final static String PREFIX = BNCore.getPrefix("Murder");
+@Aliases("murder")
+@Permission("murder")
+public class MurderCommand extends CustomCommand {
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		try {
-			if (sender instanceof Player) {
-				if (args[0].equalsIgnoreCase("kit")) {
-					((Player) sender).getInventory().addItem(MurderUtils.getKnife());
-					((Player) sender).getInventory().addItem(MurderUtils.getGun());
-					((Player) sender).getInventory().addItem(MurderUtils.getScrap());
-					((Player) sender).getInventory().addItem(MurderUtils.getFakeScrap());
-					((Player) sender).getInventory().addItem(MurderUtils.getCompass());
-					((Player) sender).getInventory().addItem(MurderUtils.getTeleporter());
-					((Player) sender).getInventory().addItem(MurderUtils.getAdrenaline());
-					((Player) sender).getInventory().addItem(MurderUtils.getRetriever());
-					sender.sendMessage(PREFIX + "Giving murder kit");
-				} else {
-					Bukkit.getServer().dispatchCommand(sender, "skmurder " + String.join(" ", args));
-				}
-			} else {
-				sender.sendMessage("You must be ingame to use this command");
+	MurderCommand(CommandEvent event) {
+		super(event);
+	}
 
-			}
-		} catch (Exception e) {
-			sender.sendMessage(PREFIX + "Error occurred");
-		}
+	@Path
+	void redirectToSkript() {
+		Bukkit.getServer().dispatchCommand(player(), "skmurder " + String.join(" ", event.getArgs()));
+	}
 
-		return true;
+	@Path("kit")
+	void kit() {
+		player().getInventory().addItem(MurderUtils.getKnife());
+		player().getInventory().addItem(MurderUtils.getGun());
+		player().getInventory().addItem(MurderUtils.getScrap());
+		player().getInventory().addItem(MurderUtils.getFakeScrap());
+		player().getInventory().addItem(MurderUtils.getCompass());
+		player().getInventory().addItem(MurderUtils.getTeleporter());
+		player().getInventory().addItem(MurderUtils.getAdrenaline());
+		player().getInventory().addItem(MurderUtils.getRetriever());
+		reply(PREFIX + "Giving murder kit");
 	}
 }

@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.restoreinventory;
 
-import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfiguration;
 import me.pugabyte.bncore.features.restoreinventory.models.RestoreInventoryPlayer;
 import org.bukkit.entity.Player;
 

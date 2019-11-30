@@ -7,13 +7,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ShowEnchants {
+	private final static String[] ROMAN_NUMERALS = {"0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
+	private final static int[] ENCHANTMENT_IDS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 22, 32, 33, 34, 35, 48, 49, 50, 51, 61, 62, 65, 66, 67, 68, 70, 71};
+	private final static String[] ENCHANTMENT_NAMES = {"Protection", "Fire Protection", "Feather Falling", "Blast Protection",
+			"Projectile Protection", "Respiration", "Aqua Affinity", "Thorns", "Depth Strider", "Frost Walker",
+			"Curse of Binding", "Sharpness", "Smite", "Bane of Arthropods", "Knockback", "Fire Aspect", "Looting",
+			"Sweeping Edge", "Efficiency", "Silk Touch", "Unbreaking", "Fortune", "Power", "Punch", "Flame", "Infinity",
+			"Luck of the Sea", "Lure", "Loyalty", "Impaling", "Riptide", "Channeling", "Mending", "Curse Of Vanishing"};
 	static Map<Player, LocalDateTime> coolDownMap = new HashMap<>();
 
 	public ShowEnchants() {
 		new ShowEnchantsCommand();
 	}
 
-	public static String getPrettyName(String item) {
+	static String getPrettyName(String item) {
 		String out = "";
 		if (item.contains("_")) {
 			String[] parts = item.split("_");
@@ -28,24 +35,34 @@ public class ShowEnchants {
 		return out.trim();
 	}
 
-	static String getEnchantNameAndLevel(String enchantment, int lvl) {
-		String level = intToRoman(lvl);
-		String enchant = getPrettyName(enchantment);
-		return enchant + " " + level;
+	static String getRealName(String item) {
+		String temp = item.toLowerCase();
+		if (temp.contains("spade")) temp = temp.replaceAll("spade", "shovel");
+		if (temp.contains("gold")) temp = temp.replaceAll("gold", "golden");
+		if (temp.contains("skull")) temp = "Skull";
+		// add more if needed.
+		return temp;
 	}
 
-	static String intToRoman(int num) {
-		String[] str = new String[]{"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-		int[] val = new int[]{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-
-		StringBuilder sb = new StringBuilder();
-
-		for (int i = 0; i < val.length; i++) {
-			while (num >= val[i]) {
-				num -= val[i];
-				sb.append(str[i]);
+	static String getEnchantNameAndLevel(int id, int lvl) {
+		String level = null;
+		String enchant = null;
+		// Get level as roman numeral (1-10)
+		for (int i = 0; i < ROMAN_NUMERALS.length; i++) {
+			if (i == lvl) {
+				level = ROMAN_NUMERALS[i];
+				break;
 			}
 		}
-		return sb.toString();
+		// If lvl is > 10, use the number itself
+		if (level == null) level = String.valueOf(lvl);
+
+		// Using the index of the enchant ID, get the enchantment name
+		for (int i = 0; i < ENCHANTMENT_IDS.length; i++) {
+			if (ENCHANTMENT_IDS[i] == id) {
+				enchant = ENCHANTMENT_NAMES[i];
+			}
+		}
+		return enchant + " " + level;
 	}
 }

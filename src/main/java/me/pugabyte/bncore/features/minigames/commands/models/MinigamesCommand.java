@@ -5,8 +5,8 @@ import lombok.NonNull;
 import lombok.Setter;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
-import me.pugabyte.bncore.models.exceptions.NoPermissionException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

@@ -44,7 +44,7 @@ public class MinigameListener implements Listener {
 				return;
 			}
 
-			MinigamePlayer minigamePlayer = Minigames.getPlugin().getPlayerManager().getMinigamePlayer(player);
+			MinigamePlayer minigamePlayer = Minigames.plugin.getPlayerData().getMinigamePlayer(player);
 			if (minigamePlayer == null) {
 				return;
 			}

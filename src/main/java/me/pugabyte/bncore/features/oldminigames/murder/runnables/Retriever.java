@@ -23,7 +23,7 @@ public class Retriever extends BukkitRunnable {
 		ItemStack item = player.getInventory().getItem(1);
 
 		// If its not the retriever item, they found the knife, so cancel
-		if (item == null || item.getType() != Material.ENDER_EYE)
+		if (item == null || item.getType() != Material.EYE_OF_ENDER)
 			this.cancel();
 
 		ItemMeta meta = item.getItemMeta();

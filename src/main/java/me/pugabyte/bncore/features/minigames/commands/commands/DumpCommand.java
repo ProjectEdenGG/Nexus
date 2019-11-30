@@ -1,12 +1,12 @@
 package me.pugabyte.bncore.features.minigames.commands.commands;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommand;
 import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommandEvent;
 import me.pugabyte.bncore.features.minigames.commands.models.MinigamesTabEvent;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class DumpCommand extends MinigamesCommand {
 		if (!optionalArena.isPresent())
 			throw new InvalidInputException("Arena not found");
 
-		BNCore.dump(optionalArena.get());
+		Utils.dump(optionalArena.get());
 	}
 
 	@Override

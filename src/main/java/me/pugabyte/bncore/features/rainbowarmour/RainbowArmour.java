@@ -9,7 +9,6 @@ public class RainbowArmour {
 	public HashMap<Player, RainbowArmourPlayer> enabledPlayers = new HashMap<>();
 
 	public RainbowArmour() {
-		new RainbowArmourCommand();
 		new RainbowArmourListener();
 	}
 

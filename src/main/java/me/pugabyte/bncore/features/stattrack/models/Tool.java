@@ -9,7 +9,8 @@ public enum Tool {
 	BOW(Material.BOW),
 	SHIELD(Material.SHIELD),
 	SHEARS(Material.SHEARS),
-	FISHING_ROD(Material.FISHING_ROD),
+	FISHING_ROD(Material.FISHING_ROD);
+	/* 1.13
 	SWORD(
 			Material.WOODEN_SWORD,
 			Material.STONE_SWORD,
@@ -64,6 +65,7 @@ public enum Tool {
 			Material.IRON_BOOTS,
 			Material.GOLDEN_BOOTS,
 			Material.DIAMOND_BOOTS);
+	*/
 
 	private final List<Material> materials;
 

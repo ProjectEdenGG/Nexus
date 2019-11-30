@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.tameables;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.tameables.models.TameablesAction;
 import org.bukkit.entity.Player;
 
@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Tameables {
-	final static String PREFIX = BNCore.getPrefix("Tameables");
+	final static String PREFIX = Utils.getPrefix("Tameables");
 	private Map<Player, TameablesAction> actions = new HashMap<>();
 
 	public Tameables() {
-		new TameablesCommand();
+		new TameablesTabCompleter();
 		new TameablesListener();
 	}
 

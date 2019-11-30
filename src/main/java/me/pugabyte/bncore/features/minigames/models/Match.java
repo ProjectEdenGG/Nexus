@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.minigames.models;
 
 import lombok.Data;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.BNCore.colorize;
+import static me.pugabyte.bncore.Utils.colorize;
 
 @Data
 public class Match {
@@ -40,10 +41,10 @@ public class Match {
 				.findFirst();
 	}
 
-	public void join(Minigamer minigamer) {
+	public boolean join(Minigamer minigamer) {
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
-		BNCore.callEvent(event);
-		if (event.isCancelled()) return;
+		Utils.callEvent(event);
+		if (event.isCancelled()) return false;
 
 		if (started) {
 			if (arena.canJoinLate()) {
@@ -52,7 +53,7 @@ public class Match {
 				teleportIn(minigamer);
 			} else {
 				minigamer.tell("This match has already started");
-				return;
+				return false;
 			}
 		} else {
 			minigamers.add(minigamer);
@@ -60,13 +61,14 @@ public class Match {
 		}
 
 		arena.getMechanic().onJoin(minigamer);
+		return true;
 	}
 
 	void quit(Minigamer minigamer) {
 		if (!minigamers.contains(minigamer)) return;
 
 		MatchQuitEvent event = new MatchQuitEvent(this, minigamer);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
@@ -77,7 +79,7 @@ public class Match {
 
 	public void start() {
 		MatchStartEvent event = new MatchStartEvent(this);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
 		started = true;
@@ -91,7 +93,7 @@ public class Match {
 
 	public void end() {
 		MatchEndEvent event = new MatchEndEvent(this);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
 		ended = true;
@@ -120,7 +122,8 @@ public class Match {
 
 	private void balance() {
 		minigamers = arena.getMechanic().balance(minigamers);
-		minigamers.forEach(minigamer -> minigamer.tell("You are on team " + minigamer.getTeam().getColor() + minigamer.getTeam().getName()));
+		if (arena.getMechanic() instanceof MultiplayerMechanic)
+			minigamers.forEach(minigamer -> minigamer.tell("You are on team " + minigamer.getTeam().getColoredName()));
 	}
 
 	private void initializeScores() {
@@ -156,7 +159,7 @@ public class Match {
 
 	public void broadcast(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (!event.isCancelled()) {
 			minigamers.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
 		}
@@ -164,7 +167,7 @@ public class Match {
 
 	public void broadcast(String message, Team team) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message, team);
-		BNCore.callEvent(event);
+		Utils.callEvent(event);
 		if (!event.isCancelled()) {
 			minigamers.stream()
 					.filter(minigamer -> minigamer.getTeam().equals(event.getTeam()))
@@ -186,10 +189,10 @@ public class Match {
 		}
 
 		void start() {
-			taskId = BNCore.scheduleSyncRepeatingTask(0, 20, () -> {
+			taskId = Utils.repeat(0, 20, () -> {
 				if (--time > 0) {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
-					BNCore.callEvent(event);
+					Utils.callEvent(event);
 					if (broadcasts.contains(time)) {
 						match.broadcast("&e" + time + " &7seconds left...");
 					}
@@ -201,7 +204,7 @@ public class Match {
 		}
 
 		void stop() {
-			BNCore.cancelTask(taskId);
+			Utils.cancelTask(taskId);
 		}
 
 	}

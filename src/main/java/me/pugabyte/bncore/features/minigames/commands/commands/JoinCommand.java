@@ -4,7 +4,7 @@ import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommand;
 import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommandEvent;
 import me.pugabyte.bncore.features.minigames.commands.models.MinigamesTabEvent;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 
 import java.util.List;
 

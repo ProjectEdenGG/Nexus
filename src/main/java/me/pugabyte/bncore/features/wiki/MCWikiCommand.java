@@ -1,26 +1,26 @@
 package me.pugabyte.bncore.features.wiki;
 
-import me.pugabyte.bncore.BNCore;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-public class MCWikiCommand implements CommandExecutor {
-	private final String URL = "https://minecraft.gamepedia.com/";
+@Aliases({"minecraftwiki", "mcwiki"})
+public class MCWikiCommand extends CustomCommand {
 
-	MCWikiCommand() {
-		BNCore.registerCommand("mcwiki", this);
+	MCWikiCommand(CommandEvent event) {
+		super(event);
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (args.length == 0 || !(args[0].equalsIgnoreCase("search"))) {
-			sender.sendMessage("§eVisit the minecraft wiki at §3" + URL);
-			sender.sendMessage("§eOr use §c/mcwiki search <query> §eto search the wiki from ingame.");
-		} else {
-			Wiki.search(sender, args, "MCWiki");
-		}
+	@Path
+	void help() {
+		reply("&eVisit the minecraft wiki at &3https://minecraft.gamepedia.com/");
+		reply("&eOr use &c/mcwiki search <query> &eto search the wiki from ingame.");
+	}
 
-		return true;
+	@Path("search {string...}")
+	void search(@Arg String search) {
+		Wiki.search(sender(), search.split(" "), "MCWiki");
 	}
 }
