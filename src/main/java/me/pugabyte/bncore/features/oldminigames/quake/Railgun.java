@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.oldminigames.quake;
 
 import au.com.mineauz.minigames.Minigames;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -31,7 +32,7 @@ public class Railgun extends Gun {
 			}
 		}
 
-		player.getPlayer().playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1, 0.8F);
+		player.getPlayer().playSound(player.getLocation(), Sound.ENTITY_FIREWORK_LAUNCH, 1, 0.8F);
 
 		Location observerPos = player.getPlayer().getEyeLocation();
 		Vector3D observerDir = new Vector3D(observerPos.getDirection());
@@ -50,7 +51,7 @@ public class Railgun extends Gun {
 			boolean notTargetingSelf = target != player.getPlayer();
 			if (notTargetingSelf && hasIntersection) {
 				boolean inGunRange = block_distance > target.getPlayer().getLocation().distance(player.getLocation());
-				boolean playerNotNull = this.player.getMinigame().getPlayers().contains(Minigames.getPlugin().getPlayerManager().getMinigamePlayer(Bukkit.getPlayer(target.getUniqueId())));
+				boolean playerNotNull = this.player.getMinigame().getPlayers().contains(Minigames.plugin.getPlayerData().getMinigamePlayer(Bukkit.getPlayer(target.getUniqueId())));
 				if (inGunRange && playerNotNull) {
 					final int finalI = i;
 					Bukkit.getScheduler().runTaskLater(BNCore.getInstance(), () -> {
@@ -59,13 +60,9 @@ public class Railgun extends Gun {
 					EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player.getPlayer(), target.getPlayer(), EntityDamageEvent.DamageCause.ENTITY_ATTACK, this.getDamage());
 					Bukkit.getServer().getPluginManager().callEvent(event);
 					if (this.shouldDamageWithConsole()) {
-						BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-										target.damage(this.getDamage()),
-								2L);
+						Utils.wait(2, () -> target.damage(this.getDamage()));
 					} else {
-						BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-										target.damage(this.getDamage(), player.getPlayer()),
-								2L);
+						Utils.wait(2, () -> target.damage(this.getDamage(), player.getPlayer()));
 					}
 				}
 			}

@@ -7,7 +7,7 @@ import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 
 import java.util.List;
 import java.util.Optional;

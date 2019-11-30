@@ -3,24 +3,80 @@ package me.pugabyte.bncore.features.inviterewards;
 import ch.njol.skript.util.Timespan;
 import ch.njol.skript.variables.Variables;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.bncore.BNCore.colorize;
+import static me.pugabyte.bncore.Utils.colorize;
 
-public class InviteRewardsCommand implements CommandExecutor {
-	final static String PREFIX = BNCore.getPrefix("InviteRewards");
+@Aliases("invited")
+@Permission("invite.rewards")
+public class InviteRewardsCommand extends CustomCommand {
 
-	InviteRewardsCommand() {
-		BNCore.registerCommand("invited", this);
+	InviteRewardsCommand(CommandEvent event) {
+		super(event);
+	}
+
+	@Path
+	void help() {
+		reply(PREFIX + "Correct usage: &c/invited <username>");
+	}
+
+	@Path("{player}")
+	void send(@Arg Player invited) {
+		Player inviter = player();
+		if (inviter.equals(invited)) {
+			error(colorize("You cannot invite yourself!"));
+		}
+
+		if (inviter.getFirstPlayed() >= invited.getFirstPlayed())
+			error("You joined after &e" + invited.getName() + "&3, so you can't have invited them!");
+
+		if (hasBeenInvitedBefore(invited))
+			error("&e" + invited.getName() + "&3 has already confirmed being invited by someone else");
+
+		if (!invited.hasPermission("invite.rewards.confirm"))
+			error("The person you are inviting must be a &fMember &3or above.");
+
+		if (getMinutesPlayed(invited) < 60)
+			error("&e" + invited.getName() + "&3 has to play for an hour before you can do that.");
+
+		sendInviteConfirmation(inviter, invited);
+	}
+
+	@Path("confirm {player}")
+	void confirm(@Arg Player inviter) {
+		Player invited = player();
+		if (inviter.getFirstPlayed() >= invited.getFirstPlayed())
+			error("&e" + inviter.getName() + " &3joined after you, so you can't have been invited by them!");
+
+		if (!hasBeenInvitedBefore(invited))
+			error("&3You have already confirmed being invited by someone else");
+
+		if (getMinutesPlayed(invited) < 60)
+			error("You have to play for an hour before you can do that.");
+
+		inviter.sendMessage(colorize("&e" + invited.getName() + "&3 has confirmed your invite; thank you for " +
+				"helping Bear Nation grow! You earned &e15 vote points"));
+		invited.sendMessage(colorize("You have confirmed &e" + inviter.getName() + "'s &3invite. Thank you " +
+				"for flying Bear Nation!"));
+		reward(inviter);
+		InviteRewards.saveInvitation(invited, inviter);
+	}
+
+	@Path("deny {player}")
+	void deny(@Arg Player inviter) {
+		Player invited = player();
+		send(inviter, PREFIX + "&e" + invited.getName() + "&3 has denied your invite confirmation.");
+		send(invited, PREFIX + "You have denied &e" + inviter.getName() + "&3's invite.");
 	}
 
 	private static boolean hasBeenInvitedBefore(Player invited) {
@@ -37,83 +93,6 @@ public class InviteRewardsCommand implements CommandExecutor {
 			return false;
 		}
 		return false;
-	}
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		try {
-			if (sender instanceof Player) {
-				Player player = (Player) sender;
-
-				if (args.length == 0) {
-					throw new InvalidInputException("Correct usage: &c/invited <username>");
-				}
-
-				switch (args[0]) {
-					case "deny":
-						if (player.hasPermission("inviterewards.confirm")) {
-							denyInvite(args[1], player);
-							return true;
-						} else {
-							throw new InvalidInputException("You must be &fMember &3to do that.");
-						}
-					case "confirm":
-						if (player.hasPermission("inviterewards.confirm")) {
-							confirmInvite(args[1], player);
-							return true;
-						} else {
-							throw new InvalidInputException("You must be &fMember &3to do that.");
-						}
-					default:
-						if (player.hasPermission("inviterewards.send")) {
-							invite(player, args[0]);
-							return true;
-						} else {
-							throw new InvalidInputException("You must be &f&lMember+ &3to do that.");
-						}
-				}
-			} else {
-				throw new InvalidInputException("You must be a player to run that command");
-			}
-		} catch (InvalidInputException ex) {
-			sender.sendMessage(PREFIX + colorize(ex.getMessage()));
-		}
-		return true;
-
-	}
-
-	private void invite(Player inviter, String invitedString) {
-		Player invited = findPlayer(invitedString);
-
-		if (invited != null) {
-			if (inviter.equals(invited)) {
-				inviter.sendMessage(colorize("You cannot invite yourself!"));
-				return;
-			}
-
-			if (inviter.getFirstPlayed() < invited.getFirstPlayed()) { // Inviter has to have joined before the person they invited
-				if (!hasBeenInvitedBefore(invited)) {
-					if (invited.hasPermission("inviterewards.confirm")) { // Invited player has to be Member or above
-						long minutes = getMinutesPlayed(invited);
-
-						// Invited player has to play for at least an hour
-						if (minutes >= 60) {
-							sendInviteConfirmation(inviter, invited);
-						} else {
-							inviter.sendMessage(colorize("&e" + invited.getName() + "&3 has to play for an hour before you can do that."));
-						}
-					} else {
-						inviter.sendMessage(colorize("The person you are inviting must be a &fMember &3or above."));
-					}
-				} else {
-					inviter.sendMessage(colorize("&e" + invited.getName() + "&3 has already confirmed being invited by someone else"));
-				}
-			} else {
-				inviter.sendMessage(colorize("You joined after &e" + invited.getName() + "&3, so you can't have invited them!"));
-			}
-		} else {
-			inviter.sendMessage(colorize("Player not found"));
-		}
 	}
 
 	private void sendInviteConfirmation(Player inviter, Player invited) {
@@ -140,51 +119,6 @@ public class InviteRewardsCommand implements CommandExecutor {
 
 	private void reward(Player inviter) {
 		InviteRewards.getPlayerPoints().getAPI().give(inviter.getUniqueId(), 15);
-	}
-
-	private void confirmInvite(String inviterString, Player invited) {
-		Player inviter = Bukkit.getPlayer(inviterString);
-		if (inviter != null) {
-			if (inviter.getFirstPlayed() < invited.getFirstPlayed()) {
-				if (!hasBeenInvitedBefore(invited)) {
-					long minutes = getMinutesPlayed(invited);
-
-					// Invited player has to play for at least an hour
-					if (minutes >= 60) {
-						inviter.sendMessage(colorize("&e" + invited.getName() + "&3 has confirmed your invite; thank you for helping Bear Nation grow! You earned &e15 vote points"));
-						invited.sendMessage(colorize("You have confirmed &e" + inviter.getName() + "'s &3invite. Thank you for flying Bear Nation!"));
-						reward(inviter);
-						InviteRewards.saveInvitation(invited, inviter);
-					} else {
-						invited.sendMessage(colorize("You have to play for an hour before you can do that."));
-					}
-				} else {
-					invited.sendMessage(colorize("&3You have already confirmed being invited by someone else"));
-				}
-			} else {
-				invited.sendMessage(colorize("&e" + inviter.getName() + " &3joined after you, so you can't have been invited by them!"));
-			}
-		} else {
-			invited.sendMessage(colorize("Player not found"));
-		}
-	}
-
-	private void denyInvite(String inviterString, Player invited) {
-		Player inviter = Bukkit.getPlayer(inviterString);
-
-		inviter.sendMessage(colorize("&e" + invited.getName() + "&3 has denied your invite confirmation."));
-		invited.sendMessage(colorize("You have denied &e" + inviter.getName() + "'s &3invite."));
-	}
-
-	private Player findPlayer(String arg) {
-		Player inviter = null;
-		for (Player _player : Bukkit.getServer().getOnlinePlayers()) {
-			if (_player.getName().toLowerCase().startsWith(arg.toLowerCase())) {
-				inviter = _player;
-			}
-		}
-
-		return inviter;
 	}
 
 	private long getMinutesPlayed(Player player) {

@@ -63,16 +63,12 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>cnaude-repo</id>
-            <url>http://cnaude.org/repo/</url>
+            <id>bn-repo</id>
+            <url>http://maven.bnn.gg/repo/</url>
         </repository>
         <repository>
             <id>bensku-repo</id>
             <url>https://raw.githubusercontent.com/bensku/mvn-repo/master</url>
-        </repository>
-        <repository>
-            <id>bn-repo</id>
-            <url>http://maven.bnn.gg/repo/</url>
         </repository>
         <repository>
             <id>jitpack-repo</id>
@@ -91,10 +87,6 @@
             <url>http://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
-            <id>parallelblock-repo</id>
-            <url>https://repo.parallelblock.com/repository/maven-public/</url>
-        </repository>
-        <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
@@ -102,13 +94,21 @@
             <id>onarandombox-repo</id>
             <url>http://repo.onarandombox.com/content/groups/public</url>
         </repository>
+        <repository>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/groups/aikar/</url>
+        </repository>
+        <repository>
+            <id>nuvotifier-repo</id>
+            <url>https://dl.bintray.com/nuvotifier/maven/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- Lombok Project -->
@@ -118,11 +118,44 @@
             <version>1.18.2</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Reflections -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.11</version>
+        </dependency>
+        <!-- Objenesis -->
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <!-- Norm -->
+        <dependency>
+            <groupId>com.dieselpoint</groupId>
+            <artifactId>norm</artifactId>
+            <version>0.8.7</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/norm-0.8.7.jar</systemPath>
+        </dependency>
+        <!-- MySQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+        </dependency>
+        <!-- Helper -->
+        <dependency>
+            <groupId>me.lucko</groupId>
+            <artifactId>helper</artifactId>
+            <version>5.5.0</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Minigames -->
         <dependency>
             <groupId>au.com.mineauz</groupId>
             <artifactId>Minigames</artifactId>
-            <version>1.13.2-SNAPSHOT</version>
+            <version>1.12.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- PermissionsEx -->
@@ -239,19 +272,11 @@
             <artifactId>netherboard-bukkit</artifactId>
             <version>1.0.6</version>
         </dependency>
-        <!-- Tabbed -->
-        <dependency>
-            <groupId>com.github.DungeonRealms</groupId>
-            <artifactId>tabbed</artifactId>
-            <version>1.8.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Tabbed-1.8.1-SNAPSHOT.jar</systemPath>
-        </dependency>
         <!-- NuVotifier -->
         <dependency>
             <groupId>com.vexsoftware</groupId>
             <artifactId>nuvotifier-universal</artifactId>
-            <version>2.4.2-SNAPSHOT</version>
+            <version>2.3.4</version>
             <scope>provided</scope>
         </dependency>
         <!-- ProtocolLib -->
@@ -259,6 +284,12 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
             <version>4.4.0</version>
+        </dependency>
+        <!-- Javax Persistence -->
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
 </project>

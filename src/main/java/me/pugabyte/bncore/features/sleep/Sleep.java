@@ -1,30 +1,40 @@
 package me.pugabyte.bncore.features.sleep;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.Utils.colorize;
 
 public class Sleep {
-	public boolean handling;
+	private final String PREFIX = Utils.getPrefix("Sleep");
+	public boolean handling = false;
 
 	public Sleep() {
 		new SleepListener();
 	}
 
 	public void calculate(World world) {
-		Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+		Collection<? extends Player> players = Bukkit.getOnlinePlayers().stream()
+				.filter(player -> player.getWorld().equals(world))
+				.collect(Collectors.toList());
+		List<Player> sleepers = new ArrayList<>();
 		int total = players.size();
 
 		int sleeping = 0;
 		for (Player player : players) {
 			if (player.isSleeping()) {
+				sleepers.add(player);
 				sleeping++;
-			} else if (BNCore.isVanished(player)) {
+			} else if (Utils.isVanished(player)) {
 				sleeping++;
-			} else if (BNCore.isAfk(player)) {
+			} else if (Utils.isAfk(player)) {
 				sleeping++;
 			}
 		}
@@ -33,19 +43,21 @@ public class Sleep {
 			return;
 		}
 
-		int percentage = ((sleeping / total) * 100);
+		int needed = (int) Math.ceil((double) players.size() / 2);
+		sleepers.forEach(player -> player.sendMessage(colorize(PREFIX + "Sleepers needed: &e" + sleepers.size() + "&3/&e" + needed)));
+
+		int percentage = (int) (((double) sleeping / total) * 100);
 
 		if (percentage >= 49) {
 			setHandling(true);
-			BNCore.runTaskLater(20, () -> {
+			Utils.wait(20, () -> {
+				players.forEach(player -> player.sendMessage(colorize(PREFIX + "The night was skipped because 50% of players slept!")));
 				world.setTime(0);
-
 				world.setStorm(false);
 				world.setThundering(false);
 
 				setHandling(false);
 			});
-
 		}
 	}
 
@@ -56,5 +68,4 @@ public class Sleep {
 	boolean isHandling() {
 		return handling;
 	}
-
 }

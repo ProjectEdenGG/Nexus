@@ -31,6 +31,10 @@ public class Team implements ConfigurationSerializable {
 	private List<Location> spawnpoints;
 	private int balancePercentage = -1;
 
+	public String getColoredName() {
+		return color + name;
+	}
+
 	public void spawn(List<Minigamer> minigamers) {
 		List<Minigamer> members = new ArrayList<>(minigamers);
 		members = members.stream()

@@ -1,26 +1,25 @@
 package me.pugabyte.bncore.features.durabilitywarning;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 
 import static me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning.disabledPlayers;
 
 /**
- * @author shannon
+ * @author Camaros
  */
 public class DurabilityWarningListener implements Listener {
-
 	//All checkpoints with colors. More points can be added to this list.
-	double[] checkPoints = {0.10, 0.05};
-	ChatColor[] colors = {ChatColor.RED, ChatColor.DARK_RED};
+	private double[] checkPoints = {0.10, 0.05};
+	private ChatColor[] colors = {ChatColor.RED, ChatColor.DARK_RED};
 
-	public DurabilityWarningListener() {
+	DurabilityWarningListener() {
 		BNCore.registerListener(this);
 	}
 
@@ -34,9 +33,8 @@ public class DurabilityWarningListener implements Listener {
 		if (disabledPlayers.contains(player)) return;
 
 		int maxDurability = item.getType().getMaxDurability();
-		Damageable damageable = (Damageable) item.getItemMeta();
-		int oldDurability = maxDurability - (damageable.getDamage());
-		int newDurability = maxDurability - (damageable.getDamage() + event.getDamage());
+		int oldDurability = maxDurability - (item.getDurability());
+		int newDurability = maxDurability - (item.getDurability() + event.getDamage());
 		double oldPercentage = (double) oldDurability / (double) maxDurability;
 		double newPercentage = (double) newDurability / (double) maxDurability;
 
@@ -46,7 +44,7 @@ public class DurabilityWarningListener implements Listener {
 
 		for (int i = 0; i < checkPoints.length; i++) {
 			if (hasDroppedBelowPercentage(checkPoints[i], oldPercentage, newPercentage)) {
-				player.sendMessage(DurabilityWarningCommand.PREFIX + colors[i] + "Your " + itemName + "'s durability "
+				player.sendMessage(Utils.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + "'s durability "
 						+ "has dropped below " + (int) (checkPoints[i] * 100) + "% (" + newDurability + " uses left)");
 			}
 		}

@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.managers;
 
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 
@@ -9,6 +10,10 @@ import java.util.Optional;
 
 public class MatchManager {
 	private static List<Match> matches = new ArrayList<>();
+
+	static {
+		Utils.repeat(100, 100, MatchManager::janitor);
+	}
 
 	public static Optional<Match> get(Arena arena) {
 		return matches.stream()
@@ -26,6 +31,10 @@ public class MatchManager {
 
 	public static void add(Match match) {
 		matches.add(match);
+	}
+
+	public static void janitor() {
+		matches.removeIf(match -> match.getMinigamers() == null || match.getMinigamers().size() == 0);
 	}
 
 }

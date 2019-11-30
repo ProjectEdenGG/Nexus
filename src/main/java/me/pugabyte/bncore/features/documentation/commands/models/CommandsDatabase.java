@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.features.documentation.commands.models;
 
-import me.pugabyte.bncore.models.persistence.BearNationDatabase;
-import me.pugabyte.bncore.models.persistence.IReader;
-import me.pugabyte.bncore.models.persistence.IWriter;
+import me.pugabyte.bncore.framework.persistence.BearNationDatabase;
+import me.pugabyte.bncore.framework.persistence.IReader;
+import me.pugabyte.bncore.framework.persistence.IWriter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

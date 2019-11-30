@@ -47,11 +47,8 @@ public class ArenaManager {
 	}
 
 	public static void add(Arena arena) {
-		Optional<Arena> previous;
-		previous = get(arena.getId());
-		previous.ifPresent(arenas::remove);
-		previous = get(arena.getName());
-		previous.ifPresent(arenas::remove);
+		get(arena.getId()).ifPresent(arenas::remove);
+		get(arena.getName()).ifPresent(arenas::remove);
 		arenas.add(arena);
 	}
 

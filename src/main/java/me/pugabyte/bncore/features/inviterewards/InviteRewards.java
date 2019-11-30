@@ -16,7 +16,6 @@ public class InviteRewards {
 		Plugin playerPoints = BNCore.getInstance().getServer().getPluginManager().getPlugin("PlayerPoints");
 
 		if (playerPoints != null && playerPoints.isEnabled()) {
-			new InviteRewardsCommand();
 			try {
 				if (!hookPlayerPoints()) {
 					BNCore.getInstance().getLogger().severe("Could not hook into PlayerPoints");

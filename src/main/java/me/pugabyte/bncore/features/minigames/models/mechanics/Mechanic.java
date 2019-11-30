@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -47,13 +48,12 @@ public abstract class Mechanic implements Listener {
 
 	public void onDeath(Minigamer victim) {
 		// TODO: Autobalancing
-		victim.getMatch().broadcast(victim.getTeam().getColor() + victim.getPlayer().getName() + " &3died");
+		victim.getMatch().broadcast(victim.getColoredName() + " &3died");
 	}
 
 	public void onDeath(Minigamer victim, Minigamer killer) {
 		// TODO: Autobalancing
-		victim.getMatch().broadcast(victim.getTeam().getColor() + victim.getPlayer().getName() +
-				" &3was killed by " + killer.getTeam().getColor() + killer.getPlayer().getName());
+		victim.getMatch().broadcast(victim.getColoredName() + " &3was killed by " + killer.getColoredName());
 	}
 
 	public void onJoin(Minigamer minigamer) {
@@ -127,7 +127,7 @@ public abstract class Mechanic implements Listener {
 				if (event.getDamage() >= victim.getPlayer().getHealth()) {
 					event.setCancelled(true);
 					MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim.getMatch(), victim, attacker);
-					BNCore.callEvent(deathEvent);
+					Utils.callEvent(deathEvent);
 					if (!deathEvent.isCancelled()) {
 						mechanic.onDeath(victim, attacker);
 						if (!victim.getMatch().isEnded()) {
@@ -168,7 +168,7 @@ public abstract class Mechanic implements Listener {
 		event.setCancelled(true);
 
 		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim.getMatch(), victim);
-		BNCore.callEvent(deathEvent);
+		Utils.callEvent(deathEvent);
 		if (deathEvent.isCancelled()) return;
 
 		mechanic.onDeath(victim);

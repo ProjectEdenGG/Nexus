@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.block.data.BlockData;
 
 @Data
 public class Flag {
@@ -18,8 +17,10 @@ public class Flag {
 	private Location spawnLocation;
 	@NonNull
 	private Material material;
+	/* 1.13
 	@NonNull
 	private BlockData blockData;
+	*/
 	@NonNull
 	private String[] lines;
 	@NonNull
@@ -42,7 +43,7 @@ public class Flag {
 		Block block = spawnLocation.getBlock();
 
 		block.setType(material);
-		block.setBlockData(blockData);
+		// 1.13 block.setBlockData(blockData);
 
 		Sign sign = (Sign) block.getState();
 
@@ -70,7 +71,7 @@ public class Flag {
 		Block block = currentLocation.getBlock();
 
 		block.setType(Material.SIGN);
-		block.setBlockData(blockData);
+		// 1.13 block.setBlockData(blockData);
 
 		Sign sign = (Sign) block.getState();
 

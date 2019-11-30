@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.stattrack;
 
+/*
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.stattrack.models.StatItem;
 import me.pugabyte.bncore.features.stattrack.models.Tool;
@@ -46,3 +47,4 @@ public class StatTrackCommand implements CommandExecutor {
 		return true;
 	}
 }
+*/

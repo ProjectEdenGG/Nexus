@@ -37,10 +37,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import static me.pugabyte.bncore.features.oldminigames.murder.Murder.PREFIX;
+
 @SuppressWarnings("unused")
 public class MurderListener implements Listener {
 	private static HashMap<Player, Integer> locators = new HashMap<>();
 	private final String MINIGAMEPREFIX = ChatColor.AQUA + "[Minigames] " + ChatColor.WHITE;
+
+
+	MurderListener() {
+		BNCore.registerListener(this);
+	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	private void onMinigameQuit(QuitMinigameEvent event) {
@@ -192,7 +199,7 @@ public class MurderListener implements Listener {
 			case IRON_SWORD:
 				throwKnife(player);
 				return;
-			case ENDER_EYE:
+			case EYE_OF_ENDER:
 				retrieveKnife(player);
 				return;
 			case ENDER_PEARL:
@@ -216,10 +223,10 @@ public class MurderListener implements Listener {
 	}
 
 	private void useTeleporter(Player player) {
-		Minigame minigame = Minigames.getPlugin().getPlayerManager().getMinigamePlayer(player).getMinigame();
+		Minigame minigame = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame();
 		Utils.shufflePlayers(minigame, true);
 
-		player.sendMessage(MurderCommand.PREFIX + "You used the teleporter!");
+		player.sendMessage(PREFIX + "You used the teleporter!");
 		player.getInventory().remove(Material.ENDER_PEARL);
 	}
 
@@ -232,8 +239,8 @@ public class MurderListener implements Listener {
 		player.getInventory().remove(Material.IRON_SWORD);
 
 		// Retrieval mechanics
-		if (player.getInventory().contains(Material.ENDER_EYE)) {
-			player.getInventory().remove(Material.ENDER_EYE);
+		if (player.getInventory().contains(Material.EYE_OF_ENDER)) {
+			player.getInventory().remove(Material.EYE_OF_ENDER);
 			player.getInventory().setItem(1, MurderUtils.getRetriever());
 			// Start countdown
 			ItemMeta meta = player.getInventory().getItem(1).getItemMeta();
@@ -304,7 +311,7 @@ public class MurderListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onDeath(PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		MinigamePlayer minigamePlayer = Minigames.getPlugin().getPlayerManager().getMinigamePlayer(player);
+		MinigamePlayer minigamePlayer = Minigames.plugin.getPlayerData().getMinigamePlayer(player);
 		Minigame minigame = minigamePlayer.getMinigame();
 
 		if (!MurderUtils.isPlayingMurder(player)) {
@@ -334,7 +341,8 @@ public class MurderListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPickup(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
+		if (!(event.getEntity() instanceof Player))
+			return;
 
 		try {
 			Player player = (Player) event.getEntity();
@@ -370,7 +378,7 @@ public class MurderListener implements Listener {
 				if (amount == 0) {
 					// First scrap
 					player.getInventory().setItem(8, MurderUtils.getScrap());
-					player.sendMessage(MurderCommand.PREFIX + "You collected a scrap " + ChatColor.GRAY + "(1/10)");
+					player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(1/10)");
 					return;
 				}
 
@@ -378,13 +386,13 @@ public class MurderListener implements Listener {
 					// Craft a gun
 					player.getInventory().remove(Material.IRON_INGOT);
 					player.getInventory().setItem(1, MurderUtils.getGun());
-					player.sendMessage(MurderCommand.PREFIX + "You collected enough scrap to craft a gun!");
+					player.sendMessage(PREFIX + "You collected enough scrap to craft a gun!");
 					return;
 				}
 
 				// Normal pick up
 				player.getInventory().addItem(MurderUtils.getScrap());
-				player.sendMessage(MurderCommand.PREFIX + "You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
+				player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
 				return;
 			}
 
@@ -406,7 +414,7 @@ public class MurderListener implements Listener {
 					// If they already have a knife, don't pick it up
 					if (player.getInventory().contains(Material.IRON_SWORD)) return;
 
-					if (player.getInventory().contains(Material.ENDER_EYE)) {
+					if (player.getInventory().contains(Material.EYE_OF_ENDER)) {
 						// They didn't use their retriever, move it back to their inventoryContents
 						player.getInventory().setItem(17, MurderUtils.getRetriever());
 					}

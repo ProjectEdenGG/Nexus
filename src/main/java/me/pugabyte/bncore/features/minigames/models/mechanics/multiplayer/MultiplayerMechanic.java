@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import org.bukkit.potion.PotionEffect;
@@ -17,7 +17,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		minigamer.clearState();
 		minigamer.teleport(minigamer.getMatch().getArena().getRespawnLocation());
 		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
-		BNCore.runTaskLater(100, () -> {
+		Utils.wait(100, () -> {
 			if (!minigamer.getMatch().isEnded()) {
 				minigamer.getTeam().spawn(Collections.singletonList(minigamer));
 				minigamer.setRespawning(false);

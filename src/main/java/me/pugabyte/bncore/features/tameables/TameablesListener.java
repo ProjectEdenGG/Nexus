@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.tameables;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.tameables.models.TameablesAction;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -40,7 +41,7 @@ public class TameablesListener implements Listener {
 			switch (action) {
 				case TRANSFER:
 					if (!isOwner(player, tameable)) return;
-					Player transfer = action.getPlayer();
+					OfflinePlayer transfer = action.getPlayer();
 					tameable.setOwner(transfer);
 					player.sendMessage(PREFIX + "You have transferred the ownership of your " + entityTypeString + " to " + transfer.getName());
 					break;

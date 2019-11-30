@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.clearinventory;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.clearinventory.models.ClearInventoryPlayer;
 import org.bukkit.entity.Player;
 
@@ -8,12 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClearInventory {
-	public final static String PREFIX = BNCore.getPrefix("ClearInventory");
+	public final static String PREFIX = Utils.getPrefix("ClearInventory");
 	private Map<Player, ClearInventoryPlayer> players = new HashMap<>();
 
 	public ClearInventory() {
-		new ClearInventoryCommand();
-		new ClearInventoryToggleCommand();
+		new ClearInventoryTabCompleter();
 		new ClearInventoryListener();
 	}
 

@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.clearinventory;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.clearinventory.models.ClearInventoryPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -15,8 +14,7 @@ public class ClearInventoryListener implements Listener {
 
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
-		Player player = event.getEntity();
-		ClearInventoryPlayer ciPlayer = BNCore.clearInventory.getPlayer(player);
+		ClearInventoryPlayer ciPlayer = BNCore.clearInventory.getPlayer(event.getEntity());
 		ciPlayer.removeCache();
 	}
 }

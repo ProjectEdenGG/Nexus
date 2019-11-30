@@ -4,7 +4,6 @@ import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommand;
 import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommandEvent;
 import me.pugabyte.bncore.features.minigames.commands.models.MinigamesTabEvent;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
-import me.pugabyte.bncore.features.minigames.models.Arena;
 
 import java.util.List;
 
@@ -21,9 +20,9 @@ public class ReloadCommand extends MinigamesCommand {
 		long startTime = System.currentTimeMillis();
 
 		if (args.length == 1) {
-			Arena.read(args[0]);
+			ArenaManager.read(args[0]);
 		} else {
-			Arena.read();
+			ArenaManager.read();
 		}
 
 		event.reply("Reload time took " + (System.currentTimeMillis() - startTime) + "ms");

@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.minigames.commands.commands;
 
 import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommand;
 import me.pugabyte.bncore.features.minigames.commands.models.MinigamesCommandEvent;
-import me.pugabyte.bncore.models.exceptions.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 
 public class QuitCommand extends MinigamesCommand {
 

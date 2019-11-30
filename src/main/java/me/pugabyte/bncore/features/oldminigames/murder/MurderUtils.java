@@ -18,10 +18,11 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 
 public class MurderUtils {
+	private final static Minigames mg = Minigames.plugin;
 
 	public static boolean isPlayingMurder(Player player) {
 		try {
-			MinigamePlayer minigamePlayer = Minigames.getPlugin().getPlayerManager().getMinigamePlayer(player);
+			MinigamePlayer minigamePlayer = mg.getPlayerData().getMinigamePlayer(player);
 			if (minigamePlayer.isInMinigame()) {
 				Minigame minigame = minigamePlayer.getMinigame();
 				if (minigame.hasStarted()) {
@@ -48,9 +49,9 @@ public class MurderUtils {
 
 	public static void kill(Player victim) {
 		ArmorStand armorStand = victim.getWorld().spawn(victim.getLocation(), ArmorStand.class);
-		SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.PLAYER_HEAD);
-		meta.setOwningPlayer(victim);
-		ItemStack skull = new ItemStack(Material.PLAYER_HEAD, 1);
+		SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
+		meta.setOwner(victim.getName());
+		ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
 		skull.setItemMeta(meta);
 		armorStand.setHelmet(skull);
 		armorStand.setGravity(false);
@@ -59,7 +60,7 @@ public class MurderUtils {
 		new CorpseTeleporter(armorStand);
 
 		Bukkit.getServer().dispatchCommand(victim, "mgm quit");
-		victim.sendMessage(MurderCommand.PREFIX + "You were killed!");
+		victim.sendMessage(Murder.PREFIX + "You were killed!");
 	}
 
 	public static void intoxicate(Player player) {
@@ -162,7 +163,7 @@ public class MurderUtils {
 	}
 
 	public static ItemStack getRetriever() {
-		ItemStack item = new ItemStack(Material.ENDER_EYE);
+		ItemStack item = new ItemStack(Material.EYE_OF_ENDER);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(ChatColor.YELLOW + "Retrieve knife");
 		ArrayList<String> lores = new ArrayList<>();

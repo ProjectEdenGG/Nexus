@@ -47,7 +47,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	private String getWinnersString(List<Team> winners) {
 		if (winners.size() > 1) {
 			String result = winners.stream()
-					.map(team -> team.getColor() + team.getName() + ChatColor.DARK_AQUA)
+					.map(team -> team.getColoredName() + ChatColor.DARK_AQUA)
 					.collect(Collectors.joining(", "));
 			int lastCommaIndex = result.lastIndexOf(", ");
 			if (lastCommaIndex >= 0) {
@@ -55,7 +55,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			}
 			return result + " tied in ";
 		} else {
-			return winners.get(0).getColor() + winners.get(0).getName() + ChatColor.DARK_AQUA + " won ";
+			return winners.get(0).getColoredName() + " &3won ";
 		}
 	}
 
