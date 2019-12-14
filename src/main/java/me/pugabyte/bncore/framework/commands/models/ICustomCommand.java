@@ -18,6 +18,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static me.pugabyte.bncore.Utils.listLast;
 import static me.pugabyte.bncore.Utils.right;
@@ -87,7 +88,7 @@ public interface ICustomCommand {
 			// log("Parameter: " + parameter.getName() + " (" + parameter.getType().getName() + ")");
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 			if (annotation == null)
-				throw new BNException("Command parameter not annotated with @Argument: "
+				throw new BNException("Command parameter not annotated with @Arg: "
 						+ method.getName() + "(" + parameter.getType().getName() + " " + parameter.getName() + ")");
 
 			String pathArg = "";
@@ -146,17 +147,19 @@ public interface ICustomCommand {
 
 		if (method == null)
 			// TODO No default path, what do?
-			throw new InvalidInputException("No matching method");
+			throw new InvalidInputException("No matching path");
 
 		return method;
 	}
 
 	@SuppressWarnings("unchecked")
 	default Method getPathMethod(CustomCommand command, List<String> args) {
-		for (Method method : getMethods(command.getClass(), withAnnotation(Path.class))) {
+		Set<Method> methods = getMethods(command.getClass(), withAnnotation(Path.class));
+		if (methods.size() == 1)
+			return methods.iterator().next();
+		for (Method method : methods)
 			if (new PathParser(method.getAnnotation(Path.class)).matches(args))
 				return method;
-		}
 		return null;
 	}
 
