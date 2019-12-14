@@ -135,8 +135,6 @@
             <groupId>com.dieselpoint</groupId>
             <artifactId>norm</artifactId>
             <version>0.8.7</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/norm-0.8.7.jar</systemPath>
         </dependency>
         <!-- MySQL -->
         <dependency>

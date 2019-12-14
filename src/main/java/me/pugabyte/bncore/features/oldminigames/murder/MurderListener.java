@@ -193,8 +193,10 @@ public class MurderListener implements Listener {
 		if (!(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
 
 		List<Material> allowedRedstone = Arrays.asList(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
-		if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK && allowedRedstone.contains(event.getClickedBlock().getType())))
-			event.setCancelled(true);
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && allowedRedstone.contains(event.getClickedBlock().getType()))
+			return;
+
+		event.setCancelled(true);
 
 		// Gunner shooting handled in MinigameListener, along with Quake and Dogfighting
 
