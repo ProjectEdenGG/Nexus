@@ -192,9 +192,15 @@ public class MurderListener implements Listener {
 
 		if (!(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
 
-		List<Material> allowedRedstone = Arrays.asList(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && allowedRedstone.contains(event.getClickedBlock().getType()))
-			return;
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			List<Material> allowedRedstone = Arrays.asList(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
+			if (allowedRedstone.contains(event.getClickedBlock().getType()))
+				return;
+
+			String minigame = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame().getName(false);
+			if ("RavensNestEstate".equalsIgnoreCase(minigame))
+				return;
+		}
 
 		event.setCancelled(true);
 
