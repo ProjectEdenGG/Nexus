@@ -7,7 +7,7 @@ import au.com.mineauz.minigames.events.QuitMinigameEvent;
 import au.com.mineauz.minigames.events.StartMinigameEvent;
 import au.com.mineauz.minigames.minigame.Minigame;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.oldminigames.Utils;
+import me.pugabyte.bncore.features.oldminigames.MinigameUtils;
 import me.pugabyte.bncore.features.oldminigames.murder.runnables.Locator;
 import me.pugabyte.bncore.features.oldminigames.murder.runnables.Retriever;
 import org.bukkit.Bukkit;
@@ -33,6 +33,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -71,7 +72,7 @@ public class MurderListener implements Listener {
 			player.removePotionEffect(_pe.getType());
 		}
 
-		Utils.resetExp(player);
+		MinigameUtils.resetExp(player);
 		player.setFoodLevel(10);
 
 		// Turn off compass scheduler
@@ -131,11 +132,11 @@ public class MurderListener implements Listener {
 
 		assignGunner(list);
 		BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-						Utils.shufflePlayers(minigame),
+						MinigameUtils.shufflePlayers(minigame),
 				2L);
 		for (MinigamePlayer player : list)
 			BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-							Utils.resetExp(player.getPlayer()),
+							MinigameUtils.resetExp(player.getPlayer()),
 					2L);
 
 
@@ -144,7 +145,7 @@ public class MurderListener implements Listener {
 			sendAssignMessages(_player);
 
 			_player.getInventory().setHeldItemSlot(0);
-			Utils.resetExp(_player);
+			MinigameUtils.resetExp(_player);
 			locators.put(_player, Locator.run(minigame, _player));
 		}
 	}
@@ -191,7 +192,9 @@ public class MurderListener implements Listener {
 
 		if (!(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
 
-		event.setCancelled(true);
+		List<Material> allowedRedstone = Arrays.asList(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
+		if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK && allowedRedstone.contains(event.getClickedBlock().getType())))
+			event.setCancelled(true);
 
 		// Gunner shooting handled in MinigameListener, along with Quake and Dogfighting
 
@@ -224,7 +227,7 @@ public class MurderListener implements Listener {
 
 	private void useTeleporter(Player player) {
 		Minigame minigame = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame();
-		Utils.shufflePlayers(minigame, true);
+		MinigameUtils.shufflePlayers(minigame, true);
 
 		player.sendMessage(PREFIX + "You used the teleporter!");
 		player.getInventory().remove(Material.ENDER_PEARL);
