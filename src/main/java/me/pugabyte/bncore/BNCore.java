@@ -57,7 +57,7 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public static void registerListener(Listener listener) {
-		if (BNCore.getInstance().isEnabled())
+		if (getInstance().isEnabled())
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
 		else
 			log("Could not register listener " + listener.toString() + "!");

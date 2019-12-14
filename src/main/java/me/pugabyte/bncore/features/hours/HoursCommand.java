@@ -19,7 +19,7 @@ public class HoursCommand extends CustomCommand {
 
 	public HoursCommand(CommandEvent event) {
 		super(event);
-		hours = (Hours) service.get(event.getPlayer());
+		hours = (Hours) service.get(player());
 	}
 
 	@Path
