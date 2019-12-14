@@ -27,7 +27,7 @@ public class MinigameListener implements Listener {
 				Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "clearentitieswalls");
 			} else if (name.toLowerCase().matches("quake|ffa|one vs one|1v1|1 v 1|dogfighting|oitq")) {
 				BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-								Utils.shufflePlayers(minigame),
+								MinigameUtils.shufflePlayers(minigame),
 						2L);
 			}
 		} catch (NullPointerException ex) {
