@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.mcmmo;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -13,11 +12,10 @@ import java.util.Map;
 
 import static me.pugabyte.bncore.Utils.camelCase;
 
-@Aliases("jmcmmoprestige")
-public class McMMOCommand extends CustomCommand {
+public class JMcMMOPrestigeCommand extends CustomCommand {
 	private McMMOService service = new McMMOService();
 
-	public McMMOCommand(CommandEvent event) {
+	public JMcMMOPrestigeCommand(CommandEvent event) {
 		super(event);
 	}
 

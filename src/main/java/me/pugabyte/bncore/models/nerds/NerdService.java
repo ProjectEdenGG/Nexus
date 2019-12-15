@@ -16,7 +16,10 @@ public class NerdService extends BaseService {
 	}
 
 	public Nerd find(String partialName) {
-		return database.where("name like ?", "%" + partialName + "%").first(Nerd.class);
+		return database.sql(
+				"select nerd.* from nerd inner join hours on hours.uuid = nerd.uuid where name like ? order by position(? in name), hours.total desc",
+				"%" + partialName + "%", partialName
+		).first(Nerd.class);
 	}
 
 	public List<Nerd> getOnlineNerds() {

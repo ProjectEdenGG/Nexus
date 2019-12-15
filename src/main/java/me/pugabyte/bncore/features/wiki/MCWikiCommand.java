@@ -6,7 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-@Aliases({"minecraftwiki", "mcwiki"})
+@Aliases("minecraftwiki")
 public class MCWikiCommand extends CustomCommand {
 
 	MCWikiCommand(CommandEvent event) {

@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.framework.commands.models;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -15,10 +16,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static me.pugabyte.bncore.Utils.listLast;
 import static me.pugabyte.bncore.Utils.right;
@@ -53,17 +57,27 @@ public interface ICustomCommand {
 	}
 
 	default String getName() {
-		return getAliases()[0];
+		return getAliases().get(0);
 	}
 
-	default String[] getAliases() {
+	default List<String> getAliases() {
+		String name = listLast(this.getClass().toString(), ".").replaceAll("Command", "");
+		List<String> aliases = new ArrayList<>(Collections.singletonList(name.toLowerCase()));
+
 		for (Annotation annotation : this.getClass().getAnnotations()) {
 			if (annotation instanceof Aliases) {
-				return ((Aliases) annotation).value();
+				for (String alias : ((Aliases) annotation).value()) {
+					if (!Pattern.compile("[a-zA-Z0-9_-]+").matcher(alias).matches()) {
+						BNCore.warn("Alias invalid: " + name + "Command.java / " + alias);
+						continue;
+					}
+
+					aliases.add(alias);
+				}
 			}
 		}
 
-		throw new RuntimeException("No aliases configured for command " + this.getClass().getName());
+		return aliases;
 	}
 
 	default String getPermission() {

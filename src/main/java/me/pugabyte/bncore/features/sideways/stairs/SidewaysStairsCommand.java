@@ -14,7 +14,7 @@ import static me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs.playerD
  * @author Camaros
  */
 
-@Aliases({"sidewaysstairs", "sws"})
+@Aliases("sws")
 public class SidewaysStairsCommand extends CustomCommand {
 	private SidewaysStairsPlayer swsPlayer;
 

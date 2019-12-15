@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.chat.alerts;
 
 import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -20,7 +19,6 @@ import java.util.Optional;
 
 import static me.pugabyte.bncore.Utils.colorize;
 
-@Aliases("alerts")
 public class AlertsCommand extends CustomCommand {
 	private AlertsService service = new AlertsService();
 	private Alerts alerts;
