@@ -21,9 +21,8 @@ public class NerdService extends BaseService {
 
 	public List<Nerd> getOnlineNerds() {
 		List<Nerd> nerds = database.where("uuid in ?", Utils.getOnlineUuids()).results(Nerd.class);
-		for (Nerd nerd : nerds) {
+		for (Nerd nerd : nerds)
 			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
-		}
 		return nerds;
 	}
 

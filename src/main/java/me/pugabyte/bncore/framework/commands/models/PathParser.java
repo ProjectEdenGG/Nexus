@@ -7,6 +7,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static me.pugabyte.bncore.Utils.left;
 
@@ -33,7 +35,7 @@ class PathParser {
 			if (path.length() > 0)
 				for (String pathArg : pathArgs)
 					switch (left(pathArg, 1)) {
-						case "[": case "{": case "(":
+						case "[": case "{":
 							break;
 						default:
 							literalWords += pathArg + " ";
@@ -56,7 +58,8 @@ class PathParser {
 			}
 
 			// Has arguments, has literal worlds
-			if (argsString.startsWith(literalWords))
+			Matcher matcher = Pattern.compile("^" + literalWords + ".*").matcher(argsString);
+			if (matcher.matches())
 				fallback = method;
 		}
 
