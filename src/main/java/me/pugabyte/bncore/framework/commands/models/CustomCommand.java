@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -95,7 +96,7 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 	}
 
 	protected String arg(int i) {
-		return arg(1, false);
+		return arg(i, false);
 	}
 
 	protected String arg(int i, boolean rest) {

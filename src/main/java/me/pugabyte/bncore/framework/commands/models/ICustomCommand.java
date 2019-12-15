@@ -139,11 +139,12 @@ public interface ICustomCommand {
 	default Method getMethod(CustomCommand command, List<String> args) {
 		Method method = getPathMethod(command, args);
 
-		int i = args.size() - 1;
-		while (method == null && i >= 0) {
-			method = getPathMethod(command, args.subList(0, i));
-			--i;
-		}
+		// Work backwards until match is found - not needed after rework?
+//		int i = args.size() - 1;
+//		while (method == null && i >= 0) {
+//			method = getPathMethod(command, args.subList(0, i));
+//			--i;
+//		}
 
 		if (method == null)
 			// TODO No default path, what do?
@@ -157,10 +158,7 @@ public interface ICustomCommand {
 		Set<Method> methods = getMethods(command.getClass(), withAnnotation(Path.class));
 		if (methods.size() == 1)
 			return methods.iterator().next();
-		for (Method method : methods)
-			if (new PathParser(method.getAnnotation(Path.class)).matches(args))
-				return method;
-		return null;
+		return new PathParser(methods).match(args);
 	}
 
 	default void checkPermission(CommandSender sender, Method method) {
