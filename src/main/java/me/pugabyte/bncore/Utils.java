@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class Utils {
 	public static String getPrefix(String prefix) {
-		return "§8§l[§e" + prefix + "§8§l]§3 ";
+		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
 	}
 
 	public static String colorize(String string) {

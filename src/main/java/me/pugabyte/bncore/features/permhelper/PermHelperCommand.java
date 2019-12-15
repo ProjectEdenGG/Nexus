@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.staff.permhelper;
+package me.pugabyte.bncore.features.permhelper;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
