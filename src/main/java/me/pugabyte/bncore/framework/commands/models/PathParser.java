@@ -16,7 +16,7 @@ class PathParser {
 	Set<Method> methods;
 
 	Method match(List<String> args) {
-		String argsString = String.join(" ", args);
+		String argsString = String.join(" ", args).toLowerCase();
 
 		// Look for exact match
 		for (Method method : methods)
@@ -26,7 +26,7 @@ class PathParser {
 		Method fallback = null;
 
 		for (Method method : methods) {
-			String path = method.getAnnotation(Path.class).value();
+			String path = method.getAnnotation(Path.class).value().toLowerCase();
 			String[] pathArgs = path.split(" ");
 
 			String literalWords = "";
