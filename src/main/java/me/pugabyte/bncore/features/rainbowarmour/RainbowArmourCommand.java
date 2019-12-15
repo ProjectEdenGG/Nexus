@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-@Aliases({"rainbowarmour", "rainbowarmor", "rba"})
+@Aliases({"rainbowarmor", "rba"})
 @Permission("rainbow.armour")
 public class RainbowArmourCommand extends CustomCommand {
 	private int rate = 9;

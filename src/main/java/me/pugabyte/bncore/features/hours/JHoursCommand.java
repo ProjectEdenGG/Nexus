@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.hours;
 
 import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -13,11 +12,10 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 
-@Aliases("jhours")
-public class HoursCommand extends CustomCommand {
+public class JHoursCommand extends CustomCommand {
 	private HoursService service = new HoursService();
 
-	public HoursCommand(CommandEvent event) {
+	public JHoursCommand(CommandEvent event) {
 		super(event);
 	}
 

@@ -8,7 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
 import static me.pugabyte.bncore.features.sideways.logs.SidewaysLogs.enabledPlayers;
 
-@Aliases({"sidewayslogs", "swl"})
+@Aliases("swl")
 public class SidewaysLogsCommand extends CustomCommand {
 
 	SidewaysLogsCommand(CommandEvent event) {

@@ -14,13 +14,13 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-@Aliases({"jdailyrewards", "jdr"})
+@Aliases("jdr")
 @Permission("daily.rewards")
-public class DailyRewardsCommand extends CustomCommand {
+public class JDailyRewardsCommand extends CustomCommand {
 	private DailyRewardsService service = new DailyRewardsService();
 	private DailyRewards dailyRewards;
 
-	public DailyRewardsCommand(CommandEvent event) {
+	public JDailyRewardsCommand(CommandEvent event) {
 		super(event);
 		if (sender() instanceof Player)
 			dailyRewards = (DailyRewards) service.get(player());

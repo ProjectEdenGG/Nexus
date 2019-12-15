@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.leash;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -17,7 +16,6 @@ import java.util.UUID;
 
 import static me.pugabyte.bncore.Utils.repeat;
 
-@Aliases("leash")
 @Permission("leash.use")
 public class LeashCommand extends CustomCommand {
 	private HashMap<UUID, Integer> leashes = BNCore.leash.leashes;

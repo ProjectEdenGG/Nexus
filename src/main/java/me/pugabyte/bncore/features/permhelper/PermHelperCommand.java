@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.permhelper;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Aliases("permhelper")
 @Permission("permissions.manage")
 public class PermHelperCommand extends CustomCommand {
 	String test = "hi";
