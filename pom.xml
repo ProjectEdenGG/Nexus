@@ -132,9 +132,9 @@
         </dependency>
         <!-- Norm -->
         <dependency>
-            <groupId>com.dieselpoint</groupId>
+            <groupId>com.github.pugabyte</groupId>
             <artifactId>norm</artifactId>
-            <version>0.8.7</version>
+            <version>-SNAPSHOT</version>
         </dependency>
         <!-- MySQL -->
         <dependency>
