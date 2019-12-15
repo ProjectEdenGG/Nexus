@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -79,7 +78,7 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 
 	public Object convert(String value, Class<?> type) {
 		if (Player.class == type || OfflinePlayer.class == type) {
-			if ("self".equalsIgnoreCase(value)) value = ((Player) event.getSender()).getUniqueId().toString();
+			if ("self".equalsIgnoreCase(value)) value = player().getUniqueId().toString();
 			return Utils.getPlayer(value);
 		}
 		if (Boolean.class == type || Boolean.TYPE == type) {

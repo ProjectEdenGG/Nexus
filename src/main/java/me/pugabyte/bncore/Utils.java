@@ -2,6 +2,7 @@ package me.pugabyte.bncore;
 
 import ch.njol.skript.variables.Variables;
 import com.google.common.base.Strings;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
@@ -112,6 +113,8 @@ public class Utils {
 	}
 
 	public static OfflinePlayer getPlayer(String partialName) {
+		if (partialName.length() == 0) throw new InvalidInputException("No player name given");
+
 		partialName = partialName.toLowerCase();
 
 		if (partialName.length() == 36)
