@@ -35,7 +35,7 @@ public class LeashCommand extends CustomCommand {
 		startLeash(player(), target);
 	}
 
-	@Path("stop")
+	@Path("(stop|cancel)")
 	void stop() {
 		if (!leashes.containsKey(player().getUniqueId()))
 			error("You are not currently leashed to a player. Use &c/leash <player>");
@@ -43,7 +43,7 @@ public class LeashCommand extends CustomCommand {
 		stopLeash(player(), "&3You are no longer leashed to the player.");
 	}
 
-	@Path("stopall")
+	@Path("(stopall|cancelall)")
 	void stopAll() {
 		for (Map.Entry<UUID, Integer> leash : leashes.entrySet())
 			stopLeash(Utils.getPlayer(leash.getKey()).getPlayer(), "Leash cancelled by &e" + sender().getName());

@@ -43,13 +43,14 @@ public class CommandEvent extends Event implements Cancellable {
 	}
 
 	public void handleException(Exception ex) {
-		ex.printStackTrace();
 		if (ex.getCause() != null && ex.getCause() instanceof BNException)
 			reply(command.getPrefix() + "&c" + ex.getCause().getMessage());
 		else if (ex instanceof BNException)
 			reply(command.getPrefix() + "&c" + ex.getMessage());
-		else
+		else {
+			ex.printStackTrace();
 			reply("&cAn internal error occurred while attempting to execute this command");
+		}
 	}
 
 }
