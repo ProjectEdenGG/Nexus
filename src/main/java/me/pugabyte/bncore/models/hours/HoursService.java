@@ -33,6 +33,7 @@ public class HoursService extends BaseService {
 		if (type.contains("day") || type.contains("daily")) return HoursType.DAILY;
 		throw new InvalidInputException("Invalid leaderboard type. Options are: " + HoursType.valuesString());
 	}
+
 	public enum HoursType {
 		TOTAL,
 		MONTHLY,
@@ -49,6 +50,5 @@ public class HoursService extends BaseService {
 					.toLowerCase();
 		}
 	}
-
 
 }
