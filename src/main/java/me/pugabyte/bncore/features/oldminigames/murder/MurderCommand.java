@@ -25,6 +25,7 @@ public class MurderCommand extends CustomCommand {
 		player().getInventory().addItem(MurderUtils.getScrap());
 		player().getInventory().addItem(MurderUtils.getFakeScrap());
 		player().getInventory().addItem(MurderUtils.getCompass());
+		player().getInventory().addItem(MurderUtils.getBloodlust());
 		player().getInventory().addItem(MurderUtils.getTeleporter());
 		player().getInventory().addItem(MurderUtils.getAdrenaline());
 		player().getInventory().addItem(MurderUtils.getRetriever());
