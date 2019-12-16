@@ -100,4 +100,12 @@ public class SkriptFunctions {
 		parameters[0] = new String[]{player.getUniqueId().toString()};
 		return FunctionUtils.executeFunction("getSuffix", parameters)[0].toString();
 	}
+
+	public static void redTint(Player player, double fadeTime, double intensity) {
+		Object[][] parameters = new Object[3][];
+		parameters[0] = new Player[]{player};
+		parameters[1] = new Double[]{fadeTime};
+		parameters[2] = new Double[]{intensity};
+		FunctionUtils.executeFunction("redTint", parameters);
+	}
 }
