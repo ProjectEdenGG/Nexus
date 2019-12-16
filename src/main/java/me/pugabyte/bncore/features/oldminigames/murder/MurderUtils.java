@@ -3,19 +3,16 @@ package me.pugabyte.bncore.features.oldminigames.murder;
 import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.minigame.Minigame;
+import me.pugabyte.bncore.ItemStackBuilder;
 import me.pugabyte.bncore.features.oldminigames.murder.runnables.CorpseTeleporter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.ArrayList;
 
 public class MurderUtils {
 	private final static Minigames mg = Minigames.plugin;
@@ -76,114 +73,66 @@ public class MurderUtils {
 	}
 
 	public static ItemStack getKnife() {
-		ItemStack item = new ItemStack(Material.IRON_SWORD);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.RED + "Knife");
-		ArrayList<String> lores = new ArrayList<>();
-		lores.add(ChatColor.WHITE + "Use this to murder innocents!");
-		lores.add(ChatColor.YELLOW + "Left-click" + ChatColor.WHITE + " to attack");
-		lores.add(ChatColor.YELLOW + "Right-click" + ChatColor.WHITE + " to throw");
-		meta.setLore(lores);
-		item.setItemMeta(meta);
-
-		return item;
+		return new ItemStackBuilder(Material.IRON_SWORD)
+				.name("&cKnife")
+				.lore("&fUse this to murder innocents!", "Left-click &fto attack", "Right-click &fto throw")
+				.build();
 	}
 
 	public static ItemStack getGun() {
-		ItemStack item = new ItemStack(Material.IRON_HOE);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName("Gun");
-		ArrayList<String> lores = new ArrayList<>();
-		lores.add(ChatColor.WHITE + "Use this to kill the murderer!");
-		lores.add(ChatColor.YELLOW + "Right-click" + ChatColor.WHITE + " to shoot");
-		meta.setLore(lores);
-		item.setItemMeta(meta);
-
-		return item;
+		return new ItemStackBuilder(Material.IRON_HOE)
+				.name("&eGun")
+				.lore("&fUse this to kill the murderer!", "&eRight-click &fto shoot")
+				.build();
 	}
 
 	public static ItemStack getScrap() {
-		ItemStack item = new ItemStack(Material.IRON_INGOT);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.YELLOW + "Scrap");
-		ArrayList<String> lores = new ArrayList<>();
-		lores.add(ChatColor.WHITE + "Collect 10 to craft a gun!");
-		meta.setLore(lores);
-		item.setItemMeta(meta);
-
-		return item;
+		return new ItemStackBuilder(Material.IRON_INGOT)
+				.name("&eScrap")
+				.lore("&fCollect 10 to craft a gun!")
+				.build();
 	}
 
 	public static ItemStack getFakeScrap() {
-		ItemStack item = new ItemStack(Material.IRON_INGOT);
-		item.setAmount(9);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.YELLOW + "Fake Scrap");
-		ArrayList<String> lores = new ArrayList<>();
-		lores.add(ChatColor.WHITE + "Use this to fool the innocents!");
-		meta.setLore(lores);
-		item.setItemMeta(meta);
-
-		return item;
+		return new ItemStackBuilder(Material.IRON_INGOT)
+				.amount(9)
+				.name("&eFake Scrap")
+				.lore("&fUse this to fool the innocents!")
+				.build();
 	}
 
 	public static ItemStack getCompass() {
-		ItemStack item = new ItemStack(Material.COMPASS);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.YELLOW + "Locator");
-		ArrayList<String> lores = new ArrayList<>();
-		lores.add(ChatColor.WHITE + "Points to the closest innocent");
-		meta.setLore(lores);
-		item.setItemMeta(meta);
-
-		return item;
+		return new ItemStackBuilder(Material.COMPASS)
+				.name("&eLocator")
+				.lore("&fPoints to the closest innocent")
+				.build();
 	}
 
 	public static ItemStack getTeleporter() {
-		ItemStack item = new ItemStack(Material.ENDER_PEARL);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.YELLOW + "Teleporter");
-		ArrayList<String> lores = new ArrayList<>();
-		lores.add(ChatColor.YELLOW + "Right-click" + ChatColor.WHITE + " to teleport all innocents");
-		meta.setLore(lores);
-		item.setItemMeta(meta);
-
-		return item;
+		return new ItemStackBuilder(Material.ENDER_PEARL)
+				.name("&eTeleporter")
+				.lore("&eRight-click &fto teleport all innocents to random locations")
+				.build();
 	}
 
 	public static ItemStack getAdrenaline() {
-		ItemStack item = new ItemStack(Material.SUGAR);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.YELLOW + "Adrenaline");
-		ArrayList<String> lores = new ArrayList<>();
-		lores.add(ChatColor.YELLOW + "Right-click" + ChatColor.WHITE + " to receive a speed boost");
-		meta.setLore(lores);
-		item.setItemMeta(meta);
+		return new ItemStackBuilder(Material.SUGAR)
+				.name("&eAdrenaline")
+				.lore("&eRight-click &fto receive a speed boost")
+				.build();
+	}
 
-		return item;
+	public static ItemStack getBloodlust() {
+		return new ItemStackBuilder(Material.EYE_OF_ENDER)
+				.name("&eBloodlust")
+				.lore("&eRight-click &fto highlight all players, for a penalty!")
+				.build();
 	}
 
 	public static ItemStack getRetriever() {
-		ItemStack item = new ItemStack(Material.TRIPWIRE_HOOK);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.YELLOW + "Retrieve knife");
-		ArrayList<String> lores = new ArrayList<>();
-		lores.add(ChatColor.YELLOW + "Right-click" + ChatColor.WHITE + " to retrieve the knife, for a penalty!");
-		meta.setLore(lores);
-		item.setItemMeta(meta);
-
-		return item;
-	}
-
-	public static ItemStack getBloodlust(){
-		ItemStack item = new ItemStack(Material.EYE_OF_ENDER);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.YELLOW + "BloodLust");
-		ArrayList<String> lores = new ArrayList<>();
-		lores.add(ChatColor.YELLOW + "Right-click" + ChatColor.WHITE + " to highlight all players!");
-		meta.setLore(lores);
-		item.setItemMeta(meta);
-
-		return item;
+		return new ItemStackBuilder(Material.TRIPWIRE_HOOK)
+				.name("&eRetrieve knife")
+				.lore("&eRight-click &fto retrieve the knife, for a penalty!")
+				.build();
 	}
 }
