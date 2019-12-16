@@ -246,9 +246,10 @@ public class MurderListener implements Listener {
 	}
 
 	private void useBloodlust(Player player) {
-		List<MinigamePlayer> players = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame().getPlayers();
 		player.sendMessage(PREFIX + "You used bloodlust!");
 		player.getInventory().remove(Material.EYE_OF_ENDER);
+
+		List<MinigamePlayer> players = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame().getPlayers();
 		for (MinigamePlayer _minigamePlayer : players) {
 			if (!MurderUtils.isMurderer(_minigamePlayer.getPlayer())) {
 				_minigamePlayer.getPlayer().sendMessage(PREFIX + "The murderer used bloodlust!");
