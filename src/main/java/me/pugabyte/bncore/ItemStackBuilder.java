@@ -12,7 +12,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.bncore.Utils.colorize;
@@ -34,10 +33,6 @@ public class ItemStackBuilder {
 	public ItemStackBuilder name(String displayName) {
 		itemMeta.setDisplayName(colorize(displayName));
 		return this;
-	}
-
-	public ItemStackBuilder lore(String lore) {
-		return lore(Collections.singletonList(lore));
 	}
 
 	public ItemStackBuilder lore(String... lore) {
@@ -65,8 +60,7 @@ public class ItemStackBuilder {
 			EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) itemMeta;
 			bookMeta.addStoredEnchant(enchantment, level, ignoreLevelRestriction);
 			itemMeta = bookMeta;
-		}
-		else {
+		} else {
 			itemMeta.addEnchant(enchantment, level, ignoreLevelRestriction);
 		}
 
