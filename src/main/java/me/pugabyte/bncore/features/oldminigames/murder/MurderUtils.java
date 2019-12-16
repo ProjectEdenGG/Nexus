@@ -116,6 +116,7 @@ public class MurderUtils {
 
 	public static ItemStack getFakeScrap() {
 		ItemStack item = new ItemStack(Material.IRON_INGOT);
+		item.setAmount(9);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(ChatColor.YELLOW + "Fake Scrap");
 		ArrayList<String> lores = new ArrayList<>();
@@ -163,11 +164,23 @@ public class MurderUtils {
 	}
 
 	public static ItemStack getRetriever() {
-		ItemStack item = new ItemStack(Material.EYE_OF_ENDER);
+		ItemStack item = new ItemStack(Material.TRIPWIRE_HOOK);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(ChatColor.YELLOW + "Retrieve knife");
 		ArrayList<String> lores = new ArrayList<>();
 		lores.add(ChatColor.YELLOW + "Right-click" + ChatColor.WHITE + " to retrieve the knife, for a penalty!");
+		meta.setLore(lores);
+		item.setItemMeta(meta);
+
+		return item;
+	}
+
+	public static ItemStack getBloodlust(){
+		ItemStack item = new ItemStack(Material.EYE_OF_ENDER);
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(ChatColor.YELLOW + "BloodLust");
+		ArrayList<String> lores = new ArrayList<>();
+		lores.add(ChatColor.YELLOW + "Right-click" + ChatColor.WHITE + " to highlight all players!");
 		meta.setLore(lores);
 		item.setItemMeta(meta);
 

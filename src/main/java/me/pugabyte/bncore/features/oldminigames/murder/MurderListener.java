@@ -8,6 +8,7 @@ import au.com.mineauz.minigames.events.StartMinigameEvent;
 import au.com.mineauz.minigames.minigame.Minigame;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.oldminigames.MinigameUtils;
+import me.pugabyte.bncore.features.oldminigames.murder.runnables.Bloodlust;
 import me.pugabyte.bncore.features.oldminigames.murder.runnables.Locator;
 import me.pugabyte.bncore.features.oldminigames.murder.runnables.Retriever;
 import org.bukkit.Bukkit;
@@ -33,10 +34,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static me.pugabyte.bncore.features.oldminigames.murder.Murder.PREFIX;
 
@@ -210,9 +208,11 @@ public class MurderListener implements Listener {
 			case IRON_SWORD:
 				throwKnife(player);
 				return;
-			case EYE_OF_ENDER:
+			case TRIPWIRE_HOOK:
 				retrieveKnife(player);
 				return;
+			case EYE_OF_ENDER:
+				useBloodlust(player);
 			case ENDER_PEARL:
 				useTeleporter(player);
 				return;
@@ -241,6 +241,22 @@ public class MurderListener implements Listener {
 		player.getInventory().remove(Material.ENDER_PEARL);
 	}
 
+	private void useBloodlust(Player player) {
+		Minigame minigame = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame();
+		for (MinigamePlayer _minigamePlayer : minigame.getPlayers()) {
+			boolean isMurder = minigame.getGametypeName().equalsIgnoreCase("Murder");
+			boolean isMurderer = MurderUtils.isMurderer(_minigamePlayer.getPlayer());
+			if (isMurder && isMurderer) {
+				_minigamePlayer.getPlayer().sendMessage(PREFIX + "The murderer used bloodlust!");
+			}
+		}
+		player.sendMessage(PREFIX + "You used bloodlust!");
+		player.getInventory().remove(Material.EYE_OF_ENDER);
+		List<MinigamePlayer> players = minigame.getPlayers();
+
+		new Bloodlust(players).runTaskTimer(BNCore.getInstance(), 0, 40);
+	}
+
 	private void throwKnife(Player player) {
 		Location loc = player.getEyeLocation().toVector().add(player.getLocation().getDirection().multiply(2))
 				.toLocation(player.getWorld(), player.getLocation().getYaw(), player.getLocation().getPitch());
@@ -250,8 +266,8 @@ public class MurderListener implements Listener {
 		player.getInventory().remove(Material.IRON_SWORD);
 
 		// Retrieval mechanics
-		if (player.getInventory().contains(Material.EYE_OF_ENDER)) {
-			player.getInventory().remove(Material.EYE_OF_ENDER);
+		if (player.getInventory().contains(Material.TRIPWIRE_HOOK)) {
+			player.getInventory().remove(Material.TRIPWIRE_HOOK);
 			player.getInventory().setItem(1, MurderUtils.getRetriever());
 			// Start countdown
 			ItemMeta meta = player.getInventory().getItem(1).getItemMeta();
@@ -425,7 +441,7 @@ public class MurderListener implements Listener {
 					// If they already have a knife, don't pick it up
 					if (player.getInventory().contains(Material.IRON_SWORD)) return;
 
-					if (player.getInventory().contains(Material.EYE_OF_ENDER)) {
+					if (player.getInventory().contains(Material.TRIPWIRE_HOOK)) {
 						// They didn't use their retriever, move it back to their inventoryContents
 						player.getInventory().setItem(17, MurderUtils.getRetriever());
 					}
