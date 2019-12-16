@@ -37,9 +37,9 @@ public class Connect4Command extends CustomCommand {
 	}
 
 	private int validate(int column) {
-		if (!(column < 0 || column > 7))
-			throw new InvalidInputException("Incorrect arguments");
-		return column;
+		if(column >= 0 && column <= 7)
+			return column;
+		throw new InvalidInputException("Incorrect arguments");
 	}
 
 	private void place(Connect4Team team, int col) {
