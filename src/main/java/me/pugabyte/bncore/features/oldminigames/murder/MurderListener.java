@@ -34,7 +34,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 import static me.pugabyte.bncore.features.oldminigames.murder.Murder.PREFIX;
 
@@ -213,6 +216,7 @@ public class MurderListener implements Listener {
 				return;
 			case EYE_OF_ENDER:
 				useBloodlust(player);
+				return;
 			case ENDER_PEARL:
 				useTeleporter(player);
 				return;
@@ -242,17 +246,14 @@ public class MurderListener implements Listener {
 	}
 
 	private void useBloodlust(Player player) {
-		Minigame minigame = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame();
-		for (MinigamePlayer _minigamePlayer : minigame.getPlayers()) {
-			boolean isMurder = minigame.getGametypeName().equalsIgnoreCase("Murder");
-			boolean isMurderer = MurderUtils.isMurderer(_minigamePlayer.getPlayer());
-			if (isMurder && isMurderer) {
+		List<MinigamePlayer> players = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame().getPlayers();
+		player.sendMessage(PREFIX + "You used bloodlust!");
+		player.getInventory().remove(Material.EYE_OF_ENDER);
+		for (MinigamePlayer _minigamePlayer : players) {
+			if (!MurderUtils.isMurderer(_minigamePlayer.getPlayer())) {
 				_minigamePlayer.getPlayer().sendMessage(PREFIX + "The murderer used bloodlust!");
 			}
 		}
-		player.sendMessage(PREFIX + "You used bloodlust!");
-		player.getInventory().remove(Material.EYE_OF_ENDER);
-		List<MinigamePlayer> players = minigame.getPlayers();
 
 		new Bloodlust(players).runTaskTimer(BNCore.getInstance(), 0, 40);
 	}
