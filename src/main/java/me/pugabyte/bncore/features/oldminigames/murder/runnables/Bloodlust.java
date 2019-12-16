@@ -4,6 +4,8 @@ import au.com.mineauz.minigames.MinigamePlayer;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -25,6 +27,7 @@ public class Bloodlust extends BukkitRunnable {
 			for (MinigamePlayer minigamePlayer : players) {
 				Player player = minigamePlayer.getPlayer();
 				player.playSound(player.getLocation(), "entity.player.breath", SoundCategory.MASTER, 2F, 0.1F);
+				player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
 				SkriptFunctions.redTint(player, fadeTime, intensity);
 			}
 			time--;
