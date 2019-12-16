@@ -5,10 +5,10 @@ import me.pugabyte.bncore.skript.SkriptFunctions;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
 import java.util.List;
 
 public class Bloodlust extends BukkitRunnable {
-
 	private List<MinigamePlayer> players;
 	private int time;
 	private double fadeTime = 0.5;
@@ -18,18 +18,19 @@ public class Bloodlust extends BukkitRunnable {
 		this.players = players;
 		this.time = 10;
 	}
+
 	@Override
 	public void run() {
-		if(time > 0){
-			for (MinigamePlayer minigamePlayer: players) {
+		if (time > 0) {
+			for (MinigamePlayer minigamePlayer : players) {
 				Player player = minigamePlayer.getPlayer();
 				player.playSound(player.getLocation(), "entity.player.breath", SoundCategory.MASTER, 2F, 0.1F);
 				SkriptFunctions.redTint(player, fadeTime, intensity);
 			}
 			time--;
-		}else{
+		} else {
 			this.cancel();
 		}
-
 	}
+
 }
