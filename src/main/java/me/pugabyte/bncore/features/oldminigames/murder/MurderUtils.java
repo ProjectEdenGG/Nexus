@@ -75,7 +75,7 @@ public class MurderUtils {
 	public static ItemStack getKnife() {
 		return new ItemStackBuilder(Material.IRON_SWORD)
 				.name("&cKnife")
-				.lore("&fUse this to murder innocents!", "Left-click &fto attack", "Right-click &fto throw")
+				.lore("&fUse this to murder innocents!", "&eLeft-click &fto attack", "&eRight-click &fto throw")
 				.build();
 	}
 
