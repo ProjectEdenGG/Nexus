@@ -29,6 +29,15 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Utils {
+
+	public static void pug(String message) {
+		Bukkit.getPlayer("Pugabyte").sendMessage(message);
+	}
+
+	public static void wakka(String message) {
+		Bukkit.getPlayer("WakkaFlocka").sendMessage(message);
+	}
+
 	public static String getPrefix(String prefix) {
 		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
 	}
