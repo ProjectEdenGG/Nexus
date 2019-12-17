@@ -31,7 +31,6 @@ public class Lobby implements ConfigurationSerializable {
 			new Lobby.LobbyTimer(this, minigamer.getMatch(), waitTime);
 	}
 
-
 	@Override
 	public Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
@@ -81,9 +80,8 @@ public class Lobby implements ConfigurationSerializable {
 				if (--time > 0) {
 					LobbyTimerTickEvent event = new LobbyTimerTickEvent(lobby, match, time);
 					Utils.callEvent(event);
-					if (broadcasts.contains(time)) {
+					if (broadcasts.contains(time))
 						match.broadcast("&e" + time + " &7seconds left...");
-					}
 				} else if (time == 0) {
 					stop();
 					match.start();

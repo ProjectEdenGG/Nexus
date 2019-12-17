@@ -19,7 +19,7 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("redtint {double} {double} {player}")
-	void getPlayer(@Arg("0.5") double fadeTime, @Arg("10") double intensity, @Arg("self") Player player) {
+	void redTint(@Arg("0.5") double fadeTime, @Arg("10") double intensity, @Arg("self") Player player) {
 		SkriptFunctions.redTint(player, fadeTime, intensity);
 	}
 }
