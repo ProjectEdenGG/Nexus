@@ -3,10 +3,12 @@ package me.pugabyte.bncore.features.minigames.models;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -94,13 +96,16 @@ public class Minigamer {
 		// TODO: Unvanish
 		player.setGameMode(GameMode.ADVENTURE);
 		player.setHealth(20);
-		for (PotionEffect effect : player.getActivePotionEffects()) {
-			player.removePotionEffect(effect.getType());
-		}
 		player.setExp(0);
 		player.setTotalExperience(0);
 		player.setLevel(0);
 		player.getInventory().clear();
+		for (PotionEffect effect : player.getActivePotionEffects())
+			player.removePotionEffect(effect.getType());
+
+		for (Player toUnhide : Bukkit.getOnlinePlayers())
+			if (player != toUnhide)
+				player.showPlayer(BNCore.getInstance(), toUnhide);
 	}
 
 }
