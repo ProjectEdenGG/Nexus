@@ -95,7 +95,6 @@ public class MurderUtils {
 
 	public static ItemStack getFakeScrap() {
 		return new ItemStackBuilder(Material.IRON_INGOT)
-				.amount(9)
 				.name("&eFake Scrap")
 				.lore("&fUse this to fool the innocents!")
 				.build();

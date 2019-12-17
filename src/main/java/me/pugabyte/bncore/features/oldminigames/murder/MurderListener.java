@@ -386,16 +386,10 @@ public class MurderListener implements Listener {
 
 				if (MurderUtils.isGunner(player)) return;
 
+				boolean isMurderer = MurderUtils.isMurderer(player);
+
 				// Fake pick up
 				event.getItem().remove();
-
-				if (MurderUtils.isMurderer(player)) {
-					if (!player.getInventory().contains(Material.IRON_INGOT)) {
-						// They don't have their fake scrap, give them one
-						player.getInventory().setItem(8, MurderUtils.getFakeScrap());
-					}
-					return;
-				}
 
 				int amount = 0;
 				try {
@@ -406,12 +400,15 @@ public class MurderListener implements Listener {
 
 				if (amount == 0) {
 					// First scrap
-					player.getInventory().setItem(8, MurderUtils.getScrap());
-					player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(1/10)");
+					player.getInventory().setItem(8, (isMurderer) ? MurderUtils.getFakeScrap() : MurderUtils.getScrap());
+					if (!isMurderer)
+						player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(1/10)");
 					return;
 				}
 
 				if (amount == 9) {
+					if (MurderUtils.isMurderer(player)) return;
+
 					// Craft a gun
 					player.getInventory().remove(Material.IRON_INGOT);
 					player.getInventory().setItem(1, MurderUtils.getGun());
@@ -420,8 +417,9 @@ public class MurderListener implements Listener {
 				}
 
 				// Normal pick up
-				player.getInventory().addItem(MurderUtils.getScrap());
-				player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
+				player.getInventory().addItem((isMurderer) ? MurderUtils.getFakeScrap() : MurderUtils.getScrap());
+				if (!isMurderer)
+					player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
 				return;
 			}
 
@@ -462,11 +460,9 @@ public class MurderListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onInventoryMove(InventoryInteractEvent event) {
 		if (event.getWhoClicked() instanceof Player) {
-			Player player = (Player) event.getWhoClicked();
-			if (!MurderUtils.isPlayingMurder(player)) {
-				return;
+			if (MurderUtils.isPlayingMurder((Player) event.getWhoClicked())) {
+				event.setCancelled(true);
 			}
-			event.setCancelled(true);
 		}
 	}
 }
