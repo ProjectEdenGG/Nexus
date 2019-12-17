@@ -9,5 +9,7 @@ public class MatchListener implements Listener {
 		BNCore.registerListener(this);
 	}
 
+	// TODO: Add quit/kick listener
+
 
 }

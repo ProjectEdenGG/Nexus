@@ -7,7 +7,11 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundExcep
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +26,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -217,6 +222,72 @@ public class Utils {
 				}
 			}
 		}
+	}
+
+	public static boolean isInWater(Player player){
+		Location location = player.getLocation();
+		Block block = location.getBlock();
+		Location locationBelow = location.subtract(0.0,1.0,0.0);
+		if((block.getType().equals(Material.WATER)) || (block.getType().equals(Material.STATIONARY_WATER))) {
+			return true;
+		} else if(block.getType().equals(Material.AIR) && locationBelow.getBlock().getType().equals(Material.WATER)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static final Map<String, Color> STR_COLORS = new HashMap<String, Color>() {{
+		put("white", Color.WHITE);
+		put("light gray", Color.SILVER);
+		put("gray", Color.GRAY);
+		put("black", Color.BLACK);
+		put("brown", Color.fromRGB(139, 69, 42));
+		put("red", Color.RED);
+		put("orange", Color.ORANGE);
+		put("yellow", Color.YELLOW);
+		put("lime", Color.LIME);
+		put("light green", Color.LIME);
+		put("green", Color.GREEN);
+		put("cyan", Color.TEAL);
+		put("aqua", Color.TEAL);
+		put("light blue", Color.AQUA);
+		put("blue", Color.BLUE);
+		put("purple", Color.PURPLE);
+		put("magenta", Color.FUCHSIA);
+		put("pink", Color.fromRGB(255, 105, 180));
+	}};
+
+	public static Color getColor(String color){
+		if (STR_COLORS.containsKey(color)){
+			return STR_COLORS.get(color);
+		}
+		return Color.WHITE;
+	}
+
+	public static final Map<Integer, String> INT_COLORS = new HashMap<Integer, String>() {{
+		put(0, "white");
+		put(8, "light gray");
+		put(7, "gray");
+		put(15, "black");
+		put(12, "brown");
+		put(14, "red");
+		put(1, "orange");
+		put(4, "yellow");
+		put(5, "lime");
+		put(13, "green");
+		put(9, "cyan");
+		put(3, "light blue");
+		put(11, "blue");
+		put(10, "purple");
+		put(2, "magenta");
+		put(6, "pink");
+	}};
+
+	public static String getColor(Integer color){
+		if (INT_COLORS.containsKey(color)){
+			return INT_COLORS.get(color);
+		}
+		return "white";
 	}
 
 }

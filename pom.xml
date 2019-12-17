@@ -80,7 +80,7 @@
         </repository>
         <repository>
             <id>multiverse-repo</id>
-            <url>http://repo.onarandombox.com/content/repositories/multiverse/</url>
+            <url>http://repo.onarandombox.com/nexus/content/groups/public/</url>
         </repository>
         <repository>
             <id>sk89q-repo</id>
@@ -230,14 +230,14 @@
         <dependency>
             <groupId>com.onarandombox.multiverseinventories</groupId>
             <artifactId>Multiverse-Inventories</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- Multiverse Core -->
         <dependency>
             <groupId>com.onarandombox.multiversecore</groupId>
             <artifactId>Multiverse-Core</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- JsonConfiguration -->
