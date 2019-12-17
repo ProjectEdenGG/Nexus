@@ -26,7 +26,6 @@ public class Team implements ConfigurationSerializable {
 	private ChatColor color;
 	@NonNull
 	private String objective;
-	@NonNull
 	private Loadout loadout;
 	@NonNull
 	private List<Location> spawnpoints;
@@ -46,7 +45,14 @@ public class Team implements ConfigurationSerializable {
 				.filter(minigamer -> minigamer.getTeam().equals(this))
 				.collect(Collectors.toList());
 
-		members.forEach(minigamer -> loadout.apply(minigamer));
+		if(loadout != null)
+			members.forEach(minigamer -> loadout.apply(minigamer));
+
+		if (spawnpoints.size() == 1) {
+			for (Minigamer minigamer : members)
+				minigamer.teleport(spawnpoints.get(0));
+			return;
+		}
 
 		while (members.size() > 0) {
 			List<Location> locs = new ArrayList<>(spawnpoints);
