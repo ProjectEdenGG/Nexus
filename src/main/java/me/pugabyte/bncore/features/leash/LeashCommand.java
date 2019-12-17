@@ -1,9 +1,8 @@
-package me.pugabyte.bncore.features.staff.leash;
+package me.pugabyte.bncore.features.leash;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -12,33 +11,41 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.Utils.repeat;
 
-@Aliases("leash")
-@Permission("playerleash.followplayer")
+@Permission("leash.use")
 public class LeashCommand extends CustomCommand {
-	private HashMap<UUID, Integer> playerRunnables = BNCore.leash.playerRunnables;
+	private HashMap<UUID, Integer> leashes = BNCore.leash.leashes;
 
 	public LeashCommand(CommandEvent event) {
 		super(event);
 	}
 
-	@Path
-	void stop() {
-		if (!playerRunnables.containsKey(player().getUniqueId()))
-			error("You are not currently leashed to a player. Use &c/leash <player>");
-
-		Utils.cancelTask(playerRunnables.get(player().getUniqueId()));
-		playerRunnables.remove(player().getUniqueId());
-		reply(PREFIX + "&3You are no longer leashed to the player.");
-	}
-
 	@Path("{player}")
 	void leash(@Arg Player target) {
+		if (leashes.containsKey(player().getUniqueId()))
+			error("You are already leashed to another player");
+
 		reply(PREFIX + "&3You are now leashed to &e" + target.getPlayer().getDisplayName());
-		runnable(player(), target);
+		startLeash(player(), target);
+	}
+
+	@Path("(stop|cancel)")
+	void stop() {
+		if (!leashes.containsKey(player().getUniqueId()))
+			error("You are not currently leashed to a player. Use &c/leash <player>");
+
+		stopLeash(player(), "&3You are no longer leashed to the player.");
+	}
+
+	@Path("(stopall|cancelall)")
+	void stopAll() {
+		for (Map.Entry<UUID, Integer> leash : leashes.entrySet())
+			stopLeash(Utils.getPlayer(leash.getKey()).getPlayer(), "Leash cancelled by &e" + sender().getName());
+		reply(PREFIX + "All leashed cancelled");
 	}
 
 	@Path("setvelocity {double}")
@@ -47,19 +54,21 @@ public class LeashCommand extends CustomCommand {
 		reply(PREFIX + "&3Velocity multiplier set to &e" + velocity);
 	}
 
-	private void runnable(Player staff, Player target) {
-		int taskID = repeat(10, 30, () -> {
+	private void stopLeash(Player staff, String message) {
+		Utils.cancelTask(leashes.get(staff.getUniqueId()));
+		leashes.remove(staff.getUniqueId());
+		send(staff, PREFIX + message);
+	}
+
+	private void startLeash(Player staff, Player target) {
+		int taskId = repeat(10, 30, () -> {
 			if (!staff.isOnline() || !target.isOnline()) {
-				Utils.cancelTask(playerRunnables.get(staff.getUniqueId()));
-				playerRunnables.remove(staff.getUniqueId());
-				send(staff, "Leash cancelled");
+				stopLeash(staff, "&3Leash cancelled. &e" + target.getDisplayName() + " &3is no longer online.");
 				return;
 			}
 
-			if(staff.getWorld() != target.getWorld()){
-				Utils.cancelTask(playerRunnables.get(staff.getUniqueId()));
-				playerRunnables.remove(staff.getUniqueId());
-				send(staff, "&3Leash Canceled. &e" + target.getDisplayName() + " &3is no longer in the same world.");
+			if (staff.getWorld() != target.getWorld()) {
+				stopLeash(staff, "&3Leash cancelled. &e" + target.getDisplayName() + " &3is no longer in the same world.");
 				return;
 			}
 
@@ -72,7 +81,7 @@ public class LeashCommand extends CustomCommand {
 			staff.setVelocity(vector.multiply(multiplier));
 		});
 
-		playerRunnables.put(staff.getUniqueId(), taskID);
+		leashes.put(staff.getUniqueId(), taskId);
 	}
 
 }

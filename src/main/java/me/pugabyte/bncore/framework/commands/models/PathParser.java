@@ -4,58 +4,66 @@ import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static me.pugabyte.bncore.Utils.left;
 
 @Data
 class PathParser {
 	@NonNull
-	Path path;
+	Set<Method> methods;
 
-	boolean matches(List<String> args) {
-		String value = path.value().toLowerCase();
+	Method match(List<String> args) {
+		String argsString = String.join(" ", args).toLowerCase();
 
-		// Zero arguments
-		if (args.size() == 0) {
-			return value.length() == 0;
-		} else if (value.length() == 0) {
-			return false;
-		}
+		// Look for exact match
+		for (Method method : methods)
+			if (method.getAnnotation(Path.class).value().equalsIgnoreCase(argsString))
+				return method;
 
-		if (args.size() > value.split(" ").length) {
-			return false;
-		}
+		Method fallback = null;
 
-		int i = 1;
-		for (String pathArg : value.split(" ")) {
-			try {
-				argSwitch:
-				switch (left(pathArg, 1)) {
-					case "<":
-					case "[":
-					case "%":
-					case "{":
-						break;
-					case "(":
-						String[] matches = pathArg.replaceAll("[()]", "").split("\\|");
-						for (String match : matches) {
-							if (match.equalsIgnoreCase(args.get(i - 1))) {
-								break argSwitch;
-							}
-						}
-						return false;
-					default:
-						if (!pathArg.equalsIgnoreCase(args.get(i - 1))) {
-							return false;
-						}
-				}
-				++i;
-			} catch (ArrayIndexOutOfBoundsException ex) {
-				return false;
+		for (Method method : methods) {
+			String path = method.getAnnotation(Path.class).value().toLowerCase();
+			String[] pathArgs = path.split(" ");
+
+			String literalWords = "";
+			if (path.length() > 0)
+				for (String pathArg : pathArgs)
+					switch (left(pathArg, 1)) {
+						case "[": case "{":
+							break;
+						default:
+							literalWords += pathArg + " ";
+					}
+
+			literalWords = literalWords.trim().toLowerCase();
+
+			// Zero arguments
+			if (args.size() == 0) {
+				if (literalWords.length() == 0)
+					return method;
+				continue;
 			}
+
+			// Has arguments, no literal words
+			if (literalWords.length() == 0) {
+				if (fallback == null)
+					fallback = method;
+				continue;
+			}
+
+			// Has arguments, has literal worlds
+			Matcher matcher = Pattern.compile("^" + literalWords + ".*").matcher(argsString);
+			if (matcher.matches())
+				fallback = method;
 		}
-		return true;
+
+		return fallback;
 	}
 
 }

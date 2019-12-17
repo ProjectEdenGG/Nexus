@@ -1,13 +1,11 @@
 package me.pugabyte.bncore.features.oldminigames.murder;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.Bukkit;
 
-@Aliases("murder")
 @Permission("murder")
 public class MurderCommand extends CustomCommand {
 
@@ -27,6 +25,7 @@ public class MurderCommand extends CustomCommand {
 		player().getInventory().addItem(MurderUtils.getScrap());
 		player().getInventory().addItem(MurderUtils.getFakeScrap());
 		player().getInventory().addItem(MurderUtils.getCompass());
+		player().getInventory().addItem(MurderUtils.getBloodlust());
 		player().getInventory().addItem(MurderUtils.getTeleporter());
 		player().getInventory().addItem(MurderUtils.getAdrenaline());
 		player().getInventory().addItem(MurderUtils.getRetriever());

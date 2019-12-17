@@ -11,7 +11,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 
-@Aliases({"connect4", "c4"})
+@Aliases("c4")
 @Permission("connect4.admin")
 public class Connect4Command extends CustomCommand {
 	private Connect4Game game = BNCore.connect4.game;
@@ -37,9 +37,9 @@ public class Connect4Command extends CustomCommand {
 	}
 
 	private int validate(int column) {
-		if (!(column < 0 || column > 7))
-			throw new InvalidInputException("Incorrect arguments");
-		return column;
+		if(column >= 0 && column <= 7)
+			return column;
+		throw new InvalidInputException("Incorrect arguments");
 	}
 
 	private void place(Connect4Team team, int col) {

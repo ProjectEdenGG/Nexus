@@ -28,11 +28,28 @@ public class HoursService extends BaseService {
 
 	public HoursType getType(String type) {
 		if (type == null || type.contains("total")) return HoursType.TOTAL;
-		if (type.contains("month")) return HoursType.MONTHLY;
-		if (type.contains("week")) return HoursType.WEEKLY;
-		if (type.contains("day") || type.contains("daily")) return HoursType.DAILY;
+
+		if (type.contains("month"))
+			if (type.contains("last"))
+				return HoursType.LAST_MONTH;
+			else
+				return HoursType.MONTHLY;
+
+		if (type.contains("week"))
+			if (type.contains("last"))
+				return HoursType.LAST_WEEK;
+			else
+				return HoursType.WEEKLY;
+
+		if (type.contains("day") || type.contains("daily"))
+			if (type.contains("yester") || type.contains("last"))
+				return HoursType.YESTERDAY;
+			else
+				return HoursType.DAILY;
+
 		throw new InvalidInputException("Invalid leaderboard type. Options are: " + HoursType.valuesString());
 	}
+
 	public enum HoursType {
 		TOTAL,
 		MONTHLY,
@@ -49,6 +66,5 @@ public class HoursService extends BaseService {
 					.toLowerCase();
 		}
 	}
-
 
 }

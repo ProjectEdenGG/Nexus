@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.framework.commands.models;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -15,9 +16,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import static me.pugabyte.bncore.Utils.listLast;
 import static me.pugabyte.bncore.Utils.right;
@@ -52,17 +57,27 @@ public interface ICustomCommand {
 	}
 
 	default String getName() {
-		return getAliases()[0];
+		return getAliases().get(0);
 	}
 
-	default String[] getAliases() {
+	default List<String> getAliases() {
+		String name = listLast(this.getClass().toString(), ".").replaceAll("Command", "");
+		List<String> aliases = new ArrayList<>(Collections.singletonList(name.toLowerCase()));
+
 		for (Annotation annotation : this.getClass().getAnnotations()) {
 			if (annotation instanceof Aliases) {
-				return ((Aliases) annotation).value();
+				for (String alias : ((Aliases) annotation).value()) {
+					if (!Pattern.compile("[a-zA-Z0-9_-]+").matcher(alias).matches()) {
+						BNCore.warn("Alias invalid: " + name + "Command.java / " + alias);
+						continue;
+					}
+
+					aliases.add(alias);
+				}
 			}
 		}
 
-		throw new RuntimeException("No aliases configured for command " + this.getClass().getName());
+		return aliases;
 	}
 
 	default String getPermission() {
@@ -87,7 +102,7 @@ public interface ICustomCommand {
 			// log("Parameter: " + parameter.getName() + " (" + parameter.getType().getName() + ")");
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 			if (annotation == null)
-				throw new BNException("Command parameter not annotated with @Argument: "
+				throw new BNException("Command parameter not annotated with @Arg: "
 						+ method.getName() + "(" + parameter.getType().getName() + " " + parameter.getName() + ")");
 
 			String pathArg = "";
@@ -138,26 +153,26 @@ public interface ICustomCommand {
 	default Method getMethod(CustomCommand command, List<String> args) {
 		Method method = getPathMethod(command, args);
 
-		int i = args.size() - 1;
-		while (method == null && i >= 0) {
-			method = getPathMethod(command, args.subList(0, i));
-			--i;
-		}
+		// Work backwards until match is found - not needed after rework?
+//		int i = args.size() - 1;
+//		while (method == null && i >= 0) {
+//			method = getPathMethod(command, args.subList(0, i));
+//			--i;
+//		}
 
 		if (method == null)
 			// TODO No default path, what do?
-			throw new InvalidInputException("No matching method");
+			throw new InvalidInputException("No matching path");
 
 		return method;
 	}
 
 	@SuppressWarnings("unchecked")
 	default Method getPathMethod(CustomCommand command, List<String> args) {
-		for (Method method : getMethods(command.getClass(), withAnnotation(Path.class))) {
-			if (new PathParser(method.getAnnotation(Path.class)).matches(args))
-				return method;
-		}
-		return null;
+		Set<Method> methods = getMethods(command.getClass(), withAnnotation(Path.class));
+		if (methods.size() == 1)
+			return methods.iterator().next();
+		return new PathParser(methods).match(args);
 	}
 
 	default void checkPermission(CommandSender sender, Method method) {

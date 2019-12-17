@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Random;
 
-public class Utils {
+public class MinigameUtils {
 	public static void resetExp(Player player) {
 		if (player.getTotalExperience() != 0) {
 			player.setLevel(0);

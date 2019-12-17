@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
 import me.pugabyte.bncore.features.documentation.Documentation;
 import me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning;
 import me.pugabyte.bncore.features.inviterewards.InviteRewards;
+import me.pugabyte.bncore.features.leash.Leash;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
@@ -15,7 +16,6 @@ import me.pugabyte.bncore.features.showenchants.ShowEnchants;
 import me.pugabyte.bncore.features.sideways.logs.SidewaysLogs;
 import me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs;
 import me.pugabyte.bncore.features.sleep.Sleep;
-import me.pugabyte.bncore.features.staff.leash.Leash;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.wiki.Wiki;
 import me.pugabyte.bncore.framework.commands.Commands;
@@ -57,7 +57,7 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public static void registerListener(Listener listener) {
-		if (BNCore.getInstance().isEnabled())
+		if (getInstance().isEnabled())
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
 		else
 			log("Could not register listener " + listener.toString() + "!");
