@@ -7,7 +7,8 @@ import au.com.mineauz.minigames.events.QuitMinigameEvent;
 import au.com.mineauz.minigames.events.StartMinigameEvent;
 import au.com.mineauz.minigames.minigame.Minigame;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.oldminigames.Utils;
+import me.pugabyte.bncore.features.oldminigames.MinigameUtils;
+import me.pugabyte.bncore.features.oldminigames.murder.runnables.Bloodlust;
 import me.pugabyte.bncore.features.oldminigames.murder.runnables.Locator;
 import me.pugabyte.bncore.features.oldminigames.murder.runnables.Retriever;
 import org.bukkit.Bukkit;
@@ -33,6 +34,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -71,7 +73,7 @@ public class MurderListener implements Listener {
 			player.removePotionEffect(_pe.getType());
 		}
 
-		Utils.resetExp(player);
+		MinigameUtils.resetExp(player);
 		player.setFoodLevel(10);
 
 		// Turn off compass scheduler
@@ -131,11 +133,11 @@ public class MurderListener implements Listener {
 
 		assignGunner(list);
 		BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-						Utils.shufflePlayers(minigame),
+						MinigameUtils.shufflePlayers(minigame),
 				2L);
 		for (MinigamePlayer player : list)
 			BNCore.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(BNCore.getInstance(), () ->
-							Utils.resetExp(player.getPlayer()),
+							MinigameUtils.resetExp(player.getPlayer()),
 					2L);
 
 
@@ -144,7 +146,7 @@ public class MurderListener implements Listener {
 			sendAssignMessages(_player);
 
 			_player.getInventory().setHeldItemSlot(0);
-			Utils.resetExp(_player);
+			MinigameUtils.resetExp(_player);
 			locators.put(_player, Locator.run(minigame, _player));
 		}
 	}
@@ -191,6 +193,16 @@ public class MurderListener implements Listener {
 
 		if (!(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
 
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			List<Material> allowedRedstone = Arrays.asList(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
+			if (allowedRedstone.contains(event.getClickedBlock().getType()))
+				return;
+
+			String minigame = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame().getName(false);
+			if ("RavensNestEstate".equalsIgnoreCase(minigame))
+				return;
+		}
+
 		event.setCancelled(true);
 
 		// Gunner shooting handled in MinigameListener, along with Quake and Dogfighting
@@ -199,8 +211,11 @@ public class MurderListener implements Listener {
 			case IRON_SWORD:
 				throwKnife(player);
 				return;
-			case EYE_OF_ENDER:
+			case TRIPWIRE_HOOK:
 				retrieveKnife(player);
+				return;
+			case EYE_OF_ENDER:
+				useBloodlust(player);
 				return;
 			case ENDER_PEARL:
 				useTeleporter(player);
@@ -224,10 +239,24 @@ public class MurderListener implements Listener {
 
 	private void useTeleporter(Player player) {
 		Minigame minigame = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame();
-		Utils.shufflePlayers(minigame, true);
+		MinigameUtils.shufflePlayers(minigame, true);
 
 		player.sendMessage(PREFIX + "You used the teleporter!");
 		player.getInventory().remove(Material.ENDER_PEARL);
+	}
+
+	private void useBloodlust(Player player) {
+		player.sendMessage(PREFIX + "You used bloodlust!");
+		player.getInventory().remove(Material.EYE_OF_ENDER);
+
+		List<MinigamePlayer> players = Minigames.plugin.getPlayerData().getMinigamePlayer(player).getMinigame().getPlayers();
+		for (MinigamePlayer _minigamePlayer : players) {
+			if (!MurderUtils.isMurderer(_minigamePlayer.getPlayer())) {
+				_minigamePlayer.getPlayer().sendMessage(PREFIX + "The murderer used bloodlust!");
+			}
+		}
+
+		new Bloodlust(players).runTaskTimer(BNCore.getInstance(), 0, 40);
 	}
 
 	private void throwKnife(Player player) {
@@ -239,8 +268,8 @@ public class MurderListener implements Listener {
 		player.getInventory().remove(Material.IRON_SWORD);
 
 		// Retrieval mechanics
-		if (player.getInventory().contains(Material.EYE_OF_ENDER)) {
-			player.getInventory().remove(Material.EYE_OF_ENDER);
+		if (player.getInventory().contains(Material.TRIPWIRE_HOOK)) {
+			player.getInventory().remove(Material.TRIPWIRE_HOOK);
 			player.getInventory().setItem(1, MurderUtils.getRetriever());
 			// Start countdown
 			ItemMeta meta = player.getInventory().getItem(1).getItemMeta();
@@ -357,16 +386,10 @@ public class MurderListener implements Listener {
 
 				if (MurderUtils.isGunner(player)) return;
 
+				boolean isMurderer = MurderUtils.isMurderer(player);
+
 				// Fake pick up
 				event.getItem().remove();
-
-				if (MurderUtils.isMurderer(player)) {
-					if (!player.getInventory().contains(Material.IRON_INGOT)) {
-						// They don't have their fake scrap, give them one
-						player.getInventory().setItem(8, MurderUtils.getFakeScrap());
-					}
-					return;
-				}
 
 				int amount = 0;
 				try {
@@ -377,12 +400,15 @@ public class MurderListener implements Listener {
 
 				if (amount == 0) {
 					// First scrap
-					player.getInventory().setItem(8, MurderUtils.getScrap());
-					player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(1/10)");
+					player.getInventory().setItem(8, (isMurderer) ? MurderUtils.getFakeScrap() : MurderUtils.getScrap());
+					if (!isMurderer)
+						player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(1/10)");
 					return;
 				}
 
 				if (amount == 9) {
+					if (MurderUtils.isMurderer(player)) return;
+
 					// Craft a gun
 					player.getInventory().remove(Material.IRON_INGOT);
 					player.getInventory().setItem(1, MurderUtils.getGun());
@@ -391,8 +417,9 @@ public class MurderListener implements Listener {
 				}
 
 				// Normal pick up
-				player.getInventory().addItem(MurderUtils.getScrap());
-				player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
+				player.getInventory().addItem((isMurderer) ? MurderUtils.getFakeScrap() : MurderUtils.getScrap());
+				if (!isMurderer)
+					player.sendMessage(PREFIX + "You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
 				return;
 			}
 
@@ -414,7 +441,7 @@ public class MurderListener implements Listener {
 					// If they already have a knife, don't pick it up
 					if (player.getInventory().contains(Material.IRON_SWORD)) return;
 
-					if (player.getInventory().contains(Material.EYE_OF_ENDER)) {
+					if (player.getInventory().contains(Material.TRIPWIRE_HOOK)) {
 						// They didn't use their retriever, move it back to their inventoryContents
 						player.getInventory().setItem(17, MurderUtils.getRetriever());
 					}
@@ -433,11 +460,9 @@ public class MurderListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onInventoryMove(InventoryInteractEvent event) {
 		if (event.getWhoClicked() instanceof Player) {
-			Player player = (Player) event.getWhoClicked();
-			if (!MurderUtils.isPlayingMurder(player)) {
-				return;
+			if (MurderUtils.isPlayingMurder((Player) event.getWhoClicked())) {
+				event.setCancelled(true);
 			}
-			event.setCancelled(true);
 		}
 	}
 }

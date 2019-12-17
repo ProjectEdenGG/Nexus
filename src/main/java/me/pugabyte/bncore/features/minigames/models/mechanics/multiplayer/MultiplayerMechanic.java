@@ -6,23 +6,26 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Collections;
-
 public abstract class MultiplayerMechanic extends Mechanic {
 
 	@Override
 	public void kill(Minigamer minigamer) {
 		if (minigamer.isRespawning()) return;
-		minigamer.setRespawning(true);
 		minigamer.clearState();
-		minigamer.teleport(minigamer.getMatch().getArena().getRespawnLocation());
-		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
-		Utils.wait(100, () -> {
-			if (!minigamer.getMatch().isEnded()) {
-				minigamer.getTeam().spawn(Collections.singletonList(minigamer));
-				minigamer.setRespawning(false);
-			}
-		});
+		if (minigamer.getMatch().getArena().getRespawnLocation() != null) {
+			minigamer.setRespawning(true);
+			minigamer.teleport(minigamer.getMatch().getArena().getRespawnLocation());
+			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
+			Utils.wait(100, () -> {
+				if (!minigamer.getMatch().isEnded()) {
+					minigamer.getTeam().spawn(minigamer);
+					minigamer.setRespawning(false);
+				}
+			});
+		} else {
+			if (!minigamer.getMatch().isEnded())
+				minigamer.getTeam().spawn(minigamer);
+		}
 	}
 
 }

@@ -9,6 +9,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,10 @@ public class Team implements ConfigurationSerializable {
 
 	public String getColoredName() {
 		return color + name;
+	}
+
+	public void spawn(Minigamer minigamer) {
+		spawn(Collections.singletonList(minigamer));
 	}
 
 	public void spawn(List<Minigamer> minigamers) {

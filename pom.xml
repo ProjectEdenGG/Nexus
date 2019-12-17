@@ -132,11 +132,9 @@
         </dependency>
         <!-- Norm -->
         <dependency>
-            <groupId>com.dieselpoint</groupId>
+            <groupId>com.github.pugabyte</groupId>
             <artifactId>norm</artifactId>
-            <version>0.8.7</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/norm-0.8.7.jar</systemPath>
+            <version>-SNAPSHOT</version>
         </dependency>
         <!-- MySQL -->
         <dependency>

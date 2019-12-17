@@ -1,6 +1,8 @@
 package me.pugabyte.bncore;
 
 import ch.njol.skript.variables.Variables;
+import com.google.common.base.Strings;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
@@ -27,8 +29,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Utils {
+
+	public static void pug(String message) {
+		Bukkit.getPlayer("Pugabyte").sendMessage(message);
+	}
+
+	public static void wakka(String message) {
+		Bukkit.getPlayer("WakkaFlocka").sendMessage(message);
+	}
+
 	public static String getPrefix(String prefix) {
-		return "§8§l[§e" + prefix + "§8§l]§3 ";
+		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
 	}
 
 	public static String colorize(String string) {
@@ -111,6 +122,8 @@ public class Utils {
 	}
 
 	public static OfflinePlayer getPlayer(String partialName) {
+		if (partialName.length() == 0) throw new InvalidInputException("No player name given");
+
 		partialName = partialName.toLowerCase();
 
 		if (partialName.length() == 36)
@@ -158,6 +171,12 @@ public class Utils {
 	}
 
 	public static String timespanFormat(int seconds) {
+		return timespanFormat(seconds, null);
+	}
+
+	public static String timespanFormat(int seconds, String noneDisplay) {
+		if (seconds == 0 && !Strings.isNullOrEmpty(noneDisplay)) return noneDisplay;
+
 		int original = seconds;
 		int years = seconds / 60 / 60 / 24 / 365;
 		seconds -= years * 60 * 60 * 24 * 365;
@@ -166,6 +185,7 @@ public class Utils {
 		int hours = seconds / 60 / 60;
 		seconds -= hours * 60 * 60;
 		int minutes = seconds / 60;
+		seconds -= minutes * 60;
 
 		String result = "";
 		if (years > 0)
@@ -176,6 +196,9 @@ public class Utils {
 			result += hours + "h ";
 		if (minutes > 0)
 			result += minutes + "m ";
+		if (years == 0 && days == 0 && hours == 0 && minutes > 0 && seconds > 0)
+			result += seconds + "s ";
+
 		if (result.length() > 0)
 			return result.trim();
 		else

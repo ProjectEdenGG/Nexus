@@ -11,7 +11,7 @@ import static me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning.di
 /**
  * @author Camaros
  */
-@Aliases({"durabilitywarning", "dw"})
+@Aliases("dw")
 @Permission("durabilitywarning.use")
 public class DurabilityWarningCommand extends CustomCommand {
 

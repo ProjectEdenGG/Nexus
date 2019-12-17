@@ -16,14 +16,21 @@ public class NerdService extends BaseService {
 	}
 
 	public Nerd find(String partialName) {
-		return database.where("name like ?", "%" + partialName + "%").first(Nerd.class);
+		return database
+				.select("nerd.*")
+				.table("nerd")
+					.innerJoin("hours")
+					.on("hours.uuid = nerd.uuid")
+				.where("name like ?")
+				.orderBy("position(? in name), hours.total desc")
+				.args("%" + partialName + "%", partialName)
+				.first(Nerd.class);
 	}
 
 	public List<Nerd> getOnlineNerds() {
 		List<Nerd> nerds = database.where("uuid in ?", Utils.getOnlineUuids()).results(Nerd.class);
-		for (Nerd nerd : nerds) {
+		for (Nerd nerd : nerds)
 			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
-		}
 		return nerds;
 	}
 

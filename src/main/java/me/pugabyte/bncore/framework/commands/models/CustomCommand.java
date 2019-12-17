@@ -35,7 +35,7 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 		player.sendMessage(Utils.colorize(message));
 	}
 
-	protected void send(int delay, Player player, String message) {
+	protected void send(Player player, String message, int delay) {
 		Utils.wait(delay, () -> player.sendMessage(Utils.colorize(message)));
 	}
 
@@ -78,7 +78,7 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 
 	public Object convert(String value, Class<?> type) {
 		if (Player.class == type || OfflinePlayer.class == type) {
-			if ("self".equalsIgnoreCase(value)) value = ((Player) event.getSender()).getUniqueId().toString();
+			if ("self".equalsIgnoreCase(value)) value = player().getUniqueId().toString();
 			return Utils.getPlayer(value);
 		}
 		if (Boolean.class == type || Boolean.TYPE == type) {
@@ -95,7 +95,7 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 	}
 
 	protected String arg(int i) {
-		return arg(1, false);
+		return arg(i, false);
 	}
 
 	protected String arg(int i, boolean rest) {
@@ -125,7 +125,9 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 
 	protected Boolean booleanArg(int i) {
 		if (event.getArgs().size() < i) return null;
-		return Boolean.parseBoolean(event.getArgs().get(i - 1));
+		String value = arg(i);
+		if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
+		return Boolean.parseBoolean(value);
 	}
 
 	protected OfflinePlayer playerArg(int i) {

@@ -38,7 +38,7 @@ public class Arena implements ConfigurationSerializable {
 	private int minWinningScore;
 	private int maxWinningScore;
 	// TODO: private Set<Material> blockList;
-	private Location eliminationTeleportPosition;
+	private Location spectatePosition;
 	@Accessors(fluent = true)
 	private boolean canJoinLate;
 
