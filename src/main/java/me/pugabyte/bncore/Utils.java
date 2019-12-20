@@ -248,9 +248,9 @@ public class Utils {
 		put("lime", Color.LIME);
 		put("light green", Color.LIME);
 		put("green", Color.GREEN);
-		put("cyan", Color.TEAL);
-		put("aqua", Color.TEAL);
-		put("light blue", Color.AQUA);
+		put("cyan", Color.AQUA);
+		put("aqua", Color.AQUA);
+		put("light blue", Color.TEAL);
 		put("blue", Color.BLUE);
 		put("purple", Color.PURPLE);
 		put("magenta", Color.FUCHSIA);
