@@ -74,6 +74,13 @@ public class Minigamer {
 		return false;
 	}
 
+	public boolean isInLobby(Class mechanic) {
+		if (match != null) {
+			return mechanic.isInstance(match.getArena().getMechanic()) && !match.isStarted();
+		}
+		return false;
+	}
+
 	public void toLobby() {
 		teleport(Minigames.getGamelobby());
 	}

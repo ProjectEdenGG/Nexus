@@ -87,6 +87,10 @@
             <url>http://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
+            <id>fawe-repo</id>
+            <url>http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
+        </repository>
+        <repository>
             <id>dmulloy2-repo</id>
             <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
@@ -206,6 +210,12 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/PlayerPoints-2.1.4.jar</systemPath>
         </dependency>
+        <!-- FAWE legacy API -->
+        <dependency>
+            <groupId>com.boydti</groupId>
+            <artifactId>fawe-api</artifactId>
+            <version>latest</version>
+        </dependency>
         <!-- WorldGuard -->
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
@@ -224,6 +234,13 @@
             <groupId>com.mewin</groupId>
             <artifactId>WorldGuardRegionAPI</artifactId>
             <version>1.5.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- WorldEdit -->
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>6.1.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- Multiverse Inventories -->
