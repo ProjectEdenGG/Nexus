@@ -41,6 +41,7 @@ import java.util.List;
 // 	- Changing gamemodes (logic)
 //	- Changing maps (locations)
 //	- 10 seconds then check if player has not jumped yet --> "Kill"
+//	- Display score after each round
 
 public final class Thimble extends TeamlessMechanic {
 
@@ -50,20 +51,20 @@ public final class Thimble extends TeamlessMechanic {
 	private Location nextPlayerLoc = new Location(Minigames.getGameworld(), 2503.5, 38.5, -220.5, -90, 0);
 	private Location spectateLoc = new Location(Minigames.getGameworld(), 2519.5, 4.5, -221.5, 90, 0);
 	private final short CONCRETE_IDS[] = {14,1,4,5,13,10,2,6,12,15,7,8,0};
-	private ArrayList<ItemStack> chosenConcrete = new ArrayList<>();
+	private ArrayList<Short> chosenConcrete = new ArrayList<>();
+//	private ArrayList<ItemStack> chosenConcrete = new ArrayList<>();
 	private int turns;
 	private final int MAX_TURNS = 49;
 
 	@Override
 	public String getName() {
-		return "Wooden";
+		return "Thimble";
 	}
 
 	@Override
 	public String getDescription() {
 		return "Description here.";
 	}
-
 
 	@Override
 	public void onQuit(Minigamer minigamer) {
@@ -119,8 +120,8 @@ public final class Thimble extends TeamlessMechanic {
 		// TODO: Select next gamemode
 		// TODO: Select & Setup next map
 		// Setup next pool region string
-		poolRegionStr = match.getArena().getMechanicType().toString().toLowerCase() + "_"
-				+ match.getArena().getDisplayName().toLowerCase() + "_pool";
+		String nextMapName = "Wooden";
+		poolRegionStr = "thimble_" + nextMapName.toLowerCase() + "_pool";
 	}
 
 	@Override
@@ -142,6 +143,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	private void score(Minigamer minigamer){
+		turns++;
 		turnList.add(minigamer);
 		minigamer.scored();
 		Match match = minigamer.getMatch();
@@ -151,17 +153,28 @@ public final class Thimble extends TeamlessMechanic {
 	private void newRound(Match match) {
 		if (alivePlayers.size() <= 1) {
 			match.end();
-		}else{
-			match.broadcast("New Round!");
-			turnList.clear();
-			Collections.shuffle(alivePlayers);
-			Utils.wait(30, () -> nextTurn(match));
+			return;
 		}
+
+		if(turns >= MAX_TURNS){
+			match.end();
+			return;
+		}
+
+		if(match.isEnded()) {
+			return;
+		}
+
+		match.broadcast("New Round!");
+		turnList.clear();
+		Collections.shuffle(alivePlayers);
+		Utils.wait(30, () -> nextTurn(match));
 	}
 
 	private void nextTurn(Match match){
-		if(match.isEnded())
+		if(match.isEnded()) {
 			return;
+		}
 
 		if(turnList.size() == alivePlayers.size()) {
 			newRound(match);
@@ -178,23 +191,19 @@ public final class Thimble extends TeamlessMechanic {
 
 		// this should never happen, maybe throw an error instead?
 		if(nextMinigamer == null) {
-//			newRound(match);
 			match.end();
 			return;
 		}
 
-		turns++;
-		Utils.wakka("Turns: " + turns);
-		if(turns >= MAX_TURNS){
-			match.end();
-		}
+		Minigamer finalNextMinigamer = nextMinigamer;
+		Player player = finalNextMinigamer.getPlayer();
 
-		Player player = nextMinigamer.getPlayer();
-		Utils.wait(5, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.0F));
-		Utils.wait(5, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
-		nextMinigamer.teleport(nextPlayerLoc);
+		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
+		finalNextMinigamer.teleport(nextPlayerLoc);
+		Utils.wait(3, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
 	}
 
+	// Auto-select unique concrete blocks for players who have not themselves
 	private void setPlayerBlocks(List<Minigamer> minigamers){
 		for (Minigamer minigamer: minigamers) {
 			Player player = minigamer.getPlayer();
@@ -202,11 +211,11 @@ public final class Thimble extends TeamlessMechanic {
 			player.getInventory().clear();
 			if(helmetItem == null || helmetItem.getType().equals(Material.AIR)) {
 				for(int i = 0; i < CONCRETE_IDS.length-1; i++){
-					if(chosenConcrete.get(i).getDurability() == CONCRETE_IDS[i]){
+					if(chosenConcrete.get(i) == CONCRETE_IDS[i]){
 						short durability = CONCRETE_IDS[i];
 						ItemStack concrete = new ItemStack(Material.CONCRETE, 1);
 						concrete.setDurability(durability);
-						chosenConcrete.add(concrete);
+						chosenConcrete.add(durability);
 						helmetItem = concrete;
 						break;
 					}
@@ -216,6 +225,7 @@ public final class Thimble extends TeamlessMechanic {
 		}
 	}
 
+	// Select unique concrete blocks
 	@EventHandler
 	public void setPlayerBlock(PlayerInteractEvent event){
 		Player player = event.getPlayer();
@@ -237,23 +247,19 @@ public final class Thimble extends TeamlessMechanic {
 			if (heldItem != null && heldItem.getType().equals(Material.CONCRETE)) {
 				short itemDurability = heldItem.getDurability();
 				// Test if selected concrete is already chosen
-				boolean isNotChosen = true;
-				for (ItemStack concrete : chosenConcrete) {
-					if (concrete.getDurability() == itemDurability) {
-						isNotChosen = false;
-						break;
-					}
-				}
-
-				if(isNotChosen) {
+				if(!chosenConcrete.contains(itemDurability)){
 					// Remove item on head from chosenIDs
 					if (playerInv.getHelmet() != null && playerInv.getHelmet().getType().equals(Material.CONCRETE)) {
-						ItemStack helmItem = playerInv.getHelmet();
-						chosenConcrete.remove(helmItem);
+						for (Short durability: chosenConcrete){
+							if(durability.equals(itemDurability)){
+								chosenConcrete.remove(itemDurability);
+								break;
+							}
+						}
 					}
 					// Add new item on head to chosenIDs
 					playerInv.setHelmet(heldItem);
-					chosenConcrete.add(heldItem);
+					chosenConcrete.add(itemDurability);
 					minigamer.tell("You chose " + Utils.getColor((int)itemDurability) + "!");
 				}else{
 					minigamer.tell("&cThat block is already chosen!");
