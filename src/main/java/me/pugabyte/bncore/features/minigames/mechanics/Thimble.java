@@ -290,9 +290,9 @@ public final class Thimble extends TeamlessMechanic {
 			Location fireworkLocation = location.add(0.0,2.0,0.0);
 
 			new FireworkLauncher(fireworkLocation)
+					.type(FireworkEffect.Type.BALL)
 					.color(color)
 					.power(0)
-					.type(FireworkEffect.Type.BALL)
 					.detonateAfter(1)
 					.launch();
 
