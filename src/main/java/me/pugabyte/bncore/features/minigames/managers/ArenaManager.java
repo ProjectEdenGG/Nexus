@@ -47,8 +47,8 @@ public class ArenaManager {
 	}
 
 	public static void add(Arena arena) {
-		get(arena.getId()).ifPresent(arenas::remove);
-		get(arena.getName()).ifPresent(arenas::remove);
+		try { get(arena.getId()).ifPresent(arenas::remove);   } catch (Exception ignore) {}
+		try { get(arena.getName()).ifPresent(arenas::remove); } catch (Exception ignore) {}
 		arenas.add(arena);
 	}
 

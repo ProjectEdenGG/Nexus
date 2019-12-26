@@ -211,7 +211,9 @@ public class Utils {
 	}
 
 	public static void dump(Object object) {
-		Method[] methods = object.getClass().getDeclaredMethods();
+		List<Method> methods = Arrays.asList(object.getClass().getDeclaredMethods());
+//		if (object.getClass().getSuperclass().getName().startsWith("me.pugabyte.bncore"))
+//			methods.addAll(Arrays.asList(object.getClass().getSuperclass().getDeclaredMethods()));
 		BNCore.log("================");
 		for (Method method : methods) {
 			if (method.getName().startsWith("get") && method.getParameterCount() == 0) {

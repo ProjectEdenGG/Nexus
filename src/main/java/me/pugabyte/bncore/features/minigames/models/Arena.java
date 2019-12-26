@@ -1,7 +1,9 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
@@ -16,6 +18,8 @@ import java.util.Map;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @SerializableAs("Arena")
 public class Arena implements ConfigurationSerializable {
 	@NonNull
@@ -31,6 +35,7 @@ public class Arena implements ConfigurationSerializable {
 	@NonNull
 	private Lobby lobby;
 	private Location respawnLocation;
+	private Location spectatePosition;
 	private int seconds;
 	private int minPlayers;
 	private int maxPlayers;
@@ -38,7 +43,6 @@ public class Arena implements ConfigurationSerializable {
 	private int minWinningScore;
 	private int maxWinningScore;
 	// TODO: private Set<Material> blockList;
-	private Location spectatePosition;
 	@Accessors(fluent = true)
 	private boolean canJoinLate;
 
@@ -48,42 +52,41 @@ public class Arena implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-		map.put("id", getId());
-		map.put("name", getName());
-		map.put("displayName", getDisplayName());
-		map.put("mechanicType", getMechanicType().name());
-		map.put("seconds", getSeconds());
-		map.put("minPlayers", getMinPlayers());
-		map.put("maxPlayers", getMaxPlayers());
-		map.put("winningScore", getWinningScore());
-		map.put("minWinningScore", getMinWinningScore());
-		map.put("maxWinningScore", getMaxWinningScore());
-		map.put("canJoinLate", canJoinLate());
-		map.put("respawnLocation", getRespawnLocation());
-		map.put("lobby", getLobby());
-		map.put("teams", getTeams());
-
-		return map;
+		return new LinkedHashMap<String, Object>() {{
+			put("id", getId());
+			put("name", getName());
+			put("displayName", getDisplayName());
+			put("mechanicType", getMechanicType().name());
+			put("lobby", getLobby());
+			put("teams", getTeams());
+			put("respawnLocation", getRespawnLocation());
+			put("spectatePosition", getRespawnLocation());
+			put("seconds", getSeconds());
+			put("minPlayers", getMinPlayers());
+			put("maxPlayers", getMaxPlayers());
+			put("winningScore", getWinningScore());
+			put("minWinningScore", getMinWinningScore());
+			put("maxWinningScore", getMaxWinningScore());
+			put("canJoinLate", canJoinLate());
+		}};
 	}
 
-	public static Arena deserialize(Map<String, Object> map) {
-		return Arena.builder()
-				.id((int) map.get("id"))
-				.name((String) map.get("name"))
-				.displayName((String) map.get("displayName"))
-				.teams((List<Team>) map.get("teams"))
-				.mechanicType(MechanicType.valueOf(((String) map.get("mechanicType")).toUpperCase()))
-				.lobby((Lobby) map.get("lobby"))
-				.respawnLocation((Location) map.get("respawnLocation"))
-				.seconds((int) map.getOrDefault("seconds", 600))
-				.minPlayers((int) map.getOrDefault("minPlayers", 2))
-				.maxPlayers((int) map.getOrDefault("maxPlayers", 10))
-				.winningScore((int) map.getOrDefault("winningScore", 10))
-				.minWinningScore((int) map.getOrDefault("minWinningScore", 0))
-				.maxWinningScore((int) map.getOrDefault("maxWinningScore", 0))
-				.canJoinLate((boolean) map.getOrDefault("canJoinLate", false))
-				.build();
+	public Arena(Map<String, Object> map) {
+		this.id = (int) map.get("id");
+		this.name = (String) map.get("name");
+		this.displayName = (String) map.get("displayName");
+		this.teams = (List<Team>) map.get("teams");
+		this.mechanicType = MechanicType.valueOf(((String) map.get("mechanicType")).toUpperCase());
+		this.lobby = (Lobby) map.get("lobby");
+		this.respawnLocation = (Location) map.get("respawnLocation");
+		this.respawnLocation = (Location) map.get("spectatePosition");
+		this.seconds = (Integer) map.get("seconds");
+		this.minPlayers = (Integer) map.get("minPlayers");
+		this.maxPlayers = (Integer) map.get("maxPlayers");
+		this.winningScore = (Integer) map.get("winningScore");
+		this.minWinningScore = (Integer) map.get("minWinningScore");
+		this.maxWinningScore = (Integer) map.get("maxWinningScore");
+		this.canJoinLate = (Boolean) map.get("canJoinLate");
 	}
 
 }

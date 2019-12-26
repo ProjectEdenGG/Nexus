@@ -5,14 +5,14 @@ import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.commands.MinigamesCommands;
 import me.pugabyte.bncore.features.minigames.listeners.MatchListener;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
-import me.pugabyte.bncore.features.minigames.models.Arena;
-import me.pugabyte.bncore.features.minigames.models.Loadout;
-import me.pugabyte.bncore.features.minigames.models.Lobby;
-import me.pugabyte.bncore.features.minigames.models.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.configuration.serialization.SerializableAs;
+import org.reflections.Reflections;
+
+import java.util.Set;
 
 public class Minigames {
 	public static final String PREFIX = Utils.getPrefix("Minigames");
@@ -34,10 +34,11 @@ public class Minigames {
 	}
 
 	private void registerConfigurationTypes() {
-		ConfigurationSerialization.registerClass(Arena.class, "Arena");
-		ConfigurationSerialization.registerClass(Lobby.class, "Lobby");
-		ConfigurationSerialization.registerClass(Team.class, "Team");
-		ConfigurationSerialization.registerClass(Loadout.class, "Loadout");
+		Set<Class<?>> serializables = new Reflections(this.getClass().getPackage().getName()).getTypesAnnotatedWith(SerializableAs.class);
+		for (Class clazz : serializables) {
+			String alias = ((SerializableAs) clazz.getAnnotation(SerializableAs.class)).value();
+			ConfigurationSerialization.registerClass(clazz, alias);
+		}
 	}
 
 }
