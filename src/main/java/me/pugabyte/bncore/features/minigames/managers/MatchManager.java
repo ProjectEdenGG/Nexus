@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.features.minigames.managers;
 
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
+import me.pugabyte.bncore.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -8,7 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 public abstract class MenuUtils {
 	protected ItemStack nameItem(ItemStack item, String name) {

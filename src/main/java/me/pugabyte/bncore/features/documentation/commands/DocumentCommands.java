@@ -1,9 +1,9 @@
 package me.pugabyte.bncore.features.documentation.commands;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.documentation.commands.models.Command;
 import me.pugabyte.bncore.features.documentation.commands.models.CommandsDatabase;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;

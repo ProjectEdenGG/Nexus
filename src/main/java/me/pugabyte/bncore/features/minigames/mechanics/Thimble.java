@@ -11,26 +11,24 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.FireworkLauncher;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.FireworkMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -291,20 +289,14 @@ public final class Thimble extends TeamlessMechanic {
 			Color color = Utils.getColor(Utils.getColor((int) durability));
 			Location fireworkLocation = location.add(0.0,2.0,0.0);
 
-			Firework firework = (Firework) player.getWorld().spawnEntity(fireworkLocation, EntityType.FIREWORK);
-			FireworkEffect effect = FireworkEffect.builder()
-					.with(FireworkEffect.Type.BALL)
-					.withColor(color)
-					.build();
-
-			FireworkMeta meta = firework.getFireworkMeta();
-			meta.setPower(0);
-
-			meta.addEffect(effect);
-			firework.setFireworkMeta(meta);
+			new FireworkLauncher(fireworkLocation)
+					.color(color)
+					.power(0)
+					.type(FireworkEffect.Type.BALL)
+					.detonateAfter(1)
+					.launch();
 
 			minigamer.teleport(minigamer.getMatch().getArena().getLobby().getLocation());
-			Utils.wait(1, firework::detonate);
 
 			score(minigamer);
 		}

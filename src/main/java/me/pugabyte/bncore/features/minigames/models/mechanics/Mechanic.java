@@ -1,12 +1,12 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.minigamers.MinigamerDeathEvent;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;

@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.oldminigames.quake;
 
 import au.com.mineauz.minigames.Minigames;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;

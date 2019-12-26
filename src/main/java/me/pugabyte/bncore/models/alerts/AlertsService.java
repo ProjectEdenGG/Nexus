@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.models.alerts;
 
 import com.dieselpoint.norm.Transaction;
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

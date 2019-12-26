@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.models.hours;
 
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.utils.Utils;
 
 import java.util.Arrays;
 import java.util.List;

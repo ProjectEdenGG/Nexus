@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.minigames.models;
 
 import lombok.Data;
 import lombok.NonNull;
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
@@ -11,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @Data
 public class Match {

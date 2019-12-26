@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.sideways.stairs;
 
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.sideways.stairs.models.SidewaysStairsPlayer;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

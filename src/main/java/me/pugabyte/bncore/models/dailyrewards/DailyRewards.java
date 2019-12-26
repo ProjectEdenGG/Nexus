@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.persistence.serializer.IntegerListSerializer;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @Data
 @NoArgsConstructor

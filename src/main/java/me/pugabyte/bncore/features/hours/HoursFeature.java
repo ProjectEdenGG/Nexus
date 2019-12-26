@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.features.hours;
 
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
+import me.pugabyte.bncore.utils.Utils;
 
 public class HoursFeature {
 

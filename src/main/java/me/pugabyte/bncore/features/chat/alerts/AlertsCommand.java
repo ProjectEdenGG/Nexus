@@ -1,12 +1,12 @@
 package me.pugabyte.bncore.features.chat.alerts;
 
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.alerts.Alerts;
 import me.pugabyte.bncore.models.alerts.AlertsService;
+import me.pugabyte.bncore.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 public class AlertsCommand extends CustomCommand {
 	private AlertsService service = new AlertsService();

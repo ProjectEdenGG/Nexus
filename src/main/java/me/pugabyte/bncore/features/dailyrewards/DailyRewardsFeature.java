@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.features.dailyrewards;
 
 import fr.minuskube.inv.SmartInventory;
-import me.pugabyte.bncore.ItemStackBuilder;
 import me.pugabyte.bncore.models.dailyrewards.DailyReward;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewardsService;
+import me.pugabyte.bncore.utils.ItemStackBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

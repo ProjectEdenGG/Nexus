@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.wiki;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
+import me.pugabyte.bncore.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

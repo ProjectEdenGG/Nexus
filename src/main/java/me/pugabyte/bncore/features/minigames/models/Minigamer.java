@@ -4,10 +4,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.Optional;
 
-import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")

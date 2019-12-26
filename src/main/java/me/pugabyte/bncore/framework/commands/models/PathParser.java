@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static me.pugabyte.bncore.Utils.left;
+import static me.pugabyte.bncore.utils.Utils.left;
 
 @Data
 class PathParser {

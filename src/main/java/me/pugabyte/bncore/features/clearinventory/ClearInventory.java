@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.clearinventory;
 
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.clearinventory.models.ClearInventoryPlayer;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

@@ -15,7 +15,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @Aliases("invited")
 @Permission("invite.rewards")

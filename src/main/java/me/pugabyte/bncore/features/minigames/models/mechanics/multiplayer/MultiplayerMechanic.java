@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer;
 
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 

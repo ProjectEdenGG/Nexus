@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static me.pugabyte.bncore.Utils.listLast;
-import static me.pugabyte.bncore.Utils.right;
+import static me.pugabyte.bncore.utils.Utils.listLast;
+import static me.pugabyte.bncore.utils.Utils.right;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 

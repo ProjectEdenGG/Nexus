@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 
 import java.util.ArrayList;

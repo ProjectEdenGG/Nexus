@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.Utils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 

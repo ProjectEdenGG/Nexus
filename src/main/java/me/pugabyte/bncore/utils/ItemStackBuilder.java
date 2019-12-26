@@ -1,4 +1,4 @@
-package me.pugabyte.bncore;
+package me.pugabyte.bncore.utils;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 public class ItemStackBuilder {
 	private ItemStack itemStack;
