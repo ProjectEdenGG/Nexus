@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.durabilitywarning;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
+import me.pugabyte.bncore.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

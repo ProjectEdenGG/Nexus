@@ -2,7 +2,7 @@ package me.pugabyte.bncore.models;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import me.pugabyte.bncore.Utils;
+import me.pugabyte.bncore.utils.Utils;
 
 public enum Rank {
 	GUEST("&7", false),

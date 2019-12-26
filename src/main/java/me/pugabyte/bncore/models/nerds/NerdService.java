@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.models.nerds;
 
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
 import java.util.List;

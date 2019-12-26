@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.damagetracker;
 
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.features.damagetracker.models.DamageEvent;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.LivingEntity;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.models.hours;
 
 import lombok.Data;
-import me.pugabyte.bncore.Utils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
 @Data

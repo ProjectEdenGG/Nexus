@@ -10,7 +10,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.Map;
 
-import static me.pugabyte.bncore.Utils.camelCase;
+import static me.pugabyte.bncore.utils.Utils.camelCase;
 
 public class JMcMMOPrestigeCommand extends CustomCommand {
 	private McMMOService service = new McMMOService();

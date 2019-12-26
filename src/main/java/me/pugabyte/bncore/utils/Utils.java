@@ -1,7 +1,8 @@
-package me.pugabyte.bncore;
+package me.pugabyte.bncore.utils;
 
 import ch.njol.skript.variables.Variables;
 import com.google.common.base.Strings;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.nerds.Nerd;
@@ -226,13 +227,17 @@ public class Utils {
 		}
 	}
 
+	public static boolean isWater(Material material) {
+		return material.equals(Material.WATER) || material.equals(Material.STATIONARY_WATER);
+	}
+
 	public static boolean isInWater(Player player){
 		Location location = player.getLocation();
 		Block block = location.getBlock();
 		Location locationBelow = location.subtract(0.0,1.0,0.0);
-		if((block.getType().equals(Material.WATER)) || (block.getType().equals(Material.STATIONARY_WATER))) {
+		if(isWater(block.getType())) {
 			return true;
-		} else if(block.getType().equals(Material.AIR) && locationBelow.getBlock().getType().equals(Material.WATER)) {
+		} else if (block.getType().equals(Material.AIR) && isWater(locationBelow.getBlock().getType())) {
 			return true;
 		}
 		return false;

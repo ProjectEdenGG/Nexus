@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.sleep;
 
-import me.pugabyte.bncore.Utils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 public class Sleep {
 	private final String PREFIX = Utils.getPrefix("Sleep");

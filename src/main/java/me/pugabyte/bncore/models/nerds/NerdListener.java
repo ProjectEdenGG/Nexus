@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.models.nerds;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

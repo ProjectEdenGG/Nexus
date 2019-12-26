@@ -2,7 +2,7 @@ package me.pugabyte.bncore.skript;
 
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.bncore.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 public class SkriptFunctions {
 	public static void koda(String message, String targets) {
