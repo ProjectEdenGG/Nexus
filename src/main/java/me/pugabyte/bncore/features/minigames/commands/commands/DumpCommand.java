@@ -23,7 +23,7 @@ public class DumpCommand extends MinigamesCommand {
 		if (args.length == 0)
 			throw new InvalidInputException("You must supply an arena name");
 
-		Optional<Arena> optionalArena = ArenaManager.get(args[1]);
+		Optional<Arena> optionalArena = ArenaManager.get(args[0]);
 		if (!optionalArena.isPresent())
 			throw new InvalidInputException("Arena not found");
 

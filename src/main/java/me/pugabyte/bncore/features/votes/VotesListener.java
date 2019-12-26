@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.Utils;
 import me.pugabyte.bncore.models.votes.Vote;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

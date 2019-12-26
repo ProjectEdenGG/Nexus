@@ -71,9 +71,9 @@ public class JDailyRewardsCommand extends CustomCommand {
 
 	// TODO: Optional arguments in the middle if default value exists
 	// TODO: Conditional default values? e.g. /speed [type = isFlying ? fly : walk] <int>
-	@Path("unclaim {player} {int}")
+	@Path("unclaim {offlineplayer} {int}")
 	@Permission("unclaim")
-	void unclaim(@Arg Player player, @Arg int day) {
+	void unclaim(@Arg OfflinePlayer player, @Arg int day) {
 		dailyRewards = ((DailyRewards) service.get(player));
 		dailyRewards.unclaim(day);
 		service.save(dailyRewards);
