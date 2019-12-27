@@ -35,7 +35,7 @@ public class Wiki {
 
 	private static String getQuery(String[] args) {
 		StringBuilder query = new StringBuilder();
-		for (int i = 1; i < args.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 			query.append(args[i]);
 			if (i < args.length - 1) {
 				query.append(" ");
@@ -70,8 +70,8 @@ public class Wiki {
 			api = "/w/api.php";
 			wiki = "/wiki/";
 		}
-		if (args.length > 1) {
-			if (args[1].length() != 0) {
+		if (args.length >= 1) {
+			if (args[0].length() != 0) {
 				if (sender instanceof Player) {
 					Bukkit.getScheduler().runTaskAsynchronously(BNCore.getInstance(), () -> {
 						String query = getQuery(args);
@@ -136,7 +136,7 @@ public class Wiki {
 					sender.sendMessage(prefix + "You must be ingame to use this command.");
 				}
 			} else {
-				sender.sendMessage(prefix + "You did not specify a search query.");
+				sender.sendMessage(prefix + "You did not specify a search query. 2");
 			}
 		} else {
 			sender.sendMessage(prefix + "You did not specify a search query.");

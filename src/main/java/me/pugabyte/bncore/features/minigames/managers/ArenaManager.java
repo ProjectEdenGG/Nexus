@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.minigames.managers;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -12,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArenaManager {
@@ -24,31 +25,45 @@ public class ArenaManager {
 	}
 
 	public static List<String> getNames() {
-		List<String> names = new ArrayList<>();
-		for (Arena arena : arenas)
-			names.add(arena.getName());
-		return names;
+		return getNames(null);
 	}
 
 	public static List<String> getNames(String filter) {
 		List<String> names = new ArrayList<>();
-		for (Arena arena : arenas)
-			if (arena.getName().toLowerCase().startsWith(filter.toLowerCase()))
-				names.add(arena.getName());
+		for (Arena arena : arenas) {
+			if (filter != null)
+				if (!arena.getName().toLowerCase().startsWith(filter.toLowerCase()))
+					continue;
+			names.add(arena.getName());
+		}
+
 		return names;
 	}
 
-	public static Optional<Arena> get(String name) {
-		return arenas.stream().filter(arena -> arena.getName().equalsIgnoreCase(name)).findFirst();
+	public static Arena find(String name) {
+		for (Arena arena : arenas)
+			if (arena.getName().toLowerCase().startsWith(name.toLowerCase()))
+				return arena;
+		throw new InvalidInputException("Arena not found");
 	}
 
-	public static Optional<Arena> get(int id) {
-		return arenas.stream().filter(arena -> arena.getId() == id).findFirst();
+	public static Arena get(String name) {
+		for (Arena arena : arenas)
+			if (arena.getName().equalsIgnoreCase(name))
+				return arena;
+		throw new InvalidInputException("Arena not found");
+	}
+
+	public static Arena get(int id) {
+		for (Arena arena : arenas)
+			if (arena.getId() == id)
+				return arena;
+		throw new InvalidInputException("Arena not found");
 	}
 
 	public static void add(Arena arena) {
-		try { get(arena.getId()).ifPresent(arenas::remove);   } catch (Exception ignore) {}
-		try { get(arena.getName()).ifPresent(arenas::remove); } catch (Exception ignore) {}
+		try { arenas.remove(get(arena.getId()));   } catch (InvalidInputException ignore) {}
+		try { arenas.remove(get(arena.getName())); } catch (InvalidInputException ignore) {}
 		arenas.add(arena);
 	}
 
@@ -57,7 +72,24 @@ public class ArenaManager {
 	}
 
 	private static FileConfiguration getConfig(String name) {
-		return YamlConfiguration.loadConfiguration(new File(getFile(name)));
+		File file = new File(getFile(name));
+		if (!file.exists()) {
+			try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
+				for (Path path : paths.collect(Collectors.toList())) {
+					if (!Files.isRegularFile(path)) continue;
+
+					if (path.getFileName().toString().toLowerCase().startsWith(name.toLowerCase())) {
+						return YamlConfiguration.loadConfiguration(path.toFile());
+					}
+				}
+			} catch (IOException ex) {
+				BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
+			}
+
+			throw new InvalidInputException("Arena configuration file not found");
+		}
+
+		return YamlConfiguration.loadConfiguration(file);
 	}
 
 	public static void read() {
@@ -78,18 +110,15 @@ public class ArenaManager {
 	}
 
 	public static void write() {
-		arenas.forEach(arena -> write(arena.getName()));
+		arenas.forEach(ArenaManager::write);
 	}
 
-	public static void write(String name) {
-		Optional<Arena> optionalArena = get(name);
-		if (!optionalArena.isPresent()) return;
-
-		FileConfiguration arenaConfig = getConfig(name);
-		arenaConfig.set("arena", optionalArena.get());
+	public static void write(Arena arena) {
+		FileConfiguration arenaConfig = getConfig(arena.getName());
+		arenaConfig.set("arena", arena);
 
 		try {
-			arenaConfig.save(getFile(name));
+			arenaConfig.save(getFile(arena.getName()));
 		} catch (IOException ex) {
 			BNCore.severe("An error occurred while trying to write arena configuration files: " + ex.getMessage());
 		}

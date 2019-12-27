@@ -1,0 +1,130 @@
+package me.pugabyte.bncore.features.minigames;
+
+import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.managers.MatchManager;
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
+import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.features.minigames.models.Match;
+import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.entity.Player;
+
+// TODO: Tab completion
+
+@Aliases({"newmgm", "newminigames"})
+@Permission("minigames")
+public class JMinigamesCommand extends CustomCommand {
+	Minigamer minigamer;
+
+	public JMinigamesCommand(CommandEvent event) {
+		super(event);
+		if (sender() instanceof Player)
+			minigamer = PlayerManager.get(player());
+	}
+
+	@Path
+	@Permission("use")
+	void help() {
+		reply(PREFIX + "Help menu");
+	}
+
+	@Path("list {string}")
+	@Permission("use")
+	void list(@Arg String search) {
+		reply(PREFIX + String.join(", ", ArenaManager.getNames(search)));
+	}
+
+	@Path("join {arena}")
+	@Permission("use")
+	void join(@Arg Arena arena) {
+		minigamer.join(arena);
+	}
+
+	@Path("quit")
+	@Permission("use")
+	void quit() {
+		minigamer.quit();
+	}
+
+	@Path("start {arena}")
+	@Permission("manage")
+	void start(@Arg("current") Arena arena) {
+		getRunningMatch(arena).start();
+	}
+
+	@Path("end {arena}")
+	@Permission("manage")
+	void end(@Arg("current") Arena arena) {
+		getRunningMatch(arena).end();
+	}
+
+	@Path("(save|write) {arena}")
+	@Permission("manage")
+	void save(@Arg Arena arena) {
+		long startTime = System.currentTimeMillis();
+
+		if (arena == null)
+			ArenaManager.write();
+		else
+			ArenaManager.write(arena);
+
+		reply(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
+	}
+
+	@Path("(reload|read) {string}")
+	@Permission("manage")
+	void reload(@Arg String arena) {
+		long startTime = System.currentTimeMillis();
+
+		if (arena == null)
+			ArenaManager.read();
+		else
+			ArenaManager.read(arena);
+
+		reply(PREFIX + "Reload time took " + (System.currentTimeMillis() - startTime) + "ms");
+	}
+
+	@Override
+	public Object convert(String value, Class<?> type) {
+		if (Arena.class == type) {
+			if ("current".equalsIgnoreCase(value))
+				if (minigamer != null)
+					if (minigamer.getMatch() != null)
+						return minigamer.getMatch().getArena();
+					else
+						error("You are not currently in a match");
+				else
+					throw new MustBeIngameException();
+			else
+				return ArenaManager.find(value);
+		}
+		if (Minigamer.class == type) {
+			if ("self".equalsIgnoreCase(value))
+				return minigamer;
+			return PlayerManager.get(Utils.getPlayer(value).getPlayer());
+		}
+		return super.convert(value, type);
+	}
+
+	private Match getRunningMatch(Arena arena) {
+		if (arena == null)
+			if (arg(2) == null)
+				error("You must supply an arena name");
+			else
+				error("Arena not found");
+
+		Match match = MatchManager.find(arena);
+
+		if (match == null)
+			error("There is no match running for that arena");
+
+		return match;
+	}
+}

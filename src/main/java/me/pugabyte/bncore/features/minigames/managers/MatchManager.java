@@ -6,7 +6,6 @@ import me.pugabyte.bncore.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class MatchManager {
 	private static List<Match> matches = new ArrayList<>();
@@ -15,10 +14,20 @@ public class MatchManager {
 		Utils.repeat(100, 100, MatchManager::janitor);
 	}
 
-	public static Optional<Match> get(Arena arena) {
-		return matches.stream()
-				.filter(_match -> _match.getArena().equals(arena))
-				.findFirst();
+	public static Match find(Arena arena) {
+		for (Match match : matches)
+			if (match.getArena().equals(arena))
+				return match;
+		return null;
+	}
+
+	public static Match get(Arena arena) {
+		Match match = find(arena);
+		if (match == null) {
+			match = new Match(arena);
+			add(match);
+		}
+		return match;
 	}
 
 	public static List<Match> getAll() {

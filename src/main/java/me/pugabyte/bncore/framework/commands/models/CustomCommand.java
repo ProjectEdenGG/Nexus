@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.framework.commands.models;
 
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -85,6 +86,7 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
 			return Boolean.parseBoolean(value);
 		}
+		if (String.class == type && value.length() == 0) return null;
 		if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
 		if (Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
 		if (Float.class == type || Float.TYPE == type) return Float.parseFloat(value);
@@ -92,6 +94,10 @@ public abstract class CustomCommand extends TabCompleter implements ICustomComma
 		if (Long.class == type || Long.TYPE == type) return Long.parseLong(value);
 		if (Byte.class == type || Byte.TYPE == type) return Byte.parseByte(value);
 		return value;
+	}
+
+	protected boolean isNullOrEmpty(String string) {
+		return Strings.isNullOrEmpty(string);
 	}
 
 	protected String arg(int i) {

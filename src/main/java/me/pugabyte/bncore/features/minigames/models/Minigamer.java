@@ -14,8 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.Optional;
-
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @Data
@@ -33,24 +31,12 @@ public class Minigamer {
 	}
 
 	public void join(String name) {
-		Optional<Arena> arena = ArenaManager.get(name);
-		if (arena.isPresent()) {
-			join(arena.get());
-		} else {
-			tell("That arena doesn't exist!");
-		}
+		join(ArenaManager.find(name));
 	}
 
 	public void join(Arena arena) {
 		if (match == null) {
-			Optional<Match> optionalMatch = MatchManager.get(arena);
-			if (!optionalMatch.isPresent()) {
-				match = new Match(arena);
-				MatchManager.add(match);
-			} else {
-				match = optionalMatch.get();
-			}
-
+			match = MatchManager.get(arena);
 			if (!match.join(this))
 				match = null;
 		} else {
@@ -68,16 +54,14 @@ public class Minigamer {
 	}
 
 	public boolean isPlaying(Class mechanic) {
-		if (match != null) {
+		if (match != null)
 			return mechanic.isInstance(match.getArena().getMechanic()) && match.isStarted();
-		}
 		return false;
 	}
 
 	public boolean isInLobby(Class mechanic) {
-		if (match != null) {
+		if (match != null)
 			return mechanic.isInstance(match.getArena().getMechanic()) && !match.isStarted();
-		}
 		return false;
 	}
 
