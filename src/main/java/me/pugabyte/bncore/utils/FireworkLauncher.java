@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.utils;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.bukkit.Color;
@@ -15,7 +14,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
 @Setter
 @Accessors(fluent = true)
 public class FireworkLauncher {
-	@NonNull
 	private Location location;
 	private Color color;
 	private FireworkEffect.Type type;
@@ -28,15 +26,20 @@ public class FireworkLauncher {
 
 	public void launch() {
 		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-		FireworkEffect effect = FireworkEffect.builder()
-				.with(type)
-				.withColor(color)
-				.build();
-
+		FireworkEffect.Builder builder = FireworkEffect.builder();
 		FireworkMeta meta = firework.getFireworkMeta();
+
+		if (type != null)
+			builder.with(type);
+		if (color != null)
+			builder.withColor(color);
+
+		FireworkEffect effect = builder.build();
+
 		meta.addEffect(effect);
 		if (power != null)
 			meta.setPower(0);
+
 		firework.setFireworkMeta(meta);
 
 		if (detonateAfter != null)

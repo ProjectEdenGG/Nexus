@@ -57,10 +57,10 @@ public class Arena implements ConfigurationSerializable {
 			put("name", getName());
 			put("displayName", getDisplayName());
 			put("mechanicType", getMechanicType().name());
-			put("lobby", getLobby());
 			put("teams", getTeams());
+			put("lobby", getLobby());
 			put("respawnLocation", getRespawnLocation());
-			put("spectatePosition", getRespawnLocation());
+			put("spectatePosition", getSpectatePosition());
 			put("seconds", getSeconds());
 			put("minPlayers", getMinPlayers());
 			put("maxPlayers", getMaxPlayers());
@@ -75,11 +75,11 @@ public class Arena implements ConfigurationSerializable {
 		this.id = (int) map.get("id");
 		this.name = (String) map.get("name");
 		this.displayName = (String) map.get("displayName");
-		this.teams = (List<Team>) map.get("teams");
 		this.mechanicType = MechanicType.valueOf(((String) map.get("mechanicType")).toUpperCase());
+		this.teams = (List<Team>) map.get("teams");
 		this.lobby = (Lobby) map.get("lobby");
 		this.respawnLocation = (Location) map.get("respawnLocation");
-		this.respawnLocation = (Location) map.get("spectatePosition");
+		this.spectatePosition = (Location) map.get("spectatePosition");
 		this.seconds = (Integer) map.get("seconds");
 		this.minPlayers = (Integer) map.get("minPlayers");
 		this.maxPlayers = (Integer) map.get("maxPlayers");

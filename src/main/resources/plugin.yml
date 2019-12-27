@@ -3,9 +3,6 @@ main: me.pugabyte.bncore.BNCore
 version: ${project.version}
 softdepend: [PermissionsEx, Minigames, Herochat, Skript, PlayerPoints]
 commands:
-  newminigames:
-    description: Minigames command
-    aliases: newmgm
   restoreinventory:
     description: RestoreInventory command
     aliases: restoreinv

@@ -142,7 +142,7 @@ public class Utils {
 				return player;
 
 		Nerd nerd = new NerdService().find(partialName);
-		if (nerd != null)
+		if (nerd != null && nerd.getUuid() != null)
 			return nerd.getOfflinePlayer();
 
 		throw new PlayerNotFoundException();
