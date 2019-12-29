@@ -62,7 +62,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 			}
 			return result + " have tied in ";
 		} else {
-			return winners.get(0).getTeam().getColoredName() + " &3has won ";
+			return winners.get(0).getColoredName() + " &3has won ";
 		}
 	}
 
