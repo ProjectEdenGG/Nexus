@@ -47,7 +47,7 @@ public class Arena implements ConfigurationSerializable {
 	private boolean canJoinLate;
 
 	public Mechanic getMechanic() {
-		return getMechanicType().get();
+		return getMechanicType().getMechanic();
 	}
 
 	@Override
