@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.models;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.ToString;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
@@ -21,6 +22,7 @@ import static me.pugabyte.bncore.utils.Utils.colorize;
 public class Minigamer {
 	@NonNull
 	private Player player;
+	@ToString.Exclude
 	private Match match;
 	private Team team;
 	private boolean respawning = false;

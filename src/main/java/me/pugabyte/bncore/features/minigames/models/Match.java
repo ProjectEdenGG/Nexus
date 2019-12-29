@@ -2,6 +2,8 @@ package me.pugabyte.bncore.features.minigames.models;
 
 import lombok.Data;
 import lombok.NonNull;
+import lombok.ToString;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
@@ -10,7 +12,9 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
+import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.Utils;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -28,6 +32,7 @@ import static me.pugabyte.bncore.utils.Utils.colorize;
 public class Match {
 	@NonNull
 	private Arena arena;
+	@ToString.Exclude
 	private List<Minigamer> minigamers = new ArrayList<>();
 	private boolean initialized = false;
 	private boolean started = false;
@@ -77,10 +82,10 @@ public class Match {
 		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
-		minigamers.remove(minigamer);
 		minigamer.toLobby();
 		minigamer.clearState();
 		arena.getMechanic().onQuit(minigamer);
+		minigamers.remove(minigamer);
 	}
 
 	public void start() {
@@ -128,7 +133,7 @@ public class Match {
 
 	private void balance() {
 		minigamers = arena.getMechanic().balance(minigamers);
-		if (arena.getMechanic() instanceof MultiplayerMechanic)
+		if (arena.getMechanic() instanceof TeamMechanic)
 			minigamers.forEach(minigamer -> minigamer.tell("You are on team " + minigamer.getTeam().getColoredName()));
 	}
 
