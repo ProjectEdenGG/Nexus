@@ -29,6 +29,7 @@ public class Match {
 	@NonNull
 	private Arena arena;
 	private List<Minigamer> minigamers = new ArrayList<>();
+	private boolean initialized = false;
 	private boolean started = false;
 	private boolean ended = false;
 	private Map<Team, Integer> scores = new HashMap<>();
@@ -45,6 +46,11 @@ public class Match {
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
 		Utils.callEvent(event);
 		if (event.isCancelled()) return false;
+
+		if (!initialized) {
+			arena.getMechanic().onInitialize(this);
+			initialized = true;
+		}
 
 		if (started) {
 			if (arena.canJoinLate()) {
