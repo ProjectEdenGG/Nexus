@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.managers;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -67,6 +68,25 @@ public class ArenaManager {
 		arenas.add(arena);
 	}
 
+	public static void updateFile(Arena arena){
+		File fileFolder = new File(folder);
+		if(!fileFolder.exists()){
+			fileFolder.mkdirs();
+		}
+		File file = new File(getFile(arena.getName()));
+		if(!file.exists()){
+			try {
+				file.createNewFile();
+				FileConfiguration config = new YamlConfiguration();
+				config.load(file);
+				config.set("arena", arena);
+				config.save(file);
+			} catch (IOException | InvalidConfigurationException ex) {
+				BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
+			}
+		}
+	}
+
 	private static String getFile(String name) {
 		return folder + name + ".yml";
 	}
@@ -98,6 +118,7 @@ public class ArenaManager {
 				if (!Files.isRegularFile(filePath)) return;
 
 				String name = filePath.getFileName().toString().replace(".yml", "");
+				if (name.startsWith(".")) return;
 				read(name);
 			});
 		} catch (IOException ex) {
@@ -122,6 +143,16 @@ public class ArenaManager {
 		} catch (IOException ex) {
 			BNCore.severe("An error occurred while trying to write arena configuration files: " + ex.getMessage());
 		}
+	}
+
+	public static int getNextID(){
+		int id = 1;
+		for(Arena arena : getAll()){
+			if(arena.getId() > id){
+				id = arena.getId() + 1;
+			}
+		}
+		return id;
 	}
 
 }

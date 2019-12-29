@@ -1,11 +1,13 @@
 package me.pugabyte.bncore.features.minigames;
 
+import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
-import me.pugabyte.bncore.features.minigames.models.Arena;
-import me.pugabyte.bncore.features.minigames.models.Match;
-import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.menus.ArenaMenu;
+import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
+import me.pugabyte.bncore.features.minigames.models.*;
+import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -14,7 +16,16 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static me.pugabyte.bncore.features.minigames.managers.ArenaManager.*;
 
 // TODO: Tab completion
 
@@ -51,6 +62,53 @@ public class JMinigamesCommand extends CustomCommand {
 	@Permission("use")
 	void quit() {
 		minigamer.quit();
+	}
+
+	@Path("create {string}")
+	@Aliases("manage")
+	@Permission("manage")
+	void create(@Arg("current") String string){
+		Arena arena;
+		if(!getNames().contains(string)){
+			Arena newArena = Arena.builder()
+					.id(getNextID())
+					.name(arg(2).toLowerCase())
+					.displayName(arg(2))
+					.mechanicType(MechanicType.CAPTURE_THE_FLAG)
+					.seconds(20)
+					.minPlayers(2)
+					.maxPlayers(16)
+					.winningScore(1)
+					.minWinningScore(0)
+					.maxWinningScore(0)
+					.canJoinLate(false)
+					.respawnLocation(player().getLocation())
+					.lobby(Lobby.builder()
+							.location(player().getLocation())
+							.waitTime(5)
+							.build())
+					.teams(Arrays.asList(Team.builder()
+							.name("Players")
+							.color(ChatColor.WHITE)
+							.objective("Beat the other players in the game.")
+							.loadout(Loadout.builder()
+									.inventoryContents(new ItemStack[]{})
+									.potionEffects(new ArrayList<PotionEffect>())
+									.build())
+							.spawnpoints(new ArrayList<Location>())
+							.build()))
+					.build();
+			reply("&aCreating arena " + arg(2) + "&a.");
+			reply(newArena.toString());
+			add(newArena);
+			updateFile(newArena);
+			arena = newArena;
+		}
+		else {
+			reply("&aEditing arena " + arg(2) + "&a.");
+			arena = ArenaManager.get(arg(2));
+		}
+		new MinigamesMenus().openArenaMenu(player(), arena);
 	}
 
 	@Path("start {arena}")

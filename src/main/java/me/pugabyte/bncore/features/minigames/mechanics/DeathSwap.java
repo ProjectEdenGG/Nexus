@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public final class DeathSwap extends TeamlessMechanic {
     @Override
     public void onStart(Match match){
         randomTeleport(match.getMinigamers());
+        for(Minigamer minigamer : match.getMinigamers()){
+            minigamer.getPlayer().setGameMode(GameMode.SURVIVAL);
+        }
         for(Minigamer minigamer : match.getMinigamers()){
             for(Minigamer toHide : match.getMinigamers()) {
                 if(minigamer != toHide) {
@@ -66,10 +70,9 @@ public final class DeathSwap extends TeamlessMechanic {
         for(Minigamer player : minigamer.getMatch().getMinigamers()){
             if(player != minigamer){
                 player.scored();
-                break;
+                return;
             }
         }
-        minigamer.quit();
     }
 
     public void swap(Match match){
@@ -103,7 +106,7 @@ public final class DeathSwap extends TeamlessMechanic {
             return;
         }
         int delayTime = randomInt(0, 120);
-        Utils.wait(delayTime * 20, () -> swap(match));
+        Utils.wait(delayTime, () -> swap(match));
     }
 
     public int randomInt(int min, int max){
