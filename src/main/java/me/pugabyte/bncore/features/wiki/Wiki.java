@@ -136,7 +136,7 @@ public class Wiki {
 					sender.sendMessage(prefix + "You must be ingame to use this command.");
 				}
 			} else {
-				sender.sendMessage(prefix + "You did not specify a search query. 2");
+				sender.sendMessage(prefix + "You did not specify a search query.");
 			}
 		} else {
 			sender.sendMessage(prefix + "You did not specify a search query.");

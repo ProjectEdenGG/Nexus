@@ -11,12 +11,13 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
-// TODO: Tab completion
+import java.util.List;
 
 @Aliases({"newmgm", "newminigames"})
 @Permission("minigames")
@@ -37,8 +38,8 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Path("list {string}")
 	@Permission("use")
-	void list(@Arg String search) {
-		reply(PREFIX + String.join(", ", ArenaManager.getNames(search)));
+	void list(@Arg String filter) {
+		reply(PREFIX + String.join(", ", ArenaManager.getNames(filter)));
 	}
 
 	@Path("join {arena}")
@@ -80,7 +81,7 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Path("(reload|read) {string}")
 	@Permission("manage")
-	void reload(@Arg String arena) {
+	void reload(@Arg(tabCompleter = Arena.class) String arena) {
 		long startTime = System.currentTimeMillis();
 
 		if (arena == null)
@@ -89,6 +90,11 @@ public class JMinigamesCommand extends CustomCommand {
 			ArenaManager.read(arena);
 
 		reply(PREFIX + "Reload time took " + (System.currentTimeMillis() - startTime) + "ms");
+	}
+
+	@TabCompleterFor(Arena.class)
+	List<String> arenaTabComplete(String filter) {
+		return ArenaManager.getNames(filter);
 	}
 
 	@Override
