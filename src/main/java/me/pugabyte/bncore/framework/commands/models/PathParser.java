@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -132,9 +133,10 @@ class PathParser {
 
 		@ToString.Include
 		List<String> tabComplete() {
-			if (isLiteral())
-				return Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
-			else if (isVariable() && tabCompleter != null)
+			if (isLiteral()) {
+				if (!Strings.isNullOrEmpty(pathArg))
+					return Collections.singletonList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|")[0]);
+			} else if (isVariable() && tabCompleter != null)
 				try {
 					return (List<String>) tabCompleter.invoke(new ObjenesisStd().newInstance(tabCompleter.getDeclaringClass()), realArg);
 				} catch (Exception e) {

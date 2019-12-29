@@ -66,19 +66,6 @@ public class JMinigamesCommand extends CustomCommand {
 		getRunningMatch(arena).end();
 	}
 
-	@Path("(save|write) {arena}")
-	@Permission("manage")
-	void save(@Arg Arena arena) {
-		long startTime = System.currentTimeMillis();
-
-		if (arena == null)
-			ArenaManager.write();
-		else
-			ArenaManager.write(arena);
-
-		reply(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
-	}
-
 	@Path("(reload|read) {string}")
 	@Permission("manage")
 	void reload(@Arg(tabCompleter = Arena.class) String arena) {
@@ -90,6 +77,19 @@ public class JMinigamesCommand extends CustomCommand {
 			ArenaManager.read(arena);
 
 		reply(PREFIX + "Reload time took " + (System.currentTimeMillis() - startTime) + "ms");
+	}
+
+	@Path("(save|write) {arena}")
+	@Permission("manage")
+	void save(@Arg Arena arena) {
+		long startTime = System.currentTimeMillis();
+
+		if (arena == null)
+			ArenaManager.write();
+		else
+			ArenaManager.write(arena);
+
+		reply(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
 	@TabCompleterFor(Arena.class)
