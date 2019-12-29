@@ -38,8 +38,9 @@ public abstract class Mechanic implements Listener {
 		return GameMode.ADVENTURE;
 	}
 
-	public void onStart(Match match) {
-	}
+	public void onInitialize(Match match) {}
+
+	public void onStart(Match match) {}
 
 	public void onEnd(Match match) {
 		if (match.isStarted())

@@ -91,6 +91,7 @@ public class ArenaManager {
 		return folder + name + ".yml";
 	}
 
+	// TODO: Centralize file walk logic, only read .yml files
 	private static FileConfiguration getConfig(String name) {
 		File file = new File(getFile(name));
 		if (!file.exists()) {
@@ -98,9 +99,8 @@ public class ArenaManager {
 				for (Path path : paths.collect(Collectors.toList())) {
 					if (!Files.isRegularFile(path)) continue;
 
-					if (path.getFileName().toString().toLowerCase().startsWith(name.toLowerCase())) {
+					if (path.getFileName().toString().toLowerCase().startsWith(name.toLowerCase()))
 						return YamlConfiguration.loadConfiguration(path.toFile());
-					}
 				}
 			} catch (IOException ex) {
 				BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
