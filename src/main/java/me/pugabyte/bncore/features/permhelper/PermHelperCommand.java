@@ -29,12 +29,6 @@ public class PermHelperCommand extends CustomCommand {
 		reply(PREFIX + "Correct usage: /permhelper <npcs|homes|plots|vaults> <add|remove> <player> <amount>");
 	}
 
-	// none - required single-literal
-	// < - required variable
-	// ( - required multi-literal
-	// { - optional variable
-	// [ - optional multi-literal
-
 	@Path("(npcs|homes|plots|vaults) (add|remove) {player} {amount}")
 	void modify(@Arg OfflinePlayer player, @Arg int amount) {
 		if (arg(2).equals("remove")) amount = -amount;
