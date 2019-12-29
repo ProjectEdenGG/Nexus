@@ -11,13 +11,13 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -104,7 +104,7 @@ class PathParser {
 		@ToString.Include
 		boolean isLiteral() {
 			if (pathArg == null) return false;
-			return !pathArg.startsWith("{") && !pathArg.startsWith("[");
+			return !pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<");
 		}
 
 		@ToString.Include
@@ -133,10 +133,9 @@ class PathParser {
 
 		@ToString.Include
 		List<String> tabComplete() {
-			if (isLiteral()) {
-				if (!Strings.isNullOrEmpty(pathArg))
-					return Collections.singletonList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|")[0]);
-			} else if (isVariable() && tabCompleter != null)
+			if (isLiteral())
+				return Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
+			else if (isVariable() && tabCompleter != null)
 				try {
 					return (List<String>) tabCompleter.invoke(new ObjenesisStd().newInstance(tabCompleter.getDeclaringClass()), realArg);
 				} catch (Exception e) {
@@ -154,11 +153,14 @@ class PathParser {
 
 	}
 
-	List<String> tabComplete(List<String> args) {
+	List<String> tabComplete(TabEvent event) {
 		List<String> completions = new ArrayList<>();
 
 		for (Method method : methods) {
-			TabCompleteHelper helper = new TabCompleteHelper(method, args);
+			if (!event.getCommand().hasPermission(event.getSender(), method))
+				continue;
+
+			TabCompleteHelper helper = new TabCompleteHelper(method, event.getArgs());
 			if (!helper.pathMatches())
 				continue;
 
@@ -186,7 +188,7 @@ class PathParser {
 			if (path.length() > 0)
 				for (String pathArg : pathArgs)
 					switch (left(pathArg, 1)) {
-						case "[": case "{":
+						case "[": case "{": case "<":
 							break;
 						default:
 							literalWords += pathArg + " ";
