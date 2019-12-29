@@ -21,6 +21,7 @@ import me.pugabyte.bncore.features.wiki.Wiki;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.persistence.Persistence;
 import me.pugabyte.bncore.models.ModelListeners;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,18 +29,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BNCore extends JavaPlugin {
-	private Commands commands = new Commands(this, "me.pugabyte.bncore.features");
+	private Commands commands;
 	private static BNCore instance;
 
 	public BNCore() {
 		if (instance == null) {
 			instance = this;
+		} else {
+			Bukkit.getServer().getLogger().info("BNCore could not be initialized: Instance is not null, but is: " + instance.getClass().getName());
 		}
 	}
 
 	public static BNCore getInstance() {
 		if (instance == null) {
-			log("Somethin dun fucked up");
+			Bukkit.getServer().getLogger().info("BNCore could not be initialized");
 		}
 		return instance;
 	}
@@ -75,6 +78,7 @@ public class BNCore extends JavaPlugin {
 	public void onEnable() {
 		setupConfig();
 		enableFeatures();
+		commands = new Commands(this, "me.pugabyte.bncore.features");
 		commands.registerAll();
 	}
 

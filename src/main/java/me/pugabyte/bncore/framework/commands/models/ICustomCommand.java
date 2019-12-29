@@ -44,8 +44,8 @@ public interface ICustomCommand {
 		}
 	}
 
-	default List<String> tabComplete() {
-		return null;
+	default List<String> tabComplete(TabEvent event) {
+		return new PathParser(getPathMethods(event.getCommand())).tabComplete(event.getArgs());
 	}
 
 	default List<String> tab(TabEvent event) {
@@ -53,7 +53,7 @@ public interface ICustomCommand {
 		if (permission != null && !event.getSender().hasPermission(permission))
 			return null;
 
-		return tabComplete();
+		return tabComplete(event);
 	}
 
 	default String getName() {
@@ -150,8 +150,15 @@ public interface ICustomCommand {
 		return constructor.newInstance(event);
 	}
 
+	default Set<Method> getPathMethods(CustomCommand command) {
+		Set<Method> methods = getMethods(command.getClass(), withAnnotation(Path.class));
+		if (methods.size() == 1)
+			return Collections.singleton(methods.iterator().next());
+		return methods;
+	}
+
 	default Method getMethod(CustomCommand command, List<String> args) {
-		Method method = getPathMethod(command, args);
+		Method method = new PathParser(getPathMethods(command)).match(args);
 
 		// Work backwards until match is found - not needed after rework?
 //		int i = args.size() - 1;
@@ -165,14 +172,6 @@ public interface ICustomCommand {
 			throw new InvalidInputException("No matching path");
 
 		return method;
-	}
-
-	@SuppressWarnings("unchecked")
-	default Method getPathMethod(CustomCommand command, List<String> args) {
-		Set<Method> methods = getMethods(command.getClass(), withAnnotation(Path.class));
-		if (methods.size() == 1)
-			return methods.iterator().next();
-		return new PathParser(methods).match(args);
 	}
 
 	default void checkPermission(CommandSender sender, Method method) {

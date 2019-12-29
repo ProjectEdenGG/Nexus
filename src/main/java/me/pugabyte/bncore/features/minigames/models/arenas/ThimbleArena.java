@@ -13,6 +13,10 @@ import java.util.Map;
 public class ThimbleArena extends Arena {
 	private List<ThimbleMap> thimbleMaps;
 
+	private ThimbleMap currentMap;
+	private String gameMode;
+	private String poolRegionStr;
+
 	@Override
 	public Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
@@ -24,6 +28,10 @@ public class ThimbleArena extends Arena {
 	public ThimbleArena(Map<String, Object> map) {
 		super(map);
 		this.thimbleMaps = (List<ThimbleMap>) map.get("thimbleMaps");
+
+		currentMap = thimbleMaps.get(0);
+		poolRegionStr = "thimble_" + thimbleMaps.get(0).getName() + "_pool";
+		gameMode = "1";
 	}
 
 }
