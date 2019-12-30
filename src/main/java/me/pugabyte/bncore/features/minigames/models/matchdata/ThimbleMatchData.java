@@ -16,6 +16,7 @@ public class ThimbleMatchData extends MatchData {
 	private List<Minigamer> alivePlayers = new ArrayList<>();
 	private Set<Short> chosenConcrete = new HashSet<>();
 	private int turns;
+	private Minigamer turnPlayer;
 
 	public ThimbleMatchData(Match match) { super(match); }
 

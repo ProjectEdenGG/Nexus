@@ -82,9 +82,9 @@ public class Match {
 		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
+		arena.getMechanic().onQuit(minigamer);
 		minigamer.toLobby();
 		minigamer.clearState();
-		arena.getMechanic().onQuit(minigamer);
 		minigamers.remove(minigamer);
 	}
 
