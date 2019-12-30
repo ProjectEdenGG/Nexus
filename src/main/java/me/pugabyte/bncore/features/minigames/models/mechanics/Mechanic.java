@@ -112,6 +112,8 @@ public abstract class Mechanic implements Listener {
 			return;
 		}
 
+		if (!(victim.isPlaying(this.getClass()) && attacker.isPlaying(this.getClass()))) return;
+
 		if ((victim.isRespawning() || attacker.isRespawning()) || victim.equals(attacker)) {
 			event.setCancelled(true);
 			return;
@@ -162,6 +164,7 @@ public abstract class Mechanic implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		BNCore.log(this.getClass().getName());
 
 		Mechanic mechanic = victim.getMatch().getArena().getMechanic();
 
