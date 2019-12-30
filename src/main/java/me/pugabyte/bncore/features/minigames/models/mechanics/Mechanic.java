@@ -156,6 +156,7 @@ public abstract class Mechanic implements Listener {
 		// Ignore damage by entity (see above)
 		if (event.getCause().name().contains("ENTITY")) return;
 		if (victim.getMatch() == null || victim.getTeam() == null) return;
+		if (!victim.isPlaying(this.getClass())) return;
 
 		if (victim.isRespawning()) {
 			event.setCancelled(true);
