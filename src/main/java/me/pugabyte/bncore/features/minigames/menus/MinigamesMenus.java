@@ -29,4 +29,14 @@ public class MinigamesMenus extends MenuUtils {
         INV.open(player);
     }
 
+    public void openLobbyMenu(Player player, Arena arena){
+        SmartInventory INV = SmartInventory.builder()
+                .id("lobbyMenu")
+                .title("Lobby Menu")
+                .provider(new LobbyMenu(arena))
+                .size(2, 9)
+                .build();
+        INV.open(player);
+    }
+
 }

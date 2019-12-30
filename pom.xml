@@ -306,5 +306,11 @@
             <artifactId>persistence-api</artifactId>
             <version>1.0.2</version>
         </dependency>
+        <!-- Anvil GUI -->
+        <dependency>
+            <groupId>com.github.WesJD.AnvilGUI</groupId>
+            <artifactId>anvilgui</artifactId>
+            <version>fac7715</version>
+        </dependency>
     </dependencies>
 </project>

@@ -1,19 +1,13 @@
 package me.pugabyte.bncore.features.minigames;
 
-import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
-import me.pugabyte.bncore.features.minigames.menus.ArenaMenu;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.bncore.features.minigames.models.*;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
-import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
-import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.*;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.utils.Utils;
@@ -25,10 +19,9 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static me.pugabyte.bncore.features.minigames.managers.ArenaManager.*;
-
-import java.util.List;
 
 @Aliases({"newmgm", "newminigames"})
 @Permission("minigames")
@@ -65,8 +58,7 @@ public class JMinigamesCommand extends CustomCommand {
 		minigamer.quit();
 	}
 
-	@Path("create {string}")
-	@Aliases("manage")
+	@Path("(create|manage) {string}")
 	@Permission("manage")
 	void create(@Arg("current") String string){
 		Arena arena;
