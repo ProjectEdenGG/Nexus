@@ -12,7 +12,9 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
+import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -63,12 +65,14 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void onQuit(Minigamer minigamer) {
-		super.onQuit(minigamer);
+		// test if player is playing in the game
+
 		ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
 		matchData.getAlivePlayers().remove(minigamer);
 		if(minigamer.equals(matchData.getTurnPlayer())){
 			onDeath(minigamer);
 		}
+		super.onQuit(minigamer);
 	}
 
 	@Override
@@ -157,18 +161,12 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(Minigamer victim) {
-		ThimbleMatchData matchData = (ThimbleMatchData) victim.getMatch().getMatchData();
+		BNCore.log("Thimble onDeath start");
 		ThimbleArena arena = (ThimbleArena) victim.getMatch().getArena();
+		arena.getGamemode().onDeath(victim);
+		BNCore.log("Thimble onDeath end");
 
-		// Most Points & Risky Reward, keep the player in alivePlayers list
-		if(!matchData.getTurnList().contains(victim)) {
-			matchData.getTurnList().add(victim);
-			victim.teleport(arena.getCurrentMap().getSpectateLocation());
-			Match match = victim.getMatch();
-			match.broadcast(victim.getColoredName() + " missed.");
-
-			Utils.wait(30, () -> nextTurn(match));
-		}
+		Utils.wait(30, () -> nextTurn(MatchManager.get(arena)));
 	}
 
 	@Override
@@ -177,8 +175,10 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	private void score(Minigamer minigamer){
+		BNCore.log("Thimble score start");
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
 		arena.getGamemode().score(minigamer);
+		BNCore.log("Thimble score end");
 
 		Utils.wait(30, () -> nextTurn(minigamer.getMatch()));
 	}
@@ -350,19 +350,30 @@ public final class Thimble extends TeamlessMechanic {
 
 	public static abstract class ThimbleGamemode {
 		void score(Minigamer minigamer) {
+			BNCore.log("Super score start");
 			ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
 			matchData.setTurns(matchData.getTurns()+1);
 			matchData.getTurnList().add(minigamer);
 		}
 
 		void onDeath(Minigamer minigamer) {
-			// do common stuff
+			BNCore.log("Super onDeath start");
+			ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
+			ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
+
+//			if(!matchData.getTurnList().contains(minigamer)) {
+				matchData.getTurnList().add(minigamer);
+				minigamer.teleport(arena.getCurrentMap().getSpectateLocation());
+				Match match = minigamer.getMatch();
+				match.broadcast(minigamer.getColoredName() + " missed.");
+//			}
 		}
 	}
 
 	public static class PointsGamemode extends ThimbleGamemode {
 		@Override
 		void score(Minigamer minigamer) {
+			BNCore.log("Points score");
 			super.score(minigamer);
 			minigamer.scored();
 		}
@@ -371,6 +382,7 @@ public final class Thimble extends TeamlessMechanic {
 	public static class RiskGamemode extends ThimbleGamemode {
 		@Override
 		void score(Minigamer minigamer) {
+			BNCore.log("Risk score");
 			super.score(minigamer);
 			// calculate score
 		}
@@ -379,14 +391,17 @@ public final class Thimble extends TeamlessMechanic {
 	public static class LastManStandingGamemode extends ThimbleGamemode {
 		@Override
 		void score(Minigamer minigamer) {
+			BNCore.log("LMS score");
 			super.score(minigamer);
 			minigamer.scored();
 		}
 
 		@Override
 		void onDeath(Minigamer minigamer) {
+			BNCore.log("LMS onDeath");
 			super.onDeath(minigamer);
-			// does custom stuff
+			ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
+			matchData.getAlivePlayers().remove(minigamer);
 		}
 
 	}
