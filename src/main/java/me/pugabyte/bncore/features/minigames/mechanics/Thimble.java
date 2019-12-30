@@ -12,6 +12,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -39,11 +40,12 @@ import java.util.List;
 import java.util.Optional;
 
 //TODO:
-// 	- GUI for picking block
 // 	- Changing gamemodes (logic)
-//	- Changing maps (locations)
-//	- 10 seconds then check if player has not jumped yet --> "Kill"
 //	- Display score after each round
+//	- 10 seconds then check if player has not jumped yet --> "Kill"
+// 			also check if they are still in the game, if not, skip turn
+//	- 15 seconds if nothing has happened just skip turn
+// 	- GUI for picking block
 
 public final class Thimble extends TeamlessMechanic {
 
@@ -65,6 +67,9 @@ public final class Thimble extends TeamlessMechanic {
 		super.onQuit(minigamer);
 		ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
 		matchData.getAlivePlayers().remove(minigamer);
+		if(minigamer.equals(matchData.getTurnPlayer())){
+			onDeath(minigamer);
+		}
 	}
 
 	@Override
@@ -110,17 +115,23 @@ public final class Thimble extends TeamlessMechanic {
 		}
 
 		int ndx = thimbleMaps.indexOf(previousMap);
-		if(ndx >= thimbleMaps.size()){
+		if(ndx >= thimbleMaps.size()-1){
 			ndx = 0;
 		}else{
-			ndx+=1;
+			ndx += 1;
 		}
-		arena.setCurrentMap(thimbleMaps.get(ndx-1));
+		arena.setCurrentMap(thimbleMaps.get(ndx));
 
 		// Setup next pool region string
 		arena.setPoolRegionStr("thimble_" + arena.getCurrentMap().getName().toLowerCase() + "_pool");
 
-		nextTurn(match);
+		// Teleport all players in minigame to spectate location of current map
+		Location specLoc = arena.getCurrentMap().getSpectateLocation();
+		for (Minigamer minigamer: minigamers) {
+			minigamer.teleport(specLoc);
+		}
+
+		Utils.wait(60, () -> nextTurn(match));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -150,7 +161,7 @@ public final class Thimble extends TeamlessMechanic {
 		ThimbleMatchData matchData = (ThimbleMatchData) victim.getMatch().getMatchData();
 		ThimbleArena arena = (ThimbleArena) victim.getMatch().getArena();
 
-		// Most Points & Risky Reward, keep the player in the game
+		// Most Points & Risky Reward, keep the player in alivePlayers list
 		if(!matchData.getTurnList().contains(victim)) {
 			matchData.getTurnList().add(victim);
 			victim.teleport(arena.getCurrentMap().getSpectateLocation());
@@ -230,6 +241,7 @@ public final class Thimble extends TeamlessMechanic {
 			match.end();
 			return;
 		}
+		matchData.setTurnPlayer(nextMinigamer);
 
 		Minigamer finalNextMinigamer = nextMinigamer;
 		Player player = finalNextMinigamer.getPlayer();
@@ -333,7 +345,7 @@ public final class Thimble extends TeamlessMechanic {
 					.detonateAfter(1)
 					.launch();
 
-			minigamer.teleport(minigamer.getMatch().getArena().getLobby().getLocation());
+			minigamer.teleport(((ThimbleArena) minigamer.getMatch().getArena()).getCurrentMap().getSpectateLocation());
 
 			score(minigamer);
 		}
