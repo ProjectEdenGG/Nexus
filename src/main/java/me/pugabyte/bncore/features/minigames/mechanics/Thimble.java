@@ -12,7 +12,6 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -101,7 +100,7 @@ public final class Thimble extends TeamlessMechanic {
 		matchData.setTurns(0);
 
 		// Select next gamemode
-		arena.setGameMode("1");
+		arena.setGamemode(arena.getNextGamemode());
 
 		// Setup next map
 		List<ThimbleMap> thimbleMaps = arena.getThimbleMaps();
@@ -178,13 +177,10 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	private void score(Minigamer minigamer){
-		ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
+		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
+		arena.getGamemode().score(minigamer);
 
-		matchData.setTurns(matchData.getTurns()+1);
-		matchData.getTurnList().add(minigamer);
-		minigamer.scored();
-		Match match = minigamer.getMatch();
-		Utils.wait(30, () -> nextTurn(match));
+		Utils.wait(30, () -> nextTurn(minigamer.getMatch()));
 	}
 
 	private void newRound(Match match) {
@@ -246,8 +242,9 @@ public final class Thimble extends TeamlessMechanic {
 		Minigamer finalNextMinigamer = nextMinigamer;
 		Player player = finalNextMinigamer.getPlayer();
 
-		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
 		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation());
+
+		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
 		Utils.wait(3, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
 	}
 
@@ -288,7 +285,7 @@ public final class Thimble extends TeamlessMechanic {
 		if (!match.isStarted()) {
 			PlayerInventory playerInv = player.getInventory();
 			ItemStack heldItem = playerInv.getItemInMainHand();
-			if(heldItem == null || heldItem.getType().equals(Material.AIR)) {
+			if(Utils.isNullOrAir(heldItem)) {
 				heldItem = playerInv.getItemInOffHand();
 			}
 
@@ -349,5 +346,48 @@ public final class Thimble extends TeamlessMechanic {
 
 			score(minigamer);
 		}
+	}
+
+	public static abstract class ThimbleGamemode {
+		void score(Minigamer minigamer) {
+			ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
+			matchData.setTurns(matchData.getTurns()+1);
+			matchData.getTurnList().add(minigamer);
+		}
+
+		void onDeath(Minigamer minigamer) {
+			// do common stuff
+		}
+	}
+
+	public static class PointsGamemode extends ThimbleGamemode {
+		@Override
+		void score(Minigamer minigamer) {
+			super.score(minigamer);
+			minigamer.scored();
+		}
+	}
+
+	public static class RiskGamemode extends ThimbleGamemode {
+		@Override
+		void score(Minigamer minigamer) {
+			super.score(minigamer);
+			// calculate score
+		}
+	}
+
+	public static class LastManStandingGamemode extends ThimbleGamemode {
+		@Override
+		void score(Minigamer minigamer) {
+			super.score(minigamer);
+			minigamer.scored();
+		}
+
+		@Override
+		void onDeath(Minigamer minigamer) {
+			super.onDeath(minigamer);
+			// does custom stuff
+		}
+
 	}
 }

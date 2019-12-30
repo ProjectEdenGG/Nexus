@@ -231,6 +231,10 @@ public class Utils {
 		return material.equals(Material.WATER) || material.equals(Material.STATIONARY_WATER);
 	}
 
+	public static boolean isNullOrAir(ItemStack itemStack) {
+		return itemStack == null || itemStack.getType().equals(Material.AIR);
+	}
+
 	public static boolean isInWater(Player player){
 		Location location = player.getLocation();
 		Block block = location.getBlock();
