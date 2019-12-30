@@ -95,6 +95,11 @@ public class ArenaManager {
 	private static FileConfiguration getConfig(String name) {
 		File file = new File(getFile(name));
 		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				BNCore.severe("Failed to create new arena file.");
+			}
 			try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
 				for (Path path : paths.collect(Collectors.toList())) {
 					if (!Files.isRegularFile(path)) continue;

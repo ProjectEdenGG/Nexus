@@ -123,25 +123,25 @@ public class BNCore extends JavaPlugin {
 	public static Wiki wiki;
 
 	private void enableFeatures() {
-		chat = new Chat();
-		clearInventory = new ClearInventory();
-		connect4 = new Connect4();
-		dailyRewards = new DailyRewardsFeature();
-		durabilityWarning = new DurabilityWarning();
-		documentation = new Documentation();
-		inviteRewards = new InviteRewards();
-		leash = new Leash();
-		modelListeners = new ModelListeners();
+		//chat = new Chat();
+		//clearInventory = new ClearInventory();
+		//connect4 = new Connect4();
+		//dailyRewards = new DailyRewardsFeature();
+		//durabilityWarning = new DurabilityWarning();
+		//documentation = new Documentation();
+		//inviteRewards = new InviteRewards();
+		//leash = new Leash();
+		//modelListeners = new ModelListeners();
 		minigames = new Minigames();
-		oldMinigames = new OldMinigames();
-		rainbowArmour = new RainbowArmour();
-		restoreInventory = new RestoreInventory();
-		showEnchants = new ShowEnchants();
-		sidewaysLogs = new SidewaysLogs();
-		sidewaysStairs = new SidewaysStairs();
-		sleep = new Sleep();
-		tameables = new Tameables();
-		wiki = new Wiki();
+		//oldMinigames = new OldMinigames();
+		//rainbowArmour = new RainbowArmour();
+		//restoreInventory = new RestoreInventory();
+		//showEnchants = new ShowEnchants();
+		//sidewaysLogs = new SidewaysLogs();
+		//sidewaysStairs = new SidewaysStairs();
+		//sleep = new Sleep();
+		//tameables = new Tameables();
+		//wiki = new Wiki();
 	}
 
 }

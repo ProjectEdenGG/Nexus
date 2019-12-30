@@ -57,4 +57,5 @@ public abstract class MenuUtils {
 	protected ItemStack closeItem() {
 		return nameItem(new ItemStack(Material.BARRIER), "&cClose");
 	}
+
 }
