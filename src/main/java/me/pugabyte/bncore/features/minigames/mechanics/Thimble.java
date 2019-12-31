@@ -13,6 +13,7 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -323,6 +324,7 @@ public final class Thimble extends TeamlessMechanic {
 			if(matchData.getTurnPlayer() == null || !matchData.getTurnPlayer().equals(minigamer)) return;
 
 			Location blockLocation = player.getLocation();
+			BNCore.log("EnteredRegionEvent. Block Loc: " + blockLocation.toString());
 			if(!Utils.isWater(blockLocation.getBlock().getType())){
 				Location locationBelow = blockLocation.subtract(0.0,1.0,0.0);
 				if(!Utils.isWater(locationBelow.getBlock().getType())){
@@ -339,7 +341,7 @@ public final class Thimble extends TeamlessMechanic {
 			blockLocation.getBlock().setData(Byte.parseByte(Short.toString(durability)));
 
 			Color color = Utils.getColor(Utils.getColor((int) durability));
-			Location fireworkLocation = blockLocation.add(0.0,2.0,0.0);
+			Location fireworkLocation = blockLocation.clone().add(0.0,2.0,0.0);
 
 			new FireworkLauncher(fireworkLocation)
 					.type(FireworkEffect.Type.BALL)
@@ -451,16 +453,19 @@ public final class Thimble extends TeamlessMechanic {
 			super.score(minigamer, blockLocation);
 			// initial score for landing in water
 			minigamer.scored();
+			int bonus = 0;
+			Block block = blockLocation.getBlock();
+			Utils.wakka("event loc: " + block.getLocation().toString());
+			Utils.wakka("X + 1 block: " + block.getRelative(1,0,0).getType().toString());
 
 			// bonus points for adjacent blocks
-			int bonus = 0;
-			if(!Utils.isWater(blockLocation.getBlock().getRelative(1,0,0).getType()))
+			if(!Utils.isWater(block.getRelative(1,0,0).getType()))
 				bonus++;
-			if(!Utils.isWater(blockLocation.getBlock().getRelative(0,0,1).getType()))
+			if(!Utils.isWater(block.getRelative(0,0,1).getType()))
 				bonus++;
-			if(!Utils.isWater(blockLocation.getBlock().getRelative(-1,0,0).getType()))
+			if(!Utils.isWater(block.getRelative(-1,0,0).getType()))
 				bonus++;
-			if(!Utils.isWater(blockLocation.getBlock().getRelative(0,0,-1).getType()))
+			if(!Utils.isWater(block.getRelative(0,0,-1).getType()))
 				bonus++;
 
 			if(bonus > 0) {
