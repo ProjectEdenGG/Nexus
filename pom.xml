@@ -281,12 +281,6 @@
             <artifactId>item-nbt-api</artifactId>
             <version>26dcd21</version>
         </dependency>
-        <!-- Netherboard -->
-        <dependency>
-            <groupId>fr.minuskube</groupId>
-            <artifactId>netherboard-bukkit</artifactId>
-            <version>1.0.6</version>
-        </dependency>
         <!-- NuVotifier -->
         <dependency>
             <groupId>com.vexsoftware</groupId>
@@ -305,6 +299,13 @@
             <groupId>javax.persistence</groupId>
             <artifactId>persistence-api</artifactId>
             <version>1.0.2</version>
+        </dependency>
+        <!-- FeatherBoard -->
+        <dependency>
+            <groupId>be.maximvdw.featherboard</groupId>
+            <artifactId>FeatherBoard</artifactId>
+            <version>4.24.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

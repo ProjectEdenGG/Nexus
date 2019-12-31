@@ -309,7 +309,7 @@ public final class Thimble extends TeamlessMechanic {
 	public void onEnterRegion(RegionEnteredEvent event){
 		Player player = event.getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
-		if(!minigamer.isPlaying(Thimble.class)) return;
+		if(!minigamer.isPlaying(this)) return;
 
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
 		if(event.getRegion().getId().equals(arena.getPoolRegionStr())) {
