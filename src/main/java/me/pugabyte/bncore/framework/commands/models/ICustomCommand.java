@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import static me.pugabyte.bncore.utils.Utils.listLast;
-import static me.pugabyte.bncore.utils.Utils.right;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -37,7 +36,8 @@ public interface ICustomCommand {
 			CustomCommand command = getCommand(event);
 			event.setCommand(command);
 			Method method = getMethod(command, event.getArgs());
-			checkPermission(event.getSender(), method);
+			if (!hasPermission(event.getSender(), method))
+				throw new NoPermissionException();
 			command.invoke(method, event);
 		} catch (Exception ex) {
 			event.handleException(ex);
@@ -45,15 +45,7 @@ public interface ICustomCommand {
 	}
 
 	default List<String> tabComplete(TabEvent event) {
-		return new PathParser(getPathMethods(event.getCommand())).tabComplete(event.getArgs());
-	}
-
-	default List<String> tab(TabEvent event) {
-		String permission = getPermission();
-		if (permission != null && !event.getSender().hasPermission(permission))
-			return null;
-
-		return tabComplete(event);
+		return new PathParser(getPathMethods(event.getCommand())).tabComplete(event);
 	}
 
 	default String getName() {
@@ -99,36 +91,23 @@ public interface ICustomCommand {
 		int i = 1;
 		int pathIndex = 0;
 		for (Parameter parameter : parameters) {
-			// log("Parameter: " + parameter.getName() + " (" + parameter.getType().getName() + ")");
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 			if (annotation == null)
 				throw new BNException("Command parameter not annotated with @Arg: "
 						+ method.getName() + "(" + parameter.getType().getName() + " " + parameter.getName() + ")");
 
 			String pathArg = "";
-			while (!pathArg.startsWith("{")) {
+			while (!pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<")) {
 				pathArg = path.next();
 				++pathIndex;
 			}
-			// log("  Path arg: " + parameter.getName() + " (Index: " + pathIndex + ")");
 
-			// TODO: This should be run on register
-			String paramArgType = listLast(parameter.getType().getName(), ".").toLowerCase();
-			String pathArgType = pathArg.replaceAll("[{}.]", "").toLowerCase();
-			if (!paramArgType.equals(pathArgType))
-				throw new BNException("Command parameter type does not match path type at parameter #"
-						+ (Integer.parseInt(right(parameter.getName(), 1)) + 1)
-						+ " (Param: " + paramArgType + ", Path: " + pathArgType + ")");
-
-			// log("  Args size: " + args.size());
 			String value = annotation.value();
-			// log("  Defaulting to: " + value);
 			if (args.size() >= pathIndex) {
 				if (pathArg.contains("..."))
 					value = String.join(" ", args.subList(pathIndex - 1, args.size()));
 				else
 					value = args.get(pathIndex - 1);
-				// log("  Overriding with: " + value);
 			}
 
 			objects[i - 1] = convert(value, parameter.getType());
@@ -139,7 +118,6 @@ public interface ICustomCommand {
 		method.invoke(this, objects);
 	}
 
-	// TODO: Make more abstract
 	Object convert(String value, Class<?> type);
 
 	@SuppressWarnings("unchecked")
@@ -174,17 +152,19 @@ public interface ICustomCommand {
 		return method;
 	}
 
-	default void checkPermission(CommandSender sender, Method method) {
+	default boolean hasPermission(CommandSender sender, Method method) {
 		String permission = getPermission();
 		if (permission != null && !sender.hasPermission(permission))
-			throw new NoPermissionException();
+			return false;
 
 		if (method.isAnnotationPresent(Permission.class)) {
 			Permission pathPermission = method.getAnnotation(Permission.class);
 			permission = pathPermission.absolute() ? "" : (permission + ".") + pathPermission.value();
 			if (!sender.hasPermission(permission))
-				throw new NoPermissionException();
+				return false;
 		}
+
+		return true;
 	}
 
 }

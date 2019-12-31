@@ -20,7 +20,7 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 
 		if (!(
-				minigamer.isPlaying(CaptureTheFlagMechanic.class) &&
+				minigamer.isPlaying(this) &&
 				event.getAction() == Action.RIGHT_CLICK_BLOCK &&
 				event.getClickedBlock() != null &&
 				event.getHand() != null &&

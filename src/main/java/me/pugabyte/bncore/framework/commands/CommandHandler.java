@@ -47,7 +47,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
 		call(event);
 		if (!event.isCancelled())
-			return customCommand.tab(event);
+			return customCommand.tabComplete(event);
 
 		return new ArrayList<>();
 	}
