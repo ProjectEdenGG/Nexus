@@ -257,8 +257,7 @@ public class Match {
 				if (!match.getPlayers().contains(player))
 					scoreboard.removePlayer(player);
 
-			for (Minigamer minigamer : match.getMinigamers())
-				scoreboard.addPlayer(minigamer.getPlayer());
+			scoreboard.addPlayers(match.getPlayers());
 		}
 	}
 
