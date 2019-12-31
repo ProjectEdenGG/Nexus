@@ -89,7 +89,6 @@ public class Utils {
 
 	public static int wait(long delay, Runnable runnable) {
 		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay).getTaskId();
-
 	}
 
 	public static int repeat(long startDelay, long interval, Runnable runnable) {

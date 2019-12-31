@@ -106,6 +106,11 @@ public class Minigamer {
 		match.getScoreboard().update();
 	}
 
+	public void setScore(int score){
+		this.score = score;
+		match.getScoreboard().update();
+	}
+
 	public void clearState() {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		// TODO: Unvanish
