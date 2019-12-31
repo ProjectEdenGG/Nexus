@@ -5,7 +5,9 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.events.minigamers.MinigamerDeathEvent;
+import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -17,6 +19,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +82,20 @@ public abstract class Mechanic implements Listener {
 
 	public abstract List<Minigamer> balance(List<Minigamer> minigamers);
 
+	public Map<String, Integer> getScoreboardLines(Match match) {
+		Map<String, Integer> lines = new HashMap<>();
+
+		if (match.getArena().getMechanic() instanceof TeamMechanic)
+			for (Team team : match.getTeams())
+				lines.put("- " + team.getColoredName(), team.getScore(match));
+
+		// TODO: Max number of lines is 15, only show max/min scores
+		for (Minigamer minigamer : match.getMinigamers())
+			lines.put(minigamer.getColoredName(), minigamer.getScore());
+
+		return lines;
+	}
+
 	@EventHandler
 	public void onDeath(EntityDamageByEntityEvent event) {
 		Minigamer victim, attacker;
@@ -111,6 +128,8 @@ public abstract class Mechanic implements Listener {
 			// Neither in minigames, ignore
 			return;
 		}
+
+		if (!(victim.isPlaying(this) && attacker.isPlaying(this))) return;
 
 		if ((victim.isRespawning() || attacker.isRespawning()) || victim.equals(attacker)) {
 			event.setCancelled(true);
@@ -156,6 +175,7 @@ public abstract class Mechanic implements Listener {
 		// Ignore damage by entity (see above)
 		if (event.getCause().name().contains("ENTITY")) return;
 		if (victim.getMatch() == null || victim.getTeam() == null) return;
+		if (!victim.isPlaying(this)) return;
 
 		if (victim.isRespawning()) {
 			event.setCancelled(true);

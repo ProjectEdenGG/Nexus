@@ -79,10 +79,6 @@
             <url>https://ci.ender.zone/plugin/repository/everything/</url>
         </repository>
         <repository>
-            <id>multiverse-repo</id>
-            <url>http://repo.onarandombox.com/nexus/content/groups/public/</url>
-        </repository>
-        <repository>
             <id>sk89q-repo</id>
             <url>http://maven.sk89q.com/repo/</url>
         </repository>
@@ -95,16 +91,16 @@
             <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
         <repository>
-            <id>onarandombox-repo</id>
-            <url>http://repo.onarandombox.com/content/groups/public</url>
-        </repository>
-        <repository>
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
         <repository>
             <id>nuvotifier-repo</id>
             <url>https://dl.bintray.com/nuvotifier/maven/</url>
+        </repository>
+        <repository>
+            <id>inventive-repo</id>
+            <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -243,26 +239,6 @@
             <version>6.1.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Multiverse Inventories -->
-        <dependency>
-            <groupId>com.onarandombox.multiverseinventories</groupId>
-            <artifactId>Multiverse-Inventories</artifactId>
-            <version>3.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Multiverse Core -->
-        <dependency>
-            <groupId>com.onarandombox.multiversecore</groupId>
-            <artifactId>Multiverse-Core</artifactId>
-            <version>3.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- JsonConfiguration -->
-        <dependency>
-            <groupId>com.dumptruckman.minecraft</groupId>
-            <artifactId>JsonConfiguration</artifactId>
-            <version>1.1</version>
-        </dependency>
         <!-- JsonSmart -->
         <dependency>
             <groupId>net.minidev</groupId>
@@ -280,12 +256,6 @@
             <groupId>com.github.tr7zw.Item-NBT-API</groupId>
             <artifactId>item-nbt-api</artifactId>
             <version>26dcd21</version>
-        </dependency>
-        <!-- Netherboard -->
-        <dependency>
-            <groupId>fr.minuskube</groupId>
-            <artifactId>netherboard-bukkit</artifactId>
-            <version>1.0.6</version>
         </dependency>
         <!-- NuVotifier -->
         <dependency>
@@ -306,11 +276,19 @@
             <artifactId>persistence-api</artifactId>
             <version>1.0.2</version>
         </dependency>
-        <!-- Anvil GUI -->
+        <!-- FeatherBoard -->
         <dependency>
-            <groupId>com.github.WesJD.AnvilGUI</groupId>
-            <artifactId>anvilgui</artifactId>
-            <version>fac7715</version>
+            <groupId>be.maximvdw.featherboard</groupId>
+            <artifactId>FeatherBoard</artifactId>
+            <version>4.24.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- GlowAPI -->
+        <dependency>
+            <groupId>org.inventivetalent</groupId>
+            <artifactId>glowapi</artifactId>
+            <version>1.4.10-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

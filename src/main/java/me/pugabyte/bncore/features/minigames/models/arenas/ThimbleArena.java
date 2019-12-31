@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.minigames.models.arenas;
 
 import lombok.Data;
+import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -14,7 +15,7 @@ public class ThimbleArena extends Arena {
 	private List<ThimbleMap> thimbleMaps;
 
 	private ThimbleMap currentMap;
-	private String gameMode;
+	private Thimble.ThimbleGamemode gamemode;
 	private String poolRegionStr;
 
 	@Override
@@ -31,7 +32,19 @@ public class ThimbleArena extends Arena {
 
 		currentMap = thimbleMaps.get(0);
 		poolRegionStr = "thimble_" + thimbleMaps.get(0).getName() + "_pool";
-		gameMode = "1";
 	}
+
+	public Thimble.ThimbleGamemode getNextGamemode() {
+		if (gamemode != null)
+			if (Thimble.ClassicGamemode.class.equals(gamemode.getClass()))
+				return new Thimble.RiskGamemode();
+			else if (Thimble.RiskGamemode.class.equals(gamemode.getClass()))
+				return new Thimble.LastManStandingGamemode();
+			else if (Thimble.LastManStandingGamemode.class.equals(gamemode.getClass()))
+				return new Thimble.ClassicGamemode();
+
+		return new Thimble.ClassicGamemode();
+	}
+
 
 }

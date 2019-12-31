@@ -8,6 +8,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
+import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -29,6 +30,8 @@ public class Minigamer {
 	private int score = 0;
 
 	public String getColoredName() {
+		if (team == null)
+			return player.getName();
 		return team.getColor() + player.getName();
 	}
 
@@ -55,13 +58,31 @@ public class Minigamer {
 		}
 	}
 
-	public boolean isPlaying(Class mechanic) {
+	public boolean isIn(Mechanic mechanic) {
+		return isIn(mechanic.getClass());
+	}
+
+	public boolean isPlaying(Mechanic mechanic) {
+		return isPlaying(mechanic.getClass());
+	}
+
+	public boolean isInLobby(Mechanic mechanic) {
+		return isInLobby(mechanic.getClass());
+	}
+
+	public boolean isIn(Class<? extends Mechanic> mechanic) {
+		if (match != null)
+			return mechanic.isInstance(match.getArena().getMechanic());
+		return false;
+	}
+
+	public boolean isPlaying(Class<? extends Mechanic> mechanic) {
 		if (match != null)
 			return mechanic.isInstance(match.getArena().getMechanic()) && match.isStarted();
 		return false;
 	}
 
-	public boolean isInLobby(Class mechanic) {
+	public boolean isInLobby(Class<? extends Mechanic> mechanic) {
 		if (match != null)
 			return mechanic.isInstance(match.getArena().getMechanic()) && !match.isStarted();
 		return false;
@@ -82,6 +103,12 @@ public class Minigamer {
 
 	public void scored() {
 		++score;
+		match.getScoreboard().update();
+	}
+
+	public void setScore(int score){
+		this.score = score;
+		match.getScoreboard().update();
 	}
 
 	public void clearState() {

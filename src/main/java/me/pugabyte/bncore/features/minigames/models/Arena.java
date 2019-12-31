@@ -45,6 +45,8 @@ public class Arena implements ConfigurationSerializable {
 	// TODO: private Set<Material> blockList;
 	@Accessors(fluent = true)
 	private boolean canJoinLate;
+	@Accessors(fluent = true)
+	private boolean hasScoreboard = true;
 
 	public Mechanic getMechanic() {
 		return getMechanicType().getMechanic();
@@ -68,6 +70,7 @@ public class Arena implements ConfigurationSerializable {
 			put("minWinningScore", getMinWinningScore());
 			put("maxWinningScore", getMaxWinningScore());
 			put("canJoinLate", canJoinLate());
+			put("hasScoreboard", hasScoreboard());
 		}};
 	}
 
@@ -87,6 +90,7 @@ public class Arena implements ConfigurationSerializable {
 		this.minWinningScore = (Integer) map.get("minWinningScore");
 		this.maxWinningScore = (Integer) map.get("maxWinningScore");
 		this.canJoinLate = (Boolean) map.get("canJoinLate");
+		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", true);
 	}
 
 }
