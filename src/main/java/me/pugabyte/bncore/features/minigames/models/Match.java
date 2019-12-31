@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.minigames.models;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.ToString;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
@@ -11,10 +10,10 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
-import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Utils;
-import org.apache.commons.lang3.builder.ToStringExclude;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -39,12 +38,21 @@ public class Match {
 	private boolean ended = false;
 	private Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;
+	private MatchScoreboard scoreboard;
 	private MatchData matchData;
 
-	public Optional<Minigamer> getPlayer(Player player) {
+	public Optional<Minigamer> getMinigamer(Player player) {
 		return minigamers.stream()
 				.filter(minigamer -> minigamer.getPlayer().getUniqueId().equals(player.getUniqueId()))
 				.findFirst();
+	}
+
+	public List<Player> getPlayers() {
+		return minigamers.stream().map(Minigamer::getPlayer).collect(Collectors.toList());
+	}
+
+	public List<Team> getTeams() {
+		return minigamers.stream().filter(minigamer -> minigamer.getTeam() != null).map(Minigamer::getTeam).collect(Collectors.toList());
 	}
 
 	public boolean join(Minigamer minigamer) {
@@ -54,6 +62,7 @@ public class Match {
 
 		if (!initialized) {
 			arena.getMechanic().onInitialize(this);
+			scoreboard = new MatchScoreboard(this);
 			initialized = true;
 		}
 
@@ -72,6 +81,7 @@ public class Match {
 		}
 
 		arena.getMechanic().onJoin(minigamer);
+		scoreboard.update();
 		return true;
 	}
 
@@ -86,6 +96,7 @@ public class Match {
 		minigamer.toLobby();
 		minigamer.clearState();
 		minigamers.remove(minigamer);
+		scoreboard.update();
 	}
 
 	public void start() {
@@ -100,6 +111,7 @@ public class Match {
 		teleportIn();
 		startTimer();
 		arena.getMechanic().onStart(this);
+		scoreboard.update();
 	}
 
 	public void end() {
@@ -114,6 +126,8 @@ public class Match {
 		clearStates();
 		toLobby();
 		arena.getMechanic().onEnd(this);
+		minigamers = new ArrayList<>();
+		scoreboard.update();
 		MatchManager.remove(this);
 	}
 
@@ -163,9 +177,9 @@ public class Match {
 
 	public void scored(Team team, int score) {
 		scores.put(team, scores.get(team) + score);
-		if (scores.get(team) >= arena.getWinningScore()) {
+		scoreboard.update();
+		if (scores.get(team) >= arena.getWinningScore())
 			end();
-		}
 	}
 
 	public void broadcast(String message) {
@@ -217,7 +231,36 @@ public class Match {
 		void stop() {
 			Utils.cancelTask(taskId);
 		}
-
 	}
+
+	public class MatchScoreboard {
+		private Match match;
+		private BNScoreboard scoreboard;
+
+		public MatchScoreboard(Match match) {
+			this.match = match;
+			if (!match.getArena().hasScoreboard())
+				return;
+			scoreboard = new BNScoreboard(match.getArena().getName());
+			update();
+		}
+
+		public void update() {
+			if (scoreboard == null)
+				return;
+			updatePlayers();
+			scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match));
+		}
+
+		private void updatePlayers() {
+			for (Player player : Bukkit.getOnlinePlayers())
+				if (!match.getPlayers().contains(player))
+					scoreboard.removePlayer(player);
+
+			for (Minigamer minigamer : match.getMinigamers())
+				scoreboard.addPlayer(minigamer.getPlayer());
+		}
+	}
+
 
 }
