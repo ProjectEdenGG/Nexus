@@ -87,8 +87,9 @@ public class Utils {
 		BNCore.getInstance().getServer().getPluginManager().callEvent(event);
 	}
 
-	public static void wait(long delay, Runnable runnable) {
-		BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay);
+	public static int wait(long delay, Runnable runnable) {
+		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay).getTaskId();
+
 	}
 
 	public static int repeat(long startDelay, long interval, Runnable runnable) {
@@ -245,6 +246,12 @@ public class Utils {
 			return true;
 		}
 		return false;
+	}
+
+	public static int randomInt(int min, int max){
+		if(min >= max)
+			throw new InvalidInputException("Min cannot be greater than max!");
+		return (int)((Math.random() * ((max - min) + 1)) + min);
 	}
 
 	public static final Map<String, Color> STR_COLORS = new HashMap<String, Color>() {{
