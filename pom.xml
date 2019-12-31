@@ -98,6 +98,10 @@
             <id>nuvotifier-repo</id>
             <url>https://dl.bintray.com/nuvotifier/maven/</url>
         </repository>
+        <repository>
+            <id>inventive-repo</id>
+            <url>https://repo.inventivetalent.org/content/groups/public/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
@@ -277,6 +281,13 @@
             <groupId>be.maximvdw.featherboard</groupId>
             <artifactId>FeatherBoard</artifactId>
             <version>4.24.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- GlowAPI -->
+        <dependency>
+            <groupId>org.inventivetalent</groupId>
+            <artifactId>glowapi</artifactId>
+            <version>1.4.10-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
