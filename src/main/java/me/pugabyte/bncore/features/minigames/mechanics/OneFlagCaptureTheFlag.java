@@ -26,7 +26,7 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 		Arena arena = match.getArena();
 		Mechanic mechanic = arena.getMechanic();
 
-		if (!minigamer.isPlaying(OneFlagCaptureTheFlag.class)) return;
+		if (!minigamer.isPlaying(this)) return;
 
 		if ((ChatColor.GRAY + "Neutral").equalsIgnoreCase(sign.getLine(2))) {
 			// TODO: Taking neutral flag

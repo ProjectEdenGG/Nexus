@@ -106,6 +106,11 @@ public class Minigamer {
 		match.getScoreboard().update();
 	}
 
+	public void scored(int scored) {
+		this.score += scored;
+		match.getScoreboard().update();
+	}
+
 	public void setScore(int score){
 		this.score = score;
 		match.getScoreboard().update();
