@@ -4,7 +4,6 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public final class DeathSwap extends TeamlessMechanic {
                 }
             }
         }
-        Utils.wait(60 * 20, () -> delay(match));
+        match.getTasks().wait(60 * 20, () -> delay(match));
     }
 
     private void randomTeleport(List<Minigamer> minigamers) {
@@ -103,7 +102,7 @@ public final class DeathSwap extends TeamlessMechanic {
             return;
         }
         int delayTime = randomInt(0, 120);
-        Utils.wait(delayTime * 20, () -> swap(match));
+        match.getTasks().wait(delayTime * 20, () -> swap(match));
     }
 
     public int randomInt(int min, int max){

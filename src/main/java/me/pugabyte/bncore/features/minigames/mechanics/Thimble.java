@@ -83,7 +83,8 @@ public final class Thimble extends TeamlessMechanic {
 			item.setDurability(CONCRETE_IDS[i]);
 			player.getInventory().setItem(i, item);
 		}
-		Utils.wait(30, () -> minigamer.tell("Click a block to select it!"));
+
+		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
 	}
 
 	@Override
@@ -119,7 +120,7 @@ public final class Thimble extends TeamlessMechanic {
 			minigamer.teleport(specLoc);
 		}
 
-		Utils.wait(60, () -> nextTurn(match));
+		match.getTasks().wait(60, () -> nextTurn(match));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -129,7 +130,6 @@ public final class Thimble extends TeamlessMechanic {
 
 		ThimbleArena arena = (ThimbleArena) match.getArena();
 		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
-		Utils.cancelTask(matchData.getTurnWaitTaskId());
 
 		// Reset Pool
 		World world = FaweAPI.getWorld((Minigames.getGameworld().getName()));
@@ -152,7 +152,7 @@ public final class Thimble extends TeamlessMechanic {
 		ThimbleArena arena = (ThimbleArena) victim.getMatch().getArena();
 		if(matchData.getTurnPlayer() != null && matchData.getTurnPlayer().equals(victim)) {
 			arena.getGamemode().onDeath(victim);
-			Utils.wait(30, () -> nextTurn(MatchManager.get(arena)));
+			victim.getMatch().getTasks().wait(30, () -> nextTurn(MatchManager.get(arena)));
 		}
 	}
 
@@ -165,7 +165,7 @@ public final class Thimble extends TeamlessMechanic {
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
 		arena.getGamemode().score(minigamer, blockLocation);
 
-		Utils.wait(30, () -> nextTurn(minigamer.getMatch()));
+		minigamer.getMatch().getTasks().wait(30, () -> nextTurn(minigamer.getMatch()));
 	}
 
 	private void newRound(Match match) {
@@ -197,7 +197,7 @@ public final class Thimble extends TeamlessMechanic {
 		match.broadcast("New Round!");
 		matchData.getTurnList().clear();
 		Collections.shuffle(matchData.getAlivePlayers());
-		Utils.wait(30, () -> nextTurn(match));
+		match.getTasks().wait(30, () -> nextTurn(match));
 	}
 
 	private void nextTurn(Match match){
@@ -232,7 +232,9 @@ public final class Thimble extends TeamlessMechanic {
 			match.end();
 			return;
 		}
-		Utils.cancelTask(matchData.getTurnWaitTaskId());
+
+		Match.MatchTasks tasks = match.getTasks();
+		tasks.cancel(matchData.getTurnWaitTaskId());
 		matchData.setTurnPlayer(nextMinigamer);
 
 		Minigamer finalNextMinigamer = nextMinigamer;
@@ -241,15 +243,15 @@ public final class Thimble extends TeamlessMechanic {
 		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation());
 
 		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
-		Utils.wait(3, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
+		tasks.wait(3, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
 
 		// wait 10 seconds, if the player's y-value is >=  nextTurnLoc y-value, kill them
-		int taskId = Utils.wait(10 * 20, () -> {
+		int taskId = tasks.wait(10 * 20, () -> {
 			if(player.getLocation().getY() >= arena.getCurrentMap().getNextTurnLocation().getY())
 				onDeath(finalNextMinigamer);
 			else {
 				// wait 5 more seconds, if the turnPlayer is still equal to player, kill them
-				int taskId2 = Utils.wait(5 * 20, () -> {
+				int taskId2 = tasks.wait(5 * 20, () -> {
 					if (matchData.getTurnPlayer() != null && matchData.getTurnPlayer().equals(finalNextMinigamer)) {
 						onDeath(finalNextMinigamer);
 					}
@@ -267,7 +269,7 @@ public final class Thimble extends TeamlessMechanic {
 			Player player = minigamer.getPlayer();
 			ItemStack helmetItem = player.getInventory().getHelmet();
 			player.getInventory().clear();
-			if(helmetItem == null || helmetItem.getType().equals(Material.AIR)) {
+			if(Utils.isNullOrAir(helmetItem)) {
 				Optional<Short> first = Shorts.asList(CONCRETE_IDS).stream().filter(id -> !matchData.getChosenConcrete().contains(id)).findFirst();
 				if (first.isPresent()) {
 					ItemStack concrete = new ItemStack(Material.CONCRETE, 1);
@@ -288,7 +290,7 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 
 		Minigamer minigamer = PlayerManager.get(player);
-		if(!minigamer.isInLobby(Thimble.class))
+		if(!minigamer.isInLobby(this))
 			return;
 
 		Match match = minigamer.getMatch();
@@ -491,7 +493,7 @@ public final class Thimble extends TeamlessMechanic {
 
 			if(bonus > 0) {
 				minigamer.tell("You recieved " + bonus + " bonus points!");
-				minigamer.setScore(minigamer.getScore() + bonus);
+				minigamer.scored(bonus);
 			}
 		}
 

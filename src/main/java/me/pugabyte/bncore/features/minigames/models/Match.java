@@ -40,6 +40,7 @@ public class Match {
 	private MatchTimer timer;
 	private MatchScoreboard scoreboard;
 	private MatchData matchData;
+	private MatchTasks tasks;
 
 	public Optional<Minigamer> getMinigamer(Player player) {
 		return minigamers.stream()
@@ -63,6 +64,7 @@ public class Match {
 		if (!initialized) {
 			arena.getMechanic().onInitialize(this);
 			scoreboard = new MatchScoreboard(this);
+			tasks = new MatchTasks();
 			initialized = true;
 		}
 
@@ -109,7 +111,7 @@ public class Match {
 		balance();
 		initializeScores();
 		teleportIn();
-		startTimer();
+		startTimer(); // -> arena.getMechanic().startTimer();
 		arena.getMechanic().onStart(this);
 		scoreboard.update();
 	}
@@ -120,8 +122,8 @@ public class Match {
 		if (event.isCancelled()) return;
 
 		ended = true;
+		tasks.end();
 		broadcast("Match has ended");
-		stopTimer();
 		clearEntities();
 		clearStates();
 		toLobby();
@@ -214,7 +216,7 @@ public class Match {
 		}
 
 		void start() {
-			taskId = Utils.repeat(0, 20, () -> {
+			taskId = match.getTasks().repeat(0, 20, () -> {
 				if (--time > 0) {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
 					Utils.callEvent(event);
@@ -261,5 +263,34 @@ public class Match {
 		}
 	}
 
+	public class MatchTasks {
+		private List<Integer> taskIds = new ArrayList<>();
+
+		void end() {
+			taskIds.forEach(this::cancel);
+		}
+
+		public void cancel(int taskId) {
+			Utils.cancelTask(taskId);
+		}
+
+		public int wait(long delay, Runnable runnable) {
+			int taskId = Utils.wait(delay, runnable);
+			taskIds.add(taskId);
+			return taskId;
+		}
+
+		public int repeat(long startDelay, long interval, Runnable runnable) {
+			int taskId = Utils.repeat(startDelay, interval, runnable);
+			taskIds.add(taskId);
+			return taskId;
+		}
+
+		public int async(Runnable runnable) {
+			int taskId = Utils.async(runnable);
+			taskIds.add(taskId);
+			return taskId;
+		}
+	}
 
 }
