@@ -27,25 +27,27 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
         //Back Item
         contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
         //Location Item
-        contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.WOODEN_DOOR), "&eLobby Location"), e ->{
+        contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.WOOD_DOOR), "&eLobby Location"), e ->{
             arena.setLobby(Lobby.builder().location(player.getLocation()).waitTime(arena.getLobby().getWaitTime()).build());
-            ArenaManager.updateFile(arena);
+            ArenaManager.write(arena);
+            ArenaManager.add(arena);
             menus.openLobbyMenu(player, arena);
         }));
         //Time Item
-        contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.WATCH), "&eWait Time"), e ->{
+        contents.set(1, 6, ClickableItem.of(nameItem(new ItemStack(Material.WATCH), "&eWait Time"), e ->{
             player.closeInventory();
             new AnvilGUI.Builder()
                     .onClose(p -> { menus.openArenaMenu(player, arena); })
                     .onComplete((p, text) -> {
                         if(Utils.isInt(text)){
                             arena.setLobby(Lobby.builder().location(arena.getLobby().getLocation()).waitTime(Integer.parseInt(text)).build());
-                            ArenaManager.updateFile(arena);
+                            ArenaManager.write(arena);
+                            ArenaManager.add(arena);
                             menus.openLobbyMenu(player, arena);
                             return AnvilGUI.Response.text(text);
                         }
                         else {
-                            player.sendMessage(Utils.colorize("&cYou must use an integer for wait time."));
+                            player.sendMessage(Utils.colorize(Utils.getPrefix("Minigames") + "You must use an integer for wait time."));
                             return AnvilGUI.Response.close();
                         }
                     })

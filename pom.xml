@@ -276,19 +276,26 @@
             <artifactId>persistence-api</artifactId>
             <version>1.0.2</version>
         </dependency>
-        <!-- FeatherBoard -->
+        <!-- FeatherBoard
         <dependency>
             <groupId>be.maximvdw.featherboard</groupId>
             <artifactId>FeatherBoard</artifactId>
             <version>4.24.0</version>
             <scope>provided</scope>
         </dependency>
+        -->
         <!-- GlowAPI -->
         <dependency>
             <groupId>org.inventivetalent</groupId>
             <artifactId>glowapi</artifactId>
             <version>1.4.10-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- AnvilGUI -->
+        <dependency>
+            <groupId>com.github.WesJD.AnvilGUI</groupId>
+            <artifactId>anvilgui</artifactId>
+            <version>fac7715</version>
         </dependency>
     </dependencies>
 </project>

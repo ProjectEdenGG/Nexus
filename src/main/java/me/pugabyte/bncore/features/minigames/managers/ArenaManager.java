@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 public class ArenaManager {
 	private static List<Arena> arenas = new ArrayList<>();
-	private static String folder = "plugins/BNCore/minigames/arenas/";
+	public static String folder = "plugins/BNCore/minigames/arenas/";
 
 	public static List<Arena> getAll() {
 		return arenas;
@@ -68,6 +68,10 @@ public class ArenaManager {
 		arenas.add(arena);
 	}
 
+	public static void remove(Arena arena){
+		arenas.remove(arena);
+	}
+
 	public static void updateFile(Arena arena){
 		File fileFolder = new File(folder);
 		if(!fileFolder.exists()){
@@ -77,15 +81,19 @@ public class ArenaManager {
 		if(!file.exists()){
 			try {
 				file.createNewFile();
-				FileConfiguration config = new YamlConfiguration();
-				config.load(file);
-				config.set("arena", arena);
-				config.save(file);
-			} catch (IOException | InvalidConfigurationException ex) {
+			} catch (IOException ex) {
 				BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
 			}
 		}
-	}
+        FileConfiguration config = new YamlConfiguration();
+        try {
+            config.load(file);
+            config.set("arena", arena);
+            config.save(file);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
 
 	private static String getFile(String name) {
 		return folder + name + ".yml";
@@ -152,11 +160,14 @@ public class ArenaManager {
 
 	public static int getNextID(){
 		int id = 1;
+		BNCore.log("getting ID");
 		for(Arena arena : getAll()){
+			BNCore.log("arena ID: " + arena.getId());
 			if(arena.getId() > id){
-				id = arena.getId() + 1;
+				id = (arena.getId() + 1);
 			}
 		}
+		BNCore.log("New Arena ID: " + id);
 		return id;
 	}
 

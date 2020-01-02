@@ -58,9 +58,9 @@ public class JMinigamesCommand extends CustomCommand {
 		minigamer.quit();
 	}
 
-	@Path("(create|manage) {string}")
+	@Path("create {string}")
 	@Permission("manage")
-	void create(@Arg("current") String string){
+	void create(@Arg String string){
 		Arena arena;
 		if(!getNames().contains(string)){
 			Arena newArena = Arena.builder()
@@ -76,6 +76,8 @@ public class JMinigamesCommand extends CustomCommand {
 					.maxWinningScore(0)
 					.canJoinLate(false)
 					.respawnLocation(player().getLocation())
+					.spectatePosition(player().getLocation())
+					.hasScoreboard(true)
 					.lobby(Lobby.builder()
 							.location(player().getLocation())
 							.waitTime(5)
@@ -91,17 +93,26 @@ public class JMinigamesCommand extends CustomCommand {
 							.spawnpoints(new ArrayList<Location>())
 							.build()))
 					.build();
-			reply("&aCreating arena " + arg(2) + "&a.");
-			reply(newArena.toString());
-			add(newArena);
-			updateFile(newArena);
+			reply(PREFIX + "Creating arena " + arg(2) + "&3.");
+			reply(PREFIX + newArena.toString());
+			write(newArena);
 			arena = newArena;
 		}
 		else {
-			reply("&aEditing arena " + arg(2) + "&a.");
+			reply(PREFIX + "Editing arena " + arg(2) + "&3.");
 			arena = ArenaManager.get(arg(2));
 		}
+		if(arena == null)
+			read();
+		else
+			read(arena.getName());
 		new MinigamesMenus().openArenaMenu(player(), arena);
+	}
+
+	@Path("manage {arena}")
+	@Permission("manage")
+	void manage(@Arg String arena){
+		new MinigamesMenus().openArenaMenu(player(), ArenaManager.get(arena));
 	}
 
 	@Path("start {arena}")
