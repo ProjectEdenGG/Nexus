@@ -11,7 +11,6 @@ import me.pugabyte.bncore.features.leash.Leash;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
-import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
 import me.pugabyte.bncore.features.showenchants.ShowEnchants;
 import me.pugabyte.bncore.features.sideways.logs.SidewaysLogs;
 import me.pugabyte.bncore.features.sideways.stairs.SidewaysStairs;
@@ -27,6 +26,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+//import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
 
 public class BNCore extends JavaPlugin {
 	private Commands commands;
@@ -114,7 +115,7 @@ public class BNCore extends JavaPlugin {
 	public static Minigames minigames;
 	public static OldMinigames oldMinigames;
 	public static RainbowArmour rainbowArmour;
-	public static RestoreInventory restoreInventory;
+	//public static RestoreInventory restoreInventory;
 	public static ShowEnchants showEnchants;
 	public static SidewaysLogs sidewaysLogs;
 	public static SidewaysStairs sidewaysStairs;
