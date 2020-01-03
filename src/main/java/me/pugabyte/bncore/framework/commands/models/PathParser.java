@@ -1,19 +1,8 @@
 package me.pugabyte.bncore.framework.commands.models;
 
-import com.google.common.base.Strings;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.framework.commands.Commands;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
-import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
-import org.objenesis.ObjenesisStd;
+import static me.pugabyte.bncore.utils.Utils.left;
 
+import com.google.common.base.Strings;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -22,13 +11,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static me.pugabyte.bncore.utils.Utils.left;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.ToString;
+import lombok.experimental.Accessors;
+import me.pugabyte.bncore.framework.commands.Commands;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 
 @Data
 class PathParser {
 	@NonNull
 	Set<Method> methods;
+	@NonNull
+	CustomCommand command;
 
 	@Data
 	class TabCompleteHelper {
@@ -132,16 +132,12 @@ class PathParser {
 		}
 
 		@ToString.Include
+		@SneakyThrows
 		List<String> tabComplete() {
 			if (isLiteral())
 				return Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
 			else if (isVariable() && tabCompleter != null)
-				try {
-					return (List<String>) tabCompleter.invoke(new ObjenesisStd().newInstance(tabCompleter.getDeclaringClass()), realArg.toLowerCase());
-				} catch (Exception e) {
-					BNCore.log("Error invoking tab completer");
-					e.printStackTrace();
-				}
+				return (List<String>) tabCompleter.invoke(command, realArg.toLowerCase());
 
 			return new ArrayList<>();
 		}

@@ -1,17 +1,10 @@
 package me.pugabyte.bncore.framework.commands.models;
 
-import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
-import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
-import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
-import me.pugabyte.bncore.framework.exceptions.BNException;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
-import org.bukkit.command.CommandSender;
+import static me.pugabyte.bncore.utils.Utils.listLast;
+import static org.reflections.ReflectionUtils.getMethods;
+import static org.reflections.ReflectionUtils.withAnnotation;
 
+import com.google.common.base.Strings;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -23,10 +16,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import static me.pugabyte.bncore.utils.Utils.listLast;
-import static org.reflections.ReflectionUtils.getMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
+import lombok.SneakyThrows;
+import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.commands.Commands;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
+import me.pugabyte.bncore.framework.exceptions.BNException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
+import org.bukkit.command.CommandSender;
 
 @SuppressWarnings("unused")
 public interface ICustomCommand {
@@ -45,7 +47,14 @@ public interface ICustomCommand {
 	}
 
 	default List<String> tabComplete(TabEvent event) {
-		return new PathParser(getPathMethods(event.getCommand())).tabComplete(event);
+		try {
+			CustomCommand command = getCommand(event);
+			event.setCommand(command);
+			return new PathParser(getPathMethods(event.getCommand()), event.getCommand()).tabComplete(event);
+		} catch (Exception ex) {
+			event.handleException(ex);
+		}
+		return new ArrayList<>();
 	}
 
 	default String getName() {
@@ -110,7 +119,7 @@ public interface ICustomCommand {
 					value = args.get(pathIndex - 1);
 			}
 
-			objects[i - 1] = convert(value, parameter.getType());
+			objects[i - 1] = convert(value, parameter.getType(), event.getCommand());
 			++i;
 		}
 
@@ -118,7 +127,25 @@ public interface ICustomCommand {
 		method.invoke(this, objects);
 	}
 
-	Object convert(String value, Class<?> type);
+	@SneakyThrows
+	default Object convert(String value, Class<?> type, CustomCommand command) {
+		if (Commands.getConverters().containsKey(type)) {
+			return Commands.getConverters().get(type).invoke(command, value);
+		}
+
+		if (Boolean.class == type || Boolean.TYPE == type) {
+			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
+			return Boolean.parseBoolean(value);
+		}
+		if (String.class == type && Strings.isNullOrEmpty(value)) return null;
+		if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
+		if (Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
+		if (Float.class == type || Float.TYPE == type) return Float.parseFloat(value);
+		if (Short.class == type || Short.TYPE == type) return Short.parseShort(value);
+		if (Long.class == type || Long.TYPE == type) return Long.parseLong(value);
+		if (Byte.class == type || Byte.TYPE == type) return Byte.parseByte(value);
+		return value;
+	}
 
 	@SuppressWarnings("unchecked")
 	default CustomCommand getCommand(CommandEvent event) throws Exception {
@@ -129,14 +156,12 @@ public interface ICustomCommand {
 	}
 
 	default Set<Method> getPathMethods(CustomCommand command) {
-		Set<Method> methods = getMethods(command.getClass(), withAnnotation(Path.class));
-		if (methods.size() == 1)
-			return Collections.singleton(methods.iterator().next());
-		return methods;
+		return getMethods(command.getClass(), withAnnotation(Path.class));
 	}
 
+	// TODO: Use same methods as tab complete
 	default Method getMethod(CustomCommand command, List<String> args) {
-		Method method = new PathParser(getPathMethods(command)).match(args);
+		Method method = new PathParser(getPathMethods(command), command).match(args);
 
 		// Work backwards until match is found - not needed after rework?
 //		int i = args.size() - 1;
