@@ -121,7 +121,7 @@ class PathParser {
 			if (isCompletionIndex)
 				if (Strings.isNullOrEmpty(realArg))
 					return true;
-				else if (pathArg.startsWith(realArg))
+				else if (pathArg.toLowerCase().startsWith(realArg))
 					return true;
 
 			for (String option : tabComplete())

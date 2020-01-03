@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArenaManager {
@@ -71,22 +70,15 @@ public class ArenaManager {
 		return folder + name + ".yml";
 	}
 
-	// TODO: Centralize file walk logic, only read .yml files
 	private static FileConfiguration getConfig(String name) {
 		File file = new File(getFile(name));
 		if (!file.exists()) {
-			try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
-				for (Path path : paths.collect(Collectors.toList())) {
-					if (!Files.isRegularFile(path)) continue;
-
-					if (path.getFileName().toString().toLowerCase().startsWith(name.toLowerCase()))
-						return YamlConfiguration.loadConfiguration(path.toFile());
-				}
+			try {
+				if (!file.createNewFile())
+					BNCore.warn("File " + file.getName() + " already exists");
 			} catch (IOException ex) {
-				BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
+				BNCore.severe("An error occurred while trying to create a configuration file: " + ex.getMessage());
 			}
-
-			throw new InvalidInputException("Arena configuration file not found");
 		}
 
 		return YamlConfiguration.loadConfiguration(file);
@@ -97,8 +89,9 @@ public class ArenaManager {
 			paths.forEach(filePath -> {
 				if (!Files.isRegularFile(filePath)) return;
 
-				String name = filePath.getFileName().toString().replace(".yml", "");
+				String name = filePath.getFileName().toString();
 				if (name.startsWith(".")) return;
+
 				read(name);
 			});
 		} catch (IOException ex) {
@@ -108,6 +101,7 @@ public class ArenaManager {
 
 	public static void read(String name) {
 		add((Arena) getConfig(name).get("arena"));
+		BNCore.log("Loaded arena " + name);
 	}
 
 	public static void write() {

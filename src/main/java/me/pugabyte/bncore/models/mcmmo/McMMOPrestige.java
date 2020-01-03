@@ -12,9 +12,6 @@ public class McMMOPrestige {
 	private Map<String, Integer> prestiges;
 
 	public int getPrestige(String type) {
-		if (prestiges.containsKey(type))
-			return prestiges.get(type);
-
-		return 0;
+		return prestiges.getOrDefault(type, 0);
 	}
 }
