@@ -91,8 +91,9 @@ public class ArenaManager {
 
 				String name = filePath.getFileName().toString();
 				if (name.startsWith(".")) return;
+				if (!name.endsWith(".yml")) return;
 
-				read(name);
+				read(name.replace(".yml",""));
 			});
 		} catch (IOException ex) {
 			BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());

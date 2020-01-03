@@ -47,6 +47,8 @@ import java.util.Optional;
 //	- Finish LMS gamemode: setup pool on start
 //	- Give players slowness when they are picked after they are teleported so they don't accidently fall off (10 ticks)
 //	- timeleft < ((total players * 17)*2) --> at the end of the round, broadcast Last Round, and no matter how much time is left, end the game
+//	- interaction whitelist
+//	- on matchEndEvent (normal bukkit listener), store a boolean that i need to end it
 public final class Thimble extends TeamlessMechanic {
 
 	private final short CONCRETE_IDS[] = {14,1,4,5,13,10,2,6,12,15,7,8,0};
@@ -97,6 +99,8 @@ public final class Thimble extends TeamlessMechanic {
 		match.setMatchData(new ThimbleMatchData(match));
 
 		arena.getGamemode().onInitialize(match);
+
+		arena.getGamemode().editPool(match);
 	}
 
 	@Override
@@ -126,12 +130,8 @@ public final class Thimble extends TeamlessMechanic {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnd(Match match) {
-		super.onEnd(match);
-
-		ThimbleArena arena = (ThimbleArena) match.getArena();
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
-
 		// Reset Pool
+		ThimbleArena arena = (ThimbleArena) match.getArena();
 		World world = FaweAPI.getWorld((Minigames.getGameworld().getName()));
 		EditSession editSession = new EditSessionBuilder(world).fastmode(true).build();
 		RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
@@ -144,6 +144,7 @@ public final class Thimble extends TeamlessMechanic {
 			editSession.setBlocks(poolRegion, baseBlock);
 			editSession.flushQueue();
 		}
+		super.onEnd(match);
 	}
 
 	@Override
@@ -398,8 +399,23 @@ public final class Thimble extends TeamlessMechanic {
 
 			// Setup next pool region string
 			arena.setPoolRegionStr("thimble_" + arena.getCurrentMap().getName().toLowerCase() + "_pool");
+
+			// fill pool full of water
+			RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
+			World world = FaweAPI.getWorld((Minigames.getGameworld().getName()));
+			EditSession editSession = new EditSessionBuilder(world).fastmode(true).build();
+			if(regionManager.getRegion(arena.getPoolRegionStr()) != null) {
+				Vector max = regionManager.getRegion(arena.getPoolRegionStr()).getMaximumPoint();
+				Vector min = regionManager.getRegion(arena.getPoolRegionStr()).getMinimumPoint();
+				Region poolRegion = new CuboidRegion(max, min);
+				BaseBlock baseBlock = new BaseBlock(9, 0);
+
+				editSession.setBlocks(poolRegion, baseBlock);
+				editSession.flushQueue();
+			}
 		}
 
+		// Randomly place blocks in pool
 		void editPool(Match match){
 			ThimbleArena arena = (ThimbleArena) match.getArena();
 			RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
@@ -452,7 +468,6 @@ public final class Thimble extends TeamlessMechanic {
 		@Override
 		void onInitialize(Match match) {
 			super.onInitialize(match);
-			editPool(match);
 		}
 
 		@Override
@@ -471,7 +486,6 @@ public final class Thimble extends TeamlessMechanic {
 		@Override
 		void onInitialize(Match match) {
 			super.onInitialize(match);
-			editPool(match);
 		}
 
 		@Override
@@ -505,11 +519,13 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	public static class LastManStandingGamemode extends ThimbleGamemode {
+
 		@Override
 		void onInitialize(Match match){
 			ThimbleArena arena = (ThimbleArena) match.getArena();
+			super.onInitialize(match);
 
-			// Fill Pool
+			// Fill pool full of upside down pistons
 			World world = FaweAPI.getWorld((Minigames.getGameworld().getName()));
 			EditSession editSession = new EditSessionBuilder(world).fastmode(true).build();
 			RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
@@ -522,11 +538,12 @@ public final class Thimble extends TeamlessMechanic {
 				editSession.setBlocks(poolRegion, baseBlock);
 				editSession.flushQueue();
 			}
-
-			super.onInitialize(match);
-			editPool(match);
 		}
-
+		// TODO: dynamic amount of holes depending on player count
+		// total match players = pMatch
+		// max players = pMax
+		// pMatch * 2 + (pMatch - pMax)
+		// # of Holes = Math.ceil(pMatch * 2 + ((pMax - pMatch)/5))
 		@Override
 		void editPool(Match match) {
 			ThimbleArena arena = (ThimbleArena) match.getArena();
@@ -549,6 +566,7 @@ public final class Thimble extends TeamlessMechanic {
 						continue;
 
 					block.setType(Material.STATIONARY_WATER);
+
 					break;
 				}
 			}
