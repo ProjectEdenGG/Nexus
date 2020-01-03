@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -274,11 +275,21 @@ public class Utils {
 		put("pink", Color.fromRGB(255, 105, 180));
 	}};
 
-	public static Color getColor(String color){
+	public static Color getChatColorFromString(String color){
 		if (STR_COLORS.containsKey(color)){
 			return STR_COLORS.get(color);
 		}
 		return Color.WHITE;
+	}
+
+	public static String getStringColorFromChat(Color color){
+		for (Map.Entry mapElement : STR_COLORS.entrySet()) {
+			String key = (String) mapElement.getKey();
+			Color value = ((Color) mapElement.getValue());
+			if(color.equals(value))
+				return key;
+		}
+		return "white";
 	}
 
 	public static final Map<Integer, String> INT_COLORS = new HashMap<Integer, String>() {{
@@ -300,11 +311,30 @@ public class Utils {
 		put(6, "pink");
 	}};
 
-	public static String getColor(Integer color){
+	public static String getStringColorFromInt(Integer color){
 		if (INT_COLORS.containsKey(color)){
 			return INT_COLORS.get(color);
 		}
 		return "white";
+	}
+
+	public static int getIntColorFromString(String color){
+		for (Map.Entry mapElement : INT_COLORS.entrySet()) {
+			int key = (int) mapElement.getKey();
+			String value = ((String) mapElement.getValue());
+			if(color.equals(value)){
+				return key;
+			}
+		}
+		return 0;
+	}
+
+	public static int getIntColorFromChat(Color color){
+		return getIntColorFromString(getStringColorFromChat(color));
+	}
+
+	public static Color getChatColorFromInt(int color){
+		return getChatColorFromString(getStringColorFromInt(color));
 	}
 
 }
