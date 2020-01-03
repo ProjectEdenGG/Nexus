@@ -22,6 +22,7 @@ import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleArena;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleMap;
 import me.pugabyte.bncore.features.minigames.models.matchdata.ThimbleMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
@@ -317,7 +318,9 @@ public final class Thimble extends TeamlessMechanic {
 					// Add new item on head to chosenIDs
 					playerInv.setHelmet(heldItem);
 					matchData.getChosenConcrete().add(itemDurability);
-					minigamer.tell("You chose " + Utils.getStringColorFromInt((int)itemDurability) + "!");
+
+					String chosenColor = ColorType.fromDurability(itemDurability).getName();
+					minigamer.tell("You chose " + chosenColor + "!");
 				}else{
 					minigamer.tell("&cThat block is already chosen!");
 				}
@@ -358,7 +361,7 @@ public final class Thimble extends TeamlessMechanic {
 			blockLocation.getBlock().setType(Material.CONCRETE);
 			blockLocation.getBlock().setData(Byte.parseByte(Short.toString(durability)));
 
-			Color color = Utils.getChatColorFromInt((int) durability);
+			Color color = ColorType.fromDurability(durability).getColor();
 			Location fireworkLocation = blockLocation.clone().add(0.0,2.0,0.0);
 
 			new FireworkLauncher(fireworkLocation)
@@ -517,7 +520,7 @@ public final class Thimble extends TeamlessMechanic {
 			return "Risk";
 		}
 	}
-
+	// when 1 hole is remaining, do not fill, finish the round letting everyone go for that one hole, and those who are still alive by the end, win.
 	public static class LastManStandingGamemode extends ThimbleGamemode {
 
 		@Override
@@ -539,18 +542,17 @@ public final class Thimble extends TeamlessMechanic {
 				editSession.flushQueue();
 			}
 		}
-		// TODO: dynamic amount of holes depending on player count
-		// total match players = pMatch
-		// max players = pMax
-		// pMatch * 2 + (pMatch - pMax)
-		// # of Holes = Math.ceil(pMatch * 2 + ((pMax - pMatch)/5))
+
+		// Place x water holes randomly in pool
 		@Override
 		void editPool(Match match) {
 			ThimbleArena arena = (ThimbleArena) match.getArena();
 			RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
 			ProtectedCuboidRegion editRegion = (ProtectedCuboidRegion) regionManager.getRegion(arena.getPoolRegionStr());
+			int playerCount = match.getMinigamers().size();
+			int maxPlayers = arena.getMaxPlayers();
 
-			int BLOCKS_TO_CHANGE = 5;
+			int BLOCKS_TO_CHANGE = ((playerCount * 2) + (playerCount - maxPlayers));
 			int ATTEMPTS = 3;
 			for (int i = 0; i < BLOCKS_TO_CHANGE; i++) {
 				for (int j = 0; j < ATTEMPTS; j++) {

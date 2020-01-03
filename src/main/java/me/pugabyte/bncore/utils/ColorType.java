@@ -82,14 +82,14 @@ public enum ColorType {
 	),
 	CYAN(
 			"cyan",
-			Color.AQUA,
+			Color.TEAL,
 			ChatColor.DARK_AQUA,
 			DyeColor.CYAN,
 			9
 	),
 	LIGHT_BLUE(
 			"light blue",
-			Color.TEAL,
+			Color.AQUA,
 			ChatColor.AQUA,
 			DyeColor.LIGHT_BLUE,
 			3
