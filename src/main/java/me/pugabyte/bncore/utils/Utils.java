@@ -297,6 +297,44 @@ public class Utils {
 		return "white";
 	}
 
+	public static int getColorInt(String color){
+		for	(int key : INT_COLORS.keySet()){
+			if (INT_COLORS.get(key).equals(color)) return key;
+		}
+		return 0;
+	}
+
+	public static String getColor(ChatColor color){
+		for(String key : DYE_CHAT_COLORS.keySet()){
+			if(DYE_CHAT_COLORS.get(key).equals(color)) return key;
+		}
+		return "white";
+	}
+
+	public static final HashMap<String, ChatColor> DYE_CHAT_COLORS = new HashMap<String, ChatColor>() {{
+		put("white", ChatColor.WHITE);
+		put("orange", ChatColor.GOLD);
+		put("light blue", ChatColor.AQUA);
+		put("yellow", ChatColor.YELLOW);
+		put("lime", ChatColor.GREEN);
+		put("pink", ChatColor.LIGHT_PURPLE);
+		put("gray", ChatColor.DARK_GRAY);
+		put("light gray", ChatColor.GRAY);
+		put("cyan", ChatColor.DARK_AQUA);
+		put("purple", ChatColor.DARK_PURPLE);
+		put("blue", ChatColor.BLUE);
+		put("green", ChatColor.DARK_GREEN);
+		put("red", ChatColor.RED);
+		put("black", ChatColor.BLACK);
+	}};
+
+	public static ChatColor getChatColor(String color){
+		if(DYE_CHAT_COLORS.containsKey(color)) {
+			return DYE_CHAT_COLORS.get(color);
+		}
+		return ChatColor.WHITE;
+	}
+
 	public static boolean isInt(String string){
 		try{
 			Integer.parseInt(string);
