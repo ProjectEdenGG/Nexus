@@ -1,7 +1,11 @@
 package me.pugabyte.bncore.features;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -9,7 +13,6 @@ import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
-import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,24 +20,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.material.Dye;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class BNCoreCommand extends CustomCommand {
 	public BNCoreCommand(CommandEvent event) {
 		super(event);
-	}
-
-	// TODO: Move to appropriate place
-	@TabCompleterFor({Player.class, OfflinePlayer.class, Nerd.class})
-	List<String> playerTabComplete(String filter) {
-		return Bukkit.getOnlinePlayers().stream()
-				.filter(player -> player.getName().toLowerCase().startsWith(filter.toLowerCase()))
-				.map(Player::getName)
-				.collect(Collectors.toList());
 	}
 
 	@Path("getPlayer {offlineplayer}")
@@ -47,23 +36,32 @@ public class BNCoreCommand extends CustomCommand {
 		SkriptFunctions.redTint(player, fadeTime, intensity);
 	}
 
+	@ConverterFor({Nerd.class})
+	Object convertToNerd(String value) {
+		return new Nerd((OfflinePlayer) convertToPlayer(value));
+	}
+
+	@TabCompleterFor(Nerd.class)
+	List<String> tabCompleteNerd(String value) {
+		return tabCompletePlayer(value);
+	}
+
 	@TabCompleterFor(ColorType.class)
-	List<String> colorTypeTabComplete(String filter) {
+	List<String> tabCompleteColorType(String filter) {
 		return Arrays.stream(ColorType.values())
 				.filter(value -> value.name().toLowerCase().startsWith(filter))
 				.map(Enum::name)
 				.collect(Collectors.toList());
 	}
 
-	@Override
-	public Object convert(String value, Class<?> type) {
-		if (ColorType.class == type)
-			try {
-				return ColorType.valueOf(value.toUpperCase());
-			} catch (IllegalArgumentException ignore) {
-				error("ColorType from " + value + " not found");
-			}
-		return super.convert(value, type);
+	@ConverterFor(ColorType.class)
+	Object convertToColorType(String value) {
+		try {
+			return ColorType.valueOf(value.toUpperCase());
+		} catch (IllegalArgumentException ignore) {
+			error("ColorType from " + value + " not found");
+		}
+		return null;
 	}
 
 	@Path("getColor {color}")

@@ -1,11 +1,10 @@
 package me.pugabyte.bncore.utils;
 
+import java.util.Arrays;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
-
-import java.util.Arrays;
 
 @Getter
 public enum ColorType {
@@ -138,23 +137,23 @@ public enum ColorType {
 	private Integer durability;
 
 	public static ColorType fromString(String name) {
-		return Arrays.stream(values()).filter(colorConfig -> name.equals(colorConfig.getName())).findFirst().get();
+		return Arrays.stream(values()).filter(colorConfig -> name.equals(colorConfig.getName())).findFirst().orElse(null);
 	}
 
 	public static ColorType fromColor(Color color) {
-		return Arrays.stream(values()).filter(colorConfig -> color.equals(colorConfig.getColor())).findFirst().get();
+		return Arrays.stream(values()).filter(colorConfig -> color.equals(colorConfig.getColor())).findFirst().orElse(null);
 	}
 
 	public static ColorType fromChatColor(ChatColor chatColor) {
-		return Arrays.stream(values()).filter(colorConfig -> chatColor.equals(colorConfig.getChatColor())).findFirst().get();
+		return Arrays.stream(values()).filter(colorConfig -> chatColor.equals(colorConfig.getChatColor())).findFirst().orElse(null);
 	}
 
 	public static ColorType fromDyeColor(DyeColor dyeColor) {
-		return Arrays.stream(values()).filter(colorConfig -> dyeColor.equals(colorConfig.getDyeColor())).findFirst().get();
+		return Arrays.stream(values()).filter(colorConfig -> dyeColor.equals(colorConfig.getDyeColor())).findFirst().orElse(null);
 	}
 
 	public static ColorType fromDurability(int durability) {
-		return Arrays.stream(values()).filter(colorConfig -> durability == (colorConfig.getDurability())).findFirst().get();
+		return Arrays.stream(values()).filter(colorConfig -> durability == (colorConfig.getDurability())).findFirst().orElse(null);
 	}
 
 }

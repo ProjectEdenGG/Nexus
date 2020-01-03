@@ -1,20 +1,19 @@
 package me.pugabyte.bncore.framework.commands;
 
+import static org.reflections.ReflectionUtils.getMethods;
+import static org.reflections.ReflectionUtils.withAnnotation;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import lombok.Getter;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import org.bukkit.plugin.Plugin;
 import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
-
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import static org.reflections.ReflectionUtils.getMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
 public class Commands {
@@ -24,6 +23,8 @@ public class Commands {
 	private Set<Class<? extends CustomCommand>> commandSet;
 	private static Map<String, CustomCommand> commands = new HashMap<>();
 	@Getter
+	private static Map<Class<?>, Method> converters = new HashMap<>();
+	@Getter
 	private static Map<Class<?>, Method> tabCompleters = new HashMap<>();
 
 	public Commands(Plugin plugin, String path) {
@@ -31,7 +32,7 @@ public class Commands {
 		this.path = path;
 		this.mapUtils = new CommandMapUtils(plugin);
 		this.commandSet = new Reflections(path).getSubTypesOf(CustomCommand.class);
-		registerTabCompleters();
+		registerConvertersAndTabCompleters();
 	}
 
 	public static CustomCommand get(String alias) {
@@ -76,27 +77,30 @@ public class Commands {
 		}
 	}
 
-	private void registerTabCompleters() {
-		new Reflections(path).getSubTypesOf(CustomCommand.class).forEach(this::registerTabCompleters);
+	private void registerConvertersAndTabCompleters() {
+		Set<Class<? extends CustomCommand>> commands = new Reflections(path).getSubTypesOf(CustomCommand.class);
+		commands.forEach(this::registerTabCompleters);
+		commands.forEach(this::registerConverters);
 		registerTabCompleters(CustomCommand.class);
+		registerConverters(CustomCommand.class);
 	}
 
 	private void registerTabCompleters(Class<?> clazz) {
-		getTabCompleterMethods(clazz).forEach(method -> {
-			Class<?>[] classes = method.getAnnotation(TabCompleterFor.class).value();
-			for (Class<?> classFor : classes) {
+		getMethods(clazz, withAnnotation(TabCompleterFor.class)).forEach(method -> {
+			for (Class<?> classFor : method.getAnnotation(TabCompleterFor.class).value()) {
 				method.setAccessible(true);
 				tabCompleters.put(classFor, method);
 			}
 		});
 	}
 
-	Set<Method> getTabCompleterMethods(Class<?> clazz) {
-		Set<Method> methods = getMethods(clazz, withAnnotation(TabCompleterFor.class));
-		if (methods.size() == 1)
-			return Collections.singleton(methods.iterator().next());
-		return methods;
+	private void registerConverters(Class<?> clazz) {
+		getMethods(clazz, withAnnotation(ConverterFor.class)).forEach(method -> {
+			for (Class<?> classFor : method.getAnnotation(ConverterFor.class).value()) {
+				method.setAccessible(true);
+				converters.put(classFor, method);
+			}
+		});
 	}
-
 
 }
