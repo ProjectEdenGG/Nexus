@@ -4,10 +4,7 @@ import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.menus.custommenus.DeathSwapMenu;
 import me.pugabyte.bncore.features.minigames.menus.custommenus.ThimbleMenu;
-import me.pugabyte.bncore.features.minigames.menus.teams.TeamEditorMenu;
-import me.pugabyte.bncore.features.minigames.menus.teams.TeamsMenu;
 import me.pugabyte.bncore.features.minigames.models.Arena;
-import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -53,27 +50,6 @@ public class MinigamesMenus extends MenuUtils {
                 .build();
         INV.open(player);
     }
-
-    public void openTeamsMenu(Player player, Arena arena){
-        SmartInventory INV = SmartInventory.builder()
-                .id("teamsMenu")
-                .title("Teams Menu")
-                .provider(new TeamsMenu(arena))
-                .size(2, 9)
-                .build();
-        INV.open(player);
-    }
-
-    public void openTeamsEditorMenu(Player player, Arena arena, Team team){
-        SmartInventory INV = SmartInventory.builder()
-                .id("teamEditorMenu")
-                .title("Team Editor Menu")
-                .provider(new TeamEditorMenu(arena, team))
-                .size(6, 9)
-                .build();
-        INV.open(player);
-    }
-
 
     public void openCustomSettingsMenu(Player player, Arena arena){
         switch(arena.getMechanicType().name().toLowerCase()){

@@ -26,6 +26,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
 
     Arena arena;
     MinigamesMenus menus = new MinigamesMenus();
+    TeamMenus teamMenus = new TeamMenus();
     public TeamsMenu(Arena arena){
         this.arena = arena;
     }
@@ -35,7 +36,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
         contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
         contents.set(0, 4, ClickableItem.of(nameItem(new ItemStack(Material.EMERALD_BLOCK), "&aAdd Team"), e->{
             new AnvilGUI.Builder()
-                    .onClose(p -> { menus.openTeamsMenu(player, arena); })
+                    .onClose(p -> { teamMenus.openTeamsMenu(player, arena); })
                     .onComplete((p, text) -> {
                         List<Team> teams = new ArrayList<>();
                         teams.addAll(arena.getTeams());
@@ -52,7 +53,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
                         arena.setTeams(teams);
                         ArenaManager.write(arena);
                         ArenaManager.add(arena);
-                        menus.openTeamsMenu(player, arena);
+                        teamMenus.openTeamsMenu(player, arena);
                         return AnvilGUI.Response.text(text);
                     })
                     .text("Team Name")
@@ -64,7 +65,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
         for(Team team : arena.getTeams()){
             ItemStack item = nameItem(new ItemStack(Material.WOOL, 1, DyeColor.valueOf(team.getColor().name()).getWoolData()), "&e" + team.getColoredName());
             contents.set(row, column, ClickableItem.of(item, e -> {
-                menus.openTeamsEditorMenu(player, arena, team);
+                teamMenus.openTeamsEditorMenu(player, arena, team);
             }));
             if(column != 8){
                 column++;

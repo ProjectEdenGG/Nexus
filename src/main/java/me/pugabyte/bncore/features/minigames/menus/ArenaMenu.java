@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 public class ArenaMenu extends MenuUtils implements InventoryProvider {
 
     MinigamesMenus menus = new MinigamesMenus();
+    TeamMenus teamMenus = new TeamMenus();
     public ArenaMenu(Arena arena){
         this.arena = arena;
     }
@@ -117,7 +119,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
         }));
         //Teams Menu Item
         contents.set(2, 4, ClickableItem.of(nameItem(new ItemStack(Material.WOOL),
-                "&eTeams", "&7Click me to open||&7the team menu"), e -> menus.openTeamsMenu(player, arena)));
+                "&eTeams", "&7Click me to open||&7the team menu"), e -> teamMenus.openTeamsMenu(player, arena)));
         //Respawn Location Item
         contents.set(2, 6, ClickableItem.of(nameItem(new ItemStack(Material.BED, 1, (byte) 14),
                 "&eRespawn Location", "&7Location players will respawn||&7while waiting to join back|| ||" +
