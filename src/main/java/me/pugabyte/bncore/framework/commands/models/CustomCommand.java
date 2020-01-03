@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeCommandBlockException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.CommandBlock;
@@ -77,10 +78,14 @@ public abstract class CustomCommand implements ICustomCommand {
 		return (CommandBlock) event.getSender();
 	}
 
+	// TODO: @ConverterFor
 	public Object convert(String value, Class<?> type) {
-		if (Player.class == type || OfflinePlayer.class == type) {
+		if (Player.class == type || OfflinePlayer.class == type || Nerd.class == type) {
 			if ("self".equalsIgnoreCase(value)) value = player().getUniqueId().toString();
-			return Utils.getPlayer(value);
+			OfflinePlayer player = Utils.getPlayer(value);
+			if (Nerd.class == type)
+				return new Nerd(player);
+			return player;
 		}
 		if (Boolean.class == type || Boolean.TYPE == type) {
 			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";

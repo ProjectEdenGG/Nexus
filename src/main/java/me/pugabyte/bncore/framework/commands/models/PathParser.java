@@ -137,7 +137,7 @@ class PathParser {
 				return Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
 			else if (isVariable() && tabCompleter != null)
 				try {
-					return (List<String>) tabCompleter.invoke(new ObjenesisStd().newInstance(tabCompleter.getDeclaringClass()), realArg);
+					return (List<String>) tabCompleter.invoke(new ObjenesisStd().newInstance(tabCompleter.getDeclaringClass()), realArg.toLowerCase());
 				} catch (Exception e) {
 					BNCore.log("Error invoking tab completer");
 					e.printStackTrace();
