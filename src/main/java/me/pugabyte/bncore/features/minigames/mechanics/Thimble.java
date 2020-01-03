@@ -184,6 +184,7 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 		}
 
+		// Check if there is enough time for another round
 //		if(arena.getSeconds() < (match.getMinigamers().size() * 17)){
 //			match.broadcast("Time left < " + (match.getMinigamers().size() * 17) + " (newround)");
 //			match.end();
@@ -315,7 +316,7 @@ public final class Thimble extends TeamlessMechanic {
 					// Add new item on head to chosenIDs
 					playerInv.setHelmet(heldItem);
 					matchData.getChosenConcrete().add(itemDurability);
-					minigamer.tell("You chose " + Utils.getColor((int)itemDurability) + "!");
+					minigamer.tell("You chose " + Utils.getStringColorFromInt((int)itemDurability) + "!");
 				}else{
 					minigamer.tell("&cThat block is already chosen!");
 				}
@@ -356,7 +357,7 @@ public final class Thimble extends TeamlessMechanic {
 			blockLocation.getBlock().setType(Material.CONCRETE);
 			blockLocation.getBlock().setData(Byte.parseByte(Short.toString(durability)));
 
-			Color color = Utils.getColor(Utils.getColor((int) durability));
+			Color color = Utils.getChatColorFromInt((int) durability);
 			Location fireworkLocation = blockLocation.clone().add(0.0,2.0,0.0);
 
 			new FireworkLauncher(fireworkLocation)
