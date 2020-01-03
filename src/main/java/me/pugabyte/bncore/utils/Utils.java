@@ -253,6 +253,7 @@ public class Utils {
 		return (int)((Math.random() * ((max - min) + 1)) + min);
 	}
 
+	@Deprecated
 	public static final Map<String, Color> STR_COLORS = new HashMap<String, Color>() {{
 		put("white", Color.WHITE);
 		put("light gray", Color.SILVER);
@@ -274,6 +275,7 @@ public class Utils {
 		put("pink", Color.fromRGB(255, 105, 180));
 	}};
 
+	@Deprecated
 	public static Color getChatColorFromString(String color){
 		if (STR_COLORS.containsKey(color)){
 			return STR_COLORS.get(color);
@@ -281,6 +283,7 @@ public class Utils {
 		return Color.WHITE;
 	}
 
+	@Deprecated
 	public static String getStringColorFromChat(Color color){
 		for (Map.Entry mapElement : STR_COLORS.entrySet()) {
 			String key = (String) mapElement.getKey();
@@ -291,6 +294,7 @@ public class Utils {
 		return "white";
 	}
 
+	@Deprecated
 	public static final Map<Integer, String> INT_COLORS = new HashMap<Integer, String>() {{
 		put(0, "white");
 		put(8, "light gray");
@@ -310,6 +314,7 @@ public class Utils {
 		put(6, "pink");
 	}};
 
+	@Deprecated
 	public static String getStringColorFromInt(Integer color){
 		if (INT_COLORS.containsKey(color)){
 			return INT_COLORS.get(color);
@@ -317,6 +322,7 @@ public class Utils {
 		return "white";
 	}
 
+	@Deprecated
 	public static int getIntColorFromString(String color){
 		for (Map.Entry mapElement : INT_COLORS.entrySet()) {
 			int key = (int) mapElement.getKey();
@@ -328,10 +334,12 @@ public class Utils {
 		return 0;
 	}
 
+	@Deprecated
 	public static int getIntColorFromChat(Color color){
 		return getIntColorFromString(getStringColorFromChat(color));
 	}
 
+	@Deprecated
 	public static Color getChatColorFromInt(int color){
 		return getChatColorFromString(getStringColorFromInt(color));
 	}

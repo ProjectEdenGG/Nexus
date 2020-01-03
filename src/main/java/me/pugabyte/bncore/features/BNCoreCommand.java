@@ -15,6 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.material.Dye;
 
 import java.util.Arrays;
@@ -77,9 +79,11 @@ public class BNCoreCommand extends CustomCommand {
 		location.getBlock().setData(colorType.getDurability().byteValue());
 
 		// Give dyed chestplate
-		Dye dye = new Dye(Material.LEATHER_CHESTPLATE);
-		dye.setColor(colorType.getDyeColor());
-		location.getWorld().dropItemNaturally(location.add(0, 1, 0), dye.toItemStack(1));
+		ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
+		LeatherArmorMeta meta = (LeatherArmorMeta) chestplate.getItemMeta();
+		meta.setColor(colorType.getColor());
+		chestplate.setItemMeta(meta);
+		location.getWorld().dropItemNaturally(location.add(0, 1, 0), chestplate);
 
 		// ChatColor
 		reply(colorType.getChatColor() + colorType.name());
