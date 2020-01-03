@@ -37,11 +37,11 @@ import java.util.stream.Collectors;
 public class Utils {
 
 	public static void pug(String message) {
-		Bukkit.getPlayer("Pugabyte").sendMessage(message);
+		Bukkit.getPlayer("Pugabyte").sendMessage(colorize(message));
 	}
 
 	public static void wakka(String message) {
-		Bukkit.getPlayer("WakkaFlocka").sendMessage(message);
+		Bukkit.getPlayer("WakkaFlocka").sendMessage(colorize(message));
 	}
 
 	public static String getPrefix(String prefix) {
