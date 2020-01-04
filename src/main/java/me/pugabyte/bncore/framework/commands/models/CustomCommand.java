@@ -1,10 +1,8 @@
 package me.pugabyte.bncore.framework.commands.models;
 
 import com.google.common.base.Strings;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +21,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess"})
 public abstract class CustomCommand implements ICustomCommand {
 	@NonNull
+	@Getter
 	protected CommandEvent event;
 	protected String PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
 

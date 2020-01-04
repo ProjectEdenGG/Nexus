@@ -120,7 +120,7 @@ public class JMinigamesCommand extends CustomCommand {
 				throw new MustBeIngameException();
 		else
 			return ArenaManager.find(value);
-		return value;
+		return null;
 	}
 
 	@TabCompleterFor(Arena.class)
