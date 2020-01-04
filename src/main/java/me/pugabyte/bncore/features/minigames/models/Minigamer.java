@@ -8,6 +8,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -88,7 +89,7 @@ public class Minigamer {
 		return false;
 	}
 
-	public void toLobby() {
+	public void toGamelobby() {
 		teleport(Minigames.getGamelobby());
 	}
 
@@ -102,17 +103,21 @@ public class Minigamer {
 	}
 
 	public void scored() {
-		++score;
-		match.getScoreboard().update();
+		scored(1);
 	}
 
 	public void scored(int scored) {
-		this.score += scored;
-		match.getScoreboard().update();
+		setScore(score + scored);
 	}
 
-	public void setScore(int score){
-		this.score = score;
+	public void setScore(int score) {
+		int diff = score - this.score;
+
+		MinigamerScoredEvent event = new MinigamerScoredEvent(this, diff);
+		Utils.callEvent(event);
+		if (event.isCancelled()) return;
+
+		this.score = event.getAmount();
 		match.getScoreboard().update();
 	}
 

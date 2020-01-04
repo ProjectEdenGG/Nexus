@@ -378,6 +378,9 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	public static abstract class ThimbleGamemode {
+
+		abstract String getName();
+
 		void onInitialize(Match match){
 			ThimbleArena arena = (ThimbleArena) match.getArena();
 
@@ -463,11 +466,14 @@ public final class Thimble extends TeamlessMechanic {
 			Match match = minigamer.getMatch();
 			match.broadcast(minigamer.getColoredName() + " missed.");
 		}
-
-		abstract String getName();
 	}
 
 	public static class ClassicGamemode extends ThimbleGamemode {
+		@Override
+		String getName() {
+			return "Classic";
+		}
+
 		@Override
 		void onInitialize(Match match) {
 			super.onInitialize(match);
@@ -478,14 +484,14 @@ public final class Thimble extends TeamlessMechanic {
 			super.score(minigamer, blockLocation);
 			minigamer.scored();
 		}
-
-		@Override
-		String getName() {
-			return "Classic";
-		}
 	}
 
 	public static class RiskGamemode extends ThimbleGamemode {
+		@Override
+		String getName() {
+			return "Risk";
+		}
+
 		@Override
 		void onInitialize(Match match) {
 			super.onInitialize(match);
@@ -495,8 +501,7 @@ public final class Thimble extends TeamlessMechanic {
 		void score(Minigamer minigamer, Location blockLocation) {
 			super.score(minigamer, blockLocation);
 			// initial score for landing in water
-			minigamer.scored();
-			int bonus = 0;
+			int bonus = 1;
 			Block block = blockLocation.getBlock();
 
 			// bonus points for adjacent blocks
@@ -514,14 +519,13 @@ public final class Thimble extends TeamlessMechanic {
 				minigamer.scored(bonus);
 			}
 		}
-
-		@Override
-		String getName() {
-			return "Risk";
-		}
 	}
 	// when 1 hole is remaining, do not fill, finish the round letting everyone go for that one hole, and those who are still alive by the end, win.
 	public static class LastManStandingGamemode extends ThimbleGamemode {
+		@Override
+		String getName() {
+			return "Last Man Standing";
+		}
 
 		@Override
 		void onInitialize(Match match){
@@ -586,11 +590,5 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
 			matchData.getAlivePlayers().remove(minigamer);
 		}
-
-		@Override
-		String getName() {
-			return "Last Man Standing";
-		}
-
 	}
 }
