@@ -14,6 +14,8 @@ import org.reflections.Reflections;
 
 import java.util.Set;
 
+import static me.pugabyte.bncore.utils.Utils.colorize;
+
 public class Minigames {
 	public static final String PREFIX = Utils.getPrefix("Minigames");
 	@Getter
@@ -34,6 +36,15 @@ public class Minigames {
 			String alias = clazz.getAnnotation(SerializableAs.class).value();
 			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
 		});
+	}
+
+	public static void broadcast(String announcement) {
+		Bukkit.getOnlinePlayers().stream()
+				.filter(player -> player.getWorld().equals(getGameworld()))
+				.forEach(player -> player.sendMessage(colorize(announcement)));
+
+		// TODO: If arena is public, announce to discord and whole server
+
 	}
 
 }

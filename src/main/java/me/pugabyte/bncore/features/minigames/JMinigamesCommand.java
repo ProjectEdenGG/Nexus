@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.minigames;
 
-import java.util.List;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -18,6 +17,8 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 @Aliases({"newmgm", "newminigames"})
 @Permission("minigames")

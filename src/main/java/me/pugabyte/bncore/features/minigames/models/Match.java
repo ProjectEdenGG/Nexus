@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Utils;
@@ -57,19 +58,12 @@ public class Match {
 	}
 
 	public boolean join(Minigamer minigamer) {
-		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
-		Utils.callEvent(event);
-		if (event.isCancelled()) return false;
 
-		if (!initialized) {
-			arena.getMechanic().onInitialize(this);
-			scoreboard = new MatchScoreboard(this);
-			tasks = new MatchTasks();
-			initialized = true;
-		}
+		initialize();
 
 		if (started) {
 			if (arena.canJoinLate()) {
+				if (!callJoinEvent(minigamer)) return false;
 				minigamers.add(minigamer);
 				balance();
 				teleportIn(minigamer);
@@ -78,6 +72,7 @@ public class Match {
 				return false;
 			}
 		} else {
+			if (!callJoinEvent(minigamer)) return false;
 			minigamers.add(minigamer);
 			arena.getLobby().join(minigamer);
 		}
@@ -95,7 +90,7 @@ public class Match {
 		if (event.isCancelled()) return;
 
 		arena.getMechanic().onQuit(minigamer);
-		minigamer.toLobby();
+		minigamer.toGamelobby();
 		minigamer.clearState();
 		minigamers.remove(minigamer);
 		scoreboard.update();
@@ -126,11 +121,26 @@ public class Match {
 		broadcast("Match has ended");
 		clearEntities();
 		clearStates();
-		toLobby();
+		toGamelobby();
 		arena.getMechanic().onEnd(this);
 		minigamers = new ArrayList<>();
 		scoreboard.update();
 		MatchManager.remove(this);
+	}
+
+	private boolean callJoinEvent(Minigamer minigamer) {
+		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
+		Utils.callEvent(event);
+		return !event.isCancelled();
+	}
+
+	private void initialize() {
+		if (!initialized) {
+			arena.getMechanic().onInitialize(this);
+			scoreboard = new MatchScoreboard(this);
+			tasks = new MatchTasks();
+			initialized = true;
+		}
 	}
 
 	private void startTimer() {
@@ -169,8 +179,8 @@ public class Match {
 		minigamers.forEach(Minigamer::clearState);
 	}
 
-	private void toLobby() {
-		minigamers.forEach(Minigamer::toLobby);
+	private void toGamelobby() {
+		minigamers.forEach(Minigamer::toGamelobby);
 	}
 
 	public void scored(Team team) {
@@ -178,7 +188,17 @@ public class Match {
 	}
 
 	public void scored(Team team, int score) {
-		scores.put(team, scores.get(team) + score);
+		setScore(team, scores.get(team) + score);
+	}
+
+	public void setScore(Team team, int score) {
+		int diff = score - scores.get(team);
+
+		TeamScoredEvent event = new TeamScoredEvent(this, team, diff);
+		Utils.callEvent(event);
+		if (event.isCancelled()) return;
+
+		scores.put(team, scores.get(team) + event.getAmount());
 		scoreboard.update();
 		if (scores.get(team) >= arena.getWinningScore())
 			end();
@@ -243,7 +263,7 @@ public class Match {
 			this.match = match;
 			if (!match.getArena().hasScoreboard())
 				return;
-			scoreboard = new BNScoreboard(match.getArena().getName());
+			scoreboard = new BNScoreboard(match.getArena().getMechanic().getScoreboardTitle(match));
 			update();
 		}
 

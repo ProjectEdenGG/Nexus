@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.minigames.models.events.lobbies;
+package me.pugabyte.bncore.features.minigames.models.events.matches.lobbies;
 
 import lombok.Getter;
 import me.pugabyte.bncore.features.minigames.models.Lobby;
@@ -8,8 +8,8 @@ public class LobbyTimerTickEvent extends LobbyEvent {
 	@Getter
 	private int time;
 
-	public LobbyTimerTickEvent(final Lobby lobby, final Match match, int time) {
-		super(lobby, match);
+	public LobbyTimerTickEvent(final Match match, final Lobby lobby, int time) {
+		super(match, lobby);
 		this.time = time;
 	}
 

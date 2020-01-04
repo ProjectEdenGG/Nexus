@@ -6,7 +6,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
-import me.pugabyte.bncore.features.minigames.models.events.minigamers.MinigamerDeathEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
@@ -82,6 +82,10 @@ public abstract class Mechanic implements Listener {
 
 	public abstract List<Minigamer> balance(List<Minigamer> minigamers);
 
+	public String getScoreboardTitle(Match match) {
+		return match.getArena().getName();
+	}
+
 	public Map<String, Integer> getScoreboardLines(Match match) {
 		Map<String, Integer> lines = new HashMap<>();
 
@@ -146,7 +150,7 @@ public abstract class Mechanic implements Listener {
 				// Damaged by opponent
 				if (event.getDamage() >= victim.getPlayer().getHealth()) {
 					event.setCancelled(true);
-					MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim.getMatch(), victim, attacker);
+					MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, attacker);
 					Utils.callEvent(deathEvent);
 					if (!deathEvent.isCancelled()) {
 						mechanic.onDeath(victim, attacker);
@@ -188,7 +192,7 @@ public abstract class Mechanic implements Listener {
 
 		event.setCancelled(true);
 
-		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim.getMatch(), victim);
+		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim);
 		Utils.callEvent(deathEvent);
 		if (deathEvent.isCancelled()) return;
 
