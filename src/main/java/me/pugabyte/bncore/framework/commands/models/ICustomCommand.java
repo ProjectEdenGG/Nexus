@@ -1,21 +1,6 @@
 package me.pugabyte.bncore.framework.commands.models;
 
-import static me.pugabyte.bncore.utils.Utils.listLast;
-import static org.reflections.ReflectionUtils.getMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
-
 import com.google.common.base.Strings;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.Commands;
@@ -29,6 +14,22 @@ import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import org.bukkit.command.CommandSender;
+import org.objenesis.ObjenesisStd;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static me.pugabyte.bncore.utils.Utils.listLast;
+import static org.reflections.ReflectionUtils.getMethods;
+import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
 public interface ICustomCommand {
@@ -36,8 +37,7 @@ public interface ICustomCommand {
 	default void execute(CommandEvent event) {
 		try {
 			CustomCommand command = getCommand(event);
-			event.setCommand(command);
-			Method method = getMethod(command, event.getArgs());
+			Method method = getMethod(event);
 			if (!hasPermission(event.getSender(), method))
 				throw new NoPermissionException();
 			command.invoke(method, event);
@@ -48,9 +48,8 @@ public interface ICustomCommand {
 
 	default List<String> tabComplete(TabEvent event) {
 		try {
-			CustomCommand command = getCommand(event);
-			event.setCommand(command);
-			return new PathParser(getPathMethods(event.getCommand()), event.getCommand()).tabComplete(event);
+			getCommand(event);
+			return new PathParser(event).tabComplete(event);
 		} catch (Exception ex) {
 			event.handleException(ex);
 		}
@@ -130,7 +129,13 @@ public interface ICustomCommand {
 	@SneakyThrows
 	default Object convert(String value, Class<?> type, CustomCommand command) {
 		if (Commands.getConverters().containsKey(type)) {
-			return Commands.getConverters().get(type).invoke(command, value);
+			Method converter = Commands.getConverters().get(type);
+			if (converter.getDeclaringClass().equals(command.getClass()))
+				return Commands.getConverters().get(type).invoke(command, value);
+			else {
+				CustomCommand newCommand = getNewCommand(command.getEvent(), converter.getDeclaringClass());
+				return Commands.getConverters().get(type).invoke(newCommand, value);
+			}
 		}
 
 		if (Boolean.class == type || Boolean.TYPE == type) {
@@ -148,27 +153,26 @@ public interface ICustomCommand {
 	}
 
 	@SuppressWarnings("unchecked")
-	default CustomCommand getCommand(CommandEvent event) throws Exception {
-		Constructor<CustomCommand> constructor = (Constructor<CustomCommand>) event.getCommand().getClass()
-				.getDeclaredConstructor(CommandEvent.class);
-		constructor.setAccessible(true);
-		return constructor.newInstance(event);
+	@SneakyThrows
+	default CustomCommand getCommand(CommandEvent event) {
+		CustomCommand command = event.getCommand().getClass().getDeclaredConstructor(CommandEvent.class).newInstance(event);
+		event.setCommand(command);
+		return command;
 	}
 
-	default Set<Method> getPathMethods(CustomCommand command) {
-		return getMethods(command.getClass(), withAnnotation(Path.class));
+	@SneakyThrows
+	default CustomCommand getNewCommand(CommandEvent originalEvent, Class<?> clazz) {
+		CommandEvent newEvent = new CommandEvent(originalEvent.getSender(), new ObjenesisStd().newInstance((Class<? extends CustomCommand>)clazz), new ArrayList<>());
+		return getCommand(newEvent);
+	}
+
+	default Set<Method> getPathMethods() {
+		return getMethods(this.getClass(), withAnnotation(Path.class));
 	}
 
 	// TODO: Use same methods as tab complete
-	default Method getMethod(CustomCommand command, List<String> args) {
-		Method method = new PathParser(getPathMethods(command), command).match(args);
-
-		// Work backwards until match is found - not needed after rework?
-//		int i = args.size() - 1;
-//		while (method == null && i >= 0) {
-//			method = getPathMethod(command, args.subList(0, i));
-//			--i;
-//		}
+	default Method getMethod(CommandEvent event) {
+		Method method = new PathParser(event).match(event.getArgs());
 
 		if (method == null)
 			// TODO No default path, what do?

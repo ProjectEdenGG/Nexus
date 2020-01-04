@@ -1,16 +1,6 @@
 package me.pugabyte.bncore.framework.commands.models;
 
-import static me.pugabyte.bncore.utils.Utils.left;
-
 import com.google.common.base.Strings;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -21,14 +11,32 @@ import lombok.experimental.Accessors;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static me.pugabyte.bncore.utils.Utils.left;
 
 @Data
 class PathParser {
 	@NonNull
-	Set<Method> methods;
-	@NonNull
+	CommandEvent event;
 	CustomCommand command;
+	Set<Method> methods;
+
+	public PathParser(@NonNull CommandEvent event) {
+		this.event = event;
+		this.command = event.getCommand();
+		this.methods = command.getPathMethods();
+	}
 
 	@Data
 	class TabCompleteHelper {
@@ -137,7 +145,12 @@ class PathParser {
 			if (isLiteral())
 				return Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
 			else if (isVariable() && tabCompleter != null)
-				return (List<String>) tabCompleter.invoke(command, realArg.toLowerCase());
+				if (tabCompleter.getDeclaringClass().equals(command.getClass()))
+					return (List<String>) tabCompleter.invoke(command, realArg.toLowerCase());
+				else {
+					CustomCommand newCommand = command.getNewCommand(command.getEvent(), tabCompleter.getDeclaringClass());
+					return (List<String>) tabCompleter.invoke(newCommand, realArg.toLowerCase());
+				}
 
 			return new ArrayList<>();
 		}
