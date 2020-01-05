@@ -117,7 +117,7 @@ public class Minigamer {
 		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
-		this.score = event.getAmount();
+		this.score += event.getAmount();
 		match.getScoreboard().update();
 	}
 
