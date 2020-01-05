@@ -7,7 +7,11 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -21,17 +25,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Utils {
 
 	public static void pug(String message) {
-		Bukkit.getPlayer("Pugabyte").sendMessage(message);
+		Bukkit.getPlayer("Pugabyte").sendMessage(colorize(message));
 	}
 
 	public static void wakka(String message) {
-		Bukkit.getPlayer("WakkaFlocka").sendMessage(message);
+		Bukkit.getPlayer("WakkaFlocka").sendMessage(colorize(message));
 	}
 
 	public static String getPrefix(String prefix) {
@@ -243,6 +253,7 @@ public class Utils {
 		return (int)((Math.random() * ((max - min) + 1)) + min);
 	}
 
+	@Deprecated
 	public static final Map<String, Color> STR_COLORS = new HashMap<String, Color>() {{
 		put("white", Color.WHITE);
 		put("light gray", Color.SILVER);
@@ -264,13 +275,26 @@ public class Utils {
 		put("pink", Color.fromRGB(255, 105, 180));
 	}};
 
-	public static Color getColor(String color){
+	@Deprecated
+	public static Color getChatColorFromString(String color){
 		if (STR_COLORS.containsKey(color)){
 			return STR_COLORS.get(color);
 		}
 		return Color.WHITE;
 	}
 
+	@Deprecated
+	public static String getStringColorFromChat(Color color){
+		for (Map.Entry mapElement : STR_COLORS.entrySet()) {
+			String key = (String) mapElement.getKey();
+			Color value = ((Color) mapElement.getValue());
+			if(color.equals(value))
+				return key;
+		}
+		return "white";
+	}
+
+	@Deprecated
 	public static final Map<Integer, String> INT_COLORS = new HashMap<Integer, String>() {{
 		put(0, "white");
 		put(8, "light gray");
@@ -290,58 +314,35 @@ public class Utils {
 		put(6, "pink");
 	}};
 
-	public static String getColor(Integer color){
+	@Deprecated
+	public static String getStringColorFromInt(Integer color){
 		if (INT_COLORS.containsKey(color)){
 			return INT_COLORS.get(color);
 		}
 		return "white";
 	}
 
-	public static int getColorInt(String color){
-		for	(int key : INT_COLORS.keySet()){
-			if (INT_COLORS.get(key).equals(color)) return key;
+	@Deprecated
+	public static int getIntColorFromString(String color){
+		for (Map.Entry mapElement : INT_COLORS.entrySet()) {
+			int key = (int) mapElement.getKey();
+			String value = ((String) mapElement.getValue());
+			if(color.equals(value)){
+				return key;
+			}
 		}
 		return 0;
 	}
 
-	public static String getColor(ChatColor color){
-		for(String key : DYE_CHAT_COLORS.keySet()){
-			if(DYE_CHAT_COLORS.get(key).equals(color)) return key;
-		}
-		return "white";
+	@Deprecated
+	public static int getIntColorFromChat(Color color){
+		return getIntColorFromString(getStringColorFromChat(color));
 	}
 
-	public static final HashMap<String, ChatColor> DYE_CHAT_COLORS = new HashMap<String, ChatColor>() {{
-		put("white", ChatColor.WHITE);
-		put("orange", ChatColor.GOLD);
-		put("light blue", ChatColor.AQUA);
-		put("yellow", ChatColor.YELLOW);
-		put("lime", ChatColor.GREEN);
-		put("pink", ChatColor.LIGHT_PURPLE);
-		put("gray", ChatColor.DARK_GRAY);
-		put("light gray", ChatColor.GRAY);
-		put("cyan", ChatColor.DARK_AQUA);
-		put("purple", ChatColor.DARK_PURPLE);
-		put("blue", ChatColor.BLUE);
-		put("green", ChatColor.DARK_GREEN);
-		put("red", ChatColor.RED);
-		put("black", ChatColor.BLACK);
-	}};
-
-	public static ChatColor getChatColor(String color){
-		if(DYE_CHAT_COLORS.containsKey(color)) {
-			return DYE_CHAT_COLORS.get(color);
-		}
-		return ChatColor.WHITE;
+	@Deprecated
+	public static Color getChatColorFromInt(int color){
+		return getChatColorFromString(getStringColorFromInt(color));
 	}
 
-	public static boolean isInt(String string){
-		try{
-			Integer.parseInt(string);
-		} catch (NumberFormatException ex){
-			return false;
-		}
-		return true;
-	}
 
 }

@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless;
 
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -40,14 +41,14 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 		String announcement;
 		if (winningScore == 0) {
 			announcement = "No players scored in " + arena.getDisplayName();
-			match.broadcast(announcement);
+			Minigames.broadcast(announcement);
 		} else {
 			if (match.getMinigamers().size() == winners.size() && match.getMinigamers().size() > 1) {
 				announcement = "All players tied in " + arena.getDisplayName();
 			} else {
 				announcement = getWinnersString(winners) + arena.getDisplayName();
 			}
-			match.broadcast(announcement + " (" + winningScore + ")");
+			Minigames.broadcast(announcement + " (" + winningScore + ")");
 		}
 	}
 

@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams;
 
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -33,14 +34,14 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		String announcement;
 		if (winningScore == 0) {
 			announcement = "No teams scored in &e" + arena.getDisplayName();
-			match.broadcast(announcement);
+			Minigames.broadcast(announcement);
 		} else {
 			if (arena.getTeams().size() == winners.size()) {
 				announcement = "All teams tied in &e" + arena.getDisplayName();
 			} else {
 				announcement = getWinnersString(winners) + arena.getDisplayName();
 			}
-			match.broadcast(announcement + getScoreList(scoreList));
+			Minigames.broadcast(announcement + getScoreList(scoreList));
 		}
 	}
 

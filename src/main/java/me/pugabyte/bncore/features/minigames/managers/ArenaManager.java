@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.minigames.managers;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,12 +13,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArenaManager {
 	private static List<Arena> arenas = new ArrayList<>();
-	public static String folder = "plugins/BNCore/minigames/arenas/";
+	@Getter
+	private static String folder = "plugins/BNCore/minigames/arenas/";
 
 	public static List<Arena> getAll() {
 		return arenas;
@@ -99,27 +98,15 @@ public class ArenaManager {
 		return folder + name + ".yml";
 	}
 
-	// TODO: Centralize file walk logic, only read .yml files
 	private static FileConfiguration getConfig(String name) {
 		File file = new File(getFile(name));
 		if (!file.exists()) {
 			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				BNCore.severe("Failed to create new arena file.");
-			}
-			try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
-				for (Path path : paths.collect(Collectors.toList())) {
-					if (!Files.isRegularFile(path)) continue;
-
-					if (path.getFileName().toString().toLowerCase().startsWith(name.toLowerCase()))
-						return YamlConfiguration.loadConfiguration(path.toFile());
-				}
+				if (!file.createNewFile())
+					BNCore.warn("File " + file.getName() + " already exists");
 			} catch (IOException ex) {
-				BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
+				BNCore.severe("An error occurred while trying to create a configuration file: " + ex.getMessage());
 			}
-
-			throw new InvalidInputException("Arena configuration file not found");
 		}
 
 		return YamlConfiguration.loadConfiguration(file);
@@ -130,9 +117,11 @@ public class ArenaManager {
 			paths.forEach(filePath -> {
 				if (!Files.isRegularFile(filePath)) return;
 
-				String name = filePath.getFileName().toString().replace(".yml", "");
+				String name = filePath.getFileName().toString();
 				if (name.startsWith(".")) return;
-				read(name);
+				if (!name.endsWith(".yml")) return;
+
+				read(name.replace(".yml",""));
 			});
 		} catch (IOException ex) {
 			BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
@@ -141,6 +130,7 @@ public class ArenaManager {
 
 	public static void read(String name) {
 		add((Arena) getConfig(name).get("arena"));
+		BNCore.log("Loaded arena " + name);
 	}
 
 	public static void write() {
