@@ -1,8 +1,10 @@
 package me.pugabyte.bncore.features.minigames.managers;
 
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -148,7 +150,7 @@ public class ArenaManager {
 		}
 	}
 
-	public static int getNextID(){
+	public static int getNextId(){
 		int id = 1;
 		BNCore.log("getting ID");
 		for(Arena arena : getAll()){
