@@ -41,10 +41,9 @@ public class Minigames {
 	public static void broadcast(String announcement) {
 		Bukkit.getOnlinePlayers().stream()
 				.filter(player -> player.getWorld().equals(getGameworld()))
-				.forEach(player -> player.sendMessage(colorize(announcement)));
+				.forEach(player -> player.sendMessage(Minigames.PREFIX + colorize(announcement)));
 
 		// TODO: If arena is public, announce to discord and whole server
-
 	}
 
 }
