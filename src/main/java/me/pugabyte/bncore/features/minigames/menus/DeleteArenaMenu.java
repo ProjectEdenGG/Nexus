@@ -36,7 +36,7 @@ public class DeleteArenaMenu extends MenuUtils implements InventoryProvider {
                 "&7Cancel"), e -> menus.openArenaMenu(player, arena)));
         contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.TNT),
                 "&4&lDELETE ARENA", "&7This cannot be undone."), e -> {
-            try (Stream<Path> paths = Files.walk(Paths.get(ArenaManager.folder))) {
+            try (Stream<Path> paths = Files.walk(Paths.get(ArenaManager.getFolder()))) {
                 paths.forEach(filePath -> {
                     if (!Files.isRegularFile(filePath)) return;
 

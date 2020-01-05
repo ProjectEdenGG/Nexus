@@ -3,20 +3,32 @@ package me.pugabyte.bncore.features.minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
+import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.features.minigames.models.Loadout;
+import me.pugabyte.bncore.features.minigames.models.Lobby;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Aliases({"newmgm", "newminigames"})
@@ -58,9 +70,9 @@ public class JMinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	void create(@Arg String string){
 		Arena arena;
-		if(!getNames().contains(string)){
+		if(!ArenaManager.getNames().contains(string)){
 			Arena newArena = Arena.builder()
-					.id(getNextID())
+					.id(ArenaManager.getNextId())
 					.name(arg(2).toLowerCase())
 					.displayName(arg(2))
 					.mechanicType(MechanicType.CAPTURE_THE_FLAG)
@@ -91,7 +103,7 @@ public class JMinigamesCommand extends CustomCommand {
 					.build();
 			reply(PREFIX + "Creating arena " + arg(2) + "&3.");
 			reply(PREFIX + newArena.toString());
-			write(newArena);
+			ArenaManager.write(newArena);
 			arena = newArena;
 		}
 		else {
@@ -99,9 +111,9 @@ public class JMinigamesCommand extends CustomCommand {
 			arena = ArenaManager.get(arg(2));
 		}
 		if(arena == null)
-			read();
+			ArenaManager.read();
 		else
-			read(arena.getName());
+			ArenaManager.read(arena.getName());
 		new MinigamesMenus().openArenaMenu(player(), arena);
 	}
 
