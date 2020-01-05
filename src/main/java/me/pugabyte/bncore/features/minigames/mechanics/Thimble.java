@@ -104,24 +104,24 @@ public final class Thimble extends TeamlessMechanic {
 		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
 
 		if (match.isStarted()) {
+			lines.put("&1", 0);
 			lines.put("&2Jumping:", 0);
 			if (matchData.getTurnPlayer() != null) {
 				lines.put("&a" + matchData.getTurnPlayer().getColoredName(), 0);
 			} else {
-				lines.put("&f?", 0);
+				lines.put("&f", 0);
 			}
 		}
 
-		if(!match.isStarted()) {
+		if (!match.isStarted()) {
 			// Shows players in lobby
 			for (Minigamer minigamer : match.getMinigamers())
 				lines.put(minigamer.getColoredName(), 0);
-		}else{
+		} else {
 			// Shows players scores
-			for (Minigamer minigamer : match.getMinigamers()) {
+			for (Minigamer minigamer : match.getMinigamers())
 				if (minigamer.getScore() >= 1)
 					lines.put(minigamer.getColoredName(), minigamer.getScore());
-			}
 		}
 
 		return lines;
@@ -544,22 +544,22 @@ public final class Thimble extends TeamlessMechanic {
 		void score(Minigamer minigamer, Location blockLocation) {
 			super.score(minigamer, blockLocation);
 			// initial score for landing in water
-			int bonus = 1;
+			int points = 1;
 			Block block = blockLocation.getBlock();
 
 			// bonus points for adjacent blocks
 			if(!Utils.isWater(block.getRelative(1,0,0).getType()))
-				bonus++;
+				points++;
 			if(!Utils.isWater(block.getRelative(0,0,1).getType()))
-				bonus++;
+				points++;
 			if(!Utils.isWater(block.getRelative(-1,0,0).getType()))
-				bonus++;
+				points++;
 			if(!Utils.isWater(block.getRelative(0,0,-1).getType()))
-				bonus++;
+				points++;
 
-			if(bonus > 1) {
-				minigamer.scored(bonus);
-				minigamer.tell("You recieved " + (bonus - 1) + " bonus points!");
+			minigamer.scored(points);
+			if(points > 1) {
+				minigamer.tell("You recieved " + (points - 1) + " bonus points!");
 			}
 		}
 	}

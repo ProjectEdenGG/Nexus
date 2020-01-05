@@ -1,8 +1,5 @@
 package me.pugabyte.bncore.features;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -20,6 +17,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class BNCoreCommand extends CustomCommand {
 	public BNCoreCommand(CommandEvent event) {
