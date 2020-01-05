@@ -5,14 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
-import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -28,7 +28,15 @@ import static me.pugabyte.bncore.utils.Utils.left;
 @Data
 class PathParser {
 	@NonNull
+	CommandEvent event;
+	CustomCommand command;
 	Set<Method> methods;
+
+	public PathParser(@NonNull CommandEvent event) {
+		this.event = event;
+		this.command = event.getCommand();
+		this.methods = command.getPathMethods();
+	}
 
 	@Data
 	class TabCompleteHelper {
@@ -132,15 +140,16 @@ class PathParser {
 		}
 
 		@ToString.Include
+		@SneakyThrows
 		List<String> tabComplete() {
 			if (isLiteral())
 				return Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
 			else if (isVariable() && tabCompleter != null)
-				try {
-					return (List<String>) tabCompleter.invoke(new ObjenesisStd().newInstance(tabCompleter.getDeclaringClass()), realArg);
-				} catch (Exception e) {
-					BNCore.log("Error invoking tab completer");
-					e.printStackTrace();
+				if (tabCompleter.getDeclaringClass().equals(command.getClass()))
+					return (List<String>) tabCompleter.invoke(command, realArg.toLowerCase());
+				else {
+					CustomCommand newCommand = command.getNewCommand(command.getEvent(), tabCompleter.getDeclaringClass());
+					return (List<String>) tabCompleter.invoke(newCommand, realArg.toLowerCase());
 				}
 
 			return new ArrayList<>();

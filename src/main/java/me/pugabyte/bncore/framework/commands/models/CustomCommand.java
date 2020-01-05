@@ -2,15 +2,19 @@ package me.pugabyte.bncore.framework.commands.models;
 
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeCommandBlockException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.command.CommandSender;
@@ -18,6 +22,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +31,7 @@ import java.util.Arrays;
 @SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess"})
 public abstract class CustomCommand implements ICustomCommand {
 	@NonNull
+	@Getter
 	protected CommandEvent event;
 	protected String PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
 
@@ -77,25 +84,6 @@ public abstract class CustomCommand implements ICustomCommand {
 		return (CommandBlock) event.getSender();
 	}
 
-	public Object convert(String value, Class<?> type) {
-		if (Player.class == type || OfflinePlayer.class == type) {
-			if ("self".equalsIgnoreCase(value)) value = player().getUniqueId().toString();
-			return Utils.getPlayer(value);
-		}
-		if (Boolean.class == type || Boolean.TYPE == type) {
-			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
-			return Boolean.parseBoolean(value);
-		}
-		if (String.class == type && isNullOrEmpty(value)) return null;
-		if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
-		if (Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
-		if (Float.class == type || Float.TYPE == type) return Float.parseFloat(value);
-		if (Short.class == type || Short.TYPE == type) return Short.parseShort(value);
-		if (Long.class == type || Long.TYPE == type) return Long.parseLong(value);
-		if (Byte.class == type || Byte.TYPE == type) return Byte.parseByte(value);
-		return value;
-	}
-
 	protected boolean isNullOrEmpty(String string) {
 		return Strings.isNullOrEmpty(string);
 	}
@@ -141,6 +129,18 @@ public abstract class CustomCommand implements ICustomCommand {
 		return Utils.getPlayer(event.getArgs().get(i - 1));
 	}
 
+	@ConverterFor({Player.class, OfflinePlayer.class})
+	public Object convertToPlayer(String value) {
+		if ("self".equalsIgnoreCase(value)) value = player().getUniqueId().toString();
+		return Utils.getPlayer(value);
+	}
+
+	@TabCompleterFor({Player.class, OfflinePlayer.class})
+	public List<String> tabCompletePlayer(String filter) {
+		return Bukkit.getOnlinePlayers().stream()
+				.filter(player -> player.getName().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(Player::getName)
+				.collect(Collectors.toList());
+	}
+
 }
-
-

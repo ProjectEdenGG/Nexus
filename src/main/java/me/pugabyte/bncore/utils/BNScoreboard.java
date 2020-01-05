@@ -102,7 +102,7 @@ public class BNScoreboard {
 
 	public void removeLine(String id) {
 		lines.remove(id);
-		scoreboard.resetScores(id);
+		scoreboard.resetScores(colorize(id));
 	}
 
 	public void removeLines(String... lines) {
