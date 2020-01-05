@@ -515,8 +515,8 @@ public final class Thimble extends TeamlessMechanic {
 				bonus++;
 
 			if(bonus > 0) {
-				minigamer.tell("You recieved " + bonus + " bonus points!");
 				minigamer.scored(bonus);
+				minigamer.tell("You recieved " + (bonus - 1) + " bonus points!");
 			}
 		}
 	}
