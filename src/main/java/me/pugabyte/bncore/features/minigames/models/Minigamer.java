@@ -30,6 +30,10 @@ public class Minigamer {
 	private boolean respawning = false;
 	private int score = 0;
 
+	public String getName() {
+		return player.getName();
+	}
+
 	public String getColoredName() {
 		if (team == null)
 			return player.getName();
