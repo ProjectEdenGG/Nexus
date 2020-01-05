@@ -39,7 +39,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 //TODO:
@@ -88,6 +90,41 @@ public final class Thimble extends TeamlessMechanic {
 		}
 
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
+	}
+
+	@Override
+	public String getScoreboardTitle(Match match) {
+		ThimbleArena arena = (ThimbleArena) match.getArena();
+		return super.getScoreboardTitle(match) + ": " + arena.getGamemode().getScoreboardTitle();
+	}
+
+	@Override
+	public Map<String, Integer> getScoreboardLines(Match match) {
+		Map<String, Integer> lines = new HashMap<>();
+		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+
+		if (match.isStarted()) {
+			lines.put("&2Jumping:", 0);
+			if (matchData.getTurnPlayer() != null) {
+				lines.put("&a" + matchData.getTurnPlayer().getColoredName(), 0);
+			} else {
+				lines.put("&f?", 0);
+			}
+		}
+
+		if(!match.isStarted()) {
+			// Shows players in lobby
+			for (Minigamer minigamer : match.getMinigamers())
+				lines.put(minigamer.getColoredName(), 0);
+		}else{
+			// Shows players scores
+			for (Minigamer minigamer : match.getMinigamers()) {
+				if (minigamer.getScore() >= 1)
+					lines.put(minigamer.getColoredName(), minigamer.getScore());
+			}
+		}
+
+		return lines;
 	}
 
 	@Override
@@ -171,7 +208,6 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	private void newRound(Match match) {
-		ThimbleArena arena = (ThimbleArena) match.getArena();
 		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
 
 		if (matchData.getAlivePlayers().size() <= 1) {
@@ -229,7 +265,6 @@ public final class Thimble extends TeamlessMechanic {
 			}
 		}
 
-		// this should never happen, maybe throw an error instead?
 		if(nextMinigamer == null) {
 			match.broadcast("nextMinigamer = null, Ending game.");
 			match.end();
@@ -238,7 +273,9 @@ public final class Thimble extends TeamlessMechanic {
 
 		Match.MatchTasks tasks = match.getTasks();
 		tasks.cancel(matchData.getTurnWaitTaskId());
+
 		matchData.setTurnPlayer(nextMinigamer);
+		match.getScoreboard().update();
 
 		Minigamer finalNextMinigamer = nextMinigamer;
 		Player player = finalNextMinigamer.getPlayer();
@@ -381,6 +418,10 @@ public final class Thimble extends TeamlessMechanic {
 
 		abstract String getName();
 
+		String getScoreboardTitle(){
+			return getName();
+		}
+
 		void onInitialize(Match match){
 			ThimbleArena arena = (ThimbleArena) match.getArena();
 
@@ -452,6 +493,7 @@ public final class Thimble extends TeamlessMechanic {
 		void score(Minigamer minigamer, Location blockLocation) {
 			ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
 			matchData.setTurnPlayer(null);
+			minigamer.getMatch().getScoreboard().update();
 			matchData.setTurns(matchData.getTurns()+1);
 			matchData.getTurnList().add(minigamer);
 		}
@@ -461,6 +503,7 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
 
 			matchData.setTurnPlayer(null);
+			minigamer.getMatch().getScoreboard().update();
 			matchData.getTurnList().add(minigamer);
 			minigamer.teleport(arena.getCurrentMap().getSpectateLocation());
 			Match match = minigamer.getMatch();
@@ -528,6 +571,11 @@ public final class Thimble extends TeamlessMechanic {
 		}
 
 		@Override
+		String getScoreboardTitle(){
+			return "LMS";
+		}
+
+		@Override
 		void onInitialize(Match match){
 			ThimbleArena arena = (ThimbleArena) match.getArena();
 			super.onInitialize(match);
@@ -556,7 +604,7 @@ public final class Thimble extends TeamlessMechanic {
 			int playerCount = match.getMinigamers().size();
 			int maxPlayers = arena.getMaxPlayers();
 
-			int BLOCKS_TO_CHANGE = ((playerCount * 2) + (playerCount - maxPlayers));
+			int BLOCKS_TO_CHANGE = ((playerCount * 2) + (maxPlayers - playerCount));
 			int ATTEMPTS = 3;
 			for (int i = 0; i < BLOCKS_TO_CHANGE; i++) {
 				for (int j = 0; j < ATTEMPTS; j++) {
