@@ -9,12 +9,14 @@ import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @Builder
@@ -35,14 +37,16 @@ public class Arena implements ConfigurationSerializable {
 	@NonNull
 	private Lobby lobby;
 	private Location respawnLocation;
-	private Location spectatePosition;
+	private Location spectateLocation;
 	private int seconds;
 	private int minPlayers;
 	private int maxPlayers;
 	private int winningScore;
 	private int minWinningScore;
 	private int maxWinningScore;
-	// TODO: private Set<Material> blockList;
+	private Set<Material> blockList;
+	@Accessors(fluent = true)
+	private boolean isWhitelist = true;
 	@Accessors(fluent = true)
 	private boolean canJoinLate;
 	@Accessors(fluent = true)
@@ -62,13 +66,15 @@ public class Arena implements ConfigurationSerializable {
 			put("teams", getTeams());
 			put("lobby", getLobby());
 			put("respawnLocation", getRespawnLocation());
-			put("spectatePosition", getSpectatePosition());
+			put("spectateLocation", getSpectateLocation());
 			put("seconds", getSeconds());
 			put("minPlayers", getMinPlayers());
 			put("maxPlayers", getMaxPlayers());
 			put("winningScore", getWinningScore());
 			put("minWinningScore", getMinWinningScore());
 			put("maxWinningScore", getMaxWinningScore());
+			put("blockList", getBlockList());
+			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 			put("hasScoreboard", hasScoreboard());
 		}};
@@ -82,15 +88,26 @@ public class Arena implements ConfigurationSerializable {
 		this.teams = (List<Team>) map.get("teams");
 		this.lobby = (Lobby) map.get("lobby");
 		this.respawnLocation = (Location) map.get("respawnLocation");
-		this.spectatePosition = (Location) map.get("spectatePosition");
+		this.spectateLocation = (Location) map.get("spectateLocation");
 		this.seconds = (Integer) map.get("seconds");
 		this.minPlayers = (Integer) map.get("minPlayers");
 		this.maxPlayers = (Integer) map.get("maxPlayers");
 		this.winningScore = (Integer) map.get("winningScore");
 		this.minWinningScore = (Integer) map.get("minWinningScore");
 		this.maxWinningScore = (Integer) map.get("maxWinningScore");
-		this.canJoinLate = (Boolean) map.get("canJoinLate");
-		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", true);
+		this.blockList = (Set<Material>) map.get("blockList");
+		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
+		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
+		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", hasScoreboard);
+	}
+
+	public boolean canUseBlock(Material type) {
+		if (blockList == null || blockList.size() == 0) return true;
+
+		if (isWhitelist)
+			return blockList.contains(type);
+		else
+			return !blockList.contains(type);
 	}
 
 }
