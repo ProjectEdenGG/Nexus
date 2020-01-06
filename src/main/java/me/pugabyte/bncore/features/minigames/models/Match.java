@@ -89,10 +89,10 @@ public class Match {
 		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
+		minigamers.remove(minigamer);
 		arena.getMechanic().onQuit(minigamer);
 		minigamer.toGamelobby();
 		minigamer.clearState();
-		minigamers.remove(minigamer);
 		scoreboard.update();
 	}
 
@@ -221,6 +221,10 @@ public class Match {
 					.collect(Collectors.toSet())
 					.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
 		}
+	}
+
+	public List<Minigamer> getAlivePlayers() {
+		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
 	}
 
 	private class MatchTimer {
