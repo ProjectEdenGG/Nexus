@@ -67,10 +67,10 @@ public class Spleef extends TeamlessMechanic {
 		Player player = event.getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
-
 		Match match = minigamer.getMatch();
 		Arena arena = match.getArena();
 
+		if (!match.getAlivePlayers().contains(minigamer)) return;
 		if (event.getAction() != Action.LEFT_CLICK_BLOCK) return;
 		if (!arena.canUseBlock(event.getClickedBlock().getType())) return;
 
@@ -81,6 +81,12 @@ public class Spleef extends TeamlessMechanic {
 		for (ProtectedRegion region : regions) {
 			if (isArenaRegion(region.getId(), arena, "floor")) {
 				event.setCancelled(true);
+				Material material = location.getBlock().getType();
+				if (material.equals(Material.WOOL) || material.equals(Material.SNOW))
+					player.playSound(player.getLocation(), "block.cloth.break", 1.0F, 0.75F);
+				else
+					player.playSound(player.getLocation(), "block.stone.break", 1.0F, 0.75F);
+
 				location.getBlock().setType(Material.AIR);
 				break;
 			}
