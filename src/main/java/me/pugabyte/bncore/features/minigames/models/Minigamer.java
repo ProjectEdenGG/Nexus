@@ -28,6 +28,7 @@ public class Minigamer {
 	private Match match;
 	private Team team;
 	private boolean respawning = false;
+	private boolean isAlive = true;
 	private int score = 0;
 
 	public String getName() {
@@ -97,6 +98,10 @@ public class Minigamer {
 		teleport(Minigames.getGamelobby());
 	}
 
+	public void toSpectate() {
+		teleport(match.getArena().getSpectateLocation());
+	}
+
 	public void tell(String message) {
 		player.sendMessage(Utils.getPrefix("Minigames") + colorize(message));
 	}
@@ -129,6 +134,7 @@ public class Minigamer {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		// TODO: Unvanish
 		player.setGameMode(GameMode.ADVENTURE);
+		player.resetMaxHealth();
 		player.setHealth(20);
 		player.setExp(0);
 		player.setTotalExperience(0);

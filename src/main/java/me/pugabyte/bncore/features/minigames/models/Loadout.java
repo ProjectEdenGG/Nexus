@@ -1,7 +1,9 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -15,21 +17,20 @@ import java.util.Map;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @SerializableAs("Loadout")
 public class Loadout implements ConfigurationSerializable {
 	private ItemStack[] inventoryContents;
 	private List<PotionEffect> potionEffects;
 
 	public void apply(Minigamer minigamer) {
-		Player player = minigamer.getPlayer();
 		minigamer.clearState();
-		player.setGameMode(minigamer.getMatch().getArena().getMechanic().getGameMode());
-		if (inventoryContents != null) {
+		Player player = minigamer.getPlayer();
+		if (inventoryContents != null)
 			player.getInventory().setContents(inventoryContents);
-		}
-		if (potionEffects != null) {
+		if (potionEffects != null)
 			player.addPotionEffects(potionEffects);
-		}
 	}
 
 	@Override

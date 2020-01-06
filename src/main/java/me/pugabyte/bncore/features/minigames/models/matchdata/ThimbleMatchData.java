@@ -13,7 +13,6 @@ import java.util.Set;
 @Data
 public class ThimbleMatchData extends MatchData {
 	private List<Minigamer> turnList = new ArrayList<>();
-	private List<Minigamer> alivePlayers = new ArrayList<>();
 	private Set<Short> chosenConcrete = new HashSet<>();
 	private int turns;
 	private Minigamer turnPlayer;
