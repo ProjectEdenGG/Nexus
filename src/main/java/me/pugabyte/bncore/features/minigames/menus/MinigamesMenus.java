@@ -1,13 +1,17 @@
 package me.pugabyte.bncore.features.minigames.menus;
 
 import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryProvider;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.minigames.menus.custommenus.DeathSwapMenu;
-import me.pugabyte.bncore.features.minigames.menus.custommenus.ThimbleMenu;
+import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.reflections.Reflections;
+
+import java.util.Set;
 
 public class MinigamesMenus extends MenuUtils {
 
@@ -51,29 +55,26 @@ public class MinigamesMenus extends MenuUtils {
         INV.open(player);
     }
 
+    @SneakyThrows
     public void openCustomSettingsMenu(Player player, Arena arena){
-        switch(arena.getMechanicType().name().toLowerCase()){
-            case "death_swap":
-                SmartInventory deathswapINV = SmartInventory.builder()
-                        .id("deathswapMenu")
-                        .title("Death Swap Settings")
-                        .provider(new DeathSwapMenu(arena))
-                        .size(6, 9)
-                        .build();
-                deathswapINV.open(player);
+        Set<Class<?>> classes = new Reflections("me.pugabyte.bncore.features.minigames.menus.custommenus").getTypesAnnotatedWith(CustomMechanicSettings.class);
+        Class provider = null;
+        for (Class<?> clazz : classes){
+            if (clazz.getAnnotation(CustomMechanicSettings.class).value().equals(arena.getMechanicType())){
+                provider = clazz;
                 break;
-            case "thimble":
-                SmartInventory thimbleINV = SmartInventory.builder()
-                        .id("thimbleMenu")
-                        .title("Thimble Settings")
-                        .provider(new ThimbleMenu(arena))
-                        .size(6, 9)
-                        .build();
-                thimbleINV.open(player);
-                break;
-            default:
-                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+            }
         }
+        if(provider == null) {
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+            return;
+        }
+        SmartInventory INV = SmartInventory.builder()
+                .id("customSettingsMenu")
+                .provider((InventoryProvider) provider.getDeclaredConstructor(Arena.class).newInstance(arena))
+                .title("Custom Settings Menu")
+                .size(6,9)
+                .build();
+        INV.open(player);
     }
-
 }

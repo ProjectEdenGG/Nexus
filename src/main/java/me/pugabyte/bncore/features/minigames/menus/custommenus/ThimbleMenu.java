@@ -5,9 +5,12 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
+import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import org.bukkit.entity.Player;
 
+@CustomMechanicSettings(MechanicType.THIMBLE)
 public class ThimbleMenu extends MenuUtils implements InventoryProvider {
 
     Arena arena;

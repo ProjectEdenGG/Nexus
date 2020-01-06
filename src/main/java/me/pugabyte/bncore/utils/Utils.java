@@ -345,4 +345,12 @@ public class Utils {
 	}
 
 
+    public static boolean isInt(String text) {
+		try{
+			Integer.parseInt(text);
+		} catch (Exception e){
+			return false;
+		}
+		return true;
+    }
 }
