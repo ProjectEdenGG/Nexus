@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Loadout;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.utils.ColorType;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -63,7 +64,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
         int row = 1;
         int column = 0;
         for(Team team : arena.getTeams()){
-            ItemStack item = nameItem(new ItemStack(Material.WOOL, 1, DyeColor.valueOf(team.getColor().name()).getWoolData()), "&e" + team.getColoredName());
+            ItemStack item = nameItem(new ItemStack(Material.WOOL, 1, ColorType.fromChatColor(team.getColor()).getDurability().byteValue()), "&e" + team.getColoredName());
             contents.set(row, column, ClickableItem.of(item, e -> {
                 teamMenus.openTeamsEditorMenu(player, arena, team);
             }));

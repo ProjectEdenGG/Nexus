@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -54,13 +55,13 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
         int column = 0;
         int row = 1;
         for(ItemStack item : items){
-            if (Utils.getChatColor(ChatColor.stripColor(item.getItemMeta().getDisplayName().toLowerCase())) == team.getColor()) {
+            if (ColorType.fromString(ChatColor.stripColor(item.getItemMeta().getDisplayName().toLowerCase())).getChatColor() == team.getColor()) {
                 item = itemGlow(item);
             }
             contents.set(row, column, ClickableItem.of(item.clone(), e->{
                 List<Team> teams = new ArrayList<>(arena.getTeams());
                 teams.remove(team);
-                team.setColor(Utils.getChatColor(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName().toLowerCase())));
+                team.setColor(ColorType.fromString(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName().toLowerCase())).getChatColor());
                 teams.add(team);
                 arena.setTeams(teams);
                 ArenaManager.write(arena);
