@@ -567,6 +567,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	// when 1 hole is remaining, do not fill, finish the round letting everyone go for that one hole, and those who are still alive by the end, win.
+	// let last players finish the round
 	public static class LastManStandingGamemode extends ThimbleGamemode {
 		@Override
 		String getName() {
