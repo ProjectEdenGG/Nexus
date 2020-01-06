@@ -4,6 +4,8 @@ import lombok.Getter;
 import me.pugabyte.bncore.features.minigames.listeners.MatchListener;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,6 +24,10 @@ public class Minigames {
 	private static World gameworld = Bukkit.getWorld("gameworld");
 	@Getter
 	private static Location gamelobby = new Location(gameworld, 1861.5, 38.1, 247.5, 0, 0);
+	@Getter
+	private static WorldGuardUtils worldGuardUtils = new WorldGuardUtils(gameworld);
+	@Getter
+	private static WorldEditUtils worldEditUtils = new WorldEditUtils(gameworld);
 
 	public Minigames() {
 		registerSerializables();

@@ -50,6 +50,8 @@ public abstract class Mechanic implements Listener {
 			announceWinners(match);
 	}
 
+	protected void onDamage(Minigamer victim, EntityDamageEvent event) {}
+
 	public void onDeath(Minigamer victim) {
 		// TODO: Autobalancing
 		victim.getMatch().broadcast(victim.getColoredName() + " &3died");
@@ -72,7 +74,9 @@ public abstract class Mechanic implements Listener {
 			checkIfShouldBeOver(minigamer.getMatch());
 	}
 
-	public abstract void kill(Minigamer minigamer);
+	public void kill(Minigamer minigamer) {
+		onDeath(minigamer);
+	}
 
 	public abstract void announceWinners(Match match);
 
@@ -81,6 +85,10 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public abstract List<Minigamer> balance(List<Minigamer> minigamers);
+
+	public boolean isArenaRegion(String regionName, Arena arena, String type) {
+		return regionName.toLowerCase().matches(("^" + getName() + "_" + arena.getName() + "_" + type + "_[0-9]+$").toLowerCase());
+	}
 
 	public String getScoreboardTitle(Match match) {
 		return match.getArena().getName();
@@ -188,7 +196,10 @@ public abstract class Mechanic implements Listener {
 
 		Mechanic mechanic = victim.getMatch().getArena().getMechanic();
 
-		if (event.getDamage() < victim.getPlayer().getHealth()) return;
+		if (event.getDamage() < victim.getPlayer().getHealth()) {
+			onDamage(victim, event);
+			return;
+		}
 
 		event.setCancelled(true);
 
@@ -196,11 +207,9 @@ public abstract class Mechanic implements Listener {
 		Utils.callEvent(deathEvent);
 		if (deathEvent.isCancelled()) return;
 
-		mechanic.onDeath(victim);
-
 		if (victim.getMatch().isEnded()) return;
 
-		mechanic.kill(victim);
+		kill(victim);
 	}
 
 	public abstract void checkIfShouldBeOver(Match match);
