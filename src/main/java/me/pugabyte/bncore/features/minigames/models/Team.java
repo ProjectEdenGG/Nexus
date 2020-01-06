@@ -45,7 +45,9 @@ public class Team implements ConfigurationSerializable {
 				.filter(minigamer -> minigamer.getTeam().equals(this))
 				.collect(Collectors.toList());
 
-		if(loadout != null)
+		if (loadout == null)
+			members.forEach(minigamer -> minigamer.getPlayer().setGameMode(minigamer.getMatch().getArena().getMechanic().getGameMode()));
+		else
 			members.forEach(minigamer -> loadout.apply(minigamer));
 
 		if (spawnpoints.size() == 1) {
@@ -93,7 +95,7 @@ public class Team implements ConfigurationSerializable {
 	public static Team deserialize(Map<String, Object> map) {
 		return Team.builder()
 				.name((String) map.get("name"))
-				.color(ChatColor.valueOf(((String) map.get("color")).toUpperCase()))
+				.color(ChatColor.valueOf(((String) map.getOrDefault("color", ChatColor.WHITE)).toUpperCase()))
 				.objective((String) map.get("objective"))
 				.loadout((Loadout) map.get("loadout"))
 				.spawnpoints((List<Location>) map.get("spawnpoints"))
