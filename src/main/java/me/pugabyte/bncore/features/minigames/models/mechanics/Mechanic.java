@@ -77,14 +77,15 @@ public abstract class Mechanic implements Listener {
 
 	public void onQuit(Minigamer minigamer) {
 		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has quit");
-		if (minigamer.getMatch().isStarted())
-			checkIfShouldBeOver(minigamer.getMatch());
+		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
+			minigamer.getMatch().end();
 	}
 
 	public void kill(Minigamer minigamer) {
 		onDeath(minigamer);
 		minigamer.getMatch().getScoreboard().update();
-		checkIfShouldBeOver(minigamer.getMatch());
+		if (shouldBeOver(minigamer.getMatch()))
+			minigamer.getMatch().end();
 	}
 
 	public abstract void announceWinners(Match match);
@@ -238,6 +239,6 @@ public abstract class Mechanic implements Listener {
 		kill(victim);
 	}
 
-	public abstract void checkIfShouldBeOver(Match match);
+	public abstract boolean shouldBeOver(Match match);
 
 }

@@ -80,9 +80,8 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public void checkIfShouldBeOver(Match match) {
-		if (match.getAlivePlayers().size() <= 1)
-			match.end();
+	public boolean shouldBeOver(Match match) {
+		return match.getAlivePlayers().size() <= 1;
 	}
 
 }
