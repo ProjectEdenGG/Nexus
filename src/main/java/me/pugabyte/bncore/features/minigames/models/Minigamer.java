@@ -16,6 +16,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
@@ -95,6 +96,10 @@ public class Minigamer {
 		return false;
 	}
 
+	public void tell(String message) {
+		player.sendMessage(Utils.getPrefix("Minigames") + colorize(message));
+	}
+
 	public void toGamelobby() {
 		teleport(Minigames.getGamelobby());
 	}
@@ -103,13 +108,11 @@ public class Minigamer {
 		teleport(match.getArena().getSpectateLocation());
 	}
 
-	public void tell(String message) {
-		player.sendMessage(Utils.getPrefix("Minigames") + colorize(message));
-	}
-
 	public void teleport(Location location) {
 		// TODO: Allow/disallow teleportation
-		player.teleport(location);
+		player.setVelocity(new Vector(0, 0, 0));
+		player.teleport(location.clone().add(0, .25, 0));
+		player.setVelocity(new Vector(0, 0, 0));
 	}
 
 	public void scored() {
