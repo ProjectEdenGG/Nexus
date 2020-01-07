@@ -13,7 +13,13 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.SlotPos;
 import lombok.Getter;
+import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -35,6 +41,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -48,14 +55,13 @@ import java.util.Map;
 import java.util.Optional;
 
 //TODO:
-// - GUI for picking block
 // - Give players slowness when they are picked after they are teleported so they don't accidently fall off (10 ticks)
 // - timeleft < ((total players * 17)*2) --> at the end of the round, broadcast Last Round, and no matter how much time is left, end the game
 // - interaction whitelist
 // - on matchEndEvent (normal bukkit listener), store a boolean that i need to end it
 public final class Thimble extends TeamlessMechanic {
 
-	private final short CONCRETE_IDS[] = {14, 1, 4, 5, 13, 10, 2, 6, 12, 15, 7, 8, 0};
+	final short CONCRETE_IDS[] = {14, 1, 4, 5, 13, 10, 2, 6, 12, 15, 7, 8, 0};
 	@Getter
 	private final int MAX_TURNS = 49;
 
@@ -84,13 +90,10 @@ public final class Thimble extends TeamlessMechanic {
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
 		minigamer.tell("You are playing Thimble: " + arena.getGamemode().getName());
 		Player player = minigamer.getPlayer();
-		ItemStack item = new ItemStack(Material.CONCRETE, 1);
-		for (int i = 0; i < 9; i++) {
-			item.setDurability(CONCRETE_IDS[i]);
-			player.getInventory().setItem(i, item);
-		}
-
+		ItemStack menuItem = new ItemStack(Material.CONCRETE, 1);
+		player.getInventory().setItem(8, menuItem);
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
+
 	}
 
 	@Override
@@ -135,7 +138,6 @@ public final class Thimble extends TeamlessMechanic {
 	public void onInitialize(Match match) {
 		ThimbleArena arena = (ThimbleArena) match.getArena();
 
-		// Select next gamemode
 		arena.setGamemode(arena.getNextGamemode());
 
 		match.setMatchData(new ThimbleMatchData(match));
@@ -202,6 +204,7 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void kill(Minigamer minigamer) {
+		onDeath(minigamer);
 		ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
 		if (minigamer.equals(matchData.getTurnPlayer())) {
@@ -321,44 +324,27 @@ public final class Thimble extends TeamlessMechanic {
 	// Select unique concrete blocks
 	@EventHandler
 	public void setPlayerBlock(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		if (!player.getWorld().equals(Minigames.getGameworld()))
+		if (event.getItem() == null) return;
+		if (!event.getItem().getType().equals(Material.CONCRETE)) return;
+		if (!(event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)))
 			return;
+
+		Player player = event.getPlayer();
+		if (!player.getWorld().equals(Minigames.getGameworld())) return;
 
 		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isInLobby(this))
-			return;
+		if (!minigamer.isInLobby(this)) return;
 
 		Match match = minigamer.getMatch();
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+		if (match.isStarted()) return;
 
-		if (!match.isStarted()) {
-			PlayerInventory playerInv = player.getInventory();
-			ItemStack heldItem = playerInv.getItemInMainHand();
-			if (Utils.isNullOrAir(heldItem)) {
-				heldItem = playerInv.getItemInOffHand();
-			}
+		SmartInventory menu = SmartInventory.builder()
+				.provider(new ThimbleMenu())
+				.title("Select Your Concrete Block")
+				.size(2, 9)
+				.build();
 
-			if (heldItem != null && heldItem.getType().equals(Material.CONCRETE)) {
-				short itemDurability = heldItem.getDurability();
-				// Test if selected concrete is already chosen
-				if (!matchData.getChosenConcrete().contains(itemDurability)) {
-					// Remove item on head from chosenIDs
-					if (playerInv.getHelmet() != null && playerInv.getHelmet().getType().equals(Material.CONCRETE)) {
-						Short helmetDurability = playerInv.getHelmet().getDurability();
-						matchData.getChosenConcrete().remove(helmetDurability);
-					}
-					// Add new item on head to chosenIDs
-					playerInv.setHelmet(heldItem);
-					matchData.getChosenConcrete().add(itemDurability);
-
-					String chosenColor = ColorType.fromDurability(itemDurability).getName();
-					minigamer.tell("You chose " + chosenColor + "!");
-				} else {
-					minigamer.tell("&cThat block is already chosen!");
-				}
-			}
-		}
+		menu.open(event.getPlayer());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -652,4 +638,62 @@ public final class Thimble extends TeamlessMechanic {
 
 	}
 
+}
+
+
+class ThimbleMenu extends MenuUtils implements InventoryProvider {
+
+	final short CONCRETE_IDS[] = {14, 1, 4, 5, 13, 10, 2, 6, 12, 15, 7, 8, 0};
+
+	@Override
+	public void init(Player player, InventoryContents contents) {
+		int row = 0;
+		int ndx = 0;
+		ItemStack concrete;
+		for (int col = 0; col < CONCRETE_IDS.length - 1; col++) {
+			if (col > 8 && row == 0) {
+				row++;
+				col = 0;
+			}
+			concrete = new ItemStack(Material.CONCRETE, 1, CONCRETE_IDS[ndx]);
+			ItemStack finalConcrete = concrete;
+			contents.set(new SlotPos(row, col), ClickableItem.of(concrete, e -> pickColor(finalConcrete, player)));
+			if (ndx < CONCRETE_IDS.length - 1)
+				ndx++;
+			else
+				break;
+		}
+	}
+
+	public void pickColor(ItemStack concrete, Player player) {
+		Minigamer minigamer = PlayerManager.get(player);
+		Match match = minigamer.getMatch();
+		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+
+		short itemDurability = concrete.getDurability();
+		// Test if selected concrete is already chosen
+		if (!matchData.getChosenConcrete().contains(itemDurability)) {
+			// Remove item on head from chosenIDs
+			PlayerInventory playerInv = player.getInventory();
+			if (playerInv.getHelmet() != null && playerInv.getHelmet().getType().equals(Material.CONCRETE)) {
+				Short helmetDurability = playerInv.getHelmet().getDurability();
+				matchData.getChosenConcrete().remove(helmetDurability);
+			}
+			// Add new item on head to chosenIDs
+			playerInv.setHelmet(concrete);
+			matchData.getChosenConcrete().add(itemDurability);
+
+			String chosenColor = ColorType.fromDurability(itemDurability).getName();
+			minigamer.tell("You chose " + chosenColor + "!");
+		} else {
+			minigamer.tell("&cThat block is already chosen!");
+		}
+
+		player.closeInventory();
+	}
+
+
+	@Override
+	public void update(Player player, InventoryContents inventoryContents) {
+	}
 }

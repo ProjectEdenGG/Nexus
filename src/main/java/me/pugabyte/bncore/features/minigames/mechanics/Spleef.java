@@ -62,7 +62,7 @@ public class Spleef extends TeamlessMechanic {
 	void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isPlaying(this) || !minigamer.isAlive()) return;
+		if (!(minigamer.isPlaying(this) && minigamer.isAlive())) return;
 		Arena arena = minigamer.getMatch().getArena();
 
 		if (event.getAction() != Action.LEFT_CLICK_BLOCK) return;
