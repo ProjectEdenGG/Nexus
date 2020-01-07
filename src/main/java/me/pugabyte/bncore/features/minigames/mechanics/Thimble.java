@@ -28,6 +28,7 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleArena;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleMap;
 import me.pugabyte.bncore.features.minigames.models.matchdata.ThimbleMatchData;
+import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
@@ -61,7 +62,8 @@ import java.util.Optional;
 // - on matchEndEvent (normal bukkit listener), store a boolean that i need to end it
 public final class Thimble extends TeamlessMechanic {
 
-	final short CONCRETE_IDS[] = {14, 1, 4, 5, 13, 10, 2, 6, 12, 15, 7, 8, 0};
+	@Getter
+	private final short[] CONCRETE_IDS = {14, 1, 4, 5, 13, 10, 2, 6, 12, 15, 7, 8, 0};
 	@Getter
 	private final int MAX_TURNS = 49;
 
@@ -643,7 +645,7 @@ public final class Thimble extends TeamlessMechanic {
 
 class ThimbleMenu extends MenuUtils implements InventoryProvider {
 
-	final short CONCRETE_IDS[] = {14, 1, 4, 5, 13, 10, 2, 6, 12, 15, 7, 8, 0};
+	final short[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
