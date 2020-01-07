@@ -97,6 +97,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 	@Override
 	public void onStart(Match match) {
+		super.onStart(match);
 		match.setMatchData(new CaptureTheFlagMatchData(match));
 	}
 

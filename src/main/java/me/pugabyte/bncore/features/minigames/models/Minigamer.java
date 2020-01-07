@@ -27,9 +27,10 @@ public class Minigamer {
 	@ToString.Exclude
 	private Match match;
 	private Team team;
+	private int score = 0;
 	private boolean respawning = false;
 	private boolean isAlive = true;
-	private int score = 0;
+	private int lives;
 
 	public String getName() {
 		return player.getName();
@@ -128,6 +129,10 @@ public class Minigamer {
 
 		this.score += event.getAmount();
 		match.getScoreboard().update();
+	}
+
+	public void died() {
+		--lives;
 	}
 
 	public void clearState() {

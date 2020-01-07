@@ -44,6 +44,7 @@ public class Arena implements ConfigurationSerializable {
 	private int winningScore;
 	private int minWinningScore;
 	private int maxWinningScore;
+	private int lives;
 	private Set<Material> blockList;
 	@Accessors(fluent = true)
 	private boolean isWhitelist = true;
@@ -73,6 +74,7 @@ public class Arena implements ConfigurationSerializable {
 			put("winningScore", getWinningScore());
 			put("minWinningScore", getMinWinningScore());
 			put("maxWinningScore", getMaxWinningScore());
+			put("lives", getLives());
 			put("blockList", getBlockList());
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
@@ -95,10 +97,15 @@ public class Arena implements ConfigurationSerializable {
 		this.winningScore = (Integer) map.get("winningScore");
 		this.minWinningScore = (Integer) map.get("minWinningScore");
 		this.maxWinningScore = (Integer) map.get("maxWinningScore");
+		this.lives = (Integer) map.get("lives");
 		this.blockList = (Set<Material>) map.get("blockList");
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", hasScoreboard);
+	}
+
+	public boolean ownsRegion(String regionName, String type) {
+		return regionName.toLowerCase().matches(("^" + getMechanic().getName() + "_" + getName() + "_" + type + "_[0-9]+$").toLowerCase());
 	}
 
 	public boolean canUseBlock(Material type) {
