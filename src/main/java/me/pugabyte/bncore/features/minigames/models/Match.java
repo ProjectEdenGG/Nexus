@@ -96,6 +96,8 @@ public class Match {
 		minigamer.toGamelobby();
 		minigamer.clearState();
 		scoreboard.update();
+		if (minigamers == null || minigamers.size() == 0)
+			MatchManager.remove(this);
 	}
 
 	public void start() {
@@ -248,6 +250,7 @@ public class Match {
 		}
 
 		void start() {
+			match.getTasks().wait(1, () -> match.broadcast("&e" + time + " &7seconds left..."));
 			taskId = match.getTasks().repeat(0, 20, () -> {
 				if (--time > 0) {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);

@@ -89,10 +89,10 @@ public final class Thimble extends TeamlessMechanic {
 	public void onJoin(Minigamer minigamer) {
 		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has joined");
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
-		minigamer.tell("You are playing Thimble: " + arena.getGamemode().getName());
+		minigamer.tell("You are playing &eThimble&3: &e" + arena.getGamemode().getName());
 		Player player = minigamer.getPlayer();
 		ItemStack menuItem = new ItemStack(Material.CONCRETE, 1);
-		player.getInventory().setItem(8, menuItem);
+		player.getInventory().setItem(0, menuItem);
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
 
 	}
@@ -199,7 +199,9 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(Minigamer victim) {
-		victim.getMatch().broadcast(victim.getColoredName() + " missed.");
+		ThimbleMatchData matchData = (ThimbleMatchData) victim.getMatch().getMatchData();
+		if (victim.equals(matchData.getTurnPlayer()))
+			victim.getMatch().broadcast(victim.getColoredName() + " missed.");
 	}
 
 	@Override
@@ -278,9 +280,7 @@ public final class Thimble extends TeamlessMechanic {
 		final Minigamer finalNextMinigamer = matchData.getTurnPlayer();
 		Player player = finalNextMinigamer.getPlayer();
 
-//		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10, 5));
-//		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, 255));
-		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation());
+		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation(), true);
 
 		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
 		tasks.wait(3, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
@@ -398,9 +398,12 @@ public final class Thimble extends TeamlessMechanic {
 
 	@EventHandler
 	public void onMatchEnd(MatchEndEvent event) {
-		ThimbleMatchData matchData = (ThimbleMatchData) event.getMatch().getMatchData();
-		if (!matchData.isEnding()) {
-			event.getMatch().broadcast("Time is up, match will end after this round.");
+		Match match = event.getMatch();
+		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+
+		if (!matchData.isEnding() && !shouldBeOver(match)) {
+			if (match.getTimer().getTime() == 0)
+				match.broadcast("Time is up, match will end after this round.");
 			matchData.isEnding(true);
 			event.setCancelled(true);
 		}

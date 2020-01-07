@@ -109,10 +109,18 @@ public class Minigamer {
 	}
 
 	public void teleport(Location location) {
+		teleport(location, false);
+	}
+
+	public void teleport(Location location, boolean withSlowness) {
 		// TODO: Allow/disallow teleportation
 		player.setVelocity(new Vector(0, 0, 0));
 		player.teleport(location.clone().add(0, .25, 0));
 		player.setVelocity(new Vector(0, 0, 0));
+		if (withSlowness) {
+			match.getTasks().wait(1, () -> player.setVelocity(new Vector(0, 0, 0)));
+			match.getTasks().wait(2, () -> player.setVelocity(new Vector(0, 0, 0)));
+		}
 	}
 
 	public void scored() {
