@@ -25,7 +25,7 @@ public enum MechanicType {
 		this.itemStack = itemStack;
 	}
 
-	public Mechanic getMechanic() {
+	public Mechanic get() {
 		return mechanic;
 	}
 	public ItemStack getItemStack() { return itemStack;}

@@ -1,7 +1,9 @@
 package me.pugabyte.bncore.features.minigames.models;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
@@ -94,6 +96,8 @@ public class Match {
 		minigamer.toGamelobby();
 		minigamer.clearState();
 		scoreboard.update();
+		if (minigamers == null || minigamers.size() == 0)
+			MatchManager.remove(this);
 	}
 
 	public void start() {
@@ -227,11 +231,13 @@ public class Match {
 		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
 	}
 
-	private class MatchTimer {
+	public class MatchTimer {
 		private Match match;
-		private int time;
 		private List<Integer> broadcasts = Arrays.asList((60 * 10), (60 * 5), 60, 30, 15, 5, 4, 3, 2, 1);
 		private int taskId;
+		@Getter
+		@Setter
+		private int time;
 
 		MatchTimer(Match match, int time) {
 			this.match = match;
@@ -239,7 +245,12 @@ public class Match {
 			start();
 		}
 
+		public void addTime(int time) {
+			this.time += time;
+		}
+
 		void start() {
+			match.getTasks().wait(1, () -> match.broadcast("&e" + time + " &7seconds left..."));
 			taskId = match.getTasks().repeat(0, 20, () -> {
 				if (--time > 0) {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);

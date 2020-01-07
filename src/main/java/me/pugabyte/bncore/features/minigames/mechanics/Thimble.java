@@ -13,7 +13,13 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.SlotPos;
 import lombok.Getter;
+import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -21,7 +27,9 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleArena;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleMap;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.ThimbleMatchData;
+import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
@@ -35,6 +43,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -48,14 +57,12 @@ import java.util.Map;
 import java.util.Optional;
 
 //TODO:
-// - GUI for picking block
 // - Give players slowness when they are picked after they are teleported so they don't accidently fall off (10 ticks)
-// - timeleft < ((total players * 17)*2) --> at the end of the round, broadcast Last Round, and no matter how much time is left, end the game
-// - interaction whitelist
-// - on matchEndEvent (normal bukkit listener), store a boolean that i need to end it
+
 public final class Thimble extends TeamlessMechanic {
 
-	private final short CONCRETE_IDS[] = {14, 1, 4, 5, 13, 10, 2, 6, 12, 15, 7, 8, 0};
+	@Getter
+	private final short[] CONCRETE_IDS = {14, 1, 4, 5, 13, 10, 2, 6, 12, 15, 7, 8, 0};
 	@Getter
 	private final int MAX_TURNS = 49;
 
@@ -82,15 +89,12 @@ public final class Thimble extends TeamlessMechanic {
 	public void onJoin(Minigamer minigamer) {
 		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has joined");
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
-		minigamer.tell("You are playing Thimble: " + arena.getGamemode().getName());
+		minigamer.tell("You are playing &eThimble&3: &e" + arena.getGamemode().getName());
 		Player player = minigamer.getPlayer();
-		ItemStack item = new ItemStack(Material.CONCRETE, 1);
-		for (int i = 0; i < 9; i++) {
-			item.setDurability(CONCRETE_IDS[i]);
-			player.getInventory().setItem(i, item);
-		}
-
+		ItemStack menuItem = new ItemStack(Material.CONCRETE, 1);
+		player.getInventory().setItem(0, menuItem);
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
+
 	}
 
 	@Override
@@ -135,7 +139,6 @@ public final class Thimble extends TeamlessMechanic {
 	public void onInitialize(Match match) {
 		ThimbleArena arena = (ThimbleArena) match.getArena();
 
-		// Select next gamemode
 		arena.setGamemode(arena.getNextGamemode());
 
 		match.setMatchData(new ThimbleMatchData(match));
@@ -147,15 +150,15 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void onStart(Match match) {
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+		super.onStart(match);
+
 		ThimbleArena arena = (ThimbleArena) match.getArena();
 
 		List<Minigamer> minigamers = match.getMinigamers();
 		setPlayerBlocks(minigamers, match);
 
-		// add x amount of seconds to the game, Each turn is 15, +2 for extra waits
-		// adds the time for the max length of a round by how many players there are
-		//arena.setSeconds(arena.getSeconds() + (minigamers.size()*17));
+		// Adds time to the game by players * total turn length
+		match.getTimer().addTime(minigamers.size() * 17);
 
 		// Teleport all players in minigame to spectate location of current map
 		Location specLoc = arena.getCurrentMap().getSpectateLocation();
@@ -196,11 +199,14 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(Minigamer victim) {
-		victim.getMatch().broadcast(victim.getColoredName() + " missed.");
+		ThimbleMatchData matchData = (ThimbleMatchData) victim.getMatch().getMatchData();
+		if (victim.equals(matchData.getTurnPlayer()))
+			victim.getMatch().broadcast(victim.getColoredName() + " missed.");
 	}
 
 	@Override
 	public void kill(Minigamer minigamer) {
+		onDeath(minigamer);
 		ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
 		if (minigamer.equals(matchData.getTurnPlayer())) {
@@ -231,12 +237,11 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 		}
 
-		// Check if there is enough time for another round
-//		if(arena.getSeconds() < (match.getMinigamers().size() * 17)){
-//			match.broadcast("Time left < " + (match.getMinigamers().size() * 17) + " (newround)");
-//			match.end();
-//			return;
-//		}
+		if (matchData.isEnding()) {
+			match.broadcast("Match End.");
+			match.end();
+			return;
+		}
 
 		if (match.isEnded()) {
 			return;
@@ -275,7 +280,7 @@ public final class Thimble extends TeamlessMechanic {
 		final Minigamer finalNextMinigamer = matchData.getTurnPlayer();
 		Player player = finalNextMinigamer.getPlayer();
 
-		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation());
+		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation(), true);
 
 		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
 		tasks.wait(3, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
@@ -320,44 +325,27 @@ public final class Thimble extends TeamlessMechanic {
 	// Select unique concrete blocks
 	@EventHandler
 	public void setPlayerBlock(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		if (!player.getWorld().equals(Minigames.getGameworld()))
+		if (event.getItem() == null) return;
+		if (!event.getItem().getType().equals(Material.CONCRETE)) return;
+		if (!(event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)))
 			return;
+
+		Player player = event.getPlayer();
+		if (!player.getWorld().equals(Minigames.getGameworld())) return;
 
 		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isInLobby(this))
-			return;
+		if (!minigamer.isInLobby(this)) return;
 
 		Match match = minigamer.getMatch();
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+		if (match.isStarted()) return;
 
-		if (!match.isStarted()) {
-			PlayerInventory playerInv = player.getInventory();
-			ItemStack heldItem = playerInv.getItemInMainHand();
-			if (Utils.isNullOrAir(heldItem)) {
-				heldItem = playerInv.getItemInOffHand();
-			}
+		SmartInventory menu = SmartInventory.builder()
+				.provider(new ThimbleMenu())
+				.title("Select Your Concrete Block")
+				.size(2, 9)
+				.build();
 
-			if (heldItem != null && heldItem.getType().equals(Material.CONCRETE)) {
-				short itemDurability = heldItem.getDurability();
-				// Test if selected concrete is already chosen
-				if (!matchData.getChosenConcrete().contains(itemDurability)) {
-					// Remove item on head from chosenIDs
-					if (playerInv.getHelmet() != null && playerInv.getHelmet().getType().equals(Material.CONCRETE)) {
-						Short helmetDurability = playerInv.getHelmet().getDurability();
-						matchData.getChosenConcrete().remove(helmetDurability);
-					}
-					// Add new item on head to chosenIDs
-					playerInv.setHelmet(heldItem);
-					matchData.getChosenConcrete().add(itemDurability);
-
-					String chosenColor = ColorType.fromDurability(itemDurability).getName();
-					minigamer.tell("You chose " + chosenColor + "!");
-				} else {
-					minigamer.tell("&cThat block is already chosen!");
-				}
-			}
-		}
+		menu.open(event.getPlayer());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -405,6 +393,19 @@ public final class Thimble extends TeamlessMechanic {
 			minigamer.teleport(((ThimbleArena) minigamer.getMatch().getArena()).getCurrentMap().getSpectateLocation());
 
 			score(minigamer, blockLocation);
+		}
+	}
+
+	@EventHandler
+	public void onMatchEnd(MatchEndEvent event) {
+		Match match = event.getMatch();
+		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+
+		if (!matchData.isEnding() && !shouldBeOver(match)) {
+			if (match.getTimer().getTime() == 0)
+				match.broadcast("Time is up, match will end after this round.");
+			matchData.isEnding(true);
+			event.setCancelled(true);
 		}
 	}
 
@@ -508,7 +509,6 @@ public final class Thimble extends TeamlessMechanic {
 			matchData.getTurnList().remove(minigamer);
 			minigamer.teleport(arena.getCurrentMap().getSpectateLocation());
 		}
-
 	}
 
 	public static class ClassicGamemode extends ThimbleGamemode {
@@ -527,7 +527,6 @@ public final class Thimble extends TeamlessMechanic {
 			super.score(minigamer, blockLocation);
 			minigamer.scored();
 		}
-
 	}
 
 	public static class RiskGamemode extends ThimbleGamemode {
@@ -651,4 +650,61 @@ public final class Thimble extends TeamlessMechanic {
 
 	}
 
+}
+
+class ThimbleMenu extends MenuUtils implements InventoryProvider {
+
+	final short[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
+
+	@Override
+	public void init(Player player, InventoryContents contents) {
+		int row = 0;
+		int ndx = 0;
+		ItemStack concrete;
+		for (int col = 0; col < CONCRETE_IDS.length - 1; col++) {
+			if (col > 8 && row == 0) {
+				row++;
+				col = 0;
+			}
+			concrete = new ItemStack(Material.CONCRETE, 1, CONCRETE_IDS[ndx]);
+			ItemStack finalConcrete = concrete;
+			contents.set(new SlotPos(row, col), ClickableItem.of(concrete, e -> pickColor(finalConcrete, player)));
+			if (ndx < CONCRETE_IDS.length - 1)
+				ndx++;
+			else
+				break;
+		}
+	}
+
+	public void pickColor(ItemStack concrete, Player player) {
+		Minigamer minigamer = PlayerManager.get(player);
+		Match match = minigamer.getMatch();
+		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+
+		short itemDurability = concrete.getDurability();
+		// Test if selected concrete is already chosen
+		if (!matchData.getChosenConcrete().contains(itemDurability)) {
+			// Remove item on head from chosenIDs
+			PlayerInventory playerInv = player.getInventory();
+			if (playerInv.getHelmet() != null && playerInv.getHelmet().getType().equals(Material.CONCRETE)) {
+				Short helmetDurability = playerInv.getHelmet().getDurability();
+				matchData.getChosenConcrete().remove(helmetDurability);
+			}
+			// Add new item on head to chosenIDs
+			playerInv.setHelmet(concrete);
+			matchData.getChosenConcrete().add(itemDurability);
+
+			String chosenColor = ColorType.fromDurability(itemDurability).getName();
+			minigamer.tell("You chose " + chosenColor + "!");
+		} else {
+			minigamer.tell("&cThat block is already chosen!");
+		}
+
+		player.closeInventory();
+	}
+
+
+	@Override
+	public void update(Player player, InventoryContents inventoryContents) {
+	}
 }

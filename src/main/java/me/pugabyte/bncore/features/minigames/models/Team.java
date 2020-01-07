@@ -45,9 +45,12 @@ public class Team implements ConfigurationSerializable {
 				.filter(minigamer -> minigamer.getTeam().equals(this))
 				.collect(Collectors.toList());
 
-		if (loadout == null)
-			members.forEach(minigamer -> minigamer.getPlayer().setGameMode(minigamer.getMatch().getArena().getMechanic().getGameMode()));
-		else
+		members.forEach(minigamer -> {
+			minigamer.getPlayer().setGameMode(minigamer.getMatch().getArena().getMechanic().getGameMode());
+			minigamer.getPlayer().getInventory().setHeldItemSlot(0);
+		});
+
+		if (loadout != null)
 			members.forEach(minigamer -> loadout.apply(minigamer));
 
 		if (spawnpoints.size() == 1) {

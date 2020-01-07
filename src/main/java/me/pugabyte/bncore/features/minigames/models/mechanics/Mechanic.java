@@ -14,8 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,7 +45,12 @@ public abstract class Mechanic implements Listener {
 
 	public void onInitialize(Match match) {}
 
-	public void onStart(Match match) {}
+	public void onStart(Match match) {
+		match.getTasks().repeat(20, 20, () -> match.getScoreboard().update());
+		int lives = match.getArena().getLives();
+		if (lives > 0)
+			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
+	}
 
 	public void onEnd(Match match) {
 		if (match.isStarted())
@@ -70,12 +77,15 @@ public abstract class Mechanic implements Listener {
 
 	public void onQuit(Minigamer minigamer) {
 		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has quit");
-		if (minigamer.getMatch().isStarted())
-			checkIfShouldBeOver(minigamer.getMatch());
+		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
+			minigamer.getMatch().end();
 	}
 
 	public void kill(Minigamer minigamer) {
 		onDeath(minigamer);
+		minigamer.getMatch().getScoreboard().update();
+		if (shouldBeOver(minigamer.getMatch()))
+			minigamer.getMatch().end();
 	}
 
 	public abstract void announceWinners(Match match);
@@ -85,10 +95,6 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public abstract List<Minigamer> balance(List<Minigamer> minigamers);
-
-	public boolean isArenaRegion(String regionName, Arena arena, String type) {
-		return regionName.toLowerCase().matches(("^" + getName() + "_" + arena.getName() + "_" + type + "_[0-9]+$").toLowerCase());
-	}
 
 	public String getScoreboardTitle(Match match) {
 		return match.getArena().getName();
@@ -103,9 +109,30 @@ public abstract class Mechanic implements Listener {
 
 		// TODO: Max number of lines is 15, only show max/min scores
 		for (Minigamer minigamer : match.getMinigamers())
-			lines.put(minigamer.getColoredName(), minigamer.getScore());
+			if (minigamer.isAlive())
+				lines.put(minigamer.getColoredName(), minigamer.getScore());
+			else
+				lines.put("&c&m" + minigamer.getName(), minigamer.getScore());
 
 		return lines;
+	}
+
+	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
+			if (event.getClickedBlock() != null)
+				if (!minigamer.getMatch().getArena().canUseBlock(event.getClickedBlock().getType())) {
+					event.setCancelled(true);
+					return;
+				}
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isIn(this)) return;
+
+		onPlayerInteract(minigamer, event);
 	}
 
 	@EventHandler
@@ -212,6 +239,6 @@ public abstract class Mechanic implements Listener {
 		kill(victim);
 	}
 
-	public abstract void checkIfShouldBeOver(Match match);
+	public abstract boolean shouldBeOver(Match match);
 
 }

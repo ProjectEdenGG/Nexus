@@ -24,6 +24,8 @@ public final class DeathSwap extends TeamlessMechanic {
 
     @Override
     public void onStart(Match match){
+        super.onStart(match);
+
         randomTeleport(match.getMinigamers());
         for(Minigamer minigamer : match.getMinigamers()){
             minigamer.getPlayer().setGameMode(GameMode.SURVIVAL);

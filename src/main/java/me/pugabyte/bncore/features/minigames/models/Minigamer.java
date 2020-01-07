@@ -16,6 +16,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
@@ -27,9 +28,10 @@ public class Minigamer {
 	@ToString.Exclude
 	private Match match;
 	private Team team;
+	private int score = 0;
 	private boolean respawning = false;
 	private boolean isAlive = true;
-	private int score = 0;
+	private int lives;
 
 	public String getName() {
 		return player.getName();
@@ -94,6 +96,10 @@ public class Minigamer {
 		return false;
 	}
 
+	public void tell(String message) {
+		player.sendMessage(Utils.getPrefix("Minigames") + colorize(message));
+	}
+
 	public void toGamelobby() {
 		teleport(Minigames.getGamelobby());
 	}
@@ -102,13 +108,19 @@ public class Minigamer {
 		teleport(match.getArena().getSpectateLocation());
 	}
 
-	public void tell(String message) {
-		player.sendMessage(Utils.getPrefix("Minigames") + colorize(message));
+	public void teleport(Location location) {
+		teleport(location, false);
 	}
 
-	public void teleport(Location location) {
+	public void teleport(Location location, boolean withSlowness) {
 		// TODO: Allow/disallow teleportation
-		player.teleport(location);
+		player.setVelocity(new Vector(0, 0, 0));
+		player.teleport(location.clone().add(0, .25, 0));
+		player.setVelocity(new Vector(0, 0, 0));
+		if (withSlowness) {
+			match.getTasks().wait(1, () -> player.setVelocity(new Vector(0, 0, 0)));
+			match.getTasks().wait(2, () -> player.setVelocity(new Vector(0, 0, 0)));
+		}
 	}
 
 	public void scored() {
@@ -128,6 +140,10 @@ public class Minigamer {
 
 		this.score += event.getAmount();
 		match.getScoreboard().update();
+	}
+
+	public void died() {
+		--lives;
 	}
 
 	public void clearState() {

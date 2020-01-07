@@ -6,6 +6,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.util.Map;
@@ -26,6 +27,10 @@ public class WorldGuardUtils {
 		if (region == null)
 			throw new InvalidInputException("Region not found");
 		return region;
+	}
+
+	public Set<ProtectedRegion> getRegionsAt(Location location) {
+		return getManager().getApplicableRegions(location).getRegions();
 	}
 
 	public Set<ProtectedRegion> getRegionsLike(String name) {

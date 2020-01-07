@@ -11,7 +11,7 @@ public class MatchManager {
 	private static List<Match> matches = new ArrayList<>();
 
 	static {
-		Utils.repeat(100, 100, MatchManager::janitor);
+		Utils.repeat(100, 40, MatchManager::janitor);
 	}
 
 	public static Match find(Arena arena) {
