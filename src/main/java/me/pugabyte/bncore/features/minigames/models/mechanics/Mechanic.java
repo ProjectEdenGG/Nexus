@@ -43,7 +43,11 @@ public abstract class Mechanic implements Listener {
 
 	public void onInitialize(Match match) {}
 
-	public void onStart(Match match) {}
+	public void onStart(Match match) {
+		int lives = match.getArena().getLives();
+		if (lives > 0)
+			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
+	}
 
 	public void onEnd(Match match) {
 		if (match.isStarted())
@@ -76,6 +80,7 @@ public abstract class Mechanic implements Listener {
 
 	public void kill(Minigamer minigamer) {
 		onDeath(minigamer);
+		checkIfShouldBeOver(minigamer.getMatch());
 	}
 
 	public abstract void announceWinners(Match match);
@@ -85,10 +90,6 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public abstract List<Minigamer> balance(List<Minigamer> minigamers);
-
-	public boolean isArenaRegion(String regionName, Arena arena, String type) {
-		return regionName.toLowerCase().matches(("^" + getName() + "_" + arena.getName() + "_" + type + "_[0-9]+$").toLowerCase());
-	}
 
 	public String getScoreboardTitle(Match match) {
 		return match.getArena().getName();

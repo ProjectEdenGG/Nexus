@@ -9,23 +9,33 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	@Override
 	public void kill(Minigamer minigamer) {
-		super.kill(minigamer);
 		if (minigamer.isRespawning()) return;
+
 		minigamer.clearState();
-		if (minigamer.getMatch().getArena().getRespawnLocation() != null) {
-			minigamer.setRespawning(true);
-			minigamer.teleport(minigamer.getMatch().getArena().getRespawnLocation());
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
-			minigamer.getMatch().getTasks().wait(100, () -> {
-				if (!minigamer.getMatch().isEnded()) {
-					minigamer.getTeam().spawn(minigamer);
-					minigamer.setRespawning(false);
+		if (minigamer.getLives() != 0) {
+			minigamer.died();
+			if (minigamer.getLives() == 0) {
+				minigamer.setAlive(false);
+				minigamer.toSpectate();
+			} else {
+				if (minigamer.getMatch().getArena().getRespawnLocation() != null) {
+					minigamer.setRespawning(true);
+					minigamer.teleport(minigamer.getMatch().getArena().getRespawnLocation());
+					minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
+					minigamer.getMatch().getTasks().wait(100, () -> {
+						if (!minigamer.getMatch().isEnded()) {
+							minigamer.getTeam().spawn(minigamer);
+							minigamer.setRespawning(false);
+						}
+					});
+				} else {
+					if (!minigamer.getMatch().isEnded())
+						minigamer.getTeam().spawn(minigamer);
 				}
-			});
-		} else {
-			if (!minigamer.getMatch().isEnded())
-				minigamer.getTeam().spawn(minigamer);
+			}
 		}
+
+		super.kill(minigamer);
 	}
 
 }

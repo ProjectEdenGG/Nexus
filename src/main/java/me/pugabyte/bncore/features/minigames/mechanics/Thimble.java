@@ -147,7 +147,8 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void onStart(Match match) {
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+		super.onStart(match);
+
 		ThimbleArena arena = (ThimbleArena) match.getArena();
 
 		List<Minigamer> minigamers = match.getMinigamers();
