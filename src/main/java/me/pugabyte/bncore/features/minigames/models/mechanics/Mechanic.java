@@ -14,8 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,6 +46,7 @@ public abstract class Mechanic implements Listener {
 	public void onInitialize(Match match) {}
 
 	public void onStart(Match match) {
+		match.getTasks().repeat(20, 20, () -> match.getScoreboard().update());
 		int lives = match.getArena().getLives();
 		if (lives > 0)
 			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
@@ -80,6 +83,7 @@ public abstract class Mechanic implements Listener {
 
 	public void kill(Minigamer minigamer) {
 		onDeath(minigamer);
+		minigamer.getMatch().getScoreboard().update();
 		checkIfShouldBeOver(minigamer.getMatch());
 	}
 
@@ -104,9 +108,30 @@ public abstract class Mechanic implements Listener {
 
 		// TODO: Max number of lines is 15, only show max/min scores
 		for (Minigamer minigamer : match.getMinigamers())
-			lines.put(minigamer.getColoredName(), minigamer.getScore());
+			if (minigamer.isAlive())
+				lines.put(minigamer.getColoredName(), minigamer.getScore());
+			else
+				lines.put("&c&m" + minigamer.getName(), minigamer.getScore());
 
 		return lines;
+	}
+
+	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
+			if (event.getClickedBlock() != null)
+				if (!minigamer.getMatch().getArena().canUseBlock(event.getClickedBlock().getType())) {
+					event.setCancelled(true);
+					return;
+				}
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isIn(this)) return;
+
+		onPlayerInteract(minigamer, event);
 	}
 
 	@EventHandler

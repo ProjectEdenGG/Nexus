@@ -13,10 +13,12 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -75,7 +77,7 @@ public class Arena implements ConfigurationSerializable {
 			put("minWinningScore", getMinWinningScore());
 			put("maxWinningScore", getMaxWinningScore());
 			put("lives", getLives());
-			put("blockList", getBlockList());
+			put("blockList", serializeMaterialSet(getBlockList()));
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 			put("hasScoreboard", hasScoreboard());
@@ -98,10 +100,20 @@ public class Arena implements ConfigurationSerializable {
 		this.minWinningScore = (Integer) map.get("minWinningScore");
 		this.maxWinningScore = (Integer) map.get("maxWinningScore");
 		this.lives = (Integer) map.get("lives");
-		this.blockList = (Set<Material>) map.get("blockList");
+		this.blockList = deserializeMaterialSet((List<String>) map.get("blockList"));
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", hasScoreboard);
+	}
+
+	List<String> serializeMaterialSet(Set<Material> materials) {
+		if (materials == null) return null;
+		return new ArrayList<String>(){{ addAll(materials.stream().map(Material::name).collect(Collectors.toList())); }};
+	}
+
+	Set<Material> deserializeMaterialSet(List<String> materials) {
+		if (materials == null) return null;
+		return materials.stream().map(block -> Material.valueOf(block.toUpperCase())).collect(Collectors.toSet());
 	}
 
 	public boolean ownsRegion(String regionName, String type) {
@@ -109,7 +121,11 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public boolean canUseBlock(Material type) {
-		if (blockList == null || blockList.size() == 0) return true;
+		if (blockList == null || blockList.size() == 0)
+			if (isWhitelist)
+				return false;
+			else
+				return true;
 
 		if (isWhitelist)
 			return blockList.contains(type);

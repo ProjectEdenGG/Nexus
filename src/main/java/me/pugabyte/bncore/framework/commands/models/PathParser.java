@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.Utils.left;
 
@@ -129,8 +130,9 @@ class PathParser {
 			if (isCompletionIndex)
 				if (Strings.isNullOrEmpty(realArg))
 					return true;
-				else if (pathArg.toLowerCase().startsWith(realArg.toLowerCase()))
-					return true;
+				else
+					if (isLiteral())
+						return getSplitPathArg(realArg).size() > 0;
 
 			for (String option : tabComplete())
 				if (option.equalsIgnoreCase(realArg))
@@ -139,11 +141,18 @@ class PathParser {
 			return false;
 		}
 
+		private List<String> getSplitPathArg(String filter) {
+			List<String> options = Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
+			if (filter != null)
+				options = options.stream().filter(option -> option.toLowerCase().startsWith(filter.toLowerCase())).collect(Collectors.toList());
+			return options;
+		}
+
 		@ToString.Include
 		@SneakyThrows
 		List<String> tabComplete() {
 			if (isLiteral())
-				return Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
+				return getSplitPathArg(realArg);
 			else if (isVariable() && tabCompleter != null)
 				if (tabCompleter.getDeclaringClass().equals(command.getClass()))
 					return (List<String>) tabCompleter.invoke(command, realArg.toLowerCase());
@@ -170,6 +179,7 @@ class PathParser {
 				continue;
 
 			TabCompleteHelper helper = new TabCompleteHelper(method, event.getArgs());
+//			BNCore.log(helper.toString());
 			if (!helper.pathMatches())
 				continue;
 
