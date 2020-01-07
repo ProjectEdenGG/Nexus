@@ -243,6 +243,10 @@ public class Match {
 			start();
 		}
 
+		public void addTime(int time) {
+			this.time += time;
+		}
+
 		void start() {
 			taskId = match.getTasks().repeat(0, 20, () -> {
 				if (--time > 0) {

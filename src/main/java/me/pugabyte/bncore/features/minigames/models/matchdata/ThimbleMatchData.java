@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -17,7 +18,11 @@ public class ThimbleMatchData extends MatchData {
 	private int turns;
 	private Minigamer turnPlayer;
 	private int turnWaitTaskId;
+	@Accessors(fluent = true)
+	private boolean isEnding;
 
-	public ThimbleMatchData(Match match) { super(match); }
+	public ThimbleMatchData(Match match) {
+		super(match);
+	}
 
 }

@@ -27,6 +27,7 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleArena;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleMap;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.ThimbleMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
@@ -57,9 +58,7 @@ import java.util.Optional;
 
 //TODO:
 // - Give players slowness when they are picked after they are teleported so they don't accidently fall off (10 ticks)
-// - timeleft < ((total players * 17)*2) --> at the end of the round, broadcast Last Round, and no matter how much time is left, end the game
-// - interaction whitelist
-// - on matchEndEvent (normal bukkit listener), store a boolean that i need to end it
+
 public final class Thimble extends TeamlessMechanic {
 
 	@Getter
@@ -158,9 +157,8 @@ public final class Thimble extends TeamlessMechanic {
 		List<Minigamer> minigamers = match.getMinigamers();
 		setPlayerBlocks(minigamers, match);
 
-		// add x amount of seconds to the game, Each turn is 15, +2 for extra waits
-		// adds the time for the max length of a round by how many players there are
-		//arena.setSeconds(arena.getSeconds() + (minigamers.size()*17));
+		// Adds time to the game by players * total turn length
+		match.getTimer().addTime(minigamers.size() * 17);
 
 		// Teleport all players in minigame to spectate location of current map
 		Location specLoc = arena.getCurrentMap().getSpectateLocation();
@@ -237,12 +235,11 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 		}
 
-		// Check if there is enough time for another round
-//		if(arena.getSeconds() < (match.getMinigamers().size() * 17)){
-//			match.broadcast("Time left < " + (match.getMinigamers().size() * 17) + " (newround)");
-//			match.end();
-//			return;
-//		}
+		if (matchData.isEnding()) {
+			match.broadcast("Match End.");
+			match.end();
+			return;
+		}
 
 		if (match.isEnded()) {
 			return;
@@ -281,6 +278,8 @@ public final class Thimble extends TeamlessMechanic {
 		final Minigamer finalNextMinigamer = matchData.getTurnPlayer();
 		Player player = finalNextMinigamer.getPlayer();
 
+//		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10, 5));
+//		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10, 255));
 		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation());
 
 		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
@@ -397,6 +396,16 @@ public final class Thimble extends TeamlessMechanic {
 		}
 	}
 
+	@EventHandler
+	public void onMatchEnd(MatchEndEvent event) {
+		ThimbleMatchData matchData = (ThimbleMatchData) event.getMatch().getMatchData();
+		if (!matchData.isEnding()) {
+			event.getMatch().broadcast("Time is up, match will end after this round.");
+			matchData.isEnding(true);
+			event.setCancelled(true);
+		}
+	}
+
 	public static abstract class ThimbleGamemode {
 
 		abstract String getName();
@@ -497,7 +506,6 @@ public final class Thimble extends TeamlessMechanic {
 			matchData.getTurnList().remove(minigamer);
 			minigamer.teleport(arena.getCurrentMap().getSpectateLocation());
 		}
-
 	}
 
 	public static class ClassicGamemode extends ThimbleGamemode {
@@ -516,7 +524,6 @@ public final class Thimble extends TeamlessMechanic {
 			super.score(minigamer, blockLocation);
 			minigamer.scored();
 		}
-
 	}
 
 	public static class RiskGamemode extends ThimbleGamemode {
@@ -641,7 +648,6 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 }
-
 
 class ThimbleMenu extends MenuUtils implements InventoryProvider {
 
