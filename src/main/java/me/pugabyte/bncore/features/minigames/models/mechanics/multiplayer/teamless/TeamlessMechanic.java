@@ -33,23 +33,23 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 		Arena arena = match.getArena();
 		Map<Minigamer, Integer> scores = new HashMap<>();
 
-		match.getMinigamers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
+		match.getAlivePlayers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
 		if (scores.size() == 0) return;
 		int winningScore = getWinningScore(scores);
 		List<Minigamer> winners = getWinners(winningScore, scores);
 
 		String announcement;
-		if (winningScore == 0) {
+		if (winningScore == 0 && winners.size() != 1)
 			announcement = "No players scored in " + arena.getDisplayName();
-			Minigames.broadcast(announcement);
-		} else {
-			if (match.getMinigamers().size() == winners.size() && match.getMinigamers().size() > 1) {
+		else {
+			if (match.getAlivePlayers().size() == winners.size() && match.getAlivePlayers().size() > 1)
 				announcement = "All players tied in " + arena.getDisplayName();
-			} else {
+			else
 				announcement = getWinnersString(winners) + arena.getDisplayName();
-			}
-			Minigames.broadcast(announcement + " (" + winningScore + ")");
+			if (winningScore != 0)
+				announcement += " (" + winningScore + ")";
 		}
+		Minigames.broadcast(announcement);
 	}
 
 	private String getWinnersString(List<Minigamer> winners) {
@@ -80,9 +80,8 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public void checkIfShouldBeOver(Match match) {
-		if (match.getMinigamers().size() <= 1)
-			match.end();
+	public boolean shouldBeOver(Match match) {
+		return match.getAlivePlayers().size() <= 1;
 	}
 
 }

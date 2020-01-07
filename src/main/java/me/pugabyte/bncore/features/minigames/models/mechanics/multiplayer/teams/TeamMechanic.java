@@ -114,12 +114,10 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public void checkIfShouldBeOver(Match match) {
+	public boolean shouldBeOver(Match match) {
 		List<Team> teams = new ArrayList<>();
 		match.getMinigamers().forEach(minigamer -> teams.add(minigamer.getTeam()));
-		if (teams.size() == 1) {
-			match.end();
-		}
+		return teams.size() == 1;
 	}
 
 }

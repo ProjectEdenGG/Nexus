@@ -1,8 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -13,17 +11,13 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.Set;
-
 // TODO:
-//  - Add materials to whitelist
 //  - Anti-camping
-//  - Sounds
 
 public class Spleef extends TeamlessMechanic {
 
@@ -62,34 +56,29 @@ public class Spleef extends TeamlessMechanic {
 				});
 	}
 
-	@EventHandler
-	void onPlayerInteract(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isPlaying(this)) return;
-		Match match = minigamer.getMatch();
-		Arena arena = match.getArena();
+	@Override
+	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
+		super.onPlayerInteract(minigamer, event);
+		if (event.isCancelled()) return;
 
-		if (!match.getAlivePlayers().contains(minigamer)) return;
-		if (event.getAction() != Action.LEFT_CLICK_BLOCK) return;
-		if (!arena.canUseBlock(event.getClickedBlock().getType())) return;
-
+		Arena arena = minigamer.getMatch().getArena();
 		Location location = event.getClickedBlock().getLocation();
 
-		RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
-		Set<ProtectedRegion> regions = regionManager.getApplicableRegions(location).getRegions();
-		for (ProtectedRegion region : regions) {
-			if (isArenaRegion(region.getId(), arena, "floor")) {
-				event.setCancelled(true);
-				Material material = location.getBlock().getType();
-				if (material.equals(Material.WOOL) || material.equals(Material.SNOW))
-					player.playSound(player.getLocation(), "block.cloth.break", 1.0F, 0.75F);
-				else
-					player.playSound(player.getLocation(), "block.stone.break", 1.0F, 0.75F);
+		for (ProtectedRegion region : Minigames.getWorldGuardUtils().getRegionsAt(location)) {
+			if (!arena.ownsRegion(region.getId(), "floor")) continue;
 
-				location.getBlock().setType(Material.AIR);
-				break;
-			}
+			event.setCancelled(true);
+			Material material = location.getBlock().getType();
+			Sound sound = Sound.BLOCK_STONE_BREAK;
+			if (material.equals(Material.SNOW))
+				sound = Sound.BLOCK_SNOW_BREAK;
+			if (material.equals(Material.WOOL))
+				sound = Sound.BLOCK_CLOTH_BREAK;
+
+			minigamer.getPlayer().getWorld().playSound(location, sound, 1.0F, 0.75F);
+
+			location.getBlock().setType(Material.AIR);
+			break;
 		}
 	}
 
@@ -97,18 +86,11 @@ public class Spleef extends TeamlessMechanic {
 	void onRegionEnter(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isPlaying(this)) return;
+		if (!(minigamer.isPlaying(this) && minigamer.isAlive())) return;
 
 		Arena arena = minigamer.getMatch().getArena();
 
-		if (isArenaRegion(event.getRegion().getId(), arena, "kill"))
+		if (arena.ownsRegion(event.getRegion().getId(), "kill"))
 			kill(minigamer);
 	}
-
-	@Override
-	public void kill(Minigamer minigamer) {
-		minigamer.setAlive(false);
-		minigamer.toSpectate();
-	}
-
 }
