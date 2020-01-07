@@ -1,7 +1,9 @@
 package me.pugabyte.bncore.features.minigames.models;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
@@ -227,11 +229,13 @@ public class Match {
 		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
 	}
 
-	private class MatchTimer {
+	public class MatchTimer {
 		private Match match;
-		private int time;
 		private List<Integer> broadcasts = Arrays.asList((60 * 10), (60 * 5), 60, 30, 15, 5, 4, 3, 2, 1);
 		private int taskId;
+		@Getter
+		@Setter
+		private int time;
 
 		MatchTimer(Match match, int time) {
 			this.match = match;
