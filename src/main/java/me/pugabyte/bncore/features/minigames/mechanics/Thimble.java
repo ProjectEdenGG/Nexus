@@ -56,9 +56,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-//TODO:
-// - Give players slowness when they are picked after they are teleported so they don't accidently fall off (10 ticks)
-
 public final class Thimble extends TeamlessMechanic {
 
 	@Getter
@@ -650,61 +647,60 @@ public final class Thimble extends TeamlessMechanic {
 
 	}
 
-}
+	class ThimbleMenu extends MenuUtils implements InventoryProvider {
+		final short[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
 
-class ThimbleMenu extends MenuUtils implements InventoryProvider {
-
-	final short[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		int row = 0;
-		int ndx = 0;
-		ItemStack concrete;
-		for (int col = 0; col < CONCRETE_IDS.length - 1; col++) {
-			if (col > 8 && row == 0) {
-				row++;
-				col = 0;
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			int row = 0;
+			int ndx = 0;
+			ItemStack concrete;
+			for (int col = 0; col < CONCRETE_IDS.length - 1; col++) {
+				if (col > 8 && row == 0) {
+					row++;
+					col = 0;
+				}
+				concrete = new ItemStack(Material.CONCRETE, 1, CONCRETE_IDS[ndx]);
+				ItemStack finalConcrete = concrete;
+				contents.set(new SlotPos(row, col), ClickableItem.of(concrete, e -> pickColor(finalConcrete, player)));
+				if (ndx < CONCRETE_IDS.length - 1)
+					ndx++;
+				else
+					break;
 			}
-			concrete = new ItemStack(Material.CONCRETE, 1, CONCRETE_IDS[ndx]);
-			ItemStack finalConcrete = concrete;
-			contents.set(new SlotPos(row, col), ClickableItem.of(concrete, e -> pickColor(finalConcrete, player)));
-			if (ndx < CONCRETE_IDS.length - 1)
-				ndx++;
-			else
-				break;
+		}
+
+		public void pickColor(ItemStack concrete, Player player) {
+			Minigamer minigamer = PlayerManager.get(player);
+			Match match = minigamer.getMatch();
+			ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+
+			short itemDurability = concrete.getDurability();
+			// Test if selected concrete is already chosen
+			if (!matchData.getChosenConcrete().contains(itemDurability)) {
+				// Remove item on head from chosenIDs
+				PlayerInventory playerInv = player.getInventory();
+				if (playerInv.getHelmet() != null && playerInv.getHelmet().getType().equals(Material.CONCRETE)) {
+					Short helmetDurability = playerInv.getHelmet().getDurability();
+					matchData.getChosenConcrete().remove(helmetDurability);
+				}
+				// Add new item on head to chosenIDs
+				playerInv.setHelmet(concrete);
+				matchData.getChosenConcrete().add(itemDurability);
+
+				String chosenColor = ColorType.fromDurability(itemDurability).getName();
+				minigamer.tell("You chose " + chosenColor + "!");
+			} else {
+				minigamer.tell("&cThat block is already chosen!");
+			}
+
+			player.closeInventory();
+		}
+
+
+		@Override
+		public void update(Player player, InventoryContents inventoryContents) {
 		}
 	}
 
-	public void pickColor(ItemStack concrete, Player player) {
-		Minigamer minigamer = PlayerManager.get(player);
-		Match match = minigamer.getMatch();
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
-
-		short itemDurability = concrete.getDurability();
-		// Test if selected concrete is already chosen
-		if (!matchData.getChosenConcrete().contains(itemDurability)) {
-			// Remove item on head from chosenIDs
-			PlayerInventory playerInv = player.getInventory();
-			if (playerInv.getHelmet() != null && playerInv.getHelmet().getType().equals(Material.CONCRETE)) {
-				Short helmetDurability = playerInv.getHelmet().getDurability();
-				matchData.getChosenConcrete().remove(helmetDurability);
-			}
-			// Add new item on head to chosenIDs
-			playerInv.setHelmet(concrete);
-			matchData.getChosenConcrete().add(itemDurability);
-
-			String chosenColor = ColorType.fromDurability(itemDurability).getName();
-			minigamer.tell("You chose " + chosenColor + "!");
-		} else {
-			minigamer.tell("&cThat block is already chosen!");
-		}
-
-		player.closeInventory();
-	}
-
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-	}
 }
