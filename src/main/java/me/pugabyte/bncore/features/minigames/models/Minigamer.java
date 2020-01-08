@@ -86,7 +86,7 @@ public class Minigamer {
 
 	public boolean isPlaying(Class<? extends Mechanic> mechanic) {
 		if (match != null)
-			return mechanic.isInstance(match.getArena().getMechanic()) && match.isStarted();
+			return mechanic.isInstance(match.getArena().getMechanic()) && match.isStarted() && isAlive();
 		return false;
 	}
 

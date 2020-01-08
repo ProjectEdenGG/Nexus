@@ -396,6 +396,8 @@ public final class Thimble extends TeamlessMechanic {
 	@EventHandler
 	public void onMatchEnd(MatchEndEvent event) {
 		Match match = event.getMatch();
+		if (!match.isMechanic(this)) return;
+
 		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
 
 		if (!matchData.isEnding() && !shouldBeOver(match)) {

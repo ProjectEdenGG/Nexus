@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.teams.TeamScoredEvent;
+import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Utils;
@@ -231,6 +232,14 @@ public class Match {
 		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
 	}
 
+	public boolean isMechanic(Mechanic mechanic) {
+		return isMechanic(mechanic.getClass());
+	}
+
+	public boolean isMechanic(Class<? extends Mechanic> mechanic) {
+		return mechanic.isInstance(getArena().getMechanic());
+	}
+
 	public class MatchTimer {
 		private Match match;
 		private List<Integer> broadcasts = Arrays.asList((60 * 10), (60 * 5), 60, 30, 15, 5, 4, 3, 2, 1);
@@ -250,7 +259,7 @@ public class Match {
 		}
 
 		void start() {
-			match.getTasks().wait(1, () -> match.broadcast("&e" + time + " &7seconds left..."));
+			match.getTasks().wait(1, () -> match.broadcast("&e" + (time + 1) + " &7seconds left..."));
 			taskId = match.getTasks().repeat(0, 20, () -> {
 				if (--time > 0) {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);

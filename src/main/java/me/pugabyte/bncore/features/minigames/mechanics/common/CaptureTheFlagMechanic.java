@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.mechanics;
+package me.pugabyte.bncore.features.minigames.mechanics.common;
 
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;

@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.minigames.mechanics.OneFlagCaptureTheFlag;
 import me.pugabyte.bncore.features.minigames.mechanics.OneInTheQuiver;
 import me.pugabyte.bncore.features.minigames.mechanics.Paintball;
 import me.pugabyte.bncore.features.minigames.mechanics.Spleef;
+import me.pugabyte.bncore.features.minigames.mechanics.Splegg;
 import me.pugabyte.bncore.features.minigames.mechanics.TeamDeathmatch;
 import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
 
@@ -20,6 +21,7 @@ public enum MechanicType {
 	ONE_IN_THE_QUIVER(new OneInTheQuiver()),
 	PAINTBALL(new Paintball()),
 	SPLEEF(new Spleef()),
+	SPLEGG(new Splegg()),
 	TEAM_DEATHMATCH(new TeamDeathmatch()),
 	THIMBLE(new Thimble());
 
