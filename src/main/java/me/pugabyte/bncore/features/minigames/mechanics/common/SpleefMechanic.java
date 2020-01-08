@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
@@ -77,7 +78,7 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onBlockExplode(EntityExplodeEvent event) {
+	public void onEntityExplode(EntityExplodeEvent event) {
 		if (!event.getEntityType().equals(EntityType.PRIMED_TNT)) return;
 
 		boolean found = false;
@@ -105,7 +106,7 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 				if (!arena.ownsRegion(region.getId(), "floor")) continue;
 
 				Material type = location.getBlock().getType();
-				if (!type.equals(Material.TNT) && !arena.canUseBlock(type)) continue;
+				if (type != Material.TNT && !arena.canUseBlock(type)) continue;
 
 				toKeep.remove(block);
 			}
@@ -117,7 +118,19 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 
 		event.blockList().clear();
 
-		toDelete.forEach(block -> block.setType(Material.AIR));
+		toDelete.forEach(block -> {
+			boolean spawnTnt = block.getType() == Material.TNT;
+			block.setType(Material.AIR);
+			if (spawnTnt)
+				spawnTnt(block.getLocation());
+		});
+	}
+
+	public void spawnTnt(Location location) {
+		Location spawnLocation = location.add(0.5, 0, 0.5);
+		TNTPrimed tnt = (TNTPrimed) location.getWorld().spawnEntity(spawnLocation, EntityType.PRIMED_TNT);
+		tnt.setYield(3);
+		tnt.setFuseTicks(0);
 	}
 
 	public abstract void playBlockBreakSound(Location location);

@@ -8,13 +8,12 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Egg;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
@@ -34,6 +33,8 @@ public class Splegg extends SpleefMechanic {
 	@Override
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		super.onPlayerInteract(minigamer, event);
+
+		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Material hand = minigamer.getPlayer().getInventory().getItemInMainHand().getType();
 		if (hand.name().contains("SPADE") || hand.name().contains("SHOVEL")) {
@@ -75,12 +76,8 @@ public class Splegg extends SpleefMechanic {
 		if (!breakBlock(minigamer.getMatch().getArena(), blockHit.getLocation()))
 			return;
 
-		if (spawnTnt) {
-			Location spawnLocation = blockHit.getLocation().add(0.5, 0, 0.5);
-			TNTPrimed tnt = (TNTPrimed) blockHit.getWorld().spawnEntity(spawnLocation, EntityType.PRIMED_TNT);
-			tnt.setYield(3);
-			tnt.setFuseTicks(0);
-		}
+		if (spawnTnt)
+			spawnTnt(blockHit.getLocation());
 	}
 
 }
