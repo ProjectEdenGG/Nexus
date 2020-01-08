@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import me.pugabyte.bncore.features.minigames.mechanics.common.CaptureTheFlagMechanic;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
-import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.mechanics.CaptureTheFlagMechanic;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 

@@ -73,29 +73,6 @@ public class ArenaManager {
 		arenas.remove(arena);
 	}
 
-	public static void updateFile(Arena arena){
-		File fileFolder = new File(folder);
-		if(!fileFolder.exists()){
-			fileFolder.mkdirs();
-		}
-		File file = new File(getFile(arena.getName()));
-		if(!file.exists()){
-			try {
-				file.createNewFile();
-			} catch (IOException ex) {
-				BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
-			}
-		}
-        FileConfiguration config = new YamlConfiguration();
-        try {
-            config.load(file);
-            config.set("arena", arena);
-            config.save(file);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-    }
-
 	private static String getFile(String name) {
 		return folder + name + ".yml";
 	}
@@ -148,6 +125,18 @@ public class ArenaManager {
 		} catch (IOException ex) {
 			BNCore.severe("An error occurred while trying to write arena configuration files: " + ex.getMessage());
 		}
+	}
+
+	public static Arena getFromRegion(String regionName) {
+		try {
+			String mechanicName = regionName.split("_")[0];
+			String arenaName = regionName.split("_")[1];
+			Arena arena = get(arenaName);
+			if (arena.getMechanic().getName().equalsIgnoreCase(mechanicName))
+				return arena;
+		} catch (ArrayIndexOutOfBoundsException ignore) {}
+
+		return null;
 	}
 
 	public static int getNextId(){

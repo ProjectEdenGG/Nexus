@@ -4,6 +4,17 @@ import me.pugabyte.bncore.features.minigames.mechanics.*;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import me.pugabyte.bncore.features.minigames.mechanics.CaptureTheFlag;
+import me.pugabyte.bncore.features.minigames.mechanics.DeathSwap;
+import me.pugabyte.bncore.features.minigames.mechanics.FourTeamDeathmatch;
+import me.pugabyte.bncore.features.minigames.mechanics.FreeForAll;
+import me.pugabyte.bncore.features.minigames.mechanics.OneFlagCaptureTheFlag;
+import me.pugabyte.bncore.features.minigames.mechanics.OneInTheQuiver;
+import me.pugabyte.bncore.features.minigames.mechanics.Paintball;
+import me.pugabyte.bncore.features.minigames.mechanics.Spleef;
+import me.pugabyte.bncore.features.minigames.mechanics.Splegg;
+import me.pugabyte.bncore.features.minigames.mechanics.TeamDeathmatch;
+import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
 
 public enum MechanicType {
 	//Mechanic Class & ItemStack in GUI

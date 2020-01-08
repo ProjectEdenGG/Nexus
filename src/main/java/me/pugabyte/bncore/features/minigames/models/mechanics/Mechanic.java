@@ -46,6 +46,7 @@ public abstract class Mechanic implements Listener {
 	public void onInitialize(Match match) {}
 
 	public void onStart(Match match) {
+		match.broadcast("Starting match");
 		match.getTasks().repeat(20, 20, () -> match.getScoreboard().update());
 		int lives = match.getArena().getLives();
 		if (lives > 0)
@@ -125,6 +126,8 @@ public abstract class Mechanic implements Listener {
 					return;
 				}
 	}
+
+	// TODO: Break and place events
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
