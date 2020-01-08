@@ -120,4 +120,16 @@ public class ArenaManager {
 		}
 	}
 
+	public static Arena getFromRegion(String regionName) {
+		try {
+			String mechanicName = regionName.split("_")[0];
+			String arenaName = regionName.split("_")[1];
+			Arena arena = get(arenaName);
+			if (arena.getMechanic().getName().equalsIgnoreCase(mechanicName))
+				return arena;
+		} catch (ArrayIndexOutOfBoundsException ignore) {}
+
+		return null;
+	}
+
 }
