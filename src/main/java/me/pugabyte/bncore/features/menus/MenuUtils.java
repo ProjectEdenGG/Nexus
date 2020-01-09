@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.menus;
 
+import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -23,7 +24,7 @@ public abstract class MenuUtils {
 	}
 
 	public int getRows(int items){
-		return (int) Math.ceil(items / 9);
+		return (int) Math.ceil((double) items / 9);
 	}
 
 	protected ItemStack nameItem(ItemStack item, String name) {

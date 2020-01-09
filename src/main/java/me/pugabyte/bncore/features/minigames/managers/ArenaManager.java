@@ -141,10 +141,8 @@ public class ArenaManager {
 
 	public static int getNextId(){
 		int id = 1;
-		BNCore.log("getting ID");
 		for(Arena arena : getAll()){
-			BNCore.log("arena ID: " + arena.getId());
-			if(arena.getId() > id){
+			if(arena.getId() >= id){
 				id = (arena.getId() + 1);
 			}
 		}

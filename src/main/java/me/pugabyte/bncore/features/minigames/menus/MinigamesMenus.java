@@ -55,6 +55,16 @@ public class MinigamesMenus extends MenuUtils {
         INV.open(player);
     }
 
+    public SmartInventory blockListMenu(Arena arena){
+        SmartInventory INV = SmartInventory.builder()
+                .id("blockListMenu")
+                .title("Block List Menu")
+                .provider(new BlockListMenu(arena))
+                .size(6, 9)
+                .build();
+        return INV;
+    }
+
     @SneakyThrows
     public void openCustomSettingsMenu(Player player, Arena arena){
         Set<Class<?>> classes = new Reflections("me.pugabyte.bncore.features.minigames.menus.custommenus").getTypesAnnotatedWith(CustomMechanicSettings.class);

@@ -27,20 +27,25 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
         //Back Item
         contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
         //Location Item
-        contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.WOOD_DOOR), "&eLobby Location"), e ->{
-            arena.setLobby(Lobby.builder().location(player.getLocation()).waitTime(arena.getLobby().getWaitTime()).build());
+        contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.WOOD_DOOR),
+                "&eLobby Location","&3Current Lobby Location:" +
+                "||&ex: " + (int) arena.getLobby().getLocation().getX() +
+                "||&ey: " + (int) arena.getLobby().getLocation().getY() +
+                "||&ez: " + (int) arena.getLobby().getLocation().getZ()), e ->{
+            arena.getLobby().setLocation(player.getLocation());
             ArenaManager.write(arena);
             ArenaManager.add(arena);
             menus.openLobbyMenu(player, arena);
         }));
         //Time Item
-        contents.set(1, 6, ClickableItem.of(nameItem(new ItemStack(Material.WATCH), "&eWait Time"), e ->{
+        contents.set(1, 6, ClickableItem.of(nameItem(new ItemStack(Material.WATCH),
+                "&eWait Time", "&3Current Wait Time:||&e" + arena.getLobby().getWaitTime()), e ->{
             player.closeInventory();
             new AnvilGUI.Builder()
                     .onClose(p -> { menus.openArenaMenu(player, arena); })
                     .onComplete((p, text) -> {
                         if(Utils.isInt(text)){
-                            arena.setLobby(Lobby.builder().location(arena.getLobby().getLocation()).waitTime(Integer.parseInt(text)).build());
+                            arena.getLobby().setWaitTime(Integer.parseInt(text));
                             ArenaManager.write(arena);
                             ArenaManager.add(arena);
                             menus.openLobbyMenu(player, arena);
