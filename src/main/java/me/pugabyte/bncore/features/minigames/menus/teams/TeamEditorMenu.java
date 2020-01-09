@@ -34,6 +34,12 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
     public void init(Player player, InventoryContents contents) {
         //Back Item
         contents.set(0, 0, ClickableItem.of(backItem(), e-> teamMenus.openTeamsMenu(player, arena)));
+        //Delete Team Item
+        contents.set(0, 8, ClickableItem.of(nameItem(new ItemStack(Material.TNT),
+                "&c&lDelete Team", "&7You will need to confirm||&7deleting a team.|| ||&7&lTHIS CANNOT BE UNDONE."), e->{
+            player.closeInventory();
+            teamMenus.openDeleteTeamMenu(player, arena, team);
+        }));
 
         //Name Item
         contents.set(1, 0, ClickableItem.of(nameItem(new ItemStack(Material.BOOK),
@@ -58,7 +64,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
         }));
         //Objective Item
         contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.SIGN),
-                "Team Objective", "||&3Current Objective:||&e" + team.getObjective()), e->{
+                "&eTeam Objective", "||&3Current Objective:||&e" + team.getObjective()), e->{
             new AnvilGUI.Builder()
                     .onClose(p -> teamMenus.openTeamsEditorMenu(player, arena, team))
                     .onComplete((p, text) -> {
@@ -78,12 +84,12 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
                 }));
         //Team Color Item
         contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.WOOL, 1, ColorType.fromChatColor(team.getColor()).getDurability().byteValue()),
-                "Team Color", "&7Set the color of the team"), e-> teamMenus.openTeamsColorMenu(player, arena, team)));
+                "&eTeam Color", "&7Set the color of the team"), e-> teamMenus.openTeamsColorMenu(player, arena, team)));
         //Spawnpoints Item
         contents.set(1, 6, ClickableItem.empty(nameItem(new ItemStack(Material.COMPASS),
-                "Spawnpoint Locations", "&7Set locations the players||&7on the team can spawn.")));
-        //Balance Percentage Item
-        contents.set(1, 0, ClickableItem.of(nameItem(new ItemStack(Material.IRON_PLATE),
+                "&eSpawnpoint Locations", "&7Set locations the players||&7on the team can spawn.")));
+        //Balance Percentage Item7
+        contents.set(1, 8, ClickableItem.of(nameItem(new ItemStack(Material.IRON_PLATE),
                 "&eBalance Percentage", "&7Set to -1 to disable||&7team balancing.|| ||&3Current Percentage:||&e" + team.getBalancePercentage()), e -> {
             player.closeInventory();
             new AnvilGUI.Builder()
@@ -110,9 +116,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
         }));
         //Loadout Item
         contents.set(2, 4, ClickableItem.of(nameItem(new ItemStack(Material.CHEST),
-                "Loadout"), e->{
-
-        }));
+                "Loadout"), e-> teamMenus.openLoadoutMenu(player, arena, team)));
     }
 
     @Override

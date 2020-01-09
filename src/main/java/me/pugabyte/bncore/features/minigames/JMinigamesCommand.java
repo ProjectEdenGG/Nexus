@@ -23,13 +23,13 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameExcepti
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Aliases({"newmgm", "newminigames"})
 @Permission("minigames")
@@ -84,7 +84,10 @@ public class JMinigamesCommand extends CustomCommand {
 					.maxWinningScore(0)
 					.canJoinLate(false)
 					.respawnLocation(player().getLocation())
-					.spectatePosition(player().getLocation())
+					.spectateLocation(player().getLocation())
+					.blockList(Collections.<Material>emptySet())
+					.isWhitelist(true)
+					.lives(1)
 					.hasScoreboard(true)
 					.lobby(Lobby.builder()
 							.location(player().getLocation())
@@ -102,11 +105,11 @@ public class JMinigamesCommand extends CustomCommand {
 							.build()))
 					.build();
 			reply(PREFIX + "Creating arena " + arg(2) + "&3.");
-			reply(PREFIX + newArena.toString());
 			ArenaManager.write(newArena);
 			arena = newArena;
 		}
 		else {
+			reply(PREFIX + "Arena already exists.");
 			reply(PREFIX + "Editing arena " + arg(2) + "&3.");
 			arena = ArenaManager.get(arg(2));
 		}
@@ -121,6 +124,12 @@ public class JMinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	void manage(@Arg String arena){
 		new MinigamesMenus().openArenaMenu(player(), ArenaManager.get(arena));
+	}
+
+	@Path("remove {arena}")
+	@Permission("manage")
+	void remove(@Arg String arena){
+		new MinigamesMenus().openDeleteMenu(player(), ArenaManager.get(arena));
 	}
 
 	@Path("start {arena}")

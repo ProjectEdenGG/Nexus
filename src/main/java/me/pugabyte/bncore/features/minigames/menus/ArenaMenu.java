@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,6 +34,9 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                 "&b" + arena.getDisplayName(), " ||&3Arena ID: &e" + arena.getId() +
                         "||&3Mechanic: &e" + arena.getMechanicType().name().replace("_", " ") +
                         "||&3Teams: &e" + arena.getTeams().size())));
+        //Delete Arena Item
+        contents.set(0, 8, ClickableItem.of(nameItem(new ItemStack(Material.TNT),
+                "&c&lDelete Arena", "&7You will need to confirm||&7deleting an arena.|| ||&7&lTHIS CANNOT BE UNDONE."), e-> menus.openDeleteMenu(player, arena)));
 
         //Arena Name Item
         contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.PAPER),
@@ -43,7 +47,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                     .onComplete((p, text) -> {
                         arena.setName(text);
                         ArenaManager.write(arena);
-                        ArenaManager.read(arena.getName());
+                        ArenaManager.add(arena);
                         menus.openArenaMenu(player, arena);
                         return AnvilGUI.Response.text(text);
                     })
@@ -63,7 +67,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                     .onComplete((p, text) -> {
                         arena.setDisplayName(text);
                         ArenaManager.write(arena);
-                        ArenaManager.read(arena.getName());
+                        ArenaManager.add(arena);
                         menus.openArenaMenu(player, arena);
                         return AnvilGUI.Response.text(text);
                     })
@@ -81,7 +85,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                         if(Utils.isInt(text)){
                             arena.setMinPlayers(Integer.parseInt(text));
                             ArenaManager.write(arena);
-                            ArenaManager.read(arena.getName());
+                            ArenaManager.add(arena);
                             menus.openArenaMenu(player, arena);
                             return AnvilGUI.Response.text(text);
                         }
@@ -104,7 +108,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                         if(Utils.isInt(text)){
                             arena.setMaxPlayers(Integer.parseInt(text));
                             ArenaManager.write(arena);
-                            ArenaManager.read(arena.getName());
+                            ArenaManager.add(arena);
                             menus.openArenaMenu(player, arena);
                             return AnvilGUI.Response.text(text);
                         }
@@ -129,11 +133,11 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                         "||&ez: " + (int) arena.getRespawnLocation().getZ()), e ->{
             arena.setRespawnLocation(player.getLocation());
             ArenaManager.write(arena);
-            ArenaManager.read(arena.getName());
+            ArenaManager.add(arena);
             menus.openArenaMenu(player, arena);
         }));
         //Game Time Item
-        contents.set(2, 7, ClickableItem.of(nameItem(new ItemStack(Material.WATCH),
+        contents.set(4, 1, ClickableItem.of(nameItem(new ItemStack(Material.WATCH),
                 "&eGame Time", "&7Time in seconds that the||&7game will run for|| ||&3Current Game Time:||&e" + arena.getSeconds()), e -> {
             player.closeInventory();
             new AnvilGUI.Builder()
@@ -142,7 +146,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                         if(Utils.isInt(text)){
                             arena.setSeconds(Integer.parseInt(text));
                             ArenaManager.write(arena);
-                            ArenaManager.read(arena.getName());
+                            ArenaManager.add(arena);
                             menus.openArenaMenu(player, arena);
                             return AnvilGUI.Response.text(text);
                         }
@@ -168,7 +172,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                         if(Utils.isInt(text)){
                             arena.setMinWinningScore(Integer.parseInt(text));
                             ArenaManager.write(arena);
-                            ArenaManager.read(arena.getName());
+                            ArenaManager.add(arena);
                             menus.openArenaMenu(player, arena);
                             return AnvilGUI.Response.text(text);
                         }
@@ -191,7 +195,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                         if(Utils.isInt(text)){
                             arena.setMaxWinningScore(Integer.parseInt(text));
                             ArenaManager.write(arena);
-                            ArenaManager.read(arena.getName());
+                            ArenaManager.add(arena);
                             menus.openArenaMenu(player, arena);
                             return AnvilGUI.Response.text(text);
                         }
@@ -214,7 +218,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                         if(Utils.isInt(text)){
                             arena.setWinningScore(Integer.parseInt(text));
                             ArenaManager.write(arena);
-                            ArenaManager.read(arena.getName());
+                            ArenaManager.add(arena);
                             menus.openArenaMenu(player, arena);
                             return AnvilGUI.Response.text(text);
                         }
@@ -241,23 +245,30 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                 arena.canJoinLate(true);
             }
             ArenaManager.write(arena);
-            ArenaManager.read(arena.getName());
+            ArenaManager.add(arena);
             menus.openArenaMenu(player, arena);
         }));
         //Spectate Location Item
-        contents.set(4, 2, ClickableItem.of(nameItem(new ItemStack(Material.COMPASS),
+        contents.set(2, 7, ClickableItem.of(nameItem(new ItemStack(Material.COMPASS),
                 "&eSpectate Location", "&7Location players will teleport to||&7when spectating the game|| ||" +
                         "&3Current Spectate Location:" +
-                        "||&ex: " + (int) arena.getSpectatePosition().getX() +
-                        "||&ey: " + (int) arena.getSpectatePosition().getY() +
-                        "||&ez: " + (int) arena.getSpectatePosition().getZ()), e ->{
-            arena.setSpectatePosition(player.getLocation());
+                        "||&ex: " + (int) arena.getSpectateLocation().getX() +
+                        "||&ey: " + (int) arena.getSpectateLocation().getY() +
+                        "||&ez: " + (int) arena.getSpectateLocation().getZ()), e ->{
+            arena.setSpectateLocation(player.getLocation());
             ArenaManager.write(arena);
-            ArenaManager.read(arena.getName());
+            ArenaManager.add(arena);
             menus.openArenaMenu(player, arena);
         }));
+        String whitelist = "Whitelisted";
+        if(arena.isWhitelist()) whitelist = "Blacklisted";
+        //Block List Item
+        contents.set(4, 3, ClickableItem.of(nameItem(new ItemStack(Material.DIAMOND_PICKAXE),
+                "&eBreakable Block List", "&7Click me to set the block list||&7that players can break|| ||&3Current Setting:||&e" + whitelist), e->{
+            menus.blockListMenu(arena).open(player);
+        }));
         //Custom Settings Item
-        contents.set(4, 4, ClickableItem.of(nameItem(new ItemStack(Material.BOOK_AND_QUILL),
+        contents.set(4, 5, ClickableItem.of(nameItem(new ItemStack(Material.BOOK_AND_QUILL),
                 "&eCustom Game Mechanic Settings"), e -> { menus.openCustomSettingsMenu(player, arena); }));
         //Scoreboard Toggle Item
         ItemStack scoreboardItem = nameItem(new ItemStack(Material.SIGN),
@@ -265,7 +276,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
         if(arena.hasScoreboard()){
             scoreboardItem = itemGlow(scoreboardItem);
         }
-        contents.set(4, 6, ClickableItem.of(scoreboardItem, e ->{
+        contents.set(4, 7, ClickableItem.of(scoreboardItem, e ->{
             if(arena.hasScoreboard()){
                 arena.hasScoreboard(false);
             }
@@ -273,14 +284,31 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                 arena.hasScoreboard(true);
             }
             ArenaManager.write(arena);
-            ArenaManager.read(arena.getName());
+            ArenaManager.add(arena);
             menus.openArenaMenu(player, arena);
         }));
-        //Delete Arena Item
-        contents.set(5, 4, ClickableItem.of(nameItem(new ItemStack(Material.TNT),
-                "&c&lDelete Arena", "&7You will need to confirm||&7deleting an arena.|| ||&7&lTHIS CANNOT BE UNDONE."), e->{
+        //Lives Item
+        contents.set(5, 4, ClickableItem.of(nameItem(new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal()),
+                "&eMinigamer Lives", "&7Set the number of lives||&7a minigamer will have.|| ||&3Current Lives:||&e" + arena.getLives()), e ->{
             player.closeInventory();
-            Utils.async(() -> menus.openDeleteMenu(player, arena));
+            new AnvilGUI.Builder()
+                    .onClose(p -> { menus.openArenaMenu(player, arena); })
+                    .onComplete((p, text) -> {
+                        if(Utils.isInt(text)){
+                            arena.setLives(Integer.parseInt(text));
+                            ArenaManager.write(arena);
+                            ArenaManager.add(arena);
+                            menus.openArenaMenu(player, arena);
+                            return AnvilGUI.Response.text(text);
+                        }
+                        else {
+                            player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for lives."));
+                            return AnvilGUI.Response.close();
+                        }
+                    })
+                    .text("Minigamer Lives")
+                    .plugin(BNCore.getInstance())
+                    .open(player);
         }));
     }
 

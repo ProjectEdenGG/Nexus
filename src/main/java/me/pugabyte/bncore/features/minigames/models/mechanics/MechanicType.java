@@ -25,6 +25,8 @@ public enum MechanicType {
 	ONE_FLAG_CAPTURE_THE_FLAG(new OneFlagCaptureTheFlag(), new ItemStack(Material.BANNER, 1, DyeColor.BLUE.getDyeData())),
 	ONE_IN_THE_QUIVER(new OneInTheQuiver(), new ItemStack(Material.BOW)),
 	PAINTBALL(new Paintball(), new ItemStack(Material.SNOW_BALL)),
+	SPLEEF(new Spleef(), new ItemStack(Material.DIAMOND_SPADE)),
+	SPLEGG(new Splegg(), new ItemStack(Material.EGG)),
 	TEAM_DEATHMATCH(new TeamDeathmatch(), new ItemStack(Material.LEATHER_HELMET)),
 	THIMBLE(new Thimble(), new ItemStack(Material.CHAINMAIL_HELMET));
 

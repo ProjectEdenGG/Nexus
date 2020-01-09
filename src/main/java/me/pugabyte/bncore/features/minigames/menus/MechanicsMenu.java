@@ -38,7 +38,7 @@ public class MechanicsMenu extends MenuUtils implements InventoryProvider {
             if(column != 8){
                 column++;
             } else {
-                column = 1;
+                column = 0;
                 row++;
             }
         }
