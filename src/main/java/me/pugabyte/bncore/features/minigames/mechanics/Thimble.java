@@ -12,7 +12,6 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -174,9 +173,9 @@ public final class Thimble extends TeamlessMechanic {
 		World world = FaweAPI.getWorld((Minigames.getGameworld().getName()));
 		EditSession editSession = new EditSessionBuilder(world).fastmode(true).build();
 		RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
-		if (regionManager.getRegion(arena.getPoolRegionStr()) != null) {
-			Vector max = regionManager.getRegion(arena.getPoolRegionStr()).getMaximumPoint();
-			Vector min = regionManager.getRegion(arena.getPoolRegionStr()).getMinimumPoint();
+		if (regionManager.getRegion(arena.getPoolRegionName()) != null) {
+			Vector max = regionManager.getRegion(arena.getPoolRegionName()).getMaximumPoint();
+			Vector min = regionManager.getRegion(arena.getPoolRegionName()).getMinimumPoint();
 			Region poolRegion = new CuboidRegion(max, min);
 			BaseBlock baseBlock = new BaseBlock(9, 0);
 
@@ -353,7 +352,7 @@ public final class Thimble extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this)) return;
 
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
-		if (event.getRegion().getId().equals(arena.getPoolRegionStr())) {
+		if (event.getRegion().getId().equals(arena.getPoolRegionName())) {
 			if (!Utils.isInWater(player)) return;
 			if (player.getInventory().getHelmet() == null) return;
 
@@ -438,43 +437,22 @@ public final class Thimble extends TeamlessMechanic {
 			}
 			arena.setCurrentMap(thimbleMaps.get(ndx));
 
-			// Setup next pool region string
-			arena.setPoolRegionStr("thimble_" + arena.getCurrentMap().getName().toLowerCase() + "_pool");
+			arena.setPoolRegionName("thimble_" + arena.getCurrentMap().getName().toLowerCase() + "_pool");
 
-			// fill pool full of water
-			RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
-			World world = FaweAPI.getWorld((Minigames.getGameworld().getName()));
-			EditSession editSession = new EditSessionBuilder(world).fastmode(true).build();
-			if (regionManager.getRegion(arena.getPoolRegionStr()) != null) {
-				Vector max = regionManager.getRegion(arena.getPoolRegionStr()).getMaximumPoint();
-				Vector min = regionManager.getRegion(arena.getPoolRegionStr()).getMinimumPoint();
-				Region poolRegion = new CuboidRegion(max, min);
-				BaseBlock baseBlock = new BaseBlock(9, 0);
-
-				editSession.setBlocks(poolRegion, baseBlock);
-				editSession.flushQueue();
-			}
+			Minigames.getWorldEditUtils().fill(arena.getPoolRegionName(), Material.STATIONARY_WATER);
 		}
 
 		// Randomly place blocks in pool
 		void editPool(Match match) {
 			ThimbleArena arena = (ThimbleArena) match.getArena();
 			ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
-			RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
-			ProtectedCuboidRegion editRegion = (ProtectedCuboidRegion) regionManager.getRegion(arena.getPoolRegionStr());
 
 			int BLOCKS_TO_CHANGE = 3;
 			int ATTEMPTS = 3;
 			int blocksChanged = 0;
 			for (int i = 0; i < BLOCKS_TO_CHANGE; i++) {
 				for (int j = 0; j < ATTEMPTS; j++) {
-					int x = editRegion.getMinimumPoint().getBlockX();
-					int y = editRegion.getMinimumPoint().getBlockY();
-					int z = editRegion.getMinimumPoint().getBlockZ();
-
-					x += Utils.randomInt(0, 6);
-					z += Utils.randomInt(0, 6);
-					Block block = Minigames.getGameworld().getBlockAt(x, y, z);
+					Block block = Minigames.getWorldGuardUtils().getRandomBlock(arena.getPoolRegionName());
 
 					if (!Utils.isWater(block.getType()))
 						continue;
@@ -582,19 +560,7 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleArena arena = (ThimbleArena) match.getArena();
 			super.onInitialize(match);
 
-			// Fill pool full of upside down pistons
-			World world = FaweAPI.getWorld((Minigames.getGameworld().getName()));
-			EditSession editSession = new EditSessionBuilder(world).fastmode(true).build();
-			RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
-			if (regionManager.getRegion(arena.getPoolRegionStr()) != null) {
-				Vector max = regionManager.getRegion(arena.getPoolRegionStr()).getMaximumPoint();
-				Vector min = regionManager.getRegion(arena.getPoolRegionStr()).getMinimumPoint();
-				Region poolRegion = new CuboidRegion(max, min);
-				BaseBlock baseBlock = new BaseBlock(33, 0);
-
-				editSession.setBlocks(poolRegion, baseBlock);
-				editSession.flushQueue();
-			}
+			Minigames.getWorldEditUtils().fill(arena.getPoolRegionName(), Material.PISTON_BASE);
 		}
 
 		// Place x water holes randomly in pool
@@ -603,8 +569,7 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleArena arena = (ThimbleArena) match.getArena();
 			ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
 			Thimble mechanic = (Thimble) arena.getMechanic();
-			RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
-			ProtectedCuboidRegion editRegion = (ProtectedCuboidRegion) regionManager.getRegion(arena.getPoolRegionStr());
+
 			int playerCount = match.getMinigamers().size();
 			int maxPlayers = arena.getMaxPlayers();
 
@@ -613,13 +578,7 @@ public final class Thimble extends TeamlessMechanic {
 			int blocksChanged = 0;
 			for (int i = 0; i < BLOCKS_TO_CHANGE; i++) {
 				for (int j = 0; j < ATTEMPTS; j++) {
-					int x = editRegion.getMinimumPoint().getBlockX();
-					int y = editRegion.getMinimumPoint().getBlockY();
-					int z = editRegion.getMinimumPoint().getBlockZ();
-
-					x += Utils.randomInt(0, 6);
-					z += Utils.randomInt(0, 6);
-					Block block = Minigames.getGameworld().getBlockAt(x, y, z);
+					Block block = Minigames.getWorldGuardUtils().getRandomBlock(arena.getPoolRegionName());
 
 					if (Utils.isWater(block.getType()))
 						continue;
@@ -627,7 +586,6 @@ public final class Thimble extends TeamlessMechanic {
 					block.setType(Material.STATIONARY_WATER);
 
 					++blocksChanged;
-
 					break;
 				}
 			}
