@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
 import me.pugabyte.bncore.features.minigames.mechanics.common.SpleefMechanic;
-import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,10 +27,9 @@ public class Spleef extends SpleefMechanic {
 		super.onPlayerInteract(minigamer, event);
 		if (event.isCancelled()) return;
 
-		Arena arena = minigamer.getMatch().getArena();
 		Location location = event.getClickedBlock().getLocation();
 
-		if (breakBlock(arena, location))
+		if (breakBlock(minigamer.getMatch(), location))
 			event.setCancelled(true);
 	}
 
