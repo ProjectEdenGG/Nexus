@@ -18,7 +18,7 @@ public class ThimbleArena extends Arena {
 
 	private ThimbleMap currentMap;
 	private Thimble.ThimbleGamemode gamemode;
-	private String poolRegionStr;
+	private String poolRegionName;
 
 	@Override
 	public Map<String, Object> serialize() {
@@ -33,7 +33,7 @@ public class ThimbleArena extends Arena {
 		this.thimbleMaps = (List<ThimbleMap>) map.get("thimbleMaps");
 
 		currentMap = thimbleMaps.get(0);
-		poolRegionStr = "thimble_" + thimbleMaps.get(0).getName() + "_pool";
+		poolRegionName = "thimble_" + thimbleMaps.get(0).getName() + "_pool";
 	}
 
 	public Thimble.ThimbleGamemode getNextGamemode() {
