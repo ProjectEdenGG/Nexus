@@ -13,15 +13,18 @@ import org.bukkit.entity.Player;
 @CustomMechanicSettings(MechanicType.DEATH_SWAP)
 public class DeathSwapMenu extends MenuUtils implements InventoryProvider {
 
+
     Arena arena;
     MinigamesMenus menus = new MinigamesMenus();
-    public DeathSwapMenu(Arena arena){
-        this.arena = arena;
+    public DeathSwapMenu(Arena arena){ this.arena = arena;
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
+        //contents
         contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
+
+        //
     }
 
     @Override

@@ -86,8 +86,10 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
         contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.WOOL, 1, ColorType.fromChatColor(team.getColor()).getDurability().byteValue()),
                 "&eTeam Color", "&7Set the color of the team"), e-> teamMenus.openTeamsColorMenu(player, arena, team)));
         //Spawnpoints Item
-        contents.set(1, 6, ClickableItem.empty(nameItem(new ItemStack(Material.COMPASS),
-                "&eSpawnpoint Locations", "&7Set locations the players||&7on the team can spawn.")));
+        contents.set(1, 6, ClickableItem.of(nameItem(new ItemStack(Material.COMPASS),
+                "&eSpawnpoint Locations", "&7Set locations the players||&7on the team can spawn."), e->{
+            teamMenus.openSpawnpointMenu(arena, team).open(player);
+        }));
         //Balance Percentage Item7
         contents.set(1, 8, ClickableItem.of(nameItem(new ItemStack(Material.IRON_PLATE),
                 "&eBalance Percentage", "&7Set to -1 to disable||&7team balancing.|| ||&3Current Percentage:||&e" + team.getBalancePercentage()), e -> {

@@ -12,7 +12,6 @@ import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -38,21 +37,21 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 
         //Potion Item
         contents.set(0, 4, ClickableItem.empty(nameItem(new ItemStack(Material.DIAMOND_BLOCK),
-                "&3" + potionEffect.getType().getName(), "&3Duration:&e " + potionEffect.getDuration() + "||&3Amplifier: &e" + potionEffect.getAmplifier())));
+                "&e" + potionEffect.getType().getName(), "&3Duration:&e " + potionEffect.getDuration() + "||&3Amplifier: &e" + potionEffect.getAmplifier())));
 
         //Duration Item
-        contents.set(1, 3, ClickableItem.of(nameItem(new ItemStack(Material.REDSTONE), "&3Duration"), e ->{
+        contents.set(1, 3, ClickableItem.of(nameItem(new ItemStack(Material.REDSTONE), "&eDuration"), e ->{
             new AnvilGUI.Builder()
                     .onClose(p -> { teamMenus.openPotionEffectEditorMenu(player, arena, team, potionEffect); })
                     .onComplete((p, text) -> {
                         if(Utils.isInt(text)){
                             ArrayList<PotionEffect> potions = new ArrayList<PotionEffect>(team.getLoadout().getPotionEffects());
-                            potions.remove(potionEffect);
+                            potions.remove(potions.indexOf(potionEffect));
                             potions.add(new PotionEffect(potionEffect.getType(), Integer.parseInt(text), potionEffect.getAmplifier()));
                             team.getLoadout().setPotionEffects(potions);
                             ArenaManager.write(arena);
                             ArenaManager.add(arena);
-                            teamMenus.openPotionEffectsMenu(player, arena, team);
+                            teamMenus.openLoadoutMenu(player, arena, team);
                             return AnvilGUI.Response.text(text);
                         }
                         else {
@@ -66,18 +65,18 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
         }));
 
         //Amplifier Item
-        contents.set(1, 5, ClickableItem.of(nameItem(new ItemStack(Material.GLOWSTONE_DUST), "&3Amplifier"), e ->{
+        contents.set(1, 5, ClickableItem.of(nameItem(new ItemStack(Material.GLOWSTONE_DUST), "&eAmplifier"), e ->{
             new AnvilGUI.Builder()
                     .onClose(p -> { teamMenus.openPotionEffectEditorMenu(player, arena, team, potionEffect); })
                     .onComplete((p, text) -> {
                         if(Utils.isInt(text)){
                             ArrayList<PotionEffect> potions = new ArrayList<PotionEffect>(team.getLoadout().getPotionEffects());
-                            potions.remove(potionEffect);
+                            potions.remove(potions.indexOf(potionEffect));
                             potions.add(new PotionEffect(potionEffect.getType(), potionEffect.getDuration(), Integer.parseInt(text)));
                             team.getLoadout().setPotionEffects(potions);
                             ArenaManager.write(arena);
                             ArenaManager.add(arena);
-                            teamMenus.openPotionEffectsMenu(player, arena, team);
+                            teamMenus.openLoadoutMenu(player, arena, team);
                             return AnvilGUI.Response.text(text);
                         }
                         else {

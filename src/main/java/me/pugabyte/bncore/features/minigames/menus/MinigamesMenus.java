@@ -83,7 +83,7 @@ public class MinigamesMenus extends MenuUtils {
                 .id("customSettingsMenu")
                 .provider((InventoryProvider) provider.getDeclaredConstructor(Arena.class).newInstance(arena))
                 .title("Custom Settings Menu")
-                .size(6,9)
+                .size(3,9)
                 .build();
         INV.open(player);
     }

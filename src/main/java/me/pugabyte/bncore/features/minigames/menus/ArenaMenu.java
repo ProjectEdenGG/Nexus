@@ -39,22 +39,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
                 "&c&lDelete Arena", "&7You will need to confirm||&7deleting an arena.|| ||&7&lTHIS CANNOT BE UNDONE."), e-> menus.openDeleteMenu(player, arena)));
 
         //Arena Name Item
-        contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.PAPER),
-                "&eArena Name", " ||&3Current Name:||&e" + arena.getName()), e -> {
-            player.closeInventory();
-            new AnvilGUI.Builder()
-                    .onClose(p -> { menus.openArenaMenu(player, arena); })
-                    .onComplete((p, text) -> {
-                        arena.setName(text);
-                        ArenaManager.write(arena);
-                        ArenaManager.add(arena);
-                        menus.openArenaMenu(player, arena);
-                        return AnvilGUI.Response.text(text);
-                    })
-                    .text("Arena Name")
-                    .plugin(BNCore.getInstance())
-                    .open(player);
-        }));
+        contents.set(1, 2, ClickableItem.empty(nameItem(new ItemStack(Material.PAPER),
+                "&eArena Name", " ||&3Current Name:||&e" + arena.getName() + "|| ||&7This value cannot be changed.")));
         //Game Mechanic Item
         contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.REDSTONE),
                 "&eGame Mechanic", "&7Game type of the arena|| ||&3Current Mechanic:||&e" + arena.getMechanicType().name().replace("_", " ")), e -> menus.openMechanicsMenu(player, arena)));
@@ -261,7 +247,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
             menus.openArenaMenu(player, arena);
         }));
         String whitelist = "Whitelisted";
-        if(arena.isWhitelist()) whitelist = "Blacklisted";
+        if(!arena.isWhitelist()) whitelist = "Blacklisted";
         //Block List Item
         contents.set(4, 3, ClickableItem.of(nameItem(new ItemStack(Material.DIAMOND_PICKAXE),
                 "&eBreakable Block List", "&7Click me to set the block list||&7that players can break|| ||&3Current Setting:||&e" + whitelist), e->{

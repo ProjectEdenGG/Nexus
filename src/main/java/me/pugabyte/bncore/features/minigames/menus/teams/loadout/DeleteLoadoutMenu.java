@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DeleteLoadoutMenu extends MenuUtils implements InventoryProvider {
 
@@ -38,7 +37,7 @@ public class DeleteLoadoutMenu extends MenuUtils implements InventoryProvider {
             team.getLoadout().setPotionEffects(new ArrayList<PotionEffect>());
             ArenaManager.write(arena);
             ArenaManager.add(arena);
-            menus.openTeamsEditorMenu(player, arena, team);
+            menus.openLoadoutMenu(player, arena, team);
         }));
     }
 
