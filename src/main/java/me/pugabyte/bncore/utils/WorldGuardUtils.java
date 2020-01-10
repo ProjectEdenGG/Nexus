@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.utils;
 
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -8,6 +10,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +46,30 @@ public class WorldGuardUtils {
 		if (matches.size() == 0)
 			throw new InvalidInputException("No regions found");
 		return matches.iterator().next();
+	}
+
+	public Region convert(ProtectedRegion region) {
+		return new CuboidRegion(region.getMaximumPoint(), region.getMinimumPoint());
+	}
+
+	public Block getRandomBlock(String region) {
+		return getRandomBlock(getRegion(region));
+	}
+
+	public Block getRandomBlock(ProtectedRegion region) {
+		int xMin = region.getMinimumPoint().getBlockX();
+		int yMin = region.getMinimumPoint().getBlockY();
+		int zMin = region.getMinimumPoint().getBlockZ();
+
+		int xDiff = region.getMaximumPoint().getBlockX() - xMin;
+		int yDiff = region.getMaximumPoint().getBlockY() - yMin;
+		int zDiff = region.getMaximumPoint().getBlockZ() - zMin;
+
+		int x = xMin + Utils.randomInt(0, xDiff);
+		int y = yMin + Utils.randomInt(0, yDiff);
+		int z = zMin + Utils.randomInt(0, zDiff);
+
+		return world.getBlockAt(x, y, z);
 	}
 
 

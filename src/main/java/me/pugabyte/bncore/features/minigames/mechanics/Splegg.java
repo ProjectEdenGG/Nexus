@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Egg;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -16,7 +17,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
-import org.bukkit.util.Vector;
 
 public class Splegg extends SpleefMechanic {
 
@@ -31,22 +31,30 @@ public class Splegg extends SpleefMechanic {
 	}
 
 	@Override
+	public void playBlockBreakSound(Location location) {
+		location.getWorld().playSound(location, Sound.ENTITY_CHICKEN_EGG, 1.0F, 0.7F);
+	}
+
+	@Override
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		super.onPlayerInteract(minigamer, event);
 
 		if (event.getHand() != EquipmentSlot.HAND) return;
+		if (!event.getAction().name().contains("RIGHT_CLICK")) return;
 
 		Material hand = minigamer.getPlayer().getInventory().getItemInMainHand().getType();
-		if (hand.name().contains("SPADE") || hand.name().contains("SHOVEL")) {
-			Vector vector = minigamer.getPlayer().getLocation().getDirection().multiply(1.75);
-			minigamer.getPlayer().launchProjectile(Egg.class, vector);
-			minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.5F, 2F);
-		}
+		// TODO: 1.13 material tags
+		if (hand.name().contains("SPADE") || hand.name().contains("SHOVEL"))
+			throwEgg(minigamer);
 	}
 
-	@Override
-	public void playBlockBreakSound(Location location) {
-		location.getWorld().playSound(location, Sound.ENTITY_CHICKEN_EGG, 1.0F, 0.7F);
+	private void throwEgg(Minigamer minigamer) {
+		Location location = minigamer.getPlayer().getLocation().add(0, 1.5, 0);
+		location.add(minigamer.getPlayer().getLocation().getDirection());
+		Egg egg = (Egg) minigamer.getPlayer().getWorld().spawnEntity(location, EntityType.EGG);
+		egg.setVelocity(location.getDirection().multiply(1.75));
+		egg.setShooter(minigamer.getPlayer());
+		minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.5F, 2F);
 	}
 
 	@EventHandler
@@ -71,13 +79,7 @@ public class Splegg extends SpleefMechanic {
 
 		if (blockHit == null) return;
 
-		boolean spawnTnt = blockHit.getType() == Material.TNT;
-
-		if (!breakBlock(minigamer.getMatch().getArena(), blockHit.getLocation()))
-			return;
-
-		if (spawnTnt)
-			spawnTnt(blockHit.getLocation());
+		breakBlock(minigamer.getMatch(), blockHit.getLocation());
 	}
 
 }
