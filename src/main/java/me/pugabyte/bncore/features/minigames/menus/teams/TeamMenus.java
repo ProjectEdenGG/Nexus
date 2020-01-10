@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.minigames.menus.teams.loadout.PotionEffectsMe
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 
 public class TeamMenus {
@@ -28,7 +27,7 @@ public class TeamMenus {
                 .id("teamEditorMenu")
                 .title("Team Editor Menu")
                 .provider(new TeamEditorMenu(arena, team))
-                .size(6, 9)
+                .size(3, 9)
                 .build();
         INV.open(player);
     }
@@ -93,4 +92,13 @@ public class TeamMenus {
         INV.open(player);
     }
 
+    public SmartInventory openSpawnpointMenu(Arena arena, Team team) {
+        SmartInventory INV = SmartInventory.builder()
+                .id("teamSpawnpointLocationsMenu")
+                .title("Spawnpoint Location Menus")
+                .provider(new SpawnpointLocationsMenu(arena, team))
+                .size(6,9)
+                .build();
+        return INV;
+    }
 }
