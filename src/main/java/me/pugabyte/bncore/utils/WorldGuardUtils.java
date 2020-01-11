@@ -20,24 +20,26 @@ import java.util.stream.Collectors;
 public class WorldGuardUtils {
 	@NonNull
 	private World world;
+	RegionManager manager;
 
-	public RegionManager getManager() {
-		return WGBukkit.getRegionManager(world);
+	public WorldGuardUtils(@NonNull World world) {
+		this.world = world;
+		this.manager = WGBukkit.getRegionManager(world);
 	}
 
 	public ProtectedRegion getRegion(String name) {
-		ProtectedRegion region = getManager().getRegion(name);
+		ProtectedRegion region = manager.getRegion(name);
 		if (region == null)
 			throw new InvalidInputException("Region not found");
 		return region;
 	}
 
 	public Set<ProtectedRegion> getRegionsAt(Location location) {
-		return getManager().getApplicableRegions(location).getRegions();
+		return manager.getApplicableRegions(location).getRegions();
 	}
 
 	public Set<ProtectedRegion> getRegionsLike(String name) {
-		Map<String, ProtectedRegion> regions = getManager().getRegions();
+		Map<String, ProtectedRegion> regions = manager.getRegions();
 		return regions.keySet().stream().filter(id -> id.matches(name.toLowerCase())).map(regions::get).collect(Collectors.toSet());
 	}
 
