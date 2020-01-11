@@ -2,6 +2,8 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public class FreeForAll extends TeamlessMechanic {
 
@@ -13,6 +15,11 @@ public class FreeForAll extends TeamlessMechanic {
 	@Override
 	public String getDescription() {
 		return "Kill everyone!";
+	}
+
+	@Override
+	public ItemStack getMenuItem() {
+		return new ItemStack(Material.IRON_SWORD);
 	}
 
 	@Override

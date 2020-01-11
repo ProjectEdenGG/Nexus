@@ -73,6 +73,11 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
+	public ItemStack getMenuItem() {
+		return new ItemStack(Material.CHAINMAIL_HELMET);
+	}
+
+	@Override
 	public void onQuit(Minigamer minigamer) {
 		ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
 		matchData.getTurnList().remove(minigamer);

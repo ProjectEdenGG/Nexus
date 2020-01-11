@@ -8,7 +8,10 @@ import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.Flag;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +26,12 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	public String getDescription() {
 		return "Capture the other team's flag to win the game";
 	}
+
+	@Override
+	public ItemStack getMenuItem() {
+		return new ItemStack(Material.BANNER, 1,DyeColor.RED.getDyeData());
+	}
+
 
 	@Override
 	public void onFlagInteract(Minigamer minigamer, Sign sign) {

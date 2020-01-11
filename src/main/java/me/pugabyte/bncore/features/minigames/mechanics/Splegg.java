@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
 
@@ -28,6 +29,11 @@ public class Splegg extends SpleefMechanic {
 	@Override
 	public String getDescription() {
 		return "Shoot blocks with eggs to break them and spleef players off the map";
+	}
+
+	@Override
+	public ItemStack getMenuItem() {
+		return new ItemStack(Material.EGG);
 	}
 
 	@Override

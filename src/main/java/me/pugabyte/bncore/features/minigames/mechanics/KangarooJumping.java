@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -25,6 +26,11 @@ public class KangarooJumping extends TeamlessMechanic {
     }
 
     @Override
+    public ItemStack getMenuItem() {
+        return new ItemStack(Material.LEATHER_BOOTS);
+    }
+
+    @Override
     public void onStart(Match match) {
     }
 
@@ -37,7 +43,7 @@ public class KangarooJumping extends TeamlessMechanic {
         minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 10));
         minigamer.getPlayer().sendMessage(Utils.getPrefix("Kangaroo Jump") + "Boooiiinnnggg!");
         event.getClickedBlock().getWorld().getBlockAt(event.getClickedBlock().getLocation()).setType(Material.AIR);
-        Utils.wait(10 * 20, () -> event.getClickedBlock().getWorld().getBlockAt(event.getClickedBlock().getLocation()).setType(Material.STONE_PLATE));
+        minigamer.getMatch().getTasks().wait(10 * 20, () -> event.getClickedBlock().getWorld().getBlockAt(event.getClickedBlock().getLocation()).setType(Material.STONE_PLATE));
     }
 
     boolean winnable = true;
@@ -50,7 +56,7 @@ public class KangarooJumping extends TeamlessMechanic {
         if(!winnable) return;
         minigamer.scored();
         minigamer.getMatch().broadcast("&e" + minigamer.getColoredName() + " has reached the finish area!");
-        Utils.wait(5 * 20, () -> minigamer.getMatch().end());
+        minigamer.getMatch().getTasks().wait(5 * 20, () -> minigamer.getMatch().end());
     }
 }
 

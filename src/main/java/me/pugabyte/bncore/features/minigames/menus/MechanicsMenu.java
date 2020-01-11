@@ -25,7 +25,7 @@ public class MechanicsMenu extends MenuUtils implements InventoryProvider {
         int row = 1;
         int column = 0;
         for(MechanicType mechanic : MechanicType.values()){
-            ItemStack item = nameItem(mechanic.getItemStack().clone(), "&e" + (ChatColor.stripColor(mechanic.name().replace("_", " "))));
+            ItemStack item = nameItem(mechanic.get().getMenuItem().clone(), "&e" + (ChatColor.stripColor(mechanic.name().replace("_", " "))));
             if(arena.getMechanicType() == mechanic){
                 item = itemGlow(item);
             }

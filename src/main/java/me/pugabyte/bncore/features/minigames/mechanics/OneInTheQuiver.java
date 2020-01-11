@@ -23,6 +23,11 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 	}
 
 	@Override
+	public ItemStack getMenuItem() {
+		return new ItemStack(Material.BOW);
+	}
+
+	@Override
 	public void onDeath(Minigamer victim, Minigamer killer) {
 		super.onDeath(victim, killer);
 		killer.scored();
@@ -37,7 +42,7 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 		if (!(event.getEntity().getShooter() instanceof Player)) return;
 		Minigamer victim = PlayerManager.get((Player) event.getHitEntity());
 		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
-		if (victim.isPlaying(OneInTheQuiver.class) && attacker.isPlaying(OneInTheQuiver.class)) {
+		if (victim.isPlaying(this) && attacker.isPlaying(this)) {
 			victim.getPlayer().damage(20, attacker.getPlayer());
 			event.getEntity().remove();
 		}

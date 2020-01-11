@@ -3,10 +3,12 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.inventory.ItemStack;
 
 public final class Paintball extends BalancedTeamMechanic {
 
@@ -18,6 +20,11 @@ public final class Paintball extends BalancedTeamMechanic {
 	@Override
 	public String getDescription() {
 		return "Shoot players";
+	}
+
+	@Override
+	public ItemStack getMenuItem() {
+		return new ItemStack(Material.SNOW_BALL);
 	}
 
 	@Override
