@@ -64,7 +64,7 @@ public class Lobby implements ConfigurationSerializable {
 		}
 
 		private void start() {
-			taskId = Utils.repeat(1, 20, () -> {
+			taskId = match.getTasks().repeat(1, 20, () -> {
 				int current = match.getMinigamers().size();
 				int min = arena.getMinPlayers();
 				int left = min - current;
@@ -94,7 +94,7 @@ public class Lobby implements ConfigurationSerializable {
 
 		private void stop() {
 			timerStarted = false;
-			Utils.cancelTask(taskId);
+			match.getTasks().cancel(taskId);
 		}
 
 	}

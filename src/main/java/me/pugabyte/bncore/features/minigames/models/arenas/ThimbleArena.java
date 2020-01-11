@@ -38,7 +38,6 @@ public class ThimbleArena extends Arena {
 
 	public Thimble.ThimbleGamemode getNextGamemode() {
 		if (gamemode != null)
-			// if (true) return <lms>
 			if (Thimble.ClassicGamemode.class.equals(gamemode.getClass()))
 				return new Thimble.RiskGamemode();
 			else if (Thimble.RiskGamemode.class.equals(gamemode.getClass()))
