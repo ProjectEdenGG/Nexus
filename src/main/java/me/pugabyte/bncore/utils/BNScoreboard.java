@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.utils;
 
-//import be.maximvdw.featherboard.api.FeatherBoardAPI;
-
+import be.maximvdw.featherboard.api.FeatherBoardAPI;
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,7 +9,11 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
@@ -72,7 +75,7 @@ public class BNScoreboard {
 	public void removePlayer(Player player) {
 		if (player.getScoreboard().equals(scoreboard)) {
 			player.setScoreboard(manager.getMainScoreboard());
-		//	FeatherBoardAPI.initScoreboard(player);
+			FeatherBoardAPI.initScoreboard(player);
 		}
 	}
 

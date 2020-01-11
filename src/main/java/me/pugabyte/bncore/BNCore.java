@@ -27,8 +27,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-//import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
-
 public class BNCore extends JavaPlugin {
 	private Commands commands;
 	private static BNCore instance;
@@ -115,7 +113,7 @@ public class BNCore extends JavaPlugin {
 	public static Minigames minigames;
 	public static OldMinigames oldMinigames;
 	public static RainbowArmour rainbowArmour;
-	//public static RestoreInventory restoreInventory;
+//	public static RestoreInventory restoreInventory;
 	public static ShowEnchants showEnchants;
 	public static SidewaysLogs sidewaysLogs;
 	public static SidewaysStairs sidewaysStairs;
@@ -124,25 +122,25 @@ public class BNCore extends JavaPlugin {
 	public static Wiki wiki;
 
 	private void enableFeatures() {
-		//chat = new Chat();
-		//clearInventory = new ClearInventory();
-		//connect4 = new Connect4();
-		//dailyRewards = new DailyRewardsFeature();
-		//durabilityWarning = new DurabilityWarning();
-		//documentation = new Documentation();
-		//inviteRewards = new InviteRewards();
-		//leash = new Leash();
-		//modelListeners = new ModelListeners();
+		chat = new Chat();
+		clearInventory = new ClearInventory();
+		connect4 = new Connect4();
+		dailyRewards = new DailyRewardsFeature();
+		durabilityWarning = new DurabilityWarning();
+		documentation = new Documentation();
+		inviteRewards = new InviteRewards();
+		leash = new Leash();
+		modelListeners = new ModelListeners();
 		minigames = new Minigames();
-		//oldMinigames = new OldMinigames();
-		//rainbowArmour = new RainbowArmour();
-		//restoreInventory = new RestoreInventory();
-		//showEnchants = new ShowEnchants();
-		//sidewaysLogs = new SidewaysLogs();
-		//sidewaysStairs = new SidewaysStairs();
-		//sleep = new Sleep();
-		//tameables = new Tameables();
-		//wiki = new Wiki();
+		oldMinigames = new OldMinigames();
+		rainbowArmour = new RainbowArmour();
+//		restoreInventory = new RestoreInventory();
+		showEnchants = new ShowEnchants();
+		sidewaysLogs = new SidewaysLogs();
+		sidewaysStairs = new SidewaysStairs();
+		sleep = new Sleep();
+		tameables = new Tameables();
+		wiki = new Wiki();
 	}
 
 }
