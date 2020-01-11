@@ -24,12 +24,14 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Aliases({"newmgm", "newminigames"})
 @Permission("minigames")
@@ -120,9 +122,9 @@ public class JMinigamesCommand extends CustomCommand {
 		new MinigamesMenus().openArenaMenu(player(), arena);
 	}
 
-	@Path("manage {arena}")
-	@Permission("manage")
-	void manage(@Arg String arena){
+	@Path("edit {arena}")
+	@Permission("edit")
+	void edit(@Arg String arena){
 		new MinigamesMenus().openArenaMenu(player(), ArenaManager.get(arena));
 	}
 
