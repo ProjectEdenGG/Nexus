@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -69,6 +68,7 @@ public class ArenaManager {
 		arenas.add(arena);
 	}
 
+	// TODO: Add delete
 	public static void remove(Arena arena){
 		arenas.remove(arena);
 	}

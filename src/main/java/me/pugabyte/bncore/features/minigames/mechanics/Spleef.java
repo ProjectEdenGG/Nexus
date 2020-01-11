@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 // TODO:
 //  - Anti-camping
@@ -20,6 +21,11 @@ public class Spleef extends SpleefMechanic {
 	@Override
 	public String getDescription() {
 		return "Spleef other players off the map to win!";
+	}
+
+	@Override
+	public ItemStack getMenuItem() {
+		return new ItemStack(Material.DIAMOND_SPADE);
 	}
 
 	@Override

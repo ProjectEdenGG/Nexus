@@ -18,6 +18,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +35,8 @@ public abstract class Mechanic implements Listener {
 	public abstract String getName();
 
 	public abstract String getDescription();
+
+	public abstract ItemStack getMenuItem();
 
 	public boolean isTeamGame() {
 		return false;
