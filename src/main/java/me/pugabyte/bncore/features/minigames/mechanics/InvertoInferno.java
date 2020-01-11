@@ -5,7 +5,6 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,13 +33,10 @@ public class InvertoInferno extends TeamlessMechanic {
 	@Override
 	public void onStart(Match match) {
 		super.onStart(match);
-		ProtectedRegion region = new WorldGuardUtils(Minigames.getGameworld()).getRegion("invertoinferno");
-//		ProtectedRegion region = Minigames.getWorldGuardUtils().getRegion("invertoinferno");
-		int vol = region.volume();
-		int percent = 5 / (100 * vol);
+		ProtectedRegion region = Minigames.getWorldGuardUtils().getRegion("invertoinferno");
+		int percent = 5 / (100 * region.volume());
 		for (int i = 0; i < percent; i++) {
-//			Block block = Minigames.getWorldGuardUtils().getRandomBlock(region);
-			Block block = new WorldGuardUtils(Minigames.getGameworld()).getRandomBlock(region);
+			Block block = Minigames.getWorldGuardUtils().getRandomBlock(region);
 			if (block.getType().isBurnable()) {
 				block.getRelative(0, 1, 0);
 				if (block.getType().equals(Material.AIR))
