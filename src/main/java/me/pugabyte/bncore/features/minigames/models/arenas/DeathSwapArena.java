@@ -13,18 +13,19 @@ import java.util.Map;
 @SerializableAs("DeathSwapArena")
 public class DeathSwapArena extends Arena {
 
-    private List<Location> schematicResetLocations;
+	private List<Location> schematicResetLocations;
 
-    @Override
-    public Map<String, Object> serialize() {
-        LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
-        map.put("schematicResetLocations", getSchematicResetLocations());
+	public DeathSwapArena(Map<String, Object> map) {
+		super(map);
+		this.schematicResetLocations = (List<Location>) map.get("schematicResetLocations");
+	}
 
-        return map;
-    }
+	@Override
+	public Map<String, Object> serialize() {
+		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
+		map.put("schematicResetLocations", getSchematicResetLocations());
 
-    public DeathSwapArena(Map<String, Object> map) {
-        super(map);
-        this.schematicResetLocations = (List<Location>) map.get("schematicResetLocations");
-    }
+		return map;
+	}
+
 }

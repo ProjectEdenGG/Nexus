@@ -13,19 +13,19 @@ import java.util.Map;
 @SerializableAs("KangarooJumpingArena")
 public class KangarooJumpingArena extends Arena {
 
-    private List<Location> jumpBoostLocations;
+	private List<Location> jumpBoostLocations;
 
-    @Override
-    public Map<String, Object> serialize() {
-        LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
-        map.put("jumpBoostLocations", getJumpBoostLocations());
+	public KangarooJumpingArena(Map<String, Object> map) {
+		super(map);
+		this.jumpBoostLocations = (List<Location>) map.get("jumpBoostLocations");
+	}
 
-        return map;
-    }
+	@Override
+	public Map<String, Object> serialize() {
+		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
+		map.put("jumpBoostLocations", getJumpBoostLocations());
 
-    public KangarooJumpingArena(Map<String, Object> map) {
-        super(map);
-        this.jumpBoostLocations = (List<Location>) map.get("jumpBoostLocations");
-    }
+		return map;
+	}
 
 }

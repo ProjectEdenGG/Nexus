@@ -74,8 +74,8 @@ public class Lobby implements ConfigurationSerializable {
 					return;
 				}
 
-				if (!match.isStarted()){
-					if(!timerStarted)
+				if (!match.isStarted()) {
+					if (!timerStarted)
 						match.broadcast("&7Starting in &e" + time + " &7seconds");
 					timerStarted = true;
 				}

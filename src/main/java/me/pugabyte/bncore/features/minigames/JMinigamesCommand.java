@@ -23,7 +23,6 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameExcepti
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -70,9 +69,9 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Path("create {string}")
 	@Permission("manage")
-	void create(@Arg String string){
+	void create(@Arg String string) {
 		Arena arena;
-		if(!ArenaManager.getNames().contains(string)){
+		if (!ArenaManager.getNames().contains(string)) {
 			Arena newArena = Arena.builder()
 					.id(ArenaManager.getNextId())
 					.name(arg(2).toLowerCase())
@@ -87,7 +86,7 @@ public class JMinigamesCommand extends CustomCommand {
 					.canJoinLate(false)
 					.respawnLocation(player().getLocation())
 					.spectateLocation(player().getLocation())
-					.blockList(Collections.<Material>emptySet())
+					.blockList(Collections.emptySet())
 					.isWhitelist(true)
 					.lives(1)
 					.hasScoreboard(true)
@@ -109,13 +108,12 @@ public class JMinigamesCommand extends CustomCommand {
 			reply(PREFIX + "Creating arena " + arg(2) + "&3.");
 			ArenaManager.write(newArena);
 			arena = newArena;
-		}
-		else {
+		} else {
 			reply(PREFIX + "Arena already exists.");
 			reply(PREFIX + "Editing arena " + arg(2) + "&3.");
 			arena = ArenaManager.get(arg(2));
 		}
-		if(arena == null)
+		if (arena == null)
 			ArenaManager.read();
 		else
 			ArenaManager.read(arena.getName());
@@ -124,13 +122,13 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Path("edit {arena}")
 	@Permission("edit")
-	void edit(@Arg String arena){
+	void edit(@Arg String arena) {
 		new MinigamesMenus().openArenaMenu(player(), ArenaManager.get(arena));
 	}
 
 	@Path("remove {arena}")
 	@Permission("manage")
-	void remove(@Arg String arena){
+	void remove(@Arg String arena) {
 		new MinigamesMenus().openDeleteMenu(player(), ArenaManager.get(arena));
 	}
 

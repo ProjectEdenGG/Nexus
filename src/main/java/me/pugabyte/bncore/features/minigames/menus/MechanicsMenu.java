@@ -13,39 +13,41 @@ import org.bukkit.inventory.ItemStack;
 
 public class MechanicsMenu extends MenuUtils implements InventoryProvider {
 
-    MinigamesMenus menus = new MinigamesMenus();
-    Arena arena;
-    public MechanicsMenu(Arena arena){
-        this.arena = arena;
-    }
+	MinigamesMenus menus = new MinigamesMenus();
+	Arena arena;
 
-    @Override
-    public void init(Player player, InventoryContents contents) {
-        contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
-        int row = 1;
-        int column = 0;
-        for(MechanicType mechanic : MechanicType.values()){
-            ItemStack item = nameItem(mechanic.get().getMenuItem().clone(), "&e" + (ChatColor.stripColor(mechanic.name().replace("_", " "))));
-            if(arena.getMechanicType() == mechanic){
-                item = itemGlow(item);
-            }
-            contents.set(row, column, ClickableItem.of(item, e -> {
-                arena.setMechanicType(mechanic);
-                ArenaManager.write(arena);
-                ArenaManager.add(arena);
-                menus.openMechanicsMenu(player, arena);
-            }));
-            if(column != 8){
-                column++;
-            } else {
-                column = 0;
-                row++;
-            }
-        }
+	public MechanicsMenu(Arena arena) {
+		this.arena = arena;
+	}
 
-    }
+	@Override
+	public void init(Player player, InventoryContents contents) {
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
+		int row = 1;
+		int column = 0;
+		for (MechanicType mechanic : MechanicType.values()) {
+			ItemStack item = nameItem(mechanic.get().getMenuItem().clone(), "&e" + (ChatColor.stripColor(mechanic.name().replace("_", " "))));
+			if (arena.getMechanicType() == mechanic) {
+				item = itemGlow(item);
+			}
+			contents.set(row, column, ClickableItem.of(item, e -> {
+				arena.setMechanicType(mechanic);
+				ArenaManager.write(arena);
+				ArenaManager.add(arena);
+				menus.openMechanicsMenu(player, arena);
+			}));
+			if (column != 8) {
+				column++;
+			} else {
+				column = 0;
+				row++;
+			}
+		}
 
-    @Override
-    public void update(Player player, InventoryContents inventoryContents) {
-    }
+	}
+
+	@Override
+	public void update(Player player, InventoryContents inventoryContents) {
+	}
+
 }

@@ -21,108 +21,110 @@ import java.util.List;
 
 public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 
-    Arena arena;
-    Team team;
-    MinigamesMenus menus = new MinigamesMenus();
-    TeamMenus teamMenus = new TeamMenus();
-    public TeamEditorMenu(Arena arena, Team team){
-        this.arena = arena;
-        this.team = team;
-    }
+	Arena arena;
+	Team team;
+	MinigamesMenus menus = new MinigamesMenus();
+	TeamMenus teamMenus = new TeamMenus();
 
-    @Override
-    public void init(Player player, InventoryContents contents) {
-        //Back Item
-        contents.set(0, 0, ClickableItem.of(backItem(), e-> teamMenus.openTeamsMenu(player, arena)));
-        //Delete Team Item
-        contents.set(0, 8, ClickableItem.of(nameItem(new ItemStack(Material.TNT),
-                "&c&lDelete Team", "&7You will need to confirm||&7deleting a team.|| ||&7&lTHIS CANNOT BE UNDONE."), e->{
-            player.closeInventory();
-            teamMenus.openDeleteTeamMenu(player, arena, team);
-        }));
+	public TeamEditorMenu(Arena arena, Team team) {
+		this.arena = arena;
+		this.team = team;
+	}
 
-        //Name Item
-        contents.set(1, 0, ClickableItem.of(nameItem(new ItemStack(Material.BOOK),
-                "&eTeam Name", " ||&3Current Name:||&e" + team.getName()), e -> {
-            player.closeInventory();
-            new AnvilGUI.Builder()
-                    .onClose(p -> teamMenus.openTeamsEditorMenu(player, arena, team))
-                    .onComplete((p, text) -> {
-                        List<Team> teams = new ArrayList<>(arena.getTeams());
-                        teams.remove(team);
-                        team.setName(text);
-                        teams.add(team);
-                        arena.setTeams(teams);
-                        ArenaManager.write(arena);
-                        ArenaManager.add(arena);
-                        teamMenus.openTeamsEditorMenu(player, arena, team);
-                        return AnvilGUI.Response.text(text);
-                    })
-                    .text("Team Name")
-                    .plugin(BNCore.getInstance())
-                    .open(player);
-        }));
-        //Objective Item
-        contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.SIGN),
-                "&eTeam Objective", "||&3Current Objective:||&e" + team.getObjective()), e->{
-            new AnvilGUI.Builder()
-                    .onClose(p -> teamMenus.openTeamsEditorMenu(player, arena, team))
-                    .onComplete((p, text) -> {
-                        List<Team> teams = new ArrayList<>(arena.getTeams());
-                        teams.remove(team);
-                        team.setObjective(text);
-                        teams.add(team);
-                        arena.setTeams(teams);
-                        ArenaManager.write(arena);
-                        ArenaManager.add(arena);
-                        teamMenus.openTeamsEditorMenu(player, arena, team);
-                        return AnvilGUI.Response.text(text);
-                    })
-                    .text("Team Objective")
-                    .plugin(BNCore.getInstance())
-                    .open(player);
-                }));
-        //Team Color Item
-        contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.WOOL, 1, ColorType.fromChatColor(team.getColor()).getDurability().byteValue()),
-                "&eTeam Color", "&7Set the color of the team"), e-> teamMenus.openTeamsColorMenu(player, arena, team)));
-        //Spawnpoints Item
-        contents.set(1, 6, ClickableItem.of(nameItem(new ItemStack(Material.COMPASS),
-                "&eSpawnpoint Locations", "&7Set locations the players||&7on the team can spawn."), e->{
-            teamMenus.openSpawnpointMenu(arena, team).open(player);
-        }));
-        //Balance Percentage Item7
-        contents.set(1, 8, ClickableItem.of(nameItem(new ItemStack(Material.IRON_PLATE),
-                "&eBalance Percentage", "&7Set to -1 to disable||&7team balancing.|| ||&3Current Percentage:||&e" + team.getBalancePercentage()), e -> {
-            player.closeInventory();
-            new AnvilGUI.Builder()
-                    .onClose(p -> teamMenus.openTeamsEditorMenu(player, arena, team))
-                    .onComplete((p, text) -> {
-                        if(!Utils.isInt(text)){
-                            player.closeInventory();
-                            player.sendMessage(Utils.getPrefix("JMinigames") + "The balance percentage must be an integer.");
-                            return AnvilGUI.Response.close();
-                        }
-                        List<Team> teams = new ArrayList<>(arena.getTeams());
-                        teams.remove(team);
-                        team.setBalancePercentage(Integer.parseInt(text));
-                        teams.add(team);
-                        arena.setTeams(teams);
-                        ArenaManager.write(arena);
-                        ArenaManager.add(arena);
-                        teamMenus.openTeamsEditorMenu(player, arena, team);
-                        return AnvilGUI.Response.text(text);
-                    })
-                    .text("Team Name")
-                    .plugin(BNCore.getInstance())
-                    .open(player);
-        }));
-        //Loadout Item
-        contents.set(2, 4, ClickableItem.of(nameItem(new ItemStack(Material.CHEST),
-                "Loadout"), e-> teamMenus.openLoadoutMenu(player, arena, team)));
-    }
+	@Override
+	public void init(Player player, InventoryContents contents) {
+		//Back Item
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> teamMenus.openTeamsMenu(player, arena)));
+		//Delete Team Item
+		contents.set(0, 8, ClickableItem.of(nameItem(new ItemStack(Material.TNT),
+				"&c&lDelete Team", "&7You will need to confirm||&7deleting a team.|| ||&7&lTHIS CANNOT BE UNDONE."), e -> {
+			player.closeInventory();
+			teamMenus.openDeleteTeamMenu(player, arena, team);
+		}));
 
-    @Override
-    public void update(Player player, InventoryContents inventoryContents) {
+		//Name Item
+		contents.set(1, 0, ClickableItem.of(nameItem(new ItemStack(Material.BOOK),
+				"&eTeam Name", " ||&3Current Name:||&e" + team.getName()), e -> {
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.onClose(p -> teamMenus.openTeamsEditorMenu(player, arena, team))
+					.onComplete((p, text) -> {
+						List<Team> teams = new ArrayList<>(arena.getTeams());
+						teams.remove(team);
+						team.setName(text);
+						teams.add(team);
+						arena.setTeams(teams);
+						ArenaManager.write(arena);
+						ArenaManager.add(arena);
+						teamMenus.openTeamsEditorMenu(player, arena, team);
+						return AnvilGUI.Response.text(text);
+					})
+					.text("Team Name")
+					.plugin(BNCore.getInstance())
+					.open(player);
+		}));
+		//Objective Item
+		contents.set(1, 2, ClickableItem.of(nameItem(new ItemStack(Material.SIGN),
+				"&eTeam Objective", "||&3Current Objective:||&e" + team.getObjective()), e -> {
+			new AnvilGUI.Builder()
+					.onClose(p -> teamMenus.openTeamsEditorMenu(player, arena, team))
+					.onComplete((p, text) -> {
+						List<Team> teams = new ArrayList<>(arena.getTeams());
+						teams.remove(team);
+						team.setObjective(text);
+						teams.add(team);
+						arena.setTeams(teams);
+						ArenaManager.write(arena);
+						ArenaManager.add(arena);
+						teamMenus.openTeamsEditorMenu(player, arena, team);
+						return AnvilGUI.Response.text(text);
+					})
+					.text("Team Objective")
+					.plugin(BNCore.getInstance())
+					.open(player);
+		}));
+		//Team Color Item
+		contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.WOOL, 1, ColorType.fromChatColor(team.getColor()).getDurability().byteValue()),
+				"&eTeam Color", "&7Set the color of the team"), e -> teamMenus.openTeamsColorMenu(player, arena, team)));
+		//Spawnpoints Item
+		contents.set(1, 6, ClickableItem.of(nameItem(new ItemStack(Material.COMPASS),
+				"&eSpawnpoint Locations", "&7Set locations the players||&7on the team can spawn."), e -> {
+			teamMenus.openSpawnpointMenu(arena, team).open(player);
+		}));
+		//Balance Percentage Item7
+		contents.set(1, 8, ClickableItem.of(nameItem(new ItemStack(Material.IRON_PLATE),
+				"&eBalance Percentage", "&7Set to -1 to disable||&7team balancing.|| ||&3Current Percentage:||&e" + team.getBalancePercentage()), e -> {
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.onClose(p -> teamMenus.openTeamsEditorMenu(player, arena, team))
+					.onComplete((p, text) -> {
+						if (!Utils.isInt(text)) {
+							player.closeInventory();
+							player.sendMessage(Utils.getPrefix("JMinigames") + "The balance percentage must be an integer.");
+							return AnvilGUI.Response.close();
+						}
+						List<Team> teams = new ArrayList<>(arena.getTeams());
+						teams.remove(team);
+						team.setBalancePercentage(Integer.parseInt(text));
+						teams.add(team);
+						arena.setTeams(teams);
+						ArenaManager.write(arena);
+						ArenaManager.add(arena);
+						teamMenus.openTeamsEditorMenu(player, arena, team);
+						return AnvilGUI.Response.text(text);
+					})
+					.text("Team Name")
+					.plugin(BNCore.getInstance())
+					.open(player);
+		}));
+		//Loadout Item
+		contents.set(2, 4, ClickableItem.of(nameItem(new ItemStack(Material.CHEST),
+				"Loadout"), e -> teamMenus.openLoadoutMenu(player, arena, team)));
+	}
 
-    }
+	@Override
+	public void update(Player player, InventoryContents inventoryContents) {
+
+	}
+
 }

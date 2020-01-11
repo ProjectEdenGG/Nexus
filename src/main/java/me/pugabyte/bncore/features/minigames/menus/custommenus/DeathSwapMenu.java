@@ -14,21 +14,24 @@ import org.bukkit.entity.Player;
 public class DeathSwapMenu extends MenuUtils implements InventoryProvider {
 
 
-    Arena arena;
-    MinigamesMenus menus = new MinigamesMenus();
-    public DeathSwapMenu(Arena arena){ this.arena = arena;
-    }
+	Arena arena;
+	MinigamesMenus menus = new MinigamesMenus();
 
-    @Override
-    public void init(Player player, InventoryContents contents) {
-        //contents
-        contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
+	public DeathSwapMenu(Arena arena) {
+		this.arena = arena;
+	}
 
-        //
-    }
+	@Override
+	public void init(Player player, InventoryContents contents) {
+		//contents
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-    @Override
-    public void update(Player player, InventoryContents inventoryContents) {
+		//
+	}
 
-    }
+	@Override
+	public void update(Player player, InventoryContents inventoryContents) {
+
+	}
+
 }
