@@ -39,6 +39,18 @@ public class ArenaManager {
 		return names;
 	}
 
+	public static Arena getFromRegion(String regionName) {
+		try {
+			String mechanicName = regionName.split("_")[0];
+			String arenaName = regionName.split("_")[1];
+			Arena arena = get(arenaName);
+			if (arena.getMechanic().getName().equalsIgnoreCase(mechanicName))
+				return arena;
+		} catch (ArrayIndexOutOfBoundsException ignore) {}
+
+		return null;
+	}
+
 	public static Arena find(String name) {
 		for (Arena arena : arenas)
 			if (arena.getName().toLowerCase().startsWith(name.toLowerCase()))
@@ -118,18 +130,6 @@ public class ArenaManager {
 		} catch (IOException ex) {
 			BNCore.severe("An error occurred while trying to write arena configuration files: " + ex.getMessage());
 		}
-	}
-
-	public static Arena getFromRegion(String regionName) {
-		try {
-			String mechanicName = regionName.split("_")[0];
-			String arenaName = regionName.split("_")[1];
-			Arena arena = get(arenaName);
-			if (arena.getMechanic().getName().equalsIgnoreCase(mechanicName))
-				return arena;
-		} catch (ArrayIndexOutOfBoundsException ignore) {}
-
-		return null;
 	}
 
 }
