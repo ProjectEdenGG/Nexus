@@ -23,4 +23,9 @@ public class KangarooJumpingArena extends Arena {
         return map;
     }
 
+    public KangarooJumpingArena(Map<String, Object> map) {
+        super(map);
+        this.jumpBoostLocations = (List<Location>) map.get("jumpBoostLocations");
+    }
+
 }

@@ -22,4 +22,9 @@ public class DeathSwapArena extends Arena {
 
         return map;
     }
+
+    public DeathSwapArena(Map<String, Object> map) {
+        super(map);
+        this.schematicResetLocations = (List<Location>) map.get("schematicResetLocations");
+    }
 }
