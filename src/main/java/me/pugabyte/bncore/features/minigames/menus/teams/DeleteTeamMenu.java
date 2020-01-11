@@ -11,9 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DeleteTeamMenu extends MenuUtils implements InventoryProvider {
 
 	Arena arena;
@@ -33,11 +30,8 @@ public class DeleteTeamMenu extends MenuUtils implements InventoryProvider {
 				"&7Cancel"), e -> menus.openTeamsMenu(player, arena)));
 		contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.TNT),
 				"&4&lDELETE ARENA", "&7This cannot be undone."), e -> {
-			List<Team> teams = new ArrayList<>(arena.getTeams());
-			teams.remove(team);
-			arena.setTeams(teams);
+			arena.getTeams().remove(team);
 			ArenaManager.write(arena);
-			ArenaManager.add(arena);
 			menus.openTeamsMenu(player, arena);
 		}));
 	}

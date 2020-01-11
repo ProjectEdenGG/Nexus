@@ -76,7 +76,6 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 						if (Utils.isInt(text)) {
 							arena.setMinPlayers(Integer.parseInt(text));
 							ArenaManager.write(arena);
-							ArenaManager.add(arena);
 							menus.openArenaMenu(player, arena);
 							return AnvilGUI.Response.text(text);
 						} else {
@@ -100,7 +99,6 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 						if (Utils.isInt(text)) {
 							arena.setMaxPlayers(Integer.parseInt(text));
 							ArenaManager.write(arena);
-							ArenaManager.add(arena);
 							menus.openArenaMenu(player, arena);
 							return AnvilGUI.Response.text(text);
 						} else {
@@ -124,7 +122,6 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 						"||&ez: " + (int) arena.getRespawnLocation().getZ()), e -> {
 			arena.setRespawnLocation(player.getLocation());
 			ArenaManager.write(arena);
-			ArenaManager.add(arena);
 			menus.openArenaMenu(player, arena);
 		}));
 		//Game Time Item
@@ -139,7 +136,6 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 						if (Utils.isInt(text)) {
 							arena.setSeconds(Integer.parseInt(text));
 							ArenaManager.write(arena);
-							ArenaManager.add(arena);
 							menus.openArenaMenu(player, arena);
 							return AnvilGUI.Response.text(text);
 						} else {

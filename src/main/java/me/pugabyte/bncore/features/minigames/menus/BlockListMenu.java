@@ -44,7 +44,6 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 				if (e.getCursor().getType() == null || e.getCursor().getType() == Material.AIR) return;
 				arena.getBlockList().add(e.getCursor().getType());
 				ArenaManager.write(arena);
-				ArenaManager.add(arena);
 				e.getWhoClicked().setItemOnCursor(new ItemStack(Material.AIR));
 				menus.blockListMenu(arena).open(player);
 			});
@@ -56,7 +55,6 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 					"&eWhitelisted", "&3Click to set the block||&3list mode to blacklist."), e -> {
 				arena.isWhitelist(false);
 				ArenaManager.write(arena);
-				ArenaManager.add(arena);
 				menus.blockListMenu(arena).open(player, page.getPage());
 			}));
 		} else {
@@ -64,7 +62,6 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 					"&eBlacklisted", "&3Click to set the block||&3list mode to whitelist."), e -> {
 				arena.isWhitelist(true);
 				ArenaManager.write(arena);
-				ArenaManager.add(arena);
 				menus.blockListMenu(arena).open(player, page.getPage());
 			}));
 		}
@@ -78,7 +75,6 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 			clickableItems[i] = ClickableItem.of(nameItem(new ItemStack(sortedList.get(i)), "&e" + sortedList.get(i).name(), "&3Click me to remove this||&3material from the list."), e -> {
 				arena.getBlockList().remove(e.getCurrentItem().getType());
 				ArenaManager.write(arena);
-				ArenaManager.add(arena);
 				menus.blockListMenu(arena).open(player);
 			});
 		}

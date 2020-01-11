@@ -55,6 +55,7 @@ public class KangarooJumping extends TeamlessMechanic {
 		if (!event.getRegion().getId().equalsIgnoreCase("kangarooJumping_" + minigamer.getMatch().getArena().getName() + "_winningRegion"))
 			return;
 		if (!winnable) return;
+		winnable = false;
 		minigamer.scored();
 		minigamer.getMatch().broadcast("&e" + minigamer.getColoredName() + " has reached the finish area!");
 		minigamer.getMatch().getTasks().wait(5 * 20, () -> minigamer.getMatch().end());
