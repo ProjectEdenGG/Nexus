@@ -119,7 +119,8 @@ public class JMinigamesCommand extends CustomCommand {
 			else
 				throw new MustBeIngameException();
 		else
-			return ArenaManager.find(value);
+			if (!isNullOrEmpty(value))
+				return ArenaManager.find(value);
 		return null;
 	}
 
