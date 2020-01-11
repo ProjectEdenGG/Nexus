@@ -9,6 +9,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -33,14 +34,16 @@ public class InvertoInferno extends TeamlessMechanic {
 	@Override
 	public void onStart(Match match) {
 		super.onStart(match);
+
 		ProtectedRegion region = Minigames.getWorldGuardUtils().getRegion("invertoinferno");
-		int percent = 5 / (100 * region.volume());
+		int percent = region.volume() / 5;
 		for (int i = 0; i < percent; i++) {
 			Block block = Minigames.getWorldGuardUtils().getRandomBlock(region);
 			if (block.getType().isBurnable()) {
-				block.getRelative(0, 1, 0);
-				if (block.getType().equals(Material.AIR))
-					block.setType(Material.FIRE);
+				Block above = block.getRelative(BlockFace.UP, 1);
+				if (above.getType().equals(Material.AIR)) {
+					above.setType(Material.FIRE);
+				}
 			}
 		}
 	}
