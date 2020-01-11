@@ -36,7 +36,6 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
 						"||&ez: " + (int) arena.getLobby().getLocation().getZ()), e -> {
 			arena.getLobby().setLocation(player.getLocation());
 			ArenaManager.write(arena);
-			ArenaManager.add(arena);
 			menus.openLobbyMenu(player, arena);
 		}));
 		//Time Item
@@ -45,13 +44,12 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
 			player.closeInventory();
 			new AnvilGUI.Builder()
 					.onClose(p -> {
-						menus.openArenaMenu(player, arena);
+						menus.openLobbyMenu(player, arena);
 					})
 					.onComplete((p, text) -> {
 						if (Utils.isInt(text)) {
 							arena.getLobby().setWaitTime(Integer.parseInt(text));
 							ArenaManager.write(arena);
-							ArenaManager.add(arena);
 							menus.openLobbyMenu(player, arena);
 							return AnvilGUI.Response.text(text);
 						} else {

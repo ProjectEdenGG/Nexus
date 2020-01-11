@@ -43,7 +43,6 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 		contents.set(0, 8, ClickableItem.of(nameItem(new ItemStack(Material.ANVIL), "&eCopy Potions", "&3This will copy all the||&3potion effects you have||&3into the team's loadout."), e -> {
 			team.getLoadout().getPotionEffects().addAll(e.getWhoClicked().getActivePotionEffects());
 			ArenaManager.write(arena);
-			ArenaManager.add(arena);
 			teamMenus.openLoadoutMenu(player, arena, team);
 		}));
 
@@ -72,7 +71,6 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 							PotionEffectType potion = PotionEffectType.getByName(text.toUpperCase());
 							team.getLoadout().getPotionEffects().add(new PotionEffect(potion, 5, 0));
 							ArenaManager.write(arena);
-							ArenaManager.add(arena);
 							teamMenus.openPotionEffectsMenu(player, arena, team);
 							return AnvilGUI.Response.text(text);
 						} catch (Exception ex) {

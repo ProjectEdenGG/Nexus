@@ -55,7 +55,6 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 							potions.add(new PotionEffect(potionEffect.getType(), Integer.parseInt(text), potionEffect.getAmplifier()));
 							team.getLoadout().setPotionEffects(potions);
 							ArenaManager.write(arena);
-							ArenaManager.add(arena);
 							teamMenus.openLoadoutMenu(player, arena, team);
 							return AnvilGUI.Response.text(text);
 						} else {
@@ -81,7 +80,6 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 							potions.add(new PotionEffect(potionEffect.getType(), potionEffect.getDuration(), Integer.parseInt(text)));
 							team.getLoadout().setPotionEffects(potions);
 							ArenaManager.write(arena);
-							ArenaManager.add(arena);
 							teamMenus.openLoadoutMenu(player, arena, team);
 							return AnvilGUI.Response.text(text);
 						} else {

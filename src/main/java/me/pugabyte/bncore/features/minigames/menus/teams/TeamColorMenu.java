@@ -67,7 +67,6 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 				teams.add(team);
 				arena.setTeams(teams);
 				ArenaManager.write(arena);
-				ArenaManager.add(arena);
 				teamMenus.openTeamsColorMenu(player, arena, team);
 			}));
 			if (column != 8) {

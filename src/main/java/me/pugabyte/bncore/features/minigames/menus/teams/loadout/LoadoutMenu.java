@@ -34,7 +34,6 @@ public class LoadoutMenu extends MenuUtils implements InventoryProvider {
 		contents.set(0, 1, ClickableItem.of(nameItem(new ItemStack(Material.ANVIL), "&eCopy Inventory", "&3This will copy all the||&3contents of your inventory||&3into the team's loadout."), e -> {
 			team.getLoadout().setInventoryContents(e.getWhoClicked().getInventory().getContents());
 			ArenaManager.write(arena);
-			ArenaManager.add(arena);
 			teamMenus.openLoadoutMenu(player, arena, team);
 		}));
 		//Potion Effects Item

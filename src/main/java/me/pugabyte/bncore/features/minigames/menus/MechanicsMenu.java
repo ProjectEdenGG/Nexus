@@ -33,7 +33,6 @@ public class MechanicsMenu extends MenuUtils implements InventoryProvider {
 			contents.set(row, column, ClickableItem.of(item, e -> {
 				arena.setMechanicType(mechanic);
 				ArenaManager.write(arena);
-				ArenaManager.add(arena);
 				menus.openMechanicsMenu(player, arena);
 			}));
 			if (column != 8) {
