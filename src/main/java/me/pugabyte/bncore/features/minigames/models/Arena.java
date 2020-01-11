@@ -38,20 +38,21 @@ public class Arena implements ConfigurationSerializable {
 	private List<Team> teams;
 	@NonNull
 	private Lobby lobby;
-	private Location respawnLocation;
 	private Location spectateLocation;
-	private int seconds;
-	private int minPlayers;
-	private int maxPlayers;
+	private Location respawnLocation;
+	private int respawnSeconds = 5;
+	private int seconds = 300;
+	private int minPlayers = 2;
+	private int maxPlayers = 30;
 	private int winningScore;
 	private int minWinningScore;
 	private int maxWinningScore;
-	private int lives;
+	private int lives = 0;
 	private Set<Material> blockList;
 	@Accessors(fluent = true)
 	private boolean isWhitelist = true;
 	@Accessors(fluent = true)
-	private boolean canJoinLate;
+	private boolean canJoinLate = false;
 	@Accessors(fluent = true)
 	private boolean hasScoreboard = true;
 
@@ -68,8 +69,9 @@ public class Arena implements ConfigurationSerializable {
 			put("mechanicType", getMechanicType().name());
 			put("teams", getTeams());
 			put("lobby", getLobby());
-			put("respawnLocation", getRespawnLocation());
 			put("spectateLocation", getSpectateLocation());
+			put("respawnLocation", getRespawnLocation());
+			put("respawnSeconds", getRespawnSeconds());
 			put("seconds", getSeconds());
 			put("minPlayers", getMinPlayers());
 			put("maxPlayers", getMaxPlayers());
@@ -91,16 +93,17 @@ public class Arena implements ConfigurationSerializable {
 		this.mechanicType = MechanicType.valueOf(((String) map.get("mechanicType")).toUpperCase());
 		this.teams = (List<Team>) map.get("teams");
 		this.lobby = (Lobby) map.get("lobby");
-		this.respawnLocation = (Location) map.get("respawnLocation");
 		this.spectateLocation = (Location) map.get("spectateLocation");
-		this.seconds = (Integer) map.get("seconds");
-		this.minPlayers = (Integer) map.get("minPlayers");
-		this.maxPlayers = (Integer) map.get("maxPlayers");
-		this.winningScore = (Integer) map.get("winningScore");
-		this.minWinningScore = (Integer) map.get("minWinningScore");
-		this.maxWinningScore = (Integer) map.get("maxWinningScore");
-		this.lives = (Integer) map.get("lives");
-		this.blockList = deserializeMaterialSet((List<String>) map.get("blockList"));
+		this.respawnLocation = (Location) map.get("respawnLocation");
+		this.respawnSeconds = (Integer) map.getOrDefault("respawnSeconds", respawnSeconds);
+		this.seconds = (Integer) map.getOrDefault("seconds", seconds);
+		this.minPlayers = (Integer) map.getOrDefault("minPlayers", minPlayers);
+		this.maxPlayers = (Integer) map.getOrDefault("maxPlayers", maxPlayers);
+		this.winningScore = (Integer) map.getOrDefault("winningScore", winningScore);
+		this.minWinningScore = (Integer) map.getOrDefault("minWinningScore", minWinningScore);
+		this.maxWinningScore = (Integer) map.getOrDefault("maxWinningScore", maxWinningScore);
+		this.lives = (Integer) map.getOrDefault("lives", lives);
+		this.blockList = deserializeMaterialSet((List<String>) map.getOrDefault("blockList", blockList));
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", hasScoreboard);
