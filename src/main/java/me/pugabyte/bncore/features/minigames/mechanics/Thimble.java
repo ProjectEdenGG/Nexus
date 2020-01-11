@@ -32,6 +32,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
+import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -69,7 +70,7 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public String getDescription() {
-		return "Description here.";
+		return "TODO";
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public final class Thimble extends TeamlessMechanic {
 		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
 		minigamer.tell("You are playing &eThimble&3: &e" + arena.getGamemode().getName());
 		Player player = minigamer.getPlayer();
-		ItemStack menuItem = new ItemStack(Material.CONCRETE, 1);
+		ItemStack menuItem = new ItemStackBuilder(Material.CONCRETE).name("Choose A Block!").amount(1).build();
 		player.getInventory().setItem(0, menuItem);
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
 

@@ -21,6 +21,10 @@ public class WorldGuardUtils {
 	@NonNull
 	private World world;
 
+	public WorldGuardUtils() {
+
+	}
+
 	public RegionManager getManager() {
 		return WGBukkit.getRegionManager(world);
 	}
