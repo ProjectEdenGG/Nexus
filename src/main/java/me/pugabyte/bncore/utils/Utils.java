@@ -12,9 +12,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
@@ -243,6 +246,14 @@ public class Utils {
 			return true;
 		}
 		return false;
+	}
+
+	public static ItemStack addGlowing(ItemStack itemStack) {
+		itemStack.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
+		ItemMeta meta = itemStack.getItemMeta();
+		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		itemStack.setItemMeta(meta);
+		return itemStack;
 	}
 
 	public static int randomInt(int min, int max){

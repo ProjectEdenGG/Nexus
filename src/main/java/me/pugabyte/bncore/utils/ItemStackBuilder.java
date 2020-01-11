@@ -67,6 +67,11 @@ public class ItemStackBuilder {
 		return this;
 	}
 
+	public ItemStackBuilder glow() {
+		Utils.addGlowing(itemStack);
+		return this;
+	}
+
 	public ItemStackBuilder effect(PotionEffectType potionEffectType) {
 		return effect(potionEffectType, 1, 1);
 	}

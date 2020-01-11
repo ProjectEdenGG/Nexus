@@ -13,6 +13,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static me.pugabyte.bncore.features.minigames.Minigames.PREFIX;
+
 public class LobbyMenu extends MenuUtils implements InventoryProvider {
 
 	Arena arena;
@@ -53,7 +55,7 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
 							menus.openLobbyMenu(player, arena);
 							return AnvilGUI.Response.text(text);
 						} else {
-							player.sendMessage(Utils.colorize(Utils.getPrefix("Minigames") + "You must use an integer for wait time."));
+							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for wait time."));
 							return AnvilGUI.Response.close();
 						}
 					})
