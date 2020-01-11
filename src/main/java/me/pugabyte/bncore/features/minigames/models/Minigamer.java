@@ -12,10 +12,10 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
@@ -146,10 +146,31 @@ public class Minigamer {
 		--lives;
 	}
 
+	public void spawn() {
+		if (!match.isEnded())
+			team.spawn(this);
+	}
+
+	public void respawn() {
+		if (match.getArena().getRespawnLocation() == null)
+			spawn();
+		else {
+			respawning = true;
+			teleport(match.getArena().getRespawnLocation(), true);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
+			match.getTasks().wait(match.getArena().getRespawnSeconds() * 20, () -> {
+				if (!match.isEnded()) {
+					spawn();
+					respawning = false;
+				}
+			});
+		}
+	}
+
 	public void clearState() {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		// TODO: Unvanish
-		player.setGameMode(GameMode.ADVENTURE);
+		player.setFireTicks(0);
 		player.resetMaxHealth();
 		player.setHealth(20);
 		player.setExp(0);

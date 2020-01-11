@@ -4,6 +4,7 @@ import me.pugabyte.bncore.features.minigames.mechanics.CaptureTheFlag;
 import me.pugabyte.bncore.features.minigames.mechanics.DeathSwap;
 import me.pugabyte.bncore.features.minigames.mechanics.FourTeamDeathmatch;
 import me.pugabyte.bncore.features.minigames.mechanics.FreeForAll;
+import me.pugabyte.bncore.features.minigames.mechanics.InvertoInferno;
 import me.pugabyte.bncore.features.minigames.mechanics.KangarooJumping;
 import me.pugabyte.bncore.features.minigames.mechanics.OneFlagCaptureTheFlag;
 import me.pugabyte.bncore.features.minigames.mechanics.OneInTheQuiver;
@@ -18,6 +19,7 @@ public enum MechanicType {
 	DEATH_SWAP(new DeathSwap()),
 	FOUR_TEAM_DEATHMATCH(new FourTeamDeathmatch()),
 	FREE_FOR_ALL(new FreeForAll()),
+	INVERTO_INFERNO(new InvertoInferno()),
 	KANGAROO_JUMPING(new KangarooJumping()),
 	ONE_FLAG_CAPTURE_THE_FLAG(new OneFlagCaptureTheFlag()),
 	ONE_IN_THE_QUIVER(new OneInTheQuiver()),
@@ -36,4 +38,5 @@ public enum MechanicType {
 	public Mechanic get() {
 		return mechanic;
 	}
+
 }
