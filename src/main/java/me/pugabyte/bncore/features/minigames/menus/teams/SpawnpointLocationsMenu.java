@@ -37,7 +37,6 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 		contents.set(0, 4, ClickableItem.of(nameItem(new ItemStack(Material.EMERALD_BLOCK), "&eAdd Spawnpoint", "&3Click to add a spawnpoint||&3at your current location."), e -> {
 			team.getSpawnpoints().add(player.getLocation());
 			ArenaManager.write(arena);
-			ArenaManager.add(arena);
 			teamMenus.openSpawnpointMenu(arena, team).open(player, page.getPage());
 		}));
 
@@ -67,7 +66,6 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 					Utils.wait(2, () -> {
 						team.getSpawnpoints().remove(loc);
 						ArenaManager.write(arena);
-						ArenaManager.add(arena);
 						e.getWhoClicked().setItemOnCursor(new ItemStack(Material.AIR));
 						teamMenus.openSpawnpointMenu(arena, team).open(player, page.getPage());
 					});

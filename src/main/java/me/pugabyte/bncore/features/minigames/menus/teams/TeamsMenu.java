@@ -20,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TeamsMenu extends MenuUtils implements InventoryProvider {
 
@@ -41,9 +40,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
 						teamMenus.openTeamsMenu(player, arena);
 					})
 					.onComplete((p, text) -> {
-						List<Team> teams = new ArrayList<>();
-						teams.addAll(arena.getTeams());
-						teams.add(Team.builder()
+						arena.getTeams().add(Team.builder()
 								.name(text)
 								.color(ChatColor.WHITE)
 								.objective("Win")
@@ -53,9 +50,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
 										.build())
 								.spawnpoints(new ArrayList<Location>())
 								.build());
-						arena.setTeams(teams);
 						ArenaManager.write(arena);
-						ArenaManager.add(arena);
 						teamMenus.openTeamsMenu(player, arena);
 						return AnvilGUI.Response.text(text);
 					})

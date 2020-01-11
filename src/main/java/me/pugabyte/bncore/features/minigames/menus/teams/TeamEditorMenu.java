@@ -16,9 +16,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 
 	Arena arena;
@@ -49,13 +46,8 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 			new AnvilGUI.Builder()
 					.onClose(p -> teamMenus.openTeamsEditorMenu(player, arena, team))
 					.onComplete((p, text) -> {
-						List<Team> teams = new ArrayList<>(arena.getTeams());
-						teams.remove(team);
 						team.setName(text);
-						teams.add(team);
-						arena.setTeams(teams);
 						ArenaManager.write(arena);
-						ArenaManager.add(arena);
 						teamMenus.openTeamsEditorMenu(player, arena, team);
 						return AnvilGUI.Response.text(text);
 					})
@@ -69,13 +61,8 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 			new AnvilGUI.Builder()
 					.onClose(p -> teamMenus.openTeamsEditorMenu(player, arena, team))
 					.onComplete((p, text) -> {
-						List<Team> teams = new ArrayList<>(arena.getTeams());
-						teams.remove(team);
 						team.setObjective(text);
-						teams.add(team);
-						arena.setTeams(teams);
 						ArenaManager.write(arena);
-						ArenaManager.add(arena);
 						teamMenus.openTeamsEditorMenu(player, arena, team);
 						return AnvilGUI.Response.text(text);
 					})
@@ -103,13 +90,8 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 							player.sendMessage(Utils.getPrefix("JMinigames") + "The balance percentage must be an integer.");
 							return AnvilGUI.Response.close();
 						}
-						List<Team> teams = new ArrayList<>(arena.getTeams());
-						teams.remove(team);
 						team.setBalancePercentage(Integer.parseInt(text));
-						teams.add(team);
-						arena.setTeams(teams);
 						ArenaManager.write(arena);
-						ArenaManager.add(arena);
 						teamMenus.openTeamsEditorMenu(player, arena, team);
 						return AnvilGUI.Response.text(text);
 					})

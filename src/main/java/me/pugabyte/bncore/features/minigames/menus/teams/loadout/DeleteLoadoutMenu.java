@@ -37,7 +37,6 @@ public class DeleteLoadoutMenu extends MenuUtils implements InventoryProvider {
 			team.getLoadout().setInventoryContents(new ItemStack[]{});
 			team.getLoadout().setPotionEffects(new ArrayList<PotionEffect>());
 			ArenaManager.write(arena);
-			ArenaManager.add(arena);
 			menus.openLoadoutMenu(player, arena, team);
 		}));
 	}
