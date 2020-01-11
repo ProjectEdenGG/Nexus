@@ -1,5 +1,0 @@
-<root>
-    <item name='fr.minuskube.inv.content.InventoryProvider'>
-        <annotation name='java.lang.Deprecated'/>
-    </item>
-</root>
