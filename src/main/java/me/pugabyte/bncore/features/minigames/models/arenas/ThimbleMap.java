@@ -17,6 +17,12 @@ public class ThimbleMap implements ConfigurationSerializable {
 	private Location nextTurnLocation;
 	private Location spectateLocation;
 
+	public ThimbleMap(Map<String, Object> map) {
+		this.name = (String) map.get("name");
+		this.nextTurnLocation = (Location) map.get("nextTurnLocation");
+		this.spectateLocation = (Location) map.get("spectateLocation");
+	}
+
 	@Override
 	public Map<String, Object> serialize() {
 		return new LinkedHashMap<String, Object>() {{
@@ -24,12 +30,6 @@ public class ThimbleMap implements ConfigurationSerializable {
 			put("nextTurnLocation", getNextTurnLocation());
 			put("spectateLocation", getSpectateLocation());
 		}};
-	}
-
-	public ThimbleMap(Map<String, Object> map) {
-		this.name = (String) map.get("name");
-		this.nextTurnLocation = (Location) map.get("nextTurnLocation");
-		this.spectateLocation = (Location) map.get("spectateLocation");
 	}
 
 }

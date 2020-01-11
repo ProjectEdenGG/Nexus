@@ -69,7 +69,7 @@ public class ArenaManager {
 	}
 
 	// TODO: Add delete
-	public static void remove(Arena arena){
+	public static void remove(Arena arena) {
 		arenas.remove(arena);
 	}
 
@@ -100,7 +100,7 @@ public class ArenaManager {
 				if (name.startsWith(".")) return;
 				if (!name.endsWith(".yml")) return;
 
-				read(name.replace(".yml",""));
+				read(name.replace(".yml", ""));
 			});
 		} catch (IOException ex) {
 			BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
@@ -139,10 +139,10 @@ public class ArenaManager {
 		return null;
 	}
 
-	public static int getNextId(){
+	public static int getNextId() {
 		int id = 1;
-		for(Arena arena : getAll()){
-			if(arena.getId() >= id){
+		for (Arena arena : getAll()) {
+			if (arena.getId() >= id) {
 				id = (arena.getId() + 1);
 			}
 		}

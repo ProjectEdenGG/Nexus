@@ -55,8 +55,26 @@ public class Arena implements ConfigurationSerializable {
 	@Accessors(fluent = true)
 	private boolean hasScoreboard = true;
 
-	public Mechanic getMechanic() {
-		return getMechanicType().get();
+	public Arena(Map<String, Object> map) {
+		this.id = (int) map.get("id");
+		this.name = (String) map.get("name");
+		this.displayName = (String) map.get("displayName");
+		this.mechanicType = MechanicType.valueOf(((String) map.get("mechanicType")).toUpperCase());
+		this.teams = (List<Team>) map.get("teams");
+		this.lobby = (Lobby) map.get("lobby");
+		this.respawnLocation = (Location) map.get("respawnLocation");
+		this.spectateLocation = (Location) map.get("spectateLocation");
+		this.seconds = (Integer) map.get("seconds");
+		this.minPlayers = (Integer) map.get("minPlayers");
+		this.maxPlayers = (Integer) map.get("maxPlayers");
+		this.winningScore = (Integer) map.get("winningScore");
+		this.minWinningScore = (Integer) map.get("minWinningScore");
+		this.maxWinningScore = (Integer) map.get("maxWinningScore");
+		this.lives = (Integer) map.get("lives");
+		this.blockList = deserializeMaterialSet((List<String>) map.get("blockList"));
+		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
+		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
+		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", hasScoreboard);
 	}
 
 	@Override
@@ -84,36 +102,20 @@ public class Arena implements ConfigurationSerializable {
 		}};
 	}
 
-	public Arena(Map<String, Object> map) {
-		this.id = (int) map.get("id");
-		this.name = (String) map.get("name");
-		this.displayName = (String) map.get("displayName");
-		this.mechanicType = MechanicType.valueOf(((String) map.get("mechanicType")).toUpperCase());
-		this.teams = (List<Team>) map.get("teams");
-		this.lobby = (Lobby) map.get("lobby");
-		this.respawnLocation = (Location) map.get("respawnLocation");
-		this.spectateLocation = (Location) map.get("spectateLocation");
-		this.seconds = (Integer) map.get("seconds");
-		this.minPlayers = (Integer) map.get("minPlayers");
-		this.maxPlayers = (Integer) map.get("maxPlayers");
-		this.winningScore = (Integer) map.get("winningScore");
-		this.minWinningScore = (Integer) map.get("minWinningScore");
-		this.maxWinningScore = (Integer) map.get("maxWinningScore");
-		this.lives = (Integer) map.get("lives");
-		this.blockList = deserializeMaterialSet((List<String>) map.get("blockList"));
-		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
-		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
-		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", hasScoreboard);
-	}
-
 	List<String> serializeMaterialSet(Set<Material> materials) {
 		if (materials == null) return null;
-		return new ArrayList<String>(){{ addAll(materials.stream().map(Material::name).collect(Collectors.toList())); }};
+		return new ArrayList<String>() {{
+			addAll(materials.stream().map(Material::name).collect(Collectors.toList()));
+		}};
 	}
 
 	Set<Material> deserializeMaterialSet(List<String> materials) {
 		if (materials == null) return null;
 		return materials.stream().map(block -> Material.valueOf(block.toUpperCase())).collect(Collectors.toSet());
+	}
+
+	public Mechanic getMechanic() {
+		return getMechanicType().get();
 	}
 
 	public boolean ownsRegion(String regionName, String type) {
@@ -122,10 +124,7 @@ public class Arena implements ConfigurationSerializable {
 
 	public boolean canUseBlock(Material type) {
 		if (blockList == null || blockList.size() == 0)
-			if (isWhitelist)
-				return false;
-			else
-				return true;
+			return !isWhitelist;
 
 		if (isWhitelist)
 			return blockList.contains(type);

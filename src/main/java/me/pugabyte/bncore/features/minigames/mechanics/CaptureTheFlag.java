@@ -29,7 +29,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.BANNER, 1,DyeColor.RED.getDyeData());
+		return new ItemStack(Material.BANNER, 1, DyeColor.RED.getDyeData());
 	}
 
 

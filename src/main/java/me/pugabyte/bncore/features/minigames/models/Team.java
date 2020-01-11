@@ -31,6 +31,16 @@ public class Team implements ConfigurationSerializable {
 	private List<Location> spawnpoints;
 	private int balancePercentage = -1;
 
+	public static Team deserialize(Map<String, Object> map) {
+		return Team.builder()
+				.name((String) map.get("name"))
+				.color(ChatColor.valueOf(((String) map.getOrDefault("color", ChatColor.WHITE)).toUpperCase()))
+				.objective((String) map.get("objective"))
+				.loadout((Loadout) map.get("loadout"))
+				.spawnpoints((List<Location>) map.get("spawnpoints"))
+				.build();
+	}
+
 	public String getColoredName() {
 		return color + name;
 	}
@@ -93,16 +103,6 @@ public class Team implements ConfigurationSerializable {
 		map.put("spawnpoints", getSpawnpoints());
 
 		return map;
-	}
-
-	public static Team deserialize(Map<String, Object> map) {
-		return Team.builder()
-				.name((String) map.get("name"))
-				.color(ChatColor.valueOf(((String) map.getOrDefault("color", ChatColor.WHITE)).toUpperCase()))
-				.objective((String) map.get("objective"))
-				.loadout((Loadout) map.get("loadout"))
-				.spawnpoints((List<Location>) map.get("spawnpoints"))
-				.build();
 	}
 
 }

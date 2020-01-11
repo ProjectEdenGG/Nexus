@@ -20,20 +20,20 @@ public class ThimbleArena extends Arena {
 	private Thimble.ThimbleGamemode gamemode;
 	private String poolRegionName;
 
-	@Override
-	public Map<String, Object> serialize() {
-		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
-		map.put("thimbleMaps", getThimbleMaps());
-
-		return map;
-	}
-
 	public ThimbleArena(Map<String, Object> map) {
 		super(map);
 		this.thimbleMaps = (List<ThimbleMap>) map.get("thimbleMaps");
 
 		currentMap = thimbleMaps.get(0);
 		poolRegionName = "thimble_" + thimbleMaps.get(0).getName() + "_pool";
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
+		map.put("thimbleMaps", getThimbleMaps());
+
+		return map;
 	}
 
 	public Thimble.ThimbleGamemode getNextGamemode() {
