@@ -113,7 +113,6 @@ public class BNCore extends JavaPlugin {
 	public static Minigames minigames;
 	public static OldMinigames oldMinigames;
 	public static RainbowArmour rainbowArmour;
-//	public static RestoreInventory restoreInventory;
 	public static ShowEnchants showEnchants;
 	public static SidewaysLogs sidewaysLogs;
 	public static SidewaysStairs sidewaysStairs;
@@ -134,7 +133,6 @@ public class BNCore extends JavaPlugin {
 		minigames = new Minigames();
 		oldMinigames = new OldMinigames();
 		rainbowArmour = new RainbowArmour();
-//		restoreInventory = new RestoreInventory();
 		showEnchants = new ShowEnchants();
 		sidewaysLogs = new SidewaysLogs();
 		sidewaysStairs = new SidewaysStairs();

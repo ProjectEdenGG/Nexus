@@ -15,12 +15,13 @@ import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static me.pugabyte.bncore.features.minigames.Minigames.PREFIX;
+
 public class ArenaMenu extends MenuUtils implements InventoryProvider {
 
 	MinigamesMenus menus = new MinigamesMenus();
 	TeamMenus teamMenus = new TeamMenus();
 	Arena arena;
-	String PREFIX = Utils.getPrefix("JMinigames");
 	public ArenaMenu(Arena arena) {
 		this.arena = arena;
 	}
@@ -229,7 +230,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		ItemStack lateJoinItem = nameItem(new ItemStack(Material.IRON_DOOR),
 				"&eLate Join", "&7Set if players can join after||&7the game has started|| ||&3Allowed:||&e" + arena.canJoinLate());
 		if (arena.canJoinLate()) {
-			lateJoinItem = itemGlow(lateJoinItem);
+			lateJoinItem = addGlowing(lateJoinItem);
 		}
 		contents.set(3, 7, ClickableItem.of(lateJoinItem, e -> {
 			if (arena.canJoinLate()) {
@@ -269,7 +270,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		ItemStack scoreboardItem = nameItem(new ItemStack(Material.SIGN),
 				"&eScoreboard", "&7Set if the arena has||&7a visible scoreboard|| ||&3Current Setting:||&e" + arena.hasScoreboard());
 		if (arena.hasScoreboard()) {
-			scoreboardItem = itemGlow(scoreboardItem);
+			scoreboardItem = addGlowing(scoreboardItem);
 		}
 		contents.set(4, 7, ClickableItem.of(scoreboardItem, e -> {
 			if (arena.hasScoreboard()) {

@@ -18,6 +18,8 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 
+import static me.pugabyte.bncore.features.minigames.Minigames.PREFIX;
+
 public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvider {
 
 	Arena arena;
@@ -57,7 +59,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 							teamMenus.openLoadoutMenu(player, arena, team);
 							return AnvilGUI.Response.text(text);
 						} else {
-							player.sendMessage(Utils.colorize(Utils.getPrefix("Minigames") + "You must use an integer for the duration."));
+							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for the duration."));
 							return AnvilGUI.Response.close();
 						}
 					})
@@ -83,7 +85,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 							teamMenus.openLoadoutMenu(player, arena, team);
 							return AnvilGUI.Response.text(text);
 						} else {
-							player.sendMessage(Utils.colorize(Utils.getPrefix("Minigames") + "You must use an integer for the amplifier."));
+							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for the amplifier."));
 							return AnvilGUI.Response.close();
 						}
 					})

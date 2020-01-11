@@ -58,7 +58,7 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 		int row = 1;
 		for (ItemStack item : items) {
 			if (ColorType.fromString(ChatColor.stripColor(item.getItemMeta().getDisplayName().toLowerCase())).getChatColor() == team.getColor()) {
-				item = itemGlow(item);
+				item = addGlowing(item);
 			}
 			contents.set(row, column, ClickableItem.of(item.clone(), e -> {
 				List<Team> teams = new ArrayList<>(arena.getTeams());

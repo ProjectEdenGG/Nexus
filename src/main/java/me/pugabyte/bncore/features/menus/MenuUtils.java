@@ -1,11 +1,9 @@
 package me.pugabyte.bncore.features.menus;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -15,12 +13,8 @@ import static me.pugabyte.bncore.utils.Utils.colorize;
 
 public abstract class MenuUtils {
 
-	protected ItemStack itemGlow(ItemStack item){
-		item.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-		ItemMeta meta = item.getItemMeta();
-		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		item.setItemMeta(meta);
-		return item;
+	protected ItemStack addGlowing(ItemStack itemStack) {
+		return Utils.addGlowing(itemStack);
 	}
 
 	public int getRows(int items){
