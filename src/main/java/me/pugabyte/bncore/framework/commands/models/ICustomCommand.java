@@ -17,7 +17,9 @@ import org.bukkit.command.CommandSender;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,7 +132,7 @@ public interface ICustomCommand {
 	default Object convert(String value, Class<?> type, CustomCommand command) {
 		if (Commands.getConverters().containsKey(type)) {
 			Method converter = Commands.getConverters().get(type);
-			if (converter.getDeclaringClass().equals(command.getClass()))
+			if (converter.getDeclaringClass().equals(command.getClass()) || Modifier.isAbstract(converter.getDeclaringClass().getModifiers()))
 				return Commands.getConverters().get(type).invoke(command, value);
 			else {
 				CustomCommand newCommand = getNewCommand(command.getEvent(), converter.getDeclaringClass());
@@ -152,17 +154,19 @@ public interface ICustomCommand {
 		return value;
 	}
 
-	@SuppressWarnings("unchecked")
 	@SneakyThrows
 	default CustomCommand getCommand(CommandEvent event) {
-		CustomCommand command = event.getCommand().getClass().getDeclaredConstructor(CommandEvent.class).newInstance(event);
+		Constructor<? extends CustomCommand> constructor = event.getCommand().getClass().getDeclaredConstructor(CommandEvent.class);
+		constructor.setAccessible(true);
+		CustomCommand command = constructor.newInstance(event);
 		event.setCommand(command);
 		return command;
 	}
 
 	@SneakyThrows
 	default CustomCommand getNewCommand(CommandEvent originalEvent, Class<?> clazz) {
-		CommandEvent newEvent = new CommandEvent(originalEvent.getSender(), new ObjenesisStd().newInstance((Class<? extends CustomCommand>)clazz), new ArrayList<>());
+		CustomCommand customCommand = new ObjenesisStd().newInstance((Class<? extends CustomCommand>) clazz);
+		CommandEvent newEvent = new CommandEvent(originalEvent.getSender(), customCommand, new ArrayList<>());
 		return getCommand(newEvent);
 	}
 

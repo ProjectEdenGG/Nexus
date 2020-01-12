@@ -69,14 +69,6 @@ public class BNCoreCommand extends CustomCommand {
 		return tabCompletePlayer(value);
 	}
 
-	@TabCompleterFor(ColorType.class)
-	List<String> tabCompleteColorType(String filter) {
-		return Arrays.stream(ColorType.values())
-				.filter(value -> value.name().toLowerCase().startsWith(filter))
-				.map(Enum::name)
-				.collect(Collectors.toList());
-	}
-
 	@ConverterFor(ColorType.class)
 	Object convertToColorType(String value) {
 		try {
@@ -85,6 +77,14 @@ public class BNCoreCommand extends CustomCommand {
 			error("ColorType from " + value + " not found");
 		}
 		return null;
+	}
+
+	@TabCompleterFor(ColorType.class)
+	List<String> tabCompleteColorType(String filter) {
+		return Arrays.stream(ColorType.values())
+				.filter(value -> value.name().toLowerCase().startsWith(filter))
+				.map(Enum::name)
+				.collect(Collectors.toList());
 	}
 
 	@Path("getColor {color}")

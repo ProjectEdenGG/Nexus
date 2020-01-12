@@ -32,7 +32,6 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		return new ItemStack(Material.BANNER, 1, DyeColor.RED.getDyeData());
 	}
 
-
 	@Override
 	public void onFlagInteract(Minigamer minigamer, Sign sign) {
 		Match match = minigamer.getMatch();

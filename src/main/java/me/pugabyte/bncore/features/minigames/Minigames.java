@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames;
 import lombok.Getter;
 import me.pugabyte.bncore.features.minigames.listeners.MatchListener;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -28,6 +29,8 @@ public class Minigames {
 	private static WorldGuardUtils worldGuardUtils = new WorldGuardUtils(gameworld);
 	@Getter
 	private static WorldEditUtils worldEditUtils = new WorldEditUtils(gameworld);
+	@Getter
+	public static MinigamesMenus menus = new MinigamesMenus();
 
 	public Minigames() {
 		registerSerializables();

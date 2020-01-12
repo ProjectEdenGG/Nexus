@@ -13,6 +13,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class InvertoInferno extends TeamlessMechanic {
 
@@ -24,6 +25,11 @@ public class InvertoInferno extends TeamlessMechanic {
 	@Override
 	public String getDescription() {
 		return "Put out the fire!";
+	}
+
+	@Override
+	public ItemStack getMenuItem() {
+		return null;
 	}
 
 	@Override

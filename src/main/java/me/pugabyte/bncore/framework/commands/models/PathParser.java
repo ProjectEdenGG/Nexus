@@ -15,6 +15,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -154,7 +155,7 @@ class PathParser {
 			if (isLiteral())
 				return getSplitPathArg(realArg);
 			else if (isVariable() && tabCompleter != null)
-				if (tabCompleter.getDeclaringClass().equals(command.getClass()))
+				if (tabCompleter.getDeclaringClass().equals(command.getClass()) || Modifier.isAbstract(tabCompleter.getDeclaringClass().getModifiers()))
 					return (List<String>) tabCompleter.invoke(command, realArg.toLowerCase());
 				else {
 					CustomCommand newCommand = command.getNewCommand(command.getEvent(), tabCompleter.getDeclaringClass());
