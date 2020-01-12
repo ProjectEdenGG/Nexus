@@ -3,11 +3,14 @@ package me.pugabyte.bncore.features.minigames.menus;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -15,293 +18,198 @@ import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import static me.pugabyte.bncore.features.minigames.Minigames.PREFIX;
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.util.Arrays;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 
 public class ArenaMenu extends MenuUtils implements InventoryProvider {
 
-	MinigamesMenus menus = new MinigamesMenus();
-	TeamMenus teamMenus = new TeamMenus();
 	Arena arena;
 	public ArenaMenu(Arena arena) {
 		this.arena = arena;
 	}
 
+	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
+		new AnvilGUI.Builder()
+				.text(text)
+				.onComplete(onComplete)
+				.onClose(p -> menus.openArenaMenu(player, arena))
+				.plugin(BNCore.getInstance())
+				.open(player);
+	}
+
+	private enum ArenaMenuItem {
+		DELETE_ARENA(1, 9, Material.TNT) {
+			@Override
+			void onClick(Player player, Arena arena) {
+				menus.openDeleteMenu(player, arena);
+			}
+
+			@Override
+			public String getTitle() {
+				return "&c&lDelete Arena";
+			}
+
+			@Override
+			String getLore(Player player, Arena arena) {
+				return "&7You will need to confirm||&7deleting an arena.|| ||&7&lTHIS CANNOT BE UNDONE.";
+			}
+		},
+		NAME(1, 1, Material.NAME_TAG),
+		DISPLAY_NAME(1, 2, Material.PAPER),
+		MECHANIC_TYPE(1, 5, Material.REDSTONE) {
+			@Override
+			void onClick(Player player, Arena arena) {
+				menus.openMechanicsMenu(player, arena);
+			}
+
+			@Override
+			String getter(Player player, Arena arena) {
+				if (arena.getMechanic() != null)
+					return arena.getMechanic().getName();
+				return "";
+			}
+		},
+		CUSTOM_MECHANIC_SETTINGS(1, 6, Material.BOOK_AND_QUILL) {
+			@Override
+			void onClick(Player player, Arena arena) {
+				menus.openCustomSettingsMenu(player, arena);
+			}
+
+			@Override
+			String getLore(Player player, Arena arena) {
+				return null;
+			}
+		},
+		TEAMS(2, 1, Material.WOOL) {
+			@Override
+			void onClick(Player player, Arena arena) {
+				new TeamMenus().openTeamsMenu(player, arena);
+			}
+
+			@Override
+			String getLore(Player player, Arena arena) {
+				return "||&eCurrent Teams: " + arena.getTeams().stream().map(Team::getColoredName).collect(Collectors.joining("&f, "));
+			}
+		},
+		LOBBY(2, 2, Material.WOOD_DOOR) {
+			@Override
+			void onClick(Player player, Arena arena) {
+				menus.openLobbyMenu(player, arena);
+			}
+
+			@Override
+			String getLore(Player player, Arena arena) {
+				return null;
+			}
+		},
+		FLAGS(2, 3, new ItemStack(Material.BANNER, 1, ColorType.CYAN.getDyeColor().getDyeData())) {
+			@Override
+			void onClick(Player player, Arena arena) {
+
+			}
+
+			@Override
+			String getLore(Player player, Arena arena) {
+				return null;
+			}
+		},
+		LIVES(3, 1, new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal())),
+		SECONDS(3, 2, Material.WATCH) {
+			@Override
+			public String getTitle() {
+				return "Game Time (Seconds)";
+			}
+		},
+		WINNING_SCORE(3, 3, Material.GOLD_INGOT),
+		MIN_WINNING_SCORE(3, 4, Material.CLAY_BRICK),
+		MAX_WINNING_SCORE(3, 5, Material.IRON_INGOT),
+		MIN_PLAYERS(4, 1, Material.LEATHER_CHESTPLATE),
+		MAX_PLAYERS(4, 2, Material.DIAMOND_CHESTPLATE),
+		SPECTATE_LOCATION(5, 1, Material.COMPASS) {
+			@Override
+			void onClick(Player player, Arena arena) {
+				arena.setSpectateLocation(player.getLocation());
+			}
+		},
+		RESPAWN_LOCATION(5, 2, Material.BED) {
+			@Override
+			void onClick(Player player, Arena arena) {
+				arena.setRespawnLocation(player.getLocation());
+			}
+		},
+		RESPAWN_SECONDS(5, 3, Material.TOTEM);
+
+		@Getter
+		private int row;
+		@Getter
+		private int column;
+		@Getter
+		private ItemStack item;
+
+		ArenaMenuItem(int row, int column, Material material) {
+			this(row, column, new ItemStack(material));
+		}
+
+		ArenaMenuItem(int row, int column, ItemStack item) {
+			this.row = row;
+			this.column = column;
+			this.item = item;
+		}
+
+		public String getTitle() {
+			return Utils.camelCase(name());
+		}
+
+		String getLore(Player player, Arena arena) {
+			return "||&eCurrent value: &3" + getter(player, arena); // + "|| ||&eClick to change";
+		}
+
+		void onClick(Player player, Arena arena) {
+			openAnvilMenu(player, arena, getter(player, arena), (Player p, String text) -> {
+				setter(player, arena, text);
+				return AnvilGUI.Response.close();
+			});
+		}
+
+		private PropertyDescriptor getPropertyDescriptor() throws IntrospectionException {
+			return new PropertyDescriptor(Character.toLowerCase(name().charAt(0)) + Utils.camelCase(name()).substring(1).replaceAll(" ", ""), Arena.class);
+		}
+
+		String getter(Player player, Arena arena) {
+			try {
+				PropertyDescriptor propertyDescriptor = getPropertyDescriptor();
+				return String.valueOf(propertyDescriptor.getReadMethod().invoke(arena));
+			} catch (Exception ignore) {}
+			return "";
+		}
+
+		void setter(Player player, Arena arena, String text) {
+			try {
+				PropertyDescriptor propertyDescriptor = getPropertyDescriptor();
+				propertyDescriptor.getWriteMethod().invoke(arena, propertyDescriptor.getPropertyType().cast(text));
+			} catch (Exception ignore) {}
+
+			ArenaManager.write();
+		}
+	}
+
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		//Close Item
-		contents.set(0, 0, ClickableItem.of(closeItem(), e -> player.closeInventory()));
-		//Arena Item
-		contents.set(0, 4, ClickableItem.empty(nameItem(new ItemStack(Material.DIAMOND_BLOCK),
-				"&b" + arena.getDisplayName(), " ||&3Arena ID: &e" + arena.getId() +
-						"||&3Mechanic: &e" + arena.getMechanicType().name().replace("_", " ") +
-						"||&3Teams: &e" + arena.getTeams().size())));
-		//Delete Arena Item
-		contents.set(0, 8, ClickableItem.of(nameItem(new ItemStack(Material.TNT),
-				"&c&lDelete Arena", "&7You will need to confirm||&7deleting an arena.|| ||&7&lTHIS CANNOT BE UNDONE."), e -> menus.openDeleteMenu(player, arena)));
-
-		//Arena Name Item
-		contents.set(1, 2, ClickableItem.empty(nameItem(new ItemStack(Material.PAPER),
-				"&eArena Name", " ||&3Current Name:||&e" + arena.getName() + "|| ||&7This value cannot be changed.")));
-		//Game Mechanic Item
-		contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.REDSTONE),
-				"&eGame Mechanic", "&7Game type of the arena|| ||&3Current Mechanic:||&e" + arena.getMechanicType().name().replace("_", " ")), e -> menus.openMechanicsMenu(player, arena)));
-		//Arena Display Name Item
-		contents.set(1, 6, ClickableItem.of(nameItem(new ItemStack(Material.BOOK),
-				"&eDisplay Name", "&7Display name of the arena|| ||&3Current Display Name:||&e" + arena.getDisplayName()), e -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.onClose(p -> {
-						menus.openArenaMenu(player, arena);
-					})
-					.onComplete((p, text) -> {
-						arena.setDisplayName(text);
-						ArenaManager.write(arena);
-						ArenaManager.add(arena);
-						menus.openArenaMenu(player, arena);
-						return AnvilGUI.Response.text(text);
-					})
-					.text("Display Name")
-					.plugin(BNCore.getInstance())
-					.open(player);
-		}));
-		//Minimum Players Item
-		contents.set(2, 1, ClickableItem.of(nameItem(new ItemStack(Material.LEATHER_CHESTPLATE),
-				"&eMinimum Players", "&7Minimum players need to||&7start the game|| ||&3Current Minimum Players:||&e" + arena.getMinPlayers()), e -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.onClose(p -> {
-						menus.openArenaMenu(player, arena);
-					})
-					.onComplete((p, text) -> {
-						if (Utils.isInt(text)) {
-							arena.setMinPlayers(Integer.parseInt(text));
-							ArenaManager.write(arena);
-							menus.openArenaMenu(player, arena);
-							return AnvilGUI.Response.text(text);
-						} else {
-							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for minimum players."));
-							return AnvilGUI.Response.close();
-						}
-					})
-					.text("Minimum Players")
-					.plugin(BNCore.getInstance())
-					.open(player);
-		}));
-		//Maximum Players Item
-		contents.set(2, 2, ClickableItem.of(nameItem(new ItemStack(Material.DIAMOND_CHESTPLATE),
-				"&eMaximum Players", "&7Maximum capacity for the arena|| ||&3Current Maximum Players:||&e" + arena.getMaxPlayers()), e -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.onClose(p -> {
-						menus.openArenaMenu(player, arena);
-					})
-					.onComplete((p, text) -> {
-						if (Utils.isInt(text)) {
-							arena.setMaxPlayers(Integer.parseInt(text));
-							ArenaManager.write(arena);
-							menus.openArenaMenu(player, arena);
-							return AnvilGUI.Response.text(text);
-						} else {
-							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for maximum players."));
-							return AnvilGUI.Response.close();
-						}
-					})
-					.text("Maximum Players")
-					.plugin(BNCore.getInstance())
-					.open(player);
-		}));
-		//Teams Menu Item
-		contents.set(2, 4, ClickableItem.of(nameItem(new ItemStack(Material.WOOL),
-				"&eTeams", "&7Click me to open||&7the team menu"), e -> teamMenus.openTeamsMenu(player, arena)));
-		//Respawn Location Item
-		contents.set(2, 6, ClickableItem.of(nameItem(new ItemStack(Material.BED, 1, (byte) 14),
-				"&eRespawn Location", "&7Location players will respawn||&7while waiting to join back|| ||" +
-						"&3Current Respawn Location:" +
-						"||&ex: " + (int) arena.getRespawnLocation().getX() +
-						"||&ey: " + (int) arena.getRespawnLocation().getY() +
-						"||&ez: " + (int) arena.getRespawnLocation().getZ()), e -> {
-			arena.setRespawnLocation(player.getLocation());
-			ArenaManager.write(arena);
-			menus.openArenaMenu(player, arena);
-		}));
-		//Game Time Item
-		contents.set(4, 1, ClickableItem.of(nameItem(new ItemStack(Material.WATCH),
-				"&eGame Time", "&7Time in seconds that the||&7game will run for|| ||&3Current Game Time:||&e" + arena.getSeconds()), e -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.onClose(p -> {
-						menus.openArenaMenu(player, arena);
-					})
-					.onComplete((p, text) -> {
-						if (Utils.isInt(text)) {
-							arena.setSeconds(Integer.parseInt(text));
-							ArenaManager.write(arena);
-							menus.openArenaMenu(player, arena);
-							return AnvilGUI.Response.text(text);
-						} else {
-							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for game time."));
-							return AnvilGUI.Response.close();
-						}
-					})
-					.text("Game Time (Seconds)")
-					.plugin(BNCore.getInstance())
-					.open(player);
-		}));
-		//Lobby Item
-		contents.set(3, 1, ClickableItem.of(nameItem(new ItemStack(Material.WOOD_DOOR),
-				"&eLobby", "&7Set the Lobby location||&7and wait time"), e -> menus.openLobbyMenu(player, arena)));
-		//Minimum Winning Score Item
-		contents.set(3, 3, ClickableItem.of(nameItem(new ItemStack(Material.CLAY_BRICK),
-				"&eMinimum Winning Score", "&7Set the minimum winning score||&7Set to 0 to ignore|| ||&3Current Minimum Score:||&e" + arena.getMinWinningScore()), e -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.onClose(p -> {
-						menus.openArenaMenu(player, arena);
-					})
-					.onComplete((p, text) -> {
-						if (Utils.isInt(text)) {
-							arena.setMinWinningScore(Integer.parseInt(text));
-							ArenaManager.write(arena);
-							ArenaManager.add(arena);
-							menus.openArenaMenu(player, arena);
-							return AnvilGUI.Response.text(text);
-						} else {
-							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for minimum winning score."));
-							return AnvilGUI.Response.close();
-						}
-					})
-					.text("Minimum Winning Score")
-					.plugin(BNCore.getInstance())
-					.open(player);
-		}));
-		//Maximum Winning Score Item
-		contents.set(3, 4, ClickableItem.of(nameItem(new ItemStack(Material.IRON_INGOT),
-				"&eMaximum Winning Score", "&7Set the maximum winning score||&7Set to 0 to ignore|| ||&3Current Maximum Score:||&e" + arena.getMaxWinningScore()), e -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.onClose(p -> {
-						menus.openArenaMenu(player, arena);
-					})
-					.onComplete((p, text) -> {
-						if (Utils.isInt(text)) {
-							arena.setMaxWinningScore(Integer.parseInt(text));
-							ArenaManager.write(arena);
-							ArenaManager.add(arena);
-							menus.openArenaMenu(player, arena);
-							return AnvilGUI.Response.text(text);
-						} else {
-							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for maximum winning score."));
-							return AnvilGUI.Response.close();
-						}
-					})
-					.text("Maximum Winning Score")
-					.plugin(BNCore.getInstance())
-					.open(player);
-		}));
-		//Winning Score Item
-		contents.set(3, 5, ClickableItem.of(nameItem(new ItemStack(Material.GOLD_INGOT),
-				"&eWinning Score", "&7Set the score needed to win|| ||&3Current Winning Score:||&e" + arena.getWinningScore()), e -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.onClose(p -> {
-						menus.openArenaMenu(player, arena);
-					})
-					.onComplete((p, text) -> {
-						if (Utils.isInt(text)) {
-							arena.setWinningScore(Integer.parseInt(text));
-							ArenaManager.write(arena);
-							ArenaManager.add(arena);
-							menus.openArenaMenu(player, arena);
-							return AnvilGUI.Response.text(text);
-						} else {
-							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for winning score."));
-							return AnvilGUI.Response.close();
-						}
-					})
-					.text("Winning Score")
-					.plugin(BNCore.getInstance())
-					.open(player);
-		}));
-		//Allow Late Join Toggle Item
-		ItemStack lateJoinItem = nameItem(new ItemStack(Material.IRON_DOOR),
-				"&eLate Join", "&7Set if players can join after||&7the game has started|| ||&3Allowed:||&e" + arena.canJoinLate());
-		if (arena.canJoinLate()) {
-			lateJoinItem = addGlowing(lateJoinItem);
-		}
-		contents.set(3, 7, ClickableItem.of(lateJoinItem, e -> {
-			if (arena.canJoinLate()) {
-				arena.canJoinLate(false);
-			} else {
-				arena.canJoinLate(true);
-			}
-			ArenaManager.write(arena);
-			ArenaManager.add(arena);
-			menus.openArenaMenu(player, arena);
-		}));
-		//Spectate Location Item
-		contents.set(2, 7, ClickableItem.of(nameItem(new ItemStack(Material.COMPASS),
-				"&eSpectate Location", "&7Location players will teleport to||&7when spectating the game|| ||" +
-						"&3Current Spectate Location:" +
-						"||&ex: " + (int) arena.getSpectateLocation().getX() +
-						"||&ey: " + (int) arena.getSpectateLocation().getY() +
-						"||&ez: " + (int) arena.getSpectateLocation().getZ()), e -> {
-			arena.setSpectateLocation(player.getLocation());
-			ArenaManager.write(arena);
-			ArenaManager.add(arena);
-			menus.openArenaMenu(player, arena);
-		}));
-		String whitelist = "Whitelisted";
-		if (!arena.isWhitelist()) whitelist = "Blacklisted";
-		//Block List Item
-		contents.set(4, 3, ClickableItem.of(nameItem(new ItemStack(Material.DIAMOND_PICKAXE),
-				"&eBreakable Block List", "&7Click me to set the block list||&7that players can break|| ||&3Current Setting:||&e" + whitelist), e -> {
-			menus.blockListMenu(arena).open(player);
-		}));
-		//Custom Settings Item
-		contents.set(4, 5, ClickableItem.of(nameItem(new ItemStack(Material.BOOK_AND_QUILL),
-				"&eCustom Game Mechanic Settings"), e -> {
-			menus.openCustomSettingsMenu(player, arena);
-		}));
-		//Scoreboard Toggle Item
-		ItemStack scoreboardItem = nameItem(new ItemStack(Material.SIGN),
-				"&eScoreboard", "&7Set if the arena has||&7a visible scoreboard|| ||&3Current Setting:||&e" + arena.hasScoreboard());
-		if (arena.hasScoreboard()) {
-			scoreboardItem = addGlowing(scoreboardItem);
-		}
-		contents.set(4, 7, ClickableItem.of(scoreboardItem, e -> {
-			if (arena.hasScoreboard()) {
-				arena.hasScoreboard(false);
-			} else {
-				arena.hasScoreboard(true);
-			}
-			ArenaManager.write(arena);
-			ArenaManager.add(arena);
-			menus.openArenaMenu(player, arena);
-		}));
-		//Lives Item
-		contents.set(5, 4, ClickableItem.of(nameItem(new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal()),
-				"&eMinigamer Lives", "&7Set the number of lives||&7a minigamer will have.|| ||&3Current Lives:||&e" + arena.getLives()), e -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.onClose(p -> {
-						menus.openArenaMenu(player, arena);
-					})
-					.onComplete((p, text) -> {
-						if (Utils.isInt(text)) {
-							arena.setLives(Integer.parseInt(text));
-							ArenaManager.write(arena);
-							ArenaManager.add(arena);
-							menus.openArenaMenu(player, arena);
-							return AnvilGUI.Response.text(text);
-						} else {
-							player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for lives."));
-							return AnvilGUI.Response.close();
-						}
-					})
-					.text("Minigamer Lives")
-					.plugin(BNCore.getInstance())
-					.open(player);
-		}));
+		Arrays.asList(ArenaMenuItem.values()).forEach(menuItem ->
+			contents.set(
+					(menuItem.getRow() - 1),
+					(menuItem.getColumn() - 1),
+					ClickableItem.of(
+							nameItem(menuItem.getItem(), "&e" + menuItem.getTitle(), menuItem.getLore(player, arena)),
+							e -> menuItem.onClick(player, arena)
+					)
+			)
+		);
 	}
 
 	@Override

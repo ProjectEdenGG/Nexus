@@ -68,17 +68,19 @@ public class MinigamesMenus extends MenuUtils {
 	@SneakyThrows
 	public void openCustomSettingsMenu(Player player, Arena arena) {
 		Set<Class<?>> classes = new Reflections("me.pugabyte.bncore.features.minigames.menus.custommenus").getTypesAnnotatedWith(CustomMechanicSettings.class);
-		Class provider = null;
+		Class<?> provider = null;
 		for (Class<?> clazz : classes) {
 			if (clazz.getAnnotation(CustomMechanicSettings.class).value().equals(arena.getMechanicType())) {
 				provider = clazz;
 				break;
 			}
 		}
+
 		if (provider == null) {
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
 			return;
 		}
+
 		SmartInventory INV = SmartInventory.builder()
 				.id("customSettingsMenu")
 				.provider((InventoryProvider) provider.getDeclaredConstructor(Arena.class).newInstance(arena))

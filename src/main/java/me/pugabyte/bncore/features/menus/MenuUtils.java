@@ -22,17 +22,15 @@ public abstract class MenuUtils {
 	}
 
 	protected ItemStack nameItem(ItemStack item, String name) {
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(colorize(name));
-		item.setItemMeta(meta);
-		return item;
+		return nameItem(item, name, null);
 	}
 
 	protected ItemStack nameItem(ItemStack item, String name, String lore) {
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(colorize(name));
-		lore = colorize(lore);
-		meta.setLore(Arrays.asList(lore.split("\\|\\|")));
+		if (name != null)
+			meta.setDisplayName(colorize(name));
+		if (lore != null)
+			meta.setLore(Arrays.asList(colorize(lore).split("\\|\\|")));
 		item.setItemMeta(meta);
 		return item;
 	}

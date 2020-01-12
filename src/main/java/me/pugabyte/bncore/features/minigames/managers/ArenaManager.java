@@ -48,7 +48,7 @@ public class ArenaManager {
 			Arena arena = get(arenaName);
 			if (arena.getMechanic().getName().equalsIgnoreCase(mechanicName))
 				return arena;
-		} catch (ArrayIndexOutOfBoundsException ignore) {}
+		} catch (ArrayIndexOutOfBoundsException | InvalidInputException ignore) {}
 
 		return null;
 	}
