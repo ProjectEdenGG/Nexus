@@ -30,6 +30,11 @@ public class ItemStackBuilder {
 		return this;
 	}
 
+	public ItemStackBuilder durability(short durability) {
+		itemStack.setDurability(durability);
+		return this;
+	}
+
 	public ItemStackBuilder name(String displayName) {
 		itemMeta.setDisplayName(colorize(displayName));
 		return this;
