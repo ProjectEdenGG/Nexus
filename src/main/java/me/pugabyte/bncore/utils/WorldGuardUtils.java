@@ -1,9 +1,12 @@
 package me.pugabyte.bncore.utils;
 
+import com.boydti.fawe.object.FawePlayer;
+import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.NonNull;
@@ -11,6 +14,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.Set;
@@ -27,11 +31,19 @@ public class WorldGuardUtils {
 		this.manager = WGBukkit.getRegionManager(world);
 	}
 
-	public ProtectedRegion getRegion(String name) {
+	public ProtectedRegion getProtectedRegion(String name) {
 		ProtectedRegion region = manager.getRegion(name);
 		if (region == null)
 			throw new InvalidInputException("Region not found");
 		return region;
+	}
+
+	public Region getRegion(String name) {
+		return convert(getProtectedRegion(name));
+	}
+
+	public Region getPlayerSelection(Player player) {
+		return FawePlayer.wrap(player).getSelection();
 	}
 
 	public Set<ProtectedRegion> getRegionsAt(Location location) {
@@ -50,12 +62,16 @@ public class WorldGuardUtils {
 		return matches.iterator().next();
 	}
 
+	public ProtectedRegion convert(Region region) {
+		return new ProtectedCuboidRegion("temp", new BlockVector(region.getMaximumPoint()), new BlockVector(region.getMinimumPoint()));
+	}
+
 	public Region convert(ProtectedRegion region) {
 		return new CuboidRegion(region.getMaximumPoint(), region.getMinimumPoint());
 	}
 
 	public Block getRandomBlock(String region) {
-		return getRandomBlock(getRegion(region));
+		return getRandomBlock(getProtectedRegion(region));
 	}
 
 	public Block getRandomBlock(ProtectedRegion region) {

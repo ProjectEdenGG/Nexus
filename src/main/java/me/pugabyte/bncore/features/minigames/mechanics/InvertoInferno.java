@@ -41,7 +41,7 @@ public class InvertoInferno extends TeamlessMechanic {
 	public void onStart(Match match) {
 		super.onStart(match);
 
-		ProtectedRegion region = Minigames.getWorldGuardUtils().getRegion("invertoinferno");
+		ProtectedRegion region = Minigames.getWorldGuardUtils().getProtectedRegion("invertoinferno");
 		int percent = region.volume() / 5;
 		for (int i = 0; i < percent; i++) {
 			Block block = Minigames.getWorldGuardUtils().getRandomBlock(region);
