@@ -6,23 +6,23 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 public abstract class MultiplayerMechanic extends Mechanic {
 
 	@Override
-	public void kill(Minigamer minigamer) {
-		if (minigamer.isRespawning()) return;
+	public void kill(Minigamer victim, Minigamer attacker) {
+		if (victim.isRespawning()) return;
 
-		minigamer.clearState();
-		if (minigamer.getLives() != 0) {
-			minigamer.died();
-			if (minigamer.getLives() == 0) {
-				minigamer.setAlive(false);
-				minigamer.toSpectate();
+		victim.clearState();
+		if (victim.getLives() != 0) {
+			victim.died();
+			if (victim.getLives() == 0) {
+				victim.setAlive(false);
+				victim.toSpectate();
 			} else {
-				minigamer.respawn();
+				victim.respawn();
 			}
 		} else {
-			minigamer.respawn();
+			victim.respawn();
 		}
 
-		super.kill(minigamer);
+		super.kill(victim, attacker);
 	}
 
 }

@@ -1,8 +1,10 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
@@ -10,41 +12,44 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 @Data
 @Builder
+@AllArgsConstructor
 @SerializableAs("Lobby")
 public class Lobby implements ConfigurationSerializable {
 	@NonNull
-	private Location location;
+	private Location location = Minigames.getGamelobby();
 	@NonNull
-	private int waitTime;
+	private int waitTime = 30;
 	private boolean timerStarted;
+
+	public Lobby() {
+		this(new HashMap<>());
+	}
+
+	public Lobby(Map<String, Object> map) {
+		this.location = (Location) map.getOrDefault("location", location);
+		this.waitTime = (Integer) map.getOrDefault("waitTime", waitTime);
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		return new LinkedHashMap<String, Object>() {{
+			put("location", getLocation());
+			put("waitTime", getWaitTime());
+		}};
+	}
 
 	public void join(Minigamer minigamer) {
 		minigamer.teleport(location);
 		minigamer.clearState();
 		if (!timerStarted)
 			new Lobby.LobbyTimer(this, minigamer.getMatch(), waitTime);
-	}
-
-	@Override
-	public Map<String, Object> serialize() {
-		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-		map.put("location", getLocation());
-		map.put("waitTime", getWaitTime());
-
-		return map;
-	}
-
-	public static Lobby deserialize(Map<String, Object> map) {
-		return Lobby.builder()
-				.location((Location) map.get("location"))
-				.waitTime((int) map.get("waitTime"))
-				.build();
 	}
 
 	private class LobbyTimer {
@@ -65,6 +70,11 @@ public class Lobby implements ConfigurationSerializable {
 
 		private void start() {
 			taskId = match.getTasks().repeat(1, 20, () -> {
+				if (match.isStarted()) {
+					stop();
+					return;
+				}
+
 				int current = match.getMinigamers().size();
 				int min = arena.getMinPlayers();
 				int left = min - current;
@@ -74,11 +84,9 @@ public class Lobby implements ConfigurationSerializable {
 					return;
 				}
 
-				if (!match.isStarted()) {
-					if (!timerStarted)
-						match.broadcast("&7Starting in &e" + time + " &7seconds");
-					timerStarted = true;
-				}
+				if (!timerStarted)
+					match.broadcast("&7Starting in &e" + time + " &7seconds");
+				timerStarted = true;
 
 				if (--time > 0) {
 					LobbyTimerTickEvent event = new LobbyTimerTickEvent(match, lobby, time);

@@ -104,6 +104,7 @@ public class ArenaManager {
 	}
 
 	public static void read() {
+		arenas.clear();
 		try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
 			paths.forEach(filePath -> {
 				if (!Files.isRegularFile(filePath)) return;
@@ -134,20 +135,33 @@ public class ArenaManager {
 
 		try {
 			arenaConfig.save(getFile(arena.getName()));
+			add(arena);
 			BNCore.log("Saved arena " + arena.getName());
 		} catch (IOException ex) {
 			BNCore.severe("An error occurred while trying to write arena configuration files: " + ex.getMessage());
 		}
 	}
 
+	public static void delete(String arena) {
+		delete(get(arena));
+	}
+
+	public static void delete(Arena arena) {
+		File file = new File(getFile(arena.getName()));
+		if (!file.exists()) {
+			return;
+		}
+
+		file.delete();
+		remove(arena);
+	}
+
 	public static int getNextId() {
 		int id = 1;
-		for (Arena arena : getAll()) {
-			if (arena.getId() >= id) {
+		for (Arena arena : getAll())
+			if (arena.getId() >= id)
 				id = (arena.getId() + 1);
-			}
-		}
-		BNCore.log("New Arena ID: " + id);
+
 		return id;
 	}
 

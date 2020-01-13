@@ -15,6 +15,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTic
 import me.pugabyte.bncore.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -102,6 +103,9 @@ public class Match {
 	}
 
 	public void start() {
+		if (started)
+			throw new InvalidInputException("Match already started");
+
 		MatchStartEvent event = new MatchStartEvent(this);
 		Utils.callEvent(event);
 		if (event.isCancelled()) return;

@@ -29,7 +29,7 @@ public class InvertoInferno extends TeamlessMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return null;
+		return new ItemStack(Material.FLINT_AND_STEEL);
 	}
 
 	@Override

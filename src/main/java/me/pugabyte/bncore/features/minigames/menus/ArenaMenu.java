@@ -4,9 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
@@ -34,12 +32,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		new AnvilGUI.Builder()
-				.text(text)
-				.onComplete(onComplete)
-				.onClose(p -> menus.openArenaMenu(player, arena))
-				.plugin(BNCore.getInstance())
-				.open(player);
+		openAnvilMenu(player, text, onComplete, p -> Utils.wait(1, () -> menus.openArenaMenu(player, arena)));
 	}
 
 	private enum ArenaMenuItem {
@@ -134,15 +127,28 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			@Override
 			void onClick(Player player, Arena arena) {
 				arena.setSpectateLocation(player.getLocation());
+				arena.write();
 			}
 		},
 		RESPAWN_LOCATION(5, 2, Material.BED) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				arena.setRespawnLocation(player.getLocation());
+				arena.write();
 			}
 		},
-		RESPAWN_SECONDS(5, 3, Material.TOTEM);
+		RESPAWN_SECONDS(5, 3, Material.TOTEM),
+		SAVE(5, 9, Material.END_CRYSTAL) {
+			@Override
+			void onClick(Player player, Arena arena) {
+				arena.write();
+			}
+
+			@Override
+			String getLore(Player player, Arena arena) {
+				return null;
+			}
+		};
 
 		@Getter
 		private int row;
@@ -166,11 +172,11 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		String getLore(Player player, Arena arena) {
-			return "||&eCurrent value: &3" + getter(player, arena); // + "|| ||&eClick to change";
+			return "||&eCurrent value: &3" + getter(player, arena);
 		}
 
 		void onClick(Player player, Arena arena) {
-			openAnvilMenu(player, arena, getter(player, arena), (Player p, String text) -> {
+			openAnvilMenu(player, arena, getter(player, arena), (p, text) -> {
 				setter(player, arena, text);
 				return AnvilGUI.Response.close();
 			});
@@ -191,10 +197,13 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		void setter(Player player, Arena arena, String text) {
 			try {
 				PropertyDescriptor propertyDescriptor = getPropertyDescriptor();
-				propertyDescriptor.getWriteMethod().invoke(arena, propertyDescriptor.getPropertyType().cast(text));
+				Object value = text;
+				if (propertyDescriptor.getPropertyType() == Integer.TYPE)
+					value = Integer.valueOf(text);
+				propertyDescriptor.getWriteMethod().invoke(arena, value);
 			} catch (Exception ignore) {}
 
-			ArenaManager.write();
+			arena.write();
 		}
 	}
 
@@ -204,7 +213,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			contents.set(
 					(menuItem.getRow() - 1),
 					(menuItem.getColumn() - 1),
-					ClickableItem.of(
+					ClickableItem.from(
 							nameItem(menuItem.getItem(), "&e" + menuItem.getTitle(), menuItem.getLore(player, arena)),
 							e -> menuItem.onClick(player, arena)
 					)

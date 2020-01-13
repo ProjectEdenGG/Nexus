@@ -18,6 +18,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import lombok.Getter;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
@@ -55,6 +56,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class Thimble extends TeamlessMechanic {
 
@@ -312,12 +315,15 @@ public final class Thimble extends TeamlessMechanic {
 			ItemStack helmetItem = player.getInventory().getHelmet();
 			player.getInventory().clear();
 			if (Utils.isNullOrAir(helmetItem)) {
-				Optional<Short> first = Shorts.asList(CONCRETE_IDS).stream().filter(id -> !matchData.getChosenConcrete().contains(id)).findFirst();
+				Stream<Short> available = Shorts.asList(CONCRETE_IDS).stream().filter(id -> !matchData.getChosenConcrete().contains(id));
+				Optional<Short> first = available.findFirst();
 				if (first.isPresent()) {
-					ItemStack concrete = new ItemStack(Material.CONCRETE, 1);
-					concrete.setDurability(first.get());
+					ItemStack concrete = new ItemStack(Material.CONCRETE, 1, first.get());
 					matchData.getChosenConcrete().add(first.get());
 					helmetItem = concrete;
+				} else {
+					BNCore.warn("Could not assign " + player.getName() + " a thimble block, out of blocks! " +
+							"(Blocks left: " + available.map(String::valueOf).collect(Collectors.joining(", ")) + ")");
 				}
 			}
 			player.getInventory().setHelmet(helmetItem);
@@ -628,7 +634,7 @@ public final class Thimble extends TeamlessMechanic {
 				}
 				concrete = new ItemStack(Material.CONCRETE, 1, CONCRETE_IDS[ndx]);
 				ItemStack finalConcrete = concrete;
-				contents.set(new SlotPos(row, col), ClickableItem.of(concrete, e -> pickColor(finalConcrete, player)));
+				contents.set(new SlotPos(row, col), ClickableItem.from(concrete, e -> pickColor(finalConcrete, player)));
 				if (ndx < CONCRETE_IDS.length - 1)
 					ndx++;
 				else

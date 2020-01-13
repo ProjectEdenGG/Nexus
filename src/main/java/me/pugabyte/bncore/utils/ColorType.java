@@ -1,10 +1,13 @@
 package me.pugabyte.bncore.utils;
 
-import java.util.Arrays;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
 
 @Getter
 public enum ColorType {
@@ -154,6 +157,14 @@ public enum ColorType {
 
 	public static ColorType fromDurability(int durability) {
 		return Arrays.stream(values()).filter(colorConfig -> durability == (colorConfig.getDurability())).findFirst().orElse(null);
+	}
+
+	public ItemStack getItemStack(Material material) {
+		return new ItemStack(material, 1, getDurability().shortValue());
+	}
+
+	public String getDisplayName() {
+		return chatColor + Utils.camelCase(name);
 	}
 
 }

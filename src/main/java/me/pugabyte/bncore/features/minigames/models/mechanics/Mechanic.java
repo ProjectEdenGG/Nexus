@@ -64,13 +64,15 @@ public abstract class Mechanic implements Listener {
 	protected void onDamage(Minigamer victim, EntityDamageEvent event) {}
 
 	public void onDeath(Minigamer victim) {
-		// TODO: Autobalancing
-		victim.getMatch().broadcast(victim.getColoredName() + " &3died");
+		onDeath(victim, null);
 	}
 
 	public void onDeath(Minigamer victim, Minigamer killer) {
 		// TODO: Autobalancing
-		victim.getMatch().broadcast(victim.getColoredName() + " &3was killed by " + killer.getColoredName());
+		if (killer == null)
+			victim.getMatch().broadcast(victim.getColoredName() + " &3died");
+		else
+			victim.getMatch().broadcast(victim.getColoredName() + " &3was killed by " + killer.getColoredName());
 	}
 
 	public void onJoin(Minigamer minigamer) {
@@ -86,10 +88,18 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void kill(Minigamer minigamer) {
-		onDeath(minigamer);
-		minigamer.getMatch().getScoreboard().update();
-		if (shouldBeOver(minigamer.getMatch()))
-			minigamer.getMatch().end();
+		kill(minigamer, null);
+	}
+
+	public void kill(Minigamer victim, Minigamer attacker) {
+		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, attacker);
+		Utils.callEvent(deathEvent);
+		if (deathEvent.isCancelled()) return;
+
+		onDeath(victim, attacker);
+		victim.getMatch().getScoreboard().update();
+		if (shouldBeOver(victim.getMatch()))
+			victim.getMatch().end();
 	}
 
 	public abstract void announceWinners(Match match);
@@ -125,6 +135,7 @@ public abstract class Mechanic implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
 			if (event.getClickedBlock() != null)
 				if (!minigamer.getMatch().getArena().canUseBlock(event.getClickedBlock().getType())) {
+					BNCore.log("Cancelling interact");
 					event.setCancelled(true);
 					return;
 				}
@@ -141,6 +152,7 @@ public abstract class Mechanic implements Listener {
 		onPlayerInteract(minigamer, event);
 	}
 
+	// TODO: Prevent damage of hanging entities/armor stands/etc
 	@EventHandler
 	public void onDeath(EntityDamageByEntityEvent event) {
 		Minigamer victim, attacker;
@@ -189,16 +201,14 @@ public abstract class Mechanic implements Listener {
 				event.setCancelled(true);
 			} else {
 				// Damaged by opponent
-				if (event.getDamage() >= victim.getPlayer().getHealth()) {
-					event.setCancelled(true);
-					MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, attacker);
-					Utils.callEvent(deathEvent);
-					if (!deathEvent.isCancelled()) {
-						mechanic.onDeath(victim, attacker);
-						if (!victim.getMatch().isEnded()) {
-							mechanic.kill(victim);
-						}
-					}
+				if (event.getDamage() < victim.getPlayer().getHealth()) {
+					onDamage(victim, event);
+					return;
+				}
+
+				event.setCancelled(true);
+				if (!victim.getMatch().isEnded()) {
+					mechanic.kill(victim, attacker);
 				}
 			}
 		} else {
@@ -227,22 +237,14 @@ public abstract class Mechanic implements Listener {
 			return;
 		}
 
-		Mechanic mechanic = victim.getMatch().getArena().getMechanic();
-
 		if (event.getDamage() < victim.getPlayer().getHealth()) {
 			onDamage(victim, event);
 			return;
 		}
 
 		event.setCancelled(true);
-
-		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim);
-		Utils.callEvent(deathEvent);
-		if (deathEvent.isCancelled()) return;
-
-		if (victim.getMatch().isEnded()) return;
-
-		kill(victim);
+		if (!victim.getMatch().isEnded())
+			kill(victim);
 	}
 
 	public abstract boolean shouldBeOver(Match match);

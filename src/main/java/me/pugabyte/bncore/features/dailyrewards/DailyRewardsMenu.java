@@ -49,10 +49,10 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		if (day > MAX_DAY - 6) day = MAX_DAY - 6;
 
 		final int initialDay = day;
-		contents.set(new SlotPos(0, 0), ClickableItem.of(back, e -> scroll(contents, -1, initialDay)));
-		contents.set(new SlotPos(2, 0), ClickableItem.of(back7, e -> scroll(contents, -7, initialDay)));
-		contents.set(new SlotPos(0, 8), ClickableItem.of(forward, e -> scroll(contents, 1, initialDay)));
-		contents.set(new SlotPos(2, 8), ClickableItem.of(forward7, e -> scroll(contents, 7, initialDay)));
+		contents.set(new SlotPos(0, 0), ClickableItem.from(back, e -> scroll(contents, -1, initialDay)));
+		contents.set(new SlotPos(2, 0), ClickableItem.from(back7, e -> scroll(contents, -7, initialDay)));
+		contents.set(new SlotPos(0, 8), ClickableItem.from(forward, e -> scroll(contents, 1, initialDay)));
+		contents.set(new SlotPos(2, 8), ClickableItem.from(forward7, e -> scroll(contents, 7, initialDay)));
 
 		int column = 1;
 		for (int i = 0; i < 7; ++i) {
@@ -66,7 +66,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 				} else {
 					ItemStack item = nameItem(unclaimed.clone(), "&eDay " + day, "&6&lClick to claim" + reward, day);
 					final int currentDay = day;
-					contents.set(new SlotPos(1, column), ClickableItem.of(item, e -> {
+					contents.set(new SlotPos(1, column), ClickableItem.from(item, e -> {
 						dailyRewards.claim(currentDay);
 						service.save(dailyRewards);
 						scroll(contents, 0, initialDay);

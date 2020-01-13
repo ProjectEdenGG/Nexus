@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -97,7 +98,7 @@ public class Minigamer {
 	}
 
 	public void tell(String message) {
-		player.sendMessage(Utils.getPrefix("Minigames") + colorize(message));
+		player.sendMessage(Minigames.PREFIX + colorize(message));
 	}
 
 	public void toGamelobby() {
@@ -113,6 +114,9 @@ public class Minigamer {
 	}
 
 	public void teleport(Location location, boolean withSlowness) {
+		if (location == null)
+			throw new InvalidInputException("Tried to teleport " + player.getName() + " to a null location");
+
 		// TODO: Allow/disallow teleportation
 		player.setVelocity(new Vector(0, 0, 0));
 		player.teleport(location.clone().add(0, .25, 0));

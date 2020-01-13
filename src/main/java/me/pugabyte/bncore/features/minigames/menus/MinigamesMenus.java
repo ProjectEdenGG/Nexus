@@ -2,9 +2,11 @@ package me.pugabyte.bncore.features.minigames.menus;
 
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryProvider;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
+import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import org.bukkit.Sound;
@@ -14,13 +16,15 @@ import org.reflections.Reflections;
 import java.util.Set;
 
 public class MinigamesMenus extends MenuUtils {
+	@Getter
+	private TeamMenus teamMenus = new TeamMenus();
 
 	public void openArenaMenu(Player player, Arena arena) {
 		SmartInventory inv = SmartInventory.builder()
 				.id("minigameManager")
 				.title(arena.getDisplayName())
 				.provider(new ArenaMenu(arena))
-				.size(6, 9)
+				.size(5, 9)
 				.build();
 		inv.open(player);
 	}
