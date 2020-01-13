@@ -18,7 +18,7 @@ public class PotionEffectEditor {
 	private boolean particles;
 	private Color color;
 
-	public PotionEffectEditor(@NonNull PotionEffect effect) {
+	public PotionEffectEditor(PotionEffect effect) {
 		this.effect = effect;
 		type = effect.getType();
 		duration = effect.getDuration();

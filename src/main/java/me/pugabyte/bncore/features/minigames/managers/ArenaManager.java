@@ -135,8 +135,9 @@ public class ArenaManager {
 
 		try {
 			arenaConfig.save(getFile(arena.getName()));
-			add(arena);
 			BNCore.log("Saved arena " + arena.getName());
+			if (!arenas.contains(arena))
+				add(arena);
 		} catch (IOException ex) {
 			BNCore.severe("An error occurred while trying to write arena configuration files: " + ex.getMessage());
 		}

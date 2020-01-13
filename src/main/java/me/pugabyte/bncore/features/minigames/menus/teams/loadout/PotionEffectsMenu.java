@@ -11,7 +11,6 @@ import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -43,7 +42,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 		contents.set(0, 2, ClickableItem.from(nameItem(new ItemStack(Material.ANVIL), "&eCopy Potions", "&3This will copy all the||&3potion effects you have||&3into the team's loadout."), e -> {
 			team.getLoadout().getEffects().addAll(player.getActivePotionEffects());
 			arena.write();
-			menus.getTeamMenus().openLoadoutMenu(player, arena, team);
+			menus.getTeamMenus().openPotionEffectsMenu(player, arena, team);
 		}));
 
 		contents.set(0, 6, ClickableItem.from(nameItem(new ItemStack(Material.BOOK), "&eList Potion Effects", "&3Click me to get a list of||&3all valid potion effect||&3names that can be added."), e -> {
@@ -96,8 +95,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 					.build();
 
 			contents.set(row, column, ClickableItem.from(item, e -> {
-				InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
-				if (event.getCursor().getType().equals(Material.TNT)) {
+				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					Utils.wait(2, () -> {
 						team.getLoadout().getEffects().remove(potionEffect);
 						arena.write();
