@@ -53,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//TODO: Show turn timer to turn player
+
 public final class Thimble extends TeamlessMechanic {
 
 	@Getter
