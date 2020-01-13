@@ -8,10 +8,11 @@ import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.extent.clipboard.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -21,6 +22,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class WorldEditUtils {
 	@NonNull
@@ -38,12 +43,42 @@ public class WorldEditUtils {
 		worldGuardUtils = new WorldGuardUtils(world);
 	}
 
+	public EditSession getEditSession() {
+		return new EditSessionBuilder(worldEditWorld).fastmode(true).build();
+	}
+
 	private File getSchematicFile(String fileName) {
 		return new File(schematicsDirectory + fileName + ".schematic");
 	}
 
-	static Vector getVector(Location location) {
+	public Vector getVector(Location location) {
 		return new Vector(location.getX(), location.getY(), location.getZ());
+	}
+
+	public BaseBlock toBaseBlock(Material material) {
+		return toBaseBlock(material, (short) 0);
+	}
+
+	public BaseBlock toBaseBlock(Material material, short data) {
+		return new BaseBlock(material.getId(), data);
+	}
+
+	public Set<BaseBlock> toBaseBlocks(Set<Material> materials) {
+		Set<BaseBlock> baseBlocks = new HashSet<>();
+		materials.forEach(material -> baseBlocks.add(toBaseBlock(material)));
+		return baseBlocks;
+	}
+
+	public RandomPattern toRandomPattern(Set<Material> materials) {
+		RandomPattern pattern = new RandomPattern();
+		toBaseBlocks(materials).forEach(baseBlock -> pattern.add(baseBlock, (float) 100 / materials.size()));
+		return pattern;
+	}
+
+	public RandomPattern toRandomPattern(Map<Material, Double> materials) {
+		RandomPattern pattern = new RandomPattern();
+		materials.forEach((material, chance) -> pattern.add(toBaseBlock(material), chance));
+		return pattern;
 	}
 
 	public void paste(String fileName, Location location) {
@@ -79,16 +114,35 @@ public class WorldEditUtils {
 	}
 
 	public void fill(String region, Material material, int data) {
-		fill(worldGuardUtils.getRegion(region), material, data);
+		fill(worldGuardUtils.convert(worldGuardUtils.getProtectedRegion(region)), material, data);
 	}
 
-	public void fill(ProtectedRegion region, Material material) {
+	public void fill(Region region, Material material) {
 		fill(region, material, 0);
 	}
 
-	public void fill(ProtectedRegion region, Material material, int data) {
-		EditSession editSession = new EditSessionBuilder(worldEditWorld).fastmode(true).build();
-		editSession.setBlocks(worldGuardUtils.convert(region), new BaseBlock(material.getId(), data));
+	public void fill(Region region, Material material, int data) {
+		EditSession editSession = getEditSession();
+		editSession.setBlocks(region, new BaseBlock(material.getId(), data));
 		editSession.flushQueue();
 	}
+
+	public void replace(Region region, Material from, Material to) {
+		replace(region, Collections.singleton(from), Collections.singleton(to));
+	}
+
+	public void replace(Region region, Set<Material> from, Set<Material> to) {
+		replace(region, from, toRandomPattern(to));
+	}
+
+	public void replace(Region region, Set<Material> from, Map<Material, Double> pattern) {
+		replace(region, from, toRandomPattern(pattern));
+	}
+
+	public void replace(Region region, Set<Material> from, Pattern pattern) {
+		EditSession editSession = getEditSession();
+		editSession.replaceBlocks(region, toBaseBlocks(from), pattern);
+		editSession.flushQueue();
+	}
+
 }
