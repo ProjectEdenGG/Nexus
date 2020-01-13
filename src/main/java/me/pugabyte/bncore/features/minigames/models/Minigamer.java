@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -102,6 +103,7 @@ public class Minigamer {
 	}
 
 	public void toGamelobby() {
+		player.setGameMode(GameMode.SURVIVAL);
 		teleport(Minigames.getGamelobby());
 	}
 
@@ -174,6 +176,16 @@ public class Minigamer {
 	public void clearState() {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		// TODO: Unvanish
+		clearGameModeState();
+		player.setGameMode(match.getArena().getMechanic().getGameMode());
+		clearGameModeState();
+
+		for (Player toUnhide : Bukkit.getOnlinePlayers())
+			if (player != toUnhide)
+				player.showPlayer(BNCore.getInstance(), toUnhide);
+	}
+
+	private void clearGameModeState() {
 		player.setFireTicks(0);
 		player.resetMaxHealth();
 		player.setHealth(20);
@@ -181,12 +193,9 @@ public class Minigamer {
 		player.setTotalExperience(0);
 		player.setLevel(0);
 		player.getInventory().clear();
+
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
-
-		for (Player toUnhide : Bukkit.getOnlinePlayers())
-			if (player != toUnhide)
-				player.showPlayer(BNCore.getInstance(), toUnhide);
 	}
 
 }

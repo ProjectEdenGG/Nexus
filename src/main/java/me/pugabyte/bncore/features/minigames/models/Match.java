@@ -62,7 +62,6 @@ public class Match {
 	}
 
 	public boolean join(Minigamer minigamer) {
-
 		initialize();
 
 		if (started) {
@@ -95,8 +94,8 @@ public class Match {
 
 		minigamers.remove(minigamer);
 		arena.getMechanic().onQuit(minigamer);
-		minigamer.toGamelobby();
 		minigamer.clearState();
+		minigamer.toGamelobby();
 		scoreboard.update();
 		if (minigamers == null || minigamers.size() == 0)
 			MatchManager.remove(this);
