@@ -4,22 +4,19 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
-import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.features.minigames.models.Loadout;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.utils.ColorType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
+import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 
 public class DeleteLoadoutMenu extends MenuUtils implements InventoryProvider {
-
 	Arena arena;
 	Team team;
-	TeamMenus menus = new TeamMenus();
 
 	public DeleteLoadoutMenu(Arena arena, Team team) {
 		this.arena = arena;
@@ -28,16 +25,14 @@ public class DeleteLoadoutMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.fillRect(0, 0, 2, 8, ClickableItem.of(nameItem(new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte) 5),
-				"&7Cancel"), e -> menus.openTeamsMenu(player, arena)));
-		contents.fillRect(1, 1, 1, 7, ClickableItem.of(nameItem(new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte) 5),
-				"&7Cancel"), e -> menus.openTeamsMenu(player, arena)));
-		contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.TNT),
-				"&4&lDELETE LOADOUT", "&7This cannot be undone."), e -> {
-			team.getLoadout().setInventoryContents(new ItemStack[]{});
-			team.getLoadout().setPotionEffects(new ArrayList<PotionEffect>());
-			ArenaManager.write(arena);
-			menus.openLoadoutMenu(player, arena, team);
+		ItemStack cancel = nameItem(new ItemStack(Material.STAINED_GLASS_PANE, 1, ColorType.LIME.getDurability().shortValue()), "&7Cancel");
+		contents.fillRect(0, 0, 2, 8, ClickableItem.from(cancel, e -> menus.getTeamMenus().openTeamsMenu(player, arena)));
+		contents.fillRect(1, 1, 1, 7, ClickableItem.from(cancel, e -> menus.getTeamMenus().openTeamsMenu(player, arena)));
+
+		contents.set(1, 4, ClickableItem.from(nameItem(new ItemStack(Material.TNT), "&4&lDELETE LOADOUT", "&7This cannot be undone."), e -> {
+			team.setLoadout(new Loadout());
+			arena.write();
+			menus.getTeamMenus().openLoadoutMenu(player, arena, team);
 		}));
 	}
 

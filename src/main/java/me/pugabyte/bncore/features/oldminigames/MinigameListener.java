@@ -4,7 +4,6 @@ import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.events.StartMinigameEvent;
 import au.com.mineauz.minigames.minigame.Minigame;
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.oldminigames.quake.Railgun;
 import org.bukkit.Bukkit;
@@ -78,13 +77,6 @@ public class MinigameListener implements Listener {
 				}
 			}
 		} catch (NullPointerException ex) {
-		}
-	}
-
-	@EventHandler
-	public void onMinigameLobbyEnter(RegionEnteredEvent event) {
-		if (event.getRegion().getId().equalsIgnoreCase("minigamelobby")) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "rg flag minigamelobby -w gameworld time-lock 18000");
 		}
 	}
 }

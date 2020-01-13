@@ -81,8 +81,12 @@ public class ItemStackBuilder {
 	}
 
 	public ItemStackBuilder effect(PotionEffectType potionEffectType, int seconds, int amplifier) {
+		return effect(new PotionEffect(potionEffectType, seconds * 20, amplifier - 1));
+	}
+
+	public ItemStackBuilder effect(PotionEffect potionEffect) {
 		PotionMeta potionMeta = (PotionMeta) itemMeta;
-		potionMeta.addCustomEffect(new PotionEffect(potionEffectType, seconds * 20, amplifier - 1), true);
+		potionMeta.addCustomEffect(potionEffect, true);
 		itemMeta = potionMeta;
 		return this;
 	}

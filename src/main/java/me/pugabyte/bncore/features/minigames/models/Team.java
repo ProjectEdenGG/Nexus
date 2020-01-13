@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -10,35 +11,54 @@ import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-@Builder
 @Data
+@Builder
+@AllArgsConstructor
 @SerializableAs("Team")
 public class Team implements ConfigurationSerializable {
 	@NonNull
-	private String name;
+	private String name = "Default";
 	@NonNull
-	private ChatColor color;
-	@NonNull
+	private ChatColor color = ChatColor.WHITE;
 	private String objective;
-	private Loadout loadout;
-	@NonNull
-	private List<Location> spawnpoints;
+	private Loadout loadout = new Loadout();
+	private List<Location> spawnpoints = new ArrayList<>();
 	private int balancePercentage = -1;
 
-	public static Team deserialize(Map<String, Object> map) {
-		return Team.builder()
-				.name((String) map.get("name"))
-				.color(ChatColor.valueOf(((String) map.getOrDefault("color", ChatColor.WHITE)).toUpperCase()))
-				.objective((String) map.get("objective"))
-				.loadout((Loadout) map.get("loadout"))
-				.spawnpoints((List<Location>) map.get("spawnpoints"))
-				.build();
+	public Team() {
+		this(new HashMap<>());
+	}
+
+	public Team(String name) {
+		this(new HashMap<String, Object>() {{ put("name", name); }});
+	}
+
+	public Team(Map<String, Object> map) {
+		this.name = (String) map.getOrDefault("name", name);
+		this.color = ChatColor.valueOf(((String) map.getOrDefault("color", color.name())).toUpperCase());
+		this.objective = (String) map.get("objective");
+		this.loadout = (Loadout) map.getOrDefault("loadout", loadout);
+		this.spawnpoints = (List<Location>) map.getOrDefault("spawnpoints", spawnpoints);
+		this.balancePercentage = (Integer) map.getOrDefault("balancePercentage", balancePercentage);
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		return new LinkedHashMap<String, Object>() {{
+			put("name", ChatColor.stripColor(getName()));
+			put("color", getColor().name());
+			put("objective", getObjective());
+			put("loadout", getLoadout());
+			put("spawnpoints", getSpawnpoints());
+			put("balancePercentage", getBalancePercentage());
+		}};
 	}
 
 	public String getColoredName() {
@@ -91,18 +111,6 @@ public class Team implements ConfigurationSerializable {
 		return match.getMinigamers().stream()
 				.filter(minigamer -> minigamer.getTeam().equals(this))
 				.collect(Collectors.toList());
-	}
-
-	@Override
-	public Map<String, Object> serialize() {
-		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-		map.put("name", ChatColor.stripColor(getName()));
-		map.put("color", getColor().name());
-		map.put("objective", getObjective());
-		map.put("loadout", getLoadout());
-		map.put("spawnpoints", getSpawnpoints());
-
-		return map;
 	}
 
 }

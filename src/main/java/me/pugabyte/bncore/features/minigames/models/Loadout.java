@@ -4,13 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.utils.SerializationUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,55 +22,30 @@ import java.util.Map;
 @AllArgsConstructor
 @SerializableAs("Loadout")
 public class Loadout implements ConfigurationSerializable {
-	private ItemStack[] inventoryContents;
-	private List<PotionEffect> potionEffects;
+	private ItemStack[] inventory = new ItemStack[41];
+	private List<PotionEffect> effects = new ArrayList<>();
 
-	public void apply(Minigamer minigamer) {
-		minigamer.clearState();
-		Player player = minigamer.getPlayer();
-		if (inventoryContents != null)
-			player.getInventory().setContents(inventoryContents);
-		if (potionEffects != null)
-			player.addPotionEffects(potionEffects);
+	public Loadout(Map<String, Object> map) {
+		this.inventory = SerializationUtils.deserializeItems((Map<String, Object>) map.getOrDefault("inventory", inventory));
+		this.effects = (List<PotionEffect>) map.getOrDefault("effects", effects);
 	}
 
 	@Override
 	public Map<String, Object> serialize() {
-		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-		if (getInventoryContents() != null)
-			map.put("inventory", serializeItems());
-		if (getPotionEffects() != null)
-			map.put("effects", getPotionEffects());
-
-		return map;
+		return new LinkedHashMap<String, Object>() {{
+			put("inventory", SerializationUtils.serializeItems(inventory));
+			put("effects", effects);
+		}};
 	}
 
-	private Map<String, ItemStack> serializeItems() {
-		Map<String, ItemStack> items = new HashMap<>();
-		int slot = 0;
-		for (ItemStack item : getInventoryContents()) {
-			if (item != null)
-				items.put(String.valueOf(slot), item);
-			slot++;
-		}
-
-		return items;
+	public void apply(Minigamer minigamer) {
+		minigamer.clearState();
+		Player player = minigamer.getPlayer();
+		if (inventory != null)
+			player.getInventory().setContents(inventory.clone());
+		if (effects != null)
+			player.addPotionEffects(effects);
 	}
 
-	public static Loadout deserialize(Map<String, Object> map) {
-		return Loadout.builder()
-				.inventoryContents(deserializeItems((Map<String, Object>) map.get("inventory")))
-				.potionEffects((List<PotionEffect>) map.get("effects"))
-				.build();
-	}
-
-	private static ItemStack[] deserializeItems(Map<String, Object> items) {
-		ItemStack[] inventory = new ItemStack[41];
-		for (Map.Entry<String, Object> item : items.entrySet()) {
-			inventory[Integer.parseInt(item.getKey())] = (ItemStack) item.getValue();
-		}
-
-		return inventory;
-	}
 
 }
