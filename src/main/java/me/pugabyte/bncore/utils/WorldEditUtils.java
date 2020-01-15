@@ -16,7 +16,6 @@ import com.sk89q.worldedit.world.World;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,7 +50,7 @@ public class WorldEditUtils {
 		return new File(schematicsDirectory + fileName + ".schematic");
 	}
 
-	public Vector getVector(Location location) {
+	public Vector toVector(Location location) {
 		return new Vector(location.getX(), location.getY(), location.getZ());
 	}
 
@@ -81,8 +80,16 @@ public class WorldEditUtils {
 		return pattern;
 	}
 
+	public Schematic copy(Location min, Location max) {
+		return copy(worldGuardUtils.getRegion(min, max));
+	}
+
+	public Schematic copy(Region region) {
+		return new Schematic(region);
+	}
+
 	public void paste(String fileName, Location location) {
-		paste(fileName, getVector(location));
+		paste(fileName, toVector(location));
 	}
 
 	@SneakyThrows
@@ -91,12 +98,19 @@ public class WorldEditUtils {
 		if (!file.exists())
 			throw new InvalidInputException("Schematic " + fileName + " does not exist");
 
-		ClipboardFormats.findByFile(file).load(file).paste(worldEditWorld, vector);
-		BNCore.log("Schematic " + file.getName() + " pasted at " + vector.toString());
+		paste(ClipboardFormats.findByFile(file).load(file), vector);
+	}
+
+	public void paste(Schematic schematic, Location location) {
+		paste(schematic, toVector(location));
+	}
+
+	public void paste(Schematic schematic, Vector vector) {
+		schematic.paste(worldEditWorld, vector);
 	}
 
 	public void save(String fileName, Location min, Location max) {
-		save(fileName, getVector(min), getVector(max));
+		save(fileName, toVector(min), toVector(max));
 	}
 
 	public void save(String fileName, Region region) {

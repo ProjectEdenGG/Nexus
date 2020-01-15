@@ -2,6 +2,7 @@ package me.pugabyte.bncore.utils;
 
 import com.boydti.fawe.object.FawePlayer;
 import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.bukkit.WGBukkit;
@@ -38,8 +39,16 @@ public class WorldGuardUtils {
 		return region;
 	}
 
+	public Vector toVector(Location location) {
+		return new Vector(location.getX(), location.getY(), location.getZ());
+	}
+
 	public Region getRegion(String name) {
 		return convert(getProtectedRegion(name));
+	}
+
+	public Region getRegion(Location min, Location max) {
+		return new CuboidRegion(toVector(min), toVector(max));
 	}
 
 	public Region getPlayerSelection(Player player) {
