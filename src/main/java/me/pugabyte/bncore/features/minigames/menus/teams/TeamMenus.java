@@ -87,7 +87,7 @@ public class TeamMenus {
 				.id("teamPotionEffectEditorMenu")
 				.title("Potion Effect Editor Menu")
 				.provider(new PotionEffectEditorMenu(arena, team, potionEffect))
-				.size(2, 9)
+				.size(6, 9)
 				.build();
 		INV.open(player);
 	}

@@ -6,12 +6,15 @@ import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.PotionEffectEditor;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.function.BiFunction;
 
@@ -37,11 +40,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> menus.getTeamMenus().openPotionEffectsMenu(player, arena, team));
 
-		//Potion Item
-		contents.set(0, 4, ClickableItem.empty(nameItem(Material.DIAMOND_BLOCK, "&e" + potionEffect.getType().getName(),
-				"&3Duration:&e " + potionEffect.getDuration() + "||&3Amplifier: &e" + potionEffect.getAmplifier())));
-
-		contents.set(1, 3, ClickableItem.from(nameItem(
+		contents.set(0, 3, ClickableItem.from(nameItem(
 					Material.REDSTONE,
 					"&eDuration",
 					"||&eCurrent value: &3" + potionEffect.getDuration()
@@ -65,7 +64,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 					}
 				})));
 
-		contents.set(1, 5, ClickableItem.from(nameItem(
+		contents.set(0, 5, ClickableItem.from(nameItem(
 					Material.GLOWSTONE_DUST,
 					"&eAmplifier",
 					"||&eCurrent value: &3" + potionEffect.getAmplifier()
@@ -86,6 +85,42 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 						return AnvilGUI.Response.close();
 					}
 				})));
+
+		contents.set(0, 8, ClickableItem.from(nameItem(Material.END_CRYSTAL, "&eSave"), e-> arena.write()));
+
+		int row = 2;
+		int column = 0;
+		for(PotionEffectType effect : PotionEffectType.values()){
+			if(effect == null) continue;
+
+			ItemStack potionItem = new ItemStackBuilder(Material.POTION)
+					.name("&e" + Utils.camelCase(effect.getName().replace("_", " ")))
+					.effect(new PotionEffect(effect, 5 ,0))
+					.effectColor(effect.getColor())
+					.build();
+
+			if(effect == potionEffect.getType()) potionItem.setType(Material.SPLASH_POTION);
+
+			contents.set(row, column, ClickableItem.from(potionItem,
+					e-> {
+				team.getLoadout().getEffects().remove(potionEffect);
+				potionEffect = new PotionEffectEditor(potionEffect).withType(effect);
+				team.getLoadout().getEffects().add(potionEffect);
+				arena.write();
+						Utils.wait(1, () -> {
+							player.closeInventory();
+							Utils.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
+						});
+					}));
+
+			if(column == 8){
+				column = 0;
+				row++;
+			} else {
+				column++;
+			}
+		}
+
 	}
 
 	@Override
