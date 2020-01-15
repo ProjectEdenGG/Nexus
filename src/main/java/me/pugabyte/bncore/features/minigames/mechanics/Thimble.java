@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 
 //TODO: Show turn timer to turn player
+//TODO: Gamemode description messages onm lobby join
 
 public final class Thimble extends TeamlessMechanic {
 
