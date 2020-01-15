@@ -57,22 +57,13 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 			player.sendMessage(Utils.colorize(PREFIX + "&e" + potions));
 		}));
 
-		contents.set(0, 4, ClickableItem.from(nameItem(
-				Material.EMERALD_BLOCK,
-				"&eAdd Potion Effect"
-			),
-			e -> openAnvilMenu(player, arena, team, "Potion Effect Name", (p, text) -> {
-				try {
-					PotionEffectType potion = PotionEffectType.getByName(text.toUpperCase());
-					team.getLoadout().getEffects().add(new PotionEffect(potion, 0, 0));
+		contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&eAdd Potion Effect"),
+			e -> {
+					PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 5, 0);
+					team.getLoadout().getEffects().add(potionEffect);
 					arena.write();
-					menus.getTeamMenus().openPotionEffectsMenu(player, arena, team);
-					return AnvilGUI.Response.text(text);
-				} catch (Exception ex) {
-					player.sendMessage(Utils.colorize(PREFIX + "Please use one of the valid potion types."));
-					return AnvilGUI.Response.close();
-				}
-			})));
+					menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect);
+			}));
 
 		ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode.||&7Then, click a potion effect with ||&7me to delete it.");
 		contents.set(0, 8, ClickableItem.from(deleteItem, e -> Utils.wait(2, () -> {

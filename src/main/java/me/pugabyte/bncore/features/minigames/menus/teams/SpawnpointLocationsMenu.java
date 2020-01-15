@@ -14,6 +14,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvider {
 	Arena arena;
 	Team team;
@@ -53,20 +56,22 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 		if (team.getSpawnpoints() == null) return;
 
 		ClickableItem[] clickableItems = new ClickableItem[team.getSpawnpoints().size()];
-		for (Location location : team.getSpawnpoints()) {
-			ItemStack item = nameItem(Material.COMPASS, "&eSpawnpoint #" + (team.getSpawnpoints().indexOf(location) + 1),
-					getLocationLore(location) + "|| ||&7Click to Teleport");
+		List<Location> spawnpoints = new ArrayList<>(team.getSpawnpoints());
+		for (int i = 0; i < spawnpoints.size(); i++) {
+			Location spawnpoint = spawnpoints.get(i);
+			ItemStack item = nameItem(Material.COMPASS, "&eSpawnpoint #" + (i + 1),
+					getLocationLore(spawnpoints.get(i)) + "|| ||&7Click to Teleport");
 
-			clickableItems[team.getSpawnpoints().indexOf(location)] = ClickableItem.from(item, e -> {
+			clickableItems[i] = ClickableItem.from(item, e -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					Utils.wait(2, () -> {
-						team.getSpawnpoints().remove(location);
+						team.getSpawnpoints().remove(spawnpoint);
 						arena.write();
 						player.setItemOnCursor(new ItemStack(Material.AIR));
 						teamMenus.openSpawnpointMenu(arena, team).open(player, page.getPage());
 					});
 				} else {
-					player.teleport(location);
+					player.teleport(spawnpoint);
 				}
 			});
 

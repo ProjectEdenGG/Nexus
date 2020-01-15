@@ -128,13 +128,26 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			void onClick(Player player, Arena arena) {
 				arena.setSpectateLocation(player.getLocation());
 				arena.write();
+				menus.openArenaMenu(player, arena);
 			}
+
+			@Override
+			String getLore(Player player, Arena arena){
+				return getLocationLore(arena.getSpectateLocation());
+			}
+
 		},
 		RESPAWN_LOCATION(5, 2, Material.BED) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				arena.setRespawnLocation(player.getLocation());
 				arena.write();
+				menus.openArenaMenu(player, arena);
+			}
+
+			@Override
+			String getLore(Player player, Arena arena) {
+				return getLocationLore(arena.getRespawnLocation());
 			}
 		},
 		RESPAWN_SECONDS(5, 3, Material.TOTEM),

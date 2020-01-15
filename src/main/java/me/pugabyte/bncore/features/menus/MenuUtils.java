@@ -59,7 +59,7 @@ public abstract class MenuUtils {
 		Bukkit.dispatchCommand(player, command);
 	}
 
-	public String getLocationLore(Location location) {
+	public static String getLocationLore(Location location) {
 		return "&3X:&e " + (int) location.getX() + "||&3Y:&e " + (int) location.getY() + "||&3Z:&e " + (int) location.getZ();
 	}
 

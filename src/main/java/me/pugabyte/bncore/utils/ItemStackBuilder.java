@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.utils;
 
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -92,6 +93,13 @@ public class ItemStackBuilder {
 	public ItemStackBuilder effect(PotionEffect potionEffect) {
 		PotionMeta potionMeta = (PotionMeta) itemMeta;
 		potionMeta.addCustomEffect(potionEffect, true);
+		itemMeta = potionMeta;
+		return this;
+	}
+
+	public ItemStackBuilder effectColor(Color color){
+		PotionMeta potionMeta = (PotionMeta) itemMeta;
+		potionMeta.setColor(color);
 		itemMeta = potionMeta;
 		return this;
 	}

@@ -33,7 +33,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	@NonNull
 	@Getter
 	protected CommandEvent event;
-	protected String PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
+	public String PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
 
 	public String getPrefix() {
 		return PREFIX;
