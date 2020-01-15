@@ -1,14 +1,8 @@
 package me.pugabyte.bncore.features.chat.translator;
 
 public enum Language {
-
-	unknown, az, ml, sq, mt, am, mk, en, mi, ar, mr, hy, mhr, af, mn, eu, de, ba, ne, be, no, bn, pa, my, pap, bg, fa,
-	bs, pl, cy, pt, hu, ro, vi, ru, ht, ceb, gl, st, nl, si, mrj, sk, el, sl, ka, sw, gu, su, da, tg, he, th, yi, tl,
-	id, ta, ga, tt, it, te, is, tr, es, udm, kk, uz, kn, uk, ca, ur, ky, fi, zh, fr, ko, hi, xh, hr, km, cs, lo, sv,
-	la, gd, lv, et, lt, eo, lb, jv, mg, ja, ms;
-
-	@Override
-	public String toString() {
-		return super.toString().replace("_", "-");
-	}
+	UNKNOWN, AZ, ML, SQ, MT, AM, MK, EN, MI, AR, MR, HY, MHR, AF, MN, EU, DE, BA, NE, BE, NO, BN, PA, MY, PAP, BG, FA,
+	BS, PL, CY, PT, HU, RO, VI, RU, HT, CEB, GL, ST, NL, SI, MRJ, SK, EL, SL, KA, SW, GU, SU, DA, TG, HE, TH, YI, TL,
+	ID, TA, GA, TT, IT, TE, IS, TR, ES, UDM, KK, UZ, KN, UK, CA, UR, KY, FI, ZH, FR, KO, HI, XH, HR, KM, CS, LO, SV,
+	LA, GD, LV, ET, LT, EO, LB, JV, MG, JA, MS
 }
