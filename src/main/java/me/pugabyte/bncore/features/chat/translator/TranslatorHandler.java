@@ -25,9 +25,7 @@ public class TranslatorHandler {
 
 		String language = (from == Language.UNKNOWN) ? to.toString() : from.toString() + "-" + to.toString();
 
-		CompletableFuture<String> translate = new CompletableFuture<>();
-
-		CompletableFuture.supplyAsync(() -> {
+		return CompletableFuture.supplyAsync(() -> {
 			try {
 				URL url = new URL(link
 						.replace("%language%", language.toLowerCase())
@@ -50,16 +48,12 @@ public class TranslatorHandler {
 				throw new RuntimeException(ex.getMessage());
 			}
 		});
-
-		return translate;
 	}
 
-	public CompletableFuture<Language> getLanguage(String message) throws Exception {
+	public CompletableFuture<Language> getLanguage(String message) {
 		String link = "https://translate.yandex.net/api/v1.5/tr.json/detect?key=%key%&text=%text%";
 
-		CompletableFuture<Language> getLanguage = new CompletableFuture<>();
-
-		CompletableFuture.supplyAsync(() -> {
+		return CompletableFuture.supplyAsync(() -> {
 			try {
 				URL url = new URL(link
 						.replace("%key%", apiKey)
@@ -76,8 +70,6 @@ public class TranslatorHandler {
 				throw new RuntimeException(ex.getMessage());
 			}
 		});
-
-		return getLanguage;
 	}
 
 }

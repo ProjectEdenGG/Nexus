@@ -5,6 +5,7 @@ import com.dthielke.herochat.Chatter;
 import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
+import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,12 +36,13 @@ public class Translator implements Listener {
 		Player sender = event.getSender().getPlayer();
 		List<Chatter> chatters = HerochatAPI.getRecipients(event.getSender(), event.getChannel());
 
-
 		Utils.wait(1, () -> {
 			try {
 				if (!translatorMap.containsKey(sender.getUniqueId())) return;
 
 				translatorHandler.getLanguage(event.getMessage()).thenAcceptAsync(language -> {
+					if (language == Language.EN) return;
+
 					translatorHandler.translate(event.getMessage(), language, Language.EN).thenAcceptAsync(translated -> {
 						for (UUID uuid : translatorMap.get(sender.getUniqueId())) {
 							Player translating = Utils.getPlayer(uuid).getPlayer();
@@ -48,8 +50,8 @@ public class Translator implements Listener {
 							if (uuid == sender.getUniqueId()) continue;
 							if (!chatters.contains(Herochat.getChatterManager().getChatter(translating))) continue;
 
-							translating.sendMessage(Utils.colorize(PREFIX + event.getSender().getPlayer().getDisplayName() +
-									" &e(&3" + language.toString().toUpperCase() + "&e) &3&l> &7" + translated));
+							SkriptFunctions.json(translating, PREFIX + sender.getName() + " &e(&3" + language.name() +
+									"&e) &3&l> &7" + translated + "||ttp:" + language.getName());
 						}
 					});
 				});
