@@ -6,6 +6,7 @@ import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -30,23 +31,33 @@ public class Translator implements Listener {
 
 	@EventHandler
 	public void onChat(ChannelChatEvent event) {
+		if (!event.getResult().toString().equals("ALLOWED")) return;
+		Player sender = event.getSender().getPlayer();
+		List<Chatter> chatters = HerochatAPI.getRecipients(event.getSender(), event.getChannel());
+
+
 		Utils.wait(1, () -> {
 			try {
-				if (!translatorMap.containsKey(event.getSender().getPlayer().getUniqueId())) return;
-				Language language = Language.valueOf(translatorHandler.getLanguage(event.getMessage()));
-				String translatedMessage = translatorHandler.translate(event.getMessage(), language, Language.en);
-				List<Chatter> chatters = HerochatAPI.getRecipients(event.getSender(), event.getChannel());
-				for (UUID uuid : translatorMap.get(event.getSender().getPlayer().getUniqueId())) {
-					if (!chatters.contains(Herochat.getChatterManager().getChatter(Utils.getPlayer(uuid).getPlayer())) || uuid != event.getSender().getPlayer().getUniqueId())
-						continue;
-					Utils.getPlayer(uuid).getPlayer().sendMessage(Utils.colorize(
-							PREFIX + event.getSender().getPlayer().getDisplayName() + " &e(&3" + language.toString().toUpperCase() + "&e) &3&l> &7" + translatedMessage));
-				}
+				if (!translatorMap.containsKey(sender.getUniqueId())) return;
+
+				translatorHandler.getLanguage(event.getMessage()).thenAcceptAsync(language -> {
+					translatorHandler.translate(event.getMessage(), language, Language.EN).thenAcceptAsync(translated -> {
+						for (UUID uuid : translatorMap.get(sender.getUniqueId())) {
+							Player translating = Utils.getPlayer(uuid).getPlayer();
+
+							if (uuid == sender.getUniqueId()) continue;
+							if (!chatters.contains(Herochat.getChatterManager().getChatter(translating))) continue;
+
+							translating.sendMessage(Utils.colorize(PREFIX + event.getSender().getPlayer().getDisplayName() +
+									" &e(&3" + language.toString().toUpperCase() + "&e) &3&l> &7" + translated));
+						}
+					});
+				});
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				for (UUID uuid : translatorMap.get(event.getSender().getPlayer().getUniqueId())) {
-					Utils.getPlayer(uuid).getPlayer().sendMessage(Utils.colorize(
-							PREFIX + "Failed to translate message from " + event.getSender().getPlayer().getDisplayName() + "."));
+				for (UUID uuid : translatorMap.get(sender.getUniqueId())) {
+					Player translating = Utils.getPlayer(uuid).getPlayer();
+					translating.sendMessage(Utils.colorize(PREFIX + "Failed to translate message from " + event.getSender().getPlayer().getDisplayName() + "."));
 				}
 			}
 		});
@@ -55,17 +66,15 @@ public class Translator implements Listener {
 	@EventHandler
 	public void onTranslatedDisconnect(PlayerQuitEvent event) {
 		if (!translatorMap.containsKey(event.getPlayer().getUniqueId())) return;
-		for (UUID uuid : translatorMap.get(event.getPlayer().getUniqueId())) {
-			Utils.getPlayer(uuid).getPlayer().sendMessage(PREFIX + event.getPlayer().getDisplayName() + " has logged out. Turning off translation for them.");
-		}
+		for (UUID uuid : translatorMap.get(event.getPlayer().getUniqueId()))
+			Utils.getPlayer(uuid).getPlayer().sendMessage(PREFIX + event.getPlayer().getDisplayName() + " has logged out. Disabling translation.");
+
 		translatorMap.remove(event.getPlayer().getUniqueId());
 	}
 
 	@EventHandler
 	public void onTranslatorDisconnect(PlayerQuitEvent event) {
-		for (UUID uuid : translatorMap.keySet()) {
-			translatorMap.get(uuid).remove(event.getPlayer().getUniqueId());
-		}
+		translatorMap.keySet().forEach(uuid -> translatorMap.get(uuid).remove(event.getPlayer().getUniqueId()));
 	}
 
 }
