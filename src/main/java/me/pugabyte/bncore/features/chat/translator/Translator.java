@@ -36,25 +36,23 @@ public class Translator implements Listener {
 		Player sender = event.getSender().getPlayer();
 		List<Chatter> chatters = HerochatAPI.getRecipients(event.getSender(), event.getChannel());
 
-		Utils.wait(1, () -> {
+		Utils.async(() -> {
 			try {
 				if (!translatorMap.containsKey(sender.getUniqueId())) return;
 
-				translatorHandler.getLanguage(event.getMessage()).thenAcceptAsync(language -> {
-					if (language == Language.EN) return;
+				Language language = translatorHandler.getLanguage(event.getMessage());
+				if (language == Language.EN) return;
 
-					translatorHandler.translate(event.getMessage(), language, Language.EN).thenAcceptAsync(translated -> {
-						for (UUID uuid : translatorMap.get(sender.getUniqueId())) {
-							Player translating = Utils.getPlayer(uuid).getPlayer();
+				String translated = translatorHandler.translate(event.getMessage(), language, Language.EN);
+				for (UUID uuid : translatorMap.get(sender.getUniqueId())) {
+					Player translating = Utils.getPlayer(uuid).getPlayer();
 
-							if (uuid == sender.getUniqueId()) continue;
-							if (!chatters.contains(Herochat.getChatterManager().getChatter(translating))) continue;
+					if (uuid == sender.getUniqueId()) continue;
+					if (!chatters.contains(Herochat.getChatterManager().getChatter(translating))) continue;
 
-							SkriptFunctions.json(translating, PREFIX + sender.getName() + " &e(&3" + language.name() +
-									"&e) &3&l> &7" + translated + "||ttp:" + language.getName());
-						}
-					});
-				});
+					SkriptFunctions.json(translating, PREFIX + sender.getName() + " &e(&3" + language.name() +
+							"&e) &3&l> &7" + translated + "||ttp:" + language.getName());
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				for (UUID uuid : translatorMap.get(sender.getUniqueId())) {
