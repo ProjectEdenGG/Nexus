@@ -5,6 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
@@ -22,7 +23,7 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 	Team team;
 	TeamMenus teamMenus = new TeamMenus();
 
-	public SpawnpointLocationsMenu(Arena arena, Team team) {
+	public SpawnpointLocationsMenu(@NonNull Arena arena, @NonNull Team team) {
 		this.arena = arena;
 		this.team = team;
 	}

@@ -62,7 +62,7 @@ public class Arena implements ConfigurationSerializable {
 		return getMechanicType().get();
 	}
 
-	public Arena(String name) {
+	public Arena(@NonNull String name) {
 		this(new HashMap<String, Object>() {{ put("name", name); }});
 	}
 

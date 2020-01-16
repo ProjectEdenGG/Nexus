@@ -19,7 +19,7 @@ public class JHoursCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("{offlineplayer}")
+	@Path("<player>")
 	void player(@Arg("self") OfflinePlayer player) {
 		Hours hours = (Hours) service.get(player);
 		reply("");

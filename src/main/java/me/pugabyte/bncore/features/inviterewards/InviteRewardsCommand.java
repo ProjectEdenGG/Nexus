@@ -30,12 +30,11 @@ public class InviteRewardsCommand extends CustomCommand {
 		reply(PREFIX + "Correct usage: &c/invited <username>");
 	}
 
-	@Path("{player}")
+	@Path("<invited>")
 	void send(@Arg Player invited) {
 		Player inviter = player();
-		if (inviter.equals(invited)) {
+		if (inviter.equals(invited))
 			error(colorize("You cannot invite yourself!"));
-		}
 
 		if (inviter.getFirstPlayed() >= invited.getFirstPlayed())
 			error("You joined after &e" + invited.getName() + "&3, so you can't have invited them!");
@@ -52,7 +51,7 @@ public class InviteRewardsCommand extends CustomCommand {
 		sendInviteConfirmation(inviter, invited);
 	}
 
-	@Path("confirm {player}")
+	@Path("confirm <inviter>")
 	void confirm(@Arg Player inviter) {
 		Player invited = player();
 		if (inviter.getFirstPlayed() >= invited.getFirstPlayed())
@@ -72,7 +71,7 @@ public class InviteRewardsCommand extends CustomCommand {
 		InviteRewards.saveInvitation(invited, inviter);
 	}
 
-	@Path("deny {player}")
+	@Path("deny <inviter>")
 	void deny(@Arg Player inviter) {
 		Player invited = player();
 		send(inviter, PREFIX + "&e" + invited.getName() + "&3 has denied your invite confirmation.");

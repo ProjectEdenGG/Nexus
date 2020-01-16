@@ -23,7 +23,7 @@ public class Translator implements Listener {
 		BNCore.registerListener(this);
 	}
 
-	public HashMap<UUID, ArrayList<UUID>> translatorMap = new HashMap<>();
+	public HashMap<UUID, ArrayList<UUID>> map = new HashMap<>();
 
 	public String apiKey = BNCore.getInstance().getConfig().getConfigurationSection("yandex").getString("apiKey");
 	public TranslatorHandler translatorHandler = new TranslatorHandler(apiKey);
@@ -36,15 +36,15 @@ public class Translator implements Listener {
 		Player sender = event.getSender().getPlayer();
 		List<Chatter> chatters = HerochatAPI.getRecipients(event.getSender(), event.getChannel());
 
-		Utils.async(() -> {
+		Utils.waitAsync(1, () -> {
 			try {
-				if (!translatorMap.containsKey(sender.getUniqueId())) return;
+				if (!map.containsKey(sender.getUniqueId())) return;
 
 				Language language = translatorHandler.getLanguage(event.getMessage());
 				if (language == Language.EN) return;
 
 				String translated = translatorHandler.translate(event.getMessage(), language, Language.EN);
-				for (UUID uuid : translatorMap.get(sender.getUniqueId())) {
+				for (UUID uuid : map.get(sender.getUniqueId())) {
 					Player translating = Utils.getPlayer(uuid).getPlayer();
 
 					if (uuid == sender.getUniqueId()) continue;
@@ -55,7 +55,7 @@ public class Translator implements Listener {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				for (UUID uuid : translatorMap.get(sender.getUniqueId())) {
+				for (UUID uuid : map.get(sender.getUniqueId())) {
 					Player translating = Utils.getPlayer(uuid).getPlayer();
 					translating.sendMessage(Utils.colorize(PREFIX + "Failed to translate message from " + event.getSender().getPlayer().getDisplayName() + "."));
 				}
@@ -65,16 +65,16 @@ public class Translator implements Listener {
 
 	@EventHandler
 	public void onTranslatedDisconnect(PlayerQuitEvent event) {
-		if (!translatorMap.containsKey(event.getPlayer().getUniqueId())) return;
-		for (UUID uuid : translatorMap.get(event.getPlayer().getUniqueId()))
+		if (!map.containsKey(event.getPlayer().getUniqueId())) return;
+		for (UUID uuid : map.get(event.getPlayer().getUniqueId()))
 			Utils.getPlayer(uuid).getPlayer().sendMessage(PREFIX + event.getPlayer().getDisplayName() + " has logged out. Disabling translation.");
 
-		translatorMap.remove(event.getPlayer().getUniqueId());
+		map.remove(event.getPlayer().getUniqueId());
 	}
 
 	@EventHandler
 	public void onTranslatorDisconnect(PlayerQuitEvent event) {
-		translatorMap.keySet().forEach(uuid -> translatorMap.get(uuid).remove(event.getPlayer().getUniqueId()));
+		map.keySet().forEach(uuid -> map.get(uuid).remove(event.getPlayer().getUniqueId()));
 	}
 
 }

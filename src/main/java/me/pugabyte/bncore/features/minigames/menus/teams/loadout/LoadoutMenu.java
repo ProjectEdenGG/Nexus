@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
@@ -21,7 +22,7 @@ public class LoadoutMenu extends MenuUtils implements InventoryProvider {
 	Arena arena;
 	Team team;
 
-	public LoadoutMenu(Arena arena, Team team) {
+	public LoadoutMenu(@NonNull Arena arena, @NonNull Team team) {
 		this.arena = arena;
 		this.team = team;
 	}

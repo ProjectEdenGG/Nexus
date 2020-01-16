@@ -19,7 +19,7 @@ public class JMcMMOPrestigeCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("{offlineplayer}")
+	@Path("[player]")
 	void main(@Arg("self") OfflinePlayer player) {
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 
