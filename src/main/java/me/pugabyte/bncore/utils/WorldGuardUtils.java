@@ -32,6 +32,8 @@ public class WorldGuardUtils {
 
 	public WorldGuardUtils(@NonNull org.bukkit.World world) {
 		this.world = world;
+		bukkitWorld = new BukkitWorld(world);
+		worldEditWorld = bukkitWorld;
 		this.manager = WGBukkit.getRegionManager(world);
 	}
 
