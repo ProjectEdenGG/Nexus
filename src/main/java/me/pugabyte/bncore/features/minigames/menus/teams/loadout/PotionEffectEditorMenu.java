@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.menus.teams.loadout;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
@@ -26,7 +27,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 	Team team;
 	PotionEffect potionEffect;
 
-	public PotionEffectEditorMenu(Arena arena, Team team, PotionEffect potionEffect) {
+	public PotionEffectEditorMenu(@NonNull Arena arena, @NonNull Team team, @NonNull PotionEffect potionEffect) {
 		this.arena = arena;
 		this.team = team;
 		this.potionEffect = potionEffect;

@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.menus.teams.loadout;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Loadout;
@@ -18,7 +19,7 @@ public class DeleteLoadoutMenu extends MenuUtils implements InventoryProvider {
 	Arena arena;
 	Team team;
 
-	public DeleteLoadoutMenu(Arena arena, Team team) {
+	public DeleteLoadoutMenu(@NonNull Arena arena, @NonNull Team team) {
 		this.arena = arena;
 		this.team = team;
 	}

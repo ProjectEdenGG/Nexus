@@ -51,7 +51,7 @@ public class JDailyRewardsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("streak {offlineplayer}")
+	@Path("streak [player]")
 	void streak(@Arg("self") OfflinePlayer player) {
 		int streak = dailyRewards.getStreak();
 		if (!player().getUniqueId().equals(player.getUniqueId())) {
@@ -60,7 +60,7 @@ public class JDailyRewardsCommand extends CustomCommand {
 		reply(PREFIX + player.getName() + "'s streak: &e" + streak);
 	}
 
-	@Path("today {offlineplayer}")
+	@Path("today [player]")
 	void today(@Arg("self") OfflinePlayer player) {
 		boolean earnedToday = dailyRewards.isEarnedToday();
 		if (!player().getUniqueId().equals(player.getUniqueId())) {
@@ -71,7 +71,7 @@ public class JDailyRewardsCommand extends CustomCommand {
 
 	// TODO: Optional arguments in the middle if default value exists
 	// TODO: Conditional default values? e.g. /speed [type = isFlying ? fly : walk] <int>
-	@Path("unclaim {player} {day}")
+	@Path("unclaim <player> <day>")
 	@Permission("unclaim")
 	void unclaim(@Arg OfflinePlayer player, @Arg int day) {
 		dailyRewards = ((DailyRewards) service.get(player));
@@ -90,7 +90,7 @@ public class JDailyRewardsCommand extends CustomCommand {
 
 	}
 
-	@Path("top {int}")
+	@Path("top [page]")
 	void top(@Arg("1") int page) {
 		Utils.async(() -> {
 			List<DailyRewards> results = service.getPage(page);

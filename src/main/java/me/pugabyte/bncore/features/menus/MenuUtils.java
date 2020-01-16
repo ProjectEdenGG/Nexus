@@ -60,6 +60,7 @@ public abstract class MenuUtils {
 	}
 
 	public static String getLocationLore(Location location) {
+		if (location == null) return null;
 		return "&3X:&e " + (int) location.getX() + "||&3Y:&e " + (int) location.getY() + "||&3Z:&e " + (int) location.getZ();
 	}
 

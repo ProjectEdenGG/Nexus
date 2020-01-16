@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.menus;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
@@ -14,7 +15,7 @@ import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 public class MechanicsMenu extends MenuUtils implements InventoryProvider {
 	Arena arena;
 
-	public MechanicsMenu(Arena arena) {
+	public MechanicsMenu(@NonNull Arena arena) {
 		this.arena = arena;
 	}
 

@@ -41,7 +41,7 @@ public class SidewaysStairsCommand extends CustomCommand {
 		toggle(!swsPlayer.isEnabled());
 	}
 
-	@Path("{boolean}")
+	@Path("<true|false>")
 	void toggle(@Arg boolean enable) {
 		swsPlayer.setEnabled(enable);
 		reply(PREFIX + (swsPlayer.isEnabled() ? "Enabled" : "Disabled"));
@@ -52,7 +52,7 @@ public class SidewaysStairsCommand extends CustomCommand {
 		reply(PREFIX + "/sws angle <number> &7- Set the angle of the stairs to be placed (0-7)");
 	}
 
-	@Path("(set|angle|setangle) {byte}")
+	@Path("(set|angle|setangle) <angle>")
 	void setAngle(@Arg byte angle) {
 		swsPlayer.trySetAngle(angle);
 		swsPlayer.setAction("set_angle");
@@ -77,7 +77,7 @@ public class SidewaysStairsCommand extends CustomCommand {
 		upsideDown(swsPlayer.getAction().equals("disable_upsidedown_placement"));
 	}
 
-	@Path("upsidedown {boolean}")
+	@Path("upsidedown <true|false>")
 	void upsideDown(@Arg boolean allow) {
 		swsPlayer.setAction(allow ? "" : "disable_upsidedown_placement");
 		swsPlayer.setEnabled(!allow);

@@ -17,7 +17,7 @@ public class WikiCommand extends CustomCommand {
 		reply("&eOr use &c/wiki search <query> &eto search the wiki from ingame.");
 	}
 
-	@Path("search {string...}")
+	@Path("search <query...>")
 	void search(@Arg String search) {
 		Wiki.search(sender(), search.split(" "), "Wiki");
 	}
