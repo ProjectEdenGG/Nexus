@@ -3,8 +3,10 @@ package me.pugabyte.bncore.utils;
 import com.boydti.fawe.object.FawePlayer;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -13,7 +15,6 @@ import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -24,10 +25,12 @@ import java.util.stream.Collectors;
 @Data
 public class WorldGuardUtils {
 	@NonNull
-	private World world;
+	private org.bukkit.World world;
+	private BukkitWorld bukkitWorld;
+	private World worldEditWorld;
 	RegionManager manager;
 
-	public WorldGuardUtils(@NonNull World world) {
+	public WorldGuardUtils(@NonNull org.bukkit.World world) {
 		this.world = world;
 		this.manager = WGBukkit.getRegionManager(world);
 	}
@@ -48,7 +51,7 @@ public class WorldGuardUtils {
 	}
 
 	public Region getRegion(Location min, Location max) {
-		return new CuboidRegion(toVector(min), toVector(max));
+		return new CuboidRegion(worldEditWorld, toVector(min), toVector(max));
 	}
 
 	public Region getPlayerSelection(Player player) {
