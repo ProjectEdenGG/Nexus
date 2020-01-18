@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.minigames.managers;
 
 import com.google.common.base.Strings;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class ArenaManager {
@@ -166,6 +168,11 @@ public class ArenaManager {
 				id = (arena.getId() + 1);
 
 		return id;
+	}
+
+	@SneakyThrows
+	public static Object convert(Arena arena, Class<?> clazz) {
+		return clazz.getDeclaredConstructor(Map.class).newInstance(arena.serialize());
 	}
 
 }
