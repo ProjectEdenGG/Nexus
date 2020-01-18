@@ -55,6 +55,7 @@ public class GoldRush extends TeamlessMechanic {
 
 	@Override
 	public void onStart(Match match){
+		super.onStart(match);
 		this.match = match;
 		GoldRushArena goldRushArena = (GoldRushArena) match.getArena();
 		mineStackHeight = goldRushArena.getMineStackHeight();
@@ -81,6 +82,7 @@ public class GoldRush extends TeamlessMechanic {
 
 	@Override
 	public void onEnd(Match match) {
+		super.onEnd(match);
 		for (Location loc : match.getTeams().get(0).getSpawnpoints()) {
 			removeMineStacks(loc);
 		}
