@@ -1,6 +1,10 @@
 package me.pugabyte.bncore.features.minigames.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
@@ -11,7 +15,13 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Data
 @Builder
@@ -126,6 +136,19 @@ public class Arena implements ConfigurationSerializable {
 
 	public void delete() {
 		ArenaManager.delete(this);
+	}
+
+	public void teleport(Minigamer minigamer) {
+		if (respawnLocation != null)
+			minigamer.teleport(respawnLocation);
+		else if (spectateLocation != null)
+			minigamer.teleport(spectateLocation);
+		else if (lobby != null && lobby.getLocation() != null)
+			minigamer.teleport(lobby.getLocation());
+		else if (teams != null && teams.size() > 0 && teams.get(0).getSpawnpoints() != null && teams.get(0).getSpawnpoints().size() > 0)
+			minigamer.teleport(teams.get(0).getSpawnpoints().get(0));
+		else
+			minigamer.tell("No teleport location found");
 	}
 
 }

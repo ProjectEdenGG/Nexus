@@ -119,7 +119,7 @@ public class ArenaManager {
 
 				read(name.replace(".yml", ""));
 			});
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
 		}
 	}
@@ -142,7 +142,7 @@ public class ArenaManager {
 			BNCore.log("Saved arena " + arena.getName());
 			if (!arenas.contains(arena))
 				add(arena);
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			BNCore.severe("An error occurred while trying to write arena configuration files: " + ex.getMessage());
 		}
 	}
