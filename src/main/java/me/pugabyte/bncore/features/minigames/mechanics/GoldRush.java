@@ -118,10 +118,9 @@ public class GoldRush extends TeamlessMechanic {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		event.setDropItems(false);
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
-		BNCore.log(event.getBlock().getType().name());
+		event.setDropItems(false);
 		if (event.getBlock().getType().equals(Material.IRON_ORE)) {
 			BNCore.log("Trapping @ " + event.getBlock().getLocation().getX() + " " + event.getBlock().getLocation().getZ());
 			trap(event.getBlock());
