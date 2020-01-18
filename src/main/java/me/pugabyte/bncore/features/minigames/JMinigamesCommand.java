@@ -38,13 +38,13 @@ public class JMinigamesCommand extends CustomCommand {
 		reply(PREFIX + "Help menu");
 	}
 
-	@Path("list {string}")
+	@Path("list [filter]")
 	@Permission("use")
 	void list(@Arg String filter) {
 		reply(PREFIX + String.join(", ", ArenaManager.getNames(filter)));
 	}
 
-	@Path("join {arena}")
+	@Path("join <arena>")
 	@Permission("use")
 	void join(@Arg Arena arena) {
 		minigamer.join(arena);
@@ -56,19 +56,19 @@ public class JMinigamesCommand extends CustomCommand {
 		minigamer.quit();
 	}
 
-	@Path("start {arena}")
+	@Path("start [arena]")
 	@Permission("manage")
 	void start(@Arg("current") Arena arena) {
 		getRunningMatch(arena).start();
 	}
 
-	@Path("end {arena}")
+	@Path("end [arena]")
 	@Permission("manage")
 	void end(@Arg("current") Arena arena) {
 		getRunningMatch(arena).end();
 	}
 
-	@Path("create {string}")
+	@Path("create <name>")
 	@Permission("manage")
 	void create(@Arg String name) {
 		try {
@@ -76,27 +76,27 @@ public class JMinigamesCommand extends CustomCommand {
 			reply(PREFIX + "Arena already exists.");
 			reply(PREFIX + "Editing arena &e" + name + "&3.");
 		} catch (InvalidInputException ex) {
-			reply(PREFIX + "Creating arena &e" + name + "&3.");
 			Arena arena = new Arena(name);
 			arena.write();
+			reply(PREFIX + "Creating arena &e" + name + "&3.");
 		}
 
 		Minigames.getMenus().openArenaMenu(player(), ArenaManager.get(name));
 	}
 
-	@Path("edit {arena}")
+	@Path("edit <arena>")
 	@Permission("manage")
 	void edit(@Arg Arena arena) {
 		Minigames.getMenus().openArenaMenu(player(), arena);
 	}
 
-	@Path("(delete|remove) {arena}")
+	@Path("(delete|remove) <arena>")
 	@Permission("manage")
 	void remove(@Arg Arena arena) {
 		Minigames.getMenus().openDeleteMenu(player(), arena);
 	}
 
-	@Path("(reload|read) {string}")
+	@Path("(reload|read) <arena>")
 	@Permission("manage")
 	void reload(@Arg(tabCompleter = Arena.class) String arena) {
 		long startTime = System.currentTimeMillis();
@@ -109,7 +109,7 @@ public class JMinigamesCommand extends CustomCommand {
 		reply(PREFIX + "Reload time took " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
-	@Path("(save|write) {arena}")
+	@Path("(save|write) <arena>>")
 	@Permission("manage")
 	void save(@Arg Arena arena) {
 		long startTime = System.currentTimeMillis();
@@ -144,13 +144,11 @@ public class JMinigamesCommand extends CustomCommand {
 				if (minigamer.getMatch() != null)
 					return minigamer.getMatch().getArena();
 				else
-					error("You are not currently in a match");
+					throw new InvalidInputException("You are not currently in a match");
 			else
 				throw new MustBeIngameException();
 		else
-			if (!isNullOrEmpty(value))
-				return ArenaManager.find(value);
-		return null;
+			return ArenaManager.find(value);
 	}
 
 	@TabCompleterFor(Arena.class)

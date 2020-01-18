@@ -92,6 +92,10 @@ public class Utils {
 		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay).getTaskId();
 	}
 
+	public static int waitAsync(long delay, Runnable runnable) {
+		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), () -> async(runnable), delay).getTaskId();
+	}
+
 	public static int repeat(long startDelay, long interval, Runnable runnable) {
 		return BNCore.getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
 	}
@@ -129,7 +133,8 @@ public class Utils {
 	}
 
 	public static OfflinePlayer getPlayer(String partialName) {
-		if (partialName.length() == 0) throw new InvalidInputException("No player name given");
+		if (partialName.length() == 0)
+			throw new InvalidInputException("No player name given");
 
 		partialName = partialName.toLowerCase();
 

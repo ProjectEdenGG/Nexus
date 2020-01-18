@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.minigames.menus.custommenus;
+package me.pugabyte.bncore.features.minigames.menus.custom;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;

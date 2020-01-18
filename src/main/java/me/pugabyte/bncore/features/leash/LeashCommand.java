@@ -24,7 +24,7 @@ public class LeashCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("{player}")
+	@Path("<target>")
 	void leash(@Arg Player target) {
 		if (leashes.containsKey(player().getUniqueId()))
 			error("You are already leashed to another player");
@@ -41,14 +41,14 @@ public class LeashCommand extends CustomCommand {
 		stopLeash(player(), "&3You are no longer leashed to the player.");
 	}
 
-	@Path("(stopall|cancelall)")
+	@Path("(stopAll|cancelAll)")
 	void stopAll() {
 		for (Map.Entry<UUID, Integer> leash : leashes.entrySet())
 			stopLeash(Utils.getPlayer(leash.getKey()).getPlayer(), "Leash cancelled by &e" + sender().getName());
 		reply(PREFIX + "All leashed cancelled");
 	}
 
-	@Path("setvelocity {double}")
+	@Path("setVelocity <velocity>")
 	void setVelocity(@Arg double velocity) {
 		BNCore.leash.setVelocity(velocity);
 		reply(PREFIX + "&3Velocity multiplier set to &e" + velocity);

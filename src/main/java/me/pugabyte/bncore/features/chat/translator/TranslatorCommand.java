@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -22,34 +23,40 @@ public class TranslatorCommand extends CustomCommand {
 		translator = BNCore.chat.translator;
 	}
 
-	@Path("stop {player}")
+	@Path("stop [player]")
 	@Permission("use")
 	void remove(@Arg Player player) {
 		if (player != null) {
-			translator.translatorMap.get(player.getUniqueId()).remove(player().getUniqueId());
-			reply(PREFIX + "You are no longer translating " + player.getDisplayName() + ".");
+			ArrayList<UUID> translators = translator.map.get(player.getUniqueId());
+			if (translators != null && translators.contains(player().getUniqueId())) {
+				translator.map.get(player.getUniqueId()).remove(player().getUniqueId());
+				reply(PREFIX + "You are no longer translating " + player.getDisplayName());
+			} else {
+				reply(PREFIX + "You are not translating that player");
+			}
 			return;
 		}
 
-		for (UUID uuid : translator.translatorMap.keySet())
-			translator.translatorMap.get(uuid).remove(player().getUniqueId());
+		for (UUID uuid : translator.map.keySet())
+			translator.map.get(uuid).remove(player().getUniqueId());
 
 		reply(PREFIX + "Stopping all active translations.");
 	}
 
-	@Path("{player}")
+	@Path("<player>")
 	@Permission("use")
 	void translate(@Arg Player player) {
+		if (player() == player)
+			throw new InvalidInputException("You cannot translate yourself");
+
 		ArrayList<UUID> uuids = new ArrayList<UUID>() {{
 			add(player().getUniqueId());
-			try {
-				addAll(translator.translatorMap.get(player.getUniqueId()));
-			} catch (Exception ignore) {}
+			if (translator.map.containsKey(player.getUniqueId()))
+				addAll(translator.map.get(player.getUniqueId()));
 		}};
-		translator.translatorMap.put(player.getUniqueId(), uuids);
+		translator.map.put(player.getUniqueId(), uuids);
 
 		reply(PREFIX + "You are now translating messages from " + player.getDisplayName() + ".");
-		BNCore.log(player().getDisplayName() + " has started translating " + player.getDisplayName());
 	}
 
 }

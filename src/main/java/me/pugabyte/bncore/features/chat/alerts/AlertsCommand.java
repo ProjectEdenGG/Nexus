@@ -97,7 +97,7 @@ public class AlertsCommand extends CustomCommand {
 		reply(PREFIX + "Example: &c/alerts add hockey");
 	}
 
-	@Path("add {string...}")
+	@Path("add <highlight...>")
 	void add(@Arg String highlight) {
 		if (highlight.equalsIgnoreCase(player().getName()))
 			error("Your name is automatically included in your alerts list");
@@ -115,7 +115,7 @@ public class AlertsCommand extends CustomCommand {
 		reply(PREFIX + "Example: &c/alerts delete hockey");
 	}
 
-	@Path("delete {string...}")
+	@Path("delete <highlight...>")
 	void delete(@Arg String highlight) {
 		if (!alerts.delete(highlight))
 			error("You did not have &e" + highlight + " &3in your alerts list");
@@ -130,7 +130,7 @@ public class AlertsCommand extends CustomCommand {
 		reply(PREFIX + "Correct usage: /alerts partialmatching <true|false> <highlight>");
 	}
 
-	@Path("(partialmatch|partialmatching) {boolean} {string...}")
+	@Path("(partialmatch|partialmatching) <truse|false> <highlight...>")
 	void partialMatching(@Arg boolean partialMatching, @Arg String highlight) {
 		Optional<Alerts.Highlight> match = alerts.get(highlight);
 		if (!match.isPresent())

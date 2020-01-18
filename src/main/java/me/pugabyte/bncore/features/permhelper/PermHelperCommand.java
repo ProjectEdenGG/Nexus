@@ -29,7 +29,7 @@ public class PermHelperCommand extends CustomCommand {
 		reply(PREFIX + "Correct usage: /permhelper <npcs|homes|plots|vaults> <add|remove> <player> <amount>");
 	}
 
-	@Path("(npcs|homes|plots|vaults) (add|remove) {player} {amount}")
+	@Path("(npcs|homes|plots|vaults) (add|remove) <player> <amount>")
 	void modify(@Arg OfflinePlayer player, @Arg int amount) {
 		if (arg(2).equals("remove")) amount = -amount;
 		modify(arg(1).toLowerCase(), PermissionsEx.getUser(player.getName()), amount);
@@ -57,7 +57,6 @@ public class PermHelperCommand extends CustomCommand {
 				break;
 		}
 
-		List<Integer> ints = new ArrayList<>();
 		newLimit = getNewLimit(which, user, permission, pattern, world, adding);
 
 		if (which.equalsIgnoreCase("homes")) {

@@ -5,6 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.utils.ColorType;
@@ -23,7 +24,7 @@ import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 public class BlockListMenu extends MenuUtils implements InventoryProvider {
 	Arena arena;
 
-	public BlockListMenu(Arena arena) {
+	public BlockListMenu(@NonNull Arena arena) {
 		this.arena = arena;
 	}
 

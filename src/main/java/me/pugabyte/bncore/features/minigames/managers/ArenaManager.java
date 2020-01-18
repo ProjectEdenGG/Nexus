@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.managers;
 
+import com.google.common.base.Strings;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Arena;
@@ -54,9 +55,10 @@ public class ArenaManager {
 	}
 
 	public static Arena find(String name) {
-		for (Arena arena : arenas)
-			if (arena.getName().toLowerCase().startsWith(name.toLowerCase()))
-				return arena;
+		if (!Strings.isNullOrEmpty(name))
+			for (Arena arena : arenas)
+				if (arena.getName().toLowerCase().startsWith(name.toLowerCase()))
+					return arena;
 		throw new InvalidInputException("Arena not found");
 	}
 

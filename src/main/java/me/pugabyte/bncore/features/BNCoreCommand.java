@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
@@ -54,7 +55,7 @@ public class BNCoreCommand extends CustomCommand {
 		SkriptFunctions.json(player(), locationString + "||sgt:" + locationString);
 	}
 
-	@Path("redtint {double} {double} {player}")
+	@Path("redtint [fadeTime] [intensity] [player]")
 	void redTint(@Arg("0.5") double fadeTime, @Arg("10") double intensity, @Arg("self") Player player) {
 		SkriptFunctions.redTint(player, fadeTime, intensity);
 	}
@@ -74,9 +75,8 @@ public class BNCoreCommand extends CustomCommand {
 		try {
 			return ColorType.valueOf(value.toUpperCase());
 		} catch (IllegalArgumentException ignore) {
-			error("ColorType from " + value + " not found");
+			throw new InvalidInputException("ColorType from " + value + " not found");
 		}
-		return null;
 	}
 
 	@TabCompleterFor(ColorType.class)
@@ -87,7 +87,7 @@ public class BNCoreCommand extends CustomCommand {
 				.collect(Collectors.toList());
 	}
 
-	@Path("getColor {color}")
+	@Path("getColor <color>")
 	void getColor(@Arg ColorType colorType) {
 
 		Location location = player().getLocation().add(2, 0, 0);
