@@ -71,7 +71,7 @@ public class MinigamesMenus extends MenuUtils {
 
 	@SneakyThrows
 	public void openCustomSettingsMenu(Player player, Arena arena) {
-		Set<Class<?>> classes = new Reflections("me.pugabyte.bncore.features.minigames.menus.custommenus").getTypesAnnotatedWith(CustomMechanicSettings.class);
+		Set<Class<?>> classes = new Reflections("me.pugabyte.bncore.features.minigames.menus.custom").getTypesAnnotatedWith(CustomMechanicSettings.class);
 		Class<?> provider = null;
 		for (Class<?> clazz : classes) {
 			if (clazz.getAnnotation(CustomMechanicSettings.class).value().equals(arena.getMechanicType())) {
