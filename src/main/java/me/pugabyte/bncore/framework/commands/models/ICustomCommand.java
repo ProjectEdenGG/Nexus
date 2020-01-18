@@ -13,11 +13,13 @@ import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import org.bukkit.command.CommandSender;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -120,7 +122,9 @@ public interface ICustomCommand {
 					value = args.get(pathIndex - 1);
 			}
 
-			objects[i - 1] = convert(value, parameter.getType(), event.getCommand());
+			boolean required = pathArg.startsWith("<");
+
+			objects[i - 1] = convert(value, parameter.getType(), event.getCommand(), required);
 			++i;
 		}
 
@@ -128,17 +132,35 @@ public interface ICustomCommand {
 		method.invoke(this, objects);
 	}
 
+	List<Class<? extends Exception>> conversionExceptions = Arrays.asList(
+			InvalidInputException.class,
+			PlayerNotFoundException.class
+	);
+
 	@SneakyThrows
-	default Object convert(String value, Class<?> type, CustomCommand command) {
-		if (Commands.getConverters().containsKey(type)) {
-			Method converter = Commands.getConverters().get(type);
-			if (converter.getDeclaringClass().equals(command.getClass()) || Modifier.isAbstract(converter.getDeclaringClass().getModifiers()))
-				return Commands.getConverters().get(type).invoke(command, value);
-			else {
-				CustomCommand newCommand = getNewCommand(command.getEvent(), converter.getDeclaringClass());
-				return Commands.getConverters().get(type).invoke(newCommand, value);
+	default Object convert(String value, Class<?> type, CustomCommand command, boolean required) {
+		try {
+			if (Commands.getConverters().containsKey(type)) {
+				Method converter = Commands.getConverters().get(type);
+				boolean isAbstract = Modifier.isAbstract(converter.getDeclaringClass().getModifiers());
+				if (isAbstract || converter.getDeclaringClass().equals(command.getClass()))
+					return Commands.getConverters().get(type).invoke(command, value);
+				else {
+					CustomCommand newCommand = getNewCommand(command.getEvent(), converter.getDeclaringClass());
+					return Commands.getConverters().get(type).invoke(newCommand, value);
+				}
 			}
+		} catch (InvocationTargetException ex) {
+			if (!required)
+				if (conversionExceptions.contains(ex.getCause().getClass()))
+					return null;
+
+			throw ex;
 		}
+
+		// TODO: Better error messages
+		if (required && Strings.isNullOrEmpty(value))
+			throw new InvalidInputException("Missing arguments");
 
 		if (Boolean.class == type || Boolean.TYPE == type) {
 			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";

@@ -20,7 +20,7 @@ public class SidewaysLogsCommand extends CustomCommand {
 		toggle(enabledPlayers.contains(player()));
 	}
 
-	@Path("{boolean}")
+	@Path("<true|false>")
 	void toggle(@Arg boolean normal) {
 		if (normal) {
 			enabledPlayers.remove(player());

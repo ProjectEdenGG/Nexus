@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
@@ -27,7 +28,7 @@ import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 public class ArenaMenu extends MenuUtils implements InventoryProvider {
 
 	Arena arena;
-	public ArenaMenu(Arena arena) {
+	public ArenaMenu(@NonNull Arena arena) {
 		this.arena = arena;
 	}
 

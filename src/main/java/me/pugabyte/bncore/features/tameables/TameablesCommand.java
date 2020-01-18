@@ -31,7 +31,7 @@ public class TameablesCommand extends CustomCommand {
 		reply(PREFIX + "Punch the animal you wish to remove ownership of");
 	}
 
-	@Path("transfer {offlineplayer}")
+	@Path("transfer <player>")
 	void transfer(@Arg OfflinePlayer transfer) {
 		if (player().getUniqueId().equals(transfer.getUniqueId()))
 			error("You can't transfer an animal to yourself");

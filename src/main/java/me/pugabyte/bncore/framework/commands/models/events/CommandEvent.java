@@ -11,6 +11,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
@@ -48,8 +49,12 @@ public class CommandEvent extends Event implements Cancellable {
 		else if (ex instanceof BNException)
 			reply(command.getPrefix() + "&c" + ex.getMessage());
 		else {
-			ex.printStackTrace();
 			reply("&cAn internal error occurred while attempting to execute this command");
+
+			if (ex.getCause() != null && ex instanceof InvocationTargetException)
+				ex.getCause().printStackTrace();
+			else
+				ex.printStackTrace();
 		}
 	}
 

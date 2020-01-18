@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.menus.teams;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
@@ -22,7 +23,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 	Team team;
 	TeamMenus teamMenus = new TeamMenus();
 
-	public TeamEditorMenu(Arena arena, Team team) {
+	public TeamEditorMenu(@NonNull Arena arena, @NonNull Team team) {
 		this.arena = arena;
 		this.team = team;
 	}

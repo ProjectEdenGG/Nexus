@@ -31,7 +31,7 @@ public class Connect4Command extends CustomCommand {
 		game.reset();
 	}
 
-	@Path("place {string} {int}")
+	@Path("place <team> <column>")
 	void place(@Arg String team, @Arg int column) {
 		place(Connect4Team.valueOf(team.toUpperCase()), validate(column));
 	}
