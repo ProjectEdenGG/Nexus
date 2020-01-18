@@ -1,10 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
@@ -15,12 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Builder
@@ -50,7 +41,7 @@ public class Arena implements ConfigurationSerializable {
 	private int minWinningScore;
 	private int maxWinningScore;
 	private int lives = 0;
-	private Set<Material> blockList;
+	private Set<Material> blockList = new HashSet<>();
 	@Accessors(fluent = true)
 	private boolean isWhitelist = true;
 	@Accessors(fluent = true)
@@ -83,7 +74,7 @@ public class Arena implements ConfigurationSerializable {
 		this.minWinningScore = (Integer) map.getOrDefault("minWinningScore", minWinningScore);
 		this.maxWinningScore = (Integer) map.getOrDefault("maxWinningScore", maxWinningScore);
 		this.lives = (Integer) map.getOrDefault("lives", lives);
-		this.blockList = SerializationUtils.deserializeMaterialSet((List<String>) map.getOrDefault("blockList", blockList));
+		this.blockList = SerializationUtils.deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", hasScoreboard);

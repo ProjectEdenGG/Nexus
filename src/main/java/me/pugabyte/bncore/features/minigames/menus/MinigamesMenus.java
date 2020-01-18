@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
+import me.pugabyte.bncore.features.minigames.menus.flags.BlockListMenu;
+import me.pugabyte.bncore.features.minigames.menus.flags.FlagsMenu;
 import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
@@ -55,6 +57,16 @@ public class MinigamesMenus extends MenuUtils {
 				.title("Lobby Menu")
 				.provider(new LobbyMenu(arena))
 				.size(2, 9)
+				.build();
+		INV.open(player);
+	}
+
+	public void openFlagsMenu(Player player, Arena arena) {
+		SmartInventory INV = SmartInventory.builder()
+				.id("flagsMenu")
+				.title("Flags Menu")
+				.provider(new FlagsMenu(arena))
+				.size(3, 9)
 				.build();
 		INV.open(player);
 	}

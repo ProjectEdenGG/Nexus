@@ -46,6 +46,11 @@ public class GoldRush extends TeamlessMechanic {
 	}
 
 	@Override
+	public GameMode getGameMode(){
+		return GameMode.SURVIVAL;
+	}
+
+	@Override
 	public ItemStack getMenuItem() {
 		return new ItemStack(Material.GOLD_INGOT);
 	}

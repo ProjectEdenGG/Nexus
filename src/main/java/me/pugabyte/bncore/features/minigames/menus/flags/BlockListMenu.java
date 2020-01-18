@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.minigames.menus;
+package me.pugabyte.bncore.features.minigames.menus.flags;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
@@ -83,13 +83,12 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 					new ItemStack(sortedList.get(i)),
 					"&e" + sortedList.get(i).name(),
 					"&3Click me to remove this||&3material from the list."
-				),
-				e -> {
-					arena.getBlockList().remove(((InventoryClickEvent) e.getEvent()).getCurrentItem().getType());
-					arena.write();
-					menus.blockListMenu(arena).open(player);
-				}
-			);
+					),
+					e -> {
+				arena.getBlockList().remove(((InventoryClickEvent) e.getEvent()).getCurrentItem().getType());
+				arena.write();
+				menus.blockListMenu(arena).open(player);
+			});
 		}
 
 		page.setItems(clickableItems);

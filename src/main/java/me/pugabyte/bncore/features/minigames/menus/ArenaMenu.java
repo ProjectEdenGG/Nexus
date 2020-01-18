@@ -104,7 +104,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		FLAGS(2, 3, new ItemStack(Material.BANNER, 1, ColorType.CYAN.getDyeColor().getDyeData())) {
 			@Override
 			void onClick(Player player, Arena arena) {
-
+				menus.openFlagsMenu(player, arena);
 			}
 
 			@Override
