@@ -24,10 +24,11 @@ import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 
 @CustomMechanicSettings(MechanicType.GOLD_RUSH)
 public class GoldRushMenu extends MenuUtils implements InventoryProvider {
-
 	GoldRushArena arena;
+
 	public GoldRushMenu(Arena arena){
 		this.arena = (GoldRushArena) ArenaManager.convert(arena, GoldRushArena.class);
+		this.arena.write();
 	}
 
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
