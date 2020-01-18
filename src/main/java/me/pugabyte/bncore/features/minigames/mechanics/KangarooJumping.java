@@ -77,8 +77,8 @@ public final class KangarooJumping extends TeamlessMechanic {
 	@EventHandler
 	public void onEnterWinningArea(RegionEnteredEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		KangarooJumpingArena arena = (KangarooJumpingArena) minigamer.getMatch().getArena();
 		if (!minigamer.isPlaying(this)) return;
+		KangarooJumpingArena arena = (KangarooJumpingArena) minigamer.getMatch().getArena();
 		if (!arena.ownsRegion(event.getRegion().getId(), "winningregion")) return;
 		if (hasAnyoneScored(minigamer.getMatch())) return;
 		minigamer.scored();
