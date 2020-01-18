@@ -5,7 +5,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class FreeForAll extends TeamlessMechanic {
+public final class FreeForAll extends TeamlessMechanic {
 
 	@Override
 	public String getName() {

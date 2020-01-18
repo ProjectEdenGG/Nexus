@@ -35,7 +35,7 @@ import java.util.Collections;
 
 // TODO: change water place event to splash potion throw
 
-public class InvertoInferno extends TeamlessMechanic {
+public final class InvertoInferno extends TeamlessMechanic {
 
 	@Override
 	public String getName() {

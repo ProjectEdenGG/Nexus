@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
 
-public class Splegg extends SpleefMechanic {
+public final class Splegg extends SpleefMechanic {
 
 	@Override
 	public String getName() {

@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 // TODO:
 //  - Anti-camping
 
-public class Spleef extends SpleefMechanic {
+public final class Spleef extends SpleefMechanic {
 
 	@Override
 	public String getName() {

@@ -30,10 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GoldRush extends TeamlessMechanic {
-
-	Match match;
-	int mineStackHeight = 50;
+public final class GoldRush extends TeamlessMechanic {
 
 	@Override
 	public String getName() {
@@ -46,7 +43,7 @@ public class GoldRush extends TeamlessMechanic {
 	}
 
 	@Override
-	public GameMode getGameMode(){
+	public GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
 
@@ -55,45 +52,59 @@ public class GoldRush extends TeamlessMechanic {
 		return new ItemStack(Material.GOLD_INGOT);
 	}
 
-	int taskID;
-	int seconds = 5;
-
 	@Override
-	public void onStart(Match match){
+	public void onStart(Match match) {
 		super.onStart(match);
-		this.match = match;
 		GoldRushArena goldRushArena = (GoldRushArena) match.getArena();
-		mineStackHeight = goldRushArena.getMineStackHeight();
-		createMineStacks(match.getTeams().get(0).getSpawnpoints());
-		for(Location loc : match.getTeams().get(0).getSpawnpoints()){
+		createMineStacks(goldRushArena.getMineStackHeight(), match.getTeams().get(0).getSpawnpoints());
+		for (Location loc : match.getTeams().get(0).getSpawnpoints())
 			loc.clone().subtract(0, 1, 0).getBlock().setType(Material.GLASS);
-		}
-		taskID = match.getTasks().repeat(3 *20, 20, ()->{
-			match.broadcast("Starting in " + seconds + "...");
-			if(seconds < 1){
-				cancelTask();
-				match.broadcast("Mine!");
-				for(Location loc : match.getTeams().get(0).getSpawnpoints()){
-					loc.clone().subtract(0, 1, 0).getBlock().breakNaturally();
-				}
-				for (Minigamer minigamer : match.getMinigamers()) {
-					minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
-					minigamer.getPlayer().setGameMode(GameMode.SURVIVAL);
-				}
-			}
-			seconds--;
-		});
+
+		new Countdown(match, 5);
 	}
+
+	private class Countdown {
+		private Match match;
+		private int taskId;
+		private int seconds;
+
+		Countdown(Match match, int seconds) {
+			this.match = match;
+			this.seconds = seconds;
+			start();
+		}
+
+		void start() {
+			taskId = match.getTasks().repeat(0, 20, () -> {
+				match.broadcast("Starting in " + seconds + "...");
+				if (seconds < 1) {
+					match.broadcast("Mine!");
+					for (Location loc : match.getTeams().get(0).getSpawnpoints())
+						loc.clone().subtract(0, 1, 0).getBlock().breakNaturally();
+					for (Minigamer minigamer : match.getMinigamers())
+						minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
+					stop();
+				}
+				seconds--;
+			});
+		}
+
+		void stop() {
+			Utils.cancelTask(taskId);
+		}
+	}
+
 
 	@Override
 	public void onEnd(Match match) {
 		super.onEnd(match);
+		GoldRushArena goldRushArena = (GoldRushArena) match.getArena();
 		for (Location loc : match.getTeams().get(0).getSpawnpoints()) {
-			removeMineStacks(loc);
+			removeMineStacks(goldRushArena.getMineStackHeight(), loc);
 		}
 	}
 
-	public void createMineStacks(List<Location> locations){
+	public void createMineStacks(int mineStackHeight, List<Location> locations) {
 		WorldEditUtils worldEditUtils = Minigames.getWorldEditUtils();
 
 		Map<Material, Double> pattern = new HashMap<Material, Double>() {{
@@ -115,7 +126,7 @@ public class GoldRush extends TeamlessMechanic {
 		}
 	}
 
-	public void removeMineStacks(Location loc){
+	public void removeMineStacks(int mineStackHeight, Location loc) {
 		WorldEditUtils worldEditUtils = Minigames.getWorldEditUtils();
 		Vector p1 = worldEditUtils.toVector(loc.clone().subtract(0, 2, 0));
 		Vector p2 = worldEditUtils.toVector(loc.clone().subtract(0, mineStackHeight, 0));
@@ -138,30 +149,26 @@ public class GoldRush extends TeamlessMechanic {
 	@EventHandler
 	public void onClick(PlayerInteractEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if(!minigamer.isPlaying(this)) return;
-		if(event.getClickedBlock() == null) return;
-		if(!event.getClickedBlock().getType().equals(Material.IRON_ORE)) return;
-		if(!event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.TNT)) return;
+		if (!minigamer.isPlaying(this)) return;
+		if (event.getClickedBlock() == null) return;
+		if (!event.getClickedBlock().getType().equals(Material.IRON_ORE)) return;
+		if (!event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.TNT)) return;
 		event.getClickedBlock().setType(Material.AIR);
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event){
+	public void onRegionEnter(RegionEnteredEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if(!minigamer.isPlaying(this)) return;
-		if (event.getRegion().getId().equalsIgnoreCase("goldrush_" + match.getArena().getName() + "_winningRegion")) {
+		if (!minigamer.isPlaying(this)) return;
+		if (event.getRegion().getId().equalsIgnoreCase("goldrush_" + minigamer.getMatch().getArena().getName() + "_winningRegion")) {
 			minigamer.scored();
-			match.end();
+			minigamer.getMatch().end();
 		}
 	}
 
-	public void trap(Block block){
+	public void trap(Block block) {
 		Utils.wait(1, () -> block.getRelative(BlockFace.UP).getLocation().clone().subtract(0, 1, 0).getBlock().setType(Material.WEB));
 		Utils.wait(2 * 20, () -> block.setType(Material.AIR));
-	}
-
-	void cancelTask(){
-		Utils.cancelTask(taskID);
 	}
 
 }

@@ -24,7 +24,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 
-public class KangarooJumping extends TeamlessMechanic {
+public final class KangarooJumping extends TeamlessMechanic {
 
 	@Override
 	public String getName() {
