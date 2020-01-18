@@ -81,7 +81,7 @@ public class WorldEditUtils {
 	}
 
 	public Schematic copy(Location min, Location max) {
-		return copy(worldGuardUtils.getRegion(min, max));
+		return copy((CuboidRegion) worldGuardUtils.getRegion(min, max));
 	}
 
 	public Schematic copy(Region region) {

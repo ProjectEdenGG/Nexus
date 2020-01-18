@@ -1,18 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics;
 
-import me.pugabyte.bncore.features.minigames.mechanics.CaptureTheFlag;
-import me.pugabyte.bncore.features.minigames.mechanics.DeathSwap;
-import me.pugabyte.bncore.features.minigames.mechanics.FourTeamDeathmatch;
-import me.pugabyte.bncore.features.minigames.mechanics.FreeForAll;
-import me.pugabyte.bncore.features.minigames.mechanics.InvertoInferno;
-import me.pugabyte.bncore.features.minigames.mechanics.KangarooJumping;
-import me.pugabyte.bncore.features.minigames.mechanics.OneFlagCaptureTheFlag;
-import me.pugabyte.bncore.features.minigames.mechanics.OneInTheQuiver;
-import me.pugabyte.bncore.features.minigames.mechanics.Paintball;
-import me.pugabyte.bncore.features.minigames.mechanics.Spleef;
-import me.pugabyte.bncore.features.minigames.mechanics.Splegg;
-import me.pugabyte.bncore.features.minigames.mechanics.TeamDeathmatch;
-import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
+import me.pugabyte.bncore.features.minigames.mechanics.*;
 
 public enum MechanicType {
 	CAPTURE_THE_FLAG(new CaptureTheFlag()),
@@ -20,6 +8,7 @@ public enum MechanicType {
 	FOUR_TEAM_DEATHMATCH(new FourTeamDeathmatch()),
 	FREE_FOR_ALL(new FreeForAll()),
 	INVERTO_INFERNO(new InvertoInferno()),
+	GOLD_RUSH(new GoldRush()),
 	KANGAROO_JUMPING(new KangarooJumping()),
 	ONE_FLAG_CAPTURE_THE_FLAG(new OneFlagCaptureTheFlag()),
 	ONE_IN_THE_QUIVER(new OneInTheQuiver()),
