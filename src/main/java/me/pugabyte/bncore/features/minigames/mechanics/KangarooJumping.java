@@ -22,8 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-
 public final class KangarooJumping extends TeamlessMechanic {
 
 	@Override
@@ -46,31 +44,22 @@ public final class KangarooJumping extends TeamlessMechanic {
 		super.onStart(match);
 		KangarooJumpingArena arena = (KangarooJumpingArena) match.getArena();
 		Utils.wait(5 * 20, () -> {
-			for (Location loc : arena.getTeams().get(0).getSpawnpoints())
-				spawnPowerUp(loc);
+			for (Location location : arena.getTeams().get(0).getSpawnpoints())
+				spawnPowerUp(match, location);
 		});
 	}
 
-	@Override
-	public void onEnd(Match match) {
-		super.onEnd(match);
-		hologramArrayList.forEach(Hologram::delete);
-		hologramArrayList.clear();
-	}
-
-	ArrayList<Hologram> hologramArrayList = new ArrayList<>();
-
-	private void spawnPowerUp(Location loc) {
-		Hologram hologram = HologramsAPI.createHologram(BNCore.getInstance(), loc.clone().add(0, 2, 0));
+	private void spawnPowerUp(Match match, Location location) {
+		Hologram hologram = HologramsAPI.createHologram(BNCore.getInstance(), location.clone().add(0, 2, 0));
 		hologram.appendTextLine(Utils.colorize("&3Power Up"));
 		ItemLine itemLine = hologram.appendItemLine(new ItemStackBuilder(Material.POTION).effectColor(ColorType.PINK.getColor()).build());
 		itemLine.setPickupHandler(player -> {
 			player.sendMessage("You picked up a power up!");
-			hologramArrayList.remove(hologram);
+			match.getHolograms().remove(hologram);
 			hologram.delete();
-			Utils.wait(10 * 20, ()->spawnPowerUp(loc));
+			Utils.wait(10 * 20, ()->spawnPowerUp(match, location));
 		});
-		hologramArrayList.add(hologram);
+		match.getHolograms().add(hologram);
 	}
 
 	@EventHandler
@@ -88,9 +77,9 @@ public final class KangarooJumping extends TeamlessMechanic {
 	@EventHandler
 	public void onEnterWinningArea(RegionEnteredEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		KangarooJumpingArena arena = (KangarooJumpingArena) minigamer.getMatch().getArena();
 		if (!minigamer.isPlaying(this)) return;
-		if (!event.getRegion().getId().equalsIgnoreCase("kangarooJumping_" + minigamer.getMatch().getArena().getName() + "_winningRegion"))
-			return;
+		if (!arena.ownsRegion(event.getRegion().getId(), "winningregion")) return;
 		if (hasAnyoneScored(minigamer.getMatch())) return;
 		minigamer.scored();
 		minigamer.getMatch().broadcast("&e" + minigamer.getColoredName() + " has reached the finish area!");

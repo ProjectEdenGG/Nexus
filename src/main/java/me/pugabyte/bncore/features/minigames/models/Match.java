@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -44,6 +45,7 @@ public class Match {
 	private Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;
 	private MatchScoreboard scoreboard;
+	private ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
 
@@ -127,6 +129,7 @@ public class Match {
 		ended = true;
 		tasks.end();
 		broadcast("Match has ended");
+		clearHolograms();
 		clearEntities();
 		clearStates();
 		toGamelobby();
@@ -163,6 +166,11 @@ public class Match {
 
 	private void clearEntities() {
 		// TODO: Clearing dropped entities & arrows
+	}
+
+	public void clearHolograms() {
+		holograms.forEach(Hologram::delete);
+		holograms.clear();
 	}
 
 	private void balance() {
