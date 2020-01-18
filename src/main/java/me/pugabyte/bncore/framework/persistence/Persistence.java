@@ -2,6 +2,7 @@ package me.pugabyte.bncore.framework.persistence;
 
 import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.sqlmakers.MySqlMaker;
+import com.google.common.base.Strings;
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -18,11 +19,13 @@ public class Persistence {
 		int port = config.getInt("databases.port");
 		String username = config.getString("databases.username");
 		String password = config.getString("databases.password");
+		String prefix = config.getString("databases.prefix");
+		prefix = (Strings.isNullOrEmpty(prefix)) ? "" : prefix + "_";
 
 		Class.forName("com.mysql.jdbc.Driver");
 
 		Database database = new Database();
-		database.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + bndb.getDatabase() + "?useSSL=false&relaxAutoCommit=true");
+		database.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + prefix + bndb.getDatabase() + "?useSSL=false&relaxAutoCommit=true");
 		database.setUser(username);
 		database.setPassword(password);
 		database.setSqlMaker(new MySqlMaker());

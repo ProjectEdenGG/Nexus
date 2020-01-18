@@ -98,6 +98,7 @@ public class BNCore extends JavaPlugin {
 		config.addDefault("databases.port", 3306);
 		config.addDefault("databases.username", "root");
 		config.addDefault("databases.password", "password");
+		config.addDefault("databases.prefix", "");
 
 		config.addDefault("yandex.apiKey", "abcdef");
 
