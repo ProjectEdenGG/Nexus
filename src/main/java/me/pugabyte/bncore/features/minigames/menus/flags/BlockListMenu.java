@@ -84,11 +84,11 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 					"&e" + sortedList.get(i).name(),
 					"&3Click me to remove this||&3material from the list."
 					),
-					e -> {
-				arena.getBlockList().remove(((InventoryClickEvent) e.getEvent()).getCurrentItem().getType());
-				arena.write();
-				menus.blockListMenu(arena).open(player);
-			});
+				e -> {
+					arena.getBlockList().remove(((InventoryClickEvent) e.getEvent()).getCurrentItem().getType());
+					arena.write();
+					menus.blockListMenu(arena).open(player);
+				});
 		}
 
 		page.setItems(clickableItems);

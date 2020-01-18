@@ -5,7 +5,6 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -27,8 +26,6 @@ import java.util.ArrayList;
 
 public class KangarooJumping extends TeamlessMechanic {
 
-	boolean winnable = true;
-
 	@Override
 	public String getName() {
 		return "Kangaroo Jumping";
@@ -44,25 +41,20 @@ public class KangarooJumping extends TeamlessMechanic {
 		return new ItemStack(Material.LEATHER_BOOTS);
 	}
 
-	KangarooJumpingArena arena;
-
 	@Override
 	public void onStart(Match match) {
 		super.onStart(match);
-		arena = (KangarooJumpingArena) ArenaManager.convert(match.getArena(), KangarooJumpingArena.class);
+		KangarooJumpingArena arena = (KangarooJumpingArena) match.getArena();
 		Utils.wait(5 * 20, () -> {
-			for (Location loc : arena.getTeams().get(0).getSpawnpoints()) {
+			for (Location loc : arena.getTeams().get(0).getSpawnpoints())
 				spawnPowerUp(loc);
-			}
 		});
 	}
 
 	@Override
 	public void onEnd(Match match) {
 		super.onEnd(match);
-		hologramArrayList.forEach(hologram -> {
-			hologram.delete();
-		});
+		hologramArrayList.forEach(Hologram::delete);
 		hologramArrayList.clear();
 	}
 
@@ -99,11 +91,18 @@ public class KangarooJumping extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this)) return;
 		if (!event.getRegion().getId().equalsIgnoreCase("kangarooJumping_" + minigamer.getMatch().getArena().getName() + "_winningRegion"))
 			return;
-		if (!winnable) return;
-		winnable = false;
+		if (hasAnyoneScored(minigamer.getMatch())) return;
 		minigamer.scored();
 		minigamer.getMatch().broadcast("&e" + minigamer.getColoredName() + " has reached the finish area!");
 		minigamer.getMatch().getTasks().wait(5 * 20, () -> minigamer.getMatch().end());
+	}
+
+	boolean hasAnyoneScored(Match match) {
+		for (Minigamer minigamer : match.getMinigamers()) {
+			if (minigamer.getScore() > 0)
+				return true;
+		}
+		return false;
 	}
 
 }

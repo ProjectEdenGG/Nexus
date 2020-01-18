@@ -90,13 +90,19 @@ public class JMinigamesCommand extends CustomCommand {
 		Minigames.getMenus().openArenaMenu(player(), arena);
 	}
 
+	@Path("(teleport|tp) <arena>")
+	@Permission("manage")
+	void teleport(@Arg Arena arena) {
+		arena.teleport(minigamer);
+	}
+
 	@Path("(delete|remove) <arena>")
 	@Permission("manage")
 	void remove(@Arg Arena arena) {
 		Minigames.getMenus().openDeleteMenu(player(), arena);
 	}
 
-	@Path("(reload|read) <arena>")
+	@Path("(reload|read) [arena]")
 	@Permission("manage")
 	void reload(@Arg(tabCompleter = Arena.class) String arena) {
 		long startTime = System.currentTimeMillis();
@@ -109,17 +115,19 @@ public class JMinigamesCommand extends CustomCommand {
 		reply(PREFIX + "Reload time took " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
-	@Path("(save|write) <arena>>")
+	@Path("(save|write) [arena]")
 	@Permission("manage")
 	void save(@Arg Arena arena) {
-		long startTime = System.currentTimeMillis();
+		Utils.async(() -> {
+			long startTime = System.currentTimeMillis();
 
-		if (arena == null)
-			ArenaManager.write();
-		else
-			ArenaManager.write(arena);
+			if (arena == null)
+				ArenaManager.write();
+			else
+				ArenaManager.write(arena);
 
-		reply(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
+			reply(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
+		});
 	}
 
 	private Match getRunningMatch(Arena arena) {
