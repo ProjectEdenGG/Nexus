@@ -134,7 +134,6 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 
 			@Override
 			String getLore(Player player, Arena arena){
-				if(arena.getSpectateLocation() == null) return "null";
 				return getLocationLore(arena.getSpectateLocation());
 			}
 
@@ -149,7 +148,6 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 
 			@Override
 			String getLore(Player player, Arena arena) {
-				if(arena.getRespawnLocation() == null) return "null";
 				return getLocationLore(arena.getRespawnLocation());
 			}
 		},

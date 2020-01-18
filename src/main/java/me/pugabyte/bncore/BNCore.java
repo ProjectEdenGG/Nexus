@@ -1,7 +1,6 @@
 package me.pugabyte.bncore;
 
 import me.pugabyte.bncore.features.chat.Chat;
-import me.pugabyte.bncore.features.chat.translator.Translator;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
 import me.pugabyte.bncore.features.connect4.Connect4;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
@@ -124,7 +123,6 @@ public class BNCore extends JavaPlugin {
 	public static SidewaysStairs sidewaysStairs;
 	public static Sleep sleep;
 	public static Tameables tameables;
-	public static Translator translator;
 	public static Wiki wiki;
 
 	private void enableFeatures() {
@@ -146,7 +144,6 @@ public class BNCore extends JavaPlugin {
 		sidewaysStairs = new SidewaysStairs();
 		sleep = new Sleep();
 		tameables = new Tameables();
-		translator = new Translator();
 		wiki = new Wiki();
 	}
 
