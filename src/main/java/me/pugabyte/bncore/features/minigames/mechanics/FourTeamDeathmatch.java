@@ -5,7 +5,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class FourTeamDeathmatch extends BalancedTeamMechanic {
+public final class FourTeamDeathmatch extends BalancedTeamMechanic {
 
 	@Override
 	public String getName() {
