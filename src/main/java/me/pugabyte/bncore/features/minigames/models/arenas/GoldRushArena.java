@@ -10,12 +10,11 @@ import java.util.Map;
 @Data
 @SerializableAs("GoldRushArena")
 public class GoldRushArena extends Arena {
-
-	private int mineStackHeight;
+	private int mineStackHeight = 0;
 
 	public GoldRushArena(Map<String, Object> map) {
 		super(map);
-		this.mineStackHeight = (int) map.get("mineStackHeight");
+		this.mineStackHeight = (int) map.getOrDefault("mineStackHeight", mineStackHeight);
 	}
 
 	@Override
