@@ -2,12 +2,18 @@ package me.pugabyte.bncore.models;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public enum Rank {
 	GUEST("&7", false),
@@ -44,6 +50,13 @@ public enum Rank {
 	@Override
 	public String toString() {
 		return Utils.camelCase(format + name());
+	}
+
+	public List<Nerd> getNerds() {
+		Set<PermissionUser> users = PermissionsEx.getPermissionManager().getGroup(Utils.camelCase(name())).getUsers();
+		Set<Nerd> nerds = new HashSet<>();
+		users.forEach(user -> nerds.add(new Nerd(user.getName())));
+		return new ArrayList<>(nerds);
 	}
 
 	public static Rank getHighestRank(Player player) {
