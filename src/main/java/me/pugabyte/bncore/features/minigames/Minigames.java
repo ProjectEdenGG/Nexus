@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.minigames;
 
 import lombok.Getter;
 import me.pugabyte.bncore.features.minigames.listeners.MatchListener;
+import me.pugabyte.bncore.features.minigames.lobby.Basketball;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.bncore.utils.Utils;
@@ -36,6 +37,8 @@ public class Minigames {
 		registerSerializables();
 		ArenaManager.read();
 		new MatchListener();
+
+		new Basketball();
 	}
 
 	private void registerSerializables() {
