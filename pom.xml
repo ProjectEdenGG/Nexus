@@ -106,6 +106,10 @@
             <id>codemc-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>citizens-repo</id>
+            <url>https://repo.citizensnpcs.co/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
@@ -324,11 +328,18 @@
             <artifactId>anvilgui</artifactId>
             <version>fac7715</version>
         </dependency>
-        <!-- HGDisplays -->
+        <!-- HolographicDisplays -->
         <dependency>
             <groupId>com.gmail.filoghost.holographicdisplays</groupId>
             <artifactId>holographicdisplays-api</artifactId>
             <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- CitizensAPI -->
+        <dependency>
+            <groupId>net.citizensnpcs</groupId>
+            <artifactId>citizens</artifactId>
+            <version>2.0.26-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

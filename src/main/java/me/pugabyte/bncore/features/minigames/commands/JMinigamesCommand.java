@@ -1,5 +1,6 @@
-package me.pugabyte.bncore.features.minigames;
+package me.pugabyte.bncore.features.minigames.commands;
 
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
