@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.models.nerds.Nerd;
@@ -14,30 +15,30 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public enum Rank {
-	GUEST("&7", false),
-	MEMBER("&f", false),
-	TRUSTED("&e", false),
-	ELITE("&6", false),
-	VETERAN("&6&l", true),
-	BUILDER("&5", true),
-	ARCHITECT("&5&l", true),
-	MODERATOR("&b&o", true),
-	OPERATOR("&3&o", true),
-	ADMIN("&9&o", true),
-	OWNER("&4&o", true);
+	GUEST("&7", false, false),
+	MEMBER("&f", false, false),
+	TRUSTED("&e", false, false),
+	ELITE("&6", false, false),
+	VETERAN("&6&l", true, false),
+	BUILDER("&5", true, true),
+	ARCHITECT("&5&l", true, true),
+	MODERATOR("&b&o", true, true),
+	OPERATOR("&3&o", true, true),
+	ADMIN("&9&o", true, true),
+	OWNER("&4&o", true, true);
 
 	@Getter
 	private String format;
 	@Getter
 	@Accessors(fluent = true)
 	private boolean hasPrefix;
-
-	Rank(String format, boolean hasPrefix) {
-		this.format = format;
-		this.hasPrefix = hasPrefix;
-	}
+	@Getter
+	@Accessors(fluent = true)
+	private boolean isStaff;
 
 	public String getPrefix() {
 		if (hasPrefix) {
@@ -57,6 +58,10 @@ public enum Rank {
 		Set<Nerd> nerds = new HashSet<>();
 		users.forEach(user -> nerds.add(new Nerd(user.getName())));
 		return new ArrayList<>(nerds);
+	}
+
+	public static List<Rank> getStaff() {
+		return Arrays.stream(Rank.values()).filter(Rank::isStaff).collect(Collectors.toList());
 	}
 
 	public static Rank getHighestRank(Player player) {
