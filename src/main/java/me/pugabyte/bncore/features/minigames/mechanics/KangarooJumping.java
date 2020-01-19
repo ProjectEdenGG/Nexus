@@ -5,24 +5,23 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.KangarooJumpingArena;
+import me.pugabyte.bncore.features.minigames.models.matchdata.KangarooJumpingMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.ArrayList;
 
 public final class KangarooJumping extends TeamlessMechanic {
 
@@ -42,47 +41,119 @@ public final class KangarooJumping extends TeamlessMechanic {
 	}
 
 	@Override
+	public void onInitialize(Match match){
+		match.setMatchData(new KangarooJumpingMatchData(match));
+	}
+
+	@Override
 	public void onStart(Match match) {
 		super.onStart(match);
 		KangarooJumpingArena arena = (KangarooJumpingArena) match.getArena();
 		Utils.wait(5 * 20, () -> {
-			for (Location loc : arena.getTeams().get(0).getSpawnpoints())
-				spawnPowerUp(loc);
+			match.broadcast("Power ups have spawned!");
+			for (Location loc : arena.getPowerUpLocations())
+				spawnPowerUp(loc, match);
 		});
 	}
 
 	@Override
 	public void onEnd(Match match) {
 		super.onEnd(match);
-		hologramArrayList.forEach(Hologram::delete);
-		hologramArrayList.clear();
+		KangarooJumpingMatchData matchData = (KangarooJumpingMatchData) match.getMatchData();
+		matchData.getHologramArrayList().forEach(Hologram::delete);
+		matchData.getHologramArrayList().clear();
 	}
 
-	ArrayList<Hologram> hologramArrayList = new ArrayList<>();
+	private void spawnPowerUp(Location loc, Match match) {
+		KangarooJumpingMatchData matchData = (KangarooJumpingMatchData) match.getMatchData();
 
-	private void spawnPowerUp(Location loc) {
+		POWERUP powerup = POWERUP.values()[Utils.randomInt(0, (POWERUP.values().length - 1))];
+		String powerUpName = Utils.colorize(((powerup.isPositive()) ? "&a" : "&c") + powerup.getName());
+
 		Hologram hologram = HologramsAPI.createHologram(BNCore.getInstance(), loc.clone().add(0, 2, 0));
-		hologram.appendTextLine(Utils.colorize("&3Power Up"));
-		ItemLine itemLine = hologram.appendItemLine(new ItemStackBuilder(Material.POTION).effectColor(ColorType.PINK.getColor()).build());
+		hologram.appendTextLine(Utils.colorize("&3&lPower Up"));
+		hologram.insertTextLine(1,  powerUpName);
+		ItemLine itemLine = hologram.appendItemLine(powerup.getItemStack());
+
 		itemLine.setPickupHandler(player -> {
-			player.sendMessage("You picked up a power up!");
-			hologramArrayList.remove(hologram);
+			player.sendMessage(Minigames.PREFIX + "You picked up a power up!");
+			powerup.onPickUp(PlayerManager.get(player));
+			matchData.getHologramArrayList().remove(hologram);
 			hologram.delete();
-			Utils.wait(10 * 20, ()->spawnPowerUp(loc));
+			Utils.wait(10 * 20, ()->{
+				if(!match.isEnded()) spawnPowerUp(loc, match);
+			});
 		});
-		hologramArrayList.add(hologram);
+		matchData.getHologramArrayList().add(hologram);
 	}
 
-	@EventHandler
-	public void onPlayerPressurePlate(PlayerInteractEvent event) {
-		if (!event.getAction().equals(Action.PHYSICAL)) return;
-		if (event.getClickedBlock().getType() != Material.STONE_PLATE) return;
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if (!minigamer.isPlaying(this)) return;
-		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 10));
-		minigamer.getPlayer().sendMessage(Utils.getPrefix("Kangaroo Jump") + "Boooiiinnnggg!");
-		event.getClickedBlock().getWorld().getBlockAt(event.getClickedBlock().getLocation()).setType(Material.AIR);
-		minigamer.getMatch().getTasks().wait(10 * 20, () -> event.getClickedBlock().getWorld().getBlockAt(event.getClickedBlock().getLocation()).setType(Material.STONE_PLATE));
+	public enum POWERUP{
+		JUMP("Extra Jump Boost", true, new ItemStackBuilder(Material.LEATHER_BOOTS).glow().build()) {
+			@Override
+			public void onPickUp(Minigamer minigamer) {
+				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 20), true);
+			}
+		},
+		P_BLINDNESS("Blindness", true, new ItemStackBuilder(Material.POTION).effectColor(ColorType.BLACK.getColor()).glow().build()) {
+			@Override
+			public void onPickUp(Minigamer minigamer) {
+				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers()) {
+					if(_minigamer == minigamer) continue;
+					_minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1));
+				}
+			}
+		},
+		N_BLINDNESS("Blindness", false, new ItemStackBuilder(Material.POTION).effectColor(ColorType.BLACK.getColor()).build()) {
+			@Override
+			public void onPickUp(Minigamer minigamer) {
+				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1));
+			}
+		},
+		SNOWBALL("Snowball", true, new ItemStackBuilder(Material.SNOW_BALL).build()) {
+			@Override
+			public void onPickUp(Minigamer minigamer) {
+				minigamer.getMatch().getMinigamers().forEach((_minigamer)->_minigamer.getPlayer().getInventory().addItem(
+						new ItemStackBuilder(Material.SNOW_BALL)
+								.name("&bKnockback Snowball")
+								.enchant(Enchantment.KNOCKBACK, 2)
+								.amount(3)
+						.build()
+				));
+			}
+		},
+		LEVITATION("Levitation", true, new ItemStackBuilder(Material.ELYTRA).glow().build()) {
+			@Override
+			public void onPickUp(Minigamer minigamer) {
+				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers()) {
+					if(_minigamer == minigamer) continue;
+					_minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 5 * 20, 3));
+				}
+			}
+		};
+
+		public String name;
+		boolean isPositive;
+		ItemStack itemStack;
+
+		public String getName(){
+			return name;
+		}
+
+		public boolean isPositive(){
+			return isPositive;
+		}
+
+		public ItemStack getItemStack(){
+			return itemStack;
+		}
+
+		POWERUP(String name, boolean isPositive, ItemStack itemStack) {
+			this.name = name;
+			this.isPositive = isPositive;
+			this.itemStack = itemStack;
+		}
+
+		public abstract void onPickUp(Minigamer minigamer);
 	}
 
 	@EventHandler
