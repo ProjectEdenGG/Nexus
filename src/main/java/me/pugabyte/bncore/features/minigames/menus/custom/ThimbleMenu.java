@@ -4,20 +4,22 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
+import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleArena;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import org.bukkit.entity.Player;
 
+import static me.pugabyte.bncore.features.minigames.Minigames.menus;
+
 @CustomMechanicSettings(MechanicType.THIMBLE)
 public class ThimbleMenu extends MenuUtils implements InventoryProvider {
-
-	Arena arena;
-	MinigamesMenus menus = new MinigamesMenus();
+	ThimbleArena arena;
 
 	public ThimbleMenu(Arena arena) {
-		this.arena = arena;
+		this.arena = (ThimbleArena) ArenaManager.convert(arena, ThimbleArena.class);
+		this.arena.write();
 	}
 
 	@Override

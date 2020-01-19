@@ -15,9 +15,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -32,8 +34,12 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
 
 import java.util.Collections;
+import java.util.List;
 
-// TODO: change water place event to splash potion throw
+// TODO: Cooldown on give glass bottle ==> done?
+// TODO: Potion Splash also extinguishes all players in area ==> done?
+// TODO: "you need to be closer" --> get target block, if its water, check distance <= 4 --> give splash ==> done?
+// TODO: slower fire spread speed --> Block Spread Event
 
 public final class InvertoInferno extends TeamlessMechanic {
 
@@ -58,6 +64,12 @@ public final class InvertoInferno extends TeamlessMechanic {
 	}
 
 	@Override
+	public void onJoin(Minigamer minigamer) {
+		super.onJoin(minigamer);
+		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Keep the flames back until the water bombers arrive!"));
+	}
+
+	@Override
 	public void onStart(Match match) {
 		super.onStart(match);
 		new FireTask(match);
@@ -66,7 +78,8 @@ public final class InvertoInferno extends TeamlessMechanic {
 	@Override
 	public void onEnd(Match match) {
 		super.onEnd(match);
-		Region region = Minigames.getWorldGuardUtils().getRegion("invertoinferno");
+		Region region = Minigames.getWorldGuardUtils().getRegion("invertoinferno_fire");
+
 		Minigames.getWorldEditUtils().replace(region, Material.FIRE, Material.AIR);
 	}
 
@@ -97,7 +110,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		int slot = playerInv.getHeldItemSlot();
 		playerInv.remove(playerInv.getItem(slot));
 
-		Utils.wait(1, () -> playerInv.setItem(slot, new ItemStack(Material.GLASS_BOTTLE)));
+		Utils.wait(20 * 20, () -> playerInv.setItem(slot, new ItemStack(Material.GLASS_BOTTLE)));
 	}
 
 	// Radius Extinguish
@@ -141,14 +154,20 @@ public final class InvertoInferno extends TeamlessMechanic {
 				}
 			}
 		}
+
+		List<Entity> nearbyEntities = projectile.getNearbyEntities(radius, radius, radius);
+		for (Entity entity : nearbyEntities)
+			entity.setFireTicks(0);
+
 		minigamer.scored(points);
 	}
 
 	@EventHandler
 	public void onGlassBottleFill(PlayerInteractEvent event) {
-		if (!event.getPlayer().getWorld().equals(Minigames.getGameworld())) return;
+		Player player = event.getPlayer();
+		if (!player.getWorld().equals(Minigames.getGameworld())) return;
 
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		ItemStack eventItem = event.getItem();
@@ -159,11 +178,18 @@ public final class InvertoInferno extends TeamlessMechanic {
 			event.setCancelled(true);
 
 		if (event.getClickedBlock() == null || event.getBlockFace() == null) {
-			if (Utils.isWater(minigamer.getPlayer().getTargetBlock(null, 10).getType()))
-				minigamer.tell("You need to be closer to do that.");
+			if (Utils.isWater(player.getTargetBlock(null, 10).getType()))
+				if (player.getLocation().distance(player.getTargetBlock(null, 10).getLocation()) > 4)
+					minigamer.tell("You need to be closer to do that.");
+				else
+					giveWaterBottle(event, eventItem);
 			return;
 		}
 
+		giveWaterBottle(event, eventItem);
+	}
+
+	private void giveWaterBottle(PlayerInteractEvent event, ItemStack eventItem) {
 		ItemStack waterPotion = new ItemStack(Material.SPLASH_POTION);
 		PotionMeta meta = (PotionMeta) waterPotion.getItemMeta();
 		meta.setBasePotionData(new PotionData(PotionType.WATER));
@@ -171,13 +197,19 @@ public final class InvertoInferno extends TeamlessMechanic {
 		PlayerInventory playerInv = event.getPlayer().getInventory();
 		int slot = playerInv.getHeldItemSlot();
 
-		if (eventItem.getType().equals(Material.GLASS_BOTTLE)
-				&& Utils.isWater(event.getClickedBlock().getRelative(event.getBlockFace()).getType())) {
-			playerInv.remove(playerInv.getItem(slot));
-			playerInv.setItem(slot, waterPotion);
+		// via Water Or Cauldron: Glass Bottle -> Water Splash
+		if (eventItem.getType().equals(Material.GLASS_BOTTLE)) {
+
+			Block clickedBlock = event.getClickedBlock();
+			if (Utils.isWater(clickedBlock.getRelative(event.getBlockFace()).getType())
+					|| clickedBlock.getType().equals(Material.CAULDRON)) {
+
+				playerInv.remove(playerInv.getItem(slot));
+				playerInv.setItem(slot, waterPotion);
+			}
 		}
 
-		// if you have a water bottle in your hand, set it to a splash potion
+		// Water Bottle ->  Water Splash
 		if (eventItem.getType().equals(Material.POTION)) {
 			playerInv.remove(playerInv.getItem(slot));
 			playerInv.setItem(slot, waterPotion);
@@ -206,11 +238,30 @@ public final class InvertoInferno extends TeamlessMechanic {
 	}
 
 	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		if (!event.getPlayer().getWorld().equals(Minigames.getGameworld())) return;
+
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this)) return;
+
+		Block eventBlock = event.getBlock();
+
+		for (ProtectedRegion region : Minigames.getWorldGuardUtils().getRegionsAt(eventBlock.getLocation())) {
+			if (region.getId().equalsIgnoreCase("invertoinferno") && !eventBlock.getType().equals(Material.FIRE)) {
+				event.setCancelled(true);
+				break;
+			}
+		}
+	}
+
+	@EventHandler
 	public void onBlockBurn(BlockBurnEvent event) {
+		if (!event.getBlock().getWorld().equals(Minigames.getGameworld())) return;
+
 		Location location = event.getBlock().getLocation();
 
 		for (ProtectedRegion region : Minigames.getWorldGuardUtils().getRegionsAt(location)) {
-			if (region.getId().equalsIgnoreCase("invertoinferno")) {
+			if (region.getId().equalsIgnoreCase("invertoinferno_fire")) {
 				event.setCancelled(true);
 				break;
 			}
@@ -220,9 +271,9 @@ public final class InvertoInferno extends TeamlessMechanic {
 	public class FireTask {
 		private Match match;
 		private int taskId;
-		private ProtectedRegion regionWG = Minigames.getWorldGuardUtils().getProtectedRegion("invertoinferno");
+		private ProtectedRegion regionWG = Minigames.getWorldGuardUtils().getProtectedRegion("invertoinferno_fire");
 		private Region regionWE = Minigames.getWorldGuardUtils().convert(regionWG);
-		private int percent = regionWG.volume() / 5;
+		private int percent = regionWG.volume() / 25;
 		private int placedFire = 0;
 
 		FireTask(Match match) {

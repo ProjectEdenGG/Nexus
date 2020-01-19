@@ -21,6 +21,7 @@ public class Translator implements Listener {
 
 	public Translator() {
 		BNCore.registerListener(this);
+		BNCore.getInstance().addConfigDefault("yandex.apiKey", "abcdef");
 	}
 
 	public HashMap<UUID, ArrayList<UUID>> map = new HashMap<>();

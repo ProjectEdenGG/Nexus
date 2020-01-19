@@ -13,6 +13,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeCommandBlockException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -88,6 +89,21 @@ public abstract class CustomCommand implements ICustomCommand {
 		return Strings.isNullOrEmpty(string);
 	}
 
+	protected void runCommand(String command) {
+		Bukkit.dispatchCommand(sender(), command);
+	}
+
+	protected void runCommandAsOp(String command) {
+		sender().setOp(true);
+		Bukkit.dispatchCommand(sender(), command);
+		sender().setOp(false);
+	}
+
+	protected void checkPermission(String permission) {
+		if (!sender().hasPermission(permission))
+			throw new NoPermissionException();
+	}
+
 	protected String arg(int i) {
 		return arg(i, false);
 	}
@@ -96,7 +112,10 @@ public abstract class CustomCommand implements ICustomCommand {
 		if (event.getArgs().size() < i) return null;
 		if (rest)
 			return String.join(" ", event.getArgs().subList(i - 1, event.getArgs().size()));
-		return event.getArgs().get(i - 1);
+
+		String result = event.getArgs().get(i - 1);
+		if (Strings.isNullOrEmpty(result)) return null;
+		return result;
 	}
 
 	protected Integer intArg(int i) {

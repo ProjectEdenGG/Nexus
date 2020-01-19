@@ -159,14 +159,16 @@ public interface ICustomCommand {
 		}
 
 		// TODO: Better error messages
-		if (required && Strings.isNullOrEmpty(value))
-			throw new InvalidInputException("Missing arguments");
+		if (Strings.isNullOrEmpty(value))
+			if (required)
+				throw new InvalidInputException("Missing arguments");
+			else
+				return null;
 
 		if (Boolean.class == type || Boolean.TYPE == type) {
 			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
 			return Boolean.parseBoolean(value);
 		}
-		if (String.class == type && Strings.isNullOrEmpty(value)) return null;
 		if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
 		if (Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
 		if (Float.class == type || Float.TYPE == type) return Float.parseFloat(value);
