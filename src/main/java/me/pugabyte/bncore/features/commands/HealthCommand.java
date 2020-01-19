@@ -9,9 +9,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-public class JHealthCommand extends CustomCommand {
+public class HealthCommand extends CustomCommand {
 
-	public JHealthCommand(CommandEvent event) {
+	public HealthCommand(CommandEvent event) {
 		super(event);
 	}
 
