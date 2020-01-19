@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundExcep
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -54,7 +55,7 @@ public class Utils {
 	}
 
 	public static String colorize(String string) {
-		return string.replaceAll("&", "§");
+		return ChatColor.translateAlternateColorCodes('&', string);
 	}
 
 	public static String right(String string, int number) {
