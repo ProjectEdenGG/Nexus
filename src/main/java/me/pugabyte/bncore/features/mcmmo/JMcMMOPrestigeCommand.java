@@ -23,7 +23,7 @@ public class JMcMMOPrestigeCommand extends CustomCommand {
 	void main(@Arg("self") OfflinePlayer player) {
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 
-		newline();
+		empty();
 		reply("Prestige for " + player.getName());
 		for (Map.Entry<String, Integer> entry : mcMMOPrestige.getPrestiges().entrySet()) {
 			String type = entry.getKey();
