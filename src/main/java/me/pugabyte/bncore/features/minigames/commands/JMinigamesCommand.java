@@ -36,13 +36,13 @@ public class JMinigamesCommand extends CustomCommand {
 	@Path
 	@Permission("use")
 	void help() {
-		reply(PREFIX + "Help menu");
+		send(PREFIX + "Help menu");
 	}
 
 	@Path("list [filter]")
 	@Permission("use")
 	void list(@Arg String filter) {
-		reply(PREFIX + String.join(", ", ArenaManager.getNames(filter)));
+		send(PREFIX + String.join(", ", ArenaManager.getNames(filter)));
 	}
 
 	@Path("join <arena>")
@@ -74,12 +74,12 @@ public class JMinigamesCommand extends CustomCommand {
 	void create(@Arg String name) {
 		try {
 			ArenaManager.get(name);
-			reply(PREFIX + "Arena already exists.");
-			reply(PREFIX + "Editing arena &e" + name + "&3.");
+			send(PREFIX + "Arena already exists.");
+			send(PREFIX + "Editing arena &e" + name + "&3.");
 		} catch (InvalidInputException ex) {
 			Arena arena = new Arena(name);
 			arena.write();
-			reply(PREFIX + "Creating arena &e" + name + "&3.");
+			send(PREFIX + "Creating arena &e" + name + "&3.");
 		}
 
 		Minigames.getMenus().openArenaMenu(player(), ArenaManager.get(name));
@@ -113,7 +113,7 @@ public class JMinigamesCommand extends CustomCommand {
 		else
 			ArenaManager.read(arena);
 
-		reply(PREFIX + "Reload time took " + (System.currentTimeMillis() - startTime) + "ms");
+		send(PREFIX + "Reload time took " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
 	@Path("(save|write) [arena]")
@@ -127,7 +127,7 @@ public class JMinigamesCommand extends CustomCommand {
 			else
 				ArenaManager.write(arena);
 
-			reply(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
+			send(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
 		});
 	}
 

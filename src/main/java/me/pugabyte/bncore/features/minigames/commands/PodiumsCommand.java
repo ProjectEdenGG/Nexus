@@ -29,33 +29,33 @@ public class PodiumsCommand extends CustomCommand {
 
 	@Path("help")
 	void help() {
-		reply("&c/podiums (left|right|middle) <player> <title...>");
-		reply("&c/podiums (tp|s) <position>");
-		reply("&c/podiums getId[s] [position]");
-		reply("&c/podiums setId <position> <id>");
+		send("&c/podiums (left|right|middle) <player> <title...>");
+		send("&c/podiums (tp|s) <position>");
+		send("&c/podiums getId[s] [position]");
+		send("&c/podiums setId <position> <id>");
 	}
 
 	@Path("<position> <player> <title...>")
 	void update(@Arg Position position, @Arg OfflinePlayer player, @Arg String title) {
 		CitizensUtils.updateNameAndSkin(getNpc(position), "&l" + player.getName());
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "hd setline podium_" + position + " 1 " + title);
-		reply(PREFIX + "Podium updated");
+		send(PREFIX + "Podium updated");
 	}
 
 	@Path("(getId|getIds) [position]")
 	void getId(@Arg Position position) {
 		if (position == null) {
-			reply(PREFIX + "Podium IDs:");
-			Arrays.asList(Position.values()).forEach(_position -> reply("&3" + Utils.camelCase(_position.name()) +
+			send(PREFIX + "Podium IDs:");
+			Arrays.asList(Position.values()).forEach(_position -> send("&3" + Utils.camelCase(_position.name()) +
 					": &e" + getPodiumId(_position)));
 		} else
-			reply(PREFIX + Utils.camelCase(position.name()) + ": &e" + getPodiumId(position));
+			send(PREFIX + Utils.camelCase(position.name()) + ": &e" + getPodiumId(position));
 	}
 
 	@Path("setId <position> <id>")
 	void setId(@Arg Position position, @Arg int id) {
 		setPodiumId(position, id);
-		reply(PREFIX + Utils.camelCase(position.name()) + " podium ID updated to " + id);
+		send(PREFIX + Utils.camelCase(position.name()) + " podium ID updated to " + id);
 	}
 
 	@Path("tp <position>")

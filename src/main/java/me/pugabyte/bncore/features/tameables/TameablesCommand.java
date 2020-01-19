@@ -16,19 +16,19 @@ public class TameablesCommand extends CustomCommand {
 
 	@Path
 	void help() {
-		reply("Correct usage: &c/tameables <info|untame|transfer [player]>");
+		send("Correct usage: &c/tameables <info|untame|transfer [player]>");
 	}
 
 	@Path("(info|view)")
 	void info() {
 		BNCore.tameables.addPendingAction(player(), TameablesAction.INFO);
-		reply(PREFIX + "Punch the animal you wish to view information on");
+		send(PREFIX + "Punch the animal you wish to view information on");
 	}
 
 	@Path("untame")
 	void untame() {
 		BNCore.tameables.addPendingAction(player(), TameablesAction.UNTAME);
-		reply(PREFIX + "Punch the animal you wish to remove ownership of");
+		send(PREFIX + "Punch the animal you wish to remove ownership of");
 	}
 
 	@Path("transfer <player>")
@@ -36,7 +36,7 @@ public class TameablesCommand extends CustomCommand {
 		if (player().getUniqueId().equals(transfer.getUniqueId()))
 			error("You can't transfer an animal to yourself");
 		BNCore.tameables.addPendingAction(player(), TameablesAction.TRANSFER.withPlayer(transfer));
-		reply(PREFIX + "Punch the animal you wish to transfer to " + transfer.getName());
+		send(PREFIX + "Punch the animal you wish to transfer to " + transfer.getName());
 	}
 
 }

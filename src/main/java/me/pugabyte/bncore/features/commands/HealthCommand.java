@@ -18,11 +18,11 @@ public class HealthCommand extends CustomCommand {
 	@Path("[player] [number]")
 	void health(@Arg("self") Player player, @Arg Double health) {
 		if (health == null)
-			reply(PREFIX + player.getName() + "'s health is " + player.getHealth());
+			send(PREFIX + player.getName() + "'s health is " + player.getHealth());
 		else {
 			checkPermission("health.set");
 			player.setHealth(health);
-			reply(PREFIX + ChatColor.stripColor(player.getName()) + "'s health set to " + player.getHealth());
+			send(PREFIX + ChatColor.stripColor(player.getName()) + "'s health set to " + player.getHealth());
 		}
 	}
 
@@ -30,11 +30,11 @@ public class HealthCommand extends CustomCommand {
 	void target(@Arg Double health) {
 		LivingEntity targetEntity = Utils.getTargetEntity(player());
 		if (health == null)
-			reply(PREFIX + ChatColor.stripColor(targetEntity.getName()) + "'s health is " + targetEntity.getHealth());
+			send(PREFIX + ChatColor.stripColor(targetEntity.getName()) + "'s health is " + targetEntity.getHealth());
 		else {
 			checkPermission("health.set");
 			targetEntity.setHealth(health);
-			reply(PREFIX + ChatColor.stripColor(targetEntity.getName()) + "'s health set to " + targetEntity.getHealth());
+			send(PREFIX + ChatColor.stripColor(targetEntity.getName()) + "'s health set to " + targetEntity.getHealth());
 		}
 	}
 }

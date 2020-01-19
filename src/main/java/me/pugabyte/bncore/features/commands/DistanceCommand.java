@@ -26,6 +26,6 @@ public class DistanceCommand extends CustomCommand {
 		if (Utils.isVanished(target) && !player().hasPermission("vanish.see"))
 			throw new PlayerNotFoundException();
 
-		reply(PREFIX + player().getLocation().distance(target.getLocation()) + " blocks.");
+		send(PREFIX + player().getLocation().distance(target.getLocation()) + " blocks.");
 	}
 }

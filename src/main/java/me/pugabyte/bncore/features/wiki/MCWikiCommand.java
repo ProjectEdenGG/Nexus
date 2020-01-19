@@ -15,8 +15,8 @@ public class MCWikiCommand extends CustomCommand {
 
 	@Path
 	void help() {
-		reply("&eVisit the minecraft wiki at &3https://minecraft.gamepedia.com/");
-		reply("&eOr use &c/mcwiki search <query> &eto search the wiki from ingame.");
+		send("&eVisit the minecraft wiki at &3https://minecraft.gamepedia.com/");
+		send("&eOr use &c/mcwiki search <query> &eto search the wiki from ingame.");
 	}
 
 	@Path("search <query...>")

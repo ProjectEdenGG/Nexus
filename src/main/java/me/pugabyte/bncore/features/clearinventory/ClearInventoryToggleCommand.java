@@ -17,7 +17,7 @@ public class ClearInventoryToggleCommand extends CustomCommand {
 
 	@Path
 	void info() {
-		reply(PREFIX + "Use &c/clear undo &3to revert an inventory clear");
+		send(PREFIX + "Use &c/clear undo &3to revert an inventory clear");
 	}
 
 }

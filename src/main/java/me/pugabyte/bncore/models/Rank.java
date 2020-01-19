@@ -50,7 +50,7 @@ public enum Rank {
 
 	@Override
 	public String toString() {
-		return Utils.camelCase(format + name());
+		return format + Utils.camelCase(name());
 	}
 
 	public List<Nerd> getNerds() {

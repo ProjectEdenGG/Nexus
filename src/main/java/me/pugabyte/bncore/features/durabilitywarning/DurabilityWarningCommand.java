@@ -23,10 +23,10 @@ public class DurabilityWarningCommand extends CustomCommand {
 	void toggle() {
 		if (!disabledPlayers.contains(player())) {
 			disabledPlayers.add(player());
-			reply(PREFIX + "Disabled");
+			send(PREFIX + "Disabled");
 		} else {
 			disabledPlayers.remove(player());
-			reply(PREFIX + "Enabled");
+			send(PREFIX + "Enabled");
 		}
 	}
 }

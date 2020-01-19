@@ -16,7 +16,7 @@ public class ClearScreenCommand extends CustomCommand {
 	@Path("[lines]")
 	void clearScreen(@Arg("20") Integer lines) {
 		for (int i = 0; i < lines; i++) {
-			reply("");
+			send("");
 		}
 	}
 }

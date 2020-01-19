@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -20,6 +21,11 @@ public class Nerd {
 	private LocalDateTime firstJoin;
 	private LocalDateTime lastJoin;
 	private LocalDateTime lastQuit;
+	private LocalDate promotionDate;
+
+	public Nerd(String name) {
+		this(Bukkit.getOfflinePlayer(name));
+	}
 
 	public Nerd(OfflinePlayer player) {
 		fromPlayer(player);

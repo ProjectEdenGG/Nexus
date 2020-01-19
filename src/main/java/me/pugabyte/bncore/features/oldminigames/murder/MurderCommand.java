@@ -29,6 +29,6 @@ public class MurderCommand extends CustomCommand {
 		player().getInventory().addItem(MurderUtils.getTeleporter());
 		player().getInventory().addItem(MurderUtils.getAdrenaline());
 		player().getInventory().addItem(MurderUtils.getRetriever());
-		reply(PREFIX + "Giving murder kit");
+		send(PREFIX + "Giving murder kit");
 	}
 }

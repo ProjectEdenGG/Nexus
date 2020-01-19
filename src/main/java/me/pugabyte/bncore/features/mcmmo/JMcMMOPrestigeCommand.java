@@ -23,12 +23,12 @@ public class JMcMMOPrestigeCommand extends CustomCommand {
 	void main(@Arg("self") OfflinePlayer player) {
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 
-		empty();
-		reply("Prestige for " + player.getName());
+		line();
+		send("Prestige for " + player.getName());
 		for (Map.Entry<String, Integer> entry : mcMMOPrestige.getPrestiges().entrySet()) {
 			String type = entry.getKey();
 			Object count = entry.getValue();
-			reply(camelCase(type) + ": " + count);
+			send(camelCase(type) + ": " + count);
 		}
 	}
 

@@ -15,6 +15,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeCommandBlockE
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -49,12 +50,22 @@ public abstract class CustomCommand implements ICustomCommand {
 		Utils.wait(delay, () -> player.sendMessage(Utils.colorize(message)));
 	}
 
-	protected void reply(String message) {
+	protected void send(String message) {
 		event.reply(message);
 	}
 
-	protected void empty() {
-		reply("");
+	protected void line() {
+		line(1);
+	}
+
+	protected void line(int count) {
+		for (int i = 0; i < count; i++) {
+			send("");
+		}
+	}
+
+	protected void json(String message) {
+		SkriptFunctions.json(player(), message);
 	}
 
 	public void error(String error) {

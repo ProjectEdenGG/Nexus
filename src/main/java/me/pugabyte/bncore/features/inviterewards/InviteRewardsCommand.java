@@ -27,7 +27,7 @@ public class InviteRewardsCommand extends CustomCommand {
 
 	@Path
 	void help() {
-		reply(PREFIX + "Correct usage: &c/invited <username>");
+		send(PREFIX + "Correct usage: &c/invited <username>");
 	}
 
 	@Path("<invited>")

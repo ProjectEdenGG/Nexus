@@ -31,7 +31,7 @@ public class BasketballCommand extends CustomCommand {
 		BNCore.getInstance().getConfig().set("minigames.lobby.basketball.item", basketball);
 		BNCore.getInstance().saveConfig();
 		Basketball.basketball = basketball;
-		reply(PREFIX + "Basketball saved");
+		send(PREFIX + "Basketball saved");
 	}
 
 	@Path("give [player]")

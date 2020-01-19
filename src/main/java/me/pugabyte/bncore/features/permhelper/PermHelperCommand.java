@@ -26,7 +26,7 @@ public class PermHelperCommand extends CustomCommand {
 
 	@Path
 	void help() {
-		reply(PREFIX + "Correct usage: /permhelper <npcs|homes|plots|vaults> <add|remove> <player> <amount>");
+		send(PREFIX + "Correct usage: /permhelper <npcs|homes|plots|vaults> <add|remove> <player> <amount>");
 	}
 
 	@Path("(npcs|homes|plots|vaults) (add|remove) <player> <amount>")
@@ -66,7 +66,7 @@ public class PermHelperCommand extends CustomCommand {
 		}
 
 		user.addPermission(finalPermission);
-		reply(PREFIX + "New " + which + " limit for " + user.getName() + ": " + newLimit);
+		send(PREFIX + "New " + which + " limit for " + user.getName() + ": " + newLimit);
 	}
 
 	private static int getNewLimit(String which, PermissionUser user, String permission, String pattern, String world, int adding) {

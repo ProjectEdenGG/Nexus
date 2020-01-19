@@ -15,6 +15,6 @@ public class WhatWorldCommand extends CustomCommand {
 
 	@Path("[player]")
 	void world(@Arg("self") Player player) {
-		reply(player.getWorld().getName());
+		send(player.getWorld().getName());
 	}
 }

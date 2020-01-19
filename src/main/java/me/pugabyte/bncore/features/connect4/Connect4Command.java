@@ -23,7 +23,7 @@ public class Connect4Command extends CustomCommand {
 	@Path("reload")
 	void reload() {
 		BNCore.getInstance().reloadConfig();
-		reply(PREFIX + "Config reloaded");
+		send(PREFIX + "Config reloaded");
 	}
 
 	@Path("(clear|reset)")
