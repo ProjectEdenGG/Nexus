@@ -139,10 +139,10 @@ public class AlertsCommand extends CustomCommand {
 		alerts.delete(highlight);
 		alerts.add(highlight, partialMatching);
 		service.save(alerts);
-		newline();
+		empty();
 		reply(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
 				+ (partialMatching ? "enabled" : "disabled"));
-		newline();
+		empty();
 		Utils.wait(2, () -> Bukkit.dispatchCommand(player(), "alerts edit"));
 	}
 

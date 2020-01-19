@@ -53,7 +53,7 @@ public abstract class CustomCommand implements ICustomCommand {
 		event.reply(message);
 	}
 
-	protected void newline() {
+	protected void empty() {
 		reply("");
 	}
 
