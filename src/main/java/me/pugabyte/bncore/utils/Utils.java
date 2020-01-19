@@ -13,12 +13,16 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.util.Vector;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -171,6 +175,32 @@ public class Utils {
 		if (yaw < 45) newYaw = 0;
 
 		return new Location(location.getWorld(), x, y, z, newYaw, (float) pitch);
+	}
+
+	public static <T extends Entity> T getTargetEntity(final LivingEntity entity) {
+		if (entity instanceof Creature)
+			return (T) ((Creature) entity).getTarget();
+
+		T target = null;
+		double targetDistanceSquared = 0;
+		final double radiusSquared = 1;
+		final Vector l = entity.getEyeLocation().toVector();
+		final Vector n = entity.getLocation().getDirection().normalize();
+		final double cos45 = Math.cos(Math.PI / 4);
+
+		for (final T other : (List<T>) entity.getNearbyEntities(50, 50, 50)) {
+			if (other == null || other == entity)
+				continue;
+			if (target == null || targetDistanceSquared > other.getLocation().distanceSquared(entity.getLocation())) {
+				final Vector t = other.getLocation().add(0, 1, 0).toVector().subtract(l);
+				if (n.clone().crossProduct(t).lengthSquared() < radiusSquared && t.normalize().dot(n) >= cos45) {
+					target = other;
+					targetDistanceSquared = target.getLocation().distanceSquared(entity.getLocation());
+				}
+			}
+		}
+
+		return target;
 	}
 
 	public static void giveItem(Player player, ItemStack item) {
