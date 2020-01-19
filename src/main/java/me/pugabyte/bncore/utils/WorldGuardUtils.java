@@ -50,6 +50,10 @@ public class WorldGuardUtils {
 		return new Vector(location.getX(), location.getY(), location.getZ());
 	}
 
+	public Location toLocation(Vector vector) {
+		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+	}
+
 	public Region getRegion(String name) {
 		return convert(getProtectedRegion(name));
 	}

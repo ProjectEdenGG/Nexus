@@ -10,7 +10,6 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -81,21 +80,18 @@ public class Basketball implements Listener {
 	}
 
 	private static Collection<Entity> getLobbyEntities() {
-		 return world.getNearbyEntities(Minigames.getGamelobby(), 200, 200, 200);
+		return world.getNearbyEntities(Minigames.getGamelobby(), 200, 200, 200);
 	}
 
 	private static void cleanupBasketballs(Player player) {
-		if (hasBasketball(player)) {
+		if (hasBasketball(player))
 			player.getInventory().remove(getBasketball(player));
-		}
-		else {
+		else
 			getLobbyEntities().forEach(entity -> {
 				if (Minigames.getWorldGuardUtils().isInRegion(entity.getLocation(), region))
-					if (isBasketball(entity) && ownsBasketball(player, entity)) {
+					if (isBasketball(entity) && ownsBasketball(player, entity))
 						entity.remove();
-					}
 			});
-		}
 	}
 
 	private class BasketballJanitor {
@@ -115,12 +111,12 @@ public class Basketball implements Listener {
 						if (!hasBasketball(player)) {
 							boolean found = false;
 							for (Entity entity : getLobbyEntities())
-									if (!wgUtils.isInRegion(entity.getLocation(), region))
-										entity.remove();
-									else {
-										found = true;
-										break;
-									}
+								if (!wgUtils.isInRegion(entity.getLocation(), region))
+									entity.remove();
+								else {
+									found = true;
+									break;
+								}
 
 							if (!found)
 								giveBasketball(player);
@@ -138,13 +134,11 @@ public class Basketball implements Listener {
 		private int iteration;
 		private Player player;
 		private Item entity;
-		private Location location;
 		private WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
 
 		BasketballThrowWatcher(Player player, Item item) {
 			this.player = player;
 			this.entity = item;
-			this.location = item.getLocation();
 			start();
 		}
 
@@ -194,9 +188,8 @@ public class Basketball implements Listener {
 
 		if (!Minigames.getWorldGuardUtils().isInRegion(player.getLocation(), region))
 			event.setCancelled(true);
-		else
-			if (!ownsBasketball(player, event.getItem().getItemStack()))
-				event.setCancelled(true);
+		else if (!ownsBasketball(player, event.getItem().getItemStack()))
+			event.setCancelled(true);
 	}
 
 	@EventHandler
