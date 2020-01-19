@@ -14,7 +14,7 @@ public class _TemplateCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path()
+	@Path
 	void help() {
 	}
 
