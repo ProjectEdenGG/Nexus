@@ -169,12 +169,16 @@ public interface ICustomCommand {
 			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
 			return Boolean.parseBoolean(value);
 		}
-		if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
-		if (Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
-		if (Float.class == type || Float.TYPE == type) return Float.parseFloat(value);
-		if (Short.class == type || Short.TYPE == type) return Short.parseShort(value);
-		if (Long.class == type || Long.TYPE == type) return Long.parseLong(value);
-		if (Byte.class == type || Byte.TYPE == type) return Byte.parseByte(value);
+		try {
+			if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
+			if (Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
+			if (Float.class == type || Float.TYPE == type) return Float.parseFloat(value);
+			if (Short.class == type || Short.TYPE == type) return Short.parseShort(value);
+			if (Long.class == type || Long.TYPE == type) return Long.parseLong(value);
+			if (Byte.class == type || Byte.TYPE == type) return Byte.parseByte(value);
+		} catch (NumberFormatException ex) {
+			throw new InvalidInputException("'" + value + "' is not a number");
+		}
 		return value;
 	}
 

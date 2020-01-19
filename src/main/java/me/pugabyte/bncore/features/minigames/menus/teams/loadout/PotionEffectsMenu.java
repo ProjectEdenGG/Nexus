@@ -40,13 +40,13 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> menus.getTeamMenus().openLoadoutMenu(player, arena, team));
 
-		contents.set(0, 2, ClickableItem.from(nameItem(new ItemStack(Material.ANVIL), "&eCopy Potions", "&3This will copy all the||&3potion effects you have||&3into the team's loadout."), e -> {
+		contents.set(0, 2, ClickableItem.from(nameItem(Material.ANVIL, "&eCopy Potions", "&3This will copy all the||&3potion effects you have||&3into the team's loadout."), e -> {
 			team.getLoadout().getEffects().addAll(player.getActivePotionEffects());
 			arena.write();
 			menus.getTeamMenus().openPotionEffectsMenu(player, arena, team);
 		}));
 
-		contents.set(0, 6, ClickableItem.from(nameItem(new ItemStack(Material.BOOK), "&eList Potion Effects", "&3Click me to get a list of||&3all valid potion effect||&3names that can be added."), e -> {
+		contents.set(0, 6, ClickableItem.from(nameItem(Material.BOOK, "&eList Potion Effects", "&3Click me to get a list of||&3all valid potion effect||&3names that can be added."), e -> {
 			StringBuilder potions = new StringBuilder();
 			ArrayList<PotionEffectType> potionList = new ArrayList<>(Arrays.asList(PotionEffectType.values()));
 			potionList.remove(0);

@@ -26,11 +26,11 @@ public class DeleteLoadoutMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		ItemStack cancel = nameItem(new ItemStack(Material.STAINED_GLASS_PANE, 1, ColorType.LIME.getDurability().shortValue()), "&7Cancel");
+		ItemStack cancel = nameItem(ColorType.LIME.getItemStack(Material.STAINED_GLASS_PANE), "&7Cancel");
 		contents.fillRect(0, 0, 2, 8, ClickableItem.from(cancel, e -> menus.getTeamMenus().openTeamsMenu(player, arena)));
 		contents.fillRect(1, 1, 1, 7, ClickableItem.from(cancel, e -> menus.getTeamMenus().openTeamsMenu(player, arena)));
 
-		contents.set(1, 4, ClickableItem.from(nameItem(new ItemStack(Material.TNT), "&4&lDELETE LOADOUT", "&7This cannot be undone."), e -> {
+		contents.set(1, 4, ClickableItem.from(nameItem(Material.TNT, "&4&lDELETE LOADOUT", "&7This cannot be undone."), e -> {
 			team.setLoadout(new Loadout());
 			arena.write();
 			menus.getTeamMenus().openLoadoutMenu(player, arena, team);

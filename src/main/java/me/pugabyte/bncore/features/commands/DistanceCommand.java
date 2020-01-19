@@ -18,10 +18,10 @@ public class DistanceCommand extends CustomCommand {
 	@Path("<player>")
 	void distance(@Arg Player target) {
 		if (player().getWorld().equals(Minigames.getGameworld()))
-			error(PREFIX + "You can't use that here, that's cheating!");
+			error("You can't use that here, that's cheating!");
 
 		if (!player().getWorld().equals(target.getWorld()))
-			error(PREFIX + "Player is not in the same world.");
+			error("Player is not in the same world.");
 
 		if (Utils.isVanished(target) && !player().hasPermission("vanish.see"))
 			throw new PlayerNotFoundException();

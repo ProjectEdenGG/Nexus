@@ -27,10 +27,12 @@ public class CountdownCommand extends CustomCommand {
 		void start() {
 			taskId = Utils.repeat(0, 20, () -> {
 				if (seconds == 0) {
-					runCommand("/herochat:ch qm l Go!");
+					runCommand("ch qm l Go!");
 					stop();
+					return;
 				}
-				runCommand("herochat:ch qm l " + seconds-- + "...");
+
+				runCommand("ch qm l " + seconds-- + "...");
 			});
 		}
 

@@ -5,6 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.utils.ColorType;
 import org.bukkit.Material;
@@ -26,7 +27,11 @@ public class DeleteArenaMenu extends MenuUtils implements InventoryProvider {
 		contents.fillRect(0, 0, 2, 8, ClickableItem.from(cancelItem, e -> menus.openArenaMenu(player, arena)));
 		contents.fillRect(1, 1, 1, 7, ClickableItem.from(cancelItem, e -> menus.openArenaMenu(player, arena)));
 
-		contents.set(1, 4, ClickableItem.from(nameItem(Material.TNT, "&4&lDELETE ARENA", "&7This cannot be undone."), e -> arena.delete()));
+		contents.set(1, 4, ClickableItem.from(nameItem(Material.TNT, "&4&lDELETE ARENA", "&7This cannot be undone."),
+				e -> {
+					arena.delete();
+					player.sendMessage(Minigames.PREFIX + "Arena &e" + arena.getName() + " &3deleted");
+				}));
 	}
 
 	@Override

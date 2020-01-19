@@ -147,7 +147,7 @@ public class JMinigamesCommand extends CustomCommand {
 	}
 
 	@ConverterFor(Arena.class)
-	Object convertToArena(String value) {
+	Arena convertToArena(String value) {
 		if ("current".equalsIgnoreCase(value))
 			if (minigamer != null)
 				if (minigamer.getMatch() != null)
@@ -166,7 +166,7 @@ public class JMinigamesCommand extends CustomCommand {
 	}
 
 	@ConverterFor(Minigamer.class)
-	Object convertToMinigamer(String value) {
+	Minigamer convertToMinigamer(String value) {
 		if ("self".equalsIgnoreCase(value))
 			return minigamer;
 		return PlayerManager.get(Utils.getPlayer(value).getPlayer());
