@@ -3,6 +3,11 @@ package me.pugabyte.bncore.models;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public enum Rank {
 	GUEST("&7", false),
@@ -38,6 +43,17 @@ public enum Rank {
 
 	@Override
 	public String toString() {
-		return Utils.camelCase(name());
+		return Utils.camelCase(format + name());
+	}
+
+	public static Rank getHighestRank(Player player) {
+		List<Rank> ranks = Arrays.asList(Rank.values());
+		Collections.reverse(ranks);
+
+		for (Rank rank : ranks)
+			if (player.hasPermission("rank." + rank.name().toLowerCase()))
+				return rank;
+
+		return GUEST;
 	}
 }
