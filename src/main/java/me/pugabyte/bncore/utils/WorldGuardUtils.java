@@ -14,10 +14,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,6 +64,18 @@ public class WorldGuardUtils {
 
 	public Set<ProtectedRegion> getRegionsAt(Location location) {
 		return manager.getApplicableRegions(location).getRegions();
+	}
+
+	public Set<String> getRegionNamesAt(Location location) {
+		return manager.getApplicableRegions(location).getRegions().stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
+	}
+
+	public boolean isInRegion(Location location, String region) {
+		return getRegionNamesAt(location).contains(region);
+	}
+
+	public Collection<Player> getPlayersInRegion(String region) {
+		return Bukkit.getOnlinePlayers().stream().filter(player -> isInRegion(player.getLocation(), region)).collect(Collectors.toList());
 	}
 
 	public Set<ProtectedRegion> getRegionsLike(String name) {

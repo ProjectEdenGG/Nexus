@@ -109,7 +109,7 @@ public interface ICustomCommand {
 						+ method.getName() + "(" + parameter.getType().getName() + " " + parameter.getName() + ")");
 
 			String pathArg = "";
-			while (!pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<")) {
+			while (!pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<") && path.hasNext()) {
 				pathArg = path.next();
 				++pathIndex;
 			}
