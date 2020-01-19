@@ -100,9 +100,13 @@ public class BNCore extends JavaPlugin {
 		config.addDefault("databases.password", "password");
 		config.addDefault("databases.prefix", "");
 
-		config.addDefault("yandex.apiKey", "abcdef");
-
 		config.options().copyDefaults(true);
+		saveConfig();
+	}
+
+	public void addConfigDefault(String path, Object value) {
+		FileConfiguration config = getInstance().getConfig();
+		config.addDefault(path, value);
 		saveConfig();
 	}
 

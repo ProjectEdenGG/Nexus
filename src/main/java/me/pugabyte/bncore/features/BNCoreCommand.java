@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features;
 
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -16,7 +15,6 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -28,31 +26,6 @@ import java.util.stream.Collectors;
 public class BNCoreCommand extends CustomCommand {
 	public BNCoreCommand(CommandEvent event) {
 		super(event);
-	}
-
-	@Path("getLocation")
-	void getLocation() {
-		Location location = player().getLocation();
-		World world = location.getWorld();
-		String worldString = "Bukkit.getWorld(" + world.getName() + ")";
-		if (world.equals(Minigames.getGameworld())) worldString = "Minigames.getGameworld()";
-		double x = Math.floor(location.getX());
-		double y = Math.floor(location.getY());
-		double z = Math.floor(location.getZ());
-		double yaw = location.getYaw();
-		double pitch = 0;
-
-		if (x < 0) x += .5;
-		if (z < 0) z += .5;
-
-		int newYaw = 0;
-		if (yaw < 315) newYaw = 270;
-		if (yaw < 225) newYaw = 180;
-		if (yaw < 135) newYaw = 90;
-		if (yaw < 45) newYaw = 0;
-
-		String locationString = "new Location(" + worldString + ", " + x + ", " + (int) y + ", " + z + ", " + newYaw + ", " + (int) pitch + ")";
-		SkriptFunctions.json(player(), locationString + "||sgt:" + locationString);
 	}
 
 	@Path("redtint [fadeTime] [intensity] [player]")

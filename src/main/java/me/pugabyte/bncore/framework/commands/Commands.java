@@ -1,12 +1,5 @@
 package me.pugabyte.bncore.framework.commands;
 
-import static org.reflections.ReflectionUtils.getMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
-
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import lombok.Getter;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -14,6 +7,15 @@ import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import org.bukkit.plugin.Plugin;
 import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import static me.pugabyte.bncore.utils.Utils.listLast;
+import static org.reflections.ReflectionUtils.getMethods;
+import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
 public class Commands {
@@ -48,6 +50,8 @@ public class Commands {
 	}
 
 	private void register(CustomCommand customCommand) {
+		if (listLast(customCommand.getClass().toString(), ".").startsWith("_")) return;
+
 		for (String alias : customCommand.getAliases()) {
 			try {
 				// plugin.getLogger().info("Registering command " + alias);
