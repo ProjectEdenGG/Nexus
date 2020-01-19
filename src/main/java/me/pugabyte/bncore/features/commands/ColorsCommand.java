@@ -5,7 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-@Aliases("colours")
+@Aliases({"colours", "color"})
 public class ColorsCommand extends CustomCommand {
 
 	public ColorsCommand(CommandEvent event) {
