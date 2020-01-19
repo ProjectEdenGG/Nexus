@@ -19,6 +19,6 @@ public class EntityNBTCommand extends CustomCommand {
 	void nbt() {
 		LivingEntity targetEntity = Utils.getTargetEntity(player());
 		NBTEntity nbtEntity = new NBTEntity(targetEntity);
-		reply(nbtEntity.asNBTString());
+		send(nbtEntity.asNBTString());
 	}
 }

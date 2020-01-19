@@ -30,9 +30,9 @@ public class TranslatorCommand extends CustomCommand {
 			ArrayList<UUID> translators = translator.map.get(player.getUniqueId());
 			if (translators != null && translators.contains(player().getUniqueId())) {
 				translator.map.get(player.getUniqueId()).remove(player().getUniqueId());
-				reply(PREFIX + "You are no longer translating " + player.getDisplayName());
+				send(PREFIX + "You are no longer translating " + player.getDisplayName());
 			} else {
-				reply(PREFIX + "You are not translating that player");
+				send(PREFIX + "You are not translating that player");
 			}
 			return;
 		}
@@ -40,7 +40,7 @@ public class TranslatorCommand extends CustomCommand {
 		for (UUID uuid : translator.map.keySet())
 			translator.map.get(uuid).remove(player().getUniqueId());
 
-		reply(PREFIX + "Stopping all active translations.");
+		send(PREFIX + "Stopping all active translations.");
 	}
 
 	@Path("<player>")
@@ -56,7 +56,7 @@ public class TranslatorCommand extends CustomCommand {
 		}};
 		translator.map.put(player.getUniqueId(), uuids);
 
-		reply(PREFIX + "You are now translating messages from " + player.getDisplayName() + ".");
+		send(PREFIX + "You are now translating messages from " + player.getDisplayName() + ".");
 	}
 
 }

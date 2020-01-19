@@ -68,7 +68,7 @@ public class AlertsCommand extends CustomCommand {
 		if (alerts.getHighlights().size() == 0)
 			error("&3You don't have any alerts! Add some with &c/alerts add <word or phrase>");
 
-		reply(PREFIX + "&eYour alerts list:");
+		send(PREFIX + "&eYour alerts list:");
 		for (Alerts.Highlight highlight : alerts.getHighlights()) {
 
 			ComponentBuilder builder = new ComponentBuilder(" ");
@@ -93,8 +93,8 @@ public class AlertsCommand extends CustomCommand {
 
 	@Path("add")
 	void addHelp() {
-		reply(PREFIX + "Enter a word or phrase to set as an alert");
-		reply(PREFIX + "Example: &c/alerts add hockey");
+		send(PREFIX + "Enter a word or phrase to set as an alert");
+		send(PREFIX + "Example: &c/alerts add hockey");
 	}
 
 	@Path("add <highlight...>")
@@ -106,13 +106,13 @@ public class AlertsCommand extends CustomCommand {
 			error("You already had &e" + highlight + " &3in your alerts list");
 
 		service.save(alerts);
-		reply(PREFIX + "Added &e" + highlight + " &3to your alerts list");
+		send(PREFIX + "Added &e" + highlight + " &3to your alerts list");
 	}
 
 	@Path("delete")
 	void deleteHelp() {
-		reply(PREFIX + "Enter a word or phrase to set as an alert");
-		reply(PREFIX + "Example: &c/alerts delete hockey");
+		send(PREFIX + "Enter a word or phrase to set as an alert");
+		send(PREFIX + "Example: &c/alerts delete hockey");
 	}
 
 	@Path("delete <highlight...>")
@@ -121,13 +121,13 @@ public class AlertsCommand extends CustomCommand {
 			error("You did not have &e" + highlight + " &3in your alerts list");
 
 		service.save(alerts);
-		reply(PREFIX + "Removed &e" + highlight + " &3from your alerts list");
+		send(PREFIX + "Removed &e" + highlight + " &3from your alerts list");
 	}
 
 	// TODO: Create @Usage?
 	@Path("(partialmatch|partialmatching)")
 	void partialMatchingHelp() {
-		reply(PREFIX + "Correct usage: /alerts partialmatching <true|false> <highlight>");
+		send(PREFIX + "Correct usage: /alerts partialmatching <true|false> <highlight>");
 	}
 
 	@Path("(partialmatch|partialmatching) <truse|false> <highlight...>")
@@ -139,10 +139,10 @@ public class AlertsCommand extends CustomCommand {
 		alerts.delete(highlight);
 		alerts.add(highlight, partialMatching);
 		service.save(alerts);
-		empty();
-		reply(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
+		line();
+		send(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
 				+ (partialMatching ? "enabled" : "disabled"));
-		empty();
+		line();
 		Utils.wait(2, () -> Bukkit.dispatchCommand(player(), "alerts edit"));
 	}
 
@@ -150,31 +150,31 @@ public class AlertsCommand extends CustomCommand {
 	void clear() {
 		alerts.clear();
 		service.save(alerts);
-		reply(PREFIX + "Cleared your alerts");
+		send(PREFIX + "Cleared your alerts");
 	}
 
 	@Path("mute")
 	void mute() {
 		alerts.setMuted(true);
-		reply(PREFIX + "Alerts muted");
+		send(PREFIX + "Alerts muted");
 	}
 
 	@Path("unmute")
 	void unmute() {
 		alerts.setMuted(false);
-		reply(PREFIX + "Alerts unmuted");
+		send(PREFIX + "Alerts unmuted");
 	}
 
 	@Path("toggle")
 	void toggle() {
 		alerts.setMuted(!alerts.isMuted());
-		reply(PREFIX + "Alerts " + (alerts.isMuted() ? "" : "un") + "muted");
+		send(PREFIX + "Alerts " + (alerts.isMuted() ? "" : "un") + "muted");
 	}
 
 	@Path("sound")
 	void sound() {
 		alerts.playSound();
-		reply(PREFIX + "Test sound sent");
+		send(PREFIX + "Test sound sent");
 	}
 
 }

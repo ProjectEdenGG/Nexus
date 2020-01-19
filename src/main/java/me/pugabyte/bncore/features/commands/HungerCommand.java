@@ -18,11 +18,11 @@ public class HungerCommand extends CustomCommand {
 	@Path("[player] [number]")
 	void hunger(@Arg("self") Player player, @Arg Integer hunger) {
 		if (hunger == null)
-			reply(PREFIX + ChatColor.stripColor(player.getName()) + "'s hunger is " + player.getFoodLevel());
+			send(PREFIX + ChatColor.stripColor(player.getName()) + "'s hunger is " + player.getFoodLevel());
 		else {
 			checkPermission("hunger.set");
 			player.setFoodLevel(hunger);
-			reply(PREFIX + ChatColor.stripColor(player.getName()) + "'s hunger set to " + player.getFoodLevel());
+			send(PREFIX + ChatColor.stripColor(player.getName()) + "'s hunger set to " + player.getFoodLevel());
 		}
 	}
 

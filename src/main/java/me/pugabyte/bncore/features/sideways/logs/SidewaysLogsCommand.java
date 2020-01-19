@@ -24,10 +24,10 @@ public class SidewaysLogsCommand extends CustomCommand {
 	void toggle(@Arg boolean normal) {
 		if (normal) {
 			enabledPlayers.remove(player());
-			reply(PREFIX + "Now placing logs normally");
+			send(PREFIX + "Now placing logs normally");
 		} else {
 			enabledPlayers.add(player());
-			reply(PREFIX + "Now placing logs vertically only");
+			send(PREFIX + "Now placing logs vertically only");
 		}
 	}
 }

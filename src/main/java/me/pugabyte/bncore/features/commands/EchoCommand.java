@@ -13,6 +13,6 @@ public class EchoCommand extends CustomCommand {
 
 	@Path("[string...]")
 	void echo(@Arg(" ") String string) {
-		reply(string);
+		send(string);
 	}
 }

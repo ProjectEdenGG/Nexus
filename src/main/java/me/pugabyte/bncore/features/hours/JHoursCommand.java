@@ -22,12 +22,12 @@ public class JHoursCommand extends CustomCommand {
 	@Path("<player>")
 	void player(@Arg("self") OfflinePlayer player) {
 		Hours hours = (Hours) service.get(player);
-		reply("");
-		reply(PREFIX + "&e" + player.getName());
-		reply("&3Total: &e" + Utils.timespanFormat(hours.getTotal(), "None"));
-		reply("&3Daily: &e" + Utils.timespanFormat(hours.getDaily(), "None"));
-		reply("&3Weekly: &e" + Utils.timespanFormat(hours.getWeekly(), "None"));
-		reply("&3Monthly: &e" + Utils.timespanFormat(hours.getMonthly(), "None"));
+		send("");
+		send(PREFIX + "&e" + player.getName());
+		send("&3Total: &e" + Utils.timespanFormat(hours.getTotal(), "None"));
+		send("&3Daily: &e" + Utils.timespanFormat(hours.getDaily(), "None"));
+		send("&3Weekly: &e" + Utils.timespanFormat(hours.getWeekly(), "None"));
+		send("&3Monthly: &e" + Utils.timespanFormat(hours.getMonthly(), "None"));
 	}
 
 	@Path("top")
@@ -49,15 +49,15 @@ public class JHoursCommand extends CustomCommand {
 
 				List<Hours> results = service.getPage(hoursType, page);
 				if (results.size() == 0) {
-					reply(PREFIX + "&cNo results on page " + page);
+					send(PREFIX + "&cNo results on page " + page);
 					return;
 				}
 
-				reply("");
-				reply(PREFIX + "Total: " + Utils.timespanFormat(service.total(hoursType)) + (page > 1 ? "&e  |  &3Page " + page : ""));
+				send("");
+				send(PREFIX + "Total: " + Utils.timespanFormat(service.total(hoursType)) + (page > 1 ? "&e  |  &3Page " + page : ""));
 				int i = (page - 1) * 10 + 1;
 				for (Hours hours : results)
-					reply("&3" + i++ + " &e" + hours.getPlayer().getName() + " &7- " + Utils.timespanFormat(hours.get(hoursType)));
+					send("&3" + i++ + " &e" + hours.getPlayer().getName() + " &7- " + Utils.timespanFormat(hours.get(hoursType)));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

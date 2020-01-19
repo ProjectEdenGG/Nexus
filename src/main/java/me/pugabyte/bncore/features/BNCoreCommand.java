@@ -79,6 +79,6 @@ public class BNCoreCommand extends CustomCommand {
 		location.getWorld().dropItemNaturally(location.add(0, 1, 0), chestplate);
 
 		// ChatColor
-		reply(colorType.getChatColor() + colorType.name());
+		send(colorType.getChatColor() + colorType.name());
 	}
 }

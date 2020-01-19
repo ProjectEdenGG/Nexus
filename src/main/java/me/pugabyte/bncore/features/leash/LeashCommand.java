@@ -29,7 +29,7 @@ public class LeashCommand extends CustomCommand {
 		if (leashes.containsKey(player().getUniqueId()))
 			error("You are already leashed to another player");
 
-		reply(PREFIX + "&3You are now leashed to &e" + target.getPlayer().getDisplayName());
+		send(PREFIX + "&3You are now leashed to &e" + target.getPlayer().getDisplayName());
 		startLeash(player(), target);
 	}
 
@@ -45,13 +45,13 @@ public class LeashCommand extends CustomCommand {
 	void stopAll() {
 		for (Map.Entry<UUID, Integer> leash : leashes.entrySet())
 			stopLeash(Utils.getPlayer(leash.getKey()).getPlayer(), "Leash cancelled by &e" + sender().getName());
-		reply(PREFIX + "All leashed cancelled");
+		send(PREFIX + "All leashed cancelled");
 	}
 
 	@Path("setVelocity <velocity>")
 	void setVelocity(@Arg double velocity) {
 		BNCore.leash.setVelocity(velocity);
-		reply(PREFIX + "&3Velocity multiplier set to &e" + velocity);
+		send(PREFIX + "&3Velocity multiplier set to &e" + velocity);
 	}
 
 	private void stopLeash(Player staff, String message) {

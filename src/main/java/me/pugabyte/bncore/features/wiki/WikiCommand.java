@@ -13,8 +13,8 @@ public class WikiCommand extends CustomCommand {
 
 	@Path
 	void help() {
-		reply("&eVisit our wiki at &3https://wiki.bnn.gg");
-		reply("&eOr use &c/wiki search <query> &eto search the wiki from ingame.");
+		send("&eVisit our wiki at &3https://wiki.bnn.gg");
+		send("&eOr use &c/wiki search <query> &eto search the wiki from ingame.");
 	}
 
 	@Path("search <query...>")

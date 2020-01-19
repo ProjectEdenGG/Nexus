@@ -29,12 +29,12 @@ public class RainbowArmourCommand extends CustomCommand {
 		RainbowArmourPlayer rbaPlayer = BNCore.rainbowArmour.getPlayer(player());
 		if (rbaPlayer.isEnabled()) {
 			stopArmour(rbaPlayer);
-			reply("&cRainbow armour unequipped!");
+			send("&cRainbow armour unequipped!");
 			rbaPlayer.setEnabled(false);
 		} else {
 			rbaPlayer.setTaskID(startArmour(rbaPlayer));
 			rbaPlayer.setEnabled(true);
-			reply("&cR&6a&ei&an&bb&5o&dw &earmour equipped!");
+			send("&cR&6a&ei&an&bb&5o&dw &earmour equipped!");
 			BNCore.rainbowArmour.enabledPlayers.put(player(), rbaPlayer);
 		}
 	}

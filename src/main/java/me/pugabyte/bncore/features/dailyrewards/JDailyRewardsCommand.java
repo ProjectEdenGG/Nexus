@@ -57,7 +57,7 @@ public class JDailyRewardsCommand extends CustomCommand {
 		if (!player().getUniqueId().equals(player.getUniqueId())) {
 			streak = ((DailyRewards) service.get(playerArg(2))).getStreak();
 		}
-		reply(PREFIX + player.getName() + "'s streak: &e" + streak);
+		send(PREFIX + player.getName() + "'s streak: &e" + streak);
 	}
 
 	@Path("today [player]")
@@ -66,7 +66,7 @@ public class JDailyRewardsCommand extends CustomCommand {
 		if (!player().getUniqueId().equals(player.getUniqueId())) {
 			earnedToday = ((DailyRewards) service.get(player)).isEarnedToday();
 		}
-		reply(PREFIX + player.getName() + " has "  + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
+		send(PREFIX + player.getName() + " has " + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
 
 	// TODO: Optional arguments in the middle if default value exists
@@ -77,7 +77,7 @@ public class JDailyRewardsCommand extends CustomCommand {
 		dailyRewards = ((DailyRewards) service.get(player));
 		dailyRewards.unclaim(day);
 		service.save(dailyRewards);
-		reply(PREFIX + "Unclaimed day " + day + " for player " + player.getName());
+		send(PREFIX + "Unclaimed day " + day + " for player " + player.getName());
 	}
 
 	@Path("reset")
@@ -95,15 +95,15 @@ public class JDailyRewardsCommand extends CustomCommand {
 		Utils.async(() -> {
 			List<DailyRewards> results = service.getPage(page);
 			if (results.size() == 0) {
-				reply(PREFIX + "&cNo results on page " + page);
+				send(PREFIX + "&cNo results on page " + page);
 				return;
 			}
 
-			reply("");
-			reply(PREFIX + "Top streaks:");
+			send("");
+			send(PREFIX + "Top streaks:");
 			int i = (page - 1) * 10 + 1;
 			for (DailyRewards dailyRewards : results) {
-				reply("&3" + i + " &e" + dailyRewards.getPlayer().getName() + " &7- " + dailyRewards.getStreak());
+				send("&3" + i + " &e" + dailyRewards.getPlayer().getName() + " &7- " + dailyRewards.getStreak());
 				++i;
 			}
 		});

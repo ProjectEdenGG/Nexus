@@ -21,7 +21,7 @@ public class ClearInventoryCommand extends CustomCommand {
 	void clear() {
 		ciPlayer.addCache();
 		player().getInventory().setContents(new ItemStack[0]);
-		reply(PREFIX + "Inventory cleared. Undo with &c/clear undo");
+		send(PREFIX + "Inventory cleared. Undo with &c/clear undo");
 	}
 
 	@Path("undo")
