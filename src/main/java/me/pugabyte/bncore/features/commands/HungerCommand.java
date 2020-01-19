@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class HungerCommand extends CustomCommand {
@@ -27,7 +28,10 @@ public class HungerCommand extends CustomCommand {
 
 	@Path("target [number]")
 	void target(@Arg Integer hunger) {
-		Player targetPlayer = Utils.getTargetEntity(player());
-		hunger(targetPlayer, hunger);
+		Entity entity = Utils.getTargetEntity(player());
+		if (!(entity instanceof Player))
+			error("Only players have hunger");
+
+		hunger((Player) entity, hunger);
 	}
 }

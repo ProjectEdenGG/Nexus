@@ -108,7 +108,7 @@ public class PodiumsCommand extends CustomCommand {
 	}
 
 	@ConverterFor(Position.class)
-	public Position convertToPosition(String value) {
+	Position convertToPosition(String value) {
 		return Position.get(value);
 	}
 

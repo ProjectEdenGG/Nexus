@@ -183,11 +183,11 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 		}
 		switch (menu) {
 			case MAIN:
-				ItemStack editName = nameItem(new ItemStack(Material.NAME_TAG),"Edit Name");
-//				ItemStack editLore = nameItem(new ItemStack(Material.WRITABLE_BOOK),"Edit Lore");
-				ItemStack toggleSpam = nameItem(new ItemStack(Material.DIAMOND_SWORD),"Toggle Spam Click","*Disabled*");
-				ItemStack editEnchants = nameItem(new ItemStack(Material.ENCHANTED_BOOK),"Enchants");
-				ItemStack toggleShiny = nameItem(new ItemStack(Material.NETHER_STAR),"Toggle Shiny","Don't enchant a shiny||item and vice versa.");
+				ItemStack editName = nameItem(Material.NAME_TAG, "Edit Name");
+//				ItemStack editLore = nameItem(Material.WRITABLE_BOOK, "Edit Lore");
+				ItemStack toggleSpam = nameItem(Material.DIAMOND_SWORD, "Toggle Spam Click","*Disabled*");
+				ItemStack editEnchants = nameItem(Material.ENCHANTED_BOOK, "Enchants");
+				ItemStack toggleShiny = nameItem(Material.NETHER_STAR, "Toggle Shiny","Don't enchant a shiny||item and vice versa.");
 
 				int slot = player.getInventory().getHeldItemSlot();
 				ItemStack heldItem = player.getInventory().getItem(slot);
@@ -205,8 +205,8 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 				contents.set(1, 7, ClickableItem.of(toggleShiny, e ->  toggleShiny(player, heldItem, slot)));
 				break;
 			case VANILLA_OR_CUSTOM:
-				ItemStack vanilla = nameItem(new ItemStack(Material.ENCHANTED_BOOK), "&bVanilla");
-				ItemStack custom = nameItem(new ItemStack(Material.BOOK), "&aCustom");
+				ItemStack vanilla = nameItem(Material.ENCHANTED_BOOK, "&bVanilla");
+				ItemStack custom = nameItem(Material.BOOK, "&aCustom");
 
 				contents.set(0, 3, ClickableItem.of(vanilla, e ->  openItemEditor(player, ItemEditMenu.VANILLA_ADD_REMOVE)));
 
@@ -214,15 +214,15 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 				contents.set(0, 6, ClickableItem.of(custom, e -> openItemEditor(player,ItemEditMenu.CUSTOM_ADD_REMOVE)));
 				break;
 			case VANILLA_ADD_REMOVE:
-				ItemStack add = nameItem(new ItemStack(Material.SLIME_BLOCK), "&aAdd Enchantment");
-				ItemStack remove = nameItem(new ItemStack(Material.TNT), "&cRemove Enchantment");
+				ItemStack add = nameItem(Material.SLIME_BLOCK, "&aAdd Enchantment");
+				ItemStack remove = nameItem(Material.TNT, "&cRemove Enchantment");
 
 				contents.set(0, 3, ClickableItem.of(add, e -> openItemEditor(player, ItemEditMenu.VANILLA_ADD)));
 				contents.set(0, 6, ClickableItem.of(remove, e -> openItemEditor(player, ItemEditMenu.VANILLA_REMOVE)));
 				break;
 			case VANILLA_ADD:
-//				ItemStack level = nameItem(new ItemStack(Material.EXPERIENCE_BOTTLE),"&aEnchantment level","Level: 1");
-				ItemStack apply = nameItem(new ItemStack(Material.END_CRYSTAL),"&eClick To Apply","Enchant: <none>||Level: 1");
+//				ItemStack level = nameItem(Material.EXPERIENCE_BOTTLE,"&aEnchantment level","Level: 1");
+				ItemStack apply = nameItem(Material.END_CRYSTAL,"&eClick To Apply","Enchant: <none>||Level: 1");
 				ItemStack enchantItem;
 				slot = player.getInventory().getHeldItemSlot();
 				heldItem = player.getInventory().getItem(slot);

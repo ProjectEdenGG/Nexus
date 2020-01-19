@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeCommandBlockException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
@@ -148,10 +149,18 @@ public abstract class CustomCommand implements ICustomCommand {
 		return Utils.getPlayer(event.getArgs().get(i - 1));
 	}
 
-	@ConverterFor({Player.class, OfflinePlayer.class})
-	public Object convertToPlayer(String value) {
+	@ConverterFor(OfflinePlayer.class)
+	public OfflinePlayer convertToOfflinePlayer(String value) {
 		if ("self".equalsIgnoreCase(value)) value = player().getUniqueId().toString();
 		return Utils.getPlayer(value);
+	}
+
+	@ConverterFor(Player.class)
+	public Player convertToPlayer(String value) {
+		OfflinePlayer offlinePlayer = convertToOfflinePlayer(value);
+		if (!offlinePlayer.isOnline())
+			throw new PlayerNotOnlineException(offlinePlayer);
+		return offlinePlayer.getPlayer();
 	}
 
 	@TabCompleterFor({Player.class, OfflinePlayer.class})

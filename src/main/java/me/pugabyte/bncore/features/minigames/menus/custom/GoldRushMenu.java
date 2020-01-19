@@ -15,7 +15,6 @@ import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiFunction;
 
@@ -41,7 +40,7 @@ public class GoldRushMenu extends MenuUtils implements InventoryProvider {
 
 		String currentValue = (arena.getMineStackHeight() > 0) ? "" + arena.getMineStackHeight() : "null";
 
-		contents.set(1, 4, ClickableItem.from(nameItem(new ItemStack(Material.LADDER), "&eMine Stack Height", "&eCurrent value:||&3"),
+		contents.set(1, 4, ClickableItem.from(nameItem(Material.LADDER, "&eMine Stack Height", "&eCurrent value:||&3"),
 				e -> {
 					openAnvilMenu(player, arena, currentValue, (Player p, String text) -> {
 						if(!Utils.isInt(text)) {

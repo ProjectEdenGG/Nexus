@@ -14,7 +14,6 @@ import me.pugabyte.bncore.utils.FireworkLauncher;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -33,9 +32,9 @@ public class BNCoreCommand extends CustomCommand {
 		SkriptFunctions.redTint(player, fadeTime, intensity);
 	}
 
-	@ConverterFor({Nerd.class})
-	Object convertToNerd(String value) {
-		return new Nerd((OfflinePlayer) convertToPlayer(value));
+	@ConverterFor(Nerd.class)
+	Nerd convertToNerd(String value) {
+		return new Nerd(convertToOfflinePlayer(value));
 	}
 
 	@TabCompleterFor(Nerd.class)
@@ -44,7 +43,7 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@ConverterFor(ColorType.class)
-	Object convertToColorType(String value) {
+	ColorType convertToColorType(String value) {
 		try {
 			return ColorType.valueOf(value.toUpperCase());
 		} catch (IllegalArgumentException ignore) {
