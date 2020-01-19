@@ -9,9 +9,9 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.LivingEntity;
 
 @Permission("group.staff")
-public class JEntityNBT extends CustomCommand {
+public class EntityNBTCommand extends CustomCommand {
 
-	public JEntityNBT(CommandEvent event) {
+	public EntityNBTCommand(CommandEvent event) {
 		super(event);
 	}
 

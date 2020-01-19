@@ -8,9 +8,9 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class JHungerCommand extends CustomCommand {
+public class HungerCommand extends CustomCommand {
 
-	public JHungerCommand(CommandEvent event) {
+	public HungerCommand(CommandEvent event) {
 		super(event);
 	}
 
