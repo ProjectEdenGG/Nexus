@@ -88,6 +88,10 @@ public abstract class CustomCommand implements ICustomCommand {
 		return Strings.isNullOrEmpty(string);
 	}
 
+	protected void runCommand(String command) {
+		Bukkit.dispatchCommand(sender(), command);
+	}
+
 	protected String arg(int i) {
 		return arg(i, false);
 	}
@@ -96,7 +100,10 @@ public abstract class CustomCommand implements ICustomCommand {
 		if (event.getArgs().size() < i) return null;
 		if (rest)
 			return String.join(" ", event.getArgs().subList(i - 1, event.getArgs().size()));
-		return event.getArgs().get(i - 1);
+
+		String result = event.getArgs().get(i - 1);
+		if (Strings.isNullOrEmpty(result)) return null;
+		return result;
 	}
 
 	protected Integer intArg(int i) {

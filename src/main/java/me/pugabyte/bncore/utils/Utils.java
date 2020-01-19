@@ -154,6 +154,25 @@ public class Utils {
 		throw new PlayerNotFoundException();
 	}
 
+	public static Location getCenteredLocation(Location location) {
+		double x = Math.floor(location.getX());
+		double y = Math.floor(location.getY());
+		double z = Math.floor(location.getZ());
+		double yaw = location.getYaw();
+		double pitch = 0;
+
+		if (x < 0) x += .5;
+		if (z < 0) z += .5;
+
+		int newYaw = 0;
+		if (yaw < 315) newYaw = 270;
+		if (yaw < 225) newYaw = 180;
+		if (yaw < 135) newYaw = 90;
+		if (yaw < 45) newYaw = 0;
+
+		return new Location(location.getWorld(), x, y, z, newYaw, (float) pitch);
+	}
+
 	public static void giveItem(Player player, ItemStack item) {
 		giveItems(player, Collections.singletonList(item));
 	}
