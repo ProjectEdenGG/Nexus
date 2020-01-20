@@ -1,11 +1,14 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
@@ -117,7 +120,15 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public boolean ownsRegion(String regionName, String type) {
-		return regionName.toLowerCase().matches(("^" + getMechanic().getName() + "_" + getName() + "_" + type + "_[0-9]+$").toLowerCase());
+		return regionName.toLowerCase().matches(("^" + getMechanic().getClass().getSimpleName() + "_" + getName() + "_" + type + "_[0-9]+$").toLowerCase());
+	}
+
+	public Region getRegion(String type) {
+		return Minigames.getWorldGuardUtils().getRegion(getMechanic().getClass().getSimpleName() + "_" + getName() + "_" + type);
+	}
+
+	public ProtectedRegion getProtectedRegion(String type) {
+		return Minigames.getWorldGuardUtils().getProtectedRegion(getMechanic().getClass().getSimpleName() + "_" + getName() + "_" + type);
 	}
 
 	public boolean canUseBlock(Material type) {

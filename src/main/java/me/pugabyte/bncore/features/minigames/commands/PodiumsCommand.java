@@ -16,6 +16,7 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -115,7 +116,7 @@ public class PodiumsCommand extends CustomCommand {
 	@TabCompleterFor(Position.class)
 	public List<String> tabCompletePosition(String filter) {
 		List<String> completions = Arrays.stream(Position.values()).map(position -> position.name().toLowerCase()).collect(Collectors.toList());
-		completions.forEach(position -> completions.add(String.valueOf(position.charAt(0))));
+		new ArrayList<>(completions).forEach(position -> completions.add(String.valueOf(position.charAt(0))));
 		return completions;
 	}
 
