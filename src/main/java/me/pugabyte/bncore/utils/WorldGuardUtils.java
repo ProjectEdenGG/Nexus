@@ -16,6 +16,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -40,7 +41,7 @@ public class WorldGuardUtils {
 	}
 
 	public ProtectedRegion getProtectedRegion(String name) {
-		ProtectedRegion region = manager.getRegion(name);
+		ProtectedRegion region = manager.getRegion(name.toLowerCase());
 		if (region == null)
 			throw new InvalidInputException("Region not found");
 		return region;
@@ -122,5 +123,14 @@ public class WorldGuardUtils {
 		return world.getBlockAt(x, y, z);
 	}
 
+	public Block getRandomBlock(ProtectedRegion region, Material type) {
+		int ATTEMPTS = 5;
+		for (int i = 0; i < ATTEMPTS; i++) {
+			Block block = getRandomBlock(region);
+			if (block.getType() == type)
+				return block;
+		}
+		return null;
+	}
 
 }
