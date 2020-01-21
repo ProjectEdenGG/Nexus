@@ -109,9 +109,9 @@ public final class GoldRush extends TeamlessMechanic {
 
 		Map<Material, Double> pattern = new HashMap<Material, Double>() {{
 			put(Material.COBBLESTONE, 10.0);
-			put(Material.GOLD_ORE, 50.0);
+			put(Material.GOLD_ORE, 40.0);
 			put(Material.DIRT, 20.0);
-			put(Material.IRON_ORE, 10.0);
+			put(Material.IRON_ORE, 20.0);
 			put(Material.WOOD, 10.0);
 		}};
 
