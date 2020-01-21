@@ -20,7 +20,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -131,6 +133,18 @@ public class WorldGuardUtils {
 				return block;
 		}
 		return null;
+	}
+
+	public List<Block> getRandomBlocks(ProtectedRegion region, Material type, int count) {
+		List<Block> blocks = new ArrayList<>();
+		int SAFETY = 0;
+		while (blocks.size() < count && ++SAFETY < (count * 2)) {
+			Block block = getRandomBlock(region, type);
+			if (block == null) continue;
+			if (blocks.contains(block)) continue;
+			blocks.add(block);
+		}
+		return blocks;
 	}
 
 }

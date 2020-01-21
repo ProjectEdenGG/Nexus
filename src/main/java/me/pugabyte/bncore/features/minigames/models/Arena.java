@@ -119,16 +119,24 @@ public class Arena implements ConfigurationSerializable {
 		}};
 	}
 
+	public String getRegionBaseName() {
+		return (getMechanic().getClass().getSimpleName() + "_" + getName()).toLowerCase();
+	}
+
+	public String getRegionTypeRegex(String type) {
+		return "^" + getRegionBaseName() + "_" + type.toLowerCase() + "(|_[0-9]+)$";
+	}
+
 	public boolean ownsRegion(String regionName, String type) {
-		return regionName.toLowerCase().matches(("^" + getMechanic().getClass().getSimpleName() + "_" + getName() + "_" + type + "_[0-9]+$").toLowerCase());
+		return regionName.toLowerCase().matches(getRegionTypeRegex(type));
 	}
 
 	public Region getRegion(String type) {
-		return Minigames.getWorldGuardUtils().getRegion(getMechanic().getClass().getSimpleName() + "_" + getName() + "_" + type);
+		return Minigames.getWorldGuardUtils().getRegion(getRegionBaseName() + "_" + type);
 	}
 
 	public ProtectedRegion getProtectedRegion(String type) {
-		return Minigames.getWorldGuardUtils().getProtectedRegion(getMechanic().getClass().getSimpleName() + "_" + getName() + "_" + type);
+		return Minigames.getWorldGuardUtils().getProtectedRegion(getRegionBaseName() + "_" + type);
 	}
 
 	public boolean canUseBlock(Material type) {

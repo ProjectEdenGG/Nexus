@@ -1,19 +1,16 @@
 package me.pugabyte.bncore.features.minigames.mechanics.common;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
-import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
-import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
-import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -26,15 +23,15 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onInitialize(Match match) {
-		super.onInitialize(match);
-		resetFloors(match);
+	public void onInitialize(MatchInitializeEvent event) {
+		super.onInitialize(event);
+		resetFloors(event.getMatch());
 	}
 
 	@Override
-	public void onEnd(Match match) {
-		super.onEnd(match);
-		resetFloors(match);
+	public void onEnd(MatchEndEvent event) {
+		super.onEnd(event);
+		resetFloors(event.getMatch());
 	}
 
 	private void resetFloors(Match match) {
@@ -43,18 +40,6 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 					String file = (getName() + "/" + floor.getId().replaceFirst(getName().toLowerCase() + "_", "")).toLowerCase();
 					Minigames.getWorldEditUtils().paste(file, floor.getMinimumPoint());
 				});
-	}
-
-	@EventHandler
-	public void onRegionEntered(RegionEnteredEvent event) {
-		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
-		if (!(minigamer.isPlaying(this))) return;
-
-		Arena arena = minigamer.getMatch().getArena();
-
-		if (arena.ownsRegion(event.getRegion().getId(), "kill"))
-			kill(minigamer);
 	}
 
 	public boolean breakBlock(Match match, Location location) {

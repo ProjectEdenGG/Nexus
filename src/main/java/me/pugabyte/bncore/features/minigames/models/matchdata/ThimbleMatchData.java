@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Data
+@MatchDataFor(Thimble.class)
 public class ThimbleMatchData extends MatchData {
 	private List<Minigamer> turnList = new ArrayList<>();
 	private Map<Player, Short> chosenConcrete = new HashMap<>();

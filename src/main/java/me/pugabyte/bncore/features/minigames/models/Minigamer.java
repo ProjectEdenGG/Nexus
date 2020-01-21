@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import com.google.common.base.Strings;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -98,6 +99,25 @@ public class Minigamer {
 		return false;
 	}
 
+	public boolean isInMatchRegion() {
+		return isInMatchRegion(null);
+	}
+
+	public boolean isInMatchRegion(String type) {
+		return Minigames.getWorldGuardUtils().getRegionsAt(getPlayer().getLocation()).stream()
+				.anyMatch(region -> {
+					if (!Strings.isNullOrEmpty(type))
+						return match.getArena().ownsRegion(region.getId(), type);
+					else
+						return region.getId().matches("^" + match.getArena().getRegionBaseName() + ".*");
+				});
+	}
+
+	public boolean isInRegion(String type) {
+		return Minigames.getWorldGuardUtils().getRegionsAt(getPlayer().getLocation()).stream()
+				.anyMatch(region -> match.getArena().ownsRegion(region.getId(), type));
+	}
+
 	public void tell(String message) {
 		player.sendMessage(Minigames.PREFIX + colorize(message));
 	}
@@ -192,7 +212,11 @@ public class Minigamer {
 		player.setExp(0);
 		player.setTotalExperience(0);
 		player.setLevel(0);
-		player.getInventory().clear();
+
+		if (match.getArena().getMechanic().shouldClearInventory()) {
+			BNCore.log("Clearing inventory");
+			player.getInventory().clear();
+		}
 
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());

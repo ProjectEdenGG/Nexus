@@ -1,11 +1,17 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics;
 
+import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.Utils;
@@ -46,9 +52,12 @@ public abstract class Mechanic implements Listener {
 		return GameMode.ADVENTURE;
 	}
 
-	public void onInitialize(Match match) {}
+	public void onInitialize(MatchInitializeEvent event) {
 
-	public void onStart(Match match) {
+	}
+
+	public void onStart(MatchStartEvent event) {
+		Match match = event.getMatch();
 		match.broadcast("Starting match");
 		match.getTasks().repeat(20, 20, () -> match.getScoreboard().update());
 		int lives = match.getArena().getLives();
@@ -56,35 +65,29 @@ public abstract class Mechanic implements Listener {
 			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
 	}
 
-	public void onEnd(Match match) {
-		if (match.isStarted())
-			announceWinners(match);
+	public void onEnd(MatchEndEvent event) {
+		if (event.getMatch().isStarted())
+			announceWinners(event.getMatch());
 	}
 
-	protected void onDamage(Minigamer victim, EntityDamageEvent event) {}
-
-	public void onDeath(Minigamer victim) {
-		onDeath(victim, null);
-	}
-
-	public void onDeath(Minigamer victim, Minigamer killer) {
-		// TODO: Autobalancing
-		if (killer == null)
-			victim.getMatch().broadcast(victim.getColoredName() + " &3died");
-		else
-			victim.getMatch().broadcast(victim.getColoredName() + " &3was killed by " + killer.getColoredName());
-	}
-
-	public void onJoin(Minigamer minigamer) {
+	public void onJoin(MatchJoinEvent event) {
+		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has joined");
 		Arena arena = minigamer.getMatch().getArena();
 		minigamer.tell("You are playing &e" + arena.getMechanic().getName() + " &3on &e" + arena.getDisplayName());
 	}
 
-	public void onQuit(Minigamer minigamer) {
+	public void onQuit(MatchQuitEvent event) {
+		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has quit");
 		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
 			minigamer.getMatch().end();
+	}
+
+	protected void onDamage(Minigamer victim, EntityDamageEvent event) {}
+
+	public void onDeath(MinigamerDeathEvent event) {
+		// TODO: Autobalancing
 	}
 
 	public void kill(Minigamer minigamer) {
@@ -96,10 +99,15 @@ public abstract class Mechanic implements Listener {
 		Utils.callEvent(deathEvent);
 		if (deathEvent.isCancelled()) return;
 
-		onDeath(victim, attacker);
+		onDeath(deathEvent);
+		deathEvent.broadcastDeathMessage();
 		victim.getMatch().getScoreboard().update();
 		if (shouldBeOver(victim.getMatch()))
 			victim.getMatch().end();
+	}
+
+	public boolean shouldClearInventory() {
+		return true;
 	}
 
 	public abstract void announceWinners(Match match);
@@ -245,6 +253,16 @@ public abstract class Mechanic implements Listener {
 		event.setCancelled(true);
 		if (!victim.getMatch().isEnded())
 			kill(victim);
+	}
+
+	@EventHandler
+	public void onEnterKillRegion(RegionEnteredEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!(minigamer.isPlaying(this))) return;
+
+		Arena arena = minigamer.getMatch().getArena();
+		if (arena.ownsRegion(event.getRegion().getId(), "kill"))
+			kill(minigamer);
 	}
 
 	public abstract boolean shouldBeOver(Match match);

@@ -18,14 +18,17 @@ public class ThimbleArena extends Arena {
 
 	private ThimbleMap currentMap;
 	private Thimble.ThimbleGamemode gamemode;
-	private String poolRegionName;
 
 	public ThimbleArena(Map<String, Object> map) {
 		super(map);
 		this.thimbleMaps = (List<ThimbleMap>) map.get("thimbleMaps");
 
 		currentMap = thimbleMaps.get(0);
-		poolRegionName = "thimble_" + thimbleMaps.get(0).getName() + "_pool";
+	}
+
+	@Override
+	public String getRegionBaseName() {
+		return "thimble_" + currentMap.getName().toLowerCase();
 	}
 
 	@Override

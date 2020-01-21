@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -34,9 +35,10 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(Match match) {
-		super.onStart(match);
+	public void onStart(MatchStartEvent event) {
+		super.onStart(event);
 
+		Match match = event.getMatch();
 		randomTeleport(match.getMinigamers());
 
 		for (Minigamer minigamer : match.getMinigamers()) {

@@ -5,10 +5,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
+import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
@@ -21,6 +24,7 @@ import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
@@ -63,12 +68,22 @@ public class Match {
 		return minigamers.stream().filter(minigamer -> minigamer.getTeam() != null).map(Minigamer::getTeam).collect(Collectors.toList());
 	}
 
+	public <T extends Arena> T getArena() {
+		return (T) arena;
+	}
+
+	public <T extends MatchData> T getMatchData() {
+		return (T) matchData;
+	}
+
 	public boolean join(Minigamer minigamer) {
 		initialize();
 
+		MatchJoinEvent event;
 		if (started) {
 			if (arena.canJoinLate()) {
-				if (!callJoinEvent(minigamer)) return false;
+				event = callJoinEvent(minigamer);
+				if (event.isCancelled()) return false;
 				minigamers.add(minigamer);
 				balance();
 				teleportIn(minigamer);
@@ -77,12 +92,13 @@ public class Match {
 				return false;
 			}
 		} else {
-			if (!callJoinEvent(minigamer)) return false;
+			event = callJoinEvent(minigamer);
+			if (event.isCancelled()) return false;
 			minigamers.add(minigamer);
 			arena.getLobby().join(minigamer);
 		}
 
-		arena.getMechanic().onJoin(minigamer);
+		arena.getMechanic().onJoin(event);
 		scoreboard.update();
 		return true;
 	}
@@ -95,7 +111,7 @@ public class Match {
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
-		arena.getMechanic().onQuit(minigamer);
+		arena.getMechanic().onQuit(event);
 		minigamer.clearState();
 		minigamer.toGamelobby();
 		scoreboard.update();
@@ -117,7 +133,7 @@ public class Match {
 		initializeScores();
 		teleportIn();
 		startTimer(); // -> arena.getMechanic().startTimer();
-		arena.getMechanic().onStart(this);
+		arena.getMechanic().onStart(event);
 		scoreboard.update();
 	}
 
@@ -133,24 +149,41 @@ public class Match {
 		clearEntities();
 		clearStates();
 		toGamelobby();
-		arena.getMechanic().onEnd(this);
+		arena.getMechanic().onEnd(event);
 		minigamers = new ArrayList<>();
 		scoreboard.update();
 		MatchManager.remove(this);
 	}
 
-	private boolean callJoinEvent(Minigamer minigamer) {
+	private MatchJoinEvent callJoinEvent(Minigamer minigamer) {
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
 		Utils.callEvent(event);
-		return !event.isCancelled();
+		return event;
 	}
 
 	private void initialize() {
 		if (!initialized) {
-			arena.getMechanic().onInitialize(this);
+			MatchInitializeEvent event = new MatchInitializeEvent(this);
+			Utils.callEvent(event);
+			if (event.isCancelled()) return;
+
+			initializeMatchData();
+			arena.getMechanic().onInitialize(event);
 			scoreboard = new MatchScoreboard(this);
 			tasks = new MatchTasks();
 			initialized = true;
+		}
+	}
+
+	@SneakyThrows
+	private void initializeMatchData() {
+		String path = this.getClass().getPackage().getName();
+		Set<Class<? extends MatchData>> classes = new Reflections(path + ".matchdata").getSubTypesOf(MatchData.class);
+		for (Class<?> clazz : classes) {
+			if (clazz.getAnnotation(MatchDataFor.class).value().equals(arena.getMechanic().getClass())) {
+				matchData = (MatchData) clazz.getConstructor(Match.class).newInstance(this);
+				break;
+			}
 		}
 	}
 
