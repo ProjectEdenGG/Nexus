@@ -9,6 +9,7 @@ public enum MechanicType {
 	FREE_FOR_ALL(new FreeForAll()),
 	INVERTO_INFERNO(new InvertoInferno()),
 	GOLD_RUSH(new GoldRush()),
+	GRAB_A_JUMBUCK(new GrabAJumbuck()),
 	KANGAROO_JUMPING(new KangarooJumping()),
 	MONSTER_MAZE(new MonsterMaze()),
 	ONE_FLAG_CAPTURE_THE_FLAG(new OneFlagCaptureTheFlag()),
