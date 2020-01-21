@@ -213,10 +213,8 @@ public class Minigamer {
 		player.setTotalExperience(0);
 		player.setLevel(0);
 
-		if (match.getArena().getMechanic().shouldClearInventory()) {
-			BNCore.log("Clearing inventory");
+		if (match.getArena().getMechanic().shouldClearInventory())
 			player.getInventory().clear();
-		}
 
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
