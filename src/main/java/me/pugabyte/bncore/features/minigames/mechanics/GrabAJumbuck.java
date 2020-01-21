@@ -4,19 +4,24 @@ import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
+import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
+import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.matchdata.GrabAJumbuckMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -47,30 +52,24 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	@Override
 	public void onStart(Match match) {
 		match.setMatchData(new GrabAJumbuckMatchData(match));
-		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) match.getMatchData();
-		matchData.setRegion(new WorldGuardUtils(Minigames.getGameworld()).getProtectedRegion("grabajumbuck_" + match.getArena().getName() + "_sheepRegion"));
-		matchData.setMax(matchData.getRegion().getMaximumPoint());
-		matchData.setMin(matchData.getRegion().getMinimumPoint());
-		spawn(match, 20);
+		spawnSheep(match, 20);
 	}
 
 	@Override
 	public void onEnd(Match match) {
-		match.getMinigamers().forEach((player) -> removeAllPassangers(player.getPlayer(), match));
+		match.getMinigamers().forEach((player) -> removeAllPassengers(player.getPlayer(), match));
 		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) match.getMatchData();
 		try {
 			matchData.getSheeps().forEach(Entity::remove);
-			matchData.getSheeps().clear();
 			matchData.getItems().forEach(Entity::remove);
-			matchData.getItems().clear();
 		} catch (Exception ignore) {}
 		super.onEnd(match);
 	}
 
-	public void spawn(Match match, int sheepAmount){
+	public void spawnSheep(Match match, int sheepAmount) {
 		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) match.getMatchData();
 		while (sheepAmount != 0) {
-			Sheep sheep = Minigames.getGameworld().spawn(randomGrassBlock(match).clone().add(0, 1, 0), Sheep.class);
+			Sheep sheep = Minigames.getGameworld().spawn(getRandomSheepSpawnLocation(match), Sheep.class);
 			DyeColor color = ColorType.values()[Utils.randomInt(1, ColorType.values().length - 1)].getDyeColor();
 			if (Utils.randomInt(0, 100) > 80) sheep.setColor(color);
 			matchData.getSheeps().add(sheep);
@@ -78,19 +77,9 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		}
 	}
 
-	public Location randomGrassBlock(Match match) {
-		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) match.getMatchData();
-		int x;
-		int z;
-		int attempts = 10;
-		for (int j = 0; j < attempts; j++) {
-			x = Utils.randomInt((int) matchData.getMin().getX(), (int) matchData.getMax().getX());
-			z = Utils.randomInt((int) matchData.getMin().getZ(), (int) matchData.getMax().getZ());
-			Block block = Minigames.getGameworld().getHighestBlockAt(x, z).getLocation().subtract(0, 1, 0).getBlock();
-			if (block.getType() != Material.GRASS) continue;
-			return block.getLocation();
-		}
-		return null;
+	public Location getRandomSheepSpawnLocation(Match match) {
+		Block block = Minigames.getWorldGuardUtils().getRandomBlock(match.getArena().getProtectedRegion("sheep"), Material.GRASS);
+		return block.getLocation().clone().add(0, 1, 0);
 	}
 
 	public void addSheep(Minigamer minigamer, Sheep sheep) {
@@ -105,7 +94,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		}
 	}
 
-	public Item spawnItem(Location loc){
+	public Item spawnItem(Location loc) {
 		Item item = Minigames.getGameworld().dropItem(loc, new ItemStack(Material.STONE_BUTTON));
 		item.setItemStack(new ItemStack(Material.STONE_BUTTON));
 		item.setInvulnerable(true);
@@ -115,7 +104,8 @@ public class GrabAJumbuck extends TeamlessMechanic {
 
 	public Entity getTopPassenger(Minigamer minigamer) {
 		if (minigamer.getPlayer().getPassengers().size() == 0) return minigamer.getPlayer();
-		if (minigamer.getPlayer().getPassengers().get(0).getPassengers().size() == 0) return minigamer.getPlayer().getPassengers().get(0);
+		if (minigamer.getPlayer().getPassengers().get(0).getPassengers().size() == 0)
+			return minigamer.getPlayer().getPassengers().get(0);
 		return getSheep(minigamer).get(getSheep(minigamer).size() - 1);
 	}
 
@@ -131,7 +121,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		return sheep;
 	}
 
-	public void removeAllPassangers(Entity entity, Match match) {
+	public void removeAllPassengers(Entity entity, Match match) {
 		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) match.getMatchData();
 		if (entity.getPassengers().size() > 0) {
 			Entity newEntity = entity.getPassengers().get(0);
@@ -141,13 +131,13 @@ public class GrabAJumbuck extends TeamlessMechanic {
 				matchData.getItems().remove(entity);
 				entity.remove();
 			}
-			removeAllPassangers(newEntity, match);
+			removeAllPassengers(newEntity, match);
 		}
 	}
 
 	@EventHandler
 	public void onSheepClick(PlayerInteractEntityEvent event) {
-		if(!event.getHand().equals(EquipmentSlot.HAND)) return;
+		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) minigamer.getMatch().getMatchData();
@@ -157,49 +147,47 @@ public class GrabAJumbuck extends TeamlessMechanic {
 			return;
 		}
 		Sheep sheep = (Sheep) event.getRightClicked();
-		if(sheep.isInsideVehicle()) return;
+		if (sheep.isInsideVehicle()) return;
 		addSheep(minigamer, sheep);
 		minigamer.getMatch().getTasks().wait(8 * 20, () -> {
-			if(minigamer.getMatch().isEnded()) return;
-			spawn(minigamer.getMatch(), 1);
+			if (minigamer.getMatch().isEnded()) return;
+			spawnSheep(minigamer.getMatch(), 1);
 		});
 	}
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
-		Set<ProtectedRegion> regions = new WorldGuardUtils(Minigames.getGameworld()).getRegionsAt(event.getDamager().getLocation());
+		Set<ProtectedRegion> regions = Minigames.getWorldGuardUtils().getRegionsAt(event.getDamager().getLocation());
 		for (ProtectedRegion region : regions) {
-			if (region.getId().contains("grabajumbuck_captureregion")) {
+			Arena arena = ArenaManager.getFromRegion(region.getId());
+			if (arena != null && arena.ownsRegion(region.getId(), "capture")) {
 				event.setCancelled(true);
 				return;
 			}
 		}
+
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
 		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isPlaying(this));
-		removeAllPassangers(event.getEntity(), minigamer.getMatch());
+		if (!minigamer.isPlaying(this)) return;
+		removeAllPassengers(event.getEntity(), minigamer.getMatch());
 	}
 
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
-		String regionName = event.getRegion().getId().toLowerCase();
-		if (!event.getRegion().getId().contains("grabajumbuck_captureregion")) return;
-		if(getTopPassenger(minigamer) == minigamer.getPlayer()) return;
+		Arena arena = minigamer.getMatch().getArena();
+		if (!arena.ownsRegion(event.getRegion().getId(), "capture")) return;
+		if (getTopPassenger(minigamer) == minigamer.getPlayer()) return;
 		int score = 0;
 		for (Sheep sheep : getSheep(minigamer)) {
-			if(sheep.getColor() == DyeColor.WHITE) {
-				score++;
-			} else {
-				score = score + 3;
-			}
+			score += sheep.getColor() == DyeColor.WHITE ? 1 : 3;
 			sheep.remove();
 		}
-		removeAllPassangers(minigamer.getPlayer(), minigamer.getMatch());
+		removeAllPassengers(minigamer.getPlayer(), minigamer.getMatch());
 		minigamer.scored(score);
-		minigamer.getMatch().broadcast(minigamer.getColoredName() + " has scored " + score + " point" + ((score == 1) ? "." : "s."));
+		minigamer.getMatch().broadcast(minigamer.getColoredName() + " has scored " + score + " point" + ((score == 1) ? "" : "s"));
 	}
 
 }
