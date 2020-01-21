@@ -16,16 +16,27 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
+@Data
 public class PowerUpUtils {
+	@NonNull
 	private Match match;
+	@NonNull
+	private List<PowerUp> powerUps;
 
-	public PowerUpUtils(Match match) {
-		this.match = match;
+	public PowerUp getRandomPowerUp() {
+		return powerUps.get(new Random().nextInt(powerUps.size()));
 	}
 
-	public void spawn(Location location, final PowerUp powerUp) {
+	public void spawn(Location location) {
+		spawn(location, false);
+	}
+
+	public void spawn(Location location, boolean recurring) {
+		PowerUp powerUp = getRandomPowerUp();
 		Hologram hologram = HologramsAPI.createHologram(BNCore.getInstance(), location.clone().add(0, 2, 0));
 		match.getHolograms().add(hologram);
 		hologram.appendTextLine(Utils.colorize("&3&lPower Up"));
@@ -37,9 +48,11 @@ public class PowerUpUtils {
 			powerUp.onPickup(PlayerManager.get(player));
 			match.getHolograms().remove(hologram);
 			hologram.delete();
-			match.getTasks().wait(10 * 20, () -> {
-				if (!match.isEnded()) spawn(location, powerUp);
-			});
+			if (recurring)
+				match.getTasks().wait(10 * 20, () -> {
+					if (!match.isEnded())
+						spawn(location, true);
+				});
 		});
 	}
 

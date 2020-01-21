@@ -1,9 +1,5 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.SneakyThrows;
@@ -86,7 +82,12 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	public Location getRandomSheepSpawnLocation(Match match) {
-		Block block = Minigames.getWorldGuardUtils().getRandomBlock(match.getArena().getProtectedRegion("sheep"), Material.GRASS);
+		Block block = Minigames.getWorldGuardUtils().getRandomBlock(match.getArena().getProtectedRegion("sheep"));
+		if (block == null)
+			return getRandomSheepSpawnLocation(match);
+		block = Minigames.getGameworld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().subtract(0, 1, 0).getBlock();
+		if (block.getType() != Material.GRASS)
+			return getRandomSheepSpawnLocation(match);
 		return block.getLocation().clone().add(0, 1, 0);
 	}
 
