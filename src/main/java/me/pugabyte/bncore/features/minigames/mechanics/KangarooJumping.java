@@ -10,7 +10,6 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.KangarooJumpingArena;
-import me.pugabyte.bncore.features.minigames.models.matchdata.KangarooJumpingMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
@@ -41,11 +40,6 @@ public final class KangarooJumping extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onInitialize(Match match){
-		match.setMatchData(new KangarooJumpingMatchData(match));
-	}
-
-	@Override
 	public void onStart(Match match) {
 		super.onStart(match);
 		KangarooJumpingArena arena = (KangarooJumpingArena) match.getArena();
@@ -56,17 +50,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 		});
 	}
 
-	@Override
-	public void onEnd(Match match) {
-		super.onEnd(match);
-		KangarooJumpingMatchData matchData = (KangarooJumpingMatchData) match.getMatchData();
-		matchData.getHologramArrayList().forEach(Hologram::delete);
-		matchData.getHologramArrayList().clear();
-	}
-
 	private void spawnPowerUp(Location loc, Match match) {
-		KangarooJumpingMatchData matchData = (KangarooJumpingMatchData) match.getMatchData();
-
 		POWERUP powerup = POWERUP.values()[Utils.randomInt(0, (POWERUP.values().length - 1))];
 		String powerUpName = Utils.colorize(((powerup.isPositive()) ? "&a" : "&c") + powerup.getName());
 
@@ -78,13 +62,13 @@ public final class KangarooJumping extends TeamlessMechanic {
 		itemLine.setPickupHandler(player -> {
 			player.sendMessage(Minigames.PREFIX + "You picked up a power up!");
 			powerup.onPickUp(PlayerManager.get(player));
-			matchData.getHologramArrayList().remove(hologram);
+			match.getHolograms().remove(hologram);
 			hologram.delete();
 			Utils.wait(10 * 20, ()->{
 				if(!match.isEnded()) spawnPowerUp(loc, match);
 			});
 		});
-		matchData.getHologramArrayList().add(hologram);
+		match.getHolograms().add(hologram);
 	}
 
 	public enum POWERUP{
