@@ -88,6 +88,12 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		block = Minigames.getGameworld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().subtract(0, 1, 0).getBlock();
 		if (block.getType() != Material.GRASS)
 			return getRandomSheepSpawnLocation(match);
+		if (block.getLocation().clone().add(1, 0 ,0).getBlock().getType() != Material.AIR
+				&& block.getLocation().clone().subtract(1, 0 ,0).getBlock().getType() != Material.AIR)
+			return getRandomSheepSpawnLocation(match);
+		if (block.getLocation().clone().add(0, 0 ,1).getBlock().getType() != Material.AIR
+				&& block.getLocation().clone().subtract(0, 0 ,1).getBlock().getType() != Material.AIR)
+			return getRandomSheepSpawnLocation(match);
 		return block.getLocation().clone().add(0, 1, 0);
 	}
 
