@@ -49,7 +49,7 @@ public class ArenaManager {
 			String mechanicName = regionName.split("_")[0];
 			String arenaName = regionName.split("_")[1];
 			Arena arena = get(arenaName);
-			if (arena.getMechanic().getName().equalsIgnoreCase(mechanicName))
+			if (arena.getMechanic().getClass().getSimpleName().equalsIgnoreCase(mechanicName))
 				return arena;
 		} catch (ArrayIndexOutOfBoundsException | InvalidInputException ignore) {}
 
