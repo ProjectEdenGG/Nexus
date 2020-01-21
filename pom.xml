@@ -110,6 +110,10 @@
             <id>citizens-repo</id>
             <url>https://repo.citizensnpcs.co/</url>
         </repository>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
