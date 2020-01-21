@@ -20,7 +20,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public final class KangarooJumping extends TeamlessMechanic {
 
@@ -47,7 +46,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 		match.getTasks().wait(5 * 20, () -> {
 			match.broadcast("Power ups have spawned!");
 			for (Location loc : arena.getPowerUpLocations())
-				new PowerUpUtils(match).spawn(loc, powerUps.get(new Random().nextInt(powerUps.size())));
+				new PowerUpUtils(match, powerUps).spawn(loc, true);
 		});
 	}
 

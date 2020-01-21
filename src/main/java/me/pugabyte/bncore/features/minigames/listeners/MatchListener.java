@@ -20,6 +20,7 @@ public class MatchListener implements Listener {
 	}
 
 	private void registerWaterDamageTask() {
+		// TODO: Move to a task triggered by entering the region
 		Utils.repeat(20, 20, () ->
 			Minigames.getActiveMinigamers().forEach(minigamer -> {
 				if (minigamer.isInMatchRegion("waterdamage") && Utils.isInWater(minigamer.getPlayer()))
