@@ -11,6 +11,8 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.GoldRushArena;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
@@ -53,9 +55,10 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(Match match) {
-		super.onStart(match);
-		GoldRushArena goldRushArena = (GoldRushArena) match.getArena();
+	public void onStart(MatchStartEvent event) {
+		super.onStart(event);
+		Match match = event.getMatch();
+		GoldRushArena goldRushArena = match.getArena();
 		createMineStacks(goldRushArena.getMineStackHeight(), match.getTeams().get(0).getSpawnpoints());
 		for (Location loc : match.getTeams().get(0).getSpawnpoints())
 			loc.clone().subtract(0, 1, 0).getBlock().setType(Material.GLASS);
@@ -96,11 +99,11 @@ public final class GoldRush extends TeamlessMechanic {
 
 
 	@Override
-	public void onEnd(Match match) {
-		super.onEnd(match);
-		GoldRushArena goldRushArena = (GoldRushArena) match.getArena();
-		for (Location loc : match.getTeams().get(0).getSpawnpoints()) {
-			removeMineStacks(goldRushArena.getMineStackHeight(), loc);
+	public void onEnd(MatchEndEvent event) {
+		super.onEnd(event);
+		GoldRushArena goldRushArena = event.getMatch().getArena();
+		for (Location location : event.getMatch().getTeams().get(0).getSpawnpoints()) {
+			removeMineStacks(goldRushArena.getMineStackHeight(), location);
 		}
 	}
 
@@ -120,9 +123,9 @@ public final class GoldRush extends TeamlessMechanic {
 		Region region = new CuboidRegion(p1, p2);
 		worldEditUtils.replace(region, Collections.singleton(Material.AIR), pattern);
 
-		Schematic schemm = worldEditUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
-		for (Location loc : locations) {
-			worldEditUtils.paste(schemm, worldEditUtils.toVector(loc.clone().subtract(0, mineStackHeight, 0)));
+		Schematic schematic = worldEditUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
+		for (Location location : locations) {
+			worldEditUtils.paste(schematic, worldEditUtils.toVector(location.clone().subtract(0, mineStackHeight, 0)));
 		}
 	}
 
@@ -160,7 +163,7 @@ public final class GoldRush extends TeamlessMechanic {
 	public void onRegionEnter(RegionEnteredEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
-		if (event.getRegion().getId().equalsIgnoreCase("goldrush_" + minigamer.getMatch().getArena().getName() + "_winningRegion")) {
+		if (minigamer.getMatch().getArena().ownsRegion(event.getRegion().getId(), "win")) {
 			minigamer.scored();
 			minigamer.getMatch().end();
 		}

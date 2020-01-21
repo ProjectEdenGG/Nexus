@@ -4,7 +4,9 @@ import lombok.Getter;
 import me.pugabyte.bncore.features.minigames.listeners.MatchListener;
 import me.pugabyte.bncore.features.minigames.lobby.Basketball;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
+import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -14,9 +16,12 @@ import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.entity.Player;
 import org.reflections.Reflections;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
@@ -39,6 +44,18 @@ public class Minigames {
 		new MatchListener();
 
 		new Basketball();
+	}
+
+	public static List<Player> getPlayers() {
+		return Bukkit.getOnlinePlayers().stream().filter(player -> player.getWorld() == gameworld).collect(Collectors.toList());
+	}
+
+	public static List<Minigamer> getMinigamers() {
+		return getPlayers().stream().map(PlayerManager::get).collect(Collectors.toList());
+	}
+
+	public static List<Minigamer> getActiveMinigamers() {
+		return getPlayers().stream().map(PlayerManager::get).filter(minigamer -> minigamer.getMatch() != null).collect(Collectors.toList());
 	}
 
 	private void registerSerializables() {

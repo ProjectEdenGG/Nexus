@@ -1,7 +1,12 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
@@ -9,6 +14,8 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.GrabAJumbuckMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
@@ -50,24 +57,25 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(Match match) {
-		match.setMatchData(new GrabAJumbuckMatchData(match));
-		spawnSheep(match, 20);
+	public void onStart(MatchStartEvent event) {
+		super.onStart(event);
+		spawnSheep(event.getMatch(), 20);
 	}
 
 	@Override
-	public void onEnd(Match match) {
+	public void onEnd(MatchEndEvent event) {
+		Match match = event.getMatch();
 		match.getMinigamers().forEach((player) -> removeAllPassengers(player.getPlayer(), match));
-		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) match.getMatchData();
+		GrabAJumbuckMatchData matchData = match.getMatchData();
 		try {
 			matchData.getSheeps().forEach(Entity::remove);
 			matchData.getItems().forEach(Entity::remove);
 		} catch (Exception ignore) {}
-		super.onEnd(match);
+		super.onEnd(event);
 	}
 
 	public void spawnSheep(Match match, int sheepAmount) {
-		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) match.getMatchData();
+		GrabAJumbuckMatchData matchData = match.getMatchData();
 		while (sheepAmount != 0) {
 			Sheep sheep = Minigames.getGameworld().spawn(getRandomSheepSpawnLocation(match), Sheep.class);
 			DyeColor color = ColorType.values()[Utils.randomInt(1, ColorType.values().length - 1)].getDyeColor();
@@ -82,9 +90,10 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		return block.getLocation().clone().add(0, 1, 0);
 	}
 
+	@SneakyThrows
 	public void addSheep(Minigamer minigamer, Sheep sheep) {
 		if (getTopPassenger(minigamer) == minigamer.getPlayer()) {
-			GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) minigamer.getMatch().getMatchData();
+			GrabAJumbuckMatchData matchData = minigamer.getMatch().getMatchData();
 			Item item = spawnItem(minigamer.getPlayer().getLocation());
 			minigamer.getPlayer().addPassenger(item);
 			item.addPassenger(sheep);
@@ -122,7 +131,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	public void removeAllPassengers(Entity entity, Match match) {
-		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) match.getMatchData();
+		GrabAJumbuckMatchData matchData = match.getMatchData();
 		if (entity.getPassengers().size() > 0) {
 			Entity newEntity = entity.getPassengers().get(0);
 			entity.removePassenger(newEntity);
@@ -140,7 +149,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
-		GrabAJumbuckMatchData matchData = (GrabAJumbuckMatchData) minigamer.getMatch().getMatchData();
+		GrabAJumbuckMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!matchData.getSheeps().contains(event.getRightClicked())) return;
 		if (getSheep(minigamer).size() == 3) {
 			minigamer.getPlayer().sendMessage(Minigames.PREFIX + "You can only carry three sheep at a time!");

@@ -12,9 +12,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Builder
 @Data
@@ -23,11 +25,13 @@ import java.util.Map;
 @SerializableAs("Loadout")
 public class Loadout implements ConfigurationSerializable {
 	private ItemStack[] inventory = new ItemStack[41];
+	private boolean isLoadoutEmpty;
 	private List<PotionEffect> effects = new ArrayList<>();
 
 	public Loadout(Map<String, Object> map) {
 		this.inventory = SerializationUtils.deserializeItems((Map<String, Object>) map.getOrDefault("inventory", inventory));
 		this.effects = (List<PotionEffect>) map.getOrDefault("effects", effects);
+		isLoadoutEmpty = Arrays.stream(inventory).noneMatch(Objects::nonNull);
 	}
 
 	@Override
@@ -41,9 +45,9 @@ public class Loadout implements ConfigurationSerializable {
 	public void apply(Minigamer minigamer) {
 		minigamer.clearState();
 		Player player = minigamer.getPlayer();
-		if (inventory != null)
+		if (!isLoadoutEmpty)
 			player.getInventory().setContents(inventory.clone());
-		if (effects != null)
+		if (effects != null && effects.size() > 0)
 			player.addPotionEffects(effects);
 	}
 

@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -28,10 +29,10 @@ public final class Paintball extends BalancedTeamMechanic {
 	}
 
 	@Override
-	public void onDeath(Minigamer victim, Minigamer killer) {
-		super.onDeath(victim, killer);
-		killer.scored();
-		killer.getMatch().scored(killer.getTeam());
+	public void onDeath(MinigamerDeathEvent event) {
+		super.onDeath(event);
+		event.getAttacker().scored();
+		event.getAttacker().getMatch().scored(event.getAttacker().getTeam());
 	}
 
 	@EventHandler

@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -23,9 +23,10 @@ public final class FreeForAll extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onDeath(Minigamer victim, Minigamer killer) {
-		super.onDeath(victim, killer);
-		killer.scored();
+	public void onDeath(MinigamerDeathEvent event) {
+		super.onDeath(event);
+		if (event.getAttacker() != null)
+			event.getAttacker().scored();
 	}
 
 }

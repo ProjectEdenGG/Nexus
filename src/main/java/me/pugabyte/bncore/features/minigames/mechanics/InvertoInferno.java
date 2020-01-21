@@ -8,6 +8,8 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
@@ -60,22 +62,17 @@ public final class InvertoInferno extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onJoin(Minigamer minigamer) {
-		super.onJoin(minigamer);
-	}
+	public void onStart(MatchStartEvent event) {
+		super.onStart(event);
 
-	@Override
-	public void onStart(Match match) {
-		super.onStart(match);
-		new FireTask(match);
-		for (Minigamer minigamer : match.getMinigamers()) {
+		new FireTask(event.getMatch());
+		for (Minigamer minigamer : event.getMatch().getMinigamers())
 			minigamer.tell("Keep the flames back until the water bombers arrive!");
-		}
 	}
 
 	@Override
-	public void onEnd(Match match) {
-		super.onEnd(match);
+	public void onEnd(MatchEndEvent event) {
+		super.onEnd(event);
 		Region region = Minigames.getWorldGuardUtils().getRegion("invertoinferno_fire");
 
 		Minigames.getWorldEditUtils().replace(region, Material.FIRE, Material.AIR);

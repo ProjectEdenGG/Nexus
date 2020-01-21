@@ -1,19 +1,20 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import me.pugabyte.bncore.features.minigames.mechanics.CaptureTheFlag;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Data
+@MatchDataFor(CaptureTheFlag.class)
 public class CaptureTheFlagMatchData extends MatchData {
-	@Getter
-	@Setter
 	Map<Team, Flag> flags = new HashMap<>();
 
 	public CaptureTheFlagMatchData(Match match) {

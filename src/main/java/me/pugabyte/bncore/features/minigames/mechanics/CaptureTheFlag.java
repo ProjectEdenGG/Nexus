@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.Flag;
 import org.bukkit.ChatColor;
@@ -35,7 +36,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	@Override
 	public void onFlagInteract(Minigamer minigamer, Sign sign) {
 		Match match = minigamer.getMatch();
-		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
+		CaptureTheFlagMatchData matchData = match.getMatchData();
 		Arena arena = match.getArena();
 
 		Optional<Team> optionalTeam = arena.getTeams().stream()
@@ -69,7 +70,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 	private void returnFlag(Minigamer minigamer) {
 		Match match = minigamer.getMatch();
-		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
+		CaptureTheFlagMatchData matchData = match.getMatchData();
 
 		match.broadcast(minigamer.getColoredName() + " &3returned " + minigamer.getTeam().getColoredName() + "&3's flag");
 
@@ -79,7 +80,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 	private void captureFlag(Minigamer minigamer, Team team) {
 		Match match = minigamer.getMatch();
-		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
+		CaptureTheFlagMatchData matchData = match.getMatchData();
 
 		match.broadcast(minigamer.getColoredName() + " &3captured " + team.getColoredName() + "&3's flag");
 
@@ -94,7 +95,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 	private void takeFlag(Flag flag, Minigamer minigamer) {
 		Match match = minigamer.getMatch();
-		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
+		CaptureTheFlagMatchData matchData = match.getMatchData();
 
 		match.broadcast(minigamer.getColoredName() + " &3took " + flag.getTeam().getColoredName() + "&3's flag");
 
@@ -104,16 +105,10 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public void onStart(Match match) {
-		super.onStart(match);
-		match.setMatchData(new CaptureTheFlagMatchData(match));
-	}
+	public void onEnd(MatchEndEvent event) {
+		super.onEnd(event);
 
-	@Override
-	public void onEnd(Match match) {
-		super.onEnd(match);
-
-		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) match.getMatchData();
+		CaptureTheFlagMatchData matchData = event.getMatch().getMatchData();
 		Map<Team, Flag> flags = matchData.getFlags();
 		for (Map.Entry<Team, Flag> flagEntry : flags.entrySet()) {
 			flagEntry.getValue().respawn();

@@ -1,16 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.boydti.fawe.FaweAPI;
-import com.boydti.fawe.util.EditSessionBuilder;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.blocks.BaseBlock;
-import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.World;
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -26,6 +16,11 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleArena;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleMap;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.ThimbleMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
@@ -79,36 +74,51 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(Minigamer minigamer) {
-		ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
-		matchData.getTurnList().remove(minigamer);
-		if (minigamer.equals(matchData.getTurnPlayer()))
-			kill(minigamer);
-		super.onQuit(minigamer);
+	public boolean shouldClearInventory() {
+		return false;
 	}
 
 	@Override
-	public void onJoin(Minigamer minigamer) {
+	public void onInitialize(MatchInitializeEvent event) {
+		Match match = event.getMatch();
+		ThimbleArena arena = match.getArena();
+		arena.setGamemode(arena.getNextGamemode());
+		arena.getGamemode().onInitialize(match);
+		arena.getGamemode().editPool(match);
+	}
+
+	@Override
+	public void onJoin(MatchJoinEvent event) {
+		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has joined");
-		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
+		ThimbleArena arena = minigamer.getMatch().getArena();
 		minigamer.tell("You are playing &eThimble&3: &e" + arena.getGamemode().getName());
 		Player player = minigamer.getPlayer();
 		ItemStack menuItem = new ItemStackBuilder(Material.CONCRETE).durability((short) 11).name("Choose A Block!").build();
 		player.getInventory().setItem(0, menuItem);
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
+	}
 
+	@Override
+	public void onQuit(MatchQuitEvent event) {
+		Minigamer minigamer = event.getMinigamer();
+		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
+		matchData.getTurnList().remove(minigamer);
+		if (minigamer.equals(matchData.getTurnPlayer()))
+			kill(minigamer);
+		super.onQuit(event);
 	}
 
 	@Override
 	public String getScoreboardTitle(Match match) {
-		ThimbleArena arena = (ThimbleArena) match.getArena();
+		ThimbleArena arena = match.getArena();
 		return super.getScoreboardTitle(match) + ": " + arena.getGamemode().getScoreboardTitle();
 	}
 
 	@Override
 	public Map<String, Integer> getScoreboardLines(Match match) {
 		Map<String, Integer> lines = new HashMap<>();
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+		ThimbleMatchData matchData = match.getMatchData();
 
 		if (match.isStarted()) {
 			lines.put("&1", 0);
@@ -138,23 +148,11 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onInitialize(Match match) {
-		ThimbleArena arena = (ThimbleArena) match.getArena();
+	public void onStart(MatchStartEvent event) {
+		super.onStart(event);
 
-		arena.setGamemode(arena.getNextGamemode());
-
-		match.setMatchData(new ThimbleMatchData(match));
-
-		arena.getGamemode().onInitialize(match);
-
-		arena.getGamemode().editPool(match);
-	}
-
-	@Override
-	public void onStart(Match match) {
-		super.onStart(match);
-
-		ThimbleArena arena = (ThimbleArena) match.getArena();
+		Match match = event.getMatch();
+		ThimbleArena arena = match.getArena();
 
 		List<Minigamer> minigamers = match.getMinigamers();
 		setPlayerBlocks(minigamers, match);
@@ -166,51 +164,40 @@ public final class Thimble extends TeamlessMechanic {
 		Location specLoc = arena.getCurrentMap().getSpectateLocation();
 		for (Minigamer minigamer : minigamers) {
 			minigamer.teleport(specLoc);
+			minigamer.getPlayer().getInventory().setStorageContents(new ItemStack[36]);
 		}
 
 		match.getTasks().wait(60, () -> nextTurn(match));
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public void onEnd(Match match) {
-		// Reset Pool
-		ThimbleArena arena = (ThimbleArena) match.getArena();
-		World world = FaweAPI.getWorld((Minigames.getGameworld().getName()));
-		EditSession editSession = new EditSessionBuilder(world).fastmode(true).build();
-		RegionManager regionManager = WGBukkit.getRegionManager(Minigames.getGameworld());
-		if (regionManager.getRegion(arena.getPoolRegionName()) != null) {
-			Vector max = regionManager.getRegion(arena.getPoolRegionName()).getMaximumPoint();
-			Vector min = regionManager.getRegion(arena.getPoolRegionName()).getMinimumPoint();
-			Region poolRegion = new CuboidRegion(max, min);
-			BaseBlock baseBlock = new BaseBlock(9, 0);
-
-			editSession.setBlocks(poolRegion, baseBlock);
-			editSession.flushQueue();
-		}
-		super.onEnd(match);
+	public void onEnd(MatchEndEvent event) {
+		ThimbleArena arena = event.getMatch().getArena();
+		Minigames.getWorldEditUtils().fill(arena.getRegion("pool"), Material.WATER);
+		super.onEnd(event);
 	}
 
 	@Override
 	protected void onDamage(Minigamer victim, EntityDamageEvent event) {
 		super.onDamage(victim, event);
-		ThimbleMatchData matchData = (ThimbleMatchData) victim.getMatch().getMatchData();
+		ThimbleMatchData matchData = victim.getMatch().getMatchData();
 		if (victim.equals(matchData.getTurnPlayer()))
 			kill(victim);
 	}
 
 	@Override
-	public void onDeath(Minigamer victim) {
-		ThimbleMatchData matchData = (ThimbleMatchData) victim.getMatch().getMatchData();
-		if (victim.equals(matchData.getTurnPlayer()))
-			victim.getMatch().broadcast(victim.getColoredName() + " missed.");
+	public void onDeath(MinigamerDeathEvent event) {
+		super.onDeath(event);
+		ThimbleMatchData matchData = event.getMinigamer().getMatch().getMatchData();
+		if (event.getMinigamer().equals(matchData.getTurnPlayer()))
+			event.setDeathMessage(event.getMinigamer().getColoredName() + " missed");
 	}
 
 	@Override
 	public void kill(Minigamer minigamer) {
-		onDeath(minigamer);
-		ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
-		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
+		super.kill(minigamer);
+		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
+		ThimbleArena arena = minigamer.getMatch().getArena();
 		if (minigamer.equals(matchData.getTurnPlayer())) {
 			arena.getGamemode().kill(minigamer);
 			minigamer.getMatch().getTasks().wait(30, () -> nextTurn(MatchManager.get(arena)));
@@ -218,14 +205,14 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	private void score(Minigamer minigamer, Location blockLocation) {
-		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
+		ThimbleArena arena = minigamer.getMatch().getArena();
 		arena.getGamemode().score(minigamer, blockLocation);
 
 		minigamer.getMatch().getTasks().wait(30, () -> nextTurn(minigamer.getMatch()));
 	}
 
 	private void newRound(Match match) {
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+		ThimbleMatchData matchData = match.getMatchData();
 
 		if (match.getAlivePlayers().size() <= 1) {
 			match.broadcast("Alive Players <= 1, Ending game.");
@@ -245,9 +232,8 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 		}
 
-		if (match.isEnded()) {
+		if (match.isEnded())
 			return;
-		}
 
 		match.broadcast("New Round!");
 		matchData.setTurnList(new ArrayList<>(match.getAlivePlayers()));
@@ -256,10 +242,10 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	private void nextTurn(Match match) {
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
-		ThimbleArena arena = (ThimbleArena) match.getArena();
+		ThimbleArena arena = match.getArena();
+		ThimbleMatchData matchData = match.getMatchData();
 
-		if (match.isEnded())
+		if (match.isEnded() || matchData == null)
 			return;
 
 		if (matchData.getTurns() >= MAX_TURNS) {
@@ -306,7 +292,7 @@ public final class Thimble extends TeamlessMechanic {
 
 	// Auto-select unique concrete blocks for players who have not themselves
 	private void setPlayerBlocks(List<Minigamer> minigamers, Match match) {
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+		ThimbleMatchData matchData = match.getMatchData();
 
 		for (Minigamer minigamer : minigamers) {
 			Short concreteId = matchData.getChosenConcrete().get(minigamer.getPlayer());
@@ -351,12 +337,12 @@ public final class Thimble extends TeamlessMechanic {
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 
-		ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
-		if (event.getRegion().getId().equals(arena.getPoolRegionName())) {
+		ThimbleArena arena = minigamer.getMatch().getArena();
+		if (event.getRegion().getId().equalsIgnoreCase(arena.getProtectedRegion("pool").getId())) {
 			if (!Utils.isInWater(player)) return;
 			if (player.getInventory().getHelmet() == null) return;
 
-			ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
+			ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
 			if (!minigamer.isAlive()) return;
 			if (matchData.getTurnPlayer() == null || !matchData.getTurnPlayer().equals(minigamer)) return;
 
@@ -370,8 +356,7 @@ public final class Thimble extends TeamlessMechanic {
 				blockLocation = locationBelow;
 			}
 
-			ItemStack item = player.getInventory().getHelmet();
-			short durability = item.getDurability();
+			short durability = player.getInventory().getHelmet().clone().getDurability();
 
 			blockLocation.getBlock().setType(Material.CONCRETE);
 			blockLocation.getBlock().setData(Byte.parseByte(Short.toString(durability)));
@@ -397,7 +382,7 @@ public final class Thimble extends TeamlessMechanic {
 		Match match = event.getMatch();
 		if (!match.isMechanic(this)) return;
 
-		ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+		ThimbleMatchData matchData = match.getMatchData();
 
 		if (!matchData.isEnding() && !shouldBeOver(match)) {
 			if (match.getTimer().getTime() == 0)
@@ -416,7 +401,7 @@ public final class Thimble extends TeamlessMechanic {
 		}
 
 		void onInitialize(Match match) {
-			ThimbleArena arena = (ThimbleArena) match.getArena();
+			ThimbleArena arena = match.getArena();
 
 			// Setup next map
 			List<ThimbleMap> thimbleMaps = arena.getThimbleMaps();
@@ -437,40 +422,26 @@ public final class Thimble extends TeamlessMechanic {
 			}
 			arena.setCurrentMap(thimbleMaps.get(ndx));
 
-			arena.setPoolRegionName("thimble_" + arena.getCurrentMap().getName().toLowerCase() + "_pool");
-
-			Minigames.getWorldEditUtils().fill(arena.getPoolRegionName(), Material.STATIONARY_WATER);
+			Minigames.getWorldEditUtils().fill(arena.getRegion("pool"), Material.STATIONARY_WATER);
 		}
 
 		// Randomly place blocks in pool
 		void editPool(Match match) {
-			ThimbleArena arena = (ThimbleArena) match.getArena();
-			ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+			ThimbleArena arena = match.getArena();
+			ThimbleMatchData matchData = match.getMatchData();
 
 			int BLOCKS_TO_CHANGE = 3;
-			int ATTEMPTS = 3;
-			int blocksChanged = 0;
-			for (int i = 0; i < BLOCKS_TO_CHANGE; i++) {
-				for (int j = 0; j < ATTEMPTS; j++) {
-					Block block = Minigames.getWorldGuardUtils().getRandomBlock(arena.getPoolRegionName());
+			List<Block> blocks = Minigames.getWorldGuardUtils().getRandomBlocks(arena.getProtectedRegion("pool"), Material.STATIONARY_WATER, BLOCKS_TO_CHANGE);
+			blocks.forEach(block -> {
+				block.setType(Material.PISTON_BASE);
+				block.setData((byte) 0);
+			});
 
-					if (!Utils.isWater(block.getType()))
-						continue;
-
-					block.setType(Material.PISTON_BASE);
-					block.setData((byte) 0);
-
-					++blocksChanged;
-
-					break;
-				}
-			}
-
-			matchData.setTurns(blocksChanged);
+			matchData.setTurns(blocks.size());
 		}
 
 		void score(Minigamer minigamer, Location blockLocation) {
-			ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
+			ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
 			matchData.setTurnPlayer(null);
 			minigamer.getMatch().getScoreboard().update();
 			matchData.setTurns(matchData.getTurns() + 1);
@@ -478,8 +449,8 @@ public final class Thimble extends TeamlessMechanic {
 		}
 
 		void kill(Minigamer minigamer) {
-			ThimbleMatchData matchData = (ThimbleMatchData) minigamer.getMatch().getMatchData();
-			ThimbleArena arena = (ThimbleArena) minigamer.getMatch().getArena();
+			ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
+			ThimbleArena arena = minigamer.getMatch().getArena();
 
 			matchData.setTurnPlayer(null);
 			minigamer.getMatch().getScoreboard().update();
@@ -495,11 +466,6 @@ public final class Thimble extends TeamlessMechanic {
 		}
 
 		@Override
-		void onInitialize(Match match) {
-			super.onInitialize(match);
-		}
-
-		@Override
 		void score(Minigamer minigamer, Location blockLocation) {
 			super.score(minigamer, blockLocation);
 			minigamer.scored();
@@ -510,11 +476,6 @@ public final class Thimble extends TeamlessMechanic {
 		@Override
 		String getName() {
 			return "Risk";
-		}
-
-		@Override
-		void onInitialize(Match match) {
-			super.onInitialize(match);
 		}
 
 		@Override
@@ -557,40 +518,27 @@ public final class Thimble extends TeamlessMechanic {
 
 		@Override
 		void onInitialize(Match match) {
-			ThimbleArena arena = (ThimbleArena) match.getArena();
+			ThimbleArena arena = match.getArena();
 			super.onInitialize(match);
 
-			Minigames.getWorldEditUtils().fill(arena.getPoolRegionName(), Material.PISTON_BASE);
+			Minigames.getWorldEditUtils().fill(arena.getRegion("pool"), Material.PISTON_BASE);
 		}
 
 		// Place x water holes randomly in pool
 		@Override
 		void editPool(Match match) {
-			ThimbleArena arena = (ThimbleArena) match.getArena();
-			ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+			ThimbleArena arena = match.getArena();
+			ThimbleMatchData matchData = match.getMatchData();
 			Thimble mechanic = (Thimble) arena.getMechanic();
 
 			int playerCount = match.getMinigamers().size();
 			int maxPlayers = arena.getMaxPlayers();
-
 			int BLOCKS_TO_CHANGE = ((playerCount * 2) + (maxPlayers - playerCount));
-			int ATTEMPTS = 3;
-			int blocksChanged = 0;
-			for (int i = 0; i < BLOCKS_TO_CHANGE; i++) {
-				for (int j = 0; j < ATTEMPTS; j++) {
-					Block block = Minigames.getWorldGuardUtils().getRandomBlock(arena.getPoolRegionName());
 
-					if (Utils.isWater(block.getType()))
-						continue;
+			List<Block> blocks = Minigames.getWorldGuardUtils().getRandomBlocks(arena.getProtectedRegion("pool"), Material.PISTON_BASE, BLOCKS_TO_CHANGE);
+			blocks.forEach(block -> block.setType(Material.STATIONARY_WATER));
 
-					block.setType(Material.STATIONARY_WATER);
-
-					++blocksChanged;
-					break;
-				}
-			}
-
-			matchData.setTurns(mechanic.getMAX_TURNS() - blocksChanged);
+			matchData.setTurns(mechanic.getMAX_TURNS() - blocks.size());
 		}
 
 		@Override
@@ -614,7 +562,7 @@ public final class Thimble extends TeamlessMechanic {
 		public void init(Player player, InventoryContents contents) {
 			Minigamer minigamer = PlayerManager.get(player);
 			Match match = minigamer.getMatch();
-			ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+			ThimbleMatchData matchData = match.getMatchData();
 
 			int row = 0;
 			int col = 0;
@@ -635,7 +583,7 @@ public final class Thimble extends TeamlessMechanic {
 		public void pickColor(ItemStack concrete, Player player) {
 			Minigamer minigamer = PlayerManager.get(player);
 			Match match = minigamer.getMatch();
-			ThimbleMatchData matchData = (ThimbleMatchData) match.getMatchData();
+			ThimbleMatchData matchData = match.getMatchData();
 
 			matchData.getChosenConcrete().remove(minigamer.getPlayer());
 

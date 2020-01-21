@@ -348,5 +348,12 @@
             <artifactId>PathfindergoalAPI</artifactId>
             <version>1.3.4</version>
         </dependency>
+        <!-- ProtocolLib -->
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>4.5.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

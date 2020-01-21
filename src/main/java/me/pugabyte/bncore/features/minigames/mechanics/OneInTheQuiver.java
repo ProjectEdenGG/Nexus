@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -28,10 +29,11 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onDeath(Minigamer victim, Minigamer killer) {
-		super.onDeath(victim, killer);
-		killer.scored();
-		killer.getPlayer().getInventory().addItem(new ItemStack(Material.ARROW, 1));
+	public void onDeath(MinigamerDeathEvent event) {
+		super.onDeath(event);
+		if (event.getAttacker() == null) return;
+		event.getAttacker().scored();
+		event.getAttacker().getPlayer().getInventory().addItem(new ItemStack(Material.ARROW, 1));
 	}
 
 	@EventHandler
