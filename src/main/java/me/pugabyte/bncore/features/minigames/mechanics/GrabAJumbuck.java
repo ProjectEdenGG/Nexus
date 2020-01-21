@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.SneakyThrows;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -142,7 +141,6 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		if (entity.getPassengers().size() > 0) {
 			Entity newEntity = entity.getPassengers().get(0);
 			entity.removePassenger(newEntity);
-			BNCore.log("Removed " + newEntity.getType() + " from " + entity.getType());
 			if (entity.getType() == EntityType.DROPPED_ITEM) {
 				matchData.getItems().remove(entity);
 				entity.remove();
