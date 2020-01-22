@@ -109,6 +109,10 @@ public class Utils {
 		return BNCore.getInstance().getServer().getScheduler().runTaskAsynchronously(BNCore.getInstance(), runnable).getTaskId();
 	}
 
+	public static int sync(Runnable runnable) {
+		return BNCore.getInstance().getServer().getScheduler().runTask(BNCore.getInstance(), runnable).getTaskId();
+	}
+
 	public static void cancelTask(int taskId) {
 		BNCore.getInstance().getServer().getScheduler().cancelTask(taskId);
 	}
