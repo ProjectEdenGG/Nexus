@@ -19,6 +19,8 @@ import org.inventivetalent.glow.GlowAPI;
 @Permission("group.staff")
 public class NearestBlockCommand extends CustomCommand {
 
+	//TODO: for player head in direction of the found block
+
 	public NearestBlockCommand(CommandEvent event) {
 		super(event);
 	}
