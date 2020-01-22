@@ -23,7 +23,7 @@ public class StaffCommand extends CustomCommand {
 		line();
 		List<Rank> ranks = Rank.getStaff();
 		Collections.reverse(ranks);
-		ranks.forEach(rank -> send(rank + "&f: " + rank.getNerds().stream().map(Nerd::getName).collect(Collectors.joining("&f, &e"))));
+		ranks.forEach(rank -> send(rank + "&f:&e " + rank.getNerds().stream().map(Nerd::getName).collect(Collectors.joining("&f, &e"))));
 		line();
 		send("&3View online staff with &c/onlinestaff&3.");
 		send("&3If you need to request a staff member's &ehelp&3, please use &c/ticket &c<message>");

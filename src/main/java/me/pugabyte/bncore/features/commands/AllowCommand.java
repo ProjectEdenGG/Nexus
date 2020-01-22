@@ -26,24 +26,24 @@ public class AllowCommand extends CustomCommand {
 		else if (playerWorld.contains("skyblock"))
 			skyblock(playerArgName);
 		else
-			main(playerArgName);
+			protection(playerArgName);
 
 		line();
 	}
 
-	private void creative(String playerName) {
+	void creative(String playerName) {
 		send("&3 Allowing to Plots:");
 		json("  &c/plot trust " + playerName + " &3- Full access ||sgt:/plot trust " + playerName);
 		json("  &c/plot add " + playerName + " &3- Only allowed to build while you are online||sgt:/plot add " + playerName);
 	}
 
-	private void skyblock(String playerName) {
+	void skyblock(String playerName) {
 		send("&3 Allowing to Islands:");
 		json("  &c/is coop " + playerName + " &3- Allow a player||sgt:/is coop " + playerName);
 		json("  &c/is invite " + playerName + " &3- Invite them to your team (players can only be on one team at a time)||sgt:/is invite " + playerName);
 	}
 
-	private void main(String playerName) {
+	void protection(String playerName) {
 		json("&3  Which protection type?  &3|&3|  " +
 				"||&b&lP-Stones||sgt:/ps allow " + playerName + " OR /ps allowall " + playerName + "||ttp:&b&lProtection Stones\n" +
 				"&eCoal, Lapis, Diamond, and Emerald ores \n" +
