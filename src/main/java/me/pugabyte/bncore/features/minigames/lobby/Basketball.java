@@ -54,7 +54,13 @@ public class Basketball implements Listener {
 	}
 
 	public static void giveBasketball(Player player) {
-		player.getInventory().addItem(getBasketball(player));
+		if (!hasBasketball(player))
+			player.getInventory().addItem(getBasketball(player));
+	}
+
+	public static void removeBasketball(Player player) {
+		if (hasBasketball(player))
+			player.getInventory().remove(getBasketball(player));
 	}
 
 	private static boolean ownsBasketball(Player player, ItemStack item) {
@@ -83,15 +89,12 @@ public class Basketball implements Listener {
 		return world.getNearbyEntities(Minigames.getGamelobby(), 200, 200, 200);
 	}
 
-	private static void cleanupBasketballs(Player player) {
-		if (hasBasketball(player))
-			player.getInventory().remove(getBasketball(player));
-		else
-			getLobbyEntities().forEach(entity -> {
-				if (Minigames.getWorldGuardUtils().isInRegion(entity.getLocation(), region))
-					if (isBasketball(entity) && ownsBasketball(player, entity))
-						entity.remove();
-			});
+	private static void cleanupBasketballs() {
+		getLobbyEntities().forEach(entity -> {
+			if (!Minigames.getWorldGuardUtils().isInRegion(entity.getLocation(), region))
+				if (isBasketball(entity))
+					entity.remove();
+		});
 	}
 
 	private class BasketballJanitor {
@@ -102,6 +105,8 @@ public class Basketball implements Listener {
 		void start() {
 			WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
 			Utils.repeat(0, 20 * 20, () -> {
+				cleanupBasketballs();
+
 				List<Player> players = Bukkit.getOnlinePlayers().stream()
 						.filter(player -> player.getWorld() == world)
 						.collect(Collectors.toList());
@@ -111,9 +116,7 @@ public class Basketball implements Listener {
 						if (!hasBasketball(player)) {
 							boolean found = false;
 							for (Entity entity : getLobbyEntities())
-								if (!wgUtils.isInRegion(entity.getLocation(), region))
-									entity.remove();
-								else {
+								if (wgUtils.isInRegion(entity.getLocation(), region)) {
 									found = true;
 									break;
 								}
@@ -122,7 +125,7 @@ public class Basketball implements Listener {
 								giveBasketball(player);
 						}
 					} else {
-						cleanupBasketballs(player);
+						removeBasketball(player);
 					}
 				});
 			});
@@ -203,16 +206,13 @@ public class Basketball implements Listener {
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(region)) return;
-		Player player = event.getPlayer();
-
-		if (!hasBasketball(player))
-			giveBasketball(player);
+		giveBasketball(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onRegionLeave(RegionLeftEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(region)) return;
-		cleanupBasketballs(event.getPlayer());
+		removeBasketball(event.getPlayer());
 	}
 
 
