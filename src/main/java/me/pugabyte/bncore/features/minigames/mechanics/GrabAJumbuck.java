@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.arenas.GrabAJumbuckArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.GrabAJumbuckMatchData;
@@ -85,14 +86,15 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		if (block == null)
 			return getRandomSheepSpawnLocation(match);
 		block = Minigames.getGameworld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().subtract(0, 1, 0).getBlock();
-		if (block.getType() != Material.GRASS)
+		GrabAJumbuckArena arena = (GrabAJumbuckArena) ArenaManager.convert(match.getArena(), GrabAJumbuckArena.class);
+		if (!arena.getSheepSpawnBlocks().contains(block.getType()))
 			return getRandomSheepSpawnLocation(match);
-		if (block.getLocation().clone().add(1, 0 ,0).getBlock().getType() != Material.AIR
-				&& block.getLocation().clone().subtract(1, 0 ,0).getBlock().getType() != Material.AIR)
+		/*if (block.getLocation().clone().add(1, 0 ,0).getBlock().getType() != Material.AIR
+				|| block.getLocation().clone().subtract(1, 0 ,0).getBlock().getType() != Material.AIR)
 			return getRandomSheepSpawnLocation(match);
 		if (block.getLocation().clone().add(0, 0 ,1).getBlock().getType() != Material.AIR
-				&& block.getLocation().clone().subtract(0, 0 ,1).getBlock().getType() != Material.AIR)
-			return getRandomSheepSpawnLocation(match);
+				|| block.getLocation().clone().subtract(0, 0 ,1).getBlock().getType() != Material.AIR)
+			return getRandomSheepSpawnLocation(match);*/
 		return block.getLocation().clone().add(0, 1, 0);
 	}
 
