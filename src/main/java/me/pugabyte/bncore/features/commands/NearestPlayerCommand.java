@@ -21,6 +21,7 @@ public class NearestPlayerCommand extends CustomCommand {
 		Player nearestPlayer = null;
 		double minDistance = Double.MAX_VALUE;
 		Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+
 		for (Player player : players) {
 			if (player.getWorld() == player().getWorld() && player != player()) {
 				double tempDistance = player.getLocation().distance(player().getLocation());
