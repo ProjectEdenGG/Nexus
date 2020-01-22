@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -10,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import me.pugabyte.bncore.features.minigames.utils.PowerUpUtils;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -70,14 +72,19 @@ public final class KangarooJumping extends TeamlessMechanic {
 
 	PowerUpUtils.PowerUp JUMP = new PowerUpUtils.PowerUp("Extra Jump Boost", true,
 			new ItemStackBuilder(Material.LEATHER_BOOTS).glow().build(),
-			minigamer -> minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 20), true));
+			minigamer -> {
+				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 20), true);
+				Utils.wait(10 * 20, () -> minigamer.getMatch().getTeams().get(0).getLoadout().apply(minigamer));
+			});
 
 	PowerUpUtils.PowerUp POSITIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", true,
 			new ItemStackBuilder(Material.POTION).effectColor(ColorType.BLACK.getColor()).glow().build(),
 			minigamer -> {
 				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
-					if (_minigamer != minigamer)
+					if (_minigamer != minigamer) {
 						_minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1));
+						_minigamer.getPlayer().sendMessage(Minigames.PREFIX + "You have been trapped!");
+					}
 			});
 
 	PowerUpUtils.PowerUp NEGATIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", false,
@@ -97,8 +104,10 @@ public final class KangarooJumping extends TeamlessMechanic {
 	PowerUpUtils.PowerUp LEVITATION = new PowerUpUtils.PowerUp("Levitation", true, Material.ELYTRA,
 			minigamer -> {
 				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
-					if (_minigamer != minigamer)
+					if (_minigamer != minigamer) {
 						_minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 5 * 20, 3));
+						_minigamer.getPlayer().sendMessage(Minigames.PREFIX + "You have been trapped!");
+					}
 			});
 
 	List<PowerUpUtils.PowerUp> powerUps = Arrays.asList(JUMP, POSITIVE_BLINDNESS, NEGATIVE_BLINDNESS, SNOWBALL, LEVITATION);

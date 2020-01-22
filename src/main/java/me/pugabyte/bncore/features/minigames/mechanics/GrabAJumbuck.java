@@ -66,7 +66,9 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		try {
 			matchData.getSheeps().forEach(Entity::remove);
 			matchData.getItems().forEach(Entity::remove);
-		} catch (Exception ignore) {}
+		} catch (Exception ignore) {
+		}
+		match.getMinigamers().forEach(Minigamer::toGamelobby);
 		super.onEnd(event);
 	}
 
@@ -89,12 +91,6 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		GrabAJumbuckArena arena = (GrabAJumbuckArena) ArenaManager.convert(match.getArena(), GrabAJumbuckArena.class);
 		if (!arena.getSheepSpawnBlocks().contains(block.getType()))
 			return getRandomSheepSpawnLocation(match);
-		/*if (block.getLocation().clone().add(1, 0 ,0).getBlock().getType() != Material.AIR
-				|| block.getLocation().clone().subtract(1, 0 ,0).getBlock().getType() != Material.AIR)
-			return getRandomSheepSpawnLocation(match);
-		if (block.getLocation().clone().add(0, 0 ,1).getBlock().getType() != Material.AIR
-				|| block.getLocation().clone().subtract(0, 0 ,1).getBlock().getType() != Material.AIR)
-			return getRandomSheepSpawnLocation(match);*/
 		return block.getLocation().clone().add(0, 1, 0);
 	}
 
@@ -109,6 +105,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		} else {
 			getTopPassenger(minigamer).addPassenger(sheep);
 		}
+		minigamer.getPlayer().setLevel(getSheep(minigamer).size());
 	}
 
 	public Item spawnItem(Location loc) {
@@ -141,6 +138,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	public void removeAllPassengers(Entity entity, Match match) {
 		GrabAJumbuckMatchData matchData = match.getMatchData();
 		if (entity.getPassengers().size() > 0) {
+			if (entity instanceof Player) ((Player) entity).setLevel(0);
 			Entity newEntity = entity.getPassengers().get(0);
 			entity.removePassenger(newEntity);
 			if (entity.getType() == EntityType.DROPPED_ITEM) {
@@ -186,7 +184,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		Player player = (Player) event.getEntity();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
-		removeAllPassengers(event.getEntity(), minigamer.getMatch());
+		removeAllPassengers(player, minigamer.getMatch());
 	}
 
 	@EventHandler
@@ -203,7 +201,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		}
 		removeAllPassengers(minigamer.getPlayer(), minigamer.getMatch());
 		minigamer.scored(score);
-		minigamer.getMatch().broadcast(minigamer.getColoredName() + " has scored " + score + " point" + ((score == 1) ? "" : "s"));
+		minigamer.getPlayer().sendMessage(Minigames.PREFIX + "You scored " + score + " point" + ((score == 1) ? "" : "s"));
 	}
 
 }
