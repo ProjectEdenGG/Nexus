@@ -82,7 +82,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 		for (PotionEffect potionEffect : team.getLoadout().getEffects()) {
 			ItemStack item = new ItemStackBuilder(Material.POTION)
 					.name("&e" + potionEffect.getType().getName())
-					.lore("&3Duration:&e " + potionEffect.getDuration(), "&3Amplifier:&e " + potionEffect.getAmplifier(), " ", "&7Click me to edit.")
+					.lore("&3Duration:&e " + potionEffect.getDuration(), "&3Amplifier:&e " + (potionEffect.getAmplifier() + 1), " ", "&7Click me to edit.")
 					.effect(potionEffect)
 					.build();
 

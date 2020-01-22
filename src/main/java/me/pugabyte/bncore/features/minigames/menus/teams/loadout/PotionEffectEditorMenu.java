@@ -49,7 +49,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 				e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getDuration()), (p, text) -> {
 					if (Utils.isInt(text)) {
 						team.getLoadout().getEffects().remove(potionEffect);
-						potionEffect = new PotionEffectEditor(potionEffect).withDuration(Integer.parseInt(text));
+						potionEffect = new PotionEffectEditor(potionEffect).withDuration(Integer.parseInt(text) - 1);
 						team.getLoadout().getEffects().add(potionEffect);
 						arena.write();
 						Utils.wait(1, () -> {
@@ -66,9 +66,9 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 				})));
 
 		contents.set(0, 5, ClickableItem.from(nameItem(
-					Material.GLOWSTONE_DUST,
-					"&eAmplifier",
-					"||&eCurrent value: &3" + potionEffect.getAmplifier()
+				Material.GLOWSTONE_DUST,
+				"&eAmplifier",
+				"||&eCurrent value: &3" + (potionEffect.getAmplifier() + 1)
 				),
 				e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getAmplifier()), (p, text) -> {
 					if (Utils.isInt(text)) {
