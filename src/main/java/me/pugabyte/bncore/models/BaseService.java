@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.persistence.BearNationDatabase;
 import me.pugabyte.bncore.framework.persistence.Persistence;
 import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -15,24 +16,28 @@ import java.util.regex.Pattern;
 public class BaseService {
 	protected Database database = Persistence.getConnection(BearNationDatabase.BEARNATION);
 
-	public Object get(String uuid) {
+	public <T> T get(String uuid) {
 		return null;
 	}
 
-	public Object get(UUID uuid) {
-		return get(uuid.toString());
+	public <T> T get(UUID uuid) {
+		return (T) get(uuid.toString());
 	}
 
-	public Object get(Player player) {
-		return get(player.getUniqueId());
+	public <T> T get(Player player) {
+		return (T) get(player.getUniqueId());
 	}
 
-	public Object get(OfflinePlayer player) {
-		return get(player.getUniqueId());
+	public <T> T get(OfflinePlayer player) {
+		return (T) get(player.getUniqueId());
 	}
 
-	public Object get(Nerd nerd) {
-		return get(nerd.getOfflinePlayer());
+	public <T> T get(Nerd nerd) {
+		return (T) get(nerd.getOfflinePlayer());
+	}
+
+	public <T> void save(T object) {
+		Utils.async(() -> database.upsert(object).execute());
 	}
 
 	protected String asList(List<String> list) {

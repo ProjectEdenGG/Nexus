@@ -2,7 +2,6 @@ package me.pugabyte.bncore.models.hours;
 
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.BaseService;
-import me.pugabyte.bncore.utils.Utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,10 +19,6 @@ public class HoursService extends BaseService {
 
 	public List<Hours> getPage(HoursType type, int page) {
 		return database.orderBy(type.name() + " desc").limit(10).offset((page - 1) * 10).results(Hours.class);
-	}
-
-	public void save(Hours hours) {
-		Utils.async(() -> database.upsert(hours).execute());
 	}
 
 	public HoursType getType(String type) {

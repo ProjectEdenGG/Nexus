@@ -33,7 +33,7 @@ public class DailyRewardsFeature implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		DailyRewardsService service = new DailyRewardsService();
-		DailyRewards dailyReward = (DailyRewards) service.get(event.getPlayer());
+		DailyRewards dailyReward = service.get(event.getPlayer());
 		if (!dailyReward.isEarnedToday()) {
 			dailyReward.setEarnedToday(true);
 			dailyReward.increaseStreak();

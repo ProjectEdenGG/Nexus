@@ -1,16 +1,25 @@
 package me.pugabyte.bncore.features.commands;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-
-//TODO: save player data -> hasreadrules
+import me.pugabyte.bncore.models.rules.HasReadRules;
+import me.pugabyte.bncore.models.rules.RulesService;
+import org.bukkit.entity.Player;
 
 public class JRulesCommand extends CustomCommand {
+	RulesService service = new RulesService();
+	HasReadRules hasReadRules;
 
 	public JRulesCommand(CommandEvent event) {
 		super(event);
+		if (sender() instanceof Player) {
+			BNCore.log("Instance of player");
+			hasReadRules = service.get(player());
+			BNCore.log("Object: " + hasReadRules);
+		}
 	}
 
 	@Path("[string] [integer]")
@@ -60,7 +69,8 @@ public class JRulesCommand extends CustomCommand {
 		json("&3[+] &eCreative Rules" + "||cmd:/jrules creative");
 		json("&3[+] &eSkyblock Rules" + "||cmd:/jrules skyblock");
 		json("&3[+] &eOther rules" + "||url:https://wiki.bnn.gg/wiki/Main_Page#Discord_rules");
-		// Save hasreadrules::main
+		hasReadRules.setMain(true);
+		service.save(hasReadRules);
 	}
 
 	void community(int page) {
@@ -75,7 +85,8 @@ public class JRulesCommand extends CustomCommand {
 				send("&e5. &3Use common sense");
 				line();
 				json("&e « Main page  ||cmd:/jrules||  &3|&3|  ||  &eNext page »||cmd:/jrules global 2");
-				// Save hasreadrules::community::1
+				hasReadRules.setCommunity1(true);
+				service.save(hasReadRules);
 				break;
 			case 2:
 				send("&e6. &3Do not do a staff member's job if they are available to do it themselves");
@@ -85,7 +96,8 @@ public class JRulesCommand extends CustomCommand {
 				json("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)||cmd:/jrules streaming");
 				line();
 				json("&e « Main page  ||cmd:/jrules||  &3|&3|  ||  &eNext page »||cmd:/jrules global 3");
-				// Save hasreadrules::community::2
+				hasReadRules.setCommunity2(true);
+				service.save(hasReadRules);
 				break;
 			case 3:
 				send("&e11. &3Do not impersonate others");
@@ -96,7 +108,8 @@ public class JRulesCommand extends CustomCommand {
 				send("&e16. &3Don't make fun of or correct other people's typos");
 				line();
 				json("&e « Main page  ||cmd:/jrules||  &3|&3|  ||  &eMain Page »||cmd:/jrules");
-				// Save hasreadrules::community::3
+				hasReadRules.setCommunity3(true);
+				service.save(hasReadRules);
 				break;
 		}
 	}
@@ -113,7 +126,8 @@ public class JRulesCommand extends CustomCommand {
 		send("&e9. &3Bear Nation has the right to use & modify all builds produced on the server");
 		line();
 		json("&e « Main page||cmd:/jrules");
-		// Save hasreadrules::survival
+		hasReadRules.setSurvival(true);
+		service.save(hasReadRules);
 	}
 
 	void minigames() {
@@ -125,7 +139,8 @@ public class JRulesCommand extends CustomCommand {
 		send("&e6. &3Do not say who the murderer is in Murder if you are dead");
 		line();
 		json("&e « Main page||cmd:/jrules");
-		// Save hasreadrules::minigames
+		hasReadRules.setMinigames(true);
+		service.save(hasReadRules);
 	}
 
 	void creative() {
@@ -135,7 +150,8 @@ public class JRulesCommand extends CustomCommand {
 		send("&e4. &3Your plot is your responsibility. Don't add people you don't trust");
 		line();
 		json("&e « Main page||cmd:/jrules");
-		// Save hasreadrules::creative
+		hasReadRules.setCreative(true);
+		service.save(hasReadRules);
 	}
 
 	void skyblock() {
@@ -143,7 +159,8 @@ public class JRulesCommand extends CustomCommand {
 		send("&e2. &3Your island is your responsibility. Don't add people you don't trust");
 		line();
 		json("&e « Main page||cmd:/jrules");
-		// Save hasreadrules::skyblock
+		hasReadRules.setSkyblock(true);
+		service.save(hasReadRules);
 	}
 
 	void streaming() {
@@ -152,7 +169,8 @@ public class JRulesCommand extends CustomCommand {
 		send("&e3. &3If a large percentage of your followers do not comply with the rules, we may ban you and any people associated with your stream");
 		line();
 		json("&e « Click here to return to page 2 of the global rules.||cmd:/jrules global 2");
-		// Save hasreadrules::streaming
+		hasReadRules.setStreaming(true);
+		service.save(hasReadRules);
 	}
 
 }

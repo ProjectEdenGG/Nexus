@@ -15,18 +15,18 @@ public class NerdListener implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		NerdService nerdService = new NerdService();
-		Nerd nerd = (Nerd) nerdService.get(event.getPlayer());
+		NerdService service = new NerdService();
+		Nerd nerd = service.get(event.getPlayer());
 		nerd.setLastJoin(Utils.timestamp(System.currentTimeMillis()));
-		nerdService.save(nerd);
+		service.save(nerd);
 	}
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		NerdService nerdService = new NerdService();
-		Nerd nerd = (Nerd) nerdService.get(event.getPlayer());
+		NerdService service = new NerdService();
+		Nerd nerd = service.get(event.getPlayer());
 		nerd.setLastQuit(Utils.timestamp(System.currentTimeMillis()));
-		nerdService.save(nerd);
+		service.save(nerd);
 	}
 
 }

@@ -23,7 +23,7 @@ public class JDailyRewardsCommand extends CustomCommand {
 	public JDailyRewardsCommand(CommandEvent event) {
 		super(event);
 		if (sender() instanceof Player)
-			dailyRewards = (DailyRewards) service.get(player());
+			dailyRewards = service.get(player());
 	}
 
 	@Path
@@ -74,7 +74,7 @@ public class JDailyRewardsCommand extends CustomCommand {
 	@Path("unclaim <player> <day>")
 	@Permission("unclaim")
 	void unclaim(@Arg OfflinePlayer player, @Arg int day) {
-		dailyRewards = ((DailyRewards) service.get(player));
+		dailyRewards = service.get(player);
 		dailyRewards.unclaim(day);
 		service.save(dailyRewards);
 		send(PREFIX + "Unclaimed day " + day + " for player " + player.getName());

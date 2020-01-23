@@ -17,10 +17,10 @@ public class HoursFeature {
 			for (Nerd nerd : new NerdService().getOnlineNerds()) {
 				if (Utils.isAfk(nerd)) continue;
 
-				HoursService hoursService = new HoursService();
-				Hours hours = (Hours) hoursService.get(nerd);
+				HoursService service = new HoursService();
+				Hours hours = service.get(nerd);
 				hours.increment();
-				hoursService.save(hours);
+				service.save(hours);
 
 				if (hours.getTotal() > (60 * 60 * 24)) {
 					//if rank == guest

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.models.dailyrewards;
 
 import me.pugabyte.bncore.models.BaseService;
-import me.pugabyte.bncore.utils.Utils;
 
 import java.util.List;
 
@@ -17,9 +16,5 @@ public class DailyRewardsService extends BaseService {
 
 	public List<DailyRewards> getAll() {
 		return database.results(DailyRewards.class);
-	}
-
-	public void save(DailyRewards dailyRewards) {
-		Utils.async(() -> database.upsert(dailyRewards).execute());
 	}
 }
