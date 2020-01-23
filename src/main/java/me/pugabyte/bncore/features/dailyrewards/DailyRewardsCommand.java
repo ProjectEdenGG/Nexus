@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.dailyrewards;
 
+import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -14,13 +15,13 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-@Aliases("jdr")
+@Aliases({"dr", "dailyreward"})
 @Permission("daily.rewards")
-public class JDailyRewardsCommand extends CustomCommand {
+public class DailyRewardsCommand extends CustomCommand {
 	private DailyRewardsService service = new DailyRewardsService();
 	private DailyRewards dailyRewards;
 
-	public JDailyRewardsCommand(CommandEvent event) {
+	public DailyRewardsCommand(CommandEvent event) {
 		super(event);
 		if (sender() instanceof Player)
 			dailyRewards = service.get(player());
@@ -63,16 +64,16 @@ public class JDailyRewardsCommand extends CustomCommand {
 	@Path("today [player]")
 	void today(@Arg("self") OfflinePlayer player) {
 		boolean earnedToday = dailyRewards.isEarnedToday();
-		if (!player().getUniqueId().equals(player.getUniqueId())) {
+		if (!isSelf(player))
 			earnedToday = ((DailyRewards) service.get(player)).isEarnedToday();
-		}
+
 		send(PREFIX + player.getName() + " has " + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
 
 	// TODO: Optional arguments in the middle if default value exists
 	// TODO: Conditional default values? e.g. /speed [type = isFlying ? fly : walk] <int>
 	@Path("unclaim <player> <day>")
-	@Permission("unclaim")
+	@Permission("modify")
 	void unclaim(@Arg OfflinePlayer player, @Arg int day) {
 		dailyRewards = service.get(player);
 		dailyRewards.unclaim(day);
@@ -80,14 +81,25 @@ public class JDailyRewardsCommand extends CustomCommand {
 		send(PREFIX + "Unclaimed day " + day + " for player " + player.getName());
 	}
 
-	@Path("reset")
-	void reset() {
-		// TODO: Write abstract confirmation menu
+	@Path("set <player> <day>")
+	@Permission("modify")
+	void setDay(@Arg OfflinePlayer player, @Arg int day) {
+		dailyRewards = service.get(player);
+		dailyRewards.setStreak(day);
+		service.save(dailyRewards);
+		send(PREFIX + "Streak set to " + dailyRewards.getStreak() + " for player " + player.getName());
 	}
 
-	@Path("confirmreset")
-	void confirmReset() {
+	@Path("reset")
+	void reset() {
+		MenuUtils.ConfirmationMenu confirm = MenuUtils.ConfirmationMenu.builder().onConfirm((e) -> {
+			dailyRewards.reset();
+			service.save(dailyRewards);
+			e.getPlayer().sendMessage(PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
+			e.getPlayer().closeInventory();
+		}).build();
 
+		MenuUtils.confirmMenu(player(), confirm);
 	}
 
 	@Path("top [page]")

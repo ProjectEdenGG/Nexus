@@ -21,7 +21,7 @@ public class HoursFeature {
 	}
 
 	private void scheduler() {
-		Utils.repeat(10, INTERVAL * 20, () -> {
+		Utils.repeatAsync(10, INTERVAL * 20, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (AFK.get(player).isAfk()) continue;
 
@@ -32,16 +32,18 @@ public class HoursFeature {
 
 				if (Rank.getHighestRank(player) == Rank.GUEST) {
 					if (hours.getTotal() > (60 * 60 * 24)) {
-						PermissionsEx.getUser(player).removeGroup("Guest");
-						PermissionsEx.getUser(player).addGroup("Member");
-						SkriptFunctions.koda("Congrats on Member rank, " + player.getName(), "md");
-						Jingles.rankup(player);
-						player.sendMessage("");
-						player.sendMessage("");
-						player.sendMessage(colorize("&e&lCongratulations! &3You have been promoted to &fMember&3 for " +
-								"playing for &e24 hours &3in-game. You are now eligible for &c/trusted&3."));
-						player.sendMessage("");
-						player.sendMessage(colorize("&6&lThank you for flying Bear Nation!"));
+						Utils.sync(() -> {
+							PermissionsEx.getUser(player).removeGroup("Guest");
+							PermissionsEx.getUser(player).addGroup("Member");
+							SkriptFunctions.koda("Congrats on Member rank, " + player.getName(), "md");
+							Jingles.rankup(player);
+							player.sendMessage("");
+							player.sendMessage("");
+							player.sendMessage(colorize("&e&lCongratulations! &3You have been promoted to &fMember&3 for " +
+									"playing for &e24 hours &3in-game. You are now eligible for &c/trusted&3."));
+							player.sendMessage("");
+							player.sendMessage(colorize("&6&lThank you for flying Bear Nation!"));
+						});
 					}
 				}
 			}

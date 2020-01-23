@@ -2,7 +2,12 @@ package me.pugabyte.bncore.features.menus;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -25,7 +30,7 @@ public abstract class MenuUtils {
 		return Utils.addGlowing(itemStack);
 	}
 
-	public int getRows(int items){
+	public int getRows(int items) {
 		return (int) Math.ceil((double) items / 9);
 	}
 
@@ -83,6 +88,43 @@ public abstract class MenuUtils {
 				.onClose(onClose)
 				.plugin(BNCore.getInstance())
 				.open(player);
+	}
+
+	public static void confirmMenu(Player player, ConfirmationMenu provider) {
+		SmartInventory inv = SmartInventory.builder()
+				.title(colorize("&4Are you sure?"))
+				.provider(provider)
+				.size(3, 9)
+				.build();
+		inv.open(player);
+	}
+
+	@Builder
+	@AllArgsConstructor
+	public static class ConfirmationMenu extends MenuUtils implements InventoryProvider {
+		private String cancelText, cancelLore, confirmText, confirmLore;
+		private Consumer<ItemClickData> onCancel;
+		@NonNull
+		private Consumer<ItemClickData> onConfirm;
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			// Builder doesnt respect class defaults
+			cancelText = cancelText == null ? "&cNo" : cancelText;
+			confirmText = confirmText == null ? "&aYes" : confirmText;
+			onCancel = onCancel == null ? (e) -> e.getPlayer().closeInventory() : onCancel;
+
+			ItemStack cancelItem = nameItem(Material.REDSTONE, cancelText, cancelLore);
+			ItemStack confirmItem = nameItem(Material.EMERALD, confirmText, confirmLore);
+
+			contents.set(1, 2, ClickableItem.from(cancelItem, onCancel));
+			contents.set(1, 6, ClickableItem.from(confirmItem, onConfirm));
+		}
+
+		@Override
+		public void update(Player player, InventoryContents inventoryContents) {
+		}
+
 	}
 
 }

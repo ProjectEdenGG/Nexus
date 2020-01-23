@@ -17,7 +17,7 @@ public class HoursService extends BaseService {
 	}
 
 	public int total(HoursType type) {
-		return database.sql("select sum(" + type.name() + ") from hours").first(Double.class).intValue();
+		return database.select("sum(" + type.name() + ")").table("hours").first(Double.class).intValue();
 	}
 
 	public List<Hours> getPage(HoursType type, int page) {

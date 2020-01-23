@@ -8,33 +8,33 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
-public class DailyReward {
+public class Reward {
 	private String description;
 	private List<ItemStack> items;
 	private Integer money;
 	private String command;
 
-	public DailyReward(String description, ItemStack item) {
+	public Reward(String description, ItemStack item) {
 		this.description = description;
 		this.items = Collections.singletonList(item);
 	}
 
-	public DailyReward(String description, ItemStack... items) {
+	public Reward(String description, ItemStack... items) {
 		this.description = description;
 		this.items = Arrays.asList(items);
 	}
 
-	public DailyReward(String description, List<ItemStack> items) {
+	public Reward(String description, List<ItemStack> items) {
 		this.description = description;
 		this.items = items;
 	}
 
-	public DailyReward(String description, int money) {
+	public Reward(String description, int money) {
 		this.description = description;
 		this.money = money;
 	}
 
-	public DailyReward(String description, String command) {
+	public Reward(String description, String command) {
 		this.description = description;
 		this.command = command;
 	}
