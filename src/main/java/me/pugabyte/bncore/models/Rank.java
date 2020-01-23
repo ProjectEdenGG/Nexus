@@ -76,6 +76,14 @@ public enum Rank {
 		return Arrays.stream(Rank.values()).filter(Rank::isStaff).collect(Collectors.toList());
 	}
 
+	public static List<Nerd> getOnlineStaff() {
+		return Bukkit.getOnlinePlayers().stream()
+				.filter(player -> new Nerd(player).getRank().isStaff())
+				.sorted(Comparator.comparing(Player::getName))
+				.map(player -> (Nerd) new NerdService().get(player))
+				.collect(Collectors.toList());
+	}
+
 	public static Rank getHighestRank(Player player) {
 		return getHighestRank(Bukkit.getOfflinePlayer(player.getUniqueId()));
 	}
