@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.utils;
 
 import com.google.common.base.Strings;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
@@ -157,6 +158,55 @@ public class Utils {
 			return nerd.getOfflinePlayer();
 
 		throw new PlayerNotFoundException();
+	}
+
+	@SneakyThrows
+	public static int getPing(Player player) {
+		Object entityPlayer = player.getClass().getMethod("getHandle").invoke(player);
+		return (int) entityPlayer.getClass().getField("ping").get(entityPlayer);
+	}
+
+	public static String getWorld(Player player) {
+		String world;
+		switch (player.getWorld().getName().toLowerCase()) {
+			case "creative":
+			case "buildcontest":
+			case "buildadmin":
+			case "jail":
+			case "pirate":
+			case "tiger":
+				world = "Creative";
+				break;
+			case "gameworld":
+			case "blockball":
+				world = "Minigames";
+				break;
+			case "skyblock":
+				world = "Skyblock";
+				break;
+			case "stranded":
+				world = "Stranded (Adventure Map)";
+				break;
+			case "world":
+			case "world_nether":
+			case "world_the_end":
+			case "staff_world":
+			case "staff_world_nether":
+			case "staff_world_the_end":
+			case "safepvp":
+			case "wither":
+				world = "Survival";
+				break;
+			case "2y":
+			case "bearfair":
+			case "mansion":
+				world = "Event";
+				break;
+			default:
+				world = "Unknown";
+				break;
+		}
+		return world;
 	}
 
 	public static Location getCenteredLocation(Location location) {
