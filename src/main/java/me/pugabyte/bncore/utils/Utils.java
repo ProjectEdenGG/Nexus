@@ -123,6 +123,10 @@ public class Utils {
 		return false;
 	}
 
+	public static boolean canSee(Player viewer, Player target) {
+		return !isVanished(target) || viewer.hasPermission("vanish.see");
+	}
+
 	public static boolean isAfk(Player player) {
 		return (boolean) Variables.getVariable("afk::" + player.getUniqueId().toString(), null, false);
 	}

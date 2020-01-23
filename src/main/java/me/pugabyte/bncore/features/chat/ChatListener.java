@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.chat;
 
+import com.dthielke.herochat.Channel;
 import com.dthielke.herochat.ChannelChatEvent;
 import com.dthielke.herochat.Chatter;
 import com.dthielke.herochat.Herochat;
@@ -31,7 +32,7 @@ public class ChatListener implements Listener {
 	}
 
 	private String dotCommand(String message) {
-		Pattern pattern = Pattern.compile("(\\ |^).\\/[a-zA-Z0-9]+");
+		Pattern pattern = Pattern.compile("(\\ |^).\\/(\\/|)[a-zA-Z0-9\\-_]+");
 		Matcher matcher = pattern.matcher(message);
 		while (matcher.find()) {
 			String group = matcher.group();
@@ -45,15 +46,16 @@ public class ChatListener implements Listener {
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 		Chatter chatter = Herochat.getChatterManager().getChatter(player);
-		if (chatter.getActiveChannel() == null) return;
 		String[] args = event.getMessage().toLowerCase().split(" ");
+
 		if (args.length > 1 && args[0].toLowerCase().matches("/ch|/herochat")) {
 			String channel = args[1].toLowerCase();
 			String nick = String.valueOf(channel.charAt(0));
-			if (chatter.getActiveChannel().getNick().equalsIgnoreCase(nick) ||
-					chatter.getActiveChannel().getName().equalsIgnoreCase(channel)) {
-				player.sendMessage(ChatColor.RED + "You are already in that channel");
-			}
+
+			Channel activeChannel = chatter.getActiveChannel();
+			if (activeChannel != null)
+				if (activeChannel.getNick().equalsIgnoreCase(nick) || activeChannel.getName().equalsIgnoreCase(channel))
+					player.sendMessage(ChatColor.RED + "You are already in that channel");
 		}
 	}
 
