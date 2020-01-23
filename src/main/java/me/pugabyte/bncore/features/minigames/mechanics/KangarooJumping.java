@@ -15,10 +15,13 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 import java.util.List;
@@ -111,6 +114,16 @@ public final class KangarooJumping extends TeamlessMechanic {
 			});
 
 	List<PowerUpUtils.PowerUp> powerUps = Arrays.asList(JUMP, POSITIVE_BLINDNESS, NEGATIVE_BLINDNESS, SNOWBALL, LEVITATION);
+
+	@EventHandler
+	public void onSnowballHit(ProjectileHitEvent event) {
+		if (!(event.getHitEntity() instanceof Player)) return;
+		Player player = (Player) event.getHitEntity();
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isPlaying(this)) return;
+		player.setVelocity(event.getEntity().getVelocity().multiply(0.5).add(new Vector(0, .5, 0)));
+	}
+
 
 }
 
