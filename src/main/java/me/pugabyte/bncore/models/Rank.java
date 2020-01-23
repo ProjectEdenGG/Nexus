@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.nerds.NerdService;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -12,6 +14,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,8 +59,16 @@ public enum Rank {
 	public List<Nerd> getNerds() {
 		Set<PermissionUser> users = PermissionsEx.getPermissionManager().getGroup(Utils.camelCase(name())).getUsers();
 		Set<Nerd> nerds = new HashSet<>();
-		users.forEach(user -> nerds.add(new Nerd(user.getName())));
+		users.forEach(user -> nerds.add(new NerdService().get(user.getName())));
 		return new ArrayList<>(nerds);
+	}
+
+	public List<Nerd> getOnlineNerds() {
+		return Bukkit.getOnlinePlayers().stream()
+				.filter(player -> new Nerd(player).getRank() == this)
+				.sorted(Comparator.comparing(Player::getName))
+				.map(player -> (Nerd) new NerdService().get(player))
+				.collect(Collectors.toList());
 	}
 
 	public static List<Rank> getStaff() {
