@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -226,6 +227,18 @@ public class Utils {
 		return LocalDateTime.ofInstant(
 				Instant.ofEpochMilli(timestamp),
 				TimeZone.getDefault().toZoneId());
+	}
+
+	public static String timespanDiff(LocalDateTime from) {
+		return timespanDiff(from, LocalDateTime.now());
+	}
+
+	public static String timespanDiff(LocalDateTime from, LocalDateTime to) {
+		return timespanFormat(from.until(to, ChronoUnit.SECONDS));
+	}
+
+	public static String timespanFormat(long seconds) {
+		return timespanFormat(Long.valueOf(seconds).intValue());
 	}
 
 	public static String timespanFormat(int seconds) {
