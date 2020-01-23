@@ -3,6 +3,7 @@ package me.pugabyte.bncore.models.nerds;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -43,6 +44,10 @@ public class Nerd {
 
 	public Player getPlayer() {
 		return Utils.getPlayer(uuid).getPlayer();
+	}
+
+	public Rank getRank() {
+		return Rank.getHighestRank(getPlayer());
 	}
 
 }
