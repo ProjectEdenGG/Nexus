@@ -146,7 +146,7 @@
         <dependency>
             <groupId>com.github.pugabyte</groupId>
             <artifactId>norm</artifactId>
-            <version>-SNAPSHOT</version>
+            <version>6878691f37</version>
         </dependency>
         <!-- MySQL -->
         <dependency>
