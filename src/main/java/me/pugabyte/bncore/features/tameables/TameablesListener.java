@@ -33,12 +33,12 @@ public class TameablesListener implements Listener {
 		if (!isTameable(entityType)) return;
 		Tameable tameable = (Tameable) entity;
 
-		Map<Player, TameablesAction> actions = BNCore.tameables.getPendingActions();
+		Map<Player, TameablesAction> actions = Tameables.getPendingActions();
 		if (actions.containsKey(player)) {
 			event.setCancelled(true);
 
 			TameablesAction action = actions.get(player);
-			switch (action) {
+			switch (action.getType()) {
 				case TRANSFER:
 					if (!isOwner(player, tameable)) return;
 					OfflinePlayer transfer = action.getPlayer();
@@ -58,7 +58,7 @@ public class TameablesListener implements Listener {
 					}
 					break;
 			}
-			BNCore.tameables.removePendingAction(player);
+			Tameables.removePendingAction(player);
 		}
 	}
 
@@ -73,9 +73,8 @@ public class TameablesListener implements Listener {
 
 	private boolean isOwner(Player player, Tameable tameable) {
 		boolean owner = tameable.getOwner().getUniqueId().toString().equals(player.getUniqueId().toString());
-		if (!owner) {
+		if (!owner)
 			player.sendMessage(PREFIX + "You do not own that animal!");
-		}
 		return owner;
 	}
 

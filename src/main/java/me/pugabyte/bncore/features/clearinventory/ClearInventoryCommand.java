@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.clearinventory;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.clearinventory.models.ClearInventoryPlayer;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -14,7 +13,7 @@ public class ClearInventoryCommand extends CustomCommand {
 
 	ClearInventoryCommand(CommandEvent event) {
 		super(event);
-		ciPlayer = BNCore.clearInventory.getPlayer(player());
+		ciPlayer = ClearInventory.getPlayer(player());
 	}
 
 	@Path

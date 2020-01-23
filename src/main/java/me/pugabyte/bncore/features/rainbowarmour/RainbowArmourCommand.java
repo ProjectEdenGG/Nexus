@@ -26,7 +26,7 @@ public class RainbowArmourCommand extends CustomCommand {
 
 	@Path
 	void toggle() {
-		RainbowArmourPlayer rbaPlayer = BNCore.rainbowArmour.getPlayer(player());
+		RainbowArmourPlayer rbaPlayer = RainbowArmour.getPlayer(player());
 		if (rbaPlayer.isEnabled()) {
 			stopArmour(rbaPlayer);
 			send("&cRainbow armour unequipped!");
@@ -35,7 +35,7 @@ public class RainbowArmourCommand extends CustomCommand {
 			rbaPlayer.setTaskID(startArmour(rbaPlayer));
 			rbaPlayer.setEnabled(true);
 			send("&cR&6a&ei&an&bb&5o&dw &earmour equipped!");
-			BNCore.rainbowArmour.enabledPlayers.put(player(), rbaPlayer);
+			RainbowArmour.getEnabledPlayers().put(player(), rbaPlayer);
 		}
 	}
 
@@ -75,7 +75,7 @@ public class RainbowArmourCommand extends CustomCommand {
 	private int startArmour(RainbowArmourPlayer rbaPlayer) {
 		Player player = rbaPlayer.getPlayer();
 
-		int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), () -> {
+		return Bukkit.getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), () -> {
 			int r = rbaPlayer.getR();
 			int g = rbaPlayer.getG();
 			int b = rbaPlayer.getB();
@@ -125,7 +125,5 @@ public class RainbowArmourCommand extends CustomCommand {
 
 			inv.setArmorContents(armour);
 		}, 4, 2);
-
-		return taskId;
 	}
 }

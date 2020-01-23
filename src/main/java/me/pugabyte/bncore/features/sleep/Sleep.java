@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.sleep;
 
+import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -34,7 +35,7 @@ public class Sleep {
 				sleeping++;
 			} else if (Utils.isVanished(player)) {
 				sleeping++;
-			} else if (Utils.isAfk(player)) {
+			} else if (AFK.get(player).isAfk()) {
 				sleeping++;
 			}
 		}

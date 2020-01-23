@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.features.hours;
 
+import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.utils.Utils;
@@ -15,7 +17,7 @@ public class HoursFeature {
 	private void scheduler() {
 		Utils.repeat(10, 5 * 20, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (Utils.isAfk(player)) continue;
+				if (AFK.get(player).isAfk()) continue;
 
 				HoursService service = new HoursService();
 				Hours hours = service.get(player);
@@ -23,8 +25,9 @@ public class HoursFeature {
 				service.save(hours);
 
 				if (hours.getTotal() > (60 * 60 * 24)) {
-					//if rank == guest
-					//    promote
+					if (Rank.getHighestRank(player) == Rank.GUEST) {
+						// promote
+					}
 				}
 			}
 		});

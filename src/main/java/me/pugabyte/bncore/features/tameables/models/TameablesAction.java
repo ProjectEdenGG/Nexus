@@ -1,25 +1,20 @@
 package me.pugabyte.bncore.features.tameables.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.With;
 import org.bukkit.OfflinePlayer;
 
-public enum TameablesAction {
-	TRANSFER,
-	UNTAME,
-	INFO;
-
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class TameablesAction {
+	@NonNull
+	private TameablesActionType type;
+	@With
 	private OfflinePlayer player;
 
-	public TameablesAction withPlayer(OfflinePlayer player) {
-		this.player = player;
-		return this;
-	}
-
-	public OfflinePlayer getPlayer() {
-		return player;
-	}
-
-	public void setPlayer(OfflinePlayer player) {
-		this.player = player;
-	}
 
 }

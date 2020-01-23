@@ -9,17 +9,15 @@ import java.util.Map;
 
 public class ClearInventory {
 	public final static String PREFIX = Utils.getPrefix("ClearInventory");
-	private Map<Player, ClearInventoryPlayer> players = new HashMap<>();
+	private static Map<Player, ClearInventoryPlayer> players = new HashMap<>();
 
 	public ClearInventory() {
-		new ClearInventoryTabCompleter();
 		new ClearInventoryListener();
 	}
 
-	public ClearInventoryPlayer getPlayer(Player player) {
-		if (!players.containsKey(player)) {
+	public static ClearInventoryPlayer getPlayer(Player player) {
+		if (!players.containsKey(player))
 			players.put(player, new ClearInventoryPlayer(player));
-		}
 
 		return players.get(player);
 	}
