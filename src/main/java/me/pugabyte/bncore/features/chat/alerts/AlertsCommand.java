@@ -26,7 +26,7 @@ public class AlertsCommand extends CustomCommand {
 	public AlertsCommand(CommandEvent event) {
 		super(event);
 		if (sender() instanceof Player)
-			alerts = (Alerts) service.get(player());
+			alerts = service.get(player());
 	}
 
 	@Path

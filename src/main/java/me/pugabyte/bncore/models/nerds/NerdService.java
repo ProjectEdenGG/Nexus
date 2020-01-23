@@ -8,11 +8,11 @@ import java.util.List;
 
 public class NerdService extends BaseService {
 	@Override
-	public Nerd get(String uuid) {
+	public <T> T get(String uuid) {
 		Player player = (Player) Utils.getPlayer(uuid);
 		Nerd nerd = database.where("uuid = ?", uuid).first(Nerd.class);
 		nerd.fromPlayer(player);
-		return nerd;
+		return (T) nerd;
 	}
 
 	public Nerd find(String partialName) {
@@ -32,10 +32,6 @@ public class NerdService extends BaseService {
 		for (Nerd nerd : nerds)
 			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
 		return nerds;
-	}
-
-	public void save(Nerd nerd) {
-		Utils.async(() -> database.upsert(nerd).execute());
 	}
 
 }

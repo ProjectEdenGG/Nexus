@@ -21,7 +21,7 @@ public class JHoursCommand extends CustomCommand {
 
 	@Path("<player>")
 	void player(@Arg("self") OfflinePlayer player) {
-		Hours hours = (Hours) service.get(player);
+		Hours hours = service.get(player);
 		send("");
 		send(PREFIX + "&e" + player.getName());
 		send("&3Total: &e" + Utils.timespanFormat(hours.getTotal(), "None"));
