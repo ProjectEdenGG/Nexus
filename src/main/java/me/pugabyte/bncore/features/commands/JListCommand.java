@@ -1,13 +1,17 @@
 package me.pugabyte.bncore.features.commands;
 
 import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.features.afk.AFKPlayer;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.models.hours.Hours;
+import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,13 +38,13 @@ public class JListCommand extends CustomCommand {
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");
 
 		line();
-		send("&3There are &e" + counts + " &3out of maximum &e " + Bukkit.getMaxPlayers() + " &3players online");
+		send("&3There are &e" + counts + " &3out of maximum &e" + Bukkit.getMaxPlayers() + " &3players online");
 
 		ranks.forEach(rank -> {
 			List<Nerd> nerds = rank.getOnlineNerds();
 			if (nerds.size() == 0) return;
 
-			send(rank + "s&f: " + nerds.stream().map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
+			json(rank + "s&f: " + nerds.stream().map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
 		});
 	}
 
@@ -54,10 +58,35 @@ public class JListCommand extends CustomCommand {
 				modifiers = "&7[AFK] [V] ";
 			else
 				modifiers = "&7[V] ";
-		else
-			if (afk)
-				modifiers = "&7[AFK] ";
+		else if (afk)
+			modifiers = "&7[AFK] ";
 
-		return modifiers + nerd.getRank().getFormat() + nerd.getName();
+		return "||" + modifiers + nerd.getRank().getFormat() + nerd.getName() + "||ttp:" + getInfo(nerd, modifiers);
+	}
+
+	String getInfo(Nerd nerd, String modifiers) {
+		Player player = nerd.getPlayer();
+		Hours hours = new HoursService().get(player);
+
+		int ping = Utils.getPing(player);
+		String onlineFor = Utils.timespanDiff(nerd.getLastJoin());
+		String world = Utils.getWorld(player);
+		double balance = 0.0;
+		String totalHours = Utils.timespanFormat(hours.getTotal());
+		String afk = "";
+
+		if (modifiers.contains("AFK")) {
+			AFKPlayer afkPlayer = AFK.get(player);
+			String timeAFK = Utils.timespanDiff(afkPlayer.getTime());
+			afk = "&3AFK for: &e" + timeAFK + "\n \n";
+		}
+
+		return afk +
+				"&3Ping: &e" + ping + "\n" +
+				"&3World: &e" + world + "\n" +
+				"&3Balance: &e$" + balance + "\n" +
+				"&3Online for: &e" + onlineFor + "\n" +
+				"&3Hours: &e" + totalHours +
+				"||";
 	}
 }
