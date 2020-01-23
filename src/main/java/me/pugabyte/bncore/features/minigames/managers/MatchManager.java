@@ -5,7 +5,6 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ public class MatchManager {
 	private static List<Match> matches = new ArrayList<>();
 
 	static {
-		Utils.repeat(100, 40, MatchManager::janitor);
+
 	}
 
 	public static Match find(Arena arena) {

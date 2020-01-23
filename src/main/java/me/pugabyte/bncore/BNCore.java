@@ -85,6 +85,7 @@ public class BNCore extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		Persistence.shutdown();
+		Minigames.shutdown();
 		commands.unregisterAll();
 	}
 

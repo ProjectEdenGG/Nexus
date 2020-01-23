@@ -4,8 +4,10 @@ import lombok.Getter;
 import me.pugabyte.bncore.features.minigames.listeners.MatchListener;
 import me.pugabyte.bncore.features.minigames.lobby.Basketball;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
+import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
@@ -42,8 +44,13 @@ public class Minigames {
 		registerSerializables();
 		ArenaManager.read();
 		new MatchListener();
+		Utils.repeat(100, 40, MatchManager::janitor);
 
 		new Basketball();
+	}
+
+	public static void shutdown() {
+		MatchManager.getAll().forEach(Match::end);
 	}
 
 	public static List<Player> getPlayers() {
