@@ -1,10 +1,13 @@
 package me.pugabyte.bncore.features.hours;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.utils.Utils;
@@ -12,22 +15,58 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 
-public class JHoursCommand extends CustomCommand {
+@Aliases({"playtime", "days", "minutes", "seconds"})
+public class HoursCommand extends CustomCommand {
 	private HoursService service = new HoursService();
 
-	public JHoursCommand(CommandEvent event) {
+	public HoursCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("<player>")
 	void player(@Arg("self") OfflinePlayer player) {
+		boolean isSelf = isSelf(player);
+
 		Hours hours = service.get(player);
 		send("");
-		send(PREFIX + "&e" + player.getName());
+		send(PREFIX + (isSelf ? "Your" : "&e" + player.getName() + "&3's") + " playtime");
 		send("&3Total: &e" + Utils.timespanFormat(hours.getTotal(), "None"));
-		send("&3Daily: &e" + Utils.timespanFormat(hours.getDaily(), "None"));
-		send("&3Weekly: &e" + Utils.timespanFormat(hours.getWeekly(), "None"));
-		send("&3Monthly: &e" + Utils.timespanFormat(hours.getMonthly(), "None"));
+		send("&7- &3Today: &e" + Utils.timespanFormat(hours.getDaily(), "None"));
+		send("&7- &3This week: &e" + Utils.timespanFormat(hours.getWeekly(), "None"));
+		send("&7- &3This month: &e" + Utils.timespanFormat(hours.getMonthly(), "None"));
+
+		if (Rank.getHighestRank(player) == Rank.GUEST) {
+			int day = 60 * 60 * 24;
+			String left = Utils.timespanFormat(day - hours.getTotal());
+			String who = (isSelf ? "You need" : player.getName() + "needs") + " ";
+
+			line();
+			send("&3" + who + " &e" + left + " more in-game play time &3to achieve &fMember&3.");
+		}
+	}
+
+	@Path("cleanup")
+	@Permission("group.admin")
+	void cleanup() {
+		send("Cleaned up " + service.cleanup() + " records");
+	}
+
+	@Path("endofday")
+	void endOfDay() {
+		console();
+		service.endOfDay();
+	}
+
+	@Path("endofweek")
+	void endOfWeek() {
+		console();
+		service.endOfWeek();
+	}
+
+	@Path("endOfMonth")
+	void endOfMonth() {
+		console();
+		service.endOfMonth();
 	}
 
 	@Path("top")
@@ -64,3 +103,5 @@ public class JHoursCommand extends CustomCommand {
 		});
 	}
 }
+
+

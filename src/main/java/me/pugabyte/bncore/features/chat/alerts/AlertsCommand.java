@@ -91,12 +91,6 @@ public class AlertsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("add")
-	void addHelp() {
-		send(PREFIX + "Enter a word or phrase to set as an alert");
-		send(PREFIX + "Example: &c/alerts add hockey");
-	}
-
 	@Path("add <highlight...>")
 	void add(@Arg String highlight) {
 		if (highlight.equalsIgnoreCase(player().getName()))
@@ -109,12 +103,6 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "Added &e" + highlight + " &3to your alerts list");
 	}
 
-	@Path("delete")
-	void deleteHelp() {
-		send(PREFIX + "Enter a word or phrase to set as an alert");
-		send(PREFIX + "Example: &c/alerts delete hockey");
-	}
-
 	@Path("delete <highlight...>")
 	void delete(@Arg String highlight) {
 		if (!alerts.delete(highlight))
@@ -124,13 +112,7 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "Removed &e" + highlight + " &3from your alerts list");
 	}
 
-	// TODO: Create @Usage?
-	@Path("(partialmatch|partialmatching)")
-	void partialMatchingHelp() {
-		send(PREFIX + "Correct usage: /alerts partialmatching <true|false> <highlight>");
-	}
-
-	@Path("(partialmatch|partialmatching) <truse|false> <highlight...>")
+	@Path("(partialmatch|partialmatching) <truse|false> [highlight...]")
 	void partialMatching(@Arg boolean partialMatching, @Arg String highlight) {
 		Optional<Alerts.Highlight> match = alerts.get(highlight);
 		if (!match.isPresent())

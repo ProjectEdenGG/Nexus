@@ -12,6 +12,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.MissingArgumentException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import org.bukkit.command.CommandSender;
@@ -97,7 +98,8 @@ public interface ICustomCommand {
 	default void invoke(Method method, CommandEvent event) throws Exception {
 		List<String> args = event.getArgs();
 		List<Parameter> parameters = Arrays.asList(method.getParameters());
-		Iterator<String> path = Arrays.asList(method.getAnnotation(Path.class).value().split(" ")).iterator();
+		String pathValue = method.getAnnotation(Path.class).value();
+		Iterator<String> path = Arrays.asList(pathValue.split(" ")).iterator();
 		Object[] objects = new Object[parameters.size()];
 
 		int i = 1;
@@ -123,8 +125,11 @@ public interface ICustomCommand {
 			}
 
 			boolean required = pathArg.startsWith("<");
-
-			objects[i - 1] = convert(value, parameter.getType(), event.getCommand(), required);
+			try {
+				objects[i - 1] = convert(value, parameter.getType(), event.getCommand(), required);
+			} catch (MissingArgumentException ex) {
+				throw new InvalidInputException("Correct usage: /" + getAliases().get(0) + " " + pathValue);
+			}
 			++i;
 		}
 
@@ -158,10 +163,9 @@ public interface ICustomCommand {
 			throw ex;
 		}
 
-		// TODO: Better error messages
 		if (Strings.isNullOrEmpty(value))
 			if (required)
-				throw new InvalidInputException("Missing arguments");
+				throw new MissingArgumentException();
 			else
 				return null;
 

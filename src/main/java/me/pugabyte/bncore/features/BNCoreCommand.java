@@ -14,6 +14,7 @@ import me.pugabyte.bncore.utils.FireworkLauncher;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -25,6 +26,11 @@ import java.util.stream.Collectors;
 public class BNCoreCommand extends CustomCommand {
 	public BNCoreCommand(CommandEvent event) {
 		super(event);
+	}
+
+	@Path("getPlayer [player]")
+	void getPlayer(@Arg OfflinePlayer player) {
+		send(player.getName());
 	}
 
 	@Path("redtint [fadeTime] [intensity] [player]")
@@ -40,6 +46,14 @@ public class BNCoreCommand extends CustomCommand {
 	@TabCompleterFor(Nerd.class)
 	List<String> tabCompleteNerd(String value) {
 		return tabCompletePlayer(value);
+	}
+
+	@ConverterFor(Material.class)
+	Material convertToMaterial(String value) {
+		Material material = Material.matchMaterial(value);
+		if (material == null)
+			throw new InvalidInputException("Material from " + value + " not found");
+		return material;
 	}
 
 	@ConverterFor(ColorType.class)

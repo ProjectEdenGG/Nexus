@@ -69,6 +69,10 @@ public class Minigamer {
 		}
 	}
 
+	public boolean isPlaying() {
+		return match != null;
+	}
+
 	public boolean isIn(Mechanic mechanic) {
 		return isIn(mechanic.getClass());
 	}

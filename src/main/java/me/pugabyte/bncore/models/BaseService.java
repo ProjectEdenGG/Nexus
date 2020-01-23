@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-public class BaseService {
+public abstract class BaseService {
 	protected Database database = Persistence.getConnection(BearNationDatabase.BEARNATION);
 
 	public <T> T get(String uuid) {

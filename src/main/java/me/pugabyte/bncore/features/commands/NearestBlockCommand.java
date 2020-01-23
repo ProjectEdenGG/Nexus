@@ -2,11 +2,9 @@ package me.pugabyte.bncore.features.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
-import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,14 +21,6 @@ public class NearestBlockCommand extends CustomCommand {
 
 	public NearestBlockCommand(CommandEvent event) {
 		super(event);
-	}
-
-	@ConverterFor(Material.class)
-	Material convertToMaterial(String value) {
-		Material material = Material.matchMaterial(value);
-		if (material == null)
-			throw new InvalidInputException("Material from " + value + " not found");
-		return material;
 	}
 
 	@Path("[material] [radius]")
