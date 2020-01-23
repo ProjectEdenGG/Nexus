@@ -11,6 +11,8 @@ import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
+import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,6 +38,11 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("redtint [fadeTime] [intensity] [player]")
 	void redTint(@Arg("0.5") double fadeTime, @Arg("10") double intensity, @Arg("self") Player player) {
 		SkriptFunctions.redTint(player, fadeTime, intensity);
+	}
+
+	@Path("loreize [string...]")
+	void loreize(@Arg String string) {
+		send(Utils.loreize(string, ChatColor.YELLOW));
 	}
 
 	@ConverterFor(Nerd.class)

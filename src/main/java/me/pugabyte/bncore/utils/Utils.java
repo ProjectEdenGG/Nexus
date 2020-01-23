@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -57,6 +58,59 @@ public class Utils {
 
 	public static String colorize(String string) {
 		return ChatColor.translateAlternateColorCodes('&', string);
+	}
+
+	public static String loreize(String string, ChatColor color) {
+		int i = 0, lineLength = 0;
+		boolean watchForNewLine = false, watchForColor = false;
+
+		for (String character : string.split("")) {
+			if (watchForNewLine) {
+				if ("|".equalsIgnoreCase(character))
+					lineLength = 0;
+				watchForNewLine = false;
+			} else if ("|".equalsIgnoreCase(character))
+				watchForNewLine = true;
+
+			if (watchForColor) {
+				if (character.matches("[a-fk-or0-9]"))
+					lineLength -= 2;
+				watchForColor = false;
+			} else if ("&".equalsIgnoreCase(character))
+				watchForColor = true;
+
+			++lineLength;
+
+			if (lineLength > 28)
+				if (" ".equalsIgnoreCase(character)) {
+					String before = left(string, i);
+					String excess = right(string, string.length() - i);
+					if (excess.length() > 5) {
+						excess = excess.trim();
+						boolean doSplit = true;
+						if (excess.contains("||") && excess.indexOf("||") <= 5)
+							doSplit = false;
+						if (excess.contains(" ") && excess.indexOf(" ") <= 5)
+							doSplit = false;
+						if (lineLength >= 38)
+							doSplit = true;
+
+						if (doSplit) {
+							string = before + "||" + color + excess.trim();
+							lineLength = 0;
+							i += 4;
+						}
+					}
+				}
+
+			++i;
+		}
+
+		return color + string;
+	}
+
+	public static List<String> splitLore(String lore) {
+		return new ArrayList<>(Arrays.asList(lore.split("\\|\\|")));
 	}
 
 	public static String right(String string, int number) {
@@ -98,20 +152,24 @@ public class Utils {
 		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay).getTaskId();
 	}
 
-	public static int waitAsync(long delay, Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), () -> async(runnable), delay).getTaskId();
-	}
-
 	public static int repeat(long startDelay, long interval, Runnable runnable) {
 		return BNCore.getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
 	}
 
-	public static int async(Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskAsynchronously(BNCore.getInstance(), runnable).getTaskId();
-	}
-
 	public static int sync(Runnable runnable) {
 		return BNCore.getInstance().getServer().getScheduler().runTask(BNCore.getInstance(), runnable).getTaskId();
+	}
+
+	public static int waitAsync(long delay, Runnable runnable) {
+		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), () -> async(runnable), delay).getTaskId();
+	}
+
+	public static int repeatAsync(long startDelay, long interval, Runnable runnable) {
+		return BNCore.getInstance().getServer().getScheduler().runTaskTimerAsynchronously(BNCore.getInstance(), runnable, startDelay, interval).getTaskId();
+	}
+
+	public static int async(Runnable runnable) {
+		return BNCore.getInstance().getServer().getScheduler().runTaskAsynchronously(BNCore.getInstance(), runnable).getTaskId();
 	}
 
 	public static void cancelTask(int taskId) {
@@ -139,7 +197,7 @@ public class Utils {
 	}
 
 	public static OfflinePlayer getPlayer(String partialName) {
-		if (partialName.length() == 0)
+		if (partialName == null || partialName.length() == 0)
 			throw new InvalidInputException("No player name given");
 
 		partialName = partialName.toLowerCase();
