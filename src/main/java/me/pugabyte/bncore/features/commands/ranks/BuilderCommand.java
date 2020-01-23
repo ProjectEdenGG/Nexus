@@ -28,7 +28,7 @@ public class BuilderCommand extends CustomCommand {
 	@Path("list")
 	void list() {
 		line();
-		send("&3All current &dBuilders &3and the date they were promoted:");
+		send("&3All current &5Builders &3and the date they were promoted:");
 		Rank.BUILDER.getNerds().forEach(nerd -> {
 			send(Rank.BUILDER.getFormat() + nerd.getName() + " &7-&e " + nerd.getPromotionDate().format(RanksCommand.formatter));
 		});
