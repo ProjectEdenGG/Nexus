@@ -35,7 +35,7 @@ public class AlertsListener implements Listener {
 		int count = 0;
 
 		try {
-			if (event.getResult().toString().equals("ALLOWED")) {
+			if (event.getResult() == Chatter.Result.ALLOWED) {
 				if (channelName.toLowerCase().contains("convo")) {
 					recipients.forEach(chatter -> ((Alerts) new AlertsService().get(chatter.getPlayer())).playSound());
 				} else {

@@ -1,5 +1,6 @@
 package me.pugabyte.bncore;
 
+import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
 import me.pugabyte.bncore.features.connect4.Connect4;
@@ -110,6 +111,7 @@ public class BNCore extends JavaPlugin {
 		saveConfig();
 	}
 
+	public static AFK afk;
 	public static Chat chat;
 	public static ClearInventory clearInventory;
 	public static Connect4 connect4;
@@ -131,6 +133,7 @@ public class BNCore extends JavaPlugin {
 	public static Wiki wiki;
 
 	private void enableFeatures() {
+		afk = new AFK();
 		chat = new Chat();
 		clearInventory = new ClearInventory();
 		connect4 = new Connect4();
