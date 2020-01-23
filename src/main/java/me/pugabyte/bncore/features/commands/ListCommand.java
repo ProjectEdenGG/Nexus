@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.commands;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.afk.AFKPlayer;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
@@ -18,12 +19,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO: QuickAction and hover info
+// TODO: Balance hoverable
 
-//@Aliases({"ls", "who", "online", "players", "eonline", "elist", "ewho", "eplayers"})
-public class JListCommand extends CustomCommand {
+@Aliases({"ls", "who", "online", "players", "eonline", "elist", "ewho", "eplayers"})
+public class ListCommand extends CustomCommand {
 
-	public JListCommand(CommandEvent event) {
+	public ListCommand(CommandEvent event) {
 		super(event);
 	}
 
@@ -46,6 +47,10 @@ public class JListCommand extends CustomCommand {
 
 			json(rank + "s&f: " + nerds.stream().map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
 		});
+
+		line();
+		send("&e&lClick &3on a player's name to open the &eQuickAction &3menu");
+		line();
 	}
 
 	String getNameWithModifiers(Nerd nerd) {
@@ -61,7 +66,9 @@ public class JListCommand extends CustomCommand {
 		else if (afk)
 			modifiers = "&7[AFK] ";
 
-		return "||" + modifiers + nerd.getRank().getFormat() + nerd.getName() + "||ttp:" + getInfo(nerd, modifiers) + "||";
+		return "||" + modifiers + nerd.getRank().getFormat() + nerd.getName() +
+				"||cmd:/quickaction " + nerd.getName() +
+				"||ttp:" + getInfo(nerd, modifiers) + "||";
 	}
 
 	String getInfo(Nerd nerd, String modifiers) {
