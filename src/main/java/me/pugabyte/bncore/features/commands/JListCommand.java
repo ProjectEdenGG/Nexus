@@ -61,7 +61,7 @@ public class JListCommand extends CustomCommand {
 		else if (afk)
 			modifiers = "&7[AFK] ";
 
-		return "||" + modifiers + nerd.getRank().getFormat() + nerd.getName() + "||ttp:" + getInfo(nerd, modifiers);
+		return "||" + modifiers + nerd.getRank().getFormat() + nerd.getName() + "||ttp:" + getInfo(nerd, modifiers) + "||";
 	}
 
 	String getInfo(Nerd nerd, String modifiers) {
@@ -86,7 +86,6 @@ public class JListCommand extends CustomCommand {
 				"&3World: &e" + world + "\n" +
 				"&3Balance: &e$" + balance + "\n" +
 				"&3Online for: &e" + onlineFor + "\n" +
-				"&3Hours: &e" + totalHours +
-				"||";
+				"&3Hours: &e" + totalHours;
 	}
 }
