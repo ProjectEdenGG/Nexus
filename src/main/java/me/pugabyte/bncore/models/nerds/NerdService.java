@@ -2,17 +2,15 @@ package me.pugabyte.bncore.models.nerds;
 
 import me.pugabyte.bncore.models.BaseService;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class NerdService extends BaseService {
 	@Override
-	public <T> T get(String uuid) {
-		Player player = (Player) Utils.getPlayer(uuid);
+	public Nerd get(String uuid) {
 		Nerd nerd = database.where("uuid = ?", uuid).first(Nerd.class);
-		nerd.fromPlayer(player);
-		return (T) nerd;
+		nerd.fromPlayer(Utils.getPlayer(uuid));
+		return nerd;
 	}
 
 	public Nerd find(String partialName) {

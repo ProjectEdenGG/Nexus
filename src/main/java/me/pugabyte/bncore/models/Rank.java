@@ -59,7 +59,7 @@ public enum Rank {
 	public List<Nerd> getNerds() {
 		Set<PermissionUser> users = PermissionsEx.getPermissionManager().getGroup(Utils.camelCase(name())).getUsers();
 		Set<Nerd> nerds = new HashSet<>();
-		users.forEach(user -> nerds.add(new NerdService().get(user.getName())));
+		users.forEach(user -> nerds.add(new NerdService().get(user.getIdentifier())));
 		return new ArrayList<>(nerds);
 	}
 
