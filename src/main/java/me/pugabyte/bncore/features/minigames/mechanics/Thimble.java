@@ -178,7 +178,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	protected void onDamage(Minigamer victim, EntityDamageEvent event) {
+	public void onDamage(Minigamer victim, EntityDamageEvent event) {
 		super.onDamage(victim, event);
 		ThimbleMatchData matchData = victim.getMatch().getMatchData();
 		if (victim.equals(matchData.getTurnPlayer()))

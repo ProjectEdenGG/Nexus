@@ -13,6 +13,6 @@ public class SignUpCommand extends CustomCommand {
 	@Path
 	void signup() {
 		send("&4Note: &cMember rank is no longer gained by signing up on our website. Check /member for more info");
-		send("&5https://bnn.gg/signup");
+		send("&ehttps://bnn.gg/signup");
 	}
 }

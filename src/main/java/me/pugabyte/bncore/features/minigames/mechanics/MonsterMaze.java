@@ -151,7 +151,7 @@ public class MonsterMaze extends TeamlessMechanic {
 	}
 
 	@Override
-	protected void onDamage(Minigamer victim, EntityDamageEvent event) {
+	public void onDamage(Minigamer victim, EntityDamageEvent event) {
 		super.onDamage(victim, event);
 	}
 

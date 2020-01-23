@@ -14,7 +14,7 @@ public class WebsiteCommand extends CustomCommand {
 
 	@Path
 	void website() {
-		send("&5https://bnn.gg");
+		send("&ehttps://bnn.gg");
 	}
 
 }

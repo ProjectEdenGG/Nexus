@@ -1,11 +1,17 @@
 package me.pugabyte.bncore.models.hours;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
 @Data
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Hours {
+	@NonNull
 	private String uuid;
 	private int total = 0;
 	private int monthly = 0;
@@ -20,10 +26,14 @@ public class Hours {
 	}
 
 	public void increment() {
-		++total;
-		++daily;
-		++weekly;
-		++monthly;
+		increment(1);
+	}
+
+	public void increment(int amount) {
+		total += amount;
+		daily += amount;
+		weekly += amount;
+		monthly += amount;
 	}
 
 	public int get(HoursService.HoursType type) {

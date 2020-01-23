@@ -1,8 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -16,12 +14,8 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -84,7 +78,7 @@ public abstract class Mechanic implements Listener {
 			minigamer.getMatch().end();
 	}
 
-	protected void onDamage(Minigamer victim, EntityDamageEvent event) {}
+	public void onDamage(Minigamer victim, EntityDamageEvent event) {}
 
 	public void onDeath(MinigamerDeathEvent event) {
 		// TODO: Autobalancing
@@ -147,122 +141,6 @@ public abstract class Mechanic implements Listener {
 					event.setCancelled(true);
 					return;
 				}
-	}
-
-	// TODO: Break and place events
-
-	@EventHandler
-	public void onPlayerInteract(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isIn(this)) return;
-
-		onPlayerInteract(minigamer, event);
-	}
-
-	// TODO: Prevent damage of hanging entities/armor stands/etc
-	@EventHandler
-	public void onDeath(EntityDamageByEntityEvent event) {
-		Minigamer victim, attacker;
-
-		if (event.getEntity() instanceof Player) {
-			victim = PlayerManager.get((Player) event.getEntity());
-		} else {
-			return;
-		}
-
-		if (event.getDamager() instanceof Player) {
-			attacker = PlayerManager.get((Player) event.getDamager());
-		} else if (event.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) event.getDamager();
-			if (projectile.getShooter() instanceof Player) {
-				attacker = PlayerManager.get((Player) projectile.getShooter());
-			} else {
-				return;
-			}
-		} else {
-			return;
-		}
-
-		if (victim.getMatch() == null || attacker.getMatch() == null
-				|| victim.getTeam() == null || attacker.getTeam() == null) {
-			if (victim.getMatch() == null && attacker.getMatch() != null) {
-				// Normal player damaging someone in a minigame
-				event.setCancelled(true);
-			}
-			// Neither in minigames, ignore
-			return;
-		}
-
-		if (!(victim.isPlaying(this) && attacker.isPlaying(this))) return;
-
-		if ((victim.isRespawning() || attacker.isRespawning()) || victim.equals(attacker)) {
-			event.setCancelled(true);
-			return;
-		}
-
-		if (victim.getMatch().equals(attacker.getMatch())) {
-			// Same match
-			Mechanic mechanic = victim.getMatch().getArena().getMechanic();
-			if (victim.getTeam().equals(attacker.getTeam()) && mechanic.isTeamGame()) {
-				// Friendly fire
-				event.setCancelled(true);
-			} else {
-				// Damaged by opponent
-				if (event.getDamage() < victim.getPlayer().getHealth()) {
-					onDamage(victim, event);
-					return;
-				}
-
-				event.setCancelled(true);
-				if (!victim.getMatch().isEnded()) {
-					mechanic.kill(victim, attacker);
-				}
-			}
-		} else {
-			// Different matches
-			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler
-	public void onDeath(EntityDamageEvent event) {
-		Minigamer victim;
-
-		if (event.getEntity() instanceof Player) {
-			victim = PlayerManager.get((Player) event.getEntity());
-		} else {
-			return;
-		}
-
-		// Ignore damage by entity (see above)
-		if (event.getCause().name().contains("ENTITY")) return;
-		if (victim.getMatch() == null || victim.getTeam() == null) return;
-		if (!victim.isPlaying(this)) return;
-
-		if (victim.isRespawning()) {
-			event.setCancelled(true);
-			return;
-		}
-
-		if (event.getDamage() < victim.getPlayer().getHealth()) {
-			onDamage(victim, event);
-			return;
-		}
-
-		event.setCancelled(true);
-		if (!victim.getMatch().isEnded())
-			kill(victim);
-	}
-
-	@EventHandler
-	public void onEnterKillRegion(RegionEnteredEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if (!(minigamer.isPlaying(this))) return;
-
-		Arena arena = minigamer.getMatch().getArena();
-		if (arena.ownsRegion(event.getRegion().getId(), "kill"))
-			kill(minigamer);
 	}
 
 	public abstract boolean shouldBeOver(Match match);

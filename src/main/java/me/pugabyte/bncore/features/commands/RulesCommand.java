@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.commands;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -9,17 +8,14 @@ import me.pugabyte.bncore.models.rules.HasReadRules;
 import me.pugabyte.bncore.models.rules.RulesService;
 import org.bukkit.entity.Player;
 
-public class JRulesCommand extends CustomCommand {
+public class RulesCommand extends CustomCommand {
 	RulesService service = new RulesService();
 	HasReadRules hasReadRules;
 
-	public JRulesCommand(CommandEvent event) {
+	public RulesCommand(CommandEvent event) {
 		super(event);
-		if (sender() instanceof Player) {
-			BNCore.log("Instance of player");
+		if (sender() instanceof Player)
 			hasReadRules = service.get(player());
-			BNCore.log("Object: " + hasReadRules);
-		}
 	}
 
 	@Path("[string] [integer]")

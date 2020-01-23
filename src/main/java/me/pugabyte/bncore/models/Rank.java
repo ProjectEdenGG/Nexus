@@ -7,6 +7,7 @@ import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -76,11 +77,17 @@ public enum Rank {
 	}
 
 	public static Rank getHighestRank(Player player) {
+		return getHighestRank(Bukkit.getOfflinePlayer(player.getUniqueId()));
+	}
+
+	public static Rank getHighestRank(OfflinePlayer player) {
+		PermissionUser user = PermissionsEx.getUser(player.getUniqueId().toString());
+
 		List<Rank> ranks = Arrays.asList(Rank.values());
 		Collections.reverse(ranks);
 
 		for (Rank rank : ranks)
-			if (player.hasPermission("rank." + rank.name().toLowerCase()))
+			if (user.inGroup(rank.name()))
 				return rank;
 
 		return GUEST;

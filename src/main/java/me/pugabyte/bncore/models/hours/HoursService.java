@@ -10,7 +10,10 @@ import java.util.stream.Collectors;
 public class HoursService extends BaseService {
 	@Override
 	public Hours get(String uuid) {
-		return database.where("uuid = ?", uuid).first(Hours.class);
+		Hours hours = database.where("uuid = ?", uuid).first(Hours.class);
+		if (hours.getUuid() == null)
+			hours = new Hours(uuid);
+		return hours;
 	}
 
 	public int total(HoursType type) {
@@ -19,6 +22,29 @@ public class HoursService extends BaseService {
 
 	public List<Hours> getPage(HoursType type, int page) {
 		return database.orderBy(type.name() + " desc").limit(10).offset((page - 1) * 10).results(Hours.class);
+	}
+
+	public int cleanup() {
+		return database
+				.table("hours")
+				.innerJoin("nerd")
+					.on("nerd.uuid = hours.uuid")
+				.where("hours.total < (30 * 60)")
+				.and("nerd.lastJoin < DATE_ADD(NOW(), INTERVAL -30 DAY)")
+				.delete()
+				.getRowsAffected();
+	}
+
+	public void endOfDay() {
+		database.sql("update hours set yesterday = daily, daily = 0").execute();
+	}
+
+	public void endOfWeek() {
+		database.sql("update hours set lastWeek = weekly, weekly = 0").execute();
+	}
+
+	public void endOfMonth() {
+		database.sql("update hours set lastMonth = monthly, monthly = 0").execute();
 	}
 
 	public HoursType getType(String type) {
