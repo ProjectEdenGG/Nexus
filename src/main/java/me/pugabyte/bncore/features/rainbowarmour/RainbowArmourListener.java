@@ -12,7 +12,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class RainbowArmourListener implements Listener {
@@ -33,7 +32,7 @@ public class RainbowArmourListener implements Listener {
 		if (!(event.getWhoClicked() instanceof Player)) return;
 		Player player = (Player) event.getWhoClicked();
 		if (player.getGameMode() != GameMode.SURVIVAL) return;
-		if (BNCore.rainbowArmour.enabledPlayers.containsKey(player) && BNCore.rainbowArmour.enabledPlayers.get(player).isEnabled()) {
+		if (RainbowArmour.getEnabledPlayers().containsKey(player) && RainbowArmour.getEnabledPlayers().get(player).isEnabled()) {
 			ItemStack item = event.getCurrentItem();
 			if (event.getSlotType() == InventoryType.SlotType.ARMOR && isLeatherArmour(item.getType())) {
 				RainbowArmourCommand.removeColor(item);
@@ -44,7 +43,7 @@ public class RainbowArmourListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onDeath(PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		if (BNCore.rainbowArmour.enabledPlayers.containsKey(player) && BNCore.rainbowArmour.enabledPlayers.get(player).isEnabled()) {
+		if (RainbowArmour.getEnabledPlayers().containsKey(player) && RainbowArmour.getEnabledPlayers().get(player).isEnabled()) {
 			for (ItemStack itemStack : event.getDrops()) {
 				if (isLeatherArmour(itemStack.getType())) {
 					LeatherArmorMeta meta = (LeatherArmorMeta) itemStack.getItemMeta();
@@ -58,9 +57,7 @@ public class RainbowArmourListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onLogout(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		if (BNCore.rainbowArmour.enabledPlayers.containsKey(player) && BNCore.rainbowArmour.enabledPlayers.get(player).isEnabled()) {
-			PlayerInventory inv = player.getInventory();
-			RainbowArmourCommand.removeColor(inv);
-		}
+		if (RainbowArmour.getEnabledPlayers().containsKey(player) && RainbowArmour.getEnabledPlayers().get(player).isEnabled())
+			RainbowArmourCommand.removeColor(player.getInventory());
 	}
 }

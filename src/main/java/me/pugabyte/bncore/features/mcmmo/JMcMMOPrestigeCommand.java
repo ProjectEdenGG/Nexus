@@ -8,8 +8,6 @@ import me.pugabyte.bncore.models.mcmmo.McMMOPrestige;
 import me.pugabyte.bncore.models.mcmmo.McMMOService;
 import org.bukkit.OfflinePlayer;
 
-import java.util.Map;
-
 import static me.pugabyte.bncore.utils.Utils.camelCase;
 
 public class JMcMMOPrestigeCommand extends CustomCommand {
@@ -25,11 +23,8 @@ public class JMcMMOPrestigeCommand extends CustomCommand {
 
 		line();
 		send("Prestige for " + player.getName());
-		for (Map.Entry<String, Integer> entry : mcMMOPrestige.getPrestiges().entrySet()) {
-			String type = entry.getKey();
-			Object count = entry.getValue();
-			send(camelCase(type) + ": " + count);
-		}
+		mcMMOPrestige.getPrestiges().forEach((type, count) -> send(camelCase(type) + ": " + count));
+
 	}
 
 }

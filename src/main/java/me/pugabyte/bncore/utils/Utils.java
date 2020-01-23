@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.utils;
 
-import ch.njol.skript.variables.Variables;
 import com.google.common.base.Strings;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -125,14 +124,6 @@ public class Utils {
 
 	public static boolean canSee(Player viewer, Player target) {
 		return !isVanished(target) || viewer.hasPermission("vanish.see");
-	}
-
-	public static boolean isAfk(Player player) {
-		return (boolean) Variables.getVariable("afk::" + player.getUniqueId().toString(), null, false);
-	}
-
-	public static boolean isAfk(Nerd nerd) {
-		return isAfk(nerd.getPlayer());
 	}
 
 	public static List<String> getOnlineUuids() {

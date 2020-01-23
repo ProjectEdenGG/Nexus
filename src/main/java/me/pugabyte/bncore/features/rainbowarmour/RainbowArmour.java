@@ -1,26 +1,24 @@
 package me.pugabyte.bncore.features.rainbowarmour;
 
+import lombok.Getter;
 import me.pugabyte.bncore.features.rainbowarmour.models.RainbowArmourPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
 public class RainbowArmour {
-	public HashMap<Player, RainbowArmourPlayer> enabledPlayers = new HashMap<>();
+	@Getter
+	private static HashMap<Player, RainbowArmourPlayer> enabledPlayers = new HashMap<>();
 
 	public RainbowArmour() {
 		new RainbowArmourListener();
 	}
 
-	public RainbowArmourPlayer getPlayer(Player player) {
-		if (enabledPlayers.containsKey(player)) {
-			return enabledPlayers.get(player);
-		}
+	public static RainbowArmourPlayer getPlayer(Player player) {
+		if (!enabledPlayers.containsKey(player))
+			enabledPlayers.put(player, new RainbowArmourPlayer(player, -1));
 
-		RainbowArmourPlayer rbaPlayer = new RainbowArmourPlayer(player, -1);
-		enabledPlayers.put(player, rbaPlayer);
-		return rbaPlayer;
-
+		return enabledPlayers.get(player);
 	}
 
 
