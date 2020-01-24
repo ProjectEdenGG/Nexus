@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.dailyrewards;
 
 import fr.minuskube.inv.SmartInventory;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewardsService;
 import me.pugabyte.bncore.models.dailyrewards.Reward;
@@ -35,16 +36,20 @@ public class DailyRewardsFeature implements Listener {
 	private void scheduler() {
 		Utils.repeatAsync(20, 5 * 20, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (((Hours) new HoursService().get(player)).getDaily() < (15 * 60)) continue;
+				try {
+					if (((Hours) new HoursService().get(player)).getDaily() < (15 * 60)) continue;
 
-				DailyRewardsService service = new DailyRewardsService();
-				DailyRewards dailyRewards = service.get(player);
-				if (dailyRewards.isEarnedToday()) continue;
+					DailyRewardsService service = new DailyRewardsService();
+					DailyRewards dailyRewards = service.get(player);
+					if (dailyRewards.isEarnedToday()) continue;
 
-				Utils.sync(() -> {
-					dailyRewards.increaseStreak();
-					service.save(dailyRewards);
-				});
+					Utils.sync(() -> {
+						dailyRewards.increaseStreak();
+						service.save(dailyRewards);
+					});
+				} catch (Exception ex) {
+					BNCore.warn("Error in DailyRewards scheduler: " + ex.getMessage());
+				}
 			}
 		});
 	}

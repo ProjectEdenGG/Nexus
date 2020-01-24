@@ -44,47 +44,40 @@ public class Commands {
 	}
 
 	public void registerAll() {
-		for (Class<? extends CustomCommand> command : commandSet) {
+		for (Class<? extends CustomCommand> command : commandSet)
 			register(new ObjenesisStd().newInstance(command));
-		}
 	}
 
 	private void register(CustomCommand customCommand) {
 		if (listLast(customCommand.getClass().toString(), ".").startsWith("_")) return;
 
-		for (String alias : customCommand.getAliases()) {
-			try {
-				// plugin.getLogger().info("Registering command " + alias);
-				mapUtils.register(alias, customCommand);
+		try {
+			mapUtils.register(customCommand);
+			for (String alias : customCommand.getAliases())
 				commands.put(alias, customCommand);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	public void unregisterAll() {
-		for (Class<? extends CustomCommand> command : commandSet) {
+		for (Class<? extends CustomCommand> command : commandSet)
 			unregister(new ObjenesisStd().newInstance(command));
-		}
 	}
 
 	private void unregister(CustomCommand customCommand) {
-		for (String alias : customCommand.getAliases()) {
-			try {
-				// plugin.getLogger().info("Unregistering command " + alias);
-				mapUtils.unregister(alias);
+		try {
+			mapUtils.unregister(customCommand.getName());
+			for (String alias : customCommand.getAliases())
 				commands.remove(alias);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 
 	private void registerConvertersAndTabCompleters() {
-		Set<Class<? extends CustomCommand>> commands = new Reflections(path).getSubTypesOf(CustomCommand.class);
-		commands.forEach(this::registerTabCompleters);
-		commands.forEach(this::registerConverters);
+		commandSet.forEach(this::registerTabCompleters);
+		commandSet.forEach(this::registerConverters);
 		registerTabCompleters(CustomCommand.class);
 		registerConverters(CustomCommand.class);
 	}
