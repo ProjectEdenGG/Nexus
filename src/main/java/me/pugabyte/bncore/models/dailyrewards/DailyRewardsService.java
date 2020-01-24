@@ -7,7 +7,10 @@ import java.util.List;
 public class DailyRewardsService extends BaseService {
 	@Override
 	public DailyRewards get(String uuid) {
-		return database.where("uuid = ?", uuid).first(DailyRewards.class);
+		DailyRewards dailyRewards = database.where("uuid = ?", uuid).first(DailyRewards.class);
+		if (dailyRewards.getUuid() == null)
+			dailyRewards = new DailyRewards(uuid);
+		return dailyRewards;
 	}
 
 	public List<DailyRewards> getPage(int page) {

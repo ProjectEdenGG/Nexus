@@ -1,9 +1,10 @@
 package me.pugabyte.bncore.models.dailyrewards;
 
 import com.dieselpoint.norm.serialize.DbSerializer;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
 import me.pugabyte.bncore.framework.persistence.serializer.IntegerListSerializer;
 import me.pugabyte.bncore.skript.SkriptFunctions;
@@ -18,8 +19,9 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DailyRewards {
+	@NonNull
 	private String uuid;
 	private int streak;
 	private boolean earnedToday;
