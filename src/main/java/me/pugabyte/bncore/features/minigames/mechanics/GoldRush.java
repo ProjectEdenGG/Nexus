@@ -5,7 +5,6 @@ import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -121,7 +120,6 @@ public final class GoldRush extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this)) return;
 		event.setDropItems(false);
 		if (event.getBlock().getType().equals(Material.IRON_ORE)) {
-			BNCore.log("Trapping @ " + event.getBlock().getLocation().getX() + " " + event.getBlock().getLocation().getZ());
 			trap(event.getBlock());
 			event.getPlayer().sendMessage(Minigames.PREFIX + "You mined some fools gold! Next time, click it with the TNT to remove it!");
 		}
