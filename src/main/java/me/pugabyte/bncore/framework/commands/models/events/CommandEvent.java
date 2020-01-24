@@ -48,7 +48,7 @@ public class CommandEvent extends Event implements Cancellable {
 			reply(command.getPrefix() + "&c" + ex.getCause().getMessage());
 		else if (ex instanceof BNException)
 			reply(command.getPrefix() + "&c" + ex.getMessage());
-		else if (ex instanceof IllegalArgumentException && ex.getMessage().contains("type mismatch"))
+		else if (ex instanceof IllegalArgumentException && ex.getMessage() != null && ex.getMessage().contains("type mismatch"))
 			reply(command.getPrefix() + "&cIncorrect usage");
 		else {
 			reply("&cAn internal error occurred while attempting to execute this command");

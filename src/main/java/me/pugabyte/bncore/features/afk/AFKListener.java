@@ -4,7 +4,7 @@ import com.dthielke.herochat.ChannelChatEvent;
 import com.dthielke.herochat.Chatter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -32,7 +32,7 @@ public class AFKListener implements Listener {
 			if (recipients.size() == 1) {
 				AFKPlayer to = AFK.get(recipients.get(0).getPlayer());
 				if (to.isAfk()) {
-					Utils.wait(3, () -> {
+					Tasks.wait(3, () -> {
 						if (!(event.getSender().getPlayer().isOnline() && to.getPlayer().isOnline())) return;
 
 						String message = "&e* " + to.getPlayer().getName() + " is AFK";
@@ -51,7 +51,7 @@ public class AFKListener implements Listener {
 
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
-		Utils.wait(3, () -> {
+		Tasks.wait(3, () -> {
 			if (!event.getPlayer().isOnline()) return;
 
 			AFKPlayer player = AFK.get(event.getPlayer());

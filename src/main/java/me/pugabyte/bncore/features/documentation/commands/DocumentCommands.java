@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.documentation.commands;
 
 import me.pugabyte.bncore.features.documentation.commands.models.Command;
 import me.pugabyte.bncore.features.documentation.commands.models.CommandsDatabase;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -47,7 +48,7 @@ public class DocumentCommands {
 	}
 
 	private void findNewCommands() {
-		Utils.waitAsync(20, () -> {
+		Tasks.waitAsync(20, () -> {
 			List<String> offers = commandMap.tabComplete(Bukkit.getConsoleSender(), "");
 			TabCompleteEvent tabEvent = new TabCompleteEvent(Bukkit.getConsoleSender(), "", offers);
 			Utils.callEvent(tabEvent);

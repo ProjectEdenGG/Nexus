@@ -9,6 +9,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,7 +47,7 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 			}));
 
 		ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode.||&7Then, click a spawnpoint with me to||&7delete the spawnpoint.");
-		contents.set(0, 8, ClickableItem.from(deleteItem, e -> Utils.wait(2, () -> {
+		contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
 			if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 			} else if (Utils.isNullOrAir(player.getItemOnCursor())) {
@@ -65,7 +66,7 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 
 			clickableItems[i] = ClickableItem.from(item, e -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
-					Utils.wait(2, () -> {
+					Tasks.wait(2, () -> {
 						team.getSpawnpoints().remove(spawnpoint);
 						arena.write();
 						player.setItemOnCursor(new ItemStack(Material.AIR));

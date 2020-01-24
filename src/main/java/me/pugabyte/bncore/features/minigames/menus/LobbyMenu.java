@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -24,7 +25,7 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		openAnvilMenu(player, text, onComplete, p -> Utils.wait(1, () -> menus.openLobbyMenu(player, arena)));
+		openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.openLobbyMenu(player, arena)));
 	}
 
 	@Override

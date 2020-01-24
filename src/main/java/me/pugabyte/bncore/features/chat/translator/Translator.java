@@ -6,6 +6,7 @@ import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
 import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,7 +38,7 @@ public class Translator implements Listener {
 		Player sender = event.getSender().getPlayer();
 		List<Chatter> chatters = HerochatAPI.getRecipients(event.getSender(), event.getChannel());
 
-		Utils.waitAsync(1, () -> {
+		Tasks.waitAsync(1, () -> {
 			try {
 				if (!map.containsKey(sender.getUniqueId())) return;
 

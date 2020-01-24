@@ -9,6 +9,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,7 +40,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 				"&eAdd Item",
 				"&3Click me with an item||&3in your hand to add it."
 			),
-			e -> Utils.wait(2, () -> {
+			e -> Tasks.wait(2, () -> {
 				if (Utils.isNullOrAir(player.getItemOnCursor())) return;
 				arena.getBlockList().add(player.getItemOnCursor().getType());
 				player.setItemOnCursor(new ItemStack(Material.AIR));

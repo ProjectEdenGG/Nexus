@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.afk;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -16,7 +16,7 @@ public class AFK {
 	}
 
 	private void scheduler() {
-		Utils.repeat(5 * 20, 3 * 20, () -> Bukkit.getOnlinePlayers().stream().map(AFK::get).forEach(player -> {
+		Tasks.repeat(5 * 20, 3 * 20, () -> Bukkit.getOnlinePlayers().stream().map(AFK::get).forEach(player -> {
 			try {
 				if (!player.getLocation().equals(player.getPlayer().getLocation()))
 					if (player.isAfk() && !player.isForceAfk())

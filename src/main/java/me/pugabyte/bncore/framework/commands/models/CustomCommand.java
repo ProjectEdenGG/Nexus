@@ -16,6 +16,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -47,7 +48,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void send(Player player, String message, int delay) {
-		Utils.wait(delay, () -> player.sendMessage(Utils.colorize(message)));
+		Tasks.wait(delay, () -> player.sendMessage(Utils.colorize(message)));
 	}
 
 	protected void send(String message) {

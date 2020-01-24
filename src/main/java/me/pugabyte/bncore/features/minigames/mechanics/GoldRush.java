@@ -14,7 +14,7 @@ import me.pugabyte.bncore.features.minigames.models.arenas.GoldRushArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -63,40 +63,18 @@ public final class GoldRush extends TeamlessMechanic {
 		for (Location loc : match.getTeams().get(0).getSpawnpoints())
 			loc.clone().subtract(0, 1, 0).getBlock().setType(Material.GLASS);
 
-		new Countdown(match, 5);
-	}
-
-	private class Countdown {
-		private Match match;
-		private int taskId;
-		private int seconds;
-
-		Countdown(Match match, int seconds) {
-			this.match = match;
-			this.seconds = seconds;
-			start();
-		}
-
-		void start() {
-			taskId = match.getTasks().repeat(0, 20, () -> {
-				match.broadcast("Starting in " + seconds + "...");
-				if (seconds < 1) {
+		Tasks.Countdown.builder()
+				.duration(5 * 20)
+				.onSecond(i -> match.broadcast("Starting in " + i + "..."))
+				.onComplete(() -> {
 					match.broadcast("Mine!");
-					for (Location loc : match.getTeams().get(0).getSpawnpoints())
-						loc.clone().subtract(0, 1, 0).getBlock().breakNaturally();
+					for (Location location : match.getTeams().get(0).getSpawnpoints())
+						location.clone().subtract(0, 1, 0).getBlock().breakNaturally();
 					for (Minigamer minigamer : match.getMinigamers())
 						minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
-					stop();
-				}
-				seconds--;
-			});
-		}
-
-		void stop() {
-			Utils.cancelTask(taskId);
-		}
+				})
+				.start();
 	}
-
 
 	@Override
 	public void onEnd(MatchEndEvent event) {
@@ -170,8 +148,8 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	public void trap(Block block) {
-		Utils.wait(1, () -> block.getRelative(BlockFace.UP).getLocation().clone().subtract(0, 1, 0).getBlock().setType(Material.WEB));
-		Utils.wait(2 * 20, () -> block.setType(Material.AIR));
+		Tasks.wait(1, () -> block.getRelative(BlockFace.UP).getLocation().clone().subtract(0, 1, 0).getBlock().setType(Material.WEB));
+		Tasks.wait(2 * 20, () -> block.setType(Material.AIR));
 	}
 
 }

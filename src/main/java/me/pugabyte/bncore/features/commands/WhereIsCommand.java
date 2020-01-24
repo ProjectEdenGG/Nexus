@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -36,6 +37,6 @@ public class WhereIsCommand extends CustomCommand {
 		GlowAPI.setGlowing(playerArg, GlowAPI.Color.RED, player());
 		Utils.lookAt(player(), playerArgLoc);
 
-		Utils.wait(10 * 20, () -> GlowAPI.setGlowing(playerArg, false, player()));
+		Tasks.wait(10 * 20, () -> GlowAPI.setGlowing(playerArg, false, player()));
 	}
 }

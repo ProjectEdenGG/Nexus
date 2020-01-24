@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -38,7 +39,7 @@ public class NearestBlockCommand extends CustomCommand {
 		}
 
 		Integer finalRadius = radius;
-		Utils.async(() -> {
+		Tasks.async(() -> {
 			Location location = player().getLocation();
 			double minDistance = finalRadius;
 			Block nearestBlock = null;
@@ -58,7 +59,7 @@ public class NearestBlockCommand extends CustomCommand {
 			}
 
 			Block block = nearestBlock;
-			Utils.sync(() -> {
+			Tasks.sync(() -> {
 				if (block != null) {
 					Location blockLoc = Utils.getCenteredLocation(block.getLocation());
 					World blockWorld = blockLoc.getWorld();
@@ -73,7 +74,7 @@ public class NearestBlockCommand extends CustomCommand {
 
 					send(PREFIX + "Loc: " + block.getLocation());
 
-					Utils.wait(10 * 20, () -> {
+					Tasks.wait(10 * 20, () -> {
 						fallingBlock.remove();
 						Bukkit.getOnlinePlayers().stream().filter(player -> player.getWorld() == blockWorld).forEach(player -> {
 							player.sendBlockChange(blockLoc, block.getType(), block.getData());

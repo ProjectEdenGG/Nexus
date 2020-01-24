@@ -11,7 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import me.pugabyte.bncore.features.minigames.utils.PowerUpUtils;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -77,7 +77,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 			new ItemStackBuilder(Material.LEATHER_BOOTS).glow().build(),
 			minigamer -> {
 				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 20), true);
-				Utils.wait(10 * 20, () -> minigamer.getMatch().getTeams().get(0).getLoadout().apply(minigamer));
+				Tasks.wait(10 * 20, () -> minigamer.getMatch().getTeams().get(0).getLoadout().apply(minigamer));
 			});
 
 	PowerUpUtils.PowerUp POSITIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", true,

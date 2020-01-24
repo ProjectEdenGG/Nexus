@@ -12,6 +12,7 @@ import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.menus.custom.KangarooJumpingMenu;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.KangarooJumpingArena;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,7 +50,7 @@ public class KangarooJumpingSubMenu extends MenuUtils implements InventoryProvid
 			}));
 
 		ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode.||&7Then, click a power up location with||&7me to delete the location.");
-		contents.set(0, 8, ClickableItem.from(deleteItem, e -> Utils.wait(2, () -> {
+		contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
 			if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 			} else if (Utils.isNullOrAir(player.getItemOnCursor())) {
@@ -68,7 +69,7 @@ public class KangarooJumpingSubMenu extends MenuUtils implements InventoryProvid
 
 			clickableItems[i] = ClickableItem.from(item, e -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
-					Utils.wait(2, () -> {
+					Tasks.wait(2, () -> {
 						arena.getPowerUpLocations().remove(powerUpLocation);
 						arena.write();
 						player.setItemOnCursor(new ItemStack(Material.AIR));

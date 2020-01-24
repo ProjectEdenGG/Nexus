@@ -5,7 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 
 @Aliases("away")
 public class AFKCommand extends CustomCommand {
@@ -24,7 +24,7 @@ public class AFKCommand extends CustomCommand {
 			player.setMessage(autoreply);
 			player.setForceAfk(true);
 			player.afk();
-			Utils.wait(10 * 20, () -> {
+			Tasks.wait(10 * 20, () -> {
 				player.setLocation();
 				player.setForceAfk(false);
 			});

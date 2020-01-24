@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -44,7 +45,7 @@ public class Minigames {
 		registerSerializables();
 		ArenaManager.read();
 		new MatchListener();
-		Utils.repeat(100, 40, MatchManager::janitor);
+		Tasks.repeat(100, 40, MatchManager::janitor);
 
 		new Basketball();
 	}

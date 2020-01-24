@@ -8,10 +8,8 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.entity.Zombie;
-
-// Copy and rename this file as a template for a new command
 
 @Permission("permission")
 public class PathfinderGoalCommand extends CustomCommand {
@@ -34,11 +32,11 @@ public class PathfinderGoalCommand extends CustomCommand {
 		PathfinderGoalMoveToLocation goal = new PathfinderGoalMoveToLocation(insentient, player().getLocation().add(20, 0, 13), 1.1, 1);
 		insentient.addPathfinderGoal(0, goal);
 
-		Utils.wait(10 * 20, () -> {
+		Tasks.wait(10 * 20, () -> {
 			send("Is done: " + insentient.getNavigation().isDoneNavigating());
 			send("Has goal: " + insentient.hasPathfinderGoal(goal));
 		});
-		Utils.wait(30 * 20, () -> {
+		Tasks.wait(30 * 20, () -> {
 			send("Is done: " + insentient.getNavigation().isDoneNavigating());
 			send("Has goal: " + insentient.hasPathfinderGoal(goal));
 		});

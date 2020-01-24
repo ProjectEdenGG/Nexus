@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.chat.translator;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -16,11 +16,10 @@ import java.util.UUID;
 @Aliases("translate")
 @Permission("translate")
 public class TranslatorCommand extends CustomCommand {
-	Translator translator;
+	Translator translator = Chat.translator;
 
 	public TranslatorCommand(CommandEvent event) {
 		super(event);
-		translator = BNCore.chat.translator;
 	}
 
 	@Path("stop [player]")
