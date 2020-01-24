@@ -26,7 +26,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -62,18 +61,17 @@ public interface ICustomCommand {
 	}
 
 	default String getName() {
-		return getAliases().get(0);
+		return listLast(this.getClass().toString(), ".").replaceAll("Command", "");
 	}
 
 	default List<String> getAliases() {
-		String name = listLast(this.getClass().toString(), ".").replaceAll("Command", "");
-		List<String> aliases = new ArrayList<>(Collections.singletonList(name.toLowerCase()));
+		List<String> aliases = new ArrayList<>();
 
 		for (Annotation annotation : this.getClass().getAnnotations()) {
 			if (annotation instanceof Aliases) {
 				for (String alias : ((Aliases) annotation).value()) {
 					if (!Pattern.compile("[a-zA-Z0-9_-]+").matcher(alias).matches()) {
-						BNCore.warn("Alias invalid: " + name + "Command.java / " + alias);
+						BNCore.warn("Alias invalid: " + getName() + "Command.java / " + alias);
 						continue;
 					}
 

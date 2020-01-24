@@ -46,7 +46,7 @@ public enum Rank {
 
 	public String getPrefix() {
 		if (hasPrefix) {
-			return "&8&l[" + format + toString() + "&8&l]";
+			return "&8&l[" + toString() + "&8&l]";
 		}
 
 		return "";

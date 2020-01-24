@@ -45,12 +45,16 @@ public class ListCommand extends CustomCommand {
 			List<Nerd> nerds = rank.getOnlineNerds();
 			if (nerds.size() == 0) return;
 
-			json(rank + "s&f: " + nerds.stream().map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
+			json(rank + "s&f: " + nerds.stream().filter(this::canSee).map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
 		});
 
 		line();
 		send("&e&lClick &3on a player's name to open the &eQuickAction &3menu");
 		line();
+	}
+
+	private boolean canSee(Nerd nerd) {
+		return Utils.canSee(player(), nerd.getPlayer());
 	}
 
 	String getNameWithModifiers(Nerd nerd) {
