@@ -35,12 +35,16 @@ public class OnlineStaffCommand extends CustomCommand {
 			List<Nerd> nerds = rank.getOnlineNerds();
 			if (nerds.size() == 0) return;
 
-			send(rank + "s&f: " + nerds.stream().map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
+			send(rank + "s&f: " + nerds.stream().filter(this::canSee).map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
 		});
 		line();
 		send("&3View a full list of staff members with &c/staff");
 		send("&3If you need to request a staff members &ehelp&3, please use &c/ticket <message>");
 		line();
+	}
+
+	private boolean canSee(Nerd nerd) {
+		return Utils.canSee(player(), nerd.getPlayer());
 	}
 
 	String getNameWithModifiers(Nerd nerd) {
