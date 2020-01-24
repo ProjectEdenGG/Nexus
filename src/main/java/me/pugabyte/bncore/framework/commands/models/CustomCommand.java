@@ -69,7 +69,7 @@ public abstract class CustomCommand implements ICustomCommand {
 		SkriptFunctions.json(player(), message);
 	}
 
-	public void error(String error) throws InvalidInputException {
+	public void error(String error) {
 		throw new InvalidInputException(error);
 	}
 

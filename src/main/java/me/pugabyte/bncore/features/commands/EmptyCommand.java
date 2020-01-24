@@ -29,7 +29,6 @@ public class EmptyCommand extends CustomCommand {
 
 		if (heldItem == bucket) error("Nothing to empty");
 
-
 		playerInv.setItem(playerInv.getHeldItemSlot(), bucket);
 	}
 

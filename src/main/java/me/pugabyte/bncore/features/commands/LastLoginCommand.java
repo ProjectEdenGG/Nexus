@@ -15,6 +15,6 @@ public class LastLoginCommand extends CustomCommand {
 
 	@Path("[player]")
 	void lastLogin(@Arg("self") Nerd nerd) {
-		send("&e&l" + nerd.getName() + " &3last logged in &e" + Utils.timespanDiff(nerd.getLastJoin()));
+		send("&e&l" + nerd.getName() + " &3last logged in &e" + Utils.timespanDiff(nerd.getLastJoin()) + " &3ago");
 	}
 }

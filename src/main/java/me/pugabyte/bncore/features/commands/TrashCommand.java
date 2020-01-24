@@ -14,7 +14,7 @@ public class TrashCommand extends CustomCommand {
 
 	@Path
 	void trash() {
-		player().openInventory(Bukkit.createInventory(null, 6, Utils.colorize("&4Trash Can!")));
+		player().openInventory(Bukkit.createInventory(null, 6 * 9, Utils.colorize("&4Trash Can!")));
 	}
 
 }
