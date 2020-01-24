@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewardsService;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -29,10 +30,14 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path
 	void main() {
+		if (WorldGroup.SURVIVAL != WorldGroup.get(player().getWorld()))
+			error("&cYou must be in the survival worlds to claim this reward.");
+
 		DailyRewardsFeature.menu(player(), dailyRewards);
 	}
 
 	@Path("dailyreset")
+	@Permission("dailyreset")
 	void dailyReset() {
 		console();
 		List<DailyRewards> dailyRewards = service.getAll();

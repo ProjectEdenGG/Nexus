@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -81,7 +82,7 @@ public class ListCommand extends CustomCommand {
 
 		int ping = Utils.getPing(player);
 		String onlineFor = Utils.timespanDiff(nerd.getLastJoin());
-		String world = Utils.getWorld(player);
+		WorldGroup world = WorldGroup.get(player.getWorld());
 		double balance = 0.0;
 		String totalHours = Utils.timespanFormat(hours.getTotal());
 		String afk = "";
