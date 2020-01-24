@@ -5,7 +5,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerds.Nerd;
-import me.pugabyte.bncore.utils.Utils;
 
 public class FirstJoinCommand extends CustomCommand {
 
@@ -15,6 +14,6 @@ public class FirstJoinCommand extends CustomCommand {
 
 	@Path("[player]")
 	void firstJoin(@Arg("self") Nerd nerd) {
-		send("&e&l" + nerd.getName() + " &3first joined Bear Nation at &e" + Utils.timespanDiff(nerd.getFirstJoin()) + " &3US Eastern Time");
+		send("&e&l" + nerd.getName() + " &3first joined Bear Nation at &e" + nerd.getFirstJoin() + " &3US Eastern Time");
 	}
 }
