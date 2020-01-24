@@ -54,21 +54,22 @@ class CommandMapUtils {
 		}
 	}
 
-	void register(String alias, CustomCommand customCommand) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+	void register(CustomCommand customCommand) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		String name = customCommand.getName().toLowerCase();
 		CommandHandler handler = new CommandHandler(customCommand);
 
-		PluginCommand cmd = COMMAND_CONSTRUCTOR.newInstance(alias, plugin);
+		PluginCommand pluginCommand = COMMAND_CONSTRUCTOR.newInstance(name, plugin);
+		pluginCommand.setLabel(name);
+		pluginCommand.setAliases(customCommand.getAliases());
+		pluginCommand.setExecutor(handler);
+		pluginCommand.setTabCompleter(handler);
 
-		getCommandMap().register(plugin.getDescription().getName(), cmd);
-		getKnownCommandMap().put(plugin.getDescription().getName().toLowerCase() + ":" + alias.toLowerCase(), cmd);
-		getKnownCommandMap().put(alias.toLowerCase(), cmd);
-
-		cmd.setLabel(alias.toLowerCase());
-		cmd.setExecutor(handler);
-		cmd.setTabCompleter(handler);
+		getCommandMap().register(plugin.getDescription().getName(), pluginCommand);
+		getKnownCommandMap().put(plugin.getDescription().getName().toLowerCase() + ":" + name, pluginCommand);
+		getKnownCommandMap().put(name, pluginCommand);
 	}
 
-	void unregister(String alias) throws IllegalAccessException {
+	void unregister(String name) throws IllegalAccessException {
 		CommandMap map = getCommandMap();
 		Map<String, Command> knownCommands = (Map<String, Command>) KNOWN_COMMANDS_FIELD.get(map);
 		Iterator<Command> iterator = knownCommands.values().iterator();
@@ -77,7 +78,7 @@ class CommandMapUtils {
 			Command command = iterator.next();
 			if (command instanceof PluginCommand) {
 				String pluginName = ((PluginCommand) command).getPlugin().getDescription().getName();
-				if (pluginName.equals(plugin.getDescription().getName()) && alias.equals(command.getLabel())) {
+				if (pluginName.equals(plugin.getDescription().getName()) && name.equals(command.getLabel())) {
 					command.unregister(map);
 					iterator.remove();
 				}

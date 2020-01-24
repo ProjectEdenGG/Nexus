@@ -1,7 +1,5 @@
 package me.pugabyte.bncore.features.inviterewards;
 
-import ch.njol.skript.util.Timespan;
-import ch.njol.skript.variables.Variables;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -9,6 +7,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.hours.Hours;
+import me.pugabyte.bncore.models.hours.HoursService;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -121,8 +121,8 @@ public class InviteRewardsCommand extends CustomCommand {
 	}
 
 	private long getMinutesPlayed(Player player) {
-		Timespan hours = (Timespan) Variables.getVariable("hours::" + player.getUniqueId().toString(), null, false);
-		return hours.getTicks_i() / 20 / 60;
+		Hours hours = new HoursService().get(player);
+		return hours.getTotal() / 60;
 	}
 
 }
