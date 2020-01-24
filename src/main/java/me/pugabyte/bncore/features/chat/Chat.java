@@ -12,11 +12,17 @@ public class Chat {
 	public Chat() {
 		Plugin herochat = BNCore.getInstance().getServer().getPluginManager().getPlugin("Herochat");
 
+		BNCore.getInstance().addConfigDefault("localRadius", 500);
+
 		if (herochat != null && herochat.isEnabled()) {
 			new ChatListener();
 			alertsFeature = new AlertsFeature();
 			translator = new Translator();
 		}
+	}
+
+	public static int getLocalRadius() {
+		return BNCore.getInstance().getConfig().getInt("localRadius");
 	}
 
 }
