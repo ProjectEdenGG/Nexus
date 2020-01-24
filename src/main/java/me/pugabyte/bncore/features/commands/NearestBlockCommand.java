@@ -12,12 +12,14 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
 @Permission("group.staff")
 public class NearestBlockCommand extends CustomCommand {
 
 	//TODO: for player head in direction of the found block
+	//TODO: format location message
 
 	public NearestBlockCommand(CommandEvent event) {
 		super(event);
@@ -58,9 +60,13 @@ public class NearestBlockCommand extends CustomCommand {
 					fallingBlock.setDropItem(false);
 					fallingBlock.setGravity(false);
 					fallingBlock.setInvulnerable(true);
+					fallingBlock.setVelocity(new Vector(0, 0, 0));
 
 					GlowAPI.setGlowing(fallingBlock, GlowAPI.Color.RED, player());
+					Utils.lookAt(player(), block.getLocation());
+
 					send(PREFIX + "Loc: " + block.getLocation());
+
 					Utils.wait(10 * 20, () -> {
 						fallingBlock.remove();
 						Bukkit.getOnlinePlayers().stream().filter(player -> player.getWorld() == blockWorld).forEach(player -> {

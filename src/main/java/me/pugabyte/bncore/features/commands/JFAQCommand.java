@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -101,7 +102,7 @@ public class JFAQCommand extends CustomCommand {
 		line();
 		json("&2[G] &3(&eGlobal&3) The main channel, visible to everyone.");
 		json("&5[D] &3(&eDiscord&3) Global messages from people on Discord");
-		json("&e[L] &3(&eLocal&3) For nearby players||ttp:&e500 blocks");
+		json("&e[L] &3(&eLocal&3) For nearby players||ttp:&e" + Chat.getLocalRadius() + " blocks");
 		json("&3[M] &3(&eMinigames&3) For the Minigame world");
 		json("&5[C] &3(&5Creative&3) For the Creative and Build Contest worlds");
 		json("&6[S] &3(&6Skyblock&3) For the Skyblock world");
