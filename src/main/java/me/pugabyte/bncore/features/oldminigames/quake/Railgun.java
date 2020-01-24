@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.oldminigames.quake;
 
 import au.com.mineauz.minigames.Minigames;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -60,9 +60,9 @@ public class Railgun extends Gun {
 					EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(player.getPlayer(), target.getPlayer(), EntityDamageEvent.DamageCause.ENTITY_ATTACK, this.getDamage());
 					Bukkit.getServer().getPluginManager().callEvent(event);
 					if (this.shouldDamageWithConsole()) {
-						Utils.wait(2, () -> target.damage(this.getDamage()));
+						Tasks.wait(2, () -> target.damage(this.getDamage()));
 					} else {
-						Utils.wait(2, () -> target.damage(this.getDamage(), player.getPlayer()));
+						Tasks.wait(2, () -> target.damage(this.getDamage(), player.getPlayer()));
 					}
 				}
 			}

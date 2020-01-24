@@ -43,6 +43,6 @@ public class FireworkLauncher {
 		firework.setFireworkMeta(meta);
 
 		if (detonateAfter != null)
-			Utils.wait(detonateAfter, firework::detonate);
+			Tasks.wait(detonateAfter, firework::detonate);
 	}
 }

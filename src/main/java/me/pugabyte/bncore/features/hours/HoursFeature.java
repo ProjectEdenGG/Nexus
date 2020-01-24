@@ -8,6 +8,7 @@ import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Jingles;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ public class HoursFeature {
 	}
 
 	private void scheduler() {
-		Utils.repeatAsync(10, INTERVAL * 20, () -> {
+		Tasks.repeatAsync(10, INTERVAL * 20, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				try {
 					if (AFK.get(player).isAfk()) continue;
@@ -43,7 +44,7 @@ public class HoursFeature {
 
 					if (Rank.getHighestRank(player) == Rank.GUEST) {
 						if (hours.getTotal() > (60 * 60 * 24)) {
-							Utils.sync(() -> {
+							Tasks.sync(() -> {
 								PermissionsEx.getUser(player).removeGroup("Guest");
 								PermissionsEx.getUser(player).addGroup("Member");
 								SkriptFunctions.koda("Congrats on Member rank, " + player.getName(), "md");

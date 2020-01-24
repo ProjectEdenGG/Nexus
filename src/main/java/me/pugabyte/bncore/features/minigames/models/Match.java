@@ -21,6 +21,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.BNScoreboard;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -319,7 +320,7 @@ public class Match {
 		}
 
 		void stop() {
-			Utils.cancelTask(taskId);
+			Tasks.cancel(taskId);
 		}
 	}
 
@@ -359,23 +360,23 @@ public class Match {
 		}
 
 		public void cancel(int taskId) {
-			Utils.cancelTask(taskId);
+			Tasks.cancel(taskId);
 		}
 
 		public int wait(long delay, Runnable runnable) {
-			int taskId = Utils.wait(delay, runnable);
+			int taskId = Tasks.wait(delay, runnable);
 			taskIds.add(taskId);
 			return taskId;
 		}
 
 		public int repeat(long startDelay, long interval, Runnable runnable) {
-			int taskId = Utils.repeat(startDelay, interval, runnable);
+			int taskId = Tasks.repeat(startDelay, interval, runnable);
 			taskIds.add(taskId);
 			return taskId;
 		}
 
 		public int async(Runnable runnable) {
-			int taskId = Utils.async(runnable);
+			int taskId = Tasks.async(runnable);
 			taskIds.add(taskId);
 			return taskId;
 		}

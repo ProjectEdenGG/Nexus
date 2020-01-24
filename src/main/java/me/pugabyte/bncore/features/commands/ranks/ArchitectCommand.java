@@ -4,6 +4,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.utils.Utils;
 
 public class ArchitectCommand extends CustomCommand {
 
@@ -27,7 +28,7 @@ public class ArchitectCommand extends CustomCommand {
 		line();
 		send("&3All current &5Architects &3and the date they were promoted:");
 		Rank.ARCHITECT.getNerds().forEach(nerd -> {
-			send(Rank.ARCHITECT.getFormat() + nerd.getName() + " &7-&e " + nerd.getPromotionDate().format(RanksCommand.formatter));
+			send(Rank.ARCHITECT.getFormat() + nerd.getName() + " &7-&e " + Utils.shortDateFormat(nerd.getPromotionDate()));
 		});
 		line();
 		RanksCommand.ranksReturn(player());

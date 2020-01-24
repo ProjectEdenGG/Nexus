@@ -4,6 +4,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.utils.Utils;
 
 public class OperatorCommand extends CustomCommand {
 
@@ -29,7 +30,7 @@ public class OperatorCommand extends CustomCommand {
 		line();
 		send("&3All current &3&oOperators &3and the date they were promoted:");
 		Rank.OPERATOR.getNerds().forEach(nerd -> {
-			send(Rank.OPERATOR.getFormat() + nerd.getName() + " &7-&e " + nerd.getPromotionDate().format(RanksCommand.formatter));
+			send(Rank.OPERATOR.getFormat() + nerd.getName() + " &7-&e " + Utils.shortDateFormat(nerd.getPromotionDate()));
 		});
 		line();
 		RanksCommand.ranksReturn(player());

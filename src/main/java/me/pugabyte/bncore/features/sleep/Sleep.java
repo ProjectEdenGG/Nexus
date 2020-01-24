@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.sleep;
 
 import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -51,7 +52,7 @@ public class Sleep {
 
 		if (percentage >= 49) {
 			setHandling(true);
-			Utils.wait(20, () -> {
+			Tasks.wait(20, () -> {
 				players.forEach(player -> player.sendMessage(colorize(PREFIX + "The night was skipped because 50% of players slept!")));
 				world.setTime(0);
 				world.setStorm(false);

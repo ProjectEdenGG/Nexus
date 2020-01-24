@@ -165,7 +165,10 @@ public interface ICustomCommand {
 			if (required)
 				throw new MissingArgumentException();
 			else
-				return null;
+				if (isPrimitiveNumber(type))
+					return 0;
+				else
+					return null;
 
 		if (Boolean.class == type || Boolean.TYPE == type) {
 			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
@@ -182,6 +185,10 @@ public interface ICustomCommand {
 			throw new InvalidInputException("'" + value + "' is not a number");
 		}
 		return value;
+	}
+
+	default boolean isPrimitiveNumber(Class<?> type) {
+		return Arrays.asList(Integer.TYPE, Double.TYPE, Float.TYPE, Short.TYPE, Long.TYPE, Byte.TYPE).contains(type);
 	}
 
 	@SneakyThrows

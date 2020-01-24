@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.Utils.repeat;
+import static me.pugabyte.bncore.utils.Tasks.repeat;
 
 @Permission("leash.use")
 public class LeashCommand extends CustomCommand {
@@ -55,7 +56,7 @@ public class LeashCommand extends CustomCommand {
 	}
 
 	private void stopLeash(Player staff, String message) {
-		Utils.cancelTask(leashes.get(staff.getUniqueId()));
+		Tasks.cancel(leashes.get(staff.getUniqueId()));
 		leashes.remove(staff.getUniqueId());
 		send(staff, PREFIX + message);
 	}

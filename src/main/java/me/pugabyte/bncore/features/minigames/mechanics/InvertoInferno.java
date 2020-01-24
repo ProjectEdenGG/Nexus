@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -106,13 +107,13 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 		if (Utils.isWater(player.getTargetBlock(null, 10).getType())) {
 			projectile.remove();
-			Utils.wait(1, () -> giveWaterBottle(player));
+			Tasks.wait(1, () -> giveWaterBottle(player));
 			return;
 		}
 
 		playerInv.remove(playerInv.getItem(slot));
 
-		Utils.wait(10 * 20, () -> playerInv.setItem(slot, new ItemStack(Material.GLASS_BOTTLE)));
+		Tasks.wait(10 * 20, () -> playerInv.setItem(slot, new ItemStack(Material.GLASS_BOTTLE)));
 	}
 
 	// Radius Extinguish
@@ -317,7 +318,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		}
 
 		void stop(int taskId) {
-			Utils.cancelTask(taskId);
+			Tasks.cancel(taskId);
 		}
 	}
 

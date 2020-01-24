@@ -17,6 +17,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
@@ -119,7 +120,7 @@ public class JMinigamesCommand extends CustomCommand {
 	@Path("(save|write) [arena]")
 	@Permission("manage")
 	void save(@Arg Arena arena) {
-		Utils.async(() -> {
+		Tasks.async(() -> {
 			long startTime = System.currentTimeMillis();
 
 			if (arena == null)

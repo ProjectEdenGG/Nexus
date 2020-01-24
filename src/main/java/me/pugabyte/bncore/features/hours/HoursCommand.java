@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
@@ -71,7 +72,7 @@ public class HoursCommand extends CustomCommand {
 
 	@Path("top")
 	void top() {
-		Utils.async(() -> {
+		Tasks.async(() -> {
 			String type = null;
 			Integer page = null;
 			try {

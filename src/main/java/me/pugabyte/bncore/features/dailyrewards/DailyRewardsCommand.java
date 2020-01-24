@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
 import me.pugabyte.bncore.models.dailyrewards.DailyRewardsService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -104,7 +104,7 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path("top [page]")
 	void top(@Arg("1") int page) {
-		Utils.async(() -> {
+		Tasks.async(() -> {
 			List<DailyRewards> results = service.getPage(page);
 			if (results.size() == 0) {
 				send(PREFIX + "&cNo results on page " + page);

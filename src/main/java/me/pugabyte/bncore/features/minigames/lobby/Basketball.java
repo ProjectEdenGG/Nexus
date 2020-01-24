@@ -7,7 +7,7 @@ import de.tr7zw.itemnbtapi.NBTItem;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -104,7 +104,7 @@ public class Basketball implements Listener {
 
 		void start() {
 			WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
-			Utils.repeat(0, 20 * 20, () -> {
+			Tasks.repeat(0, 20 * 20, () -> {
 				cleanupBasketballs();
 
 				List<Player> players = Bukkit.getOnlinePlayers().stream()
@@ -146,7 +146,7 @@ public class Basketball implements Listener {
 		}
 
 		void start() {
-			taskId = Utils.repeat(0, 1, () -> {
+			taskId = Tasks.repeat(0, 1, () -> {
 				++iteration;
 
 				if (!wgUtils.isInRegion(entity.getLocation(), region)) {
@@ -178,7 +178,7 @@ public class Basketball implements Listener {
 		}
 
 		void stop() {
-			Utils.cancelTask(taskId);
+			Tasks.cancel(taskId);
 		}
 	}
 

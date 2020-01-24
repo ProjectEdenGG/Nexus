@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PreConfiguredException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -68,7 +69,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 
 				owner.setGameMode(GameMode.valueOf(args[1].toUpperCase()));
 
-				Utils.wait(3, () -> {
+				Tasks.wait(3, () -> {
 					try {
 						switch (args[2].toLowerCase()) {
 							case "inventory":
@@ -116,7 +117,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 				Player owner = match.get();
 				String code = args[1];
 
-				Utils.async(() -> {
+				Tasks.async(() -> {
 					try {
 						String data = getPaste(code);
 

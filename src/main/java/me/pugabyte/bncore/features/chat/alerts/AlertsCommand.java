@@ -6,7 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.alerts.Alerts;
 import me.pugabyte.bncore.models.alerts.AlertsService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -125,7 +125,7 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
 				+ (partialMatching ? "enabled" : "disabled"));
 		line();
-		Utils.wait(2, () -> Bukkit.dispatchCommand(player(), "alerts edit"));
+		Tasks.wait(2, () -> Bukkit.dispatchCommand(player(), "alerts edit"));
 	}
 
 	@Path("clear")

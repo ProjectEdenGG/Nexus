@@ -5,7 +5,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.persistence.BearNationDatabase;
 import me.pugabyte.bncore.framework.persistence.Persistence;
 import me.pugabyte.bncore.models.nerds.Nerd;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -37,7 +37,7 @@ public abstract class BaseService {
 	}
 
 	public <T> void save(T object) {
-		Utils.async(() -> database.upsert(object).execute());
+		Tasks.async(() -> database.upsert(object).execute());
 	}
 
 	protected String asList(List<String> list) {

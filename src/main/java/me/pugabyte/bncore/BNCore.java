@@ -92,9 +92,8 @@ public class BNCore extends JavaPlugin {
 	}
 
 	private void setupConfig() {
-		if (!BNCore.getInstance().getDataFolder().exists()) {
+		if (!BNCore.getInstance().getDataFolder().exists())
 			BNCore.getInstance().getDataFolder().mkdir();
-		}
 
 		FileConfiguration config = getInstance().getConfig();
 

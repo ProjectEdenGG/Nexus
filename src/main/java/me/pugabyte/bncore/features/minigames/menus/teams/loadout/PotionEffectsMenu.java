@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -33,7 +34,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	static void openAnvilMenu(Player player, Arena arena, Team team, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		openAnvilMenu(player, text, onComplete, p -> Utils.wait(1, () -> menus.getTeamMenus().openPotionEffectsMenu(player, arena, team)));
+		openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectsMenu(player, arena, team)));
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 			}));
 
 		ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode.||&7Then, click a potion effect with ||&7me to delete it.");
-		contents.set(0, 8, ClickableItem.from(deleteItem, e -> Utils.wait(2, () -> {
+		contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
 			if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 			} else if (Utils.isNullOrAir(player.getItemOnCursor())) {
@@ -88,7 +89,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 
 			contents.set(row, column, ClickableItem.from(item, e -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
-					Utils.wait(2, () -> {
+					Tasks.wait(2, () -> {
 						team.getLoadout().getEffects().remove(potionEffect);
 						arena.write();
 						player.setItemOnCursor(new ItemStack(Material.AIR));

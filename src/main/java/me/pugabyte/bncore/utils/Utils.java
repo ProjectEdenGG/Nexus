@@ -31,7 +31,9 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,34 +148,6 @@ public class Utils {
 
 	public static void callEvent(Event event) {
 		BNCore.getInstance().getServer().getPluginManager().callEvent(event);
-	}
-
-	public static int wait(long delay, Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay).getTaskId();
-	}
-
-	public static int repeat(long startDelay, long interval, Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
-	}
-
-	public static int sync(Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTask(BNCore.getInstance(), runnable).getTaskId();
-	}
-
-	public static int waitAsync(long delay, Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), () -> async(runnable), delay).getTaskId();
-	}
-
-	public static int repeatAsync(long startDelay, long interval, Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskTimerAsynchronously(BNCore.getInstance(), runnable, startDelay, interval).getTaskId();
-	}
-
-	public static int async(Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskAsynchronously(BNCore.getInstance(), runnable).getTaskId();
-	}
-
-	public static void cancelTask(int taskId) {
-		BNCore.getInstance().getServer().getScheduler().cancelTask(taskId);
 	}
 
 	public static boolean isVanished(Player player) {
@@ -399,6 +373,45 @@ public class Utils {
 			return result.trim();
 		else
 			return original + "s";
+	}
+
+	public static String longDateTimeFormat(LocalDateTime dateTime) {
+		return longDateFormat(dateTime.toLocalDate()) + " " + timeFormat(dateTime);
+	}
+
+	public static String longDateFormat(LocalDate date) {
+		return camelCase(date.getMonth().name()) + " " + getNumberSuffix(date.getDayOfMonth()) + ", " + date.getYear();
+	}
+
+	public static String shortDateFormat(LocalDate date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/YY");
+		return date.format(formatter);
+	}
+
+	public static String timeFormat(LocalDateTime time) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss a");
+		return time.format(formatter);
+	}
+
+	public static String getNumberSuffix(int number) {
+		String text = String.valueOf(number);
+		if (text.endsWith("1"))
+			if (text.endsWith("11"))
+				return number + "th";
+			else
+				return number + "st";
+		else if (text.endsWith("2"))
+			if (text.endsWith("12"))
+				return number + "th";
+			else
+				return number + "nd";
+		else if (text.endsWith("3"))
+			if (text.endsWith("13"))
+				return number + "th";
+			else
+				return number + "rd";
+		else
+			return number + "th";
 	}
 
 	public static void dump(Object object) {

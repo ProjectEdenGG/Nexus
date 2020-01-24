@@ -4,15 +4,17 @@ import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-public class JFAQCommand extends CustomCommand {
+@Redirect(from = "/chatinfo", to = "/faq chatinfo")
+public class FAQCommand extends CustomCommand {
 
-	public JFAQCommand(CommandEvent event) {
+	public FAQCommand(CommandEvent event) {
 		super(event);
 	}
 
-	String PLUSPREFIX = "&3[+] &e";
+	String PLUS = "&3[+] &e";
 
 	public String faqCom(String string) {
 		return "||cmd:/jfaq " + string;
@@ -86,13 +88,13 @@ public class JFAQCommand extends CustomCommand {
 	private void main() {
 		send("&6&lFrequently Asked Questions");
 		line();
-		json(PLUSPREFIX + "What can I do on this server?" + faqCom("whatcanido"));
-		json(PLUSPREFIX + "How can I start building?" + faqCom("startbuilding"));
-		json(PLUSPREFIX + "How can I rank up?" + faqCom("ranks"));
-		json(PLUSPREFIX + "How does the chat work?" + faqCom("chat"));
-		json(PLUSPREFIX + "Is mcMMO nerfed?" + faqCom("mcmmo"));
-		json(PLUSPREFIX + "How do I claim/protect my stuff?" + faqCom("protect"));
-		json(PLUSPREFIX + "How do I allow my friends to my stuff?" + faqCom("allow"));
+		json(PLUS + "What can I do on this server?" + faqCom("whatcanido"));
+		json(PLUS + "How can I start building?" + faqCom("startbuilding"));
+		json(PLUS + "How can I rank up?" + faqCom("ranks"));
+		json(PLUS + "How does the chat work?" + faqCom("chat"));
+		json(PLUS + "Is mcMMO nerfed?" + faqCom("mcmmo"));
+		json(PLUS + "How do I claim/protect my stuff?" + faqCom("protect"));
+		json(PLUS + "How do I allow my friends to my stuff?" + faqCom("allow"));
 		line();
 		json("&3Simply &e&lclick &3on the question you want answered.");
 	}
