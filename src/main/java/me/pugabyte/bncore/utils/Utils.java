@@ -309,6 +309,23 @@ public class Utils {
 		return target;
 	}
 
+	public static void lookAt(Player player, Location lookAt) {
+		Vector direction = player.getEyeLocation().toVector().subtract(lookAt.add(0.5, 0.5, 0.5).toVector()).normalize();
+		double x = direction.getX();
+		double y = direction.getY();
+		double z = direction.getZ();
+
+		// Now change the angle
+		Location changed = player.getLocation().clone();
+		changed.setYaw(180 - toDegree(Math.atan2(x, z)));
+		changed.setPitch(90 - toDegree(Math.acos(y)));
+		player.teleport(changed);
+	}
+
+	private static float toDegree(double angle) {
+		return (float) Math.toDegrees(angle);
+	}
+
 	public static void giveItem(Player player, ItemStack item) {
 		giveItems(player, Collections.singletonList(item));
 	}
