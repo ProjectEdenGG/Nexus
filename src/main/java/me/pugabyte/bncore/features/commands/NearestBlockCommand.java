@@ -32,13 +32,19 @@ public class NearestBlockCommand extends CustomCommand {
 			return;
 		}
 
+		if (radius > 100) {
+			error("Max radius is 100, limiting radius");
+			radius = 100;
+		}
+
+		Integer finalRadius = radius;
 		Utils.async(() -> {
 			Location location = player().getLocation();
-			double minDistance = radius;
+			double minDistance = finalRadius;
 			Block nearestBlock = null;
-			for (int x = -radius; x <= radius; x++) {
-				for (int z = -radius; z <= radius; z++) {
-					for (int y = -radius; y < radius; y++) {
+			for (int x = -finalRadius; x <= finalRadius; x++) {
+				for (int z = -finalRadius; z <= finalRadius; z++) {
+					for (int y = -finalRadius; y < finalRadius; y++) {
 						Block tempBlock = location.getBlock().getRelative(x, y, z);
 						if (tempBlock.getType().equals(material)) {
 							double tempDistance = location.distance(tempBlock.getLocation());
@@ -74,7 +80,7 @@ public class NearestBlockCommand extends CustomCommand {
 						});
 					});
 				} else
-					send(PREFIX + Utils.camelCase(material.toString()) + " not found");
+					error(Utils.camelCase(material.toString()) + " not found");
 			});
 		});
 	}
