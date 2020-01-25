@@ -1,33 +1,45 @@
-package me.pugabyte.bncore.features.afk;
+package me.pugabyte.bncore.models.afk;
 
+import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.afk.events.NotAFKEvent;
 import me.pugabyte.bncore.features.afk.events.NowAFKEvent;
+import me.pugabyte.bncore.framework.persistence.serializer.LocationSerializer;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @Data
+@NoArgsConstructor
+@Table(name = "afk")
 public class AFKPlayer {
-	private Player player;
+	private String uuid;
 	private boolean isAfk;
 	private String message;
 	private LocalDateTime time;
+	@DbSerializer(LocationSerializer.class)
 	private Location location;
 	private boolean forceAfk;
 
 	public AFKPlayer(Player player) {
+		this.uuid = player.getUniqueId().toString();
 		this.player = player;
 		this.time = LocalDateTime.now();
 		this.location = player.getLocation();
 	}
+
+	@Transient
+	private Player player;
 
 	public void setMessage(String message) {
 		this.message = ChatColor.stripColor(message);
@@ -56,7 +68,7 @@ public class AFKPlayer {
 		Utils.callEvent(new NowAFKEvent(this));
 
 		Bukkit.getOnlinePlayers().forEach(_player -> {
-			if (!Utils.canSee(_player, player)) return;
+			if (!Utils.canSee(_player, getPlayer())) return;
 
 			String broadcast = "&7* &e" + player.getName() + " &7is now AFK";
 			if (_player.getUniqueId() == player.getUniqueId()) {
