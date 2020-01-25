@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.framework.commands;
 
 import lombok.Getter;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
@@ -46,6 +47,7 @@ public class Commands {
 	public void registerAll() {
 		for (Class<? extends CustomCommand> command : commandSet)
 			register(new ObjenesisStd().newInstance(command));
+		BNCore.log("Registered " + commandSet.size() + " commands");
 	}
 
 	private void register(CustomCommand customCommand) {

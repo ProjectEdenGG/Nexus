@@ -53,6 +53,7 @@ public class Minigames {
 
 	public static void shutdown() {
 		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
+		ArenaManager.write();
 	}
 
 	public static List<Player> getPlayers() {
