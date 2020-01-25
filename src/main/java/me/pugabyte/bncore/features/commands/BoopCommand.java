@@ -8,6 +8,8 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+//TODO: cooldown
+
 public class BoopCommand extends CustomCommand {
 
 	public BoopCommand(CommandEvent event) {
