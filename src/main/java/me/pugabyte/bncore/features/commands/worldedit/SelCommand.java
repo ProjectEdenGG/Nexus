@@ -4,10 +4,12 @@ import lombok.SneakyThrows;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.DoubleSlash;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
 
 @DoubleSlash
+@Permission("worldedit.wand")
 public class SelCommand extends CustomCommand {
 
 	public SelCommand(CommandEvent event) {
@@ -17,7 +19,7 @@ public class SelCommand extends CustomCommand {
 	@SneakyThrows
 	@Path("[string]")
 	void sel(String string) {
-		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(player().getWorld());
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
 
 		if (string == null) {
 			redirectToWorldEdit();
@@ -25,7 +27,7 @@ public class SelCommand extends CustomCommand {
 			switch (string.toLowerCase()) {
 				case "tp":
 				case "teleport":
-					player().teleport(worldGuardUtils.toLocation(worldGuardUtils.getPlayerSelection(player()).getCenter()));
+					player().teleport(worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getCenter()));
 					break;
 				case "c":
 					runCommand("/sel cuboid");
