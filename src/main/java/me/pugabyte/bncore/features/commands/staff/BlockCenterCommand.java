@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -10,7 +10,7 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-@Permission("bncore.teleport")
+@Permission("group.staff")
 public class BlockCenterCommand extends CustomCommand {
 
 	public BlockCenterCommand(CommandEvent event) {
