@@ -137,11 +137,11 @@ public class ArenaManager {
 		} catch (Exception ex) {
 			BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
 		}
+		BNCore.log("Loaded " + arenas.size() + " arenas");
 	}
 
 	public static void read(String name) {
 		add((Arena) getConfig(name).get("arena"));
-		BNCore.log("Loaded arena " + name);
 	}
 
 	public static void write() {
@@ -154,7 +154,6 @@ public class ArenaManager {
 
 		try {
 			arenaConfig.save(getFile(arena.getName()));
-			BNCore.log("Saved arena " + arena.getName());
 			if (!arenas.contains(arena))
 				add(arena);
 		} catch (Exception ex) {
