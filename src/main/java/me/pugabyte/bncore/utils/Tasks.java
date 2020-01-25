@@ -2,7 +2,11 @@ package me.pugabyte.bncore.utils;
 
 import lombok.Builder;
 import me.pugabyte.bncore.BNCore;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.inventivetalent.glow.GlowAPI;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class Tasks {
@@ -97,5 +101,17 @@ public class Tasks {
 		void stop() {
 			cancel(taskId);
 		}
+	}
+
+	public static class GlowTask {
+
+		@Builder(buildMethodName = "start")
+		public GlowTask(int duration, Entity entity, GlowAPI.Color color, Runnable onComplete, List<Player> viewers) {
+			GlowAPI.setGlowing(entity, color, viewers);
+			Tasks.wait(duration, () -> GlowAPI.setGlowing(entity, false, viewers));
+			if (onComplete != null)
+				Tasks.wait(duration + 1, onComplete);
+		}
+
 	}
 }

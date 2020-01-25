@@ -13,8 +13,11 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
+
+import java.util.Collections;
 
 @Permission("group.staff")
 public class NearestBlockCommand extends CustomCommand {
@@ -69,17 +72,22 @@ public class NearestBlockCommand extends CustomCommand {
 					fallingBlock.setInvulnerable(true);
 					fallingBlock.setVelocity(new Vector(0, 0, 0));
 
-					GlowAPI.setGlowing(fallingBlock, GlowAPI.Color.RED, player());
 					Utils.lookAt(player(), block.getLocation());
-
 					send(PREFIX + "Loc: " + block.getLocation());
 
-					Tasks.wait(10 * 20, () -> {
-						fallingBlock.remove();
-						Bukkit.getOnlinePlayers().stream().filter(player -> player.getWorld() == blockWorld).forEach(player -> {
-							player.sendBlockChange(blockLoc, block.getType(), block.getData());
-						});
-					});
+					Tasks.GlowTask.builder()
+							.duration(10 * 20)
+							.entity(fallingBlock)
+							.color(GlowAPI.Color.RED)
+							.viewers(Collections.singletonList(player()))
+							.onComplete(() -> {
+								fallingBlock.remove();
+								for (Player player : Bukkit.getOnlinePlayers())
+									if (player.getWorld() == blockWorld)
+										player.sendBlockChange(blockLoc, block.getType(), block.getData());
+							})
+							.start();
+
 				} else
 					error(Utils.camelCase(material.toString()) + " not found");
 			});

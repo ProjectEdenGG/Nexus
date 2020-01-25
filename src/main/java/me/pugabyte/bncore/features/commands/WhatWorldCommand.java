@@ -4,8 +4,8 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.entity.Player;
-
 
 public class WhatWorldCommand extends CustomCommand {
 
@@ -15,6 +15,6 @@ public class WhatWorldCommand extends CustomCommand {
 
 	@Path("[player]")
 	void world(@Arg("self") Player player) {
-		send(player.getWorld().getName());
+		send("&3You are in world &e" + player.getWorld().getName() + " &3in group &e" + WorldGroup.get(player.getWorld()));
 	}
 }

@@ -66,8 +66,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		try {
 			matchData.getSheeps().forEach(Entity::remove);
 			matchData.getItems().forEach(Entity::remove);
-		} catch (Exception ignore) {
-		}
+		} catch (Exception ignore) {}
 		match.getMinigamers().forEach(Minigamer::toGamelobby);
 		super.onEnd(event);
 	}
@@ -76,6 +75,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		GrabAJumbuckMatchData matchData = match.getMatchData();
 		while (sheepAmount != 0) {
 			Sheep sheep = Minigames.getGameworld().spawn(getRandomSheepSpawnLocation(match), Sheep.class);
+			sheep.setInvulnerable(true);
 			DyeColor color = ColorType.values()[Utils.randomInt(1, ColorType.values().length - 1)].getDyeColor();
 			if (Utils.randomInt(0, 100) > 80) sheep.setColor(color);
 			matchData.getSheeps().add(sheep);

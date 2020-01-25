@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.models.nerds;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.BaseService;
 import me.pugabyte.bncore.utils.Utils;
 
@@ -15,7 +14,6 @@ public class NerdService extends BaseService {
 	}
 
 	public Nerd find(String partialName) {
-		BNCore.log("Searching for match for: " + partialName);
 		return database
 				.select("nerd.*")
 				.table("nerd")
