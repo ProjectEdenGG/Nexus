@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
