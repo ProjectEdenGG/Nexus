@@ -137,6 +137,11 @@ public abstract class CustomCommand implements ICustomCommand {
 			throw new NoPermissionException();
 	}
 
+	protected String argsString() {
+		if (args() == null || args().size() == 0) return "";
+		return String.join(" ", args());
+	}
+
 	protected List<String> args() {
 		return event.getArgs();
 	}
