@@ -54,24 +54,6 @@ public interface ICustomCommand {
 		}
 	}
 
-	default void checkCooldown(CustomCommand command) {
-		checkCooldown(command, command.getClass().getAnnotation(Cooldown.class), command.getName());
-		checkCooldown(command, command.getEvent().getMethod().getAnnotation(Cooldown.class), command.getName() + "#" + command.getEvent().getMethod().getName());
-	}
-
-	default void checkCooldown(CustomCommand command, Cooldown cooldown, String id) {
-		if (cooldown != null) {
-			boolean bypass = false;
-			if (cooldown.bypass().length() > 0)
-				if (command.getEvent().getSender() instanceof Player)
-					if (command.getEvent().getPlayer().hasPermission(cooldown.bypass()))
-						bypass = true;
-
-			if (!bypass)
-				new CooldownService().check(command.player(), "command:" + id, cooldown.value());
-		}
-	}
-
 	default List<String> tabComplete(TabEvent event) {
 		try {
 			getCommand(event);
@@ -258,6 +240,24 @@ public interface ICustomCommand {
 		}
 
 		return true;
+	}
+
+	default void checkCooldown(CustomCommand command) {
+		checkCooldown(command, command.getClass().getAnnotation(Cooldown.class), command.getName());
+		checkCooldown(command, command.getEvent().getMethod().getAnnotation(Cooldown.class), command.getName() + "#" + command.getEvent().getMethod().getName());
+	}
+
+	default void checkCooldown(CustomCommand command, Cooldown cooldown, String id) {
+		if (cooldown != null) {
+			boolean bypass = false;
+			if (cooldown.bypass().length() > 0)
+				if (command.getEvent().getSender() instanceof Player)
+					if (command.getEvent().getPlayer().hasPermission(cooldown.bypass()))
+						bypass = true;
+
+			if (!bypass)
+				new CooldownService().check(command.player(), "command:" + id, cooldown.value());
+		}
 	}
 
 }
