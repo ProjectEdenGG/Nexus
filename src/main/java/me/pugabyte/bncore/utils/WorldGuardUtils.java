@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.utils;
 
-import com.boydti.fawe.object.FawePlayer;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
@@ -8,6 +7,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -33,12 +33,13 @@ public class WorldGuardUtils {
 	private org.bukkit.World world;
 	private BukkitWorld bukkitWorld;
 	private World worldEditWorld;
-	RegionManager manager;
+	private RegionManager manager;
+	static WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 
 	public WorldGuardUtils(@NonNull org.bukkit.World world) {
 		this.world = world;
-		bukkitWorld = new BukkitWorld(world);
-		worldEditWorld = bukkitWorld;
+		this.bukkitWorld = new BukkitWorld(world);
+		this.worldEditWorld = bukkitWorld;
 		this.manager = WGBukkit.getRegionManager(world);
 	}
 
@@ -63,10 +64,6 @@ public class WorldGuardUtils {
 
 	public Region getRegion(Location min, Location max) {
 		return new CuboidRegion(worldEditWorld, toVector(min), toVector(max));
-	}
-
-	public Region getPlayerSelection(Player player) {
-		return FawePlayer.wrap(player).getSelection();
 	}
 
 	public Set<ProtectedRegion> getRegionsAt(Location location) {

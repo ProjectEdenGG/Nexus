@@ -1,30 +1,40 @@
 package me.pugabyte.bncore.utils;
 
+import com.boydti.fawe.config.BBC;
+import com.boydti.fawe.object.FawePlayer;
 import com.boydti.fawe.object.schematic.Schematic;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extent.clipboard.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.World;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 public class WorldEditUtils {
 	@NonNull
@@ -34,6 +44,8 @@ public class WorldEditUtils {
 	private WorldGuardUtils worldGuardUtils;
 	@Getter
 	private String schematicsDirectory = "plugins/WorldEdit/schematics/";
+	@Getter
+	static WorldEditPlugin plugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
 
 	public WorldEditUtils(org.bukkit.World world) {
 		this.world = world;
@@ -52,6 +64,85 @@ public class WorldEditUtils {
 
 	public Vector toVector(Location location) {
 		return new Vector(location.getX(), location.getY(), location.getZ());
+	}
+
+	public Location toLocation(Vector vector) {
+		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+	}
+
+	public FawePlayer<Object> getPlayer(Player player) {
+		return FawePlayer.wrap(player);
+	}
+
+	public Region getPlayerSelection(Player player) {
+		return getPlayer(player).getSelection();
+	}
+
+	public enum SelectionChangeDirectionType {
+		HORIZONTAL(Direction::isCardinal),
+		VERTICAL(Direction::isUpright),
+		ALL(direction -> direction.isCardinal() || direction.isUpright());
+
+		@Getter
+		private Function<Direction, Boolean> filter;
+
+		SelectionChangeDirectionType(Function<Direction, Boolean> filter) {
+			this.filter = filter;
+		}
+	}
+
+	public enum SelectionChangeType {
+		EXPAND,
+		CONTRACT
+	}
+
+	@SneakyThrows
+	public void changeSelection(Player player, SelectionChangeType changeType, SelectionChangeDirectionType directionType, int amount) {
+		if (amount <= 0) return;
+		LocalSession session = plugin.getSession(player);
+		Region region = session.getSelection(worldEditWorld);
+		int oldSize = region.getArea();
+		Vector[] directions = getDirections(directionType, amount);
+
+		if (changeType == SelectionChangeType.EXPAND)
+			region.expand(directions);
+		else if (changeType == SelectionChangeType.CONTRACT)
+			region.contract(directions);
+
+		session.getRegionSelector(worldEditWorld).learnChanges();
+		int newSize = region.getArea();
+		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
+		session.getRegionSelector(worldEditWorld).explainRegionAdjust(worldEditPlayer, session);
+		BBC.SELECTION_EXPAND.send(worldEditPlayer, (newSize - oldSize));
+	}
+
+	public void setSelection(Player player, Location location) {
+		setSelection(player, location, location);
+	}
+
+	public void setSelection(Player player, Vector vector) {
+		setSelection(player, vector);
+	}
+
+	public void setSelection(Player player, Location min, Location max) {
+		setSelection(player, toVector(min), toVector(min));
+	}
+
+	public void setSelection(Player player, Vector min, Vector max) {
+		LocalSession session = plugin.getSession(player);
+		Region region = new CuboidRegion(min, max);
+		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
+		session.getRegionSelector(worldEditWorld).explainPrimarySelection(worldEditPlayer, session, region.getMinimumPoint());
+		session.getRegionSelector(worldEditWorld).explainSecondarySelection(worldEditPlayer, session, region.getMaximumPoint());
+	}
+
+	@NotNull
+	private Vector[] getDirections(SelectionChangeDirectionType type, int number) {
+		return Arrays.stream(Direction.values())
+				.filter(direction -> type.getFilter().apply(direction))
+				.map(Direction::toVector)
+				.map(vector -> vector.multiply(number))
+				.toArray(Vector[]::new);
 	}
 
 	public BaseBlock toBaseBlock(Material material) {
