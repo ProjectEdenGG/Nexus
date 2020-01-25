@@ -47,7 +47,7 @@ public class BNCoreCommand extends CustomCommand {
 	void setting(@Arg String type, @Arg String value) {
 		if (!isNullOrEmpty(value))
 			new SettingService().save(new Setting(player(), type, value));
-		send("Setting: " + new SettingService().get(player().getUniqueId().toString(), type));
+		send("Setting: " + new SettingService().get(player(), type));
 	}
 
 	@ConverterFor(Nerd.class)
