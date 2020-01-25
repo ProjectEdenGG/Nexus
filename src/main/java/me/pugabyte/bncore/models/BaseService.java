@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 public abstract class BaseService {
-	protected Database database = Persistence.getConnection(BearNationDatabase.BEARNATION);
+	protected static Database database = Persistence.getConnection(BearNationDatabase.BEARNATION);
 
 	public <T> T get(String uuid) {
 		return null;

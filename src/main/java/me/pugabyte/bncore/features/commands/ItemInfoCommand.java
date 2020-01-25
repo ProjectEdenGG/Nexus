@@ -56,7 +56,7 @@ public class ItemInfoCommand extends CustomCommand {
 			int length = give.length();
 			if (length > 12400) {
 				send("String very big, length: " + length);
-				json("&e&l[Click to Try]||sgt:/iteminfo override||ttp:&cCaution: Could crash you");
+				json("&e&l[Click to Try]||sgt:/iteminfo override||ttp:&cCaution: May crash you");
 				return;
 			}
 		}
