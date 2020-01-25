@@ -14,7 +14,6 @@ public class Setting {
 	private String id;
 	@NonNull
 	private String type;
-	@NonNull
 	private String value;
 
 	public Setting(Player player, String type, String value) {
