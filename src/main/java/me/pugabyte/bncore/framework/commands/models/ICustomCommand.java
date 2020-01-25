@@ -41,6 +41,7 @@ public interface ICustomCommand {
 		try {
 			CustomCommand command = getCommand(event);
 			Method method = getMethod(event);
+			event.setUsage(method);
 			if (!hasPermission(event.getSender(), method))
 				throw new NoPermissionException();
 			command.invoke(method, event);
@@ -124,7 +125,7 @@ public interface ICustomCommand {
 			try {
 				objects[i - 1] = convert(value, parameter.getType(), event.getCommand(), required);
 			} catch (MissingArgumentException ex) {
-				throw new InvalidInputException("Correct usage: /" + getAliases().get(0) + " " + pathValue);
+				event.getCommand().showUsage();
 			}
 			++i;
 		}
@@ -152,7 +153,9 @@ public interface ICustomCommand {
 				}
 			}
 		} catch (InvocationTargetException ex) {
-			if (!required)
+			if (required)
+				throw new MissingArgumentException();
+			else
 				if (conversionExceptions.contains(ex.getCause().getClass()))
 					return null;
 
@@ -201,7 +204,7 @@ public interface ICustomCommand {
 	@SneakyThrows
 	default CustomCommand getNewCommand(CommandEvent originalEvent, Class<?> clazz) {
 		CustomCommand customCommand = new ObjenesisStd().newInstance((Class<? extends CustomCommand>) clazz);
-		CommandEvent newEvent = new CommandEvent(originalEvent.getSender(), customCommand, new ArrayList<>());
+		CommandEvent newEvent = new CommandEvent(originalEvent.getSender(), customCommand, customCommand.getName(), new ArrayList<>());
 		return getCommand(newEvent);
 	}
 

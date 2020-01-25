@@ -43,16 +43,24 @@ public abstract class CustomCommand implements ICustomCommand {
 		return PREFIX;
 	}
 
+	public String getAliasUsed() {
+		return event.getAliasUsed();
+	}
+
 	protected void send(Player player, String message) {
 		player.sendMessage(Utils.colorize(message));
 	}
 
-	protected void send(Player player, String message, int delay) {
+	protected void send(Player player, int delay, String message) {
 		Tasks.wait(delay, () -> player.sendMessage(Utils.colorize(message)));
 	}
 
 	protected void send(String message) {
 		event.reply(message);
+	}
+
+	protected void send(int delay, String message) {
+		Tasks.wait(delay, () -> event.reply(message));
 	}
 
 	protected void line() {
@@ -71,6 +79,10 @@ public abstract class CustomCommand implements ICustomCommand {
 
 	public void error(String error) {
 		throw new InvalidInputException(error);
+	}
+
+	public void showUsage() {
+		throw new InvalidInputException("Correct usage: /" + event.getAliasUsed() + " " + event.getUsage());
 	}
 
 	protected CommandSender sender() {
@@ -139,6 +151,16 @@ public abstract class CustomCommand implements ICustomCommand {
 		return result;
 	}
 
+	protected boolean isIntArg(int i) {
+		if (event.getArgs().size() < i) return false;
+		try {
+			Integer.parseInt(event.getArgs().get(i - 1));
+			return true;
+		} catch (NumberFormatException ex) {
+			return false;
+		}
+	}
+
 	protected Integer intArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		try {
@@ -180,12 +202,16 @@ public abstract class CustomCommand implements ICustomCommand {
 		OfflinePlayer offlinePlayer = convertToOfflinePlayer(value);
 		if (!offlinePlayer.isOnline())
 			throw new PlayerNotOnlineException(offlinePlayer);
+		if (!Utils.canSee(player(), offlinePlayer.getPlayer()))
+			throw new PlayerNotOnlineException(offlinePlayer);
+
 		return offlinePlayer.getPlayer();
 	}
 
 	@TabCompleterFor({Player.class, OfflinePlayer.class})
 	public List<String> tabCompletePlayer(String filter) {
 		return Bukkit.getOnlinePlayers().stream()
+				.filter(player -> Utils.canSee(player(), player))
 				.filter(player -> player.getName().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(Player::getName)
 				.collect(Collectors.toList());
