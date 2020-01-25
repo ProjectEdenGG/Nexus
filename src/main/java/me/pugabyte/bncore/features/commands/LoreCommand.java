@@ -28,7 +28,7 @@ public class LoreCommand extends CustomCommand {
 	}
 
 	@Path("set <line> <text>")
-	void setLore(@Arg int line, @Arg String text) {
+	void setLore(int line, String text) {
 		ItemStack tool = getTool(player());
 		ItemMeta meta = tool.getItemMeta();
 		List<String> lore = meta.getLore();
@@ -44,7 +44,7 @@ public class LoreCommand extends CustomCommand {
 	}
 
 	@Path("add <text>")
-	void addLore(@Arg String text) {
+	void addLore(String text) {
 		ItemStack tool = getTool(player());
 		ItemMeta meta = tool.getItemMeta();
 		List<String> lore = meta.getLore();
@@ -57,7 +57,7 @@ public class LoreCommand extends CustomCommand {
 	}
 
 	@Path("remove <line>")
-	void removeLore(@Arg int line) {
+	void removeLore(int line) {
 		ItemStack tool = getTool(player());
 		ItemMeta meta = tool.getItemMeta();
 		List<String> lore = meta.getLore();

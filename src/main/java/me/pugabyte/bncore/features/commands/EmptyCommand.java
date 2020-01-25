@@ -31,7 +31,7 @@ public class EmptyCommand extends CustomCommand {
 	}
 
 	@Path("[string]")
-	void emptyType(@Arg String type) {
+	void emptyType(String type) {
 		PlayerInventory playerInv = player().getInventory();
 		ItemStack bucket = new ItemStack(Material.BUCKET);
 

@@ -30,7 +30,7 @@ public class PermHelperCommand extends CustomCommand {
 	}
 
 	@Path("(npcs|homes|plots|vaults) (add|remove) <player> <amount>")
-	void modify(@Arg OfflinePlayer player, @Arg int amount) {
+	void modify(OfflinePlayer player, int amount) {
 		if (arg(2).equals("remove")) amount = -amount;
 		modify(arg(1).toLowerCase(), PermissionsEx.getUser(player.getName()), amount);
 	}

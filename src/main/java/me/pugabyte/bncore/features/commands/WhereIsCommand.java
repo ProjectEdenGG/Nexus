@@ -22,7 +22,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	void whereIs(@Arg Player playerArg) {
+	void whereIs(Player playerArg) {
 		Location playerArgLoc = playerArg.getLocation().clone();
 
 		if (!player().getWorld().equals(playerArg.getWorld()))

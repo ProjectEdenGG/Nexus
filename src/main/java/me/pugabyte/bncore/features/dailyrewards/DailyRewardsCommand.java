@@ -79,7 +79,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	// TODO: Conditional default values? e.g. /speed [type = isFlying ? fly : walk] <int>
 	@Path("unclaim <player> <day>")
 	@Permission("modify")
-	void unclaim(@Arg OfflinePlayer player, @Arg int day) {
+	void unclaim(OfflinePlayer player, int day) {
 		dailyRewards = service.get(player);
 		dailyRewards.unclaim(day);
 		service.save(dailyRewards);
@@ -88,7 +88,7 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path("set <player> <day>")
 	@Permission("modify")
-	void setDay(@Arg OfflinePlayer player, @Arg int day) {
+	void setDay(OfflinePlayer player, int day) {
 		dailyRewards = service.get(player);
 		dailyRewards.setStreak(day);
 		service.save(dailyRewards);

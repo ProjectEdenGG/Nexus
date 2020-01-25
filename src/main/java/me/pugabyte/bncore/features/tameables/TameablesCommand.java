@@ -32,7 +32,7 @@ public class TameablesCommand extends CustomCommand {
 	}
 
 	@Path("transfer <player>")
-	void transfer(@Arg OfflinePlayer transfer) {
+	void transfer(OfflinePlayer transfer) {
 		if (player().getUniqueId().equals(transfer.getUniqueId()))
 			error("You can't transfer an animal to yourself");
 		Tameables.addPendingAction(player(), new TameablesAction(TameablesActionType.TRANSFER, transfer));

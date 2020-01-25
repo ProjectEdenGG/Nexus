@@ -37,14 +37,14 @@ public class PodiumsCommand extends CustomCommand {
 	}
 
 	@Path("<position> <player> <title...>")
-	void update(@Arg Position position, @Arg OfflinePlayer player, @Arg String title) {
+	void update(Position position, OfflinePlayer player, String title) {
 		CitizensUtils.updateNameAndSkin(getNpc(position), "&l" + player.getName());
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "hd setline podium_" + position + " 1 " + title);
 		send(PREFIX + "Podium updated");
 	}
 
 	@Path("(getId|getIds) [position]")
-	void getId(@Arg Position position) {
+	void getId(Position position) {
 		if (position == null) {
 			send(PREFIX + "Podium IDs:");
 			Arrays.asList(Position.values()).forEach(_position -> send("&3" + Utils.camelCase(_position.name()) +
@@ -54,18 +54,18 @@ public class PodiumsCommand extends CustomCommand {
 	}
 
 	@Path("setId <position> <id>")
-	void setId(@Arg Position position, @Arg int id) {
+	void setId(Position position, int id) {
 		setPodiumId(position, id);
 		send(PREFIX + Utils.camelCase(position.name()) + " podium ID updated to " + id);
 	}
 
 	@Path("tp <position>")
-	void tp(@Arg Position position) {
+	void tp(Position position) {
 		player().teleport(getNpc(position).getEntity());
 	}
 
 	@Path("(s|summon) <position>")
-	void tphere(@Arg Position position) {
+	void tphere(Position position) {
 		runCommand("blockcenter");
 		getNpc(position).getEntity().teleport(player().getLocation());
 	}

@@ -42,13 +42,13 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Path("list [filter]")
 	@Permission("use")
-	void list(@Arg String filter) {
+	void list(String filter) {
 		send(PREFIX + String.join(", ", ArenaManager.getNames(filter)));
 	}
 
 	@Path("join <arena>")
 	@Permission("use")
-	void join(@Arg Arena arena) {
+	void join(Arena arena) {
 		minigamer.join(arena);
 	}
 
@@ -72,7 +72,7 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Path("create <name>")
 	@Permission("manage")
-	void create(@Arg String name) {
+	void create(String name) {
 		try {
 			ArenaManager.get(name);
 			send(PREFIX + "Arena already exists.");
@@ -88,19 +88,19 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Path("edit <arena>")
 	@Permission("manage")
-	void edit(@Arg Arena arena) {
+	void edit(Arena arena) {
 		Minigames.getMenus().openArenaMenu(player(), arena);
 	}
 
 	@Path("(teleport|tp) <arena>")
 	@Permission("manage")
-	void teleport(@Arg Arena arena) {
+	void teleport(Arena arena) {
 		arena.teleport(minigamer);
 	}
 
 	@Path("(delete|remove) <arena>")
 	@Permission("manage")
-	void remove(@Arg Arena arena) {
+	void remove(Arena arena) {
 		Minigames.getMenus().openDeleteMenu(player(), arena);
 	}
 
@@ -119,7 +119,7 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Path("(save|write) [arena]")
 	@Permission("manage")
-	void save(@Arg Arena arena) {
+	void save(Arena arena) {
 		Tasks.async(() -> {
 			long startTime = System.currentTimeMillis();
 

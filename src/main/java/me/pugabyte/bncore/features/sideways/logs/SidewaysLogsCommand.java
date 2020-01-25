@@ -21,7 +21,7 @@ public class SidewaysLogsCommand extends CustomCommand {
 	}
 
 	@Path("<true|false>")
-	void toggle(@Arg boolean normal) {
+	void toggle(boolean normal) {
 		if (normal) {
 			enabledPlayers.remove(player());
 			send(PREFIX + "Now placing logs normally");

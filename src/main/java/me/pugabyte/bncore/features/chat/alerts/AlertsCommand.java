@@ -92,7 +92,7 @@ public class AlertsCommand extends CustomCommand {
 	}
 
 	@Path("add <highlight...>")
-	void add(@Arg String highlight) {
+	void add(String highlight) {
 		if (highlight.equalsIgnoreCase(player().getName()))
 			error("Your name is automatically included in your alerts list");
 
@@ -104,7 +104,7 @@ public class AlertsCommand extends CustomCommand {
 	}
 
 	@Path("delete <highlight...>")
-	void delete(@Arg String highlight) {
+	void delete(String highlight) {
 		if (!alerts.delete(highlight))
 			error("You did not have &e" + highlight + " &3in your alerts list");
 
@@ -113,7 +113,7 @@ public class AlertsCommand extends CustomCommand {
 	}
 
 	@Path("(partialmatch|partialmatching) <truse|false> [highlight...]")
-	void partialMatching(@Arg boolean partialMatching, @Arg String highlight) {
+	void partialMatching(boolean partialMatching, String highlight) {
 		Optional<Alerts.Highlight> match = alerts.get(highlight);
 		if (!match.isPresent())
 			error("I could not find that alert in your alerts list");

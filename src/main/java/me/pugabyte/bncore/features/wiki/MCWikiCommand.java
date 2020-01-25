@@ -20,7 +20,7 @@ public class MCWikiCommand extends CustomCommand {
 	}
 
 	@Path("search <query...>")
-	void search(@Arg String search) {
+	void search(String search) {
 		Wiki.search(sender(), search.split(" "), "MCWiki");
 	}
 }

@@ -18,7 +18,7 @@ public class HealthCommand extends CustomCommand {
 	}
 
 	@Path("[player] [number]")
-	void health(@Arg("self") Player player, @Arg Double health) {
+	void health(@Arg("self") Player player, Double health) {
 		if (health == null)
 			send(PREFIX + player.getName() + "'s health is " + player.getHealth());
 		else {
@@ -29,7 +29,7 @@ public class HealthCommand extends CustomCommand {
 	}
 
 	@Path("target [number]")
-	void target(@Arg Double health) {
+	void target(Double health) {
 		LivingEntity targetEntity = Utils.getTargetEntity(player());
 		if (health == null)
 			send(PREFIX + ChatColor.stripColor(targetEntity.getName()) + "'s health is " + targetEntity.getHealth());

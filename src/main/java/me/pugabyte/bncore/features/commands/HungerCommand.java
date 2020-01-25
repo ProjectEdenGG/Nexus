@@ -16,7 +16,7 @@ public class HungerCommand extends CustomCommand {
 	}
 
 	@Path("[player] [number]")
-	void hunger(@Arg("self") Player player, @Arg Integer hunger) {
+	void hunger(@Arg("self") Player player, Integer hunger) {
 		if (hunger == null)
 			send(PREFIX + ChatColor.stripColor(player.getName()) + "'s hunger is " + player.getFoodLevel());
 		else {
@@ -27,7 +27,7 @@ public class HungerCommand extends CustomCommand {
 	}
 
 	@Path("target [number]")
-	void target(@Arg Integer hunger) {
+	void target(Integer hunger) {
 		Entity entity = Utils.getTargetEntity(player());
 		if (!(entity instanceof Player))
 			error("Only players have hunger");

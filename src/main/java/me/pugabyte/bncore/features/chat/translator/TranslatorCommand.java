@@ -24,7 +24,7 @@ public class TranslatorCommand extends CustomCommand {
 
 	@Path("stop [player]")
 	@Permission("use")
-	void remove(@Arg Player player) {
+	void remove(Player player) {
 		if (player != null) {
 			ArrayList<UUID> translators = translator.map.get(player.getUniqueId());
 			if (translators != null && translators.contains(player().getUniqueId())) {
@@ -44,7 +44,7 @@ public class TranslatorCommand extends CustomCommand {
 
 	@Path("<player>")
 	@Permission("use")
-	void translate(@Arg Player player) {
+	void translate(Player player) {
 		if (player() == player)
 			throw new InvalidInputException("You cannot translate yourself");
 
