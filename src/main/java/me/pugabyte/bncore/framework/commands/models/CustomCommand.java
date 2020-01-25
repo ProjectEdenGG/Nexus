@@ -81,6 +81,10 @@ public abstract class CustomCommand implements ICustomCommand {
 		throw new InvalidInputException(error);
 	}
 
+	public void error(Player player, String error) {
+		player.sendMessage(Utils.colorize("&c" + error));
+	}
+
 	public void showUsage() {
 		throw new InvalidInputException(event.getUsageMessage());
 	}
