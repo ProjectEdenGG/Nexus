@@ -13,7 +13,7 @@ public class QuickActionCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	void quickAction(@Arg Player player) {
+	void quickAction(Player player) {
 		line();
 		String playerName = player.getName();
 		send("&8&l[&eQuickAction&8&l] &6&l" + playerName);

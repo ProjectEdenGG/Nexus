@@ -16,7 +16,7 @@ public class AFKCommand extends CustomCommand {
 	}
 
 	@Path("[autoreply...]")
-	void afk(@Arg String autoreply) {
+	void afk(String autoreply) {
 		AFKPlayer player = AFK.get(player());
 
 		if (player.isAfk())

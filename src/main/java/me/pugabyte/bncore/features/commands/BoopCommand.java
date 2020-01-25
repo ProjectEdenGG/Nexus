@@ -23,7 +23,7 @@ public class BoopCommand extends CustomCommand {
 
 	@Path("<player> [flag]")
 	@Cooldown(value = 5 * 20, bypass = "group.admin")
-	void boop(@Arg Player playerArg, @Arg String flag) {
+	void boop(Player playerArg, String flag) {
 		boolean anon = false;
 		if (flag != null)
 			if (flag.equalsIgnoreCase("-s"))

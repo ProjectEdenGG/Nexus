@@ -26,7 +26,7 @@ public class LeashCommand extends CustomCommand {
 	}
 
 	@Path("<target>")
-	void leash(@Arg Player target) {
+	void leash(Player target) {
 		if (leashes.containsKey(player().getUniqueId()))
 			error("You are already leashed to another player");
 
@@ -50,7 +50,7 @@ public class LeashCommand extends CustomCommand {
 	}
 
 	@Path("setVelocity <velocity>")
-	void setVelocity(@Arg double velocity) {
+	void setVelocity(double velocity) {
 		BNCore.leash.setVelocity(velocity);
 		send(PREFIX + "&3Velocity multiplier set to &e" + velocity);
 	}

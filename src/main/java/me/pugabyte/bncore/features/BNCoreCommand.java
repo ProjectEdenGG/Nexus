@@ -44,7 +44,7 @@ public class BNCoreCommand extends CustomCommand {
 
 	@SneakyThrows
 	@Path("setting <type> [value]")
-	void setting(@Arg String type, @Arg String value) {
+	void setting(String type, String value) {
 		if (!isNullOrEmpty(value))
 			new SettingService().save(new Setting(player(), type, value));
 		send("Setting: " + new SettingService().get(player(), type));
@@ -86,7 +86,7 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("getColor <color>")
-	void getColor(@Arg ColorType colorType) {
+	void getColor(ColorType colorType) {
 
 		Location location = player().getLocation().add(2, 0, 0);
 

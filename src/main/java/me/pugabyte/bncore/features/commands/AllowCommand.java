@@ -13,7 +13,7 @@ public class AllowCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	void allow(@Arg Player playerArg) {
+	void allow(Player playerArg) {
 		String playerArgName = "<player>";
 		if (playerArg != null)
 			playerArgName = playerArg.getName();
