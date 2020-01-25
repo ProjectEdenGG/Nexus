@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.afk.events;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.bncore.features.afk.AFKPlayer;
+import me.pugabyte.bncore.models.afk.AFKPlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
