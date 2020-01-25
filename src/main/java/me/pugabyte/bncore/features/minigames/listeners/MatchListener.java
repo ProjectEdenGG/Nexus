@@ -3,9 +3,11 @@ package me.pugabyte.bncore.features.minigames.listeners;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
+import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
@@ -17,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -49,8 +52,6 @@ public class MatchListener implements Listener {
 	public void onMatchQuit(MatchQuitEvent event) {
 		MatchManager.janitor();
 	}
-
-
 
 	// TODO: Break and place events
 
@@ -168,5 +169,20 @@ public class MatchListener implements Listener {
 		Arena arena = minigamer.getMatch().getArena();
 		if (arena.ownsRegion(event.getRegion().getId(), "kill"))
 			mechanic.kill(minigamer);
+	}
+
+	@EventHandler
+	public void onItemPickup(EntityPickupItemEvent event) {
+		if (!event.getEntity().getWorld().equals(Minigames.getGameworld())) return;
+		// TODO: Entity pickups?
+		if (!(event.getEntity() instanceof Player)) return;
+
+		Arena arena = ArenaManager.getFromLocation(event.getItem().getLocation());
+		if (arena == null) return;
+		Match match = MatchManager.get(arena);
+		Player player = (Player) event.getEntity();
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isIn(match))
+			event.setCancelled(true);
 	}
 }

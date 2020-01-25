@@ -73,6 +73,18 @@ public class Minigamer {
 		return match != null;
 	}
 
+	public boolean isIn(Match match) {
+		return isIn(match.getArena().getMechanic()) && match.equals(this.match);
+	}
+
+	public boolean isInLobby(Match match) {
+		return isInLobby(match.getArena().getMechanic()) && match.equals(this.match);
+	}
+
+	public boolean isPlaying(Match match) {
+		return isPlaying(match.getArena().getMechanic()) && match.equals(this.match);
+	}
+
 	public boolean isIn(Mechanic mechanic) {
 		return isIn(mechanic.getClass());
 	}

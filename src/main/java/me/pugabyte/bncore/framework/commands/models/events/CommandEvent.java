@@ -60,13 +60,17 @@ public class CommandEvent extends Event implements Cancellable {
 			this.usage = annotation.value();
 	}
 
+	public String getUsageMessage() {
+		return "Correct usage: /" + aliasUsed + " " + usage;
+	}
+
 	public void handleException(Exception ex) {
 		if (ex.getCause() != null && ex.getCause() instanceof BNException)
 			reply(command.getPrefix() + "&c" + ex.getCause().getMessage());
 		else if (ex instanceof BNException)
 			reply(command.getPrefix() + "&c" + ex.getMessage());
 		else if (ex instanceof IllegalArgumentException && ex.getMessage() != null && ex.getMessage().contains("type mismatch"))
-			reply(command.getPrefix() + "&cIncorrect usage");
+			reply(command.getPrefix() + "&c" + getUsageMessage());
 		else {
 			reply("&cAn internal error occurred while attempting to execute this command");
 

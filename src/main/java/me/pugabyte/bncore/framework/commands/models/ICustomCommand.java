@@ -158,12 +158,12 @@ public interface ICustomCommand {
 			}
 		} catch (InvocationTargetException ex) {
 			if (required)
-				throw new MissingArgumentException();
+				if (!Strings.isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
+					throw ex;
+				else
+					throw new MissingArgumentException();
 			else
-				if (conversionExceptions.contains(ex.getCause().getClass()))
-					return null;
-
-			throw ex;
+				return null;
 		}
 
 		if (Strings.isNullOrEmpty(value))

@@ -82,7 +82,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	public void showUsage() {
-		throw new InvalidInputException("Correct usage: /" + event.getAliasUsed() + " " + event.getUsage());
+		throw new InvalidInputException(event.getUsageMessage());
 	}
 
 	protected CommandSender sender() {
@@ -135,6 +135,10 @@ public abstract class CustomCommand implements ICustomCommand {
 	protected void checkPermission(String permission) {
 		if (!sender().hasPermission(permission))
 			throw new NoPermissionException();
+	}
+
+	protected List<String> args() {
+		return event.getArgs();
 	}
 
 	protected String arg(int i) {
