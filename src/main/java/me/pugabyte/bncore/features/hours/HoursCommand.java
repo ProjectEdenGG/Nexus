@@ -6,7 +6,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
@@ -52,13 +51,13 @@ public class HoursCommand extends CustomCommand {
 		send("Cleaned up " + service.cleanup() + " records");
 	}
 
-	@Path("endofday")
+	@Path("endOfDay")
 	void endOfDay() {
 		console();
 		service.endOfDay();
 	}
 
-	@Path("endofweek")
+	@Path("endOfWeek")
 	void endOfWeek() {
 		console();
 		service.endOfWeek();
@@ -73,16 +72,8 @@ public class HoursCommand extends CustomCommand {
 	@Path("top")
 	void top() {
 		Tasks.async(() -> {
-			String type = null;
-			Integer page = null;
-			try {
-				page = intArg(2);
-			} catch (InvalidInputException ex) {
-				type = arg(2);
-				page = intArg(3);
-			}
-			if (type == null) type = "total";
-			if (page == null) page = 1;
+			String type = isIntArg(2) ? "total" : arg(2);
+			int page = isIntArg(2) ? intArg(2) : isIntArg(3) ? intArg(3) : 1;
 
 			try {
 				final HoursService.HoursType hoursType = service.getType(type);

@@ -22,10 +22,8 @@ public class EmptyCommand extends CustomCommand {
 		ItemStack bucket = new ItemStack(Material.BUCKET);
 
 		ItemStack heldItem = playerInv.getItem(playerInv.getHeldItemSlot());
-		if (Utils.isNullOrAir(heldItem) || !isBucket(heldItem)) {
+		if (Utils.isNullOrAir(heldItem) || !isBucket(heldItem))
 			error("You must be holding a bucket type");
-			return;
-		}
 
 		if (heldItem == bucket) error("Nothing to empty");
 

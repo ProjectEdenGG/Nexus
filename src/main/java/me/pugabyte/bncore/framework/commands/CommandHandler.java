@@ -26,8 +26,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		CommandEvent event = new CommandEvent(sender, customCommand, Arrays.asList(args));
+	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
+		CommandEvent event = new CommandEvent(sender, customCommand, alias, Arrays.asList(args));
 		call(event);
 		if (!event.isCancelled())
 			customCommand.execute(event);
@@ -36,8 +36,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		TabEvent event = new TabEvent(sender, customCommand, new ArrayList<>(Arrays.asList(args)));
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
+		TabEvent event = new TabEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
 
 		// Remove any empty args except the last one
 		boolean lastIndexIsEmpty = Strings.isNullOrEmpty(event.getArgs().get(event.getArgs().size() - 1));

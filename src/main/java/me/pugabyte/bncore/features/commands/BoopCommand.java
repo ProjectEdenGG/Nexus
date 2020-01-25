@@ -25,8 +25,11 @@ public class BoopCommand extends CustomCommand {
 	@Path("<player> [flag]")
 	void boop(@Arg Player playerArg, @Arg String flag) {
 		boolean anon = false;
-		if (flag != null && flag.equalsIgnoreCase("-s"))
-			anon = true;
+		if (flag != null)
+			if (flag.equalsIgnoreCase("-s"))
+				anon = true;
+			else
+				showUsage();
 
 		if (playerArg.equals(player()))
 			error("You cannot boop yourself!");

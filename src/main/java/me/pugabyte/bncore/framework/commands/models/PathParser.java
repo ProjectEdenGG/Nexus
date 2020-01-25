@@ -208,7 +208,9 @@ class PathParser {
 			if (path.length() > 0)
 				for (String pathArg : pathArgs)
 					switch (left(pathArg, 1)) {
-						case "[": case "{": case "<":
+						case "[":
+						case "{":
+						case "<":
 							break;
 						default:
 							literalWords += pathArg + " ";
@@ -216,15 +218,13 @@ class PathParser {
 
 			literalWords = literalWords.trim().toLowerCase();
 
-			// Zero arguments
-			if (args.size() == 0) {
-				if (literalWords.length() == 0)
-					return method;
-				continue;
-			}
-
-			// Has arguments, no literal words
 			if (literalWords.length() == 0) {
+				if (args.size() > 0 && path.length() > 0)
+					return method;
+
+				if (args.size() == 0 && path.length() == 0)
+					return method;
+
 				if (fallback == null)
 					fallback = method;
 				continue;

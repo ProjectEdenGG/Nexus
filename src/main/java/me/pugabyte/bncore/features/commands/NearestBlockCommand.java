@@ -29,19 +29,14 @@ public class NearestBlockCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[material] [radius]")
+	@Path("<material> <radius>")
 	void nearestBlock(@Arg Material material, @Arg Integer radius) {
-		if (material == null || radius == null) {
-			error("/nearestblock <material> <radius>");
-			return;
-		}
-
 		if (radius > 100) {
-			error("Max radius is 100, limiting radius");
+			send(PREFIX + "Max radius is 100, limiting radius");
 			radius = 100;
 		}
 
-		Integer finalRadius = radius;
+		int finalRadius = radius;
 		Tasks.async(() -> {
 			Location location = player().getLocation();
 			double minDistance = finalRadius;
