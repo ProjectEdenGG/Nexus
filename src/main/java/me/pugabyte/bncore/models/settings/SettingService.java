@@ -10,7 +10,22 @@ public class SettingService extends BaseService {
 	}
 
 	public Setting get(String id, String type) {
-		return database.table("setting").where("id = ?").and("type = ?").args(id, type).first(Setting.class);
+		Setting setting = database.table("setting").where("id = ?").and("type = ?").args(id, type).first(Setting.class);
+		if (setting.getId() == null)
+			setting = new Setting(id, type, null);
+		return setting;
+	}
+
+	public void delete(Player player, String type) {
+		delete(player.getUniqueId().toString(), type);
+	}
+
+	public void delete(Setting setting) {
+		delete(setting.getId(), setting.getType());
+	}
+
+	public void delete(String id, String type) {
+		database.table("setting").where("id = ?").and("type = ?").args(id, type).delete();
 	}
 
 }
