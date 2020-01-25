@@ -53,13 +53,10 @@ public class ItemInfoCommand extends CustomCommand {
 		send("");
 
 		if (!overrideBool && (material.equals(Material.WRITTEN_BOOK) || material.equals(Material.BOOK_AND_QUILL))) {
-			if (give.getBytes().length > 32767) {
-				error("Canceled, will crash player");
-			}
 			int length = give.length();
 			if (length > 12400) {
 				send("String very big, length: " + length);
-				json("&e&l[Click to Show]||sgt:/iteminfo override");
+				json("&e&l[Click to Try]||sgt:/iteminfo override||ttp:&cCaution: Could crash you");
 				return;
 			}
 		}
