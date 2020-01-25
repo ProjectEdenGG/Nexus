@@ -19,7 +19,7 @@ public class CooldownService extends BaseService {
 	}
 
 	public boolean check(String id, String type, double ticks) {
-		Cooldown cooldown = database.where("id = ? and type = ?", id, type).first(Cooldown.class);
+		Cooldown cooldown = database.where("id = ?").and("type = ?").args(id, type).first(Cooldown.class);
 		boolean canRun = true;
 		if (cooldown.getTime() != null) {
 			long ticksElapsed = cooldown.getTime().until(LocalDateTime.now(), ChronoUnit.SECONDS) * 20;

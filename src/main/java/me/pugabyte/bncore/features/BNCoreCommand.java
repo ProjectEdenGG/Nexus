@@ -1,7 +1,5 @@
 package me.pugabyte.bncore.features;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.util.Direction;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -12,10 +10,11 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
+import me.pugabyte.bncore.models.settings.Setting;
+import me.pugabyte.bncore.models.settings.SettingService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,14 +43,11 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@SneakyThrows
-	@Path("expandh [number]")
-	void expandh(@Arg("1") int number) {
-		new WorldGuardUtils(player().getWorld()).getPlayerSelection(player())
-				.expand(Arrays.stream(Direction.values())
-						.filter(Direction::isCardinal)
-						.map(Direction::toVector)
-						.map(vector -> vector.multiply(number))
-						.toArray(Vector[]::new));
+	@Path("setting <type> [value]")
+	void setting(@Arg String type, @Arg String value) {
+		if (!isNullOrEmpty(value))
+			new SettingService().save(new Setting(player(), type, value));
+		send("Setting: " + new SettingService().get(player().getUniqueId().toString(), type));
 	}
 
 	@ConverterFor(Nerd.class)
