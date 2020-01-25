@@ -35,7 +35,6 @@ public class HealthCommand extends CustomCommand {
 	@Path("target [number]")
 	void target(Double health) {
 		LivingEntity targetEntity = Utils.getTargetEntity(player());
-
 		Tasks.GlowTask.builder()
 				.duration(10 * 20)
 				.entity(targetEntity)
