@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.commands.staff;
 
 import de.tr7zw.itemnbtapi.NBTEntity;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;

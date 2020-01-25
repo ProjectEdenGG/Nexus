@@ -391,17 +391,41 @@ public class Utils {
 		return material.equals(Material.WATER) || material.equals(Material.STATIONARY_WATER);
 	}
 
+	public static boolean isLava(Material material) {
+		return material.equals(Material.LAVA) || material.equals(Material.STATIONARY_LAVA);
+	}
+
+	public static boolean isSign(Material material) {
+		return material.equals(Material.SIGN) || material.equals(Material.SIGN_POST) || material.equals(Material.WALL_SIGN);
+	}
+
 	public static boolean isNullOrAir(ItemStack itemStack) {
 		return itemStack == null || itemStack.getType().equals(Material.AIR);
 	}
 
-	public static boolean isInWater(Player player){
+	public static boolean isNullOrAir(Material material) {
+		return material == null || material.equals(Material.AIR);
+	}
+
+	public static boolean isInWater(Player player) {
 		Location location = player.getLocation();
 		Block block = location.getBlock();
-		Location locationBelow = location.subtract(0.0,1.0,0.0);
-		if(isWater(block.getType())) {
+		Location locationBelow = location.subtract(0.0, 1.0, 0.0);
+		if (isWater(block.getType())) {
 			return true;
 		} else if (block.getType().equals(Material.AIR) && isWater(locationBelow.getBlock().getType())) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isInLava(Player player) {
+		Location location = player.getLocation();
+		Block block = location.getBlock();
+		Location locationBelow = location.subtract(0.0, 1.0, 0.0);
+		if (isLava(block.getType())) {
+			return true;
+		} else if (block.getType().equals(Material.AIR) && isLava(locationBelow.getBlock().getType())) {
 			return true;
 		}
 		return false;
@@ -415,7 +439,7 @@ public class Utils {
 		return itemStack;
 	}
 
-	public static int randomInt(int min, int max){
+	public static int randomInt(int min, int max) {
 		if (min == max) return min;
 		if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
 		return (int)((Math.random() * ((max - min) + 1)) + min);

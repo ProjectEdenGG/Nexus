@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.commands;
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
