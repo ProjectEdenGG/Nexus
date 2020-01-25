@@ -109,6 +109,7 @@ public class WorldEditUtils {
 		else if (changeType == SelectionChangeType.CONTRACT)
 			region.contract(directions);
 
+		getPlayer(player).setSelection(region);
 		session.getRegionSelector(worldEditWorld).learnChanges();
 		int newSize = region.getArea();
 		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
@@ -131,6 +132,7 @@ public class WorldEditUtils {
 	public void setSelection(Player player, Vector min, Vector max) {
 		LocalSession session = plugin.getSession(player);
 		Region region = new CuboidRegion(min, max);
+		getPlayer(player).setSelection(region);
 		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
 		session.getRegionSelector(worldEditWorld).explainPrimarySelection(worldEditPlayer, session, region.getMinimumPoint());
 		session.getRegionSelector(worldEditWorld).explainSecondarySelection(worldEditPlayer, session, region.getMaximumPoint());
