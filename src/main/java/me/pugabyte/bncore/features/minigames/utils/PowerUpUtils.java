@@ -44,6 +44,9 @@ public class PowerUpUtils {
 		ItemLine itemLine = hologram.appendItemLine(powerUp.getItemStack());
 
 		itemLine.setPickupHandler(player -> {
+			Minigamer minigamer = PlayerManager.get(player);
+			if (!minigamer.isPlaying(match)) return;
+
 			player.sendMessage(Minigames.PREFIX + "You picked up a power up!");
 			powerUp.onPickup(PlayerManager.get(player));
 			match.getHolograms().remove(hologram);
@@ -68,7 +71,7 @@ public class PowerUpUtils {
 		@NonNull
 		Consumer<Minigamer> onPickup;
 
-		public PowerUp(@NonNull String name, @NonNull boolean isPositive, @NonNull Material material, @NonNull Consumer<Minigamer> onPickup) {
+		public PowerUp(String name, boolean isPositive, Material material, Consumer<Minigamer> onPickup) {
 			this.name = name;
 			this.isPositive = isPositive;
 			this.itemStack = new ItemStack(material);

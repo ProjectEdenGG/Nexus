@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,10 +54,12 @@ public class Match {
 	private MatchData matchData;
 	private MatchTasks tasks;
 
-	public Optional<Minigamer> getMinigamer(Player player) {
-		return minigamers.stream()
-				.filter(minigamer -> minigamer.getPlayer().getUniqueId().equals(player.getUniqueId()))
-				.findFirst();
+	public Minigamer getMinigamer(Player player) {
+		for (Minigamer minigamer : minigamers)
+			if (minigamer.getPlayer().getUniqueId().equals(player.getUniqueId()))
+				return minigamer;
+
+		return null;
 	}
 
 	public List<Player> getPlayers() {
