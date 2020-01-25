@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.framework.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.DoubleSlash;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -56,6 +57,8 @@ class CommandMapUtils {
 
 	void register(CustomCommand customCommand) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 		String name = customCommand.getName().toLowerCase();
+		if (customCommand.getClass().getAnnotation(DoubleSlash.class) != null)
+			name = "/" + name;
 		CommandHandler handler = new CommandHandler(customCommand);
 
 		PluginCommand pluginCommand = COMMAND_CONSTRUCTOR.newInstance(name, plugin);
