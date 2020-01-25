@@ -117,7 +117,7 @@ public interface ICustomCommand {
 				++pathIndex;
 			}
 
-			String value = annotation.value();
+			String value = (annotation == null ? null : annotation.value());
 			if (args.size() >= pathIndex) {
 				if (pathArg.contains("..."))
 					value = String.join(" ", args.subList(pathIndex - 1, args.size()));
