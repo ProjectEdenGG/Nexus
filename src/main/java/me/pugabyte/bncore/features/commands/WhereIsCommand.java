@@ -12,6 +12,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.util.Collections;
+
 @Permission("group.staff")
 public class WhereIsCommand extends CustomCommand {
 
@@ -34,9 +36,13 @@ public class WhereIsCommand extends CustomCommand {
 			return;
 		}
 
-		GlowAPI.setGlowing(playerArg, GlowAPI.Color.RED, player());
 		Utils.lookAt(player(), playerArgLoc);
 
-		Tasks.wait(10 * 20, () -> GlowAPI.setGlowing(playerArg, false, player()));
+		Tasks.GlowTask.builder()
+				.duration(10 * 20)
+				.entity(playerArg)
+				.color(GlowAPI.Color.RED)
+				.viewers(Collections.singletonList(player()))
+				.start();
 	}
 }

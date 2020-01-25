@@ -22,6 +22,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.reflections.Reflections;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class Minigames {
 	}
 
 	public static void shutdown() {
-		MatchManager.getAll().forEach(Match::end);
+		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
 	}
 
 	public static List<Player> getPlayers() {

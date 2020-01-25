@@ -10,7 +10,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
-import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MissingArgumentException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
@@ -100,13 +99,12 @@ public interface ICustomCommand {
 		Iterator<String> path = Arrays.asList(pathValue.split(" ")).iterator();
 		Object[] objects = new Object[parameters.size()];
 
+		// TODO: Validate params and path have same args
+
 		int i = 1;
 		int pathIndex = 0;
 		for (Parameter parameter : parameters) {
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
-			if (annotation == null)
-				throw new BNException("Command parameter not annotated with @Arg: "
-						+ method.getName() + "(" + parameter.getType().getName() + " " + parameter.getName() + ")");
 
 			String pathArg = "";
 			while (!pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<") && path.hasNext()) {

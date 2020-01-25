@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 
 // TODO: Balance hoverable
 
-@Aliases({"ls", "who", "online", "players", "eonline", "elist", "ewho", "eplayers"})
-public class ListCommand extends CustomCommand {
+@Aliases({"list", "ls", "who", "players", "eonline", "elist", "ewho", "eplayers"})
+public class OnlineCommand extends CustomCommand {
 
-	public ListCommand(CommandEvent event) {
+	public OnlineCommand(CommandEvent event) {
 		super(event);
 	}
 

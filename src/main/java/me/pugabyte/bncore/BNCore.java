@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.connect4.Connect4;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
 import me.pugabyte.bncore.features.documentation.Documentation;
 import me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning;
+import me.pugabyte.bncore.features.holidays.Holidays;
 import me.pugabyte.bncore.features.hours.HoursFeature;
 import me.pugabyte.bncore.features.inviterewards.InviteRewards;
 import me.pugabyte.bncore.features.leash.Leash;
@@ -120,6 +121,7 @@ public class BNCore extends JavaPlugin {
 	public static DailyRewardsFeature dailyRewards;
 	public static Documentation documentation;
 	public static DurabilityWarning durabilityWarning;
+	public static Holidays holidays;
 	public static HoursFeature hoursFeature;
 	public static InviteRewards inviteRewards;
 	public static Leash leash;
@@ -143,6 +145,7 @@ public class BNCore extends JavaPlugin {
 		dailyRewards = new DailyRewardsFeature();
 		durabilityWarning = new DurabilityWarning();
 		documentation = new Documentation();
+		holidays = new Holidays();
 		hoursFeature = new HoursFeature();
 		inviteRewards = new InviteRewards();
 		leash = new Leash();

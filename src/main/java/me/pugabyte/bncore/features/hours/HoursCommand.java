@@ -38,11 +38,11 @@ public class HoursCommand extends CustomCommand {
 
 		if (Rank.getHighestRank(player) == Rank.GUEST) {
 			int day = 60 * 60 * 24;
+			String who = (isSelf ? "You need" : player.getName() + " needs") + " ";
 			String left = Utils.timespanFormat(day - hours.getTotal());
-			String who = (isSelf ? "You need" : player.getName() + "needs") + " ";
 
 			line();
-			send("&3" + who + " &e" + left + " more in-game play time &3to achieve &fMember&3.");
+			send("&3" + who + "&e" + left + " more in-game play time &3to achieve &fMember&3.");
 		}
 	}
 

@@ -24,6 +24,8 @@ public class AFKListener implements Listener {
 		AFKPlayer player = AFK.get(event.getSender().getPlayer());
 		if (player.isAfk())
 			player.notAfk();
+		else
+			player.update();
 
 		if (event.getResult() != Chatter.Result.ALLOWED) return;
 

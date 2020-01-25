@@ -5,7 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-@Aliases({"yt"})
+@Aliases("yt")
 public class YouTubeCommand extends CustomCommand {
 
 	public YouTubeCommand(CommandEvent event) {
