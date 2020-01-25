@@ -5,10 +5,14 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.inventivetalent.glow.GlowAPI;
+
+import java.util.Collections;
 
 @Redirect(from = "/entityhealth", to = "/health target")
 public class HealthCommand extends CustomCommand {
@@ -31,6 +35,14 @@ public class HealthCommand extends CustomCommand {
 	@Path("target [number]")
 	void target(Double health) {
 		LivingEntity targetEntity = Utils.getTargetEntity(player());
+
+		Tasks.GlowTask.builder()
+				.duration(10 * 20)
+				.entity(targetEntity)
+				.color(GlowAPI.Color.RED)
+				.viewers(Collections.singletonList(player()))
+				.start();
+
 		if (health == null)
 			send(PREFIX + ChatColor.stripColor(targetEntity.getName()) + "'s health is " + targetEntity.getHealth());
 		else {
