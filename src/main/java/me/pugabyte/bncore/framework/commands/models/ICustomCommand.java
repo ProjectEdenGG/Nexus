@@ -6,6 +6,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -14,7 +15,9 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MissingArgumentException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.annotation.Annotation;
@@ -44,9 +47,28 @@ public interface ICustomCommand {
 			event.setUsage(method);
 			if (!hasPermission(event.getSender(), method))
 				throw new NoPermissionException();
+			checkCooldown(command);
 			command.invoke(method, event);
 		} catch (Exception ex) {
 			event.handleException(ex);
+		}
+	}
+
+	default void checkCooldown(CustomCommand command) {
+		checkCooldown(command, command.getClass().getAnnotation(Cooldown.class), command.getName());
+		checkCooldown(command, command.getEvent().getMethod().getAnnotation(Cooldown.class), command.getName() + "#" + command.getEvent().getMethod().getName());
+	}
+
+	default void checkCooldown(CustomCommand command, Cooldown cooldown, String id) {
+		if (cooldown != null) {
+			boolean bypass = false;
+			if (cooldown.bypass().length() > 0)
+				if (command.getEvent().getSender() instanceof Player)
+					if (command.getEvent().getPlayer().hasPermission(cooldown.bypass()))
+						bypass = true;
+
+			if (!bypass)
+				new CooldownService().check(command.player(), "command:" + id, cooldown.value());
 		}
 	}
 

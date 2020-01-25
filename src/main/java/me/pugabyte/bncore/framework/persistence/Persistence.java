@@ -35,9 +35,8 @@ public class Persistence {
 
 	public static Database getConnection(BearNationDatabase bndb) {
 		try {
-			if (databases.get(bndb) == null) {
+			if (databases.get(bndb) == null)
 				openConnection(bndb);
-			}
 			return databases.get(bndb);
 		} catch (Exception ex) {
 			bnCore.getLogger().severe("Could not establish connection to the \"" + bndb.getDatabase() + "\" database: " + ex.getMessage());

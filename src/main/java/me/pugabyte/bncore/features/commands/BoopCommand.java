@@ -3,12 +3,11 @@ package me.pugabyte.bncore.features.commands;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-
-//TODO: cooldown
 
 public class BoopCommand extends CustomCommand {
 
@@ -23,6 +22,7 @@ public class BoopCommand extends CustomCommand {
 	}
 
 	@Path("<player> [flag]")
+	@Cooldown(value = 5 * 20, bypass = "group.admin")
 	void boop(@Arg Player playerArg, @Arg String flag) {
 		boolean anon = false;
 		if (flag != null)

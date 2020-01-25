@@ -28,6 +28,7 @@ public class CommandEvent extends Event implements Cancellable {
 	private String aliasUsed;
 	@NonNull
 	private List<String> args;
+	private Method method;
 	private String usage;
 	private boolean cancelled = false;
 	private HandlerList handlers = new HandlerList();
@@ -53,6 +54,7 @@ public class CommandEvent extends Event implements Cancellable {
 	}
 
 	public void setUsage(Method method) {
+		this.method = method;
 		Path annotation = method.getAnnotation(Path.class);
 		if (annotation != null)
 			this.usage = annotation.value();
