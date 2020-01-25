@@ -274,7 +274,14 @@ public class WorldEditUtils {
 
 	@SneakyThrows
 	public void fixFlat(LocalSession session, Region region) {
-
+		region.expand(Direction.DOWN.toVector().multiply(500));
+		region.contract(Direction.DOWN.toVector().multiply(500));
+		session.getRegionSelector(region.getWorld()).learnChanges();
+		fill(region, Material.BEDROCK);
+		region.expand(Direction.UP.toVector().multiply(3));
+		region.contract(Direction.UP.toVector().multiply(1));
+		session.getRegionSelector(region.getWorld()).learnChanges();
+		fill(region, Material.GRASS);
 	}
 
 }

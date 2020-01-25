@@ -30,5 +30,6 @@ public class ContractAllCommand extends CustomCommand {
 				amount
 		);
 	}
+
 }
 
