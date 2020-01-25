@@ -250,4 +250,29 @@ public class WorldEditUtils {
 		editSession.flushQueue();
 	}
 
+	@SneakyThrows
+	public Region expandAll(Region region, int amount) {
+		region.expand(Arrays.stream(Direction.values())
+				.filter((direction -> direction.isUpright() || direction.isCardinal()))
+				.map(Direction::toVector)
+				.map(vector -> vector.multiply(amount))
+				.toArray(Vector[]::new));
+		return region;
+	}
+
+	@SneakyThrows
+	public Region contractAll(Region region, int amount) {
+		region.contract(Arrays.stream(Direction.values())
+				.filter((direction -> direction.isUpright() || direction.isCardinal()))
+				.map(Direction::toVector)
+				.map(vector -> vector.multiply(amount))
+				.toArray(Vector[]::new));
+		return region;
+	}
+
+	@SneakyThrows
+	public void fixFlat(LocalSession session, Region region) {
+
+	}
+
 }
