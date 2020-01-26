@@ -75,10 +75,12 @@ public class SignLinesCommand extends CustomCommand {
 						newLines[editLine] = "";
 				}
 			}
+
 			int line = 0;
 			for (String string : newLines) {
 				if (string != null)
-					sign.setLine(line++, string.trim());
+					sign.setLine(line, Utils.colorize(string.trim()));
+				++line;
 			}
 		}
 

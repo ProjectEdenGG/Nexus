@@ -4,6 +4,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,7 +27,7 @@ public class LoreCommand extends CustomCommand {
 		send("&c/lore remove <line>");
 	}
 
-	@Path("set <line> <text>")
+	@Path("set <line> <text...>")
 	void setLore(int line, String text) {
 		ItemStack tool = getTool(player());
 		ItemMeta meta = tool.getItemMeta();
@@ -36,20 +37,20 @@ public class LoreCommand extends CustomCommand {
 		while (lore.size() < line)
 			lore.add("");
 
-		lore.set(line - 1, text);
+		lore.set(line - 1, Utils.colorize(text));
 		meta.setLore(lore);
 		tool.setItemMeta(meta);
 		player().updateInventory();
 	}
 
-	@Path("add <text>")
+	@Path("add <text...>")
 	void addLore(String text) {
 		ItemStack tool = getTool(player());
 		ItemMeta meta = tool.getItemMeta();
 		List<String> lore = meta.getLore();
 		if (lore == null)
 			lore = new ArrayList<>();
-		lore.add(text);
+		lore.add(Utils.colorize(text));
 		meta.setLore(lore);
 		tool.setItemMeta(meta);
 		player().updateInventory();

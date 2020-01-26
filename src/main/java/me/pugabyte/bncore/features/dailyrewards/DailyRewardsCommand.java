@@ -60,7 +60,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Path("streak [player]")
 	void streak(@Arg("self") OfflinePlayer player) {
 		int streak = dailyRewards.getStreak();
-		if (!player().getUniqueId().equals(player.getUniqueId())) {
+		if (!player().equals(player)) {
 			streak = ((DailyRewards) service.get(playerArg(2))).getStreak();
 		}
 		send(PREFIX + player.getName() + "'s streak: &e" + streak);
