@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.holidays.Holidays;
 import me.pugabyte.bncore.features.hours.HoursFeature;
 import me.pugabyte.bncore.features.inviterewards.InviteRewards;
 import me.pugabyte.bncore.features.leash.Leash;
+import me.pugabyte.bncore.features.mcmmo.McMMO;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
@@ -126,6 +127,7 @@ public class BNCore extends JavaPlugin {
 	public static HoursFeature hoursFeature;
 	public static InviteRewards inviteRewards;
 	public static Leash leash;
+	public static McMMO mcmmo;
 	public static ModelListeners modelListeners;
 	public static Minigames minigames;
 	public static OldMinigames oldMinigames;
@@ -150,6 +152,7 @@ public class BNCore extends JavaPlugin {
 		hoursFeature = new HoursFeature();
 		inviteRewards = new InviteRewards();
 		leash = new Leash();
+		mcmmo = new McMMO();
 		modelListeners = new ModelListeners();
 		minigames = new Minigames();
 		oldMinigames = new OldMinigames();
