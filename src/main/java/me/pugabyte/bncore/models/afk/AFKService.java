@@ -34,7 +34,7 @@ public class AFKService extends BaseService {
 			return players;
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			return null;
+			return new HashMap<>();
 		}
 	}
 
