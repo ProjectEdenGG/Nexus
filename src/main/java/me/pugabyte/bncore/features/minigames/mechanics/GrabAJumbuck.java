@@ -163,10 +163,6 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		Sheep sheep = (Sheep) event.getRightClicked();
 		if (sheep.isInsideVehicle()) return;
 		addSheep(minigamer, sheep);
-		minigamer.getMatch().getTasks().wait(8 * 20, () -> {
-			if (minigamer.getMatch().isEnded()) return;
-			spawnSheep(minigamer.getMatch(), 1);
-		});
 	}
 
 	@EventHandler
@@ -202,6 +198,10 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		removeAllPassengers(minigamer.getPlayer(), minigamer.getMatch());
 		minigamer.scored(score);
 		minigamer.getPlayer().sendMessage(Minigames.PREFIX + "You scored " + score + " point" + ((score == 1) ? "" : "s"));
+		minigamer.getMatch().getTasks().wait(8 * 20, () -> {
+			if (minigamer.getMatch().isEnded()) return;
+			spawnSheep(minigamer.getMatch(), 1);
+		});
 	}
 
 }
