@@ -105,6 +105,11 @@ public class MatchListener implements Listener {
 			return;
 		}
 
+		if (!victim.getMatch().isStarted()) {
+			event.setCancelled(true);
+			return;
+		}
+
 		if (victim.getMatch().equals(attacker.getMatch())) {
 			// Same match
 			Mechanic mechanic = victim.getMatch().getArena().getMechanic();
@@ -144,7 +149,7 @@ public class MatchListener implements Listener {
 		if (!victim.isPlaying()) return;
 		Mechanic mechanic = victim.getMatch().getArena().getMechanic();
 
-		if (victim.isRespawning()) {
+		if (victim.isRespawning() || !victim.getMatch().isStarted()) {
 			event.setCancelled(true);
 			return;
 		}
