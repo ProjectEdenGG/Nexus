@@ -191,6 +191,10 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		if (!arena.ownsRegion(event.getRegion().getId(), "capture")) return;
 		if (getTopPassenger(minigamer) == minigamer.getPlayer()) return;
 		int score = 0;
+		minigamer.getMatch().getTasks().wait(8 * 20, () -> {
+			if (minigamer.getMatch().isEnded()) return;
+			spawnSheep(minigamer.getMatch(), getSheep(minigamer).size());
+		});
 		for (Sheep sheep : getSheep(minigamer)) {
 			score += sheep.getColor() == DyeColor.WHITE ? 1 : 3;
 			sheep.remove();
@@ -198,10 +202,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		removeAllPassengers(minigamer.getPlayer(), minigamer.getMatch());
 		minigamer.scored(score);
 		minigamer.getPlayer().sendMessage(Minigames.PREFIX + "You scored " + score + " point" + ((score == 1) ? "" : "s"));
-		minigamer.getMatch().getTasks().wait(8 * 20, () -> {
-			if (minigamer.getMatch().isEnded()) return;
-			spawnSheep(minigamer.getMatch(), 1);
-		});
+
 	}
 
 }
