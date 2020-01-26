@@ -23,6 +23,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -133,6 +134,12 @@ public final class GoldRush extends TeamlessMechanic {
 		if (!event.getClickedBlock().getType().equals(Material.IRON_ORE)) return;
 		if (!event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.TNT)) return;
 		event.getClickedBlock().setType(Material.AIR);
+	}
+
+	@EventHandler
+	public void onPlaceBlock(BlockPlaceEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (minigamer.isPlaying(this)) event.setCancelled(true);
 	}
 
 	@EventHandler
