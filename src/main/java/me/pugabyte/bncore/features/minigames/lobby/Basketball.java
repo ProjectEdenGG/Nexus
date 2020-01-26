@@ -39,7 +39,7 @@ public class Basketball implements Listener {
 
 	public Basketball() {
 		BNCore.registerListener(this);
-		//new Basketball.BasketballJanitor();
+		new Basketball.BasketballJanitor();
 	}
 
 	public static ItemStack getBasketball(Player player) {
