@@ -14,7 +14,7 @@ import static me.pugabyte.bncore.utils.Utils.colorize;
 
 public class Tickets {
 	public static final String PREFIX = Utils.getPrefix("Tickets");
-	public static String PERMISSION_MOD = "is.op"; // "tickets.mod";
+	public static String PERMISSION_MOD = "tickets.mod";
 
 	static {
 		PlaceholderAPI.registerPlaceholder(BNCore.getInstance(), "tickets_open", event ->
@@ -24,14 +24,14 @@ public class Tickets {
 	}
 
 	static void showTicket(Player player, Ticket ticket) {
-		SkriptFunctions.json(player, "&7#" + ticket.getId() + " &3" + ticket.getOwner().getName() + " &7- &e" +
+		SkriptFunctions.json(player, "&7#" + ticket.getId() + " &3" + ticket.getOwnerName() + " &7- &e" +
 				ticket.getDescription() + "||cmd:/tickets view " + ticket.getId());
 	}
 
 	public static void sendTicketButtons(Player staff, Ticket ticket) {
 		staff.sendMessage("");
 		SkriptFunctions.json(staff, "||&3 |&3|   &6&lTeleport||cmd:/tickets tp " + ticket.getId() + "||ttp:&eClick to teleport" +
-				"||&3   |&3|   ||&b&lMessage||sgt:/msg " + ticket.getOwner().getName() + " ||ttp:&eClick to message the player" +
+				"||&3   |&3|   ||&b&lMessage||sgt:/msg " + ticket.getOwnerName() + " ||ttp:&eClick to message the player" +
 				"||&3   |&3|   ||&c&lClose||cmd:/tickets close " + ticket.getId() + "||ttp:&eClick to close" +
 				"||&3   |&3|");
 		staff.sendMessage("");

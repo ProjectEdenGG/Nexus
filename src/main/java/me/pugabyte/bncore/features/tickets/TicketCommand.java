@@ -14,7 +14,7 @@ import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 
-@Aliases({"helpop", "helpop"})
+@Aliases({"helpop", "report"})
 public class TicketCommand extends CustomCommand {
 	private TicketService service = new TicketService();
 

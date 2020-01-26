@@ -47,9 +47,12 @@ public abstract class CustomCommand implements ICustomCommand {
 		return event.getAliasUsed();
 	}
 
-	protected void send(OfflinePlayer player, String message) {
-		if (player.isOnline())
-			player.getPlayer().sendMessage(Utils.colorize(message));
+	protected void send(CommandSender sender, String message) {
+		if (sender instanceof ConsoleCommandSender || sender instanceof Player)
+			sender.sendMessage(Utils.colorize(message));
+		else if (sender instanceof OfflinePlayer)
+			if (((OfflinePlayer) sender).isOnline())
+				((OfflinePlayer) sender).getPlayer().sendMessage(Utils.colorize(message));
 	}
 
 	protected void send(Player player, String message) {

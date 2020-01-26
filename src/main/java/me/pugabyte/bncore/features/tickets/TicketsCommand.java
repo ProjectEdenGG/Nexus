@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
+import org.bukkit.command.ConsoleCommandSender;
 
 public class TicketsCommand extends CustomCommand {
 	private TicketService service = new TicketService();
@@ -35,7 +36,7 @@ public class TicketsCommand extends CustomCommand {
 			error("You can't view that ticket");
 
 		send(PREFIX + "&c#" + ticket.getId());
-		send("&3Owner: &e" + ticket.getOwner().getName());
+		send("&3Owner: &e" + ticket.getOwnerName());
 		send("&3When: &e" + ticket.getTimespan() + " &3ago");
 		send("&3Description: &e" + ticket.getDescription());
 		Tickets.sendTicketButtons(player(), ticket);
@@ -46,6 +47,12 @@ public class TicketsCommand extends CustomCommand {
 		Ticket ticket = service.get(id);
 		if (!ticket.canBeSeenBy(player()))
 			error("You can't view that ticket");
+
+		if (ticket.getLocation() == null)
+			if (ticket.getOwner() instanceof ConsoleCommandSender)
+				error("That ticket was created by console, so you can not teleport to it");
+			else
+				error("That ticket does not have a location");
 
 		player().teleport(ticket.getLocation());
 

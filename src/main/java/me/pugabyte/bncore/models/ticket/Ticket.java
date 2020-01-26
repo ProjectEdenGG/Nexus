@@ -8,7 +8,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.LocationSerializer;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.entity.Player;
 
 import javax.persistence.GeneratedValue;
@@ -38,8 +38,20 @@ public class Ticket {
 		this.description = description;
 	}
 
-	public OfflinePlayer getOwner() {
-		return Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+	public <T extends Conversable> T getOwner() {
+		try {
+			return (T) Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+		} catch (Exception ex) {
+			return (T) Bukkit.getConsoleSender();
+		}
+	}
+
+	public String getOwnerName() {
+		try {
+			return Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
+		} catch (Exception ex) {
+			return Bukkit.getConsoleSender().getName();
+		}
 	}
 
 	public boolean ownsTicket(Player player) {
@@ -52,7 +64,7 @@ public class Ticket {
 
 	public void setOpen(boolean open) {
 		this.open = open;
-		if (!this.open && this.timeClosed != null)
+		if (!this.open && this.timeClosed == null)
 			this.timeClosed = LocalDateTime.now();
 
 	}
