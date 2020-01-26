@@ -22,8 +22,9 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Aliases({"newmgm", "newminigames"})
+@Aliases({"jmgm", "newmgm", "newminigames"})
 @Permission("minigames")
 public class JMinigamesCommand extends CustomCommand {
 	Minigamer minigamer;
@@ -43,7 +44,9 @@ public class JMinigamesCommand extends CustomCommand {
 	@Path("list [filter]")
 	@Permission("use")
 	void list(String filter) {
-		send(PREFIX + String.join(", ", ArenaManager.getNames(filter)));
+		send(PREFIX + ArenaManager.getAll(filter).stream()
+				.map(arena -> (MatchManager.find(arena) != null ? "&e" : "&3") + arena.getName())
+				.collect(Collectors.joining("&3, ")));
 	}
 
 	@Path("join <arena>")
