@@ -9,7 +9,7 @@ public class TicketService extends BaseService {
 
 	public Ticket get(int id) {
 		Ticket ticket = database.where("id = ?", id).first(Ticket.class);
-		if (ticket.getUuid() == null)
+		if (ticket.getId() == 0)
 			throw new InvalidInputException("Ticket not found");
 		return ticket;
 	}
