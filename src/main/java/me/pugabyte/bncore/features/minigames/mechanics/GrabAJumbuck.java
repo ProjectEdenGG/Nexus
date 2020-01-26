@@ -190,11 +190,14 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		Arena arena = minigamer.getMatch().getArena();
 		if (!arena.ownsRegion(event.getRegion().getId(), "capture")) return;
 		if (getTopPassenger(minigamer) == minigamer.getPlayer()) return;
-		int score = 0;
+
+		final int sheepAmount = getSheep(minigamer).size();
 		minigamer.getMatch().getTasks().wait(8 * 20, () -> {
 			if (minigamer.getMatch().isEnded()) return;
-			spawnSheep(minigamer.getMatch(), getSheep(minigamer).size());
+			spawnSheep(minigamer.getMatch(), sheepAmount);
 		});
+
+		int score = 0;
 		for (Sheep sheep : getSheep(minigamer)) {
 			score += sheep.getColor() == DyeColor.WHITE ? 1 : 3;
 			sheep.remove();

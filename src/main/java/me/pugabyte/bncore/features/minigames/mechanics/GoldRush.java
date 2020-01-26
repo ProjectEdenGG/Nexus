@@ -79,9 +79,11 @@ public final class GoldRush extends TeamlessMechanic {
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
-		GoldRushArena goldRushArena = event.getMatch().getArena();
-		for (Location location : event.getMatch().getTeams().get(0).getSpawnpoints()) {
-			removeMineStacks(goldRushArena.getMineStackHeight(), location);
+		if (event.getMatch().isStarted()) {
+			GoldRushArena goldRushArena = event.getMatch().getArena();
+			for (Location location : event.getMatch().getTeams().get(0).getSpawnpoints()) {
+				removeMineStacks(goldRushArena.getMineStackHeight(), location);
+			}
 		}
 	}
 

@@ -100,7 +100,9 @@ public class Match {
 			arena.getLobby().join(minigamer);
 		}
 
-		arena.getMechanic().onJoin(event);
+		try {
+			arena.getMechanic().onJoin(event);
+		} catch (Exception ex) { ex.printStackTrace(); }
 		scoreboard.update();
 		return true;
 	}
@@ -113,7 +115,9 @@ public class Match {
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
-		arena.getMechanic().onQuit(event);
+		try {
+			arena.getMechanic().onQuit(event);
+		} catch (Exception ex) { ex.printStackTrace(); }
 		minigamer.clearState();
 		minigamer.toGamelobby();
 		scoreboard.update();
