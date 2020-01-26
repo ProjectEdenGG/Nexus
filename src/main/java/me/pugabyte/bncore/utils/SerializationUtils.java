@@ -1,9 +1,13 @@
 package me.pugabyte.bncore.utils;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,5 +45,26 @@ public class SerializationUtils {
 	public static Set<Material> deserializeMaterialSet(List<String> materials) {
 		if (materials == null) return null;
 		return materials.stream().map(block -> Material.valueOf(block.toUpperCase())).collect(Collectors.toSet());
+	}
+
+	public static String serializeLocation(Location location) {
+		DecimalFormat nf = new DecimalFormat("#.000");
+		return location.getWorld().getName() + "," +
+				nf.format(location.getX()) + "," +
+				nf.format(location.getY()) + "," +
+				nf.format(location.getZ()) + "," +
+				nf.format(location.getYaw()) + "," +
+				nf.format(location.getPitch());
+	}
+
+	public static Location deserializeLocation(String in) {
+		List<String> parts = Arrays.asList(in.split(","));
+		return new Location(Bukkit.getWorld(parts.get(0)),
+				Double.parseDouble(parts.get(1)),
+				Double.parseDouble(parts.get(2)),
+				Double.parseDouble(parts.get(3)),
+				Float.parseFloat(parts.get(4)),
+				Float.parseFloat(parts.get(5))
+		);
 	}
 }

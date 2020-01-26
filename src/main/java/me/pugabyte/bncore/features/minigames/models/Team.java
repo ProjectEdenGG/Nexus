@@ -97,6 +97,8 @@ public class Team implements ConfigurationSerializable {
 				int randomIndex = rand.nextInt(locs.size());
 				minigamer.teleport(locs.get(randomIndex));
 				locs.remove(randomIndex);
+				if (locs.size() == 0)
+					locs.addAll(new ArrayList<>(spawnpoints));
 				toRemove.add(minigamer);
 			}
 			members.removeAll(toRemove);

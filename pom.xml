@@ -146,10 +146,10 @@
         <dependency>
 <!--            <groupId>com.dieselpoint</groupId>-->
 <!--            <artifactId>norm</artifactId>-->
-<!--            <version>0.9.1</version>-->
+<!--            <version>0.9.4</version>-->
             <groupId>com.github.pugabyte</groupId>
             <artifactId>norm</artifactId>
-            <version>6878691f37</version>
+            <version>53ff611041</version>
         </dependency>
         <!-- MySQL -->
         <dependency>

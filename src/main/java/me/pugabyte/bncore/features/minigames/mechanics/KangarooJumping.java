@@ -11,7 +11,6 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import me.pugabyte.bncore.features.minigames.utils.PowerUpUtils;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
-import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -66,6 +65,10 @@ public final class KangarooJumping extends TeamlessMechanic {
 		minigamer.getMatch().getTasks().wait(5 * 20, () -> minigamer.getMatch().end());
 	}
 
+//	@Override
+//	public void kill(Minigamer victim, Minigamer attacker) {
+//	}
+
 	boolean hasAnyoneScored(Match match) {
 		for (Minigamer minigamer : match.getMinigamers())
 			if (minigamer.getScore() > 0)
@@ -77,7 +80,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 			new ItemStackBuilder(Material.LEATHER_BOOTS).glow().build(),
 			minigamer -> {
 				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 20), true);
-				Tasks.wait(10 * 20, () -> minigamer.getMatch().getTeams().get(0).getLoadout().apply(minigamer));
+				minigamer.getMatch().getTasks().wait(10 * 20, () -> minigamer.getMatch().getTeams().get(0).getLoadout().apply(minigamer));
 			});
 
 	PowerUpUtils.PowerUp POSITIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", true,

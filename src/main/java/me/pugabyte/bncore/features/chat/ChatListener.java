@@ -46,6 +46,7 @@ public class ChatListener implements Listener {
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 		Chatter chatter = Herochat.getChatterManager().getChatter(player);
+		if (chatter == null) return;
 		String[] args = event.getMessage().toLowerCase().split(" ");
 
 		if (args.length > 1 && args[0].toLowerCase().matches("/ch|/herochat")) {

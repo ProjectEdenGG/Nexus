@@ -88,12 +88,8 @@ public interface ICustomCommand {
 	}
 
 	default String getPermission() {
-		for (Annotation annotation : this.getClass().getAnnotations()) {
-			if (annotation instanceof Permission) {
-				return ((Permission) annotation).value();
-			}
-		}
-
+		if (this.getClass().getAnnotation(Permission.class) != null)
+			return this.getClass().getAnnotation(Permission.class).value();
 		return null;
 	}
 
@@ -109,14 +105,13 @@ public interface ICustomCommand {
 		int i = 1;
 		int pathIndex = 0;
 		for (Parameter parameter : parameters) {
-			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
-
 			String pathArg = "";
 			while (!pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<") && path.hasNext()) {
 				pathArg = path.next();
 				++pathIndex;
 			}
 
+			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 			String value = (annotation == null ? null : annotation.value());
 			if (args.size() >= pathIndex) {
 				if (pathArg.contains("..."))

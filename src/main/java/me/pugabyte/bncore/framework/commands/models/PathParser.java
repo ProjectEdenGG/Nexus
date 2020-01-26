@@ -69,7 +69,8 @@ class PathParser {
 					arg.setParamIndex(paramIndex++);
 					Parameter parameter = method.getParameters()[arg.getParamIndex()];
 					arg.setTabCompleter(parameter.getType());
-					arg.setTabCompleter(parameter.getAnnotation(Arg.class).tabCompleter());
+					if (parameter.getAnnotation(Arg.class) != null)
+						arg.setTabCompleter(parameter.getAnnotation(Arg.class).tabCompleter());
 				}
 
 				args.add(arg);

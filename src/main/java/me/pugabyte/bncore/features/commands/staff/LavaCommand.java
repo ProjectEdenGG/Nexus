@@ -7,8 +7,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerds.Nerd;
-import me.pugabyte.bncore.models.settings.Setting;
-import me.pugabyte.bncore.models.settings.SettingService;
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Material;
@@ -31,7 +31,7 @@ public class LavaCommand extends CustomCommand implements Listener {
 	void lava() {
 		WorldGroup world = WorldGroup.get(player().getWorld());
 		if (world.equals(WorldGroup.SKYBLOCK))
-			error("Not allowed in " + WorldGroup.SKYBLOCK.toString());
+			error("Not allowed in " + world);
 
 		Setting setting = new SettingService().get(player(), "lava");
 		boolean isEnabled = Boolean.parseBoolean(setting.getValue());

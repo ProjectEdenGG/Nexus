@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.settings;
+package me.pugabyte.bncore.models.setting;
 
 import me.pugabyte.bncore.models.BaseService;
 import org.bukkit.entity.Player;

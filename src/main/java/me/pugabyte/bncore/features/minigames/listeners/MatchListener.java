@@ -65,7 +65,7 @@ public class MatchListener implements Listener {
 	}
 
 	// TODO: Prevent damage of hanging entities/armor stands/etc
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onDeath(EntityDamageByEntityEvent event) {
 		Minigamer victim, attacker;
 
@@ -129,7 +129,7 @@ public class MatchListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onDeath(EntityDamageEvent event) {
 		Minigamer victim;
 
@@ -138,7 +138,6 @@ public class MatchListener implements Listener {
 		} else {
 			return;
 		}
-
 
 		// Ignore damage by entity (see above)
 		if (event.getCause().name().contains("ENTITY")) return;

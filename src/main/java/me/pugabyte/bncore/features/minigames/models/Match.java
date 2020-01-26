@@ -56,7 +56,7 @@ public class Match {
 
 	public Minigamer getMinigamer(Player player) {
 		for (Minigamer minigamer : minigamers)
-			if (minigamer.getPlayer().getUniqueId().equals(player.getUniqueId()))
+			if (minigamer.getPlayer().equals(player))
 				return minigamer;
 
 		return null;

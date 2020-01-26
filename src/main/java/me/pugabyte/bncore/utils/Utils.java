@@ -62,6 +62,10 @@ public class Utils {
 		return ChatColor.translateAlternateColorCodes('&', string);
 	}
 
+	public static String decolorize(String string) {
+		return string.replaceAll("§", "&");
+	}
+
 	public static String loreize(String string, ChatColor color) {
 		int i = 0, lineLength = 0;
 		boolean watchForNewLine = false, watchForColor = false;

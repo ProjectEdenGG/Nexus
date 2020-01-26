@@ -59,11 +59,11 @@ public class RulesCommand extends CustomCommand {
 	void menu() {
 		send("&3Bear Nation's rules are divided into categories; &e&lclick on the lines below&3 to read the rules for each category.");
 		line();
-		json("&3[+] &eCommunity Rules" + "||cmd:/jrules global");
-		json("&3[+] &eSurvival Rules" + "||cmd:/jrules survival");
-		json("&3[+] &eMinigame Rules" + "||cmd:/jrules minigames");
-		json("&3[+] &eCreative Rules" + "||cmd:/jrules creative");
-		json("&3[+] &eSkyblock Rules" + "||cmd:/jrules skyblock");
+		json("&3[+] &eCommunity Rules" + "||cmd:/rules global");
+		json("&3[+] &eSurvival Rules" + "||cmd:/rules survival");
+		json("&3[+] &eMinigame Rules" + "||cmd:/rules minigames");
+		json("&3[+] &eCreative Rules" + "||cmd:/rules creative");
+		json("&3[+] &eSkyblock Rules" + "||cmd:/rules skyblock");
 		json("&3[+] &eOther rules" + "||url:https://wiki.bnn.gg/wiki/Main_Page#Discord_rules");
 		hasReadRules.setMain(true);
 		service.save(hasReadRules);
@@ -80,7 +80,7 @@ public class RulesCommand extends CustomCommand {
 				send("&e4. &3No excessive swearing, spamming or overusing caps, or bypassing the censor");
 				send("&e5. &3Use common sense");
 				line();
-				json("&e « Main page  ||cmd:/jrules||  &3|&3|  ||  &eNext page »||cmd:/jrules global 2");
+				json("&e « Main page  ||cmd:/rules||  &3|&3|  ||  &eNext page »||cmd:/rules global 2");
 				hasReadRules.setCommunity1(true);
 				service.save(hasReadRules);
 				break;
@@ -89,9 +89,9 @@ public class RulesCommand extends CustomCommand {
 				send("&e7. &3No inappropriate content");
 				send("&e8. &3No ban evading (that includes using Discord). Appeal at https://bnn.gg/appeal");
 				send("&e9. &3Keep heavily opinionated and political arguments out of public chats");
-				json("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)||cmd:/jrules streaming");
+				json("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)||cmd:/rules streaming");
 				line();
-				json("&e « Main page  ||cmd:/jrules||  &3|&3|  ||  &eNext page »||cmd:/jrules global 3");
+				json("&e « Main page  ||cmd:/rules||  &3|&3|  ||  &eNext page »||cmd:/rules global 3");
 				hasReadRules.setCommunity2(true);
 				service.save(hasReadRules);
 				break;
@@ -103,7 +103,7 @@ public class RulesCommand extends CustomCommand {
 				send("&e15. &3Do not call out vanished staff members");
 				send("&e16. &3Don't make fun of or correct other people's typos");
 				line();
-				json("&e « Main page  ||cmd:/jrules||  &3|&3|  ||  &eMain Page »||cmd:/jrules");
+				json("&e « Main page  ||cmd:/rules||  &3|&3|  ||  &eMain Page »||cmd:/rules");
 				hasReadRules.setCommunity3(true);
 				service.save(hasReadRules);
 				break;
@@ -121,7 +121,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e8. &3No random 1x1 towers/holes, block spam or obscene structures/skins");
 		send("&e9. &3Bear Nation has the right to use & modify all builds produced on the server");
 		line();
-		json("&e « Main page||cmd:/jrules");
+		json("&e « Main page||cmd:/rules");
 		hasReadRules.setSurvival(true);
 		service.save(hasReadRules);
 	}
@@ -134,7 +134,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e5. &3Spawn trapping/camping/killing will not be tolerated");
 		send("&e6. &3Do not say who the murderer is in Murder if you are dead");
 		line();
-		json("&e « Main page||cmd:/jrules");
+		json("&e « Main page||cmd:/rules");
 		hasReadRules.setMinigames(true);
 		service.save(hasReadRules);
 	}
@@ -145,7 +145,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e3. &3Do not claim a plot next to someone who is not near spawn without permission. Give people their space");
 		send("&e4. &3Your plot is your responsibility. Don't add people you don't trust");
 		line();
-		json("&e « Main page||cmd:/jrules");
+		json("&e « Main page||cmd:/rules");
 		hasReadRules.setCreative(true);
 		service.save(hasReadRules);
 	}
@@ -154,7 +154,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e1. &3All surivival rules apply, especially numbers 2 and 3");
 		send("&e2. &3Your island is your responsibility. Don't add people you don't trust");
 		line();
-		json("&e « Main page||cmd:/jrules");
+		json("&e « Main page||cmd:/rules");
 		hasReadRules.setSkyblock(true);
 		service.save(hasReadRules);
 	}
@@ -164,7 +164,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e2. &3You, the streamer, and all your followers must follow all the rules");
 		send("&e3. &3If a large percentage of your followers do not comply with the rules, we may ban you and any people associated with your stream");
 		line();
-		json("&e « Click here to return to page 2 of the global rules.||cmd:/jrules global 2");
+		json("&e « Click here to return to page 2 of the global rules.||cmd:/rules global 2");
 		hasReadRules.setStreaming(true);
 		service.save(hasReadRules);
 	}

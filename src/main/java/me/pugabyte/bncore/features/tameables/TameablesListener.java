@@ -72,7 +72,7 @@ public class TameablesListener implements Listener {
 	}
 
 	private boolean isOwner(Player player, Tameable tameable) {
-		boolean owner = tameable.getOwner().getUniqueId().toString().equals(player.getUniqueId().toString());
+		boolean owner = tameable.getOwner().equals(player);
 		if (!owner)
 			player.sendMessage(PREFIX + "You do not own that animal!");
 		return owner;

@@ -47,6 +47,11 @@ public abstract class CustomCommand implements ICustomCommand {
 		return event.getAliasUsed();
 	}
 
+	protected void send(OfflinePlayer player, String message) {
+		if (player.isOnline())
+			player.getPlayer().sendMessage(Utils.colorize(message));
+	}
+
 	protected void send(Player player, String message) {
 		player.sendMessage(Utils.colorize(message));
 	}
@@ -75,6 +80,10 @@ public abstract class CustomCommand implements ICustomCommand {
 
 	protected void json(String message) {
 		SkriptFunctions.json(player(), message);
+	}
+
+	protected void json(Player player, String message) {
+		SkriptFunctions.json(player, message);
 	}
 
 	public void error(String error) {
@@ -115,11 +124,11 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected boolean isSelf(OfflinePlayer player) {
-		return player.getUniqueId().equals(player().getUniqueId());
+		return player.equals(player());
 	}
 
 	protected boolean isSelf(Player player) {
-		return player.getUniqueId().equals(player().getUniqueId());
+		return player.equals(player());
 	}
 
 	protected boolean isNullOrEmpty(String string) {

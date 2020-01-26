@@ -17,15 +17,15 @@ public class FAQCommand extends CustomCommand {
 	String PLUS = "&3[+] &e";
 
 	public String faqCom(String string) {
-		return "||cmd:/jfaq " + string;
+		return "||cmd:/faq " + string;
 	}
 
 	public void back(String string) {
-		json("&f &3&m<  &e Back||cmd:/jfaq " + string);
+		json("&f &3&m<  &e Back||cmd:/faq " + string);
 	}
 
 	public void back() {
-		json("&f &3&m<  &e Back||cmd:/jfaq");
+		json("&f &3&m<  &e Back||cmd:/faq");
 	}
 
 	@Path("[string]")
