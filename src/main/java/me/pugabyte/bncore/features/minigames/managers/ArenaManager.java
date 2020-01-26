@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArenaManager {
@@ -32,20 +33,24 @@ public class ArenaManager {
 		return arenas;
 	}
 
+	public static List<Arena> getAll(String filter) {
+		List<Arena> filtered = new ArrayList<>();
+		for (Arena arena : arenas) {
+			if (filter != null)
+				if (!arena.getName().toLowerCase().startsWith(filter.toLowerCase()))
+					continue;
+			filtered.add(arena);
+		}
+
+		return filtered;
+	}
+
 	public static List<String> getNames() {
 		return getNames(null);
 	}
 
 	public static List<String> getNames(String filter) {
-		List<String> names = new ArrayList<>();
-		for (Arena arena : arenas) {
-			if (filter != null)
-				if (!arena.getName().toLowerCase().startsWith(filter.toLowerCase()))
-					continue;
-			names.add(arena.getName());
-		}
-
-		return names;
+		return getAll(filter).stream().map(Arena::getName).collect(Collectors.toList());
 	}
 
 	public static Arena getFromLocation(Location location) {
