@@ -1,30 +1,20 @@
 package me.pugabyte.bncore.features.menus.itemeditor;
 
-import me.pugabyte.bncore.BNCore;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-public class ItemEditorCommand implements CommandExecutor {
+public class ItemEditorCommand extends CustomCommand {
 
-	ItemEditorCommand() {
-		BNCore.registerCommand("itemeditor", this);
+	public ItemEditorCommand(CommandEvent event) {
+		super(event);
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player)) return false;
-		Player player = (Player) sender;
-
-		if (!player.hasPermission("itemeditor.use")) {
-			player.sendMessage(ChatColor.RED + "Permission denied");
-			return false;
-		} else {
-			ItemEditorMenu.openItemEditor(player, ItemEditMenu.MAIN);
-		}
-
-		return true;
+	@Path
+	@Permission("item.editor")
+	void itemEditor() {
+		ItemEditorMenu.openItemEditor(player(), ItemEditMenu.MAIN);
 	}
+
 }

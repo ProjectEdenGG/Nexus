@@ -14,9 +14,6 @@ public enum ItemEditMenu {
 
 	private int size = 0;
 
-	ItemEditMenu() {
-	}
-
 	ItemEditMenu(int size) {
 		this.size = size;
 	}
