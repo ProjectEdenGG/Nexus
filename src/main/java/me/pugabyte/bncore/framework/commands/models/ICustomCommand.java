@@ -12,6 +12,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MissingArgumentException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
@@ -141,7 +142,8 @@ public interface ICustomCommand {
 
 	List<Class<? extends Exception>> conversionExceptions = Arrays.asList(
 			InvalidInputException.class,
-			PlayerNotFoundException.class
+			PlayerNotFoundException.class,
+			PlayerNotOnlineException.class
 	);
 
 	@SneakyThrows

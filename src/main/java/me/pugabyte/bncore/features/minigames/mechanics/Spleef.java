@@ -8,9 +8,6 @@ import org.bukkit.Sound;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-// TODO:
-//  - Anti-camping
-
 public final class Spleef extends SpleefMechanic {
 
 	@Override

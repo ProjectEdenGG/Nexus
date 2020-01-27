@@ -19,8 +19,9 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,12 +33,16 @@ class PathParser {
 	@NonNull
 	CommandEvent event;
 	CustomCommand command;
-	Set<Method> methods;
+	List<Method> methods;
 
 	public PathParser(@NonNull CommandEvent event) {
 		this.event = event;
 		this.command = event.getCommand();
-		this.methods = command.getPathMethods();
+		this.methods = new ArrayList<>(command.getPathMethods());
+
+		// Sort by most literal words first (most specific first)
+		methods.sort(Comparator.comparing(method -> getLiteralWords(getPathString(method)).split(" ").length));
+		Collections.reverse(methods);
 	}
 
 	@Data
@@ -202,22 +207,8 @@ class PathParser {
 		Method fallback = null;
 
 		for (Method method : methods) {
-			String path = method.getAnnotation(Path.class).value().toLowerCase();
-			String[] pathArgs = path.split(" ");
-
-			String literalWords = "";
-			if (path.length() > 0)
-				for (String pathArg : pathArgs)
-					switch (left(pathArg, 1)) {
-						case "[":
-						case "{":
-						case "<":
-							break;
-						default:
-							literalWords += pathArg + " ";
-					}
-
-			literalWords = literalWords.trim().toLowerCase();
+			String path = getPathString(method);
+			String literalWords = getLiteralWords(path);
 
 			if (literalWords.length() == 0) {
 				if (args.size() > 0 && path.length() > 0)
@@ -234,10 +225,33 @@ class PathParser {
 			// Has arguments, has literal worlds
 			Matcher matcher = Pattern.compile("^" + literalWords + ".*").matcher(argsString);
 			if (matcher.matches())
-				fallback = method;
+				return method;
 		}
 
 		return fallback;
+	}
+
+	private String getPathString(Method method) {
+		return method.getAnnotation(Path.class).value().toLowerCase();
+	}
+
+	private String getLiteralWords(String path) {
+		String[] pathArgs = path.split(" ");
+
+		String literalWords = "";
+		if (path.length() > 0)
+			for (String pathArg : pathArgs)
+				switch (left(pathArg, 1)) {
+					case "[":
+					case "{":
+					case "<":
+						break;
+					default:
+						literalWords += pathArg + " ";
+				}
+
+		literalWords = literalWords.trim().toLowerCase();
+		return literalWords;
 	}
 
 }
