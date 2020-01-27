@@ -64,8 +64,7 @@ public class LavaCommand extends CustomCommand implements Listener {
 			return;
 
 		Setting setting = new SettingService().get(player, "lava");
-		boolean isEnabled = Boolean.parseBoolean(setting.getValue());
-		if (!isEnabled)
+		if (!setting.getBoolean())
 			return;
 
 		PlayerInventory playerInv = player.getInventory();
