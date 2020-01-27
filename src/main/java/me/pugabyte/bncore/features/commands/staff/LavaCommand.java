@@ -34,13 +34,12 @@ public class LavaCommand extends CustomCommand implements Listener {
 			error("Not allowed in " + world);
 
 		Setting setting = new SettingService().get(player(), "lava");
-		boolean isEnabled = Boolean.parseBoolean(setting.getValue());
 
-		if (isEnabled) {
+		if (setting.getBoolean()) {
 			new SettingService().delete(player(), "lava");
 			send("&3Unlimited lava turned &eoff&3.");
 		} else {
-			setting.setValue("true");
+			setting.setBoolean(true);
 			new SettingService().save(setting);
 			send("&3Unlimited lava turned &eon&3.");
 		}
