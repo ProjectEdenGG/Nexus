@@ -58,6 +58,7 @@ class CommandMapUtils {
 	void register(String name, CustomCommand customCommand) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 		if (customCommand.getClass().getAnnotation(DoubleSlash.class) != null)
 			name = "/" + name;
+		name = name.toLowerCase();
 		CommandHandler handler = new CommandHandler(customCommand);
 
 		PluginCommand pluginCommand = COMMAND_CONSTRUCTOR.newInstance(name, plugin);
