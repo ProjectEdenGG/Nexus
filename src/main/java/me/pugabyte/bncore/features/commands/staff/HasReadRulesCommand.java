@@ -25,17 +25,17 @@ public class HasReadRulesCommand extends CustomCommand {
 
 	@Path("<player>")
 	void hrr(Player player) {
-		send(PREFIX + player.getName());
 		line();
+		send(PREFIX + player.getName());
 		send("&3Main: " + (hasReadRules.isMain() ? CHECK : X));
-		send("&eCommunity: " + (hasReadRules.isCommunity1() ? CHECK : X) +
+		send("&3Community: " + (hasReadRules.isCommunity1() ? CHECK : X) +
 				(hasReadRules.isCommunity2() ? CHECK : X) +
 				(hasReadRules.isCommunity3() ? CHECK : X));
-		send("&eStreamers: " + (hasReadRules.isStreaming() ? CHECK : X));
-		send("&eSurvival:  " + (hasReadRules.isSurvival() ? CHECK : X));
-		send("&eMinigames: " + (hasReadRules.isMinigames() ? CHECK : X));
-		send("&eCreative: " + (hasReadRules.isCreative() ? CHECK : X));
-		send("&eSkyblock: " + (hasReadRules.isSkyblock() ? CHECK : X));
+		send("&3Streamers: " + (hasReadRules.isStreaming() ? CHECK : X));
+		send("&3Survival:  " + (hasReadRules.isSurvival() ? CHECK : X));
+		send("&3Minigames: " + (hasReadRules.isMinigames() ? CHECK : X));
+		send("&3Creative: " + (hasReadRules.isCreative() ? CHECK : X));
+		send("&3Skyblock: " + (hasReadRules.isSkyblock() ? CHECK : X));
 	}
 
 }
