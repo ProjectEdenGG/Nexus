@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.menus.itemeditor.providers.ItemEditorProvider
 import org.bukkit.entity.Player;
 
 public class ItemEditorMenu {
+
 	public static void openItemEditor(Player player, ItemEditMenu menu) {
 		SmartInventory inv = SmartInventory.builder()
 				.provider(new ItemEditorProvider(menu))
