@@ -23,8 +23,11 @@ public class HasReadRulesCommand extends CustomCommand {
 	String CHECK = "&a✔ ";
 	String X = "&c✗ ";
 
-	@Path("[player]")
+	@Path("<player>")
 	void hrr(Player player) {
+		send(PREFIX + player.getName());
+		line();
+		send("&3Main: " + (hasReadRules.isMain() ? CHECK : X));
 		send("&eCommunity: " + (hasReadRules.isCommunity1() ? CHECK : X) +
 				(hasReadRules.isCommunity2() ? CHECK : X) +
 				(hasReadRules.isCommunity3() ? CHECK : X));
