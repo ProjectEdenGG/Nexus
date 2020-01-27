@@ -21,7 +21,7 @@ public class HealthCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[player] [number]")
+	@Path("<player> [number]")
 	void health(@Arg("self") Player player, Double health) {
 		if (health == null)
 			send(PREFIX + player.getName() + "'s health is " + player.getHealth());
