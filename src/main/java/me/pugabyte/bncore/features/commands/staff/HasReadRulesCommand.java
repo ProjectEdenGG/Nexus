@@ -26,9 +26,9 @@ public class HasReadRulesCommand extends CustomCommand {
 	@Path("[player]")
 	void hrr(Player player) {
 		send("&eCommunity: " + (hasReadRules.isCommunity1() ? CHECK : X) +
-				(hasReadRules.isCommunity1() ? CHECK : X) +
-				(hasReadRules.isCommunity1() ? CHECK : X));
-		send("eStreamers: " + (hasReadRules.isStreaming() ? CHECK : X));
+				(hasReadRules.isCommunity2() ? CHECK : X) +
+				(hasReadRules.isCommunity3() ? CHECK : X));
+		send("&eStreamers: " + (hasReadRules.isStreaming() ? CHECK : X));
 		send("&eSurvival:  " + (hasReadRules.isSurvival() ? CHECK : X));
 		send("&eMinigames: " + (hasReadRules.isMinigames() ? CHECK : X));
 		send("&eCreative: " + (hasReadRules.isCreative() ? CHECK : X));
