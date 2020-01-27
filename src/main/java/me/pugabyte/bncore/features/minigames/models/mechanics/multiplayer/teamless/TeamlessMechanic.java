@@ -45,7 +45,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 			if (match.getAlivePlayers().size() == winners.size() && match.getAlivePlayers().size() > 1)
 				announcement = "All players tied in " + arena.getDisplayName();
 			else
-				announcement = getWinnersString(winners) + arena.getDisplayName();
+				announcement = getWinnersString(winners) + "&e" + arena.getDisplayName();
 			if (winningScore != 0)
 				announcement += " (" + winningScore + ")";
 		}

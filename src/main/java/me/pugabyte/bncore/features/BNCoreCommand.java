@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -15,6 +16,7 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
+import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -48,6 +50,22 @@ public class BNCoreCommand extends CustomCommand {
 		if (!isNullOrEmpty(value))
 			new SettingService().save(new Setting(player(), type, value));
 		send("Setting: " + new SettingService().get(player(), type));
+	}
+
+	@Path("schem save <name>")
+	@Permission("group.admin")
+	void schemSave(String name) {
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
+		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
+		send("Saved schematic " + name);
+	}
+
+	@Path("schem paste <name>")
+	@Permission("group.admin")
+	void schemPaste(String name) {
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
+		worldEditUtils.paste(name, player().getLocation());
+		send("Pasted schematic " + name);
 	}
 
 	@ConverterFor(Nerd.class)

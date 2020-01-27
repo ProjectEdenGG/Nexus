@@ -135,6 +135,10 @@ public class Arena implements ConfigurationSerializable {
 		return Minigames.getWorldGuardUtils().getRegion(getRegionBaseName() + "_" + type);
 	}
 
+	public Set<ProtectedRegion> getRegionsLike(String regex) {
+		return Minigames.getWorldGuardUtils().getRegionsLike(getRegionBaseName() + "_" + regex);
+	}
+
 	public ProtectedRegion getProtectedRegion(String type) {
 		return Minigames.getWorldGuardUtils().getProtectedRegion(getRegionBaseName() + "_" + type);
 	}

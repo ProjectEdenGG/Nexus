@@ -36,8 +36,9 @@ public enum WorldGroup {
 
 	public static WorldGroup get(String world) {
 		for (WorldGroup group : values())
-			if (Arrays.asList(group.getWorlds()).contains(world))
-				return group;
+			if (group.getWorlds() != null)
+				if (Arrays.asList(group.getWorlds()).contains(world))
+					return group;
 
 		return UNKNOWN;
 	}

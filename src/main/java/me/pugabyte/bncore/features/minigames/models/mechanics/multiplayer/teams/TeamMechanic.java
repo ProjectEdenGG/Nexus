@@ -39,7 +39,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			if (arena.getTeams().size() == winners.size()) {
 				announcement = "All teams tied in &e" + arena.getDisplayName();
 			} else {
-				announcement = getWinnersString(winners) + arena.getDisplayName();
+				announcement = getWinnersString(winners) + "&e" + arena.getDisplayName();
 			}
 			Minigames.broadcast(announcement + getScoreList(scoreList));
 		}

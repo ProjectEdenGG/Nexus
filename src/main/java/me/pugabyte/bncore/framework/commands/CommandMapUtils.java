@@ -55,8 +55,7 @@ class CommandMapUtils {
 		}
 	}
 
-	void register(CustomCommand customCommand) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		String name = customCommand.getName().toLowerCase();
+	void register(String name, CustomCommand customCommand) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 		if (customCommand.getClass().getAnnotation(DoubleSlash.class) != null)
 			name = "/" + name;
 		CommandHandler handler = new CommandHandler(customCommand);
@@ -79,12 +78,9 @@ class CommandMapUtils {
 
 		while (iterator.hasNext()) {
 			Command command = iterator.next();
-			if (command instanceof PluginCommand) {
-				String pluginName = ((PluginCommand) command).getPlugin().getDescription().getName();
-				if (pluginName.equals(plugin.getDescription().getName()) && name.equals(command.getLabel())) {
-					command.unregister(map);
-					iterator.remove();
-				}
+			if (command instanceof PluginCommand && name.equals(command.getLabel())) {
+				command.unregister(map);
+				iterator.remove();
 			}
 		}
 	}
