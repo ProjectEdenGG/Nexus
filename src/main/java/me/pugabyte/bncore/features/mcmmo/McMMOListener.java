@@ -196,8 +196,6 @@ public class McMMOListener {
 				return CocoaPlant.CocoaPlantSize.MEDIUM;
 			case MEDIUM:
 				return CocoaPlant.CocoaPlantSize.LARGE;
-			case LARGE:
-				return CocoaPlant.CocoaPlantSize.SMALL;
 		}
 		return size;
 	}
