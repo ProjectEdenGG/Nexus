@@ -15,6 +15,6 @@ public class WhatWorldCommand extends CustomCommand {
 
 	@Path("[player]")
 	void world(@Arg("self") Player player) {
-		send("&3You are in world &e" + player.getWorld().getName() + " &3in group &e" + WorldGroup.get(player.getWorld()));
+		send("&3" + (isSelf(player) ? "You are" : player.getName() + " is") + " in world &e" + player.getWorld().getName() + " &3in group &e" + WorldGroup.get(player.getWorld()));
 	}
 }

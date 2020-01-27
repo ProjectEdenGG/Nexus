@@ -87,6 +87,12 @@ public interface ICustomCommand {
 		return aliases;
 	}
 
+	default List<String> getAllAliases() {
+		List<String> aliases = getAliases();
+		aliases.add(getName());
+		return aliases;
+	}
+
 	default String getPermission() {
 		if (this.getClass().getAnnotation(Permission.class) != null)
 			return this.getClass().getAnnotation(Permission.class).value();

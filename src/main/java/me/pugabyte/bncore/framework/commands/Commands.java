@@ -54,9 +54,10 @@ public class Commands {
 		if (listLast(customCommand.getClass().toString(), ".").startsWith("_")) return;
 
 		try {
-			mapUtils.register(customCommand);
-			for (String alias : customCommand.getAliases())
+			for (String alias : customCommand.getAllAliases()) {
+				mapUtils.register(alias, customCommand);
 				commands.put(alias, customCommand);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -69,9 +70,10 @@ public class Commands {
 
 	private void unregister(CustomCommand customCommand) {
 		try {
-			mapUtils.unregister(customCommand.getName());
-			for (String alias : customCommand.getAliases())
+			for (String alias : customCommand.getAllAliases()) {
+				mapUtils.unregister(customCommand.getName());
 				commands.remove(alias);
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

@@ -438,6 +438,19 @@ public class Utils {
 		return false;
 	}
 
+	public static List<Block> getBlocksInRadius(Block start, int radius){
+		return getBlocksInRadius(start, radius, radius, radius);
+	}
+
+	public static List<Block> getBlocksInRadius(Block start, int xRadius, int yRadius, int zRadius){
+		List<Block> blocks = new ArrayList<>();
+		for (int x = -xRadius; x <= xRadius; x++)
+			for (int z = -zRadius; z <= zRadius; z++)
+				for (int y = -yRadius; y <= yRadius; y++)
+					blocks.add(start.getRelative(x, y, z));
+		return blocks;
+	}
+
 	public static ItemStack addGlowing(ItemStack itemStack) {
 		itemStack.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
 		ItemMeta meta = itemStack.getItemMeta();
