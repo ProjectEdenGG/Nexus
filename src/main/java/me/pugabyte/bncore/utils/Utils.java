@@ -203,11 +203,14 @@ public class Utils {
 	}
 
 	public static Location getCenteredLocation(Location location) {
-		double x = Math.floor(location.getX()) + .5;
+		double x = Math.floor(location.getX());
 		double y = Math.floor(location.getY());
-		double z = Math.floor(location.getZ()) + .5;
+		double z = Math.floor(location.getZ());
 		double yaw = location.getYaw();
 		double pitch = 0;
+
+		x += (x >= 0) ? .5 : -.5;
+		z += (z >= 0) ? .5 : -.5;
 
 		int newYaw = 0;
 		if (yaw < 315) newYaw = 270;
