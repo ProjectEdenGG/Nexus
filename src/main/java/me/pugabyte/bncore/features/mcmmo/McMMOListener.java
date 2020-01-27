@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+// TODO: Fix beetroot, melons stems, melons, pumpkin stems and pumpkins
+
 public class McMMOListener {
 	public McMMOListener() {
 		Tasks.repeat(0, 10, () -> {
@@ -204,7 +206,7 @@ public class McMMOListener {
 		switch (material) {
 			case POTATO:
 			case CARROT:
-			case BEETROOT:
+			case BEETROOT_BLOCK:
 			case WHEAT:
 			case PUMPKIN_STEM:
 			case MELON_STEM:
