@@ -23,7 +23,8 @@ public class ThimbleArena extends Arena {
 		super(map);
 		this.thimbleMaps = (List<ThimbleMap>) map.get("thimbleMaps");
 
-		currentMap = thimbleMaps.get(0);
+		if (thimbleMaps != null)
+			currentMap = thimbleMaps.get(0);
 	}
 
 	@Override

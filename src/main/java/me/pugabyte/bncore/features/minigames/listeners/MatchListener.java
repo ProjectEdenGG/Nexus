@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -67,6 +68,8 @@ public class MatchListener implements Listener {
 	// TODO: Prevent damage of hanging entities/armor stands/etc
 	@EventHandler(ignoreCancelled = true)
 	public void onDeath(EntityDamageByEntityEvent event) {
+		if (event.isCancelled()) return;
+
 		Minigamer victim, attacker;
 
 		if (event.getEntity() instanceof Player) {
@@ -124,9 +127,13 @@ public class MatchListener implements Listener {
 				}
 
 				event.setCancelled(true);
-				if (!victim.getMatch().isEnded()) {
+
+				MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, attacker, event);
+				Utils.callEvent(deathEvent);
+				if (deathEvent.isCancelled()) return;
+
+				if (!victim.getMatch().isEnded())
 					mechanic.kill(victim, attacker);
-				}
 			}
 		} else {
 			// Different matches
@@ -160,8 +167,13 @@ public class MatchListener implements Listener {
 		}
 
 		event.setCancelled(true);
+
+		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, event);
+		Utils.callEvent(deathEvent);
+		if (deathEvent.isCancelled()) return;
+
 		if (!victim.getMatch().isEnded())
-			mechanic.kill(victim);
+			mechanic.onDeath(deathEvent);
 	}
 
 	@EventHandler
@@ -171,9 +183,16 @@ public class MatchListener implements Listener {
 		Mechanic mechanic = minigamer.getMatch().getArena().getMechanic();
 
 		Arena arena = minigamer.getMatch().getArena();
-		if (arena.ownsRegion(event.getRegion().getId(), "kill"))
-			mechanic.kill(minigamer);
+		if (arena.ownsRegion(event.getRegion().getId(), "kill")) {
+			MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(minigamer, event);
+			Utils.callEvent(deathEvent);
+			if (deathEvent.isCancelled()) return;
+
+			mechanic.onDeath(deathEvent);
+		}
 	}
+
+	// TODO: Win region
 
 	@EventHandler
 	public void onItemPickup(EntityPickupItemEvent event) {

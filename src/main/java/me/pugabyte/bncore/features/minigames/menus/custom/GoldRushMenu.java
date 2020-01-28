@@ -6,10 +6,10 @@ import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.mechanics.GoldRush;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.GoldRushArena;
-import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -22,12 +22,12 @@ import java.util.function.BiFunction;
 import static me.pugabyte.bncore.features.minigames.Minigames.PREFIX;
 import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 
-@CustomMechanicSettings(MechanicType.GOLD_RUSH)
+@CustomMechanicSettings(GoldRush.class)
 public class GoldRushMenu extends MenuUtils implements InventoryProvider {
 	GoldRushArena arena;
 
 	public GoldRushMenu(Arena arena){
-		this.arena = (GoldRushArena) ArenaManager.convert(arena, GoldRushArena.class);
+		this.arena = ArenaManager.convert(arena, GoldRushArena.class);
 		this.arena.write();
 	}
 

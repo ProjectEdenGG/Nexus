@@ -12,7 +12,6 @@ import java.util.Map;
 @Data
 @SerializableAs("DeathSwapArena")
 public class DeathSwapArena extends Arena {
-
 	private List<Location> schematicResetLocations;
 
 	public DeathSwapArena(Map<String, Object> map) {

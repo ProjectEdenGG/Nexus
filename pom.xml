@@ -179,6 +179,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/PermissionsEx-1.23.4.jar</systemPath>
         </dependency>
+        <!-- McMMO -->
+        <dependency>
+            <groupId>com.gmail.nossr50.mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>1.5.01-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Herochat -->
         <dependency>
             <groupId>com.dthielke.herochat</groupId>

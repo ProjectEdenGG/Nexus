@@ -135,6 +135,14 @@ public class Arena implements ConfigurationSerializable {
 		return Minigames.getWorldGuardUtils().getRegion(getRegionBaseName() + "_" + type);
 	}
 
+	public int getRegionTypeId(String type) {
+		return getRegionTypeId(getProtectedRegion(type));
+	}
+
+	public int getRegionTypeId(ProtectedRegion region) {
+		return Integer.parseInt(region.getId().split("_")[3]);
+	}
+
 	public Set<ProtectedRegion> getRegionsLike(String regex) {
 		return Minigames.getWorldGuardUtils().getRegionsLike(getRegionBaseName() + "_" + regex);
 	}
@@ -166,7 +174,7 @@ public class Arena implements ConfigurationSerializable {
 			minigamer.teleport(respawnLocation);
 		else if (spectateLocation != null)
 			minigamer.teleport(spectateLocation);
-		else if (lobby != null && lobby.getLocation() != null)
+		else if (lobby != null && lobby.getLocation() != null && !lobby.getLocation().equals(Minigames.getGamelobby()))
 			minigamer.teleport(lobby.getLocation());
 		else if (teams != null && teams.size() > 0 && teams.get(0).getSpawnpoints() != null && teams.get(0).getSpawnpoints().size() > 0)
 			minigamer.teleport(teams.get(0).getSpawnpoints().get(0));

@@ -1,7 +1,9 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+@NoArgsConstructor
 public class MatchData {
 	@ToString.Exclude
 	private Match match;

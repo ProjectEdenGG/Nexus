@@ -13,7 +13,6 @@ import java.util.Map;
 @Data
 @SerializableAs("KangarooJumpingArena")
 public class KangarooJumpingArena extends Arena {
-
 	private List<Location> powerUpLocations = new ArrayList<>();
 
 	public KangarooJumpingArena(Map<String, Object> map) {

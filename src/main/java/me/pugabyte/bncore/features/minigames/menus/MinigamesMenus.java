@@ -10,12 +10,14 @@ import me.pugabyte.bncore.features.minigames.menus.flags.BlockListMenu;
 import me.pugabyte.bncore.features.minigames.menus.flags.FlagsMenu;
 import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.reflections.Reflections;
 
-import java.util.Set;
+import java.util.Arrays;
+import java.util.List;
 
 public class MinigamesMenus extends MenuUtils {
 	@Getter
@@ -83,12 +85,18 @@ public class MinigamesMenus extends MenuUtils {
 
 	@SneakyThrows
 	public void openCustomSettingsMenu(Player player, Arena arena) {
-		Set<Class<?>> classes = new Reflections("me.pugabyte.bncore.features.minigames.menus.custom").getTypesAnnotatedWith(CustomMechanicSettings.class);
-		Class<?> provider = null;
-		for (Class<?> clazz : classes) {
-			if (clazz.getAnnotation(CustomMechanicSettings.class).value().equals(arena.getMechanicType())) {
-				provider = clazz;
-				break;
+		Class<? extends InventoryProvider> provider = null;
+
+		customMenus:
+		for (Class<? extends InventoryProvider> menu : new Reflections("me.pugabyte.bncore.features.minigames.menus.custom").getSubTypesOf(InventoryProvider.class)) {
+			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses()) {
+				if (menu.getAnnotation(CustomMechanicSettings.class) != null) {
+					List<Class<? extends Mechanic>> classes = Arrays.asList(menu.getAnnotation(CustomMechanicSettings.class).value());
+					if (classes.contains(superclass)) {
+						provider = menu;
+						break customMenus;
+					}
+				}
 			}
 		}
 
@@ -99,7 +107,7 @@ public class MinigamesMenus extends MenuUtils {
 
 		SmartInventory INV = SmartInventory.builder()
 				.id("customSettingsMenu")
-				.provider((InventoryProvider) provider.getDeclaredConstructor(Arena.class).newInstance(arena))
+				.provider(provider.getDeclaredConstructor(Arena.class).newInstance(arena))
 				.title("Custom Settings Menu")
 				.size(3, 9)
 				.build();

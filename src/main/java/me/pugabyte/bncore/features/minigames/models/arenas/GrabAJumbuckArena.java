@@ -16,7 +16,6 @@ import java.util.Set;
 @Data
 @SerializableAs("GrabAJumbuckArena")
 public class GrabAJumbuckArena extends Arena {
-
 	private Set<Material> sheepSpawnBlocks = new HashSet<>();
 
 	public GrabAJumbuckArena(Map<String, Object> map) {

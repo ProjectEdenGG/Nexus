@@ -190,8 +190,8 @@ public class ArenaManager {
 	}
 
 	@SneakyThrows
-	public static Object convert(Arena arena, Class<?> clazz) {
-		return clazz.getDeclaredConstructor(Map.class).newInstance(arena.serialize());
+	public static <T> T convert(Arena arena, Class<?> clazz) {
+		return (T) clazz.getDeclaredConstructor(Map.class).newInstance(arena.serialize());
 	}
 
 }
