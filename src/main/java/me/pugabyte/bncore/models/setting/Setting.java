@@ -31,11 +31,11 @@ public class Setting {
 	}
 
 	public Location getLocation() {
-		return SerializationUtils.deserializeLocation(value);
+		return SerializationUtils.deserializeDatabaseLocation(value);
 	}
 
 	public void setLocation(Location location) {
-		this.value = SerializationUtils.serializeLocation(location);
+		this.value = SerializationUtils.serializeDatabaseLocation(location);
 	}
 
 }

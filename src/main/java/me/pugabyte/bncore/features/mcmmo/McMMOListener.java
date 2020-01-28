@@ -288,7 +288,7 @@ public class McMMOListener {
 				int minZ = (int) Math.min(start.getZ(), z.getZ());
 
 				northwest = new Location(start.getWorld(), minX, start.getY(), minZ);
-				northwest = Utils.getCenteredLocation(northwest);
+				northwest = Utils.getBlockCenter(northwest);
 				break;
 			}
 		}

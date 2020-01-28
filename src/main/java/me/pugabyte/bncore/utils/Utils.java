@@ -206,11 +206,10 @@ public class Utils {
 		double x = Math.floor(location.getX());
 		double y = Math.floor(location.getY());
 		double z = Math.floor(location.getZ());
-		double yaw = location.getYaw();
-		double pitch = 0;
+		double yaw = Math.abs(location.getYaw()); // what the fuck minecraft
 
-		x += (x >= 0) ? .5 : -.5;
-		z += (z >= 0) ? .5 : -.5;
+		x += .5;
+		z += .5;
 
 		int newYaw = 0;
 		if (yaw < 315) newYaw = 270;
@@ -218,7 +217,21 @@ public class Utils {
 		if (yaw < 135) newYaw = 90;
 		if (yaw < 45) newYaw = 0;
 
-		return new Location(location.getWorld(), x, y, z, newYaw, (float) pitch);
+		return new Location(location.getWorld(), x, y, z, newYaw, 0F);
+	}
+
+	@Deprecated
+	// The above method seems to be more accurate, but neither are 100% accurate
+	// Doesn't do yaw/pitch
+	public static Location getBlockCenter(Location location) {
+		double x = Math.floor(location.getX());
+		double y = Math.floor(location.getY());
+		double z = Math.floor(location.getZ());
+
+		x += (x >= 0) ? .5 : -.5;
+		z += (z >= 0) ? .5 : -.5;
+
+		return new Location(location.getWorld(), x, y, z);
 	}
 
 	public static <T extends Entity> T getTargetEntity(final LivingEntity entity) {

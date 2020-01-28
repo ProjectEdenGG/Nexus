@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
@@ -34,20 +35,24 @@ public class HealthCommand extends CustomCommand {
 
 	@Path("target [number]")
 	void target(Double health) {
-		LivingEntity targetEntity = Utils.getTargetEntity(player());
+		LivingEntity target = Utils.getTargetEntity(player());
+
+		if (target == null)
+			throw new InvalidInputException("No target entity found");
+
 		Tasks.GlowTask.builder()
 				.duration(10 * 20)
-				.entity(targetEntity)
+				.entity(target)
 				.color(GlowAPI.Color.RED)
 				.viewers(Collections.singletonList(player()))
 				.start();
 
 		if (health == null)
-			send(PREFIX + ChatColor.stripColor(targetEntity.getName()) + "'s health is " + targetEntity.getHealth());
+			send(PREFIX + ChatColor.stripColor(target.getName()) + "'s health is " + target.getHealth());
 		else {
 			checkPermission("health.set");
-			targetEntity.setHealth(health);
-			send(PREFIX + ChatColor.stripColor(targetEntity.getName()) + "'s health set to " + targetEntity.getHealth());
+			target.setHealth(health);
+			send(PREFIX + ChatColor.stripColor(target.getName()) + "'s health set to " + target.getHealth());
 		}
 	}
 }
