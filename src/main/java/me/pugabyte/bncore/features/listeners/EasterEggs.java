@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
+import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Location;
@@ -9,17 +11,14 @@ import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class EasterEggs {
+public class EasterEggs implements Listener {
 
 	public EasterEggs() {
-
+		BNCore.registerListener(this);
 	}
 
 	@EventHandler
@@ -85,12 +84,7 @@ public class EasterEggs {
 				player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_MILK, 0.5F, 1F);
 				Tasks.wait(4, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_AMBIENT, 0.5F, 1F));
 
-				ItemStack milkBucket = new ItemStack(Material.MILK_BUCKET, 1);
-				ItemMeta meta = milkBucket.getItemMeta();
-				List<String> lore = new ArrayList<>();
-				lore.add("Wakka's Milk");
-				meta.setLore(lore);
-				milkBucket.setItemMeta(meta);
+				ItemStack milkBucket = new ItemStackBuilder(Material.MILK_BUCKET).lore("Wakka's milk").build();
 
 				player.getInventory().addItem(milkBucket);
 
