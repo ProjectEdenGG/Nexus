@@ -102,18 +102,19 @@ public abstract class MenuUtils {
 	@Builder
 	@AllArgsConstructor
 	public static class ConfirmationMenu extends MenuUtils implements InventoryProvider {
-		private String cancelText, cancelLore, confirmText, confirmLore;
-		private Consumer<ItemClickData> onCancel;
+		@Builder.Default
+		private String cancelText = "&cNo";
+		private String cancelLore;
+		@Builder.Default
+		private String confirmText = "&aYes";
+		private String confirmLore;
+		@Builder.Default
+		private Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
 		@NonNull
 		private Consumer<ItemClickData> onConfirm;
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			// Builder doesnt respect class defaults
-			cancelText = cancelText == null ? "&cNo" : cancelText;
-			confirmText = confirmText == null ? "&aYes" : confirmText;
-			onCancel = onCancel == null ? (e) -> e.getPlayer().closeInventory() : onCancel;
-
 			ItemStack cancelItem = nameItem(Material.REDSTONE, cancelText, cancelLore);
 			ItemStack confirmItem = nameItem(Material.EMERALD, confirmText, confirmLore);
 

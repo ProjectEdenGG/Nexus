@@ -32,7 +32,7 @@ public class Tickets {
 		staff.sendMessage("");
 		SkriptFunctions.json(staff, "||&3 |&3|   &6&lTeleport||cmd:/tickets tp " + ticket.getId() + "||ttp:&eClick to teleport" +
 				"||&3   |&3|   ||&b&lMessage||sgt:/msg " + ticket.getOwnerName() + " ||ttp:&eClick to message the player" +
-				"||&3   |&3|   ||&c&lClose||cmd:/tickets close " + ticket.getId() + "||ttp:&eClick to close" +
+				"||&3   |&3|   ||&c&lClose||cmd:/tickets confirmclose " + ticket.getId() + "||ttp:&eClick to close" +
 				"||&3   |&3|");
 		staff.sendMessage("");
 	}
