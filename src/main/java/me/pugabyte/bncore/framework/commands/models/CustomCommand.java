@@ -20,6 +20,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -242,4 +243,22 @@ public abstract class CustomCommand implements ICustomCommand {
 				.collect(Collectors.toList());
 	}
 
+	@ConverterFor(World.class)
+	World convertToWorld(String value) {
+		try {
+			if ("current".equalsIgnoreCase(value))
+				return player().getWorld();
+			return Bukkit.getWorld(value);
+		} catch (IllegalArgumentException ignore) {
+			throw new InvalidInputException("World from " + value + " not found");
+		}
+	}
+
+	@TabCompleterFor(World.class)
+	List<String> tabCompleteWorld(String filter) {
+		return Bukkit.getWorlds().stream()
+				.filter(world -> world.getName().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(World::getName)
+				.collect(Collectors.toList());
+	}
 }
