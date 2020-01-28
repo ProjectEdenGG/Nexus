@@ -15,10 +15,12 @@ public enum MechanicType {
 	ONE_FLAG_CAPTURE_THE_FLAG(new OneFlagCaptureTheFlag()),
 	ONE_IN_THE_QUIVER(new OneInTheQuiver()),
 	PAINTBALL(new Paintball()),
+	PARKOUR(new Parkour()),
 	SPLEEF(new Spleef()),
 	SPLEGG(new Splegg()),
 	TEAM_DEATHMATCH(new TeamDeathmatch()),
-	THIMBLE(new Thimble());
+	THIMBLE(new Thimble()),
+	XRUN(new XRun());
 
 	private Mechanic mechanic;
 

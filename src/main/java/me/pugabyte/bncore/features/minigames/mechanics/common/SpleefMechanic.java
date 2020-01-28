@@ -175,7 +175,7 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 				if (floorAt == null)
 					throw new InvalidInputException("Could not find spleef floor for player " + minigamer.getName());
 
-				floorId = Integer.parseInt(floorAt.getId().split("_")[3]);
+				floorId = arena.getRegionTypeId(floorAt);
 			} else {
 				// Floor ID provided (probably recursively trying to find next floor down)
 				floorAt = arena.getProtectedRegion("floor_" + floorId);

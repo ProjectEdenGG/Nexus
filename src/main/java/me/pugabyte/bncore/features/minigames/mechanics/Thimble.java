@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
+import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleArena;
@@ -89,14 +90,18 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void onJoin(MatchJoinEvent event) {
+		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
-		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has joined");
-		ThimbleArena arena = minigamer.getMatch().getArena();
-		minigamer.tell("You are playing &eThimble&3: &e" + arena.getGamemode().getName());
 		Player player = minigamer.getPlayer();
 		ItemStack menuItem = new ItemStackBuilder(Material.CONCRETE).durability((short) 11).name("Choose A Block!").build();
 		player.getInventory().setItem(0, menuItem);
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
+	}
+
+	@Override
+	public void tellMapAndMechanic(Minigamer minigamer) {
+		Arena arena = minigamer.getMatch().getArena();
+		minigamer.tell("You are playing &e" + arena.getMechanic().getName() + " &3on &e" + arena.getDisplayName());
 	}
 
 	@Override

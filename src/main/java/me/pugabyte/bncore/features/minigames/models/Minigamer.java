@@ -157,7 +157,7 @@ public class Minigamer {
 
 		// TODO: Allow/disallow teleportation
 		player.setVelocity(new Vector(0, 0, 0));
-		player.teleport(location.clone().add(0, .25, 0));
+		player.teleport(location.clone().add(0, .5, 0));
 		player.setVelocity(new Vector(0, 0, 0));
 		if (withSlowness) {
 			match.getTasks().wait(1, () -> player.setVelocity(new Vector(0, 0, 0)));

@@ -6,10 +6,10 @@ import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.mechanics.GrabAJumbuck;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.GrabAJumbuckArena;
-import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -23,13 +23,13 @@ import java.util.List;
 
 import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 
-@CustomMechanicSettings(MechanicType.GRAB_A_JUMBUCK)
+@CustomMechanicSettings(GrabAJumbuck.class)
 public class GrabAJumbuckMenu extends MenuUtils implements InventoryProvider {
 
 	GrabAJumbuckArena arena;
 
 	public GrabAJumbuckMenu(Arena arena) {
-		this.arena = (GrabAJumbuckArena) ArenaManager.convert(arena, GrabAJumbuckArena.class);
+		this.arena = ArenaManager.convert(arena, GrabAJumbuckArena.class);
 	}
 
 	@Override

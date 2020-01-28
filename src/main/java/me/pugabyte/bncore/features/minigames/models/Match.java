@@ -81,26 +81,19 @@ public class Match {
 	public boolean join(Minigamer minigamer) {
 		initialize();
 
-		MatchJoinEvent event;
-		if (started) {
-			if (arena.canJoinLate()) {
-				event = callJoinEvent(minigamer);
-				if (event.isCancelled()) return false;
-				minigamers.add(minigamer);
-				balance();
-				teleportIn(minigamer);
-			} else {
-				minigamer.tell("This match has already started");
-				return false;
-			}
-		} else {
-			event = callJoinEvent(minigamer);
-			if (event.isCancelled()) return false;
-			minigamers.add(minigamer);
-			arena.getLobby().join(minigamer);
+		if (started && !arena.canJoinLate()) {
+			minigamer.tell("This match has already started");
+			return false;
 		}
 
+		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
+		Utils.callEvent(event);
+		if (event.isCancelled()) return false;
+
+		minigamers.add(minigamer);
+
 		try {
+			arena.getMechanic().processJoin(minigamer);
 			arena.getMechanic().onJoin(event);
 		} catch (Exception ex) { ex.printStackTrace(); }
 		scoreboard.update();
@@ -160,13 +153,6 @@ public class Match {
 		scoreboard.update();
 		MatchManager.remove(this);
 	}
-
-	private MatchJoinEvent callJoinEvent(Minigamer minigamer) {
-		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
-		Utils.callEvent(event);
-		return event;
-	}
-
 	private void initialize() {
 		if (!initialized) {
 			MatchInitializeEvent event = new MatchInitializeEvent(this);
@@ -184,18 +170,21 @@ public class Match {
 	@SneakyThrows
 	private void initializeMatchData() {
 		String path = this.getClass().getPackage().getName();
-		Set<Class<? extends MatchData>> classes = new Reflections(path + ".matchdata").getSubTypesOf(MatchData.class);
-		for (Class<?> clazz : classes) {
-			if (clazz.getAnnotation(MatchDataFor.class).value().equals(arena.getMechanic().getClass())) {
-				matchData = (MatchData) clazz.getConstructor(Match.class).newInstance(this);
-				break;
+		Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".matchdata").getSubTypesOf(MatchData.class);
+
+		matchDataTypes:
+		for (Class<?> matchDataType : matchDataTypes) {
+			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses()) {
+				if (matchDataType.getAnnotation(MatchDataFor.class).value().equals(superclass)) {
+					matchData = (MatchData) matchDataType.getConstructor(Match.class).newInstance(this);
+					break matchDataTypes;
+				}
 			}
 		}
 	}
 
 	private void startTimer() {
-		if (arena.getSeconds() > 0)
-			timer = new MatchTimer(this, arena.getSeconds());
+		timer = new MatchTimer(this, arena.getSeconds());
 	}
 
 	private void stopTimer() {
@@ -226,7 +215,7 @@ public class Match {
 		arena.getTeams().forEach(team -> team.spawn(minigamers));
 	}
 
-	private void teleportIn(Minigamer minigamer) {
+	public void teleportIn(Minigamer minigamer) {
 		minigamer.getTeam().spawn(Collections.singletonList(minigamer));
 	}
 
@@ -309,19 +298,23 @@ public class Match {
 		}
 
 		void start() {
-			match.getTasks().wait(1, () -> match.broadcast("&e" + (time + 1) + " &7seconds left..."));
-			taskId = match.getTasks().repeat(0, 20, () -> {
-				if (--time > 0) {
-					MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
-					Utils.callEvent(event);
-					if (broadcasts.contains(time)) {
-						match.broadcast("&e" + time + " &7seconds left...");
+			if (time > 0) {
+				match.getTasks().wait(1, () -> match.broadcast("&e" + (time + 1) + " &7seconds left..."));
+				taskId = match.getTasks().repeat(0, 20, () -> {
+					if (--time > 0) {
+						if (broadcasts.contains(time))
+							match.broadcast("&e" + time + " &7seconds left...");
+					} else {
+						match.end();
+						stop();
 					}
-				} else {
-					match.end();
-					stop();
-				}
-			});
+				});
+			} else {
+				taskId = match.getTasks().repeat(0, 20, () -> {
+					MatchTimerTickEvent event = new MatchTimerTickEvent(match, ++time);
+					Utils.callEvent(event);
+				});
+			}
 		}
 
 		void stop() {

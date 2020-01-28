@@ -12,7 +12,6 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -20,6 +19,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -46,9 +46,7 @@ public abstract class Mechanic implements Listener {
 		return GameMode.ADVENTURE;
 	}
 
-	public void onInitialize(MatchInitializeEvent event) {
-
-	}
+	public void onInitialize(MatchInitializeEvent event) {}
 
 	public void onStart(MatchStartEvent event) {
 		Match match = event.getMatch();
@@ -64,11 +62,12 @@ public abstract class Mechanic implements Listener {
 			announceWinners(event.getMatch());
 	}
 
+	public abstract void processJoin(Minigamer minigamer);
+
 	public void onJoin(MatchJoinEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has joined");
-		Arena arena = minigamer.getMatch().getArena();
-		minigamer.tell("You are playing &e" + arena.getMechanic().getName() + " &3on &e" + arena.getDisplayName());
+		tellMapAndMechanic(minigamer);
 	}
 
 	public void onQuit(MatchQuitEvent event) {
@@ -82,6 +81,8 @@ public abstract class Mechanic implements Listener {
 
 	public void onDeath(MinigamerDeathEvent event) {
 		// TODO: Autobalancing
+		event.broadcastDeathMessage();
+		kill(event.getMinigamer(), event.getAttacker());
 	}
 
 	public void kill(Minigamer minigamer) {
@@ -89,12 +90,6 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void kill(Minigamer victim, Minigamer attacker) {
-		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, attacker);
-		Utils.callEvent(deathEvent);
-		if (deathEvent.isCancelled()) return;
-
-		onDeath(deathEvent);
-		deathEvent.broadcastDeathMessage();
 		victim.getMatch().getScoreboard().update();
 		if (shouldBeOver(victim.getMatch()))
 			victim.getMatch().end();
@@ -104,10 +99,19 @@ public abstract class Mechanic implements Listener {
 		return true;
 	}
 
+	public void tellMapAndMechanic(Minigamer minigamer) {
+		Arena arena = minigamer.getMatch().getArena();
+		minigamer.tell("You are playing &e" + arena.getMechanic().getName() + " &3on &e" + arena.getDisplayName());
+	}
+
 	public abstract void announceWinners(Match match);
 
 	public int getWinningScore(Map<?, Integer> scores) {
 		return Collections.max(scores.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getValue();
+	}
+
+	public List<Minigamer> balance(Minigamer minigamer) {
+		return balance(Collections.singletonList(minigamer));
 	}
 
 	public abstract List<Minigamer> balance(List<Minigamer> minigamers);
@@ -144,5 +148,17 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public abstract boolean shouldBeOver(Match match);
+
+	public List<Class<? extends Mechanic>> getSuperclasses() {
+		List<Class<? extends Mechanic>> superclasses = new ArrayList<>();
+		Class<? extends Mechanic> clazz = this.getClass();
+		while (clazz.getSuperclass() != Object.class) {
+			superclasses.add(clazz);
+
+			clazz = (Class<? extends Mechanic>) clazz.getSuperclass();
+		}
+
+		return superclasses;
+	}
 
 }

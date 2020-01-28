@@ -5,20 +5,20 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.mechanics.DeathSwap;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.DeathSwapArena;
-import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import org.bukkit.entity.Player;
 
 import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 
-@CustomMechanicSettings(MechanicType.DEATH_SWAP)
+@CustomMechanicSettings(DeathSwap.class)
 public class DeathSwapMenu extends MenuUtils implements InventoryProvider {
 	DeathSwapArena arena;
 
 	public DeathSwapMenu(Arena arena) {
-		this.arena = (DeathSwapArena) ArenaManager.convert(arena, DeathSwapArena.class);
+		this.arena = ArenaManager.convert(arena, DeathSwapArena.class);
 		this.arena.write();
 	}
 

@@ -34,7 +34,7 @@ public class WorldGuardUtils {
 	private BukkitWorld bukkitWorld;
 	private World worldEditWorld;
 	private RegionManager manager;
-	static WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
+	public static WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 
 	public WorldGuardUtils(@NonNull org.bukkit.World world) {
 		this.world = world;
@@ -95,7 +95,11 @@ public class WorldGuardUtils {
 	}
 
 	public ProtectedRegion convert(Region region) {
-		return new ProtectedCuboidRegion("temp", new BlockVector(region.getMaximumPoint()), new BlockVector(region.getMinimumPoint()));
+		return convert("temp", region);
+	}
+
+	public ProtectedRegion convert(String id, Region region) {
+		return new ProtectedCuboidRegion(id, new BlockVector(region.getMaximumPoint()), new BlockVector(region.getMinimumPoint()));
 	}
 
 	public Region convert(ProtectedRegion region) {
