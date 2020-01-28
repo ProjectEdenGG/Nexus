@@ -50,7 +50,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 				e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getDuration()), (p, text) -> {
 					if (Utils.isInt(text)) {
 						team.getLoadout().getEffects().remove(potionEffect);
-						potionEffect = new PotionEffectEditor(potionEffect).withDuration(Integer.parseInt(text) - 1);
+						potionEffect = new PotionEffectEditor(potionEffect).withDuration(Integer.parseInt(text));
 						team.getLoadout().getEffects().add(potionEffect);
 						arena.write();
 						Tasks.wait(1, () -> {
@@ -74,7 +74,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 				e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getAmplifier()), (p, text) -> {
 					if (Utils.isInt(text)) {
 						team.getLoadout().getEffects().remove(potionEffect);
-						potionEffect = new PotionEffectEditor(potionEffect).withAmplifier(Integer.parseInt(text));
+						potionEffect = new PotionEffectEditor(potionEffect).withAmplifier(Integer.parseInt(text) - 1);
 						team.getLoadout().getEffects().add(potionEffect);
 						arena.write();
 						Tasks.wait(1, () -> {
