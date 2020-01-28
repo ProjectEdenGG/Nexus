@@ -192,8 +192,6 @@ public class MatchListener implements Listener {
 		}
 	}
 
-	// TODO: Win region
-
 	@EventHandler
 	public void onItemPickup(EntityPickupItemEvent event) {
 		if (!event.getEntity().getWorld().equals(Minigames.getGameworld())) return;

@@ -11,7 +11,6 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
-import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleArena;
@@ -100,8 +99,8 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void tellMapAndMechanic(Minigamer minigamer) {
-		Arena arena = minigamer.getMatch().getArena();
-		minigamer.tell("You are playing &e" + arena.getMechanic().getName() + " &3on &e" + arena.getDisplayName());
+		ThimbleArena arena = minigamer.getMatch().getArena();
+		minigamer.tell("You are playing &eThimble&3: &e" + arena.getGamemode().getName());
 	}
 
 	@Override
