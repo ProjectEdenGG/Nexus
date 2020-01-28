@@ -9,11 +9,13 @@ import me.pugabyte.bncore.features.minigames.models.arenas.CheckpointArena;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 
 @Aliases("checkpoint")
+@Permission("minigames.manage")
 public class CheckpointsCommand extends CustomCommand {
 	CheckpointArena arena;
 	String region;
@@ -37,6 +39,7 @@ public class CheckpointsCommand extends CustomCommand {
 
 	@Path
 	void help() {
+		// TODO
 		// Stand in correct spot
 		// Select floor of checkpoint area
 		// /checkpoint add <number>
