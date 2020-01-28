@@ -47,7 +47,7 @@ public class SerializationUtils {
 		return materials.stream().map(block -> Material.valueOf(block.toUpperCase())).collect(Collectors.toSet());
 	}
 
-	public static String serializeLocation(Location location) {
+	public static String serializeDatabaseLocation(Location location) {
 		DecimalFormat nf = new DecimalFormat("#.000");
 		return location.getWorld().getName() + "," +
 				nf.format(location.getX()) + "," +
@@ -57,7 +57,7 @@ public class SerializationUtils {
 				nf.format(location.getPitch());
 	}
 
-	public static Location deserializeLocation(String in) {
+	public static Location deserializeDatabaseLocation(String in) {
 		List<String> parts = Arrays.asList(in.split(","));
 		return new Location(Bukkit.getWorld(parts.get(0)),
 				Double.parseDouble(parts.get(1)),
