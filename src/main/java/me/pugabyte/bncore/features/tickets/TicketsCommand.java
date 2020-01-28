@@ -1,10 +1,15 @@
 package me.pugabyte.bncore.features.tickets;
 
+import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.command.ConsoleCommandSender;
 
 public class TicketsCommand extends CustomCommand {
@@ -43,11 +48,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("(tp|teleport) <id>")
-	void teleport(int id) {
-		Ticket ticket = service.get(id);
-		if (!ticket.canBeSeenBy(player()))
-			error("You can't view that ticket");
-
+	void teleport(Ticket ticket) {
 		if (ticket.getLocation() == null)
 			if (ticket.getOwner() instanceof ConsoleCommandSender)
 				error("That ticket was created by console, so you can not teleport to it");
@@ -61,14 +62,20 @@ public class TicketsCommand extends CustomCommand {
 		send(ticket.getOwner(), message);
 
 		send(PREFIX + "Teleporting to ticket &e#" + ticket.getId());
+
+		Tasks.wait(15 * 20, () -> {
+			if (service.get(ticket.getId()).isOpen())
+				json(PREFIX + "&3Click here to &cclose &3the ticket||cmd:/tickets confirmclose" + ticket.getId() + "||ttp:&eClick to close");
+		});
 	}
 
-	// TODO: Confirm menu
+	@Path("confirmclose <id>")
+	void confirmClose(Ticket ticket) {
+		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder().onConfirm((e) -> close(ticket)).build());
+	}
+
 	@Path("close <id>")
-	void close(int id) {
-		Ticket ticket = service.get(id);
-		if (!ticket.canBeSeenBy(player()))
-			error("You can't modify that ticket");
+	void close(Ticket ticket) {
 		if (!ticket.isOpen())
 			error("Ticket already closed");
 
@@ -83,10 +90,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("reopen <id>")
-	void reopen(int id) {
-		Ticket ticket = service.get(id);
-		if (!ticket.canBeSeenBy(player()))
-			error("You can't modify that ticket");
+	void reopen(Ticket ticket) {
 		if (ticket.isOpen())
 			error("Ticket already open");
 
@@ -98,6 +102,19 @@ public class TicketsCommand extends CustomCommand {
 		send(ticket.getOwner(), message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &areopened");
+	}
+
+	@ConverterFor(Ticket.class)
+	public Ticket convertToTicket(String value) {
+		if (!Utils.isInt(value))
+			error("Ticket ID must be a number");
+
+		Ticket ticket = service.get(Integer.parseInt(value));
+
+		if (!ticket.canBeSeenBy(player()))
+			error("You cannot view that ticket");
+
+		return ticket;
 	}
 
 }
