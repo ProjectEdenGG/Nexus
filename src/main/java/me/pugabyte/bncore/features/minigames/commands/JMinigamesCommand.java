@@ -55,7 +55,7 @@ public class JMinigamesCommand extends CustomCommand {
 		minigamer.join(arena);
 	}
 
-	@Path("quit")
+	@Path("(quit|leave)")
 	@Permission("use")
 	void quit() {
 		minigamer.quit();

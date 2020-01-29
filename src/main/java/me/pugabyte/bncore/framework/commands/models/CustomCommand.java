@@ -245,13 +245,12 @@ public abstract class CustomCommand implements ICustomCommand {
 
 	@ConverterFor(World.class)
 	World convertToWorld(String value) {
-		try {
-			if ("current".equalsIgnoreCase(value))
-				return player().getWorld();
-			return Bukkit.getWorld(value);
-		} catch (IllegalArgumentException ignore) {
+		if ("current".equalsIgnoreCase(value))
+			return player().getWorld();
+		World world = Bukkit.getWorld(value);
+		if (world == null)
 			throw new InvalidInputException("World from " + value + " not found");
-		}
+		return world;
 	}
 
 	@TabCompleterFor(World.class)
