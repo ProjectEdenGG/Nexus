@@ -53,7 +53,7 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("schem save <name>")
-	@Permission("group.admin")
+	@Permission("group.seniorstaff")
 	void schemSave(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
 		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
@@ -61,7 +61,7 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("schem paste <name>")
-	@Permission("group.admin")
+	@Permission("group.seniorstaff")
 	void schemPaste(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
 		worldEditUtils.paste(name, player().getLocation());

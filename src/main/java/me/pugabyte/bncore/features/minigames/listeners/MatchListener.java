@@ -180,6 +180,7 @@ public class MatchListener implements Listener {
 	public void onEnterKillRegion(RegionEnteredEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying()) return;
+		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;
 		Mechanic mechanic = minigamer.getMatch().getArena().getMechanic();
 
 		Arena arena = minigamer.getMatch().getArena();
