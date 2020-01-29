@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.pugabyte.bncore.utils.Utils.left;
+
 public abstract class Mechanic implements Listener {
 
 	public Mechanic() {
@@ -117,7 +119,7 @@ public abstract class Mechanic implements Listener {
 	public abstract List<Minigamer> balance(List<Minigamer> minigamers);
 
 	public String getScoreboardTitle(Match match) {
-		return match.getArena().getName();
+		return left(match.getArena().getName(), 16);
 	}
 
 	public Map<String, Integer> getScoreboardLines(Match match) {

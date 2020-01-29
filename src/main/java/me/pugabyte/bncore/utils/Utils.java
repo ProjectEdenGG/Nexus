@@ -124,7 +124,7 @@ public class Utils {
 	}
 
 	public static String left(String string, int number) {
-		return string.substring(0, number);
+		return string.substring(0, Math.min(number, string.length()));
 	}
 
 	public static String camelCase(String text) {

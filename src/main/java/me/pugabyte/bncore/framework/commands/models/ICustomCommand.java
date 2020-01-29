@@ -237,9 +237,11 @@ public interface ICustomCommand {
 
 		if (method.isAnnotationPresent(Permission.class)) {
 			Permission pathPermission = method.getAnnotation(Permission.class);
-			permission = pathPermission.absolute() ? "" : (permission + ".") + pathPermission.value();
-			if (!sender.hasPermission(permission))
-				return false;
+			if (permission != null)
+				permission = pathPermission.absolute() ? "" : (permission + ".") + pathPermission.value();
+			else
+				permission = pathPermission.value();
+			return sender.hasPermission(permission);
 		}
 
 		return true;
