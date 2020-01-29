@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,42 +27,52 @@ public class ItemInfoCommand extends CustomCommand {
 
 		Material material = tool.getType();
 		int amount = tool.getAmount();
-		String nbt = "{}";
+		String nbtString = null;
 
 		NBTItem nbtItem = new NBTItem(tool);
-		if (nbtItem.hasNBTData())
-			nbt = nbtItem.asNBTString();
+		if (nbtItem.hasNBTData()) {
+			nbtString = nbtItem.asNBTString();
+			nbtString = ChatColor.stripColor(nbtString);
+		}
 
-		String give = material.name() + " " + amount + " 0 " + nbt;
+		String spawnCommand = "/i " + material.name() + " " + amount + (nbtString == null ? "" : " " + nbtString);
 
-		// clean up of garbage
-		give = give.replaceAll("\"\"", "");
-		give = give.replaceAll("\\{\"\"text\"\":\"\"\\n\"\"},", "");
-		give = give.replaceAll("\\n", "");
-		give = give.replaceAll("\\\\", "");
+		if (nbtString != null) {
+			// clean up of garbage
+			nbtString = nbtString.replaceAll("\"\"", "");
+			nbtString = nbtString.replaceAll("\\{\"\"text\"\":\"\"\\n\"\"},", "");
+			nbtString = nbtString.replaceAll("\\n", "");
+			nbtString = nbtString.replaceAll("\\\\", "");
 
-		// highlight keywords
-		give = give.replaceAll("run_command", "&crun_command&f");
-		give = give.replaceAll("suggest_command", "&csuggest_command&f");
-		give = give.replaceAll("insert_command", "&cinsert_command&f");
-		give = give.replaceAll("open_url", "&copen_url&f");
-		give = give.replaceAll("open_file", "&copen_file&f");
+			// highlight keywords
+			nbtString = nbtString.replaceAll("run_command", "&crun_command&f");
+			nbtString = nbtString.replaceAll("suggest_command", "&csuggest_command&f");
+			nbtString = nbtString.replaceAll("insert_command", "&cinsert_command&f");
+			nbtString = nbtString.replaceAll("open_url", "&copen_url&f");
+			nbtString = nbtString.replaceAll("open_file", "&copen_file&f");
 
-		give = give.replaceAll("clickEvent", "&cclickEvent&f");
-		give = give.replaceAll("hoverEvent", "&choverEvent&f");
+			nbtString = nbtString.replaceAll("clickEvent", "&cclickEvent&f");
+			nbtString = nbtString.replaceAll("hoverEvent", "&choverEvent&f");
+		}
 
 		send("");
 
 		if (!overrideBool && (material.equals(Material.WRITTEN_BOOK) || material.equals(Material.BOOK_AND_QUILL))) {
-			int length = give.length();
-			if (length > 12400) {
-				send("String very big, length: " + length);
-				json("&e&l[Click to Try]||sgt:/iteminfo override||ttp:&cCaution: May crash you");
-				return;
+			if (nbtString != null) {
+				int length = nbtString.length();
+				if (length > 12400) {
+					send("String very big, length: " + length);
+					json("&e&l[Click to Try]||sgt:/iteminfo override||ttp:&cCaution: May crash you");
+					return;
+				}
 			}
 		}
 
-		send(give);
-		json("&e&l[Click to Copy]||sgt:" + give);
+		send("ID: " + material.getId() + ":" + tool.getDurability());
+		send("Material: " + material);
+		if (nbtString != null) {
+			send("NBT: " + Utils.colorize(nbtString));
+			json("&e&l[Click to Copy]||sgt:" + spawnCommand);
+		}
 	}
 }
