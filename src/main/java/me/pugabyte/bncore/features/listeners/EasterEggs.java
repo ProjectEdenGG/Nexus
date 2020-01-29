@@ -39,7 +39,6 @@ public class EasterEggs implements Listener {
 		Player clicked = (Player) event.getRightClicked();
 		Player clicker = event.getPlayer();
 		ItemStack heldItem = clicker.getInventory().getItemInMainHand();
-		heldItem.setAmount(heldItem.getAmount() - 1);
 
 		switch (clicked.getName().toLowerCase()) {
 			case "pugabyte":
@@ -69,15 +68,13 @@ public class EasterEggs implements Listener {
 			case COOKED_CHICKEN:
 			case RABBIT:
 			case COOKED_RABBIT:
-				player.getInventory().setItem(player.getInventory().getHeldItemSlot(), heldItem);
+				heldItem.setAmount(heldItem.getAmount() - 1);
 
 				eatSound(player, clicked.getLocation(), Sound.ENTITY_GENERIC_EAT);
 				addFoodLevel(clicked);
 				Tasks.wait(20, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_WOLF_AMBIENT, 0.5F, 1F));
 				break;
 			case ROTTEN_FLESH:
-				player.getInventory().setItem(player.getInventory().getHeldItemSlot(), heldItem);
-
 				player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_WOLF_GROWL, 0.5F, 1F);
 				break;
 		}
@@ -86,18 +83,16 @@ public class EasterEggs implements Listener {
 	private void wakka(Player player, ItemStack heldItem, Player clicked) {
 		switch (heldItem.getType()) {
 			case BUCKET:
-				player.getInventory().setItem(player.getInventory().getHeldItemSlot(), heldItem);
+				heldItem.setAmount(heldItem.getAmount() - 1);
 
 				player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_MILK, 0.5F, 1F);
 				Tasks.wait(4, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_AMBIENT, 0.5F, 1F));
 
 				ItemStack milkBucket = new ItemStackBuilder(Material.MILK_BUCKET).lore("Wakka's milk").build();
-
 				player.getInventory().addItem(milkBucket);
-
 				break;
 			case WHEAT:
-				player.getInventory().setItem(player.getInventory().getHeldItemSlot(), heldItem);
+				heldItem.setAmount(heldItem.getAmount() - 1);
 
 				eatSound(player, clicked.getLocation(), Sound.ENTITY_GENERIC_EAT);
 				addFoodLevel(clicked);
@@ -111,7 +106,7 @@ public class EasterEggs implements Listener {
 		switch (heldItem.getType()) {
 			case CARROT_ITEM:
 			case BEETROOT:
-				player.getInventory().setItem(player.getInventory().getHeldItemSlot(), heldItem);
+				heldItem.setAmount(heldItem.getAmount() - 1);
 
 				eatSound(player, clicked.getLocation(), Sound.ENTITY_GENERIC_EAT);
 				addFoodLevel(clicked);
@@ -126,7 +121,7 @@ public class EasterEggs implements Listener {
 			case BEETROOT_SEEDS:
 			case MELON_SEEDS:
 			case PUMPKIN_SEEDS:
-				player.getInventory().setItem(player.getInventory().getHeldItemSlot(), heldItem);
+				heldItem.setAmount(heldItem.getAmount() - 1);
 
 				eatSound(player, clicked.getLocation(), Sound.ENTITY_PARROT_EAT);
 				addFoodLevel(clicked);
