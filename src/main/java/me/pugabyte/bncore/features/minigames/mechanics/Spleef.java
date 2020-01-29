@@ -40,7 +40,7 @@ public final class Spleef extends SpleefMechanic {
 	public void playBlockBreakSound(Location location) {
 		Material material = location.getBlock().getType();
 		Sound sound = Sound.BLOCK_STONE_BREAK;
-		if (material.equals(Material.SNOW))
+		if (material.equals(Material.SNOW_BLOCK))
 			sound = Sound.BLOCK_SNOW_BREAK;
 		if (material.equals(Material.WOOL))
 			sound = Sound.BLOCK_CLOTH_BREAK;
