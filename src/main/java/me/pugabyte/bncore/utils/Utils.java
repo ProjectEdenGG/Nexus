@@ -299,6 +299,12 @@ public class Utils {
 		return null;
 	}
 
+	public static void runCommandAsOp(Player player, String command) {
+		player.setOp(true);
+		Bukkit.dispatchCommand(player, command);
+		player.setOp(false);
+	}
+
 	public static LocalDateTime timestamp(long timestamp) {
 		return LocalDateTime.ofInstant(
 				Instant.ofEpochMilli(timestamp),
