@@ -17,7 +17,6 @@ public class HasReadRulesCommand extends CustomCommand {
 
 	public HasReadRulesCommand(CommandEvent event) {
 		super(event);
-		hasReadRules = service.get(player());
 	}
 
 	String CHECK = "&a✔ ";
@@ -25,6 +24,8 @@ public class HasReadRulesCommand extends CustomCommand {
 
 	@Path("<player>")
 	void hrr(Player player) {
+		hasReadRules = service.get(player);
+
 		line();
 		send(PREFIX + player.getName());
 		send("&3Main: " + (hasReadRules.isMain() ? CHECK : X));
@@ -39,3 +40,4 @@ public class HasReadRulesCommand extends CustomCommand {
 	}
 
 }
+
