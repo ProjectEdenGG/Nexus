@@ -32,7 +32,7 @@ public class EconomyCommand extends CustomCommand {
 		json("&3[+] &c/bal [player]||ttp:&3View your balance. " +
 				"\n&3Add a player name to view " +
 				"\n&3another player's balance.||sgt:/bal ");
-		json("&3[+] &c/baltop [##]||ttp:&3View the richest people on the server||sgt:/baltop");
+		json("&3[+] &c/baltop [#]||ttp:&3View the richest people on the server||sgt:/baltop");
 		json("&3[+] &c/market||ttp:&3Visit the market||sgt:/market");
 		line();
 		json("&3 « &eClick here to return to the economy menu.||cmd:/economy");
