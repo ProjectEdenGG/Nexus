@@ -143,10 +143,20 @@ public abstract class CustomCommand implements ICustomCommand {
 		Bukkit.dispatchCommand(sender(), command);
 	}
 
+	protected void runCommand(Player player, String command) {
+		Bukkit.dispatchCommand(player, command);
+	}
+
 	protected void runCommandAsOp(String command) {
 		sender().setOp(true);
 		Bukkit.dispatchCommand(sender(), command);
 		sender().setOp(false);
+	}
+
+	protected void runCommandAsOp(Player player, String command) {
+		player.setOp(true);
+		Bukkit.dispatchCommand(player, command);
+		player.setOp(false);
 	}
 
 	protected void checkPermission(String permission) {
