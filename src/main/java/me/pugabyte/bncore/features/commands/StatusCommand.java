@@ -15,6 +15,7 @@ public class StatusCommand extends CustomCommand {
 
 	@Path
 	void toggle() {
+		fixPerms();
 		if (!perms()) {
 			if (player().hasPermission(userPerm)) removeUserPerm();
 			else addUserPerm();
@@ -24,14 +25,21 @@ public class StatusCommand extends CustomCommand {
 
 	@Path("(on|enable|true)")
 	void on() {
+		fixPerms();
 		if (!perms()) addUserPerm();
 		else runCommand("fb on");
 	}
 
 	@Path("(off|disable|false)")
 	void off() {
+		fixPerms();
 		if (!perms()) removeUserPerm();
 		else runCommand("fb off");
+	}
+
+	void fixPerms() {
+		if (perms())
+			if (player().hasPermission(userPerm)) removeUserPerm();
 	}
 
 	boolean perms() {
