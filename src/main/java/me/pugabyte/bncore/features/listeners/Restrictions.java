@@ -8,6 +8,7 @@ import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -109,6 +110,9 @@ public class Restrictions implements Listener {
 		if (damager instanceof Arrow)
 			if (((Arrow) damager).getShooter() instanceof Player)
 				damager = ((Player) ((Arrow) damager).getShooter()).getPlayer();
+
+		if (!event.getEntity().getType().equals(EntityType.ENDER_CRYSTAL))
+			return;
 
 		if (!damager.hasPermission("use.fire")) {
 			event.setCancelled(true);
