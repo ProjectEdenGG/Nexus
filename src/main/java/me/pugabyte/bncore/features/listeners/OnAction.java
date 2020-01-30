@@ -52,7 +52,7 @@ public class OnAction implements Listener {
 		if (!event.getBlockPlaced().getType().equals(Material.FURNACE))
 			return;
 
-		String msgFormat = "&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e";
+		String msgFormat = Koda.getDmFormat();
 		player.sendMessage(msgFormat + "Your furnace is protected with LWC! Use /lwcinfo to learn more. Use /cmodify <player> to allow someone else to use it.");
 	}
 
