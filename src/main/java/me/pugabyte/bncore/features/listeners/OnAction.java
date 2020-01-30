@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Tasks;
@@ -38,7 +39,7 @@ public class OnAction implements Listener {
 		if (!event.getBlockPlaced().getType().equals(Material.CHEST))
 			return;
 
-		String msgFormat = "&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e";
+		String msgFormat = Koda.getDmFormat();
 		player.sendMessage(msgFormat + "Your chest is protected with LWC! Use /lwcinfo to learn more. Use /cmodify <player> to allow someone else to use it.");
 	}
 
