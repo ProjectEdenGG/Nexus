@@ -46,22 +46,8 @@ public class MGNCommand extends CustomCommand {
 		}
 		until += ((hours > 0 || days > 0) ? "and " : "") + minutes + " minute" + ((minutes == 1) ? "" : "s");
 
-
-		String end = "th";
-		switch (Utils.right("" + nextMGM.getDayOfMonth(), 1)) {
-			case "1":
-				end = "st";
-				break;
-			case "2":
-				end = "nd";
-				break;
-			case "3":
-				end = "rd";
-				break;
-			default:
-		}
 		line();
-		send("&3The next &eMinigame Night &3will be hosted on &eSaturday, " + nextMGM.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + nextMGM.getDayOfMonth() + end + "&3 at &e4:00 PM &3EST. That is in &e" + until);
+		send("&3The next &eMinigame Night &3will be hosted on &eSaturday, " + nextMGM.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + Utils.getNumberSuffix(nextMGM.getDayOfMonth()) + "&3 at &e4:00 PM &3EST. That is in &e" + until);
 	}
 
 }
