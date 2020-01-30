@@ -64,7 +64,7 @@ public class PStoneInfoCommand extends CustomCommand {
 	@Path("sap")
 	void sap() {
 		line();
-		send("&eProtection Stone Sizes & Prices. &3(&eHover for more info!&3) " +
+		send("&eProtection Stone Sizes && Prices. &3(&eHover for more info!&3) " +
 				"\n");
 		send("&7Coal Ore");
 		json("      &eSize: &311x11x11||ttp:&3(&eRadius of 5&3)");

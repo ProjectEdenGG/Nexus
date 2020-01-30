@@ -25,7 +25,7 @@ public class BCHelpCommand extends CustomCommand {
 		json("&3[+] &c/ptime <time>||ttp:&eChange the appearance of time.||sgt:/ptime night");
 		json("&3[+] &c/speed <speed>||ttp:&eChange your walk or fly speed.||sgt:/speed ");
 		json("&3[+] &c/jump||ttp:&eJump forward||sgt:/jump");
-		json("&3[+] See the &ecreative commands wiki &3for more info||ttp:&eClick to open the wiki||url:https://wiki.bnn.gg/wiki/Commands##Creative");
+		json("&3[+] See the &ecreative commands wiki &3for more info||ttp:&eClick to open the wiki||url:https://wiki.bnn.gg/wiki/Commands#Creative");
 		send("&3[+] &eYou can also use WorldEdit, VoxelSniper, and a compass to teleport through walls");
 		line();
 	}
