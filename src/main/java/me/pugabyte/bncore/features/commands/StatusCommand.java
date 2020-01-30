@@ -19,7 +19,7 @@ public class StatusCommand extends CustomCommand {
 			if (player().hasPermission(userPerm)) removeUserPerm();
 			else addUserPerm();
 		}
-		runCommand("fb off");
+		runCommand("fb toggle");
 	}
 
 	@Path("(on|enable|true)")
