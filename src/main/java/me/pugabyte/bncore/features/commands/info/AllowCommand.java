@@ -1,10 +1,12 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.commands.info;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
+@Aliases("trust")
 public class AllowCommand extends CustomCommand {
 
 	public AllowCommand(CommandEvent event) {

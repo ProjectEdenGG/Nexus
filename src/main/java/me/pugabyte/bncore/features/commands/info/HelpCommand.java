@@ -5,10 +5,10 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-@Aliases("help")
-public class ServerInfoCommand extends CustomCommand {
+@Aliases("serverinfo")
+public class HelpCommand extends CustomCommand {
 
-	public ServerInfoCommand(CommandEvent event) {
+	public HelpCommand(CommandEvent event) {
 		super(event);
 	}
 

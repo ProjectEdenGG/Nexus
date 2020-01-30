@@ -13,6 +13,6 @@ public class TradeSignsCommand extends CustomCommand {
 	@Path
 	void help() {
 		line();
-		json("&eClick here &3to open the wiki on &6Trade Signs||url:https://wiki.bnn.gg/wiki/Economy##Trade_Signs");
+		json("&eClick here &3to open the wiki on &6Trade Signs||url:https://wiki.bnn.gg/wiki/Economy#Trade_Signs");
 	}
 }
