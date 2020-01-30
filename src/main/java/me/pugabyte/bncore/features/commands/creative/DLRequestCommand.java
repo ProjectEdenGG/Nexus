@@ -16,6 +16,5 @@ public class DLRequestCommand extends CustomCommand {
 			error(PREFIX + "You must be in the creative world to run this command.");
 		}
 		runCommand("ticket Plot download request");
-
 	}
 }

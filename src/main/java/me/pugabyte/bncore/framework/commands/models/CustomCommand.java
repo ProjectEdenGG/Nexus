@@ -159,6 +159,10 @@ public abstract class CustomCommand implements ICustomCommand {
 		player.setOp(false);
 	}
 
+	protected void runConsoleCommand(String command) {
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+	}
+
 	protected void checkPermission(String permission) {
 		if (!sender().hasPermission(permission))
 			throw new NoPermissionException();
