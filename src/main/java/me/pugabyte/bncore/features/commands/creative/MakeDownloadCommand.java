@@ -13,6 +13,6 @@ public class MakeDownloadCommand extends CustomCommand {
 
 	@Path("<player>")
 	void run(Player player) {
-		runCommandAsOp("plot download");
+		runCommandAsOp(player, "plot download");
 	}
 }
