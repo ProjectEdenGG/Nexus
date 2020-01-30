@@ -18,8 +18,7 @@ public class FilidWelcCommand extends CustomCommand {
 		send("&3Here are some of the most important aspects of our &ecommunity &3and what makes Bear Nation unique.");
 		line();
 		json("&3[+] &eMinigames||cmd:/minigames||ttp:&3Join us on &eSaturdays&3, &e4&3-&e6 &ePM &eEST " +
-				"\n&3for" +
-				"&eMinigame Night&3!" +
+				"\n&3for &eMinigame Night&3!\n" +
 				"\n&eFor different timezones:" +
 				"\n&3California: &eSat. 1-3 PM" +
 				"\n&3London: &eSat. 9-11 PM" +
@@ -27,7 +26,7 @@ public class FilidWelcCommand extends CustomCommand {
 				"\n&eMake sure to join &c/discord &etoo!");
 		json("&3[+] &eDiscord||cmd:/discord||ttp:&eA community skype-like program including " +
 				"\n&etext chats and voice chats");
-		json("&3[+] &eDubtrack||cmd:/dubtrack||ttp:&eShare your music with the community");
+//		json("&3[+] &eDubtrack||cmd:/dubtrack||ttp:&eShare your music with the community");
 		json("&3[+] &eWebsite||url:https://bnn.gg/||ttp:&eThe homepage for the server");
 		json("&3[+] &eVoting||cmd:/vote||ttp:&eVote for our server to support us!");
 		line();

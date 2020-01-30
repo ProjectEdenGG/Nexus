@@ -24,8 +24,8 @@ public class PStoneInfoCommand extends CustomCommand {
 	void commands() {
 		line();
 		send("&eProtection Stone Commands &3(&eHover for more info!&3)");
-		json("&3[+] &c/ps allow <player>||ttp:&eAllow another player to your edit inside Protection Stone field.||sgt:/ps allow ");
-		json("&3[+] &c/ps remove <player>||ttp:&eRemove another player's access to your field.||sgt:/ps remove ");
+		json("&3[+] &c/ps allow <player>||ttp:&eAllow another player to your edit inside Protection Stone field||sgt:/ps allow ");
+		json("&3[+] &c/ps remove <player>||ttp:&eRemove another player's access to your field||sgt:/ps remove ");
 		json("&3[+] &c/ps info||ttp:&eView information about the field." +
 				"\n&3The same output is given by right clicking " +
 				"\n&3on a field block with a diamond tool.||sgt:/ps info");
@@ -33,9 +33,9 @@ public class PStoneInfoCommand extends CustomCommand {
 				"\n&eyour field, showing you what is protected." +
 				"\n&3Only the blocks &cinside &3the glass are protected.||sgt:/ps visualize");
 		json("&3[+] &c/ps take||ttp:&eRemove the protection block and place it in your inventory.||sgt:/ps take");
-		json("&3[+] &c/ps allowed||ttp:&eGet a list of who is allowed to the field.||sgt:/ps allowed");
+		json("&3[+] &c/ps allowed||ttp:&eGet a list of who is allowed to the field||sgt:/ps allowed");
 		json("&3[+] &c/ps mark||ttp:&eCreate temporary obsidian towers at the " +
-				"\n&elocations of your nearby Protection Stones.||sgt:/ps mark");
+				"\n&elocations of your nearby Protection Stones||sgt:/ps mark");
 		json("&3[+] &c/ps toggle prevent-flow||ttp:&eToggle the water flow prevention flag." +
 				"\n&3By default, Protection Stones prevent water from " +
 				"\n&3flowing in or out of your field, to prevent " +
