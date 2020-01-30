@@ -13,6 +13,15 @@ public class StatusCommand extends CustomCommand {
 	String perm = "featherboard.group.";
 	String userPerm = perm + "user";
 
+	@Path
+	void toggle() {
+		if (!perms()) {
+			if (player().hasPermission(userPerm)) removeUserPerm();
+			else addUserPerm();
+		}
+		runCommand("fb off");
+	}
+
 	@Path("(on|enable|true)")
 	void on() {
 		if (!perms()) addUserPerm();
@@ -23,15 +32,6 @@ public class StatusCommand extends CustomCommand {
 	void off() {
 		if (!perms()) removeUserPerm();
 		else runCommand("fb off");
-	}
-
-	@Path
-	void toggle() {
-		if (!perms()) {
-			if (player().hasPermission(userPerm)) removeUserPerm();
-			else addUserPerm();
-		}
-		runCommand("rb off");
 	}
 
 	boolean perms() {
