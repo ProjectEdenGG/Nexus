@@ -13,6 +13,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
+import me.pugabyte.bncore.framework.exceptions.BNException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -41,7 +42,7 @@ class PathParser {
 		this.methods = new ArrayList<>(command.getPathMethods());
 
 		// Sort by most literal words first (most specific first)
-		methods.sort(Comparator.comparing(method -> getLiteralWords(getPathString(method)).split(" ").length));
+		methods.sort(Comparator.comparing(method -> getPathString(method).split(" ").length));
 		Collections.reverse(methods);
 	}
 
@@ -74,8 +75,11 @@ class PathParser {
 					arg.setParamIndex(paramIndex++);
 					Parameter parameter = method.getParameters()[arg.getParamIndex()];
 					arg.setTabCompleter(parameter.getType());
-					if (parameter.getAnnotation(Arg.class) != null)
+					if (parameter.getAnnotation(Arg.class) != null) {
 						arg.setTabCompleter(parameter.getAnnotation(Arg.class).tabCompleter());
+						if (parameter.getAnnotation(Arg.class).contextArg() > 0)
+							arg.setContextArg(command.getMethodParameters(method, event, false)[parameter.getAnnotation(Arg.class).contextArg() - 1]);
+					}
 				}
 
 				args.add(arg);
@@ -116,6 +120,7 @@ class PathParser {
 		private boolean isCompletionIndex = false;
 		private Integer paramIndex;
 		private Method tabCompleter;
+		private Object contextArg;
 
 		@ToString.Include
 		boolean isLiteral() {
@@ -160,13 +165,18 @@ class PathParser {
 		List<String> tabComplete() {
 			if (isLiteral())
 				return getSplitPathArg(realArg);
-			else if (isVariable() && tabCompleter != null)
-				if (tabCompleter.getDeclaringClass().equals(command.getClass()) || Modifier.isAbstract(tabCompleter.getDeclaringClass().getModifiers()))
-					return (List<String>) tabCompleter.invoke(command, realArg.toLowerCase());
-				else {
-					CustomCommand newCommand = command.getNewCommand(command.getEvent(), tabCompleter.getDeclaringClass());
-					return (List<String>) tabCompleter.invoke(newCommand, realArg.toLowerCase());
-				}
+			else if (isVariable() && tabCompleter != null) {
+				CustomCommand tabCompleteCommand = command;
+				if (!(tabCompleter.getDeclaringClass().equals(command.getClass()) || Modifier.isAbstract(tabCompleter.getDeclaringClass().getModifiers())))
+					tabCompleteCommand = command.getNewCommand(command.getEvent(), tabCompleter.getDeclaringClass());
+
+				if (tabCompleter.getParameterCount() == 1)
+					return (List<String>) tabCompleter.invoke(tabCompleteCommand, realArg.toLowerCase());
+				else if (tabCompleter.getParameterCount() == 2)
+					return (List<String>) tabCompleter.invoke(tabCompleteCommand, realArg.toLowerCase(), contextArg);
+				else
+					throw new BNException("Unknown converter parameters in " + tabCompleter.getName());
+			}
 
 			return new ArrayList<>();
 		}
@@ -212,7 +222,8 @@ class PathParser {
 
 			if (literalWords.length() == 0) {
 				if (args.size() > 0 && path.length() > 0)
-					return method;
+					if (path.split(" ").length <= args.size())
+						return method;
 
 				if (args.size() == 0 && path.length() == 0)
 					return method;

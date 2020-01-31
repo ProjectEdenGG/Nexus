@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface Arg {
 	String value() default "";
 	Class<?> tabCompleter() default void.class;
+	int contextArg() default -1;
 }
