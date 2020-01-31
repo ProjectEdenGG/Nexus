@@ -24,11 +24,11 @@ public class SuggestCommand extends Command {
 
 	public SuggestCommand() {
 		this.name = "suggest";
-		this.requiredRole = "SomePlayer";
+		this.requiredRole = "Staff";
+		this.guildOnly = true;
 	}
 
 	protected void execute(CommandEvent event) {
-		// TODO: Don't hardcode these
 		if (!event.getChannel().getId().equals(DiscordId.Channel.STAFF_PROMOTIONS.getId()))
 			return;
 
