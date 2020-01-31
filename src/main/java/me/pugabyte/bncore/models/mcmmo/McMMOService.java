@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.models.mcmmo;
 
 import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.utils.Tasks;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,5 +17,12 @@ public class McMMOService extends BaseService {
 			prestiges.put((String) row.get("type"), (Integer) row.get("count"));
 
 		return new McMMOPrestige(uuid, prestiges);
+	}
+
+	public void save(McMMOPrestige prestiges) {
+		Tasks.async(() -> prestiges.getPrestiges().forEach((type, count) -> database
+				.sql("INSERT INTO mcmmo_prestige VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE count=VALUES(count)")
+				.args(prestiges.getUuid(), type, count)
+				.execute()));
 	}
 }
