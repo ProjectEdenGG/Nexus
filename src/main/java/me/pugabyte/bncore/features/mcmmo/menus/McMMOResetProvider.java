@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.mcmmo.menus;
 
+import com.dieselpoint.norm.Database;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
@@ -8,10 +9,13 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.framework.persistence.BearNationDatabase;
+import me.pugabyte.bncore.framework.persistence.Persistence;
 import me.pugabyte.bncore.models.mcmmo.McMMOPrestige;
 import me.pugabyte.bncore.models.mcmmo.McMMOService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -138,9 +142,8 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		McMMOService service = new McMMOService();
-		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
+
 		ItemStack all = new ItemStackBuilder(Material.BEACON)
 				.name("&cAll Skills")
 				.lore("&&6Power Level:  " + mcmmoPlayer.getPowerLevel() + "/1300" +
@@ -148,11 +151,17 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 						"&f- $150,000||&f- All normal rewards||" + "&f- When your health gets low, this breastplate will give you the " +
 						"strength of an angry barbarian!").build();
 		if (mcmmoPlayer.getPowerLevel() >= 1300) addGlowing(all);
-
 		ItemStack reset = new ItemStackBuilder(Material.BARRIER).name("&c&lReset all with &4no reward").build();
 
-		contents.set(0, 4, ClickableItem.empty(all));
-		contents.set(5, 4, ClickableItem.empty(reset));
+		contents.set(0, 4, ClickableItem.from(all, (e) -> {
+			if (mcmmoPlayer.getPowerLevel() < 1300) return;
+			player.closeInventory();
+			prestigeAll(player);
+		}));
+		contents.set(5, 4, ClickableItem.from(reset, (e) -> {
+			player.closeInventory();
+			resetAll(mcmmoPlayer);
+		}));
 
 		for (SKILL skill : SKILL.values()) {
 			ItemStack item = new ItemStackBuilder(skill.getMaterial())
@@ -165,21 +174,53 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 			if (mcmmoPlayer.getSkillLevel(SkillType.valueOf(skill.name())) >= 100) addGlowing(item);
 			contents.set(skill.getRow(), skill.getColumn(),
 					ClickableItem.from(item, (e) -> {
-						if (!(mcmmoPlayer.getSkillLevel(SkillType.valueOf(skill.name())) >= 100)) return;
+						if (!(mcmmoPlayer.getSkillLevel(SkillType.valueOf(skill.name())) < 100)) return;
 						player.closeInventory();
-						skill.onClick(player);
-						Utils.blast(skill.name());
-						int prestiges = 1;
-						try {
-							prestiges = mcMMOPrestige.getPrestiges().get(skill.name().toLowerCase()) + 1;
-						} catch (Exception ignore) {
-						}
-						Utils.blast("" + prestiges);
-						SkriptFunctions.koda(player.getName() + " has reset their " + skill.name().toLowerCase() + " skill for the " +
-								Utils.getNumberSuffix(prestiges + 1) + " time!", "md");
-						mcmmoPlayer.modifySkill(SkillType.valueOf(skill.name()), 0);
+						prestige(player, skill);
 					}));
 		}
+	}
+
+	public void resetAll(McMMOPlayer player) {
+		player.getPlayer().closeInventory();
+		for (SkillType skillType : SkillType.values()) {
+			player.modifySkill(skillType, 0);
+		}
+
+	}
+
+	public void prestigeAll(Player player) {
+		SkriptFunctions.koda(player.getName() + " has reset all of their McMMO Skills!", "md");
+		for (SkillType skillType : SkillType.values()) {
+			if (skillType.isChildSkill()) continue;
+			prestige(player, SKILL.valueOf(skillType.name()));
+		}
+	}
+
+	public void prestige(Player player, SKILL skill) {
+		McMMOService service = new McMMOService();
+		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
+		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
+
+		skill.onClick(player);
+		int prestiges = 1;
+		try {
+			prestiges = mcMMOPrestige.getPrestiges().get(skill.name().toLowerCase()) + 1;
+		} catch (Exception ignore) {
+		}
+		SkriptFunctions.koda(player.getName() + " has reset their " + skill.name().toLowerCase() + " skill for the " +
+				Utils.getNumberSuffix(prestiges + 1) + " time!", "md");
+		mcmmoPlayer.modifySkill(SkillType.valueOf(skill.name()), 0);
+		mcMMOPrestige.getPrestiges().put(skill.name(), prestiges);
+		save(mcMMOPrestige);
+	}
+
+	public void save(McMMOPrestige prestiges) {
+		Database database = Persistence.getConnection(BearNationDatabase.BEARNATION);
+		Tasks.async(() -> prestiges.getPrestiges().forEach((type, count) -> database
+				.sql("INSERT INTO mcmmo_prestige VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE count=VALUES(count)")
+				.args(prestiges.getUuid(), type, count)
+				.execute()));
 	}
 
 	@Override
