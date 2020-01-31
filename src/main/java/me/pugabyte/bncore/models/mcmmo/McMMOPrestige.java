@@ -14,4 +14,12 @@ public class McMMOPrestige {
 	public int getPrestige(String type) {
 		return prestiges.getOrDefault(type, 0);
 	}
+
+	public void setPrestige(String type, int prestige) {
+		prestiges.put(type.toLowerCase(), prestige);
+	}
+
+	public void prestige(String type) {
+		setPrestige(type, getPrestige(type) + 1);
+	}
 }

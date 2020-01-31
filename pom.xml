@@ -50,6 +50,11 @@
                                     <pattern>net.minidev.json</pattern>
                                     <shadedPattern>com.onarandombox.multiverseinventories.util.json</shadedPattern>
                                 </relocation>
+                                <!-- Conflicts with something else shading neovisionaries (vixio?) -->
+                                <relocation>
+                                    <pattern>com.neovisionaries.</pattern>
+                                    <shadedPattern>me.pugabyte.bncore.neovisionaries.</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -114,6 +119,11 @@
             <id>dmulloy2-repo</id>
             <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
+        <repository>
+            <id>jcenter</id>
+            <name>jcenter-bintray</name>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
@@ -163,6 +173,25 @@
             <artifactId>helper</artifactId>
             <version>5.5.0</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- JDA -->
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>4.1.1_104</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>club.minnced</groupId>
+                    <artifactId>opus-java</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- JDA-Utilities -->
+        <dependency>
+            <groupId>com.jagrosh</groupId>
+            <artifactId>jda-utilities-command</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
         </dependency>
         <!-- Minigames -->
         <dependency>

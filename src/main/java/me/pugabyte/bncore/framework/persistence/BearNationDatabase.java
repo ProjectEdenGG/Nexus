@@ -2,6 +2,7 @@ package me.pugabyte.bncore.framework.persistence;
 
 public enum BearNationDatabase {
 	BEARNATION,
+	LITEBANS,
 	NAMELESS;
 
 	public String getDatabase() {

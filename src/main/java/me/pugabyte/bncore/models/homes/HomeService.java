@@ -12,13 +12,7 @@ public class HomeService extends BaseService {
 		return CompletableFuture.supplyAsync(() -> HomeOwner.builder()
 				.uuid(uuid)
 				.homes(getHomes(uuid))
-				.fullAccessList(database
-						.select("accessUuid")
-						.table("home_permission_map")
-						.where("uuid = ?")
-						.and("accessType = ?")
-						.args(uuid, HomeOwner.PermissionType.ALLOW_ALL.name())
-						.results(String.class))
+				.fullAccessList(getAccessList(uuid, HomeOwner.PermissionType.ALLOW_ALL))
 				.build());
 	}
 
@@ -43,13 +37,7 @@ public class HomeService extends BaseService {
 		for (Home home : homes) {
 			if (home.getUuid() == null) continue;
 
-			home.setAccessList(database
-					.select("accessUuid")
-					.table("home_permission_map")
-					.where("uuid = ?")
-					.and("accessType = ?")
-					.args(uuid, HomeOwner.PermissionType.ALLOW.name())
-					.results(String.class));
+			home.setAccessList(getAccessList(uuid, HomeOwner.PermissionType.ALLOW));
 		}
 
 		return homes;
@@ -57,6 +45,16 @@ public class HomeService extends BaseService {
 
 	public List<String> getHomeNames(String uuid) {
 		return database.select("name").table("home").where("uuid = ?").args(uuid).results(String.class);
+	}
+
+	public List<String> getAccessList(String uuid, HomeOwner.PermissionType accessType) {
+		return database
+				.select("accessUuid")
+				.table("home_permission_map")
+				.where("uuid = ?")
+				.and("accessType = ?")
+				.args(uuid, accessType.name())
+				.results(String.class);
 	}
 
 }

@@ -24,6 +24,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.loreize;
 
 public abstract class MenuUtils {
 
@@ -52,7 +53,7 @@ public abstract class MenuUtils {
 		if (name != null)
 			meta.setDisplayName(colorize(name));
 		if (lore != null)
-			meta.setLore(Arrays.asList(colorize(lore).split("\\|\\|")));
+			meta.setLore(Arrays.asList(loreize(colorize(lore)).split("\\|\\|")));
 		item.setItemMeta(meta);
 		return item;
 	}

@@ -57,6 +57,10 @@ public enum Rank {
 		return format + Utils.camelCase(name());
 	}
 
+	public String noFormat() {
+		return Utils.camelCase(name());
+	}
+
 	public List<Nerd> getNerds() {
 		Set<PermissionUser> users = PermissionsEx.getPermissionManager().getGroup(Utils.camelCase(name())).getUsers();
 		Set<Nerd> nerds = new HashSet<>();
