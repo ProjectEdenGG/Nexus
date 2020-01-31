@@ -4,6 +4,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.arenas.CheckpointArena;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -18,7 +19,7 @@ import me.pugabyte.bncore.utils.WorldGuardUtils;
 @Permission("minigames.manage")
 public class CheckpointsCommand extends CustomCommand {
 	CheckpointArena arena;
-	String region;
+	String regionBase;
 	WorldEditUtils weUtils;
 	WorldGuardUtils wgUtils;
 
@@ -28,10 +29,12 @@ public class CheckpointsCommand extends CustomCommand {
 			arena = (CheckpointArena) ArenaManager.getFromLocation(player().getLocation());
 		} catch (Exception ex) {}
 
-		if (arena == null)
-			error("No arena found at your location; did you create the main region and set the mechanic?");
+		if (arena == null) {
+			send(Minigames.PREFIX + "&cNo arena found at your location; did you create the main region and set the mechanic?");
+			return;
+		}
 
-		region = arena.getMechanicType().name() + "_" + arena.getName() + "_checkpoint_";
+		regionBase = arena.getMechanicType().name() + "_" + arena.getName() + "_checkpoint_";
 
 		weUtils = new WorldEditUtils(player().getWorld());
 		wgUtils = new WorldGuardUtils(player().getWorld());
@@ -50,7 +53,7 @@ public class CheckpointsCommand extends CustomCommand {
 	void addCheckpoint(int number) {
 		Region selection = weUtils.getPlayerSelection(player());
 		selection.expand(Direction.UP.toVector().multiply(4));
-		String id = region + number;
+		String id = regionBase + number;
 		ProtectedRegion region = wgUtils.convert(id, selection);
 		wgUtils.getManager().addRegion(region);
 		wgUtils.getManager().saveChanges();
@@ -62,7 +65,7 @@ public class CheckpointsCommand extends CustomCommand {
 
 	@Path("(remove|delete) <number>")
 	void removeCheckpoint(int number) {
-		wgUtils.getManager().removeRegion(region + number);
+		wgUtils.getManager().removeRegion(regionBase + number);
 		arena.removeCheckpoint(number);
 		send(PREFIX + "Removed checkpoint &e#" + number + " &3in &e" + arena.getDisplayName());
 	}

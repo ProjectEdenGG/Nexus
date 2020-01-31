@@ -18,6 +18,8 @@ public abstract class SingleplayerMechanic extends Mechanic {
 
 	@Override
 	public void processJoin(Minigamer minigamer) {
+		balance(minigamer);
+		minigamer.getMatch().teleportIn(minigamer);
 		if (!minigamer.getMatch().isStarted())
 			minigamer.getMatch().start();
 	}

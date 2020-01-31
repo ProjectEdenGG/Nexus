@@ -15,7 +15,7 @@ import java.util.List;
 public class StarTrekMoviesCommand extends CustomCommand {
 	private HoursService service = new HoursService();
 	private DecimalFormat nf = new DecimalFormat("#.00");
-	private final double divisor = 60 * 116.52;
+	private final double divisor = 60 * 116.53;
 
 	public StarTrekMoviesCommand(CommandEvent event) {
 		super(event);

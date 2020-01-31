@@ -3,6 +3,8 @@ package me.pugabyte.bncore.features.listeners;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -17,6 +19,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
+import static me.pugabyte.bncore.utils.Utils.colorize;
+
 public class OnAction implements Listener {
 	public OnAction() {
 		BNCore.registerListener(this);
@@ -24,10 +28,9 @@ public class OnAction implements Listener {
 
 	@EventHandler
 	public void onHorseLikeDamage(EntityDamageEvent event) {
-		if (event.getEntity() instanceof AbstractHorse) {
+		if (event.getEntity() instanceof AbstractHorse)
 			if (event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION))
 				event.setCancelled(true);
-		}
 	}
 
 	@EventHandler
@@ -39,8 +42,16 @@ public class OnAction implements Listener {
 		if (!event.getBlockPlaced().getType().equals(Material.CHEST))
 			return;
 
+		SettingService service = new SettingService();
+		Setting setting = service.get(player, "tips.lwc.chest");
+		if (setting.getBoolean())
+			return;
+
 		String msgFormat = Koda.getDmFormat();
-		player.sendMessage(msgFormat + "Your chest is protected with LWC! Use /lwcinfo to learn more. Use /cmodify <player> to allow someone else to use it.");
+		player.sendMessage(colorize(msgFormat + "Your chest is protected with LWC! Use /lwcinfo to learn more. Use /cmodify <player> to allow someone else to use it."));
+
+		setting.setBoolean(true);
+		service.save(setting);
 	}
 
 	@EventHandler
@@ -52,8 +63,16 @@ public class OnAction implements Listener {
 		if (!event.getBlockPlaced().getType().equals(Material.FURNACE))
 			return;
 
+		SettingService service = new SettingService();
+		Setting setting = service.get(player, "tips.lwc.furnace");
+		if (setting.getBoolean())
+			return;
+
 		String msgFormat = Koda.getDmFormat();
-		player.sendMessage(msgFormat + "Your furnace is protected with LWC! Use /lwcinfo to learn more. Use /cmodify <player> to allow someone else to use it.");
+		player.sendMessage(colorize(msgFormat + "Your furnace is protected with LWC! Use /lwcinfo to learn more. Use /cmodify <player> to allow someone else to use it."));
+
+		setting.setBoolean(true);
+		service.save(setting);
 	}
 
 	@EventHandler
@@ -86,7 +105,7 @@ public class OnAction implements Listener {
 				break;
 		}
 
-		if (event.getFrom().getName().equalsIgnoreCase("donortrial")) {
+		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
 			Tasks.wait(20, () -> {
 				player.sendMessage("Removing pets, disguises and ptime changes");
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "undisguiseplayer " + player.getName());
@@ -96,10 +115,8 @@ public class OnAction implements Listener {
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "wings reset " + player.getName());
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "speed walk 1 " + player.getName());
 			});
-		}
 
-		if (player.getWorld().getName().equalsIgnoreCase("staff_world")) {
+		if (player.getWorld().getName().equalsIgnoreCase("staff_world"))
 			Tasks.wait(20, () -> Bukkit.dispatchCommand(player, "nocheats"));
-		}
 	}
 }

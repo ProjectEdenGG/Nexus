@@ -37,4 +37,8 @@ public class CheckpointMatchData extends MatchData {
 		else
 			minigamer.teleport(minigamer.getTeam().getSpawnpoints().get(0));
 	}
+
+	public void clearCheckpoints(Minigamer minigamer) {
+		checkpoints.remove(minigamer.getPlayer().getUniqueId());
+	}
 }
