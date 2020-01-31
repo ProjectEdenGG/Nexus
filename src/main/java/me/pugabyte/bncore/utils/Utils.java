@@ -54,6 +54,10 @@ public class Utils {
 		Bukkit.getPlayer("WakkaFlocka").sendMessage(colorize(message));
 	}
 
+	public static void blast(String message) {
+		Bukkit.getPlayer("Blast").sendMessage(colorize(message));
+	}
+
 	public static String getPrefix(String prefix) {
 		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
 	}
@@ -303,6 +307,10 @@ public class Utils {
 		player.setOp(true);
 		Bukkit.dispatchCommand(player, command);
 		player.setOp(false);
+	}
+
+	public static void runConsoleCommand(String command) {
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}
 
 	public static LocalDateTime timestamp(long timestamp) {
