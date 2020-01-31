@@ -15,6 +15,7 @@ import me.pugabyte.bncore.features.inviterewards.InviteRewards;
 import me.pugabyte.bncore.features.leash.Leash;
 import me.pugabyte.bncore.features.listeners.Listeners;
 import me.pugabyte.bncore.features.mcmmo.McMMO;
+import me.pugabyte.bncore.features.menus.SignMenuFactory;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
@@ -147,6 +148,9 @@ public class BNCore extends JavaPlugin {
 	public static Tickets tickets;
 	public static Wiki wiki;
 
+	@Getter
+	private SignMenuFactory signMenuFactory;
+
 	private void enableFeatures() {
 		afk = new AFK();
 		chat = new Chat();
@@ -173,6 +177,8 @@ public class BNCore extends JavaPlugin {
 		tameables = new Tameables();
 		tickets = new Tickets();
 		wiki = new Wiki();
+
+		signMenuFactory = new SignMenuFactory(this);
 	}
 
 }

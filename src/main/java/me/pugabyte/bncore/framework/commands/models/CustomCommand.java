@@ -15,6 +15,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeCommandBlockE
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -169,6 +170,10 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected String argsString() {
+		return argsString(args());
+	}
+
+	protected String argsString(List<String> args) {
 		if (args() == null || args().size() == 0) return "";
 		return String.join(" ", args());
 	}
@@ -194,7 +199,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	protected boolean isIntArg(int i) {
 		if (event.getArgs().size() < i) return false;
 		try {
-			Integer.parseInt(event.getArgs().get(i - 1));
+			Integer.parseInt(arg(i));
 			return true;
 		} catch (NumberFormatException ex) {
 			return false;
@@ -204,7 +209,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	protected Integer intArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		try {
-			return Integer.parseInt(event.getArgs().get(i - 1));
+			return Integer.parseInt(arg(i));
 		} catch (NumberFormatException ex) {
 			throw new InvalidInputException("Argument #" + i + " is not a valid integer");
 		}
@@ -213,7 +218,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	protected Double doubleArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		try {
-			return Double.parseDouble(event.getArgs().get(i - 1));
+			return Double.parseDouble(arg(i));
 		} catch (NumberFormatException ex) {
 			throw new InvalidInputException("Argument #" + i + " is not a valid number");
 		}
@@ -226,9 +231,19 @@ public abstract class CustomCommand implements ICustomCommand {
 		return Boolean.parseBoolean(value);
 	}
 
+	protected boolean isPlayerArg(int i) {
+		if (event.getArgs().size() < i) return false;
+		try {
+			Utils.getPlayer(arg(i));
+			return true;
+		} catch (PlayerNotFoundException ex) {
+			return false;
+		}
+	}
+
 	protected OfflinePlayer playerArg(int i) {
 		if (event.getArgs().size() < i) return null;
-		return Utils.getPlayer(event.getArgs().get(i - 1));
+		return Utils.getPlayer(arg(i));
 	}
 
 	@ConverterFor(OfflinePlayer.class)

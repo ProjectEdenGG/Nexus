@@ -11,6 +11,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
+import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MissingArgumentException;
@@ -101,6 +102,12 @@ public interface ICustomCommand {
 	}
 
 	default void invoke(Method method, CommandEvent event) throws Exception {
+		Object[] objects = getMethodParameters(method, event, true);
+		method.setAccessible(true);
+		method.invoke(this, objects);
+	}
+
+	default public Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
 		List<String> args = event.getArgs();
 		List<Parameter> parameters = Arrays.asList(method.getParameters());
 		String pathValue = method.getAnnotation(Path.class).value();
@@ -120,6 +127,9 @@ public interface ICustomCommand {
 
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 			String value = (annotation == null ? null : annotation.value());
+			int contextArgIndex = (annotation == null ? -1 : annotation.contextArg());
+			Object contextArg = (contextArgIndex > 0 && objects.length <= contextArgIndex) ? contextArgIndex : null;
+
 			if (args.size() >= pathIndex) {
 				if (pathArg.contains("..."))
 					value = String.join(" ", args.subList(pathIndex - 1, args.size()));
@@ -127,17 +137,15 @@ public interface ICustomCommand {
 					value = args.get(pathIndex - 1);
 			}
 
-			boolean required = pathArg.startsWith("<");
+			boolean required = doValidation && pathArg.startsWith("<");
 			try {
-				objects[i - 1] = convert(value, parameter.getType(), event.getCommand(), required);
+				objects[i - 1] = convert(value, contextArg, parameter.getType(), event, required);
 			} catch (MissingArgumentException ex) {
 				event.getCommand().showUsage();
 			}
 			++i;
 		}
-
-		method.setAccessible(true);
-		method.invoke(this, objects);
+		return objects;
 	}
 
 	List<Class<? extends Exception>> conversionExceptions = Arrays.asList(
@@ -147,19 +155,24 @@ public interface ICustomCommand {
 	);
 
 	@SneakyThrows
-	default Object convert(String value, Class<?> type, CustomCommand command, boolean required) {
+	default Object convert(String value, Object context, Class<?> type, CommandEvent event, boolean required) {
 		try {
+			CustomCommand command = event.getCommand();
 			if (Commands.getConverters().containsKey(type)) {
 				Method converter = Commands.getConverters().get(type);
 				boolean isAbstract = Modifier.isAbstract(converter.getDeclaringClass().getModifiers());
-				if (isAbstract || converter.getDeclaringClass().equals(command.getClass()))
-					return Commands.getConverters().get(type).invoke(command, value);
-				else {
-					CustomCommand newCommand = getNewCommand(command.getEvent(), converter.getDeclaringClass());
-					return Commands.getConverters().get(type).invoke(newCommand, value);
+				if (!(isAbstract || converter.getDeclaringClass().equals(command.getClass()))) {
+					command = getNewCommand(command.getEvent(), converter.getDeclaringClass());
 				}
+				if (converter.getParameterCount() == 1)
+					return converter.invoke(command, value);
+				else if (converter.getParameterCount() == 2)
+					return converter.invoke(command, value, context);
+				else
+					throw new BNException("Unknown converter parameters in " + converter.getName());
 			}
 		} catch (InvocationTargetException ex) {
+			ex.printStackTrace();
 			if (required)
 				if (!Strings.isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
 					throw ex;

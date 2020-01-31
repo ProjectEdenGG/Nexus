@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features;
 
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -124,5 +125,16 @@ public class BNCoreCommand extends CustomCommand {
 
 		// ChatColor
 		send(colorType.getChatColor() + colorType.name());
+	}
+
+	@Path("signgui")
+	void signgui() {
+		BNCore.getInstance().getSignMenuFactory()
+				.create("", "1", "2")
+				.response((player, lines) -> {
+					for (String string : lines)
+						send(string);
+				})
+				.open(player());
 	}
 }
