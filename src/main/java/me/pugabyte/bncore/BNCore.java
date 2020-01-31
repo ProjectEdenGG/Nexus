@@ -1,5 +1,7 @@
 package me.pugabyte.bncore;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import lombok.Getter;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
@@ -92,6 +94,7 @@ public class BNCore extends JavaPlugin {
 	public void onDisable() {
 		Minigames.shutdown();
 		AFK.shutdown();
+		ProtocolLibrary.getProtocolManager().removePacketListeners(this);
 		Persistence.shutdown();
 		commands.unregisterAll();
 	}

@@ -23,6 +23,8 @@ public class Chat {
 			Channel activeChannel = chatter.getActiveChannel();
 			if (activeChannel == null)
 				return "&eNone";
+			if (activeChannel.getName().contains("convo"))
+				return "&b" + activeChannel.getName().replace("convo", "DM / ").replace(event.getPlayer().getName(), "");
 
 			return activeChannel.getColor() + activeChannel.getName();
 		});

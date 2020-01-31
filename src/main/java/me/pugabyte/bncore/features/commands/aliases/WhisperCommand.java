@@ -13,9 +13,8 @@ public class WhisperCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<player>")
-	void player(Player player) {
-		args().remove(0);
-		runCommand("msg " + player + " " + argsString());
+	@Path("<player> [message...]")
+	void player(Player player, String message) {
+		runCommand("msg " + player.getName() + " " + ((message == null) ? "" : message));
 	}
 }
