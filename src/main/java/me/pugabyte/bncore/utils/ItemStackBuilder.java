@@ -20,6 +20,7 @@ import static me.pugabyte.bncore.utils.Utils.colorize;
 public class ItemStackBuilder {
 	private ItemStack itemStack;
 	private ItemMeta itemMeta;
+	private boolean doLoreize = true;
 
 	public ItemStackBuilder(Material material) {
 		itemStack = new ItemStack(material);
@@ -48,8 +49,16 @@ public class ItemStackBuilder {
 	public ItemStackBuilder lore(List<String> lore) {
 		List<String> colorized = new ArrayList<>();
 		for (String line : lore)
-			colorized.add(colorize(line));
+			if (doLoreize)
+				colorized.addAll(Arrays.asList(Utils.loreize(colorize(line)).split("\\|\\|")));
+			else
+				colorized.add(colorize(line));
 		itemMeta.setLore(colorized);
+		return this;
+	}
+
+	public ItemStackBuilder loreize(boolean doLoreize) {
+		this.doLoreize = doLoreize;
 		return this;
 	}
 

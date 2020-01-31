@@ -46,7 +46,7 @@ public class Nerd {
 	}
 
 	public Rank getRank() {
-		return Rank.getHighestRank(getPlayer());
+		return Rank.getHighestRank(getOfflinePlayer());
 	}
 
 	public boolean isVanished() {

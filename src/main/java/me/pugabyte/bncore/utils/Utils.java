@@ -70,6 +70,10 @@ public class Utils {
 		return string.replaceAll("§", "&");
 	}
 
+	public static String loreize(String string) {
+		return loreize(string, ChatColor.WHITE);
+	}
+
 	public static String loreize(String string, ChatColor color) {
 		int i = 0, lineLength = 0;
 		boolean watchForNewLine = false, watchForColor = false;
@@ -83,7 +87,7 @@ public class Utils {
 				watchForNewLine = true;
 
 			if (watchForColor) {
-				if (character.matches("[a-fk-or0-9]"))
+				if (character.matches("[A-Fa-fK-Ok-oRr0-9]"))
 					lineLength -= 2;
 				watchForColor = false;
 			} else if ("&".equalsIgnoreCase(character))

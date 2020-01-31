@@ -4,6 +4,7 @@ import me.pugabyte.bncore.features.mcmmo.menus.McMMOResetMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.WorldGroup;
 
 public class McMMOResetCommand extends CustomCommand {
 	public McMMOResetCommand(CommandEvent event) {
@@ -12,6 +13,9 @@ public class McMMOResetCommand extends CustomCommand {
 
 	@Path
 	void McMMOReset() {
+		if (WorldGroup.get(player().getWorld()) != WorldGroup.SURVIVAL)
+			error("You cannot use this outside of survival");
+
 		McMMOResetMenu.openMcMMOReset(player());
 	}
 }

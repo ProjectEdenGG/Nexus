@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
 import me.pugabyte.bncore.features.connect4.Connect4;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
+import me.pugabyte.bncore.features.discord.DiscordFeature;
 import me.pugabyte.bncore.features.documentation.Documentation;
 import me.pugabyte.bncore.features.durabilitywarning.DurabilityWarning;
 import me.pugabyte.bncore.features.holidays.Holidays;
@@ -95,6 +96,7 @@ public class BNCore extends JavaPlugin {
 	public void onDisable() {
 		Minigames.shutdown();
 		AFK.shutdown();
+		DiscordFeature.shutdown();
 		ProtocolLibrary.getProtocolManager().removePacketListeners(this);
 		Persistence.shutdown();
 		commands.unregisterAll();
@@ -127,6 +129,7 @@ public class BNCore extends JavaPlugin {
 	public static ClearInventory clearInventory;
 	public static Connect4 connect4;
 	public static DailyRewardsFeature dailyRewards;
+	public static DiscordFeature discordFeature;
 	public static Documentation documentation;
 	public static DurabilityWarning durabilityWarning;
 	public static Holidays holidays;
@@ -157,8 +160,9 @@ public class BNCore extends JavaPlugin {
 		clearInventory = new ClearInventory();
 		connect4 = new Connect4();
 		dailyRewards = new DailyRewardsFeature();
-		durabilityWarning = new DurabilityWarning();
+		discordFeature = new DiscordFeature();
 		documentation = new Documentation();
+		durabilityWarning = new DurabilityWarning();
 		holidays = new Holidays();
 		hoursFeature = new HoursFeature();
 		inviteRewards = new InviteRewards();
