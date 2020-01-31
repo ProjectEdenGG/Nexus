@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.Utils;
@@ -92,7 +93,7 @@ public abstract class MenuUtils {
 
 	public static void confirmMenu(Player player, ConfirmationMenu provider) {
 		SmartInventory inv = SmartInventory.builder()
-				.title(colorize("&4Are you sure?"))
+				.title(colorize(provider.getTitle()))
 				.provider(provider)
 				.size(3, 9)
 				.build();
@@ -102,6 +103,9 @@ public abstract class MenuUtils {
 	@Builder
 	@AllArgsConstructor
 	public static class ConfirmationMenu extends MenuUtils implements InventoryProvider {
+		@Getter
+		@Builder.Default
+		private String title = "&4Are you sure?";
 		@Builder.Default
 		private String cancelText = "&cNo";
 		private String cancelLore;
