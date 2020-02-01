@@ -146,15 +146,16 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendRestoreButtons(Player player, String gamemode) {
-		new JsonBuilder().next("&f").send(player);
-		new JsonBuilder().next("&e " + gamemode).send(player);
 		new JsonBuilder()
+				.newline()
+				.next("&e " + gamemode)
+				.newline()
 				.next("  &e|&e|  ").group()
 				.next("&3Inventory").command("/restoreinv do " + gamemode.toLowerCase() + " inventory").group()
-				.next("").group()
-				.next("  &e|&e|  &3Ender Chest").command("/restoreinv do " + gamemode.toLowerCase() + " enderchest").group()
-				.next("").group()
-				.next("  &e|&e|  &3Experience").command("/restoreinv do " + gamemode.toLowerCase() + " exp").group()
+				.next("  &e|&e|  ").group()
+				.next("&3Ender Chest").command("/restoreinv do " + gamemode.toLowerCase() + " enderchest").group()
+				.next("  &e|&e|  ").group()
+				.next("&3Experience").command("/restoreinv do " + gamemode.toLowerCase() + " exp").group()
 				.next("  &e|&e|")
 				.send(player);
 	}

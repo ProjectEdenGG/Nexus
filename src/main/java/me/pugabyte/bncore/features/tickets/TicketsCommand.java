@@ -66,14 +66,17 @@ public class TicketsCommand extends CustomCommand {
 		Tasks.wait(15 * 20, () -> {
 			if (service.get(ticket.getId()).isOpen())
 				send(json2(PREFIX + "&3Click here to &cclose &3the ticket")
-						.command("/tickets confirmclose" + ticket.getId())
+						.command("/tickets confirmclose " + ticket.getId())
 						.hover("&eClick to close"));
 		});
 	}
 
 	@Path("confirmclose <id>")
 	void confirmClose(Ticket ticket) {
-		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder().onConfirm((e) -> close(ticket)).build());
+		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder().onConfirm((e) -> {
+			close(ticket);
+			e.getPlayer().closeInventory();
+		}).build());
 	}
 
 	@Path("close <id>")
