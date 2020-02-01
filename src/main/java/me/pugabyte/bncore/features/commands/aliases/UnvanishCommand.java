@@ -14,6 +14,6 @@ public class UnvanishCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommand("vanish");
+		runCommand("vanish off");
 	}
 }

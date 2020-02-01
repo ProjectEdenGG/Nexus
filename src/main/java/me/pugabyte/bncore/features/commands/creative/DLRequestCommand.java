@@ -12,9 +12,9 @@ public class DLRequestCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		if (!player().getWorld().getName().equalsIgnoreCase("creative")) {
+		if (!player().getWorld().getName().equalsIgnoreCase("creative"))
 			error(PREFIX + "You must be in the creative world to run this command.");
-		}
+
 		runCommand("ticket Plot download request");
 	}
 }
