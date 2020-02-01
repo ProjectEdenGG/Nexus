@@ -523,14 +523,25 @@ public class Utils {
 		return itemStack;
 	}
 
+	public static void sendJsonLocation(String message, Location location, Player player) {
+		int x = (int) location.getX();
+		int y = (int) location.getY();
+		int z = (int) location.getZ();
+		double yaw = location.getYaw();
+		double pitch = location.getPitch();
+		String world = location.getWorld().getName();
+
+		new JsonBuilder().then(message).command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + world).send(player);
+	}
+
 	public static int randomInt(int min, int max) {
 		if (min == max) return min;
 		if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
-		return (int)((Math.random() * ((max - min) + 1)) + min);
+		return (int) ((Math.random() * ((max - min) + 1)) + min);
 	}
 
 	public static boolean isInt(String text) {
-		try{
+		try {
 			Integer.parseInt(text);
 		} catch (Exception e){
 			return false;

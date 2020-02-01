@@ -21,9 +21,6 @@ import java.util.Collections;
 @Permission("group.staff")
 public class NearestBlockCommand extends CustomCommand {
 
-	//TODO: for player head in direction of the found block
-	//TODO: format location message
-
 	public NearestBlockCommand(CommandEvent event) {
 		super(event);
 	}
@@ -67,7 +64,7 @@ public class NearestBlockCommand extends CustomCommand {
 					fallingBlock.setVelocity(new Vector(0, 0, 0));
 
 					Utils.lookAt(player(), block.getLocation());
-					send(PREFIX + "Loc: " + block.getLocation());
+					Utils.sendJsonLocation(PREFIX + "&3&l[Click to Teleport]", block.getLocation(), player());
 
 					Tasks.GlowTask.builder()
 							.duration(10 * 20)
