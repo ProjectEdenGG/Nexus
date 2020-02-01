@@ -96,7 +96,6 @@ public abstract class CustomCommand implements ICustomCommand {
 		return new JsonBuilder(message);
 	}
 
-
 	protected void json(String message) {
 		SkriptFunctions.json(player(), message);
 	}
