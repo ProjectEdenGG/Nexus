@@ -13,11 +13,15 @@ public class ProtectionCommand extends CustomCommand {
 	@Path
 	void help() {
 		line();
-		json("&3  Which protection type?  &3|&3| " + "||&b&lP-Stones||sgt:/pstoneinfo||ttp:&b&lProtection Stones\n&eCoal, Lapis, Diamond, and Emerald ores\n&eProtects all blocks & animals inside\n&ethe field" +
-				"||  &3|&3|  " + "||&6&lLWC||sgt:/lwcinfo||ttp:&6&lLock With Commands\n&eProtects chests, doors, \n&efurnaces, etc\n&eAutomatically applies \n&ewhen you place it" +
-				"||  &3|&3|  " + "||&e&lHomes||cmd:/homes edit||ttp:&eUse the GUI to edit your homes." +
-				"||  &3|&3|");
+		send(json2()
+				.next("&3  Which protection type?  &3|| ")
+				.next("&b&lP-Stones").suggest("/pstoneinfo").hover("&b&lProtection Stones\n&eCoal, Lapis, Diamond, and Emerald ores\n&eProtects all blocks & animals inside\n&ethe field").group()
+				.next("  &3||  ")
+				.next("&6&lLWC").suggest("/lwcinfo").hover("&6&lLock With Commands\n&eProtects chests, doors, \n&efurnaces, etc\n&eAutomatically applies \n&ewhen you place it").group()
+				.next("  &3||  ")
+				.next("&e&lHomes").command("/homes edit").hover("&eUse the GUI to edit your homes.").group()
+				.next("  &3||"));
 		line();
-		json("&3 « &eClick here to return to the help menu.||cmd:/serverinfo");
+		send(json2("&3 « &eClick here to return to the help menu.").command("/serverinfo"));
 	}
 }

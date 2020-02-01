@@ -17,9 +17,9 @@ public class StaffHelpCommand extends CustomCommand {
 		line();
 		send("&eStaff Help Commands");
 		line();
-		json("&3[+] &c/ticket <problem>||sgt:/ticket||ttp:&eClick here to submit a ticket");
-		json("&3[+] &c/staff||sgt:/staff||ttp:&eShow a list of all current staff");
-		json("&3[+] &c/onlinestaff||sgt:/onlinestaff||ttp:&eShow a list of online staff members");
+		send(json2("&3[+] &c/ticket <problem>").suggest("/ticket").hover("&eClick here to submit a ticket"));
+		send(json2("&3[+] &c/staff").suggest("/staff").hover("&eShow a list of all current staff"));
+		send(json2("&3[+] &c/onlinestaff").suggest("/onlinestaff").hover("&eShow a list of online staff members"));
 	}
 
 }
