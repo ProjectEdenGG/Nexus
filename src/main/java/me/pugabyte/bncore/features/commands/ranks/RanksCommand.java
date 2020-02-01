@@ -32,11 +32,12 @@ public class RanksCommand extends CustomCommand {
 		);
 		line();
 		Arrays.asList(Rank.values()).forEach(rank -> {
-			String text = "&3- " + rank;
+			JsonBuilder builder = new JsonBuilder("&3- " + rank);
 			if (Rank.getHighestRank(player()) == rank)
-				text += "  &e&o<-- You are here!";
-			text += "||cmd:/" + rank.name().toLowerCase();
-			json(text);
+				builder.next("  &e&o<-- You are here!");
+			builder.next("||cmd:/" + rank.name().toLowerCase());
+
+			send(builder);
 		});
 		line();
 	}
