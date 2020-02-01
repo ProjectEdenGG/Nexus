@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// TODO: Map back to OnlineCommand with filter?
 public class OnlineStaffCommand extends CustomCommand {
 
 	public OnlineStaffCommand(CommandEvent event) {
