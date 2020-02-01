@@ -149,15 +149,12 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 		new JsonBuilder().next("&f").send(player);
 		new JsonBuilder().next("&e " + gamemode).send(player);
 		new JsonBuilder()
-				.next("  &e|&e|  &3Inventory")
-				.command("/restoreinv do " + gamemode.toLowerCase() + " inventory")
-				.group()
-				.next("  &e|&e|  &3Ender Chest")
-				.command("/restoreinv do " + gamemode.toLowerCase() + " enderchest")
-				.group()
-				.next("  &e|&e|  &3Experience")
-				.command("/restoreinv do " + gamemode.toLowerCase() + " exp")
-				.group()
+				.next("  &e|&e|  ").group()
+				.next("&3Inventory").command("/restoreinv do " + gamemode.toLowerCase() + " inventory").group()
+				.next("").group()
+				.next("  &e|&e|  &3Ender Chest").command("/restoreinv do " + gamemode.toLowerCase() + " enderchest").group()
+				.next("").group()
+				.next("  &e|&e|  &3Experience").command("/restoreinv do " + gamemode.toLowerCase() + " exp").group()
 				.next("  &e|&e|")
 				.send(player);
 	}
