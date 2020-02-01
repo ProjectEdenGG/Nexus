@@ -17,18 +17,39 @@ public class QuickActionCommand extends CustomCommand {
 		String playerName = player.getName();
 		send("&8&l[&eQuickAction&8&l] &6&l" + playerName);
 		line();
-		json(" &3|&3|  " +
-				"|| &eMessage ||sgt:/msg " + playerName + " || &3|&3| " +
-				"|| &ePoof request ||sgt:/poof " + playerName + " || &3|&3| " +
-				"|| &ePoof Here request ||sgt:/poofhere " + playerName + " || &3|&3| "
-		);
+		send(json()
+				.next(" &3|&3|  ")
+				.next(" &eMessage")
+				.suggest("/msg " + playerName + " ")
+				.group()
+				.next("&3  ||  ")
+				.next("&ePoof Request")
+				.suggest("/poof " + playerName)
+				.group()
+				.next("&3  ||  ")
+				.next("&ePoof Here Request")
+				.suggest("/poofhere " + playerName)
+				.group()
+				.next("  &3||"));
 
-		json(" &3|&3|  " +
-				"|| &eAllow ||cmd:/allow " + playerName + " || &3|&3| " +
-				"|| &eSPVP Challenge ||sgt:/spvp " + playerName + "|| &3|&3| " +
-				"|| &eShop ||sgt:/shop " + playerName + "|| &3|&3| " +
-				"|| &ePay ||sgt:/pay " + playerName + " 10|| &3|&3| "
-		);
+		send(json()
+				.next(" &3||  ")
+				.next("&eAllow")
+				.command("/allow " + playerName)
+				.group()
+				.next("  &3||  ")
+				.next("&eSPVP Challenge")
+				.suggest("/spvp " + playerName)
+				.group()
+				.next("  &3||  ")
+				.next("&eShop")
+				.suggest("/shop " + playerName)
+				.group()
+				.next("  &3||  ")
+				.next("&ePay")
+				.suggest("/pay " + playerName + " 10")
+				.group()
+				.next("  &3||"));
 		line();
 	}
 }
