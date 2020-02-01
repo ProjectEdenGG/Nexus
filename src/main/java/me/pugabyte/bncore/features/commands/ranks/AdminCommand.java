@@ -20,7 +20,7 @@ public class AdminCommand extends CustomCommand {
 		line();
 		send("&3[+] &eSenior Staff rank");
 		send("&3[+] &eHow to achieve&3: &3Promoted from &3&oOperator &3by existing Admins");
-		json("&3[+] &eClick here &3for a list of admins||cmd:/admin list");
+		send(json2("&3[+] &eClick here &3for a list of admins").command("/admin list"));
 		line();
 		RanksCommand.ranksReturn(player());
 	}
