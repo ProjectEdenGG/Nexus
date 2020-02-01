@@ -22,7 +22,14 @@ public class RanksCommand extends CustomCommand {
 	void ranks() {
 		line(5);
 		send("&3Here is a list of server ranks. &eClick &3on one to view more info. You can tell what rank a person is by the &ecolor and format of their name&3.");
-		json("&3Please do not ask for ranks. You have to ||&eearn||ttp:&eClick here &3for a basic guide to ranking up||cmd:/faq ranks ranks||&3 them.");
+		send(json2("&3Please do not ask for ranks. You have to ")
+				.group()
+				.next("&eearn")
+				.hover("&eClick here &3for a basic guide to ranking up")
+				.command("/faq ranks ranks")
+				.group()
+				.next("&3 them")
+		);
 		line();
 		Arrays.asList(Rank.values()).forEach(rank -> {
 			String text = "&3- " + rank;
@@ -36,7 +43,8 @@ public class RanksCommand extends CustomCommand {
 
 	static void ranksReturn(Player player) {
 		new JsonBuilder()
-				.next("&f &3&m<  &e Back||cmd:/ranks")
+				.next("&f &3&m<  &e Back")
+				.command("/ranks")
 				.send(player);
 	}
 }
