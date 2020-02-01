@@ -22,7 +22,7 @@ public class RanksCommand extends CustomCommand {
 	void ranks() {
 		line(5);
 		send("&3Here is a list of server ranks. &eClick &3on one to view more info. You can tell what rank a person is by the &ecolor and format of their name&3.");
-		send(json2("&3Please do not ask for ranks. You have to ")
+		send(json("&3Please do not ask for ranks. You have to ")
 				.group()
 				.next("&eearn")
 				.hover("&eClick here &3for a basic guide to ranking up")

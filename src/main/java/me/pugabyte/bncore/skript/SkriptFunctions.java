@@ -2,8 +2,6 @@ package me.pugabyte.bncore.skript;
 
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
-
 public class SkriptFunctions {
 	public static void koda(String message, String targets) {
 		koda(message, targets, false);
@@ -60,13 +58,6 @@ public class SkriptFunctions {
 		parameters[4] = new String[]{durability};
 		parameters[5] = new String[]{channel};
 		FunctionUtils.executeFunction("showEnchants", parameters);
-	}
-
-	public static void json(Player player, String message) {
-		Object[][] parameters = new Object[2][];
-		parameters[0] = new String[]{player.getName()};
-		parameters[1] = new String[]{colorize(message)};
-		FunctionUtils.executeFunction("json", parameters);
 	}
 
 	public static void debug(String service, String message) {

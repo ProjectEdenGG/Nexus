@@ -12,6 +12,6 @@ public class SuggestionCommand extends CustomCommand {
 
 	@Path
 	void suggestion() {
-		send(json2("&3Make &esuggestions &3on our &c/discord").command("discord"));
+		send(json("&3Make &esuggestions &3on our &c/discord").command("discord"));
 	}
 }

@@ -34,18 +34,18 @@ public class AllowCommand extends CustomCommand {
 
 	void creative(String playerName) {
 		send("&3 Allowing to Plots:");
-		send(json2("  &c/plot trust " + playerName + " &3- Full access").suggest("/plot trust " + playerName));
-		send(json2("  &c/plot add " + playerName + " &3- Only allowed to build while you are online").suggest("/plot add " + playerName));
+		send(json("  &c/plot trust " + playerName + " &3- Full access").suggest("/plot trust " + playerName));
+		send(json("  &c/plot add " + playerName + " &3- Only allowed to build while you are online").suggest("/plot add " + playerName));
 	}
 
 	void skyblock(String playerName) {
 		send("&3 Allowing to Islands:");
-		send(json2("  &c/is coop " + playerName + " &3- Allow a player").suggest("/is coop " + playerName));
-		send(json2("  &c/is invite " + playerName + " &3- Invite them to your team (players can only be on one team at a time)").suggest("/is invite " + playerName));
+		send(json("  &c/is coop " + playerName + " &3- Allow a player").suggest("/is coop " + playerName));
+		send(json("  &c/is invite " + playerName + " &3- Invite them to your team (players can only be on one team at a time)").suggest("/is invite " + playerName));
 	}
 
 	void protection(String playerName) {
-		send(json2()
+		send(json()
 				.next("&3  Which protection type?  ||  ")
 				.next("&b&lP-Stones")
 				.suggest("/ps allow " + playerName + " OR /ps allowall " + playerName)

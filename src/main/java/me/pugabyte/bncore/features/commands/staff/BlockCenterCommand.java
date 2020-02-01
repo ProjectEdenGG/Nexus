@@ -57,6 +57,6 @@ public class BlockCenterCommand extends CustomCommand {
 		String locationString = "new Location(" + worldString + ", " + loc.getX() + ", " + loc.getY() + ", " +
 				loc.getZ() + ", " + loc.getYaw() + ", " + loc.getPitch() + ")";
 
-		send(json2(locationString).suggest(locationString));
+		send(json(locationString).suggest(locationString));
 	}
 }

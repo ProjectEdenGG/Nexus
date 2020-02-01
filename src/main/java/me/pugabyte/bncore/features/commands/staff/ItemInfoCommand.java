@@ -62,7 +62,7 @@ public class ItemInfoCommand extends CustomCommand {
 				int length = nbtString.length();
 				if (length > 12400) {
 					send("String very big, length: " + length);
-					send(json2("&e&l[Click to Try]").suggest("/iteminfo override").hover("&cCaution: May crash you"));
+					send(json("&e&l[Click to Try]").suggest("/iteminfo override").hover("&cCaution: May crash you"));
 					return;
 				}
 			}
@@ -72,7 +72,7 @@ public class ItemInfoCommand extends CustomCommand {
 		send("Material: " + material);
 		if (nbtString != null) {
 			send("NBT: " + Utils.colorize(nbtString));
-			send(json2("&e&l[Click to Copy]").suggest(spawnCommand));
+			send(json("&e&l[Click to Copy]").suggest(spawnCommand));
 		}
 	}
 }
