@@ -7,7 +7,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
 import me.pugabyte.bncore.framework.persistence.serializer.IntegerListSerializer;
-import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -36,8 +36,10 @@ public class DailyRewards {
 		earnedToday = true;
 		++streak;
 		if (!getPlayer().isOnline()) return;
-		SkriptFunctions.json(getPlayer().getPlayer(), Utils.getPrefix("DailyRewards") + "Your streak has &eincreased&3! " +
-				"Use &c/dailyrewards &3to claim your reward||cmd:/dr");
+		new JsonBuilder()
+				.next(Utils.getPrefix("DailyRewards") + "Your streak has &eincreased&3! " + "Use &c/dailyrewards &3to claim your reward")
+				.command("/dr")
+				.send(getPlayer().getPlayer());
 	}
 
 	public boolean hasClaimed(int day) {
