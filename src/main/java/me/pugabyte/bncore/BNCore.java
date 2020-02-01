@@ -155,12 +155,14 @@ public class BNCore extends JavaPlugin {
 	private SignMenuFactory signMenuFactory;
 
 	private void enableFeatures() {
+		// Load this first
+		discord = new Discord();
+
 		afk = new AFK();
 		chat = new Chat();
 		clearInventory = new ClearInventory();
 		connect4 = new Connect4();
 		dailyRewards = new DailyRewardsFeature();
-		discord = new Discord();
 		documentation = new Documentation();
 		durabilityWarning = new DurabilityWarning();
 		holidays = new Holidays();
