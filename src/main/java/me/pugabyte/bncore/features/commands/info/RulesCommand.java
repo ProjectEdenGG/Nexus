@@ -101,9 +101,13 @@ public class RulesCommand extends CustomCommand {
 				send("&e7. &3No inappropriate content");
 				send("&e8. &3No ban evading (that includes using Discord). Appeal at https://bnn.gg/appeal");
 				send("&e9. &3Keep heavily opinionated and political arguments out of public chats");
-				json("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)||cmd:/rules streaming");
+				send(json2("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)").command("/rules streaming"));
 				line();
-				json("&e « Main page  ||cmd:/rules||  &3|&3|  ||  &eNext page »||cmd:/rules global 3");
+				send(json2()
+						.next("&e « Main page  ").command("/rules").group()
+						.next("  &3|&3|  ").group()
+						.next("  &eNext page »").command("/rules global 3").group()
+				);
 				hasReadRules.setCommunity2(true);
 				service.save(hasReadRules);
 				break;
@@ -115,7 +119,7 @@ public class RulesCommand extends CustomCommand {
 				send("&e15. &3Do not call out vanished staff members");
 				send("&e16. &3Don't make fun of or correct other people's typos");
 				line();
-				json("&e « Main page  ||cmd:/rules||  &3|&3|  ||  &eMain Page »||cmd:/rules");
+				send(json2("&e « Main page  ").command("/rules"));
 				hasReadRules.setCommunity3(true);
 				service.save(hasReadRules);
 				break;
@@ -123,9 +127,9 @@ public class RulesCommand extends CustomCommand {
 	}
 
 	void survival() {
-		json("&e1. &3No griefing or raiding. &eHover for more info.||ttp:&3If you don't have permission from \n&3the owner, don't touch it. This \n&3includes farms. &3If it isn't marked \n&3as public, don't farm and replant");
+		send(json2("&e1. &3No griefing or raiding. &eHover for more info.").hover("&3If you don't have permission from \n&3the owner, don't touch it. This \n&3includes farms. &3If it isn't marked \n&3as public, don't farm and replant"));
 		send("&e2. &3No killing other players using game mechanics or death traps. (drowning, spleef, suffocation, etc)");
-		json("&e3. &3Do not create lag using Minecraft mechanics. &eHover for more info.||ttp:&3This includes things such as:\n&3[+] &eAFKing for many hours at a grinder.\n&3[+] &eRedstone clocks\n&3[+] &eExcessive redstone machinery\n&3[+] &ePerm-loading chunks\n&3[+] &eMassively oversized farms\n&3[+] &eEtc");
+		send(json2("&e3. &3Do not create lag using Minecraft mechanics. &eHover for more info.").hover("&3This includes things such as:\n&3[+] &eAFKing for many hours at a grinder.\n&3[+] &eRedstone clocks\n&3[+] &eExcessive redstone machinery\n&3[+] &ePerm-loading chunks\n&3[+] &eMassively oversized farms\n&3[+] &eEtc"));
 		send("&e4. &3No AFK farms that level up mcMMO or anti-AFK mechanisms");
 		send("&e5. &3Be considerate of other and future players when exploring the worlds/raiding generated structures");
 		send("&e6. &3Give nearby players a reasonable amount of space. When in doubt, ask the build owner.");
@@ -133,7 +137,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e8. &3No random 1x1 towers/holes, block spam or obscene structures/skins");
 		send("&e9. &3Bear Nation has the right to use & modify all builds produced on the server");
 		line();
-		json("&e « Main page||cmd:/rules");
+		send(json2("&e « Main page").command("/rules"));
 		hasReadRules.setSurvival(true);
 		service.save(hasReadRules);
 	}
@@ -146,7 +150,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e5. &3Spawn trapping/camping/killing will not be tolerated");
 		send("&e6. &3Do not say who the murderer is in Murder if you are dead");
 		line();
-		json("&e « Main page||cmd:/rules");
+		send(json2("&e « Main page").command("/rules"));
 		hasReadRules.setMinigames(true);
 		service.save(hasReadRules);
 	}
@@ -157,7 +161,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e3. &3Do not claim a plot next to someone who is not near spawn without permission. Give people their space");
 		send("&e4. &3Your plot is your responsibility. Don't add people you don't trust");
 		line();
-		json("&e « Main page||cmd:/rules");
+		send(json2("&e « Main page").command("/rules"));
 		hasReadRules.setCreative(true);
 		service.save(hasReadRules);
 	}
@@ -166,7 +170,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e1. &3All surivival rules apply, especially numbers 2 and 3");
 		send("&e2. &3Your island is your responsibility. Don't add people you don't trust");
 		line();
-		json("&e « Main page||cmd:/rules");
+		send(json2("&e « Main page").command("/rules"));
 		hasReadRules.setSkyblock(true);
 		service.save(hasReadRules);
 	}
@@ -176,7 +180,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e2. &3You, the streamer, and all your followers must follow all the rules");
 		send("&e3. &3If a large percentage of your followers do not comply with the rules, we may ban you and any people associated with your stream");
 		line();
-		json("&e « Click here to return to page 2 of the global rules.||cmd:/rules global 2");
+		send(json2("&e « Click here to return to page 2 of the global rules.").command("/rules global 2"));
 		hasReadRules.setStreaming(true);
 		service.save(hasReadRules);
 	}

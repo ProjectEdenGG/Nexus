@@ -49,7 +49,7 @@ public class SignLinesCommand extends CustomCommand {
 
 		} else if (arg(1).equalsIgnoreCase("--copy")) {
 			copyLines.put(uuid, lines);
-			json("&eSign copied. Use &c/signlines --paste &ewhile looking at another sign||cmd:/signlines --paste");
+			send(json2("&eSign copied. Use &c/signlines --paste &ewhile looking at another sign").command("/signlines --paste"));
 
 		} else if (arg(1).equalsIgnoreCase("--paste")) {
 			String[] strings = copyLines.get(uuid);

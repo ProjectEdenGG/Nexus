@@ -16,12 +16,12 @@ public class MCSKCommand extends CustomCommand {
 	}
 
 	@Path("(c|clear|remove)")
-	void remove(){
+	void remove() {
 		runCommand("mscoreboard clear");
 	}
 
 	@Path
-	void run(){
+	void run() {
 		send("&c/mcsb <k[eep]|c[lear]>");
 	}
 

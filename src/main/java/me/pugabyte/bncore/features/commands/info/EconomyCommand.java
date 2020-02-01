@@ -14,28 +14,23 @@ public class EconomyCommand extends CustomCommand {
 	void sell() {
 		line(3);
 		send("&3There are a few ways you can trade with other players:");
-		json("&3[+] &eTrade signs||url:https://wiki.bnn.gg/wiki/Main_Page#Trade_Sign_Shops||ttp:&3Click to open the wiki " +
-				"\n&3section on Trade Signs.");
-		json("&3[+] &eUse the trading GUI||url:https://wiki.bnn.gg/wiki/Economy#Trading_via_GUI||ttp:&3Click to open the wiki " +
-				"\n&3section on the trading GUI.");
+		send(json2("&3[+] &eTrade signs").url("https://wiki.bnn.gg/wiki/Main_Page#Trade_Sign_Shops").hover("&3Click to open the wiki section on Trade Signs."));
+		send(json2("&3[+] &eUse the trading GUI").url("https://wiki.bnn.gg/wiki/Economy#Trading_via_GUI").hover("&3Click to open the wiki section on the trading GUI."));
 		send("&3[+] &eSimply ask in chat!");
 		line();
-		json("&3 « &eClick here to return to the economy menu.||cmd:/economy");
+		send(json2("&3 « &eClick here to return to the economy menu.").command("/economy"));
 	}
 
 	@Path("(cmds|commands)")
 	void commands() {
 		line(3);
 		send("&eEconomy Related Commands");
-		json("&3[+] &c/pay <player> <amount>||ttp:&3Give someone some money. " +
-				"\n&3Ex: &c/pay notch 666||sgt:/pay ");
-		json("&3[+] &c/bal [player]||ttp:&3View your balance. " +
-				"\n&3Add a player name to view " +
-				"\n&3another player's balance.||sgt:/bal ");
-		json("&3[+] &c/baltop [#]||ttp:&3View the richest people on the server||sgt:/baltop");
-		json("&3[+] &c/market||ttp:&3Visit the market||sgt:/market");
+		send(json2("&3[+] &c/pay <player> <amount>").hover("&3Give someone some money. \nEx: &c/pay notch 666||sgt:/pay "));
+		send(json2("&3[+] &c/bal [player]").hover("&3View your balance.\n&3Add a player name to view another player's balance.||sgt:/bal "));
+		send(json2("&3[+] &c/baltop [#]").hover("&3View the richest people on the server||sgt:/baltop"));
+		send(json2("&3[+] &c/market").hover("&3Visit the market||sgt:/market"));
 		line();
-		json("&3 « &eClick here to return to the economy menu.||cmd:/economy");
+		send(json2("&3 « &eClick here to return to the economy menu.").command("/economy"));
 	}
 
 	@Path
@@ -44,18 +39,14 @@ public class EconomyCommand extends CustomCommand {
 		send("&3Each player starts out with &e$500&3.");
 		send("&3There are multiple ways to make money, such as:");
 		line();
-		json("&3[+] &eSelling items at the &c/market||sgt:/market");
-		json("&3[+] &eSelling items to other players||cmd:/economy sell||ttp:&3Click for a few tips on how " +
-				"\n&3to sell to other players");
-		json("&3[+] &eKilling mobs||url:https://wiki.bnn.gg/wiki/Main_Page#Mobs||ttp:&3Click to open the wiki " +
-				"\n&3section on mobs.");
+		send(json2("&3[+] &eSelling items at the &c/market||sgt:/market"));
+		send(json2("&3[+] &eSelling items to other players").command("/economy sell").hover("&3Click for a few tips on how to sell to other players"));
+		send(json2("&3[+] &eKilling mobs").url("https://wiki.bnn.gg/wiki/Main_Page#Mobs").hover("&3Click to open the wiki section on mobs."));
 		send("&3[+] &eWorking for other players");
-		json("&3[+] &eVoting and getting &2&lTop Voter||cmd:/vote");
-		json("&3[+] &eWinning Events||ttp:&3Make sure to check Discord's " +
-				"\n&e#announcements &3channel and the " +
-				"\n&3home page for upcoming events!");
+		send(json2("&3[+] &eVoting and getting &2&lTop Voter").command("/vote"));
+		send(json2("&3[+] &eWinning Events").hover("&3Make sure to check Discord's &e#announcements &3channel and the home page for upcoming events!"));
 		line();
-		json("&3[+] &eEconomy related commands||cmd:/economy cmds");
+		send(json2("&3[+] &eEconomy related commands").command("/economy cmds"));
 	}
 
 }

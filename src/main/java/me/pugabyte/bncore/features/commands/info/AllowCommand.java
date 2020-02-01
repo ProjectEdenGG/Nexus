@@ -34,30 +34,35 @@ public class AllowCommand extends CustomCommand {
 
 	void creative(String playerName) {
 		send("&3 Allowing to Plots:");
-		json("  &c/plot trust " + playerName + " &3- Full access ||sgt:/plot trust " + playerName);
-		json("  &c/plot add " + playerName + " &3- Only allowed to build while you are online||sgt:/plot add " + playerName);
+		send(json2("  &c/plot trust " + playerName + " &3- Full access").suggest("/plot trust " + playerName));
+		send(json2("  &c/plot add " + playerName + " &3- Only allowed to build while you are online").suggest("/plot add " + playerName));
 	}
 
 	void skyblock(String playerName) {
 		send("&3 Allowing to Islands:");
-		json("  &c/is coop " + playerName + " &3- Allow a player||sgt:/is coop " + playerName);
-		json("  &c/is invite " + playerName + " &3- Invite them to your team (players can only be on one team at a time)||sgt:/is invite " + playerName);
+		send(json2("  &c/is coop " + playerName + " &3- Allow a player").suggest("/is coop " + playerName));
+		send(json2("  &c/is invite " + playerName + " &3- Invite them to your team (players can only be on one team at a time)").suggest("/is invite " + playerName));
 	}
 
 	void protection(String playerName) {
-		json("&3  Which protection type?  &3|&3|  " +
-				"||&b&lP-Stones||sgt:/ps allow " + playerName + " OR /ps allowall " + playerName + "||ttp:&b&lProtection Stones\n" +
-				"&eCoal, Lapis, Diamond, and Emerald ores \n" +
-				"&eProtects all blocks & animals inside \n" +
-				"&ethe field" +
-				"||  &3|&3|  " +
-				"||&6&lLWC||sgt:/cmodify " + playerName + " OR /cmodifyall " + playerName + "||ttp:&6&lLock With Commands\n" +
-				"&eProtects chests, doors, \n" +
-				"&efurnaces, etc \n" +
-				"&eAutomatically applies \n" +
-				"&ewhen you place it" +
-				"||  &3|&3|  " +
-				"||&e&lHomes||cmd:/homes edit||ttp:&eUse the GUI to edit your homes." +
-				"||  &3|&3|  ");
+		send(json2()
+				.next("&3  Which protection type?  ||  ")
+				.next("&b&lP-Stones")
+				.suggest("/ps allow " + playerName + " OR /ps allowall " + playerName)
+				.hover("&b&lProtection Stones\n" +
+						"&eCoal, Lapis, Diamond, and Emerald ores protects all blocks & animals inside the field")
+				.group()
+				.next("  &3||  ")
+				.next("&6&lLWC")
+				.suggest("/cmodify " + playerName + " OR /cmodifyall " + playerName)
+				.hover("&6&lLock With Commands\n" +
+						"&eProtects chests, doors, furnaces, etc. Automatically applies when you place it")
+				.group()
+				.next("  &3||  ")
+				.next("&e&lHomes")
+				.command("/homes edit")
+				.hover("&eUse the GUI to edit your homes.")
+				.group()
+				.next("  &3||  "));
 	}
 }

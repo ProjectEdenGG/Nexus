@@ -20,9 +20,12 @@ public class ModeratorCommand extends CustomCommand {
 		send("&b&oModerators &3are the first level of staff. They &eanswer any questions &3a player has, &efix grief&3, moderate chat, " +
 				"and see too any other basic problems players have.");
 		line();
-		json("&3[+] &eHow to achieve&3: ||&eApply||url:" + modApp +
-				"||ttp:&eClick to open the application||&3 on the website (must be &6Elite &3or above)");
-		json("&3[+] &eClick here &3for a list of moderators||cmd:/moderator list");
+		send(json2()
+				.next("&3[+] &eHow to achieve&3:")
+				.next(" &eApply").url(modApp)
+				.hover("&eClick to open the application on the website (must be &6Elite &3or above)")
+				.group());
+		send(json2("&3[+] &eClick here &3for a list of moderators").command("/moderator list"));
 		line();
 		RanksCommand.ranksReturn(player());
 	}

@@ -17,9 +17,9 @@ public class PugaWelcCommand extends CustomCommand {
 		send("&3Most likely you are asking yourself the question '&eWhy should I choose this server?&3'");
 		send("&3I can promise you that if you &estick around &3long enough and &egive us a chance&3, you won't be disappointed");
 		send("&3Here's a few resources you may find helpful as you explore our server. Just &e&lclick &3to open them");
-		json("&3[+] &eFAQ||cmd:/faq");
-		json("&3[+] &eRules||cmd:/rules");
-		json("&3[+] &eWiki||url:https://wiki.bnn.gg/");
+		send(json2("&3[+] &eFAQ").command("/faq"));
+		send(json2("&3[+] &eRules").command("/rules"));
+		send(json2("&3[+] &eWiki").url("https://wiki.bnn.gg/"));
 		runCommand("curiositycookies");
 	}
 

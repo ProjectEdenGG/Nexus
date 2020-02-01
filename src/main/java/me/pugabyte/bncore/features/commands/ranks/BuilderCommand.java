@@ -19,9 +19,12 @@ public class BuilderCommand extends CustomCommand {
 		line(5);
 		send("&5Builders &3help with any build related needs for the server, such as &ewarps&3, &eminigame maps&3, and &eevents&3");
 		line();
-		json("&3[+] &eHow to achieve&3: ||&eApply||url:" + builderApp +
-				"||ttp:&eClick to open the application||&3 on the website (must be &eTrusted &3or above)");
-		json("&3[+] &eClick here &3for a list of builders||cmd:/builder list");
+		send(json2()
+				.next("&3[+] &eHow to achieve&3:")
+				.next(" &eApply").url(builderApp)
+				.hover("&eClick to open the application on the website (must be &eTrusted &3or above)")
+				.group());
+		send(json2("&3[+] &eClick here &3for a list of builders").command("/builder list"));
 		line();
 		RanksCommand.ranksReturn(player());
 	}

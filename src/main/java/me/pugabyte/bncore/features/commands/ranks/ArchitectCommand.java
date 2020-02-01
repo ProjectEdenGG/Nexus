@@ -18,7 +18,7 @@ public class ArchitectCommand extends CustomCommand {
 		send("&5&lArchitects &3oversee the building tasks for the server and recruit players to help with projects.");
 		line();
 		send("&3[+] &eHow to achieve&3: Promoted from &5Builder &3by Senior Staff.");
-		json("&3[+] &eClick here &3for a list of architects||cmd:/architect list");
+		send(json2("&3[+] &eClick here &3for a list of architects").command("/architect list"));
 		line();
 		RanksCommand.ranksReturn(player());
 	}
