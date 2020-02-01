@@ -1,23 +1,17 @@
 package me.pugabyte.bncore.features.chat.alerts;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.alerts.Alerts;
 import me.pugabyte.bncore.models.alerts.AlertsService;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
-
-import static me.pugabyte.bncore.utils.Utils.colorize;
 
 public class AlertsCommand extends CustomCommand {
 	private AlertsService service = new AlertsService();
@@ -31,36 +25,28 @@ public class AlertsCommand extends CustomCommand {
 
 	@Path
 	void main() {
-		TextComponent message = new TextComponent(PREFIX + colorize("Receive a &e'ping' noise &3whenever a " +
-				"word or phrase in your &c/alerts list &3is said in chat. Make sure you have your 'Players' sound on!"));
-		message.setColor(ChatColor.DARK_AQUA);
-		TextComponent edit = new TextComponent("You can edit your alerts with the following commands:");
-		edit.setColor(ChatColor.DARK_AQUA);
-		TextComponent commandList = new TextComponent(" /alerts list");
-		commandList.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/alerts list"));
-		commandList.setColor(ChatColor.RED);
-		TextComponent commandAdd = new TextComponent(" /alerts add <word or phrase>");
-		commandAdd.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/alerts add "));
-		commandAdd.setColor(ChatColor.RED);
-		TextComponent commandDelete = new TextComponent(" /alerts delete <word or phrase>");
-		commandDelete.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/alerts delete "));
-		commandDelete.setColor(ChatColor.RED);
-		TextComponent commandClear = new TextComponent(" /alerts clear");
-		commandClear.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/alerts clear"));
-		commandClear.setColor(ChatColor.RED);
-		TextComponent commandMute = new TextComponent(" /alerts <mute|unmute|toggle>");
-		commandMute.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/alerts <mute|unmute|toggle>"));
-		commandMute.setColor(ChatColor.RED);
-
-		player().sendMessage("");
-		player().spigot().sendMessage(message);
-		player().sendMessage("");
-		player().spigot().sendMessage(edit);
-		player().spigot().sendMessage(commandList);
-		player().spigot().sendMessage(commandAdd);
-		player().spigot().sendMessage(commandDelete);
-		player().spigot().sendMessage(commandClear);
-		player().spigot().sendMessage(commandMute);
+		new JsonBuilder()
+				.then("&3Receive a &e'ping' noise &3whenever a word or phrase in your &c/alerts list &3is said in chat. ")
+				.then("&3Make sure you have your 'Players' sound on!")
+				.newline()
+				.newline()
+				.then("&3You can edit your alerts with the following commands:")
+				.newline()
+				.then("&c /alerts list")
+				.suggest("/alerts list ")
+				.newline()
+				.then("&c /alerts add <word or phrase>")
+				.suggest("/alerts add ")
+				.newline()
+				.then("&c /alerts delete <word or phrase>")
+				.suggest("/alerts delete ")
+				.newline()
+				.then("&c /alerts clear")
+				.suggest("/alerts clear")
+				.newline()
+				.then("&c /alerts <mute|unmute|toggle>")
+				.suggest("/alerts toggle")
+				.send(player());
 	}
 
 	@Path("(list|edit)")
@@ -71,23 +57,19 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "&eYour alerts list:");
 		for (Alerts.Highlight highlight : alerts.getHighlights()) {
 
-			ComponentBuilder builder = new ComponentBuilder(" ");
+			JsonBuilder builder = new JsonBuilder();
 
 			if (highlight.isPartialMatching()) {
-				builder.append("✔")
-						.color(ChatColor.GREEN)
-						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/alerts partialmatch false " + highlight.getHighlight()))
-						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to turn off partial matching").color(ChatColor.RED).create()));
+				builder.then("&a✔")
+						.command("/alerts partialmatch false " + highlight.getHighlight())
+						.hover("&cClick to turn off partial matching");
 			} else {
-				builder.append("✕ ")
-						.color(ChatColor.RED)
-						.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/alerts partialmatch true " + highlight.getHighlight()))
-						.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to turn on partial matching").color(ChatColor.GREEN).create()));
+				builder.then("&c✕ ")
+						.command("/alerts partialmatch true " + highlight.getHighlight())
+						.hover("&cClick to turn on partial matching");
 			}
 
-			builder.append(" " + highlight.getHighlight() + " ").color(ChatColor.DARK_AQUA);
-
-			player().spigot().sendMessage(builder.create());
+			builder.then(" &3" + highlight.getHighlight()).send(player());
 		}
 	}
 

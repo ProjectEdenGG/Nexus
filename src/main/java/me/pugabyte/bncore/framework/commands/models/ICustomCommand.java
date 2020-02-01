@@ -172,7 +172,6 @@ public interface ICustomCommand {
 					throw new BNException("Unknown converter parameters in " + converter.getName());
 			}
 		} catch (InvocationTargetException ex) {
-			ex.printStackTrace();
 			if (required)
 				if (!Strings.isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
 					throw ex;

@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands;
 
 import be.maximvdw.placeholderapi.PlaceholderAPI;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -27,12 +28,16 @@ public class PushCommand extends CustomCommand {
 			push(enable);
 	}
 
+	@SneakyThrows
 	void push(boolean enable) {
 		if (enable) {
 			PermissionsEx.getUser(player()).addPermission(permission);
+			PermissionsEx.getUser(player()).removePermission("-" + permission);
 			send("&ePushing will be turned &aon&e shortly.");
 		} else {
 			PermissionsEx.getUser(player()).removePermission(permission);
+			PermissionsEx.getUser(player()).addPermission("-" + permission);
+			PermissionsEx.getPermissionManager().reset();
 			send("&ePushing will be turned &coff&e shortly.");
 		}
 	}

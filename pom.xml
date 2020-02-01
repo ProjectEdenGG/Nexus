@@ -193,6 +193,12 @@
             <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Emoji Parser -->
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>emoji-java</artifactId>
+            <version>5.1.1</version>
+        </dependency>
         <!-- Minigames -->
         <dependency>
             <groupId>au.com.mineauz</groupId>

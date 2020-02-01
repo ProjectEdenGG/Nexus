@@ -5,9 +5,12 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.Table;
+
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+@Table(name = "has_read_rules")
 public class HasReadRules {
 	@NonNull
 	private String uuid;

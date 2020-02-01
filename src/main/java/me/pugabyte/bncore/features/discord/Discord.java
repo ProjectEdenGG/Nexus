@@ -8,8 +8,12 @@ import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
 
-public class DiscordFeature {
+public class Discord {
 	@Getter
 	private static JDA relayBot;
 	private static String configPath = "discord.tokens.relayBot";
@@ -18,16 +22,18 @@ public class DiscordFeature {
 		BNCore.getInstance().addConfigDefault(configPath, "abcdef");
 	}
 
-	public DiscordFeature() {
+	public Discord() {
 		Tasks.async(() -> {
 			try {
 				relayBot = new JDABuilder(AccountType.BOT)
 						.setToken(BNCore.getInstance().getConfig().getString(configPath))
-//						.addEventListeners(new MessageListener())
+//						.addEventListeners(new BridgeListener())
 						.addEventListeners(new CommandClientBuilder()
 								.setPrefix("/")
 								.setOwnerId(DiscordId.User.PUGABYTE.getId())
 								.addCommand(new SuggestCommand())
+								.setStatus(OnlineStatus.INVISIBLE)
+								.setActivity(Activity.playing("Minecraft"))
 								.build())
 						.build()
 						.awaitReady();
@@ -44,6 +50,18 @@ public class DiscordFeature {
 			if (relayBot != null) relayBot.shutdown();
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	public static Guild getGuild() {
+		return relayBot.getGuildById(DiscordId.Guild.BEAR_NATION.getId());
+	}
+
+	public static void send(String message, DiscordId.Channel... targets) {
+		for (DiscordId.Channel target : targets) {
+			TextChannel channel = relayBot.getTextChannelById(target.getId());
+			if (channel != null)
+				channel.sendMessage(message).queue();
 		}
 	}
 
