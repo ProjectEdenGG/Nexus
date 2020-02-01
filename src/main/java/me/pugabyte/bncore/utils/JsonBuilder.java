@@ -6,9 +6,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
-import static me.pugabyte.bncore.utils.Utils.getLastColor;
-import static me.pugabyte.bncore.utils.Utils.loreize;
+import static me.pugabyte.bncore.utils.Utils.*;
 
 public class JsonBuilder {
 	private ComponentBuilder result = new ComponentBuilder("");
@@ -19,15 +17,15 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder(String text) {
-		then(text);
+		next(text);
 	}
 
-	public JsonBuilder then(String text) {
+	public JsonBuilder next(String text) {
 		builder.append(getColoredWords(colorize(text)));
 		return this;
 	}
 
-	public JsonBuilder reset() {
+	public JsonBuilder group() {
 		result.append(builder.create());
 		builder = new ComponentBuilder("");
 		return this;
@@ -35,7 +33,13 @@ public class JsonBuilder {
 
 	public JsonBuilder newline() {
 		builder.append("\n");
-		reset();
+		group();
+		return this;
+	}
+
+	public JsonBuilder line() {
+		newline();
+		newline();
 		return this;
 	}
 
@@ -70,7 +74,7 @@ public class JsonBuilder {
 	}
 
 	public void send(Player player) {
-		reset();
+		group();
 		player.spigot().sendMessage(result.create());
 	}
 

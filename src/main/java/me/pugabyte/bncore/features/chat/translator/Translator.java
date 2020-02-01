@@ -5,7 +5,7 @@ import com.dthielke.herochat.Chatter;
 import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
-import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
@@ -52,8 +52,10 @@ public class Translator implements Listener {
 					if (uuid == sender.getUniqueId()) continue;
 					if (!chatters.contains(Herochat.getChatterManager().getChatter(translating))) continue;
 
-					SkriptFunctions.json(translating, PREFIX + sender.getName() + " &e(&3" + language.name() +
-							"&e) &3&l> &7" + translated + "||ttp:" + language.getName());
+					new JsonBuilder()
+							.next(PREFIX + sender.getName() + " &e(&3" + language.name() + "&e) &3&l> &7" + translated)
+							.hover(language.getName())
+							.send(translating);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

@@ -7,7 +7,7 @@ import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -128,13 +128,19 @@ public class OnAction implements Listener {
 		switch (WorldGroup.get(player.getWorld())) {
 			case MINIGAMES:
 				if (nerd.isVanished())
-					SkriptFunctions.json(player, "You've joined the gameworld vanished. Click here to unvanish and join the minigames channel.||sgt:/unvanishgameworld");
+					new JsonBuilder()
+							.next("You've joined the gameworld vanished. Click here to unvanish and join the minigames channel.")
+							.suggest("/unvanishgameworld")
+							.send(player);
 				else
 					Tasks.wait(20, () -> Bukkit.dispatchCommand(player, "ch join m"));
 				break;
 			case CREATIVE:
 				if (nerd.isVanished())
-					SkriptFunctions.json(player, "You've joined creative vanished. Click here to unvanish and join the creative channel.||sgt:/unvanishcreative");
+					new JsonBuilder()
+							.next("You've joined creative vanished. Click here to unvanish and join the creative channel.")
+							.suggest("/unvanishcreative")
+							.send(player);
 				else
 					Tasks.wait(20, () -> Bukkit.dispatchCommand(player, "ch join c"));
 				break;
