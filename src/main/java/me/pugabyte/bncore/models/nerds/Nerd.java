@@ -7,6 +7,7 @@ import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,6 +48,13 @@ public class Nerd {
 
 	public Rank getRank() {
 		return Rank.getHighestRank(getOfflinePlayer());
+	}
+
+	public String getChatFormat() {
+		Rank rank = getRank();
+		String prefix = PermissionsEx.getUser(uuid).getPrefix();
+		if (prefix == null) prefix = rank.getPrefix();
+		return prefix + " " + rank.getFormat() + getName();
 	}
 
 	public boolean isVanished() {

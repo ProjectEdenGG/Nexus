@@ -84,6 +84,15 @@ public class ArenaManager {
 		throw new InvalidInputException("Arena not found");
 	}
 
+	public static  boolean exists(String name) {
+		try {
+			get(name);
+			return true;
+		} catch (InvalidInputException ex) {
+			return false;
+		}
+	}
+
 	public static Arena get(String name) {
 		for (Arena arena : arenas)
 			if (arena.getName().equalsIgnoreCase(name))

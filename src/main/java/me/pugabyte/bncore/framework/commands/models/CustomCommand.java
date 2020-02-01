@@ -17,6 +17,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameExcepti
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -69,6 +70,10 @@ public abstract class CustomCommand implements ICustomCommand {
 		event.reply(message);
 	}
 
+	protected void send(JsonBuilder builder) {
+		builder.send(player());
+	}
+
 	protected void send(int delay, String message) {
 		Tasks.wait(delay, () -> event.reply(message));
 	}
@@ -82,6 +87,15 @@ public abstract class CustomCommand implements ICustomCommand {
 			send("");
 		}
 	}
+
+	protected JsonBuilder json2() {
+		return json2("");
+	}
+
+	protected JsonBuilder json2(String message) {
+		return new JsonBuilder(message);
+	}
+
 
 	protected void json(String message) {
 		SkriptFunctions.json(player(), message);

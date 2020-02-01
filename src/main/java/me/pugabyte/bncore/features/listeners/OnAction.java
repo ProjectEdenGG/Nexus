@@ -114,9 +114,10 @@ public class OnAction implements Listener {
 			return;
 
 		NBTTileEntity tileEntityNBT = new NBTTileEntity(event.getBlock().getState());
-		if (!tileEntityNBT.asNBTString().contains("Items:["))
+		if (!tileEntityNBT.asNBTString().contains("Items:[")) {
 			event.setCancelled(true);
-		event.getBlock().setType(Material.AIR);
+			event.getBlock().setType(Material.AIR);
+		}
 	}
 
 	@EventHandler

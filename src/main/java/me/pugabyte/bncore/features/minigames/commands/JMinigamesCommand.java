@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.commands;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
@@ -76,16 +77,30 @@ public class JMinigamesCommand extends CustomCommand {
 	@Path("create <name>")
 	@Permission("manage")
 	void create(String name) {
-		try {
-			ArenaManager.get(name);
-			send(PREFIX + "Arena already exists.");
-			send(PREFIX + "Editing arena &e" + name + "&3.");
-		} catch (InvalidInputException ex) {
+		if (ArenaManager.exists(name))
+			send(PREFIX + "Editing arena &e" + name + "&3");
+		else {
 			Arena arena = new Arena(name);
 			arena.write();
-			send(PREFIX + "Creating arena &e" + name + "&3.");
+			send(PREFIX + "Creating arena &e" + name + "&3");
 		}
 
+		Minigames.getMenus().openArenaMenu(player(), ArenaManager.get(name));
+	}
+
+	@Path("copy <from> <to>")
+	@Permission("manage")
+	void copy(Arena arena, String name) {
+		if (ArenaManager.exists(name))
+			error(PREFIX + "&e" + name + " already exists");
+
+		Arena copy = ArenaManager.convert(arena, arena.getClass());
+		copy.setId(ArenaManager.getNextId());
+		copy.setName(name);
+		copy.setDisplayName(name);
+		copy.write();
+		send(PREFIX + "Creating arena &e" + name + "&3");
+		send(PREFIX + "&cRecommended: &3Edit .yml file to remove locations");
 		Minigames.getMenus().openArenaMenu(player(), ArenaManager.get(name));
 	}
 
@@ -125,6 +140,7 @@ public class JMinigamesCommand extends CustomCommand {
 	void save(Arena arena) {
 		Tasks.async(() -> {
 			long startTime = System.currentTimeMillis();
+			BNCore.log("Arena: " + arena);
 
 			if (arena == null)
 				ArenaManager.write();

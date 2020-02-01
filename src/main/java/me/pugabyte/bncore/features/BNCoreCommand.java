@@ -5,6 +5,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
@@ -16,19 +17,16 @@ import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.WorldEditUtils;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.utils.Utils.getLastColor;
 
 public class BNCoreCommand extends CustomCommand {
 	public BNCoreCommand(CommandEvent event) {
@@ -69,6 +67,29 @@ public class BNCoreCommand extends CustomCommand {
 		send("Pasted schematic " + name);
 	}
 
+	@Path("signgui")
+	@Permission("group.staff")
+	void signgui() {
+		BNCore.getInstance().getSignMenuFactory()
+				.create("1", "2", "3", "4")
+				.response((player, lines) -> {
+					for (String string : lines)
+						send(string);
+				})
+				.open(player());
+	}
+
+	@Path("lastColor <text...>")
+	void lastColor(String text) {
+		send(getLastColor(text) + "color");
+	}
+
+	@Path("cooldown")
+	@Cooldown(5 * 20)
+	void cooldown() {
+		send("Hello!");
+	}
+
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
 		return new NerdService().get(convertToOfflinePlayer(value));
@@ -102,39 +123,5 @@ public class BNCoreCommand extends CustomCommand {
 				.filter(value -> value.name().toLowerCase().startsWith(filter))
 				.map(Enum::name)
 				.collect(Collectors.toList());
-	}
-
-	@Path("getColor <color>")
-	void getColor(ColorType colorType) {
-
-		Location location = player().getLocation().add(2, 0, 0);
-
-		// Firework (Color)
-		new FireworkLauncher(location).color(colorType.getColor()).type(FireworkEffect.Type.BALL).detonateAfter(1).launch();
-
-		// Place block
-		location.getBlock().setType(Material.WOOL);
-		location.getBlock().setData(colorType.getDurability().byteValue());
-
-		// Give dyed chestplate
-		ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
-		LeatherArmorMeta meta = (LeatherArmorMeta) chestplate.getItemMeta();
-		meta.setColor(colorType.getColor());
-		chestplate.setItemMeta(meta);
-		location.getWorld().dropItemNaturally(location.add(0, 1, 0), chestplate);
-
-		// ChatColor
-		send(colorType.getChatColor() + colorType.name());
-	}
-
-	@Path("signgui")
-	void signgui() {
-		BNCore.getInstance().getSignMenuFactory()
-				.create("", "1", "2")
-				.response((player, lines) -> {
-					for (String string : lines)
-						send(string);
-				})
-				.open(player());
 	}
 }

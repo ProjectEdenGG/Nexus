@@ -67,7 +67,11 @@ public class Utils {
 	}
 
 	public static String decolorize(String string) {
-		return string.replaceAll("§", "&");
+		return string.replaceAll(getColorChar(), "&");
+	}
+
+	public static String getColorChar() {
+		return "§";
 	}
 
 	public static String loreize(String string) {
@@ -77,6 +81,7 @@ public class Utils {
 	public static String loreize(String string, ChatColor color) {
 		int i = 0, lineLength = 0;
 		boolean watchForNewLine = false, watchForColor = false;
+		string = colorize(string);
 
 		for (String character : string.split("")) {
 			if (watchForNewLine) {
@@ -125,6 +130,34 @@ public class Utils {
 
 	public static List<String> splitLore(String lore) {
 		return new ArrayList<>(Arrays.asList(lore.split("\\|\\|")));
+	}
+
+	public static String getLastColor(String text) {
+		String reversed = new StringBuilder(colorize(text)).reverse().toString();
+		StringBuilder result = new StringBuilder();
+		String lastChar = null;
+
+		for (String character : reversed.split("")) {
+			if (character.equals(Utils.getColorChar()) && lastChar != null) {
+				ChatColor color = ChatColor.getByChar(lastChar);
+
+				if (color != null) {
+					if (color.isFormat()) {
+						result.insert(0, color.toString());
+						continue;
+					} else {
+						if (color == ChatColor.RESET)
+							color = ChatColor.WHITE;
+						result.insert(0, color);
+						break;
+					}
+				}
+			}
+
+			lastChar = character;
+		}
+
+		return result.toString();
 	}
 
 	public static String right(String string, int number) {
