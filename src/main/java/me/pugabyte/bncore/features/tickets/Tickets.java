@@ -5,6 +5,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,16 +25,29 @@ public class Tickets {
 	}
 
 	static void showTicket(Player player, Ticket ticket) {
-		SkriptFunctions.json(player, "&7#" + ticket.getId() + " &3" + ticket.getOwnerName() + " &7- &e" +
-				ticket.getDescription() + "||cmd:/tickets view " + ticket.getId());
+		new JsonBuilder()
+				.next("&7#" + ticket.getId() + " &3" + ticket.getOwnerName() + " &7- &e" + ticket.getDescription())
+				.command("/tickets view \" + ticket.getId()")
+				.send(player);
 	}
 
 	public static void sendTicketButtons(Player staff, Ticket ticket) {
 		staff.sendMessage("");
-		SkriptFunctions.json(staff, "||&3 |&3|   &6&lTeleport||cmd:/tickets tp " + ticket.getId() + "||ttp:&eClick to teleport" +
-				"||&3   |&3|   ||&b&lMessage||sgt:/msg " + ticket.getOwnerName() + " ||ttp:&eClick to message the player" +
-				"||&3   |&3|   ||&c&lClose||cmd:/tickets confirmclose " + ticket.getId() + "||ttp:&eClick to close" +
-				"||&3   |&3|");
+		new JsonBuilder()
+				.next("&3 |&3|   &6&lTeleport")
+				.command("/tickets tp " + ticket.getId())
+				.hover("&eClick to teleport")
+				.group()
+				.next("&3   |&3|   &b&lMessage")
+				.suggest("/msg " + ticket.getOwnerName())
+				.hover("&eClick to message the player")
+				.group()
+				.next("&3   |&3|   &c&lClose")
+				.command("/tickets confirmclose " + ticket.getId())
+				.hover("&eClick to close")
+				.group()
+				.next("&3   |&3|")
+				.send(staff);
 		staff.sendMessage("");
 	}
 

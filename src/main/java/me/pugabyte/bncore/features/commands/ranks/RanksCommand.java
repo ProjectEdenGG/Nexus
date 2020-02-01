@@ -4,7 +4,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
-import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import org.bukkit.entity.Player;
 
 import java.time.format.DateTimeFormatter;
@@ -35,6 +35,8 @@ public class RanksCommand extends CustomCommand {
 	}
 
 	static void ranksReturn(Player player) {
-		SkriptFunctions.json(player, "&f &3&m<  &e Back||cmd:/ranks");
+		new JsonBuilder()
+				.next("&f &3&m<  &e Back||cmd:/ranks")
+				.send(player);
 	}
 }
