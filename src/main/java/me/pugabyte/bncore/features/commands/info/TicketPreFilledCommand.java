@@ -13,7 +13,7 @@ public class TicketPreFilledCommand extends CustomCommand {
 	@Path
 	void run() {
 		line();
-		send(json2()
+		send(json()
 				.next(" &3|&3| ")
 				.group()
 				.next("&eI've been griefed ")

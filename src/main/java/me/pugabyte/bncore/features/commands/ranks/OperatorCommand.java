@@ -20,7 +20,7 @@ public class OperatorCommand extends CustomCommand {
 		line();
 		send("&3[+] &eSenior Staff rank");
 		send("&3[+] &eHow to achieve&3: &3Promoted from &b&oModerator &3by Senior Staff");
-		send(json2("&3[+] &eClick here &3for a list of operators").command("/operator list"));
+		send(json("&3[+] &eClick here &3for a list of operators").command("/operator list"));
 		line();
 		RanksCommand.ranksReturn(player());
 	}

@@ -20,7 +20,7 @@ public class DonateCommand extends CustomCommand {
 				"and they come with some cool &erewards&3! Visit &ehttps://store.bnn.gg &3to view the packages you can " +
 				"get.");
 		line();
-		send(json2(PLUS + "Terms and Conditions").hover(PLUS + "Click here before you donate for anything.").command("/donate tac"));
+		send(json(PLUS + "Terms and Conditions").hover(PLUS + "Click here before you donate for anything.").command("/donate tac"));
 	}
 
 	@Path("tac")

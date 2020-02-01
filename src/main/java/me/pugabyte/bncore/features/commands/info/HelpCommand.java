@@ -17,19 +17,19 @@ public class HelpCommand extends CustomCommand {
 		send("&eHello there, and welcome to the server, &b" + player().getName() + "&e.");
 		send("&eGot a question? &3Just ask! or &e&lclick below &3for the fastest, most in-depth answers:");
 		line();
-		send(json2("&3[+] &eFAQ").command("/faq"));
-		send(json2("&3[+] &eRules").command("/rules"));
-		send(json2("&3[+] &eRanks").command("/ranks"));
-		send(json2("&3[+] &eDiscord").command("/discord"));
-		send(json2("&3[+] &eWiki").url("https://wiki.bnn.gg/").hover("&eThis will open our wiki in your browser."));
-		send(json2("&3[+] &eCommands").url("https://wiki.bnn.gg/wiki/Commands").hover("&eThis will open a page from our wiki in your browser."));
-		send(json2("&3[+] &eProtection").command("/protection"));
-		send(json2("&3[+] &eHome related commands").command("/homehelp"));
-		send(json2("&3[+] &eEconomy").command("/economy"));
-		send(json2("&3[+] &eVote").command("/vote"));
-		send(json2("&3[+] &eStaff help commands").command("/staffhelpcommands"));
+		send(json("&3[+] &eFAQ").command("/faq"));
+		send(json("&3[+] &eRules").command("/rules"));
+		send(json("&3[+] &eRanks").command("/ranks"));
+		send(json("&3[+] &eDiscord").command("/discord"));
+		send(json("&3[+] &eWiki").url("https://wiki.bnn.gg/").hover("&eThis will open our wiki in your browser."));
+		send(json("&3[+] &eCommands").url("https://wiki.bnn.gg/wiki/Commands").hover("&eThis will open a page from our wiki in your browser."));
+		send(json("&3[+] &eProtection").command("/protection"));
+		send(json("&3[+] &eHome related commands").command("/homehelp"));
+		send(json("&3[+] &eEconomy").command("/economy"));
+		send(json("&3[+] &eVote").command("/vote"));
+		send(json("&3[+] &eStaff help commands").command("/staffhelpcommands"));
 		line();
-		send(json2("&3If you have any questions, please ask. Enjoy the server!"));
+		send(json("&3If you have any questions, please ask. Enjoy the server!"));
 
 	}
 

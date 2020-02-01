@@ -13,7 +13,7 @@ public class ProtectionCommand extends CustomCommand {
 	@Path
 	void help() {
 		line();
-		send(json2()
+		send(json()
 				.next("&3  Which protection type?  &3|| ")
 				.next("&b&lP-Stones").suggest("/pstoneinfo").hover("&b&lProtection Stones\n&eCoal, Lapis, Diamond, and Emerald ores\n&eProtects all blocks & animals inside\n&ethe field").group()
 				.next("  &3||  ")
@@ -22,6 +22,6 @@ public class ProtectionCommand extends CustomCommand {
 				.next("&e&lHomes").command("/homes edit").hover("&eUse the GUI to edit your homes.").group()
 				.next("  &3||"));
 		line();
-		send(json2("&3 « &eClick here to return to the help menu.").command("/serverinfo"));
+		send(json("&3 « &eClick here to return to the help menu.").command("/serverinfo"));
 	}
 }

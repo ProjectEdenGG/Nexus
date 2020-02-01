@@ -16,7 +16,6 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -88,20 +87,12 @@ public abstract class CustomCommand implements ICustomCommand {
 		}
 	}
 
-	protected JsonBuilder json2() {
-		return json2("");
+	protected JsonBuilder json() {
+		return json("");
 	}
 
-	protected JsonBuilder json2(String message) {
+	protected JsonBuilder json(String message) {
 		return new JsonBuilder(message);
-	}
-
-	protected void json(String message) {
-		SkriptFunctions.json(player(), message);
-	}
-
-	protected void json(Player player, String message) {
-		SkriptFunctions.json(player, message);
 	}
 
 	public void error(String error) {
