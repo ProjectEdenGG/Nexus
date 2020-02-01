@@ -13,10 +13,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.text.DecimalFormat;
 import java.util.Collections;
 
 @Redirect(from = "/entityhealth", to = "/health target")
 public class HealthCommand extends CustomCommand {
+
+	private DecimalFormat nf = new DecimalFormat("#.00");
 
 	public HealthCommand(CommandEvent event) {
 		super(event);
@@ -25,11 +28,11 @@ public class HealthCommand extends CustomCommand {
 	@Path("<player> [number]")
 	void health(@Arg("self") Player player, Double health) {
 		if (health == null)
-			send(PREFIX + player.getName() + "'s health is " + player.getHealth());
+			send(PREFIX + player.getName() + "'s health is " + nf.format(player.getHealth()));
 		else {
 			checkPermission("health.set");
 			player.setHealth(health);
-			send(PREFIX + ChatColor.stripColor(player.getName()) + "'s health set to " + player.getHealth());
+			send(PREFIX + ChatColor.stripColor(player.getName()) + "'s health set to " + nf.format(player.getHealth()));
 		}
 	}
 
@@ -48,11 +51,11 @@ public class HealthCommand extends CustomCommand {
 				.start();
 
 		if (health == null)
-			send(PREFIX + ChatColor.stripColor(target.getName()) + "'s health is " + target.getHealth());
+			send(PREFIX + ChatColor.stripColor(target.getName()) + "'s health is " + nf.format(target.getHealth()));
 		else {
 			checkPermission("health.set");
 			target.setHealth(health);
-			send(PREFIX + ChatColor.stripColor(target.getName()) + "'s health set to " + target.getHealth());
+			send(PREFIX + ChatColor.stripColor(target.getName()) + "'s health set to " + nf.format(target.getHealth()));
 		}
 	}
 }

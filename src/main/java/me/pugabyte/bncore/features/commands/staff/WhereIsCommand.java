@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.inventivetalent.glow.GlowAPI;
@@ -22,6 +23,9 @@ public class WhereIsCommand extends CustomCommand {
 
 	@Path("<player>")
 	void whereIs(Player playerArg) {
+		if (WorldGroup.get(player().getWorld()).equals(WorldGroup.MINIGAMES))
+			error("Cannot use in gameworld");
+
 		Location playerArgLoc = playerArg.getLocation().clone();
 
 		if (!player().getWorld().equals(playerArg.getWorld()))
