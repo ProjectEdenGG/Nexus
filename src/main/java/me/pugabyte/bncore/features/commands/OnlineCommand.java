@@ -10,6 +10,7 @@ import me.pugabyte.bncore.models.afk.AFKPlayer;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
@@ -18,7 +19,6 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 // TODO: Balance hoverable
 
@@ -46,7 +46,11 @@ public class OnlineCommand extends CustomCommand {
 			List<Nerd> nerds = rank.getOnlineNerds();
 			if (nerds.size() == 0) return;
 
-			json(rank + "s&f: " + nerds.stream().filter(this::canSee).map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
+			JsonBuilder builder = new JsonBuilder(rank + "s&f: ");
+
+			nerds.stream().filter(this::canSee).forEach(nerd -> getNameWithModifiers(nerd, builder));
+
+			send(builder);
 		});
 
 		line();
@@ -58,7 +62,7 @@ public class OnlineCommand extends CustomCommand {
 		return Utils.canSee(player(), nerd.getPlayer());
 	}
 
-	String getNameWithModifiers(Nerd nerd) {
+	void getNameWithModifiers(Nerd nerd, JsonBuilder builder) {
 		boolean vanished = Utils.isVanished(nerd.getPlayer());
 		boolean afk = AFK.get(nerd.getPlayer()).isAfk();
 
@@ -71,9 +75,15 @@ public class OnlineCommand extends CustomCommand {
 		else if (afk)
 			modifiers = "&7[AFK] ";
 
-		return "||" + modifiers + nerd.getRank().getFormat() + nerd.getName() +
-				"||cmd:/quickaction " + nerd.getName() +
-				"||ttp:" + getInfo(nerd, modifiers) + "||";
+		if (!builder.isInitialized())
+			builder.initialize();
+		else
+			builder.next("&f, ").group();
+
+		builder.next(modifiers + nerd.getRank().getFormat() + nerd.getName())
+				.command("/quickaction " + nerd.getName())
+				.hover(getInfo(nerd, modifiers))
+				.group();
 	}
 
 	String getInfo(Nerd nerd, String modifiers) {

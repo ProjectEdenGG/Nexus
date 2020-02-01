@@ -6,11 +6,15 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.bncore.utils.Utils.*;
+import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.getLastColor;
+import static me.pugabyte.bncore.utils.Utils.loreize;
 
 public class JsonBuilder {
 	private ComponentBuilder result = new ComponentBuilder("");
 	private ComponentBuilder builder = new ComponentBuilder("");
+	// Helper boolean for loops and stuff
+	private boolean initialized;
 
 	public JsonBuilder() {
 		this("");
@@ -71,6 +75,14 @@ public class JsonBuilder {
 	public JsonBuilder hover(String text) {
 		builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(loreize(text)).create()));
 		return this;
+	}
+
+	public boolean isInitialized() {
+		return initialized;
+	}
+
+	public void initialize() {
+		this.initialized = true;
 	}
 
 	public void send(Player player) {

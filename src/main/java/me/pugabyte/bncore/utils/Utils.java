@@ -84,6 +84,11 @@ public class Utils {
 		string = colorize(string);
 
 		for (String character : string.split("")) {
+			if (character.contains("\n")) {
+				lineLength = 0;
+				continue;
+			}
+
 			if (watchForNewLine) {
 				if ("|".equalsIgnoreCase(character))
 					lineLength = 0;
