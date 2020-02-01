@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PreConfiguredException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -145,12 +146,20 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendRestoreButtons(Player player, String gamemode) {
-		SkriptFunctions.json(player, "&f");
-		SkriptFunctions.json(player, "&e " + gamemode);
-		SkriptFunctions.json(player, "  &e|&e|  ||&3Inventory||cmd:/restoreinv do " + gamemode.toLowerCase() + " inventory" +
-				"||  &e|&e|  ||&3Ender Chest||cmd:/restoreinv do " + gamemode.toLowerCase() + " enderchest" +
-				"||  &e|&e|  ||&3Experience||cmd:/restoreinv do " + gamemode.toLowerCase() + " exp" +
-				"||  &e|&e|  ||");
+		new JsonBuilder().next("&f").send(player);
+		new JsonBuilder().next("&e " + gamemode).send(player);
+		new JsonBuilder()
+				.next("  &e|&e|  &3Inventory")
+				.command("/restoreinv do " + gamemode.toLowerCase() + " inventory")
+				.group()
+				.next("  &e|&e|  &3Ender Chest")
+				.command("/restoreinv do " + gamemode.toLowerCase() + " enderchest")
+				.group()
+				.next("  &e|&e|  &3Experience")
+				.command("/restoreinv do " + gamemode.toLowerCase() + " exp")
+				.group()
+				.next("  &e|&e|")
+				.send(player);
 	}
 
 	private void sendInventoryRestoreNotEmptyMessage(Player restorer, Player owner, String type) throws InvalidInputException {

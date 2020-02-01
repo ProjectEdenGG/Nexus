@@ -26,25 +26,25 @@ public class AlertsCommand extends CustomCommand {
 	@Path
 	void main() {
 		new JsonBuilder()
-				.then("&3Receive a &e'ping' noise &3whenever a word or phrase in your &c/alerts list &3is said in chat. ")
-				.then("&3Make sure you have your 'Players' sound on!")
+				.next("&3Receive a &e'ping' noise &3whenever a word or phrase in your &c/alerts list &3is said in chat. ")
+				.next("&3Make sure you have your 'Players' sound on!")
 				.newline()
 				.newline()
-				.then("&3You can edit your alerts with the following commands:")
+				.next("&3You can edit your alerts with the following commands:")
 				.newline()
-				.then("&c /alerts list")
+				.next("&c /alerts list")
 				.suggest("/alerts list ")
 				.newline()
-				.then("&c /alerts add <word or phrase>")
+				.next("&c /alerts add <word or phrase>")
 				.suggest("/alerts add ")
 				.newline()
-				.then("&c /alerts delete <word or phrase>")
+				.next("&c /alerts delete <word or phrase>")
 				.suggest("/alerts delete ")
 				.newline()
-				.then("&c /alerts clear")
+				.next("&c /alerts clear")
 				.suggest("/alerts clear")
 				.newline()
-				.then("&c /alerts <mute|unmute|toggle>")
+				.next("&c /alerts <mute|unmute|toggle>")
 				.suggest("/alerts toggle")
 				.send(player());
 	}
@@ -60,16 +60,16 @@ public class AlertsCommand extends CustomCommand {
 			JsonBuilder builder = new JsonBuilder();
 
 			if (highlight.isPartialMatching()) {
-				builder.then("&a✔")
+				builder.next("&a✔")
 						.command("/alerts partialmatch false " + highlight.getHighlight())
 						.hover("&cClick to turn off partial matching");
 			} else {
-				builder.then("&c✕ ")
+				builder.next("&c✕ ")
 						.command("/alerts partialmatch true " + highlight.getHighlight())
 						.hover("&cClick to turn on partial matching");
 			}
 
-			builder.then(" &3" + highlight.getHighlight()).send(player());
+			builder.next(" &3" + highlight.getHighlight()).send(player());
 		}
 	}
 

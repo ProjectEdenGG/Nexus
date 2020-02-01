@@ -43,27 +43,27 @@ public class BridgeListener extends ListenerAdapter {
 			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
 
 			if (user != null && !Strings.isNullOrEmpty(user.getRoleId()))
-				builder.then(new Nerd(user.getUuid()).getChatFormat());
+				builder.next(new Nerd(user.getUuid()).getChatFormat());
 			else
-				builder.then(getName(event));
+				builder.next(getName(event));
 
-			builder.then(" " + channel.getColor() + "&l>&f");
+			builder.next(" " + channel.getColor() + "&l>&f");
 
 			String content = EmojiParser.parseToAliases(event.getMessage().getContentDisplay().trim());
 			if (content.length() > 0)
-				builder.then(" " + colorize(content.replaceAll("&", "&&f")));
+				builder.next(" " + colorize(content.replaceAll("&", "&&f")));
 
 			// TODO: censor
 			// TODO: emotes
 
 			for (Message.Attachment attachment : event.getMessage().getAttachments())
-				builder.reset()
-						.then(" &f&l[View Attachment]")
+				builder.group()
+						.next(" &f&l[View Attachment]")
 						.url(attachment.getUrl());
 
 			Utils.callEvent(new DiscordMessageEvent(content, channel.getPermission()));
 
-			builder.then(" (Java)");
+			builder.next(" (Java)");
 
 			for (Player player : Bukkit.getOnlinePlayers())
 				if (player.hasPermission(channel.getPermission()))

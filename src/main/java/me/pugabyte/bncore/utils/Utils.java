@@ -531,7 +531,7 @@ public class Utils {
 		double pitch = location.getPitch();
 		String world = location.getWorld().getName();
 
-		new JsonBuilder().then(message).command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + world).send(player);
+		new JsonBuilder().next(message).command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + world).send(player);
 	}
 
 	public static int randomInt(int min, int max) {
