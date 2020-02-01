@@ -21,4 +21,5 @@ public class _TemplateCommand extends CustomCommand {
 	@Path("run")
 	void run() {
 	}
+
 }
