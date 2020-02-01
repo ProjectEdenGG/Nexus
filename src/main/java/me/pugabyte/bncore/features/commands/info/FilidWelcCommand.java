@@ -26,7 +26,7 @@ public class FilidWelcCommand extends CustomCommand {
 				"\n&eMake sure to join &c/discord &etoo!"));
 		send(json2("&3[+] &eDiscord").command("/discord").hover("&eA community skype-like program including " +
 				"\n&etext chats and voice chats"));
-//		json("&3[+] &eDubtrack||cmd:/dubtrack||ttp:&eShare your music with the community");
+//		send(json2("&3[+] &eDubtrack").command("/dubtrack").hover("&eShare your music with the community"));
 		send(json2("&3[+] &eWebsite").url("https://bnn.gg/").hover("&eThe homepage for the server"));
 		send(json2("&3[+] &eVoting").command("/vote").hover("&eVote for our server to support us!"));
 		line();

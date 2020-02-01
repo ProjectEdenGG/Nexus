@@ -35,7 +35,7 @@ public class RanksCommand extends CustomCommand {
 			JsonBuilder builder = new JsonBuilder("&3- " + rank);
 			if (Rank.getHighestRank(player()) == rank)
 				builder.next("  &e&o<-- You are here!");
-			builder.next("||cmd:/" + rank.name().toLowerCase());
+			builder.command("/" + rank.name().toLowerCase());
 
 			send(builder);
 		});
