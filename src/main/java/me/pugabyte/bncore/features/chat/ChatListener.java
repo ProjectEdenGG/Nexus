@@ -59,5 +59,4 @@ public class ChatListener implements Listener {
 					player.sendMessage(ChatColor.RED + "You are already in that channel");
 		}
 	}
-
 }

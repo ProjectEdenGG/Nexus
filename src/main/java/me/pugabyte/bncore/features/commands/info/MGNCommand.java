@@ -23,14 +23,14 @@ public class MGNCommand extends CustomCommand {
 	void help() {
 		LocalDateTime dateTime = LocalDateTime.now();
 		LocalTime time = dateTime.toLocalTime();
-		LocalDateTime nextMGM = dateTime.with(TemporalAdjusters.next(DayOfWeek.SATURDAY)).withHour(16).withMinute(0).withSecond(0);
+		LocalDateTime nextMGM = dateTime.withHour(16).withMinute(0).withSecond(0);
 		if (dateTime.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
 			if (time.isAfter(LocalTime.parse("16:00:00")) && time.isBefore(LocalTime.parse("18:00:00"))) {
 				line();
 				send("&3Minigame night is happening right now! Join with &e/gl");
 				return;
 			}
-		}
+		} else nextMGM = nextMGM.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
 
 		long days, hours, minutes;
 		days = ChronoUnit.DAYS.between(dateTime, nextMGM);
