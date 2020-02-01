@@ -27,25 +27,19 @@ public class Tickets {
 	static void showTicket(Player player, Ticket ticket) {
 		new JsonBuilder()
 				.next("&7#" + ticket.getId() + " &3" + ticket.getOwnerName() + " &7- &e" + ticket.getDescription())
-				.command("/tickets view \" + ticket.getId()")
+				.command("/tickets view " + ticket.getId())
 				.send(player);
 	}
 
 	public static void sendTicketButtons(Player staff, Ticket ticket) {
 		staff.sendMessage("");
 		new JsonBuilder()
-				.next("&3 |&3|   &6&lTeleport")
-				.command("/tickets tp " + ticket.getId())
-				.hover("&eClick to teleport")
-				.group()
-				.next("&3   |&3|   &b&lMessage")
-				.suggest("/msg " + ticket.getOwnerName())
-				.hover("&eClick to message the player")
-				.group()
-				.next("&3   |&3|   &c&lClose")
-				.command("/tickets confirmclose " + ticket.getId())
-				.hover("&eClick to close")
-				.group()
+				.next("&3 |&3|   ").group()
+				.next("&6&lTeleport").command("/tickets tp " + ticket.getId()).hover("&eClick to teleport").group()
+				.next("&3   |&3|   ").group()
+				.next("&b&lMessage").suggest("/msg " + ticket.getOwnerName()).hover("&eClick to message the player").group()
+				.next("&3   |&3|   ").group()
+				.next("&c&lClose").command("/tickets confirmclose " + ticket.getId()).hover("&eClick to close").group()
 				.next("&3   |&3|")
 				.send(staff);
 		staff.sendMessage("");

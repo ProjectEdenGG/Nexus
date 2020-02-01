@@ -59,12 +59,20 @@ public class RulesCommand extends CustomCommand {
 	void menu() {
 		send("&3Bear Nation's rules are divided into categories; &e&lclick on the lines below&3 to read the rules for each category.");
 		line();
-		json("&3[+] &eCommunity Rules" + "||cmd:/rules global");
-		json("&3[+] &eSurvival Rules" + "||cmd:/rules survival");
-		json("&3[+] &eMinigame Rules" + "||cmd:/rules minigames");
-		json("&3[+] &eCreative Rules" + "||cmd:/rules creative");
-		json("&3[+] &eSkyblock Rules" + "||cmd:/rules skyblock");
-		json("&3[+] &eOther rules" + "||url:https://wiki.bnn.gg/wiki/Main_Page#Discord_rules");
+		send(json2()
+				.next("&3[+] &eCommunity Rules").command("/rules global")
+				.newline()
+				.next("&3[+] &eSurvival Rules").command("/rules survival")
+				.newline()
+				.next("&3[+] &eMinigame Rules").command("/rules minigames")
+				.newline()
+				.next("&3[+] &eCreative Rules").command("/rules creative")
+				.newline()
+				.next("&3[+] &eSkyblock Rules").command("/rules skyblock")
+				.newline()
+				.next("&3[+] &eOther Rules").url("https://wiki.bnn.gg/wiki/Main_Page#Discord_rules")
+		);
+
 		hasReadRules.setMain(true);
 		service.save(hasReadRules);
 	}
@@ -80,6 +88,11 @@ public class RulesCommand extends CustomCommand {
 				send("&e4. &3No excessive swearing, spamming or overusing caps, or bypassing the censor");
 				send("&e5. &3Use common sense");
 				line();
+				send(json2()
+						.next("&e « Main page  ").command("/rules").group()
+						.next("  &3|&3|  ").group()
+						.next("  &eNext page »").command("/rules global 2").group()
+				);
 				json("&e « Main page  ||cmd:/rules||  &3|&3|  ||  &eNext page »||cmd:/rules global 2");
 				hasReadRules.setCommunity1(true);
 				service.save(hasReadRules);

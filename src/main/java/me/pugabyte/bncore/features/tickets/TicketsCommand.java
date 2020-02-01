@@ -65,7 +65,9 @@ public class TicketsCommand extends CustomCommand {
 
 		Tasks.wait(15 * 20, () -> {
 			if (service.get(ticket.getId()).isOpen())
-				json(PREFIX + "&3Click here to &cclose &3the ticket||cmd:/tickets confirmclose" + ticket.getId() + "||ttp:&eClick to close");
+				send(json2(PREFIX + "&3Click here to &cclose &3the ticket")
+						.command("/tickets confirmclose" + ticket.getId())
+						.hover("&eClick to close"));
 		});
 	}
 
