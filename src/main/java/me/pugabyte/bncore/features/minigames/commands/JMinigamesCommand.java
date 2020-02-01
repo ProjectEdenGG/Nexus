@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.minigames.commands;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
@@ -140,7 +139,6 @@ public class JMinigamesCommand extends CustomCommand {
 	void save(Arena arena) {
 		Tasks.async(() -> {
 			long startTime = System.currentTimeMillis();
-			BNCore.log("Arena: " + arena);
 
 			if (arena == null)
 				ArenaManager.write();
