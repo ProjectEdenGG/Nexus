@@ -93,7 +93,6 @@ public class RulesCommand extends CustomCommand {
 						.next("  &3|&3|  ").group()
 						.next("  &eNext page »").command("/rules global 2").group()
 				);
-				json("&e « Main page  ||cmd:/rules||  &3|&3|  ||  &eNext page »||cmd:/rules global 2");
 				hasReadRules.setCommunity1(true);
 				service.save(hasReadRules);
 				break;
