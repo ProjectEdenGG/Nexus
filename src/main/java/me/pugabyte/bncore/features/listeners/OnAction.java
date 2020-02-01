@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
+import de.tr7zw.itemnbtapi.NBTItem;
+import de.tr7zw.itemnbtapi.NBTTileEntity;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.models.nerds.Nerd;
@@ -10,14 +12,19 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.inventory.ItemStack;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
@@ -73,6 +80,43 @@ public class OnAction implements Listener {
 
 		setting.setBoolean(true);
 		service.save(setting);
+	}
+
+	@EventHandler
+	public void onEnderDragonDeath(EntityDeathEvent event) {
+		if (!event.getEntityType().equals(EntityType.ENDER_DRAGON))
+			return;
+
+		if (Utils.randomInt(1, 3) == 1)
+			event.getDrops().add(new ItemStack(Material.DRAGON_EGG));
+	}
+
+	@EventHandler
+	public void onPlacePotionLauncherHopper(BlockPlaceEvent event) {
+		if (!event.getBlockPlaced().getType().equals(Material.HOPPER))
+			return;
+
+		NBTItem itemNBT = new NBTItem(event.getItemInHand());
+		if (!itemNBT.hasNBTData())
+			return;
+
+		if (itemNBT.asNBTString().contains("&8Potion Launcher"))
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onBreakEmptyShulkerBox(BlockBreakEvent event) {
+		//TODO: 1.13+ Switch to material tag
+		if (!event.getBlock().getType().toString().toLowerCase().contains("shulker_box"))
+			return;
+
+		if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE))
+			return;
+
+		NBTTileEntity tileEntityNBT = new NBTTileEntity(event.getBlock().getState());
+		if (!tileEntityNBT.asNBTString().contains("Items:["))
+			event.setCancelled(true);
+		event.getBlock().setType(Material.AIR);
 	}
 
 	@EventHandler
