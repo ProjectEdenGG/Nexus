@@ -12,7 +12,7 @@ public class CopyrightCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommandAsOp("essentials:sudo " + player().getName() + "c:" + argsString() + " ©");
+		runConsoleCommand("essentials:sudo " + player().getName() + "c:" + argsString() + " ©");
 	}
 
 }

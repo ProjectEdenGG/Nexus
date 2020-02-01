@@ -5,16 +5,16 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-@Aliases("rainoff")
-public class SnowOffCommand extends CustomCommand {
+@Aliases("snowoff")
+public class RainOffCommand extends CustomCommand {
 
-	public SnowOffCommand(CommandEvent event) {
+	public RainOffCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path
-	void help() {
-		if (player().hasPermission("essentials.pweather")) runCommand("pweather clear");
+	void run() {
+		runCommand("pweather clear");
 	}
 
 }
