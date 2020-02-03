@@ -167,6 +167,12 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.6</version>
         </dependency>
+        <!-- Morphia -->
+        <dependency>
+            <groupId>dev.morphia.morphia</groupId>
+            <artifactId>core</artifactId>
+            <version>1.5.8</version>
+        </dependency>
         <!-- Helper -->
         <dependency>
             <groupId>me.lucko</groupId>

@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.framework.persistence;
 
-public enum BearNationDatabase {
+public enum MySQLDatabase {
 	BEARNATION,
 	LITEBANS,
 	NAMELESS;

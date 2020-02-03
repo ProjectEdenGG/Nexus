@@ -1,8 +1,11 @@
 package me.pugabyte.bncore.models;
 
 import com.dieselpoint.norm.Database;
-import me.pugabyte.bncore.framework.persistence.BearNationDatabase;
-import me.pugabyte.bncore.framework.persistence.Persistence;
+import dev.morphia.Datastore;
+import me.pugabyte.bncore.framework.persistence.MongoDBDatabase;
+import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
+import me.pugabyte.bncore.framework.persistence.MySQLDatabase;
+import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.OfflinePlayer;
@@ -12,10 +15,18 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class BaseService {
-	protected static Database database = Persistence.getConnection(BearNationDatabase.BEARNATION);
+	protected static Database database;
+	protected static Datastore datastore;
+
+	static {
+		database = MySQLPersistence.getConnection(MySQLDatabase.BEARNATION);
+		datastore = MongoDBPersistence.getConnection(MongoDBDatabase.BEARNATION);
+		if (datastore != null)
+			datastore.ensureIndexes();
+	}
 
 	public <T> T get(String uuid) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public <T> T get(UUID uuid) {

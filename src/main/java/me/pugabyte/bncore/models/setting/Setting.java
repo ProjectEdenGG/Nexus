@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.utils.SerializationUtils;
+import me.pugabyte.bncore.framework.persistence.serializer.mysql.LocationSerializer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -31,11 +31,11 @@ public class Setting {
 	}
 
 	public Location getLocation() {
-		return SerializationUtils.deserializeDatabaseLocation(value);
+		return new LocationSerializer().deserialize(value);
 	}
 
 	public void setLocation(Location location) {
-		this.value = SerializationUtils.serializeDatabaseLocation(location);
+		this.value = new LocationSerializer().serialize(location);
 	}
 
 }

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.documentation.commands;
 
 import me.pugabyte.bncore.features.documentation.commands.models.Command;
-import me.pugabyte.bncore.features.documentation.commands.models.CommandsDatabase;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -10,7 +9,6 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.server.TabCompleteEvent;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,11 +16,11 @@ import java.util.stream.Collectors;
 public class DocumentCommands {
 	private static SimpleCommandMap commandMap = invokeMethod(Bukkit.getServer().getClass(), "getCommandMap", Bukkit.getServer());
 	private List<Command> commands;
-	private CommandsDatabase.CommandsReader commandsReader = new CommandsDatabase.CommandsReader();
-	private CommandsDatabase.CommandsWriter commandsWriter = new CommandsDatabase.CommandsWriter();
+//	private CommandsDatabase.CommandsReader commandsReader = new CommandsDatabase.CommandsReader();
+//	private CommandsDatabase.CommandsWriter commandsWriter = new CommandsDatabase.CommandsWriter();
 
 	public DocumentCommands() {
-		commands = (ArrayList<Command>) commandsReader.read();
+//		commands = (ArrayList<Command>) commandsReader.read();
 
 		findNewCommands();
 	}
@@ -106,7 +104,7 @@ public class DocumentCommands {
 			}
 
 			for (Command _command : commands) {
-				commandsWriter.write(_command);
+//				commandsWriter.write(_command);
 			}
 		});
 	}

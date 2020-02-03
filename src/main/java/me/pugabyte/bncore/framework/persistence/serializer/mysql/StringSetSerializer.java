@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.framework.persistence.serializer;
+package me.pugabyte.bncore.framework.persistence.serializer.mysql;
 
 import com.dieselpoint.norm.serialize.DbSerializable;
 
