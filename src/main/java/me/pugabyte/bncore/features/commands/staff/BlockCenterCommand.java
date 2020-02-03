@@ -54,8 +54,8 @@ public class BlockCenterCommand extends CustomCommand {
 		String worldString = "Bukkit.getWorld(" + world.getName() + ")";
 		if (world.equals(Minigames.getGameworld())) worldString = "Minigames.getGameworld()";
 
-		String locationString = "new Location(" + worldString + ", " + loc.getX() + ", " + loc.getY() + ", " +
-				loc.getZ() + ", " + loc.getYaw() + ", " + loc.getPitch() + ")";
+		String locationString = "new Location(\"" + worldString + "\", " + loc.getX() + ", " + loc.getY() + ", " +
+				loc.getZ() + ", " + loc.getYaw() + "F, " + loc.getPitch() + "F)";
 
 		send(json(locationString).suggest(locationString));
 	}

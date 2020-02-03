@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.afk.events.NotAFKEvent;
 import me.pugabyte.bncore.features.afk.events.NowAFKEvent;
-import me.pugabyte.bncore.framework.persistence.serializer.LocationSerializer;
+import me.pugabyte.bncore.framework.persistence.serializer.mysql.LocationSerializer;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

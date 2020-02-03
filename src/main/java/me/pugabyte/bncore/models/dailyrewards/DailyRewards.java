@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
-import me.pugabyte.bncore.framework.persistence.serializer.IntegerListSerializer;
+import me.pugabyte.bncore.framework.persistence.serializer.mysql.IntegerListSerializer;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;

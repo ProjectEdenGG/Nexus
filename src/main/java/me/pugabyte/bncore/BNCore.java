@@ -29,7 +29,8 @@ import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.tickets.Tickets;
 import me.pugabyte.bncore.features.wiki.Wiki;
 import me.pugabyte.bncore.framework.commands.Commands;
-import me.pugabyte.bncore.framework.persistence.Persistence;
+import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
+import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.ModelListeners;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -98,7 +99,8 @@ public class BNCore extends JavaPlugin {
 		AFK.shutdown();
 		Discord.shutdown();
 		ProtocolLibrary.getProtocolManager().removePacketListeners(this);
-		Persistence.shutdown();
+		MySQLPersistence.shutdown();
+		MongoDBPersistence.shutdown();
 		commands.unregisterAll();
 	}
 
@@ -108,12 +110,6 @@ public class BNCore extends JavaPlugin {
 
 		FileConfiguration config = getInstance().getConfig();
 
-		config.addDefault("databases.host", "localhost");
-		config.addDefault("databases.port", 3306);
-		config.addDefault("databases.username", "root");
-		config.addDefault("databases.password", "password");
-		config.addDefault("databases.prefix", "");
-
 		config.options().copyDefaults(true);
 		saveConfig();
 	}
@@ -121,7 +117,6 @@ public class BNCore extends JavaPlugin {
 	public void addConfigDefault(String path, Object value) {
 		FileConfiguration config = getInstance().getConfig();
 		config.addDefault(path, value);
-		saveConfig();
 	}
 
 	public static AFK afk;
@@ -163,7 +158,7 @@ public class BNCore extends JavaPlugin {
 		clearInventory = new ClearInventory();
 		connect4 = new Connect4();
 		dailyRewards = new DailyRewardsFeature();
-		documentation = new Documentation();
+//		documentation = new Documentation();
 		durabilityWarning = new DurabilityWarning();
 		holidays = new Holidays();
 		hoursFeature = new HoursFeature();

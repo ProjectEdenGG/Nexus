@@ -1,30 +1,38 @@
 package me.pugabyte.bncore.models.homes;
 
-import com.dieselpoint.norm.serialize.DbSerializer;
+import dev.morphia.annotations.Converters;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.framework.persistence.serializer.LocationSerializer;
+import lombok.NonNull;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
+import me.pugabyte.bncore.models.PlayerOwnedObject;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.Transient;
 import java.util.List;
+import java.util.UUID;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Home {
-	private String uuid;
+@Converters({LocationConverter.class, UUIDConverter.class})
+public class Home extends PlayerOwnedObject {
+	@NonNull
+	private UUID uuid;
+	@NonNull
 	private String name;
-	@DbSerializer(LocationSerializer.class)
+	@NonNull
 	private Location location;
 	private boolean locked;
+	// TODO: Needs converter
 	private ItemStack item;
-	@Transient
-	List<String> accessList;
+	private List<UUID> accessList;
 
 	public HomeOwner getOwner() {
 		return new HomeService().get(uuid);
@@ -35,16 +43,15 @@ public class Home {
 	}
 
 	public boolean hasAccess(Player player) {
-		// TODO
-		return true;
+		return getOwner().hasGivenAccessTo(player) || accessList.contains(player.getUniqueId());
 	}
 
 	public void allow(OfflinePlayer player) {
-		// TODO
+		accessList.add(player.getUniqueId());
 	}
 
 	public void remove(OfflinePlayer player) {
-		// TODO
+		accessList.remove(player.getUniqueId());
 	}
 
 	@Data

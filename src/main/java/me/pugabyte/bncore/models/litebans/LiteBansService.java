@@ -1,12 +1,12 @@
 package me.pugabyte.bncore.models.litebans;
 
 import com.dieselpoint.norm.Database;
-import me.pugabyte.bncore.framework.persistence.BearNationDatabase;
-import me.pugabyte.bncore.framework.persistence.Persistence;
+import me.pugabyte.bncore.framework.persistence.MySQLDatabase;
+import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.BaseService;
 
 public class LiteBansService extends BaseService {
-	protected static Database database = Persistence.getConnection(BearNationDatabase.LITEBANS);
+	protected static Database database = MySQLPersistence.getConnection(MySQLDatabase.LITEBANS);
 
 	public int getHistory(String uuid) {
 		return database.sql("SELECT " +
