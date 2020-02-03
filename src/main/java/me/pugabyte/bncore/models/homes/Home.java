@@ -54,10 +54,4 @@ public class Home extends PlayerOwnedObject {
 		accessList.remove(player.getUniqueId());
 	}
 
-	@Data
-	private static class PermissionMap {
-		private HomeOwner.PermissionType type;
-		private String uuid;
-	}
-
 }
