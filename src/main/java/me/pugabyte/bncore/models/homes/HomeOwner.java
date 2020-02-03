@@ -14,6 +14,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,6 +35,8 @@ public class HomeOwner extends PlayerOwnedObject {
 	private boolean autoLock;
 
 	public List<String> getNames() {
+		if (homes == null)
+			return new ArrayList<>();
 		return homes.stream().map(Home::getName).collect(Collectors.toList());
 	}
 
@@ -55,11 +58,6 @@ public class HomeOwner extends PlayerOwnedObject {
 
 	public boolean hasGivenAccessTo(OfflinePlayer player) {
 		return fullAccessList.contains(player.getUniqueId());
-	}
-
-	enum PermissionType {
-		ALLOW,
-		ALLOW_ALL
 	}
 
 }
