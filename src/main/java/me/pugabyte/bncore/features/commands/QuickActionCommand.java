@@ -27,7 +27,7 @@ public class QuickActionCommand extends CustomCommand {
 				.next("  &3||"));
 
 		send(json()
-				.next("        &3||  &r")
+				.next("      &3||  &r")
 				.next("&eAllow").command("/allow " + playerName).group()
 				.next("  &3||  &r")
 				.next("&eSPVP Challenge").suggest("/spvp " + playerName).group()
