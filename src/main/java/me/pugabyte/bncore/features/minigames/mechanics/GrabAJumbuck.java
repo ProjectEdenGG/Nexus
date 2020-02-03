@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.GrabAJumbuckArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.GrabAJumbuckMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
@@ -69,6 +70,12 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		} catch (Exception ignore) {}
 		match.getMinigamers().forEach(Minigamer::toGamelobby);
 		super.onEnd(event);
+	}
+
+	@Override
+	public void onQuit(MatchQuitEvent event) {
+		super.onQuit(event);
+		removeAllPassengers(event.getMinigamer().getPlayer(), event.getMatch());
 	}
 
 	public void spawnSheep(Match match, int sheepAmount) {

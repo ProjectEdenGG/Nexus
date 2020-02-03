@@ -43,12 +43,12 @@ public final class SignMenuFactory {
 		this.listen();
 	}
 
-	public Menu create(String... linesArray) {
+	public Menu lines(String... linesArray) {
 		if (linesArray == null) linesArray = new String[4];
 		return new Menu(Arrays.asList(linesArray));
 	}
 
-	public Menu create(List<String> lines) {
+	public Menu lines(List<String> lines) {
 		if (lines == null) lines = new ArrayList<>();
 		return new Menu(lines);
 	}

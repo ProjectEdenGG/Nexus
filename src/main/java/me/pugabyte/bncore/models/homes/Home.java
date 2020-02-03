@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.LocationSerializer;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import javax.persistence.Transient;
 import java.util.List;
@@ -20,9 +21,14 @@ public class Home {
 	private String name;
 	@DbSerializer(LocationSerializer.class)
 	private Location location;
+	private boolean locked;
+	private ItemStack item;
 	@Transient
 	List<String> accessList;
 
+	public HomeOwner getOwner() {
+		return new HomeService().get(uuid);
+	}
 
 	public void teleport(Player player) {
 		player.teleport(location.clone().add(0, .5, 0));
@@ -33,9 +39,12 @@ public class Home {
 		return true;
 	}
 
-	public void grantAccess(OfflinePlayer player) {
+	public void allow(OfflinePlayer player) {
 		// TODO
+	}
 
+	public void remove(OfflinePlayer player) {
+		// TODO
 	}
 
 	@Data

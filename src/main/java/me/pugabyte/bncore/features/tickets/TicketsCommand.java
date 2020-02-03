@@ -12,6 +12,8 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.command.ConsoleCommandSender;
 
+import java.util.List;
+
 public class TicketsCommand extends CustomCommand {
 	private TicketService service = new TicketService();
 
@@ -21,7 +23,11 @@ public class TicketsCommand extends CustomCommand {
 
 	@Path
 	void tickets() {
-		service.getAllOpen().stream()
+		List<Ticket> open = service.getAllOpen();
+		if (open.size() == 0)
+			error("There are no open tickets");
+
+		open.stream()
 				.filter(ticket -> ticket.canBeSeenBy(player()))
 				.forEach(ticket -> Tickets.showTicket(player(), ticket));
 	}
@@ -74,8 +80,10 @@ public class TicketsCommand extends CustomCommand {
 	@Path("confirmclose <id>")
 	void confirmClose(Ticket ticket) {
 		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder().onConfirm((e) -> {
-			close(ticket);
-			e.getPlayer().closeInventory();
+			if (ticket.isOpen())
+				close(ticket);
+			else
+				send(e.getPlayer(), PREFIX + "&cTicket already closed");
 		}).build());
 	}
 

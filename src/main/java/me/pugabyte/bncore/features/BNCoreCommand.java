@@ -71,7 +71,7 @@ public class BNCoreCommand extends CustomCommand {
 	@Permission("group.staff")
 	void signgui() {
 		BNCore.getInstance().getSignMenuFactory()
-				.create("1", "2", "3", "4")
+				.lines("1", "2", "3", "4")
 				.response((player, lines) -> {
 					for (String string : lines)
 						send(string);

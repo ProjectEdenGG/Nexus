@@ -132,6 +132,7 @@ public abstract class Mechanic implements Listener {
 		// TODO: Max number of lines is 15, only show max/min scores
 		for (Minigamer minigamer : match.getMinigamers())
 			if (minigamer.isAlive())
+				// TODO: Put after teams, before dead players
 				lines.put(minigamer.getColoredName(), minigamer.getScore());
 			else
 				lines.put("&c&m" + minigamer.getName(), minigamer.getScore());

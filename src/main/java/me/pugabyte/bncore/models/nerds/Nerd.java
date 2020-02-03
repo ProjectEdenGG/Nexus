@@ -11,6 +11,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @AllArgsConstructor
@@ -44,6 +45,12 @@ public class Nerd {
 
 	public Player getPlayer() {
 		return Utils.getPlayer(uuid).getPlayer();
+	}
+
+	public long getTimeOffline(ChronoUnit unit) {
+		if (getLastQuit() == null || getOfflinePlayer().isOnline())
+			return 0;
+		return getLastQuit().until(LocalDateTime.now(), unit);
 	}
 
 	public Rank getRank() {

@@ -153,6 +153,7 @@ public class Match {
 		scoreboard.update();
 		MatchManager.remove(this);
 	}
+
 	private void initialize() {
 		if (!initialized) {
 			MatchInitializeEvent event = new MatchInitializeEvent(this);

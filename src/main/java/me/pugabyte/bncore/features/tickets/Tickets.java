@@ -34,11 +34,11 @@ public class Tickets {
 	public static void sendTicketButtons(Player staff, Ticket ticket) {
 		staff.sendMessage("");
 		new JsonBuilder()
-				.next("&3 |&3|   ").group()
+				.next("&3 |&3|   &3").group()
 				.next("&6&lTeleport").command("/tickets tp " + ticket.getId()).hover("&eClick to teleport").group()
-				.next("&3   |&3|   ").group()
+				.next("&3   |&3|   &3").group()
 				.next("&b&lMessage").suggest("/msg " + ticket.getOwnerName()).hover("&eClick to message the player").group()
-				.next("&3   |&3|   ").group()
+				.next("&3   |&3|   &3").group()
 				.next("&c&lClose").command("/tickets confirmclose " + ticket.getId()).hover("&eClick to close").group()
 				.next("&3   |&3|")
 				.send(staff);
