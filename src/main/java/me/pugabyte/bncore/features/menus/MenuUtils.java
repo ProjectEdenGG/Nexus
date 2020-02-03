@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -75,6 +76,10 @@ public abstract class MenuUtils {
 		contents.set(0, 0, ClickableItem.from(backItem(), consumer));
 	}
 
+	protected void addCloseItem(InventoryContents contents) {
+		contents.set(0, 0, ClickableItem.from(backItem(), e -> e.getPlayer().closeInventory()));
+	}
+
 	protected ItemStack backItem() {
 		return nameItem(new ItemStack(Material.BARRIER), "&cBack");
 	}
@@ -120,11 +125,19 @@ public abstract class MenuUtils {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			ItemStack cancelItem = nameItem(Material.REDSTONE, cancelText, cancelLore);
-			ItemStack confirmItem = nameItem(Material.EMERALD, confirmText, confirmLore);
+			ItemStack cancelItem = nameItem(ColorType.RED.getItemStack(Material.CONCRETE), cancelText, cancelLore);
+			ItemStack confirmItem = nameItem(ColorType.LIME.getItemStack(Material.CONCRETE), confirmText, confirmLore);
 
-			contents.set(1, 2, ClickableItem.from(cancelItem, onCancel));
-			contents.set(1, 6, ClickableItem.from(confirmItem, onConfirm));
+			contents.set(1, 2, ClickableItem.from(cancelItem, (e) -> {
+				e.getPlayer().closeInventory();
+				if (onCancel != null)
+					onCancel.accept(e);
+			}));
+
+			contents.set(1, 6, ClickableItem.from(confirmItem, e -> {
+				e.getPlayer().closeInventory();
+				onConfirm.accept(e);
+			}));
 		}
 
 		@Override

@@ -49,7 +49,7 @@ public class CheckpointsCommand extends CustomCommand {
 	}
 
 	@SneakyThrows
-	@Path("(add|create) <number>")
+	@Path("(set|add|create) <number>")
 	void addCheckpoint(int number) {
 		Region selection = weUtils.getPlayerSelection(player());
 		selection.expand(Direction.UP.toVector().multiply(4));

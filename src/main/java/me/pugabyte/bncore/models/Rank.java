@@ -104,4 +104,13 @@ public enum Rank {
 
 		return GUEST;
 	}
+
+	public enum Group {
+		ADMINS,
+		SENIOR_STAFF,
+		STAFF,
+		BUILDERS,
+		PLAYERS;
+	}
+
 }
