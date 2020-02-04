@@ -234,7 +234,7 @@ class PathParser {
 			}
 
 			// Has arguments, has literal worlds
-			Matcher matcher = Pattern.compile("^" + literalWords + ".*").matcher(argsString);
+			Matcher matcher = Pattern.compile("^" + literalWords + " .*").matcher(argsString + " ");
 			if (matcher.matches())
 				return method;
 		}

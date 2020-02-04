@@ -9,7 +9,9 @@ import me.pugabyte.bncore.models.homes.Home;
 import me.pugabyte.bncore.models.homes.HomeOwner;
 import me.pugabyte.bncore.models.homes.HomeService;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.function.BiConsumer;
 
 public class HomesMenu {
 	private static SignMenuFactory signMenuFactory = BNCore.getInstance().getSignMenuFactory();
@@ -35,57 +37,67 @@ public class HomesMenu {
 
 	private static String[] playerNameLines = {"", "^ ^ ^ ^ ^ ^", "Enter a", "player's name"};
 
-	public static void allowAll(HomeOwner homeOwner) {
+	public static void allowAll(HomeOwner homeOwner, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
 				.response((player, response) -> {
-					homeOwner.allowAll(Bukkit.getPlayer(response[0]));
-					new HomeService().save(homeOwner);
+					try {
+						homeOwner.allowAll(Utils.getPlayer(response[0]));
+						new HomeService().save(homeOwner);
+						onResponse.accept(player, response);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 				})
 				.open(homeOwner.getPlayer());
 
 	}
 
-	public static void removeAll(HomeOwner homeOwner) {
+	public static void removeAll(HomeOwner homeOwner, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
 				.response((player, response) -> {
-					homeOwner.removeAll(Bukkit.getPlayer(response[0]));
+					homeOwner.removeAll(Utils.getPlayer(response[0]));
 					new HomeService().save(homeOwner);
+					onResponse.accept(player, response);
 				})
 				.open(homeOwner.getPlayer());
 	}
 
-	public static void allow(Home home) {
+	public static void allow(Home home, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
 				.response((player, response) -> {
-					home.allow(Bukkit.getPlayer(response[0]));
+					home.allow(Utils.getPlayer(response[0]));
 					new HomeService().save(home.getOwner());
+					onResponse.accept(player, response);
 				})
 				.open(home.getOwner().getPlayer());
 	}
 
-	public static void remove(Home home) {
+	public static void remove(Home home, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
 				.response((player, response) -> {
-					home.remove(Bukkit.getPlayer(response[0]));
+					home.remove(Utils.getPlayer(response[0]));
 					new HomeService().save(home.getOwner());
+					onResponse.accept(player, response);
 				})
 				.open(home.getOwner().getPlayer());
 	}
 
-	public static void item(Home home) {
+	public static void item(Home home, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines("", "Enter a player's", "name, \"hand\"", "or an item name")
 				.response((player, response) -> {
 					// TODO Item parsing
 					new HomeService().save(home.getOwner());
+					onResponse.accept(player, response);
 				})
 				.open(home.getOwner().getPlayer());
 	}
 
-	public static void rename(Home home) {
+	public static void rename(Home home, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines("", "^ ^ ^ ^ ^ ^", "Enter the home's", "new name")
 				.response((player, response) -> {
 					home.setName(response[0]);
 					new HomeService().save(home.getOwner());
+					onResponse.accept(player, response);
 				})
 				.open(home.getOwner().getPlayer());
 	}

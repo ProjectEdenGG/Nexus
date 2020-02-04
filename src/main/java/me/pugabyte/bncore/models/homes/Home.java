@@ -14,7 +14,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -32,7 +33,7 @@ public class Home extends PlayerOwnedObject {
 	private boolean locked;
 	// TODO: Needs converter
 	private ItemStack item;
-	private List<UUID> accessList;
+	private Set<UUID> accessList = new HashSet<>();
 
 	public HomeOwner getOwner() {
 		return new HomeService().get(uuid);
