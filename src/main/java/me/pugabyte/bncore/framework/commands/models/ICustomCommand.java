@@ -128,7 +128,7 @@ public interface ICustomCommand {
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 			String value = (annotation == null ? null : annotation.value());
 			int contextArgIndex = (annotation == null ? -1 : annotation.contextArg());
-			Object contextArg = (contextArgIndex > 0 && objects.length <= contextArgIndex) ? contextArgIndex : null;
+			Object contextArg = (contextArgIndex > 0 && objects.length >= contextArgIndex) ? objects[contextArgIndex - 1] : null;
 
 			if (args.size() >= pathIndex) {
 				if (pathArg.contains("..."))

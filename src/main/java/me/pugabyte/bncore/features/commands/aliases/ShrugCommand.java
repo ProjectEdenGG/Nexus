@@ -12,7 +12,7 @@ public class ShrugCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runConsoleCommand("essentials:sudo " + player().getName() + "c:" + argsString() + " ¯\\_(ツ)_/¯");
+		runConsoleCommand("essentials:sudo " + player().getName() + " c:" + argsString() + " ¯\\_(ツ)_/¯");
 	}
 
 }

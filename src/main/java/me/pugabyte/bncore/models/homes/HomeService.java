@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.models.homes;
 
 import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.utils.Tasks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +27,7 @@ public class HomeService extends BaseService {
 	}
 
 	public void save(HomeOwner homeOwner) {
-		datastore.save(homeOwner);
+		Tasks.async(() -> datastore.merge(homeOwner));
 	}
-
 
 }

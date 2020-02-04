@@ -15,7 +15,9 @@ import me.pugabyte.bncore.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -31,13 +33,20 @@ public class HomeOwner extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private List<Home> homes;
-	private List<UUID> fullAccessList;
+	private Set<UUID> fullAccessList = new HashSet<>();
 	private boolean autoLock;
 
 	public List<String> getNames() {
+		return getNames(null);
+	}
+
+	public List<String> getNames(String filter) {
 		if (homes == null)
 			return new ArrayList<>();
-		return homes.stream().map(Home::getName).collect(Collectors.toList());
+		return homes.stream()
+				.map(Home::getName)
+				.filter(name -> filter == null || name.startsWith(filter))
+				.collect(Collectors.toList());
 	}
 
 	public Home getHome(String name) {
