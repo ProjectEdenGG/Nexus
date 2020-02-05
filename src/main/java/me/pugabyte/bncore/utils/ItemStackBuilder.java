@@ -23,8 +23,12 @@ public class ItemStackBuilder {
 	private boolean doLoreize = true;
 
 	public ItemStackBuilder(Material material) {
-		itemStack = new ItemStack(material);
-		itemMeta = itemStack.getItemMeta();
+		this(new ItemStack(material));
+	}
+
+	public ItemStackBuilder(ItemStack itemStack) {
+		this.itemStack = itemStack.clone();
+		this.itemMeta = itemStack.getItemMeta();
 	}
 
 	public ItemStackBuilder amount(int amount) {
@@ -52,7 +56,7 @@ public class ItemStackBuilder {
 			if (doLoreize)
 				colorized.addAll(Arrays.asList(Utils.loreize(colorize(line)).split("\\|\\|")));
 			else
-				colorized.add(colorize(line));
+				colorized.addAll(Arrays.asList(colorize(line).split("\\|\\|")));
 		itemMeta.setLore(colorized);
 		return this;
 	}
@@ -83,7 +87,8 @@ public class ItemStackBuilder {
 	}
 
 	public ItemStackBuilder glow() {
-		Utils.addGlowing(itemStack);
+		enchant(Enchantment.ARROW_INFINITE);
+		itemFlags(ItemFlag.HIDE_ENCHANTS);
 		return this;
 	}
 

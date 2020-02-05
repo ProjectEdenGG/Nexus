@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -69,7 +70,7 @@ public final class SignMenuFactory {
 
 				event.setCancelled(true);
 
-				menu.response.accept(player, input);
+				Tasks.sync(() -> menu.response.accept(player, input));
 
 				Location location = blockPosition.toLocation(player.getWorld());
 				player.sendBlockChange(location, location.getBlock().getType(), location.getBlock().getData());

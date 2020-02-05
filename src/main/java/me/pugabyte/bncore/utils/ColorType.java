@@ -68,7 +68,7 @@ public enum ColorType {
 			DyeColor.YELLOW,
 			4
 	),
-	LIME(
+	LIGHT_GREEN(
 			"lime",
 			Color.LIME,
 			ChatColor.GREEN,
