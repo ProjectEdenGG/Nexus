@@ -132,6 +132,10 @@ public abstract class CustomCommand implements ICustomCommand {
 		return (CommandBlock) event.getSender();
 	}
 
+	private boolean isPlayer() {
+		return sender() instanceof Player;
+	}
+
 	protected boolean isSelf(OfflinePlayer player) {
 		return player.equals(player());
 	}
@@ -261,7 +265,7 @@ public abstract class CustomCommand implements ICustomCommand {
 		OfflinePlayer offlinePlayer = convertToOfflinePlayer(value);
 		if (!offlinePlayer.isOnline())
 			throw new PlayerNotOnlineException(offlinePlayer);
-		if (!Utils.canSee(player(), offlinePlayer.getPlayer()))
+		if (isPlayer() && !Utils.canSee(player(), offlinePlayer.getPlayer()))
 			throw new PlayerNotOnlineException(offlinePlayer);
 
 		return offlinePlayer.getPlayer();

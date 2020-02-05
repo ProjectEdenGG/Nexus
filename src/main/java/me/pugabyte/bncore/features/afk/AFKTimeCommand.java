@@ -5,7 +5,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.afk.AFKPlayer;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
@@ -16,10 +15,9 @@ public class AFKTimeCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[player]")
+	@Path("<player>")
 	void timeAfk(@Arg("self") Player player) {
-		AFKPlayer afkPlayer = AFK.get(player);
-		String timespan = Utils.timespanDiff(afkPlayer.getTime());
+		String timespan = Utils.timespanDiff(AFK.get(player).getTime());
 		send("&3" + player.getName() + " has been AFK for &e" + timespan);
 	}
 
