@@ -13,6 +13,8 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.features.homes.HomesFeature.maxHomes;
 
 @Data
 @Builder
@@ -55,6 +59,16 @@ public class HomeOwner extends PlayerOwnedObject {
 				.findFirst()
 				.orElseThrow(() -> new InvalidInputException("That home does not exist"));
 	}
+
+	public int getMaxHomes() {
+		PermissionUser user = PermissionsEx.getUser(getUuid().toString());
+		for (int i = maxHomes; i > 0; i--)
+			if (user.has("homes.set." + i))
+				return i;
+
+		return 0;
+	}
+
 
 	public void allowAll(OfflinePlayer player) {
 		fullAccessList.add(player.getUniqueId());

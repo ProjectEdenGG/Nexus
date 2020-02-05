@@ -23,7 +23,7 @@ public class DeleteArenaMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		ItemStack cancelItem = nameItem(new ItemStack(Material.STAINED_GLASS_PANE, 1, ColorType.LIME.getDurability().shortValue()), "&7Cancel");
+		ItemStack cancelItem = nameItem(new ItemStack(Material.STAINED_GLASS_PANE, 1, ColorType.LIGHT_GREEN.getDurability().shortValue()), "&7Cancel");
 		contents.fillRect(0, 0, 2, 8, ClickableItem.from(cancelItem, e -> menus.openArenaMenu(player, arena)));
 		contents.fillRect(1, 1, 1, 7, ClickableItem.from(cancelItem, e -> menus.openArenaMenu(player, arena)));
 
