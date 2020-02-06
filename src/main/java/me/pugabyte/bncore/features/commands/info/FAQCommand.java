@@ -84,13 +84,13 @@ public class FAQCommand extends CustomCommand {
 	private void main() {
 		send("&6&lFrequently Asked Questions");
 		line();
-		send(json(PLUS + "What can I do on this server?").command("faq whatcanido"));
-		send(json(PLUS + "How can I start building?").command("faq startbuilding"));
-		send(json(PLUS + "How can I rank up?").command("faq ranks"));
-		send(json(PLUS + "How does the chat work?").command("faq chat"));
-		send(json(PLUS + "Is mcMMO nerfed?").command("faq mcmmo"));
-		send(json(PLUS + "How do I claim/protect my stuff?").command("faq protect"));
-		send(json(PLUS + "How do I allow my friends to my stuff?").command("faq allow"));
+		send(json(PLUS + "What can I do on this server?").command("/faq whatcanido"));
+		send(json(PLUS + "How can I start building?").command("/faq startbuilding"));
+		send(json(PLUS + "How can I rank up?").command("/faq ranks"));
+		send(json(PLUS + "How does the chat work?").command("/faq chat"));
+		send(json(PLUS + "Is mcMMO nerfed?").command("/faq mcmmo"));
+		send(json(PLUS + "How do I claim/protect my stuff?").command("/faq protect"));
+		send(json(PLUS + "How do I allow my friends to my stuff?").command("/faq allow"));
 		line();
 		send(json("&3Simply &e&lclick &3on the question you want answered."));
 	}
@@ -159,9 +159,9 @@ public class FAQCommand extends CustomCommand {
 		line();
 		send("&3There are three different types of protection. &eClick one &3for more information");
 		line();
-		send(json("&3[+] &eLand").command("faq protect_land"));
-		send(json("&3[+] &eChests, furnaces, doors, etc").command("faq protect_lwc"));
-		send(json("&3[+] &eHomes").command("faq protect_homes"));
+		send(json("&3[+] &eLand").command("/faq protect_land"));
+		send(json("&3[+] &eChests, furnaces, doors, etc").command("/faq protect_lwc"));
+		send(json("&3[+] &eHomes").command("/faq protect_homes"));
 		line();
 		back();
 	}
@@ -242,11 +242,11 @@ public class FAQCommand extends CustomCommand {
 
 	private void whatCanIDo() {
 		send("&3Bear Nation has 5 gamemodes:");
-		send(json("&3[+] &eSurvival").command("faq survival"));
-		send(json("&3[+] &eCreative").command("faq creative"));
-		send(json("&3[+] &eMinigames").command("faq minigames"));
-		send(json("&3[+] &eSkyblock").command("faq skyblock"));
-		send(json("&3[+] &eAdventure Maps").command("faq adventure"));
+		send(json("&3[+] &eSurvival").command("/faq survival"));
+		send(json("&3[+] &eCreative").command("/faq creative"));
+		send(json("&3[+] &eMinigames").command("/faq minigames"));
+		send(json("&3[+] &eSkyblock").command("/faq skyblock"));
+		send(json("&3[+] &eAdventure Maps").command("/faq adventure"));
 		line();
 		send(json("&e&lClick &3on one to learn more"));
 		line();

@@ -58,6 +58,8 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder command(String command) {
+		if (!command.startsWith("/"))
+			command = "/" + command;
 		builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
 		return this;
 	}
