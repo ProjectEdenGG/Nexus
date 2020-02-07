@@ -129,14 +129,18 @@ public abstract class MenuUtils {
 			ItemStack confirmItem = nameItem(ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE), confirmText, confirmLore);
 
 			contents.set(1, 2, ClickableItem.from(cancelItem, (e) -> {
-				e.getPlayer().closeInventory();
 				if (onCancel != null)
 					onCancel.accept(e);
+
+				if (title.equals(e.getPlayer().getOpenInventory().getTitle()))
+					e.getPlayer().closeInventory();
 			}));
 
 			contents.set(1, 6, ClickableItem.from(confirmItem, e -> {
-				e.getPlayer().closeInventory();
 				onConfirm.accept(e);
+
+				if (title.equals(e.getPlayer().getOpenInventory().getTitle()))
+					e.getPlayer().closeInventory();
 			}));
 		}
 

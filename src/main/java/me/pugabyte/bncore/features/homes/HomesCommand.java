@@ -8,12 +8,7 @@ import me.pugabyte.bncore.models.homes.Home;
 import me.pugabyte.bncore.models.homes.HomeOwner;
 import me.pugabyte.bncore.models.homes.HomeService;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 public class HomesCommand extends CustomCommand {
 	HomeService service;
@@ -25,20 +20,27 @@ public class HomesCommand extends CustomCommand {
 		homeOwner = service.get(player());
 	}
 
-	@Path("reload")
-	@Permission("group.seniorstaff")
-	void reload() {
-		service.clearCache();
+
+@Path("getHomeOwner")
+void getHomeOwner() {
+	send("Home owner: " + homeOwner);
+}
+
+@Path("getHome <name>")
+void getHome(String name) {
+	send("Home: " + homeOwner.getHome(name).get());
+}
+
+
+	@Path
+	void list() {
+		send("Homes: " + homeOwner.getNames());
 	}
 
-	@Path("getHomeOwner")
-	void getHomeOwner() {
-		send("Home owner: " + homeOwner);
-	}
-
-	@Path("getHome <name>")
-	void getHome(String name) {
-		send("Home: " + homeOwner.getHome(name));
+	@Path("<player>")
+	void list(Player player) {
+		homeOwner = service.get(player);
+		list();
 	}
 
 	@Path("edit [home]")
@@ -49,22 +51,13 @@ public class HomesCommand extends CustomCommand {
 			HomesMenu.edit(home);
 	}
 
-	@Path
-	void run() {
-		list(null);
-	}
-
-	@Path("list [filter]")
-	void list(String filter) {
-		send("Homes: " + homeOwner.getNames(filter));
-	}
-
 	@Path("allowAll [player]")
 	void allowAll(Player player) {
 		if (player == null)
-			HomesMenu.allowAll(homeOwner, (owner, response) ->
-				send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3has been granted access to your homes")
-			);
+			HomesMenu.allowAll(homeOwner, (owner, response) -> {
+				if (response[0].length() > 0)
+					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3has been granted access to your homes");
+			});
 		else {
 			homeOwner.allowAll(player);
 			new HomeService().save(homeOwner);
@@ -75,9 +68,10 @@ public class HomesCommand extends CustomCommand {
 	@Path("removeAll [player]")
 	void removeAll(Player player) {
 		if (player == null)
-			HomesMenu.removeAll(homeOwner, (owner, response) ->
-				send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3no longer has access to your homes")
-			);
+			HomesMenu.removeAll(homeOwner, (owner, response) -> {
+				if (response[0].length() > 0)
+					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3no longer has access to your homes");
+			});
 		else {
 			homeOwner.removeAll(player);
 			new HomeService().save(homeOwner);
@@ -85,12 +79,13 @@ public class HomesCommand extends CustomCommand {
 		}
 	}
 
-	@Path("allow [home] [player]")
+	@Path("allow <home> [player]")
 	void allow(Home home, Player player) {
 		if (player == null)
-			HomesMenu.allow(home, (owner, response) ->
-				send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3has been granted access to your home &e" + home.getName())
-			);
+			HomesMenu.allow(home, (owner, response) -> {
+				if (response[0].length() > 0)
+					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3has been granted access to your home &e" + home.getName());
+			});
 		else {
 			home.allow(player);
 			new HomeService().save(homeOwner);
@@ -98,12 +93,13 @@ public class HomesCommand extends CustomCommand {
 		}
 	}
 
-	@Path("remove [player]")
+	@Path("remove <home> [player]")
 	void remove(Home home, Player player) {
 		if (player == null)
-			HomesMenu.remove(home, (owner, response) ->
-				send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3no longer has access to your home &e" + home.getName())
-			);
+			HomesMenu.remove(home, (owner, response) -> {
+				if (response[0].length() > 0)
+					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3no longer has access to your home &e" + home.getName());
+			});
 		else {
 			homeOwner.removeAll(player);
 			new HomeService().save(homeOwner);
@@ -111,5 +107,10 @@ public class HomesCommand extends CustomCommand {
 		}
 	}
 
+	@Path("reload")
+	@Permission("group.seniorstaff")
+	void reload() {
+		service.clearCache();
+	}
 
 }
