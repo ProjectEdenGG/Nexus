@@ -5,9 +5,11 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
-@Permission("group.staff")
 @Aliases("nv")
+@Permission("group.staff")
 public class NightVisionCommand extends CustomCommand {
 
 	public NightVisionCommand(CommandEvent event) {
@@ -16,11 +18,11 @@ public class NightVisionCommand extends CustomCommand {
 
 	@Path
 	void on() {
-		runCommandAsOp("minecraft:effect " + player().getName() + " minecraft:night_vision 1 1000000 true");
+		player().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 9999999, 1, false, false));
 	}
 
 	@Path("off")
 	void off() {
-		runCommandAsOp("minecraft:effect " + player().getName() + " minecraft:night_vision 1 2 true");
+		player().removePotionEffect(PotionEffectType.NIGHT_VISION);
 	}
 }
