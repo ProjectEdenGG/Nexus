@@ -40,11 +40,16 @@ public class Home extends PlayerOwnedObject {
 	}
 
 	public void teleport(Player player) {
-		player.teleport(location.clone().add(0, .5, 0));
+		if (hasAccess(player))
+			player.teleport(location.clone().add(0, .5, 0));
+		else
+			player.sendMessage(PREFIX + colorize("&cYou don't have acces"));
 	}
 
 	public boolean hasAccess(Player player) {
-		return getOwner().hasGivenAccessTo(player) || accessList.contains(player.getUniqueId());
+		return player.getUniqueId().equals(getOfflinePlayer().getUniqueId())
+				|| getOwner().hasGivenAccessTo(player)
+				|| accessList.contains(player.getUniqueId());
 	}
 
 	public void allow(OfflinePlayer player) {

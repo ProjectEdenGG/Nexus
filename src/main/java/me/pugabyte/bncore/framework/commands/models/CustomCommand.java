@@ -133,7 +133,11 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	private boolean isPlayer() {
-		return sender() instanceof Player;
+		return isPlayer(sender());
+	}
+
+	private boolean isPlayer(Object object) {
+		return object instanceof Player;
 	}
 
 	protected boolean isSelf(OfflinePlayer player) {

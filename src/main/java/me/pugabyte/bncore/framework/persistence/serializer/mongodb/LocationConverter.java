@@ -6,6 +6,9 @@ import dev.morphia.mapping.MappedField;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class LocationConverter extends TypeConverter {
 
 	public LocationConverter() {
@@ -17,11 +20,11 @@ public class LocationConverter extends TypeConverter {
 		Location location = (Location) value;
 		return new BasicDBObject() {{
 			put("world", location.getWorld().getName());
-			put("x", location.getX());
-			put("y", location.getY());
-			put("z", location.getZ());
-			put("yaw", location.getYaw());
-			put("pitch", location.getPitch());
+			put("x", BigDecimal.valueOf(location.getX()).setScale(3, RoundingMode.HALF_UP).doubleValue());
+			put("y", BigDecimal.valueOf(location.getY()).setScale(3, RoundingMode.HALF_UP).doubleValue());
+			put("z", BigDecimal.valueOf(location.getZ()).setScale(3, RoundingMode.HALF_UP).doubleValue());
+			put("yaw", BigDecimal.valueOf(location.getYaw()).setScale(3, RoundingMode.HALF_UP).doubleValue());
+			put("pitch", BigDecimal.valueOf(location.getPitch()).setScale(3, RoundingMode.HALF_UP).doubleValue());
 		}};
 	}
 

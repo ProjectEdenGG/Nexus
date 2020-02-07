@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static me.pugabyte.bncore.features.homes.HomesMenu.getAccessListNames;
+import static me.pugabyte.bncore.utils.Utils.camelCase;
 
 public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	private HomeOwner homeOwner;
@@ -125,6 +126,8 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 				item.loreize(false).lore("||&f&cLocked||&f||&eClick to edit" + getAccessListNames(home.getAccessList()));
 			else
 				item.lore("||&f&aUnlocked||&f||&eClick to edit");
+
+			item.name("&f" + camelCase(home.getName()));
 
 			items.add(ClickableItem.from(item.build(), e -> HomesMenu.edit(home)));
 		});
