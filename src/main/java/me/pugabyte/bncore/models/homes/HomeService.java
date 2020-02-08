@@ -8,6 +8,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class HomeService extends BaseService {
 	private final static Map<UUID, HomeOwner> cache = new HashMap<>();
@@ -30,17 +31,18 @@ public class HomeService extends BaseService {
 
 	public void save(HomeOwner homeOwner) {
 		Tasks.async(() -> {
+			Supplier<String> name = () -> homeOwner.getOfflinePlayer() == null ? homeOwner.getUuid().toString() : homeOwner.getOfflinePlayer().getName();
 			try {
 				datastore.merge(homeOwner);
-			} catch (UpdateException ex) {
+			} catch (UpdateException doesntExistYet) {
 				try {
 					datastore.save(homeOwner);
 				} catch (Exception ex2) {
-					BNCore.log("Error saving HomeOwner " + homeOwner.getOfflinePlayer().getName());
+					BNCore.log("Error saving HomeOwner " + name.get());
 					ex2.printStackTrace();
 				}
 			} catch (Exception ex3) {
-				BNCore.log("Error updating HomeOwner " + homeOwner.getOfflinePlayer().getName());
+				BNCore.log("Error updating HomeOwner " + name.get());
 				ex3.printStackTrace();
 			}
 		});

@@ -60,14 +60,13 @@ public class HomesCommand extends CustomCommand {
 
 					HomeOwner homeOwner = service.get(uuid);
 
-					Object autolock = getSkriptVariable("homes::" + uuid.toString() + "::autolock");
+					Boolean autolock = (Boolean) getSkriptVariable("homes::" + uuid.toString() + "::autolock");
+					if (autolock != null)
+						homeOwner.setAutoLock(autolock);
 
-					if (autolock instanceof Boolean)
-						homeOwner.setAutoLock((Boolean) autolock);
-
-					Object allowAll = getSkriptVariable("homes::" + uuid.toString() + "::allowAll::*");
+					Map allowAll = (Map) getSkriptVariable("homes::" + uuid.toString() + "::allowAll::*");
 					if (allowAll != null)
-						((Map) allowAll).keySet().forEach(allowAllUuid ->
+						allowAll.keySet().forEach(allowAllUuid ->
 								homeOwner.getFullAccessList().add(UUID.fromString((String) allowAllUuid)));
 
 					for (String homeName : user.getHomes()) {
@@ -77,14 +76,14 @@ public class HomesCommand extends CustomCommand {
 									.name(homeName)
 									.location(user.getHome(homeName));
 
-							Object locked = getSkriptVariable("homes::" + uuid.toString() + "::locked::" + homeName);
-							if (locked instanceof Boolean)
-								builder.locked((Boolean) locked);
+							Boolean locked = (Boolean) getSkriptVariable("homes::" + uuid.toString() + "::locked::" + homeName);
+							if (locked != null)
+								builder.locked(locked);
 
-							Object allowed = getSkriptVariable("homes::" + uuid.toString() + "::allowed::" + homeName + "::*");
 							Set<UUID> accessList = new HashSet<>();
+							Map allowed = (Map) getSkriptVariable("homes::" + uuid.toString() + "::allowed::" + homeName + "::*");
 							if (allowed != null)
-								((Map) allowed).keySet().stream()
+								allowed.keySet().stream()
 										.map(allowedUuid -> UUID.fromString((String) allowedUuid))
 										.filter(allowedUuid -> !homeOwner.getFullAccessList().contains(allowedUuid))
 										.forEach(allowedUuid -> accessList.add((UUID) allowedUuid));
@@ -95,6 +94,8 @@ public class HomesCommand extends CustomCommand {
 					}
 
 					service.save(homeOwner);
+
+					// TODO: Permissions?
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
