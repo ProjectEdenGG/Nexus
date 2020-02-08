@@ -54,7 +54,7 @@ public class HomeCommand extends CustomCommand {
 	@TabCompleterFor(Home.class)
 	public List<String> tabCompleteHome(String filter, OfflinePlayer context) {
 		if (context == null) context = player();
-		return ((HomeOwner) service.get(context)).getNames();
+		return ((HomeOwner) service.get(context)).getNames(filter);
 	}
 
 }

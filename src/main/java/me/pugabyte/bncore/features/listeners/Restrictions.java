@@ -76,7 +76,6 @@ public class Restrictions implements Listener {
 			event.setCancelled(true);
 			player.sendMessage(Utils.colorize(prefix + "Sorry, but you can't use TNT! You must be Member or above"));
 		}
-
 	}
 
 	@EventHandler
