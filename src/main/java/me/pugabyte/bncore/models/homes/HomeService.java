@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.models.homes;
 
+import dev.morphia.query.UpdateException;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.BaseService;
 import me.pugabyte.bncore.utils.Tasks;
 
@@ -27,7 +29,21 @@ public class HomeService extends BaseService {
 	}
 
 	public void save(HomeOwner homeOwner) {
-		Tasks.async(() -> datastore.merge(homeOwner));
+		Tasks.async(() -> {
+			try {
+				datastore.merge(homeOwner);
+			} catch (UpdateException ex) {
+				try {
+					datastore.save(homeOwner);
+				} catch (Exception ex2) {
+					BNCore.log("Error saving HomeOwner " + homeOwner.getOfflinePlayer().getName());
+					ex2.printStackTrace();
+				}
+			} catch (Exception ex3) {
+				BNCore.log("Error updating HomeOwner " + homeOwner.getOfflinePlayer().getName());
+				ex3.printStackTrace();
+			}
+		});
 	}
 
 }

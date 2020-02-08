@@ -36,7 +36,7 @@ public class HomeOwner extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private List<Home> homes;
+	private List<Home> homes = new ArrayList<>();
 	private Set<UUID> fullAccessList = new HashSet<>();
 	private boolean autoLock;
 
@@ -79,6 +79,11 @@ public class HomeOwner extends PlayerOwnedObject {
 
 	public boolean hasGivenAccessTo(OfflinePlayer player) {
 		return fullAccessList.contains(player.getUniqueId());
+	}
+
+	public void add(Home home) {
+		getHome(home.getName()).ifPresent(this::delete);
+		homes.add(home);
 	}
 
 	public void delete(Home home) {
