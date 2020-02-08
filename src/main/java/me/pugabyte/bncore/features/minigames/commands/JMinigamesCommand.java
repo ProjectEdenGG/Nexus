@@ -4,9 +4,11 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
+import me.pugabyte.bncore.features.minigames.mechanics.common.CheckpointMechanic;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -147,6 +149,24 @@ public class JMinigamesCommand extends CustomCommand {
 
 			send(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
 		});
+	}
+
+	@Path("autoreset [boolean]")
+	@Permission("use")
+	void autoreset(@Arg("true") boolean autoreset) {
+		Match match = minigamer.getMatch();
+		if (!minigamer.isPlaying())
+			error("You must be playing a checkpoint game to use that command");
+
+		if (!(match.getArena().getMechanic() instanceof CheckpointMechanic))
+			error("You are not in a checkpoint game");
+
+		CheckpointMatchData matchData = match.getMatchData();
+		matchData.autoreset(minigamer, autoreset);
+		if (matchData.isAutoresetting(minigamer))
+			send(PREFIX + "Enabled &eAuto Reset");
+		else
+			send(PREFIX + "Disabled Auto Reset");
 	}
 
 	private Match getRunningMatch(Arena arena) {

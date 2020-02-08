@@ -7,13 +7,16 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.arenas.CheckpointArena;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @MatchDataFor(CheckpointMechanic.class)
 public class CheckpointMatchData extends MatchData {
 	private Map<UUID, Integer> checkpoints = new HashMap<>();
+	private List<UUID> autoresetting = new ArrayList<>();
 
 	public CheckpointMatchData(Match match) {
 		super(match);
@@ -32,13 +35,28 @@ public class CheckpointMatchData extends MatchData {
 	public void toCheckpoint(Minigamer minigamer) {
 		CheckpointArena arena = minigamer.getMatch().getArena();
 
-		if (checkpoints.containsKey(minigamer.getPlayer().getUniqueId()))
+		if (autoresetting.contains(minigamer.getPlayer().getUniqueId())) {
+			minigamer.teleport(minigamer.getTeam().getSpawnpoints().get(0));
+			minigamer.setScore(0);
+		} else if (checkpoints.containsKey(minigamer.getPlayer().getUniqueId()))
 			minigamer.teleport(arena.getCheckpoint(getCheckpointId(minigamer)));
 		else
 			minigamer.teleport(minigamer.getTeam().getSpawnpoints().get(0));
 	}
 
-	public void clearCheckpoints(Minigamer minigamer) {
+	public void clearData(Minigamer minigamer) {
 		checkpoints.remove(minigamer.getPlayer().getUniqueId());
+		autoresetting.remove(minigamer.getPlayer().getUniqueId());
+	}
+
+	public void autoreset(Minigamer minigamer, boolean autoreset) {
+		if (autoreset)
+			autoresetting.add(minigamer.getPlayer().getUniqueId());
+		else
+			autoresetting.remove(minigamer.getPlayer().getUniqueId());
+	}
+
+	public boolean isAutoresetting(Minigamer minigamer) {
+		return autoresetting.contains(minigamer.getPlayer().getUniqueId());
 	}
 }
