@@ -28,7 +28,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 		super.onQuit(event);
 
 		CheckpointMatchData matchData = event.getMinigamer().getMatch().getMatchData();
-		matchData.clearCheckpoints(event.getMinigamer());
+		matchData.clearData(event.getMinigamer());
 	}
 
 	@EventHandler
