@@ -168,6 +168,6 @@ public class OnAction implements Listener {
 			});
 
 		if (player.getWorld().getName().equalsIgnoreCase("staff_world"))
-			Tasks.wait(20, () -> Bukkit.dispatchCommand(player, "nocheats"));
+			Tasks.wait(20, () -> Bukkit.dispatchCommand(player, "cheats off"));
 	}
 }
