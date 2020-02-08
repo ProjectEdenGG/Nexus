@@ -18,6 +18,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
+import static me.pugabyte.bncore.utils.Utils.colorize;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -43,13 +46,13 @@ public class Home extends PlayerOwnedObject {
 		if (hasAccess(player))
 			player.teleport(location.clone().add(0, .5, 0));
 		else
-			player.sendMessage(PREFIX + colorize("&cYou don't have acces"));
+			player.sendMessage(PREFIX + colorize("&cYou don't have access to that home"));
 	}
 
 	public boolean hasAccess(Player player) {
-		return player.getUniqueId().equals(getOfflinePlayer().getUniqueId())
-				|| getOwner().hasGivenAccessTo(player)
-				|| accessList.contains(player.getUniqueId());
+		return player.getUniqueId().equals(getOfflinePlayer().getUniqueId()) ||
+				getOwner().hasGivenAccessTo(player) ||
+				accessList.contains(player.getUniqueId());
 	}
 
 	public void allow(OfflinePlayer player) {
