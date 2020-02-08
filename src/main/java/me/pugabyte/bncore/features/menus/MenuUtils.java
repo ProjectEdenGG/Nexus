@@ -139,7 +139,7 @@ public abstract class MenuUtils {
 			contents.set(1, 6, ClickableItem.from(confirmItem, e -> {
 				onConfirm.accept(e);
 
-				if (title.equals(e.getPlayer().getOpenInventory().getTitle()))
+				if (colorize(title).equals(e.getPlayer().getOpenInventory().getTitle()))
 					e.getPlayer().closeInventory();
 			}));
 		}
