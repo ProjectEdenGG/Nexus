@@ -60,7 +60,7 @@ public class RulesCommand extends CustomCommand {
 		send("&3Bear Nation's rules are divided into categories; &e&lclick on the lines below&3 to read the rules for each category.");
 		line();
 		send(json()
-				.next("&3[+] &eCommunity Rules").command("/rules global")
+				.next("&3[+] &eCommunity Rules").command("/rules community")
 				.newline()
 				.next("&3[+] &eSurvival Rules").command("/rules survival")
 				.newline()
@@ -91,7 +91,7 @@ public class RulesCommand extends CustomCommand {
 				send(json()
 						.next("&e « Main page  ").command("/rules").group()
 						.next("  &3|&3|  ").group()
-						.next("  &eNext page »").command("/rules global 2").group()
+						.next("  &eNext page »").command("/rules community 2").group()
 				);
 				hasReadRules.setCommunity1(true);
 				service.save(hasReadRules);
@@ -104,9 +104,9 @@ public class RulesCommand extends CustomCommand {
 				send(json("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)").command("/rules streaming"));
 				line();
 				send(json()
-						.next("&e « Main page  ").command("/rules").group()
+						.next("&e « Previous page  ").command("/rules community 1").group()
 						.next("  &3|&3|  ").group()
-						.next("  &eNext page »").command("/rules global 3").group()
+						.next("  &eNext page »").command("/rules community 3").group()
 				);
 				hasReadRules.setCommunity2(true);
 				service.save(hasReadRules);
@@ -119,7 +119,11 @@ public class RulesCommand extends CustomCommand {
 				send("&e15. &3Do not call out vanished staff members");
 				send("&e16. &3Don't make fun of or correct other people's typos");
 				line();
-				send(json("&e « Main page  ").command("/rules"));
+				send(json()
+						.next("&e « Previous page  ").command("/rules community 2").group()
+						.next("  &3|&3|  ").group()
+						.next("  &eMain page »").command("/rules").group()
+				);
 				hasReadRules.setCommunity3(true);
 				service.save(hasReadRules);
 				break;
@@ -180,7 +184,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e2. &3You, the streamer, and all your followers must follow all the rules");
 		send("&e3. &3If a large percentage of your followers do not comply with the rules, we may ban you and any people associated with your stream");
 		line();
-		send(json("&e « Click here to return to page 2 of the global rules.").command("/rules global 2"));
+		send(json("&e « Back to Community rules.").command("/rules community 2"));
 		hasReadRules.setStreaming(true);
 		service.save(hasReadRules);
 	}
