@@ -568,7 +568,10 @@ public class Utils {
 	}
 
 	public static Block getBlockStandingOn(Player player) {
-		Location below = player.getLocation().add(0, -1, 0);
+		if (!player.isOnGround())
+			return null;
+
+		Location below = player.getLocation().add(0, -.25, 0);
 		Block block = below.getBlock();
 		if (block.getType().isSolid())
 			return block;
