@@ -87,6 +87,10 @@ public class WorldGuardUtils {
 		return regions.keySet().stream().filter(id -> id.matches(name.toLowerCase())).map(regions::get).collect(Collectors.toSet());
 	}
 
+	public Set<ProtectedRegion> getRegionsLikeAt(Location location, String name) {
+		return getRegionsAt(location).stream().filter(region -> region.getId().matches(name.toLowerCase())).collect(Collectors.toSet());
+	}
+
 	public ProtectedRegion getRegionLike(String name) {
 		Set<ProtectedRegion> matches = getRegionsLike(name);
 		if (matches.size() == 0)
