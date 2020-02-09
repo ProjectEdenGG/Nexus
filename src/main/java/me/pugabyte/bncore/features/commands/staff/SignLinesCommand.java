@@ -90,8 +90,8 @@ public class SignLinesCommand extends CustomCommand {
 	void usage() {
 		send(PREFIX + "&cCorrect Usage:");
 		send("&c/signlines read");
-		send("&c&m/signlines <--copy|--paste>");
-		send("&c&m/signlines -<#> <text> [-<#> <text> ...]");
-		send("&c&m/signlines -<#> null [-<#> null ...]");
+		send("&c/signlines <--copy|--paste>");
+		send("&c/signlines -<#> <text> [-<#> <text> ...]");
+		send("&c/signlines -<#> null [-<#> null ...]");
 	}
 }

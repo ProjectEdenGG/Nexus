@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.minigames.mechanics.common.CheckpointMechanic
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -167,6 +168,31 @@ public class JMinigamesCommand extends CustomCommand {
 			send(PREFIX + "Enabled &eAuto Reset");
 		else
 			send(PREFIX + "Disabled Auto Reset");
+	}
+
+	@Path("addSpawnpoint <arena> [team]")
+	void addSpawnpoint(Arena arena, String teamName) {
+		List<Team> teams = arena.getTeams();
+
+		if (teamName == null) {
+			if (teams.size() != 1)
+				error("There is more than one team in that arena, you must specify which one");
+
+			teams.get(0).getSpawnpoints().add(player().getLocation());
+			arena.write();
+			send(PREFIX + "Spawnpoint added");
+			return;
+		}
+
+		for (Team team : teams) {
+			if (teamName.equalsIgnoreCase(team.getName())) {
+				team.getSpawnpoints().add(player().getLocation());
+				arena.write();
+				send(PREFIX + "Spawnpoint added");
+			}
+		}
+
+		error("Team not found");
 	}
 
 	private Match getRunningMatch(Arena arena) {

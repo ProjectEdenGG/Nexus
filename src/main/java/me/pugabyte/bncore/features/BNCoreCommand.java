@@ -19,7 +19,7 @@ import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
-import org.bukkit.Material;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -111,14 +111,6 @@ public class BNCoreCommand extends CustomCommand {
 		return tabCompletePlayer(value);
 	}
 
-	@ConverterFor(Material.class)
-	Material convertToMaterial(String value) {
-		Material material = Material.matchMaterial(value);
-		if (material == null)
-			throw new InvalidInputException("Material from " + value + " not found");
-		return material;
-	}
-
 	@ConverterFor(ColorType.class)
 	ColorType convertToColorType(String value) {
 		try {
@@ -133,6 +125,23 @@ public class BNCoreCommand extends CustomCommand {
 		return Arrays.stream(ColorType.values())
 				.filter(value -> value.name().toLowerCase().startsWith(filter))
 				.map(Enum::name)
+				.collect(Collectors.toList());
+	}
+
+	@ConverterFor(WorldGroup.class)
+	WorldGroup convertToWorldGroup(String value) {
+		try {
+			return WorldGroup.valueOf(value.toUpperCase());
+		} catch (IllegalArgumentException ignore) {
+			throw new InvalidInputException("WorldGroup from " + value + " not found");
+		}
+	}
+
+	@TabCompleterFor(WorldGroup.class)
+	List<String> tabCompleteWorldGroup(String filter) {
+		return Arrays.stream(WorldGroup.values())
+				.filter(worldGroup -> worldGroup.name().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(WorldGroup::name)
 				.collect(Collectors.toList());
 	}
 }
