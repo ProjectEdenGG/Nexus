@@ -548,10 +548,13 @@ public class Utils {
 	public static boolean isInt(String text) {
 		try {
 			Integer.parseInt(text);
-		} catch (Exception e){
+		} catch (Exception e) {
 			return false;
 		}
 		return true;
 	}
 
+	public static Block getBlockStandingOn(Player player) {
+		return null; // TODO
+	}
 }

@@ -27,7 +27,8 @@ public class CheckpointsCommand extends CustomCommand {
 		super(event);
 		try {
 			arena = (CheckpointArena) ArenaManager.getFromLocation(player().getLocation());
-		} catch (Exception ex) {}
+		} catch (Exception ignore) {
+		}
 
 		if (arena == null) {
 			send(Minigames.PREFIX + "&cNo arena found at your location; did you create the main region and set the mechanic?");
