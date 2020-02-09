@@ -68,11 +68,7 @@ public class CPSWatchCommand extends CustomCommand implements Listener {
 				return;
 
 			if (cps > 2) {
-				final String color =
-						(cps > 20) ? "&c" :
-								(cps > 15) ? "&6" :
-										"&e";
-
+				final String color = (cps > 20) ? "&c" : (cps > 15) ? "&6" : "&e";
 				watchMap.get(player).forEach(staff -> send(staff, PREFIX + player.getName() + "'s CPS is " + color + cps));
 			}
 
@@ -83,6 +79,9 @@ public class CPSWatchCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
+		if (!watchMap.containsKey(player))
+			return;
+
 		watchMap.get(player).forEach(staff ->
 				send(staff, PREFIX + "&c" + player.getName() + " went offline"));
 		watchMap.remove(player);
