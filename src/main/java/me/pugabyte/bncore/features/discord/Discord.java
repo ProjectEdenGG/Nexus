@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.bukkit.ChatColor;
 
 public class Discord {
 	@Getter
@@ -61,7 +62,7 @@ public class Discord {
 		for (DiscordId.Channel target : targets) {
 			TextChannel channel = relayBot.getTextChannelById(target.getId());
 			if (channel != null)
-				channel.sendMessage(message).queue();
+				channel.sendMessage(ChatColor.stripColor(message)).queue();
 		}
 	}
 
