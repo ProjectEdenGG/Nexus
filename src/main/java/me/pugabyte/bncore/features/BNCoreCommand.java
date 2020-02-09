@@ -17,9 +17,11 @@ import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -49,6 +51,15 @@ public class BNCoreCommand extends CustomCommand {
 		if (!isNullOrEmpty(value))
 			new SettingService().save(new Setting(player(), type, value));
 		send("Setting: " + new SettingService().get(player(), type));
+	}
+
+	@Path("getBlockStandingOn")
+	void getBlockStandingOn() {
+		Block block = Utils.getBlockStandingOn(player());
+		if (block == null)
+			send("Nothing");
+		else
+			send(block.getType().name());
 	}
 
 	@Path("schem save <name>")

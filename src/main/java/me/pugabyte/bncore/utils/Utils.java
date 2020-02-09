@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -38,6 +39,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -554,7 +556,44 @@ public class Utils {
 		return true;
 	}
 
+	public static BlockFace getBlockFaceBetween(BlockFace face1, BlockFace face2) {
+		int x = face1.getModX() + face2.getModX();
+		int y = face1.getModY() + face2.getModY();
+		int z = face1.getModZ() + face2.getModZ();
+		for (BlockFace face : BlockFace.values())
+			if (face.getModX() == x && face.getModY() == y && face.getModZ() == z)
+				return face;
+
+		return null;
+	}
+
 	public static Block getBlockStandingOn(Player player) {
-		return null; // TODO
+		Location below = player.getLocation().add(0, -1, 0);
+		Block block = below.getBlock();
+		if (block.getType().isSolid())
+			return block;
+
+		List<BlockFace> priority = new HashMap<BlockFace, Double>() {{
+			put(BlockFace.NORTH, below.getZ() - Math.floor(below.getZ()));
+			put(BlockFace.EAST, Math.abs(below.getX() - Math.ceil(below.getX())));
+			put(BlockFace.SOUTH, Math.abs(below.getZ() - Math.ceil(below.getZ())));
+			put(BlockFace.WEST, below.getX() - Math.floor(below.getX()));
+		}}.entrySet().stream()
+				.filter(direction -> direction.getValue() < .3)
+				.sorted(Map.Entry.comparingByValue())
+				.map(Map.Entry::getKey)
+				.limit(2)
+				.collect(Collectors.toList());
+
+		if (priority.size() == 2)
+			priority.add(getBlockFaceBetween(priority.get(0), priority.get(1)));
+
+		for (BlockFace blockFace : priority) {
+			Block relative = block.getRelative(blockFace);
+			if (relative.getType().isSolid())
+				return relative;
+		}
+
+		return null;
 	}
 }
