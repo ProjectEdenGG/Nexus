@@ -54,7 +54,7 @@ public abstract class BaseService {
 	}
 
 	protected String asList(List<String> list) {
-		return "\"" + String.join("\",\"", list) + "\"";
+		return "'" + String.join("','", list) + "'";
 	}
 
 //	public String safe(String input) {
