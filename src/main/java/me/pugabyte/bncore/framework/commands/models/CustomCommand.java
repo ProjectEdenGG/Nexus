@@ -20,6 +20,7 @@ import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.CommandBlock;
@@ -301,4 +302,13 @@ public abstract class CustomCommand implements ICustomCommand {
 				.map(World::getName)
 				.collect(Collectors.toList());
 	}
+
+	@ConverterFor(Material.class)
+	Material convertToMaterial(String value) {
+		Material material = Material.matchMaterial(value);
+		if (material == null)
+			throw new InvalidInputException("Material from " + value + " not found");
+		return material;
+	}
+
 }
