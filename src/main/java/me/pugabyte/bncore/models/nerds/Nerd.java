@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -12,6 +14,8 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
+import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @Data
 @AllArgsConstructor
@@ -31,6 +35,18 @@ public class Nerd {
 
 	public Nerd(OfflinePlayer player) {
 		fromPlayer(player);
+	}
+
+	protected void send(String message) {
+		getPlayer().sendMessage(colorize(message));
+	}
+
+	protected void send(int delay, String message) {
+		Tasks.wait(delay, () -> send(message));
+	}
+
+	protected void send(JsonBuilder builder) {
+		builder.send(getPlayer());
 	}
 
 	public void fromPlayer(OfflinePlayer player) {

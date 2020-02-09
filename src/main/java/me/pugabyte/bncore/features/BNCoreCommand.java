@@ -62,6 +62,12 @@ public class BNCoreCommand extends CustomCommand {
 			send(block.getType().name());
 	}
 
+	@Path("getOnlineNerdsWith <permission>")
+	@Permission("group.seniorstaff")
+	void getOnlineNerdsWith(String permission) {
+		send(new NerdService().getOnlineNerdsWith(permission).stream().map(Nerd::getName).collect(Collectors.joining(", ")));
+	}
+
 	@Path("schem save <name>")
 	@Permission("group.seniorstaff")
 	void schemSave(String name) {
