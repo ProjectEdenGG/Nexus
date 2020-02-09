@@ -68,12 +68,9 @@ public class TNTRun extends TeamlessMechanic {
 		void start() {
 			taskId = match.getTasks().repeat(3 * 20, 1, () -> {
 				if (match.isEnded())
-					stop(taskId);
+					stop();
 
 				minigamers.forEach(minigamer -> {
-					if (!minigamer.getPlayer().isOnGround())
-						return;
-
 					Block standingOn = Utils.getBlockStandingOn(minigamer.getPlayer());
 					if (standingOn == null)
 						return;
@@ -85,7 +82,9 @@ public class TNTRun extends TeamlessMechanic {
 					if (!tnt.getType().equals(Material.TNT))
 						return;
 
-					Tasks.wait(4, () -> {
+					match.getTasks().wait(4, () -> {
+						if (match.isEnded())
+							return;
 						standingOn.setType(Material.AIR);
 						tnt.setType(Material.AIR);
 					});
@@ -93,7 +92,7 @@ public class TNTRun extends TeamlessMechanic {
 			});
 		}
 
-		void stop(int taskId) {
+		void stop() {
 			Tasks.cancel(taskId);
 		}
 	}
