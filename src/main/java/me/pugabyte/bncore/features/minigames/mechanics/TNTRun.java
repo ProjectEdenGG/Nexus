@@ -66,30 +66,39 @@ public class TNTRun extends TeamlessMechanic {
 		}
 
 		void start() {
-			taskId = match.getTasks().repeat(3 * 20, 1, () -> {
-				if (match.isEnded())
-					stop();
+			int wait = 5 * 20;
+			Tasks.Countdown.builder()
+					.duration(wait)
+					.onSecond(i -> match.broadcast("&7Starting in &e" + i + "&7..."))
+					.onComplete(() -> {
+						match.broadcast("&eGo!");
 
-				minigamers.forEach(minigamer -> {
-					Block standingOn = Utils.getBlockStandingOn(minigamer.getPlayer());
-					if (standingOn == null)
-						return;
+						taskId = match.getTasks().repeat(0, 1, () -> {
+							if (match.isEnded())
+								stop();
 
-					if (!(standingOn.getType().equals(Material.SAND) || standingOn.getType().equals(Material.GRAVEL)))
-						return;
+							minigamers.forEach(minigamer -> {
+								Block standingOn = Utils.getBlockStandingOn(minigamer.getPlayer());
+								if (standingOn == null)
+									return;
 
-					Block tnt = standingOn.getRelative(0, -1, 0);
-					if (!tnt.getType().equals(Material.TNT))
-						return;
+								if (!(standingOn.getType().equals(Material.SAND) || standingOn.getType().equals(Material.GRAVEL)))
+									return;
 
-					match.getTasks().wait(4, () -> {
-						if (match.isEnded())
-							return;
-						standingOn.setType(Material.AIR);
-						tnt.setType(Material.AIR);
-					});
-				});
-			});
+								Block tnt = standingOn.getRelative(0, -1, 0);
+								if (!tnt.getType().equals(Material.TNT))
+									return;
+
+								match.getTasks().wait(3, () -> {
+									if (match.isEnded())
+										return;
+									standingOn.setType(Material.AIR);
+									tnt.setType(Material.AIR);
+								});
+							});
+
+						});
+					}).start();
 		}
 
 		void stop() {
