@@ -3,6 +3,8 @@ package me.pugabyte.bncore.models.setting;
 import me.pugabyte.bncore.models.BaseService;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class SettingService extends BaseService {
 
 	public Setting get(Player player, String type) {
@@ -14,6 +16,10 @@ public class SettingService extends BaseService {
 		if (setting.getId() == null)
 			setting = new Setting(id, type, null);
 		return setting;
+	}
+
+	public List<Setting> getFromType(String type) {
+		return database.table("setting").where("type = ?").args(type).results(Setting.class);
 	}
 
 	public void delete(Player player, String type) {

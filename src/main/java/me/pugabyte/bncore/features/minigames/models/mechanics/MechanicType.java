@@ -20,6 +20,7 @@ public enum MechanicType {
 	SPLEGG(new Splegg()),
 	TEAM_DEATHMATCH(new TeamDeathmatch()),
 	THIMBLE(new Thimble()),
+	TNT_RUN(new TNTRun()),
 	XRUN(new XRun());
 
 	private Mechanic mechanic;
