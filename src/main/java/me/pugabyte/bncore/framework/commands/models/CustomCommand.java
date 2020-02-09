@@ -1,11 +1,9 @@
 package me.pugabyte.bncore.framework.commands.models;
 
 import com.google.common.base.Strings;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -33,14 +31,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-@AllArgsConstructor
-@RequiredArgsConstructor
-@SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess"})
+@SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess", "UnusedReturnValue"})
 public abstract class CustomCommand implements ICustomCommand {
 	@NonNull
 	@Getter
 	protected CommandEvent event;
-	public String PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
+	public static String PREFIX = "&3";
+
+	public CustomCommand(@NonNull CommandEvent event) {
+		this.event = event;
+		PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
+	}
 
 	public String getPrefix() {
 		return PREFIX;
