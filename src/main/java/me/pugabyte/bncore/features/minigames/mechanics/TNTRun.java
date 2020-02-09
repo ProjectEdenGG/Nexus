@@ -82,9 +82,6 @@ public class TNTRun extends TeamlessMechanic {
 								if (standingOn == null)
 									return;
 
-								if (!(standingOn.getType().equals(Material.SAND) || standingOn.getType().equals(Material.GRAVEL)))
-									return;
-
 								Block tnt = standingOn.getRelative(0, -1, 0);
 								if (!tnt.getType().equals(Material.TNT))
 									return;
