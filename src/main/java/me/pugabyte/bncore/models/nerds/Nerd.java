@@ -37,7 +37,7 @@ public class Nerd {
 		fromPlayer(player);
 	}
 
-	protected void send(String message) {
+	public void send(String message) {
 		getPlayer().sendMessage(colorize(message));
 	}
 
