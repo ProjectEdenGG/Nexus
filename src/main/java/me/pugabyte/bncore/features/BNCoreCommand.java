@@ -147,7 +147,7 @@ public class BNCoreCommand extends CustomCommand {
 	List<String> tabCompleteWorldGroup(String filter) {
 		return Arrays.stream(WorldGroup.values())
 				.filter(worldGroup -> worldGroup.name().toLowerCase().startsWith(filter.toLowerCase()))
-				.map(WorldGroup::name)
+				.map(WorldGroup::toString)
 				.collect(Collectors.toList());
 	}
 }

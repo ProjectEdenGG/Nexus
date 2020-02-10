@@ -9,10 +9,12 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerds.NerdService;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Permission("group.moderator")
@@ -20,6 +22,7 @@ public class WorldUnbanCommand extends CustomCommand {
 
 	public WorldUnbanCommand(CommandEvent event) {
 		super(event);
+		PREFIX = Utils.getPrefix("WorldBan");
 	}
 
 	@Path("<player> [worldGroup]")
@@ -27,14 +30,17 @@ public class WorldUnbanCommand extends CustomCommand {
 		String uuid = player.getUniqueId().toString();
 		List<WorldGroup> worldList = WorldBanCommand.banList.get(uuid);
 		if (worldList == null || worldList.size() == 0)
-			return;
+			error(player.getName() + " is not world banned");
 
-		String message = PREFIX + "&e" + player().getName() + " &chas unbanned &e" + player.getName() + " &cfrom &e";
+		if (worldGroup != null && !worldList.contains(worldGroup))
+			error(player.getName() + " is not world banned from " + worldGroup.toString());
+
+		String message = "&a" + player().getName() + " &fhas world unbanned &a" + player.getName() + " &ffrom &a";
 		if (worldGroup != null) {
 			message += worldGroup.toString();
 			worldList.remove(worldGroup);
 		} else {
-			message += worldList.toString();
+			message += worldList.stream().map(WorldGroup::toString).collect(Collectors.joining("&f, &a"));
 			worldList.clear();
 		}
 
