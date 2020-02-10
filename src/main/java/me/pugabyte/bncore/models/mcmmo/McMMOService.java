@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.models.mcmmo;
 
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 import me.pugabyte.bncore.utils.Tasks;
 
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class McMMOService extends BaseService {
+public class McMMOService extends MySQLService {
 	public McMMOPrestige getPrestige(String uuid) {
 		List<HashMap> data = database.sql("select type, count from mcmmo_prestige where uuid = ?", uuid).results(HashMap.class);
 

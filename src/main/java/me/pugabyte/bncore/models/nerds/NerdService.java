@@ -1,13 +1,13 @@
 package me.pugabyte.bncore.models.nerds;
 
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NerdService extends BaseService {
+public class NerdService extends MySQLService {
 	@Override
 	public Nerd get(String uuid) {
 		Nerd nerd = database.where("uuid = ?", uuid).first(Nerd.class);

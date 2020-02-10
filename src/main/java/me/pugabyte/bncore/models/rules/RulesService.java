@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.models.rules;
 
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 
-public class RulesService extends BaseService {
+public class RulesService extends MySQLService {
 
 	@Override
 	public HasReadRules get(String uuid) {

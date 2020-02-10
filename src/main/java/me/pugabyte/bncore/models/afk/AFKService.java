@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.models.afk;
 
 import me.pugabyte.bncore.features.afk.AFK;
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class AFKService extends BaseService {
+public class AFKService extends MySQLService {
 
 	public void saveAll() {
 		for (Player player : Bukkit.getOnlinePlayers()) {

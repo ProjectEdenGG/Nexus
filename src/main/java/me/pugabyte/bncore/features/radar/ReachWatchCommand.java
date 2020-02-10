@@ -26,7 +26,7 @@ import java.util.Map;
 import static me.pugabyte.bncore.utils.Utils.camelCase;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission("group.moderator")
 public class ReachWatchCommand extends CustomCommand implements Listener {
 
 	static Map<Player, List<Player>> watchMap = new HashMap<>();
