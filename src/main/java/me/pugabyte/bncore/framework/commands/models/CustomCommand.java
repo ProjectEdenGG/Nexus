@@ -35,12 +35,12 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess"})
+@SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess", "UnusedReturnValue"})
 public abstract class CustomCommand implements ICustomCommand {
 	@NonNull
 	@Getter
 	protected CommandEvent event;
-	public String PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
+	public  String PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
 
 	public String getPrefix() {
 		return PREFIX;
