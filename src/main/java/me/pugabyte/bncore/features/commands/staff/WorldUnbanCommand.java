@@ -9,16 +9,18 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerds.NerdService;
+import me.pugabyte.bncore.models.worldban.WorldBan;
+import me.pugabyte.bncore.models.worldban.WorldBanService;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Permission("group.moderator")
 public class WorldUnbanCommand extends CustomCommand {
+	public WorldBanService service = new WorldBanService();
 
 	public WorldUnbanCommand(CommandEvent event) {
 		super(event);
@@ -26,10 +28,11 @@ public class WorldUnbanCommand extends CustomCommand {
 	}
 
 	@Path("<player> [worldGroup]")
-	void worldUnban(@Arg Player player, @Arg WorldGroup worldGroup) {
-		String uuid = player.getUniqueId().toString();
-		List<WorldGroup> worldList = WorldBanCommand.banList.get(uuid);
-		if (worldList == null || worldList.size() == 0)
+	void worldUnban(@Arg OfflinePlayer player, @Arg WorldGroup worldGroup) {
+		WorldBan worldBan = service.get(player);
+		List<WorldGroup> worldList = worldBan.getBans();
+
+		if (worldList.size() == 0)
 			error(player.getName() + " is not world banned");
 
 		if (worldGroup != null && !worldList.contains(worldGroup))
@@ -40,11 +43,11 @@ public class WorldUnbanCommand extends CustomCommand {
 			message += worldGroup.toString();
 			worldList.remove(worldGroup);
 		} else {
-			message += worldList.stream().map(WorldGroup::toString).collect(Collectors.joining("&f, &a"));
+			message += String.join("&f, &a", worldBan.getBanNames());
 			worldList.clear();
 		}
 
-		WorldBanCommand.banList.put(uuid, worldList);
+		service.save(worldBan);
 
 		String finalMessage = message;
 		new NerdService().getOnlineNerdsWith("group.moderator").forEach(staff -> staff.send(finalMessage));
