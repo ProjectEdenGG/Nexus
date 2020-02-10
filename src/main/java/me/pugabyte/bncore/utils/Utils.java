@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -545,6 +546,14 @@ public class Utils {
 		if (min == max) return min;
 		if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
 		return (int) ((Math.random() * ((max - min) + 1)) + min);
+	}
+
+	public static boolean chanceOf(int chance) {
+		return randomInt(0, 100) <= chance;
+	}
+
+	public static <T> T getRandomElement(List list) {
+		return (T) list.get(new Random().nextInt(list.size()));
 	}
 
 	public static boolean isInt(String text) {

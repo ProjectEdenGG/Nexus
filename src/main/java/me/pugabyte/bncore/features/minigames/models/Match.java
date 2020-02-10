@@ -203,7 +203,7 @@ public class Match {
 	}
 
 	private void balance() {
-		minigamers = arena.getMechanic().balance(minigamers);
+		arena.getMechanic().balance(minigamers);
 		if (arena.getMechanic() instanceof TeamMechanic)
 			minigamers.forEach(minigamer -> minigamer.tell("You are on team " + minigamer.getTeam().getColoredName()));
 	}
@@ -270,6 +270,12 @@ public class Match {
 
 	public List<Minigamer> getAlivePlayers() {
 		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
+	}
+
+	public List<Minigamer> getUnassignedPlayers() {
+		return minigamers.stream()
+				.filter(waiting -> waiting.getTeam() == null)
+				.collect(Collectors.toList());
 	}
 
 	public boolean isMechanic(Mechanic mechanic) {

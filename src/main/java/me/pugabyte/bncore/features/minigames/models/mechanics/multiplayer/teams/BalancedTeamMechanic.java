@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class BalancedTeamMechanic extends TeamMechanic {
 
 	@Override
-	public List<Minigamer> balance(List<Minigamer> minigamers) {
+	public void balance(List<Minigamer> minigamers) {
 		Arena arena = minigamers.get(0).getMatch().getArena();
 
 		List<Team> teams = new ArrayList<>(arena.getTeams());
@@ -23,16 +23,13 @@ public abstract class BalancedTeamMechanic extends TeamMechanic {
 			if (minigamer.getTeam() != null) continue;
 			minigamer.setTeam(getSmallestTeam(minigamers, teams));
 		}
-
-		return minigamers;
 	}
 
-	public List<Minigamer> rebalance(Match match, List<Minigamer> minigamers) {
+	public void rebalance(Match match, List<Minigamer> minigamers) {
 		if (isTeamGame()) {
 			List<Team> teams = new ArrayList<>(match.getArena().getTeams());
 			// TODO: Rebalancing
 		}
-		return minigamers;
 	}
 
 }

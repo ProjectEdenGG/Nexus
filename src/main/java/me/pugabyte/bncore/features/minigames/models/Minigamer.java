@@ -200,13 +200,23 @@ public class Minigamer {
 			respawning = true;
 			teleport(match.getArena().getRespawnLocation(), true);
 			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
+			hideAll();
 			match.getTasks().wait(match.getArena().getRespawnSeconds() * 20, () -> {
 				if (!match.isEnded()) {
+					unhideAll();
 					spawn();
 					respawning = false;
 				}
 			});
 		}
+	}
+
+	private void hideAll() {
+		match.getAlivePlayers().forEach(minigamer -> getPlayer().hidePlayer(BNCore.getInstance(), minigamer.getPlayer()));
+	}
+
+	private void unhideAll() {
+		Bukkit.getOnlinePlayers().forEach(minigamer -> getPlayer().showPlayer(BNCore.getInstance(), minigamer.getPlayer()));
 	}
 
 	public void clearState() {

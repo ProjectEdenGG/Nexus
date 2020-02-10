@@ -10,8 +10,10 @@ import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class TeamMechanic extends MultiplayerMechanic {
@@ -27,7 +29,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		Map<ChatColor, Integer> scoreList = new HashMap<>();
 		Map<Team, Integer> scores = match.getScores();
 
-		int winningScore = getWinningScore(scores);
+		int winningScore = getWinningScore(scores.values());
 		List<Team> winners = getWinners(winningScore, scores);
 		scores.keySet().forEach(team -> scoreList.put(team.getColor(), scores.get(team)));
 
@@ -115,7 +117,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 	@Override
 	public boolean shouldBeOver(Match match) {
-		List<Team> teams = new ArrayList<>();
+		Set<Team> teams = new HashSet<>();
 		match.getMinigamers().forEach(minigamer -> teams.add(minigamer.getTeam()));
 		return teams.size() == 1;
 	}

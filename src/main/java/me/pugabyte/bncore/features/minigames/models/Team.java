@@ -30,6 +30,8 @@ public class Team implements ConfigurationSerializable {
 	private String objective;
 	private Loadout loadout = new Loadout();
 	private List<Location> spawnpoints = new ArrayList<>();
+	private int lives = 0;
+	private int minPlayers = 1;
 	private int balancePercentage = -1;
 
 	public Team() {
@@ -46,6 +48,8 @@ public class Team implements ConfigurationSerializable {
 		this.objective = (String) map.get("objective");
 		this.loadout = (Loadout) map.getOrDefault("loadout", loadout);
 		this.spawnpoints = (List<Location>) map.getOrDefault("spawnpoints", spawnpoints);
+		this.lives = (Integer) map.getOrDefault("lives", lives);
+		this.minPlayers = (Integer) map.getOrDefault("minPlayers", minPlayers);
 		this.balancePercentage = (Integer) map.getOrDefault("balancePercentage", balancePercentage);
 	}
 
@@ -57,6 +61,8 @@ public class Team implements ConfigurationSerializable {
 			put("objective", getObjective());
 			put("loadout", getLoadout());
 			put("spawnpoints", getSpawnpoints());
+			put("lives", getLives());
+			put("minPlayers", getMinPlayers());
 			put("balancePercentage", getBalancePercentage());
 		}};
 	}
@@ -111,7 +117,7 @@ public class Team implements ConfigurationSerializable {
 
 	public List<Minigamer> getMinigamers(Match match) {
 		return match.getMinigamers().stream()
-				.filter(minigamer -> minigamer.getTeam().equals(this))
+				.filter(minigamer -> minigamer.getTeam() != null && minigamer.getTeam().equals(this))
 				.collect(Collectors.toList());
 	}
 

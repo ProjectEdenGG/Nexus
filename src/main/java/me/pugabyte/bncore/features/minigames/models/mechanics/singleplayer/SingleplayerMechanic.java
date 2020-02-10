@@ -10,10 +10,9 @@ import java.util.List;
 public abstract class SingleplayerMechanic extends Mechanic {
 
 	@Override
-	public List<Minigamer> balance(List<Minigamer> minigamers) {
+	public void balance(List<Minigamer> minigamers) {
 		Arena arena = minigamers.get(0).getMatch().getArena();
 		minigamers.forEach(minigamer -> minigamer.setTeam(arena.getTeams().get(0)));
-		return minigamers;
 	}
 
 	@Override

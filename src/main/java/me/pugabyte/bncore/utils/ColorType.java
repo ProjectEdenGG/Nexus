@@ -54,6 +54,13 @@ public enum ColorType {
 			DyeColor.RED,
 			14
 	),
+	LIGHT_RED(
+			"light red",
+			Color.fromRGB(255, 85, 85),
+			ChatColor.RED,
+			null,
+			14
+	),
 	ORANGE(
 			"orange",
 			Color.ORANGE,
