@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerds.NerdService;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,6 +22,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+// todo: if player is in the world they have been banned from, teleport them to spawn
 
 @NoArgsConstructor
 @Permission("group.moderator")
@@ -38,52 +43,64 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 
 	@Path("list")
 	void listAllBans() {
+		if (banList.size() == 0)
+			error("There are no world banned players");
+
 		line();
-		send(PREFIX + "WorldBanned Players:");
+		send(PREFIX + "World banned players:");
 		banList.forEach((uuid, worldList) -> {
-			String playerName = Bukkit.getPlayer(uuid).getName();
-			send("&e" + playerName + ": &e" + worldList.toString());
+			if (worldList == null || worldList.size() == 0)
+				return;
+			String playerName = Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
+			send(" &e" + playerName + "&7 - &3" + worldList.stream().map(WorldGroup::toString).collect(Collectors.joining("&e, &3")));
 		});
 		line();
 	}
 
-	@Path("<player>")
-	void playerBannedWorlds(@Arg Player player) {
-		line();
-		List<WorldGroup> worldList = banList.get(player.getUniqueId().toString());
-		send(PREFIX + "&e" + player.getName() + "&3: &e" + worldList.toString());
-		line();
-	}
+	@Path("<player> [worldGroup]")
+	void worldBan(@Arg Player player, @Arg WorldGroup worldGroup) {
+		if (worldGroup == null) {
+			List<WorldGroup> worldList = banList.get(player.getUniqueId().toString());
+			if (worldList == null)
+				error(player.getName() + " is not world banned");
+			else
+				send(PREFIX + "&e" + player.getName() + "&7 - &3" + worldList.stream().map(WorldGroup::toString).collect(Collectors.joining("&e, &3")));
+		} else {
+			if (worldGroup.equals(WorldGroup.SURVIVAL) || worldGroup.equals(WorldGroup.UNKNOWN))
+				error("Cannot world ban from " + worldGroup.toString());
 
-	@Path("<worldGroup> <player>")
-	void worldBan(@Arg WorldGroup worldGroup, @Arg Player player) {
-		if (worldGroup.equals(WorldGroup.SURVIVAL))
-			error("Cannot worldban from Survival");
+			String uuid = player.getUniqueId().toString();
+			List<WorldGroup> worldList = banList.get(uuid);
+			if (worldList == null)
+				worldList = new ArrayList<>();
 
-		String uuid = player.getUniqueId().toString();
-		List<WorldGroup> worldList = banList.get(uuid);
-		if (worldList == null)
-			worldList = new ArrayList<>();
+			if (worldList.contains(worldGroup))
+				error(player.getName() + " is already banned from " + worldGroup.toString());
 
-		if (worldList.contains(worldGroup))
-			error("Player is already banned from " + worldGroup.toString());
+			worldList.add(worldGroup);
+			banList.put(uuid, worldList);
 
-		worldList.add(worldGroup);
-		banList.put(uuid, worldList);
-
-		String message = PREFIX + "&e" + player().getName() + " &chas banned &e" + player.getName() + " &cfrom &e" + worldGroup.toString();
-		new NerdService().getOnlineNerdsWith("group.moderator").forEach(staff -> staff.send(message));
-		Discord.send(message, DiscordId.Channel.STAFF_BRIDGE, DiscordId.Channel.STAFF_LOG);
+			String message = "&a" + player().getName() + " &fhas world banned &a" + player.getName() + " &ffrom &a" + worldGroup.toString();
+			new NerdService().getOnlineNerdsWith("group.moderator").forEach(staff -> staff.send(message));
+			Discord.send(message, DiscordId.Channel.STAFF_BRIDGE, DiscordId.Channel.STAFF_LOG);
+		}
 	}
 
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 		List<WorldGroup> bannedWorlds = banList.get(player.getUniqueId().toString());
-		if (bannedWorlds.contains(WorldGroup.get(player.getWorld()))) {
+		if (bannedWorlds == null)
+			return;
+
+		WorldGroup worldGroup = WorldGroup.get(player.getWorld());
+		if (bannedWorlds.contains(worldGroup)) {
 			runCommand(player, "warp spawn");
-			send(player, "&cDue to your behavior, your access to this world has been restricted.");
+			Tasks.wait(10, () -> {
+				send(player, "");
+				send(player, "&cDue to your behavior, your access to " + worldGroup.toString() + " has been restricted.");
+				send(player, "");
+			});
 		}
 	}
-
 }
