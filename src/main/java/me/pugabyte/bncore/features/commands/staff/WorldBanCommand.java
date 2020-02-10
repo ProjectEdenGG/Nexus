@@ -108,7 +108,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 
 		WorldGroup worldGroup = WorldGroup.get(player.getWorld());
 		if (worldBan.getBans().contains(worldGroup))
-			removeFromBannedWorld(player, worldGroup);
+			Tasks.wait(5, () -> removeFromBannedWorld(player, worldGroup));
 	}
 
 	public void removeFromBannedWorld(Player player, WorldGroup worldGroup) {
