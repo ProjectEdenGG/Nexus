@@ -42,6 +42,7 @@ public class EasterEggs implements Listener {
 
 		switch (clicked.getName().toLowerCase()) {
 			case "pugabyte":
+			case "vargskati":
 				pug(clicker, heldItem, clicked);
 				break;
 			case "wakkaflocka":
@@ -51,6 +52,7 @@ public class EasterEggs implements Listener {
 				pork(clicker, heldItem, clicked);
 				break;
 			case "ravenonacloud":
+			case "chaioty":
 				raven(clicker, heldItem, clicked);
 				break;
 		}
