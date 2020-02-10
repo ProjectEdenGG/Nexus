@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.models.discord;
 
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 
-public class DiscordService extends BaseService {
+public class DiscordService extends MySQLService {
 
 	@Override
 	public DiscordUser get(String uuid) {

@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.models.dailyrewards;
 
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 
 import java.util.List;
 
-public class DailyRewardsService extends BaseService {
+public class DailyRewardsService extends MySQLService {
 	@Override
 	public DailyRewards get(String uuid) {
 		DailyRewards dailyRewards = database.where("uuid = ?", uuid).first(DailyRewards.class);

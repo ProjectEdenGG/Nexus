@@ -1,11 +1,11 @@
 package me.pugabyte.bncore.models.ticket;
 
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 
 import java.util.List;
 
-public class TicketService extends BaseService {
+public class TicketService extends MySQLService {
 
 	public Ticket get(int id) {
 		Ticket ticket = database.where("id = ?", id).first(Ticket.class);

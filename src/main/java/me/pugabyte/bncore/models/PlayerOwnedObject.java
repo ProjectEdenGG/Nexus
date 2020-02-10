@@ -11,7 +11,7 @@ public abstract class PlayerOwnedObject {
 	public abstract UUID getUuid();
 
 	public OfflinePlayer getOfflinePlayer() {
-		return Bukkit.getPlayer(getUuid());
+		return Bukkit.getOfflinePlayer(getUuid());
 	}
 
 	public Player getPlayer() {

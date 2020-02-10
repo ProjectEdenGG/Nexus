@@ -3,9 +3,9 @@ package me.pugabyte.bncore.models.litebans;
 import com.dieselpoint.norm.Database;
 import me.pugabyte.bncore.framework.persistence.MySQLDatabase;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 
-public class LiteBansService extends BaseService {
+public class LiteBansService extends MySQLService {
 	protected static Database database = MySQLPersistence.getConnection(MySQLDatabase.LITEBANS);
 
 	public int getHistory(String uuid) {

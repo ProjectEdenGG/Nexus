@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.models.alerts;
 
 import com.dieselpoint.norm.Transaction;
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 import me.pugabyte.bncore.utils.Tasks;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AlertsService extends BaseService {
+public class AlertsService extends MySQLService {
 	@Override
 	public Alerts get(String uuid) {
 		List<Alerts.Highlight> highlights = database.where("uuid = ?", uuid).results(Alerts.Highlight.class);

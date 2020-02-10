@@ -1,13 +1,13 @@
 package me.pugabyte.bncore.models.hours;
 
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.models.BaseService;
+import me.pugabyte.bncore.models.MySQLService;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HoursService extends BaseService {
+public class HoursService extends MySQLService {
 	@Override
 	public Hours get(String uuid) {
 		Hours hours = database.where("uuid = ?", uuid).first(Hours.class);

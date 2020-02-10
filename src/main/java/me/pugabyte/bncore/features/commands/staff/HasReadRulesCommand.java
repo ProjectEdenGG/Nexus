@@ -9,7 +9,7 @@ import me.pugabyte.bncore.models.rules.HasReadRules;
 import me.pugabyte.bncore.models.rules.RulesService;
 import org.bukkit.entity.Player;
 
-@Permission("group.staff")
+@Permission("group.moderator")
 @Aliases("hrr")
 public class HasReadRulesCommand extends CustomCommand {
 	RulesService service = new RulesService();
