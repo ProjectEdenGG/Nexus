@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-// todo: if player is in the world they have been banned from, teleport them to spawn
-
 @NoArgsConstructor
 @Permission("group.moderator")
 public class WorldBanCommand extends CustomCommand implements Listener {
@@ -83,6 +81,15 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			String message = "&a" + player().getName() + " &fhas world banned &a" + player.getName() + " &ffrom &a" + worldGroup.toString();
 			new NerdService().getOnlineNerdsWith("group.moderator").forEach(staff -> staff.send(message));
 			Discord.send(message, DiscordId.Channel.STAFF_BRIDGE, DiscordId.Channel.STAFF_LOG);
+
+			if (WorldGroup.get(player.getWorld()).equals(worldGroup)) {
+				runCommand(player, "warp spawn");
+				Tasks.wait(10, () -> {
+					send(player, "");
+					send(player, "&cDue to your behavior, your access to " + worldGroup.toString() + " has been restricted.");
+					send(player, "");
+				});
+			}
 		}
 	}
 
