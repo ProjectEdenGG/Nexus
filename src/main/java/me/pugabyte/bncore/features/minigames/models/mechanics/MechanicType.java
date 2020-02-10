@@ -7,6 +7,7 @@ public enum MechanicType {
 	DEATH_SWAP(new DeathSwap()),
 	FOUR_TEAM_DEATHMATCH(new FourTeamDeathmatch()),
 	FREE_FOR_ALL(new FreeForAll()),
+	INFECTION(new Infection()),
 	INVERTO_INFERNO(new InvertoInferno()),
 	GOLD_RUSH(new GoldRush()),
 	GRAB_A_JUMBUCK(new GrabAJumbuck()),

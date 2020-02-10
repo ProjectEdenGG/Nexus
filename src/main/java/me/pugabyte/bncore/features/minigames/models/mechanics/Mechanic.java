@@ -20,8 +20,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +57,11 @@ public abstract class Mechanic implements Listener {
 		int lives = match.getArena().getLives();
 		if (lives > 0)
 			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
+		else
+			match.getMinigamers().forEach(minigamer -> {
+				if (minigamer.getTeam().getLives() > 0)
+					minigamer.setLives(minigamer.getTeam().getLives());
+			});
 	}
 
 	public void onEnd(MatchEndEvent event) {
@@ -108,15 +113,17 @@ public abstract class Mechanic implements Listener {
 
 	public abstract void announceWinners(Match match);
 
-	public int getWinningScore(Map<?, Integer> scores) {
-		return Collections.max(scores.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getValue();
+	public int getWinningScore(Collection<Integer> scores) {
+		if (scores.size() == 0)
+			return 0;
+		return Collections.max(scores);
 	}
 
-	public List<Minigamer> balance(Minigamer minigamer) {
-		return balance(Collections.singletonList(minigamer));
+	public void balance(Minigamer minigamer) {
+		balance(Collections.singletonList(minigamer));
 	}
 
-	public abstract List<Minigamer> balance(List<Minigamer> minigamers);
+	public abstract void balance(List<Minigamer> minigamers);
 
 	public String getScoreboardTitle(Match match) {
 		return left(match.getArena().getName(), 16);

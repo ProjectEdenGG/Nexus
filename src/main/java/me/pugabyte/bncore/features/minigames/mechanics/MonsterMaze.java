@@ -19,7 +19,6 @@ import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creature;
@@ -63,7 +62,7 @@ public class MonsterMaze extends TeamlessMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.ZOMBIE.ordinal());
+		return new ItemStack(Material.MOB_SPAWNER);
 	}
 
 	@Override

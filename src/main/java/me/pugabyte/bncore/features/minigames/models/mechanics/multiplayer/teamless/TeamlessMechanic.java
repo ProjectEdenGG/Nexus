@@ -20,12 +20,10 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public List<Minigamer> balance(List<Minigamer> minigamers) {
+	public void balance(List<Minigamer> minigamers) {
 		Arena arena = minigamers.get(0).getMatch().getArena();
 
 		minigamers.forEach(minigamer -> minigamer.setTeam(arena.getTeams().get(0)));
-
-		return minigamers;
 	}
 
 	@Override
@@ -35,7 +33,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 
 		match.getAlivePlayers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
 		if (scores.size() == 0) return;
-		int winningScore = getWinningScore(scores);
+		int winningScore = getWinningScore(scores.values());
 		List<Minigamer> winners = getWinners(winningScore, scores);
 
 		String announcement;

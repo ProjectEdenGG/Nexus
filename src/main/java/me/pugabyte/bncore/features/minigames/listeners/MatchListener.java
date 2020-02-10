@@ -136,7 +136,7 @@ public class MatchListener implements Listener {
 				if (deathEvent.isCancelled()) return;
 
 				if (!victim.getMatch().isEnded())
-					mechanic.kill(victim, attacker);
+					mechanic.onDeath(deathEvent);
 			}
 		} else {
 			// Different matches

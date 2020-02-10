@@ -189,6 +189,7 @@ public class JMinigamesCommand extends CustomCommand {
 				team.getSpawnpoints().add(player().getLocation());
 				arena.write();
 				send(PREFIX + "Spawnpoint added");
+				return;
 			}
 		}
 
