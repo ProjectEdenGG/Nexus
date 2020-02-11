@@ -23,7 +23,6 @@ public class Cooldown {
 	private double ticks;
 	@NonNull
 	private LocalDateTime time;
-	// TODO: override
 
 	public Cooldown(String id, String type, double ticks) {
 		this.id = id;

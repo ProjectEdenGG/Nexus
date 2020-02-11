@@ -113,7 +113,6 @@ public class ArenaManager {
 		arenas.add(arena);
 	}
 
-	// TODO: Add delete
 	public static void remove(Arena arena) {
 		arenas.remove(arena);
 	}
