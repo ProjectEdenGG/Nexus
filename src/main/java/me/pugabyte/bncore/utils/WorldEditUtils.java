@@ -274,6 +274,9 @@ public class WorldEditUtils {
 
 	@SneakyThrows
 	public void fixFlat(LocalSession session, Region region) {
+		region.expand(Direction.UP.toVector().multiply(500));
+		region.expand(Direction.DOWN.toVector().multiply(500));
+		fill(region, Material.AIR);
 		region.expand(Direction.DOWN.toVector().multiply(500));
 		region.contract(Direction.DOWN.toVector().multiply(500));
 		session.getRegionSelector(region.getWorld()).learnChanges();
