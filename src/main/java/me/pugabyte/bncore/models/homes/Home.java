@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
@@ -25,7 +26,7 @@ import static me.pugabyte.bncore.utils.Utils.colorize;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Converters({LocationConverter.class, UUIDConverter.class})
+@Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
 public class Home extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
@@ -34,7 +35,6 @@ public class Home extends PlayerOwnedObject {
 	@NonNull
 	private Location location;
 	private boolean locked;
-	// TODO: Needs converter
 	private ItemStack item;
 	private Set<UUID> accessList = new HashSet<>();
 

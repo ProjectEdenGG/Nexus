@@ -1,10 +1,12 @@
 package me.pugabyte.bncore.features.homes;
 
+import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.variables.Variables;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserMap;
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -16,7 +18,11 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.ess3.api.InvalidWorldException;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -52,6 +58,7 @@ public class HomesCommand extends CustomCommand {
 
 			Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 			UserMap userMap = essentials.getUserMap();
+//			Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).forEach(uuid -> {
 			userMap.getAllUniqueUsers().forEach(uuid -> {
 				try {
 					User user = userMap.getUser(uuid);
@@ -79,6 +86,23 @@ public class HomesCommand extends CustomCommand {
 							Boolean locked = (Boolean) getSkriptVariable("homes::" + uuid.toString() + "::locked::" + homeName);
 							if (locked != null)
 								builder.locked(locked);
+
+							Object item = getSkriptVariable("homes::" + uuid.toString() + "::item::" + homeName);
+							if (item != null) {
+								if (item instanceof ItemStack)
+									builder.item((ItemStack) item);
+								else if (item instanceof ItemType)
+									builder.item(((ItemType) item).getRandom());
+								else if (item instanceof String) {
+									OfflinePlayer skullOwner = Bukkit.getOfflinePlayer(UUID.fromString((String) item));
+									ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+									SkullMeta meta = (SkullMeta) skull.getItemMeta();
+									meta.setOwningPlayer(skullOwner);
+									skull.setItemMeta(meta);
+									builder.item(skull);
+								} else
+									BNCore.log("Home " + homeOwner.getOfflinePlayer().getName() + " / " + homeName + " has unknown item of " + item);
+							}
 
 							Set<UUID> accessList = new HashSet<>();
 							Map allowed = (Map) getSkriptVariable("homes::" + uuid.toString() + "::allowed::" + homeName + "::*");
