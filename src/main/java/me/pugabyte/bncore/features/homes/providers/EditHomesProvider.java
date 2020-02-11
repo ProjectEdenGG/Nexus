@@ -112,6 +112,8 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		if (homeOwner.getHomes() == null || homeOwner.getHomes().size() == 0) return;
 
 		List<ClickableItem> items = new ArrayList<>();
+
+		// TODO: Look into async paginator in SmartInvs
 		homeOwner.getHomes().forEach(home -> {
 			ItemStackBuilder item;
 
@@ -123,7 +125,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 				item = new ItemStackBuilder(ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE));
 
 			if (home.isLocked())
-				item.loreize(false).lore("||&f&cLocked||&f||&eClick to edit" + getAccessListNames(home.getAccessList()));
+				item.glow().loreize(false).lore("||&f&cLocked||&f||&eClick to edit" + getAccessListNames(home.getAccessList()));
 			else
 				item.lore("||&f&aUnlocked||&f||&eClick to edit");
 
@@ -138,10 +140,10 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 3, 0));
 
 		if (!page.isFirst())
-			contents.set(1, 0, ClickableItem.from(nameItem(new ItemStack(Material.PAPER, page.getPage() - 1),
+			contents.set(2, 0, ClickableItem.from(nameItem(new ItemStack(Material.PAPER, Math.max(page.getPage() - 1, 1)),
 					"&fPrevious Page"), e -> HomesMenu.edit(homeOwner, page.previous().getPage())));
 		if (!page.isLast())
-			contents.set(1, 8, ClickableItem.from(nameItem(new ItemStack(Material.PAPER, page.getPage() + 1),
+			contents.set(2, 8, ClickableItem.from(nameItem(new ItemStack(Material.PAPER, page.getPage() + 1),
 					"&fNext Page"), e -> HomesMenu.edit(homeOwner, page.next().getPage())));
 	}
 
