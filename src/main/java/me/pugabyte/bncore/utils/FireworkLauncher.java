@@ -10,12 +10,19 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Getter
 @Setter
 @Accessors(fluent = true)
 public class FireworkLauncher {
 	private Location location;
-	private Color color;
+	private List<Color> colors;
+	private List<Color> fadeColors;
+	private Boolean flickering;
+	private Boolean trailing;
 	private FireworkEffect.Type type;
 	private Integer power;
 	private Integer detonateAfter;
@@ -31,18 +38,48 @@ public class FireworkLauncher {
 
 		if (type != null)
 			builder.with(type);
-		if (color != null)
-			builder.withColor(color);
+		if (colors != null)
+			builder.withColor(colors);
+		if (fadeColors != null)
+			builder.withFade(fadeColors);
 
 		FireworkEffect effect = builder.build();
 
 		meta.addEffect(effect);
 		if (power != null)
-			meta.setPower(0);
+			meta.setPower(power);
 
 		firework.setFireworkMeta(meta);
 
 		if (detonateAfter != null)
 			Tasks.wait(detonateAfter, firework::detonate);
+	}
+
+	public static FireworkLauncher random(Location location) {
+		// Get Random Colors
+		ColorType[] colorTypes = ColorType.values();
+		List<Color> colorList = new ArrayList<>();
+		for (ColorType colorType : colorTypes)
+			if (Utils.chanceOf(40))
+				colorList.add(colorType.getColor());
+		if (colorList.size() == 0)
+			colorList.add(((ColorType) Utils.getRandomElement(Arrays.asList(colorTypes))).getColor());
+
+		// Get Random Fade Colors
+		List<Color> fadeColorList = new ArrayList<>();
+		for (ColorType colorType : colorTypes)
+			if (Utils.chanceOf(40))
+				fadeColorList.add(colorType.getColor());
+
+		// Get Random Type
+		FireworkEffect.Type type = Utils.getRandomElement(Arrays.asList(FireworkEffect.Type.values()));
+
+		return new FireworkLauncher(location)
+				.type(type)
+				.colors(colorList)
+				.fadeColors(fadeColorList)
+				.trailing(Utils.chanceOf(50))
+				.flickering(Utils.chanceOf(50))
+				.power(Utils.randomInt(1, 3));
 	}
 }
