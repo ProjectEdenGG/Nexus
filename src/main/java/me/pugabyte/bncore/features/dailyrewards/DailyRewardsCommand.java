@@ -75,8 +75,6 @@ public class DailyRewardsCommand extends CustomCommand {
 		send(PREFIX + player.getName() + " has " + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
 
-	// TODO: Optional arguments in the middle if default value exists
-	// TODO: Conditional default values? e.g. /speed [type = isFlying ? fly : walk] <int>
 	@Path("unclaim <player> <day>")
 	@Permission("modify")
 	void unclaim(OfflinePlayer player, int day) {

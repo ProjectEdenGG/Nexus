@@ -106,7 +106,7 @@ public class OnlineCommand extends CustomCommand {
 		return afk +
 				"&3Ping: &e" + ping + "\n" +
 				"&3World: &e" + world + "\n" +
-				"&3Balance: &e$" + balance + "\n" +
+//				"&3Balance: &e$" + balance + "\n" +
 				"&3Online for: &e" + onlineFor + "\n" +
 				"&3Hours: &e" + totalHours;
 	}
