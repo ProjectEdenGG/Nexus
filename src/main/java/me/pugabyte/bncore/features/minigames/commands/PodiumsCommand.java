@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.minigames.commands;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -15,6 +14,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,7 +61,7 @@ public class PodiumsCommand extends CustomCommand {
 
 	@Path("tp <position>")
 	void tp(Position position) {
-		player().teleport(getNpc(position).getEntity());
+		player().teleport(getNpc(position).getEntity(), TeleportCause.COMMAND);
 	}
 
 	@Path("(s|summon) <position>")
