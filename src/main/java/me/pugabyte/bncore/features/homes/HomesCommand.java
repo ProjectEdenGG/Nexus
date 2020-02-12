@@ -30,12 +30,11 @@ import java.util.Set;
 import java.util.UUID;
 
 public class HomesCommand extends CustomCommand {
-	HomeService service;
+	HomeService service = new HomeService();;
 	HomeOwner homeOwner;
 
 	public HomesCommand(CommandEvent event) {
 		super(event);
-		service = new HomeService();
 		homeOwner = service.get(player());
 	}
 
@@ -126,6 +125,7 @@ public class HomesCommand extends CustomCommand {
 			});
 
 			send(PREFIX + "Migration took " + (System.currentTimeMillis() - startTime) + "ms");
+			service.clearCache();
 		});
 	}
 

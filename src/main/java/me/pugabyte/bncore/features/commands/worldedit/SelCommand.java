@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @DoubleSlash
 @Permission("worldedit.wand")
@@ -27,7 +28,7 @@ public class SelCommand extends CustomCommand {
 			switch (string.toLowerCase()) {
 				case "tp":
 				case "teleport":
-					player().teleport(worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getCenter()));
+					player().teleport(worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getCenter()), TeleportCause.COMMAND);
 					break;
 				case "c":
 					runCommand("/sel cuboid");

@@ -16,12 +16,12 @@ public class WorldBanService extends MongoService {
 
 	@Override
 	public WorldBan get(UUID uuid) {
-		if (!cache.containsKey(uuid)) {
-			WorldBan worldBan = database.createQuery(WorldBan.class).field("_id").equal(uuid).first();
+		cache.computeIfAbsent(uuid, $ -> {
+			WorldBan worldBan = database.createQuery(WorldBan.class).field(_id).equal(uuid).first();
 			if (worldBan == null)
 				worldBan = new WorldBan(uuid);
-			cache.put(uuid, worldBan);
-		}
+			return worldBan;
+		});
 
 		return cache.get(uuid);
 	}

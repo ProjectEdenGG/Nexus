@@ -13,6 +13,7 @@ import me.pugabyte.bncore.models.PlayerOwnedObject;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
@@ -44,7 +45,7 @@ public class Home extends PlayerOwnedObject {
 
 	public void teleport(Player player) {
 		if (hasAccess(player))
-			player.teleport(location.clone().add(0, .5, 0));
+			player.teleport(location.clone().add(0, .5, 0), TeleportCause.COMMAND);
 		else
 			player.sendMessage(PREFIX + colorize("&cYou don't have access to that home"));
 	}

@@ -213,6 +213,10 @@ public class Utils {
 		return !isVanished(target) || viewer.hasPermission("vanish.see");
 	}
 
+	public static boolean isNPC(Entity entity) {
+		return entity.hasMetadata("NPC");
+	}
+
 	public static List<String> getOnlineUuids() {
 		return Bukkit.getOnlinePlayers().stream()
 				.map(p -> p.getUniqueId().toString())

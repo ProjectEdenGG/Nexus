@@ -14,6 +14,7 @@ import java.util.UUID;
 
 public class MongoService {
 	protected static Datastore database;
+	protected static String _id = "_id";
 
 	static {
 		database = MongoDBPersistence.getConnection(MongoDBDatabase.BEARNATION);

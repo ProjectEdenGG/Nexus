@@ -2,6 +2,7 @@ package me.pugabyte.bncore.models.homes;
 
 import me.pugabyte.bncore.models.MongoService;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,14 +16,20 @@ public class HomeService extends MongoService {
 
 	@Override
 	public HomeOwner get(UUID uuid) {
-		if (!cache.containsKey(uuid)) {
-			HomeOwner homeOwner = database.createQuery(HomeOwner.class).field("_id").equal(uuid).first();
+		cache.computeIfAbsent(uuid, $ -> {
+			HomeOwner homeOwner = database.createQuery(HomeOwner.class).field(_id).equal(uuid).first();
 			if (homeOwner == null)
 				homeOwner = new HomeOwner(uuid);
-			cache.put(uuid, homeOwner);
-		}
+			return homeOwner;
+		});
 
 		return cache.get(uuid);
+	}
+
+	@Override
+	public <T> void save(T object) {
+		((HomeOwner) object).getHomes().sort(Comparator.comparing(Home::getName));
+		super.save(object);
 	}
 
 }

@@ -12,6 +12,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class TicketsCommand extends CustomCommand {
 			else
 				error("That ticket does not have a location");
 
-		player().teleport(ticket.getLocation());
+		player().teleport(ticket.getLocation(), TeleportCause.COMMAND);
 
 		String message = PREFIX + "&e" + player().getName() + " &3teleported to ticket &e#" + ticket.getId();
 		Tickets.tellOtherStaff(player(), message);
