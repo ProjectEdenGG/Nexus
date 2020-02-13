@@ -107,7 +107,7 @@ public class WorldGuardUtils {
 	}
 
 	public Region convert(ProtectedRegion region) {
-		return new CuboidRegion(region.getMaximumPoint(), region.getMinimumPoint());
+		return new CuboidRegion(worldEditWorld, region.getMaximumPoint(), region.getMinimumPoint());
 	}
 
 	public Block getRandomBlock(String region) {
