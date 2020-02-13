@@ -23,14 +23,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HomesCommand extends CustomCommand {
-	HomeService service = new HomeService();;
+	HomeService service = new HomeService();
 	HomeOwner homeOwner;
 
 	public HomesCommand(CommandEvent event) {
@@ -50,13 +52,51 @@ public class HomesCommand extends CustomCommand {
 	}
 
 	@SneakyThrows
+	@Path("migrateperms")
+	void migrateperms() {
+		Tasks.async(() -> {
+			long startTime = System.currentTimeMillis();
+			send(PREFIX + "Starting migration");
+
+			Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+			UserMap userMap = essentials.getUserMap();
+			AtomicInteger count = new AtomicInteger(0);
+
+			userMap.getAllUniqueUsers().forEach(uuid -> {
+				try {
+					User user = userMap.getUser(uuid);
+					if (user.getHomes() == null || user.getHomes().size() == 0)
+						return;
+
+					HomeOwner homeOwner = service.get(uuid);
+
+					PermissionsEx.getUser(homeOwner.getUuid().toString()).addPermission("homes.limit." + homeOwner.getLegacyMaxHomes());
+				} catch (Exception ex) {
+					BNCore.log("Error migrating user " + Bukkit.getOfflinePlayer(uuid).getName());
+					ex.printStackTrace();
+				}
+
+				count.getAndIncrement();
+				if (count.get() % 100 == 0)
+					send(PREFIX + "Migrated " + count.get() + " users...");
+			});
+
+			send(PREFIX + "Migrated " + count.get() + " users, took " + (System.currentTimeMillis() - startTime) + "ms");
+			service.clearCache();
+		});
+	}
+
+	@SneakyThrows
 	@Path("migrate")
 	void migrate() {
 		Tasks.async(() -> {
 			long startTime = System.currentTimeMillis();
+			send(PREFIX + "Starting migration");
 
 			Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 			UserMap userMap = essentials.getUserMap();
+			AtomicInteger count = new AtomicInteger(0);
+
 //			Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).forEach(uuid -> {
 			userMap.getAllUniqueUsers().forEach(uuid -> {
 				try {
@@ -65,6 +105,7 @@ public class HomesCommand extends CustomCommand {
 						return;
 
 					HomeOwner homeOwner = service.get(uuid);
+					homeOwner.getHomes().clear();
 
 					Boolean autolock = (Boolean) getSkriptVariable("homes::" + uuid.toString() + "::autolock");
 					if (autolock != null)
@@ -77,28 +118,29 @@ public class HomesCommand extends CustomCommand {
 
 					for (String homeName : user.getHomes()) {
 						try {
-							Home.HomeBuilder builder = Home.builder()
+							Home home = Home.builder()
 									.uuid(uuid)
 									.name(homeName)
-									.location(user.getHome(homeName));
+									.location(user.getHome(homeName))
+									.build();
 
 							Boolean locked = (Boolean) getSkriptVariable("homes::" + uuid.toString() + "::locked::" + homeName);
 							if (locked != null)
-								builder.locked(locked);
+								home.setLocked(locked);
 
 							Object item = getSkriptVariable("homes::" + uuid.toString() + "::item::" + homeName);
 							if (item != null) {
 								if (item instanceof ItemStack)
-									builder.item((ItemStack) item);
+									home.setItem((ItemStack) item);
 								else if (item instanceof ItemType)
-									builder.item(((ItemType) item).getRandom());
+									home.setItem(((ItemType) item).getRandom());
 								else if (item instanceof String) {
 									OfflinePlayer skullOwner = Bukkit.getOfflinePlayer(UUID.fromString((String) item));
 									ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
 									SkullMeta meta = (SkullMeta) skull.getItemMeta();
 									meta.setOwningPlayer(skullOwner);
 									skull.setItemMeta(meta);
-									builder.item(skull);
+									home.setItem(skull);
 								} else
 									BNCore.log("Home " + homeOwner.getOfflinePlayer().getName() + " / " + homeName + " has unknown item of " + item);
 							}
@@ -110,21 +152,24 @@ public class HomesCommand extends CustomCommand {
 										.map(allowedUuid -> UUID.fromString((String) allowedUuid))
 										.filter(allowedUuid -> !homeOwner.getFullAccessList().contains(allowedUuid))
 										.forEach(allowedUuid -> accessList.add((UUID) allowedUuid));
-							builder.accessList(accessList);
+							home.setAccessList(accessList);
 
-							homeOwner.add(builder.build());
+							homeOwner.add(home);
 						} catch (InvalidWorldException ignore) {}
 					}
 
 					service.save(homeOwner);
-
-					// TODO: Permissions?
 				} catch (Exception ex) {
+					BNCore.log("Error migrating user " + Bukkit.getOfflinePlayer(uuid).getName());
 					ex.printStackTrace();
 				}
+
+				count.getAndIncrement();
+				if (count.get() % 100 == 0)
+					send(PREFIX + "Migrated " + count.get() + " users...");
 			});
 
-			send(PREFIX + "Migration took " + (System.currentTimeMillis() - startTime) + "ms");
+			send(PREFIX + "Migrated " + count.get() + " users, took " + (System.currentTimeMillis() - startTime) + "ms");
 			service.clearCache();
 		});
 	}

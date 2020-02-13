@@ -274,6 +274,7 @@
             <groupId>com.boydti</groupId>
             <artifactId>fawe-api</artifactId>
             <version>latest</version>
+            <scope>provided</scope>
         </dependency>
         <!-- WorldGuard -->
         <dependency>
@@ -321,12 +322,14 @@
             <groupId>com.dumptruckman.minecraft</groupId>
             <artifactId>JsonConfiguration</artifactId>
             <version>1.1</version>
+            <scope>provided</scope>
         </dependency>
         <!-- JsonSmart -->
         <dependency>
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
             <version>1.1.1</version>
+            <scope>provided</scope>
         </dependency>
         <!-- SmartInvs -->
         <dependency>
@@ -343,6 +346,7 @@
             <groupId>com.github.tr7zw.Item-NBT-API</groupId>
             <artifactId>item-nbt-api</artifactId>
             <version>26dcd21</version>
+            <scope>provided</scope>
         </dependency>
         <!-- NuVotifier -->
         <dependency>
@@ -356,6 +360,7 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
             <version>4.4.0</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Javax Persistence -->
         <dependency>

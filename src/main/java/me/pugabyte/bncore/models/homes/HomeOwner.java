@@ -16,11 +16,14 @@ import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.homes.HomesFeature.maxHomes;
@@ -62,10 +65,27 @@ public class HomeOwner extends PlayerOwnedObject {
 	public int getMaxHomes() {
 		PermissionUser user = PermissionsEx.getUser(getUuid().toString());
 		for (int i = maxHomes; i > 0; i--)
-			if (user.has("homes.set." + i))
+			if (user.has("homes.limit." + i))
 				return i;
 
 		return 0;
+	}
+
+	public int getLegacyMaxHomes() {
+		PermissionUser user = PermissionsEx.getUser(getUuid().toString());
+		List<Integer> ints = new ArrayList<>();
+		for (String _permission : user.getPermissions("")) {
+			Matcher matcher = Pattern.compile("essentials.sethome.multiple.".replaceAll("\\.", "\\.") + "(g{1,101})" + "$").matcher(_permission);
+			if (matcher.matches())
+				ints.add(matcher.group(1).length());
+		}
+
+		int currentLimit = 0;
+		if (!ints.isEmpty()) {
+			currentLimit = Collections.max(ints);
+		}
+
+		return currentLimit;
 	}
 
 	public void allowAll(OfflinePlayer player) {

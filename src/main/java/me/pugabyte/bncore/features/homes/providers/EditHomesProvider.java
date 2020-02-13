@@ -59,7 +59,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 			item.name("&cYou have set the max number").lore("&cof homes possible! &3(" + max + ")||&f||" +
 					"To set more homes, you will need to either &erank up &3or &c/donate");
 
-		contents.set(0, 3, ClickableItem.empty(item.build()));
+		contents.set(0, 3, ClickableItem.from(item.build(), e -> HomesMenu.setHome(homeOwner)));
 	}
 
 	public void format_AutoLock(InventoryContents contents) {

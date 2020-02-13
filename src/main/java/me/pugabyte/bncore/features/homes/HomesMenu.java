@@ -6,12 +6,19 @@ import me.pugabyte.bncore.features.homes.providers.EditHomeProvider;
 import me.pugabyte.bncore.features.homes.providers.EditHomesProvider;
 import me.pugabyte.bncore.features.homes.providers.SetHomeProvider;
 import me.pugabyte.bncore.features.menus.SignMenuFactory;
+import me.pugabyte.bncore.framework.exceptions.BNException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.homes.Home;
 import me.pugabyte.bncore.models.homes.HomeOwner;
 import me.pugabyte.bncore.models.homes.HomeService;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Set;
 import java.util.UUID;
@@ -60,6 +67,17 @@ public class HomesMenu {
 
 	private static String[] playerNameLines = {"", "^ ^ ^ ^ ^ ^", "Enter a", "player's name"};
 
+	public static void handleException(Player player, Exception ex) {
+		if (ex.getCause() != null && ex.getCause() instanceof BNException)
+			player.sendMessage(colorize(PREFIX + "&c" + ex.getCause().getMessage()));
+		else if (ex instanceof BNException)
+			player.sendMessage(colorize(PREFIX + "&c" + ex.getMessage()));
+		else {
+			player.sendMessage(colorize(("&cAn internal error occurred while attempting to execute this command")));
+			ex.printStackTrace();
+		}
+	}
+
 	public static void allowAll(HomeOwner homeOwner, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
 				.response((player, response) -> {
@@ -70,7 +88,7 @@ public class HomesMenu {
 						}
 						onResponse.accept(player, response);
 					} catch (Exception ex) {
-						ex.printStackTrace();
+						handleException(player, ex);
 					}
 				})
 				.open(homeOwner.getPlayer());
@@ -80,11 +98,15 @@ public class HomesMenu {
 	public static void removeAll(HomeOwner homeOwner, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
 				.response((player, response) -> {
-					if (response[0].length() > 0) {
-						homeOwner.removeAll(Utils.getPlayer(response[0]));
-						new HomeService().save(homeOwner);
+					try {
+						if (response[0].length() > 0) {
+							homeOwner.removeAll(Utils.getPlayer(response[0]));
+							new HomeService().save(homeOwner);
+						}
+						onResponse.accept(player, response);
+					} catch (Exception ex) {
+						handleException(player, ex);
 					}
-					onResponse.accept(player, response);
 				})
 				.open(homeOwner.getPlayer());
 	}
@@ -92,11 +114,15 @@ public class HomesMenu {
 	public static void allow(Home home, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
 				.response((player, response) -> {
-					if (response[0].length() > 0) {
-						home.allow(Utils.getPlayer(response[0]));
-						new HomeService().save(home.getOwner());
+					try {
+						if (response[0].length() > 0) {
+							home.allow(Utils.getPlayer(response[0]));
+							new HomeService().save(home.getOwner());
+						}
+						onResponse.accept(player, response);
+					} catch (Exception ex) {
+						handleException(player, ex);
 					}
-					onResponse.accept(player, response);
 				})
 				.open(home.getOwner().getPlayer());
 	}
@@ -104,21 +130,59 @@ public class HomesMenu {
 	public static void remove(Home home, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
 				.response((player, response) -> {
-					if (response[0].length() > 0) {
-						home.remove(Utils.getPlayer(response[0]));
-						new HomeService().save(home.getOwner());
+					try {
+						if (response[0].length() > 0) {
+							home.remove(Utils.getPlayer(response[0]));
+							new HomeService().save(home.getOwner());
+						}
+						onResponse.accept(player, response);
+					} catch (Exception ex) {
+						handleException(player, ex);
 					}
-					onResponse.accept(player, response);
 				})
 				.open(home.getOwner().getPlayer());
 	}
 
 	public static void displayItem(Home home, BiConsumer<Player, String[]> onResponse) {
-		signMenuFactory.lines("", "Enter a player's", "name, \"hand\"", "or an item name")
+		signMenuFactory.lines("", "Enter a player's", "name, 'hand'", "or an item name")
 				.response((player, response) -> {
-					// TODO Item parsing
-					new HomeService().save(home.getOwner());
-					onResponse.accept(player, response);
+					try {
+						String input = response[0];
+						if (input.length() > 0) {
+							ItemStack itemStack = null;
+
+							if ("hand".equalsIgnoreCase(input)) {
+								itemStack = player.getInventory().getItemInMainHand();
+							} else {
+								Material material = Material.matchMaterial(input);
+								if (material != null) {
+									itemStack = new ItemStack(material);
+								} else {
+									try {
+										OfflinePlayer offlinePlayer = Utils.getPlayer(input);
+										if (offlinePlayer != null) {
+											itemStack = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+											SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+											meta.setOwningPlayer(offlinePlayer);
+											itemStack.setItemMeta(meta);
+										}
+									} catch (PlayerNotFoundException ignore) {}
+								}
+							}
+
+							if (itemStack == null) {
+								player.sendMessage(colorize(PREFIX + "&cCould not parse item"));
+								displayItem(home, onResponse);
+							} else {
+								home.setItem(itemStack);
+								new HomeService().save(home.getOwner());
+							}
+						}
+
+						onResponse.accept(player, response);
+					} catch (Exception ex) {
+						handleException(player, ex);
+					}
 				})
 				.open(home.getOwner().getPlayer());
 	}
@@ -126,18 +190,45 @@ public class HomesMenu {
 	public static void rename(Home home, BiConsumer<Player, String[]> onResponse) {
 		signMenuFactory.lines("", "^ ^ ^ ^ ^ ^", "Enter the home's", "new name")
 				.response((player, response) -> {
-					BNCore.log("Length: " + response[0].length());
-					if (response[0].length() > 0) {
-						if (home.getOwner().getHome(response[0]).isPresent())
-							home.getPlayer().sendMessage(PREFIX + colorize("&cThat home already exists! Please pick a different name"));
-						else {
-							home.setName(response[0]);
-							new HomeService().save(home.getOwner());
+					try {
+						if (response[0].length() > 0) {
+							if (home.getOwner().getHome(response[0]).isPresent())
+								home.getPlayer().sendMessage(PREFIX + colorize("&cThat home already exists! Please pick a different name"));
+							else {
+								home.setName(response[0]);
+								new HomeService().save(home.getOwner());
+							}
 						}
+						onResponse.accept(player, response);
+					} catch (Exception ex) {
+						handleException(player, ex);
 					}
-					onResponse.accept(player, response);
 				})
 				.open(home.getOwner().getPlayer());
+	}
+
+	public static void create(HomeOwner homeOwner, BiConsumer<Player, String[]> onResponse) {
+		signMenuFactory.lines("", "^ ^ ^ ^ ^ ^", "Enter your new", "home's name")
+				.response((player, response) -> {
+					try {
+						if (response[0].length() > 0) {
+							if (homeOwner.getHome(response[0]).isPresent())
+								homeOwner.getPlayer().sendMessage(PREFIX + colorize("&cThat home already exists! Please pick a different name"));
+							else {
+								homeOwner.add(Home.builder()
+										.uuid(homeOwner.getUuid())
+										.name(response[0])
+										.location(player.getLocation())
+										.build());
+								new HomeService().save(homeOwner);
+							}
+						}
+						onResponse.accept(player, response);
+					} catch (Exception ex) {
+						handleException(player, ex);
+					}
+				})
+				.open(homeOwner.getPlayer());
 	}
 
 	public static String getAccessListNames(Set<UUID> accessList) {

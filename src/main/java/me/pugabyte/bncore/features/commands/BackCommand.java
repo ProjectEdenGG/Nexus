@@ -38,11 +38,14 @@ public class BackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[count]")
-	void help(@Arg("1") int count) {
+	void back(@Arg("1") int count) {
 		if (!player().hasPermission("group.staff"))
 			count = 1;
 
-		Location location = back.getLocations().get(count - 1);
+		Location location = null;
+		if (back.getLocations().size() >= count)
+			location = back.getLocations().get(count - 1);
+
 		if (location == null)
 			error("You have no back location");
 

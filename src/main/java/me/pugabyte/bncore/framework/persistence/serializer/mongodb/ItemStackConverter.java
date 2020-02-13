@@ -8,6 +8,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,11 +43,25 @@ public class ItemStackConverter extends TypeConverter {
 		String json = ((BasicDBObject) value).toJson();
 		Map<String, Object> deserialized = gson.fromJson(json, Map.class);
 
-		deserialized.computeIfPresent("meta", ($, meta) -> {
-				return ConfigurationSerialization.deserializeObject((Map<String, Object>) meta);
-		});
+		fixClasses(deserialized);
+
+		deserialized.computeIfPresent("meta", ($, meta) ->
+				ConfigurationSerialization.deserializeObject((Map<String, Object>) meta));
 
 		return ItemStack.deserialize(deserialized);
+	}
+
+	// MongoDB deserializes some properties as the wrong class, do conversion
+	public void fixClasses(Map<String, Object> deserialized) {
+		deserialized.computeIfPresent("meta", ($, meta) -> {
+			Arrays.asList("power", "repair-cost").forEach(key ->
+					((Map<String, Object>) meta).computeIfPresent(key, ($2, metaValue) -> {
+						if (metaValue instanceof Number)
+							return ((Number) metaValue).intValue();
+						return metaValue;
+					}));
+			return meta;
+		});
 	}
 
 }
