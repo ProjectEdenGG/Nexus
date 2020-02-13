@@ -34,7 +34,7 @@ public class Back extends PlayerOwnedObject {
 	private List<Location> locations = new ArrayList<>();
 
 	public void add(Location from) {
-		locations.add(from);
+		locations.add(0, from);
 	}
 
 }
