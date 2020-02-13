@@ -7,6 +7,8 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -544,6 +546,10 @@ public class Utils {
 		String world = location.getWorld().getName();
 
 		new JsonBuilder().next(message).command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + world).send(player);
+	}
+
+	public static void sendActionBar(Player player, String message) {
+		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
 	}
 
 	public static int randomInt(int min, int max) {
