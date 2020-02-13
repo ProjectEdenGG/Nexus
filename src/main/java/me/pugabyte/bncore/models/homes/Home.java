@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -24,7 +25,6 @@ import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
@@ -38,6 +38,21 @@ public class Home extends PlayerOwnedObject {
 	private boolean locked;
 	private ItemStack item;
 	private Set<UUID> accessList = new HashSet<>();
+
+	@Builder
+	public Home(@NonNull UUID uuid, @NonNull String name, @NonNull Location location, ItemStack item) {
+		this.uuid = uuid;
+		this.name = name;
+		this.location = location;
+		this.locked = getOwner().isAutoLock();
+		this.item = item;
+
+		if (getOwner().getHome(name).isPresent())
+			throw new InvalidInputException("&cThat home already exists! Please pick a different name");
+
+		if (!name.matches("^[a-zA-Z0-9_]*$"))
+			throw new InvalidInputException("Home names can only contain alphanumeric characters and underscores");
+	}
 
 	public HomeOwner getOwner() {
 		return new HomeService().get(uuid);
