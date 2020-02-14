@@ -25,13 +25,16 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -145,6 +148,18 @@ public class WorldEditUtils {
 				.map(Direction::toVector)
 				.map(vector -> vector.multiply(number))
 				.toArray(Vector[]::new);
+	}
+
+	public List<Block> getBlocks(CuboidRegion region) {
+		List<Block> blockList = new ArrayList<>();
+		for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++) {
+			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++) {
+				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
+					blockList.add(world.getBlockAt(x, y, z));
+				}
+			}
+		}
+		return blockList;
 	}
 
 	public BaseBlock toBaseBlock(Material material) {
