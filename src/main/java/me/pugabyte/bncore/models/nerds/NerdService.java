@@ -46,4 +46,11 @@ public class NerdService extends MySQLService {
 		return nerds;
 	}
 
+	public List<Nerd> getNerdsWithBirthdays() {
+		List<Nerd> nerds = database.where("birthday IS NOT NULL").results(Nerd.class);
+		for (Nerd nerd : nerds)
+			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
+		return nerds;
+	}
+
 }
