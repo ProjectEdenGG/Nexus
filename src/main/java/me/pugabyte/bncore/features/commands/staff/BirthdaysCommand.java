@@ -1,25 +1,32 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.nerds.NerdService;
 
-// Copy and rename this file as a template for a new command
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 
-@Permission("permission")
 public class BirthdaysCommand extends CustomCommand {
 
 	public BirthdaysCommand(CommandEvent event) {
 		super(event);
 	}
 
-	@Path
-	void help() {
+	@Path("[amount]")
+	void birthday(@Arg("5") int amount) {
+		NerdService service = new NerdService();
+		List<Nerd> nerds = service.getNerdsWithBirthdays();
+		nerds.sort(Comparator.comparing(Nerd::getBirthday));
+		send("&3Upcoming birthdays:");
+		for (int i = 0; i < amount; i++) {
+			send("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- " + LocalDate.now().until(nerds.get(i).getBirthday()).getDays() + " days");
+		}
 	}
 
-	@Path("run")
-	void run() {
-	}
 
 }
