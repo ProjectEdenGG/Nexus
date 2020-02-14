@@ -38,6 +38,7 @@ import java.util.Set;
 // TODO:
 //  - Scoreboards
 //  - rounds
+//  - convert worldguard utils region stuff to arena region stuff
 
 public class PixelPainters extends TeamlessMechanic {
 	WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
