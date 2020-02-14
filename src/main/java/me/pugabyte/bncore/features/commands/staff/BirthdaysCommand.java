@@ -24,7 +24,12 @@ public class BirthdaysCommand extends CustomCommand {
 		nerds.sort(Comparator.comparing(Nerd::getBirthday));
 		send("&3Upcoming birthdays:");
 		for (int i = 0; i < amount; i++) {
-			send("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- " + LocalDate.now().until(nerds.get(i).getBirthday()).getDays() + " days");
+			LocalDate now = LocalDate.now();
+			LocalDate birthday = nerds.get(i).getBirthday();
+			boolean thisYear = true;
+			if (birthday.getMonth().getValue() < now.getMonth().getValue()) thisYear = false;
+			LocalDate nextBirthday = birthday.withYear(thisYear ? now.getYear() : now.getYear() + 1);
+			send("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- " + now.until(nextBirthday).getDays() + " days");
 		}
 	}
 
