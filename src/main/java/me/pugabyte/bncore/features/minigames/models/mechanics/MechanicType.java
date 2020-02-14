@@ -17,6 +17,7 @@ public enum MechanicType {
 	ONE_IN_THE_QUIVER(new OneInTheQuiver()),
 	PAINTBALL(new Paintball()),
 	PARKOUR(new Parkour()),
+	PIXELPAINTERS(new PixelPainters()),
 	SPLEEF(new Spleef()),
 	SPLEGG(new Splegg()),
 	TEAM_DEATHMATCH(new TeamDeathmatch()),
