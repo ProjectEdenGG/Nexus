@@ -23,7 +23,7 @@ public class ToggleSnowCommand extends CustomCommand {
 	}
 
 	static {
-		snowEffectTask();
+		//snowEffectTask();
 	}
 
 	@Path

@@ -27,7 +27,11 @@ public class BirthdaysCommand extends CustomCommand {
 		});
 		send("&3Upcoming birthdays:");
 		for (int i = 0; i < Math.min(amount, nerds.size()); i++) {
-			send("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- " + ChronoUnit.DAYS.between(LocalDate.now(), getNextBirthday(nerds.get(i))) + " days");
+			if (LocalDate.now().getDayOfYear() == getNextBirthday(nerds.get(i)).getDayOfYear())
+				send("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- Today");
+			else
+				send("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- " +
+						ChronoUnit.DAYS.between(LocalDate.now(), getNextBirthday(nerds.get(i))) + " days");
 		}
 	}
 
@@ -35,7 +39,8 @@ public class BirthdaysCommand extends CustomCommand {
 		LocalDate now = LocalDate.now();
 		LocalDate birthday = nerd.getBirthday();
 		boolean thisYear = true;
-		if (birthday.getMonth().getValue() < now.getMonth().getValue() && birthday.getDayOfMonth() < now.getDayOfMonth())
+		if (birthday.getMonth().getValue() < now.getMonth().getValue() ||
+				(birthday.getMonth().getValue() == now.getMonth().getValue() && birthday.getDayOfMonth() <= now.getDayOfMonth()))
 			thisYear = false;
 		return birthday.withYear(thisYear ? now.getYear() : now.getYear() + 1);
 	}
