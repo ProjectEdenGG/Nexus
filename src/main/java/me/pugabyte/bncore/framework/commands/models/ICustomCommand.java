@@ -104,20 +104,20 @@ public interface ICustomCommand {
 	}
 
 	default void invoke(Method method, CommandEvent event) throws Exception {
-		Object[] objects = getMethodParameters(method, event, true);
-		method.setAccessible(true);
+		Runnable run = () -> {
+			try {
+				Object[] objects = getMethodParameters(method, event, true);
+				method.setAccessible(true);
+				method.invoke(this, objects);
+			} catch (Exception ex) {
+				event.handleException(ex);
+			}
+		};
+
 		if (method.getAnnotation(Async.class) != null)
-			Tasks.async(() -> {
-				BNCore.log("Running command asynchronously");
-				// TODO: Pass exception up
-				try {
-					method.invoke(this, objects);
-				} catch (Exception ex) {
-					event.handleException(ex);
-				}
-			});
+			Tasks.async(run);
 		else
-			method.invoke(this, objects);
+			run.run();
 	}
 
 	default public Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
