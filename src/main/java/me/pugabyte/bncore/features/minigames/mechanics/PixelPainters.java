@@ -37,8 +37,8 @@ import java.util.Set;
 
 // TODO:
 //  - Scoreboards
-//  - rounds
 //  - convert worldguard utils region stuff to arena region stuff
+//  - lobby animation
 
 public class PixelPainters extends TeamlessMechanic {
 	WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
@@ -46,7 +46,9 @@ public class PixelPainters extends TeamlessMechanic {
 	@Getter
 	private final int MAX_ROUNDS = 5;
 	@Getter
-	private final int TIME_OUT = 10 * 20;
+	private final int TIME_OUT = 8 * 20;
+	@Getter
+	private final int ROUND_COUNTDOWN = 30 * 20;
 	@Getter
 	private Region NEXT_DESIGN_REGION = WGUtils.getRegion("pixelpainters_nextdesigntest");
 	@Getter
@@ -79,7 +81,6 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersMatchData matchData = match.getMatchData();
 		matchData.setCurrentRound(0);
 		countDesigns(match);
-		// start game
 		endOfRound(match);
 	}
 
@@ -93,28 +94,39 @@ public class PixelPainters extends TeamlessMechanic {
 	public void endOfRound(Match match) {
 		// Disable checking & Clear checked
 		PixelPaintersMatchData matchData = match.getMatchData();
+		List<Minigamer> minigamers = match.getMinigamers();
+		if (matchData.getCurrentRound() != 0) {
+			minigamers.forEach(minigamer -> Utils.sendActionBar(minigamer.getPlayer(), "&cRound Over!"));
+		}
+
 		matchData.canCheck(false);
 		matchData.getChecked().clear();
 
-		List<Minigamer> minigamers = match.getMinigamers();
 		minigamers.forEach(minigamer -> minigamer.getPlayer().getInventory().clear());
-
-		pasteLogo();
-		clearFloors();
 		setupNextDesign(match);
 
 		// Start countdown to new round
-		Tasks.wait(TIME_OUT / 2, () ->
-				Tasks.Countdown.builder()
-						.duration(TIME_OUT)
-						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-							Utils.sendActionBar(player, "Next round starts in... " + i + " second" + (i != 1 ? "s" : ""));
-							if (i <= 3)
-								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
-						}))
-						.onComplete(() -> newRound(match))
-						.start()
+		match.getTasks().wait(TIME_OUT / 2, () -> {
+					pasteLogo();
+					clearFloors();
+					Tasks.Countdown countdown = Tasks.Countdown.builder()
+							.duration(TIME_OUT)
+							.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+								if (match.isEnded()) {
+									return;
+								}
+
+								Utils.sendActionBar(player, "Next round starts in... " + i + " second" + (i != 1 ? "s" : ""));
+								if (i <= 3)
+									player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
+							}))
+							.onComplete(() -> newRound(match))
+							.start();
+
+					match.getTasks().register(countdown.getTaskId());
+				}
 		);
+
 	}
 
 	public void countDesigns(Match match) {
@@ -130,6 +142,8 @@ public class PixelPainters extends TeamlessMechanic {
 
 
 	public void newRound(Match match) {
+		if (match.isEnded()) return; // just in case
+
 		PixelPaintersMatchData matchData = match.getMatchData();
 		// Increase round counter
 		matchData.setCurrentRound(matchData.getCurrentRound() + 1);
@@ -152,6 +166,11 @@ public class PixelPainters extends TeamlessMechanic {
 		if (!event.getHand().equals(EquipmentSlot.HAND))
 			return;
 
+		Match match = minigamer.getMatch();
+		PixelPaintersMatchData matchData = match.getMatchData();
+
+		if (!matchData.canCheck()) return;
+
 		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
 			event.setCancelled(true);
 			removeBlock(minigamer, event);
@@ -161,8 +180,8 @@ public class PixelPainters extends TeamlessMechanic {
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !Utils.isNullOrAir(event.getItem())) {
 			if (!canPlaceBlock(event)) {
 				event.setCancelled(true);
-				return;
 			}
+			return;
 		}
 
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
@@ -172,18 +191,38 @@ public class PixelPainters extends TeamlessMechanic {
 		if (event.getClickedBlock() == null || !event.getClickedBlock().getType().toString().toLowerCase().contains("button"))
 			return;
 
+		if (matchData.getChecked().contains(minigamer)) return;
+
+		pressButton(minigamer, event);
+	}
+
+	public void removeBlock(Minigamer minigamer, PlayerInteractEvent event) {
+		Block block = event.getClickedBlock();
+		Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(block.getLocation());
+		regionsAt.forEach(region -> {
+			if (region.getId().matches("pixelpainters_floortest_[0-9]+")) {
+				ItemStack item = new ItemStack(block.getType(), 1, block.getData());
+				event.getClickedBlock().setType(Material.AIR);
+				minigamer.getPlayer().getInventory().addItem(item);
+			}
+		});
+	}
+
+	public boolean canPlaceBlock(PlayerInteractEvent event) {
+		Block block = event.getClickedBlock().getRelative(event.getBlockFace());
+		Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(block.getLocation());
+		for (ProtectedRegion region : regionsAt) {
+			if (region.getId().matches("pixelpainters_floortest_[0-9]+"))
+				return true;
+		}
+		return false;
+	}
+
+	public void pressButton(Minigamer minigamer, PlayerInteractEvent event) {
 		Match match = minigamer.getMatch();
 		PixelPaintersMatchData matchData = match.getMatchData();
-		if (!matchData.canCheck())
-			return;
 
-
-		if (matchData.getChecked().contains(minigamer)) {
-			minigamer.tell("already checked");
-			return;
-		}
-
-		// Test Islands
+		// For Testing
 		Location floorLoc = (event.getClickedBlock()).getRelative(0, -1, 0).getLocation();
 
 //		Location floorLoc = (event.getClickedBlock()).getRelative(0, -1 ,3).getLocation();
@@ -209,30 +248,41 @@ public class PixelPainters extends TeamlessMechanic {
 
 			int size = matchData.getChecked().size();
 			minigamer.scored(Math.max(1, 1 + (4 - size)));
+			if (size == 1)
+				startRoundCountdown(match);
+
+			if (match.getMinigamers().size() == matchData.getChecked().size()) {
+				cancelCountdown(match);
+				endOfRound(match);
+			}
+
 		} else
 			minigamer.tell("&e" + incorrect + " &3blocks incorrect!");
+
 	}
 
-	public void removeBlock(Minigamer minigamer, PlayerInteractEvent event) {
-		Block block = event.getClickedBlock();
-		Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(block.getLocation());
-		regionsAt.forEach(region -> {
-			if (region.getId().matches("pixelpainters_floortest_[0-9]+")) {
-				ItemStack item = new ItemStack(block.getType(), 1, block.getData());
-				event.getClickedBlock().setType(Material.AIR);
-				minigamer.getPlayer().getInventory().addItem(item);
-			}
-		});
+	public void startRoundCountdown(Match match) {
+		List<Minigamer> minigamers = match.getMinigamers();
+		PixelPaintersMatchData matchData = match.getMatchData();
+		Tasks.Countdown countdown = Tasks.Countdown.builder()
+				.duration(ROUND_COUNTDOWN)
+				.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+					if (match.isEnded()) return;
+
+					Utils.sendActionBar(player, "Round ends in... " + i + " second" + (i != 1 ? "s" : ""));
+					if (i <= 3)
+						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
+				}))
+				.onComplete(() -> endOfRound(match))
+				.start();
+
+		matchData.setRoundCountdownID(countdown.getTaskId());
+		match.getTasks().register(countdown.getTaskId());
 	}
 
-	public boolean canPlaceBlock(PlayerInteractEvent event) {
-		Block block = event.getClickedBlock().getRelative(event.getBlockFace());
-		Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(block.getLocation());
-		for (ProtectedRegion region : regionsAt) {
-			if (region.getId().matches("pixelpainters_floortest_[0-9]+"))
-				return true;
-		}
-		return false;
+	public void cancelCountdown(Match match) {
+		PixelPaintersMatchData matchData = match.getMatchData();
+		match.getTasks().cancel(matchData.getRoundCountdownID());
 	}
 
 	// check the player's floor against the current design
