@@ -31,7 +31,6 @@ public class BirthdaysCommand extends CustomCommand {
 			LocalDate now = LocalDate.now();
 			return (int) ChronoUnit.DAYS.between(now, getNextBirthday(nerd1)) - (int) ChronoUnit.DAYS.between(now, getNextBirthday(nerd2));
 		});
-		send("Size: " + nerds.size());
 
 		line();
 		send("&3Upcoming birthdays:");
