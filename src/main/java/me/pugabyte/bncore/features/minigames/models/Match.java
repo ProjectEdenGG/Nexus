@@ -368,6 +368,10 @@ public class Match {
 			Tasks.cancel(taskId);
 		}
 
+		public void register(int taskId) {
+			taskIds.add(taskId);
+		}
+
 		public int wait(long delay, Runnable runnable) {
 			int taskId = Tasks.wait(delay, runnable);
 			taskIds.add(taskId);

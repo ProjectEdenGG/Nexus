@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.utils;
 
 import lombok.Builder;
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -56,6 +57,7 @@ public class Tasks {
 			start();
 		}
 
+		@Getter
 		private int taskId;
 		private int ticks;
 		private int seconds;
