@@ -19,12 +19,14 @@ public class PixelPaintersMatchData extends MatchData {
 	private List<Integer> designsPlayed = new ArrayList<>();
 	@Accessors(fluent = true)
 	private boolean canCheck;
+	private boolean roundOver;
 	private int currentRound;
 	private int designCount;
 	private CuboidRegion designRegion;
 	private long roundStart;
 	private int totalFinished;
 	private int roundCountdownID;
+	private int timeLeft;
 
 
 	public PixelPaintersMatchData(Match match) {
