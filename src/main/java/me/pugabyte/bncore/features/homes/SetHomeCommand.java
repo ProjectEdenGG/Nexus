@@ -45,8 +45,6 @@ public class SetHomeCommand extends CustomCommand {
 
 		service.save(homeOwner);
 		send(PREFIX + message);
-
-
 	}
 
 }

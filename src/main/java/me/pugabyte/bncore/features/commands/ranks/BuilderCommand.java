@@ -14,7 +14,7 @@ public class BuilderCommand extends CustomCommand {
 
 	String builderApp = "https://bnn.gg/apply/builder";
 
-	@Path()
+	@Path
 	void builder() {
 		line(5);
 		send("&5Builders &3help with any build related needs for the server, such as &ewarps&3, &eminigame maps&3, and &eevents&3");

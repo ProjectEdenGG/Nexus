@@ -24,13 +24,17 @@ public class SignLinesCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path
+	void usage() {
+		send(PREFIX + "&cCorrect Usage:");
+		send("&c/signlines read");
+		send("&c/signlines <--copy|--paste>");
+		send("&c/signlines -<#> <text> [-<#> <text> ...]");
+		send("&c/signlines -<#> null [-<#> null ...]");
+	}
+
 	@Path("[arguments...]")
 	void signLines(@Arg String arguments) {
-		if (args().size() == 0) {
-			usage();
-			return;
-		}
-
 		Block targetBlock = player().getTargetBlock(null, 5);
 		Material material = targetBlock.getType();
 		if (Utils.isNullOrAir(material) || !Utils.isSign(material)) {
@@ -85,13 +89,5 @@ public class SignLinesCommand extends CustomCommand {
 		}
 
 		sign.update();
-	}
-
-	void usage() {
-		send(PREFIX + "&cCorrect Usage:");
-		send("&c/signlines read");
-		send("&c/signlines <--copy|--paste>");
-		send("&c/signlines -<#> <text> [-<#> <text> ...]");
-		send("&c/signlines -<#> null [-<#> null ...]");
 	}
 }
