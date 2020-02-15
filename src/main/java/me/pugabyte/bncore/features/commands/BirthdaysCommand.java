@@ -64,7 +64,7 @@ public class BirthdaysCommand extends CustomCommand {
 
 	@Path("format")
 	void format() {
-		error("Correct birthday format: MM/dd/yyyy");
+		error("Correct birthday format: MM/DD/YYYY");
 	}
 
 	public LocalDate getNextBirthday(Nerd nerd) {

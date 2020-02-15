@@ -12,7 +12,7 @@ public class HiKodaCommand extends CustomCommand {
 	}
 
 	@Path
-	@Cooldown(value = 60 * 20, bypass = "group.staff")
+	@Cooldown(value = 60 * 20)
 	void hiKoda() {
 		runCommand("ch qm g Hi Koda!");
 	}

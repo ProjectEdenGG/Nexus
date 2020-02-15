@@ -23,7 +23,7 @@ public class HoursCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<player>")
+	@Path("[player]")
 	void player(@Arg("self") OfflinePlayer player) {
 		boolean isSelf = isSelf(player);
 

@@ -12,7 +12,7 @@ public class RedstoneOnCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path()
+	@Path
 	void run() {
 		runCommand("plot set redstone true");
 	}
