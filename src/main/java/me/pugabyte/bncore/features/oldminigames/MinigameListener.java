@@ -5,7 +5,11 @@ import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.events.StartMinigameEvent;
 import au.com.mineauz.minigames.minigame.Minigame;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
+import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.oldminigames.quake.Railgun;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,9 +17,29 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class MinigameListener implements Listener {
+
+	@EventHandler
+	public void onOldMinigameCommand(PlayerCommandPreprocessEvent event) {
+		if (event.getMessage().toLowerCase().matches("/mgm (quit|leave).*")) {
+			event.setCancelled(true);
+			Player player = event.getPlayer();
+			Minigamer minigamer = PlayerManager.get(player);
+			if (minigamer.isPlaying())
+				minigamer.quit();
+			else {
+				WorldGuardUtils worldGuardUtils = new WorldGuardUtils(player.getWorld());
+				if (worldGuardUtils.getRegionsLikeAt(player.getLocation(), "mobarena_.*").size() > 0)
+					Utils.runCommand(player, "ma leave");
+				else
+					Utils.runCommand(player, "minigames:mgm quit");
+			}
+		}
+	}
+
 	@SuppressWarnings("unused")
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onMinigameStart(StartMinigameEvent event) {
@@ -29,9 +53,7 @@ public class MinigameListener implements Listener {
 								MinigameUtils.shufflePlayers(minigame),
 						2L);
 			}
-		} catch (NullPointerException ex) {
-			return;
-		}
+		} catch (NullPointerException ignore) {}
 	}
 
 	@SuppressWarnings("unused")
@@ -76,7 +98,6 @@ public class MinigameListener implements Listener {
 					}
 				}
 			}
-		} catch (NullPointerException ex) {
-		}
+		} catch (NullPointerException ignore) {}
 	}
 }
