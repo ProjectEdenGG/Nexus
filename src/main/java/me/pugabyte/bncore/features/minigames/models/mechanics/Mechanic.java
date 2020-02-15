@@ -171,4 +171,8 @@ public abstract class Mechanic implements Listener {
 		return superclasses;
 	}
 
+	public boolean shuffleSpawnpoints() {
+		return true;
+	}
+
 }

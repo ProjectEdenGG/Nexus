@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Data
@@ -97,14 +96,16 @@ public class Team implements ConfigurationSerializable {
 
 		while (members.size() > 0) {
 			List<Location> locs = new ArrayList<>(spawnpoints);
+			if (minigamers.get(0).getMatch().getArena().getMechanic().shuffleSpawnpoints())
+				Collections.shuffle(locs);
+
 			List<Minigamer> toRemove = new ArrayList<>();
-			Random rand = new Random();
 			for (Minigamer minigamer : members) {
-				int randomIndex = rand.nextInt(locs.size());
-				minigamer.teleport(locs.get(randomIndex));
-				locs.remove(randomIndex);
+				minigamer.teleport(locs.get(0));
+				locs.remove(0);
 				if (locs.size() == 0)
 					locs.addAll(new ArrayList<>(spawnpoints));
+
 				toRemove.add(minigamer);
 			}
 			members.removeAll(toRemove);
