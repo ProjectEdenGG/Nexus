@@ -51,7 +51,7 @@ public class Home extends PlayerOwnedObject {
 			throw new InvalidInputException("&cThat home already exists! Please pick a different name");
 
 		if (!name.matches("^[a-zA-Z0-9_]*$"))
-			throw new InvalidInputException("Home names can only contain alphanumeric characters and underscores");
+			throw new InvalidInputException("Home names can only contain numbers, letters and underscores");
 	}
 
 	public HomeOwner getOwner() {
@@ -66,9 +66,14 @@ public class Home extends PlayerOwnedObject {
 	}
 
 	public boolean hasAccess(Player player) {
-		return player.getUniqueId().equals(getOfflinePlayer().getUniqueId()) ||
-				getOwner().hasGivenAccessTo(player) ||
-				accessList.contains(player.getUniqueId());
+		if (!locked)
+			return true;
+		if (player.hasPermission("group.staff"))
+			return true;
+		if (player.getUniqueId().equals(getOfflinePlayer().getUniqueId()))
+			return true;
+
+		return getOwner().hasGivenAccessTo(player) || accessList.contains(player.getUniqueId());
 	}
 
 	public void allow(OfflinePlayer player) {

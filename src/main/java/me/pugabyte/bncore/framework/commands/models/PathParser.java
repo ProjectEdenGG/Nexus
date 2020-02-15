@@ -125,7 +125,7 @@ class PathParser {
 		@ToString.Include
 		boolean isLiteral() {
 			if (pathArg == null) return false;
-			return !pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<");
+			return !pathArg.startsWith("[") && !pathArg.startsWith("<");
 		}
 
 		@ToString.Include
@@ -229,7 +229,8 @@ class PathParser {
 					return method;
 
 				if (fallback == null)
-					fallback = method;
+					if (args.size() >= getRequiredArgs(path))
+						fallback = method;
 				continue;
 			}
 
@@ -254,7 +255,6 @@ class PathParser {
 			for (String pathArg : pathArgs)
 				switch (left(pathArg, 1)) {
 					case "[":
-					case "{":
 					case "<":
 						break;
 					default:
@@ -263,6 +263,18 @@ class PathParser {
 
 		literalWords = literalWords.trim().toLowerCase();
 		return literalWords;
+	}
+
+	private int getRequiredArgs(String path) {
+		String[] pathArgs = path.split(" ");
+
+		int requiredArgs = 0;
+		if (path.length() > 0)
+			for (String pathArg : pathArgs)
+				if (!pathArg.startsWith("["))
+					++requiredArgs;
+
+		return requiredArgs;
 	}
 
 }

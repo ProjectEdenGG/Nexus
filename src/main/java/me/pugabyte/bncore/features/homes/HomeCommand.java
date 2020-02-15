@@ -23,11 +23,12 @@ public class HomeCommand extends CustomCommand {
 
 	public HomeCommand(CommandEvent event) {
 		super(event);
+		PREFIX = HomesFeature.PREFIX;
 		service = new HomeService();
 		homeOwner = service.get(player());
 	}
 
-	@Path("<home>")
+	@Path("[home]")
 	void teleport(@Arg(value = "home", tabCompleter = Home.class) String name) {
 		Optional<Home> home = homeOwner.getHome(name);
 		if (!home.isPresent())
@@ -40,7 +41,7 @@ public class HomeCommand extends CustomCommand {
 		home.get().teleport(player());
 	}
 
-	@Path("<player> <home>")
+	@Path("<player> [home]")
 	void teleport(OfflinePlayer player, @Arg(contextArg = 1) Home home) {
 		home.teleport(player());
 	}
