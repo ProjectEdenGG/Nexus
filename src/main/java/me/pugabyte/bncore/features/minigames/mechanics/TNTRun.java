@@ -86,7 +86,7 @@ public class TNTRun extends TeamlessMechanic {
 								if (!tnt.getType().equals(Material.TNT))
 									return;
 
-								match.getTasks().wait(3, () -> {
+								match.getTasks().wait(4, () -> {
 									if (match.isEnded())
 										return;
 									standingOn.setType(Material.AIR);
