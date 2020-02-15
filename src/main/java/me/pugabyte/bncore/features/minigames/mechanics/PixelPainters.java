@@ -31,7 +31,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -91,10 +93,51 @@ public class PixelPainters extends TeamlessMechanic {
 		super.onEnd(event);
 	}
 
+	@Override
+	public Map<String, Integer> getScoreboardLines(Match match) {
+		Map<String, Integer> lines = new HashMap<>();
+		PixelPaintersMatchData matchData = match.getMatchData();
+		// During Game
+		if (match.isStarted()) {
+
+			// Inbetween Rounds
+			if (matchData.isRoundOver()) {
+				for (Minigamer minigamer : match.getMinigamers()) {
+					lines.put(minigamer.getName(), minigamer.getScore());
+				}
+				lines.put("&1", 0);
+				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + getMAX_ROUNDS(), 0);
+				lines.put("&3&fNext Round In: &c" + matchData.getTimeLeft(), 0);
+
+
+				// During Round
+			} else {
+				for (Minigamer minigamer : match.getMinigamers()) {
+					if (matchData.getChecked().contains(minigamer))
+						lines.put("&a" + minigamer.getName(), 1);
+					else
+						lines.put(minigamer.getName(), 1);
+
+					lines.put("&a", 0);
+					lines.put("&fTime Left: " + matchData.getTimeLeft(), 0);
+				}
+			}
+
+			// In Lobby
+		} else {
+			for (Minigamer minigamer : match.getMinigamers())
+				lines.put(minigamer.getColoredName(), 0);
+		}
+
+		return lines;
+	}
+
 	public void endOfRound(Match match) {
 		// Disable checking & Clear checked
 		PixelPaintersMatchData matchData = match.getMatchData();
 		List<Minigamer> minigamers = match.getMinigamers();
+		matchData.setRoundOver(true);
+
 		if (matchData.getCurrentRound() != 0) {
 			minigamers.forEach(minigamer -> Utils.sendActionBar(minigamer.getPlayer(), "&cRound Over!"));
 		}
@@ -115,6 +158,8 @@ public class PixelPainters extends TeamlessMechanic {
 								if (match.isEnded()) {
 									return;
 								}
+								matchData.setTimeLeft(i);
+								match.getScoreboard().update();
 
 								Utils.sendActionBar(player, "Next round starts in... " + i + " second" + (i != 1 ? "s" : ""));
 								if (i <= 3)
@@ -140,11 +185,11 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.setDesignCount(blocksCount / 81);
 	}
 
-
 	public void newRound(Match match) {
 		if (match.isEnded()) return; // just in case
 
 		PixelPaintersMatchData matchData = match.getMatchData();
+		matchData.setRoundOver(false);
 		// Increase round counter
 		matchData.setCurrentRound(matchData.getCurrentRound() + 1);
 
@@ -248,6 +293,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 			int size = matchData.getChecked().size();
 			minigamer.scored(Math.max(1, 1 + (4 - size)));
+			match.getScoreboard().update();
 			if (size == 1)
 				startRoundCountdown(match);
 
@@ -268,6 +314,8 @@ public class PixelPainters extends TeamlessMechanic {
 				.duration(ROUND_COUNTDOWN)
 				.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
 					if (match.isEnded()) return;
+					matchData.setTimeLeft(i);
+					match.getScoreboard().update();
 
 					Utils.sendActionBar(player, "Round ends in... " + i + " second" + (i != 1 ? "s" : ""));
 					if (i <= 3)
