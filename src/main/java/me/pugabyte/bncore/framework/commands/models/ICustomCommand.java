@@ -137,7 +137,7 @@ public interface ICustomCommand {
 					value = args.get(pathIndex - 1);
 			}
 
-			boolean required = doValidation && pathArg.startsWith("<");
+			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && value != null));
 			try {
 				objects[i - 1] = convert(value, contextArg, parameter.getType(), event, required);
 			} catch (MissingArgumentException ex) {

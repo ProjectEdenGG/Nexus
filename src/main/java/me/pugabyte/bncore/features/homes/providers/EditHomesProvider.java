@@ -56,7 +56,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 			item.name("&eSet a new home").lore("You have set &e" + homes + " &fof your &e" + max + " &fhomes||" +
 					"&fYou can set &e" + left + " &fmore");
 		else
-			item.name("&cYou have set the max number").lore("&cof homes possible! &3(" + max + ")||&f||" +
+			item.name("&cYou have used all of").lore("&cyour available homes! &3(" + max + ")||&f||" +
 					"To set more homes, you will need to either &erank up &3or &c/donate");
 
 		contents.set(0, 3, ClickableItem.from(item.build(), e -> HomesMenu.setHome(homeOwner)));

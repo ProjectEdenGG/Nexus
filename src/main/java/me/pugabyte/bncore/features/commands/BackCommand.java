@@ -69,7 +69,7 @@ public class BackCommand extends CustomCommand implements Listener {
 					.next("&3" + new DecimalFormat("#00").format(i) + " &e" + location.getWorld().getName() +
 							" &7/ &e" + x + " &7/ &e" + y + " &7/ &e" + z)
 					.command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + location.getWorld().getName())
-					.hover("&eClick to go");
+					.hover("&eClick to teleport");
 		}
 
 		send(json);
