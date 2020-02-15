@@ -6,6 +6,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -18,6 +19,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MissingArgumentExce
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.objenesis.ObjenesisStd;
@@ -104,7 +106,18 @@ public interface ICustomCommand {
 	default void invoke(Method method, CommandEvent event) throws Exception {
 		Object[] objects = getMethodParameters(method, event, true);
 		method.setAccessible(true);
-		method.invoke(this, objects);
+		if (method.getAnnotation(Async.class) != null)
+			Tasks.async(() -> {
+				BNCore.log("Running command asynchronously");
+				// TODO: Pass exception up
+				try {
+					method.invoke(this, objects);
+				} catch (Exception ex) {
+					event.handleException(ex);
+				}
+			});
+		else
+			method.invoke(this, objects);
 	}
 
 	default public Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
