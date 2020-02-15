@@ -23,6 +23,12 @@ public class SetHomeCommand extends CustomCommand {
 
 	@Path("[name]")
 	void sethome(@Arg("home") String homeName) {
+		int homes = homeOwner.getHomes().size();
+		int max = homeOwner.getMaxHomes();
+		int left = Math.max(0, max - homes);
+		if (left == 0)
+			error("You have used all of your available homes! &3To set more homes, you will need to either &erank up &3or &c/donate");
+
 		Optional<Home> home = homeOwner.getHome(homeName);
 		String message;
 		if (home.isPresent()) {
