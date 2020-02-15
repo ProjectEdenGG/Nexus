@@ -549,7 +549,7 @@ public class Utils {
 	}
 
 	public static void sendActionBar(Player player, String message) {
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(colorize(message)));
 	}
 
 	public static int randomInt(int min, int max) {

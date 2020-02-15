@@ -24,6 +24,7 @@ public class PixelPaintersMatchData extends MatchData {
 	private CuboidRegion designRegion;
 	private long roundStart;
 	private int totalFinished;
+	private int roundCountdownID;
 
 
 	public PixelPaintersMatchData(Match match) {
