@@ -109,7 +109,6 @@ public class PixelPainters extends TeamlessMechanic {
 				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + getMAX_ROUNDS(), 0);
 				lines.put("&3&fNext Round In: &c" + matchData.getTimeLeft(), 0);
 
-
 				// During Round
 			} else {
 				for (Minigamer minigamer : match.getMinigamers()) {
@@ -119,7 +118,12 @@ public class PixelPainters extends TeamlessMechanic {
 						lines.put(minigamer.getName(), 1);
 
 					lines.put("&a", 0);
-					lines.put("&fTime Left: " + matchData.getTimeLeft(), 0);
+
+					int timeLeft = matchData.getTimeLeft();
+					if (timeLeft <= 0)
+						lines.put("&fTime Left: ", 0);
+					else
+						lines.put("&fTime Left: &c" + timeLeft, 0);
 				}
 			}
 
@@ -190,6 +194,8 @@ public class PixelPainters extends TeamlessMechanic {
 
 		PixelPaintersMatchData matchData = match.getMatchData();
 		matchData.setRoundOver(false);
+		matchData.setTimeLeft(0);
+
 		// Increase round counter
 		matchData.setCurrentRound(matchData.getCurrentRound() + 1);
 
