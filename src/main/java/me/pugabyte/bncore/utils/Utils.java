@@ -354,6 +354,10 @@ public class Utils {
 		return null;
 	}
 
+	public static void runCommand(Player player, String command) {
+		Bukkit.dispatchCommand(player, command);
+	}
+
 	public static void runCommandAsOp(Player player, String command) {
 		player.setOp(true);
 		Bukkit.dispatchCommand(player, command);
@@ -615,4 +619,5 @@ public class Utils {
 
 		return null;
 	}
+
 }
