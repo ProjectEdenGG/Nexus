@@ -48,7 +48,7 @@ public class Minigames {
 		ArenaManager.read();
 		new MatchListener();
 		new SignListener();
-		Tasks.repeat(100, 40, MatchManager::janitor);
+		Tasks.repeat(100, 10, MatchManager::janitor);
 
 		new Basketball();
 	}
