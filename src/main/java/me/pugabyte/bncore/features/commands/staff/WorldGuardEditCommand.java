@@ -42,19 +42,19 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	private void on() {
-		PermissionsEx.getUser(player()).removePermission(permission);
+		PermissionsEx.getUser(player()).addPermission(permission);
 		send("&eWorldGuard editing &aenabled");
 	}
 
 	private void off() {
-		PermissionsEx.getUser(player()).addPermission(permission);
+		PermissionsEx.getUser(player()).removePermission(permission);
 		send("&eWorldGuard editing &cdisabled");
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (event.getPlayer().hasPermission(permission))
-			off();
+			PermissionsEx.getUser(player()).removePermission(permission);
 	}
 
 }
