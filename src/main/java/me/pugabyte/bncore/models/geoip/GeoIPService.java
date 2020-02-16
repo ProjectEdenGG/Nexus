@@ -31,12 +31,19 @@ public class GeoIPService extends MongoService {
 	public GeoIP get(UUID uuid) {
 		cache.computeIfAbsent(uuid, $ -> {
 			GeoIP geoIp = database.createQuery(GeoIP.class).field(_id).equal(uuid).first();
-			if (geoIp == null)
-				if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+
+			if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+				if (geoIp != null)
+					if (!Bukkit.getPlayer(uuid).getAddress().getHostString().equals(geoIp.getIp()))
+						geoIp = request(Bukkit.getPlayer(uuid));
+
+				if (geoIp == null)
 					geoIp = request(Bukkit.getPlayer(uuid));
-					if (geoIp.getIp() != null)
-						save(geoIp);
-				}
+			}
+
+			if (geoIp != null && geoIp.getIp() != null)
+				save(geoIp);
+
 			return geoIp;
 		});
 

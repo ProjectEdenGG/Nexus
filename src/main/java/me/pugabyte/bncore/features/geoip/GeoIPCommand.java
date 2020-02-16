@@ -23,7 +23,6 @@ import java.util.List;
 @Permission("group.moderator")
 @NoArgsConstructor
 public class GeoIPCommand extends CustomCommand implements Listener {
-	GeoIPService service = new GeoIPService();
 
 	public GeoIPCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -37,7 +36,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	@Async
 	@SneakyThrows
 	void geoip(GeoIP geoIp) {
-		String location = geoIp.getCity() + ", " + geoIp.getRegionName() + ", " + geoIp.getCountryName();
+		String location = geoIp.getFriendlyLocationString();
 		send(json("&3Location of &e" + geoIp.getOfflinePlayer().getName() + "&3: &e" + location).hover(geoIp.getIp()).insert(geoIp.getIp()));
 	}
 
