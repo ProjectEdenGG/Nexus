@@ -25,7 +25,7 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.BOW);
+		return new ItemStack(Material.ARROW);
 	}
 
 	@Override
