@@ -20,11 +20,21 @@ public class NerdService extends MySQLService {
 				.select("nerd.*")
 				.table("nerd")
 				.leftJoin("hours")
-					.on("hours.uuid = nerd.uuid")
+				.on("hours.uuid = nerd.uuid")
 				.where("name like ?")
 				.orderBy("position(? in name), hours.total desc")
 				.args("%" + partialName + "%", partialName)
 				.first(Nerd.class);
+	}
+
+	public List<Nerd> search(String partialName) {
+		List<Nerd> nerds = database
+				.where("name like ?")
+				.args("%" + partialName + "%")
+				.results(Nerd.class);
+		for (Nerd nerd : nerds)
+			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
+		return nerds;
 	}
 
 	public List<Nerd> getOnlineNerds() {
