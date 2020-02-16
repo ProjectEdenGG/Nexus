@@ -106,11 +106,13 @@ public class Alerts {
 		}
 	}
 
+	public static void playSound(Player player) {
+		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0F, 1.0F);
+	}
+
 	public void playSound() {
-		if (!isMuted()) {
-			Player player = (Player) Utils.getPlayer(uuid);
-			player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0F, 1.0F);
-		}
+		if (!isMuted())
+			playSound(Utils.getPlayer(uuid).getPlayer());
 	}
 
 	@Data
