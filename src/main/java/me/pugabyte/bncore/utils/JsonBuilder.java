@@ -3,10 +3,13 @@ package me.pugabyte.bncore.utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.bncore.utils.Utils.*;
+import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.getLastColor;
+import static me.pugabyte.bncore.utils.Utils.loreize;
 
 public class JsonBuilder {
 	private ComponentBuilder result = new ComponentBuilder("");
@@ -28,7 +31,7 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder group() {
-		result.append(builder.create());
+		result.append(builder.create(), FormatRetention.NONE);
 		builder = new ComponentBuilder("");
 		return this;
 	}

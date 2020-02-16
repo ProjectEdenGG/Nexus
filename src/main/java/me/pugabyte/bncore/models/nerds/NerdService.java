@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// TODO: Support past names
 public class NerdService extends MySQLService {
 	@Override
 	public Nerd get(String uuid) {
@@ -15,24 +16,19 @@ public class NerdService extends MySQLService {
 		return nerd;
 	}
 
-	public Nerd find(String partialName) {
-		return database
+	public List<Nerd> find(String partialName) {
+		return find(partialName, "name");
+	}
+
+	public List<Nerd> find(String partialName, String column) {
+		List<Nerd> nerds = database
 				.select("nerd.*")
 				.table("nerd")
 				.leftJoin("hours")
 				.on("hours.uuid = nerd.uuid")
-				.where("name like ?")
+				.where("nerd." + safe(column) + " like ?")
 				.orderBy("position(? in name), hours.total desc")
 				.args("%" + partialName + "%", partialName)
-				.first(Nerd.class);
-	}
-
-	public List<Nerd> search(String column, String partial, int limit) {
-		List<Nerd> nerds = database
-				.where(column + " like ?")
-				.args("%" + partial + "%")
-				.orderBy("name")
-				.limit(limit)
 				.results(Nerd.class);
 		for (Nerd nerd : nerds)
 			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));

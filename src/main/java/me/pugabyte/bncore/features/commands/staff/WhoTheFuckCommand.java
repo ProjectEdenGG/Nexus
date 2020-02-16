@@ -32,7 +32,6 @@ public class WhoTheFuckCommand extends CustomCommand {
 		line();
 		line();
 		send("&3Who the fuck is &6&l" + nerd.getName() + "&3?");
-		line();
 
 		HoursService hoursService = new HoursService();
 		LiteBansService liteBansService = new LiteBansService();
@@ -62,26 +61,28 @@ public class WhoTheFuckCommand extends CustomCommand {
 		List<String> alts = liteBansService.getAlts(nerd.getUuid());
 
 		JsonBuilder json = json()
-				.next("&3Rank: &e" + rank).newline()
-				.next("&3First Join: &e" + firstJoin).newline();
+				.newline().next("&3Rank: &e" + rank)
+				.newline().next("&3First Join: &e" + firstJoin);
 
 		if (lastJoinQuitDate != null)
-				json.next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate).newline();
+			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate);
 
 		if (hours.getTotal() > 0)
-			json.next("&3Hours: &e" + Utils.timespanFormat(hours.getTotal(), "None")).newline();
+			json.newline().next("&3Hours: &e" + Utils.timespanFormat(hours.getTotal(), "None"));
 
 		if (history > 0)
-			json.next("&3History: &e" + history).command("/history " + nerd.getName()).newline();
+			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName());
 
 		if (alts.size() > 0)
-			json.next("&3Alts: &e" + String.join(", ", alts)).newline();
+			json.newline().next("&3Alts: &e" + String.join(", ", alts));
+
+		// TODO: Past names
 
 		try {
 			GeoIP geoIp = geoIpService.get(nerd);
-			json.next("&3Location: &e" + geoIp.getFriendlyLocationString()).hover(geoIp.getIp()).suggest(geoIp.getIp());
+			json.newline().next("&3Location: &e" + geoIp.getFriendlyLocationString()).hover("&e" + geoIp.getIp()).suggest(geoIp.getIp());
 		} catch (InvalidInputException ex) {
-			json.next("&3Location: &c" + ex.getMessage());
+			json.newline().next("&3Location: &c" + ex.getMessage());
 		}
 
 		send(json);
