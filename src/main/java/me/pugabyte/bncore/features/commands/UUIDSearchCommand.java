@@ -16,7 +16,7 @@ public class UUIDSearchCommand extends CustomCommand {
 	@Path("<uuid> [amount]")
 	void search(String string, @Arg("25") int limit) {
 		NerdService service = new NerdService();
-		send("&3Matches for &e" + arg(1));
+		send("&3Matches for '&e" + arg(1) + "&3':");
 		for (Nerd nerd : service.search("uuid", arg(1), limit)) {
 			send(json("&e" + nerd.getUuid() + " (" + nerd.getName() + ")").suggest(nerd.getUuid()));
 		}
