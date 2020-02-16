@@ -10,10 +10,10 @@ import org.bukkit.OfflinePlayer;
 
 import static me.pugabyte.bncore.utils.Utils.camelCase;
 
-public class JMcMMOPrestigeCommand extends CustomCommand {
+public class McMMOPrestigeCommand extends CustomCommand {
 	private McMMOService service = new McMMOService();
 
-	public JMcMMOPrestigeCommand(CommandEvent event) {
+	public McMMOPrestigeCommand(CommandEvent event) {
 		super(event);
 	}
 
