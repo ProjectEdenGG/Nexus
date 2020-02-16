@@ -376,10 +376,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Match match = minigamer.getMatch();
 		PixelPaintersMatchData matchData = match.getMatchData();
 
-		// For Testing
-		Location floorLoc = (event.getClickedBlock()).getRelative(0, -1, 0).getLocation();
-
-//		Location floorLoc = (event.getClickedBlock()).getRelative(0, -1 ,3).getLocation();
+		Location floorLoc = (event.getClickedBlock()).getRelative(0, -1, 3).getLocation();
 		ProtectedRegion floorRg = null;
 		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(floorLoc);
 
