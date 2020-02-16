@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.models.mechanics;
 import me.pugabyte.bncore.features.minigames.mechanics.*;
 
 public enum MechanicType {
+	ARCHERY(new Archery()),
 	CAPTURE_THE_FLAG(new CaptureTheFlag()),
 	DEATH_SWAP(new DeathSwap()),
 	FOUR_TEAM_DEATHMATCH(new FourTeamDeathmatch()),
