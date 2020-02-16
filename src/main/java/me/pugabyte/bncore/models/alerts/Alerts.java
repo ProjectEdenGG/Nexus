@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.utils.Jingles;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.persistence.Id;
@@ -106,13 +106,9 @@ public class Alerts {
 		}
 	}
 
-	public static void playSound(Player player) {
-		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0F, 1.0F);
-	}
-
 	public void playSound() {
 		if (!isMuted())
-			playSound(Utils.getPlayer(uuid).getPlayer());
+			Jingles.ping(Utils.getPlayer(uuid).getPlayer());
 	}
 
 	@Data

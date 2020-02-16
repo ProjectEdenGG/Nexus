@@ -8,8 +8,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import ru.tehkode.permissions.PermissionUser;
+import org.bukkit.event.player.PlayerJoinEvent;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 @Aliases("wgedit")
@@ -38,19 +39,22 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 				on();
 			else
 				off();
-
 	}
 
 	private void on() {
-		PermissionUser user = PermissionsEx.getUser(player());
-		user.removePermission(permission);
+		PermissionsEx.getUser(player()).removePermission(permission);
 		send("&eWorldGuard editing &aenabled");
 	}
 
 	private void off() {
-		PermissionUser user = PermissionsEx.getUser(player());
-		user.addPermission(permission);
+		PermissionsEx.getUser(player()).addPermission(permission);
 		send("&eWorldGuard editing &cdisabled");
+	}
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		if (event.getPlayer().hasPermission(permission))
+			off();
 	}
 
 }

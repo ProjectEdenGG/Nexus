@@ -25,7 +25,7 @@ public class NerdService extends MySQLService {
 				.select("nerd.*")
 				.table("nerd")
 				.leftJoin("hours")
-				.on("hours.uuid = nerd.uuid")
+					.on("hours.uuid = nerd.uuid")
 				.where("nerd." + safe(column) + " like ?")
 				.orderBy("position(? in name), hours.total desc")
 				.args("%" + partialName + "%", partialName)
