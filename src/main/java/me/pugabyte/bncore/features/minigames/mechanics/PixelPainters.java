@@ -102,8 +102,8 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersArena arena = match.getArena();
 		matchData.setLobbyDesign(0);
 		countDesigns(match);
-		match.getTasks().repeat(0, 2 * 20, () -> {
-			if (match.isEnded())
+		int taskId = match.getTasks().repeat(0, 2 * 20, () -> {
+			if (match.isEnded() || match.isStarted())
 				return;
 
 			// Build Next Design
@@ -147,6 +147,7 @@ public class PixelPainters extends TeamlessMechanic {
 			Schematic schem = WEUtils.copy(arena.getLobbyDesignRegion());
 			WEUtils.paste(schem, pasteRegion.getMinimumPoint());
 		});
+		matchData.setAnimateLobbyID(taskId);
 	}
 
 	@Override
@@ -154,6 +155,7 @@ public class PixelPainters extends TeamlessMechanic {
 		super.onStart(event);
 		Match match = event.getMatch();
 		PixelPaintersMatchData matchData = match.getMatchData();
+		match.getTasks().cancel(matchData.getAnimateLobbyID());
 		matchData.setCurrentRound(0);
 		matchData.setTimeLeft(0);
 		countDesigns(match);
@@ -330,7 +332,7 @@ public class PixelPainters extends TeamlessMechanic {
 		}
 
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !Utils.isNullOrAir(event.getItem())) {
-			if (!canPlaceBlock(event)) {
+			if (!canPlaceBlock(minigamer, event)) {
 				event.setCancelled(true);
 			}
 			return;
@@ -349,10 +351,11 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	public void removeBlock(Minigamer minigamer, PlayerInteractEvent event) {
+		PixelPaintersArena arena = minigamer.getMatch().getArena();
 		Block block = event.getClickedBlock();
 		Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(block.getLocation());
 		regionsAt.forEach(region -> {
-			if (region.getId().matches("pixelpainters_floortest_[0-9]+")) {
+			if (region.getId().matches(arena.getRegionTypeRegex("floor"))) {
 				ItemStack item = new ItemStack(block.getType(), 1, block.getData());
 				event.getClickedBlock().setType(Material.AIR);
 				Player player = minigamer.getPlayer();
@@ -362,11 +365,12 @@ public class PixelPainters extends TeamlessMechanic {
 		});
 	}
 
-	public boolean canPlaceBlock(PlayerInteractEvent event) {
+	public boolean canPlaceBlock(Minigamer minigamer, PlayerInteractEvent event) {
+		PixelPaintersArena arena = minigamer.getMatch().getArena();
 		Block block = event.getClickedBlock().getRelative(event.getBlockFace());
 		Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(block.getLocation());
 		for (ProtectedRegion region : regionsAt) {
-			if (region.getId().matches("pixelpainters_floortest_[0-9]+"))
+			if (region.getId().matches(arena.getRegionTypeRegex("floor")))
 				return true;
 		}
 		return false;
@@ -374,6 +378,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 	public void pressButton(Minigamer minigamer, PlayerInteractEvent event) {
 		Match match = minigamer.getMatch();
+		PixelPaintersArena arena = match.getArena();
 		PixelPaintersMatchData matchData = match.getMatchData();
 
 		Location floorLoc = (event.getClickedBlock()).getRelative(0, -1, 3).getLocation();
@@ -381,7 +386,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(floorLoc);
 
 		for (ProtectedRegion region : regions) {
-			if (region.getId().matches("pixelpainters_floortest_[0-9]+")) {
+			if (region.getId().matches(arena.getRegionTypeRegex("floor"))) {
 				floorRg = region;
 				break;
 			}
@@ -487,8 +492,7 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.getDesignsPlayed().add(design);
 
 		// Get minimum point from current chosen design
-		int yValue = designsRegion.getMinimumPoint().getBlockY() - 1;
-		Vector designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0).subtract(0, yValue, 0);
+		Vector designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
 
 		// Get maximum point from: 255 - MinPoint
 		int diff = designsRegion.getMaximumPoint().getBlockY() - designMin.getBlockY();
