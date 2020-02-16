@@ -16,7 +16,7 @@ public class PlayerSearchCommand extends CustomCommand {
 	@Path("<name> [amount]")
 	void search(String string, @Arg("25") int limit) {
 		NerdService service = new NerdService();
-		send("&3Matches for '&e" + arg(1) + "'&3:");
+		send("&3Matches for '&e" + arg(1) + "&3':");
 		for (Nerd nerd : service.search("name", arg(1), limit)) {
 			send(json("&e" + nerd.getName()).suggest(nerd.getName()));
 		}
