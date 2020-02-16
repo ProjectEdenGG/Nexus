@@ -29,6 +29,7 @@ public class PixelPaintersMatchData extends MatchData {
 	private int timeLeft;
 	private boolean animateLobby;
 	private int lobbyDesign;
+	private int animateLobbyID;
 
 
 	public PixelPaintersMatchData(Match match) {
