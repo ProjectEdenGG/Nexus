@@ -60,7 +60,15 @@ public class MatchManager {
 	}
 
 	public static void janitor() {
-		matches.removeIf(match -> match.getMinigamers() == null || match.getMinigamers().size() == 0);
+		List<Match> toRemove = new ArrayList<>();
+		matches.forEach(match -> {
+			if (match.getMinigamers() == null || match.getMinigamers().size() == 0) {
+				match.end();
+				toRemove.add(match);
+			}
+		});
+
+		matches.removeAll(toRemove);
 	}
 
 }

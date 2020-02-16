@@ -115,7 +115,7 @@ public class Match {
 		minigamer.toGamelobby();
 		scoreboard.update();
 		if (minigamers == null || minigamers.size() == 0)
-			MatchManager.remove(this);
+			end();
 	}
 
 	public void start() {
