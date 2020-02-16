@@ -10,11 +10,11 @@ import java.util.Map;
 @Data
 @SerializableAs("PixelPaintersArena")
 public class PixelPaintersArena extends Arena {
-	private Region DESIGNS_REGION = getRegion(getRegionBaseName() + "_designs");
-	private Region NEXT_DESIGN_REGION = getRegion(getRegionBaseName() + "_nextdesign");
-	private Region LOBBY_DESIGN_REGION = getRegion(getRegionBaseName() + "_lobbynextdesign");
-	private Region LOGO_REGION = getRegion(getRegionBaseName() + "_logo");
-	private Region LOBBY_ANIMATION_REGION = getRegion(getRegionBaseName() + "lobbyanimation");
+	private Region designRegion = getRegion("designs");
+	private Region nextDesignRegion = getRegion("nextdesign");
+	private Region lobbyDesignRegion = getRegion("lobbynextdesign");
+	private Region logoRegion = getRegion("logo");
+	private Region lobbyAnimationRegion = getRegion("lobbyanimation");
 
 	@Override
 	public String getRegionBaseName() {
