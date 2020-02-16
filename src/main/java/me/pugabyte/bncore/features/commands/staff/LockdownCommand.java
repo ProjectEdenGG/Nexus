@@ -16,8 +16,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
+
+import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
@@ -48,9 +50,9 @@ public class LockdownCommand extends CustomCommand implements Listener {
 		tellStaff(PREFIX + player().getName() + " initiated lockdown: &c" + reason);
 
 		for (Player player : Bukkit.getOnlinePlayers())
-			if (!canBypass(player)) {
+			if (!canBypass(player.getUniqueId())) {
 				player.kickPlayer(getLockdownReason());
-				tellStaff(PREFIX + "Removed " + player.getName() + "from server");
+				tellStaff(PREFIX + "Removed " + player.getName() + " from server");
 			}
 	}
 
@@ -66,11 +68,11 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onConnect(PlayerLoginEvent event) {
+	public void onConnect(AsyncPlayerPreLoginEvent event) {
 		if (lockdown)
-			if (!canBypass(player())) {
+			if (!canBypass(event.getUniqueId())) {
 				event.disallow(Result.KICK_OTHER, getLockdownReason());
-				tellStaff(PREFIX + "Prevented " + event.getPlayer().getName() + " from joining the server");
+				tellStaff(PREFIX + "Prevented " + event.getName() + " from joining the server");
 			}
 	}
 
@@ -81,9 +83,9 @@ public class LockdownCommand extends CustomCommand implements Listener {
 				send(player, message);
 	}
 
-	public boolean canBypass(Player player) {
+	public boolean canBypass(UUID player) {
 		Hours hours = new HoursService().get(player);
-		return hours.getTotal() < (30 * 60);
+		return hours.getTotal() > (30 * 60);
 	}
 
 	private String getLockdownReason() {
