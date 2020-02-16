@@ -5,9 +5,9 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
-import me.pugabyte.bncore.models.dailyrewards.DailyRewardsService;
-import me.pugabyte.bncore.models.dailyrewards.Reward;
+import me.pugabyte.bncore.models.dailyreward.DailyReward;
+import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
+import me.pugabyte.bncore.models.dailyreward.Reward;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,8 +17,8 @@ import org.bukkit.inventory.ItemStack;
 import static me.pugabyte.bncore.utils.Utils.loreize;
 
 public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
-	private DailyRewardsService service = new DailyRewardsService();
-	private DailyRewards dailyRewards;
+	private DailyRewardService service = new DailyRewardService();
+	private DailyReward dailyReward;
 
 	private ItemStack back = new ItemStackBuilder(Material.BARRIER).name("&cScroll back 1 day").build();
 	private ItemStack back7 = new ItemStackBuilder(Material.BARRIER).amount(7).name("&cScroll back 7 days").build();
@@ -30,8 +30,8 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private ItemStack unclaimed = new ItemStack(Material.WOOL, 1);
 	private ItemStack locked = new ItemStack(Material.WOOL, 1, (short) 15);
 
-	DailyRewardsMenu(DailyRewards dailyRewards) {
-		this.dailyRewards = dailyRewards;
+	DailyRewardsMenu(DailyReward dailyReward) {
+		this.dailyReward = dailyReward;
 	}
 
 	@Override
@@ -61,16 +61,16 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			Reward dailyReward = DailyRewardsFeature.getReward(day);
 
 			String reward = "||&f||&6&lReward: &e" + loreize(dailyReward.getDescription(), ChatColor.YELLOW);
-			if (dailyRewards.getStreak() >= day) {
-				if (dailyRewards.hasClaimed(day)) {
+			if (this.dailyReward.getStreak() >= day) {
+				if (this.dailyReward.hasClaimed(day)) {
 					ItemStack item = nameItem(claimed.clone(), "&eDay " + day, "&3Claimed" + reward, day);
 					contents.set(new SlotPos(1, column), ClickableItem.empty(addGlowing(item)));
 				} else {
 					ItemStack item = nameItem(unclaimed.clone(), "&eDay " + day, "&6&lClick to claim" + reward, day);
 					final int currentDay = day;
 					contents.set(new SlotPos(1, column), ClickableItem.from(item, e -> {
-						dailyRewards.claim(currentDay);
-						service.save(dailyRewards);
+						this.dailyReward.claim(currentDay);
+						service.save(this.dailyReward);
 						scroll(contents, 0, initialDay);
 					}));
 				}

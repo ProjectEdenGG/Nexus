@@ -5,14 +5,14 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.rules.HasReadRules;
-import me.pugabyte.bncore.models.rules.RulesService;
+import me.pugabyte.bncore.models.rule.HasReadRules;
+import me.pugabyte.bncore.models.rule.RuleService;
 import org.bukkit.entity.Player;
 
 @Permission("group.moderator")
 @Aliases("hrr")
 public class HasReadRulesCommand extends CustomCommand {
-	RulesService service = new RulesService();
+	RuleService service = new RuleService();
 	HasReadRules hasReadRules;
 
 	public HasReadRulesCommand(CommandEvent event) {

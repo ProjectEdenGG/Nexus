@@ -5,9 +5,9 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.homes.Home;
-import me.pugabyte.bncore.models.homes.HomeOwner;
-import me.pugabyte.bncore.models.homes.HomeService;
+import me.pugabyte.bncore.models.home.Home;
+import me.pugabyte.bncore.models.home.HomeOwner;
+import me.pugabyte.bncore.models.home.HomeService;
 
 import java.util.Optional;
 

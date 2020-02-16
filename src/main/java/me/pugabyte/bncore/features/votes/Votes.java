@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.votes;
 
-import me.pugabyte.bncore.models.votes.Vote;
+import me.pugabyte.bncore.models.vote.Vote;
 
 public class Votes {
 

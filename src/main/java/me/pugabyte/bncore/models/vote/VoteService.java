@@ -1,11 +1,11 @@
-package me.pugabyte.bncore.models.votes;
+package me.pugabyte.bncore.models.vote;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class Votes {
+public class VoteService {
 	private List<Vote> votes;
 
 }
