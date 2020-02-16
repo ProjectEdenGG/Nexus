@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.geoip.GeoIP;
 import me.pugabyte.bncore.models.geoip.GeoIP.Distance;
@@ -12,6 +13,7 @@ import me.pugabyte.bncore.utils.Utils;
 
 import java.text.DecimalFormat;
 
+@Permission("group.moderator")
 public class IrlDistanceCommand extends CustomCommand {
 
 	public IrlDistanceCommand(@NonNull CommandEvent event) {

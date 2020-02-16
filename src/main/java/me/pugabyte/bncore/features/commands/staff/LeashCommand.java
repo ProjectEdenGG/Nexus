@@ -1,8 +1,6 @@
-package me.pugabyte.bncore.features.leash;
+package me.pugabyte.bncore.features.commands.staff;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -19,7 +17,8 @@ import static me.pugabyte.bncore.utils.Tasks.repeat;
 
 @Permission("leash.use")
 public class LeashCommand extends CustomCommand {
-	private HashMap<UUID, Integer> leashes = BNCore.leash.leashes;
+	private static HashMap<UUID, Integer> leashes = new HashMap<>();
+	private static double velocity = .8;
 
 	public LeashCommand(CommandEvent event) {
 		super(event);
@@ -51,7 +50,7 @@ public class LeashCommand extends CustomCommand {
 
 	@Path("setVelocity <velocity>")
 	void setVelocity(double velocity) {
-		BNCore.leash.setVelocity(velocity);
+		LeashCommand.velocity = velocity;
 		send(PREFIX + "&3Velocity multiplier set to &e" + velocity);
 	}
 
@@ -78,7 +77,7 @@ public class LeashCommand extends CustomCommand {
 			}
 
 			Vector vector = target.getLocation().toVector().subtract(staff.getLocation().toVector()).normalize();
-			double multiplier = staff.getLocation().distance(target.getLocation()) / 100 + BNCore.leash.getVelocity();
+			double multiplier = staff.getLocation().distance(target.getLocation()) / 100 + velocity;
 			staff.setVelocity(vector.multiply(multiplier));
 		});
 

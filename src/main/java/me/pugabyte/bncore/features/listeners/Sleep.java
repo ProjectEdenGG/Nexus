@@ -1,25 +1,31 @@
-package me.pugabyte.bncore.features.sleep;
+package me.pugabyte.bncore.features.listeners;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerBedLeaveEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.BNCore.sleep;
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
-public class Sleep {
+public class Sleep implements Listener {
 	private final String PREFIX = Utils.getPrefix("Sleep");
 	public boolean handling = false;
 
 	public Sleep() {
-		new SleepListener();
+		BNCore.registerListener(this);
 	}
 
 	public void calculate(World world) {
@@ -69,5 +75,22 @@ public class Sleep {
 
 	boolean isHandling() {
 		return handling;
+	}
+
+	@EventHandler
+	public void onBedEnter(PlayerBedEnterEvent event) {
+		if (!sleep.isHandling()) {
+			Tasks.wait(1, () -> sleep.calculate(event.getPlayer().getWorld()));
+		}
+	}
+
+	@EventHandler
+	public void onBedLeave(PlayerBedLeaveEvent event) {
+		if (!sleep.isHandling()) {
+			World world = event.getPlayer().getWorld();
+			if (world.getTime() >= 12541 && world.getTime() <= 23458) {
+				Tasks.wait(1, () -> sleep.calculate(world));
+			}
+		}
 	}
 }

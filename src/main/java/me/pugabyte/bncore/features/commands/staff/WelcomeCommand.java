@@ -35,7 +35,7 @@ public class WelcomeCommand extends CustomCommand {
 	void welcome(Player player) {
 		if (!player.hasPermission("rank.guest"))
 			error("Prevented accidental welcome");
-		if (((Hours) new HoursService().get(player)).getTotal() < 60 * 60)
+		if (((Hours) new HoursService().get(player)).getTotal() > (60 * 60))
 			error("Prevented accidental welcome");
 
 		try {
