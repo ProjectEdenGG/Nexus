@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.geoip;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.geoip.GeoIP;
@@ -18,6 +19,7 @@ public class IrlDistanceCommand extends CustomCommand {
 		PREFIX = Utils.getPrefix("GeoIP");
 	}
 
+	@Async
 	@Path("<player> [player]")
 	void run(GeoIP from, @Arg("self") GeoIP to) {
 		Distance distance = new Distance(from, to);
