@@ -11,6 +11,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -146,5 +147,10 @@ public class HorsePickerCommand extends CustomCommand {
 		horse.setColor(color);
 		horse.setStyle(style);
 		horse.setOwner(player);
+		horse.setAdult();
+		horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.4f);
+		horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(30);
+		horse.getAttribute(Attribute.HORSE_JUMP_STRENGTH).setBaseValue(0.96f);
+		horse.setHealth(30.0);
 	}
 }
