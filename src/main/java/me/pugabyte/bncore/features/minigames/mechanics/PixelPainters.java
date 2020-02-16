@@ -72,6 +72,11 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	@Override
+	public boolean shuffleSpawnpoints() {
+		return false;
+	}
+
+	@Override
 	public void onJoin(MatchJoinEvent event) {
 		super.onJoin(event);
 		Match match = event.getMatch();
