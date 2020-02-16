@@ -20,7 +20,7 @@ public class NameCommand extends CustomCommand {
 		send(json("&e" + Utils.getPlayer(uuid).getName()).hover("&3Click to copy").suggest(Utils.getPlayer(uuid).getName()));
 	}
 
-	@Path()
+	@Path
 	void usage() {
 		error("Usage: /name <uuid>");
 	}

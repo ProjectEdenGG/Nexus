@@ -17,4 +17,9 @@ public class UUIDCommand extends CustomCommand {
 		send(json("&e" + player.getUniqueId()).hover("&3Click to copy").suggest(player.getUniqueId().toString()));
 	}
 
+	@Path
+	void usage() {
+		error("Usage: /uuid <name>");
+	}
+
 }
