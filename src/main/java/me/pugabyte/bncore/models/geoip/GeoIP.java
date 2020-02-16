@@ -119,6 +119,10 @@ public class GeoIP extends PlayerOwnedObject {
 		private String threatTypes;
 	}
 
+	public String getFriendlyLocationString() {
+		return city + ", " + regionName + ", " + countryName;
+	}
+
 	@Data
 	public static class Distance {
 		double distance;

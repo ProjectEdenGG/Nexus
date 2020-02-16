@@ -72,6 +72,11 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	@Override
+	public boolean shuffleSpawnpoints() {
+		return false;
+	}
+
+	@Override
 	public void onJoin(MatchJoinEvent event) {
 		super.onJoin(event);
 		Match match = event.getMatch();
@@ -102,7 +107,7 @@ public class PixelPainters extends TeamlessMechanic {
 				return;
 
 			// Build Next Design
-			Region designsRegion = arena.getDESIGNS_REGION();
+			Region designsRegion = arena.getDesignRegion();
 
 			int designCount = matchData.getDesignCount();
 			int design = Utils.randomInt(1, designCount);
@@ -122,7 +127,7 @@ public class PixelPainters extends TeamlessMechanic {
 			Vector designMax = designsRegion.getMaximumPoint().subtract(0, diff, 0);
 
 			Vector copySliceMin = designMin.add(0, 0, 8);
-			Vector pasteMin = arena.getLOBBY_DESIGN_REGION().getMinimumPoint();
+			Vector pasteMin = arena.getLobbyDesignRegion().getMinimumPoint();
 
 			Vector copyMinV;
 			Vector copyMaxV;
@@ -138,8 +143,8 @@ public class PixelPainters extends TeamlessMechanic {
 			}
 
 			// Paste Design
-			Region pasteRegion = arena.getLOBBY_ANIMATION_REGION();
-			Schematic schem = WEUtils.copy(arena.getLOBBY_DESIGN_REGION());
+			Region pasteRegion = arena.getLobbyAnimationRegion();
+			Schematic schem = WEUtils.copy(arena.getLobbyDesignRegion());
 			WEUtils.paste(schem, pasteRegion.getMinimumPoint());
 		});
 	}
@@ -272,7 +277,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 	public void countDesigns(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		Region designsRegion = arena.getDESIGNS_REGION();
+		Region designsRegion = arena.getDesignRegion();
 
 		int area = designsRegion.getArea();
 		EditSession editSession = WEUtils.getEditSession();
@@ -472,7 +477,7 @@ public class PixelPainters extends TeamlessMechanic {
 	// designsRegion Max is south east corner, designsRegion Min is north west corner
 	public void setupNextDesign(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		Region designsRegion = arena.getDESIGNS_REGION();
+		Region designsRegion = arena.getDesignRegion();
 		PixelPaintersMatchData matchData = match.getMatchData();
 
 		int designCount = matchData.getDesignCount();
@@ -496,7 +501,7 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.setDesignRegion(designRegion);
 
 		Vector copySliceMin = designMin.add(0, 0, 8);
-		Vector pasteMin = arena.getNEXT_DESIGN_REGION().getMinimumPoint();
+		Vector pasteMin = arena.getNextDesignRegion().getMinimumPoint();
 
 		Vector copyMinV;
 		Vector copyMaxV;
@@ -515,7 +520,7 @@ public class PixelPainters extends TeamlessMechanic {
 	public void pasteNewDesign(Match match) {
 		PixelPaintersArena arena = match.getArena();
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
-		Schematic schem = WEUtils.copy(arena.getNEXT_DESIGN_REGION());
+		Schematic schem = WEUtils.copy(arena.getNextDesignRegion());
 		wallRegions.forEach(wallRegion -> {
 			Region region = WGUtils.convert(wallRegion);
 			WEUtils.paste(schem, region.getMinimumPoint());
@@ -524,7 +529,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 	public void giveBlocks(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) arena.getNEXT_DESIGN_REGION());
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) arena.getNextDesignRegion());
 
 		List<ItemStack> items = new ArrayList<>();
 		for (Block block : blocks) {
@@ -540,7 +545,7 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersArena arena = match.getArena();
 		// Paste Logo on all island walls
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
-		Schematic schem = WEUtils.copy(arena.getLOGO_REGION());
+		Schematic schem = WEUtils.copy(arena.getLogoRegion());
 		wallRegions.forEach(wallRegion -> {
 			Region region = WGUtils.convert(wallRegion);
 			WEUtils.paste(schem, region.getMinimumPoint());
