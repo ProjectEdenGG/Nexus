@@ -231,6 +231,8 @@ class PathParser {
 				if (fallback == null)
 					if (args.size() >= getRequiredArgs(path))
 						fallback = method;
+					else if (args.size() == 0 && getLiteralWords(path).length() == 0)
+						fallback = method;
 				continue;
 			}
 

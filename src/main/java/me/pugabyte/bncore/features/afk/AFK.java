@@ -55,4 +55,17 @@ public class AFK {
 		return players.get(player);
 	}
 
+	public static int getActivePlayers() {
+		if (Bukkit.getOnlinePlayers().size() == 0)
+			return 0;
+		else {
+			int result = 0;
+			for (Player player : Bukkit.getOnlinePlayers())
+				if (!get(player).isAfk())
+					++result;
+
+			return result;
+		}
+	}
+
 }
