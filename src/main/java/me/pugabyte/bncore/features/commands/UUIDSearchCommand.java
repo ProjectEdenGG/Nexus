@@ -7,25 +7,25 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
 
-public class PlayerSearchCommand extends CustomCommand {
+public class UUIDSearchCommand extends CustomCommand {
 
-	public PlayerSearchCommand(CommandEvent event) {
+	public UUIDSearchCommand(CommandEvent event) {
 		super(event);
 	}
 
-	@Path("<name> [amount]")
+	@Path("<uuid> [amount]")
 	void search(String string, @Arg("25") int limit) {
 		NerdService service = new NerdService();
 		send("&3Matches for &e" + arg(1));
-		for (Nerd nerd : service.search("name", arg(1), limit)) {
-			send(json("&e" + nerd.getName()).suggest(nerd.getName()));
+		for (Nerd nerd : service.search("uuid", arg(1), limit)) {
+			send(json("&e" + nerd.getUuid() + " (" + nerd.getName() + ")").suggest(nerd.getUuid()));
 		}
 		send("&3Click on a name to insert it into your chat");
 	}
 
 	@Path
 	void usage() {
-		error("Usage: /playersearch <partial name>");
+		error("Usage: /uuidsearch <partial name>");
 	}
 
 }
