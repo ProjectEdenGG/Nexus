@@ -6,7 +6,6 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class PlayerSearchCommand extends CustomCommand {
@@ -20,7 +19,6 @@ public class PlayerSearchCommand extends CustomCommand {
 		NerdService service = new NerdService();
 		send("&3Matches for &e" + arg(1));
 		List<Nerd> nerds = service.search(arg(1));
-		nerds.sort(Comparator.comparing(Nerd::getName));
 		for (Nerd nerd : service.search(arg(1))) {
 			send(json("&e" + nerd.getName()).suggest(nerd.getName()));
 		}

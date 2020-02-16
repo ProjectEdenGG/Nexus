@@ -31,6 +31,7 @@ public class NerdService extends MySQLService {
 		List<Nerd> nerds = database
 				.where("name like ?")
 				.args("%" + partialName + "%")
+				.orderBy("name")
 				.results(Nerd.class);
 		for (Nerd nerd : nerds)
 			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
