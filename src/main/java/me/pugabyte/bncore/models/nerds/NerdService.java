@@ -27,11 +27,12 @@ public class NerdService extends MySQLService {
 				.first(Nerd.class);
 	}
 
-	public List<Nerd> search(String partialName) {
+	public List<Nerd> search(String column, String partial, int limit) {
 		List<Nerd> nerds = database
-				.where("name like ?")
-				.args("%" + partialName + "%")
+				.where(column + " like ?")
+				.args("%" + partial + "%")
 				.orderBy("name")
+				.limit(limit)
 				.results(Nerd.class);
 		for (Nerd nerd : nerds)
 			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
