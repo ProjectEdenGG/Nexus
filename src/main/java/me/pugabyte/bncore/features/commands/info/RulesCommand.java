@@ -4,12 +4,12 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.rules.HasReadRules;
-import me.pugabyte.bncore.models.rules.RulesService;
+import me.pugabyte.bncore.models.rule.HasReadRules;
+import me.pugabyte.bncore.models.rule.RuleService;
 import org.bukkit.entity.Player;
 
 public class RulesCommand extends CustomCommand {
-	RulesService service = new RulesService();
+	RuleService service = new RuleService();
 	HasReadRules hasReadRules;
 
 	public RulesCommand(CommandEvent event) {

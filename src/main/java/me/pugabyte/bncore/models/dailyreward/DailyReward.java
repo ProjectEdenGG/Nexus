@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.dailyrewards;
+package me.pugabyte.bncore.models.dailyreward;
 
 import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.Data;
@@ -20,7 +20,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class DailyRewards {
+public class DailyReward {
 	@NonNull
 	private String uuid;
 	private int streak;

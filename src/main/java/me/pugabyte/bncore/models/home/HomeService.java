@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.homes;
+package me.pugabyte.bncore.models.home;
 
 import me.pugabyte.bncore.models.MongoService;
 

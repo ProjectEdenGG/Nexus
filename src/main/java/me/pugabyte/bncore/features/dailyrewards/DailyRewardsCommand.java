@@ -7,8 +7,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
-import me.pugabyte.bncore.models.dailyrewards.DailyRewardsService;
+import me.pugabyte.bncore.models.dailyreward.DailyReward;
+import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
@@ -19,13 +19,13 @@ import java.util.List;
 @Aliases({"dr", "dailyreward"})
 @Permission("daily.rewards")
 public class DailyRewardsCommand extends CustomCommand {
-	private DailyRewardsService service = new DailyRewardsService();
-	private DailyRewards dailyRewards;
+	private DailyRewardService service = new DailyRewardService();
+	private DailyReward dailyReward;
 
 	public DailyRewardsCommand(CommandEvent event) {
 		super(event);
 		if (sender() instanceof Player)
-			dailyRewards = service.get(player());
+			dailyReward = service.get(player());
 	}
 
 	@Path
@@ -33,15 +33,15 @@ public class DailyRewardsCommand extends CustomCommand {
 		if (WorldGroup.SURVIVAL != WorldGroup.get(player().getWorld()))
 			error("&cYou must be in the survival worlds to claim this reward.");
 
-		DailyRewardsFeature.menu(player(), dailyRewards);
+		DailyRewardsFeature.menu(player(), dailyReward);
 	}
 
 	@Path("dailyreset")
 	@Permission("dailyreset")
 	void dailyReset() {
 		console();
-		List<DailyRewards> dailyRewards = service.getAll();
-		for (DailyRewards dailyReward : dailyRewards) {
+		List<DailyReward> dailyRewards = service.getAll();
+		for (DailyReward dailyReward : dailyRewards) {
 			if (!dailyReward.isEarnedToday()) {
 				dailyReward.setStreak(0);
 				dailyReward.setClaimed(null);
@@ -59,18 +59,18 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path("streak [player]")
 	void streak(@Arg("self") OfflinePlayer player) {
-		int streak = dailyRewards.getStreak();
+		int streak = dailyReward.getStreak();
 		if (!player().equals(player)) {
-			streak = ((DailyRewards) service.get(playerArg(2))).getStreak();
+			streak = ((DailyReward) service.get(playerArg(2))).getStreak();
 		}
 		send(PREFIX + player.getName() + "'s streak: &e" + streak);
 	}
 
 	@Path("today [player]")
 	void today(@Arg("self") OfflinePlayer player) {
-		boolean earnedToday = dailyRewards.isEarnedToday();
+		boolean earnedToday = dailyReward.isEarnedToday();
 		if (!isSelf(player))
-			earnedToday = ((DailyRewards) service.get(player)).isEarnedToday();
+			earnedToday = ((DailyReward) service.get(player)).isEarnedToday();
 
 		send(PREFIX + player.getName() + " has " + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
@@ -78,26 +78,26 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Path("unclaim <player> <day>")
 	@Permission("modify")
 	void unclaim(OfflinePlayer player, int day) {
-		dailyRewards = service.get(player);
-		dailyRewards.unclaim(day);
-		service.save(dailyRewards);
+		dailyReward = service.get(player);
+		dailyReward.unclaim(day);
+		service.save(dailyReward);
 		send(PREFIX + "Unclaimed day " + day + " for player " + player.getName());
 	}
 
 	@Path("set <player> <day>")
 	@Permission("modify")
 	void setDay(OfflinePlayer player, int day) {
-		dailyRewards = service.get(player);
-		dailyRewards.setStreak(day);
-		service.save(dailyRewards);
-		send(PREFIX + "Streak set to " + dailyRewards.getStreak() + " for player " + player.getName());
+		dailyReward = service.get(player);
+		dailyReward.setStreak(day);
+		service.save(dailyReward);
+		send(PREFIX + "Streak set to " + dailyReward.getStreak() + " for player " + player.getName());
 	}
 
 	@Path("reset")
 	void reset() {
 		MenuUtils.ConfirmationMenu confirm = MenuUtils.ConfirmationMenu.builder().onConfirm((e) -> {
-			dailyRewards.reset();
-			service.save(dailyRewards);
+			dailyReward.reset();
+			service.save(dailyReward);
 			e.getPlayer().sendMessage(PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
 			e.getPlayer().closeInventory();
 		}).build();
@@ -108,7 +108,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Path("top [page]")
 	void top(@Arg("1") int page) {
 		Tasks.async(() -> {
-			List<DailyRewards> results = service.getPage(page);
+			List<DailyReward> results = service.getPage(page);
 			if (results.size() == 0) {
 				send(PREFIX + "&cNo results on page " + page);
 				return;
@@ -117,8 +117,8 @@ public class DailyRewardsCommand extends CustomCommand {
 			send("");
 			send(PREFIX + "Top streaks:");
 			int i = (page - 1) * 10 + 1;
-			for (DailyRewards dailyRewards : results) {
-				send("&3" + i + " &e" + dailyRewards.getPlayer().getName() + " &7- " + dailyRewards.getStreak());
+			for (DailyReward dailyReward : results) {
+				send("&3" + i + " &e" + dailyReward.getPlayer().getName() + " &7- " + dailyReward.getStreak());
 				++i;
 			}
 		});

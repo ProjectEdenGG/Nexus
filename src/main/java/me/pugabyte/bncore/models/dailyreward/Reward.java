@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.dailyrewards;
+package me.pugabyte.bncore.models.dailyreward;
 
 import lombok.Data;
 import org.bukkit.inventory.ItemStack;

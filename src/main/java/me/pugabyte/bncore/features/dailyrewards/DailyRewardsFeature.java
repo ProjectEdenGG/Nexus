@@ -2,9 +2,9 @@ package me.pugabyte.bncore.features.dailyrewards;
 
 import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.models.dailyrewards.DailyRewards;
-import me.pugabyte.bncore.models.dailyrewards.DailyRewardsService;
-import me.pugabyte.bncore.models.dailyrewards.Reward;
+import me.pugabyte.bncore.models.dailyreward.DailyReward;
+import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
+import me.pugabyte.bncore.models.dailyreward.Reward;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
@@ -39,13 +39,13 @@ public class DailyRewardsFeature implements Listener {
 				try {
 					if (((Hours) new HoursService().get(player)).getDaily() < (15 * 60)) continue;
 
-					DailyRewardsService service = new DailyRewardsService();
-					DailyRewards dailyRewards = service.get(player);
-					if (dailyRewards.isEarnedToday()) continue;
+					DailyRewardService service = new DailyRewardService();
+					DailyReward dailyReward = service.get(player);
+					if (dailyReward.isEarnedToday()) continue;
 
 					Tasks.sync(() -> {
-						dailyRewards.increaseStreak();
-						service.save(dailyRewards);
+						dailyReward.increaseStreak();
+						service.save(dailyReward);
 					});
 				} catch (Exception ex) {
 					BNCore.warn("Error in DailyRewards scheduler: " + ex.getMessage());
@@ -60,8 +60,8 @@ public class DailyRewardsFeature implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		DailyRewardsService service = new DailyRewardsService();
-		DailyRewards dailyReward = service.get(event.getPlayer());
+		DailyRewardService service = new DailyRewardService();
+		DailyReward dailyReward = service.get(event.getPlayer());
 		if (!dailyReward.isEarnedToday()) {
 			dailyReward.setEarnedToday(true);
 			dailyReward.increaseStreak();
@@ -69,9 +69,9 @@ public class DailyRewardsFeature implements Listener {
 		}
 	}
 
-	public static void menu(Player player, DailyRewards dailyRewards) {
+	public static void menu(Player player, DailyReward dailyReward) {
 		SmartInventory inv = SmartInventory.builder()
-				.provider(new DailyRewardsMenu(dailyRewards))
+				.provider(new DailyRewardsMenu(dailyReward))
 				.size(3, 9)
 				.title(ChatColor.DARK_AQUA + "Daily Rewards")
 				.build();

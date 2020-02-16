@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.votes;
+package me.pugabyte.bncore.models.vote;
 
 import lombok.Data;
 import lombok.NonNull;

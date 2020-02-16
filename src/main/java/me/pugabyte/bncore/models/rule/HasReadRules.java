@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.rules;
+package me.pugabyte.bncore.models.rule;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
