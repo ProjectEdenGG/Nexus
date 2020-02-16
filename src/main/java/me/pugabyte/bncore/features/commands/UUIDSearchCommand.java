@@ -7,25 +7,26 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class UUIDSearchCommand extends CustomCommand {
+	NerdService service = new NerdService();
 
 	public UUIDSearchCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("<uuid> [amount]")
-	void search(String string, @Arg("25") int limit) {
-		NerdService service = new NerdService();
-		send("&3Matches for '&e" + arg(1) + "&3':");
-		for (Nerd nerd : service.search("uuid", arg(1), limit)) {
-			send(json("&e" + nerd.getUuid() + " (" + nerd.getName() + ")").suggest(nerd.getUuid()));
-		}
-		send("&3Click on a name to insert it into your chat");
-	}
+	void search(String search, @Arg("25") int limit) {
+		List<Nerd> nerds = service.find(search, "uuid");
+		if (nerds.size() == 0)
+			error("No matches found for &e" + search);
 
-	@Path
-	void usage() {
-		error("Usage: /uuidsearch <partial name>");
+		send("&3Matches for '&e" + search + "&3':");
+		for (Nerd nerd : nerds.stream().limit(limit).collect(Collectors.toList()))
+			send(json("&e" + nerd.getUuid() + " (" + nerd.getName() + ")").insert(nerd.getUuid()));
+		send("&3Shift+Click on a name to insert it into your chat");
 	}
 
 }

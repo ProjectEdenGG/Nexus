@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.models;
 
 import com.dieselpoint.norm.Database;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.persistence.MySQLDatabase;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.nerds.Nerd;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public abstract class MySQLService {
 	protected static Database database;
@@ -50,9 +52,9 @@ public abstract class MySQLService {
 		return "'" + String.join("','", list) + "'";
 	}
 
-//	public String safe(String input) {
-//		if (Pattern.compile("[\\w\\d\\s]+").matcher(input).matches())
-//			return input;
-//		throw new InvalidInputException("Unsafe argument");
-//	}
+	public String safe(String input) {
+		if (Pattern.compile("[\\w\\d\\s]+").matcher(input).matches())
+			return input;
+		throw new InvalidInputException("Unsafe argument");
+	}
 }

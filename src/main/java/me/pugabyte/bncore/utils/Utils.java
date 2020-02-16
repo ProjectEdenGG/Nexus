@@ -244,9 +244,12 @@ public class Utils {
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
 
-		Nerd nerd = new NerdService().find(partialName);
-		if (nerd != null && nerd.getUuid() != null)
-			return nerd.getOfflinePlayer();
+		List<Nerd> matches = new NerdService().find(partialName);
+		if (matches.size() > 0) {
+			Nerd nerd = matches.get(0);
+			if (nerd != null && nerd.getUuid() != null)
+				return nerd.getOfflinePlayer();
+		}
 
 		throw new PlayerNotFoundException();
 	}
