@@ -69,8 +69,7 @@ public class MatchListener implements Listener {
 	}
 
 	// TODO: Prevent damage of hanging entities/armor stands/etc
-	@EventHandler(ignoreCancelled = true)
-	public void onDeath(EntityDamageByEntityEvent event) {
+	public void onDamage(EntityDamageByEntityEvent event) {
 		if (event.isCancelled()) return;
 
 		Minigamer victim, attacker;
@@ -124,7 +123,7 @@ public class MatchListener implements Listener {
 				event.setCancelled(true);
 			} else {
 				// Damaged by opponent
-				if (event.getDamage() < victim.getPlayer().getHealth()) {
+				if (event.getFinalDamage() < victim.getPlayer().getHealth()) {
 					mechanic.onDamage(victim, event);
 					return;
 				}
@@ -145,7 +144,12 @@ public class MatchListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onDeath(EntityDamageEvent event) {
+	public void onDamage(EntityDamageEvent event) {
+		if (event instanceof EntityDamageByEntityEvent) {
+			onDamage((EntityDamageByEntityEvent) event);
+			return;
+		}
+
 		Minigamer victim;
 
 		if (event.getEntity() instanceof Player) {
@@ -164,7 +168,7 @@ public class MatchListener implements Listener {
 			return;
 		}
 
-		if (event.getDamage() < victim.getPlayer().getHealth()) {
+		if (event.getFinalDamage() < victim.getPlayer().getHealth()) {
 			mechanic.onDamage(victim, event);
 			return;
 		}

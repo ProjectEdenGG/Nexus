@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.afk.events;
+package me.pugabyte.bncore.models.afk.events;
 
 import me.pugabyte.bncore.models.afk.AFKPlayer;
 

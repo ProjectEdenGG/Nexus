@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 
 // TODO:
+//  - Only paste the designs on active islands
 //  - Colorblind Mode? - is this even worth it?
 //  	- Would need to change: pasteWall, giveBlocks, checkDesign
 //  	- Separate palettes for each type
@@ -194,17 +195,17 @@ public class PixelPainters extends TeamlessMechanic {
 			} else {
 				for (Minigamer minigamer : match.getMinigamers()) {
 					if (matchData.getChecked().contains(minigamer))
-						lines.put("&a" + minigamer.getName(), 1);
+						lines.put("&1&a" + minigamer.getName(), 0);
 					else
-						lines.put(minigamer.getName(), 1);
+						lines.put("&1&f" + minigamer.getName(), 0);
 
-					lines.put("&a", 0);
+					lines.put("&2", 0);
 
 					int timeLeft = matchData.getTimeLeft();
 					if (timeLeft <= 0)
-						lines.put("&fTime Left: ", 0);
+						lines.put("&3&fTime Left: ", 0);
 					else
-						lines.put("&fTime Left: &c" + timeLeft, 0);
+						lines.put("&4&fTime Left: &c" + timeLeft, 0);
 				}
 			}
 

@@ -49,7 +49,10 @@ public class Discord {
 
 	public static void shutdown() {
 		try {
-			if (relayBot != null) relayBot.shutdown();
+			if (relayBot != null) {
+				relayBot.shutdown();
+				relayBot = null;
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

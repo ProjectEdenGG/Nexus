@@ -31,7 +31,6 @@ public class PixelPaintersMatchData extends MatchData {
 	private int lobbyDesign;
 	private int animateLobbyID;
 
-
 	public PixelPaintersMatchData(Match match) {
 		super(match);
 	}
