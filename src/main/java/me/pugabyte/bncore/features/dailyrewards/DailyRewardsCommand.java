@@ -48,10 +48,8 @@ public class DailyRewardsCommand extends CustomCommand {
 			}
 
 			dailyReward.setEarnedToday(false);
-			if (dailyReward.getPlayer().isOnline()) {
-				dailyReward.setEarnedToday(true);
+			if (dailyReward.getPlayer().isOnline())
 				dailyReward.increaseStreak();
-			}
 
 			service.save(dailyReward);
 		}

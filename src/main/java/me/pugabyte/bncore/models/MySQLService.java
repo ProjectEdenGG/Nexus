@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.models;
 
 import com.dieselpoint.norm.Database;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.persistence.MySQLDatabase;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
@@ -45,7 +46,11 @@ public abstract class MySQLService {
 	}
 
 	public <T> void saveSync(T object) {
+		long startTime = System.currentTimeMillis();
 		database.upsert(object);
+		long time = System.currentTimeMillis() - startTime;
+		if (time > 500)
+			BNCore.warn(object.getClass().getSimpleName() + " save time took " + time + "ms");
 	}
 
 	protected String asList(List<String> list) {
