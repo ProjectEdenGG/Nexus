@@ -3,7 +3,8 @@ package me.pugabyte.bncore.framework.persistence;
 public enum MySQLDatabase {
 	BEARNATION,
 	LITEBANS,
-	NAMELESS;
+	NAMELESS,
+	SMP_LWC;
 
 	public String getDatabase() {
 		String name = name().toLowerCase();
