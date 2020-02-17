@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 // TODO: Only spawn targets for the active islands
+// TODO: On Join --> load the next range color locations into matchdata
 
 public class Archery extends TeamlessMechanic {
 	@Override
@@ -46,8 +47,8 @@ public class Archery extends TeamlessMechanic {
 		Map<String, Integer> lines = new HashMap<>();
 		ArcheryMatchData matchData = match.getMatchData();
 
-		int timeLeft = match.getTimer().getTime();
 		if (match.isStarted()) {
+			int timeLeft = match.getTimer().getTime();
 			for (Minigamer minigamer : match.getMinigamers()) {
 				lines.put("&1", 0);
 				lines.put("&2&fScore: &c&l" + minigamer.getScore(), 0);
