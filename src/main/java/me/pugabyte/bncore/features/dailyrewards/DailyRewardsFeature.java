@@ -15,21 +15,17 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DailyRewardsFeature implements Listener {
+public class DailyRewardsFeature {
 	private static List<Reward> rewards = new ArrayList<>();
 
 	public DailyRewardsFeature() {
 		setupDailyRewards();
-
 		scheduler();
 	}
 
@@ -56,17 +52,6 @@ public class DailyRewardsFeature implements Listener {
 
 	public static int getMaxDays() {
 		return rewards.size();
-	}
-
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-		DailyRewardService service = new DailyRewardService();
-		DailyReward dailyReward = service.get(event.getPlayer());
-		if (!dailyReward.isEarnedToday()) {
-			dailyReward.setEarnedToday(true);
-			dailyReward.increaseStreak();
-			service.save(dailyReward);
-		}
 	}
 
 	public static void menu(Player player, DailyReward dailyReward) {
