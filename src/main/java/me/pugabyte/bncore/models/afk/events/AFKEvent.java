@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.afk.events;
+package me.pugabyte.bncore.models.afk.events;
 
 import lombok.Data;
 import lombok.NonNull;
