@@ -17,6 +17,8 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Sound;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -26,6 +28,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.text.DecimalFormat;
 
 public class MatchListener implements Listener {
 
@@ -122,13 +126,21 @@ public class MatchListener implements Listener {
 				// Friendly fire
 				event.setCancelled(true);
 			} else {
+				double newDamage = victim.getPlayer().getHealth() - event.getFinalDamage();
+
 				// Damaged by opponent
-				if (event.getFinalDamage() < victim.getPlayer().getHealth()) {
+				if (newDamage > 0) {
+					if (event.getDamager() instanceof Arrow)
+						attacker.tell("&7" + victim.getName() + " is on &c" + new DecimalFormat("#.0").format(newDamage) + " &7HP");
+
 					mechanic.onDamage(victim, event);
 					return;
 				}
 
 				event.setCancelled(true);
+
+				if (event.getDamager() instanceof Arrow)
+					attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
 				MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, attacker, event);
 				Utils.callEvent(deathEvent);
