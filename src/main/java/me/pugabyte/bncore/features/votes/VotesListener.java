@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.models.vote.Vote;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -45,7 +44,7 @@ public class VotesListener implements Listener {
 //		LocalDateTime timestamp = Utils.timestamp(event.getVote().getLocalTimestamp());
 		LocalDateTime timestamp = LocalDateTime.now();
 
-		Vote vote = new Vote(service, extra, timestamp);
-		Votes.save(vote);
+//		Vote vote = new Vote(service, extra, timestamp);
+//		Votes.save(vote);
 	}
 }

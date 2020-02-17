@@ -113,6 +113,9 @@ public class BNCore extends JavaPlugin {
 	public void addConfigDefault(String path, Object value) {
 		FileConfiguration config = getInstance().getConfig();
 		config.addDefault(path, value);
+
+		config.options().copyDefaults(true);
+		saveConfig();
 	}
 
 	public static AFK afk;
