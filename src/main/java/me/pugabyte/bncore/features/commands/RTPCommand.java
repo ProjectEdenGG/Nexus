@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.lwc.LWCProtection;
@@ -27,6 +28,7 @@ public class RTPCommand extends CustomCommand {
 
 	@Path
 	@Async
+	@Cooldown(30 * 20)
 	void rtp() {
 		if (!running) {
 			send(PREFIX + "Teleporting to random location");
