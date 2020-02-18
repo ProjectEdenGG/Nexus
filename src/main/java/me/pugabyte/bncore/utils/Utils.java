@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
 import net.md_5.bungee.api.ChatMessageType;
@@ -355,6 +356,23 @@ public class Utils {
 			return rank.getPrefix() + rank.getSuffix();
 		}
 		return null;
+	}
+
+	public static void updatePrefix(Player player, String prefix) {
+		PermissionUser user = PermissionsEx.getUser(player);
+		PermissionGroup[] groups = user.getGroups();
+		String rank = "";
+		TEST:
+		for (Rank test : Rank.values()) {
+			for (PermissionGroup group : groups) {
+				if (group.getName().equalsIgnoreCase(test.name())) {
+					rank = test.name();
+					break TEST;
+				}
+			}
+		}
+		runConsoleCommand("pex user " + player.getName() + " prefix \"" + prefix + "\"");
+		runConsoleCommand("pex user " + player.getName() + " suffix \"" + Rank.valueOf(rank).getFormat() + "\"");
 	}
 
 	public static void runCommand(Player player, String command) {
