@@ -1,21 +1,40 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
+import com.boydti.fawe.object.schematic.Schematic;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.util.Direction;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.mechanics.Archery;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
+import me.pugabyte.bncore.features.minigames.models.arenas.ArcheryArena;
+import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @MatchDataFor(Archery.class)
 public class ArcheryMatchData extends MatchData {
+	private WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
+	private WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
+	private Map<String, Schematic> targetSchematics = new HashMap<>();
+	private Map<ProtectedRegion, ArrayList<Location>> powderLocations = new HashMap<>();
 	private Map<Minigamer, Integer> targetsHit = new HashMap<>();
 
-	public void addToTargets(Minigamer minigamer) {
+	public void addTargets(Minigamer minigamer) {
 		int targets = targetsHit.get(minigamer) + 1;
 		targetsHit.put(minigamer, targets);
 	}
@@ -25,6 +44,101 @@ public class ArcheryMatchData extends MatchData {
 		if (targets == null)
 			targets = 0;
 		return targets;
+	}
+
+	public void loadRangeLocations(int range, Match match) {
+		WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
+		WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
+		ArcheryArena arena = match.getArena();
+
+		String regex = "range_" + range + "_.*";
+		Set<ProtectedRegion> colorRegions = arena.getRegionsLike(regex);
+		colorRegions.forEach(colorRegion -> {
+			powderLocations.put(colorRegion, new ArrayList<>());
+
+			List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.convert(colorRegion));
+			blocks.forEach(block -> {
+				if (block.getType().equals(Material.CONCRETE_POWDER)) {
+					ArrayList<Location> locations = powderLocations.get(colorRegion);
+					locations.add(block.getLocation());
+					powderLocations.put(colorRegion, locations);
+				}
+			});
+		});
+	}
+
+	// This should never be used during onQuit if the game is not started
+	public void unloadRangeLocations(int range, Match match) {
+		ArcheryArena arena = match.getArena();
+
+		Set<ProtectedRegion> colorRegions = arena.getRegionsLike("range_" + range + "_");
+		colorRegions.forEach(colorRegion -> {
+			if (powderLocations.get(colorRegion) != null)
+				powderLocations.remove(colorRegion);
+		});
+	}
+
+	public String getRangeColor(ProtectedRegion protectedRegion) {
+		String[] strings = protectedRegion.getId().split("_");
+		return strings[strings.length - 1];
+	}
+
+	public int getRangeNumber(ProtectedRegion protectedRegion) {
+		String[] strings = protectedRegion.getId().split("_");
+		return Integer.parseInt(strings[strings.length - 2]);
+	}
+
+	public Direction getRangeDirection(int range, Match match) {
+		List<Location> spawnpoints = match.getTeams().get(0).getSpawnpoints();
+		Location spawnpoint = spawnpoints.get(range - 1);
+		Location down = spawnpoint.getBlock().getRelative(0, -1, 0).getLocation();
+		Block north = down.getBlock().getRelative(0, 0, -1);
+		Block south = down.getBlock().getRelative(0, 0, 1);
+
+		// If block in direction is top dark oak wood slab == direction of range
+		if (north.getType().equals(Material.WOOD_STEP) && north.getData() == 13)
+			return Direction.NORTH;
+		else if (south.getType().equals(Material.WOOD_STEP) && south.getData() == 13)
+			return Direction.SOUTH;
+
+		return null;
+	}
+
+	public Direction getTargetDirection(ProtectedRegion region) {
+		String[] strings = region.getId().split("_");
+		return Direction.valueOf(strings[strings.length - 1].toUpperCase());
+	}
+
+	public String getTargetColor(ProtectedRegion region) {
+		String[] strings = region.getId().split("_");
+		return strings[strings.length - 2];
+	}
+
+	public void removeInactiveRanges(Match match) {
+		ArcheryArena arena = match.getArena();
+		Set<ProtectedRegion> rangeRegions = arena.getRegionsLike("_range_[0-9]+_.*");
+		Set<ProtectedRegion> activeRegions = new HashSet<>();
+
+		// Get active regions
+		List<Minigamer> minigamers = match.getMinigamers();
+		minigamers.forEach(minigamer -> {
+			Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(minigamer.getPlayer().getLocation());
+			regionsAt.forEach(region -> {
+				if (rangeRegions.contains(region))
+					activeRegions.add(region);
+			});
+		});
+
+		// Remove active regions from range regions
+		rangeRegions.forEach(region -> {
+			if (activeRegions.contains(region))
+				rangeRegions.remove(region);
+		});
+
+		// Unload inactive regions
+		for (ProtectedRegion region : rangeRegions) {
+			unloadRangeLocations(getRangeNumber(region), match);
+		}
 	}
 
 	public ArcheryMatchData(Match match) {

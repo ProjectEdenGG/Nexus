@@ -541,11 +541,15 @@ public class Utils {
 		return false;
 	}
 
-	public static List<Block> getBlocksInRadius(Block start, int radius){
+	public static List<Block> getBlocksInRadius(Location start, int radius) {
+		return getBlocksInRadius(start.getBlock(), radius, radius, radius);
+	}
+
+	public static List<Block> getBlocksInRadius(Block start, int radius) {
 		return getBlocksInRadius(start, radius, radius, radius);
 	}
 
-	public static List<Block> getBlocksInRadius(Block start, int xRadius, int yRadius, int zRadius){
+	public static List<Block> getBlocksInRadius(Block start, int xRadius, int yRadius, int zRadius) {
 		List<Block> blocks = new ArrayList<>();
 		for (int x = -xRadius; x <= xRadius; x++)
 			for (int z = -zRadius; z <= zRadius; z++)
