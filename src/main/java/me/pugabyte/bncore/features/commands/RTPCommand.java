@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.lwc.LWCProtection;
@@ -23,10 +24,16 @@ public class RTPCommand extends CustomCommand {
 
 	LWCProtectionService service = new LWCProtectionService();
 	AtomicInteger count = new AtomicInteger(0);
+	boolean running = false;
 
 	@Path
 	@Async
+	@Cooldown(30 * 20)
 	void rtp() {
+		if (!running) {
+			send(PREFIX + "Teleporting to random location");
+			running = true;
+		}
 		count.getAndIncrement();
 		int worldRange = 10000;
 		int range = 250;
@@ -46,10 +53,8 @@ public class RTPCommand extends CustomCommand {
 				Tasks.async(this::rtp);
 				return;
 			}
-			send(PREFIX + "Teleporting to random location");
 			player().teleport(highestBlock.getLocation().add(0, 1, 0));
 		});
-
 	}
 
 	public double getDensity(Location location, int range) {
