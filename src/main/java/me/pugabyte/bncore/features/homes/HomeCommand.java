@@ -32,16 +32,12 @@ public class HomeCommand extends CustomCommand {
 	void teleport(@Arg(value = "home", tabCompleter = Home.class) String name) {
 		Optional<Home> home = homeOwner.getHome(name);
 		if (!home.isPresent())
-			if (arg(1) != null && arg(1).length() >= 3 && isPlayerArg(1)) {
-				teleport(playerArg(1), convertToHome("home", playerArg(1)));
-				return;
-			} else
-				error("You do not have a home named &e" + name);
+			error("You do not have a home named &e" + name);
 
 		home.get().teleport(player());
 	}
 
-	@Path("<player> [home]")
+	@Path("<player> <home>")
 	void teleport(OfflinePlayer player, @Arg(contextArg = 1) Home home) {
 		home.teleport(player());
 	}
