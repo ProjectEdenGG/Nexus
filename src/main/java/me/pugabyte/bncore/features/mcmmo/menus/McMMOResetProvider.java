@@ -26,7 +26,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A frozen sword that slows your enemies and may trap them in ice") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_sword iceaspect:3 knockback:1 durability:2");
+					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_sword damage_all:2 looting:2 mending:1 iceaspect:3 knockback:1 durability:2");
 				}
 		},
 		MINING(1, 5, Material.DIAMOND_PICKAXE,
@@ -40,35 +40,35 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A shovel that hastens the user after every block broken") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_spade energizing:2 mending:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_spade efficiency:5 durability:3 silk_touch:1 mending:1");
 				}
 		},
 		AXES(2, 4, Material.DIAMOND_AXE,
 				"The power of Thor is imbued in this axe, giving you a chance of smiting your target with lightning") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_axe thunderingblow:2 damage_all:3 durability:3");
+					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_axe thunderingblow:2 damage_all:3 mending:1 durability:3");
 				}
 		},
 		HERBALISM(2, 6, Material.DIAMOND_HOE,
-				"The boots of the druid grant the users speed and regeneration when they stand on dirt or grass") {
-				@Override
-				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " leather_boots druidboots");
-				}
+				"The boots of Demeter give you the power to increase agricultural rates around you.") {
+			@Override
+			void onClick(Player player) {
+				Utils.giveItem(player, new ItemStackBuilder(Material.GOLD_BOOTS).lore("&bBonemeal Boots").build());
+			}
 		},
 		FISHING(3, 1, Material.FISHING_ROD,
 				"A godly rod that increases your catch") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " fishing_rod fireaspect:1 lure:4 luck:4 mending:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " fishing_rod lure:4 luck:5 durability:3 mending:1");
 				}
 		},
 		ACROBATICS(3, 3, Material.DIAMOND_BOOTS,
 				"Jump higher and run faster with these boots") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " chainmail_boots gears:1 springs:2 durability:2");
+					Utils.runConsoleCommand("ce give " + player.getName() + " chainmail_boots gears:3 springs:2 feather_falling:3 mending:1 durability:2");
 				}
 		},
 		REPAIR(3, 5, Material.ANVIL,
@@ -83,7 +83,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"Now you can be the wither- enemies take wither damage for a short period from every successful hit") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " bow wither:2 durability:2 knockback:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " bow wither:2 infinity:1 mending:1 durability:2 knockback:1");
 				}
 		},
 		TAMING(4, 0, Material.BONE,
@@ -98,15 +98,17 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"For every log or plank broken this shiny new axe will give you a short burst of haste") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_axe energizing:2 mending:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_axe energizing:3 mending:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " leather_helmet implants:1");
 				}
 		},
 		UNARMED(4, 6, Material.ROTTEN_FLESH,
-				"Punching your enemies to death can be dangerous work, this bandage will help you heal") {
-				@Override
-				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " paper bandage");
-				}
+				"Punching your enemies to death can be dangerous work, this bandage and stick will help with that.") {
+			@Override
+			void onClick(Player player) {
+				Utils.runConsoleCommand("ce give " + player.getName() + " paper bandage");
+				Utils.runConsoleCommand("ce give " + player.getName() + " stick Quarterstaff disarming:1");
+			}
 		},
 		ALCHEMY(4, 8, Material.SPLASH_POTION,
 				"You want to throw potions mate? Why not launch them from this hopper? " +
@@ -197,13 +199,16 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void prestigeAll(Player player) {
+		// TODO Koda Broadcasts
 		SkriptFunctions.koda(player.getName() + " has reset all of their McMMO skills!", "md");
+
+		Utils.runConsoleCommand("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
+		Utils.runConsoleCommand("eco give " + player.getName() + " 20000");
 
 		for (SkillType skillType : SkillType.values()) {
 			if (skillType.isChildSkill()) continue;
 			prestige(player, ResetSkillType.valueOf(skillType.name()), false);
 		}
-
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 		mcMMOPrestige.prestige("all");
 		service.save(mcMMOPrestige);
@@ -213,12 +218,14 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
 		skill.onClick(player);
+		Utils.runConsoleCommand("eco give " + player.getName() + " 10000");
 		mcmmoPlayer.modifySkill(SkillType.valueOf(skill.name()), 0);
 
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 		mcMMOPrestige.prestige(skill.name());
 		service.save(mcMMOPrestige);
 
+		// TODO Koda Broadcast
 		if (broadcast)
 			SkriptFunctions.koda(player.getName() + " has reset their " + skill.name().toLowerCase() + " skill for the " +
 					Utils.getNumberSuffix(mcMMOPrestige.getPrestige(skill.name())) + " time!", "md");
