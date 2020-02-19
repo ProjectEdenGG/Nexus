@@ -19,12 +19,15 @@ public class UUIDSearchCommand extends CustomCommand {
 
 	@Path("<uuid> [amount]")
 	void search(String search, @Arg("25") int limit) {
-		List<Nerd> nerds = service.find(search, "uuid");
+		if (search.length() < 4)
+			error("Please be more specific!");
+
+		List<Nerd> nerds = service.find(search, "uuid").stream().limit(limit).collect(Collectors.toList());
 		if (nerds.size() == 0)
 			error("No matches found for &e" + search);
 
-		send("&3Matches for '&e" + search + "&3':");
-		for (Nerd nerd : nerds.stream().limit(limit).collect(Collectors.toList()))
+		send("&3Matches for '&e" + search + "&3' (&e" + nerds.size() + "&3):");
+		for (Nerd nerd : nerds)
 			send(json("&e" + nerd.getUuid() + " (" + nerd.getName() + ")").insert(nerd.getUuid()));
 		send("&3Shift+Click on a name to insert it into your chat");
 	}

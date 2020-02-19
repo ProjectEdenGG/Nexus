@@ -19,12 +19,15 @@ public class PlayerSearchCommand extends CustomCommand {
 
 	@Path("<name> [amount]")
 	void search(String search, @Arg("25") int limit) {
-		List<Nerd> nerds = service.find(search);
+		if (search.length() < 3)
+			error("Please be more specific!");
+
+		List<Nerd> nerds = service.find(search).stream().limit(limit).collect(Collectors.toList());
 		if (nerds.size() == 0)
 			error("No matches found for &e" + search);
 
-		send("&3Matches for '&e" + search + "&3':");
-		for (Nerd nerd : nerds.stream().limit(limit).collect(Collectors.toList()))
+		send("&3Matches for '&e" + search + "&3' (&e" + nerds.size() + "&3):");
+		for (Nerd nerd : nerds)
 			send(json("&e" + nerd.getName()).insert(nerd.getName()));
 		send("&3Shift+Click on a name to insert it into your chat");
 	}
