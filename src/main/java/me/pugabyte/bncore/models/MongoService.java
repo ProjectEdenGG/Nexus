@@ -59,7 +59,6 @@ public class MongoService {
 	}
 
 	public <T> void delete(T object) {
-		BNCore.log("Deleting");
 		database.delete(object);
 	}
 }
