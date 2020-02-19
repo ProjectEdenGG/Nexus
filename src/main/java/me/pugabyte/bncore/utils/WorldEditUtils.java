@@ -18,6 +18,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -148,6 +149,10 @@ public class WorldEditUtils {
 				.map(Direction::toVector)
 				.map(vector -> vector.multiply(number))
 				.toArray(Vector[]::new);
+	}
+
+	public List<Block> getBlocks(ProtectedRegion region) {
+		return getBlocks((CuboidRegion) worldGuardUtils.convert(region));
 	}
 
 	public List<Block> getBlocks(CuboidRegion region) {
