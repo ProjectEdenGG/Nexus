@@ -19,8 +19,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +46,21 @@ public class ArcheryMatchData extends MatchData {
 		if (targets == null)
 			targets = 0;
 		return targets;
+	}
+
+	public Map<Minigamer, Integer> getSortedScores(Match match) {
+		List<Minigamer> minigamers = match.getMinigamers();
+		Map<Minigamer, Integer> allScores = new HashMap<>();
+
+		minigamers.forEach(minigamer -> allScores.put(minigamer, minigamer.getScore()));
+		LinkedHashMap<Minigamer, Integer> reverseSortedMap = new LinkedHashMap<>();
+
+		allScores.entrySet()
+				.stream()
+				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+				.forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
+
+		return reverseSortedMap;
 	}
 
 	public void loadRangeLocations(int range, Match match) {
@@ -130,10 +147,7 @@ public class ArcheryMatchData extends MatchData {
 		});
 
 		// Remove active regions from range regions
-		rangeRegions.forEach(region -> {
-			if (activeRegions.contains(region))
-				rangeRegions.remove(region);
-		});
+		activeRegions.forEach(rangeRegions::remove);
 
 		// Unload inactive regions
 		for (ProtectedRegion region : rangeRegions) {

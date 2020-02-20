@@ -12,6 +12,7 @@ import me.pugabyte.bncore.features.minigames.models.arenas.ArcheryArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.ArcheryMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
@@ -21,6 +22,7 @@ import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -38,7 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-// TODO: On Player Quit --> if the game is active, unload their range
+// TODO: Sound at near end time left messages?
+// TODO: Disable all interactions
 
 public class Archery extends TeamlessMechanic {
 	WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
@@ -82,19 +85,23 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	@Override
+	public void onQuit(MatchQuitEvent event) {
+		super.onQuit(event);
+		Match match = event.getMatch();
+		ArcheryMatchData matchData = match.getMatchData();
+
+		if (match.isStarted()) {
+			matchData.removeInactiveRanges(match);
+		}
+	}
+
+	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 		Match match = event.getMatch();
 		ArcheryMatchData matchData = match.getMatchData();
 
-		match.getTasks().wait(20, () -> {
-			matchData.removeInactiveRanges(match);
-			for (Minigamer minigamer : match.getMinigamers()) {
-				minigamer.scored(5);
-			}
-
-		});
-
+		match.getTasks().wait(20, () -> matchData.removeInactiveRanges(match));
 		startTargetTask(match);
 	}
 
@@ -109,32 +116,55 @@ public class Archery extends TeamlessMechanic {
 	public Map<String, Integer> getScoreboardLines(Match match) {
 		Map<String, Integer> lines = new HashMap<>();
 		ArcheryMatchData matchData = match.getMatchData();
+		String[] order = {"a", "b", "c", "d", "e", "f", "k", "l", "m", "n", "o", "r"};
+		int ndx = 0;
 
 		if (match.isStarted()) {
 			int timeLeft = match.getTimer().getTime();
-			List<Minigamer> minigamers = match.getMinigamers();
 
-			for (Minigamer minigamer : minigamers) {
-				lines.put("&1&fScore: &c" + minigamer.getScore(), 0);
-				lines.put("&2&fTargets Hit: &c" + matchData.getTargetsHit(minigamer), 0);
-				lines.put("&3", 0);
-				lines.put("&4&fTime Left: &c&l" + timeLeft, 0);
-				lines.put("&5", 0);
+			// Temporary until we get that setting
+			lines.put("&1", 0);
+			lines.put("&2&fTime Left: &e&l" + timeLeft, 0);
+			lines.put("&3", 0);
 
-				// TODO: Leaderboard (Needs to be sorted by score)
-				for (Minigamer sbMinigamer : minigamers) {
-					if (sbMinigamer.getScore() <= 0)
-						continue;
+			Map<Minigamer, Integer> sortedScores = matchData.getSortedScores(match);
+			for (Minigamer sbMinigamer : sortedScores.keySet()) {
+				if (sbMinigamer.getScore() <= 0)
+					continue;
 
-					String name = sbMinigamer.getName();
+				if (ndx >= order.length)
+					break;
 
-					if (minigamer.equals(sbMinigamer))
-						name = "&f&lYOU";
-
-					int score = sbMinigamer.getScore();
-					lines.put("&6&f" + name + "&f: &c" + score, 0);
-				}
+				String name = sbMinigamer.getName();
+				int score = sbMinigamer.getScore();
+				lines.put("&" + order[ndx++] + "&f" + name + "&f: &e" + score, 0);
 			}
+			//
+
+//			List<Minigamer> minigamers = match.getMinigamers();
+//			for (Minigamer minigamer : minigamers) {
+//				lines.put("&1&fScore: &e" + minigamer.getScore(), 0);
+//				lines.put("&2&fTargets Hit: &e" + matchData.getTargetsHit(minigamer), 0);
+//				lines.put("&3", 0);
+//				lines.put("&4&fTime Left: &e&l" + timeLeft, 0);
+//				lines.put("&5", 0);
+//
+//				Map<Minigamer, Integer> sortedScores = matchData.getSortedScores(match);
+//				for(Minigamer sbMinigamer: sortedScores.keySet()){
+//					if (sbMinigamer.getScore() <= 0)
+//						continue;
+//
+//					if(ndx >= order.length)
+//						break;
+//
+//					String name = sbMinigamer.getName();
+//					if (minigamer.equals(sbMinigamer))
+//						name = "&f&lYOU";
+//
+//					int score = sbMinigamer.getScore();
+//					lines.put("&" + order[ndx++] + "&f" + name + "&f: &e" + score, 0);
+//				}
+//			}
 		} else {
 			for (Minigamer minigamer : match.getMinigamers())
 				lines.put(minigamer.getName(), 0);
@@ -149,7 +179,7 @@ public class Archery extends TeamlessMechanic {
 		saveTargetSchems(match);
 		Map<String, Schematic> targetSchems = matchData.getTargetSchematics();
 
-		match.getTasks().repeat(0, 7 * 20, () -> {
+		match.getTasks().repeat(5 * 20, 7 * 20, () -> {
 			for (ProtectedRegion colorRegion : powderLocations.keySet()) {
 				ArrayList<Location> locations = powderLocations.get(colorRegion);
 
@@ -259,6 +289,7 @@ public class Archery extends TeamlessMechanic {
 
 		projectile.remove();
 		removeTarget(hitBlock);
+		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 	}
 
 	public int getPoints(String color) {
