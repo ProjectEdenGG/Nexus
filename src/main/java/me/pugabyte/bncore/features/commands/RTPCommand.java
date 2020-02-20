@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
+import java.util.Arrays;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
@@ -30,6 +31,9 @@ public class RTPCommand extends CustomCommand {
 	@Async
 	@Cooldown(30 * 20)
 	void rtp() {
+		if (!Arrays.asList("world", "survival", "legacy_survival").contains(player().getWorld().getName()))
+			error("You must be in the survival world to run this command");
+
 		if (!running) {
 			send(PREFIX + "Teleporting to random location");
 			running = true;
