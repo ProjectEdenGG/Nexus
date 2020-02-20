@@ -133,7 +133,7 @@ public abstract class CustomCommand implements ICustomCommand {
 		return (CommandBlock) event.getSender();
 	}
 
-	private boolean isPlayer() {
+	protected boolean isPlayer() {
 		return isPlayer(sender());
 	}
 
