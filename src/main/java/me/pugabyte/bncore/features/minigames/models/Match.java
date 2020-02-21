@@ -7,6 +7,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
@@ -168,19 +169,24 @@ public class Match {
 		}
 	}
 
-	@SneakyThrows
 	private void initializeMatchData() {
-		String path = this.getClass().getPackage().getName();
-		Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".matchdata").getSubTypesOf(MatchData.class);
+		try {
+			String path = this.getClass().getPackage().getName();
+			Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".matchdata")
+					.getSubTypesOf(MatchData.class);
 
-		matchDataTypes:
-		for (Class<?> matchDataType : matchDataTypes) {
-			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses()) {
-				if (matchDataType.getAnnotation(MatchDataFor.class).value().equals(superclass)) {
-					matchData = (MatchData) matchDataType.getConstructor(Match.class).newInstance(this);
-					break matchDataTypes;
-				}
-			}
+			matchDataTypes:
+			for (Class<?> matchDataType : matchDataTypes)
+				for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses())
+					if (matchDataType.getAnnotation(MatchDataFor.class) != null)
+						if (matchDataType.getAnnotation(MatchDataFor.class).value().equals(superclass)) {
+							matchData = (MatchData) matchDataType.getConstructor(Match.class).newInstance(this);
+							break matchDataTypes;
+						}
+
+		} catch (Exception ex) {
+			BNCore.log("Error initializing match data for " + arena.getMechanic().getName());
+			ex.printStackTrace();
 		}
 	}
 
