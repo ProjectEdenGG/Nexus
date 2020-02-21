@@ -30,7 +30,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -41,7 +43,6 @@ import java.util.Map;
 import java.util.Set;
 
 // TODO: Sound at near end time left messages?
-// TODO: Disable all interactions
 
 public class Archery extends TeamlessMechanic {
 	WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
@@ -258,6 +259,21 @@ public class Archery extends TeamlessMechanic {
 				});
 			});
 		}
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isPlaying(this)) return;
+
+		Match match = minigamer.getMatch();
+		if (!match.isStarted()) return;
+
+		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) ||
+				event.getAction().equals(Action.RIGHT_CLICK_BLOCK) ||
+				event.getAction().equals(Action.PHYSICAL))
+			event.setCancelled(true);
 	}
 
 	@EventHandler
