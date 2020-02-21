@@ -40,7 +40,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 		if (isPlayer())
 			send(json("&3Location of &e" + geoIp.getOfflinePlayer().getName() + "&3: &e" + location).hover(geoIp.getIp()).insert(geoIp.getIp()));
 		else
-			send("Location of " + geoIp.getOfflinePlayer().getName() + " (" + geoIp.getIp() + "):" + location);
+			send("Location of " + geoIp.getOfflinePlayer().getName() + " (" + geoIp.getIp() + "): " + location);
 	}
 
 	@EventHandler
