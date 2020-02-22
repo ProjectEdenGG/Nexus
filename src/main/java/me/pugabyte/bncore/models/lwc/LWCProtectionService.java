@@ -14,18 +14,17 @@ public class LWCProtectionService extends MySQLService {
 
 
 	public LWCProtection get(int id) {
-		return database.table("lwc_protections").where("id = ?", id)
-				.first(LWCProtection.class);
+		return database.where("id = ?", id).first(LWCProtection.class);
 	}
 
 	public LWCProtection getByLocation(Location location) {
-		return database.table("lwc_protections").where("x, y, z, world = ?,?,?,?")
+		return database.where("x, y, z, world = ?, ?, ?, ?")
 				.args(location.getX(), location.getY(), location.getZ(), location.getWorld().getName())
 				.first(LWCProtection.class);
 	}
 
 	public List<LWCProtection> getPlayerProtections(UUID uuid) {
-		return database.table("lwc_protections").where("owner = ?", uuid.toString()).results(LWCProtection.class);
+		return database.where("owner = ?", uuid.toString()).results(LWCProtection.class);
 	}
 
 	public List<LWCProtection> getProtectionsInRange(Location location, int range) {
@@ -33,7 +32,7 @@ public class LWCProtectionService extends MySQLService {
 		int xneg = (int) location.getX() - range;
 		int zpos = (int) location.getZ() + range;
 		int zneg = (int) location.getZ() - range;
-		return database.table("lwc_protections").where("(x BETWEEN ? AND ?) AND (z BETWEEN ? AND ?) AND world = ?")
+		return database.where("(x BETWEEN ? AND ?) AND (z BETWEEN ? AND ?) AND world = ?")
 				.args(xneg, xpos, zneg, zpos, location.getWorld().getName())
 				.results(LWCProtection.class);
 	}
