@@ -28,7 +28,7 @@ public class Translator implements Listener {
 	public HashMap<UUID, ArrayList<UUID>> map = new HashMap<>();
 
 	public String apiKey = BNCore.getInstance().getConfig().getConfigurationSection("yandex").getString("apiKey");
-	public TranslatorHandler translatorHandler = new TranslatorHandler(apiKey);
+	public TranslatorHandler handler = new TranslatorHandler(apiKey);
 
 	String PREFIX = Utils.getPrefix("Translator");
 
@@ -42,10 +42,10 @@ public class Translator implements Listener {
 			try {
 				if (!map.containsKey(sender.getUniqueId())) return;
 
-				Language language = translatorHandler.getLanguage(event.getMessage());
+				Language language = handler.detect(event.getMessage());
 				if (language == Language.EN) return;
 
-				String translated = translatorHandler.translate(event.getMessage(), language, Language.EN);
+				String translated = handler.translate(event.getMessage(), language, Language.EN);
 				for (UUID uuid : map.get(sender.getUniqueId())) {
 					Player translating = Utils.getPlayer(uuid).getPlayer();
 

@@ -67,6 +67,9 @@ public class Lobby implements ConfigurationSerializable {
 		}
 
 		private void start() {
+			match.broadcast("&7Starting in &e" + time + " &7seconds");
+			timerStarted = true;
+
 			taskId = match.getTasks().repeat(1, 20, () -> {
 				if (match.isStarted()) {
 					stop();
@@ -81,11 +84,6 @@ public class Lobby implements ConfigurationSerializable {
 					stop();
 					return;
 				}
-
-				if (!timerStarted)
-					match.broadcast("&7Starting in &e" + time + " &7seconds");
-				timerStarted = true;
-
 				if (--time > 0) {
 					LobbyTimerTickEvent event = new LobbyTimerTickEvent(match, lobby, time);
 					Utils.callEvent(event);

@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Utils;
@@ -100,9 +101,12 @@ public class AntiCampingTask {
 			floorAt = arena.getProtectedRegion("floor_" + floorId);
 		}
 
-		if (floorId < 2)
-			mechanic.kill(minigamer);
-		else {
+		if (floorId < 2) {
+			MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(minigamer);
+			Utils.callEvent(deathEvent);
+			if (deathEvent.isCancelled()) return;
+			mechanic.onDeath(deathEvent);
+		} else {
 			Location location = minigamer.getPlayer().getLocation();
 			location.setY(floorAt.getMinimumPoint().getY() - 1);
 
