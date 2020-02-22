@@ -14,6 +14,10 @@ public class MinigamerDeathEvent extends MinigamerEvent {
 	@Setter
 	private String deathMessage = "";
 
+	public MinigamerDeathEvent(Minigamer victim) {
+		super(victim);
+	}
+
 	public MinigamerDeathEvent(Minigamer victim, Event originalEvent) {
 		super(victim);
 		this.originalEvent = originalEvent;
