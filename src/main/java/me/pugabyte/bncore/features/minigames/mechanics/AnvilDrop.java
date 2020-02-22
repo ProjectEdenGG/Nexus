@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.annotations.AntiCamp;
 import me.pugabyte.bncore.features.minigames.models.arenas.AnvilDropArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
@@ -27,9 +28,9 @@ import java.util.List;
 import java.util.Set;
 
 // TODO:
-//  - add anticamping
 //  - add maps
 
+@AntiCamp
 public class AnvilDrop extends TeamlessMechanic {
 	WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
 	WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
