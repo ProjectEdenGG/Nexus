@@ -88,7 +88,7 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	public void createMineStacks(int mineStackHeight, List<Location> locations) {
-		WorldEditUtils worldEditUtils = Minigames.getWorldEditUtils();
+		WorldEditUtils worldEditUtils = WEUtils;
 
 		Map<Material, Double> pattern = new HashMap<Material, Double>() {{
 			put(Material.COBBLESTONE, 10.0);
@@ -110,7 +110,7 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	public void removeMineStacks(int mineStackHeight, Location loc) {
-		WorldEditUtils worldEditUtils = Minigames.getWorldEditUtils();
+		WorldEditUtils worldEditUtils = WEUtils;
 		Vector p1 = worldEditUtils.toVector(loc.clone().subtract(0, 2, 0));
 		Vector p2 = worldEditUtils.toVector(loc.clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);

@@ -6,7 +6,6 @@ import com.github.ysl3000.bukkit.pathfinding.goals.PathfinderGoalMoveToLocation;
 import com.github.ysl3000.bukkit.pathfinding.pathfinding.PathfinderManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -79,12 +78,12 @@ public class MonsterMaze extends TeamlessMechanic {
 
 		List<Location> goals = new ArrayList<>();
 		for (com.sk89q.worldedit.Vector vector : match.getArena().getRegion("floor")) {
-			Location location = Minigames.getWorldGuardUtils().toLocation(vector);
+			Location location = WGUtils.toLocation(vector);
 			if (location.getBlock().getType() == goalMaterial)
 				goals.add(location.add(0, 1, 0));
 		}
 
-		List<Block> spawnpoints = Minigames.getWorldGuardUtils().getRandomBlocks(floor, floorMaterial, MONSTERS);
+		List<Block> spawnpoints = WGUtils.getRandomBlocks(floor, floorMaterial, MONSTERS);
 		spawnpoints.stream().map(block -> block.getLocation().add(.5, 1, .5)).forEach(spawnpoint -> {
 			LivingEntity monster = spawnpoint.getWorld().spawn(spawnpoint, Zombie.class);
 			monster.setAI(false);
@@ -119,7 +118,7 @@ public class MonsterMaze extends TeamlessMechanic {
 					}
 			});
 
-			List<Block> powerupLocations = Minigames.getWorldGuardUtils().getRandomBlocks(floor, floorMaterial, POWERUPS);
+			List<Block> powerupLocations = WGUtils.getRandomBlocks(floor, floorMaterial, POWERUPS);
 			match.broadcast("Power ups have spawned!");
 			for (Block block : powerupLocations)
 				new PowerUpUtils(match, Arrays.asList(JUMPS)).spawn(block.getLocation().add(0, 1, 0), true);

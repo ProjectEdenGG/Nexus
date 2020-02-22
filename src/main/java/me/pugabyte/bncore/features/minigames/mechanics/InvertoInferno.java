@@ -74,9 +74,9 @@ public final class InvertoInferno extends TeamlessMechanic {
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
-		Region region = Minigames.getWorldGuardUtils().getRegion("invertoinferno_fire");
+		Region region = WGUtils.getRegion("invertoinferno_fire");
 
-		Minigames.getWorldEditUtils().replace(region, Material.FIRE, Material.AIR);
+		WEUtils.replace(region, Material.FIRE, Material.AIR);
 	}
 
 	@EventHandler
@@ -242,7 +242,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 		Block eventBlock = event.getBlock();
 
-		for (ProtectedRegion region : Minigames.getWorldGuardUtils().getRegionsAt(eventBlock.getLocation())) {
+		for (ProtectedRegion region : WGUtils.getRegionsAt(eventBlock.getLocation())) {
 			if (region.getId().equalsIgnoreCase("invertoinferno") && !eventBlock.getType().equals(Material.FIRE)) {
 				event.setCancelled(true);
 				break;
@@ -256,7 +256,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 		Location location = event.getBlock().getLocation();
 
-		for (ProtectedRegion region : Minigames.getWorldGuardUtils().getRegionsAt(location)) {
+		for (ProtectedRegion region : WGUtils.getRegionsAt(location)) {
 			if (region.getId().equalsIgnoreCase("invertoinferno_fire")) {
 				if (event.getSource().getType().equals(Material.FIRE)) {
 					int chance = Utils.randomInt(1, 3);
@@ -273,7 +273,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 		Location location = event.getBlock().getLocation();
 
-		for (ProtectedRegion region : Minigames.getWorldGuardUtils().getRegionsAt(location)) {
+		for (ProtectedRegion region : WGUtils.getRegionsAt(location)) {
 			if (region.getId().equalsIgnoreCase("invertoinferno_fire")) {
 				event.setCancelled(true);
 				break;
@@ -284,8 +284,8 @@ public final class InvertoInferno extends TeamlessMechanic {
 	public class FireTask {
 		private Match match;
 		private int taskId;
-		private ProtectedRegion regionWG = Minigames.getWorldGuardUtils().getProtectedRegion("invertoinferno_fire");
-		private Region regionWE = Minigames.getWorldGuardUtils().convert(regionWG);
+		private ProtectedRegion regionWG = WGUtils.getProtectedRegion("invertoinferno_fire");
+		private Region regionWE = WGUtils.convert(regionWG);
 		private int percent = regionWG.volume() / 25;
 		private int placedFire = 0;
 
@@ -299,11 +299,11 @@ public final class InvertoInferno extends TeamlessMechanic {
 				if (match.isEnded())
 					stop(taskId);
 
-				EditSession editSession = Minigames.getWorldEditUtils().getEditSession();
+				EditSession editSession = WEUtils.getEditSession();
 				if (editSession.countBlocks(regionWE, Collections.singleton(new BaseBlock(Material.FIRE.getId()))) <= placedFire) {
 					placedFire = 0;
 					for (int i = 0; i < percent; i++) {
-						Block block = Minigames.getWorldGuardUtils().getRandomBlock(regionWG);
+						Block block = WGUtils.getRandomBlock(regionWG);
 						if (block.getType().isBurnable()) {
 							Block above = block.getRelative(BlockFace.UP, 1);
 							if (above.getType().equals(Material.AIR)) {
