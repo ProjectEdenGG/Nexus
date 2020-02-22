@@ -18,8 +18,6 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.PixelPaintersMatch
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldEditUtils;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,8 +43,6 @@ import java.util.Set;
 //  	- Separate palettes for each type
 
 public class PixelPainters extends TeamlessMechanic {
-	WorldGuardUtils WGUtils = WGUtils;
-	WorldEditUtils WEUtils = WEUtils;
 	private final int MAX_ROUNDS = 5;
 	private final int TIME_OUT = 8 * 20;
 	private final int ROUND_COUNTDOWN = 30 * 20;

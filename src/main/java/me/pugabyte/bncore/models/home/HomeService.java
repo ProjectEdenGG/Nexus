@@ -20,6 +20,7 @@ public class HomeService extends MongoService {
 			HomeOwner homeOwner = database.createQuery(HomeOwner.class).field(_id).equal(uuid).first();
 			if (homeOwner == null)
 				homeOwner = new HomeOwner(uuid);
+			homeOwner.getHomes().sort(Comparator.comparing(home -> home.getName().toLowerCase()));
 			return homeOwner;
 		});
 

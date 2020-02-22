@@ -28,6 +28,8 @@ import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -397,6 +399,8 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	public static abstract class ThimbleGamemode {
+		protected WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
+		protected WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
 
 		abstract String getName();
 

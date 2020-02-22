@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -161,7 +162,7 @@ public class AntiCampingTask {
 		Location location = minigamer.getPlayer().getLocation();
 		ProtectedRegion floor = null;
 		for (int i = 0; i < 3; i++) {
-			Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(location);
+			Set<ProtectedRegion> regionsAt = Minigames.getWorldGuardUtils().getRegionsAt(location);
 			for (ProtectedRegion region : regionsAt) {
 				if (region.getId().matches(floorRegex)) {
 					floor = region;
