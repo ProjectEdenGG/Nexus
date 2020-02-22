@@ -1,11 +1,11 @@
-package me.pugabyte.bncore.features.menus.warps.providers;
+package me.pugabyte.bncore.features.warps.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.menus.warps.WarpMenu;
-import me.pugabyte.bncore.features.menus.warps.WarpsMenu;
+import me.pugabyte.bncore.features.warps.WarpMenu;
+import me.pugabyte.bncore.features.warps.WarpsMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
