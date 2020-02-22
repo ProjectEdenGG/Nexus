@@ -8,10 +8,10 @@ import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import org.bukkit.OfflinePlayer;
 
-public class BridgeCommand extends CustomCommand {
+public class JBridgeCommand extends CustomCommand {
 	private DiscordService service;
 
-	public BridgeCommand(CommandEvent event) {
+	public JBridgeCommand(CommandEvent event) {
 		super(event);
 		service = new DiscordService();
 	}

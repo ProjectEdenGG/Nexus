@@ -19,6 +19,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -159,6 +160,12 @@ public abstract class Mechanic implements Listener {
 
 	public abstract boolean shouldBeOver(Match match);
 
+	public boolean shuffleSpawnpoints() {
+		return true;
+	}
+
+	// Reflection utils
+
 	public List<Class<? extends Mechanic>> getSuperclasses() {
 		List<Class<? extends Mechanic>> superclasses = new ArrayList<>();
 		Class<? extends Mechanic> clazz = this.getClass();
@@ -171,8 +178,15 @@ public abstract class Mechanic implements Listener {
 		return superclasses;
 	}
 
-	public boolean shuffleSpawnpoints() {
-		return true;
+	public <T> T getAnnotation(Class<? extends Annotation> annotation) {
+		for (Class<? extends Mechanic> mechanic : getSuperclasses()) {
+			Annotation result = mechanic.getAnnotation(annotation);
+			if (result != null) {
+				return (T) result;
+			}
+		}
+
+		return null;
 	}
 
 }

@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.minigames.listeners;
 
-import me.pugabyte.bncore.BNCore;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -18,12 +18,9 @@ import java.util.Arrays;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
+@NoArgsConstructor
 public class SignListener implements Listener {
 	public static String header = colorize("&l< &1Minigames &0&l>");
-
-	public SignListener() {
-		BNCore.registerListener(this);
-	}
 
 	@EventHandler
 	public void onClickOnSign(PlayerInteractEvent event) {
