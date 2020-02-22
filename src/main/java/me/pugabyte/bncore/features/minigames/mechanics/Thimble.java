@@ -191,10 +191,10 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
-		super.onDeath(event);
 		ThimbleMatchData matchData = event.getMinigamer().getMatch().getMatchData();
 		if (event.getMinigamer().equals(matchData.getTurnPlayer()))
 			event.setDeathMessage(event.getMinigamer().getColoredName() + " missed");
+		super.onDeath(event);
 	}
 
 	@Override

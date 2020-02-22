@@ -19,6 +19,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -158,8 +159,11 @@ public class MatchListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onDamage(EntityDamageEvent event) {
 		if (event instanceof EntityDamageByEntityEvent) {
-			onDamage((EntityDamageByEntityEvent) event);
-			return;
+			EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
+			if (!(entityDamageByEntityEvent.getDamager() instanceof FallingBlock)) {
+				onDamage(entityDamageByEntityEvent);
+				return;
+			}
 		}
 
 		Minigamer victim;
