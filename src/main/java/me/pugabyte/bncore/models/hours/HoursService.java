@@ -4,16 +4,28 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.models.MySQLService;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HoursService extends MySQLService {
+	private final static Map<String, Hours> cache = new HashMap<>();
+
+	public void clearCache() {
+		cache.clear();
+	}
+
 	@Override
 	public Hours get(String uuid) {
-		Hours hours = database.where("uuid = ?", uuid).first(Hours.class);
-		if (hours.getUuid() == null)
-			hours = new Hours(uuid);
-		return hours;
+		cache.computeIfAbsent(uuid, $ -> {
+			Hours hours = database.where("uuid = ?", uuid).first(Hours.class);
+			if (hours.getUuid() == null)
+				hours = new Hours(uuid);
+			return hours;
+		});
+
+		return cache.get(uuid);
 	}
 
 	public int total(HoursType type) {
@@ -25,6 +37,7 @@ public class HoursService extends MySQLService {
 	}
 
 	public int cleanup() {
+		clearCache();
 		return database
 				.table("hours")
 				.innerJoin("nerd")
@@ -36,15 +49,21 @@ public class HoursService extends MySQLService {
 	}
 
 	public void endOfDay() {
+		clearCache();
 		database.sql("update hours set yesterday = daily, daily = 0").execute();
+		clearCache();
 	}
 
 	public void endOfWeek() {
+		clearCache();
 		database.sql("update hours set lastWeek = weekly, weekly = 0").execute();
+		clearCache();
 	}
 
 	public void endOfMonth() {
+		clearCache();
 		database.sql("update hours set lastMonth = monthly, monthly = 0").execute();
+		clearCache();
 	}
 
 	public HoursType getType(String type) {
