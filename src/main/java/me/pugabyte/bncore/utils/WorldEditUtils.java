@@ -155,6 +155,10 @@ public class WorldEditUtils {
 		return getBlocks((CuboidRegion) worldGuardUtils.convert(region));
 	}
 
+	public List<Block> getBlocks(Region region) {
+		return getBlocks((CuboidRegion) region);
+	}
+
 	public List<Block> getBlocks(CuboidRegion region) {
 		List<Block> blockList = new ArrayList<>();
 		for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++) {
