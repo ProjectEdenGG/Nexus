@@ -91,7 +91,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	public Location getRandomSheepSpawnLocation(Match match) {
-		Block block = Minigames.getWorldGuardUtils().getRandomBlock(match.getArena().getProtectedRegion("sheep"));
+		Block block = WGUtils.getRandomBlock(match.getArena().getProtectedRegion("sheep"));
 		if (block == null)
 			return getRandomSheepSpawnLocation(match);
 		block = Minigames.getGameworld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().clone().subtract(0, 1, 0).getBlock();
@@ -174,7 +174,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
-		Set<ProtectedRegion> regions = Minigames.getWorldGuardUtils().getRegionsAt(event.getDamager().getLocation());
+		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(event.getDamager().getLocation());
 		for (ProtectedRegion region : regions) {
 			Arena arena = ArenaManager.getFromRegion(region.getId());
 			if (arena != null && arena.ownsRegion(region.getId(), "capture")) {

@@ -4,7 +4,6 @@ import com.boydti.fawe.object.schematic.Schematic;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -18,8 +17,6 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.ArcheryMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldEditUtils;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -45,8 +42,6 @@ import java.util.Set;
 // TODO: Sound at near end time left messages?
 
 public class Archery extends TeamlessMechanic {
-	WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
-	WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
 
 	@Override
 	public String getName() {

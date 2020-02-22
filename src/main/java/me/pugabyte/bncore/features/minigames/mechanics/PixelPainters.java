@@ -7,7 +7,6 @@ import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.PixelPaintersArena;
@@ -46,8 +45,8 @@ import java.util.Set;
 //  	- Separate palettes for each type
 
 public class PixelPainters extends TeamlessMechanic {
-	WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
-	WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
+	WorldGuardUtils WGUtils = WGUtils;
+	WorldEditUtils WEUtils = WEUtils;
 	private final int MAX_ROUNDS = 5;
 	private final int TIME_OUT = 8 * 20;
 	private final int ROUND_COUNTDOWN = 30 * 20;

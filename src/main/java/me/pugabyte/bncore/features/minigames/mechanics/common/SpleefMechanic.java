@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics.common;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.annotations.AntiCamp;
@@ -46,15 +45,15 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 	}
 
 	private void resetFloors(Match match) {
-		Minigames.getWorldGuardUtils().getRegionsLike(getName() + "_" + match.getArena().getName() + "_floor_[0-9]+")
+		WGUtils.getRegionsLike(getName() + "_" + match.getArena().getName() + "_floor_[0-9]+")
 				.forEach(floor -> {
 					String file = (getName() + "/" + floor.getId().replaceFirst(getName().toLowerCase() + "_", "")).toLowerCase();
-					Minigames.getWorldEditUtils().paste(file, floor.getMinimumPoint());
+					WEUtils.paste(file, floor.getMinimumPoint());
 				});
 	}
 
 	public boolean breakBlock(Match match, Location location) {
-		for (ProtectedRegion region : Minigames.getWorldGuardUtils().getRegionsAt(location.clone().add(0, .1, 0))) {
+		for (ProtectedRegion region : WGUtils.getRegionsAt(location.clone().add(0, .1, 0))) {
 			if (!match.getArena().ownsRegion(region.getId(), "floor")) continue;
 
 			Material type = location.getBlock().getType();

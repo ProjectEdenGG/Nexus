@@ -177,7 +177,7 @@ public final class Thimble extends TeamlessMechanic {
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		ThimbleArena arena = event.getMatch().getArena();
-		Minigames.getWorldEditUtils().fill(arena.getRegion("pool"), Material.WATER);
+		WEUtils.fill(arena.getRegion("pool"), Material.WATER);
 		super.onEnd(event);
 	}
 
@@ -426,7 +426,7 @@ public final class Thimble extends TeamlessMechanic {
 			}
 			arena.setCurrentMap(thimbleMaps.get(ndx));
 
-			Minigames.getWorldEditUtils().fill(arena.getRegion("pool"), Material.STATIONARY_WATER);
+			WEUtils.fill(arena.getRegion("pool"), Material.STATIONARY_WATER);
 		}
 
 		// Randomly place blocks in pool
@@ -435,7 +435,7 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleMatchData matchData = match.getMatchData();
 
 			int BLOCKS_TO_CHANGE = 3;
-			List<Block> blocks = Minigames.getWorldGuardUtils().getRandomBlocks(arena.getProtectedRegion("pool"), Material.STATIONARY_WATER, BLOCKS_TO_CHANGE);
+			List<Block> blocks = WGUtils.getRandomBlocks(arena.getProtectedRegion("pool"), Material.STATIONARY_WATER, BLOCKS_TO_CHANGE);
 			blocks.forEach(block -> {
 				block.setType(Material.PISTON_BASE);
 				block.setData((byte) 0);
@@ -525,7 +525,7 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleArena arena = match.getArena();
 			super.onInitialize(match);
 
-			Minigames.getWorldEditUtils().fill(arena.getRegion("pool"), Material.PISTON_BASE);
+			WEUtils.fill(arena.getRegion("pool"), Material.PISTON_BASE);
 		}
 
 		// Place x water holes randomly in pool
@@ -539,7 +539,7 @@ public final class Thimble extends TeamlessMechanic {
 			int maxPlayers = arena.getMaxPlayers();
 			int BLOCKS_TO_CHANGE = ((playerCount * 2) + (maxPlayers - playerCount));
 
-			List<Block> blocks = Minigames.getWorldGuardUtils().getRandomBlocks(arena.getProtectedRegion("pool"), Material.PISTON_BASE, BLOCKS_TO_CHANGE);
+			List<Block> blocks = WGUtils.getRandomBlocks(arena.getProtectedRegion("pool"), Material.PISTON_BASE, BLOCKS_TO_CHANGE);
 			blocks.forEach(block -> block.setType(Material.STATIONARY_WATER));
 
 			matchData.setTurns(mechanic.getMAX_TURNS() - blocks.size());
