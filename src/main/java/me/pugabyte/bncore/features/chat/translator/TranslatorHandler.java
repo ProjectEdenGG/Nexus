@@ -1,19 +1,17 @@
 package me.pugabyte.bncore.features.chat.translator;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
+import lombok.Data;
+import lombok.Getter;
 import lombok.SneakyThrows;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 public class TranslatorHandler {
+	private static String apiUrl = "https://translate.yandex.net/api/v1.5/tr.json/";
 	String apiKey;
 
 	public TranslatorHandler(String apiKey) {
@@ -21,44 +19,57 @@ public class TranslatorHandler {
 	}
 
 	@SneakyThrows
-	public String translate(String message, Language from, Language to) {
-		String link = "https://translate.yandex.net/api/v1.5/tr.json/translate?key=%key%&text=%text%&lang=%language%";
+	public Language detect(String message) {
+		String link = Detection.getUrl()
+				.replace("{{key}}", apiKey)
+				.replace("{{text}}", URLEncoder.encode(message, "UTF-8"));
 
-		String language = (from == Language.UNKNOWN) ? to.toString() : from.toString() + "-" + to.toString();
+		Request request = new Request.Builder().url(link).build();
 
-		URL url = new URL(link
-				.replace("%language%", language.toLowerCase())
-				.replace("%key%", apiKey)
-				.replace("%text%", URLEncoder.encode(message, "UTF-8")));
-
-		HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(httpsURLConnection.getInputStream(), StandardCharsets.UTF_8));
-		String input = reader.readLine();
-		reader.close();
-
-		JsonArray array = new JsonParser().parse(input).getAsJsonObject().getAsJsonArray("text");
-		StringBuilder stringBuilder = new StringBuilder();
-		for (JsonElement member : array)
-			stringBuilder.append(member.getAsString());
-
-		return stringBuilder.toString().trim();
+		try (Response response = new OkHttpClient().newCall(request).execute()) {
+			Detection.Response result = new Gson().fromJson(response.body().string(), Detection.Response.class);
+			return Language.valueOf(result.getLang().toUpperCase());
+		}
 	}
 
 	@SneakyThrows
-	public Language getLanguage(String message) {
-		String link = "https://translate.yandex.net/api/v1.5/tr.json/detect?key=%key%&text=%text%";
+	public String translate(String message, Language from, Language to) {
+		String language = (from == Language.UNKNOWN) ? to.toString() : from.toString() + "-" + to.toString();
 
-		URL url = new URL(link
-				.replace("%key%", apiKey)
-				.replace("%text%", URLEncoder.encode(message, "UTF-8")));
+		String link = Translation.getUrl()
+				.replace("{{key}}", apiKey)
+				.replace("{{text}}", URLEncoder.encode(message, "UTF-8"))
+				.replace("{{language}}", language.toLowerCase());
 
-		HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(httpsURLConnection.getInputStream()));
-		String input = reader.readLine();
-		reader.close();
+		Request request = new Request.Builder().url(link).build();
 
-		JsonObject object = new JsonParser().parse(input).getAsJsonObject();
-		return Language.valueOf(object.get("lang").getAsString().toUpperCase());
+		try (Response response = new OkHttpClient().newCall(request).execute()) {
+			Translation.Response result = new Gson().fromJson(response.body().string(), Translation.Response.class);
+			return String.join("", result.getText()).trim();
+		}
+	}
+
+	private static class Detection {
+		@Getter
+		private static String url = apiUrl + "detect?key={{key}}&text={{text}}";
+
+		@Data
+		private static class Response {
+			private int code;
+			private String lang;
+		}
+	}
+
+	private static class Translation {
+		@Getter
+		private static String url = apiUrl + "translate?key={{key}}&text={{text}}&lang={{language}}";
+
+		@Data
+		private static class Response {
+			private int code;
+			private String lang;
+			private String[] text;
+		}
 	}
 
 }
