@@ -69,7 +69,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onConnect(AsyncPlayerPreLoginEvent event) {
-		if (lockdown)
+		if (lockdown && event.getLoginResult() == Result.ALLOWED)
 			if (!canBypass(event.getUniqueId())) {
 				event.disallow(Result.KICK_OTHER, getLockdownReason());
 				tellStaff(PREFIX + "Prevented " + event.getName() + " from joining the server");
