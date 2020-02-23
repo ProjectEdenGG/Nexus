@@ -5,6 +5,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
+import lombok.ToString;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.mechanics.Archery;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -33,6 +34,7 @@ public class ArcheryMatchData extends MatchData {
 	private WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
 	private WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
 	private Map<String, Schematic> targetSchematics = new HashMap<>();
+	@ToString.Exclude
 	private Map<ProtectedRegion, ArrayList<Location>> powderLocations = new HashMap<>();
 	private Map<Minigamer, Integer> targetsHit = new HashMap<>();
 

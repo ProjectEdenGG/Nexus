@@ -69,6 +69,8 @@ public class Utils {
 	}
 
 	public static String colorize(String string) {
+		if (string == null)
+			return null;
 		return ChatColor.translateAlternateColorCodes('&', string);
 	}
 
