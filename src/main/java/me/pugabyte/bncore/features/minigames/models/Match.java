@@ -318,10 +318,7 @@ public class Match {
 					if (--time > 0) {
 						if (broadcasts.contains(time)) {
 							match.broadcast("&e" + time + " &7seconds left...");
-							match.getMinigamers()
-									.stream()
-									.map(Minigamer::getPlayer)
-									.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F));
+							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F));
 						}
 					} else {
 						match.end();
