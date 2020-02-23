@@ -12,6 +12,7 @@ import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -35,6 +36,7 @@ public class Minigamer {
 	private boolean respawning = false;
 	private boolean isAlive = true;
 	private int lives;
+	private MinigamerScoreboard scoreboard;
 
 	public String getName() {
 		return player.getName();
@@ -245,5 +247,25 @@ public class Minigamer {
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
 	}
+
+	public MinigamerScoreboard getScoreboard() {
+		if (scoreboard == null)
+			scoreboard = new MinigamerScoreboard();
+		return scoreboard;
+	}
+
+	public class MinigamerScoreboard {
+		private BNScoreboard scoreboard;
+
+		public MinigamerScoreboard() {
+			scoreboard = new BNScoreboard(match.getArena().getMechanic().getScoreboardTitle(match), player);
+			update();
+		}
+
+		public void update() {
+			scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(Minigamer.this));
+		}
+	}
+
 
 }

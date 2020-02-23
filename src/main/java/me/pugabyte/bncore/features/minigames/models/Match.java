@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
@@ -343,15 +342,21 @@ public class Match {
 			this.match = match;
 			if (!match.getArena().hasScoreboard())
 				return;
-			scoreboard = new BNScoreboard(match.getArena().getMechanic().getScoreboardTitle(match));
+			if (!match.getArena().hasUniqueScoreboards())
+				scoreboard = new BNScoreboard(match.getArena().getMechanic().getScoreboardTitle(match));
 			update();
 		}
 
 		public void update() {
-			if (scoreboard == null)
-				return;
-			updatePlayers();
-			scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match));
+			if (match.getArena().hasUniqueScoreboards())
+				for (Minigamer minigamer : match.getMinigamers())
+					minigamer.getScoreboard().update();
+			else {
+				if (scoreboard == null)
+					return;
+				updatePlayers();
+				scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match));
+			}
 		}
 
 		private void updatePlayers() {
