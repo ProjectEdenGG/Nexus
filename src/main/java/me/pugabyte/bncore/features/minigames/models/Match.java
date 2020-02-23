@@ -318,7 +318,7 @@ public class Match {
 					if (--time > 0) {
 						if (broadcasts.contains(time)) {
 							match.broadcast("&e" + time + " &7seconds left...");
-							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F));
+							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 10F, 0.6F));
 						}
 					} else {
 						match.end();
