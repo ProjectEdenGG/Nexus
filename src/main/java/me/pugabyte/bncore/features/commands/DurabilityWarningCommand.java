@@ -70,7 +70,7 @@ public class DurabilityWarningCommand extends CustomCommand implements Listener 
 
 		for (int i = 0; i < checkPoints.length; i++) {
 			if (hasDroppedBelowPercentage(checkPoints[i], oldPercentage, newPercentage)) {
-				player.sendMessage(Utils.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + "'s durability "
+				player.sendMessage(Utils.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + colors[i] + "'s durability "
 						+ "has dropped below " + (int) (checkPoints[i] * 100) + "% (" + newDurability + " uses left)");
 			}
 		}
