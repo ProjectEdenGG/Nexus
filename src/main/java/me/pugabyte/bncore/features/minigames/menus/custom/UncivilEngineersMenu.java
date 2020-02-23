@@ -1,22 +1,19 @@
 package me.pugabyte.bncore.features.minigames.menus.custom;
 
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.menus.SignMenuFactory;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.UncivilEngineersArena;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -44,9 +41,20 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 	public void init(Player player, InventoryContents contents) {
 		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-		contents.set(1, 3, ClickableItem.from(nameItem(Material.MONSTER_EGG, "Mob Points"), e -> openMobPointsMenu(player)));
+		contents.set(1, 4, ClickableItem.from(nameItem(new ItemStack(Material.MONSTER_EGG), "&eMob Points"), e -> openMobPointsMenu(player)));
 
-		contents.set(1, 5, ClickableItem.from(nameItem(Material.COMPASS, "Origins"), e -> openOriginsMenu(player)));
+		contents.set(1, 6, ClickableItem.from(nameItem(new ItemStack(Material.COMPASS), "&eOrigins"), e -> openOriginsMenu(player)));
+
+		contents.set(1, 2, ClickableItem.from(nameItem(new ItemStack(Material.WOOD_AXE), "&eCreate Schematic"), e -> {
+			try {
+				Minigames.getWorldEditUtils().save("uncivilengineers/" + arena.getName() + "_strip", arena.getRegion("strip_1"));
+				player.closeInventory();
+				player.sendMessage(Minigames.PREFIX + "Successfully saved the strip");
+			} catch (NullPointerException ex) {
+				player.sendMessage(Minigames.PREFIX + "&cYou must setup the region: " + arena.getRegionBaseName() + "_strip_1");
+			}
+		}));
+
 	}
 
 	private void openOriginsMenu(Player player) {
@@ -75,7 +83,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			contents.set(0, 0, ClickableItem.from(backItem(), e -> openMobPointsMenu(player)));
+			contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
 
 			contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&aAdd Mob Point"), e -> {
 				SmartInventory INV = SmartInventory.builder()
@@ -92,7 +100,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 			for (UncivilEngineers.MobPoint mobPoint : arena.getMobPoints()) {
 				for (MobHead head : MobHead.values()) {
 					if (mobPoint.getType() == head.getType()) {
-						ItemStack skull = new ItemStack(Material.SKULL, 1, (byte) 3);
+						ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
 						SkullMeta meta = (SkullMeta) skull.getItemMeta();
 						meta.setOwner(head.getMHFName());
 						skull.setItemMeta(meta);
@@ -175,7 +183,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 			int row = 1;
 			int column = 0;
 			for (MobHead head : MobHead.values()) {
-				ItemStack skull = new ItemStack(Material.SKULL, 1, (byte) 3);
+				ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
 				SkullMeta meta = (SkullMeta) skull.getItemMeta();
 				meta.setOwner(head.getMHFName());
 				skull.setItemMeta(meta);
@@ -204,36 +212,38 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 		public void init(Player player, InventoryContents contents) {
 			contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
 
+			ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode.||&7Then, click a spawnpoint with me to||&7delete the spawnpoint.");
+			contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
+				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
+					player.setItemOnCursor(new ItemStack(Material.AIR));
+				} else if (Utils.isNullOrAir(player.getItemOnCursor())) {
+					player.setItemOnCursor(deleteItem);
+				}
+			})));
+
 			contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&aSet New Origin"),
 					e -> {
-						WorldEditUtils worldEditUtils = new WorldEditUtils(player.getWorld());
-						LocalSession localSession = worldEditUtils.getPlayer(player).getSession();
-						try {
-							Location loc = worldEditUtils.toLocation(localSession.getSelection(new BukkitWorld(player.getWorld())).getMinimumPoint());
-							AtomicInteger originID = new AtomicInteger(0);
-							new SignMenuFactory(BNCore.getInstance())
-									.lines("", "^^^^^^^^", "UE Line", "Number")
-									.response((player1, response) -> {
-										try {
-											originID.set(Integer.parseInt(response[0]));
-										} catch (Exception ignore) {
+						Location loc = player.getLocation();
+						AtomicInteger originID = new AtomicInteger(0);
+						player.closeInventory();
+						BNCore.getInstance().getSignMenuFactory()
+								.lines("", "^^^^^^^^", "UE Line", "Number")
+								.response((player1, response) -> {
+									try {
+										originID.set(Integer.parseInt(response[0]));
+										if (originID.get() == 0) {
 											player.sendMessage("&cYou must use an integer greater than 0.");
 											player.closeInventory();
 										}
-									})
-									.open(player);
-							if (originID.get() == 0) {
-								player.sendMessage("&cYou must use an integer greater than 0.");
-								player.closeInventory();
-							}
-							arena.getOrigins().put(originID.get(), player.getLocation());
-							arena.write();
-							openOriginsMenu(player);
-						} catch (IncompleteRegionException ex) {
-							player.closeInventory();
-							player.sendMessage("&cYour World Edit region is not set. " +
-									"Please set your region to the lowest block in one corner of the map.");
-						}
+										arena.getOrigins().put(originID.get(), loc.getBlock().getLocation());
+										arena.write();
+										openOriginsMenu(player);
+									} catch (Exception ignore) {
+										player.sendMessage("&cYou must use an integer greater than 0.");
+										player.closeInventory();
+									}
+								})
+								.open(player);
 					}));
 
 			int row = 1;
@@ -245,7 +255,16 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				contents.set(row, column, ClickableItem.from(nameItem(Material.COMPASS,
 						"&eOrigin: " + origin, getLocationLore(arena.getOrigins().get(origin)) +
 								"|| ||&7Click to teleport."),
-						e -> player.teleport(arena.getOrigins().get(origin))));
+						e -> {
+							if (player.getItemOnCursor().getType().equals(Material.TNT)) {
+								player.setItemOnCursor(new ItemStack(Material.AIR));
+								String originID = Utils.right(e.getItem().getItemMeta().getDisplayName(), 1);
+								arena.getOrigins().remove(Integer.parseInt(originID));
+								openOriginsMenu(player);
+								return;
+							}
+							player.teleport(arena.getOrigins().get(origin));
+						}));
 				if (column != 8) {
 					column++;
 				} else {
