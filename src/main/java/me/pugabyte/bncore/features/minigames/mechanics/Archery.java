@@ -273,8 +273,10 @@ public class Archery extends TeamlessMechanic {
 		String color = ColorType.fromDurability(hitBlock.getRelative(0, 1, 0).getData()).getName();
 		minigamer.scored(getPoints(color));
 
+		ArcheryMatchData matchData = minigamer.getMatch().getMatchData();
 		projectile.remove();
 		removeTarget(hitBlock);
+		matchData.addTargets(minigamer);
 		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 	}
 
