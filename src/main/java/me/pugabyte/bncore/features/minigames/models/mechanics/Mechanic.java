@@ -154,7 +154,7 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public Map<String, Integer> getScoreboardLines(Minigamer minigamer) {
-		return null;
+		return new HashMap<>();
 	}
 
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
