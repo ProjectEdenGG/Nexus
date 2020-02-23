@@ -19,11 +19,10 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTic
 import me.pugabyte.bncore.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.reflections.Reflections;
@@ -50,7 +49,7 @@ public class Match {
 	private boolean ended = false;
 	private Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;
-	private MatchScoreboard scoreboard;
+	private MinigameScoreboard scoreboard;
 	private ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
@@ -114,9 +113,6 @@ public class Match {
 		} catch (Exception ex) { ex.printStackTrace(); }
 		minigamer.clearState();
 		minigamer.toGamelobby();
-		if (minigamer.getScoreboard() != null)
-			minigamer.getScoreboard().delete();
-		scoreboard.update();
 		if (minigamers == null || minigamers.size() == 0)
 			end();
 	}
@@ -153,7 +149,7 @@ public class Match {
 		toGamelobby();
 		arena.getMechanic().onEnd(event);
 		minigamers = new ArrayList<>();
-		scoreboard.update();
+		scoreboard.handleEnd();
 		MatchManager.remove(this);
 	}
 
@@ -165,7 +161,7 @@ public class Match {
 
 			initializeMatchData();
 			arena.getMechanic().onInitialize(event);
-			scoreboard = new MatchScoreboard(this);
+			scoreboard = MinigameScoreboard.Factory.create(this);
 			tasks = new MatchTasks();
 			initialized = true;
 		}
@@ -336,52 +332,6 @@ public class Match {
 
 		void stop() {
 			Tasks.cancel(taskId);
-		}
-	}
-
-	// TODO: Add handler layer to decide between unique/global scoreboards
-	// TODO: Team scoreboards
-	public class MatchScoreboard {
-		private Match match;
-		private BNScoreboard scoreboard;
-
-		public MatchScoreboard(Match match) {
-			this.match = match;
-			if (!match.getArena().hasScoreboard())
-				return;
-
-			if (match.getArena().hasUniqueScoreboards())
-				match.getMinigamers().forEach(Minigamer::createScoreboard);
-			else
-				scoreboard = new BNScoreboard(match.getArena().getMechanic().getScoreboardTitle(match));
-
-			update();
-		}
-
-		public void update() {
-			if (!match.getArena().hasScoreboard())
-				return;
-
-			updatePlayers();
-			if (match.getArena().hasUniqueScoreboards())
-				match.getMinigamers().forEach(minigamer -> minigamer.getScoreboard().update());
-			else
-				scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match));
-		}
-
-		private void updatePlayers() {
-			if (!match.getArena().hasScoreboard())
-				return;
-
-			if (match.getArena().hasUniqueScoreboards())
-				match.getMinigamers().forEach(Minigamer::createScoreboard);
-			else {
-				for (Player player : Bukkit.getOnlinePlayers())
-					if (!match.getPlayers().contains(player))
-						scoreboard.removePlayer(player);
-
-				scoreboard.addPlayers(match.getPlayers());
-			}
 		}
 	}
 

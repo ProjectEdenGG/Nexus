@@ -290,6 +290,7 @@ public class Archery extends TeamlessMechanic {
 		removeTarget(hitBlock);
 		matchData.addTargets(minigamer);
 		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
+		minigamer.getMatch().getScoreboard().update();
 	}
 
 	public int getPoints(String color) {
