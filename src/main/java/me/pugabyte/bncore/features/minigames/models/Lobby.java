@@ -7,6 +7,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -89,8 +90,13 @@ public class Lobby implements ConfigurationSerializable {
 				if (--time > 0) {
 					LobbyTimerTickEvent event = new LobbyTimerTickEvent(match, lobby, time);
 					Utils.callEvent(event);
-					if (broadcasts.contains(time))
+					if (broadcasts.contains(time)) {
 						match.broadcast("&e" + time + " &7seconds left...");
+						match.getMinigamers()
+								.stream()
+								.map(Minigamer::getPlayer)
+								.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F));
+					}
 				} else if (time == 0) {
 					stop();
 					match.start();
