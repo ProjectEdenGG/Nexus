@@ -114,7 +114,8 @@ public class Match {
 		} catch (Exception ex) { ex.printStackTrace(); }
 		minigamer.clearState();
 		minigamer.toGamelobby();
-		minigamer.getScoreboard().delete();
+		if (minigamer.getScoreboard() != null)
+			minigamer.getScoreboard().delete();
 		scoreboard.update();
 		if (minigamers == null || minigamers.size() == 0)
 			end();
@@ -318,7 +319,7 @@ public class Match {
 					if (--time > 0) {
 						if (broadcasts.contains(time)) {
 							match.broadcast("&e" + time + " &7seconds left...");
-							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 10F, 0.6F));
+							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, .75F, .6F));
 						}
 					} else {
 						match.end();
