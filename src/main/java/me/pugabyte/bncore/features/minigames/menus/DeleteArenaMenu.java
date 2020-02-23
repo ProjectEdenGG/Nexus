@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +31,7 @@ public class DeleteArenaMenu extends MenuUtils implements InventoryProvider {
 		contents.set(1, 4, ClickableItem.from(nameItem(Material.TNT, "&4&lDELETE ARENA", "&7This cannot be undone."),
 				e -> {
 					arena.delete();
-					player.sendMessage(Minigames.PREFIX + "Arena &e" + arena.getName() + " &3deleted");
+					player.sendMessage(Utils.colorize(Minigames.PREFIX + "Arena &e" + arena.getName() + " &3deleted"));
 				}));
 	}
 
