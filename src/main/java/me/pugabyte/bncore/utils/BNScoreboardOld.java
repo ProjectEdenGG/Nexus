@@ -1,13 +1,12 @@
 package me.pugabyte.bncore.utils;
 
-import me.lucko.helper.Services;
-import me.lucko.helper.scoreboard.PacketScoreboard;
-import me.lucko.helper.scoreboard.PacketScoreboardProvider;
-import me.lucko.helper.scoreboard.ScoreboardObjective;
+import be.maximvdw.featherboard.api.FeatherBoardAPI;
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.Arrays;
@@ -19,52 +18,49 @@ import java.util.Map;
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @SuppressWarnings("unused")
-public class BNScoreboard {
+public class BNScoreboardOld {
 	private ScoreboardManager manager = BNCore.getInstance().getServer().getScoreboardManager();
-	private PacketScoreboard scoreboard;
-	private ScoreboardObjective objective;
+	private Scoreboard scoreboard;
+	private Objective objective;
 	private Map<String, Integer> lines = new HashMap<>();
 
-	public BNScoreboard(String title) {
-		this(title, title, Collections.emptyList());
+	public BNScoreboardOld(String title) {
+		this(title, Collections.emptyList());
 	}
 
-	public BNScoreboard(String title, Player player) {
-		this(title, title, Collections.singletonList(player));
+	public BNScoreboardOld(String title, Player player) {
+		this(title, Collections.singletonList(player));
 	}
 
-	public BNScoreboard(String title, List<Player> players) {
-		this(title, title, players);
+	public BNScoreboardOld(String title, Player... players) {
+		this(title, Arrays.asList(players));
 	}
 
-	public BNScoreboard(String id, String title) {
-		this(id, title, Collections.emptyList());
-	}
-
-	public BNScoreboard(String id, String title, Player player) {
-		this(id, title, Collections.singletonList(player));
-	}
-
-	public BNScoreboard(String id, String title, List<Player> players) {
-		scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
-		objective = scoreboard.createObjective(id, colorize(title), DisplaySlot.SIDEBAR, false);
+	public BNScoreboardOld(String title, List<Player> players) {
+		scoreboard = manager.getNewScoreboard();
+		objective = scoreboard.registerNewObjective(colorize(title), title);
+		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		for (Player player : players)
 			addPlayer(player);
 	}
 
 	public void delete() {
-		scoreboard.removeObjective(objective.getId());
+		objective.unregister();
 		for (Player player : Bukkit.getOnlinePlayers())
-			removePlayer(player);
-		scoreboard = null;
+			if (player.getScoreboard().equals(scoreboard))
+				removePlayer(player);
 	}
 
 	private void clear() {
-		objective.clearScores();
+		new HashMap<>(lines).forEach((id, score) -> removeLine(id));
+	}
+
+	private void update() {
+		lines.forEach((id, score) -> objective.getScore(colorize(id)).setScore(score));
 	}
 
 	public void addPlayer(Player player) {
-		objective.subscribe(player);
+		player.setScoreboard(scoreboard);
 	}
 
 	public void addPlayers(Player... players) {
@@ -77,13 +73,10 @@ public class BNScoreboard {
 	}
 
 	public void removePlayer(Player player) {
-		objective.unsubscribe(player, true);
-//		player.setScoreboard(manager.getMainScoreboard());
-//		try {
-//			FeatherBoardAPI.initScoreboard(player);
-//		} catch (Exception ex) {
-//			ex.printStackTrace();
-//		}
+		if (player.getScoreboard().equals(scoreboard)) {
+			player.setScoreboard(manager.getMainScoreboard());
+			FeatherBoardAPI.initScoreboard(player);
+		}
 	}
 
 	public void removePlayers(Player... players) {
@@ -96,19 +89,23 @@ public class BNScoreboard {
 	}
 
 	public Map<String, Integer> getLines() {
-		return objective.getScores();
+		return lines;
 	}
 
 	public void setLine(String id, int score) {
-		objective.setScore(id, score);
+		lines.put(id, score);
+		update();
 	}
 
 	public void setLines(Map<String, Integer> lines) {
-		objective.applyScores(lines);
+		clear();
+		this.lines = lines;
+		update();
 	}
 
 	public void removeLine(String id) {
-		objective.removeScore(id);
+		lines.remove(id);
+		scoreboard.resetScores(colorize(id));
 	}
 
 	public void removeLines(String... lines) {

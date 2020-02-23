@@ -1,5 +1,9 @@
 package me.pugabyte.bncore.features.minigames.commands;
 
+import me.lucko.helper.Services;
+import me.lucko.helper.scoreboard.PacketScoreboard;
+import me.lucko.helper.scoreboard.PacketScoreboardProvider;
+import me.lucko.helper.scoreboard.ScoreboardTeam;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
@@ -22,6 +26,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -36,6 +41,17 @@ public class JMinigamesCommand extends CustomCommand {
 		super(event);
 		if (sender() instanceof Player)
 			minigamer = PlayerManager.get(player());
+	}
+
+	@Path("testcolor")
+	void color() {
+		PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
+		ScoreboardTeam test = scoreboard.createTeam("test");
+		test.setColor(ChatColor.YELLOW);
+//		scoreboard.createObjective()
+
+		for (Player player : minigamer.getMatch().getPlayers())
+			test.addPlayer(player);
 	}
 
 	@Path

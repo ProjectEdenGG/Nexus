@@ -96,7 +96,6 @@ public class Match {
 			arena.getMechanic().processJoin(minigamer);
 			arena.getMechanic().onJoin(event);
 		} catch (Exception ex) { ex.printStackTrace(); }
-		scoreboard.update();
 		return true;
 	}
 
@@ -113,6 +112,7 @@ public class Match {
 		} catch (Exception ex) { ex.printStackTrace(); }
 		minigamer.clearState();
 		minigamer.toGamelobby();
+		scoreboard.handleQuit(minigamer);
 		if (minigamers == null || minigamers.size() == 0)
 			end();
 	}
@@ -162,9 +162,9 @@ public class Match {
 			if (event.isCancelled()) return;
 
 			initializeMatchData();
-			arena.getMechanic().onInitialize(event);
-			scoreboard = MinigameScoreboard.Factory.create(this);
 			tasks = new MatchTasks();
+			scoreboard = MinigameScoreboard.Factory.create(this);
+			arena.getMechanic().onInitialize(event);
 			initialized = true;
 		}
 	}

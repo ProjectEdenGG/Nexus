@@ -15,8 +15,12 @@ public class MinigamerScoreboard implements MinigameScoreboard {
 		this.match = match;
 	}
 
-	public BNScoreboard createScoreboard(Minigamer minigamer) {
-		return new BNScoreboard(match.getArena().getMechanic().getScoreboardTitle(match), minigamer.getPlayer());
+	private BNScoreboard createScoreboard(Minigamer minigamer) {
+		return new BNScoreboard(
+				minigamer.getName() + "-" + minigamer.getMatch().getArena().getName(),
+				match.getArena().getMechanic().getScoreboardTitle(match),
+				minigamer.getPlayer()
+		);
 	}
 
 	@Override
@@ -31,7 +35,7 @@ public class MinigamerScoreboard implements MinigameScoreboard {
 
 	@Override
 	public void handleJoin(Minigamer minigamer) {
-		createScoreboard(minigamer);
+		scoreboards.put(minigamer, createScoreboard(minigamer));
 	}
 
 	@Override

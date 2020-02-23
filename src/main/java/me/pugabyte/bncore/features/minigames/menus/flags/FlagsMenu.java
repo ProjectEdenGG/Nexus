@@ -41,28 +41,6 @@ public class FlagsMenu extends MenuUtils implements InventoryProvider {
 			arena.write();
 			menus.openFlagsMenu(player, arena);
 		}));
-
-		ItemStack scoreboardItem = nameItem(Material.SIGN, "&eScoreboard",
-				"&7Set if the arena has||&7a visible scoreboard|| ||&3Current Setting:||&e" + arena.hasScoreboard());
-		if (arena.hasScoreboard())
-			addGlowing(scoreboardItem);
-
-		contents.set(1, 2, ClickableItem.from(scoreboardItem, e -> {
-			arena.hasScoreboard(!arena.hasScoreboard());
-			arena.write();
-			menus.openFlagsMenu(player, arena);
-		}));
-
-		ItemStack uniqueScoreboardItem = nameItem(Material.SIGN, "&eUnique Scoreboards",
-				"&7Set if the arena has unique||&7 scoreboards for each player|| ||&3Current Setting:||&e" + arena.hasUniqueScoreboards());
-		if (arena.hasUniqueScoreboards())
-			addGlowing(uniqueScoreboardItem);
-
-		contents.set(1, 3, ClickableItem.from(uniqueScoreboardItem, e -> {
-			arena.hasUniqueScoreboards(!arena.hasUniqueScoreboards());
-			arena.write();
-			menus.openFlagsMenu(player, arena);
-		}));
 	}
 
 	@Override
