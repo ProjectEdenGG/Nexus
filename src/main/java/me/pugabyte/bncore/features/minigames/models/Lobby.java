@@ -46,7 +46,7 @@ public class Lobby implements ConfigurationSerializable {
 	public void join(Minigamer minigamer) {
 		minigamer.teleport(location);
 		minigamer.clearState();
-		if (!timerStarted && minigamer.getMatch().getMinigamers().size() >= minigamer.getMatch().getArena().getMinPlayers())
+		if (!timerStarted)
 			new Lobby.LobbyTimer(this, minigamer.getMatch(), waitTime);
 	}
 
@@ -67,10 +67,7 @@ public class Lobby implements ConfigurationSerializable {
 		}
 
 		private void start() {
-			match.broadcast("&7Starting in &e" + time + " &7seconds");
-			timerStarted = true;
-
-			taskId = match.getTasks().repeat(1, 20, () -> {
+			taskId = match.getTasks().repeat(0, 20, () -> {
 				if (match.isStarted()) {
 					stop();
 					return;
@@ -84,6 +81,11 @@ public class Lobby implements ConfigurationSerializable {
 					stop();
 					return;
 				}
+
+				if (!timerStarted)
+					match.broadcast("&7Starting in &e" + time + " &7seconds");
+				timerStarted = true;
+
 				if (--time > 0) {
 					LobbyTimerTickEvent event = new LobbyTimerTickEvent(match, lobby, time);
 					Utils.callEvent(event);
