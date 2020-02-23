@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.damagetracker;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.damagetracker.models.DamageEvent;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -66,8 +65,6 @@ public class DamageTrackerListener implements Listener {
 
 	boolean ignore(EntityDamageEvent event) {
 		if (event.isCancelled())
-			return true;
-		if (event.getEntity().getWorld().equals(Minigames.getGameworld()))
 			return true;
 		return !(event.getEntity() instanceof LivingEntity);
 	}
