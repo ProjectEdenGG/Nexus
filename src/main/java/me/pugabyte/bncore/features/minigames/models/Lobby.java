@@ -46,7 +46,7 @@ public class Lobby implements ConfigurationSerializable {
 	public void join(Minigamer minigamer) {
 		minigamer.teleport(location);
 		minigamer.clearState();
-		if (!timerStarted)
+		if (!timerStarted && minigamer.getMatch().getMinigamers().size() >= minigamer.getMatch().getArena().getMinPlayers())
 			new Lobby.LobbyTimer(this, minigamer.getMatch(), waitTime);
 	}
 
