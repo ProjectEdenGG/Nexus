@@ -24,6 +24,7 @@ import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.reflections.Reflections;
 
@@ -315,8 +316,13 @@ public class Match {
 				match.getTasks().wait(1, () -> match.broadcast("&e" + (time + 1) + " &7seconds left..."));
 				taskId = match.getTasks().repeat(0, 20, () -> {
 					if (--time > 0) {
-						if (broadcasts.contains(time))
+						if (broadcasts.contains(time)) {
 							match.broadcast("&e" + time + " &7seconds left...");
+							match.getMinigamers()
+									.stream()
+									.map(Minigamer::getPlayer)
+									.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F));
+						}
 					} else {
 						match.end();
 						stop();
