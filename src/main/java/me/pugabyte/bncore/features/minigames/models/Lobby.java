@@ -92,7 +92,7 @@ public class Lobby implements ConfigurationSerializable {
 					Utils.callEvent(event);
 					if (broadcasts.contains(time)) {
 						match.broadcast("&e" + time + " &7seconds left...");
-						match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 10F, 0.6F));
+						match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, .75F, .6F));
 					}
 				} else if (time == 0) {
 					stop();
