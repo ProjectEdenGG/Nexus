@@ -153,6 +153,10 @@ public abstract class Mechanic implements Listener {
 		return lines;
 	}
 
+	public Map<String, Integer> getScoreboardLines(Minigamer minigamer) {
+		return null;
+	}
+
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
 			if (event.getClickedBlock() != null)

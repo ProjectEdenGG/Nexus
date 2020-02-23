@@ -61,6 +61,8 @@ public class Arena implements ConfigurationSerializable {
 	private boolean canJoinLate = false;
 	@Accessors(fluent = true)
 	private boolean hasScoreboard = true;
+	@Accessors(fluent = true)
+	private boolean hasUniqueScoreboards = false;
 
 	public Mechanic getMechanic() {
 		return getMechanicType().get();
@@ -91,6 +93,7 @@ public class Arena implements ConfigurationSerializable {
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 		this.hasScoreboard = (Boolean) map.getOrDefault("hasScoreboard", hasScoreboard);
+		this.hasUniqueScoreboards = (Boolean) map.getOrDefault("hasUniqueScoreboards", hasUniqueScoreboards);
 	}
 
 	@Override
@@ -116,6 +119,7 @@ public class Arena implements ConfigurationSerializable {
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 			put("hasScoreboard", hasScoreboard());
+			put("hasUniqueScoreboards", hasUniqueScoreboards());
 		}};
 	}
 
