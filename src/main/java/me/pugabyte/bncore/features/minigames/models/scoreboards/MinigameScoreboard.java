@@ -1,7 +1,11 @@
 package me.pugabyte.bncore.features.minigames.models.scoreboards;
 
+import lombok.Getter;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
+import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 
 public interface MinigameScoreboard {
 
@@ -13,15 +17,35 @@ public interface MinigameScoreboard {
 
 	void handleEnd();
 
+
 	class Factory {
+
+		@SneakyThrows
 		public static MinigameScoreboard create(Match match) {
-			if (!match.getArena().hasScoreboard())
-				return null;
+			Mechanic mechanic = match.getArena().getMechanic();
+			Scoreboard annotation = mechanic.getAnnotation(Scoreboard.class);
+			Class<? extends MinigameScoreboard> type = Type.MATCH.getType();
+			if (annotation != null)
+				type = annotation.value().getType();
 
-			if (match.getArena().hasUniqueScoreboards())
-				return new MinigamerScoreboard(match);
+			if (type != null)
+				return type.getDeclaredConstructor(Match.class).newInstance(match);
 
-			return new MatchScoreboard(match);
+			return null;
+		}
+
+	}
+
+	enum Type {
+		NONE(null),
+		MATCH(MatchScoreboard.class),
+		MINIGAMER(MinigamerScoreboard.class);
+
+		@Getter
+		private Class<? extends MinigameScoreboard> type;
+
+		Type(Class<? extends MinigameScoreboard> clazz) {
+			this.type = clazz;
 		}
 	}
 
