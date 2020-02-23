@@ -22,6 +22,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.util.Objects;
+
 import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @Data
@@ -274,5 +276,11 @@ public class Minigamer {
 		}
 	}
 
-
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Minigamer minigamer = (Minigamer) o;
+		return Objects.equals(player.getUniqueId(), minigamer.player.getUniqueId());
+	}
 }
