@@ -20,8 +20,8 @@ import static me.pugabyte.bncore.utils.Utils.colorize;
 
 @SuppressWarnings("unused")
 public class BNScoreboard {
-	private ScoreboardManager manager = BNCore.getInstance().getServer().getScoreboardManager();
-	private PacketScoreboard scoreboard;
+	private static final ScoreboardManager manager = BNCore.getInstance().getServer().getScoreboardManager();
+	private static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 	private ScoreboardObjective objective;
 	private Map<String, Integer> lines = new HashMap<>();
 
@@ -46,7 +46,6 @@ public class BNScoreboard {
 	}
 
 	public BNScoreboard(String id, String title, List<Player> players) {
-		scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 		objective = scoreboard.createObjective(id, colorize(title), DisplaySlot.SIDEBAR, false);
 		for (Player player : players)
 			addPlayer(player);
@@ -56,7 +55,6 @@ public class BNScoreboard {
 		scoreboard.removeObjective(objective.getId());
 		for (Player player : Bukkit.getOnlinePlayers())
 			removePlayer(player);
-		scoreboard = null;
 	}
 
 	private void clear() {
