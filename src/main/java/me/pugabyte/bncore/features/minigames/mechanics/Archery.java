@@ -16,6 +16,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.matchdata.ArcheryMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Archery extends TeamlessMechanic {
 
@@ -151,44 +153,54 @@ public class Archery extends TeamlessMechanic {
 		Map<String, Schematic> targetSchems = matchData.getTargetSchematics();
 
 		match.getTasks().repeat(5 * 20, 7 * 20, () -> {
+			AtomicInteger wait = new AtomicInteger(0);
+			AtomicInteger count = new AtomicInteger(0);
+
 			for (ProtectedRegion colorRegion : powderLocations.keySet()) {
-				ArrayList<Location> locations = powderLocations.get(colorRegion);
+				if (count.get() > 0 && count.get() % 3 == 0)
+					wait.getAndIncrement();
 
-				for (int i = 0; i < 10; i++) {
-					Location randomXZ = Utils.getRandomElement(locations);
-					int min = colorRegion.getMinimumPoint().getBlockY() + 2;
-					int max = colorRegion.getMaximumPoint().getBlockY() - 2;
-					int y = Utils.randomInt(min, max);
+				Tasks.wait(wait.get(), () -> {
+					ArrayList<Location> locations = powderLocations.get(colorRegion);
 
-					Location targetLoc = randomXZ.getBlock().getLocation();
-					targetLoc.setY(y);
-					targetLoc = targetLoc.getBlock().getRelative(-1, 1, 0).getLocation();
+					for (int i = 0; i < 10; i++) {
+						Location randomXZ = Utils.getRandomElement(locations);
+						int min = colorRegion.getMinimumPoint().getBlockY() + 2;
+						int max = colorRegion.getMaximumPoint().getBlockY() - 2;
+						int y = Utils.randomInt(min, max);
 
-					int range = matchData.getRangeNumber(colorRegion);
-					Direction direction = matchData.getRangeDirection(range, match);
-					if (direction == null)
-						break;
-					String color = matchData.getRangeColor(colorRegion);
+						Location targetLoc = randomXZ.getBlock().getLocation();
+						targetLoc.setY(y);
+						targetLoc = targetLoc.getBlock().getRelative(-1, 1, 0).getLocation();
 
-					if (color.equalsIgnoreCase("red")) {
-						if (direction.equals(Direction.NORTH))
-							targetLoc = targetLoc.getBlock().getRelative(0, 0, -1).getLocation();
-						else
-							targetLoc = targetLoc.getBlock().getRelative(0, 0, 1).getLocation();
-					} else if (color.equalsIgnoreCase("yellow")) {
-						if (direction.equals(Direction.NORTH))
-							targetLoc = targetLoc.getBlock().getRelative(0, 0, 1).getLocation();
-						else
-							targetLoc = targetLoc.getBlock().getRelative(0, 0, -1).getLocation();
+						int range = matchData.getRangeNumber(colorRegion);
+						Direction direction = matchData.getRangeDirection(range, match);
+						if (direction == null)
+							break;
+						String color = matchData.getRangeColor(colorRegion);
+
+						if (color.equalsIgnoreCase("red")) {
+							if (direction.equals(Direction.NORTH))
+								targetLoc = targetLoc.getBlock().getRelative(0, 0, -1).getLocation();
+							else
+								targetLoc = targetLoc.getBlock().getRelative(0, 0, 1).getLocation();
+						} else if (color.equalsIgnoreCase("yellow")) {
+							if (direction.equals(Direction.NORTH))
+								targetLoc = targetLoc.getBlock().getRelative(0, 0, 1).getLocation();
+							else
+								targetLoc = targetLoc.getBlock().getRelative(0, 0, -1).getLocation();
+						}
+
+						if (canPlaceTarget(targetLoc)) {
+							String key = (direction.name() + "_" + color).toLowerCase();
+							Schematic schem = targetSchems.get(key);
+							WEUtils.paste(schem, targetLoc);
+							break;
+						}
 					}
+				});
 
-					if (canPlaceTarget(targetLoc)) {
-						String key = (direction.name() + "_" + color).toLowerCase();
-						Schematic schem = targetSchems.get(key);
-						WEUtils.paste(schem, targetLoc);
-						break;
-					}
-				}
+				count.getAndIncrement();
 			}
 		});
 	}
