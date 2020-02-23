@@ -39,8 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-// TODO: Sound at near end time left messages?
-
 public class Archery extends TeamlessMechanic {
 
 	@Override
@@ -107,10 +105,10 @@ public class Archery extends TeamlessMechanic {
 		clearRanges(event.getMatch());
 	}
 
-	// TODO: Needs a setting to show individual scoreboards
 	@Override
-	public Map<String, Integer> getScoreboardLines(Match match) {
+	public Map<String, Integer> getScoreboardLines(Minigamer minigamer) {
 		Map<String, Integer> lines = new HashMap<>();
+		Match match = minigamer.getMatch();
 		ArcheryMatchData matchData = match.getMatchData();
 		String[] order = {"a", "b", "c", "d", "e", "f", "k", "l", "m", "n", "o", "r"};
 		int ndx = 0;
@@ -118,10 +116,11 @@ public class Archery extends TeamlessMechanic {
 		if (match.isStarted()) {
 			int timeLeft = match.getTimer().getTime();
 
-			// Temporary until we get that setting
-			lines.put("&1", 0);
-			lines.put("&2&fTime Left: &e&l" + timeLeft, 0);
+			lines.put("&1&fScore: &e" + minigamer.getScore(), 0);
+			lines.put("&2&fTargets Hit: &e" + matchData.getTargetsHit(minigamer), 0);
 			lines.put("&3", 0);
+			lines.put("&4&fTime Left: &e&l" + timeLeft, 0);
+			lines.put("&5", 0);
 
 			Map<Minigamer, Integer> sortedScores = matchData.getSortedScores(match);
 			for (Minigamer sbMinigamer : sortedScores.keySet()) {
@@ -132,40 +131,16 @@ public class Archery extends TeamlessMechanic {
 					break;
 
 				String name = sbMinigamer.getName();
+				if (minigamer.equals(sbMinigamer))
+					name = "&f&lYOU";
+
 				int score = sbMinigamer.getScore();
 				lines.put("&" + order[ndx++] + "&f" + name + "&f: &e" + score, 0);
 			}
-			//
-
-//			List<Minigamer> minigamers = match.getMinigamers();
-//			for (Minigamer minigamer : minigamers) {
-//				lines.put("&1&fScore: &e" + minigamer.getScore(), 0);
-//				lines.put("&2&fTargets Hit: &e" + matchData.getTargetsHit(minigamer), 0);
-//				lines.put("&3", 0);
-//				lines.put("&4&fTime Left: &e&l" + timeLeft, 0);
-//				lines.put("&5", 0);
-//
-//				Map<Minigamer, Integer> sortedScores = matchData.getSortedScores(match);
-//				for(Minigamer sbMinigamer: sortedScores.keySet()){
-//					if (sbMinigamer.getScore() <= 0)
-//						continue;
-//
-//					if(ndx >= order.length)
-//						break;
-//
-//					String name = sbMinigamer.getName();
-//					if (minigamer.equals(sbMinigamer))
-//						name = "&f&lYOU";
-//
-//					int score = sbMinigamer.getScore();
-//					lines.put("&" + order[ndx++] + "&f" + name + "&f: &e" + score, 0);
-//				}
-//			}
 		} else {
-			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getName(), 0);
+			for (Minigamer sbMinigamer : match.getMinigamers())
+				lines.put(sbMinigamer.getName(), 0);
 		}
-
 		return lines;
 	}
 
