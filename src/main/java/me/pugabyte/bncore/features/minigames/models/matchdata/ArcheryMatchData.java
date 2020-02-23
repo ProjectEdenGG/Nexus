@@ -37,8 +37,10 @@ public class ArcheryMatchData extends MatchData {
 	private Map<Minigamer, Integer> targetsHit = new HashMap<>();
 
 	public void addTargets(Minigamer minigamer) {
-		int targets = targetsHit.get(minigamer) + 1;
-		targetsHit.put(minigamer, targets);
+		Integer targets = targetsHit.get(minigamer);
+		if (targets == null)
+			targets = 0;
+		targetsHit.put(minigamer, ++targets);
 	}
 
 	public int getTargetsHit(Minigamer minigamer) {
