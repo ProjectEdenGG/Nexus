@@ -248,10 +248,9 @@ public class Minigamer {
 			player.removePotionEffect(effect.getType());
 	}
 
-	public MinigamerScoreboard getScoreboard() {
+	public void createScoreboard() {
 		if (scoreboard == null)
 			scoreboard = new MinigamerScoreboard();
-		return scoreboard;
 	}
 
 	public class MinigamerScoreboard {
@@ -263,7 +262,15 @@ public class Minigamer {
 		}
 
 		public void update() {
-			scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(Minigamer.this));
+			if (match == null)
+				delete();
+			else
+				scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(Minigamer.this));
+		}
+
+		public void delete() {
+			scoreboard.removePlayer(player);
+			scoreboard.delete();
 		}
 	}
 

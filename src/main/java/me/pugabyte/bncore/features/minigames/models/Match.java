@@ -113,6 +113,7 @@ public class Match {
 		} catch (Exception ex) { ex.printStackTrace(); }
 		minigamer.clearState();
 		minigamer.toGamelobby();
+		minigamer.getScoreboard().delete();
 		scoreboard.update();
 		if (minigamers == null || minigamers.size() == 0)
 			end();
@@ -334,6 +335,8 @@ public class Match {
 		}
 	}
 
+	// TODO: Add handler layer to decide between unique/global scoreboards
+	// TODO: Team scoreboards
 	public class MatchScoreboard {
 		private Match match;
 		private BNScoreboard scoreboard;
@@ -342,29 +345,39 @@ public class Match {
 			this.match = match;
 			if (!match.getArena().hasScoreboard())
 				return;
-			if (!match.getArena().hasUniqueScoreboards())
+
+			if (match.getArena().hasUniqueScoreboards())
+				match.getMinigamers().forEach(Minigamer::createScoreboard);
+			else
 				scoreboard = new BNScoreboard(match.getArena().getMechanic().getScoreboardTitle(match));
+
 			update();
 		}
 
 		public void update() {
+			if (!match.getArena().hasScoreboard())
+				return;
+
+			updatePlayers();
 			if (match.getArena().hasUniqueScoreboards())
-				for (Minigamer minigamer : match.getMinigamers())
-					minigamer.getScoreboard().update();
-			else {
-				if (scoreboard == null)
-					return;
-				updatePlayers();
+				match.getMinigamers().forEach(minigamer -> minigamer.getScoreboard().update());
+			else
 				scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match));
-			}
 		}
 
 		private void updatePlayers() {
-			for (Player player : Bukkit.getOnlinePlayers())
-				if (!match.getPlayers().contains(player))
-					scoreboard.removePlayer(player);
+			if (!match.getArena().hasScoreboard())
+				return;
 
-			scoreboard.addPlayers(match.getPlayers());
+			if (match.getArena().hasUniqueScoreboards())
+				match.getMinigamers().forEach(Minigamer::createScoreboard);
+			else {
+				for (Player player : Bukkit.getOnlinePlayers())
+					if (!match.getPlayers().contains(player))
+						scoreboard.removePlayer(player);
+
+				scoreboard.addPlayers(match.getPlayers());
+			}
 		}
 	}
 
