@@ -136,6 +136,8 @@ public class Match {
 	}
 
 	public void end() {
+		if (ended) return;
+
 		MatchEndEvent event = new MatchEndEvent(this);
 		Utils.callEvent(event);
 		if (event.isCancelled()) return;
