@@ -28,7 +28,7 @@ public class TNTRun extends TeamlessMechanic {
 
 	@Override
 	public String getDescription() {
-		return "???";
+		return "TODO";
 	}
 
 	@Override

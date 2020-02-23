@@ -55,15 +55,10 @@ public class AnvilDrop extends TeamlessMechanic {
 		dropAnvils(event.getMatch());
 	}
 
-
 	@Override
 	public void onDamage(Minigamer victim, EntityDamageEvent event) {
 		super.onDamage(victim, event);
 		event.setDamage(victim.getPlayer().getHealth() + 1);
-		if (event.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
-			event.getEntity().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_PLAYER_DEATH, 10F, 1F);
-			event.getEntity().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_PLAYER_BIG_FALL, 10F, 1F);
-		}
 	}
 
 	@Override
@@ -74,6 +69,10 @@ public class AnvilDrop extends TeamlessMechanic {
 				String minigamer = event.getMinigamer().getColoredName();
 				String deathMessage = Utils.getRandomElement(deathMessages);
 				event.setDeathMessage(minigamer + " &3" + deathMessage);
+
+				Entity eventEntity = entityDamageEvent.getEntity();
+				eventEntity.getWorld().playSound(eventEntity.getLocation(), Sound.ENTITY_PLAYER_DEATH, 10F, 1F);
+				eventEntity.getWorld().playSound(eventEntity.getLocation(), Sound.ENTITY_PLAYER_BIG_FALL, 10F, 1F);
 			}
 		}
 		super.onDeath(event);
