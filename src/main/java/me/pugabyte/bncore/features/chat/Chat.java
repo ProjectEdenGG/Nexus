@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.chat;
 
-import be.maximvdw.placeholderapi.PlaceholderAPI;
 import com.dthielke.herochat.Channel;
 import com.dthielke.herochat.Chatter;
 import com.dthielke.herochat.Herochat;
@@ -16,7 +15,7 @@ public class Chat {
 	public static Translator translator;
 
 	static {
-		PlaceholderAPI.registerPlaceholder(BNCore.getInstance(), "currentchannel", event -> {
+		BNCore.registerPlaceholder("currentchannel", event -> {
 			Chatter chatter = Herochat.getChatterManager().getChatter(event.getPlayer());
 			if (chatter == null)
 				return "&eNone";
@@ -29,10 +28,10 @@ public class Chat {
 			return activeChannel.getColor() + activeChannel.getName();
 		});
 
-		PlaceholderAPI.registerPlaceholder(BNCore.getInstance(), "vanished", event ->
+		BNCore.registerPlaceholder("vanished", event ->
 				String.valueOf(Utils.isVanished(event.getPlayer())));
 
-		PlaceholderAPI.registerPlaceholder(BNCore.getInstance(), "nerds", event ->
+		BNCore.registerPlaceholder("nerds", event ->
 				String.valueOf(Bukkit.getOnlinePlayers().stream().filter(target -> Utils.canSee(event.getPlayer(), target)).count()));
 	}
 
