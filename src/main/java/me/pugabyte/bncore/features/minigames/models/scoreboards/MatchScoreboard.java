@@ -41,7 +41,6 @@ public class MatchScoreboard implements MinigameScoreboard {
 	@Override
 	public void handleEnd() {
 		scoreboard.delete();
-		scoreboard = null;
 	}
 
 }

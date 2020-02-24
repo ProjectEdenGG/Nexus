@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
@@ -31,10 +32,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SerializableAs("Arena")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Arena implements ConfigurationSerializable {
 	@NonNull
+	@EqualsAndHashCode.Include
 	private int id = ArenaManager.getNextId();
 	@NonNull
+	@EqualsAndHashCode.Include
 	private String name;
 	@NonNull
 	private String displayName;

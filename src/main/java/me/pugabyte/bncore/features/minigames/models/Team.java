@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.models;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,8 +22,10 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @SerializableAs("Team")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Team implements ConfigurationSerializable {
 	@NonNull
+	@EqualsAndHashCode.Include
 	private String name = "Default";
 	@NonNull
 	private ChatColor color = ChatColor.WHITE;
@@ -75,10 +78,8 @@ public class Team implements ConfigurationSerializable {
 	}
 
 	public void spawn(List<Minigamer> minigamers) {
-		List<Minigamer> members = new ArrayList<>(minigamers);
-		members = members.stream()
-				.filter(minigamer -> minigamer.getTeam().equals(this))
-				.collect(Collectors.toList());
+		List<Minigamer> members = getMembers(minigamers);
+		if (members.isEmpty()) return;
 
 		members.forEach(minigamer -> {
 			minigamer.getPlayer().setGameMode(minigamer.getMatch().getArena().getMechanic().getGameMode());
@@ -112,8 +113,18 @@ public class Team implements ConfigurationSerializable {
 		}
 	}
 
+	public List<Minigamer> getMembers(Match match) {
+		return getMembers(match.getMinigamers());
+	}
+
+	public List<Minigamer> getMembers(List<Minigamer> minigamers) {
+		return new ArrayList<>(minigamers).stream()
+				.filter(minigamer -> minigamer.getTeam().equals(this))
+				.collect(Collectors.toList());
+	}
+
 	public int getScore(Match match) {
-		return match.getScores().get(this);
+		return match.getScores().getOrDefault(this, 0);
 	}
 
 	public List<Minigamer> getMinigamers(Match match) {

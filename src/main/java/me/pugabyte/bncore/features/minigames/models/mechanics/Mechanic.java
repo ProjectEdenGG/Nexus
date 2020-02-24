@@ -56,7 +56,10 @@ public abstract class Mechanic implements Listener {
 
 	public void onInitialize(MatchInitializeEvent event) {
 		Match match = event.getMatch();
-		match.getTasks().repeat(1, 20, () -> match.getScoreboard().update());
+		match.getTasks().repeat(1, 20, () -> {
+			match.getScoreboard().update();
+			match.getScoreboardTeams().update();
+		});
 	}
 
 	public void onStart(MatchStartEvent event) {

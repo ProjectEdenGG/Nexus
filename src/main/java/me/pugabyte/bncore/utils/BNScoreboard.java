@@ -46,6 +46,7 @@ public class BNScoreboard {
 	}
 
 	public BNScoreboard(String id, String title, List<Player> players) {
+//		scoreboard.removeObjective(id);
 		objective = scoreboard.createObjective(id, colorize(title), DisplaySlot.SIDEBAR, false);
 		for (Player player : players)
 			addPlayer(player);

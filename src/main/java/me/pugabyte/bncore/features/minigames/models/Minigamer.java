@@ -147,6 +147,12 @@ public class Minigamer {
 
 	public void toSpectate() {
 		teleport(match.getArena().getSpectateLocation());
+		match.getMinigamers().forEach(minigamer -> {
+			if (minigamer.isAlive)
+				minigamer.getPlayer().hidePlayer(BNCore.getInstance(), player);
+			else
+				player.showPlayer(BNCore.getInstance(), minigamer.getPlayer());
+		});
 	}
 
 	public void teleport(Location location) {
