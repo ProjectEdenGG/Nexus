@@ -6,7 +6,6 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
@@ -45,15 +44,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 
 		contents.set(1, 6, ClickableItem.from(nameItem(new ItemStack(Material.COMPASS), "&eOrigins"), e -> openOriginsMenu(player)));
 
-		contents.set(1, 2, ClickableItem.from(nameItem(new ItemStack(Material.WOOD_AXE), "&eCreate Schematic"), e -> {
-			try {
-				Minigames.getWorldEditUtils().save("uncivilengineers/" + arena.getName() + "_strip", arena.getRegion("strip_1"));
-				player.closeInventory();
-				player.sendMessage(Minigames.PREFIX + "Successfully saved the strip");
-			} catch (NullPointerException ex) {
-				player.sendMessage(Minigames.PREFIX + "&cYou must setup the region: " + arena.getRegionBaseName() + "_strip_1");
-			}
-		}));
+		contents.set(1, 2, ClickableItem.from(nameItem(new ItemStack(Material.WOOD_AXE), "&eCreate Schematic"), e -> UncivilEngineers.setupArena(arena, player)));
 
 	}
 
