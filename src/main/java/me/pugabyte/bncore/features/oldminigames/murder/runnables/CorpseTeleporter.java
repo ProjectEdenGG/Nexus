@@ -11,7 +11,7 @@ public class CorpseTeleporter {
 	private ArmorStand armorStand;
 	private Location location;
 	private int counter = 1;
-	private int taskID;
+	private int taskId;
 
 	public CorpseTeleporter(ArmorStand armorStand) {
 		this.armorStand = armorStand;
@@ -26,11 +26,11 @@ public class CorpseTeleporter {
 
 	public void startTeleporter() {
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-		taskID = scheduler.scheduleSyncRepeatingTask(BNCore.getInstance(), () -> {
+		taskId = scheduler.scheduleSyncRepeatingTask(BNCore.getInstance(), () -> {
 			down();
 			armorStand.teleport(location);
 			if (counter == 16) {
-				Bukkit.getScheduler().cancelTask(taskID);
+				Bukkit.getScheduler().cancelTask(taskId);
 			}
 		}, 0L, 1L);
 	}
