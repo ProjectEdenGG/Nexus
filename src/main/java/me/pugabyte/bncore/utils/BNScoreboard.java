@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.utils;
 
 import me.lucko.helper.Services;
-import me.lucko.helper.scoreboard.PacketScoreboard;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
+import me.lucko.helper.scoreboard.Scoreboard;
 import me.lucko.helper.scoreboard.ScoreboardObjective;
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
@@ -21,7 +21,7 @@ import static me.pugabyte.bncore.utils.Utils.colorize;
 @SuppressWarnings("unused")
 public class BNScoreboard {
 	private static final ScoreboardManager manager = BNCore.getInstance().getServer().getScoreboardManager();
-	private static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
+	private static final Scoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 	private ScoreboardObjective objective;
 	private Map<String, Integer> lines = new HashMap<>();
 
