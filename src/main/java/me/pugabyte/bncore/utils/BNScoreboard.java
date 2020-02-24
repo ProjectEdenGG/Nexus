@@ -53,9 +53,9 @@ public class BNScoreboard {
 	}
 
 	public void delete() {
-		scoreboard.removeObjective(objective.getId());
 		for (Player player : Bukkit.getOnlinePlayers())
 			removePlayer(player);
+		scoreboard.removeObjective(objective.getId());
 	}
 
 	private void clear() {
