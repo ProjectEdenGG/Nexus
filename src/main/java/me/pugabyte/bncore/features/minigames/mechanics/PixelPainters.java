@@ -38,14 +38,11 @@ import java.util.Set;
 
 // TODO:
 //  - Only paste the designs on active islands
-//  - Colorblind Mode? - is this even worth it?
-//  	- Would need to change: pasteWall, giveBlocks, checkDesign
-//  	- Separate palettes for each type
 
 public class PixelPainters extends TeamlessMechanic {
 	private final int MAX_ROUNDS = 5;
 	private final int TIME_OUT = 8 * 20;
-	private final int ROUND_COUNTDOWN = 30 * 20;
+	private final int ROUND_COUNTDOWN = 45 * 20;
 
 	@Override
 	public String getName() {
