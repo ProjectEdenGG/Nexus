@@ -173,9 +173,9 @@ public class UncivilEngineers extends TeamlessMechanic {
 	@EventHandler
 	public void onEnterMobRegion(RegionEnteredEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		UncivilEngineersMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!minigamer.isPlaying(this)) return;
 
+		UncivilEngineersMatchData matchData = minigamer.getMatch().getMatchData();
 		EntityType type;
 		try {
 			type = EntityType.valueOf(getMobFromRegion(minigamer.getMatch(), event.getRegion().getId()));
