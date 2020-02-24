@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.tickets;
 
-import be.maximvdw.placeholderapi.PlaceholderAPI;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
@@ -18,9 +17,9 @@ public class Tickets {
 	public static String PERMISSION_MOD = "tickets.mod";
 
 	static {
-		PlaceholderAPI.registerPlaceholder(BNCore.getInstance(), "tickets_open", event ->
+		BNCore.registerPlaceholder("tickets_open", event ->
 				String.valueOf(new TicketService().getAllOpen().size()));
-		PlaceholderAPI.registerPlaceholder(BNCore.getInstance(), "tickets_total", event ->
+		BNCore.registerPlaceholder("tickets_total", event ->
 				String.valueOf(new TicketService().getAll().size()));
 	}
 
