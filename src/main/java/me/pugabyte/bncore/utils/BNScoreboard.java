@@ -77,7 +77,7 @@ public class BNScoreboard {
 
 	public void removePlayer(Player player) {
 		objective.unsubscribe(player, true);
-//		player.setScoreboard(manager.getMainScoreboard());
+		player.setScoreboard(manager.getMainScoreboard());
 //		try {
 //			FeatherBoardAPI.initScoreboard(player);
 //		} catch (Exception ex) {
