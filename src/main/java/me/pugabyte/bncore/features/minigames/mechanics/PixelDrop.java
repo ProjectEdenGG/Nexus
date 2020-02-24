@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.PixelDropMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import org.bukkit.Material;
@@ -43,5 +44,14 @@ public class PixelDrop extends TeamlessMechanic {
 		PixelDropMatchData matchData = match.getMatchData();
 		if (matchData.isAnimateLobby() && match.getMinigamers().size() == 0)
 			matchData.setAnimateLobby(false);
+	}
+
+	@Override
+	public void onStart(MatchStartEvent event) {
+		super.onStart(event);
+		Match match = event.getMatch();
+		PixelDropMatchData matchData = match.getMatchData();
+		match.getTasks().cancel(matchData.getNextFrameTaskId());
+		match.getTasks().cancel(matchData.getAnimateLobbyId());
 	}
 }

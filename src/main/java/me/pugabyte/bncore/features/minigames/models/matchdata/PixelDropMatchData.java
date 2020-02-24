@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.arenas.PixelDropArena;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
@@ -39,7 +40,7 @@ public class PixelDropMatchData extends MatchData {
 //	private int roundCountdownId;
 //	private boolean roundOver;
 
-	private Map<String, Material> lobbyDesignMap = new HashMap<>();
+	private Map<String, Block> lobbyDesignMap = new HashMap<>();
 	private List<String> keys = new ArrayList<>();
 	private int nextFrameTaskId;
 	private boolean doNextFrame;
@@ -57,10 +58,12 @@ public class PixelDropMatchData extends MatchData {
 		PixelDropArena arena = match.getArena();
 		matchData.setLobbyDesign(0);
 		countDesigns(match);
+		doNextFrame = true;
 
 		int animateTaskId = match.getTasks().repeat(0, 2 * 20, () -> {
 			if (match.isEnded() || match.isStarted() || !doNextFrame)
 				return;
+			doNextFrame = false;
 
 			// Get Random Design
 			Region designsRegion = arena.getDesignRegion();
@@ -85,27 +88,30 @@ public class PixelDropMatchData extends MatchData {
 				for (int z = 0; z < 15; z++) {
 					Block block = WGUtils.toLocation(designMin.add(x, 0, z)).getBlock();
 					String key = x + "_" + z;
-					lobbyDesignMap.put(key, block.getType());
+					lobbyDesignMap.put(key, block);
 					keys.add(key);
 				}
 			}
 
 			// Random Paste
-			matchData.setDoNextFrame(false);
 			int nextFrameTaskId = match.getTasks().repeat(0, 2, () -> {
-				if (keys.size() == 0) {
-					stopFrameTask(match);
-					return;
+				for (int i = 0; i < 3; i++) {
+					if (keys.size() == 0) {
+						stopFrameTask(match);
+						return;
+					}
+
+					String key = Utils.getRandomElement(keys);
+					keys.remove(key);
+					String[] xz = key.split("_");
+					int x = Integer.parseInt(xz[0]);
+					int z = Integer.parseInt(xz[1]);
+
+					Block block = lobbyDesignMap.get(x + "_" + z);
+					Location loc = WGUtils.toLocation(pasteMin.add(x, 0, z));
+					loc.getBlock().setType(block.getType());
+					loc.getBlock().setData(block.getData());
 				}
-
-				String key = Utils.getRandomElement(keys);
-				keys.remove(key);
-				String[] xz = key.split("_");
-				int x = Integer.parseInt(xz[0]);
-				int z = Integer.parseInt(xz[1]);
-
-				Material material = lobbyDesignMap.get(x + "_" + z);
-				WGUtils.toLocation(pasteMin.add(x, 0, z)).getBlock().setType(material);
 			});
 			matchData.setNextFrameTaskId(nextFrameTaskId);
 		});
@@ -115,7 +121,7 @@ public class PixelDropMatchData extends MatchData {
 	public void stopFrameTask(Match match) {
 		PixelDropMatchData matchData = match.getMatchData();
 		match.getTasks().cancel(matchData.getNextFrameTaskId());
-		matchData.setDoNextFrame(true);
+		doNextFrame = true;
 	}
 
 	public void countDesigns(Match match) {
