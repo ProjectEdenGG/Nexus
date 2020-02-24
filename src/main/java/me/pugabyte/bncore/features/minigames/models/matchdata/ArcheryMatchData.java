@@ -6,15 +6,12 @@ import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.ToString;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.mechanics.Archery;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.arenas.ArcheryArena;
-import me.pugabyte.bncore.utils.WorldEditUtils;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -66,8 +63,6 @@ public class ArcheryMatchData extends MatchData {
 	}
 
 	public void loadRangeLocations(int range, Match match) {
-		WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
-		WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
 		ArcheryArena arena = match.getArena();
 
 		String regex = "range_" + range + "_.*";
