@@ -50,6 +50,7 @@ public class Match {
 	private Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;
 	private MinigameScoreboard scoreboard;
+	private MinigameScoreboard.Teams scoreboardTeams;
 	private ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
@@ -96,6 +97,10 @@ public class Match {
 			arena.getMechanic().processJoin(minigamer);
 			arena.getMechanic().onJoin(event);
 		} catch (Exception ex) { ex.printStackTrace(); }
+
+		if (scoreboard != null) scoreboard.handleJoin(minigamer);
+		if (scoreboardTeams != null) scoreboardTeams.handleJoin(minigamer);
+
 		return true;
 	}
 
@@ -107,12 +112,13 @@ public class Match {
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
-		try {
-			arena.getMechanic().onQuit(event);
-		} catch (Exception ex) { ex.printStackTrace(); }
+		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
 		minigamer.clearState();
 		minigamer.toGamelobby();
-		scoreboard.handleQuit(minigamer);
+
+		if (scoreboard != null) scoreboard.handleQuit(minigamer);
+		if (scoreboardTeams != null) scoreboardTeams.handleQuit(minigamer);
+
 		if (minigamers == null || minigamers.size() == 0)
 			end();
 	}
@@ -132,7 +138,9 @@ public class Match {
 		teleportIn();
 		startTimer(); // -> arena.getMechanic().startTimer();
 		arena.getMechanic().onStart(event);
-		scoreboard.update();
+
+		if (scoreboard != null) scoreboard.update();
+		if (scoreboardTeams != null) scoreboardTeams.update();
 	}
 
 	public void end() {
@@ -143,7 +151,8 @@ public class Match {
 		if (event.isCancelled()) return;
 
 		ended = true;
-		tasks.end();
+		if (tasks != null)
+			tasks.end();
 		broadcast("Match has ended");
 		clearHolograms();
 		clearEntities();
@@ -151,7 +160,10 @@ public class Match {
 		toGamelobby();
 		arena.getMechanic().onEnd(event);
 		minigamers = new ArrayList<>();
-		scoreboard.handleEnd();
+
+		if (scoreboard != null) scoreboard.handleEnd();
+		if (scoreboardTeams != null) scoreboardTeams.handleEnd();
+
 		MatchManager.remove(this);
 	}
 
@@ -164,6 +176,7 @@ public class Match {
 			initializeMatchData();
 			tasks = new MatchTasks();
 			scoreboard = MinigameScoreboard.Factory.create(this);
+			scoreboardTeams = new MinigameScoreboard.Teams(this);
 			arena.getMechanic().onInitialize(event);
 			initialized = true;
 		}
@@ -239,19 +252,19 @@ public class Match {
 	}
 
 	public void scored(Team team, int score) {
-		setScore(team, scores.get(team) + score);
+		setScore(team, scores.getOrDefault(team, 0) + score);
 	}
 
 	public void setScore(Team team, int score) {
-		int diff = score - scores.get(team);
+		int diff = score - scores.getOrDefault(team, 0);
 
 		TeamScoredEvent event = new TeamScoredEvent(this, team, diff);
 		Utils.callEvent(event);
 		if (event.isCancelled()) return;
 
-		scores.put(team, scores.get(team) + event.getAmount());
+		scores.put(team, scores.getOrDefault(team, 0) + event.getAmount());
 		scoreboard.update();
-		if (scores.get(team) >= arena.getWinningScore())
+		if (scores.getOrDefault(team, 0) >= arena.getWinningScore())
 			end();
 	}
 

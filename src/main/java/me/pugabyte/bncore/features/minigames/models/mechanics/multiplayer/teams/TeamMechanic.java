@@ -66,7 +66,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		List<Team> winners = new ArrayList<>();
 
 		for (Team team : scores.keySet()) {
-			if (scores.get(team).equals(winningScore)) {
+			if (scores.getOrDefault(team, 0).equals(winningScore)) {
 				winners.add(team);
 			}
 		}

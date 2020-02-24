@@ -1,6 +1,9 @@
 package me.pugabyte.bncore.features.minigames;
 
 import lombok.Getter;
+import me.lucko.helper.Services;
+import me.lucko.helper.scoreboard.PacketScoreboard;
+import me.lucko.helper.scoreboard.PacketScoreboardProvider;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.lobby.Basketball;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
@@ -41,6 +44,8 @@ public class Minigames {
 	private static WorldEditUtils worldEditUtils = new WorldEditUtils(gameworld);
 	@Getter
 	public static MinigamesMenus menus = new MinigamesMenus();
+	@Getter
+	public static PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 
 	public Minigames() {
 		registerSerializables();

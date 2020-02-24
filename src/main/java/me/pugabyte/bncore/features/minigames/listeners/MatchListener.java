@@ -94,8 +94,12 @@ public class MatchListener implements Listener {
 
 		if (victim.getMatch() == null || attacker.getMatch() == null
 				|| victim.getTeam() == null || attacker.getTeam() == null) {
-			if (victim.getMatch() == null && attacker.getMatch() != null) {
+			if (victim.getMatch() != null && attacker.getMatch() == null) {
 				// Normal player damaging someone in a minigame
+				event.setCancelled(true);
+			}
+			if (victim.getMatch() == null && attacker.getMatch() != null) {
+				// Minigamer damaging normal player
 				event.setCancelled(true);
 			}
 			// Neither in minigames, ignore
