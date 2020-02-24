@@ -87,6 +87,11 @@ public class Match {
 			return false;
 		}
 
+		if (minigamers.size() >= arena.getMaxPlayers()) {
+			minigamer.tell("This match is full");
+			return false;
+		}
+
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
 		Utils.callEvent(event);
 		if (event.isCancelled()) return false;

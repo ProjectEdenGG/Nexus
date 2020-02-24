@@ -31,8 +31,6 @@ import java.util.Set;
 @Data
 @MatchDataFor(Archery.class)
 public class ArcheryMatchData extends MatchData {
-	private WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
-	private WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
 	private Map<String, Schematic> targetSchematics = new HashMap<>();
 	@ToString.Exclude
 	private Map<ProtectedRegion, ArrayList<Location>> powderLocations = new HashMap<>();
