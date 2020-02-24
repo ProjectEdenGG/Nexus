@@ -1,5 +1,7 @@
 package me.pugabyte.bncore;
 
+import be.maximvdw.placeholderapi.PlaceholderAPI;
+import be.maximvdw.placeholderapi.PlaceholderReplaceEvent;
 import com.comphenix.protocol.ProtocolLibrary;
 import lombok.Getter;
 import me.pugabyte.bncore.features.afk.AFK;
@@ -35,6 +37,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.function.Function;
 
 public class BNCore extends JavaPlugin {
 	private Commands commands;
@@ -80,6 +84,10 @@ public class BNCore extends JavaPlugin {
 
 	public static void registerTabCompleter(String command, TabCompleter tabCompleter) {
 		getInstance().getCommand(command).setTabCompleter(tabCompleter);
+	}
+
+	public static void registerPlaceholder(String id, Function<PlaceholderReplaceEvent, String> function) {
+		PlaceholderAPI.registerPlaceholder(getInstance(), id, function::apply);
 	}
 
 	@Override

@@ -143,7 +143,7 @@ public class PixelPainters extends TeamlessMechanic {
 			Schematic schem = WEUtils.copy(arena.getLobbyDesignRegion());
 			WEUtils.paste(schem, pasteRegion.getMinimumPoint());
 		});
-		matchData.setAnimateLobbyID(taskId);
+		matchData.setAnimateLobbyId(taskId);
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class PixelPainters extends TeamlessMechanic {
 		super.onStart(event);
 		Match match = event.getMatch();
 		PixelPaintersMatchData matchData = match.getMatchData();
-		match.getTasks().cancel(matchData.getAnimateLobbyID());
+		match.getTasks().cancel(matchData.getAnimateLobbyId());
 		matchData.setCurrentRound(0);
 		matchData.setTimeLeft(0);
 		countDesigns(match);
@@ -439,13 +439,13 @@ public class PixelPainters extends TeamlessMechanic {
 				.onComplete(() -> endOfRound(match))
 				.start();
 
-		matchData.setRoundCountdownID(countdown.getTaskId());
+		matchData.setRoundCountdownId(countdown.getTaskId());
 		match.getTasks().register(countdown.getTaskId());
 	}
 
 	public void cancelCountdown(Match match) {
 		PixelPaintersMatchData matchData = match.getMatchData();
-		match.getTasks().cancel(matchData.getRoundCountdownID());
+		match.getTasks().cancel(matchData.getRoundCountdownId());
 		matchData.setTimeLeft(0);
 		match.getScoreboard().update();
 	}

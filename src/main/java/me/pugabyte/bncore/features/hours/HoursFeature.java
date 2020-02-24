@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.hours;
 
-import be.maximvdw.placeholderapi.PlaceholderAPI;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.models.Rank;
@@ -25,7 +24,7 @@ public class HoursFeature {
 	}
 
 	private void registerPlaceholder() {
-		PlaceholderAPI.registerPlaceholder(BNCore.getInstance(), "hours", event -> {
+		BNCore.registerPlaceholder("hours", event -> {
 			Hours hours = new HoursService().get(event.getPlayer());
 			return Utils.timespanFormat(hours.getTotal());
 		});

@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.commands;
 
-import be.maximvdw.placeholderapi.PlaceholderAPI;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -12,7 +11,7 @@ public class PushCommand extends CustomCommand {
 	private static String permission = "stoppushing.allow";
 
 	static {
-		PlaceholderAPI.registerPlaceholder(BNCore.getInstance(), "pushing", event ->
+		BNCore.registerPlaceholder("pushing", event ->
 				String.valueOf(event.getPlayer().hasPermission(permission)));
 	}
 

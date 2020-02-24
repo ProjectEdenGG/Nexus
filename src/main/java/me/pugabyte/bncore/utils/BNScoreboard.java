@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.utils;
 
 import me.lucko.helper.Services;
-import me.lucko.helper.scoreboard.PacketScoreboard;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
+import me.lucko.helper.scoreboard.Scoreboard;
 import me.lucko.helper.scoreboard.ScoreboardObjective;
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
@@ -11,6 +11,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ import static me.pugabyte.bncore.utils.Utils.colorize;
 @SuppressWarnings("unused")
 public class BNScoreboard {
 	private static final ScoreboardManager manager = BNCore.getInstance().getServer().getScoreboardManager();
-	private static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
+	private static final Scoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 	private ScoreboardObjective objective;
 	private Map<String, Integer> lines = new HashMap<>();
 
@@ -33,7 +34,7 @@ public class BNScoreboard {
 		this(title, title, Collections.singletonList(player));
 	}
 
-	public BNScoreboard(String title, List<Player> players) {
+	public BNScoreboard(String title, Collection<? extends Player> players) {
 		this(title, title, players);
 	}
 
@@ -45,7 +46,7 @@ public class BNScoreboard {
 		this(id, title, Collections.singletonList(player));
 	}
 
-	public BNScoreboard(String id, String title, List<Player> players) {
+	public BNScoreboard(String id, String title, Collection<? extends Player> players) {
 //		scoreboard.removeObjective(id);
 		objective = scoreboard.createObjective(id, colorize(title), DisplaySlot.SIDEBAR, false);
 		for (Player player : players)
@@ -53,9 +54,8 @@ public class BNScoreboard {
 	}
 
 	public void delete() {
+		removePlayers(Bukkit.getOnlinePlayers());
 		scoreboard.removeObjective(objective.getId());
-		for (Player player : Bukkit.getOnlinePlayers())
-			removePlayer(player);
 	}
 
 	private void clear() {
@@ -70,14 +70,15 @@ public class BNScoreboard {
 		addPlayers(Arrays.asList(players));
 	}
 
-	public void addPlayers(List<Player> players) {
+	public void addPlayers(Collection<? extends Player> players) {
 		for (Player player : players)
 			addPlayer(player);
 	}
 
 	public void removePlayer(Player player) {
+		objective.unsubscribe(player);
 		objective.unsubscribe(player, true);
-//		player.setScoreboard(manager.getMainScoreboard());
+		player.setScoreboard(manager.getMainScoreboard());
 //		try {
 //			FeatherBoardAPI.initScoreboard(player);
 //		} catch (Exception ex) {
@@ -89,7 +90,7 @@ public class BNScoreboard {
 		removePlayers(Arrays.asList(players));
 	}
 
-	public void removePlayers(List<Player> players) {
+	public void removePlayers(Collection<? extends Player> players) {
 		for (Player player : players)
 			removePlayer(player);
 	}
@@ -103,6 +104,7 @@ public class BNScoreboard {
 	}
 
 	public void setLines(Map<String, Integer> lines) {
+		clear();
 		objective.applyScores(lines);
 	}
 

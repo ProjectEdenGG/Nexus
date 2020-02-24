@@ -171,10 +171,10 @@ public class JMinigamesCommand extends CustomCommand {
 	}
 
 	@Path("addSpawnpoint <arena> [team]")
-	void addSpawnpoint(Arena arena, String teamName) {
+	void addSpawnpoint(Arena arena, @Arg(contextArg = 1) Team team) {
 		List<Team> teams = arena.getTeams();
 
-		if (teamName == null) {
+		if (team == null) {
 			if (teams.size() != 1)
 				error("There is more than one team in that arena, you must specify which one");
 
@@ -184,16 +184,9 @@ public class JMinigamesCommand extends CustomCommand {
 			return;
 		}
 
-		for (Team team : teams) {
-			if (teamName.equalsIgnoreCase(team.getName())) {
-				team.getSpawnpoints().add(player().getLocation());
-				arena.write();
-				send(PREFIX + "Spawnpoint added");
-				return;
-			}
-		}
-
-		error("Team not found");
+		team.getSpawnpoints().add(player().getLocation());
+		arena.write();
+		send(PREFIX + "Spawnpoint added");
 	}
 
 	private Match getRunningMatch(Arena arena) {
@@ -238,7 +231,26 @@ public class JMinigamesCommand extends CustomCommand {
 	}
 
 	@TabCompleterFor(Minigamer.class)
-	List<String> tabCompleteMinigamer(String value) {
-		return tabCompletePlayer(value);
+	List<String> tabCompleteMinigamer(String filter) {
+		return tabCompletePlayer(filter);
+	}
+
+	@ConverterFor(Team.class)
+	Team convertToTeam(String value, Arena context) {
+		if ("current".equalsIgnoreCase(value))
+			return minigamer.getTeam();
+
+		return context.getTeams().stream()
+				.filter(team -> team.getName().startsWith(value))
+				.findFirst()
+				.orElseThrow(() -> new InvalidInputException("Team not found"));
+	}
+
+	@TabCompleterFor(Team.class)
+	List<String> tabCompleteTeam(String filter, Arena context) {
+		return context.getTeams().stream()
+				.map(Team::getName)
+				.filter(name -> name.startsWith(filter))
+				.collect(Collectors.toList());
 	}
 }

@@ -28,6 +28,15 @@ public class PodiumsCommand extends CustomCommand {
 		super(event);
 	}
 
+	static {
+		Arrays.asList(Position.values()).forEach(position ->
+				BNCore.getInstance().addConfigDefault("minigames.podiums." + position.name().toLowerCase(), 0));
+
+		BNCore.registerPlaceholder("podiums_left", event -> getNpc(Position.LEFT).getName());
+		BNCore.registerPlaceholder("podiums_middle", event -> getNpc(Position.MIDDLE).getName());
+		BNCore.registerPlaceholder("podiums_right", event -> getNpc(Position.RIGHT).getName());
+	}
+
 	@Path("help")
 	void help() {
 		send("&c/podiums (left|right|middle) <player> <title...>");
@@ -70,26 +79,21 @@ public class PodiumsCommand extends CustomCommand {
 		getNpc(position).getEntity().teleport(player().getLocation());
 	}
 
-	private NPC getNpc(int podiumId) {
+	private static NPC getNpc(int podiumId) {
 		return CitizensAPI.getNPCRegistry().getById(podiumId);
 	}
 
-	private NPC getNpc(Position position) {
+	private static NPC getNpc(Position position) {
 		return CitizensAPI.getNPCRegistry().getById(getPodiumId(position));
 	}
 
-	private int getPodiumId(Position position) {
+	private static int getPodiumId(Position position) {
 		return BNCore.getInstance().getConfig().getInt("minigames.podiums." + position.name().toLowerCase());
 	}
 
-	private void setPodiumId(Position position, int id) {
+	private static void setPodiumId(Position position, int id) {
 		BNCore.getInstance().getConfig().set("minigames.podiums." + position.name().toLowerCase(), id);
 		BNCore.getInstance().saveConfig();
-	}
-
-	static {
-		Arrays.asList(Position.values()).forEach(position ->
-				BNCore.getInstance().addConfigDefault("minigames.podiums." + position.name().toLowerCase(), 0));
 	}
 
 	public enum Position {

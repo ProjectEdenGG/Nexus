@@ -25,11 +25,11 @@ public class PixelPaintersMatchData extends MatchData {
 	private CuboidRegion designRegion;
 	private long roundStart;
 	private int totalFinished;
-	private int roundCountdownID;
+	private int roundCountdownId;
 	private int timeLeft;
 	private boolean animateLobby;
 	private int lobbyDesign;
-	private int animateLobbyID;
+	private int animateLobbyId;
 
 	public PixelPaintersMatchData(Match match) {
 		super(match);
