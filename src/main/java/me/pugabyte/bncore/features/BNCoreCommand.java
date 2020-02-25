@@ -45,6 +45,11 @@ public class BNCoreCommand extends CustomCommand {
 		SkriptFunctions.redTint(player, fadeTime, intensity);
 	}
 
+	@Path("actionBar [message] [duration] [fade]")
+	void actionBar(@Arg(" ") String message, int duration, @Arg("true") boolean fade) {
+		Utils.sendActionBar(player(), message, duration, fade);
+	}
+
 	@SneakyThrows
 	@Path("setting <type> [value]")
 	void setting(String type, String value) {

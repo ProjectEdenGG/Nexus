@@ -579,6 +579,29 @@ public class Utils {
 		new JsonBuilder().next(message).command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + world).send(player);
 	}
 
+	public static void sendActionBar(final Player player, final String message, int duration) {
+		sendActionBar(player, message, duration, true);
+	}
+
+	public static void sendActionBar(final Player player, final String message, int duration, boolean fade) {
+		sendActionBar(player, message);
+
+		if (!fade && duration >= 0)
+			Tasks.wait(duration + 1, () -> sendActionBar(player, ""));
+
+		while (duration > 40)
+			Tasks.wait(duration -= 40, () -> sendActionBar(player, message));
+	}
+
+	public static void sendActionBarToAllPlayers(String message) {
+		sendActionBarToAllPlayers(message, -1);
+	}
+
+	public static void sendActionBarToAllPlayers(String message, int duration) {
+		for (Player p : Bukkit.getOnlinePlayers())
+			sendActionBar(p, message, duration);
+	}
+
 	public static void sendActionBar(Player player, String message) {
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(colorize(message)));
 	}
