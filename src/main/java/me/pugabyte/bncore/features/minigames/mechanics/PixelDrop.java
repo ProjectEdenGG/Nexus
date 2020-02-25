@@ -1,16 +1,43 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import com.dthielke.herochat.ChannelChatEvent;
+import com.dthielke.herochat.Chatter;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.regions.Region;
+import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
+import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.arenas.PixelDropArena;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.PixelDropMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 // TODO: Clear floor animation (use blockiterator)
+// TODO: Scoreboards
+// TODO: bug - blocks sometimes place ontop of each other
+// TODO: sound when other people guess right
+
 public class PixelDrop extends TeamlessMechanic {
+	private final int MAX_ROUNDS = 5;
+	private final int TIME_OUT = 8 * 20;
+	private final int ROUND_COUNTDOWN = 45 * 20;
+
 	@Override
 	public String getName() {
 		return "Pixel Drop";
@@ -53,5 +80,237 @@ public class PixelDrop extends TeamlessMechanic {
 		PixelDropMatchData matchData = match.getMatchData();
 		match.getTasks().cancel(matchData.getNextFrameTaskId());
 		match.getTasks().cancel(matchData.getAnimateLobbyId());
+
+		matchData.setupGame(match);
+		endOfRound(match);
+		// Force players into a temp? channel
+//		ChatterManager chatterManager = new ChatterManager();
+//		ChannelManager channelManager = new ChannelManager();
+//
+//		channelManager.addChannel();
+//		chatterManager.get
+	}
+
+	@Override
+	public void onEnd(MatchEndEvent event) {
+		Match match = event.getMatch();
+		PixelDropMatchData matchData = match.getMatchData();
+		matchData.clearFloor(match);
+		super.onEnd(event);
+	}
+
+	public void endOfRound(Match match) {
+		PixelDropMatchData matchData = match.getMatchData();
+		List<Minigamer> minigamers = match.getMinigamers();
+		matchData.setRoundOver(true);
+		matchData.setTimeLeft(0);
+		matchData.getDesignMap().clear();
+		matchData.getDesignKeys().clear();
+
+		if (matchData.getCurrentRound() != 0) {
+			stopDesignTask(match);
+			// TODO: Drop remaining blocks
+			minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+				Utils.sendActionBar(player, "&c&lRound Over!");
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.7F);
+			});
+			match.broadcast("&c&lRound Over!");
+		}
+
+		matchData.canGuess(false);
+		matchData.getGuessed().clear();
+
+		if (matchData.getCurrentRound() == MAX_ROUNDS) {
+			match.getTasks().wait(3 * 20, () -> {
+				minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+					Utils.sendActionBar(player, "&c&lGame Over!");
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 1F);
+				});
+				match.broadcast("&c&lGame Over!");
+				match.getTasks().wait(3 * 20, match::end);
+			});
+		} else {
+			// Start countdown to new round
+			match.getTasks().wait(TIME_OUT / 2, () -> {
+						matchData.clearFloor(match);
+						Tasks.Countdown countdown = Tasks.Countdown.builder()
+								.duration(TIME_OUT)
+								.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+									if (match.isEnded()) {
+										return;
+									}
+									matchData.setTimeLeft(i);
+									match.getScoreboard().update();
+
+									Utils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
+									if (i <= 3)
+										player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
+								}))
+								.onComplete(() -> newRound(match))
+								.start();
+
+						match.getTasks().register(countdown.getTaskId());
+					}
+			);
+		}
+	}
+
+	public void newRound(Match match) {
+		if (match.isEnded()) return; // just in case
+
+		PixelDropMatchData matchData = match.getMatchData();
+		matchData.setRoundOver(false);
+		matchData.setTimeLeft(0);
+		match.getScoreboard().update();
+
+		// Increase round counter
+		matchData.setCurrentRound(matchData.getCurrentRound() + 1);
+
+		matchData.setRoundStart(System.currentTimeMillis());
+
+		// Enable checking
+		matchData.canGuess(true);
+
+		startDesignTask(match);
+	}
+
+	public void startDesignTask(Match match) {
+		PixelDropMatchData matchData = match.getMatchData();
+		PixelDropArena arena = match.getArena();
+
+		// Get Random Design
+		Region designsRegion = arena.getDesignRegion();
+		Region dropRegion = arena.getDropRegion();
+
+		int designCount = matchData.getDesignCount();
+		int design = Utils.randomInt(1, designCount);
+		for (int i = 0; i < designCount; i++) {
+			design = Utils.randomInt(1, designCount);
+			if (matchData.getDesign() != design)
+				break;
+		}
+		matchData.setDesign(design);
+
+
+		// Get min point from current chosen design
+		Vector designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
+		// Get min point of paste region
+		Vector pasteMin = dropRegion.getMinimumPoint();
+
+		// Builds the map
+		for (int x = 0; x < 15; x++) {
+			for (int z = 0; z < 15; z++) {
+				Block block = WGUtils.toLocation(designMin.add(x, 0, z)).getBlock();
+				if (block.getType().equals(Material.BARRIER)) continue;
+				String key = x + "_" + z;
+				matchData.getDesignMap().put(key, block);
+				matchData.getDesignKeys().add(key);
+			}
+		}
+
+		// Random Paste
+		int nextDesignTaskId = match.getTasks().repeat(0, 8, () -> {
+			if (matchData.getDesignKeys().size() == 0) {
+				stopDesignTask(match);
+				return;
+			}
+
+			String key = Utils.getRandomElement(matchData.getDesignKeys());
+			matchData.getDesignKeys().remove(key);
+			String[] xz = key.split("_");
+			int x = Integer.parseInt(xz[0]);
+			int z = Integer.parseInt(xz[1]);
+
+			Block block = matchData.getDesignMap().get(x + "_" + z);
+			double blockX = x + 0.5;
+			double blockZ = z + 0.5;
+			Location loc = WGUtils.toLocation(pasteMin.add(blockX, 0, blockZ));
+
+			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType(), block.getData());
+			fallingBlock.setDropItem(false);
+			fallingBlock.setInvulnerable(true);
+			fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
+
+		});
+		matchData.setDesignTaskId(nextDesignTaskId);
+	}
+
+	public void stopDesignTask(Match match) {
+		PixelDropMatchData matchData = match.getMatchData();
+		match.getTasks().cancel(matchData.getDesignTaskId());
+	}
+
+	@EventHandler
+	public void onPlayerChat(ChannelChatEvent event) {
+		Player player = event.getSender().getPlayer();
+		HerochatAPI.getRecipients()
+		event.getChannel()
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isPlaying(this)) return;
+
+		Match match = minigamer.getMatch();
+		PixelDropMatchData matchData = match.getMatchData();
+
+		if (!matchData.canGuess()) return;
+
+		//TODO: make those who haven't guessed not be able to see messages to those who have?
+		String message = event.getMessage();
+		if (matchData.getGuessed().contains(minigamer)) {
+			if (message.toLowerCase().contains(matchData.getRoundWord().toLowerCase()))
+				event.setResult(Chatter.Result.FAIL);
+			return;
+		}
+
+		if (!message.equalsIgnoreCase(matchData.getRoundWord())) return;
+
+		event.setResult(Chatter.Result.FAIL);
+		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_XYLOPHONE, 10F, 0.5F);
+		match.broadcast("&a" + minigamer.getName() + " guessed the word!");
+		matchData.getGuessed().add(minigamer);
+
+		int size = matchData.getGuessed().size();
+		minigamer.scored(Math.max(1, 1 + (4 - size)));
+		match.getScoreboard().update();
+
+		if (size == 1)
+			startRoundCountdown(match);
+
+		if (match.getMinigamers().size() == matchData.getGuessed().size()) {
+			cancelCountdown(match);
+			stopDesignTask(match);
+			matchData.canGuess(false);
+			match.getTasks().wait(2 * 20, () -> endOfRound(match));
+		}
+	}
+
+	public void startRoundCountdown(Match match) {
+		List<Minigamer> minigamers = match.getMinigamers();
+		minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F));
+
+		PixelDropMatchData matchData = match.getMatchData();
+		Tasks.Countdown countdown = Tasks.Countdown.builder()
+				.duration(ROUND_COUNTDOWN)
+				.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+					if (match.isEnded()) return;
+					matchData.setTimeLeft(i);
+					match.getScoreboard().update();
+
+					Utils.sendActionBar(player, "&cRound ends in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
+					if (i <= 3)
+						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
+				}))
+				.onComplete(() -> endOfRound(match))
+				.start();
+
+		matchData.setRoundCountdownId(countdown.getTaskId());
+		match.getTasks().register(countdown.getTaskId());
+	}
+
+	public void cancelCountdown(Match match) {
+		PixelDropMatchData matchData = match.getMatchData();
+		match.getTasks().cancel(matchData.getRoundCountdownId());
+		matchData.setTimeLeft(0);
+		match.getScoreboard().update();
 	}
 }

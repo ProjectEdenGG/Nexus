@@ -5,15 +5,18 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.regions.Region;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.mechanics.PixelDrop;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.MatchData;
+import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.arenas.PixelDropArena;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,24 +27,28 @@ import java.util.Map;
 @Data
 @MatchDataFor(PixelDrop.class)
 public class PixelDropMatchData extends MatchData {
-//	private List<Minigamer> guessed = new ArrayList<>();
-//	@Accessors(fluent = true)
-//	private boolean canGuess;
-//	private int totalFinished;
+	private List<Minigamer> guessed = new ArrayList<>();
+	@Accessors(fluent = true)
+	private boolean canGuess;
+	private int totalFinished;
 
-	//	private List<Integer> designsPlayed = new ArrayList<>();
-//	private Map<String, Material> designMap = new HashMap<>();
-//	private int designY;
+	private List<String> designWords = new ArrayList<>();
+	private List<Integer> designsPlayed = new ArrayList<>();
+	private Map<String, Block> designMap = new HashMap<>();
+	private List<String> designKeys = new ArrayList<>();
+	private int design;
 	private int designCount;
+	private int designTaskId;
 
-//	private int currentRound;
-//	private long roundStart;
-//	private int timeLeft;
-//	private int roundCountdownId;
-//	private boolean roundOver;
+	private String roundWord;
+	private int currentRound;
+	private long roundStart;
+	private int timeLeft;
+	private int roundCountdownId;
+	private boolean roundOver;
 
 	private Map<String, Block> lobbyDesignMap = new HashMap<>();
-	private List<String> keys = new ArrayList<>();
+	private List<String> lobbyKeys = new ArrayList<>();
 	private int nextFrameTaskId;
 	private boolean doNextFrame;
 	private boolean animateLobby;
@@ -52,6 +59,22 @@ public class PixelDropMatchData extends MatchData {
 		super(match);
 	}
 
+	public void setupGame(Match match) {
+		countDesigns(match);
+		setupDesignWords(match);
+		setCurrentRound(0);
+		setTimeLeft(0);
+		clearFloor(match);
+	}
+
+	public void setDesign(int design) {
+		this.design = design;
+		roundWord = designWords.get(design - 1);
+	}
+
+	public void setNewDesign(Match match) {
+
+	}
 
 	public void startLobbyAnimation(Match match) {
 		PixelDropMatchData matchData = match.getMatchData();
@@ -89,20 +112,20 @@ public class PixelDropMatchData extends MatchData {
 					Block block = WGUtils.toLocation(designMin.add(x, 0, z)).getBlock();
 					String key = x + "_" + z;
 					lobbyDesignMap.put(key, block);
-					keys.add(key);
+					lobbyKeys.add(key);
 				}
 			}
 
 			// Random Paste
 			int nextFrameTaskId = match.getTasks().repeat(0, 2, () -> {
 				for (int i = 0; i < 3; i++) {
-					if (keys.size() == 0) {
+					if (lobbyKeys.size() == 0) {
 						stopFrameTask(match);
 						return;
 					}
 
-					String key = Utils.getRandomElement(keys);
-					keys.remove(key);
+					String key = Utils.getRandomElement(lobbyKeys);
+					lobbyKeys.remove(key);
 					String[] xz = key.split("_");
 					int x = Integer.parseInt(xz[0]);
 					int z = Integer.parseInt(xz[1]);
@@ -136,5 +159,37 @@ public class PixelDropMatchData extends MatchData {
 		PixelDropMatchData matchData = match.getMatchData();
 		int totalDesigns = blocksCount / 225;
 		matchData.setDesignCount(totalDesigns);
+	}
+
+	public void setupDesignWords(Match match) {
+		PixelDropArena arena = match.getArena();
+		PixelDropMatchData matchData = match.getMatchData();
+		Region designsRegion = arena.getDesignRegion();
+		Vector minPoint = designsRegion.getMinimumPoint().subtract(1, 0, 0);
+		int designCount = matchData.getDesignCount();
+
+		for (int i = 0; i < designCount; i++) {
+			Location signLoc = WGUtils.toLocation(minPoint).add(0, i, 0);
+			String word = getWord(signLoc);
+			designWords.add(word);
+		}
+	}
+
+	public String getWord(Location location) {
+		Sign sign = (Sign) location.getBlock().getState();
+		String[] lines = sign.getLines();
+		StringBuilder word = new StringBuilder();
+		for (String line : lines) {
+			if (line.length() != 0)
+				word.append(line);
+		}
+		word = new StringBuilder(word.toString().replaceAll("_", " "));
+		return word.toString();
+	}
+
+	// TODO: Counter clockwise animation
+	public void clearFloor(Match match) {
+		PixelDropArena arena = match.getArena();
+		WEUtils.fill(arena.getBoardRegion(), Material.AIR);
 	}
 }
