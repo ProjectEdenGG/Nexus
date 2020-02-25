@@ -11,7 +11,8 @@ import java.util.Map;
 @SerializableAs("PixelDropArena")
 public class PixelDropArena extends Arena {
 	private Region designRegion = getRegion("designs");
-//	private Region dropRegion = getRegion("dropzone");
+	private Region dropRegion = getRegion("dropzone");
+	private Region boardRegion = getRegion("board");
 	private Region lobbyAnimationRegion = getRegion("lobbyanimation");
 
 	public PixelDropArena(Map<String, Object> map) {
