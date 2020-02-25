@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
 import com.dthielke.herochat.ChannelChatEvent;
-import com.dthielke.herochat.Chatter;
+import com.dthielke.herochat.Chatter.Result;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.Region;
-import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -24,6 +24,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -83,12 +84,6 @@ public class PixelDrop extends TeamlessMechanic {
 
 		matchData.setupGame(match);
 		endOfRound(match);
-		// Force players into a temp? channel
-//		ChatterManager chatterManager = new ChatterManager();
-//		ChannelManager channelManager = new ChannelManager();
-//
-//		channelManager.addChannel();
-//		chatterManager.get
 	}
 
 	@Override
@@ -132,26 +127,25 @@ public class PixelDrop extends TeamlessMechanic {
 		} else {
 			// Start countdown to new round
 			match.getTasks().wait(TIME_OUT / 2, () -> {
-						matchData.clearFloor(match);
-						Tasks.Countdown countdown = Tasks.Countdown.builder()
-								.duration(TIME_OUT)
-								.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-									if (match.isEnded()) {
-										return;
-									}
-									matchData.setTimeLeft(i);
-									match.getScoreboard().update();
+				matchData.clearFloor(match);
+				Tasks.Countdown countdown = Tasks.Countdown.builder()
+						.duration(TIME_OUT)
+						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+							if (match.isEnded()) {
+								return;
+							}
+							matchData.setTimeLeft(i);
+							match.getScoreboard().update();
 
-									Utils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
-									if (i <= 3)
-										player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
-								}))
-								.onComplete(() -> newRound(match))
-								.start();
+							Utils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
+							if (i <= 3)
+								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
+						}))
+						.onComplete(() -> newRound(match))
+						.start();
 
-						match.getTasks().register(countdown.getTaskId());
-					}
-			);
+				match.getTasks().register(countdown.getTaskId());
+			});
 		}
 	}
 
@@ -241,46 +235,74 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onPlayerChat(ChannelChatEvent event) {
+	public void onHerochatChat(ChannelChatEvent event) {
 		Player player = event.getSender().getPlayer();
-		HerochatAPI.getRecipients()
-		event.getChannel()
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
+		BNCore.log("PixelDrop herochat chat");
+
+		PixelDropMatchData matchData = minigamer.getMatch().getMatchData();
+		if (!matchData.canGuess()) return;
+
+		if (player.hasPermission("group.staff"))
+			return;
+
+		event.setResult(Result.FAIL);
+	}
+
+	@EventHandler
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		Player player = event.getPlayer();
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isPlaying(this)) return;
+		BNCore.log("PixelDrop async chat");
+
+		// Only block actual chat, not commands
+		if (!event.isAsynchronous()) return;
 
 		Match match = minigamer.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
 
 		if (!matchData.canGuess()) return;
+		event.setCancelled(true);
 
-		//TODO: make those who haven't guessed not be able to see messages to those who have?
-		String message = event.getMessage();
-		if (matchData.getGuessed().contains(minigamer)) {
-			if (message.toLowerCase().contains(matchData.getRoundWord().toLowerCase()))
-				event.setResult(Chatter.Result.FAIL);
-			return;
-		}
+		Tasks.sync(() -> {
+			String message = event.getMessage();
+			if (matchData.getGuessed().contains(minigamer)) {
+				matchData.getGuessed().forEach(recipient -> sendChat(recipient, minigamer, message));
+				return;
+			}
 
-		if (!message.equalsIgnoreCase(matchData.getRoundWord())) return;
+			if (!message.equalsIgnoreCase(matchData.getRoundWord())) {
+				match.getMinigamers().forEach(recipient -> sendChat(recipient, minigamer, message));
+				return;
+			}
 
-		event.setResult(Chatter.Result.FAIL);
-		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_XYLOPHONE, 10F, 0.5F);
-		match.broadcast("&a" + minigamer.getName() + " guessed the word!");
-		matchData.getGuessed().add(minigamer);
+			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_XYLOPHONE, 10F, 0.5F);
+			match.broadcast("&a" + minigamer.getName() + " guessed the word!");
+			matchData.getGuessed().add(minigamer);
+			minigamer.scored(Math.max(1, 1 + (4 - matchData.getGuessed().size())));
+			match.getScoreboard().update();
 
-		int size = matchData.getGuessed().size();
-		minigamer.scored(Math.max(1, 1 + (4 - size)));
-		match.getScoreboard().update();
+			if (matchData.getGuessed().size() == 1)
+				startRoundCountdown(match);
 
-		if (size == 1)
-			startRoundCountdown(match);
+			if (match.getMinigamers().size() == matchData.getGuessed().size()) {
+				cancelCountdown(match);
+				stopDesignTask(match);
+				matchData.canGuess(false);
+				match.getTasks().wait(2 * 20, () -> endOfRound(match));
+			}
+		});
+	}
 
-		if (match.getMinigamers().size() == matchData.getGuessed().size()) {
-			cancelCountdown(match);
-			stopDesignTask(match);
-			matchData.canGuess(false);
-			match.getTasks().wait(2 * 20, () -> endOfRound(match));
-		}
+	private String getChatFormat(Minigamer sender, String message) {
+		PixelDropMatchData matchData = sender.getMatch().getMatchData();
+		return "[PixelDrop] " + sender.getName() + " > " + message;
+	}
+
+	private void sendChat(Minigamer recipient, Minigamer sender, String message) {
+		recipient.tell(getChatFormat(sender, message), false);
 	}
 
 	public void startRoundCountdown(Match match) {

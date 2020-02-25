@@ -579,6 +579,10 @@ public class Utils {
 		new JsonBuilder().next(message).command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + world).send(player);
 	}
 
+	public static void sendActionBar(final Player player, final String message) {
+		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(colorize(message)));
+	}
+
 	public static void sendActionBar(final Player player, final String message, int duration) {
 		sendActionBar(player, message, duration, true);
 	}
@@ -598,12 +602,12 @@ public class Utils {
 	}
 
 	public static void sendActionBarToAllPlayers(String message, int duration) {
-		for (Player p : Bukkit.getOnlinePlayers())
-			sendActionBar(p, message, duration);
+		sendActionBarToAllPlayers(message, duration, true);
 	}
 
-	public static void sendActionBar(Player player, String message) {
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(colorize(message)));
+	public static void sendActionBarToAllPlayers(String message, int duration, boolean fade) {
+		for (Player player : Bukkit.getOnlinePlayers())
+			sendActionBar(player, message, duration, fade);
 	}
 
 	public static int randomInt(int min, int max) {
