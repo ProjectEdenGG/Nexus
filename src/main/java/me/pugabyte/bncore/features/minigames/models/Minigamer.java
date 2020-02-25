@@ -137,7 +137,11 @@ public class Minigamer {
 	}
 
 	public void tell(String message) {
-		player.sendMessage(Minigames.PREFIX + colorize(message));
+		tell(message, true);
+	}
+
+	public void tell(String message, boolean prefix) {
+		player.sendMessage((prefix ? Minigames.PREFIX : "") + colorize(message));
 	}
 
 	public void toGamelobby() {
