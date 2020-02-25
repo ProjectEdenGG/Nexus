@@ -580,7 +580,7 @@ public class Utils {
 	}
 
 	public static void sendActionBar(final Player player, final String message, int duration) {
-		sendActionBar(player, message, duration, false);
+		sendActionBar(player, message, duration, true);
 	}
 
 	public static void sendActionBar(final Player player, final String message, int duration, boolean fade) {
