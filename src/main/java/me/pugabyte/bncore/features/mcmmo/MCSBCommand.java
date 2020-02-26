@@ -17,7 +17,7 @@ public class MCSBCommand extends CustomCommand {
 
 	@Path("(c|clear|remove)")
 	void remove() {
-		runCommand("mscoreboard clear");
+		runCommand("mcscoreboard clear");
 	}
 
 	@Path
