@@ -14,7 +14,6 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.UncivilEngineersArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
-import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.UncivilEngineersMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -27,7 +26,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -54,11 +55,6 @@ public class UncivilEngineers extends TeamlessMechanic {
 	@Override
 	public GameMode getGameMode() {
 		return GameMode.SURVIVAL;
-	}
-
-	@Override
-	public boolean shouldClearInventory() {
-		return false;
 	}
 
 	@Override
@@ -146,13 +142,27 @@ public class UncivilEngineers extends TeamlessMechanic {
 	public void toCheckpoint(Minigamer minigamer) {
 		UncivilEngineersArena arena = minigamer.getMatch().getArena();
 		UncivilEngineersMatchData matchData = minigamer.getMatch().getMatchData();
-		minigamer.clearState();
+		clearGameModeState(minigamer);
 		if (!matchData.getCheckpoints().containsKey(minigamer.getPlayer().getUniqueId())) {
 			Location spawnpoint = arena.getTeams().get(0).getSpawnpoints().get(0);
 			minigamer.teleport(getLocationOffFirst(minigamer, spawnpoint));
 			return;
 		}
 		minigamer.teleport(getLocationOffFirst(minigamer, arena.getCheckpoint(matchData.getCheckpointId(minigamer))));
+	}
+
+	//Custom clearState due to inventory wipe
+	private void clearGameModeState(Minigamer minigamer) {
+		Player player = minigamer.getPlayer();
+		player.setFireTicks(0);
+		player.resetMaxHealth();
+		player.setHealth(20);
+		player.setExp(0);
+		player.setTotalExperience(0);
+		player.setLevel(0);
+
+		for (PotionEffect effect : player.getActivePotionEffects())
+			player.removePotionEffect(effect.getType());
 	}
 
 	@EventHandler
@@ -164,10 +174,16 @@ public class UncivilEngineers extends TeamlessMechanic {
 		toCheckpoint(minigamer);
 	}
 
-	@Override
-	public void onDeath(MinigamerDeathEvent event) {
-		event.broadcastDeathMessage();
-		toCheckpoint(event.getMinigamer());
+	@EventHandler
+	public void onCustomDeath(PlayerDeathEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getEntity());
+		if (!minigamer.isPlaying(this)) return;
+
+		event.setKeepInventory(true);
+		toCheckpoint(minigamer);
+
+		event.setDeathMessage(null);
+		minigamer.getMatch().broadcast(minigamer.getColoredName() + " &3died");
 	}
 
 	@EventHandler
