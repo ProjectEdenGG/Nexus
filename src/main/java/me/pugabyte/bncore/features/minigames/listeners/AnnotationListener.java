@@ -44,12 +44,13 @@ public class AnnotationListener implements Listener {
 	}
 
 	private void regenerate(Match match, String type) {
-		String name = match.getArena().getMechanic().getName().toLowerCase();
-		Minigames.getWorldGuardUtils().getRegionsLike(name + "_" + match.getArena().getName() + "_" + type + "_[0-9]+")
-				.forEach(region -> {
-					String file = (name + "/" + region.getId().replaceFirst(name + "_", "")).toLowerCase();
-					Minigames.getWorldEditUtils().paste(file, region.getMinimumPoint());
-				});
+		String name = match.getArena().getRegionBaseName().split("_")[0];
+		String regex = match.getArena().getRegionTypeRegex(type);
+
+		Minigames.getWorldGuardUtils().getRegionsLike(regex).forEach(region -> {
+			String file = name + "/" + region.getId().replaceFirst(name + "_", "");
+			Minigames.getWorldEditUtils().paste(file.toLowerCase(), region.getMinimumPoint());
+		});
 	}
 
 }

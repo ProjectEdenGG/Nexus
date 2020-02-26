@@ -136,6 +136,10 @@ public class Minigamer {
 				.anyMatch(region -> match.getArena().ownsRegion(region.getId(), type));
 	}
 
+	public void send(String message) {
+		tell(message, false);
+	}
+
 	public void tell(String message) {
 		tell(message, true);
 	}
