@@ -1,12 +1,20 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
+import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
+import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
+import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData;
+import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid;
+import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Ship;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
-import me.pugabyte.bncore.framework.exceptions.BNException;
+import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.Utils;
@@ -17,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -25,13 +34,20 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static me.pugabyte.bncore.utils.Utils.left;
+import static me.pugabyte.bncore.utils.Utils.right;
 
 /*
 	Regions:
 		team_<team>
-		a0_(ships|pegs)_<team>
+		(a0|b1)_(ships|pegs)_<team>
 		ships
 		config
 		floor
@@ -39,8 +55,10 @@ import java.util.List;
  */
 
 @Regenerating("board")
+@Scoreboard(Type.TEAM)
 public class Battleship extends BalancedTeamMechanic {
 	private static final String PREFIX = Utils.getPrefix("Battleship");
+	public static final String LETTERS = "ABCDEFGHIJ";
 
 	private void debug(String message) {
 		if (false)
@@ -67,6 +85,106 @@ public class Battleship extends BalancedTeamMechanic {
 		return GameMode.SURVIVAL;
 	}
 
+	public enum ProgressBarStyle {
+		NONE,
+		COUNT,
+		PERCENT
+	}
+
+	public String progressBar(int progress, int goal) {
+		return progressBar(progress, goal, ProgressBarStyle.NONE, 25);
+	}
+
+	public String progressBar(int progress, int goal, ProgressBarStyle style) {
+		return progressBar(progress, goal, style, 25);
+	}
+
+	public String progressBar(int progress, int goal, ProgressBarStyle style, int length) {
+		double percent = Math.min(progress / goal, 1);
+		ChatColor color = ChatColor.RED;
+		if (percent == 1)
+			color = ChatColor.GREEN;
+		else if (percent >= 2/3)
+			color = ChatColor.YELLOW;
+		else if (percent >= 1/3)
+			color = ChatColor.GOLD;
+
+		int n = (int) Math.floor(percent * length);
+
+		String bar = String.join("", Collections.nCopies(length, "|"));
+		String first = left(bar, n);
+		String last = right(bar, length - n);
+		String result = color + first + "&8" + last;
+
+		// TODO: Style
+		if (style == ProgressBarStyle.COUNT)
+			result += " &f" + progress + "/" + goal;
+		if (style == ProgressBarStyle.PERCENT)
+			result += " &f" + Math.floor(percent * 100);
+
+		return result;
+	}
+
+	@Override
+	public String getScoreboardTitle(Match match) {
+		return "&6&lBattleship";
+	}
+
+	@Override
+	public Map<String, Integer> getScoreboardLines(Match match, Team team) {
+		BattleshipMatchData matchData = match.getMatchData();
+		List<String> lines = new ArrayList<>();
+		lines.add("&cFleet: " + team.getColoredName());
+		lines.add("&cTime: &e" + "11s");
+		lines.add("&cChoose in: &e" + "17s");
+		lines.add("&f");
+
+		Team team1 = match.getArena().getTeams().get(0);
+		Team team2 = match.getArena().getTeams().get(1);
+
+		lines.add("&6&l" + team1.getName() + " Fleet");
+		lines.add("&0" + progressBar(matchData.getGrid(team1).getHealth(), ShipType.getCombinedHealth(), ProgressBarStyle.COUNT));
+		lines.add("&6&l" + team2.getName() + " Fleet");
+		lines.add("&1" + progressBar(matchData.getGrid(team2).getHealth(), ShipType.getCombinedHealth(), ProgressBarStyle.COUNT));
+
+		// TODO: History
+
+		return new HashMap<String, Integer>() {{
+			for (int i = lines.size(); i > 0; i--)
+				put(lines.get(lines.size() - i), i);
+		}};
+	}
+
+	private void start(Match match) {
+		BattleshipMatchData matchData = match.getMatchData();
+		if (!matchData.isPlacingKits()) return;
+
+		for (Team team : matchData.getShips().keySet()) {
+			long count = matchData.getShips().get(team).values().stream()
+					.filter(ship -> ship.getOrigin() == null)
+					.count();
+
+			if (count > 0)
+				match.broadcast("Cannot start yet, setup incomplete");
+		}
+
+		matchData.setPlacingKits(false);
+
+		matchData.getShips().forEach((team, ships) -> {
+			for (ShipType shipType : ShipType.values())
+				pasteShip(shipType, ships.get(shipType).getOrigin());
+		});
+	}
+
+	private Team getTeam(Arena arena, Location location) {
+		for (ProtectedRegion region : WGUtils.getRegionsAt(location))
+			if (arena.ownsRegion(region.getId(), "team"))
+				for (Team team : arena.getTeams())
+					if (region.getId().split("_")[3].equalsIgnoreCase(team.getName().replaceAll(" ", "").toLowerCase()))
+						return team;
+		return null;
+	}
+
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
@@ -75,15 +193,15 @@ public class Battleship extends BalancedTeamMechanic {
 		event.setCancelled(true);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		event.setCancelled(true);
 
-		Ship ship = Ship.get(event.getBlockPlaced());
-		if (ship == null) return;
+		ShipType shipType = ShipType.get(event.getBlockPlaced());
+		if (shipType == null) return;
 		if (event.getBlockAgainst().getType() != Material./*1.13 YELLOW_*/WOOL) return;
 
 		Location floor = event.getBlockAgainst().getLocation();
@@ -91,7 +209,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 		// TODO: if (!matchData.isPlacingKits()) return;
 
-		if (placeKit(minigamer, ship, floor.add(0, 3, 0), BlockFace.NORTH))
+		if (placeKit(minigamer, shipType, floor.add(0, 3, 0), BlockFace.NORTH))
 			minigamer.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 	}
 
@@ -101,29 +219,33 @@ public class Battleship extends BalancedTeamMechanic {
 		if (event.isCancelled()) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
+
+		BattleshipMatchData matchData = minigamer.getMatch().getMatchData();
+		Team team = minigamer.getTeam();
 		Block start = event.getClickedBlock();
-		Ship ship = Ship.get(start);
-		if (ship == null) return;
+		ShipType shipType = ShipType.get(start);
+		if (shipType == null) return;
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			BlockFace direction = getKitDirection(start.getLocation());
 
 			if (direction != null)
-				placeKit(minigamer, ship, start.getLocation(), getNextDirection(direction));
+				placeKit(minigamer, shipType, start.getLocation(), getNextDirection(direction));
 		} else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 			event.setCancelled(true);
-			minigamer.send(PREFIX + "Removed &e" + ship);
+			minigamer.send(PREFIX + "Removed &e" + shipType);
 			deleteKit(start.getLocation());
-			giveKitItem(minigamer, ship);
+			matchData.getGrid(team).vacate(shipType);
+			giveKitItem(minigamer, shipType);
 		}
 	}
 
-	private void giveKitItem(Minigamer minigamer, Ship ship) {
+	private void giveKitItem(Minigamer minigamer, ShipType shipType) {
 		PlayerInventory inventory = minigamer.getPlayer().getInventory();
 		if (inventory.getItemInMainHand().getType() == Material.AIR)
-			inventory.setItemInMainHand(ship.getItem());
+			inventory.setItemInMainHand(shipType.getItem());
 		else
-			Utils.giveItem(minigamer.getPlayer(), ship.getItem());
+			Utils.giveItem(minigamer.getPlayer(), shipType.getItem());
 	}
 
 	private void deleteKit(Location location) {
@@ -135,43 +257,52 @@ public class Battleship extends BalancedTeamMechanic {
 			}
 	}
 
-	private boolean placeKit(Minigamer minigamer, Ship ship, Location location, BlockFace direction) {
-		return placeKit(minigamer, ship, location, direction, 0);
+	private boolean placeKit(Minigamer minigamer, ShipType shipType, Location location, BlockFace direction) {
+		return placeKit(minigamer, shipType, location, direction, 0);
 	}
 
-	private boolean placeKit(Minigamer minigamer, Ship ship, Location location, BlockFace direction, int attempts) {
+	private boolean placeKit(Minigamer minigamer, ShipType shipType, Location location, BlockFace direction, int attempts) {
 		if (attempts >= 4) {
-			if (location.getBlock().getType() == ship.getItem().getType())
-				minigamer.send(PREFIX + "Your &e" + ship + " &3could not be rotated");
+			if (location.getBlock().getType() == shipType.getItem().getType())
+				minigamer.send(PREFIX + "Your &e" + shipType + " &3could not be rotated");
 			else
-				minigamer.send(PREFIX + "Your &e" + ship + " &3doesnt fit there");
+				minigamer.send(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
 			return false;
 		}
 
 		++attempts;
 
-		if (!kitFits(location, direction, ship.getKitLength()))
-			return placeKit(minigamer, ship, location, getNextDirection(direction), attempts);
+		if (!kitFits(location, direction, shipType.getKitLength()))
+			return placeKit(minigamer, shipType, location, getNextDirection(direction), attempts);
 
-		if (location.getBlock().getType() == ship.getItem().getType()) {
+		if (location.getBlock().getType() == shipType.getItem().getType()) {
 			deleteKit(location);
-			minigamer.send(PREFIX + "Rotated &e" + ship);
+			minigamer.send(PREFIX + "Rotated &e" + shipType);
 		} else {
 			if (location.getBlock().getType() != Material.AIR) {
-				minigamer.send(PREFIX + "Your &e" + ship + " &3doesnt fit there");
+				minigamer.send(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
 				return false;
 			}
 
-			minigamer.send(PREFIX + "Placed &e" + ship);
+			minigamer.send(PREFIX + "Placed &e" + shipType);
 		}
 
-		location.getBlock().setType(ship.getItem().getType());
-		location.getBlock().setData((byte) ship.getItem().getDurability());
+		BattleshipMatchData matchData = minigamer.getMatch().getMatchData();
+		Team team = minigamer.getTeam();
+		Grid grid = matchData.getGrid(team);
+		Ship ship = matchData.getShip(team, shipType);
+		grid.vacate(shipType);
+
+		location.getBlock().setType(shipType.getItem().getType());
+		location.getBlock().setData((byte) shipType.getItem().getDurability());
+		grid.getCoordinate(location).occupy(ship);
+		ship.setOrigin(location);
 
 		Block index = location.getBlock();
-		for (int i = 0; i < ship.getKitLength(); i++) {
+		for (int i = 0; i < shipType.getKitLength(); i++) {
 			index = index.getRelative(direction);
 			index.setType(Material./*1.13 WHITE_*/WOOL);
+			grid.getCoordinate(index.getLocation()).occupy(ship);
 		}
 
 		return true;
@@ -184,11 +315,6 @@ public class Battleship extends BalancedTeamMechanic {
 			index = index.getRelative(direction);
 			if (index.getType() != Material.AIR) {
 				debug("Kit doesnt fit, block is not air (" + index.getType() + ")");
-				if (index.getType() == Material.WOOL) {
-					index.setType(Material.REDSTONE_BLOCK);
-					throw new BNException("Aborting");
-				}
-
 				return false;
 			}
 
@@ -205,10 +331,10 @@ public class Battleship extends BalancedTeamMechanic {
 		return true;
 	}
 
-	private void pasteShip(Ship ship, Location location) {
+	private void pasteShip(ShipType shipType, Location location) {
 		BlockFace direction = getKitDirection(location);
 		deleteKit(location);
-		WEUtils.paste("battleship/" + ship.name().toLowerCase() + "/" + direction.name().toLowerCase(), location);
+		WEUtils.paste("battleship/" + shipType.name().toLowerCase() + "/" + direction.name().toLowerCase(), location);
 	}
 
 	public BlockFace getKitDirection(Location location) {
@@ -242,7 +368,7 @@ public class Battleship extends BalancedTeamMechanic {
 		return Arrays.asList(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST).contains(face);
 	}
 
-	public enum Ship {
+	public enum ShipType {
 		CRUISER(2, ColorType.LIGHT_GREEN),
 		SUBMARINE(3, ColorType.LIGHT_RED),
 		DESTROYER(3, ColorType.PURPLE),
@@ -256,11 +382,11 @@ public class Battleship extends BalancedTeamMechanic {
 		@Getter
 		private ItemStack item;
 
-		Ship(int length, ColorType color) {
+		ShipType(int length, ColorType color) {
 			this.length = length;
 			this.color = color;
 			this.item = new ItemStackBuilder(Material.CONCRETE)
-					.name(color.getChatColor() + toString())
+					.name(color.getChatColor() + toString() + " &8| &7Size: &e" + length)
 					.lore("&fPlace on the yellow wool to configure")
 					.durability(color.getDurability().shortValue())
 					.build();
@@ -275,13 +401,18 @@ public class Battleship extends BalancedTeamMechanic {
 			return (length - 1) * 4;
 		}
 
-		public static Ship get(Block block) {
-			for (Ship ship : Ship.values())
-				if (block.getData() == ship.getColor().getDurability())
-					return ship;
+		public static ShipType get(Block block) {
+			for (ShipType shipType : ShipType.values())
+				if (block.getData() == shipType.getColor().getDurability())
+					return shipType;
 
 			return null;
 		}
+
+		public static int getCombinedHealth() {
+			return Arrays.stream(values()).mapToInt(ShipType::getLength).sum();
+		}
+
 	}
 
 }
