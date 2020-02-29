@@ -25,12 +25,12 @@ public class MinigamerScoreboard implements MinigameScoreboard {
 
 	@Override
 	public void update() {
-		scoreboards.forEach((minigamer, scoreboard) ->
-				scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(minigamer)));
-
 		match.getMinigamers().forEach(minigamer ->
 				scoreboards.computeIfAbsent(minigamer, $ ->
 						createScoreboard(minigamer)));
+
+		scoreboards.forEach((minigamer, scoreboard) ->
+				scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(minigamer)));
 	}
 
 	@Override

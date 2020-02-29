@@ -20,14 +20,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Aliases({"randomtp", "wild"})
 public class RTPCommand extends CustomCommand {
+	LWCProtectionService service = new LWCProtectionService();
+	AtomicInteger count = new AtomicInteger(0);
+	boolean running = false;
 
 	public RTPCommand(CommandEvent event) {
 		super(event);
 	}
-
-	LWCProtectionService service = new LWCProtectionService();
-	AtomicInteger count = new AtomicInteger(0);
-	boolean running = false;
 
 	@Path
 	@Async

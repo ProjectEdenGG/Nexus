@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.Utils.left;
 
 @SuppressWarnings("unused")
 public class BNScoreboard {
@@ -48,7 +49,7 @@ public class BNScoreboard {
 
 	public BNScoreboard(String id, String title, Collection<? extends Player> players) {
 //		scoreboard.removeObjective(id);
-		objective = scoreboard.createObjective(id, colorize(title), DisplaySlot.SIDEBAR, false);
+		objective = scoreboard.createObjective(left(id, 16), colorize(title), DisplaySlot.SIDEBAR, false);
 		for (Player player : players)
 			addPlayer(player);
 	}
