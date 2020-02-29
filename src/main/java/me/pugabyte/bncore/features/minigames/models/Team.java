@@ -119,7 +119,7 @@ public class Team implements ConfigurationSerializable {
 
 	public List<Minigamer> getMembers(List<Minigamer> minigamers) {
 		return new ArrayList<>(minigamers).stream()
-				.filter(minigamer -> minigamer.getTeam().equals(this))
+				.filter(minigamer -> this.equals(minigamer.getTeam()))
 				.collect(Collectors.toList());
 	}
 

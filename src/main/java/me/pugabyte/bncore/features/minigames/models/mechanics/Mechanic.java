@@ -162,6 +162,10 @@ public abstract class Mechanic implements Listener {
 		return new HashMap<>();
 	}
 
+	public Map<String, Integer> getScoreboardLines(Match match, Team team) {
+		return new HashMap<>();
+	}
+
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
 			if (event.getClickedBlock() != null)

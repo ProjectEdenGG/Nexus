@@ -43,6 +43,7 @@ public interface MinigameScoreboard {
 	enum Type {
 		NONE(null),
 		MATCH(MatchScoreboard.class),
+		TEAM(TeamScoreboard.class),
 		MINIGAMER(MinigamerScoreboard.class);
 
 		@Getter

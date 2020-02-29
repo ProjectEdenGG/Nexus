@@ -10,8 +10,8 @@ import me.pugabyte.bncore.utils.WorldGuardUtils;
 public class MatchData {
 	@ToString.Exclude
 	private Match match;
-	protected WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
-	protected WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
+	protected static WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
+	protected static WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
 
 	public MatchData(Match match) {
 		this.match = match;
