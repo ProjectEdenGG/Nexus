@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.commands;
 
-import java.util.Arrays;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -13,10 +13,12 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Aliases({"randomtp", "wild"})
 public class RTPCommand extends CustomCommand {
 
 	public RTPCommand(CommandEvent event) {
