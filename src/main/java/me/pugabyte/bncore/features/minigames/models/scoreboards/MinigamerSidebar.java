@@ -7,11 +7,11 @@ import me.pugabyte.bncore.utils.BNScoreboard;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MinigamerScoreboard implements MinigameScoreboard {
+public class MinigamerSidebar implements MinigameScoreboard {
 	private Match match;
 	private Map<Minigamer, BNScoreboard> scoreboards = new HashMap<>();
 
-	public MinigamerScoreboard(Match match) {
+	public MinigamerSidebar(Match match) {
 		this.match = match;
 	}
 
@@ -29,8 +29,10 @@ public class MinigamerScoreboard implements MinigameScoreboard {
 				scoreboards.computeIfAbsent(minigamer, $ ->
 						createScoreboard(minigamer)));
 
-		scoreboards.forEach((minigamer, scoreboard) ->
-				scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(minigamer)));
+		scoreboards.forEach((minigamer, scoreboard) -> {
+			scoreboard.setTitle(match.getArena().getMechanic().getScoreboardTitle(minigamer.getMatch()));
+			scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(minigamer));
+		});
 	}
 
 	@Override

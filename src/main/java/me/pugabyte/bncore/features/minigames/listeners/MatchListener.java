@@ -132,12 +132,18 @@ public class MatchListener implements Listener {
 				if (newDamage > 0) {
 					MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, attacker, event);
 					Utils.callEvent(damageEvent);
-					if (damageEvent.isCancelled()) return;
+					if (damageEvent.isCancelled()) {
+						event.setCancelled(true);
+						return;
+					}
 
 					if (event.getDamager() instanceof Arrow)
 						attacker.tell("&7" + victim.getName() + " is on &c" + new DecimalFormat("#.0").format(newDamage) + " &7HP");
 
 					mechanic.onDamage(damageEvent);
+
+					if (damageEvent.isCancelled())
+						event.setCancelled(true);
 					return;
 				}
 
@@ -190,9 +196,15 @@ public class MatchListener implements Listener {
 		if (event.getFinalDamage() < victim.getPlayer().getHealth()) {
 			MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, event);
 			Utils.callEvent(damageEvent);
-			if (damageEvent.isCancelled()) return;
+			if (damageEvent.isCancelled()) {
+				event.setCancelled(true);
+				return;
+			}
 
 			mechanic.onDamage(damageEvent);
+
+			if (damageEvent.isCancelled())
+				event.setCancelled(true);
 			return;
 		}
 

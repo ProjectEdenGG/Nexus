@@ -70,7 +70,8 @@ public class Tasks {
 				return;
 			}
 
-			onStart.run();
+			if (onStart != null)
+				onStart.run();
 
 			taskId = repeat(1, 1, () -> {
 				if (duration == ticks) {

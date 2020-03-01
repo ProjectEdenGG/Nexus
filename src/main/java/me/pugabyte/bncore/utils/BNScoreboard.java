@@ -96,6 +96,14 @@ public class BNScoreboard {
 			removePlayer(player);
 	}
 
+	public String getTitle() {
+		return objective.getDisplayName();
+	}
+
+	public void setTitle(String title) {
+		objective.setDisplayName(title);
+	}
+
 	public Map<String, Integer> getLines() {
 		return objective.getScores();
 	}

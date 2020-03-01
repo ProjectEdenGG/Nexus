@@ -118,7 +118,10 @@ public final class Thimble extends TeamlessMechanic {
 	@Override
 	public String getScoreboardTitle(Match match) {
 		ThimbleArena arena = match.getArena();
-		return super.getScoreboardTitle(match) + ": " + arena.getGamemode().getScoreboardTitle();
+		String scoreboardTitle = super.getScoreboardTitle(match);
+		if (arena.getGamemode() != null)
+			scoreboardTitle += ": " + arena.getGamemode().getScoreboardTitle();
+		return scoreboardTitle ;
 	}
 
 	@Override
@@ -186,6 +189,7 @@ public final class Thimble extends TeamlessMechanic {
 	@Override
 	public void onDamage(MinigamerDamageEvent event) {
 		super.onDamage(event);
+		event.setCancelled(true);
 		ThimbleMatchData matchData = event.getMinigamer().getMatch().getMatchData();
 		if (event.getMinigamer().equals(matchData.getTurnPlayer()))
 			kill(event.getMinigamer());
@@ -193,6 +197,7 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
+		super.onDeath(event);
 		Minigamer minigamer = event.getMinigamer();
 		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
 		ThimbleArena arena = minigamer.getMatch().getArena();
@@ -201,7 +206,6 @@ public final class Thimble extends TeamlessMechanic {
 			minigamer.getMatch().getTasks().wait(30, () -> nextTurn(MatchManager.get(arena)));
 			event.setDeathMessage(minigamer.getColoredName() + " missed");
 		}
-		super.onDeath(event);
 	}
 
 	private void score(Minigamer minigamer, Location blockLocation) {
