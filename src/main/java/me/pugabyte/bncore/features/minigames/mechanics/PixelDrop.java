@@ -4,7 +4,6 @@ import com.dthielke.herochat.ChannelChatEvent;
 import com.dthielke.herochat.Chatter.Result;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.Region;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -15,6 +14,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.PixelDropMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
@@ -29,10 +29,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-// TODO: Clear floor animation (use blockiterator)
-// TODO: Scoreboards
-// TODO: bug - blocks sometimes place ontop of each other
-// TODO: sound when other people guess right
+// TODO:
+//  - Clear floor animation (use blockiterator)
+//  - Scoreboards
+//  - Actionbar word underscores thing, randomly fills in letters after x seconds
 
 public class PixelDrop extends TeamlessMechanic {
 	private final int MAX_ROUNDS = 5;
@@ -97,14 +97,15 @@ public class PixelDrop extends TeamlessMechanic {
 	public void endOfRound(Match match) {
 		PixelDropMatchData matchData = match.getMatchData();
 		List<Minigamer> minigamers = match.getMinigamers();
-		matchData.setRoundOver(true);
-		matchData.setTimeLeft(0);
-		matchData.getDesignMap().clear();
-		matchData.getDesignKeys().clear();
+		matchData.endRound(match);
 
 		if (matchData.getCurrentRound() != 0) {
 			stopDesignTask(match);
-			// TODO: Drop remaining blocks
+			matchData.stopWordTask(match);
+
+			dropRemainingBlocks(match);
+			matchData.revealWord(match);
+
 			minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
 				Utils.sendActionBar(player, "&c&lRound Over!");
 				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.7F);
@@ -112,8 +113,7 @@ public class PixelDrop extends TeamlessMechanic {
 			match.broadcast("&c&lRound Over!");
 		}
 
-		matchData.canGuess(false);
-		matchData.getGuessed().clear();
+		matchData.resetRound();
 
 		if (matchData.getCurrentRound() == MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
@@ -131,9 +131,9 @@ public class PixelDrop extends TeamlessMechanic {
 				Tasks.Countdown countdown = Tasks.Countdown.builder()
 						.duration(TIME_OUT)
 						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-							if (match.isEnded()) {
+							if (match.isEnded())
 								return;
-							}
+
 							matchData.setTimeLeft(i);
 							match.getScoreboard().update();
 
@@ -151,20 +151,8 @@ public class PixelDrop extends TeamlessMechanic {
 
 	public void newRound(Match match) {
 		if (match.isEnded()) return; // just in case
-
 		PixelDropMatchData matchData = match.getMatchData();
-		matchData.setRoundOver(false);
-		matchData.setTimeLeft(0);
-		match.getScoreboard().update();
-
-		// Increase round counter
-		matchData.setCurrentRound(matchData.getCurrentRound() + 1);
-
-		matchData.setRoundStart(System.currentTimeMillis());
-
-		// Enable checking
-		matchData.canGuess(true);
-
+		matchData.setupRound(match);
 		startDesignTask(match);
 	}
 
@@ -184,7 +172,7 @@ public class PixelDrop extends TeamlessMechanic {
 				break;
 		}
 		matchData.setDesign(design);
-
+		matchData.startWordTask(match);
 
 		// Get min point from current chosen design
 		Vector designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
@@ -234,12 +222,34 @@ public class PixelDrop extends TeamlessMechanic {
 		match.getTasks().cancel(matchData.getDesignTaskId());
 	}
 
+	public void dropRemainingBlocks(Match match) {
+		PixelDropArena arena = match.getArena();
+		PixelDropMatchData matchData = match.getMatchData();
+
+		Vector pasteMin = arena.getDropRegion().getMinimumPoint();
+		for (String key : matchData.getDesignKeys()) {
+			Block block = matchData.getDesignMap().get(key);
+
+			String[] xz = key.split("_");
+			int x = Integer.parseInt(xz[0]);
+			int z = Integer.parseInt(xz[1]);
+			double blockX = x + 0.5;
+			double blockZ = z + 0.5;
+			Location loc = WGUtils.toLocation(pasteMin.add(blockX, 0, blockZ));
+
+			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType(), block.getData());
+			fallingBlock.setDropItem(false);
+			fallingBlock.setInvulnerable(true);
+			fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
+		}
+		matchData.getDesignKeys().clear();
+	}
+
 	@EventHandler
 	public void onHerochatChat(ChannelChatEvent event) {
 		Player player = event.getSender().getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
-		BNCore.log("PixelDrop herochat chat");
 
 		PixelDropMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!matchData.canGuess()) return;
@@ -255,7 +265,6 @@ public class PixelDrop extends TeamlessMechanic {
 		Player player = event.getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
-		BNCore.log("PixelDrop async chat");
 
 		// Only block actual chat, not commands
 		if (!event.isAsynchronous()) return;
@@ -269,16 +278,16 @@ public class PixelDrop extends TeamlessMechanic {
 		Tasks.sync(() -> {
 			String message = event.getMessage();
 			if (matchData.getGuessed().contains(minigamer)) {
-				matchData.getGuessed().forEach(recipient -> sendChat(recipient, minigamer, message));
+				matchData.getGuessed().forEach(recipient -> sendChat(recipient, minigamer, "&7" + message));
 				return;
 			}
 
 			if (!message.equalsIgnoreCase(matchData.getRoundWord())) {
-				match.getMinigamers().forEach(recipient -> sendChat(recipient, minigamer, message));
+				match.getMinigamers().forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
 				return;
 			}
 
-			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_XYLOPHONE, 10F, 0.5F);
+			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_NOTE_XYLOPHONE, 10F, 0.5F);
 			match.broadcast("&a" + minigamer.getName() + " guessed the word!");
 			matchData.getGuessed().add(minigamer);
 			minigamer.scored(Math.max(1, 1 + (4 - matchData.getGuessed().size())));
@@ -297,8 +306,7 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	private String getChatFormat(Minigamer sender, String message) {
-		PixelDropMatchData matchData = sender.getMatch().getMatchData();
-		return "[PixelDrop] " + sender.getName() + " > " + message;
+		return StringUtils.getPrefix("PixelDrop") + sender.getName() + " > " + message;
 	}
 
 	private void sendChat(Minigamer recipient, Minigamer sender, String message) {

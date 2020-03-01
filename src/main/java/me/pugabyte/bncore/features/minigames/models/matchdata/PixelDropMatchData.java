@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Data
 @MatchDataFor(PixelDrop.class)
@@ -30,7 +31,6 @@ public class PixelDropMatchData extends MatchData {
 	private List<Minigamer> guessed = new ArrayList<>();
 	@Accessors(fluent = true)
 	private boolean canGuess;
-	private int totalFinished;
 
 	private List<String> designWords = new ArrayList<>();
 	private List<Integer> designsPlayed = new ArrayList<>();
@@ -41,6 +41,7 @@ public class PixelDropMatchData extends MatchData {
 	private int designTaskId;
 
 	private String roundWord;
+	private int wordTaskId;
 	private int currentRound;
 	private long roundStart;
 	private int timeLeft;
@@ -65,6 +66,27 @@ public class PixelDropMatchData extends MatchData {
 		setCurrentRound(0);
 		setTimeLeft(0);
 		clearFloor(match);
+	}
+
+	public void endRound(Match match) {
+		canGuess(false);
+		setRoundOver(true);
+		setTimeLeft(0);
+	}
+
+	public void resetRound() {
+		getDesignMap().clear();
+		getDesignKeys().clear();
+		getGuessed().clear();
+	}
+
+	public void setupRound(Match match) {
+		setRoundOver(false);
+		setTimeLeft(0);
+		match.getScoreboard().update();
+		setCurrentRound(getCurrentRound() + 1);
+		setRoundStart(System.currentTimeMillis());
+		canGuess(true);
 	}
 
 	public void setDesign(int design) {
@@ -185,6 +207,50 @@ public class PixelDropMatchData extends MatchData {
 		}
 		word = new StringBuilder(word.toString().replaceAll("_", " "));
 		return word.toString();
+	}
+
+	public void startWordTask(Match match) {
+		String word = getRoundWord().replace("_", " ");
+		String underscores = word.replaceAll("[a-zA-z]+", "_");
+		AtomicReference<String> hint = new AtomicReference<>(underscores);
+
+		this.wordTaskId = match.getTasks().repeat(0, 3 * 20, () -> {
+			long secondsElapsed = (System.currentTimeMillis() - getRoundStart()) * 1000;
+			if (secondsElapsed > 30) {
+				if (Utils.chanceOf(15)) {
+					String oldHint = hint.get();
+					char letter = '-';
+					int ndx = -1;
+					for (int i = 0; i < 5; i++) {
+						int random = Utils.randomInt(0, word.length() - 1);
+						letter = oldHint.charAt(random);
+						if (letter == '_') {
+							ndx = oldHint.indexOf(letter, random);
+							break;
+						}
+					}
+
+					if (ndx != -1) {
+						char[] chars = oldHint.toCharArray();
+						chars[ndx] = letter;
+						hint.set(String.valueOf(chars));
+					}
+				}
+
+				List<Minigamer> minigamers = match.getMinigamers();
+				minigamers.forEach(minigamer -> Utils.sendActionBar(minigamer.getPlayer(), hint.get(), 2 * 20, true));
+			}
+		});
+	}
+
+	public void stopWordTask(Match match) {
+		match.getTasks().cancel(wordTaskId);
+	}
+
+	public void revealWord(Match match) {
+		List<Minigamer> minigamers = match.getMinigamers();
+		String word = getRoundWord().replaceAll("_", " ");
+		minigamers.forEach(minigamer -> Utils.sendActionBar(minigamer.getPlayer(), word, 40, true));
 	}
 
 	// TODO: Counter clockwise animation
