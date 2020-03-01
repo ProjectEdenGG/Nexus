@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.CitizensUtils;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -56,16 +56,16 @@ public class PodiumsCommand extends CustomCommand {
 	void getId(Position position) {
 		if (position == null) {
 			send(PREFIX + "Podium IDs:");
-			Arrays.asList(Position.values()).forEach(_position -> send("&3" + Utils.camelCase(_position.name()) +
+			Arrays.asList(Position.values()).forEach(_position -> send("&3" + StringUtils.camelCase(_position.name()) +
 					": &e" + getPodiumId(_position)));
 		} else
-			send(PREFIX + Utils.camelCase(position.name()) + ": &e" + getPodiumId(position));
+			send(PREFIX + StringUtils.camelCase(position.name()) + ": &e" + getPodiumId(position));
 	}
 
 	@Path("setId <position> <id>")
 	void setId(Position position, int id) {
 		setPodiumId(position, id);
-		send(PREFIX + Utils.camelCase(position.name()) + " podium ID updated to " + id);
+		send(PREFIX + StringUtils.camelCase(position.name()) + " podium ID updated to " + id);
 	}
 
 	@Path("tp <position>")

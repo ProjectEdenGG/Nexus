@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.listeners;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -18,10 +19,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.BNCore.sleep;
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Sleep implements Listener {
-	private final String PREFIX = Utils.getPrefix("Sleep");
+	private final String PREFIX = StringUtils.getPrefix("Sleep");
 	public boolean handling = false;
 
 	public Sleep() {

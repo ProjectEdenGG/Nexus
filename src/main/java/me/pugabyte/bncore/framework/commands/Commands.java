@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.utils.Utils.listLast;
+import static me.pugabyte.bncore.utils.StringUtils.listLast;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 

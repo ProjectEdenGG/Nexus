@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionGroup;
@@ -52,7 +53,7 @@ public class DemoteCommand extends CustomCommand {
 		}
 		runConsoleCommand("pex user " + player.getName() + " group add " + rank);
 		Utils.updatePrefix(player, user.getPrefix());
-		send(PREFIX + "Demoted " + player.getName() + " to " + Rank.valueOf(rank).getFormat() + Utils.camelCase(rank));
+		send(PREFIX + "Demoted " + player.getName() + " to " + Rank.valueOf(rank).getFormat() + StringUtils.camelCase(rank));
 	}
 
 }

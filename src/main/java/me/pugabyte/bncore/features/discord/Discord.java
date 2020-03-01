@@ -4,8 +4,8 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.commands.SuggestCommand;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -66,7 +66,7 @@ public class Discord {
 		for (DiscordId.Channel target : targets) {
 			TextChannel channel = relayBot.getTextChannelById(target.getId());
 			if (channel != null)
-				channel.sendMessage(ChatColor.stripColor(Utils.colorize(message))).queue();
+				channel.sendMessage(ChatColor.stripColor(StringUtils.colorize(message))).queue();
 		}
 	}
 

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @SuppressWarnings("unused")
 public class BNScoreboardOld {

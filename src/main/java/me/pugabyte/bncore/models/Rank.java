@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -54,15 +54,15 @@ public enum Rank {
 
 	@Override
 	public String toString() {
-		return format + Utils.camelCase(name());
+		return format + StringUtils.camelCase(name());
 	}
 
 	public String noFormat() {
-		return Utils.camelCase(name());
+		return StringUtils.camelCase(name());
 	}
 
 	public List<Nerd> getNerds() {
-		Set<PermissionUser> users = PermissionsEx.getPermissionManager().getGroup(Utils.camelCase(name())).getUsers();
+		Set<PermissionUser> users = PermissionsEx.getPermissionManager().getGroup(StringUtils.camelCase(name())).getUsers();
 		Set<Nerd> nerds = new HashSet<>();
 		users.forEach(user -> nerds.add(new NerdService().get(user.getIdentifier())));
 		return new ArrayList<>(nerds);

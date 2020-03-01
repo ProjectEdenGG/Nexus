@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.UncivilEngineersArena;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
@@ -160,7 +161,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 		}
 
 		public String getTitle() {
-			return Utils.camelCase(type.name().replace("_", " "));
+			return StringUtils.camelCase(type.name().replace("_", " "));
 		}
 
 	}
@@ -249,7 +250,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 						e -> {
 							if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 								player.setItemOnCursor(new ItemStack(Material.AIR));
-								String originID = Utils.right(e.getItem().getItemMeta().getDisplayName(), 1);
+								String originID = StringUtils.right(e.getItem().getItemMeta().getDisplayName(), 1);
 								arena.getOrigins().remove(Integer.parseInt(originID));
 								openOriginsMenu(player);
 								return;

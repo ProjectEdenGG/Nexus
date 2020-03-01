@@ -10,7 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
@@ -30,15 +30,15 @@ public class HoursCommand extends CustomCommand {
 		Hours hours = service.get(player);
 		send("");
 		send(PREFIX + (isSelf ? "Your" : "&e" + player.getName() + "&3's") + " playtime");
-		send("&3Total: &e" + Utils.timespanFormat(hours.getTotal(), "None"));
-		send("&7- &3Today: &e" + Utils.timespanFormat(hours.getDaily(), "None"));
-		send("&7- &3This week: &e" + Utils.timespanFormat(hours.getWeekly(), "None"));
-		send("&7- &3This month: &e" + Utils.timespanFormat(hours.getMonthly(), "None"));
+		send("&3Total: &e" + StringUtils.timespanFormat(hours.getTotal(), "None"));
+		send("&7- &3Today: &e" + StringUtils.timespanFormat(hours.getDaily(), "None"));
+		send("&7- &3This week: &e" + StringUtils.timespanFormat(hours.getWeekly(), "None"));
+		send("&7- &3This month: &e" + StringUtils.timespanFormat(hours.getMonthly(), "None"));
 
 		if (Rank.getHighestRank(player) == Rank.GUEST) {
 			int day = 60 * 60 * 24;
 			String who = (isSelf ? "You need" : player.getName() + " needs") + " ";
-			String left = Utils.timespanFormat(day - hours.getTotal());
+			String left = StringUtils.timespanFormat(day - hours.getTotal());
 
 			line();
 			send("&3" + who + "&e" + left + " more in-game play time &3to achieve &fMember&3.");
@@ -82,10 +82,10 @@ public class HoursCommand extends CustomCommand {
 			error(PREFIX + "&cNo results on page " + page);
 
 		send("");
-		send(PREFIX + "Total: " + Utils.timespanFormat(service.total(hoursType)) + (page > 1 ? "&e  |  &3Page " + page : ""));
+		send(PREFIX + "Total: " + StringUtils.timespanFormat(service.total(hoursType)) + (page > 1 ? "&e  |  &3Page " + page : ""));
 		int i = (page - 1) * 10 + 1;
 		for (Hours hours : results)
-			send("&3" + i++ + " &e" + hours.getPlayer().getName() + " &7- " + Utils.timespanFormat(hours.get(hoursType)));
+			send("&3" + i++ + " &e" + hours.getPlayer().getName() + " &7- " + StringUtils.timespanFormat(hours.get(hoursType)));
 	}
 }
 

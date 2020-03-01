@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.geoip.GeoIP;
 import me.pugabyte.bncore.models.geoip.GeoIP.Distance;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 
 import java.text.DecimalFormat;
 
@@ -18,7 +18,7 @@ public class IrlDistanceCommand extends CustomCommand {
 
 	public IrlDistanceCommand(@NonNull CommandEvent event) {
 		super(event);
-		PREFIX = Utils.getPrefix("GeoIP");
+		PREFIX = StringUtils.getPrefix("GeoIP");
 	}
 
 	@Async

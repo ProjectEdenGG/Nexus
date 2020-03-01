@@ -21,7 +21,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Aliases("ld")
 @NoArgsConstructor

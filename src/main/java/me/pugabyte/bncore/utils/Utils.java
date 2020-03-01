@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.utils;
 
-import com.google.common.base.Strings;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -11,7 +10,6 @@ import me.pugabyte.bncore.models.nerds.NerdService;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -35,10 +33,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,155 +48,15 @@ import java.util.stream.Collectors;
 public class Utils {
 
 	public static void pug(String message) {
-		Bukkit.getPlayer("Pugabyte").sendMessage(colorize(message));
+		Bukkit.getPlayer("Pugabyte").sendMessage(StringUtils.colorize(message));
 	}
 
 	public static void wakka(String message) {
-		Bukkit.getPlayer("WakkaFlocka").sendMessage(colorize(message));
+		Bukkit.getPlayer("WakkaFlocka").sendMessage(StringUtils.colorize(message));
 	}
 
 	public static void blast(String message) {
-		Bukkit.getPlayer("Blast").sendMessage(colorize(message));
-	}
-
-	public static String getPrefix(String prefix) {
-		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
-	}
-
-	public static String colorize(String string) {
-		if (string == null)
-			return null;
-		return ChatColor.translateAlternateColorCodes('&', string);
-	}
-
-	public static String decolorize(String string) {
-		return string.replaceAll(getColorChar(), "&");
-	}
-
-	public static String getColorChar() {
-		return "§";
-	}
-
-	public static String loreize(String string) {
-		return loreize(string, ChatColor.WHITE);
-	}
-
-	public static String loreize(String string, ChatColor color) {
-		int i = 0, lineLength = 0;
-		boolean watchForNewLine = false, watchForColor = false;
-		string = colorize(string);
-
-		for (String character : string.split("")) {
-			if (character.contains("\n")) {
-				lineLength = 0;
-				continue;
-			}
-
-			if (watchForNewLine) {
-				if ("|".equalsIgnoreCase(character))
-					lineLength = 0;
-				watchForNewLine = false;
-			} else if ("|".equalsIgnoreCase(character))
-				watchForNewLine = true;
-
-			if (watchForColor) {
-				if (character.matches("[A-Fa-fK-Ok-oRr0-9]"))
-					lineLength -= 2;
-				watchForColor = false;
-			} else if ("&".equalsIgnoreCase(character))
-				watchForColor = true;
-
-			++lineLength;
-
-			if (lineLength > 28)
-				if (" ".equalsIgnoreCase(character)) {
-					String before = left(string, i);
-					String excess = right(string, string.length() - i);
-					if (excess.length() > 5) {
-						excess = excess.trim();
-						boolean doSplit = true;
-						if (excess.contains("||") && excess.indexOf("||") <= 5)
-							doSplit = false;
-						if (excess.contains(" ") && excess.indexOf(" ") <= 5)
-							doSplit = false;
-						if (lineLength >= 38)
-							doSplit = true;
-
-						if (doSplit) {
-							string = before + "||" + color + excess.trim();
-							lineLength = 0;
-							i += 4;
-						}
-					}
-				}
-
-			++i;
-		}
-
-		return color + string;
-	}
-
-	public static List<String> splitLore(String lore) {
-		return new ArrayList<>(Arrays.asList(lore.split("\\|\\|")));
-	}
-
-	public static String getLastColor(String text) {
-		String reversed = new StringBuilder(colorize(text)).reverse().toString();
-		StringBuilder result = new StringBuilder();
-		String lastChar = null;
-
-		for (String character : reversed.split("")) {
-			if (character.equals(Utils.getColorChar()) && lastChar != null) {
-				ChatColor color = ChatColor.getByChar(lastChar);
-
-				if (color != null) {
-					if (color.isFormat()) {
-						result.insert(0, color.toString());
-						continue;
-					} else {
-						if (color == ChatColor.RESET)
-							color = ChatColor.WHITE;
-						result.insert(0, color);
-						break;
-					}
-				}
-			}
-
-			lastChar = character;
-		}
-
-		return result.toString();
-	}
-
-	public static String right(String string, int number) {
-		return string.substring(Math.max(string.length() - number, 0));
-	}
-
-	public static String left(String string, int number) {
-		return string.substring(0, Math.min(number, string.length()));
-	}
-
-	public static String camelCase(String text) {
-		if (text == null || text.isEmpty()) {
-			return text;
-		}
-
-		return Arrays.stream(text.replaceAll("_", " ").split(" "))
-				.map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase())
-				.collect(Collectors.joining(" "));
-	}
-
-	public static String listFirst(String string, String delimiter) {
-		return string.split(delimiter)[0];
-	}
-
-	public static String listLast(String string, String delimiter) {
-		return string.substring(string.lastIndexOf(delimiter) + 1);
-	}
-
-	public static String listGetAt(String string, int index, String delimiter) {
-		String[] split = string.split(delimiter);
-		return split[index - 1];
+		Bukkit.getPlayer("Blast").sendMessage(StringUtils.colorize(message));
 	}
 
 	public static void callEvent(Event event) {
@@ -397,92 +252,6 @@ public class Utils {
 				TimeZone.getDefault().toZoneId());
 	}
 
-	public static String timespanDiff(LocalDateTime from) {
-		return timespanDiff(from, LocalDateTime.now());
-	}
-
-	public static String timespanDiff(LocalDateTime from, LocalDateTime to) {
-		return timespanFormat(from.until(to, ChronoUnit.SECONDS));
-	}
-
-	public static String timespanFormat(long seconds) {
-		return timespanFormat(Long.valueOf(seconds).intValue());
-	}
-
-	public static String timespanFormat(int seconds) {
-		return timespanFormat(seconds, null);
-	}
-
-	public static String timespanFormat(int seconds, String noneDisplay) {
-		if (seconds == 0 && !Strings.isNullOrEmpty(noneDisplay)) return noneDisplay;
-
-		int original = seconds;
-		int years = seconds / 60 / 60 / 24 / 365;
-		seconds -= years * 60 * 60 * 24 * 365;
-		int days = seconds / 60 / 60 / 24;
-		seconds -= days * 60 * 60 * 24;
-		int hours = seconds / 60 / 60;
-		seconds -= hours * 60 * 60;
-		int minutes = seconds / 60;
-		seconds -= minutes * 60;
-
-		String result = "";
-		if (years > 0)
-			result += years + "y ";
-		if (days > 0)
-			result += days + "d ";
-		if (hours > 0)
-			result += hours + "h ";
-		if (minutes > 0)
-			result += minutes + "m ";
-		if (years == 0 && days == 0 && hours == 0 && minutes > 0 && seconds > 0)
-			result += seconds + "s ";
-
-		if (result.length() > 0)
-			return result.trim();
-		else
-			return original + "s";
-	}
-
-	public static String longDateTimeFormat(LocalDateTime dateTime) {
-		return longDateFormat(dateTime.toLocalDate()) + " " + timeFormat(dateTime);
-	}
-
-	public static String longDateFormat(LocalDate date) {
-		return camelCase(date.getMonth().name()) + " " + getNumberSuffix(date.getDayOfMonth()) + ", " + date.getYear();
-	}
-
-	public static String shortDateFormat(LocalDate date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/YY");
-		return date.format(formatter);
-	}
-
-	public static String timeFormat(LocalDateTime time) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss a");
-		return time.format(formatter);
-	}
-
-	public static String getNumberSuffix(int number) {
-		String text = String.valueOf(number);
-		if (text.endsWith("1"))
-			if (text.endsWith("11"))
-				return number + "th";
-			else
-				return number + "st";
-		else if (text.endsWith("2"))
-			if (text.endsWith("12"))
-				return number + "th";
-			else
-				return number + "nd";
-		else if (text.endsWith("3"))
-			if (text.endsWith("13"))
-				return number + "th";
-			else
-				return number + "rd";
-		else
-			return number + "th";
-	}
-
 	public static void dump(Object object) {
 		List<Method> methods = Arrays.asList(object.getClass().getDeclaredMethods());
 //		if (object.getClass().getSuperclass().getName().startsWith("me.pugabyte.bncore"))
@@ -568,19 +337,8 @@ public class Utils {
 		return itemStack;
 	}
 
-	public static void sendJsonLocation(String message, Location location, Player player) {
-		int x = (int) location.getX();
-		int y = (int) location.getY();
-		int z = (int) location.getZ();
-		double yaw = location.getYaw();
-		double pitch = location.getPitch();
-		String world = location.getWorld().getName();
-
-		new JsonBuilder().next(message).command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + world).send(player);
-	}
-
 	public static void sendActionBar(final Player player, final String message) {
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(colorize(message)));
+		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(StringUtils.colorize(message)));
 	}
 
 	public static void sendActionBar(final Player player, final String message, int duration) {

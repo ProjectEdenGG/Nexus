@@ -10,6 +10,7 @@ import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.litebans.LiteBansService;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.models.nerds.NerdService;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -45,8 +46,8 @@ public class SuggestCommand extends Command {
 				Hours hours = new HoursService().get(nerd);
 
 				String firstJoin = nerd.getFirstJoin().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy"));
-				String hoursTotal = Utils.timespanFormat(hours.getTotal(), "None");
-				String hoursMonthly = Utils.timespanFormat(hours.getMonthly(), "None");
+				String hoursTotal = StringUtils.timespanFormat(hours.getTotal(), "None");
+				String hoursMonthly = StringUtils.timespanFormat(hours.getMonthly(), "None");
 				String history = "None";
 				if (new LiteBansService().getHistory(nerd.getUuid()) > 0)
 					 history = "[View](https://bans.bnn.gg/history.php?uuid=" + nerd.getUuid() + ")";

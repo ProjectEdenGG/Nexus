@@ -23,7 +23,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Objects;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")

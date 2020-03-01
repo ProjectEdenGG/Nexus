@@ -4,7 +4,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -37,7 +37,7 @@ public class LoreCommand extends CustomCommand {
 		while (lore.size() < line)
 			lore.add("");
 
-		lore.set(line - 1, Utils.colorize(text));
+		lore.set(line - 1, StringUtils.colorize(text));
 		meta.setLore(lore);
 		tool.setItemMeta(meta);
 		player().updateInventory();
@@ -50,7 +50,7 @@ public class LoreCommand extends CustomCommand {
 		List<String> lore = meta.getLore();
 		if (lore == null)
 			lore = new ArrayList<>();
-		lore.add(Utils.colorize(text));
+		lore.add(StringUtils.colorize(text));
 		meta.setLore(lore);
 		tool.setItemMeta(meta);
 		player().updateInventory();

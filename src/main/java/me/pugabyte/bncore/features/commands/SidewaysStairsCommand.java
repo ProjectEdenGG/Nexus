@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +27,7 @@ import java.util.Map;
 @Aliases("sws")
 @NoArgsConstructor
 public class SidewaysStairsCommand extends CustomCommand implements Listener {
-	public static final String PREFIX = Utils.getPrefix("SidewaysStairs");
+	public static final String PREFIX = StringUtils.getPrefix("SidewaysStairs");
 	static Map<Player, SidewaysStairsPlayer> playerData = new HashMap<>();
 
 	private SidewaysStairsPlayer swsPlayer;

@@ -7,7 +7,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -32,7 +32,7 @@ import java.util.Map;
 import static me.pugabyte.bncore.features.showenchants.ShowEnchants.coolDownMap;
 
 public class ShowEnchantsCommand implements CommandExecutor {
-	private final static String PREFIX = Utils.getPrefix("ShowEnchants");
+	private final static String PREFIX = StringUtils.getPrefix("ShowEnchants");
 	private final static String USAGE = "Correct usage: " + ChatColor.RED + "/showenchants <hand|offhand|hat|chest|pants|boots> [text]";
 
 	private Player player;

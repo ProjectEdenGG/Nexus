@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.pugabyte.bncore.utils.Utils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 	private HomeOwner homeOwner;

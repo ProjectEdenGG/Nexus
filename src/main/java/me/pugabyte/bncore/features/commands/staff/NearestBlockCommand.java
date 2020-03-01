@@ -4,6 +4,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -64,7 +65,7 @@ public class NearestBlockCommand extends CustomCommand {
 					fallingBlock.setVelocity(new Vector(0, 0, 0));
 
 					Utils.lookAt(player(), block.getLocation());
-					Utils.sendJsonLocation(PREFIX + "&3&l[Click to Teleport]", block.getLocation(), player());
+					StringUtils.sendJsonLocation(PREFIX + "&3&l[Click to Teleport]", block.getLocation(), player());
 
 					Tasks.GlowTask.builder()
 							.duration(10 * 20)
@@ -80,7 +81,7 @@ public class NearestBlockCommand extends CustomCommand {
 							.start();
 
 				} else
-					error(Utils.camelCase(material.toString()) + " not found");
+					error(StringUtils.camelCase(material.toString()) + " not found");
 			});
 		});
 	}

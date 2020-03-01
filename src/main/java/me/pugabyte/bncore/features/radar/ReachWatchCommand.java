@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.bncore.utils.Utils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
 @Permission("group.moderator")

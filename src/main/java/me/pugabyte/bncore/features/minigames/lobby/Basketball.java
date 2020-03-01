@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Basketball implements Listener {
 	@Getter

@@ -9,8 +9,8 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionExcepti
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PreConfiguredException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
-	private final static String PREFIX = Utils.getPrefix("RestoreInventory");
+	private final static String PREFIX = StringUtils.getPrefix("RestoreInventory");
 	private final static String USAGE = ChatColor.RED + "/restoreinv <player> <paste code>";
 
 	public RestoreInventoryCommand() {

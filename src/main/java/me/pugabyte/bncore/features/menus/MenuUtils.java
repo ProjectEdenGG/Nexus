@@ -24,8 +24,8 @@ import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
-import static me.pugabyte.bncore.utils.Utils.loreize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public abstract class MenuUtils {
 

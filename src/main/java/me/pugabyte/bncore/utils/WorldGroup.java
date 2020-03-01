@@ -23,7 +23,7 @@ public enum WorldGroup {
 
 	@Override
 	public String toString() {
-		return Utils.camelCase(name());
+		return StringUtils.camelCase(name());
 	}
 
 	public String[] getWorlds() {

@@ -14,7 +14,7 @@ import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Aliases({"helpop", "report"})
 public class TicketCommand extends CustomCommand {

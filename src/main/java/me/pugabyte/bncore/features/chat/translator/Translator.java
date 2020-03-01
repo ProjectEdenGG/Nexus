@@ -6,6 +6,7 @@ import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
@@ -30,7 +31,7 @@ public class Translator implements Listener {
 	public String apiKey = BNCore.getInstance().getConfig().getConfigurationSection("yandex").getString("apiKey");
 	public TranslatorHandler handler = new TranslatorHandler(apiKey);
 
-	String PREFIX = Utils.getPrefix("Translator");
+	String PREFIX = StringUtils.getPrefix("Translator");
 
 	@EventHandler
 	public void onChat(ChannelChatEvent event) {
@@ -61,7 +62,7 @@ public class Translator implements Listener {
 				ex.printStackTrace();
 				for (UUID uuid : map.get(sender.getUniqueId())) {
 					Player translating = Utils.getPlayer(uuid).getPlayer();
-					translating.sendMessage(Utils.colorize(PREFIX + "Failed to translate message from " + event.getSender().getPlayer().getDisplayName() + "."));
+					translating.sendMessage(StringUtils.colorize(PREFIX + "Failed to translate message from " + event.getSender().getPlayer().getDisplayName() + "."));
 				}
 			}
 		});

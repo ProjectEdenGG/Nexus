@@ -5,15 +5,15 @@ import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Tickets {
-	public static final String PREFIX = Utils.getPrefix("Tickets");
+	public static final String PREFIX = StringUtils.getPrefix("Tickets");
 	public static String PERMISSION_MOD = "tickets.mod";
 
 	static {

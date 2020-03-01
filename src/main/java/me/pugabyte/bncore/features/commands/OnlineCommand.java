@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
@@ -91,15 +92,15 @@ public class OnlineCommand extends CustomCommand {
 		Hours hours = new HoursService().get(player);
 
 		int ping = Utils.getPing(player);
-		String onlineFor = Utils.timespanDiff(nerd.getLastJoin());
+		String onlineFor = StringUtils.timespanDiff(nerd.getLastJoin());
 		WorldGroup world = WorldGroup.get(player.getWorld());
 		double balance = 0.0;
-		String totalHours = Utils.timespanFormat(hours.getTotal());
+		String totalHours = StringUtils.timespanFormat(hours.getTotal());
 		String afk = "";
 
 		if (modifiers.contains("AFK")) {
 			AFKPlayer afkPlayer = AFK.get(player);
-			String timeAFK = Utils.timespanDiff(afkPlayer.getTime());
+			String timeAFK = StringUtils.timespanDiff(afkPlayer.getTime());
 			afk = "&3AFK for: &e" + timeAFK + "\n \n";
 		}
 

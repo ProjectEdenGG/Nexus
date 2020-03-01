@@ -5,7 +5,7 @@ import net.citizensnpcs.npc.skin.SkinnableEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class CitizensUtils {
 	public static void updateNameAndSkin(NPC npc, String name) {

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.chat.Chat.alertsFeature;
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class AlertsListener implements Listener {
 

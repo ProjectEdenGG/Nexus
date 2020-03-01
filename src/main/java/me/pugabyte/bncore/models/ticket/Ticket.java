@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.tickets.Tickets;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.LocationSerializer;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.conversations.Conversable;
@@ -70,7 +70,7 @@ public class Ticket {
 	}
 
 	public String getTimespan() {
-		return Utils.timespanDiff(timeOpened);
+		return StringUtils.timespanDiff(timeOpened);
 	}
 
 }

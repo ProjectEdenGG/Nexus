@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class ItemStackBuilder {
 	private ItemStack itemStack;
@@ -54,7 +54,7 @@ public class ItemStackBuilder {
 		List<String> colorized = new ArrayList<>();
 		for (String line : lore)
 			if (doLoreize)
-				colorized.addAll(Arrays.asList(Utils.loreize(colorize(line)).split("\\|\\|")));
+				colorized.addAll(Arrays.asList(StringUtils.loreize(colorize(line)).split("\\|\\|")));
 			else
 				colorized.addAll(Arrays.asList(colorize(line).split("\\|\\|")));
 		itemMeta.setLore(colorized);

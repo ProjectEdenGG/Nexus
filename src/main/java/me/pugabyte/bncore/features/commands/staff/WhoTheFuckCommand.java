@@ -14,7 +14,7 @@ import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.litebans.LiteBansService;
 import me.pugabyte.bncore.models.nerds.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -49,12 +49,12 @@ public class WhoTheFuckCommand extends CustomCommand {
 			if (nerd.getLastQuit() != null) {
 				lastJoinQuitLabel = "Last Quit";
 				lastJoinQuitDate = nerd.getLastQuit().format(dateTimeFormatter);
-				lastJoinQuitDiff = Utils.timespanDiff(nerd.getLastQuit());
+				lastJoinQuitDiff = StringUtils.timespanDiff(nerd.getLastQuit());
 			}
 		} else {
 			lastJoinQuitLabel = "Last Join";
 			lastJoinQuitDate = nerd.getLastJoin().format(dateTimeFormatter);
-			lastJoinQuitDiff = Utils.timespanDiff(nerd.getLastJoin());
+			lastJoinQuitDiff = StringUtils.timespanDiff(nerd.getLastJoin());
 		}
 
 		int history = liteBansService.getHistory(nerd.getUuid());
@@ -68,7 +68,7 @@ public class WhoTheFuckCommand extends CustomCommand {
 			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate);
 
 		if (hours.getTotal() > 0)
-			json.newline().next("&3Hours: &e" + Utils.timespanFormat(hours.getTotal(), "None"));
+			json.newline().next("&3Hours: &e" + StringUtils.timespanFormat(hours.getTotal(), "None"));
 
 		if (history > 0)
 			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName());

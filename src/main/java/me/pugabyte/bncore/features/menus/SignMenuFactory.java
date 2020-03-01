@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.IntStream;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public final class SignMenuFactory {
 	private static final int ACTION_INDEX = 9;
