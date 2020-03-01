@@ -11,6 +11,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundExcep
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -28,8 +29,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
-import static me.pugabyte.bncore.utils.Utils.colorize;
-import static me.pugabyte.bncore.utils.Utils.loreize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public class HomesMenu {
 	private static SignMenuFactory signMenuFactory = BNCore.getInstance().getSignMenuFactory();
@@ -42,7 +43,7 @@ public class HomesMenu {
 		SmartInventory.builder()
 				.provider(new EditHomesProvider(homeOwner))
 				.size((int) Math.min(6, Math.ceil(Integer.valueOf(homeOwner.getHomes().size()).doubleValue() / 9) + 3), 9)
-				.title(Utils.colorize("&3Home Editor"))
+				.title(StringUtils.colorize("&3Home Editor"))
 				.build()
 				.open(homeOwner.getPlayer(), page);
 	}
@@ -51,7 +52,7 @@ public class HomesMenu {
 		SmartInventory.builder()
 				.provider(new EditHomeProvider(home))
 				.size(4, 9)
-				.title(Utils.colorize((home.isLocked() ? "&4" : "&a") + Utils.camelCase(home.getName())))
+				.title(StringUtils.colorize((home.isLocked() ? "&4" : "&a") + StringUtils.camelCase(home.getName())))
 				.build()
 				.open(home.getOwner().getPlayer());
 	}
@@ -60,7 +61,7 @@ public class HomesMenu {
 		SmartInventory.builder()
 				.provider(new SetHomeProvider(homeOwner))
 				.size(5, 9)
-				.title(Utils.colorize("&3Set a new home"))
+				.title(StringUtils.colorize("&3Set a new home"))
 				.build()
 				.open(homeOwner.getPlayer());
 	}

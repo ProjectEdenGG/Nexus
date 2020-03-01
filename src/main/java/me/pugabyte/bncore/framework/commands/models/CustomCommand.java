@@ -17,6 +17,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameExcepti
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -40,7 +41,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	@NonNull
 	@Getter
 	protected CommandEvent event;
-	public  String PREFIX = Utils.getPrefix(Utils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
+	public  String PREFIX = StringUtils.getPrefix(StringUtils.listLast(this.getClass().getName(), ".").replaceAll("Command", ""));
 
 	public String getPrefix() {
 		return PREFIX;
@@ -52,18 +53,18 @@ public abstract class CustomCommand implements ICustomCommand {
 
 	protected void send(CommandSender sender, String message) {
 		if (sender instanceof ConsoleCommandSender || sender instanceof Player)
-			sender.sendMessage(Utils.colorize(message));
+			sender.sendMessage(StringUtils.colorize(message));
 		else if (sender instanceof OfflinePlayer)
 			if (((OfflinePlayer) sender).isOnline())
-				((OfflinePlayer) sender).getPlayer().sendMessage(Utils.colorize(message));
+				((OfflinePlayer) sender).getPlayer().sendMessage(StringUtils.colorize(message));
 	}
 
 	protected void send(Player player, String message) {
-		player.sendMessage(Utils.colorize(message));
+		player.sendMessage(StringUtils.colorize(message));
 	}
 
 	protected void send(Player player, int delay, String message) {
-		Tasks.wait(delay, () -> player.sendMessage(Utils.colorize(message)));
+		Tasks.wait(delay, () -> player.sendMessage(StringUtils.colorize(message)));
 	}
 
 	protected void send(String message) {
@@ -101,7 +102,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	public void error(Player player, String error) {
-		player.sendMessage(Utils.colorize("&c" + error));
+		player.sendMessage(StringUtils.colorize("&c" + error));
 	}
 
 	public void showUsage() {

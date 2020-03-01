@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.utils.Utils.getLastColor;
+import static me.pugabyte.bncore.utils.StringUtils.getLastColor;
 
 @Permission("group.seniorstaff")
 public class BNCoreCommand extends CustomCommand {

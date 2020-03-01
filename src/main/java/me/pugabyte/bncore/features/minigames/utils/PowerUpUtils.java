@@ -11,7 +11,7 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -39,7 +39,7 @@ public class PowerUpUtils {
 		PowerUp powerUp = getRandomPowerUp();
 		Hologram hologram = HologramsAPI.createHologram(BNCore.getInstance(), location.clone().add(0, 2, 0));
 		match.getHolograms().add(hologram);
-		hologram.appendTextLine(Utils.colorize("&3&lPower Up"));
+		hologram.appendTextLine(StringUtils.colorize("&3&lPower Up"));
 		hologram.insertTextLine(1, powerUp.getName());
 		ItemLine itemLine = hologram.appendItemLine(powerUp.getItemStack());
 
@@ -79,7 +79,7 @@ public class PowerUpUtils {
 		}
 
 		public String getName() {
-			return Utils.colorize(((isPositive) ? "&a" : "&c") + name);
+			return StringUtils.colorize(((isPositive) ? "&a" : "&c") + name);
 		}
 
 		public void onPickup(Minigamer minigamer) {

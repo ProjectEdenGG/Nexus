@@ -17,7 +17,7 @@ import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Data
 @NoArgsConstructor

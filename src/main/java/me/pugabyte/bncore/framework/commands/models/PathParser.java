@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.utils.Utils.left;
+import static me.pugabyte.bncore.utils.StringUtils.left;
 
 @Data
 class PathParser {

@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Horse;
@@ -26,7 +26,7 @@ public class HorsePickerCommand extends CustomCommand {
 	@Path
 	void horsePicker() {
 		SmartInventory colorINV = SmartInventory.builder()
-				.title(Utils.colorize("&3Color Picker"))
+				.title(StringUtils.colorize("&3Color Picker"))
 				.size(3, 9)
 				.provider(new HorsePickerColorProvider())
 				.build();
@@ -101,10 +101,10 @@ public class HorsePickerCommand extends CustomCommand {
 			int column = 1;
 			for (HorseColor color : HorseColor.values()) {
 				contents.set(1, column++, ClickableItem.from(nameItem(color.getItem(), color.getColor() +
-						Utils.camelCase(color.getName())), e -> {
+						StringUtils.camelCase(color.getName())), e -> {
 					SmartInventory markingProvider = SmartInventory.builder()
-							.title(Utils.colorize("&3Markings Picker (" +
-									color.getColor() + Utils.camelCase(color.getName()) + "&3)"))
+							.title(StringUtils.colorize("&3Markings Picker (" +
+									color.getColor() + StringUtils.camelCase(color.getName()) + "&3)"))
 							.size(3, 9)
 							.provider(new HorsePickerMarkingsProvider(Horse.Color.valueOf(color.name())))
 							.build();

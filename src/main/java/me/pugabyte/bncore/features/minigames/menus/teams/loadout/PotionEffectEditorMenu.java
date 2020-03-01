@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.PotionEffectEditor;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -61,7 +62,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 						});
 						return AnvilGUI.Response.text(text);
 					} else {
-						player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for the duration."));
+						player.sendMessage(StringUtils.colorize(PREFIX + "You must use an integer for the duration."));
 						return AnvilGUI.Response.close();
 					}
 				})));
@@ -83,7 +84,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 						});
 						return AnvilGUI.Response.text(text);
 					} else {
-						player.sendMessage(Utils.colorize(PREFIX + "You must use an integer for the amplifier."));
+						player.sendMessage(StringUtils.colorize(PREFIX + "You must use an integer for the amplifier."));
 						return AnvilGUI.Response.close();
 					}
 				})));
@@ -96,7 +97,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 			if(effect == null) continue;
 
 			ItemStack potionItem = new ItemStackBuilder(Material.POTION)
-					.name("&e" + Utils.camelCase(effect.getName().replace("_", " ")))
+					.name("&e" + StringUtils.camelCase(effect.getName().replace("_", " ")))
 					.effect(new PotionEffect(effect, 5 ,0))
 					.effectColor(effect.getColor())
 					.build();

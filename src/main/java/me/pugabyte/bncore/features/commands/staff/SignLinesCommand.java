@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -83,7 +84,7 @@ public class SignLinesCommand extends CustomCommand {
 			int line = 0;
 			for (String string : newLines) {
 				if (string != null)
-					sign.setLine(line, Utils.colorize(string.trim()));
+					sign.setLine(line, StringUtils.colorize(string.trim()));
 				++line;
 			}
 		}

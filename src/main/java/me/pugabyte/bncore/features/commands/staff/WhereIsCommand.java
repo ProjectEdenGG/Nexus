@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -29,11 +30,11 @@ public class WhereIsCommand extends CustomCommand {
 		Location playerArgLoc = playerArg.getLocation().clone();
 
 		if (!player().getWorld().equals(playerArg.getWorld()))
-			error(playerArg.getName() + " is in " + Utils.camelCase(playerArg.getWorld().getName()));
+			error(playerArg.getName() + " is in " + StringUtils.camelCase(playerArg.getWorld().getName()));
 
 		double distance = player().getLocation().distance(playerArgLoc);
 		if (distance > Chat.getLocalRadius())
-			error(Utils.camelCase(playerArg.getName() + " not found"));
+			error(StringUtils.camelCase(playerArg.getName() + " not found"));
 
 		Utils.lookAt(player(), playerArgLoc);
 

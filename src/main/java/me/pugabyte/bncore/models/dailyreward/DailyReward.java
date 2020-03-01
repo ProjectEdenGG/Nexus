@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.IntegerListSerializer;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -37,7 +38,7 @@ public class DailyReward {
 		++streak;
 		if (!getPlayer().isOnline()) return;
 		new JsonBuilder()
-				.next(Utils.getPrefix("DailyRewards") + "Your streak has &eincreased&3! " + "Use &c/dailyrewards &3to claim your reward")
+				.next(StringUtils.getPrefix("DailyRewards") + "Your streak has &eincreased&3! " + "Use &c/dailyrewards &3to claim your reward")
 				.command("/dr")
 				.send(getPlayer().getPlayer());
 	}

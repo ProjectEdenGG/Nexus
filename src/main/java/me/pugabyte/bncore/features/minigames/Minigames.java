@@ -12,8 +12,8 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -30,10 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Minigames {
-	public static final String PREFIX = Utils.getPrefix("Minigames");
+	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	@Getter
 	private static World gameworld = Bukkit.getWorld("gameworld");
 	@Getter

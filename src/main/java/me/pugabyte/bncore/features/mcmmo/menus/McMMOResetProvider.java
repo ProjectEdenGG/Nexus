@@ -12,6 +12,7 @@ import me.pugabyte.bncore.models.mcmmo.McMMOPrestige;
 import me.pugabyte.bncore.models.mcmmo.McMMOService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"Any helmet of your choice that gives you night vision for deep mining expeditions") {
 				@Override
 				void onClick(Player player) {
-					player.sendMessage(Utils.colorize("&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own."));
+					player.sendMessage(StringUtils.colorize("&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own."));
 				}
 		},
 		EXCAVATION(2, 2, Material.DIAMOND_SPADE,
@@ -76,7 +77,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 						"a chance to add that enchantment to one item of your choice!") {
 				@Override
 				void onClick(Player player) {
-					player.sendMessage(Utils.colorize("&ePut in a &c/ticket &eto have a staff member add auto repair to one item you own."));
+					player.sendMessage(StringUtils.colorize("&ePut in a &c/ticket &eto have a staff member add auto repair to one item you own."));
 				}
 		},
 		ARCHERY(3, 7, Material.BOW,
@@ -91,7 +92,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				@Override
 				void onClick(Player player) {
 					Utils.runConsoleCommand("pex user " + player.getName() + " add horsepicker.pick");
-					player.sendMessage(Utils.colorize("&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!"));
+					player.sendMessage(StringUtils.colorize("&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!"));
 				}
 		},
 		WOODCUTTING(4, 2, Material.WOOD,
@@ -117,7 +118,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				void onClick(Player player) {
 					Utils.runConsoleCommand("ce give " + player.getName() + " hopper potionlauncher");
 					Utils.runConsoleCommand("pex user " + player.getName() + " add combine.use");
-					player.sendMessage(Utils.colorize("&eTo shoot potions, first run &c/combine &eto combine all similar potions in your inventory into one stack, " +
+					player.sendMessage(StringUtils.colorize("&eTo shoot potions, first run &c/combine &eto combine all similar potions in your inventory into one stack, " +
 							"then place the stack in the slot to the right of the Potion Launcher. If you place the hopper, hold it and do &c/fixpotionlauncher"));
 				}
 		};
@@ -169,7 +170,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 		for (ResetSkillType skill : ResetSkillType.values()) {
 			ItemStack item = new ItemStackBuilder(skill.getMaterial())
-					.name("&c" + Utils.camelCase(skill.name()))
+					.name("&c" + StringUtils.camelCase(skill.name()))
 					.lore("&6Level: " + mcmmoPlayer.getSkillLevel(SkillType.valueOf(skill.name())) +
 							"|| ||&e&lReward:" +
 							"||&f$10,000" +
@@ -228,7 +229,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		// TODO Koda Broadcast
 		if (broadcast)
 			SkriptFunctions.koda(player.getName() + " has reset their " + skill.name().toLowerCase() + " skill for the " +
-					Utils.getNumberSuffix(mcMMOPrestige.getPrestige(skill.name())) + " time!", "md");
+					StringUtils.getNumberSuffix(mcMMOPrestige.getPrestige(skill.name())) + " time!", "md");
 	}
 
 	@Override

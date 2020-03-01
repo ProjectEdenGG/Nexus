@@ -10,7 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerds.NerdService;
 import me.pugabyte.bncore.models.worldban.WorldBan;
 import me.pugabyte.bncore.models.worldban.WorldBanService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 
@@ -23,7 +23,7 @@ public class WorldUnbanCommand extends CustomCommand {
 
 	public WorldUnbanCommand(CommandEvent event) {
 		super(event);
-		PREFIX = Utils.getPrefix("WorldBan");
+		PREFIX = StringUtils.getPrefix("WorldBan");
 	}
 
 	@Path("<player> [worldGroup]")

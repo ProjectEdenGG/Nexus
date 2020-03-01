@@ -14,7 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import static me.pugabyte.bncore.utils.Utils.loreize;
+import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private DailyRewardService service = new DailyRewardService();

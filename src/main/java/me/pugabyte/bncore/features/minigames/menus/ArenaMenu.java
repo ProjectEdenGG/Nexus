@@ -10,8 +10,8 @@ import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -185,7 +185,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		public String getTitle() {
-			return Utils.camelCase(name());
+			return StringUtils.camelCase(name());
 		}
 
 		String getLore(Player player, Arena arena) {
@@ -200,7 +200,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		private PropertyDescriptor getPropertyDescriptor() throws IntrospectionException {
-			return new PropertyDescriptor(Character.toLowerCase(name().charAt(0)) + Utils.camelCase(name()).substring(1).replaceAll(" ", ""), Arena.class);
+			return new PropertyDescriptor(Character.toLowerCase(name().charAt(0)) + StringUtils.camelCase(name()).substring(1).replaceAll(" ", ""), Arena.class);
 		}
 
 		String getter(Player player, Arena arena) {

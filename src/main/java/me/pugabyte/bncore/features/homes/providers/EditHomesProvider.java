@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static me.pugabyte.bncore.features.homes.HomesMenu.getAccessListNames;
-import static me.pugabyte.bncore.utils.Utils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	private HomeOwner homeOwner;

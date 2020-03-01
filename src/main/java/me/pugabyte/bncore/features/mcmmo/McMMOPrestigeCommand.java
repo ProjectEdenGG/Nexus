@@ -8,7 +8,7 @@ import me.pugabyte.bncore.models.mcmmo.McMMOPrestige;
 import me.pugabyte.bncore.models.mcmmo.McMMOService;
 import org.bukkit.OfflinePlayer;
 
-import static me.pugabyte.bncore.utils.Utils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 public class McMMOPrestigeCommand extends CustomCommand {
 	private McMMOService service = new McMMOService();

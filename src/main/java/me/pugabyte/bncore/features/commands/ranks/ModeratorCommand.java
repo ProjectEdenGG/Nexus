@@ -4,7 +4,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 
 public class ModeratorCommand extends CustomCommand {
 
@@ -35,7 +35,7 @@ public class ModeratorCommand extends CustomCommand {
 		line();
 		send("&3All current &b&oModerators &3and the date they were promoted:");
 		Rank.MODERATOR.getNerds().forEach(nerd -> {
-			send(Rank.MODERATOR.getFormat() + nerd.getName() + " &7-&e " + Utils.shortDateFormat(nerd.getPromotionDate()));
+			send(Rank.MODERATOR.getFormat() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
 		});
 		line();
 		RanksCommand.ranksReturn(player());

@@ -7,13 +7,13 @@ import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Jingles;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class HoursFeature {
 	final int INTERVAL = 5;
@@ -26,7 +26,7 @@ public class HoursFeature {
 	private void registerPlaceholder() {
 		BNCore.registerPlaceholder("hours", event -> {
 			Hours hours = new HoursService().get(event.getPlayer());
-			return Utils.timespanFormat(hours.getTotal());
+			return StringUtils.timespanFormat(hours.getTotal());
 		});
 	}
 

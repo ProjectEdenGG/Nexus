@@ -6,7 +6,6 @@ import me.lucko.helper.scoreboard.PacketScoreboardProvider;
 import me.lucko.helper.scoreboard.Scoreboard;
 import me.lucko.helper.scoreboard.ScoreboardObjective;
 import me.pugabyte.bncore.BNCore;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -20,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
-import static me.pugabyte.bncore.utils.Utils.left;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.left;
 
 @SuppressWarnings("unused")
 public class BNScoreboard {
@@ -58,7 +57,6 @@ public class BNScoreboard {
 	}
 
 	public void delete() {
-		unsubscribe(Bukkit.getOnlinePlayers());
 		scoreboard.removeObjective(objective.getId());
 	}
 

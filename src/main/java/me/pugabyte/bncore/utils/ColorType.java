@@ -171,7 +171,7 @@ public enum ColorType {
 	}
 
 	public String getDisplayName() {
-		return chatColor + Utils.camelCase(name);
+		return chatColor + StringUtils.camelCase(name);
 	}
 
 }

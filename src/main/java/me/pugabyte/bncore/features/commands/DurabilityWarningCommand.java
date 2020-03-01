@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -70,7 +70,7 @@ public class DurabilityWarningCommand extends CustomCommand implements Listener 
 
 		for (int i = 0; i < checkPoints.length; i++) {
 			if (hasDroppedBelowPercentage(checkPoints[i], oldPercentage, newPercentage)) {
-				player.sendMessage(Utils.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + colors[i] + "'s durability "
+				player.sendMessage(StringUtils.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + colors[i] + "'s durability "
 						+ "has dropped below " + (int) (checkPoints[i] * 100) + "% (" + newDurability + " uses left)");
 			}
 		}

@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.commands.info;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -47,7 +47,7 @@ public class MGNCommand extends CustomCommand {
 		until += ((hours > 0 || days > 0) ? "and " : "") + minutes + " minute" + ((minutes == 1) ? "" : "s");
 
 		line();
-		send("&3The next &eMinigame Night &3will be hosted on &eSaturday, " + nextMGM.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + Utils.getNumberSuffix(nextMGM.getDayOfMonth()) + "&3 at &e4:00 PM &3EST. That is in &e" + until);
+		send("&3The next &eMinigame Night &3will be hosted on &eSaturday, " + nextMGM.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + StringUtils.getNumberSuffix(nextMGM.getDayOfMonth()) + "&3 at &e4:00 PM &3EST. That is in &e" + until);
 	}
 
 }

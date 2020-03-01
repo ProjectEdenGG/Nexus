@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Data
 @NoArgsConstructor

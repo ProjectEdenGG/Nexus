@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.wiki;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -60,12 +60,12 @@ public class Wiki {
 		String api;
 		String wiki;
 		if (WHICH.equalsIgnoreCase("MCWiki")) {
-			prefix = Utils.getPrefix("MCWiki");
+			prefix = StringUtils.getPrefix("MCWiki");
 			url = "https://minecraft.gamepedia.com";
 			api = "/api.php";
 			wiki = "/";
 		} else {
-			prefix = Utils.getPrefix("Wiki");
+			prefix = StringUtils.getPrefix("Wiki");
 			url = "https://wiki.bnn.gg";
 			api = "/w/api.php";
 			wiki = "/wiki/";

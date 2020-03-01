@@ -16,7 +16,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 public class SignListener implements Listener {

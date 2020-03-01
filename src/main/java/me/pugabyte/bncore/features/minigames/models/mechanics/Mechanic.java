@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.bncore.utils.Utils.left;
+import static me.pugabyte.bncore.utils.StringUtils.left;
 
 public abstract class Mechanic implements Listener {
 	protected WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();

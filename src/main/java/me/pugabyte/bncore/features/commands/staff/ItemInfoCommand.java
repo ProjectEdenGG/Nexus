@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -71,7 +72,7 @@ public class ItemInfoCommand extends CustomCommand {
 		send("ID: " + material.getId() + ":" + tool.getDurability());
 		send("Material: " + material);
 		if (nbtString != null) {
-			send("NBT: " + Utils.colorize(nbtString));
+			send("NBT: " + StringUtils.colorize(nbtString));
 			send(json("&e&l[Click to Copy]").suggest(spawnCommand));
 		}
 	}

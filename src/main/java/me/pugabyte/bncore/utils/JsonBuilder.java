@@ -7,9 +7,9 @@ import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.bncore.utils.Utils.colorize;
-import static me.pugabyte.bncore.utils.Utils.getLastColor;
-import static me.pugabyte.bncore.utils.Utils.loreize;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.getLastColor;
+import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public class JsonBuilder {
 	private ComponentBuilder result = new ComponentBuilder("");

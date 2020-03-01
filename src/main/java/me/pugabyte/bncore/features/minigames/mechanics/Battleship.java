@@ -17,6 +17,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -36,13 +37,9 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static me.pugabyte.bncore.utils.Utils.left;
-import static me.pugabyte.bncore.utils.Utils.right;
 
 /*
 	Regions:
@@ -57,7 +54,7 @@ import static me.pugabyte.bncore.utils.Utils.right;
 @Regenerating("board")
 @Scoreboard(sidebarType = Type.TEAM)
 public class Battleship extends BalancedTeamMechanic {
-	private static final String PREFIX = Utils.getPrefix("Battleship");
+	private static final String PREFIX = StringUtils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";
 
 	private void debug(String message) {
@@ -85,46 +82,6 @@ public class Battleship extends BalancedTeamMechanic {
 		return GameMode.SURVIVAL;
 	}
 
-	public enum ProgressBarStyle {
-		NONE,
-		COUNT,
-		PERCENT
-	}
-
-	public String progressBar(int progress, int goal) {
-		return progressBar(progress, goal, ProgressBarStyle.NONE, 25);
-	}
-
-	public String progressBar(int progress, int goal, ProgressBarStyle style) {
-		return progressBar(progress, goal, style, 25);
-	}
-
-	public String progressBar(int progress, int goal, ProgressBarStyle style, int length) {
-		double percent = Math.min(progress / goal, 1);
-		ChatColor color = ChatColor.RED;
-		if (percent == 1)
-			color = ChatColor.GREEN;
-		else if (percent >= 2/3)
-			color = ChatColor.YELLOW;
-		else if (percent >= 1/3)
-			color = ChatColor.GOLD;
-
-		int n = (int) Math.floor(percent * length);
-
-		String bar = String.join("", Collections.nCopies(length, "|"));
-		String first = left(bar, n);
-		String last = right(bar, length - n);
-		String result = color + first + "&8" + last;
-
-		// TODO: Style
-		if (style == ProgressBarStyle.COUNT)
-			result += " &f" + progress + "/" + goal;
-		if (style == ProgressBarStyle.PERCENT)
-			result += " &f" + Math.floor(percent * 100);
-
-		return result;
-	}
-
 	@Override
 	public String getScoreboardTitle(Match match) {
 		return "&6&lBattleship";
@@ -143,9 +100,9 @@ public class Battleship extends BalancedTeamMechanic {
 		Team team2 = match.getArena().getTeams().get(1);
 
 		lines.add("&6&l" + team1.getName() + " Fleet");
-		lines.add("&0" + progressBar(matchData.getGrid(team1).getHealth(), ShipType.getCombinedHealth(), ProgressBarStyle.COUNT));
+		lines.add("&0" + getProgressBar(matchData, team1));
 		lines.add("&6&l" + team2.getName() + " Fleet");
-		lines.add("&1" + progressBar(matchData.getGrid(team2).getHealth(), ShipType.getCombinedHealth(), ProgressBarStyle.COUNT));
+		lines.add("&0" + getProgressBar(matchData, team2));
 
 		// TODO: History
 
@@ -153,6 +110,10 @@ public class Battleship extends BalancedTeamMechanic {
 			for (int i = lines.size(); i > 0; i--)
 				put(lines.get(lines.size() - i), i);
 		}};
+	}
+
+	public String getProgressBar(BattleshipMatchData matchData, Team team1) {
+		return StringUtils.progressBar(matchData.getGrid(team1).getHealth(), ShipType.getCombinedHealth(), StringUtils.ProgressBarStyle.COUNT);
 	}
 
 	private void start(Match match) {
@@ -394,7 +355,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 		@Override
 		public String toString() {
-			return Utils.camelCase(name());
+			return StringUtils.camelCase(name());
 		}
 
 		public int getKitLength() {
