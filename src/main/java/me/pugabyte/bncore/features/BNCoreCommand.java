@@ -17,6 +17,7 @@ import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.Utils.getLastColor;
 
+@Permission("group.seniorstaff")
 public class BNCoreCommand extends CustomCommand {
 	public BNCoreCommand(CommandEvent event) {
 		super(event);
@@ -43,6 +45,31 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("redtint [fadeTime] [intensity] [player]")
 	void redTint(@Arg("0.5") double fadeTime, @Arg("10") double intensity, @Arg("self") Player player) {
 		SkriptFunctions.redTint(player, fadeTime, intensity);
+	}
+
+	@Path("expCooldown <cooldown>")
+	void expCooldown(@Arg("20") int cooldown) {
+		Tasks.Countdown.builder()
+				.duration(cooldown)
+				.onStart(() -> player().setLevel(0))
+				.onTick(ticks -> player().setExp((float) ticks / cooldown))
+				.onComplete(() -> player().setExp(0))
+				.start();
+	}
+
+	@Path("setExp <number>")
+	void setExp(float exp) {
+		player().setExp(exp);
+	}
+
+	@Path("setTotalExperience <number>")
+	void setTotalExperience(int exp) {
+		player().setTotalExperience(exp);
+	}
+
+	@Path("setLevel <number>")
+	void setLevel(int exp) {
+		player().setLevel(exp);
 	}
 
 	@Path("actionBar [message] [duration] [fade]")
@@ -68,13 +95,11 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("getOnlineNerdsWith <permission>")
-	@Permission("group.seniorstaff")
 	void getOnlineNerdsWith(String permission) {
 		send(new NerdService().getOnlineNerdsWith(permission).stream().map(Nerd::getName).collect(Collectors.joining(", ")));
 	}
 
 	@Path("schem save <name>")
-	@Permission("group.seniorstaff")
 	void schemSave(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
 		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
@@ -82,7 +107,6 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("schem paste <name>")
-	@Permission("group.seniorstaff")
 	void schemPaste(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
 		worldEditUtils.paste(name, player().getLocation());
@@ -90,7 +114,6 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("signgui")
-	@Permission("group.staff")
 	void signgui() {
 		BNCore.getInstance().getSignMenuFactory()
 				.lines("1", "2", "3", "4")

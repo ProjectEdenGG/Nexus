@@ -2,16 +2,25 @@ package me.pugabyte.bncore.features.minigames.listeners;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.minigames.Minigames;
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.mechanics.common.AntiCampingTask;
 import me.pugabyte.bncore.features.minigames.models.Match;
+import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.AntiCamp;
+import me.pugabyte.bncore.features.minigames.models.annotations.Railgun;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.bncore.features.minigames.utils.Gun;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.Arrays;
+import java.util.List;
 
 @NoArgsConstructor
 public class AnnotationListener implements Listener {
@@ -51,6 +60,25 @@ public class AnnotationListener implements Listener {
 			String file = name + "/" + region.getId().replaceFirst(name + "_", "");
 			Minigames.getWorldEditUtils().paste(file.toLowerCase(), region.getMinimumPoint());
 		});
+	}
+
+	@EventHandler
+	public void onGunShoot(PlayerInteractEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying()) return;
+
+		List<Action> actions = Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.RIGHT_CLICK_AIR);
+		if (!actions.contains(event.getAction())) return;
+
+		Railgun railgun = minigamer.getMatch().getArena().getMechanic().getAnnotation(Railgun.class);
+		if (railgun == null) return;
+
+		if (!minigamer.getPlayer().getInventory().getItemInMainHand().getType().name().contains("HOE")) return;
+
+		Gun gun = new Gun(minigamer);
+		gun.setShouldDamageWithConsole(railgun.damageWithConsole());
+		gun.setCooldown(railgun.cooldownTicks());
+		gun.shoot();
 	}
 
 }

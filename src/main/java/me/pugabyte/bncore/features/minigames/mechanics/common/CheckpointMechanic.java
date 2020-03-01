@@ -11,24 +11,32 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTic
 import me.pugabyte.bncore.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.Arrays;
 
 public abstract class CheckpointMechanic extends SingleplayerMechanic {
+
+	public CheckpointMatchData getMatchData(Minigamer minigamer) {
+		return minigamer.getMatch().getMatchData();
+	}
 
 	@Override
 	public void kill(Minigamer minigamer, Minigamer attacker) {
 		super.kill(minigamer, attacker);
 
-		CheckpointMatchData matchData = minigamer.getMatch().getMatchData();
-		matchData.toCheckpoint(minigamer);
+		getMatchData(minigamer).toCheckpoint(minigamer);
 	}
 
 	@Override
 	public void onQuit(MatchQuitEvent event) {
 		super.onQuit(event);
 
-		CheckpointMatchData matchData = event.getMinigamer().getMatch().getMatchData();
-		matchData.clearData(event.getMinigamer());
+		getMatchData(event.getMinigamer()).clearData(event.getMinigamer());
 	}
 
 	@EventHandler
@@ -49,11 +57,10 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 		if (!minigamer.isPlaying(this)) return;
 
 		CheckpointArena arena = minigamer.getMatch().getArena();
-		CheckpointMatchData matchData = minigamer.getMatch().getMatchData();
 
 		if (arena.ownsRegion(event.getRegion().getId(), "checkpoint")) {
 			int checkpointId = arena.getRegionTypeId(event.getRegion());
-			matchData.setCheckpoint(minigamer, checkpointId);
+			getMatchData(minigamer).setCheckpoint(minigamer, checkpointId);
 		}
 	}
 
@@ -63,4 +70,18 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
 		event.getMatch().getMinigamers().forEach(Minigamer::scored);
 	}
+
+	@EventHandler
+	public void onCheckpointReset(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isPlaying(this)) return;
+
+		if (player.getInventory().getItemInMainHand() == null) return;
+		if (player.getInventory().getItemInMainHand().getType() != Material.POISONOUS_POTATO) return;
+		if (!Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.RIGHT_CLICK_AIR).contains(event.getAction())) return;
+
+		getMatchData(minigamer).toCheckpoint(minigamer);
+	}
+
 }
