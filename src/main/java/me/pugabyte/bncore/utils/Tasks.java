@@ -45,14 +45,16 @@ public class Tasks {
 		private boolean doZero;
 		private Consumer<Integer> onTick;
 		private Consumer<Integer> onSecond;
+		private Runnable onStart;
 		private Runnable onComplete;
 
 		@Builder(buildMethodName = "start")
-		public Countdown(int duration, boolean doZero, Consumer<Integer> onTick, Consumer<Integer> onSecond, Runnable onComplete) {
+		public Countdown(int duration, boolean doZero, Consumer<Integer> onTick, Consumer<Integer> onSecond, Runnable onStart, Runnable onComplete) {
 			this.duration = duration;
 			this.doZero = doZero;
 			this.onTick = onTick;
 			this.onSecond = onSecond;
+			this.onStart = onStart;
 			this.onComplete = onComplete;
 			start();
 		}
@@ -67,6 +69,8 @@ public class Tasks {
 				stop();
 				return;
 			}
+
+			onStart.run();
 
 			taskId = repeat(1, 1, () -> {
 				if (duration == ticks) {

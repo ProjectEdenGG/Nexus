@@ -61,7 +61,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 
 		contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&eAdd Potion Effect"),
 			e -> {
-					PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 5, 0);
+					PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 5, 0, true, false);
 					team.getLoadout().getEffects().add(potionEffect);
 					arena.write();
 					menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect);
