@@ -6,17 +6,18 @@ import me.pugabyte.bncore.utils.BNScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class MatchScoreboard implements MinigameScoreboard {
+public class MatchSidebar implements MinigameScoreboard {
 	private Match match;
 	private BNScoreboard scoreboard;
 
-	public MatchScoreboard(Match match) {
+	public MatchSidebar(Match match) {
 		this.match = match;
 		this.scoreboard = new BNScoreboard(match.getArena().getMechanic().getScoreboardTitle(match));;
 	}
 
 	@Override
 	public void update() {
+		scoreboard.setTitle(match.getArena().getMechanic().getScoreboardTitle(match));
 		scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match));
 
 		for (Player player : Bukkit.getOnlinePlayers())

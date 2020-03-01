@@ -42,14 +42,14 @@ public class ThimbleArena extends Arena {
 
 	public Thimble.ThimbleGamemode getNextGamemode() {
 		if (gamemode != null)
-			if (Thimble.ClassicGamemode.class.equals(gamemode.getClass()))
+			if (gamemode instanceof Thimble.ClassicGamemode)
 				return new Thimble.RiskGamemode();
-			else if (Thimble.RiskGamemode.class.equals(gamemode.getClass()))
+			else if (gamemode instanceof Thimble.RiskGamemode)
 				return new Thimble.LastManStandingGamemode();
-			else if (Thimble.LastManStandingGamemode.class.equals(gamemode.getClass()))
+			else if (gamemode instanceof Thimble.LastManStandingGamemode)
 				return new Thimble.ClassicGamemode();
 
-		return Arrays.asList(new Thimble.ClassicGamemode(), new Thimble.RiskGamemode(), new Thimble.LastManStandingGamemode()).get(Utils.randomInt(0, 2));
+		return Utils.getRandomElement(Arrays.asList(new Thimble.ClassicGamemode(), new Thimble.RiskGamemode(), new Thimble.LastManStandingGamemode()));
 	}
 
 

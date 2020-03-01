@@ -8,11 +8,11 @@ import me.pugabyte.bncore.utils.BNScoreboard;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TeamScoreboard implements MinigameScoreboard {
+public class TeamSidebar implements MinigameScoreboard {
 	private Match match;
 	private Map<Team, BNScoreboard> scoreboards = new HashMap<>();
 
-	public TeamScoreboard(Match match) {
+	public TeamSidebar(Match match) {
 		this.match = match;
 	}
 
@@ -28,8 +28,10 @@ public class TeamScoreboard implements MinigameScoreboard {
 		match.getArena().getTeams().forEach(team ->
 				scoreboards.computeIfAbsent(team, this::createScoreboard));
 
-		scoreboards.forEach((team, scoreboard) ->
-				scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match, team)));
+		scoreboards.forEach((team, scoreboard) -> {
+			scoreboard.setTitle(match.getArena().getMechanic().getScoreboardTitle(match));
+			scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match, team));
+		});
 
 		match.getArena().getTeams().forEach(team ->
 				team.getMembers(match).forEach(minigamer ->
