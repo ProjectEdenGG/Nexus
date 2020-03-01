@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Railgun;
+import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
@@ -35,6 +36,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -45,13 +47,13 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Scoreboard(teams = false)
 @Railgun(damageWithConsole = true)
 public class Murder extends UnbalancedTeamMechanic {
 
@@ -84,16 +86,16 @@ public class Murder extends UnbalancedTeamMechanic {
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
 
-//		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder stop " + minigameString);
-//		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder clearentities " + minigameString);
+		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder stop " + event.getMatch().getArena().getName());
+		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder clearentities " + event.getMatch().getArena().getName());
 	}
 
 	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 
-//		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder start " + minigameString);
-//		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder clearentities " + minigameString);
+		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder start " + event.getMatch().getArena().getName());
+		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder clearentities " + event.getMatch().getArena().getName());
 
 		List<Minigamer> list = event.getMatch().getAlivePlayers();
 
@@ -128,25 +130,35 @@ public class Murder extends UnbalancedTeamMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
-		Player player = event.getMinigamer().getPlayer();
-		spawnCorpse(player);
+		spawnCorpse(event.getMinigamer());
+		super.onDeath(event);
 
 		event.getMinigamer().tell("You were killed!");
-		super.onDeath(event);
 	}
 
-	public void spawnCorpse(Player player) {
+	public void spawnCorpse(Minigamer minigamer) {
 		// TODO: Sleeping NPC?
-		ArmorStand armorStand = player.getWorld().spawn(player.getLocation(), ArmorStand.class);
+		Player player = minigamer.getPlayer();
+		Location location = player.getLocation().clone();
+		location.setY(255);
+		ArmorStand armorStand = player.getWorld().spawn(location, ArmorStand.class);
+		armorStand.setGravity(false);
+		armorStand.setVisible(false);
 		SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
 		meta.setOwningPlayer(player);
 		ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
 		skull.setItemMeta(meta);
 		armorStand.setHelmet(skull);
-		armorStand.setGravity(false);
-		armorStand.setVisible(false);
+		armorStand.teleport(player.getLocation());
 		// armorStand.setDisableSlots?
-		new CorpseTeleporter(armorStand);
+
+		Countdown countdown = Tasks.Countdown.builder()
+				.duration(16)
+				.doZero(true)
+				.onTick(i -> armorStand.teleport(armorStand.getLocation().add(0, -.1, 0)))
+				.start();
+		minigamer.getMatch().getTasks().register(countdown.getTaskId());
+
 	}
 
 	private void assignGunner(Match match) {
@@ -161,11 +173,11 @@ public class Murder extends UnbalancedTeamMechanic {
 	private void sendAssignMessages(Match match) {
 		match.getAlivePlayers().forEach(minigamer -> {
 			if (isMurderer(minigamer))
-				minigamer.tell("You are the &cmurderer&f! Kill everyone in your path, but don't get caught!");
+				minigamer.tell("You are the &cmurderer&3! Kill everyone in your path, but don't get caught!");
 			else if (isGunner(minigamer))
-				minigamer.tell("You are the &6gunner&f! Find the murderer and shoot them with your gun.");
+				minigamer.tell("You are the &6gunner&3! Find the murderer and shoot them with your gun.");
 			else
-				minigamer.tell("You are an &9innocent&f! Try to find scraps to craft a gun.");
+				minigamer.tell("You are an &9innocent&3! Try to find scraps to craft a gun.");
 		});
 	}
 
@@ -309,9 +321,9 @@ public class Murder extends UnbalancedTeamMechanic {
 
 		if (event.getOriginalEvent() != null && event.getOriginalEvent() instanceof EntityDamageByEntityEvent) {
 			EntityDamageByEntityEvent originalEvent = (EntityDamageByEntityEvent) event.getOriginalEvent();
-			if (originalEvent.getCause() == DamageCause.ENTITY_ATTACK &&
+			if (isMurderer(event.getAttacker()) &&
+					originalEvent.getCause() == DamageCause.ENTITY_ATTACK &&
 					originalEvent.getEntityType() == EntityType.PLAYER &&
-					isMurderer(event.getAttacker()) &&
 					event.getAttacker().getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_SWORD) {
 				// Staby-stab
 				event.setCancelled(true);
@@ -418,6 +430,12 @@ public class Murder extends UnbalancedTeamMechanic {
 		event.setCancelled(true);
 	}
 
+	@EventHandler
+	public void onItemMerge(ItemMergeEvent event) {
+		if (WGUtils.getRegionsLikeAt(event.getTarget().getLocation(), "murder_.*").size() > 0)
+			event.setCancelled(true);
+	}
+
 	public static class Retriever extends BukkitRunnable {
 		private Player player;
 		private int time;
@@ -448,36 +466,6 @@ public class Murder extends UnbalancedTeamMechanic {
 				player.getInventory().getItem(1).setItemMeta(meta);
 				this.cancel();
 			}
-		}
-	}
-
-	public static class CorpseTeleporter {
-
-		private ArmorStand armorStand;
-		private Location location;
-		private int counter = 1;
-		private int taskId;
-
-		public CorpseTeleporter(ArmorStand armorStand) {
-			this.armorStand = armorStand;
-			this.location = armorStand.getLocation();
-			startTeleporter();
-		}
-
-		public void down() {
-			location.setY(location.getY() - .1);
-			counter++;
-		}
-
-		public void startTeleporter() {
-			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-			taskId = scheduler.scheduleSyncRepeatingTask(BNCore.getInstance(), () -> {
-				down();
-				armorStand.teleport(location);
-				if (counter == 16) {
-					Bukkit.getScheduler().cancelTask(taskId);
-				}
-			}, 0L, 1L);
 		}
 	}
 

@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Scoreboard(MinigameScoreboard.Type.MINIGAMER)
+@Scoreboard(sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Archery extends TeamlessMechanic {
 
 	@Override

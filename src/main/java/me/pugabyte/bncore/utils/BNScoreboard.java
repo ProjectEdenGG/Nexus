@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.utils;
 
+import be.maximvdw.featherboard.api.FeatherBoardAPI;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
 import me.lucko.helper.scoreboard.Scoreboard;
@@ -10,12 +11,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.ScoreboardManager;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static me.pugabyte.bncore.utils.Utils.colorize;
 import static me.pugabyte.bncore.utils.Utils.left;
@@ -48,14 +51,14 @@ public class BNScoreboard {
 	}
 
 	public BNScoreboard(String id, String title, Collection<? extends Player> players) {
-//		scoreboard.removeObjective(id);
+		try { scoreboard.removeObjective(id); } catch (Exception ignore) {}
 		objective = scoreboard.createObjective(left(id, 16), colorize(title), DisplaySlot.SIDEBAR, false);
 		for (Player player : players)
-			addPlayer(player);
+			subscribe(player);
 	}
 
 	public void delete() {
-		removePlayers(Bukkit.getOnlinePlayers());
+		unsubscribe(Bukkit.getOnlinePlayers());
 		scoreboard.removeObjective(objective.getId());
 	}
 
@@ -63,37 +66,40 @@ public class BNScoreboard {
 		objective.clearScores();
 	}
 
-	public void addPlayer(Player player) {
-		objective.subscribe(player);
+	public boolean isSubscribed(Player player) {
+		try {
+			Field subscribed = objective.getClass().getDeclaredField("subscribed");
+			subscribed.setAccessible(true);
+			Set<Player> players = (Set<Player>) subscribed.get(objective);
+			return players.contains(player);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		// Cant read subscribers, assume they are subscribed
+		return true;
 	}
 
-	public void addPlayers(Player... players) {
-		addPlayers(Arrays.asList(players));
+	public void subscribe(Player... players) {
+		subscribe(Arrays.asList(players));
 	}
 
-	public void addPlayers(Collection<? extends Player> players) {
+	public void subscribe(Collection<? extends Player> players) {
 		for (Player player : players)
-			addPlayer(player);
+			objective.subscribe(player);
 	}
 
-	public void removePlayer(Player player) {
-		objective.unsubscribe(player);
-		objective.unsubscribe(player, true);
-		player.setScoreboard(manager.getMainScoreboard());
-//		try {
-//			FeatherBoardAPI.initScoreboard(player);
-//		} catch (Exception ex) {
-//			ex.printStackTrace();
-//		}
+	public void unsubscribe(Player... players) {
+		unsubscribe(Arrays.asList(players));
 	}
 
-	public void removePlayers(Player... players) {
-		removePlayers(Arrays.asList(players));
-	}
-
-	public void removePlayers(Collection<? extends Player> players) {
-		for (Player player : players)
-			removePlayer(player);
+	public void unsubscribe(Collection<? extends Player> players) {
+		for (Player player : players) {
+			if (!isSubscribed(player)) return;
+			objective.unsubscribe(player);
+			player.setScoreboard(manager.getMainScoreboard());
+			try { FeatherBoardAPI.initScoreboard(player); } catch (Exception ignore) {}
+		}
 	}
 
 	public String getTitle() {
