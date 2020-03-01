@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.utils.Tasks;
@@ -129,10 +130,14 @@ public class MatchListener implements Listener {
 
 				// Damaged by opponent
 				if (newDamage > 0) {
+					MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, attacker, event);
+					Utils.callEvent(damageEvent);
+					if (damageEvent.isCancelled()) return;
+
 					if (event.getDamager() instanceof Arrow)
 						attacker.tell("&7" + victim.getName() + " is on &c" + new DecimalFormat("#.0").format(newDamage) + " &7HP");
 
-					mechanic.onDamage(victim, event);
+					mechanic.onDamage(damageEvent);
 					return;
 				}
 
@@ -183,7 +188,11 @@ public class MatchListener implements Listener {
 		}
 
 		if (event.getFinalDamage() < victim.getPlayer().getHealth()) {
-			mechanic.onDamage(victim, event);
+			MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, event);
+			Utils.callEvent(damageEvent);
+			if (damageEvent.isCancelled()) return;
+
+			mechanic.onDamage(damageEvent);
 			return;
 		}
 
@@ -205,13 +214,8 @@ public class MatchListener implements Listener {
 		Mechanic mechanic = minigamer.getMatch().getArena().getMechanic();
 
 		Arena arena = minigamer.getMatch().getArena();
-		if (arena.ownsRegion(event.getRegion().getId(), "kill")) {
-			MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(minigamer, event);
-			Utils.callEvent(deathEvent);
-			if (deathEvent.isCancelled()) return;
-
-			mechanic.onDeath(deathEvent);
-		}
+		if (arena.ownsRegion(event.getRegion().getId(), "kill"))
+			mechanic.kill(minigamer);
 	}
 
 	@EventHandler

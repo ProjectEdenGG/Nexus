@@ -11,14 +11,15 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitiali
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -95,12 +96,15 @@ public abstract class Mechanic implements Listener {
 			minigamer.getMatch().end();
 	}
 
-	public void onDamage(Minigamer victim, EntityDamageEvent event) {}
+	public void onDamage(MinigamerDamageEvent event) {}
 
 	public void onDeath(MinigamerDeathEvent event) {
 		// TODO: Autobalancing
 		event.broadcastDeathMessage();
-		kill(event.getMinigamer(), event.getAttacker());
+		Minigamer victim = event.getMinigamer();
+		victim.getMatch().getScoreboard().update();
+		if (shouldBeOver(victim.getMatch()))
+			victim.getMatch().end();
 	}
 
 	public void kill(Minigamer minigamer) {
@@ -108,9 +112,11 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void kill(Minigamer victim, Minigamer attacker) {
-		victim.getMatch().getScoreboard().update();
-		if (shouldBeOver(victim.getMatch()))
-			victim.getMatch().end();
+		MinigamerDeathEvent event = new MinigamerDeathEvent(victim, attacker);
+		Utils.callEvent(event);
+		if (event.isCancelled()) return;
+
+		onDeath(event);
 	}
 
 	public boolean shouldClearInventory() {

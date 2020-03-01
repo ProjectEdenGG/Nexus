@@ -20,6 +20,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitiali
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.ThimbleMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
@@ -40,7 +41,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -184,30 +184,24 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onDamage(Minigamer victim, EntityDamageEvent event) {
-		super.onDamage(victim, event);
-		ThimbleMatchData matchData = victim.getMatch().getMatchData();
-		if (victim.equals(matchData.getTurnPlayer()))
-			kill(victim);
+	public void onDamage(MinigamerDamageEvent event) {
+		super.onDamage(event);
+		ThimbleMatchData matchData = event.getMinigamer().getMatch().getMatchData();
+		if (event.getMinigamer().equals(matchData.getTurnPlayer()))
+			kill(event.getMinigamer());
 	}
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
-		ThimbleMatchData matchData = event.getMinigamer().getMatch().getMatchData();
-		if (event.getMinigamer().equals(matchData.getTurnPlayer()))
-			event.setDeathMessage(event.getMinigamer().getColoredName() + " missed");
-		super.onDeath(event);
-	}
-
-	@Override
-	public void kill(Minigamer minigamer) {
-		super.kill(minigamer);
+		Minigamer minigamer = event.getMinigamer();
 		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
 		ThimbleArena arena = minigamer.getMatch().getArena();
 		if (minigamer.equals(matchData.getTurnPlayer())) {
 			arena.getGamemode().kill(minigamer);
 			minigamer.getMatch().getTasks().wait(30, () -> nextTurn(MatchManager.get(arena)));
+			event.setDeathMessage(minigamer.getColoredName() + " missed");
 		}
+		super.onDeath(event);
 	}
 
 	private void score(Minigamer minigamer, Location blockLocation) {

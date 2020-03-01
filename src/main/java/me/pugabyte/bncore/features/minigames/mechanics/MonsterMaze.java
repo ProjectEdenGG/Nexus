@@ -25,7 +25,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -203,11 +202,6 @@ public class MonsterMaze extends TeamlessMechanic {
 		super.onEnd(event);
 		MonsterMazeMatchData matchData = event.getMatch().getMatchData();
 		matchData.getMonsters().forEach(Entity::remove);
-	}
-
-	@Override
-	public void onDamage(Minigamer victim, EntityDamageEvent event) {
-		super.onDamage(victim, event);
 	}
 
 	PowerUpUtils.PowerUp JUMPS = new PowerUpUtils.PowerUp("3 Jumps", true, Material.FEATHER, minigamer -> {

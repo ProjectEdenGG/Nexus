@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.CheckpointArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
 import me.pugabyte.bncore.utils.Utils;
@@ -26,10 +27,10 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 	}
 
 	@Override
-	public void kill(Minigamer minigamer, Minigamer attacker) {
-		super.kill(minigamer, attacker);
+	public void onDeath(MinigamerDeathEvent event) {
+		super.onDeath(event);
 
-		getMatchData(minigamer).toCheckpoint(minigamer);
+		getMatchData(event.getMinigamer()).toCheckpoint(event.getMinigamer());
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -68,24 +69,30 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	@Override
-	public void kill(Minigamer minigamer) {
-		minigamer.getMatch().broadcast("&c" + minigamer.getPlayer().getDisplayName() + " has died! ("
+	public void onDeath(MinigamerDeathEvent event) {
+		Minigamer minigamer = event.getMinigamer();
+		event.setDeathMessage("&c" + minigamer.getPlayer().getDisplayName() + " has died! ("
 				+ (minigamer.getMatch().getMinigamers().size() - 1)
 				+ minigamer.getMatch().getArena().getMaxPlayers() + ")");
+
 		for (Minigamer player : minigamer.getMatch().getMinigamers()) {
 			player.getPlayer().showPlayer(minigamer.getPlayer());
 			minigamer.getPlayer().showPlayer(player.getPlayer());
 		}
+
 		if (minigamer.getMatch().getMinigamers().size() > 2) {
 			minigamer.quit();
 			return;
 		}
+
 		for (Minigamer player : minigamer.getMatch().getMinigamers()) {
 			if (player != minigamer) {
 				player.scored();
 				return;
 			}
 		}
+
+		super.onDeath(event);
 	}
 
 	public void swap(Match match) {

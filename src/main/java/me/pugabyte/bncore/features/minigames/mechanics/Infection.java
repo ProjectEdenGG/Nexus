@@ -4,6 +4,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -29,7 +30,10 @@ public class Infection extends UnbalancedTeamMechanic {
 	// TODO: Validation on start (e.g. only two teams, one has lives, balance percentages)
 
 	@Override
-	public void kill(Minigamer victim, Minigamer attacker) {
+	public void onDeath(MinigamerDeathEvent event) {
+		Minigamer victim = event.getMinigamer();
+		Minigamer attacker = event.getAttacker();
+
 		Match match = victim.getMatch();
 		Team other = match.getArena().getTeams().stream()
 				.filter(team -> !team.equals(victim.getTeam()))
@@ -51,7 +55,7 @@ public class Infection extends UnbalancedTeamMechanic {
 				}
 			}
 
-		super.kill(victim, attacker);
+		super.onDeath(event);
 	}
 
 }

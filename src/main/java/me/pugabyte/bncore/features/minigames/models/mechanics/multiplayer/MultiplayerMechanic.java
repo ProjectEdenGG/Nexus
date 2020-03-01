@@ -2,12 +2,14 @@ package me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer;
 
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 
 public abstract class MultiplayerMechanic extends Mechanic {
 
 	@Override
-	public void kill(Minigamer victim, Minigamer attacker) {
+	public void onDeath(MinigamerDeathEvent event) {
+		Minigamer victim = event.getMinigamer();
 		if (victim.isRespawning()) return;
 
 		victim.clearState();
@@ -23,7 +25,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			victim.respawn();
 		}
 
-		super.kill(victim, attacker);
+		super.onDeath(event);
 	}
 
 	@Override
