@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.minigames.mechanics.common;
 
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.Flag;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
@@ -43,8 +44,9 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 	public abstract void onFlagInteract(Minigamer minigamer, Sign sign);
 
 	@Override
-	public void kill(Minigamer minigamer) {
-		CaptureTheFlagMatchData matchData = (CaptureTheFlagMatchData) minigamer.getMatch().getMatchData();
+	public void onDeath(MinigamerDeathEvent event) {
+		Minigamer minigamer = event.getMinigamer();
+		CaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
 		Flag carriedFlag = matchData.getFlagByCarrier(minigamer);
 		if (carriedFlag != null) {
 			carriedFlag.drop(minigamer.getPlayer().getLocation());
@@ -52,7 +54,7 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 			matchData.removeFlagCarrier(minigamer);
 		}
 
-		super.kill(minigamer);
+		super.onDeath(event);
 	}
 
 }

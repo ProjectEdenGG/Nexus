@@ -239,7 +239,6 @@ public class Minigamer {
 	public void clearState() {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		// TODO: Unvanish
-		BNCore.log("Clearing state of " + player.getName());
 		clearGameModeState();
 		player.setGameMode(match.getArena().getMechanic().getGameMode());
 		clearGameModeState();
@@ -256,6 +255,7 @@ public class Minigamer {
 		player.setExp(0);
 		player.setTotalExperience(0);
 		player.setLevel(0);
+		player.getInventory().setHeldItemSlot(0);
 
 		if (match.getArena().getMechanic().shouldClearInventory())
 			player.getInventory().clear();

@@ -1,5 +1,6 @@
-package me.pugabyte.bncore.features.oldminigames.murder;
+package me.pugabyte.bncore.features.minigames.commands;
 
+import me.pugabyte.bncore.features.minigames.mechanics.Murder;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -20,15 +21,15 @@ public class MurderCommand extends CustomCommand {
 
 	@Path("kit")
 	void kit() {
-		player().getInventory().addItem(MurderUtils.getKnife());
-		player().getInventory().addItem(MurderUtils.getGun());
-		player().getInventory().addItem(MurderUtils.getScrap());
-		player().getInventory().addItem(MurderUtils.getFakeScrap());
-		player().getInventory().addItem(MurderUtils.getCompass());
-		player().getInventory().addItem(MurderUtils.getBloodlust());
-		player().getInventory().addItem(MurderUtils.getTeleporter());
-		player().getInventory().addItem(MurderUtils.getAdrenaline());
-		player().getInventory().addItem(MurderUtils.getRetriever());
+		player().getInventory().addItem(Murder.getKnife());
+		player().getInventory().addItem(Murder.getGun());
+		player().getInventory().addItem(Murder.getScrap());
+		player().getInventory().addItem(Murder.getFakeScrap());
+		player().getInventory().addItem(Murder.getCompass());
+		player().getInventory().addItem(Murder.getBloodlust());
+		player().getInventory().addItem(Murder.getTeleporter());
+		player().getInventory().addItem(Murder.getAdrenaline());
+		player().getInventory().addItem(Murder.getRetriever());
 		send(PREFIX + "Giving murder kit");
 	}
 }

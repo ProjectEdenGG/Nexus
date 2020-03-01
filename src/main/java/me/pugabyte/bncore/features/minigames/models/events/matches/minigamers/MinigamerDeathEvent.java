@@ -18,6 +18,11 @@ public class MinigamerDeathEvent extends MinigamerEvent {
 		super(victim);
 	}
 
+	public MinigamerDeathEvent(Minigamer victim, Minigamer attacker) {
+		super(victim);
+		this.attacker = attacker;
+	}
+
 	public MinigamerDeathEvent(Minigamer victim, Event originalEvent) {
 		super(victim);
 		this.originalEvent = originalEvent;

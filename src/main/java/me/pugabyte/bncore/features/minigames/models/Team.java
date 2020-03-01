@@ -89,6 +89,14 @@ public class Team implements ConfigurationSerializable {
 		if (loadout != null)
 			members.forEach(minigamer -> loadout.apply(minigamer));
 
+		toSpawnpoints(members);
+	}
+
+	public void toSpawnpoints(Match match) {
+		toSpawnpoints(getMembers(match));
+	}
+
+	public void toSpawnpoints(List<Minigamer> members) {
 		if (spawnpoints.size() == 1) {
 			for (Minigamer minigamer : members)
 				minigamer.teleport(spawnpoints.get(0));
@@ -97,7 +105,7 @@ public class Team implements ConfigurationSerializable {
 
 		while (members.size() > 0) {
 			List<Location> locs = new ArrayList<>(spawnpoints);
-			if (minigamers.get(0).getMatch().getArena().getMechanic().shuffleSpawnpoints())
+			if (members.get(0).getMatch().getArena().getMechanic().shuffleSpawnpoints())
 				Collections.shuffle(locs);
 
 			List<Minigamer> toRemove = new ArrayList<>();
@@ -119,6 +127,7 @@ public class Team implements ConfigurationSerializable {
 
 	public List<Minigamer> getMembers(List<Minigamer> minigamers) {
 		return new ArrayList<>(minigamers).stream()
+				.filter(Minigamer::isAlive)
 				.filter(minigamer -> this.equals(minigamer.getTeam()))
 				.collect(Collectors.toList());
 	}

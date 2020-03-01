@@ -2,10 +2,10 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.models.Match;
-import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.AntiCamp;
 import me.pugabyte.bncore.features.minigames.models.arenas.AnvilDropArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Utils;
@@ -56,9 +56,10 @@ public class AnvilDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onDamage(Minigamer victim, EntityDamageEvent event) {
-		super.onDamage(victim, event);
-		event.setDamage(victim.getPlayer().getHealth() + 1);
+	public void onDamage(MinigamerDamageEvent event) {
+		if (event.getOriginalEvent() instanceof EntityDamageEvent)
+			((EntityDamageEvent) event.getOriginalEvent()).setDamage(event.getMinigamer().getPlayer().getHealth() + 1);
+		super.onDamage(event);
 	}
 
 	@Override
