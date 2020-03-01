@@ -17,7 +17,10 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			victim.died();
 			if (victim.getLives() == 0) {
 				victim.setAlive(false);
-				victim.toSpectate();
+				if (victim.getMatch().getArena().getSpectateLocation() == null)
+					victim.quit();
+				else
+					victim.toSpectate();
 			} else {
 				victim.respawn();
 			}

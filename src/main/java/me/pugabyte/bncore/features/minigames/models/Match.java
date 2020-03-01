@@ -159,6 +159,7 @@ public class Match {
 		if (tasks != null)
 			tasks.end();
 		broadcast("Match has ended");
+		broadcast("");
 		clearHolograms();
 		clearEntities();
 		clearStates();
@@ -181,7 +182,7 @@ public class Match {
 			initializeMatchData();
 			tasks = new MatchTasks();
 			scoreboard = MinigameScoreboard.Factory.create(this);
-			scoreboardTeams = new MinigameScoreboard.Teams(this);
+			scoreboardTeams = MinigameScoreboard.Teams.Factory.create(this);
 			arena.getMechanic().onInitialize(event);
 			initialized = true;
 		}

@@ -58,14 +58,18 @@ public abstract class Mechanic implements Listener {
 	public void onInitialize(MatchInitializeEvent event) {
 		Match match = event.getMatch();
 		match.getTasks().repeat(1, 20, () -> {
-			match.getScoreboard().update();
-			match.getScoreboardTeams().update();
+			if (match.getScoreboard() != null)
+				match.getScoreboard().update();
+
+			if (match.getScoreboardTeams() != null)
+				match.getScoreboardTeams().update();
 		});
 	}
 
 	public void onStart(MatchStartEvent event) {
 		Match match = event.getMatch();
 		match.broadcast("Starting match");
+		match.broadcast("");
 		int lives = match.getArena().getLives();
 		if (lives > 0)
 			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
@@ -101,10 +105,10 @@ public abstract class Mechanic implements Listener {
 	public void onDeath(MinigamerDeathEvent event) {
 		// TODO: Autobalancing
 		event.broadcastDeathMessage();
-		Minigamer victim = event.getMinigamer();
-		victim.getMatch().getScoreboard().update();
-		if (shouldBeOver(victim.getMatch()))
-			victim.getMatch().end();
+		if (event.getMatch().getScoreboard() != null)
+			event.getMatch().getScoreboard().update();
+		if (shouldBeOver(event.getMatch()))
+			event.getMatch().end();
 	}
 
 	public void kill(Minigamer minigamer) {

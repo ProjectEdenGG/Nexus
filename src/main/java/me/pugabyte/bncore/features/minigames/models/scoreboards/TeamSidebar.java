@@ -35,7 +35,7 @@ public class TeamSidebar implements MinigameScoreboard {
 
 		match.getArena().getTeams().forEach(team ->
 				team.getMembers(match).forEach(minigamer ->
-						scoreboards.get(team).addPlayer(minigamer.getPlayer())));
+						scoreboards.get(team).subscribe(minigamer.getPlayer())));
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class TeamSidebar implements MinigameScoreboard {
 	public void handleQuit(Minigamer minigamer) {
 		if (minigamer.getTeam() != null)
 			if (scoreboards.containsKey(minigamer.getTeam()))
-				scoreboards.get(minigamer.getTeam()).removePlayer(minigamer.getPlayer());
+				scoreboards.get(minigamer.getTeam()).unsubscribe(minigamer.getPlayer());
 	}
 
 	@Override

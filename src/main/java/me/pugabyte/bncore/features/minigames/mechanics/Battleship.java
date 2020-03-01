@@ -55,7 +55,7 @@ import static me.pugabyte.bncore.utils.Utils.right;
  */
 
 @Regenerating("board")
-@Scoreboard(Type.TEAM)
+@Scoreboard(sidebarType = Type.TEAM)
 public class Battleship extends BalancedTeamMechanic {
 	private static final String PREFIX = Utils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";

@@ -22,20 +22,20 @@ public class MatchSidebar implements MinigameScoreboard {
 
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (!match.getPlayers().contains(player))
-				scoreboard.removePlayer(player);
+				scoreboard.unsubscribe(player);
 
-		scoreboard.addPlayers(match.getPlayers());
+		scoreboard.subscribe(match.getPlayers());
 	}
 
 	@Override
 	public void handleJoin(Minigamer minigamer) {
-		scoreboard.addPlayer(minigamer.getPlayer());
+		scoreboard.subscribe(minigamer.getPlayer());
 		update();
 	}
 
 	@Override
 	public void handleQuit(Minigamer minigamer) {
-		scoreboard.removePlayer(minigamer.getPlayer());
+		scoreboard.unsubscribe(minigamer.getPlayer());
 		update();
 	}
 

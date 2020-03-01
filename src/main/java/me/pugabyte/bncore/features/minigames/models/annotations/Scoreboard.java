@@ -7,5 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Scoreboard {
-	Type value();
+	Type sidebarType() default Type.MATCH;
+	boolean teams() default true;
 }

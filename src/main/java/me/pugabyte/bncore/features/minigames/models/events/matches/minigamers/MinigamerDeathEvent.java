@@ -38,11 +38,11 @@ public class MinigamerDeathEvent extends MinigamerEvent {
 		if (deathMessage == null) return;
 		if (deathMessage.length() == 0)
 			if (attacker == null)
-				minigamer.getMatch().broadcast(minigamer.getColoredName() + " &3died");
+				getMatch().broadcast(minigamer.getColoredName() + " &3died");
 			else
-				minigamer.getMatch().broadcast(minigamer.getColoredName() + " &3was killed by " + attacker.getColoredName());
+				getMatch().broadcast(minigamer.getColoredName() + " &3was killed by " + attacker.getColoredName());
 		else
-			minigamer.getMatch().broadcast(deathMessage);
+			getMatch().broadcast(deathMessage);
 	}
 
 }

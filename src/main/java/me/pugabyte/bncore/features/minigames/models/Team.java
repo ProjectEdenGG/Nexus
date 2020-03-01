@@ -34,6 +34,7 @@ public class Team implements ConfigurationSerializable {
 	private List<Location> spawnpoints = new ArrayList<>();
 	private int lives = 0;
 	private int minPlayers = 1;
+	private int maxPlayers = -1;
 	private int balancePercentage = -1;
 
 	public Team() {
@@ -52,6 +53,7 @@ public class Team implements ConfigurationSerializable {
 		this.spawnpoints = (List<Location>) map.getOrDefault("spawnpoints", spawnpoints);
 		this.lives = (Integer) map.getOrDefault("lives", lives);
 		this.minPlayers = (Integer) map.getOrDefault("minPlayers", minPlayers);
+		this.maxPlayers = (Integer) map.getOrDefault("maxPlayers", maxPlayers);
 		this.balancePercentage = (Integer) map.getOrDefault("balancePercentage", balancePercentage);
 	}
 
@@ -65,6 +67,7 @@ public class Team implements ConfigurationSerializable {
 			put("spawnpoints", getSpawnpoints());
 			put("lives", getLives());
 			put("minPlayers", getMinPlayers());
+			put("maxPlayers", getMaxPlayers());
 			put("balancePercentage", getBalancePercentage());
 		}};
 	}

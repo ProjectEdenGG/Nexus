@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
-import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
@@ -27,11 +26,10 @@ public interface MinigameScoreboard {
 	class Factory {
 		@SneakyThrows
 		public static MinigameScoreboard create(Match match) {
-			Mechanic mechanic = match.getArena().getMechanic();
-			Scoreboard annotation = mechanic.getAnnotation(Scoreboard.class);
+			Scoreboard annotation = match.getArena().getMechanic().getAnnotation(Scoreboard.class);
 			Class<? extends MinigameScoreboard> type = Type.MATCH.getType();
 			if (annotation != null)
-				type = annotation.value().getType();
+				type = annotation.sidebarType().getType();
 
 			if (type != null)
 				return type.getDeclaredConstructor(Match.class).newInstance(match);
@@ -60,6 +58,19 @@ public interface MinigameScoreboard {
 
 		public Teams(Match match) {
 			this.match = match;
+		}
+
+		public static class Factory {
+			@SneakyThrows
+			public static Teams create(Match match) {
+				Scoreboard annotation = match.getArena().getMechanic().getAnnotation(Scoreboard.class);
+				boolean doTeams = annotation == null || annotation.teams();
+
+				if (doTeams)
+					return new Teams(match);
+
+				return null;
+			}
 		}
 
 		public ScoreboardTeam getScoreboardTeam(Team team) {

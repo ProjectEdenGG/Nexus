@@ -17,7 +17,7 @@ public enum MechanicType {
 	GRAB_A_JUMBUCK(new GrabAJumbuck()),
 	KANGAROO_JUMPING(new KangarooJumping()),
 	MONSTER_MAZE(new MonsterMaze()),
-//	MURDER(new Murder()),
+	MURDER(new Murder()),
 	ONE_FLAG_CAPTURE_THE_FLAG(new OneFlagCaptureTheFlag()),
 	ONE_IN_THE_QUIVER(new OneInTheQuiver()),
 	PAINTBALL(new Paintball()),
