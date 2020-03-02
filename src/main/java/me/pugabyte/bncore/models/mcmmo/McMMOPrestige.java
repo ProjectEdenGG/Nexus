@@ -16,7 +16,7 @@ public class McMMOPrestige {
 	}
 
 	public void setPrestige(String type, int prestige) {
-		prestiges.put(type.toLowerCase(), prestige);
+		prestiges.put(type, prestige);
 	}
 
 	public void prestige(String type) {
