@@ -45,7 +45,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 
 		contents.set(1, 6, ClickableItem.from(nameItem(new ItemStack(Material.COMPASS), "&eOrigins"), e -> openOriginsMenu(player)));
 
-		contents.set(1, 2, ClickableItem.from(nameItem(new ItemStack(Material.WOOD_AXE), "&eCreate Schematic"), e -> UncivilEngineers.setupArena(arena, player)));
+		contents.set(1, 2, ClickableItem.from(nameItem(new ItemStack(Material.WOOD_AXE), "&eSetup Region", "&7You must set all the origins first, and then run this after setting the first region."), e -> UncivilEngineers.setupArena(arena, player)));
 
 	}
 
