@@ -12,11 +12,11 @@ public class McMMOPrestige {
 	private Map<String, Integer> prestiges;
 
 	public int getPrestige(String type) {
-		return prestiges.getOrDefault(type, 0);
+		return prestiges.getOrDefault(type.toLowerCase(), 0);
 	}
 
 	public void setPrestige(String type, int prestige) {
-		prestiges.put(type, prestige);
+		prestiges.put(type.toLowerCase(), prestige);
 	}
 
 	public void prestige(String type) {
