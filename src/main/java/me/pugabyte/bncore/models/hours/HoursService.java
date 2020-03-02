@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.models.hours;
 
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.MySQLService;
 
@@ -29,11 +31,11 @@ public class HoursService extends MySQLService {
 	}
 
 	public int total(HoursType type) {
-		return database.select("sum(" + type.name() + ")").table("hours").first(Double.class).intValue();
+		return database.select("sum(" + type.columnName() + ")").table("hours").first(Double.class).intValue();
 	}
 
 	public List<Hours> getPage(HoursType type, int page) {
-		return database.orderBy(type.name() + " desc").limit(10).offset((page - 1) * 10).results(Hours.class);
+		return database.orderBy(type.columnName() + " desc").limit(10).offset((page - 1) * 10).results(Hours.class);
 	}
 
 	public int cleanup() {
@@ -98,6 +100,10 @@ public class HoursService extends MySQLService {
 		LAST_MONTH,
 		LAST_WEEK,
 		YESTERDAY;
+
+		public String columnName() {
+			return camelCase(name());
+		}
 
 		public static String valuesString() {
 			return Arrays.stream(values())
