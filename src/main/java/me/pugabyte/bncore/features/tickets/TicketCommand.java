@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.tickets;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.ticket.Ticket;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
+@Cooldown(60 * 20)
 @Aliases({"helpop", "report"})
 public class TicketCommand extends CustomCommand {
 	private TicketService service = new TicketService();
