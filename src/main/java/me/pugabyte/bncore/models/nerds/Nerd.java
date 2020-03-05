@@ -52,7 +52,7 @@ public class Nerd {
 	public void fromPlayer(OfflinePlayer player) {
 		uuid = player.getUniqueId().toString();
 		name = player.getName();
-		firstJoin = Utils.timestamp(player.getFirstPlayed());
+		firstJoin = Utils.epochMilli(player.getFirstPlayed());
 	}
 
 	public OfflinePlayer getOfflinePlayer() {

@@ -34,6 +34,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -91,7 +91,7 @@ public class Utils {
 		if (partialName == null || partialName.length() == 0)
 			throw new InvalidInputException("No player name given");
 
-		partialName = partialName.toLowerCase();
+		partialName = partialName.toLowerCase().trim();
 
 		if (partialName.length() == 36)
 			return getPlayer(UUID.fromString(partialName));
@@ -246,10 +246,18 @@ public class Utils {
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}
 
-	public static LocalDateTime timestamp(long timestamp) {
-		return LocalDateTime.ofInstant(
-				Instant.ofEpochMilli(timestamp),
-				TimeZone.getDefault().toZoneId());
+	public static LocalDateTime epochSecond(String timestamp) {
+		return epochSecond(Long.parseLong(timestamp));
+	}
+
+	public static LocalDateTime epochSecond(long timestamp) {
+		return epochMilli(timestamp * 1000);
+	}
+
+	public static LocalDateTime epochMilli(long timestamp) {
+		return Instant.ofEpochMilli(timestamp)
+				.atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
 	}
 
 	public static void dump(Object object) {
@@ -366,6 +374,10 @@ public class Utils {
 	public static void sendActionBarToAllPlayers(String message, int duration, boolean fade) {
 		for (Player player : Bukkit.getOnlinePlayers())
 			sendActionBar(player, message, duration, fade);
+	}
+
+	public static int randomInt(int max) {
+		return randomInt(0, max);
 	}
 
 	public static int randomInt(int min, int max) {

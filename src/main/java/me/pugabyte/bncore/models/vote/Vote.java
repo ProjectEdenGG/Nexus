@@ -1,13 +1,15 @@
 package me.pugabyte.bncore.models.vote;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
-@Builder
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Vote {
 	@NonNull
 	private String uuid;
