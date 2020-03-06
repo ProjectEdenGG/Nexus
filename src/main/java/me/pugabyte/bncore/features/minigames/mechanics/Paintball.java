@@ -80,19 +80,35 @@ public final class Paintball extends BalancedTeamMechanic {
 			case CONCRETE:
 			case CONCRETE_POWDER:
 			case STAINED_GLASS:
+			case STAINED_GLASS_PANE:
 			case CARPET:
-				block.setData(ColorType.fromChatColor(minigamer.getTeam().getColor()).getDurability().byteValue());
+				changeColor(minigamer, block);
+				break;
+			case SAND:
+				block.setType(Material.CONCRETE_POWDER);
+				changeColor(minigamer, block);
+				break;
+			case THIN_GLASS:
+				block.setType(Material.STAINED_GLASS_PANE);
+				changeColor(minigamer, block);
 				break;
 			case QUARTZ_BLOCK:
 			case SNOW_BLOCK:
+			case SANDSTONE:
 				block.setType(Material.CONCRETE);
-				block.setData(ColorType.fromChatColor(minigamer.getTeam().getColor()).getDurability().byteValue());
+				changeColor(minigamer, block);
 				break;
 			case HARD_CLAY:
+			case PACKED_ICE:
+			case ICE:
 				block.setType(Material.STAINED_CLAY);
-				block.setData(ColorType.fromChatColor(minigamer.getTeam().getColor()).getDurability().byteValue());
+				changeColor(minigamer, block);
 				break;
 		}
+	}
+
+	public void changeColor(Minigamer minigamer, Block block) {
+		block.setData(ColorType.fromChatColor(minigamer.getTeam().getColor()).getDurability().byteValue());
 	}
 
 	// TODO:

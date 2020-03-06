@@ -15,6 +15,7 @@ public enum MechanicType {
 	INVERTO_INFERNO(new InvertoInferno()),
 	GOLD_RUSH(new GoldRush()),
 	GRAB_A_JUMBUCK(new GrabAJumbuck()),
+	HOLI_SPLEGG(new HoliSplegg()),
 	KANGAROO_JUMPING(new KangarooJumping()),
 	MONSTER_MAZE(new MonsterMaze()),
 	MURDER(new Murder()),
