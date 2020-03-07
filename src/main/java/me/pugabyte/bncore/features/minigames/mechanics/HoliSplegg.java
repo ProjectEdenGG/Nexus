@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
-import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.HoliSpleggMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Utils;
@@ -28,6 +27,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Regenerating("floor")
 public final class HoliSplegg extends TeamlessMechanic {
@@ -53,23 +55,28 @@ public final class HoliSplegg extends TeamlessMechanic {
 		HoliSpleggMatchData matchData = event.getMatch().getMatchData();
 		matchData.setArmorStand(summonArmorStand());
 
-		event.getMatch().getTasks().repeat(0, 20, () -> {
+		event.getMatch().getTasks().repeat(20, 20, () -> {
+			matchData.setTime(matchData.getTime() + 1);
 			if (Utils.isInWater(matchData.getArmorStand()))
 				event.getMatch().end();
 		});
 	}
 
-	@EventHandler
-	public void onTick(MatchTimerTickEvent event) {
-		if (!event.getMatch().isMechanic(this)) return;
-
-		event.getMatch().getMinigamers().forEach(Minigamer::scored);
+	@Override
+	public Map<String, Integer> getScoreboardLines(Match match) {
+		HoliSpleggMatchData matchData = match.getMatchData();
+		Map<String, Integer> lines = new HashMap<>();
+		lines.put("Time", matchData.getTime());
+		return lines;
 	}
 
 	@Override
 	public void onEnd(MatchEndEvent event) {
-		super.onEnd(event);
 		HoliSpleggMatchData matchData = event.getMatch().getMatchData();
+		for (Minigamer minigamer : event.getMatch().getMinigamers()) {
+			minigamer.setScore(matchData.getTime());
+		}
+		super.onEnd(event);
 		if (matchData.getArmorStand() != null)
 			matchData.getArmorStand().remove();
 	}
