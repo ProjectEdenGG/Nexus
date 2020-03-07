@@ -12,6 +12,7 @@ import org.bukkit.entity.ArmorStand;
 public class HoliSpleggMatchData extends MatchData {
 
 	public ArmorStand armorStand;
+	public int time = 0;
 
 	public HoliSpleggMatchData(Match match) {
 		super(match);
