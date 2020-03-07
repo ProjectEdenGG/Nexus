@@ -1,10 +1,8 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
-import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
@@ -53,10 +51,10 @@ public final class HoliSplegg extends TeamlessMechanic {
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 		HoliSpleggMatchData matchData = event.getMatch().getMatchData();
-		matchData.setArmorStand(summonArmorStand(event.getMatch().getArena()));
+		matchData.setArmorStand(summonArmorStand());
 
 		event.getMatch().getTasks().repeat(0, 20, () -> {
-			if (matchData.getArmorStand().getLocation().clone().subtract(0, 1, 0).getBlock().getType() == Material.WATER)
+			if (Utils.isInWater(matchData.getArmorStand()))
 				event.getMatch().end();
 		});
 	}
@@ -72,17 +70,16 @@ public final class HoliSplegg extends TeamlessMechanic {
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
 		HoliSpleggMatchData matchData = event.getMatch().getMatchData();
-		matchData.getArmorStand().remove();
+		if (matchData.getArmorStand() != null)
+			matchData.getArmorStand().remove();
 	}
 
-	private ArmorStand summonArmorStand(Arena arena) {
-		Region region = arena.getRegion("floor_1");
+	private ArmorStand summonArmorStand() {
 		ArmorStand armorStand = Minigames.getGameworld().spawn(new Location(Minigames.getGameworld(), 2548, 29, 710), ArmorStand.class);
 		armorStand.setInvulnerable(true);
 		armorStand.setFireTicks(9999999);
 		armorStand.setCustomNameVisible(true);
-		armorStand.setCustomName("temp");
-		Utils.blast(armorStand.getLocation().toString());
+		armorStand.setCustomName("Holika");
 		return armorStand;
 	}
 
