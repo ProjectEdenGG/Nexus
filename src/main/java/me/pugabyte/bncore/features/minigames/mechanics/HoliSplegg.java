@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.matchdata.HoliSpleggMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,6 +26,8 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
 
@@ -87,6 +90,34 @@ public final class HoliSplegg extends TeamlessMechanic {
 		armorStand.setFireTicks(9999999);
 		armorStand.setCustomNameVisible(true);
 		armorStand.setCustomName("Holika");
+		armorStand.setArms(true);
+
+		ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
+		LeatherArmorMeta chestplateMeta = (LeatherArmorMeta) chestplate.getItemMeta();
+		chestplate.setItemMeta(chestplateMeta);
+		chestplateMeta.setColor(Color.YELLOW);
+		armorStand.setChestplate(chestplate);
+
+		ItemStack pants = new ItemStack(Material.LEATHER_LEGGINGS);
+		LeatherArmorMeta pantsMeta = (LeatherArmorMeta) pants.getItemMeta();
+		pants.setItemMeta(pantsMeta);
+		chestplateMeta.setColor(Color.RED);
+		armorStand.setLeggings(pants);
+
+		ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
+		LeatherArmorMeta bootsMeta = (LeatherArmorMeta) boots.getItemMeta();
+		bootsMeta.setColor(Color.RED);
+		boots.setItemMeta(bootsMeta);
+		armorStand.setBoots(boots);
+
+		ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+		skullMeta.setOwner("9da0817559824f2aa231209164201e0d");
+		skull.setItemMeta(skullMeta);
+		armorStand.setHelmet(skull);
+
+		armorStand.setItemInHand(new ItemStack(Material.BOOK));
+
 		return armorStand;
 	}
 
