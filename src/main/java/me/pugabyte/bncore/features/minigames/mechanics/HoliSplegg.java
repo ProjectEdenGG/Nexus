@@ -94,14 +94,14 @@ public final class HoliSplegg extends TeamlessMechanic {
 
 		ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
 		LeatherArmorMeta chestplateMeta = (LeatherArmorMeta) chestplate.getItemMeta();
-		chestplate.setItemMeta(chestplateMeta);
 		chestplateMeta.setColor(Color.YELLOW);
+		chestplate.setItemMeta(chestplateMeta);
 		armorStand.setChestplate(chestplate);
 
 		ItemStack pants = new ItemStack(Material.LEATHER_LEGGINGS);
 		LeatherArmorMeta pantsMeta = (LeatherArmorMeta) pants.getItemMeta();
-		pants.setItemMeta(pantsMeta);
 		chestplateMeta.setColor(Color.RED);
+		pants.setItemMeta(pantsMeta);
 		armorStand.setLeggings(pants);
 
 		ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
