@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -42,6 +43,9 @@ public class SignListener implements Listener {
 			}
 			if ((ChatColor.GREEN + "Quit").equalsIgnoreCase(sign.getLine(1))) {
 				PlayerManager.get(event.getPlayer()).quit();
+			}
+			if ((ChatColor.GREEN + "Force Start").equalsIgnoreCase(sign.getLine(1))) {
+				Utils.runCommandAsOp(event.getPlayer(), "newmgm start");
 			}
 		}
 	}
