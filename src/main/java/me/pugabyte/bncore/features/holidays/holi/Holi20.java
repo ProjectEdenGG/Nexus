@@ -2,6 +2,8 @@ package me.pugabyte.bncore.features.holidays.holi;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -50,6 +52,13 @@ public class Holi20 implements Listener {
 		if (!event.getItem().getItemMeta().getLore().contains(StringUtils.colorize("&bHoli20 Event Item"))) return;
 
 		Player player = event.getPlayer();
+		CooldownService cooldownService = new CooldownService();
+		try {
+			cooldownService.check(player, "throwDyeBomb", 2 * 20);
+		} catch (CooldownException e) {
+			return;
+		}
+
 		Location location = player.getLocation().add(0, 1.5, 0);
 		location.add(player.getLocation().getDirection());
 
