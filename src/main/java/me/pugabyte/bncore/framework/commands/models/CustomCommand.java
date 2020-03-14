@@ -75,6 +75,10 @@ public abstract class CustomCommand implements ICustomCommand {
 		builder.send(player());
 	}
 
+	protected void send(Player player, JsonBuilder builder) {
+		builder.send(player);
+	}
+
 	protected void send(int delay, String message) {
 		Tasks.wait(delay, () -> event.reply(message));
 	}
