@@ -26,6 +26,7 @@ import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
 import me.pugabyte.bncore.features.showenchants.ShowEnchants;
 import me.pugabyte.bncore.features.tameables.Tameables;
 import me.pugabyte.bncore.features.tickets.Tickets;
+import me.pugabyte.bncore.features.votes.Votes;
 import me.pugabyte.bncore.features.wiki.Wiki;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
@@ -149,6 +150,7 @@ public class BNCore extends JavaPlugin {
 	public static Sleep sleep;
 	public static Tameables tameables;
 	public static Tickets tickets;
+	public static Votes votes;
 	public static Wiki wiki;
 
 	@Getter
@@ -179,6 +181,7 @@ public class BNCore extends JavaPlugin {
 		sleep = new Sleep();
 		tameables = new Tameables();
 		tickets = new Tickets();
+		votes = new Votes();
 		wiki = new Wiki();
 
 		signMenuFactory = new SignMenuFactory(this);
