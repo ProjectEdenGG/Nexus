@@ -69,7 +69,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"Jump higher and run faster with these boots") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " chainmail_boots gears:3 springs:2 feather_falling:3 mending:1 durability:2");
+					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_boots protection:2 gears:3 springs:2 feather_falling:3 mending:1 durability:2");
 				}
 		},
 		REPAIR(3, 5, Material.ANVIL,
@@ -84,7 +84,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"Now you can be the wither- enemies take wither damage for a short period from every successful hit") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " bow wither:2 infinity:1 mending:1 durability:2 knockback:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " bow power:2 wither:2 infinity:1 mending:1 durability:2 knockback:1");
 				}
 		},
 		TAMING(4, 0, Material.BONE,

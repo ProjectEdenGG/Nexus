@@ -51,6 +51,7 @@ public final class Paintball extends BalancedTeamMechanic {
 		if (!(event.getEntity().getShooter() instanceof Player)) return;
 		Minigamer victim = PlayerManager.get((Player) event.getHitEntity());
 		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
+		if (victim.equals(attacker)) return;
 		if (victim.isPlaying(this) && attacker.isPlaying(this))
 			kill(victim, attacker);
 	}
