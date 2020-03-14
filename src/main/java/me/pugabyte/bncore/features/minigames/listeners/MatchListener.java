@@ -126,10 +126,10 @@ public class MatchListener implements Listener {
 				// Friendly fire
 				event.setCancelled(true);
 			} else {
-				double newDamage = victim.getPlayer().getHealth() - event.getFinalDamage();
-
 				// Damaged by opponent
-				if (newDamage > 0) {
+				double newHealth = victim.getPlayer().getHealth() - event.getFinalDamage();
+
+				if (newHealth > 0) {
 					MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, attacker, event);
 					Utils.callEvent(damageEvent);
 					if (damageEvent.isCancelled()) {
@@ -138,7 +138,7 @@ public class MatchListener implements Listener {
 					}
 
 					if (event.getDamager() instanceof Arrow)
-						attacker.tell("&7" + victim.getName() + " is on &c" + new DecimalFormat("#.0").format(newDamage) + " &7HP");
+						attacker.tell("&7" + victim.getName() + " is on &c" + new DecimalFormat("#.0").format(newHealth) + " &7HP");
 
 					mechanic.onDamage(damageEvent);
 
