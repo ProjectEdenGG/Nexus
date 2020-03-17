@@ -43,36 +43,39 @@ public class PoofHereCommand extends CustomCommand {
 	@Path("accept")
 	void accept() {
 		Poof request = service.getByReceiver(player().getPlayer());
-		if (request == null)
+		if (request == null || request.isExpired())
 			error("You do not have any pending Poof-here requests");
 		Player receiver = Utils.getPlayer(UUID.fromString(request.getReceiver())).getPlayer();
 		receiver.teleport(request.getSenderLocation());
 		send(receiver, "&3You accepted &e" + receiver.getName() + "'s &3poof-here request");
 		send("&e" + Utils.getPlayer(UUID.fromString(request.getReceiver())).getName() + " &3accepted your poof-here request");
-		service.remove(request);
+		request.setExpired(true);
+		service.save(request);
 	}
 
 	@Path("deny")
 	void deny() {
 		Poof request = service.getByReceiver(player().getPlayer());
-		if (request == null)
+		if (request == null || request.isExpired())
 			error("You do not have any pending Poof-here requests");
 		Player receiver = Utils.getPlayer(UUID.fromString(request.getReceiver())).getPlayer();
 		send(receiver, "&3You denied &e" + receiver.getName() + "'s &3poof-here request");
 		send("&e" + Utils.getPlayer(UUID.fromString(request.getReceiver())).getName() + " &3denied your poof-here request");
-		service.remove(request);
+		request.setExpired(true);
+		service.save(request);
 	}
 
 	@Path("cancel")
 	void cancel() {
 		Poof request = service.getBySender(player().getPlayer());
-		if (request == null)
+		if (request == null || request.isExpired())
 			error("You do not have any pending Poof-here requests");
 		Player receiver = Utils.getPlayer(UUID.fromString(request.getReceiver())).getPlayer();
 		Player sender = Utils.getPlayer(UUID.fromString(request.getSender())).getPlayer();
 		send(receiver, "&e" + sender.getName() + " &3canceled their poof-here request");
 		send("&3You canceled your poof-here request to &e" + receiver.getName());
-		service.remove(request);
+		request.setExpired(true);
+		service.save(request);
 	}
 
 }
