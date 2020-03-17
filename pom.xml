@@ -456,5 +456,6 @@
             <version>1.5.01-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 </project>

@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.poof.Poof;
 import me.pugabyte.bncore.models.poof.PoofService;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
@@ -18,6 +19,18 @@ public class PoofCommand extends CustomCommand {
 	}
 
 	PoofService service = new PoofService();
+
+	static {
+		Tasks.repeatAsync(100, 60 * 20, () -> {
+			PoofService poofService = new PoofService();
+			poofService.getActivePoofs().forEach((poof -> {
+				if (poof.getTimeSent().isBefore(LocalDateTime.now().minusMinutes(1))) {
+					poof.setExpired(true);
+					poofService.save(poof);
+				}
+			}));
+		});
+	}
 
 	@Path("<player>")
 	void player(Player target) {
@@ -43,36 +56,39 @@ public class PoofCommand extends CustomCommand {
 	@Path("accept")
 	void accept() {
 		Poof request = service.getByReceiver(player().getPlayer());
-		if (request == null)
+		if (request == null || request.isExpired())
 			error("You do not have any pending Poof requests");
 		Player sender = Utils.getPlayer(UUID.fromString(request.getSender())).getPlayer();
 		sender.teleport(request.getReceiverLocation());
 		send("&3You accepted &e" + sender.getName() + "'s &3poof request");
 		send(sender, "&e" + Utils.getPlayer(UUID.fromString(request.getReceiver())).getName() + " &3accepted your poof request");
-		service.remove(request);
+		request.setExpired(true);
+		service.save(request);
 	}
 
 	@Path("deny")
 	void deny() {
 		Poof request = service.getByReceiver(player().getPlayer());
-		if (request == null)
+		if (request == null || request.isExpired())
 			error("You do not have any pending Poof requests");
 		Player sender = Utils.getPlayer(UUID.fromString(request.getSender())).getPlayer();
 		send("&3You denied &e" + sender.getName() + "'s &3poof request");
 		send(sender, "&e" + Utils.getPlayer(UUID.fromString(request.getReceiver())).getName() + " &3denied your poof request");
-		service.remove(request);
+		request.setExpired(true);
+		service.save(request);
 	}
 
 	@Path("cancel")
 	void cancel() {
 		Poof request = service.getBySender(player().getPlayer());
-		if (request == null)
+		if (request == null || request.isExpired())
 			error("You do not have any pending Poof requests");
 		Player receiver = Utils.getPlayer(UUID.fromString(request.getReceiver())).getPlayer();
 		Player sender = Utils.getPlayer(UUID.fromString(request.getSender())).getPlayer();
 		send(receiver, "&e" + sender.getName() + " &3canceled their poof request");
 		send("&3You canceled your poof request to &e" + receiver.getName());
-		service.remove(request);
+		request.setExpired(true);
+		service.save(request);
 	}
 
 }
