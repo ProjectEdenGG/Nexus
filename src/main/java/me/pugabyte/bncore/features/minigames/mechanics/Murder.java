@@ -15,6 +15,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
+import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.Tasks;
@@ -49,11 +50,13 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Scoreboard(teams = false)
+@Scoreboard(teams = false, sidebarType = Type.NONE)
 @Railgun(damageWithConsole = true)
 public class Murder extends UnbalancedTeamMechanic {
 
@@ -133,7 +136,37 @@ public class Murder extends UnbalancedTeamMechanic {
 		spawnCorpse(event.getMinigamer());
 		super.onDeath(event);
 
+		// If the attacker was a gunner and the victim was not the murderer, intoxicate
+		if (isGunner(event.getAttacker()) && !isMurderer(event.getMinigamer()))
+			intoxicate(event.getAttacker().getPlayer());
+
 		event.getMinigamer().tell("You were killed!");
+	}
+
+	@Override
+	public void onDamage(MinigamerDamageEvent event) {
+		super.onDamage(event);
+
+		if (event.getOriginalEvent() != null && event.getOriginalEvent() instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent originalEvent = (EntityDamageByEntityEvent) event.getOriginalEvent();
+			if (
+					isMurderer(event.getAttacker()) &&
+					originalEvent.getCause() == DamageCause.ENTITY_ATTACK &&
+					originalEvent.getEntityType() == EntityType.PLAYER &&
+					event.getAttacker().getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_SWORD
+			) {
+				// Staby-stab
+				event.setCancelled(true);
+				kill(event.getMinigamer());
+			}
+		}
+	}
+
+	public Map<String, Integer> getScoreboardLines(Match match) {
+		return new HashMap<String, Integer>() {{
+			match.getMinigamers().stream().filter(Minigamer::isAlive)
+					.forEach(minigamer -> put(minigamer.getColoredName(), 0));
+		}};
 	}
 
 	public void spawnCorpse(Minigamer minigamer) {
@@ -153,7 +186,7 @@ public class Murder extends UnbalancedTeamMechanic {
 		// armorStand.setDisableSlots?
 
 		Countdown countdown = Tasks.Countdown.builder()
-				.duration(16)
+				.duration(15)
 				.doZero(true)
 				.onTick(i -> armorStand.teleport(armorStand.getLocation().add(0, -.1, 0)))
 				.start();
@@ -296,6 +329,7 @@ public class Murder extends UnbalancedTeamMechanic {
 			victim = PlayerManager.get((Player) event.getHitEntity());
 
 		if (!attacker.isPlaying(this)) return;
+		if (!isMurderer(attacker)) return;
 
 		// If it was an arrow, it was from a knife throw, so we want to spawn a knife item
 		if (event.getEntityType() == EntityType.ARROW) {
@@ -309,27 +343,6 @@ public class Murder extends UnbalancedTeamMechanic {
 
 		if (victim != null)
 			kill(victim);
-	}
-
-	@Override
-	public void onDamage(MinigamerDamageEvent event) {
-		super.onDamage(event);
-
-		// If the attacker was a gunner and the victim was not the murderer, intoxicate
-		if (isGunner(event.getAttacker()) && !isMurderer(event.getMinigamer()))
-			intoxicate(event.getAttacker().getPlayer());
-
-		if (event.getOriginalEvent() != null && event.getOriginalEvent() instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent originalEvent = (EntityDamageByEntityEvent) event.getOriginalEvent();
-			if (isMurderer(event.getAttacker()) &&
-					originalEvent.getCause() == DamageCause.ENTITY_ATTACK &&
-					originalEvent.getEntityType() == EntityType.PLAYER &&
-					event.getAttacker().getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_SWORD) {
-				// Staby-stab
-				event.setCancelled(true);
-				kill(event.getMinigamer());
-			}
-		}
 	}
 
 	@EventHandler
