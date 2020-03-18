@@ -5,6 +5,7 @@ public class Listeners {
 		new EasterEggs();
 		new OnAction();
 		new Restrictions();
+		new LaunchPads();
 	}
 
 }
