@@ -32,7 +32,6 @@ import java.util.List;
 // TODO:
 //  - Clear floor animation (use blockiterator)
 //  - Scoreboards
-//  - Actionbar word underscores thing, randomly fills in letters after x seconds
 
 public class PixelDrop extends TeamlessMechanic {
 	private final int MAX_ROUNDS = 5;
@@ -106,11 +105,9 @@ public class PixelDrop extends TeamlessMechanic {
 			dropRemainingBlocks(match);
 			matchData.revealWord(match);
 
-			minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-				Utils.sendActionBar(player, "&c&lRound Over!");
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.7F);
-			});
-			match.broadcast("&c&lRound Over!");
+			minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.7F));
+			match.broadcast("&c&lRound Over!&c The word was: " + matchData.getRoundWord());
 		}
 
 		matchData.resetRound();
@@ -326,7 +323,7 @@ public class PixelDrop extends TeamlessMechanic {
 					matchData.setTimeLeft(i);
 					match.getScoreboard().update();
 
-					Utils.sendActionBar(player, "&cRound ends in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
+//					Utils.sendActionBar(player, "&cRound ends in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
 					if (i <= 3)
 						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
 				}))
