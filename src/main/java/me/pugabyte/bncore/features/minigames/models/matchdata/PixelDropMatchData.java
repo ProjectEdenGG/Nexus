@@ -211,21 +211,25 @@ public class PixelDropMatchData extends MatchData {
 
 	public void startWordTask(Match match) {
 		String word = getRoundWord().replace("_", " ");
-		String underscores = word.replaceAll("[a-zA-z]+", "_");
+		String underscores = word.replaceAll("[a-zA-z]", "_");
 		AtomicReference<String> hint = new AtomicReference<>(underscores);
 
-		this.wordTaskId = match.getTasks().repeat(0, 3 * 20, () -> {
-			long secondsElapsed = (System.currentTimeMillis() - getRoundStart()) * 1000;
-			if (secondsElapsed > 30) {
-				if (Utils.chanceOf(15)) {
+		this.wordTaskId = match.getTasks().repeat(0, 2 * 20, () -> {
+			long secondsElapsed = (System.currentTimeMillis() - getRoundStart()) / 1000;
+			if (secondsElapsed > 10) {
+				int chance = 15 + (5 * guessed.size());
+				if (Utils.chanceOf(chance)) {
 					String oldHint = hint.get();
 					char letter = '-';
 					int ndx = -1;
+
+					// Try 5 times
 					for (int i = 0; i < 5; i++) {
 						int random = Utils.randomInt(0, word.length() - 1);
 						letter = oldHint.charAt(random);
 						if (letter == '_') {
 							ndx = oldHint.indexOf(letter, random);
+							letter = word.charAt(ndx);
 							break;
 						}
 					}
@@ -236,10 +240,14 @@ public class PixelDropMatchData extends MatchData {
 						hint.set(String.valueOf(chars));
 					}
 				}
-
-				List<Minigamer> minigamers = match.getMinigamers();
-				minigamers.forEach(minigamer -> Utils.sendActionBar(minigamer.getPlayer(), hint.get(), 2 * 20, true));
 			}
+			List<Minigamer> minigamers = match.getMinigamers();
+			minigamers.forEach(minigamer -> {
+				if (!guessed.contains(minigamer))
+					Utils.sendActionBar(minigamer.getPlayer(), hint.get(), 3 * 20, true);
+				else
+					Utils.sendActionBar(minigamer.getPlayer(), "&a" + word, 3 * 20, true);
+			});
 		});
 	}
 
@@ -250,7 +258,7 @@ public class PixelDropMatchData extends MatchData {
 	public void revealWord(Match match) {
 		List<Minigamer> minigamers = match.getMinigamers();
 		String word = getRoundWord().replaceAll("_", " ");
-		minigamers.forEach(minigamer -> Utils.sendActionBar(minigamer.getPlayer(), word, 40, true));
+		minigamers.forEach(minigamer -> Utils.sendActionBar(minigamer.getPlayer(), "&a" + word, 40, true));
 	}
 
 	// TODO: Counter clockwise animation
