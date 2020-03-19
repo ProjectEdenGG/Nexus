@@ -59,6 +59,13 @@ public class Utils {
 		Bukkit.getPlayer("Blast").sendMessage(StringUtils.colorize(message));
 	}
 
+	public static void mod(String message) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (player.hasPermission("group.staff"))
+				player.sendMessage(StringUtils.colorize(message));
+		}
+	}
+
 	public static void callEvent(Event event) {
 		BNCore.getInstance().getServer().getPluginManager().callEvent(event);
 	}
