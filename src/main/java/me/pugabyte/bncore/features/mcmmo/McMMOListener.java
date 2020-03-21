@@ -72,6 +72,9 @@ public class McMMOListener {
 
 								// if block above dirt, is crops
 								Block blockAbove = block.getRelative(0, 1, 0);
+								if (blockAbove.getType().toString().toLowerCase().contains("beetroot"))
+									continue;
+
 								if (!isCrop(blockAbove.getType()))
 									continue;
 
