@@ -6,12 +6,10 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -21,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -86,43 +83,6 @@ public class Holi20 implements Listener {
 		Location hitLoc = event.getEntity().getLocation().subtract(vel);
 
 		FireworkLauncher.random(hitLoc).detonateAfter(0).power(0).type(FireworkEffect.Type.BURST).launch();
-	}
-
-	// Will need to be 1.13 ified
-	@EventHandler
-	public void onBreakBlock(BlockBreakEvent event) {
-		if (!(event.getPlayer().getGameMode().equals(GameMode.SURVIVAL))) return;
-		Block eventBlock = event.getBlock();
-		Location loc = eventBlock.getLocation();
-		WorldGuardUtils WGUtils = new WorldGuardUtils(loc.getWorld());
-
-		for (ProtectedRegion region : WGUtils.getRegionsAt(loc)) {
-			if (region.getId().contains("regen")) {
-				String[] regionSplit = region.getId().split("_");
-				String regenBlockStr = regionSplit[2];
-				String[] regenBlockSplit = regenBlockStr.split("-");
-				int regenBlockID = Integer.parseInt(regenBlockSplit[0]);
-				int regenBlockData = Integer.parseInt(regenBlockSplit[1]);
-
-				int eventBlockID = eventBlock.getTypeId();
-				int eventBlockData = eventBlock.getData();
-
-				if (regenBlockID == eventBlockID && regenBlockData == eventBlockData) {
-					regenBlock(loc, eventBlock.getType(), eventBlock.getData(), 30);
-					break;
-				} else {
-					event.setCancelled(true);
-				}
-			}
-		}
-	}
-
-	public void regenBlock(Location location, Material material, byte data, int seconds) {
-		Tasks.wait(seconds * 20, () -> {
-			Block block = location.getBlock();
-			block.setType(material);
-			block.setData(data);
-		});
 	}
 
 	@EventHandler

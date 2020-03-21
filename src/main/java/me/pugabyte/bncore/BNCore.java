@@ -14,6 +14,7 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.documentation.Documentation;
 import me.pugabyte.bncore.features.holidays.Holidays;
 import me.pugabyte.bncore.features.homes.HomesFeature;
+import me.pugabyte.bncore.features.honeypots.HoneyPots;
 import me.pugabyte.bncore.features.hours.HoursFeature;
 import me.pugabyte.bncore.features.inviterewards.InviteRewards;
 import me.pugabyte.bncore.features.listeners.Listeners;
@@ -22,6 +23,7 @@ import me.pugabyte.bncore.features.mcmmo.McMMO;
 import me.pugabyte.bncore.features.menus.SignMenuFactory;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
+import me.pugabyte.bncore.features.quests.Quests;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
 import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
 import me.pugabyte.bncore.features.showenchants.ShowEnchants;
@@ -139,6 +141,7 @@ public class BNCore extends JavaPlugin {
 	public static Documentation documentation;
 	public static Holidays holidays;
 	public static HomesFeature homesFeature;
+	public static HoneyPots honeyPots;
 	public static HoursFeature hoursFeature;
 	public static InviteRewards inviteRewards;
 	public static Listeners listeners;
@@ -146,6 +149,7 @@ public class BNCore extends JavaPlugin {
 	public static ModelListeners modelListeners;
 	public static Minigames minigames;
 	public static OldMinigames oldMinigames;
+	public static Quests quests;
 	public static RainbowArmour rainbowArmour;
 	public static RestoreInventory restoreInventory;
 	public static ShowEnchants showEnchants;
@@ -171,6 +175,7 @@ public class BNCore extends JavaPlugin {
 //		documentation = new Documentation();
 		holidays = new Holidays();
 		homesFeature = new HomesFeature();
+		//honeyPots = new HoneyPots();
 		hoursFeature = new HoursFeature();
 		inviteRewards = new InviteRewards();
 		listeners = new Listeners();
@@ -178,6 +183,7 @@ public class BNCore extends JavaPlugin {
 		modelListeners = new ModelListeners();
 		minigames = new Minigames();
 		oldMinigames = new OldMinigames();
+		quests = new Quests();
 		rainbowArmour = new RainbowArmour();
 		restoreInventory = new RestoreInventory();
 		showEnchants = new ShowEnchants();

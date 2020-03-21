@@ -24,15 +24,6 @@ public class LeashCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<target>")
-	void leash(Player target) {
-		if (leashes.containsKey(player().getUniqueId()))
-			error("You are already leashed to another player");
-
-		send(PREFIX + "&3You are now leashed to &e" + target.getPlayer().getDisplayName());
-		startLeash(player(), target);
-	}
-
 	@Path("(stop|cancel)")
 	void stop() {
 		if (!leashes.containsKey(player().getUniqueId()))
@@ -46,6 +37,15 @@ public class LeashCommand extends CustomCommand {
 		for (Map.Entry<UUID, Integer> leash : leashes.entrySet())
 			stopLeash(Utils.getPlayer(leash.getKey()).getPlayer(), "Leash cancelled by &e" + sender().getName());
 		send(PREFIX + "All leashed cancelled");
+	}
+
+	@Path("<target>")
+	void leash(Player target) {
+		if (leashes.containsKey(player().getUniqueId()))
+			error("You are already leashed to another player");
+
+		send(PREFIX + "&3You are now leashed to &e" + target.getPlayer().getDisplayName());
+		startLeash(player(), target);
 	}
 
 	@Path("setVelocity <velocity>")
@@ -73,6 +73,11 @@ public class LeashCommand extends CustomCommand {
 			}
 
 			if (staff.getLocation().distance(target.getLocation()) <= 7) {
+				return;
+			}
+
+			if (staff.getLocation().distance(target.getLocation()) >= 100) {
+				staff.teleport(target);
 				return;
 			}
 
