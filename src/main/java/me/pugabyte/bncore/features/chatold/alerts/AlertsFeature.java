@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.chat.alerts;
+package me.pugabyte.bncore.features.chatold.alerts;
 
 import me.pugabyte.bncore.models.alerts.AlertsService;
 

@@ -1,6 +1,6 @@
-package me.pugabyte.bncore.features.chat.translator;
+package me.pugabyte.bncore.features.chatold.translator;
 
-import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chatold.ChatOld;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Aliases("translate")
 @Permission("translate")
 public class TranslatorCommand extends CustomCommand {
-	Translator translator = Chat.translator;
+	Translator translator = ChatOld.translator;
 
 	public TranslatorCommand(CommandEvent event) {
 		super(event);

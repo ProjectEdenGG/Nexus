@@ -21,6 +21,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -35,6 +36,14 @@ import static me.pugabyte.bncore.utils.StringUtils.getLastColor;
 public class BNCoreCommand extends CustomCommand {
 	public BNCoreCommand(CommandEvent event) {
 		super(event);
+	}
+
+	static {
+		BNCore.registerPlaceholder("vanished", event ->
+				String.valueOf(Utils.isVanished(event.getPlayer())));
+
+		BNCore.registerPlaceholder("nerds", event ->
+				String.valueOf(Bukkit.getOnlinePlayers().stream().filter(target -> Utils.canSee(event.getPlayer(), target)).count()));
 	}
 
 	@Path("getPlayer [player]")

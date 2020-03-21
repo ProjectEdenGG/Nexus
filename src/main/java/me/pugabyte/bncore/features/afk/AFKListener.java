@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.afk;
 import com.dthielke.herochat.ChannelChatEvent;
 import com.dthielke.herochat.Chatter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
+import me.pugabyte.bncore.features.chatold.herochat.HerochatAPI;
 import me.pugabyte.bncore.models.afk.AFKPlayer;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.event.EventHandler;

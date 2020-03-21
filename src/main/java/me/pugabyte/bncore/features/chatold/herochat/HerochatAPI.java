@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.chat.herochat;
+package me.pugabyte.bncore.features.chatold.herochat;
 
 import com.dthielke.herochat.Channel;
 import com.dthielke.herochat.Chatter;
