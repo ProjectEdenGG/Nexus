@@ -12,7 +12,7 @@ public class FacepalmCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runConsoleCommand("essentials:sudo " + player().getName() + " c:" + argsString() + " (ლ‸－)");
+		runCommandAsConsole("essentials:sudo " + player().getName() + " c:" + argsString() + " (ლ‸－)");
 	}
 
 }

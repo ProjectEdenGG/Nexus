@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.utils;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
@@ -94,8 +95,12 @@ public class JsonBuilder {
 	}
 
 	public void send(Player player) {
+		player.spigot().sendMessage(build());
+	}
+
+	public BaseComponent[] build() {
 		group();
-		player.spigot().sendMessage(result.create());
+		return result.create();
 	}
 
 	private String getColoredWords(String text) {

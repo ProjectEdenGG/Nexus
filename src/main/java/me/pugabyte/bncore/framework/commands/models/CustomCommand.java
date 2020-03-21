@@ -52,15 +52,11 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void send(CommandSender sender, String message) {
-		if (sender instanceof ConsoleCommandSender || sender instanceof Player)
+		if (isConsole() || isPlayer())
 			sender.sendMessage(StringUtils.colorize(message));
-		else if (sender instanceof OfflinePlayer)
+		else if (isOfflinePlayer())
 			if (((OfflinePlayer) sender).isOnline())
 				((OfflinePlayer) sender).getPlayer().sendMessage(StringUtils.colorize(message));
-	}
-
-	protected void send(Player player, String message) {
-		player.sendMessage(StringUtils.colorize(message));
 	}
 
 	protected void send(Player player, int delay, String message) {
@@ -72,7 +68,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void send(JsonBuilder builder) {
-		builder.send(player());
+		sender().spigot().sendMessage(builder.build());
 	}
 
 	protected void send(Player player, JsonBuilder builder) {
@@ -118,14 +114,14 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected Player player() {
-		if (!(event.getSender() instanceof Player))
+		if (!isPlayer())
 			throw new MustBeIngameException();
 
 		return (Player) event.getSender();
 	}
 
 	protected ConsoleCommandSender console() {
-		if (!(event.getSender() instanceof ConsoleCommandSender))
+		if (!isConsole())
 			throw new MustBeConsoleException();
 
 		return (ConsoleCommandSender) event.getSender();
@@ -146,6 +142,30 @@ public abstract class CustomCommand implements ICustomCommand {
 		return object instanceof Player;
 	}
 
+	protected boolean isOfflinePlayer() {
+		return isOfflinePlayer(sender());
+	}
+
+	private boolean isOfflinePlayer(Object object) {
+		return object instanceof OfflinePlayer;
+	}
+
+	protected boolean isConsole() {
+		return isConsole(sender());
+	}
+
+	private boolean isConsole(Object object) {
+		return object instanceof ConsoleCommandSender;
+	}
+
+	protected boolean isCommandBlock() {
+		return isCommandBlock(sender());
+	}
+
+	private boolean isCommandBlock(Object object) {
+		return object instanceof CommandBlock;
+	}
+
 	protected boolean isSelf(OfflinePlayer player) {
 		return player.equals(player());
 	}
@@ -159,26 +179,24 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void runCommand(String command) {
-		Bukkit.dispatchCommand(sender(), command);
+		runCommand(sender(), command);
 	}
 
-	protected void runCommand(Player player, String command) {
-		Bukkit.dispatchCommand(player, command);
+	protected void runCommand(CommandSender sender, String command) {
+		Bukkit.dispatchCommand(sender, command);
 	}
 
 	protected void runCommandAsOp(String command) {
-		sender().setOp(true);
-		Bukkit.dispatchCommand(sender(), command);
-		sender().setOp(false);
+		runCommandAsOp(sender(), command);
 	}
 
-	protected void runCommandAsOp(Player player, String command) {
-		player.setOp(true);
-		Bukkit.dispatchCommand(player, command);
-		player.setOp(false);
+	protected void runCommandAsOp(CommandSender sender, String command) {
+		sender.setOp(true);
+		Bukkit.dispatchCommand(sender, command);
+		sender.setOp(false);
 	}
 
-	protected void runConsoleCommand(String command) {
+	protected void runCommandAsConsole(String command) {
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}
 

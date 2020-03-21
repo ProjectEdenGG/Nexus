@@ -40,7 +40,7 @@ public class DemoteCommand extends CustomCommand {
 			}
 		}
 		if (oldRank.equalsIgnoreCase(Rank.GUEST.name())) error("User is already Guest");
-		runConsoleCommand("pex user " + player.getName() + " group remove " + oldRank);
+		runCommandAsConsole("pex user " + player.getName() + " group remove " + oldRank);
 		if (rank == null) {
 			List<Rank> rankList = new ArrayList<>(Arrays.asList(Rank.values()));
 			rank = rankList.get(rankList.indexOf(Rank.valueOf(oldRank.toUpperCase())) - 1).name();
@@ -51,7 +51,7 @@ public class DemoteCommand extends CustomCommand {
 				error("Invalid rank");
 			}
 		}
-		runConsoleCommand("pex user " + player.getName() + " group add " + rank);
+		runCommandAsConsole("pex user " + player.getName() + " group add " + rank);
 		Utils.updatePrefix(player, user.getPrefix());
 		send(PREFIX + "Demoted " + player.getName() + " to " + Rank.valueOf(rank).getFormat() + StringUtils.camelCase(rank));
 	}

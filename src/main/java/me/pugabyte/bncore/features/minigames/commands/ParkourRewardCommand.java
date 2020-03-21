@@ -15,7 +15,7 @@ public class ParkourRewardCommand extends CustomCommand {
 
 	@Path
 	void reward() {
-		runConsoleCommand("eco give " + player().getName() + " 40");
+		runCommandAsConsole("eco give " + player().getName() + " 40");
 	}
 
 }

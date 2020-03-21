@@ -132,7 +132,7 @@ public class HorsePickerCommand extends CustomCommand {
 			for (HorseMarking marking : HorseMarking.values()) {
 				contents.set(1, column++, ClickableItem.from(nameItem(marking.getItem(), marking.getName()), e -> {
 					spawnHorse(player, color, Horse.Style.valueOf(marking.name()));
-					runConsoleCommand("pex user " + player.getName() + " remove horsepicker.pick");
+					runCommandAsConsole("pex user " + player.getName() + " remove horsepicker.pick");
 				}));
 			}
 		}

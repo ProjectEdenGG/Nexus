@@ -49,11 +49,11 @@ public class StatusCommand extends CustomCommand {
 	}
 
 	public void addUserPerm() {
-		runConsoleCommand("pex user " + player().getName() + " add " + userPerm);
+		runCommandAsConsole("pex user " + player().getName() + " add " + userPerm);
 	}
 
 	public void removeUserPerm() {
-		runConsoleCommand("pex user " + player().getName() + " remove " + userPerm);
+		runCommandAsConsole("pex user " + player().getName() + " remove " + userPerm);
 	}
 
 }

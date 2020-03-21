@@ -2,6 +2,7 @@ package me.pugabyte.bncore.framework.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.DoubleSlash;
+import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -70,6 +71,14 @@ class CommandMapUtils {
 		getCommandMap().register(plugin.getDescription().getName(), pluginCommand);
 		getKnownCommandMap().put(plugin.getDescription().getName().toLowerCase() + ":" + name, pluginCommand);
 		getKnownCommandMap().put(name, pluginCommand);
+
+		registerRedirects(customCommand);
+	}
+
+	private void registerRedirects(CustomCommand customCommand) {
+		for (Redirect annotation : customCommand.getClass().getAnnotationsByType(Redirect.class))
+			for (String from : annotation.from())
+				Commands.getRedirects().put(from, annotation.to());
 	}
 
 	void unregister(String name) throws IllegalAccessException {
