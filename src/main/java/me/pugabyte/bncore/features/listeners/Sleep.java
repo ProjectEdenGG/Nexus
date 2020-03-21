@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +31,9 @@ public class Sleep implements Listener {
 	}
 
 	public void calculate(World world) {
+		if (!(world.getTime() >= 12541 && world.getTime() <= 23458))
+			return;
+
 		Collection<? extends Player> players = Bukkit.getOnlinePlayers().stream()
 				.filter(player -> player.getWorld().equals(world))
 				.collect(Collectors.toList());
@@ -37,20 +41,17 @@ public class Sleep implements Listener {
 		int total = players.size();
 
 		int sleeping = 0;
-		for (Player player : players) {
+		for (Player player : players)
 			if (player.isSleeping()) {
 				sleepers.add(player);
 				sleeping++;
-			} else if (Utils.isVanished(player)) {
+			} else if (Utils.isVanished(player))
 				sleeping++;
-			} else if (AFK.get(player).isAfk()) {
+			else if (AFK.get(player).isAfk())
 				sleeping++;
-			}
-		}
 
-		if (sleeping == 0) {
+		if (sleeping == 0)
 			return;
-		}
 
 		int needed = (int) Math.ceil((double) players.size() / 2);
 		sleepers.forEach(player -> player.sendMessage(colorize(PREFIX + "Sleepers needed: &e" + sleepers.size() + "&3/&e" + needed)));
@@ -80,18 +81,19 @@ public class Sleep implements Listener {
 
 	@EventHandler
 	public void onBedEnter(PlayerBedEnterEvent event) {
-		if (!sleep.isHandling()) {
+		if (!sleep.isHandling())
 			Tasks.wait(1, () -> sleep.calculate(event.getPlayer().getWorld()));
-		}
 	}
 
 	@EventHandler
 	public void onBedLeave(PlayerBedLeaveEvent event) {
-		if (!sleep.isHandling()) {
-			World world = event.getPlayer().getWorld();
-			if (world.getTime() >= 12541 && world.getTime() <= 23458) {
-				Tasks.wait(1, () -> sleep.calculate(world));
-			}
-		}
+		if (!sleep.isHandling())
+			Tasks.wait(1, () -> sleep.calculate(event.getPlayer().getWorld()));
+	}
+
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		if (!sleep.isHandling())
+			Tasks.wait(1, () -> sleep.calculate(event.getPlayer().getWorld()));
 	}
 }
