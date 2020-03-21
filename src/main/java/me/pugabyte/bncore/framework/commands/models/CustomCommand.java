@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.Fallback;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -280,6 +281,14 @@ public abstract class CustomCommand implements ICustomCommand {
 	protected OfflinePlayer playerArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		return Utils.getPlayer(arg(i));
+	}
+
+	protected void fallback() {
+		Fallback fallback = getClass().getAnnotation(Fallback.class);
+		if (fallback != null)
+			Bukkit.dispatchCommand(sender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
+		else
+			throw new InvalidInputException("Nothing to fallback to");
 	}
 
 	@ConverterFor(OfflinePlayer.class)

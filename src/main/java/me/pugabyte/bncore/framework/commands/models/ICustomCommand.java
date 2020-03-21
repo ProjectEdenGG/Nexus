@@ -255,7 +255,7 @@ public interface ICustomCommand {
 		if (method == null) {
 			Fallback fallback = event.getCommand().getClass().getAnnotation(Fallback.class);
 			if (fallback != null)
-				Bukkit.dispatchCommand(event.getSender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgs());
+				Bukkit.dispatchCommand(event.getSender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
 			else
 				// TODO No default path, what do?
 				throw new InvalidInputException("No matching path");
