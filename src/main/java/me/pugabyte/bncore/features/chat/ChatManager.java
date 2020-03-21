@@ -5,7 +5,7 @@ import lombok.Setter;
 import me.pugabyte.bncore.features.chat.models.Channel;
 import me.pugabyte.bncore.features.chat.models.Chatter;
 import me.pugabyte.bncore.features.chat.models.events.ChatEvent;
-import me.pugabyte.bncore.models.nerds.NerdService;
+import me.pugabyte.bncore.models.nerd.NerdService;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

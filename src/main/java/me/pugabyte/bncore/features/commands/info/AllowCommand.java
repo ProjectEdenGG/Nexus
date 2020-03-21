@@ -46,23 +46,23 @@ public class AllowCommand extends CustomCommand {
 
 	void protection(String playerName) {
 		send(json()
-				.next("&3  Which protection type?  ||  ")
+				.next("&3  Which protection type?  ||  &3")
 				.next("&b&lP-Stones")
 				.suggest("/ps allow " + playerName + " OR /ps allowall " + playerName)
 				.hover("&b&lProtection Stones\n" +
 						"&eCoal, Lapis, Diamond, and Emerald ores protects all blocks & animals inside the field")
 				.group()
-				.next("  &3||  ")
+				.next("  &3||  &3")
 				.next("&6&lLWC")
 				.suggest("/cmodify " + playerName + " OR /cmodifyall " + playerName)
 				.hover("&6&lLock With Commands\n" +
 						"&eProtects chests, doors, furnaces, etc. Automatically applies when you place it")
 				.group()
-				.next("  &3||  ")
+				.next("  &3||  &3")
 				.next("&e&lHomes")
 				.command("/homes edit")
 				.hover("&eUse the GUI to edit your homes.")
 				.group()
-				.next("  &3||  "));
+				.next("  &3||"));
 	}
 }

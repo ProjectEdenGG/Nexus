@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.chat.Chat;
-import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.nerd.Nerd;
 
 @Data
 @RequiredArgsConstructor

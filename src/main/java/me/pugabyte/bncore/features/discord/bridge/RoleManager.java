@@ -4,7 +4,7 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
-import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.OfflinePlayer;
 

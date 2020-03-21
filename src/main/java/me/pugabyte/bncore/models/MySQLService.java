@@ -5,7 +5,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.persistence.MySQLDatabase;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
-import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

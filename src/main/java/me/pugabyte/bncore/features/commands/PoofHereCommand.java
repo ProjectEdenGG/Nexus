@@ -30,7 +30,7 @@ public class PoofHereCommand extends CustomCommand {
 				.command("poofhere accept")
 				.hover("&eClick &3to accept")
 				.group()
-				.next("  &3||  ")
+				.next("  &3||  &3")
 				.group()
 				.next("&c&lDeny")
 				.command("poofhere deny")

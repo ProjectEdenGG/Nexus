@@ -8,7 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.nerds.NerdService;
+import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.models.worldban.WorldBan;
 import me.pugabyte.bncore.models.worldban.WorldBanService;
 import me.pugabyte.bncore.utils.Tasks;

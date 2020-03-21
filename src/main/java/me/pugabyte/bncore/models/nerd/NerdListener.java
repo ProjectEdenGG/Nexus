@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.nerds;
+package me.pugabyte.bncore.models.nerd;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.Utils;

@@ -5,7 +5,7 @@ import com.vdurmont.emoji.EmojiParser;
 import me.pugabyte.bncore.features.chatold.alerts.models.DiscordMessageEvent;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
-import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
