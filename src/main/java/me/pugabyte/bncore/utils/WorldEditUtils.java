@@ -10,6 +10,7 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -205,17 +206,29 @@ public class WorldEditUtils {
 		return new Schematic(region);
 	}
 
-	public void paste(String fileName, Location location) {
-		paste(fileName, toVector(location));
-	}
-
 	@SneakyThrows
-	public void paste(String fileName, Vector vector) {
+	public Schematic getSchematic(String fileName) {
 		File file = getSchematicFile(fileName);
 		if (!file.exists())
 			throw new InvalidInputException("Schematic " + fileName + " does not exist");
 
-		paste(ClipboardFormats.findByFile(file).load(file), vector);
+		return ClipboardFormats.findByFile(file).load(file);
+	}
+
+	public void paste(String fileName, Location location) {
+		paste(fileName, toVector(location));
+	}
+
+	public void paste(String fileName, Vector vector) {
+		paste(getSchematic(fileName), vector);
+	}
+
+	public void paste(Clipboard clipboard, Location location) {
+		paste(new Schematic(clipboard), location);
+	}
+
+	public void paste(Clipboard clipboard, Vector vector) {
+		paste(new Schematic(clipboard), vector);
 	}
 
 	public void paste(Schematic schematic, Location location) {
