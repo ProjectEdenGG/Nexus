@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 import me.pugabyte.bncore.framework.exceptions.BNException;
@@ -193,6 +194,8 @@ class PathParser {
 
 		for (Method method : methods) {
 			if (!event.getCommand().hasPermission(event.getSender(), method))
+				continue;
+			if (method.getAnnotation(TabCompleteIgnore.class) != null)
 				continue;
 
 			TabCompleteHelper helper = new TabCompleteHelper(method, event.getArgs());

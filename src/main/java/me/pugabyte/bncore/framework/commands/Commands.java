@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.framework.commands;
 
 import lombok.Getter;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
@@ -29,6 +28,8 @@ public class Commands {
 	private static Map<Class<?>, Method> converters = new HashMap<>();
 	@Getter
 	private static Map<Class<?>, Method> tabCompleters = new HashMap<>();
+	@Getter
+	private static Map<String, String> redirects = new HashMap<>();
 
 	public Commands(Plugin plugin, String path) {
 		this.plugin = plugin;
@@ -36,6 +37,8 @@ public class Commands {
 		this.mapUtils = new CommandMapUtils(plugin);
 		this.commandSet = new Reflections(path).getSubTypesOf(CustomCommand.class);
 		registerConvertersAndTabCompleters();
+		plugin.getServer().getPluginManager().registerEvents(new CommandListener(), plugin);
+
 	}
 
 	public static CustomCommand get(String alias) {
@@ -47,7 +50,7 @@ public class Commands {
 	public void registerAll() {
 		for (Class<? extends CustomCommand> command : commandSet)
 			register(new ObjenesisStd().newInstance(command));
-		BNCore.log("Registered " + commandSet.size() + " commands");
+		plugin.getLogger().info("Registered " + commandSet.size() + " commands");
 	}
 
 	private void register(CustomCommand customCommand) {

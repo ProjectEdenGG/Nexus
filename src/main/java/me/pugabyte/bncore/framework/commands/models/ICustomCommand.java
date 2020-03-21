@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.bncore.framework.commands.models.annotations.Fallback;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -20,6 +21,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionExcepti
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.Tasks;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.objenesis.ObjenesisStd;
@@ -48,6 +50,8 @@ public interface ICustomCommand {
 		try {
 			CustomCommand command = getCommand(event);
 			Method method = getMethod(event);
+			if (method == null)
+				return;
 			event.setUsage(method);
 			if (!hasPermission(event.getSender(), method))
 				throw new NoPermissionException();
@@ -248,9 +252,14 @@ public interface ICustomCommand {
 	default Method getMethod(CommandEvent event) {
 		Method method = new PathParser(event).match(event.getArgs());
 
-		if (method == null)
-			// TODO No default path, what do?
-			throw new InvalidInputException("No matching path");
+		if (method == null) {
+			Fallback fallback = event.getCommand().getClass().getAnnotation(Fallback.class);
+			if (fallback != null)
+				Bukkit.dispatchCommand(event.getSender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgs());
+			else
+				// TODO No default path, what do?
+				throw new InvalidInputException("No matching path");
+		}
 
 		return method;
 	}

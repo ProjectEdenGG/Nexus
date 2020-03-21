@@ -12,7 +12,7 @@ public class TMCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runConsoleCommand("essentials:sudo " + player().getName() + " c:" + argsString() + "™");
+		runCommandAsConsole("essentials:sudo " + player().getName() + " c:" + argsString() + "™");
 	}
 
 }

@@ -12,7 +12,7 @@ public class AllRecipesCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runConsoleCommand("minecraft:recipe give " + player().getName() + " *");
+		runCommandAsConsole("minecraft:recipe give " + player().getName() + " *");
 	}
 
 }
