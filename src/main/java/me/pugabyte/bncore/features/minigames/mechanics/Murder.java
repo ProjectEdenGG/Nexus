@@ -79,8 +79,10 @@ public class Murder extends UnbalancedTeamMechanic {
 	public void onQuit(MatchQuitEvent event) {
 		Player player = event.getMinigamer().getPlayer();
 		// Drop a gun if they had one
-		if (isGunner(player))
+		if (isGunner(player)) {
+			BNCore.log("Gunner quit");
 			player.getLocation().getWorld().dropItem(player.getLocation(), gun);
+		}
 
 		super.onQuit(event);
 	}
@@ -88,6 +90,8 @@ public class Murder extends UnbalancedTeamMechanic {
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
+
+		BNCore.log("Alive players: " + event.getMatch().getAlivePlayers());
 
 		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder stop " + event.getMatch().getArena().getName());
 		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder clearentities " + event.getMatch().getArena().getName());
