@@ -4,7 +4,7 @@ import de.tr7zw.itemnbtapi.NBTItem;
 import de.tr7zw.itemnbtapi.NBTTileEntity;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.koda.Koda;
-import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.JsonBuilder;

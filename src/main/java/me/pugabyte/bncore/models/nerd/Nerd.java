@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.nerds;
+package me.pugabyte.bncore.models.nerd;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

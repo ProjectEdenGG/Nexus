@@ -5,7 +5,7 @@ import dev.morphia.query.UpdateException;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.persistence.MongoDBDatabase;
 import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
-import me.pugabyte.bncore.models.nerds.Nerd;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

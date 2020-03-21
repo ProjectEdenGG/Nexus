@@ -43,7 +43,7 @@ public class PoofCommand extends CustomCommand {
 				.command("poof accept")
 				.hover("&eClick &3to accept")
 				.group()
-				.next("  &3||  ")
+				.next("  &3||  &3")
 				.group()
 				.next("&c&lDeny")
 				.command("poof deny")

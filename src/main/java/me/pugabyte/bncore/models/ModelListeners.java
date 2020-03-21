@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.models;
 
-import me.pugabyte.bncore.models.nerds.NerdListener;
+import me.pugabyte.bncore.models.nerd.NerdListener;
 
 public class ModelListeners {
 	public ModelListeners() {

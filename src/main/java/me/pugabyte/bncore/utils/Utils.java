@@ -5,8 +5,8 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.Rank;
-import me.pugabyte.bncore.models.nerds.Nerd;
-import me.pugabyte.bncore.models.nerds.NerdService;
+import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.models.nerd.NerdService;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -109,7 +109,13 @@ public class Utils {
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
 
-		List<Nerd> matches = new NerdService().find(partialName);
+		NerdService nerdService = new NerdService();
+
+		OfflinePlayer fromNickname = nerdService.getFromNickname(partialName);
+		if (fromNickname != null)
+			return fromNickname;
+
+		List<Nerd> matches = nerdService.find(partialName);
 		if (matches.size() > 0) {
 			Nerd nerd = matches.get(0);
 			if (nerd != null && nerd.getUuid() != null)
