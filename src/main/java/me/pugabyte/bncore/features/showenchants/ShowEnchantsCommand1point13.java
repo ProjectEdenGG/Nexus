@@ -5,7 +5,7 @@ import com.dthielke.herochat.Channel;
 import com.dthielke.herochat.Chatter;
 import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
+import me.pugabyte.bncore.features.chatold.herochat.HerochatAPI;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import net.md_5.bungee.api.chat.BaseComponent;

@@ -1,50 +1,69 @@
 package me.pugabyte.bncore.features.chat;
 
-import com.dthielke.herochat.Channel;
-import com.dthielke.herochat.Chatter;
-import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.alerts.AlertsFeature;
-import me.pugabyte.bncore.features.chat.translator.Translator;
-import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
+import me.pugabyte.bncore.features.chat.models.Channel;
+import me.pugabyte.bncore.utils.StringUtils;
+import org.bukkit.ChatColor;
 
 public class Chat {
-	public static AlertsFeature alertsFeature;
-	public static Translator translator;
 
-	static {
-		BNCore.registerPlaceholder("currentchannel", event -> {
-			Chatter chatter = Herochat.getChatterManager().getChatter(event.getPlayer());
-			if (chatter == null)
-				return "&eNone";
-			Channel activeChannel = chatter.getActiveChannel();
-			if (activeChannel == null)
-				return "&eNone";
-			if (activeChannel.getName().contains("convo"))
-				return "&b" + activeChannel.getName().replace("convo", "DM / ").replace(event.getPlayer().getName(), "");
-
-			return activeChannel.getColor() + activeChannel.getName();
-		});
-
-		BNCore.registerPlaceholder("vanished", event ->
-				String.valueOf(Utils.isVanished(event.getPlayer())));
-
-		BNCore.registerPlaceholder("nerds", event ->
-				String.valueOf(Bukkit.getOnlinePlayers().stream().filter(target -> Utils.canSee(event.getPlayer(), target)).count()));
-	}
+	public static final String PREFIX = StringUtils.getPrefix("Chat");
 
 	public Chat() {
-		Plugin herochat = BNCore.getInstance().getServer().getPluginManager().getPlugin("Herochat");
-
 		BNCore.getInstance().addConfigDefault("localRadius", 500);
+//		new ChatListener();
 
-		if (herochat != null && herochat.isEnabled()) {
-			new ChatListener();
-			alertsFeature = new AlertsFeature();
-			translator = new Translator();
-		}
+		addChannels();
+	}
+
+	private void addChannels() {
+		Channel global = Channel.builder()
+				.name("Global")
+				.nickname("g")
+				.color(ChatColor.DARK_GREEN)
+				.local(false)
+				.crossWorld(true)
+				.build();
+
+		Channel local = Channel.builder()
+				.name("Local")
+				.nickname("l")
+				.color(ChatColor.YELLOW)
+				.local(true)
+				.crossWorld(false)
+				.build();
+
+		Channel staff = Channel.builder()
+				.name("Staff")
+				.nickname("s")
+				.color(ChatColor.BLACK)
+				.local(false)
+				.crossWorld(true)
+				.build();
+
+		Channel operator = Channel.builder()
+				.name("Operator")
+				.nickname("o")
+				.color(ChatColor.DARK_AQUA)
+				.local(false)
+				.crossWorld(true)
+				.build();
+
+		Channel admin = Channel.builder()
+				.name("Admin")
+				.nickname("a")
+				.color(ChatColor.DARK_AQUA)
+				.local(false)
+				.crossWorld(true)
+				.build();
+
+		ChatManager.addChannel(global);
+		ChatManager.addChannel(local);
+		ChatManager.addChannel(staff);
+		ChatManager.addChannel(operator);
+		ChatManager.addChannel(admin);
+
+		ChatManager.setMainChannel(global);
 	}
 
 	public static int getLocalRadius() {

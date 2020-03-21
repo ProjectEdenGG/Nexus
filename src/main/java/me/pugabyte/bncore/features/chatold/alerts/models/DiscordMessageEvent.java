@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.chat.alerts.models;
+package me.pugabyte.bncore.features.chatold.alerts.models;
 
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

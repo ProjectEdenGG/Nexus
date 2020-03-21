@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.chat.translator;
+package me.pugabyte.bncore.features.chatold.translator;
 
 import lombok.Getter;
 

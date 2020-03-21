@@ -1,10 +1,10 @@
-package me.pugabyte.bncore.features.chat.alerts;
+package me.pugabyte.bncore.features.chatold.alerts;
 
 import com.dthielke.herochat.ChannelChatEvent;
 import com.dthielke.herochat.Chatter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.alerts.models.DiscordMessageEvent;
-import me.pugabyte.bncore.features.chat.herochat.HerochatAPI;
+import me.pugabyte.bncore.features.chatold.alerts.models.DiscordMessageEvent;
+import me.pugabyte.bncore.features.chatold.herochat.HerochatAPI;
 import me.pugabyte.bncore.models.alerts.Alerts;
 import me.pugabyte.bncore.models.alerts.AlertsService;
 import me.pugabyte.bncore.utils.Utils;
@@ -17,7 +17,7 @@ import org.bukkit.event.Listener;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.features.chat.Chat.alertsFeature;
+import static me.pugabyte.bncore.features.chatold.ChatOld.alertsFeature;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class AlertsListener implements Listener {

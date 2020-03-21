@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import lombok.Getter;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chatold.ChatOld;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
 import me.pugabyte.bncore.features.connect4.Connect4;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
@@ -130,6 +131,7 @@ public class BNCore extends JavaPlugin {
 
 	public static AFK afk;
 	public static Chat chat;
+	public static ChatOld chatOld;
 	public static ClearInventory clearInventory;
 	public static Connect4 connect4;
 	public static DailyRewardsFeature dailyRewards;
@@ -162,6 +164,7 @@ public class BNCore extends JavaPlugin {
 
 		afk = new AFK();
 		chat = new Chat();
+		chatOld = new ChatOld();
 		clearInventory = new ClearInventory();
 		connect4 = new Connect4();
 		dailyRewards = new DailyRewardsFeature();

@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.discord.bridge;
 
 import com.google.common.base.Strings;
 import com.vdurmont.emoji.EmojiParser;
-import me.pugabyte.bncore.features.chat.alerts.models.DiscordMessageEvent;
+import me.pugabyte.bncore.features.chatold.alerts.models.DiscordMessageEvent;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.nerds.Nerd;
