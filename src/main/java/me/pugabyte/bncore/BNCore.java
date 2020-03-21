@@ -170,7 +170,7 @@ public class BNCore extends JavaPlugin {
 //		documentation = new Documentation();
 		holidays = new Holidays();
 		homesFeature = new HomesFeature();
-		honeyPots = new HoneyPots();
+		//honeyPots = new HoneyPots();
 		hoursFeature = new HoursFeature();
 		inviteRewards = new InviteRewards();
 		listeners = new Listeners();

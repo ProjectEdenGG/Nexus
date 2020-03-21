@@ -23,11 +23,11 @@ import org.bukkit.OfflinePlayer;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Aliases("hp")
+@Aliases("jhp")
 @Permission("group.staff")
-public class HoneyPotsCommand extends CustomCommand {
+public class JHoneyPotsCommand extends CustomCommand {
 
-	public HoneyPotsCommand(CommandEvent event) {
+	public JHoneyPotsCommand(CommandEvent event) {
 		super(event);
 	}
 
