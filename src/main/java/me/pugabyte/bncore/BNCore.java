@@ -22,6 +22,7 @@ import me.pugabyte.bncore.features.mcmmo.McMMO;
 import me.pugabyte.bncore.features.menus.SignMenuFactory;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.oldminigames.OldMinigames;
+import me.pugabyte.bncore.features.quests.Quests;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
 import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
 import me.pugabyte.bncore.features.showenchants.ShowEnchants;
@@ -146,6 +147,7 @@ public class BNCore extends JavaPlugin {
 	public static ModelListeners modelListeners;
 	public static Minigames minigames;
 	public static OldMinigames oldMinigames;
+	public static Quests quests;
 	public static RainbowArmour rainbowArmour;
 	public static RestoreInventory restoreInventory;
 	public static ShowEnchants showEnchants;
@@ -178,6 +180,7 @@ public class BNCore extends JavaPlugin {
 		modelListeners = new ModelListeners();
 		minigames = new Minigames();
 		oldMinigames = new OldMinigames();
+		quests = new Quests();
 		rainbowArmour = new RainbowArmour();
 		restoreInventory = new RestoreInventory();
 		showEnchants = new ShowEnchants();
