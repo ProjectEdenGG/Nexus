@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
 public class LaunchPads implements Listener {
-	boolean disable = false;
+	boolean disable = true;
 
 	public LaunchPads() {
 		BNCore.registerListener(this);
