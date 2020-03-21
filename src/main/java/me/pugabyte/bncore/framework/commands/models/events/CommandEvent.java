@@ -53,6 +53,10 @@ public class CommandEvent extends Event implements Cancellable {
 		return aliasUsed.replace("bncore:", "");
 	}
 
+	public String getArgsString() {
+		return String.join(" ", args);
+	}
+
 	public void setUsage(Method method) {
 		this.method = method;
 		Path annotation = method.getAnnotation(Path.class);
