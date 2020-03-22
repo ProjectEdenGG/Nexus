@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Material;
@@ -11,10 +12,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.util.Vector;
 
 public class LaunchPads implements Listener {
-	boolean disable = true;
+	private boolean disable = true;
+	private int taskID;
+	private final static double DECELERATION_RATE = 0.98D;
+	private final static double GRAVITY_CONSTANT = 0.08D;
+	private final static double VANILLA_ANTICHEAT_THRESHOLD = 9.5D; // actual 10D
 
 	public LaunchPads() {
 		BNCore.registerListener(this);
@@ -65,17 +69,68 @@ public class LaunchPads implements Listener {
 		launchPlayer(player, 5.0, 5.0);
 	}
 
-	// Works ok
-	public void launchPlayer(Player player, double height, double distance) {
+	public void launchPlayer(Player player, double power, double angle) {
+		launchPlayer(player, power, angle, -1);
+	}
+
+	// <Power>
+	// <Angle>
+	// [Direction]
+	public void launchPlayer(Player player, double power, double angle, double direction) {
+		if (direction == -1) {
+
+		} else {
+
+		}
+
+	}
+
+	private void playerVelTask(Player player) {
+
+	}
+
+	private void cancelPlayerVelTask() {
+		Tasks.cancel(taskID);
+		BNCore.log("Canceled Task: " + taskID);
+	}
+
+	/*
+			double y = height * 0.5;
+			playerVelTask(player, y, distance);
+
+		private void playerVelTask(Player player, double height, double distance){
+			final double[] velY = {height};
+			Location locCached = new Location(null,0,0,0);
+			Vector direction = player.getLocation().getDirection().multiply(distance);
+
+			taskID = Tasks.repeat(0, 1, () -> {
+				if (velY[0] > VANILLA_ANTICHEAT_THRESHOLD) {
+					player.getLocation(locCached).setY(locCached.getY() + velY[0]);
+					player.teleport(locCached);
+					player.setVelocity(new Vector(direction.getX(), VANILLA_ANTICHEAT_THRESHOLD, direction.getZ()));
+				} else {
+					player.setVelocity(new Vector(direction.getX(), velY[0], direction.getZ()));
+					cancelPlayerVelTask();
+				}
+
+				velY[0] -= GRAVITY_CONSTANT;
+				velY[0] *= DECELERATION_RATE;
+			});
+	}
+	 */
+
+	/*
 		double y = height * 0.5;
 		Vector upwards = player.getVelocity().setY(y);
 		player.setVelocity(upwards);
 
 		Vector direction = player.getLocation().getDirection().multiply(distance);
 		direction.setY(upwards.getY());
+
 		player.setVelocity(direction);
-//		player.getWorld().createExplosion(player.getLocation(), -1);
+		player.getWorld().createExplosion(player.getLocation(), -1);
 	}
+	 */
 
 	/* Pstones Player Launch
 
