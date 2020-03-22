@@ -27,8 +27,10 @@ public class CheckpointData extends MatchData {
 
 	public void setCheckpoint(Minigamer minigamer, int id) {
 		Integer currentId = getCheckpointId(minigamer);
-		if (currentId == null || currentId < id)
+		if (currentId == null || currentId < id) {
+			minigamer.tell("Checkpoint saved (&e#" + id + "&3)");
 			checkpoints.put(minigamer.getPlayer().getUniqueId(), id);
+		}
 	}
 
 	public void toCheckpoint(Minigamer minigamer) {
