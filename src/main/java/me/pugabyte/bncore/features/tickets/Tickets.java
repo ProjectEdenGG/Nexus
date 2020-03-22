@@ -7,10 +7,10 @@ import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class Tickets {
 	public static final String PREFIX = StringUtils.getPrefix("Tickets");
@@ -45,7 +45,7 @@ public class Tickets {
 	}
 
 	public static void tellOtherStaff(Player player, String message) {
-		SkriptFunctions.log(ChatColor.stripColor(colorize(message)));
+		SkriptFunctions.log(stripColor(message));
 
 		Bukkit.getOnlinePlayers().stream()
 				.filter(staff -> !staff.getUniqueId().equals(player.getUniqueId()))

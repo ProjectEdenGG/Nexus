@@ -30,6 +30,10 @@ public class StringUtils {
 		return string.replaceAll(getColorChar(), "&");
 	}
 
+	public static String stripColor(String string) {
+		return ChatColor.stripColor(colorize(string));
+	}
+
 	public static String getColorChar() {
 		return "§";
 	}

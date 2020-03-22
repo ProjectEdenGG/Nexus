@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.features.listeners;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,10 +18,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class EasterEggs implements Listener {
 
-	public EasterEggs() {
-		BNCore.registerListener(this);
-	}
-
 	@EventHandler
 	public void onClickOnPlayer(PlayerInteractEntityEvent event) {
 		if (WorldGroup.get(event.getPlayer().getWorld()).equals(WorldGroup.MINIGAMES))
@@ -30,7 +26,7 @@ public class EasterEggs implements Listener {
 		if (!event.getRightClicked().getType().equals(EntityType.PLAYER))
 			return;
 
-		if (event.getRightClicked().hasMetadata("NPC"))
+		if (Utils.isNPC(event.getRightClicked()))
 			return;
 
 		if (!event.getHand().equals(EquipmentSlot.HAND))
