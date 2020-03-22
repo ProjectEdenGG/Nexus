@@ -23,7 +23,6 @@ import java.util.Map;
 @NoArgsConstructor
 @Permission("group.moderator")
 public class CPSWatchCommand extends CustomCommand implements Listener {
-
 	static Map<Player, Integer> cpsMap = new HashMap<>();
 	static Map<Player, List<Player>> watchMap = new HashMap<>();
 

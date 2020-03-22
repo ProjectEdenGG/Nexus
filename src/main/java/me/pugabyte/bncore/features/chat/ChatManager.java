@@ -9,7 +9,6 @@ import me.pugabyte.bncore.features.chat.models.PublicChannel;
 import me.pugabyte.bncore.features.chat.models.events.ChannelChatEvent;
 import me.pugabyte.bncore.features.chat.models.events.ChatEvent;
 import me.pugabyte.bncore.features.chat.models.events.PrivateChatEvent;
-import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.entity.Player;
@@ -35,7 +34,7 @@ public class ChatManager {
 	private static PublicChannel mainChannel;
 
 	public static Chatter getChatter(Player player) {
-		chatters.computeIfAbsent(player, $ -> new Chatter(new NerdService().get(player)));
+		chatters.computeIfAbsent(player, $ -> new Chatter((player)));
 		return chatters.get(player);
 	}
 

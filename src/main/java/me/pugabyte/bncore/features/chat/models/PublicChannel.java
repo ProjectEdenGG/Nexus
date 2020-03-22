@@ -48,4 +48,11 @@ public class PublicChannel implements Channel {
 				.collect(Collectors.toSet());
 	}
 
+	public void broadcast(String message) {
+		Bukkit.getOnlinePlayers().stream()
+				.map(ChatManager::getChatter)
+				.filter(chatter -> chatter.hasJoined(this))
+				.forEach(chatter -> chatter.send(message));
+	}
+
 }
