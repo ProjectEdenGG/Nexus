@@ -83,4 +83,8 @@ public class NerdService extends MySQLService {
 		database.where("uuid = ?, nickname = ?", uuid.toString(), nickname).delete();
 	}
 
+	public List<String> getPastNames(UUID uuid) {
+		return database.select("nickname").table("name_history").where("uuid = ?", uuid.toString()).results(String.class);
+	}
+
 }
