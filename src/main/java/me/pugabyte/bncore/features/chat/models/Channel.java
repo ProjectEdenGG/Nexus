@@ -1,21 +1,11 @@
 package me.pugabyte.bncore.features.chat.models;
 
-import lombok.Builder;
-import lombok.Data;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
+import java.util.Set;
 
-import java.util.List;
+public interface Channel {
 
-@Data
-@Builder
-public class Channel {
-	private String name;
-	private String nickname;
-	private ChatColor color;
-	private boolean local;
-	private boolean crossWorld;
-	private List<World> worlds;
+	Set<Chatter> getRecipients(Chatter chatter);
 
+	String getAssignMessage(Chatter chatter);
 
 }

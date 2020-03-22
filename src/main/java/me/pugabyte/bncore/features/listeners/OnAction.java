@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.listeners;
 
 import de.tr7zw.itemnbtapi.NBTItem;
 import de.tr7zw.itemnbtapi.NBTTileEntity;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.setting.Setting;
@@ -29,9 +28,6 @@ import org.bukkit.inventory.ItemStack;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class OnAction implements Listener {
-	public OnAction() {
-		BNCore.registerListener(this);
-	}
 
 	@EventHandler
 	public void onHorseLikeDamage(EntityDamageEvent event) {
