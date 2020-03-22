@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -13,23 +14,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+@Disabled
 public class LaunchPads implements Listener {
-	private boolean disable = true;
-	private int taskID;
+	private int taskId;
 	private final static double DECELERATION_RATE = 0.98D;
 	private final static double GRAVITY_CONSTANT = 0.08D;
 	private final static double VANILLA_ANTICHEAT_THRESHOLD = 9.5D; // actual 10D
 
-	public LaunchPads() {
-		BNCore.registerListener(this);
-	}
-
 	@EventHandler
 	public void onRedstoneBlockActivate(PlayerInteractEvent event) {
-		// Disabled until this works properly
-		if (disable)
-			return;
-
 		Block block = event.getClickedBlock();
 		if (block == null)
 			return;
@@ -90,8 +83,8 @@ public class LaunchPads implements Listener {
 	}
 
 	private void cancelPlayerVelTask() {
-		Tasks.cancel(taskID);
-		BNCore.log("Canceled Task: " + taskID);
+		Tasks.cancel(taskId);
+		BNCore.log("Canceled Task: " + taskId);
 	}
 
 	/*
@@ -103,7 +96,7 @@ public class LaunchPads implements Listener {
 			Location locCached = new Location(null,0,0,0);
 			Vector direction = player.getLocation().getDirection().multiply(distance);
 
-			taskID = Tasks.repeat(0, 1, () -> {
+			taskId = Tasks.repeat(0, 1, () -> {
 				if (velY[0] > VANILLA_ANTICHEAT_THRESHOLD) {
 					player.getLocation(locCached).setY(locCached.getY() + velY[0]);
 					player.teleport(locCached);

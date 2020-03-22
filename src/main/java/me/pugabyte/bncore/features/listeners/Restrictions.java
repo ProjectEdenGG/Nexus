@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.listeners;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -22,10 +21,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class Restrictions implements Listener {
 	String prefix = Koda.getLocalFormat();
-
-	public Restrictions() {
-		BNCore.registerListener(this);
-	}
 
 	@EventHandler
 	public void onInteractWithFire(PlayerInteractEvent event) {

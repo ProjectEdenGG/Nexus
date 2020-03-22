@@ -11,11 +11,10 @@ import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Jingles;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @Cooldown(60 * 20)
 @Aliases({"helpop", "report"})
@@ -42,7 +41,7 @@ public class TicketCommand extends CustomCommand {
 		if (Utils.isInt(description))
 			error("Prevented accidental ticket");
 
-		Ticket ticket = new Ticket(player(), ChatColor.stripColor(colorize(description)));
+		Ticket ticket = new Ticket(player(), stripColor(description));
 		service.saveSync(ticket);
 
 		send(PREFIX + "You have submitted a ticket. Staff have been alerted, please wait patiently for a response. &eThank you!");
