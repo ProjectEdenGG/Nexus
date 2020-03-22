@@ -154,7 +154,7 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Path("autoreset [boolean]")
 	@Permission("use")
-	void autoreset(@Arg("true") boolean autoreset) {
+	void autoreset(Boolean autoreset) {
 		Match match = minigamer.getMatch();
 		if (!minigamer.isPlaying())
 			error("You must be playing a checkpoint game to use that command");
@@ -167,7 +167,7 @@ public class JMinigamesCommand extends CustomCommand {
 		if (matchData.isAutoresetting(minigamer))
 			send(PREFIX + "Enabled &eAuto Reset");
 		else
-			send(PREFIX + "Disabled Auto Reset");
+			send(PREFIX + "Disabled &eAuto Reset");
 	}
 
 	@Path("addSpawnpoint <arena> [team]")

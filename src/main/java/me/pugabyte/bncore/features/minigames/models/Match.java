@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.minigames.models;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.google.common.base.Strings;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -159,7 +160,7 @@ public class Match {
 		if (tasks != null)
 			tasks.end();
 		broadcast("Match has ended");
-		broadcast("");
+		broadcastNoPrefix("");
 		clearHolograms();
 		clearEntities();
 		clearStates();
@@ -275,11 +276,22 @@ public class Match {
 	}
 
 	public void broadcast(String message) {
+		if (Strings.isNullOrEmpty(message)) {
+			broadcastNoPrefix("");
+			return;
+		}
+
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		Utils.callEvent(event);
-		if (!event.isCancelled()) {
+		if (!event.isCancelled())
 			minigamers.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
-		}
+	}
+
+	public void broadcastNoPrefix(String message) {
+		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
+		Utils.callEvent(event);
+		if (!event.isCancelled())
+			minigamers.forEach(minigamer -> minigamer.send(colorize(event.getMessage())));
 	}
 
 	public void broadcast(String message, Team team) {

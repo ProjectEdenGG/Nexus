@@ -69,7 +69,7 @@ public abstract class Mechanic implements Listener {
 	public void onStart(MatchStartEvent event) {
 		Match match = event.getMatch();
 		match.broadcast("Starting match");
-		match.broadcast("");
+		match.broadcastNoPrefix("");
 		int lives = match.getArena().getLives();
 		if (lives > 0)
 			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
