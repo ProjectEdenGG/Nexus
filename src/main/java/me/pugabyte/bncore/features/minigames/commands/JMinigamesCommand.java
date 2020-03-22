@@ -34,6 +34,7 @@ public class JMinigamesCommand extends CustomCommand {
 
 	public JMinigamesCommand(CommandEvent event) {
 		super(event);
+		PREFIX = Minigames.PREFIX;
 		if (sender() instanceof Player)
 			minigamer = PlayerManager.get(player());
 	}
