@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
@@ -34,6 +35,8 @@ public class Minigamer {
 	private Match match;
 	private Team team;
 	private int score = 0;
+	@Accessors(fluent = true)
+	private boolean canTeleport;
 	private boolean respawning = false;
 	private boolean isAlive = true;
 	private int lives;
@@ -173,7 +176,9 @@ public class Minigamer {
 
 		// TODO: Allow/disallow teleportation
 		player.setVelocity(new Vector(0, 0, 0));
+		canTeleport = true;
 		player.teleport(location.clone().add(0, .5, 0));
+		canTeleport = false;
 		player.setVelocity(new Vector(0, 0, 0));
 		if (withSlowness) {
 			match.getTasks().wait(1, () -> player.setVelocity(new Vector(0, 0, 0)));
