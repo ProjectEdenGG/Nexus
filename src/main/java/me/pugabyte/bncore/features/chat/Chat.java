@@ -1,8 +1,9 @@
 package me.pugabyte.bncore.features.chat;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.models.Channel;
+import me.pugabyte.bncore.features.chat.models.PublicChannel;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.ChatColor;
 
 public class Chat {
@@ -17,7 +18,7 @@ public class Chat {
 	}
 
 	private void addChannels() {
-		Channel global = Channel.builder()
+		PublicChannel global = PublicChannel.builder()
 				.name("Global")
 				.nickname("g")
 				.color(ChatColor.DARK_GREEN)
@@ -25,7 +26,7 @@ public class Chat {
 				.crossWorld(true)
 				.build();
 
-		Channel local = Channel.builder()
+		PublicChannel local = PublicChannel.builder()
 				.name("Local")
 				.nickname("l")
 				.color(ChatColor.YELLOW)
@@ -33,7 +34,7 @@ public class Chat {
 				.crossWorld(false)
 				.build();
 
-		Channel staff = Channel.builder()
+		PublicChannel staff = PublicChannel.builder()
 				.name("Staff")
 				.nickname("s")
 				.color(ChatColor.BLACK)
@@ -41,7 +42,7 @@ public class Chat {
 				.crossWorld(true)
 				.build();
 
-		Channel operator = Channel.builder()
+		PublicChannel operator = PublicChannel.builder()
 				.name("Operator")
 				.nickname("o")
 				.color(ChatColor.DARK_AQUA)
@@ -49,7 +50,7 @@ public class Chat {
 				.crossWorld(true)
 				.build();
 
-		Channel admin = Channel.builder()
+		PublicChannel admin = PublicChannel.builder()
 				.name("Admin")
 				.nickname("a")
 				.color(ChatColor.DARK_AQUA)
@@ -57,11 +58,31 @@ public class Chat {
 				.crossWorld(true)
 				.build();
 
+		PublicChannel minigames = PublicChannel.builder()
+				.name("Minigames")
+				.nickname("m")
+				.color(ChatColor.DARK_AQUA)
+				.local(false)
+				.crossWorld(false)
+				.worldGroup(WorldGroup.MINIGAMES)
+				.build();
+
+		PublicChannel creative = PublicChannel.builder()
+				.name("creative")
+				.nickname("c")
+				.color(ChatColor.AQUA)
+				.local(false)
+				.crossWorld(false)
+				.worldGroup(WorldGroup.CREATIVE)
+				.build();
+
 		ChatManager.addChannel(global);
 		ChatManager.addChannel(local);
 		ChatManager.addChannel(staff);
 		ChatManager.addChannel(operator);
 		ChatManager.addChannel(admin);
+		ChatManager.addChannel(minigames);
+		ChatManager.addChannel(creative);
 
 		ChatManager.setMainChannel(global);
 	}
