@@ -6,16 +6,16 @@ import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.CheckpointArena;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
 public class CheckpointData extends MatchData {
 	private Map<UUID, Integer> checkpoints = new HashMap<>();
-	private List<UUID> autoresetting = new ArrayList<>();
+	private Set<UUID> autoresetting = new HashSet<>();
 
 	public CheckpointData(Match match) {
 		super(match);
@@ -48,11 +48,16 @@ public class CheckpointData extends MatchData {
 		autoresetting.remove(minigamer.getPlayer().getUniqueId());
 	}
 
-	public void autoreset(Minigamer minigamer, boolean autoreset) {
+	public void autoreset(Minigamer minigamer, Boolean autoreset) {
+		UUID uuid = minigamer.getPlayer().getUniqueId();
+
+		if (autoreset == null)
+			autoreset = !autoresetting.contains(uuid);
+
 		if (autoreset)
-			autoresetting.add(minigamer.getPlayer().getUniqueId());
+			autoresetting.add(uuid);
 		else
-			autoresetting.remove(minigamer.getPlayer().getUniqueId());
+			autoresetting.remove(uuid);
 	}
 
 	public boolean isAutoresetting(Minigamer minigamer) {
