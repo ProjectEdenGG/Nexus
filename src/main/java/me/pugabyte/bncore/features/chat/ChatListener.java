@@ -77,7 +77,6 @@ public class ChatListener implements Listener {
 			else
 				recipient.send(from);
 		});
-
 	}
 
 	@EventHandler

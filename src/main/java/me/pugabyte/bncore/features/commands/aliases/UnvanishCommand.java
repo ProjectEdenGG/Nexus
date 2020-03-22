@@ -16,4 +16,16 @@ public class UnvanishCommand extends CustomCommand {
 	void run() {
 		runCommand("vanish off");
 	}
+
+	@Path("gameworld")
+	void gameworld() {
+		runCommand("vanish off");
+		runCommand("ch join m");
+	}
+
+	@Path("creative")
+	void creative() {
+		runCommand("vanish off");
+		runCommand("ch join c");
+	}
 }

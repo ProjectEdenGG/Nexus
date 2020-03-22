@@ -64,6 +64,10 @@ public abstract class CustomCommand implements ICustomCommand {
 		Tasks.wait(delay, () -> player.sendMessage(StringUtils.colorize(message)));
 	}
 
+	protected void send() {
+		send("");
+	}
+
 	protected void send(String message) {
 		event.reply(message);
 	}

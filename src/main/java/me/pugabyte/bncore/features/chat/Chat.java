@@ -4,6 +4,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.models.PublicChannel;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 public class Chat {
@@ -68,7 +69,7 @@ public class Chat {
 				.build();
 
 		PublicChannel creative = PublicChannel.builder()
-				.name("creative")
+				.name("Creative")
 				.nickname("c")
 				.color(ChatColor.AQUA)
 				.local(false)
@@ -85,6 +86,14 @@ public class Chat {
 		ChatManager.addChannel(creative);
 
 		ChatManager.setMainChannel(global);
+
+		Bukkit.getOnlinePlayers().stream()
+				.map(ChatManager::getChatter)
+				.forEach(chatter -> {
+					chatter.join(global);
+					chatter.join(local);
+					chatter.updateChannels();
+				});
 	}
 
 	public static int getLocalRadius() {

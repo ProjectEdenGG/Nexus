@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.chat.commands;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.ChatManager;
+import me.pugabyte.bncore.features.chat.models.Channel;
 import me.pugabyte.bncore.features.chat.models.Chatter;
 import me.pugabyte.bncore.features.chat.models.PublicChannel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -42,18 +43,28 @@ public class JChannelCommand extends CustomCommand {
 		ChatManager.process(chatter, channel, message);
 	}
 
-	@ConverterFor(PublicChannel.class)
+	@ConverterFor({Channel.class, PublicChannel.class})
 	PublicChannel convertToChannel(String value) {
 		return ChatManager.getChannel(value).orElseThrow(() -> new InvalidInputException("Channel not found"));
 	}
 
-	@TabCompleterFor(PublicChannel.class)
+	@TabCompleterFor({Channel.class, PublicChannel.class})
 	List<String> tabCompleteChannel(String filter) {
 		return ChatManager.getChannels().stream()
 				.filter(channel -> channel.getNickname().toLowerCase().startsWith(filter.toLowerCase()) ||
 						channel.getName().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(PublicChannel::getNickname)
 				.collect(Collectors.toList());
+	}
+
+	@ConverterFor(Chatter.class)
+	Chatter convertToChatter(String value) {
+		return ChatManager.getChatter(convertToPlayer(value));
+	}
+
+	@TabCompleterFor(Chatter.class)
+	List<String> tabCompleteChatter(String filter) {
+		return tabCompletePlayer(filter);
 	}
 
 }

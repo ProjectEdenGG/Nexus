@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands.aliases;
+package me.pugabyte.bncore.features.chat.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;

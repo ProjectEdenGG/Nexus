@@ -9,6 +9,7 @@ import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ public class Chatter {
 	@NonNull
 	private Player player;
 	private Channel activeChannel;
-	private List<PublicChannel> joinedChannels;
+	private List<PublicChannel> joinedChannels = new ArrayList<>();
 
 	public void setActiveChannel(Channel channel) {
 		this.activeChannel = channel;

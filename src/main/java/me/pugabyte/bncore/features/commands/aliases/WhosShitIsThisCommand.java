@@ -4,15 +4,15 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-public class CopyrightCommand extends CustomCommand {
+public class WhosShitIsThisCommand extends CustomCommand {
 
-	public CopyrightCommand(CommandEvent event) {
+	public WhosShitIsThisCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path
 	void run() {
-		runCommandAsConsole("essentials:sudo " + player().getName() + " c:" + argsString() + "©");
+		runCommand("/pr l a:drop r:10 t:10000d");
 	}
 
 }
