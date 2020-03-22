@@ -28,7 +28,6 @@ import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 @NoArgsConstructor
 @Permission("group.moderator")
 public class ReachWatchCommand extends CustomCommand implements Listener {
-
 	static Map<Player, List<Player>> watchMap = new HashMap<>();
 	private DecimalFormat nf = new DecimalFormat("#.00");
 

@@ -30,6 +30,10 @@ public class StringUtils {
 		return string.replaceAll(getColorChar(), "&");
 	}
 
+	public static String stripColor(String string) {
+		return ChatColor.stripColor(colorize(string));
+	}
+
 	public static String getColorChar() {
 		return "§";
 	}
@@ -154,6 +158,10 @@ public class StringUtils {
 	public static String listGetAt(String string, int index, String delimiter) {
 		String[] split = string.split(delimiter);
 		return split[index - 1];
+	}
+
+	public static String replaceLast(String text, String regex, String replacement) {
+		return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
 	}
 
 	public enum ProgressBarStyle {

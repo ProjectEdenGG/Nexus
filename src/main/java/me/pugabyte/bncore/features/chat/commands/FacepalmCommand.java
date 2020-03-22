@@ -1,18 +1,18 @@
-package me.pugabyte.bncore.features.commands.aliases;
+package me.pugabyte.bncore.features.chat.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-public class JoinCommand extends CustomCommand {
+public class FacepalmCommand extends CustomCommand {
 
-	public JoinCommand(CommandEvent event) {
+	public FacepalmCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path
 	void run() {
-		runCommand("herochat join " + arg(1));
+		runCommandAsConsole("essentials:sudo " + player().getName() + " c:" + argsString() + " (ლ‸－)");
 	}
 
 }

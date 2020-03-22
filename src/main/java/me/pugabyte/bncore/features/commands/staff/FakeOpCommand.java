@@ -1,25 +1,21 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import org.bukkit.entity.Player;
 
-// Copy and rename this file as a template for a new command
+@Permission("group.staff")
+public class FakeOpCommand extends CustomCommand {
 
-@Permission("permission")
-public class _TemplateCommand extends CustomCommand {
-
-	public _TemplateCommand(CommandEvent event) {
+	public FakeOpCommand(CommandEvent event) {
 		super(event);
 	}
 
-	@Path
-	void help() {
-	}
-
-	@Path("run")
-	void run() {
+	@Path("<player>")
+	void slap(Player player) {
+		player.sendMessage("Opped " + player.getName());
 	}
 
 }

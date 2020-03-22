@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.listeners;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -25,10 +24,6 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 public class Sleep implements Listener {
 	private final String PREFIX = StringUtils.getPrefix("Sleep");
 	public boolean handling = false;
-
-	public Sleep() {
-		BNCore.registerListener(this);
-	}
 
 	public void calculate(World world) {
 		if (!(world.getTime() >= 12541 && world.getTime() <= 23458))

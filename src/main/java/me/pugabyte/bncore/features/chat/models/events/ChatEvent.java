@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.chat.models.events;
 
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.bncore.features.chat.models.Channel;
 import me.pugabyte.bncore.features.chat.models.Chatter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -32,9 +31,5 @@ public abstract class ChatEvent extends Event implements Cancellable {
 	}
 
 	abstract Chatter getChatter();
-
-	abstract Channel getChannel();
-
-	abstract String getMessage();
 
 }
