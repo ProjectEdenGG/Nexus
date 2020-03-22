@@ -46,7 +46,7 @@ public class GeoIP extends PlayerOwnedObject {
 	private Connection connection;
 
 	@Data
-	private static class Location {
+	public static class Location {
 		@SerializedName("geoname_id")
 		private int geonameId;
 		private String capital;
@@ -63,7 +63,7 @@ public class GeoIP extends PlayerOwnedObject {
 		private boolean isEu;
 
 		@Data
-		private static class Language {
+		public static class Language {
 			private String code;
 			private String name;
 			@SerializedName("native")
@@ -72,7 +72,7 @@ public class GeoIP extends PlayerOwnedObject {
 	}
 
 	@Data
-	private static class Timezone {
+	public static class Timezone {
 		private String id;
 		@SerializedName("current_time")
 		private String currentTime;
@@ -84,7 +84,7 @@ public class GeoIP extends PlayerOwnedObject {
 	}
 
 	@Data
-	private static class Currency {
+	public static class Currency {
 		private String code;
 		private String name;
 		private String plural;
@@ -94,13 +94,13 @@ public class GeoIP extends PlayerOwnedObject {
 	}
 
 	@Data
-	private static class Connection {
+	public static class Connection {
 		private String asn;
 		private String isp;
 	}
 
 	@Data
-	private static class Security {
+	public static class Security {
 		@SerializedName("is_proxy")
 		private boolean isProxy;
 		@SerializedName("proxy_type")
