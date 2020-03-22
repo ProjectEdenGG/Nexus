@@ -26,6 +26,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.text.DecimalFormat;
 
@@ -42,6 +43,16 @@ public class MatchListener implements Listener {
 				if (minigamer.isInMatchRegion("waterdamage") && Utils.isInWater(minigamer.getPlayer()))
 					minigamer.getPlayer().damage(1.25);
 		}));
+	}
+
+	@EventHandler
+	public void onTeleport(PlayerTeleportEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (minigamer.getMatch() == null) return;
+		if (minigamer.canTeleport()) return;
+
+		event.setCancelled(true);
+		minigamer.tell("You cannot teleport while in a game!");
 	}
 
 	@EventHandler

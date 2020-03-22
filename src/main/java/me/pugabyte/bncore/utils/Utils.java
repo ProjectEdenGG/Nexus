@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
@@ -87,6 +88,18 @@ public class Utils {
 	public static List<String> getOnlineUuids() {
 		return Bukkit.getOnlinePlayers().stream()
 				.map(p -> p.getUniqueId().toString())
+				.collect(Collectors.toList());
+	}
+
+	public static List<Player> getPlayersInWorld(World world) {
+		return Bukkit.getOnlinePlayers().stream()
+				.filter(_player -> _player.getWorld() == world)
+				.collect(Collectors.toList());
+	}
+
+	public static List<Player> getPlayersNear(Location location, int distance) {
+		return getPlayersInWorld(location.getWorld()).stream()
+				.filter(player -> player.getLocation().distance(location) <= distance)
 				.collect(Collectors.toList());
 	}
 
