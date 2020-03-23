@@ -111,7 +111,7 @@ public class JoinQuit implements Listener {
 	public void onJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
-			Koda.say("&lWelcome to Bear Nation, " + player.getName() + "!");
+			Koda.reply("&lWelcome to Bear Nation, " + player.getName() + "!");
 		}
 
 		if (!Utils.isVanished(player))
