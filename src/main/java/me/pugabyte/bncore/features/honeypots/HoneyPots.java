@@ -10,6 +10,7 @@ import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,12 +21,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import java.util.Set;
 
 public class HoneyPots implements Listener {
+	SettingService service = new SettingService();
 
 	public HoneyPots() {
 		BNCore.registerListener(this);
 	}
-
-	SettingService service = new SettingService();
 
 	public String getHP(ProtectedRegion region) {
 		return region.getId().replace("hp_", "");
@@ -33,21 +33,22 @@ public class HoneyPots implements Listener {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		//if (event.getPlayer().hasPermission("group.staff")) return;
+		//if (event.getPlayer().hasPermission("honeypot.bypass")) return;
 		incrementPlayer(event.getPlayer(), event.getBlock().getLocation());
 	}
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		//if (event.getPlayer().hasPermission("group.staff")) return;
+		//if (event.getPlayer().hasPermission("honeypot.bypass")) return;
 		incrementPlayer(event.getPlayer(), event.getBlock().getLocation());
 	}
 
 	@EventHandler
 	public void onEntityKill(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player)) return;
+		if (!(event.getEntity() instanceof Animals)) return;
 		Player player = (Player) event.getDamager();
-		//if (player.hasPermission("group.staff")) return;
+		//if (player.hasPermission("honeypot.bypass")) return;
 		incrementPlayer(player, event.getEntity().getLocation());
 	}
 

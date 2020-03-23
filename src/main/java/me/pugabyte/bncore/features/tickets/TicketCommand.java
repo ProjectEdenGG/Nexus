@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.tickets;
 
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
@@ -8,7 +9,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Jingles;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -50,7 +50,7 @@ public class TicketCommand extends CustomCommand {
 		send(" &eYour ticket (&c#" + ticket.getId() + "&e): &3" + ticket.getDescription());
 
 		// TODO: #staff-alerts if no staff are on
-		SkriptFunctions.log("[Tickets] " + player().getName() + " (" + ticket.getId() + "): " + ticket.getDescription());
+		Discord.log("[Tickets] " + player().getName() + " (" + ticket.getId() + "): " + ticket.getDescription());
 
 		Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission(Tickets.PERMISSION_MOD)).forEach(staff -> {
 			Jingles.ping(staff);

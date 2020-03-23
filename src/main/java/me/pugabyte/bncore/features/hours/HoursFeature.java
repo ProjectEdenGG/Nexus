@@ -2,10 +2,10 @@ package me.pugabyte.bncore.features.hours;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Jingles;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -47,7 +47,7 @@ public class HoursFeature {
 							Tasks.sync(() -> {
 								PermissionsEx.getUser(player).removeGroup("Guest");
 								PermissionsEx.getUser(player).addGroup("Member");
-								SkriptFunctions.koda("Congrats on Member rank, " + player.getName(), "md");
+								Koda.say("Congrats on Member rank, " + player.getName());
 								Jingles.rankup(player);
 								player.sendMessage("");
 								player.sendMessage("");

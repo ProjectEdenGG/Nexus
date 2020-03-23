@@ -6,6 +6,7 @@ import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chatold.herochat.HerochatAPI;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.StringUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -90,7 +91,7 @@ public class ShowEnchantsCommand implements CommandExecutor {
 				int durability = item.getDurability();
 				String prefix = channel.getNick();
 				ChatColor color = channel.getColor();
-				String format = color + "[" + prefix + "] " + SkriptFunctions.getFullChatFormat(player);
+				String format = color + "[" + prefix + "]" + new Nerd(player).getChatFormat();
 
 				ComponentBuilder herochat = new ComponentBuilder(format + color + ChatColor.BOLD + " > ").append(message);
 				ComponentBuilder json = new ComponentBuilder("{id:\"minecraft:" + itemId + "\",Count:1,Damage:" + durability + ",tag:{ench:[" + enchants + "],display:{Lore:[" + lore + "]}}}");

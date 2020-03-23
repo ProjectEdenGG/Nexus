@@ -7,10 +7,10 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
+import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.mcmmo.McMMOPrestige;
 import me.pugabyte.bncore.models.mcmmo.McMMOService;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
@@ -201,7 +201,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 	public void prestigeAll(Player player) {
 		// TODO Koda Broadcasts
-		SkriptFunctions.koda(player.getName() + " has reset all of their McMMO skills!", "md");
+		Koda.say(player.getName() + " has reset all of their McMMO skills!");
 
 		Utils.runConsoleCommand("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
 		Utils.runConsoleCommand("eco give " + player.getName() + " 20000");
@@ -228,8 +228,8 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 		// TODO Koda Broadcast
 		if (broadcast)
-			SkriptFunctions.koda(player.getName() + " has reset their " + skill.name().toLowerCase() + " skill for the " +
-					StringUtils.getNumberSuffix(mcMMOPrestige.getPrestige(skill.name())) + " time!", "md");
+			Koda.say(player.getName() + " has reset their " + skill.name().toLowerCase() + " skill for the " +
+					StringUtils.getNumberSuffix(mcMMOPrestige.getPrestige(skill.name())) + " time!");
 	}
 
 	@Override
