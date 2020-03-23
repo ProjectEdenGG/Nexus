@@ -18,6 +18,10 @@ public class Chat {
 		addChannels();
 	}
 
+	public static void broadcast(String message) {
+		ChatManager.getChannel("Global").ifPresent(publicChannel -> publicChannel.broadcast(message));
+	}
+
 	private void addChannels() {
 		PublicChannel global = PublicChannel.builder()
 				.name("Global")

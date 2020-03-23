@@ -27,6 +27,10 @@ public class PermCheckCommand extends CustomCommand {
 			send("&a✔ " + player.getName() + " has permission " + permission);
 		else
 			send("&c✗ " + player.getName() + " does not have permission " + permission);
+		if (player.isPermissionSet(permission))
+			send("&a✔ " + player.getName() + " has set permission " + permission);
+		else
+			send("&c✗ " + player.getName() + " does not have set permission " + permission);
 	}
 
 }

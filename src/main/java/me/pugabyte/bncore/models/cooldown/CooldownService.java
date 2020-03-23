@@ -3,13 +3,10 @@ package me.pugabyte.bncore.models.cooldown;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.MySQLService;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
 
 public class CooldownService extends MySQLService {
 
@@ -30,11 +27,13 @@ public class CooldownService extends MySQLService {
 		} else
 			cooldown = new Cooldown(id, type, ticks);
 
+	/*
 		if (!canRun && id.length() == 36) {
 			OfflinePlayer player = Utils.getPlayer(UUID.fromString(id));
 			if (player.isOnline() && player.getPlayer().hasPermission("cooldown.bypass." + type))
 				canRun = true;
 		}
+	*/
 
 		if (canRun) {
 			cooldown.update();

@@ -23,12 +23,12 @@ public class Translator implements Listener {
 
 	public Translator() {
 		BNCore.registerListener(this);
-		BNCore.getInstance().addConfigDefault("yandex.apiKey", "abcdef");
+		BNCore.getInstance().addConfigDefault("tokens.yandex", "abcdef");
 	}
 
 	public HashMap<UUID, ArrayList<UUID>> map = new HashMap<>();
 
-	public String apiKey = BNCore.getInstance().getConfig().getConfigurationSection("yandex").getString("apiKey");
+	public String apiKey = BNCore.getInstance().getConfig().getString("tokens.yandex");
 	public TranslatorHandler handler = new TranslatorHandler(apiKey);
 
 	String PREFIX = StringUtils.getPrefix("Translator");

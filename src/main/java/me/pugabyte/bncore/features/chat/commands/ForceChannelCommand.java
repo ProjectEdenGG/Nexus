@@ -18,7 +18,7 @@ public class ForceChannelCommand extends CustomCommand {
 
 	@Path("<player> <channel>")
 	void forceChannel(Player player, @Arg(tabCompleter = Channel.class) String channel) {
-		runCommand(player, "/ch " + channel);
+		runCommand(player, "ch " + channel);
 	}
 
 }

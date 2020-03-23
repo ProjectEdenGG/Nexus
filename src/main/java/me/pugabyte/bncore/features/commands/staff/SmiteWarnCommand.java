@@ -21,7 +21,7 @@ public class SmiteWarnCommand extends CustomCommand {
 			error("Target player is not in minigames");
 
 		player.getWorld().strikeLightningEffect(player.getLocation());
-		runCommand("/warn " + player.getName() + " Please obey the rules of our minigames.");
+		runCommand("warn " + player.getName() + " Please obey the rules of our minigames.");
 	}
 
 

@@ -12,7 +12,7 @@ public class WhosShitIsThisCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommand("/pr l a:drop r:10 t:10000d");
+		runCommand("pr l a:drop r:10 t:10000d");
 	}
 
 }
