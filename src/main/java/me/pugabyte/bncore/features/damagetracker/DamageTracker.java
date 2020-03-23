@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.damagetracker;
 
 import me.pugabyte.bncore.features.damagetracker.models.DamageEvent;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.entity.LivingEntity;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,7 @@ public class DamageTracker {
 
 	public DamageTracker() {
 		new DamageTrackerListener();
-		Tasks.repeat((60 * 20), (60 * 20), this::janitor);
+		Tasks.repeat(Time.MINUTE, Time.MINUTE, this::janitor);
 	}
 
 	public static void log(DamageEvent event) {

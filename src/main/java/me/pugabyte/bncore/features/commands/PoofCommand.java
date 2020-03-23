@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.poof.Poof;
 import me.pugabyte.bncore.models.poof.PoofService;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
@@ -21,7 +22,7 @@ public class PoofCommand extends CustomCommand {
 	PoofService service = new PoofService();
 
 	static {
-		Tasks.repeatAsync(100, 60 * 20, () -> {
+		Tasks.repeatAsync(Time.SECOND.x(5), Time.MINUTE, () -> {
 			PoofService poofService = new PoofService();
 			poofService.getActivePoofs().forEach((poof -> {
 				if (poof.getTimeSent().isBefore(LocalDateTime.now().minusMinutes(1))) {

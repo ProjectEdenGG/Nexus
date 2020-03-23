@@ -3,8 +3,10 @@ package me.pugabyte.bncore.features.commands;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -21,7 +23,7 @@ public class BoopCommand extends CustomCommand {
 	}
 
 	@Path("<player> [flag]")
-	@Cooldown(value = 5 * 20, bypass = "group.admin")
+	@Cooldown(value = @Part(value = Time.SECOND, x = 5), bypass = "group.admin")
 	void boop(Player playerArg, String flag) {
 		boolean anon = false;
 		if (flag != null)

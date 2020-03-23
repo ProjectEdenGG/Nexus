@@ -9,6 +9,7 @@ import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Jingles;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -31,7 +32,7 @@ public class HoursFeature {
 	}
 
 	private void scheduler() {
-		Tasks.repeatAsync(10, INTERVAL * 20, () -> {
+		Tasks.repeatAsync(10, Time.SECOND.x(INTERVAL), () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				try {
 					if (AFK.get(player).isAfk()) continue;

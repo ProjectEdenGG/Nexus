@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.joinquit;
+package me.pugabyte.bncore.features.store.perks.joinquit;
 
 import lombok.Getter;
 import lombok.SneakyThrows;

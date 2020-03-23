@@ -17,6 +17,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.matchdata.PixelPaintersMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -95,7 +96,7 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersArena arena = match.getArena();
 		matchData.setLobbyDesign(0);
 		countDesigns(match);
-		int taskId = match.getTasks().repeat(0, 2 * 20, () -> {
+		int taskId = match.getTasks().repeat(0, Time.SECOND.x(2), () -> {
 			if (match.isEnded() || match.isStarted())
 				return;
 

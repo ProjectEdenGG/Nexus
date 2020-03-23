@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -37,7 +38,7 @@ public class AntiCampingTask {
 	private Map<Minigamer, Location> recentLocations = new HashMap<>();
 
 	public void start() {
-		taskId = match.getTasks().repeat(20, 20, () -> {
+		taskId = match.getTasks().repeat(Time.SECOND, Time.SECOND, () -> {
 			for (Minigamer minigamer : match.getAlivePlayers()) {
 				if (match.isEnded()) {
 					stop();

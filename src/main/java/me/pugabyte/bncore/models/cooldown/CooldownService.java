@@ -3,6 +3,7 @@ package me.pugabyte.bncore.models.cooldown;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.MySQLService;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ import java.time.temporal.ChronoUnit;
 public class CooldownService extends MySQLService {
 
 	static {
-		Tasks.repeatAsync(10, 5 * 20, () -> database.table("cooldown").where("time <= DATE_ADD(NOW(), INTERVAL -(ticks / 20) SECOND)").delete());
+		Tasks.repeatAsync(10, Time.SECOND.x(5), () -> database.table("cooldown").where("time <= DATE_ADD(NOW(), INTERVAL -(ticks / 20) SECOND)").delete());
 	}
 
 	public boolean check(Player player, String type, double ticks) {

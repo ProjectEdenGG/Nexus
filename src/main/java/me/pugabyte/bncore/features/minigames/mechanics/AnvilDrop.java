@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -82,7 +83,7 @@ public class AnvilDrop extends TeamlessMechanic {
 	public void dropAnvils(Match match) {
 		AnvilDropArena arena = match.getArena();
 		List<Location> dropLocs = getLocations(WEUtils.getBlocks(arena.getRegion("dropzone")));
-		match.getTasks().repeat(3 * 20, 5, () -> {
+		match.getTasks().repeat(Time.SECOND.x(3), 5, () -> {
 			Location dropLoc = Utils.getRandomElement(dropLocs);
 			dropLoc.getBlock().setType(Material.ANVIL);
 		});

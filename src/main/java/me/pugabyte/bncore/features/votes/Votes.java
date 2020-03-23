@@ -6,6 +6,7 @@ import me.pugabyte.bncore.models.vote.Vote;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.VoteSite;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
@@ -26,7 +27,7 @@ public class Votes implements Listener {
 	}
 
 	private void scheduler() {
-		Tasks.repeatAsync(100, 10 * 20, () -> {
+		Tasks.repeatAsync(Time.SECOND.x(5), Time.SECOND.x(10), () -> {
 			VoteService service = new VoteService();
 			service.getActiveVotes().forEach(vote -> {
 				LocalDateTime expiration = vote.getTimestamp().plusHours(vote.getSite().getExpirationHours());

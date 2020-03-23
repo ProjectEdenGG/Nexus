@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.HoliSpleggMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -58,7 +59,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 		HoliSpleggMatchData matchData = event.getMatch().getMatchData();
 		matchData.setArmorStand(summonArmorStand());
 
-		event.getMatch().getTasks().repeat(20, 20, () -> {
+		event.getMatch().getTasks().repeat(Time.SECOND, Time.SECOND, () -> {
 			matchData.setTime(matchData.getTime() + 1);
 			if (Utils.isInWater(matchData.getArmorStand()))
 				event.getMatch().end();

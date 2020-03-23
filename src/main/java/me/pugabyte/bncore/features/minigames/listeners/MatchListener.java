@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
@@ -38,7 +39,7 @@ public class MatchListener implements Listener {
 
 	private void registerWaterDamageTask() {
 		// TODO: Move to a task triggered by entering the region
-		Tasks.repeat(20, 20, () ->
+		Tasks.repeat(Time.SECOND, Time.SECOND, () ->
 			Minigames.getActiveMinigamers().forEach(minigamer -> {
 				if (minigamer.isInMatchRegion("waterdamage") && Utils.isInWater(minigamer.getPlayer()))
 					minigamer.getPlayer().damage(1.25);

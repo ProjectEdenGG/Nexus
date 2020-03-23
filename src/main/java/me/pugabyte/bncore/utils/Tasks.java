@@ -12,8 +12,24 @@ import java.util.function.Consumer;
 
 public class Tasks {
 
+	public static int wait(Time delay, Runnable runnable) {
+		return wait(delay.get(), runnable);
+	}
+
 	public static int wait(long delay, Runnable runnable) {
 		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay).getTaskId();
+	}
+
+	public static int repeat(Time startDelay, long interval, Runnable runnable) {
+		return repeat(startDelay.get(), interval, runnable);
+	}
+
+	public static int repeat(long startDelay, Time interval, Runnable runnable) {
+		return repeat(startDelay, interval.get(), runnable);
+	}
+
+	public static int repeat(Time startDelay, Time interval, Runnable runnable) {
+		return repeat(startDelay.get(), interval.get(), runnable);
 	}
 
 	public static int repeat(long startDelay, long interval, Runnable runnable) {
@@ -24,8 +40,24 @@ public class Tasks {
 		return BNCore.getInstance().getServer().getScheduler().runTask(BNCore.getInstance(), runnable).getTaskId();
 	}
 
+	public static int waitAsync(Time delay, Runnable runnable) {
+		return waitAsync(delay.get(), runnable);
+	}
+
 	public static int waitAsync(long delay, Runnable runnable) {
 		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), () -> async(runnable), delay).getTaskId();
+	}
+
+	public static int repeatAsync(long startDelay, Time interval, Runnable runnable) {
+		return repeatAsync(startDelay, interval.get(), runnable);
+	}
+
+	public static int repeatAsync(Time startDelay, long interval, Runnable runnable) {
+		return repeatAsync(startDelay.get(), interval, runnable);
+	}
+
+	public static int repeatAsync(Time startDelay, Time interval, Runnable runnable) {
+		return repeatAsync(startDelay.get(), interval.get(), runnable);
 	}
 
 	public static int repeatAsync(long startDelay, long interval, Runnable runnable) {

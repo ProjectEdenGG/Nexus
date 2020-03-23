@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.store.perks;
+package me.pugabyte.bncore.features.store.perks.fireworks;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;

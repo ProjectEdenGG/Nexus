@@ -3,12 +3,14 @@ package me.pugabyte.bncore.features.tickets;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.Jingles;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 
@@ -16,7 +18,7 @@ import java.util.Arrays;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
-@Cooldown(60 * 20)
+@Cooldown(@Part(Time.MINUTE))
 @Aliases({"helpop", "report"})
 public class TicketCommand extends CustomCommand {
 	private TicketService service = new TicketService();
