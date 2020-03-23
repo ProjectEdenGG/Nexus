@@ -107,7 +107,7 @@ public enum VPSMenu {
 		}};
 	};
 
-	public abstract Map<Integer, VPSPage> getPages();
+	public abstract List<VPSPage> getPages();
 
 	public VPSPage getPage(int page) {
 		return getPages().get(page - 1);

@@ -14,12 +14,12 @@ public class CModifyCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		if (arg(2).equalsIgnoreCase("or")) {
+		if ("or".equalsIgnoreCase(arg(2))) {
 			args().remove(1);
 			fallback();
 		}
 		for (int i = 0; i < args().size(); i++) {
-			if (args().get(i).equalsIgnoreCase("add")) {
+			if ("add".equalsIgnoreCase(args().get(i))) {
 				args().remove(i);
 			}
 		}
