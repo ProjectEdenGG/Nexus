@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.store.annotations.Id;
 import me.pugabyte.bncore.features.store.annotations.Permissions.Permission;
 import me.pugabyte.bncore.utils.StringUtils;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -351,28 +352,29 @@ public enum Package {
 	DISGUISES_NEW_GENERATION_MONSTERS;
 
 	@SneakyThrows
-	public int getId() {
-		return getClass().getDeclaredField(name()).getAnnotation(Id.class).value();
+	public Field getField() {
+		return getClass().getDeclaredField(name());
 	}
 
-	@SneakyThrows
+	public int getId() {
+		return getField().getAnnotation(Id.class).value();
+	}
+
 	public List<String> getPermissions() {
-		return Arrays.stream(getClass().getDeclaredField(name()).getAnnotationsByType(Permission.class))
+		return Arrays.stream(getField().getAnnotationsByType(Permission.class))
 				.map(Permission::value)
 				.collect(Collectors.toList());
 	}
 
-	@SneakyThrows
 	public List<String> getCommands() {
-		return Arrays.stream(getClass().getDeclaredField(name()).getAnnotationsByType(Command.class))
+		return Arrays.stream(getField().getAnnotationsByType(Command.class))
 				.map(Command::value)
 				.map(StringUtils::noSlash)
 				.collect(Collectors.toList());
 	}
 
-	@SneakyThrows
 	public int getExpirationDays() {
-		return Optional.of(getClass().getDeclaredField(name()).getAnnotation(ExpirationDays.class)).map(ExpirationDays::value).orElse(-1);
+		return Optional.of(getField().getAnnotation(ExpirationDays.class)).map(ExpirationDays::value).orElse(-1);
 	}
 
 	public static Package getPackage(int id) {

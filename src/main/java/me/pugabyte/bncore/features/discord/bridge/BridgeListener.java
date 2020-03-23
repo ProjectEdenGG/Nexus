@@ -63,7 +63,7 @@ public class BridgeListener extends ListenerAdapter {
 
 			Utils.callEvent(new DiscordMessageEvent(content, channel.getPermission()));
 
-			builder.next(" (Java)");
+			builder.next(" &o(Java)");
 
 			for (Player player : Bukkit.getOnlinePlayers())
 				if (player.hasPermission(channel.getPermission()))

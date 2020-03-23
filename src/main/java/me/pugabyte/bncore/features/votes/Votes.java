@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.votes.vps.VPS;
 import me.pugabyte.bncore.models.vote.Vote;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.VoteSite;
@@ -24,6 +25,7 @@ public class Votes implements Listener {
 	public Votes() {
 		BNCore.registerListener(this);
 		scheduler();
+		new VPS();
 	}
 
 	private void scheduler() {
