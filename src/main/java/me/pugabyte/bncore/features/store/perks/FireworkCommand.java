@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.store.perks;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -7,26 +7,18 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.FireworkLauncher;
-import me.pugabyte.bncore.utils.Tasks;
 
-@Aliases("multifw")
+@Aliases("fw")
 @Permission("firework.launch")
-@Cooldown(value = 10 * 20, bypass = "group.staff")
-public class MultiFireworkCommand extends CustomCommand {
+@Cooldown(value = 20, bypass = "group.staff")
+public class FireworkCommand extends CustomCommand {
 
-	public MultiFireworkCommand(CommandEvent event) {
+	public FireworkCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path
 	void firework() {
-		Tasks.Countdown.builder()
-				.duration(20 * 20)
-				.onSecond(i -> {
-					if (i % 2 == 0)
-						FireworkLauncher.random(player().getLocation()).launch();
-				})
-				.doZero(true)
-				.start();
+		FireworkLauncher.random(player().getLocation()).launch();
 	}
 }
