@@ -129,6 +129,10 @@ public class StringUtils {
 		return result.toString();
 	}
 
+	public static String noSlash(String command) {
+		return right(command, command.length() - 1);
+	}
+
 	public static String right(String string, int number) {
 		return string.substring(Math.max(string.length() - number, 0));
 	}
@@ -162,6 +166,21 @@ public class StringUtils {
 
 	public static String replaceLast(String text, String regex, String replacement) {
 		return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
+	}
+
+	public static String uuidFormat(String uuid) {
+		uuid = uuidUnformat(uuid);
+		String formatted = "";
+		formatted += uuid.substring(0, 8) + "-";
+		formatted += uuid.substring(8, 12) + "-";
+		formatted += uuid.substring(12, 16) + "-";
+		formatted += uuid.substring(16, 20) + "-";
+		formatted += uuid.substring(20, 32);
+		return formatted;
+	}
+
+	private static String uuidUnformat(String uuid) {
+		return uuid.replaceAll("-", "");
 	}
 
 	public enum ProgressBarStyle {

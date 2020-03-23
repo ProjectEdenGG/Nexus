@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.right;
+import static me.pugabyte.bncore.utils.StringUtils.noSlash;
 
 public class CommandOverrideListener implements Listener {
 
@@ -22,7 +22,7 @@ public class CommandOverrideListener implements Listener {
 		if (args.size() == 0) return;
 		String argsString = event.getMessage().replace(args.get(0) + " ", "");
 
-		Consumer<String> redirect = command -> Bukkit.dispatchCommand(player, right(command, command.length() - 1));
+		Consumer<String> redirect = command -> Bukkit.dispatchCommand(player, noSlash(command));
 		Consumer<String> send = message -> player.sendMessage(colorize(message));
 
 		switch (args.get(0)) {
