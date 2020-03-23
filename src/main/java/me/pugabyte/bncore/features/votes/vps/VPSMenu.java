@@ -198,14 +198,13 @@ public enum VPSMenu {
 	}
 
 	@Data
-	@Builder
 	public static class VPSPage {
 		@Default
 		private int rows = 6;
 		private Map<Integer, VPSSlot> items;
 
 		@Builder
-		public VPSPage(int rows, Map<Integer, VPSSlotBuilder> items) {
+		public VPSPage(int rows, HashMap<Integer, VPSSlotBuilder> items) {
 			this.rows = rows;
 			this.items = items.entrySet().stream().collect(Collectors.toMap(Entry::getKey, e -> e.getValue().build()));
 		}
