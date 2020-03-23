@@ -3,11 +3,13 @@ package me.pugabyte.bncore.utils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -120,6 +122,11 @@ public class ItemStackBuilder {
 
 	public ItemStackBuilder itemFlags(ItemFlag... flags) {
 		itemMeta.addItemFlags(flags);
+		return this;
+	}
+
+	public ItemStackBuilder spawnEgg(EntityType entityType) {
+		((SpawnEggMeta) itemMeta).setSpawnedType(entityType);
 		return this;
 	}
 
