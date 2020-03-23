@@ -3,11 +3,11 @@ package me.pugabyte.bncore.features.restoreinventory;
 import com.onarandombox.multiverseinventories.share.Sharables;
 import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfiguration;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.restoreinventory.models.RestoreInventoryPlayer;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PreConfiguredException;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -105,7 +105,7 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 					}
 				});
 
-				SkriptFunctions.log(PREFIX + restorer.getName() + " restored " + owner.getName() + "'s " + args[1].toLowerCase()
+				Discord.log(PREFIX + restorer.getName() + " restored " + owner.getName() + "'s " + args[1].toLowerCase()
 						+ " " + args[2].toLowerCase() + " from <https://paste.bnn.gg/" + code + ".json>");
 			} else {
 				Optional<? extends Player> match = Bukkit.getOnlinePlayers().stream()

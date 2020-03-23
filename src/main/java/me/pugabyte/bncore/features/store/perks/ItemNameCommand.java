@@ -9,6 +9,8 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
 @Aliases("nameitem")
 @Permission("itemname.use")
 public class ItemNameCommand extends CustomCommand {
@@ -30,7 +32,7 @@ public class ItemNameCommand extends CustomCommand {
 	private void rename(String name) {
 		ItemStack itemInMainHand = player().getInventory().getItemInMainHand();
 		ItemMeta itemMeta = itemInMainHand.getItemMeta();
-		itemMeta.setDisplayName(name);
+		itemMeta.setDisplayName(colorize("&f" + name));
 		itemInMainHand.setItemMeta(itemMeta);
 	}
 

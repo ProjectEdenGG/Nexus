@@ -1,16 +1,15 @@
 package me.pugabyte.bncore.features.tickets;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class Tickets {
 	public static final String PREFIX = StringUtils.getPrefix("Tickets");
@@ -45,7 +44,7 @@ public class Tickets {
 	}
 
 	public static void tellOtherStaff(Player player, String message) {
-		SkriptFunctions.log(stripColor(message));
+		Discord.log(message);
 
 		Bukkit.getOnlinePlayers().stream()
 				.filter(staff -> !staff.getUniqueId().equals(player.getUniqueId()))
