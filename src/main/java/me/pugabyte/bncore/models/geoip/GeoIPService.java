@@ -17,10 +17,10 @@ import java.util.UUID;
 
 public class GeoIPService extends MongoService {
 	private final static Map<UUID, GeoIP> cache = new HashMap<>();
-	private final String KEY = BNCore.getInstance().getConfig().getString("ipstack.apiKey");
+	private final String KEY = BNCore.getInstance().getConfig().getString("tokens.ipstack");
 
 	static {
-		BNCore.getInstance().addConfigDefault("ipstack.apiKey", "abcdef");
+		BNCore.getInstance().addConfigDefault("tokens.ipstack", "abcdef");
 	}
 
 	public void clearCache() {

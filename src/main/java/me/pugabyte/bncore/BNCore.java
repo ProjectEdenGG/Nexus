@@ -17,6 +17,7 @@ import me.pugabyte.bncore.features.homes.HomesFeature;
 import me.pugabyte.bncore.features.honeypots.HoneyPots;
 import me.pugabyte.bncore.features.hours.HoursFeature;
 import me.pugabyte.bncore.features.inviterewards.InviteRewards;
+import me.pugabyte.bncore.features.joinquit.JoinQuit;
 import me.pugabyte.bncore.features.listeners.Listeners;
 import me.pugabyte.bncore.features.listeners.Sleep;
 import me.pugabyte.bncore.features.mcmmo.McMMO;
@@ -144,6 +145,7 @@ public class BNCore extends JavaPlugin {
 	public static HoneyPots honeyPots;
 	public static HoursFeature hoursFeature;
 	public static InviteRewards inviteRewards;
+	public static JoinQuit joinQuit;
 	public static Listeners listeners;
 	public static McMMO mcmmo;
 	public static ModelListeners modelListeners;
@@ -178,6 +180,7 @@ public class BNCore extends JavaPlugin {
 		//honeyPots = new HoneyPots();
 		hoursFeature = new HoursFeature();
 		inviteRewards = new InviteRewards();
+		joinQuit = new JoinQuit();
 		listeners = new Listeners();
 		mcmmo = new McMMO();
 		modelListeners = new ModelListeners();
