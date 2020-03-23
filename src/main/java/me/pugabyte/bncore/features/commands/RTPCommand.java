@@ -4,11 +4,13 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.lwc.LWCProtection;
 import me.pugabyte.bncore.models.lwc.LWCProtectionService;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -18,7 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Cooldown(30 * 20)
+@Cooldown(@Part(value = Time.SECOND, x = 30))
 @Aliases({"randomtp", "wild"})
 public class RTPCommand extends CustomCommand {
 	LWCProtectionService service = new LWCProtectionService();

@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -43,9 +43,11 @@ public class CommandOverrideListener implements Listener {
 				event.setCancelled(true);
 				send.accept("no");
 				break;
-
-
-
+			case "/cadmin":
+			case "/lwc:cadmin":
+				event.setCancelled(true);
+				redirect.accept("/lwc admin " + argsString);
+				break;
 		}
 	}
 

@@ -14,6 +14,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -57,7 +58,7 @@ public abstract class Mechanic implements Listener {
 
 	public void onInitialize(MatchInitializeEvent event) {
 		Match match = event.getMatch();
-		match.getTasks().repeat(1, 20, () -> {
+		match.getTasks().repeat(1, Time.SECOND, () -> {
 			if (match.getScoreboard() != null)
 				match.getScoreboard().update();
 

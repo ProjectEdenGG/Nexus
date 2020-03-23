@@ -19,6 +19,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -155,7 +156,7 @@ public class Archery extends TeamlessMechanic {
 		saveTargetSchems(match);
 		Map<String, Schematic> targetSchems = matchData.getTargetSchematics();
 
-		match.getTasks().repeat(5 * 20, 7 * 20, () -> {
+		match.getTasks().repeat(Time.SECOND.x(5), Time.SECOND.x(7), () -> {
 			AtomicInteger wait = new AtomicInteger(0);
 			AtomicInteger count = new AtomicInteger(0);
 

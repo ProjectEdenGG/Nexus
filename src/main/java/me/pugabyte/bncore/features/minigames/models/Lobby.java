@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -68,7 +69,7 @@ public class Lobby implements ConfigurationSerializable {
 		}
 
 		private void start() {
-			taskId = match.getTasks().repeat(0, 20, () -> {
+			taskId = match.getTasks().repeat(0, Time.SECOND, () -> {
 				if (match.isStarted()) {
 					stop();
 					return;

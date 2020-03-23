@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 
 @Permission("group.seniorstaff")
@@ -19,7 +20,7 @@ public class QueueRestartCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeat(100, 15 * 20, () -> {
+		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(15), () -> {
 			if (restart && AFK.getActivePlayers() == 0) {
 				BNCore.log("Restart is queued");
 				Tasks.wait(30 * 20, () -> {

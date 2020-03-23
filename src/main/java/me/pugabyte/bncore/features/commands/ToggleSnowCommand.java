@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -55,7 +56,7 @@ public class ToggleSnowCommand extends CustomCommand {
 	}
 
 	private static void snowEffectTask() {
-		Tasks.repeat(0, 2 * 20, () -> {
+		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			new SettingService().getFromType(SETTING_TYPE).stream()
 					.map(setting -> UUID.fromString(setting.getId()))
 					.filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline())

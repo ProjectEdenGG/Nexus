@@ -9,6 +9,7 @@ import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,7 +31,7 @@ public class DailyRewardsFeature {
 	}
 
 	private void scheduler() {
-		Tasks.repeatAsync(20, 5 * 20, () -> {
+		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(5), () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				try {
 					if (((Hours) new HoursService().get(player)).getDaily() < (15 * 60)) continue;

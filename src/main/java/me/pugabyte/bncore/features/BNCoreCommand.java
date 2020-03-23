@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
@@ -18,6 +19,7 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -139,7 +141,10 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("cooldown")
-	@Cooldown(5 * 20)
+	@Cooldown({
+			@Part(value = Time.SECOND, x = 5),
+			@Part(value = Time.TICK, x = 5)
+	})
 	void cooldown() {
 		send("Hello!");
 	}

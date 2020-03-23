@@ -15,6 +15,7 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.MonsterMazeMatchDa
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.features.minigames.utils.PowerUpUtils;
 import me.pugabyte.bncore.framework.exceptions.BNException;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -94,11 +95,11 @@ public class MonsterMaze extends TeamlessMechanic {
 
 		match.getMinigamers().forEach(this::preventJump);
 
-		match.getTasks().wait(5 * 20, () -> {
+		match.getTasks().wait(Time.SECOND.x(5), () -> {
 			for (LivingEntity monster : matchData.getMonsters())
 				updatePath(monster, goals);
 
-			match.getTasks().repeat(7 * 20, 30, () -> {
+			match.getTasks().repeat(Time.SECOND.x(7), 30, () -> {
 				for (LivingEntity monster : matchData.getMonsters()) {
 					Insentient insentient = pathApi.getPathfinderGoalEntity((Creature) monster);
 					if (insentient.getNavigation().isDoneNavigating())

@@ -23,6 +23,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -344,7 +345,7 @@ public class Match {
 		void start() {
 			if (time > 0) {
 				match.getTasks().wait(1, () -> match.broadcast("&e" + (time + 1) + " &7seconds left..."));
-				taskId = match.getTasks().repeat(0, 20, () -> {
+				taskId = match.getTasks().repeat(0, Time.SECOND, () -> {
 					if (--time > 0) {
 						if (broadcasts.contains(time)) {
 							match.broadcast("&e" + time + " &7seconds left...");
@@ -356,7 +357,7 @@ public class Match {
 					}
 				});
 			} else {
-				taskId = match.getTasks().repeat(0, 20, () -> {
+				taskId = match.getTasks().repeat(0, Time.SECOND, () -> {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, ++time);
 					Utils.callEvent(event);
 				});
@@ -383,10 +384,26 @@ public class Match {
 			taskIds.add(taskId);
 		}
 
+		public int wait(Time delay, Runnable runnable) {
+			return wait(delay.get(), runnable);
+		}
+
 		public int wait(long delay, Runnable runnable) {
 			int taskId = Tasks.wait(delay, runnable);
 			taskIds.add(taskId);
 			return taskId;
+		}
+
+		public int repeat(Time startDelay, long interval, Runnable runnable) {
+			return repeat(startDelay.get(), interval, runnable);
+		}
+
+		public int repeat(long startDelay, Time interval, Runnable runnable) {
+			return repeat(startDelay, interval.get(), runnable);
+		}
+
+		public int repeat(Time startDelay, Time interval, Runnable runnable) {
+			return repeat(startDelay.get(), interval.get(), runnable);
 		}
 
 		public int repeat(long startDelay, long interval, Runnable runnable) {

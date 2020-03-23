@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.World;
 import org.bukkit.entity.Bat;
 
@@ -31,7 +32,7 @@ public class WhoDaresSummonMeCommand extends CustomCommand {
 		for (int i = 0; i < 10; i++) {
 			bats.add(world.spawn(player().getLocation(), Bat.class));
 		}
-		Tasks.wait(5 * 20, () -> bats.forEach(Bat::remove));
+		Tasks.wait(Time.SECOND.x(5), () -> bats.forEach(Bat::remove));
 	}
 
 

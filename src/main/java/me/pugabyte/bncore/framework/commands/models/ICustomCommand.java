@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Fallback;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -294,8 +295,12 @@ public interface ICustomCommand {
 					if (command.getEvent().getPlayer().hasPermission(cooldown.bypass()))
 						bypass = true;
 
-			if (!bypass)
-				new CooldownService().check(command.player(), "command:" + id, cooldown.value());
+			if (!bypass) {
+				int ticks = 0;
+				for (Part part : cooldown.value())
+					ticks += part.value().get() * part.x();
+				new CooldownService().check(command.player(), "command:" + id, ticks);
+			}
 		}
 	}
 

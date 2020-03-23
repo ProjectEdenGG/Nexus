@@ -12,6 +12,7 @@ import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.arenas.PixelDropArena;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -105,7 +106,7 @@ public class PixelDropMatchData extends MatchData {
 		countDesigns(match);
 		doNextFrame = true;
 
-		int animateTaskId = match.getTasks().repeat(0, 2 * 20, () -> {
+		int animateTaskId = match.getTasks().repeat(0, Time.SECOND.x(2), () -> {
 			if (match.isEnded() || match.isStarted() || !doNextFrame)
 				return;
 			doNextFrame = false;
@@ -214,7 +215,7 @@ public class PixelDropMatchData extends MatchData {
 		String underscores = word.replaceAll("[a-zA-z]", "_");
 		AtomicReference<String> hint = new AtomicReference<>(underscores);
 
-		this.wordTaskId = match.getTasks().repeat(0, 2 * 20, () -> {
+		this.wordTaskId = match.getTasks().repeat(0, Time.SECOND.x(2), () -> {
 			long secondsElapsed = (System.currentTimeMillis() - getRoundStart()) / 1000;
 			if (secondsElapsed > 10) {
 				int chance = 15 + (5 * guessed.size());

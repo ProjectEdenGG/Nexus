@@ -12,6 +12,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -295,7 +296,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		}
 
 		void start() {
-			taskId = match.getTasks().repeat(0, 5 * 20, () -> {
+			taskId = match.getTasks().repeat(0, Time.SECOND.x(5), () -> {
 				if (match.isEnded())
 					stop(taskId);
 
