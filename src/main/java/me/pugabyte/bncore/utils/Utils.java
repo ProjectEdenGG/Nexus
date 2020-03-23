@@ -424,6 +424,17 @@ public class Utils {
 		return (int) ((Math.random() * ((max - min) + 1)) + min);
 	}
 
+	public static double randomDouble(double max) {
+		return randomDouble(0, max);
+	}
+
+	public static double randomDouble(double min, double max) {
+		if (min == max) return min;
+		if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
+		return (Math.random() * ((max - min) + 1)) + min;
+	}
+
+
 	public static boolean chanceOf(int chance) {
 		return randomInt(0, 100) <= chance;
 	}
