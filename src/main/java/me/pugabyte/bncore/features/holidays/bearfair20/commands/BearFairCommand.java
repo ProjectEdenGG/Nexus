@@ -14,5 +14,4 @@ public class BearFairCommand extends CustomCommand {
 	void bearfair() {
 		send(PREFIX + "Coming soon!");
 	}
-
 }
