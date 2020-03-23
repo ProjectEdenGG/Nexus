@@ -143,6 +143,21 @@ public enum VPSMenu {
 
 					}}).build());
 
+			// Page 2
+			add(VPSPage.builder()
+					.rows(6)
+					.items(new HashMap<Integer, VPSSlotBuilder>() {{
+
+					}}).build());
+
+			// Page 3
+			add(VPSPage.builder()
+					.rows(6)
+					.items(new HashMap<Integer, VPSSlotBuilder>() {{
+
+					}}).build());
+
+			// Page 4
 			add(VPSPage.builder()
 					.rows(6)
 					.items(new HashMap<Integer, VPSSlotBuilder>() {{
@@ -154,6 +169,8 @@ public enum VPSMenu {
 	CREATIVE {
 		@Getter
 		List<VPSPage> pages = new ArrayList<VPSPage>() {{
+
+			// Page 1
 			add(VPSPage.builder()
 					.rows(6)
 					.items(new HashMap<Integer, VPSSlotBuilder>() {{
@@ -164,6 +181,8 @@ public enum VPSMenu {
 	SKYBLOCK {
 		@Getter
 		List<VPSPage> pages = new ArrayList<VPSPage>() {{
+
+			// Page 1
 			add(VPSPage.builder()
 					.rows(6)
 					.items(new HashMap<Integer, VPSSlotBuilder>() {{
