@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-@Fallback("essentialsx")
+@Fallback("essentials")
 @Permission("essentials.speed")
 @Aliases({"flyspeed", "walkspeed"})
 public class SpeedCommand extends CustomCommand {
