@@ -52,4 +52,17 @@ public class DiscordId {
 			this.id = id;
 		}
 	}
+
+	public enum Role {
+		SUPPORTER("269916102199476236"),
+		VERIFIED("411658569444884495"),
+		NERD("387029729401896980");
+
+		@Getter
+		private String id;
+
+		Role(String id) {
+			this.id = id;
+		}
+	}
 }

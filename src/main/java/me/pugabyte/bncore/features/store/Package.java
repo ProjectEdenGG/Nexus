@@ -1,16 +1,16 @@
 package me.pugabyte.bncore.features.store;
 
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.store.annotations.Commands.Command;
 import me.pugabyte.bncore.features.store.annotations.ExpirationDays;
 import me.pugabyte.bncore.features.store.annotations.Id;
 import me.pugabyte.bncore.features.store.annotations.Permissions.Permission;
+import me.pugabyte.bncore.utils.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static me.pugabyte.bncore.utils.StringUtils.right;
 
 public enum Package {
 
@@ -350,25 +350,29 @@ public enum Package {
 	@Permission("libsdisguises.disguise.illusioner.setArrowsSticking.setBurning.setSpellTicks.setViewSelfDisguise")
 	DISGUISES_NEW_GENERATION_MONSTERS;
 
+	@SneakyThrows
 	public int getId() {
-		return getClass().getAnnotation(Id.class).value();
+		return getClass().getDeclaredField(name()).getAnnotation(Id.class).value();
 	}
 
+	@SneakyThrows
 	public List<String> getPermissions() {
-		return Arrays.stream(getClass().getAnnotationsByType(Permission.class))
+		return Arrays.stream(getClass().getDeclaredField(name()).getAnnotationsByType(Permission.class))
 				.map(Permission::value)
 				.collect(Collectors.toList());
 	}
 
+	@SneakyThrows
 	public List<String> getCommands() {
-		return Arrays.stream(getClass().getAnnotationsByType(Command.class))
+		return Arrays.stream(getClass().getDeclaredField(name()).getAnnotationsByType(Command.class))
 				.map(Command::value)
-				.map(command -> right(command, command.length() - 1))
+				.map(StringUtils::noSlash)
 				.collect(Collectors.toList());
 	}
 
+	@SneakyThrows
 	public int getExpirationDays() {
-		return Optional.of(getClass().getAnnotation(ExpirationDays.class)).map(ExpirationDays::value).orElse(-1);
+		return Optional.of(getClass().getDeclaredField(name()).getAnnotation(ExpirationDays.class)).map(ExpirationDays::value).orElse(-1);
 	}
 
 	public static Package getPackage(int id) {
