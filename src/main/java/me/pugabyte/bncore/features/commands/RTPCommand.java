@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Cooldown(30 * 20)
 @Aliases({"randomtp", "wild"})
 public class RTPCommand extends CustomCommand {
 	LWCProtectionService service = new LWCProtectionService();
@@ -30,7 +31,6 @@ public class RTPCommand extends CustomCommand {
 
 	@Path
 	@Async
-	@Cooldown(30 * 20)
 	void rtp() {
 		if (!Arrays.asList("world", "survival", "legacy_survival").contains(player().getWorld().getName()))
 			error("You must be in the survival world to run this command");
