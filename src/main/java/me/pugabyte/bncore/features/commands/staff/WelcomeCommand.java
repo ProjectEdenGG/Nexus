@@ -41,8 +41,10 @@ public class WelcomeCommand extends CustomCommand {
 			if (!(Rank.getOnlineStaff().size() > 2)) return;
 			try {
 				new CooldownService().check("staff", "bumpReminder", Time.DAY.x(1));
-				Utils.mod("&e&oHi Staff. &3It looks like there's a few moderators or above online. Could you consider bumping the server?");
+				Utils.mod("");
+				Utils.mod("&eHi Staff. &3It looks like there's a few of you online. Could you consider &ebumping the server?");
 				Utils.mod("&3Instructions: &ehttps://bnn.gg/mod");
+				Utils.mod("");
 			} catch (CooldownException ignore) {
 			}
 		});
