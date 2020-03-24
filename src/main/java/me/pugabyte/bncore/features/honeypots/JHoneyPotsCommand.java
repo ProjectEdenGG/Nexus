@@ -7,7 +7,6 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.SneakyThrows;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -26,15 +25,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Aliases("jhp")
 @Permission("group.staff")
 public class JHoneyPotsCommand extends CustomCommand {
+	SettingService service = new SettingService();
+	WorldGuardUtils WGUtils = new WorldGuardUtils(player().getWorld());
+	WorldEditUtils WEUtils = new WorldEditUtils(player().getWorld());
 
 	public JHoneyPotsCommand(CommandEvent event) {
 		super(event);
 	}
-
-	SettingService service = new SettingService();
-	HoneyPots honeyPots = BNCore.honeyPots;
-	WorldGuardUtils WGUtils = new WorldGuardUtils(player().getWorld());
-	WorldEditUtils WEUtils = new WorldEditUtils(player().getWorld());
 
 	@Path("check <player>")
 	@Permission("group.seniorstaff")
@@ -61,7 +58,7 @@ public class JHoneyPotsCommand extends CustomCommand {
 	void repair(String honeyPot) {
 		ProtectedRegion region = WGUtils.getProtectedRegion("hpregen_" + honeyPot);
 		if (region == null) error("That honey pot does not exist");
-		honeyPots.fixHP(region, player().getWorld());
+		HoneyPots.fixHP(region, player().getWorld());
 		send(PREFIX + "Successfully repaired the honey pot: &e" + honeyPot);
 	}
 
@@ -101,7 +98,7 @@ public class JHoneyPotsCommand extends CustomCommand {
 		send(PREFIX + "Honey Pots in your world:");
 		AtomicInteger i = new AtomicInteger(1);
 		regions.forEach((region) -> {
-			json("&3" + i.getAndIncrement() + ".&e" + region.getId()).hover("&3Click to Teleport").command("honeypots teleport " + honeyPots.getHP(region));
+			json("&3" + i.getAndIncrement() + ".&e" + region.getId()).hover("&3Click to Teleport").command("honeypots teleport " + HoneyPots.getHP(region));
 		});
 	}
 

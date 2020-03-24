@@ -11,7 +11,7 @@ public class VoteService extends MySQLService {
 
 	@Override
 	public Voter get(String uuid) {
-		return new Voter(uuid, getTotalVotes(uuid), getActiveVotes(uuid));
+		return new Voter(uuid, getTotalVotes(uuid), getActiveVotes(uuid), getPoints(uuid));
 	}
 
 	public int getTotalVotes() {
@@ -34,6 +34,14 @@ public class VoteService extends MySQLService {
 		if (uuid != null)
 			query.and("uuid = ?", uuid);
 		return query.results(Vote.class);
+	}
+
+	public int getPoints(String uuid) {
+		return database.select("balance").table("vote_point").where("uuid = ?", uuid).first(Integer.class);
+	}
+
+	public void setPoints(String uuid, int balance) {
+		database.sql("update vote_point set balance = ? where uuid = ?", balance, uuid).execute();
 	}
 
 }

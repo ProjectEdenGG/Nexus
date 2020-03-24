@@ -27,8 +27,19 @@ public class HoneyPots implements Listener {
 		BNCore.registerListener(this);
 	}
 
-	public String getHP(ProtectedRegion region) {
+	public static String getHP(ProtectedRegion region) {
 		return region.getId().replace("hp_", "");
+	}
+
+	public static void fixHP(ProtectedRegion region, World world) {
+		WorldEditUtils WEUtils = new WorldEditUtils(world);
+		String fileName = region.getId().replace("_", "/");
+		WEUtils.paste(fileName, getSchemRegen(region, world).getMinimumPoint());
+	}
+
+	public static ProtectedRegion getSchemRegen(ProtectedRegion region, World world) {
+		String name = region.getId().replace("hp_", "hpregen_");
+		return new WorldGuardUtils(world).getProtectedRegion(name);
 	}
 
 	@EventHandler
@@ -78,17 +89,5 @@ public class HoneyPots implements Listener {
 			service.save(setting);
 		}
 	}
-
-	public void fixHP(ProtectedRegion region, World world) {
-		WorldEditUtils WEUtils = new WorldEditUtils(world);
-		String fileName = region.getId().replace("_", "/");
-		WEUtils.paste(fileName, getSchemRegen(region, world).getMinimumPoint());
-	}
-
-	public ProtectedRegion getSchemRegen(ProtectedRegion region, World world) {
-		String name = region.getId().replace("hp_", "hpregen_");
-		return new WorldGuardUtils(world).getProtectedRegion(name);
-	}
-
 
 }

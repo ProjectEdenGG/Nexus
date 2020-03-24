@@ -506,6 +506,10 @@ public enum VPSMenu {
 			private String command;
 			private String consoleCommand;
 
+			public String getName() {
+				return display.getItemMeta().getDisplayName();
+			}
+
 			public static class VPSSlotBuilder {
 				private String name;
 				private ItemStack display;
