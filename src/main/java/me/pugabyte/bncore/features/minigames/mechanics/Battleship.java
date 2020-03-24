@@ -16,7 +16,7 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchDat
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
@@ -346,7 +346,7 @@ public class Battleship extends BalancedTeamMechanic {
 		ShipType(int length, ColorType color) {
 			this.length = length;
 			this.color = color;
-			this.item = new ItemStackBuilder(Material.CONCRETE)
+			this.item = new ItemBuilder(Material.CONCRETE)
 					.name(color.getChatColor() + toString() + " &8| &7Size: &e" + length)
 					.lore("&fPlace on the yellow wool to configure")
 					.durability(color.getDurability())

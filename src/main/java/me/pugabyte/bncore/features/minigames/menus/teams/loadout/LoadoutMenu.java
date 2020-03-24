@@ -9,7 +9,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -99,7 +99,7 @@ public class LoadoutMenu extends MenuUtils implements InventoryProvider {
 			}));
 
 		contents.set(0, 4, ClickableItem.from(
-			new ItemStackBuilder(Material.POTION)
+			new ItemBuilder(Material.POTION)
 					.name("&ePotion Effects")
 					.itemFlags(ItemFlag.HIDE_POTION_EFFECTS)
 					.build(),

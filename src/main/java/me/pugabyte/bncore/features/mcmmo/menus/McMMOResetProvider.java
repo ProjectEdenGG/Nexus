@@ -11,7 +11,7 @@ import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.mcmmo.McMMOPrestige;
 import me.pugabyte.bncore.models.mcmmo.McMMOService;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -55,7 +55,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"The boots of Demeter give you the power to increase agricultural rates around you.") {
 			@Override
 			void onClick(Player player) {
-				Utils.giveItem(player, new ItemStackBuilder(Material.GOLD_BOOTS).lore("&bBonemeal Boots").build());
+				Utils.giveItem(player, new ItemBuilder(Material.GOLD_BOOTS).lore("&bBonemeal Boots").build());
 			}
 		},
 		FISHING(3, 1, Material.FISHING_ROD,
@@ -142,14 +142,14 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
-		ItemStack all = new ItemStackBuilder(Material.BEACON)
+		ItemStack all = new ItemBuilder(Material.BEACON)
 				.name("&cAll Skills")
 				.lore("&6Power Level: " + mcmmoPlayer.getPowerLevel() + "/1300" +
 						"||&f||&e&lReward:||" +
 						"&f- $150,000||&f- All normal rewards||" + "&f- When your health gets low, this breastplate will give you the " +
 						"strength of an angry barbarian!").build();
 		if (mcmmoPlayer.getPowerLevel() >= 1300) addGlowing(all);
-		ItemStack reset = new ItemStackBuilder(Material.BARRIER).name("&c&lReset all with &4no reward").build();
+		ItemStack reset = new ItemBuilder(Material.BARRIER).name("&c&lReset all with &4no reward").build();
 
 		contents.set(0, 4, ClickableItem.from(all, (e) -> {
 			if (mcmmoPlayer.getPowerLevel() < 1300)
@@ -169,7 +169,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		}));
 
 		for (ResetSkillType skill : ResetSkillType.values()) {
-			ItemStack item = new ItemStackBuilder(skill.getMaterial())
+			ItemStack item = new ItemBuilder(skill.getMaterial())
 					.name("&c" + StringUtils.camelCase(skill.name()))
 					.lore("&6Level: " + mcmmoPlayer.getSkillLevel(SkillType.valueOf(skill.name())) +
 							"|| ||&e&lReward:" +

@@ -15,6 +15,14 @@ public class CooldownService extends MySQLService {
 		Tasks.repeatAsync(10, Time.SECOND.x(5), () -> database.table("cooldown").where("time <= DATE_ADD(NOW(), INTERVAL -(ticks / 20) SECOND)").delete());
 	}
 
+	public boolean check(Player player, String type, Time time) {
+		return check(player.getUniqueId().toString(), type, time);
+	}
+
+	public boolean check(String id, String type, Time time) {
+		return check(id, type, time.get());
+	}
+
 	public boolean check(Player player, String type, double ticks) {
 		return check(player.getUniqueId().toString(), type, ticks);
 	}

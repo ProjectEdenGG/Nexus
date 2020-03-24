@@ -9,7 +9,7 @@ import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
 import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 				homeOwner.getHome(response[0]).ifPresent(HomesMenu::edit))));
 
 		Map<String, ItemStack> options = new LinkedHashMap<String, ItemStack>() {{
-			put("home", new ItemStackBuilder(Material.BED)
+			put("home", new ItemBuilder(Material.BED)
 					.durability(ColorType.CYAN.getDurability())
 					.loreize(false)
 					.lore("&fThis is your main home. You can teleport to it with &c/h &for &c/home")
@@ -52,7 +52,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 
 			put("spawner", new ItemStack(Material.MOB_SPAWNER));
 			put("farm", new ItemStack(Material.WHEAT));
-			put("mine", new ItemStackBuilder(Material.DIAMOND_PICKAXE).itemFlags(ItemFlag.HIDE_ATTRIBUTES).build());
+			put("mine", new ItemBuilder(Material.DIAMOND_PICKAXE).itemFlags(ItemFlag.HIDE_ATTRIBUTES).build());
 			put("storage", new ItemStack(Material.CHEST));
 			put("shop", new ItemStack(Material.SIGN));
 

@@ -4,9 +4,10 @@ import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.WorldGroup;
 
+@Permission("group.seniorstaff")
 public class JVPSCommand extends CustomCommand {
 
 	public JVPSCommand(@NonNull CommandEvent event) {
@@ -15,7 +16,7 @@ public class JVPSCommand extends CustomCommand {
 
 	@Path("[page]")
 	void run(@Arg("1") int page) {
-		VPS.open(player(), WorldGroup.get(player().getWorld()).name(), page);
+		VPS.open(player(), VPS.getMenu(player()), page);
 	}
 
 }

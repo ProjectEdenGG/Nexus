@@ -7,7 +7,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -82,7 +82,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 		int row = 1;
 		int column = 0;
 		for (PotionEffect potionEffect : team.getLoadout().getEffects()) {
-			ItemStack item = new ItemStackBuilder(Material.POTION)
+			ItemStack item = new ItemBuilder(Material.POTION)
 					.name("&e" + potionEffect.getType().getName())
 					.lore("&3Duration:&e " + potionEffect.getDuration(), "&3Amplifier:&e " + (potionEffect.getAmplifier() + 1), " ", "&7Click me to edit.")
 					.effect(potionEffect)

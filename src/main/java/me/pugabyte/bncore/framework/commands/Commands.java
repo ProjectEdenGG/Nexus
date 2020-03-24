@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
+import me.pugabyte.bncore.utils.Time.Timer;
 import org.bukkit.plugin.Plugin;
 import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
@@ -38,7 +39,6 @@ public class Commands {
 		this.commandSet = new Reflections(path).getSubTypesOf(CustomCommand.class);
 		registerConvertersAndTabCompleters();
 		plugin.getServer().getPluginManager().registerEvents(new CommandListener(), plugin);
-
 	}
 
 	public static CustomCommand get(String alias) {
@@ -54,16 +54,18 @@ public class Commands {
 	}
 
 	private void register(CustomCommand customCommand) {
-		if (listLast(customCommand.getClass().toString(), ".").startsWith("_")) return;
+		new Timer("  Register command " + customCommand.getName(), () -> {
+			if (listLast(customCommand.getClass().toString(), ".").startsWith("_")) return;
 
-		try {
-			for (String alias : customCommand.getAllAliases()) {
-				mapUtils.register(alias, customCommand);
-				commands.put(alias, customCommand);
+			try {
+				for (String alias : customCommand.getAllAliases()) {
+					mapUtils.register(alias, customCommand);
+					commands.put(alias, customCommand);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		});
 	}
 
 	public void unregisterAll() {

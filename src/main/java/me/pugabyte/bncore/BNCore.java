@@ -36,6 +36,7 @@ import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.ModelListeners;
+import me.pugabyte.bncore.utils.Time.Timer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
@@ -97,10 +98,14 @@ public class BNCore extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		setupConfig();
-		enableFeatures();
-		commands = new Commands(this, "me.pugabyte.bncore.features");
-		commands.registerAll();
+		new Timer("Enable", () -> {
+			new Timer(" Config", this::setupConfig);
+			new Timer(" Features", this::enableFeatures);
+			new Timer(" Commands", () -> {
+				commands = new Commands(this, "me.pugabyte.bncore.features");
+				commands.registerAll();
+			});
+		});
 	}
 
 	@Override
@@ -166,35 +171,35 @@ public class BNCore extends JavaPlugin {
 
 	private void enableFeatures() {
 		// Load this first
-		discord = new Discord();
+		new Timer("  Discord", () -> discord = new Discord());
 
-		afk = new AFK();
-		chat = new Chat();
-		chatOld = new ChatOld();
-		clearInventory = new ClearInventory();
-		connect4 = new Connect4();
-		dailyRewards = new DailyRewardsFeature();
-//		documentation = new Documentation();
-		holidays = new Holidays();
-		homesFeature = new HomesFeature();
-		//honeyPots = new HoneyPots();
-		hoursFeature = new HoursFeature();
-		inviteRewards = new InviteRewards();
-		joinQuit = new JoinQuit();
-		listeners = new Listeners();
-		mcmmo = new McMMO();
-		modelListeners = new ModelListeners();
-		minigames = new Minigames();
-		oldMinigames = new OldMinigames();
-		quests = new Quests();
-		rainbowArmour = new RainbowArmour();
-		restoreInventory = new RestoreInventory();
-		showEnchants = new ShowEnchants();
-		sleep = new Sleep();
-		tameables = new Tameables();
-		tickets = new Tickets();
-		votes = new Votes();
-		wiki = new Wiki();
+		new Timer("  AFK", () -> afk = new AFK());
+		new Timer("  Chat", () -> chat = new Chat());
+		new Timer("  ChatOld", () -> chatOld = new ChatOld());
+		new Timer("  ClearInventory", () -> clearInventory = new ClearInventory());
+		new Timer("  Connect4", () -> connect4 = new Connect4());
+		new Timer("  DailyRewardsFeature", () -> dailyRewards = new DailyRewardsFeature());
+//		new Timer("  Documentation", () -> documentation = new Documentation());
+		new Timer("  Holidays", () -> holidays = new Holidays());
+		new Timer("  HomesFeature", () -> homesFeature = new HomesFeature());
+//		new Timer("  HoneyPots", () -> honeyPots = new HoneyPots());
+		new Timer("  HoursFeature", () -> hoursFeature = new HoursFeature());
+		new Timer("  InviteRewards", () -> inviteRewards = new InviteRewards());
+		new Timer("  JoinQuit", () -> joinQuit = new JoinQuit());
+		new Timer("  Listeners", () -> listeners = new Listeners());
+		new Timer("  McMMO", () -> mcmmo = new McMMO());
+		new Timer("  ModelListeners", () -> modelListeners = new ModelListeners());
+		new Timer("  Minigames", () -> minigames = new Minigames());
+		new Timer("  OldMinigames", () -> oldMinigames = new OldMinigames());
+		new Timer("  Quests", () -> quests = new Quests());
+		new Timer("  RainbowArmour", () -> rainbowArmour = new RainbowArmour());
+		new Timer("  RestoreInventory", () -> restoreInventory = new RestoreInventory());
+		new Timer("  ShowEnchants", () -> showEnchants = new ShowEnchants());
+		new Timer("  Sleep", () -> sleep = new Sleep());
+		new Timer("  Tameables", () -> tameables = new Tameables());
+		new Timer("  Tickets", () -> tickets = new Tickets());
+		new Timer("  Votes", () -> votes = new Votes());
+		new Timer("  Wiki", () -> wiki = new Wiki());
 
 		signMenuFactory = new SignMenuFactory(this);
 	}
