@@ -350,94 +350,130 @@ public enum VPSMenu {
 								.give(Material.GLOWSTONE, 32));
 						put(13, VPSSlot.builder()
 								.name("32 Sea Lanterns")
-								.display()
+								.display(Material.SEA_LANTERN, 32)
 								.price(10)
-								.give());
+								.give(Material.SEA_LANTERN));
 						put(14, VPSSlot.builder()
 								.name("1 Sponge")
-								.display()
+								.display(Material.SPONGE)
 								.price(35)
-								.give());
+								.give(Material.SPONGE));
 						put(16, VPSSlot.builder()
 								.name("4 Oak Saplings")
-								.display()
+								.display(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 0)
+										.amount(4)
+										.build())
 								.price(2)
-								.give());
+								.give(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 1)
+										.amount(4)
+										.build()));
 						put(17, VPSSlot.builder()
 								.name("4 Spruce Saplings")
-								.display()
+								.display(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 1)
+										.amount(4)
+										.build())
 								.price(8)
-								.give());
+								.give(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 1)
+										.amount(4)
+										.build()));
 						put(25, VPSSlot.builder()
 								.name("4 Birch Saplings")
-								.display()
+								.display(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 2)
+										.amount(4)
+										.build())
 								.price(4)
-								.give());
+								.give(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 2)
+										.amount(4)
+										.build()));
 						put(26, VPSSlot.builder()
 								.name("4 Jungle Saplings")
-								.display()
+								.display(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 3)
+										.amount(4)
+										.build())
 								.price(6)
-								.give());
+								.give(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 3)
+										.amount(4)
+										.build()));
 						put(35, VPSSlot.builder()
 								.name("4 Acacia Saplings")
-								.display()
+								.display(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 4)
+										.amount(4)
+										.build())
 								.price(4)
-								.give());
+								.give(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 4)
+										.amount(4)
+										.build()));
 						put(44, VPSSlot.builder()
 								.name("4 Dark Oak Saplings")
-								.display()
+								.display(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 5)
+										.amount(4)
+										.build())
 								.price(6)
-								.give());
+								.give(new ItemStackBuilder(Material.SAPLING)
+										.durability((byte) 5)
+										.amount(4)
+										.build()));
 						put(29, VPSSlot.builder()
 								.name("4 Blaze Rods")
-								.display()
+								.display(Material.BLAZE_ROD, 4)
 								.price(8)
-								.give());
+								.give(Material.BLAZE_ROD, 4));
 						put(30, VPSSlot.builder()
 								.name("8 Ender Pearls")
-								.display()
+								.display(Material.ENDER_PEARL, 8)
 								.price(2)
-								.give());
+								.give(Material.ENDER_PEARL, 8));
 						put(31, VPSSlot.builder()
 								.name("4 Slimeballs")
-								.display()
+								.display(Material.SLIME_BALL, 4)
 								.price(5)
-								.give());
+								.give(Material.SLIME_BALL, 4));
 						put(32, VPSSlot.builder()
 								.name("16 Gunpowder")
-								.display()
+								.display(Material.SULPHUR, 16)
 								.price(2)
-								.give());
+								.give(Material.SULPHUR, 16));
 						put(33, VPSSlot.builder()
 								.name("16 Leather")
-								.display()
+								.display(Material.LEATHER, 16)
 								.price(10)
-								.give());
+								.give(Material.LEATHER, 16));
 						put(38, VPSSlot.builder()
 								.name("64 Experience Bottles")
-								.display()
+								.display(Material.EXP_BOTTLE, 64)
 								.price(15)
-								.give());
+								.give(Material.EXP_BOTTLE, 64));
 						put(39, VPSSlot.builder()
 								.name("1 Notch Apple")
-								.display()
+								.display(new ItemStackBuilder(Material.GOLDEN_APPLE).durability((byte) 1).build())
 								.price(30)
-								.give());
+								.give(new ItemStackBuilder(Material.GOLDEN_APPLE).durability((byte) 1).build()));
 						put(40, VPSSlot.builder()
 								.name("1 Golden Apple")
-								.display()
+								.display(Material.GOLDEN_APPLE)
 								.price(10)
-								.give());
+								.give(Material.GOLDEN_APPLE));
 						put(41, VPSSlot.builder()
 								.name("16 Bones")
-								.display()
+								.display(Material.BONE, 16)
 								.price(2)
-								.give());
+								.give(Material.BONE, 16));
 						put(42, VPSSlot.builder()
 								.name("4 Steak")
-								.display()
+								.display(Material.COOKED_BEEF, 4)
 								.price(1)
-								.give());
+								.give(Material.COOKED_BEEF, 4));
 					}}).build());
 
 		}};
