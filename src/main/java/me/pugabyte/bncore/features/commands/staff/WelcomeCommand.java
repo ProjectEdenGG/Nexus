@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -7,9 +8,12 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
+import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
@@ -17,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Aliases("welc")
+@NoArgsConstructor
 @Permission("group.staff")
 public class WelcomeCommand extends CustomCommand {
 	List<String> messages = new ArrayList<String>() {{
@@ -29,6 +34,18 @@ public class WelcomeCommand extends CustomCommand {
 
 	public WelcomeCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	static {
+		Tasks.repeat(0, Time.SECOND.x(60), () -> {
+			if (!(Rank.getOnlineStaff().size() > 2)) return;
+			try {
+				new CooldownService().check("staff", "bumpReminder", Time.DAY.x(1));
+				Utils.mod("&e&oHi Staff. &3It looks like there's a few moderators or above online. Could you consider bumping the server?");
+				Utils.mod("&3Instructions: &ehttps://bnn.gg/mod");
+			} catch (CooldownException ignore) {
+			}
+		});
 	}
 
 	@Path("<player>")
