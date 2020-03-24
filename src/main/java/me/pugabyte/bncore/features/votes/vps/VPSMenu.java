@@ -5,16 +5,18 @@ import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
+import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
+import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public enum VPSMenu {
@@ -23,64 +25,142 @@ public enum VPSMenu {
 		List<VPSPage> pages = new ArrayList<VPSPage>() {{
 			add(VPSPage.builder()
 					.rows(6)
-					.items(new HashMap<Integer, VPSSlot>() {{
+					.items(new HashMap<Integer, VPSSlotBuilder>() {{
 						put(11, VPSSlot.builder()
 								.name("$250")
 								.display(Material.GOLD_NUGGET)
 								.price(1)
-								.money(250)
-								.build());
+								.money(250));
 						put(12, VPSSlot.builder()
 								.name("$2,500")
 								.display(Material.GOLD_NUGGET)
 								.price(10)
-								.money(2500)
-								.build());
+								.money(2500));
 						put(13, VPSSlot.builder()
 								.name("$5,000")
 								.display(Material.GOLD_NUGGET)
 								.price(20)
-								.money(5000)
-								.build());
+								.money(5000));
 						put(14, VPSSlot.builder()
 								.name("$10,000")
 								.display(Material.GOLD_NUGGET)
 								.price(40)
-								.money(10000)
-								.build());
+								.money(10000));
 
 						put(20, VPSSlot.builder()
 								.name("Coal Protection Stone")
-								.display(Material.COAL_ORE)
-								.price(4)
-								.item(new ItemStackBuilder(Material.COAL_ORE)
+								.display(new ItemStackBuilder(Material.COAL_ORE)
 										.lore("Size: &e11x11x11 &3(Radius of 5)", "Do &c/ps about &3for more info")
 										.build())
-								.build());
+								.price(4)
+								.give(Material.COAL_ORE));
 						put(21, VPSSlot.builder()
 								.name("Lapis Protection Stone")
-								.display(Material.LAPIS_ORE)
-								.price(15)
-								.item(new ItemStackBuilder(Material.LAPIS_ORE)
+								.display(new ItemStackBuilder(Material.LAPIS_ORE)
 										.lore("Size: &e21x21x21 &3(Radius of 10)", "Do &c/ps about &3for more info")
 										.build())
-								.build());
+								.price(15)
+								.give(Material.LAPIS_ORE));
 						put(22, VPSSlot.builder()
 								.name("Diamond Protection Stone")
-								.display(Material.DIAMOND_ORE)
-								.price(50)
-								.item(new ItemStackBuilder(Material.DIAMOND_ORE)
+								.display(new ItemStackBuilder(Material.DIAMOND_ORE)
 										.lore("Size: &e41x41x41 &3(Radius of 20)", "Do &c/ps about &3for more info")
 										.build())
-								.build());
+								.price(50)
+								.give(Material.DIAMOND_ORE));
 						put(23, VPSSlot.builder()
 								.name("Emerald Protection Stone")
-								.display(Material.EMERALD_ORE)
-								.price(100)
-								.item(new ItemStackBuilder(Material.EMERALD_ORE)
+								.display(new ItemStackBuilder(Material.EMERALD_ORE)
 										.lore("Size: &e81x81x81 &3(Radius of 40)", "Do &c/ps about &3for more info")
 										.build())
-								.build());
+								.price(100)
+								.give(Material.EMERALD_ORE));
+
+						put(39, VPSSlot.builder()
+								.name("x3 KillerMoney boost for 2 days")
+								.display(new ItemStack(Material.DIAMOND_SWORD, 3))
+								.consoleCommand("kmboost [player]")
+								.price(30)
+								.takePoints(false)
+								.close(true));
+
+						put(41, VPSSlot.builder()
+								.name("Uncraftable Banners")
+								.display(new ItemStackBuilder(Material.BANNER).color(ColorType.CYAN)
+										.lore("Pre-selected banners or","choose your own!","","&eClick to teleport &3to the",
+												"banner display area","","Read the &ehologram&3!","","&6Price: &e5-10vp")
+										.build())
+								.command("warp banners")
+								.close(true));
+
+						put(16, VPSSlot.builder()
+								.name("Diamond Horse Armor")
+								.display(Material.DIAMOND_BARDING)
+								.price(10)
+								.give(Material.DIAMOND_BARDING));
+
+						put(25, VPSSlot.builder()
+								.name("Iron Horse Armor")
+								.display(Material.IRON_BARDING)
+								.price(6)
+								.give(Material.IRON_BARDING));
+
+						put(34, VPSSlot.builder()
+								.name("Gold Horse Armor")
+								.display(Material.GOLD_BARDING)
+								.price(8)
+								.give(Material.GOLD_BARDING));
+
+						put(43, VPSSlot.builder()
+								.name("Saddle")
+								.display(Material.SADDLE)
+								.price(10)
+								.give(Material.SADDLE));
+
+						put(17, VPSSlot.builder()
+								.name("Full Diamond Armor Set")
+								.display(Material.DIAMOND_CHESTPLATE)
+								.price(28)
+								.give(Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS));
+
+						put(26, VPSSlot.builder()
+								.name("Full Iron Armor Set")
+								.display(Material.IRON_CHESTPLATE)
+								.price(18)
+								.give(Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS));
+
+						put(35, VPSSlot.builder()
+								.name("Full Golden Armor Set")
+								.display(Material.GOLD_CHESTPLATE)
+								.price(15)
+								.give(Material.GOLD_HELMET, Material.GOLD_CHESTPLATE, Material.GOLD_LEGGINGS, Material.GOLD_BOOTS));
+
+						put(44, VPSSlot.builder()
+								.name("Full Chainmail Armor Set")
+								.display(Material.CHAINMAIL_CHESTPLATE)
+								.price(20)
+								.give(Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE, Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS));
+
+					}}).build());
+
+			// Page 2
+			add(VPSPage.builder()
+					.rows(6)
+					.items(new HashMap<Integer, VPSSlotBuilder>() {{
+
+					}}).build());
+
+			// Page 3
+			add(VPSPage.builder()
+					.rows(6)
+					.items(new HashMap<Integer, VPSSlotBuilder>() {{
+
+					}}).build());
+
+			// Page 4
+			add(VPSPage.builder()
+					.rows(6)
+					.items(new HashMap<Integer, VPSSlotBuilder>() {{
 
 					}}).build());
 
@@ -89,9 +169,11 @@ public enum VPSMenu {
 	CREATIVE {
 		@Getter
 		List<VPSPage> pages = new ArrayList<VPSPage>() {{
+
+			// Page 1
 			add(VPSPage.builder()
 					.rows(6)
-					.items(new HashMap<Integer, VPSSlot>() {{
+					.items(new HashMap<Integer, VPSSlotBuilder>() {{
 
 					}}).build());
 		}};
@@ -99,9 +181,11 @@ public enum VPSMenu {
 	SKYBLOCK {
 		@Getter
 		List<VPSPage> pages = new ArrayList<VPSPage>() {{
+
+			// Page 1
 			add(VPSPage.builder()
 					.rows(6)
-					.items(new HashMap<Integer, VPSSlot>() {{
+					.items(new HashMap<Integer, VPSSlotBuilder>() {{
 
 					}}).build());
 		}};
@@ -114,11 +198,16 @@ public enum VPSMenu {
 	}
 
 	@Data
-	@Builder
 	public static class VPSPage {
 		@Default
 		private int rows = 6;
 		private Map<Integer, VPSSlot> items;
+
+		@Builder
+		public VPSPage(int rows, HashMap<Integer, VPSSlotBuilder> items) {
+			this.rows = rows;
+			this.items = items.entrySet().stream().collect(Collectors.toMap(Entry::getKey, e -> e.getValue().build()));
+		}
 
 		@Data
 		@Builder
@@ -185,23 +274,19 @@ public enum VPSMenu {
 					return this;
 				}
 
-				public VPSSlotBuilder item(Material material) {
-					return item(new ItemStack(material));
+				public VPSSlotBuilder give(ItemStackBuilder builder) {
+					return give(builder.build());
 				}
 
-				public VPSSlotBuilder item(ItemStack itemStack) {
-					return items(Collections.singletonList(itemStack));
+				public VPSSlotBuilder give(Material... materials) {
+					return give(Arrays.stream(materials).map(ItemStack::new).collect(Collectors.toList()));
 				}
 
-				public VPSSlotBuilder items(Material... materials) {
-					return items(Arrays.stream(materials).map(ItemStack::new).collect(Collectors.toList()));
+				public VPSSlotBuilder give(ItemStack... items) {
+					return give(Arrays.stream(items).collect(Collectors.toList()));
 				}
 
-				public VPSSlotBuilder items(ItemStack... items) {
-					return items(Arrays.stream(items).collect(Collectors.toList()));
-				}
-
-				public VPSSlotBuilder items(List<ItemStack> items) {
+				public VPSSlotBuilder give(List<ItemStack> items) {
 					this.items = items;
 					return this;
 				}

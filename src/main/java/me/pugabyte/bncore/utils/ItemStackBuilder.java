@@ -38,6 +38,10 @@ public class ItemStackBuilder {
 		return this;
 	}
 
+	public ItemStackBuilder color(ColorType colorType) {
+		return durability(colorType.getDurability().shortValue());
+	}
+
 	public ItemStackBuilder durability(short durability) {
 		itemStack.setDurability(durability);
 		return this;
