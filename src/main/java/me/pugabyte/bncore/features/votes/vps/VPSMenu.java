@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemStackBuilder;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.TreeSpecies;
@@ -415,21 +416,24 @@ public enum VPSMenu {
 			add(VPSPage.builder()
 					.rows(3)
 					.items(new HashMap<Integer, VPSSlotBuilder>() {{
-//						put(12, VPSSlot.builder()
-//								.name("")
-//								.display()
-//								.price(1)
-//								.give());
-//						put(14, VPSSlot.builder()
-//								.name("")
-//								.display()
-//								.price(1)
-//								.give());
-//						put(16, VPSSlot.builder()
-//								.name("")
-//								.display()
-//								.price(1)
-//								.give());
+						put(12, VPSSlot.builder()
+								.name("+1 Plot")
+								.display(new ItemStackBuilder(Material.STEP).durability(1)
+										.lore("You may purchase up to","&efour &3addition plots either",
+												"from the VPS or the server","store (&c/donate&3)","","&6Price: &e150vp"))
+								.command("vps buy plot"));
+						put(14, VPSSlot.builder()
+								.name("Player Heads")
+								.display(new ItemStackBuilder(Material.SKULL_ITEM).durability(SkullType.PLAYER.ordinal())
+										.lore("&6Price &3(Non-Staff): &e6vp","&6Price &3(Staff): &e9vp"))
+								.command("vps buy head")
+								.close(true));
+						put(16, VPSSlot.builder()
+								.name("Uncraftable Banners")
+								.display(new ItemStackBuilder(Material.BANNER).color(ColorType.CYAN)
+										.lore("&eClick to teleport &3to the","banner display area","","Read the &ehologram&3!","","&6Price: &e5-10vp"))
+								.command("warp banners")
+								.close(true));
 					}}).build());
 		}};
 	},
@@ -441,6 +445,71 @@ public enum VPSMenu {
 					.rows(5)
 					.items(new HashMap<Integer, VPSSlotBuilder>() {{
 
+						put(11, VPSSlot.builder()
+								.name("5 dirt")
+								.display(Material.DIRT, 5)
+								.price(10)
+								.give(Material.DIRT, 5));
+						put(12, VPSSlot.builder()
+								.name("1 grass")
+								.display(Material.GRASS, 1)
+								.price(5)
+								.give(Material.GRASS, 1));
+						put(13, VPSSlot.builder()
+								.name("64 cobble")
+								.display(Material.COBBLESTONE, 64)
+								.price(5)
+								.give(Material.COBBLESTONE, 64));
+						put(15, VPSSlot.builder()
+								.name("1 water bucket")
+								.display(Material.WATER_BUCKET)
+								.price(25)
+								.give(Material.WATER_BUCKET));
+						put(16, VPSSlot.builder()
+								.name("1 lava bucket")
+								.display(Material.LAVA_BUCKET)
+								.price(35)
+								.give(Material.LAVA_BUCKET));
+						put(17, VPSSlot.builder()
+								.name("1 iron pickaxe")
+								.display(Material.IRON_PICKAXE)
+								.price(10)
+								.give(Material.IRON_PICKAXE));
+						put(29, VPSSlot.builder()
+								.name("5 seeds")
+								.display(Material.SEEDS, 5)
+								.price(5)
+								.give(Material.SEEDS, 5));
+						put(30, VPSSlot.builder()
+								.name("1 pumpkin seeds")
+								.display(Material.PUMPKIN_SEEDS)
+								.price(3)
+								.give(Material.PUMPKIN_SEEDS));
+						put(31, VPSSlot.builder()
+								.name("1 melon seeds")
+								.display(Material.MELON_SEEDS)
+								.price(3)
+								.give(Material.MELON_SEEDS));
+						put(32, VPSSlot.builder()
+								.name("3 bone meal")
+								.display(new ItemStack(Material.INK_SACK, 1, DyeColor.WHITE.getDyeData()))
+								.price(1)
+								.give(new ItemStack(Material.INK_SACK, 1, DyeColor.WHITE.getDyeData())));
+						put(33, VPSSlot.builder()
+								.name("8 bread")
+								.display(Material.BREAD, 8)
+								.price(3)
+								.give(Material.BREAD, 8));
+						put(34, VPSSlot.builder()
+								.name("16 torches")
+								.display(Material.TORCH, 16)
+								.price(5)
+								.give(Material.TORCH, 16));
+						put(35, VPSSlot.builder()
+								.name("Reset your deaths to 0")
+								.display(Material.TOTEM)
+								.price(40)
+								.consoleCommand("asadmin setdeaths [player] 0"));
 					}}).build());
 		}};
 	};
