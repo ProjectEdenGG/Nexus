@@ -63,6 +63,8 @@ public class FreezeCommand extends CustomCommand implements Listener {
 		setting.setBoolean(true);
 		service.save(setting);
 		freezePlayer(player);
+		Utils.mod(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName());
+		send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 	}
 
 	public void freezePlayer(Player player) {
@@ -74,8 +76,6 @@ public class FreezeCommand extends CustomCommand implements Listener {
 		armorStand.setCustomName("FreezeStand-" + player.getUniqueId().toString());
 		armorStand.setCustomNameVisible(false);
 		armorStand.addPassenger(player);
-		send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
-		Utils.mod(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName());
 	}
 
 	@EventHandler
