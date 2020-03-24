@@ -123,8 +123,8 @@ public final class SignMenuFactory {
 				exception.printStackTrace();
 			}
 
-			BNCore.getInstance().getSignMenuFactory().signLocations.put(player, blockPosition);
-			BNCore.getInstance().getSignMenuFactory().inputReceivers.putIfAbsent(player, this);
+			BNCore.getSignMenuFactory().signLocations.put(player, blockPosition);
+			BNCore.getSignMenuFactory().inputReceivers.putIfAbsent(player, this);
 		}
 	}
 }

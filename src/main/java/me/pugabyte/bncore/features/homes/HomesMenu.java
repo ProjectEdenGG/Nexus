@@ -33,7 +33,7 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public class HomesMenu {
-	private static SignMenuFactory signMenuFactory = BNCore.getInstance().getSignMenuFactory();
+	private static SignMenuFactory signMenuFactory = BNCore.getSignMenuFactory();
 
 	public static void edit(HomeOwner homeOwner) {
 		edit(homeOwner, 0);

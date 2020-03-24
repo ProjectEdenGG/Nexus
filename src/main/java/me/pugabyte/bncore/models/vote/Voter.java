@@ -22,6 +22,10 @@ public class Voter {
 		setPoints(this.points - points);
 	}
 
+	public void addPoints(int points) {
+		setPoints(this.points + points);
+	}
+
 	public void setPoints(int points) {
 		this.points = points;
 		new VoteService().setPoints(uuid, points);

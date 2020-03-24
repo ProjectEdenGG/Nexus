@@ -28,6 +28,7 @@ public class DailyRewardsFeature {
 	public DailyRewardsFeature() {
 		setupDailyRewards();
 		scheduler();
+		BNCore.getCron().schedule("00 00 * * *", DailyRewardsFeature::dailyReset);
 	}
 
 	private void scheduler() {
@@ -49,6 +50,23 @@ public class DailyRewardsFeature {
 				}
 			}
 		});
+	}
+
+	static void dailyReset() {
+		DailyRewardService service = new DailyRewardService();
+		List<DailyReward> dailyRewards = service.getAll();
+		for (DailyReward dailyReward : dailyRewards) {
+			if (!dailyReward.isEarnedToday()) {
+				dailyReward.setStreak(0);
+				dailyReward.setClaimed(null);
+			}
+
+			dailyReward.setEarnedToday(false);
+			if (dailyReward.getPlayer().isOnline())
+				dailyReward.increaseStreak();
+
+			service.save(dailyReward);
+		}
 	}
 
 	public static int getMaxDays() {

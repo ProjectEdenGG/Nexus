@@ -126,7 +126,7 @@ public class BNCoreCommand extends CustomCommand {
 
 	@Path("signgui")
 	void signgui() {
-		BNCore.getInstance().getSignMenuFactory()
+		BNCore.getSignMenuFactory()
 				.lines("1", "2", "3", "4")
 				.response((player, lines) -> {
 					for (String string : lines)

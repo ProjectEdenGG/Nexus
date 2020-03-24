@@ -2,10 +2,13 @@ package me.pugabyte.bncore.features.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.votes.vps.VPS;
 import me.pugabyte.bncore.models.vote.Vote;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.VoteSite;
+import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -17,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.Utils.epochSecond;
 import static me.pugabyte.bncore.utils.Utils.randomInt;
 
@@ -26,6 +30,12 @@ public class Votes implements Listener {
 		BNCore.registerListener(this);
 		scheduler();
 		new VPS();
+
+		BNCore.getCron().schedule("00 00 1 * *", this::endOfMonth);
+	}
+
+	private void endOfMonth() {
+		// TODO
 	}
 
 	private void scheduler() {
@@ -52,8 +62,23 @@ public class Votes implements Listener {
 		Vote vote = new Vote(player.getUniqueId().toString(), site, extra, timestamp);
 		new VoteService().save(vote);
 
-		// Announce if PMC
-		// Give points
+		if (true) return;
+
+		if (site == VoteSite.PMC) {
+			Chat.broadcast("&a[✔] &3" + player.getName() + " &bvoted &3for the server and received &b1 &3vote point per site!");
+			Discord.send(":white_check_mark: **" + player.getName() + " voted** for the server and received **1 vote point** per site!");
+		}
+
+		if (vote.getExtra() > 0) {
+			Chat.broadcast("&3[✦] &e" + player.getName() + " &3received &e" + vote.getExtra() + " extra &3vote points!");
+			Discord.send(":star: **" + player.getName() + "** received **" + vote.getExtra() + "** extra vote points!");
+		}
+
+		Voter voter = new VoteService().get(player);
+		int points = vote.getExtra() + 1;
+		voter.addPoints(points);
+		if (player.isOnline())
+			player.getPlayer().sendMessage(colorize(VPS.PREFIX + "You have received " + points + " point" + (points == 1 ? "" : "s")));
 	}
 
 	Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{

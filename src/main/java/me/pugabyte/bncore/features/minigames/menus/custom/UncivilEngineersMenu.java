@@ -218,7 +218,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 						Location loc = player.getLocation();
 						AtomicInteger originID = new AtomicInteger(0);
 						player.closeInventory();
-						BNCore.getInstance().getSignMenuFactory()
+						BNCore.getSignMenuFactory()
 								.lines("", "^^^^^^^^", "UE Line", "Number")
 								.response((player1, response) -> {
 									try {
