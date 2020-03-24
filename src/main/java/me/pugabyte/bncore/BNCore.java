@@ -3,6 +3,7 @@ package me.pugabyte.bncore;
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import be.maximvdw.placeholderapi.PlaceholderReplaceEvent;
 import com.comphenix.protocol.ProtocolLibrary;
+import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
@@ -117,6 +118,7 @@ public class BNCore extends JavaPlugin {
 		MySQLPersistence.shutdown();
 		MongoDBPersistence.shutdown();
 		commands.unregisterAll();
+		cron.stop();
 	}
 
 	private void setupConfig() {
@@ -167,7 +169,11 @@ public class BNCore extends JavaPlugin {
 	public static Wiki wiki;
 
 	@Getter
-	private SignMenuFactory signMenuFactory;
+	private static Scheduler cron = new Scheduler();
+
+	// http://www.sauronsoftware.it/projects/cron4j/manual.php
+	@Getter
+	private static SignMenuFactory signMenuFactory;
 
 	private void enableFeatures() {
 		// Load this first
@@ -202,6 +208,7 @@ public class BNCore extends JavaPlugin {
 		new Timer("  Wiki", () -> wiki = new Wiki());
 
 		signMenuFactory = new SignMenuFactory(this);
+		cron.start();
 	}
 
 }

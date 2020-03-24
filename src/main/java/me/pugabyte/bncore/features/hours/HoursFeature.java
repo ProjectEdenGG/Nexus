@@ -22,6 +22,10 @@ public class HoursFeature {
 	public HoursFeature() {
 		registerPlaceholder();
 		scheduler();
+
+		BNCore.getCron().schedule("00 00 * * *", () -> new HoursService().endOfDay());
+		BNCore.getCron().schedule("00 00 * * 1", () -> new HoursService().endOfWeek());
+		BNCore.getCron().schedule("00 00 1 * *", () -> new HoursService().endOfMonth());
 	}
 
 	private void registerPlaceholder() {

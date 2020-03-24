@@ -40,19 +40,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Permission("dailyreset")
 	void dailyReset() {
 		console();
-		List<DailyReward> dailyRewards = service.getAll();
-		for (DailyReward dailyReward : dailyRewards) {
-			if (!dailyReward.isEarnedToday()) {
-				dailyReward.setStreak(0);
-				dailyReward.setClaimed(null);
-			}
-
-			dailyReward.setEarnedToday(false);
-			if (dailyReward.getPlayer().isOnline())
-				dailyReward.increaseStreak();
-
-			service.save(dailyReward);
-		}
+		DailyRewardsFeature.dailyReset();
 	}
 
 	@Path("streak [player]")
