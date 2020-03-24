@@ -349,7 +349,7 @@ public class Battleship extends BalancedTeamMechanic {
 			this.item = new ItemStackBuilder(Material.CONCRETE)
 					.name(color.getChatColor() + toString() + " &8| &7Size: &e" + length)
 					.lore("&fPlace on the yellow wool to configure")
-					.durability(color.getDurability().shortValue())
+					.durability(color.getDurability())
 					.build();
 		}
 

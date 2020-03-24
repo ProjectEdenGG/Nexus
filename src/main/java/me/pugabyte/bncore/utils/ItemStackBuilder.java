@@ -42,6 +42,10 @@ public class ItemStackBuilder {
 		return durability(colorType.getDurability().shortValue());
 	}
 
+	public ItemStackBuilder durability(int durability) {
+		return durability(Integer.valueOf(durability).shortValue());
+	}
+
 	public ItemStackBuilder durability(short durability) {
 		itemStack.setDurability(durability);
 		return this;

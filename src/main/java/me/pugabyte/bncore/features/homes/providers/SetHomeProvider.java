@@ -45,7 +45,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 
 		Map<String, ItemStack> options = new LinkedHashMap<String, ItemStack>() {{
 			put("home", new ItemStackBuilder(Material.BED)
-					.durability(ColorType.CYAN.getDurability().shortValue())
+					.durability(ColorType.CYAN.getDurability())
 					.loreize(false)
 					.lore("&fThis is your main home. You can teleport to it with &c/h &for &c/home")
 					.build());
