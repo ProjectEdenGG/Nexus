@@ -31,7 +31,7 @@ public enum VPSMenu {
 			add(VPSPage.builder().items(new HashMap<Integer, VPSSlotBuilder>() {{
 						put(10, VPSSlot.builder()
 								.name("$250")
-								.display(Material.GOLD_NUGGET)
+								.display(Material.IRON_NUGGET)
 								.price(1)
 								.money(250));
 						put(11, VPSSlot.builder()
@@ -41,12 +41,12 @@ public enum VPSMenu {
 								.money(2500));
 						put(12, VPSSlot.builder()
 								.name("$5,000")
-								.display(Material.GOLD_NUGGET)
+								.display(Material.GOLD_INGOT)
 								.price(20)
 								.money(5000));
 						put(13, VPSSlot.builder()
 								.name("$10,000")
-								.display(Material.GOLD_NUGGET)
+								.display(Material.GOLD_BLOCK)
 								.price(40)
 								.money(10000));
 						put(19, VPSSlot.builder()
