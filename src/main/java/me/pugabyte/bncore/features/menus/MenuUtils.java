@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -77,15 +78,15 @@ public abstract class MenuUtils {
 	}
 
 	protected void addCloseItem(InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(backItem(), e -> e.getPlayer().closeInventory()));
+		contents.set(0, 0, ClickableItem.from(closeItem(), e -> e.getPlayer().closeInventory()));
 	}
 
 	protected ItemStack backItem() {
-		return nameItem(new ItemStack(Material.BARRIER), "&cBack");
+		return new ItemBuilder(Material.BARRIER).name("&cBack").build();
 	}
 
 	protected ItemStack closeItem() {
-		return nameItem(new ItemStack(Material.BARRIER), "&cClose");
+		return new ItemBuilder(Material.BARRIER).name("&cClose").build();
 	}
 
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {

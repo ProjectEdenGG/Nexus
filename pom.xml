@@ -11,6 +11,7 @@
                 <directory>src/main/java</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
+                    <exclude>target/generated-sources/delombok/*</exclude>
                 </excludes>
             </resource>
             <resource>
@@ -61,6 +62,7 @@
                     </execution>
                 </executions>
             </plugin>
+        <!--
             <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
@@ -78,6 +80,7 @@
                     </execution>
                 </executions>
             </plugin>
+        -->
         </plugins>
     </build>
     <properties>

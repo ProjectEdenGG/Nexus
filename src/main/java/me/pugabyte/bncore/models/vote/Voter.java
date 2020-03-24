@@ -13,7 +13,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Voter {
 	@NonNull
-	public String uuid;
-	int votes;
-	List<Vote> activeVotes = new ArrayList<>();
+	private String uuid;
+	private int votes;
+	private List<Vote> activeVotes = new ArrayList<>();
+	private int points;
+
+	public void takePoints(int points) {
+		setPoints(this.points - points);
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
+		new VoteService().setPoints(uuid, points);
+	}
+
 }
