@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.utils;
 
+import me.pugabyte.bncore.BNCore;
+
 public enum Time {
 	TICK(1),
 	SECOND(TICK.get() * 20),
@@ -22,5 +24,19 @@ public enum Time {
 
 	public int x(int multiplier) {
 		return value * multiplier;
+	}
+
+	public static class Timer {
+		private static final int IGNORE = 30;
+
+		public Timer(String id, Runnable runnable) {
+			long startTime = System.currentTimeMillis();
+
+			runnable.run();
+
+			long duration = System.currentTimeMillis() - startTime;
+			if (duration > IGNORE)
+				BNCore.log("[Timer] " + id + " took " + duration + "ms");
+		}
 	}
 }

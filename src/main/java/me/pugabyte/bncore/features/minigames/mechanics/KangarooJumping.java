@@ -10,7 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.features.minigames.utils.PowerUpUtils;
 import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -77,14 +77,14 @@ public final class KangarooJumping extends TeamlessMechanic {
 	}
 
 	PowerUpUtils.PowerUp JUMP = new PowerUpUtils.PowerUp("Extra Jump Boost", true,
-			new ItemStackBuilder(Material.LEATHER_BOOTS).glow().build(),
+			new ItemBuilder(Material.LEATHER_BOOTS).glow().build(),
 			minigamer -> {
 				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 20), true);
 				minigamer.getMatch().getTasks().wait(10 * 20, () -> minigamer.getMatch().getTeams().get(0).getLoadout().apply(minigamer));
 			});
 
 	PowerUpUtils.PowerUp POSITIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", true,
-			new ItemStackBuilder(Material.POTION).effectColor(ColorType.BLACK.getColor()).glow().build(),
+			new ItemBuilder(Material.POTION).effectColor(ColorType.BLACK.getColor()).glow().build(),
 			minigamer -> {
 				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
 					if (_minigamer != minigamer) {
@@ -94,13 +94,13 @@ public final class KangarooJumping extends TeamlessMechanic {
 			});
 
 	PowerUpUtils.PowerUp NEGATIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", false,
-			new ItemStackBuilder(Material.POTION).effectColor(ColorType.BLACK.getColor()).build(),
+			new ItemBuilder(Material.POTION).effectColor(ColorType.BLACK.getColor()).build(),
 			minigamer -> minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1)));
 
 	PowerUpUtils.PowerUp SNOWBALL = new PowerUpUtils.PowerUp("Snowball", true, Material.SNOW_BALL,
 			minigamer ->
 				minigamer.getMatch().getMinigamers().forEach(_minigamer -> _minigamer.getPlayer().getInventory().addItem(
-						new ItemStackBuilder(Material.SNOW_BALL)
+						new ItemBuilder(Material.SNOW_BALL)
 								.name("&bKnockback Snowball")
 								.enchant(Enchantment.KNOCKBACK, 2)
 								.amount(3)

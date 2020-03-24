@@ -27,7 +27,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -94,7 +94,7 @@ public final class Thimble extends TeamlessMechanic {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getPlayer();
-		ItemStack menuItem = new ItemStackBuilder(Material.CONCRETE).durability(11).name("Choose A Block!").build();
+		ItemStack menuItem = new ItemBuilder(Material.CONCRETE).durability(11).name("Choose A Block!").build();
 		player.getInventory().setItem(0, menuItem);
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
 	}

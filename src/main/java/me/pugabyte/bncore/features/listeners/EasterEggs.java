@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.listeners;
 
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -86,7 +86,7 @@ public class EasterEggs implements Listener {
 				player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_MILK, 0.5F, 1F);
 				Tasks.wait(4, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_AMBIENT, 0.5F, 1F));
 
-				ItemStack milkBucket = new ItemStackBuilder(Material.MILK_BUCKET).lore("Wakka's milk").build();
+				ItemStack milkBucket = new ItemBuilder(Material.MILK_BUCKET).lore("Wakka's milk").build();
 				player.getInventory().addItem(milkBucket);
 				break;
 			case WHEAT:

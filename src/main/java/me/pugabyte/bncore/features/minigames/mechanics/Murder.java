@@ -17,7 +17,7 @@ import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.skript.SkriptFunctions;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Utils;
@@ -545,55 +545,55 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	@Getter
-	public static ItemStack knife = new ItemStackBuilder(Material.IRON_SWORD)
+	public static ItemStack knife = new ItemBuilder(Material.IRON_SWORD)
 			.name("&cKnife")
 			.lore("&fUse this to murder innocents!", "&eLeft-click &fto attack", "&eRight-click &fto throw")
 			.build();
 
 	@Getter
-	public static ItemStack gun = new ItemStackBuilder(Material.IRON_HOE)
+	public static ItemStack gun = new ItemBuilder(Material.IRON_HOE)
 			.name("&eGun")
 			.lore("&fUse this to kill the murderer!", "&eRight-click &fto shoot")
 			.build();
 
 	@Getter
-	public static ItemStack scrap = new ItemStackBuilder(Material.IRON_INGOT)
+	public static ItemStack scrap = new ItemBuilder(Material.IRON_INGOT)
 			.name("&eScrap")
 			.lore("&fCollect 10 to craft a gun!")
 			.build();
 
 	@Getter
-	public static ItemStack fakeScrap = new ItemStackBuilder(Material.IRON_INGOT)
+	public static ItemStack fakeScrap = new ItemBuilder(Material.IRON_INGOT)
 			.name("&eFake Scrap")
 			.lore("&fUse this to fool the innocents!")
 			.build();
 
 	@Getter
-	public static ItemStack compass = new ItemStackBuilder(Material.COMPASS)
+	public static ItemStack compass = new ItemBuilder(Material.COMPASS)
 			.name("&eLocator")
 			.lore("&fPoints to the closest innocent")
 			.build();
 
 	@Getter
-	public static ItemStack teleporter = new ItemStackBuilder(Material.ENDER_PEARL)
+	public static ItemStack teleporter = new ItemBuilder(Material.ENDER_PEARL)
 			.name("&eTeleporter")
 			.lore("&eRight-click &fto teleport all innocents to random locations")
 			.build();
 
 	@Getter
-	public static ItemStack adrenaline = new ItemStackBuilder(Material.SUGAR)
+	public static ItemStack adrenaline = new ItemBuilder(Material.SUGAR)
 			.name("&eAdrenaline")
 			.lore("&eRight-click &fto receive a speed boost")
 			.build();
 
 	@Getter
-	public static ItemStack bloodlust = new ItemStackBuilder(Material.EYE_OF_ENDER)
+	public static ItemStack bloodlust = new ItemBuilder(Material.EYE_OF_ENDER)
 			.name("&eBloodlust")
 			.lore("&eRight-click &fto highlight all players, for a penalty!")
 			.build();
 
 	@Getter
-	public static ItemStack retriever = new ItemStackBuilder(Material.TRIPWIRE_HOOK)
+	public static ItemStack retriever = new ItemBuilder(Material.TRIPWIRE_HOOK)
 			.name("&eRetrieve knife")
 			.lore("&eRight-click &fto retrieve the knife, for a penalty!")
 			.build();

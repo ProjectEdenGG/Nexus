@@ -10,7 +10,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
 import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -50,7 +50,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		int max = homeOwner.getMaxHomes();
 		int left = max - homes;
 
-		ItemStackBuilder item = new ItemStackBuilder(Material.NAME_TAG);
+		ItemBuilder item = new ItemBuilder(Material.NAME_TAG);
 
 		if (left > 0)
 			item.name("&eSet a new home").lore("You have set &e" + homes + " &fof your &e" + max + " &fhomes||" +
@@ -63,7 +63,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void format_AutoLock(InventoryContents contents) {
-		ItemStackBuilder item = new ItemStackBuilder(Material.REDSTONE);
+		ItemBuilder item = new ItemBuilder(Material.REDSTONE);
 
 		if (homeOwner.isAutoLock())
 			item.name("&eAuto Lock &f| &aON").lore("Any new homes you set will be automatically locked").glow();
@@ -78,7 +78,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void format_AllowAndRemoveAll(InventoryContents contents) {
-		contents.set(1, 2, ClickableItem.from(new ItemStackBuilder(ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE_POWDER))
+		contents.set(1, 2, ClickableItem.from(new ItemBuilder(ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE_POWDER))
 						.name("&eGrant a player access to all homes")
 						.loreize(false)
 						.lore("&fThey will be able to teleport to||&fyour homes even if they are locked" + getAccessListNames(homeOwner.getFullAccessList())).build(),
@@ -115,14 +115,14 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 
 		// TODO: Look into async paginator in SmartInvs
 		homeOwner.getHomes().forEach(home -> {
-			ItemStackBuilder item;
+			ItemBuilder item;
 
 			if (home.getItem() != null)
-				item = new ItemStackBuilder(home.getItem());
+				item = new ItemBuilder(home.getItem());
 			else if (home.isLocked())
-				item = new ItemStackBuilder(ColorType.RED.getItemStack(Material.CONCRETE));
+				item = new ItemBuilder(ColorType.RED.getItemStack(Material.CONCRETE));
 			else
-				item = new ItemStackBuilder(ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE));
+				item = new ItemBuilder(ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE));
 
 			if (home.isLocked())
 				item.glow().loreize(false).lore("||&f&cLocked||&f||&eClick to edit" + getAccessListNames(home.getAccessList()));

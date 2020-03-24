@@ -39,7 +39,7 @@ public class Basketball implements Listener {
 
 	public Basketball() {
 		BNCore.registerListener(this);
-		new Basketball.BasketballJanitor();
+		janitor();
 	}
 
 	public static ItemStack getBasketball(Player player) {
@@ -97,39 +97,33 @@ public class Basketball implements Listener {
 		});
 	}
 
-	private class BasketballJanitor {
-		public BasketballJanitor() {
-			start();
-		}
+	private void janitor() {
+		WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
+		Tasks.repeat(0, 20 * 20, () -> {
+			cleanupBasketballs();
 
-		void start() {
-			WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
-			Tasks.repeat(0, 20 * 20, () -> {
-				cleanupBasketballs();
+			List<Player> players = Bukkit.getOnlinePlayers().stream()
+					.filter(player -> player.getWorld() == world)
+					.collect(Collectors.toList());
 
-				List<Player> players = Bukkit.getOnlinePlayers().stream()
-						.filter(player -> player.getWorld() == world)
-						.collect(Collectors.toList());
+			players.forEach(player -> {
+				if (wgUtils.isInRegion(player.getLocation(), region)) {
+					if (!hasBasketball(player)) {
+						boolean found = false;
+						for (Entity entity : getLobbyEntities())
+							if (wgUtils.isInRegion(entity.getLocation(), region)) {
+								found = true;
+								break;
+							}
 
-				players.forEach(player -> {
-					if (wgUtils.isInRegion(player.getLocation(), region)) {
-						if (!hasBasketball(player)) {
-							boolean found = false;
-							for (Entity entity : getLobbyEntities())
-								if (wgUtils.isInRegion(entity.getLocation(), region)) {
-									found = true;
-									break;
-								}
-
-							if (!found)
-								giveBasketball(player);
-						}
-					} else {
-						removeBasketball(player);
+						if (!found)
+							giveBasketball(player);
 					}
-				});
+				} else {
+					removeBasketball(player);
+				}
 			});
-		}
+		});
 	}
 
 	private class BasketballThrowWatcher {

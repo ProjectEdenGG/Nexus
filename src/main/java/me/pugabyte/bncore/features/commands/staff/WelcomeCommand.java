@@ -40,7 +40,7 @@ public class WelcomeCommand extends CustomCommand {
 		Tasks.repeat(0, Time.SECOND.x(60), () -> {
 			if (!(Rank.getOnlineStaff().size() > 2)) return;
 			try {
-				new CooldownService().check("staff", "bumpReminder", Time.DAY.x(1));
+				new CooldownService().check("staff", "bumpReminder", Time.DAY);
 				Utils.mod("");
 				Utils.mod("&eHi Staff. &3It looks like there's a few of you online. Could you consider &ebumping the server?");
 				Utils.mod("&3Instructions: &ehttps://bnn.gg/mod");

@@ -8,7 +8,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.dailyreward.DailyReward;
 import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
 import me.pugabyte.bncore.models.dailyreward.Reward;
-import me.pugabyte.bncore.utils.ItemStackBuilder;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,10 +20,10 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private DailyRewardService service = new DailyRewardService();
 	private DailyReward dailyReward;
 
-	private ItemStack back = new ItemStackBuilder(Material.BARRIER).name("&cScroll back 1 day").build();
-	private ItemStack back7 = new ItemStackBuilder(Material.BARRIER).amount(7).name("&cScroll back 7 days").build();
-	private ItemStack forward = new ItemStackBuilder(Material.ARROW).name("&2Scroll forward 1 day").build();
-	private ItemStack forward7 = new ItemStackBuilder(Material.ARROW).amount(7).name("&2Scroll forward 7 days").build();
+	private ItemStack back = new ItemBuilder(Material.BARRIER).name("&cScroll back 1 day").build();
+	private ItemStack back7 = new ItemBuilder(Material.BARRIER).amount(7).name("&cScroll back 7 days").build();
+	private ItemStack forward = new ItemBuilder(Material.ARROW).name("&2Scroll forward 1 day").build();
+	private ItemStack forward7 = new ItemBuilder(Material.ARROW).amount(7).name("&2Scroll forward 7 days").build();
 
 	private final int MAX_DAY = DailyRewardsFeature.getMaxDays();
 	private ItemStack claimed = new ItemStack(Material.WOOL, 1);
