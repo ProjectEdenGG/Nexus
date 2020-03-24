@@ -94,7 +94,7 @@ public final class Thimble extends TeamlessMechanic {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getPlayer();
-		ItemStack menuItem = new ItemStackBuilder(Material.CONCRETE).durability((short) 11).name("Choose A Block!").build();
+		ItemStack menuItem = new ItemStackBuilder(Material.CONCRETE).durability(11).name("Choose A Block!").build();
 		player.getInventory().setItem(0, menuItem);
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
 	}
