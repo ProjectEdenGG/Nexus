@@ -25,14 +25,9 @@ import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Slime;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,34 +48,6 @@ public class BNCoreCommand extends CustomCommand {
 
 		BNCore.registerPlaceholder("nerds", event ->
 				String.valueOf(Bukkit.getOnlinePlayers().stream().filter(target -> Utils.canSee(event.getPlayer(), target)).count()));
-	}
-
-	@Path("leash")
-	void leash() {
-		Location fence1 = new Location(Bukkit.getWorld("world"), -421.5, 64.0, -222.5, 180.0F, 0.0F);
-		Location fence2 = new Location(Bukkit.getWorld("world"), -421.5, 64.0, -225.5, 180.0F, 0.0F);
-		Location fence3 = new Location(Bukkit.getWorld("world"), -421.5, 64.0, -228.5, 180.0F, 0.0F);
-
-		LeashHitch leash1 = fence1.getWorld().spawn(fence1.getBlock().getLocation(), LeashHitch.class);
-		LeashHitch leash2 = fence2.getWorld().spawn(fence2.getBlock().getLocation(), LeashHitch.class);
-		LeashHitch leash3 = fence2.getWorld().spawn(fence2.getBlock().getLocation(), LeashHitch.class);
-		LeashHitch leash4 = fence2.getWorld().spawn(fence3.getBlock().getLocation(), LeashHitch.class);
-
-		spawnSlime(fence1).setLeashHolder(leash2);
-		spawnSlime(fence2).setLeashHolder(leash1);
-		spawnSlime(fence2).setLeashHolder(leash4);
-		spawnSlime(fence3).setLeashHolder(leash3);
-	}
-
-	private Slime spawnSlime(Location location) {
-		Slime slime = location.getWorld().spawn(location, Slime.class);
-		slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999999, 1, false, false));
-		slime.setAI(false);
-		slime.setGravity(false);
-		slime.setSize(1);
-		slime.setCollidable(false);
-		slime.setInvulnerable(true);
-		return slime;
 	}
 
 	@Path("koda <message...>")
