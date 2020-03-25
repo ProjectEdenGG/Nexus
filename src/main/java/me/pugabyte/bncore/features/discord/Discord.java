@@ -40,18 +40,20 @@ public class Discord {
 	}
 
 	public static void send(String message, DiscordId.Channel... targets) {
+		message = stripColor(message);
 		for (DiscordId.Channel target : targets) {
 			TextChannel channel = Bot.RELAY.jda().getTextChannelById(target.getId());
 			if (channel != null)
-				channel.sendMessage(stripColor(message)).queue();
+				channel.sendMessage(message).queue();
 		}
 	}
 
 	public static void koda(String message, DiscordId.Channel... targets) {
+		message = stripColor(message);
 		for (DiscordId.Channel target : targets) {
 			TextChannel channel = Bot.KODA.jda().getTextChannelById(target.getId());
 			if (channel != null)
-				channel.sendMessage(stripColor(message)).queue();
+				channel.sendMessage(message).queue();
 		}
 	}
 

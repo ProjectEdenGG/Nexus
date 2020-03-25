@@ -15,7 +15,7 @@ public class Chat {
 		BNCore.getInstance().addConfigDefault("localRadius", 500);
 //		new ChatListener();
 
-		addChannels();
+//		addChannels();
 	}
 
 	public static void broadcast(String message) {

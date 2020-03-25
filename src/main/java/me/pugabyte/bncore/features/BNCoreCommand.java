@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features;
 
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -46,6 +47,11 @@ public class BNCoreCommand extends CustomCommand {
 
 		BNCore.registerPlaceholder("nerds", event ->
 				String.valueOf(Bukkit.getOnlinePlayers().stream().filter(target -> Utils.canSee(event.getPlayer(), target)).count()));
+	}
+
+	@Path("koda <message...>")
+	void koda(String message) {
+		Koda.say(message);
 	}
 
 	@Path("getPlayer [player]")
