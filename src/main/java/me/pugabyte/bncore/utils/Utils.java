@@ -16,6 +16,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -258,18 +259,20 @@ public class Utils {
 		runConsoleCommand("pex user " + player.getName() + " suffix \"" + Rank.valueOf(rank).getFormat() + "\"");
 	}
 
-	public static void runCommand(Player player, String command) {
-		Bukkit.dispatchCommand(player, command);
+	public static void runCommand(CommandSender sender, String command) {
+		Bukkit.dispatchCommand(sender, command);
 	}
 
-	public static void runCommandAsOp(Player player, String command) {
-		player.setOp(true);
-		Bukkit.dispatchCommand(player, command);
-		player.setOp(false);
+	public static void runCommandAsOp(CommandSender sender, String command) {
+		boolean deop = !sender.isOp();
+		sender.setOp(true);
+		runCommand(sender, command);
+		if (deop)
+			sender.setOp(false);
 	}
 
 	public static void runConsoleCommand(String command) {
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+		runCommand(Bukkit.getConsoleSender(), command);
 	}
 
 	public static LocalDateTime epochSecond(String timestamp) {

@@ -5,7 +5,6 @@ import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Bukkit;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -19,7 +18,7 @@ public class Koda {
 	private static String dmFormat = "&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e";
 
 	public static void reply(String message) {
-		Tasks.wait(Time.SECOND, () -> say(message));
+		Tasks.wait(10, () -> say(message));
 	}
 
 	public static void say(String message) {
