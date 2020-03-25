@@ -115,7 +115,7 @@ public class LaunchPads implements Listener {
 			}
 
 			if (fBlock == null || fBlock.isOnGround() || fBlock.isDead() || fBlock.getLocation().getY() < -10.0
-					|| fBlock.getVelocity().length() == 0.0 || endFlight || jumpPadPlayers.get(player) == null) {
+					|| fBlock.getVelocity().length() == 0.0 || endFlight || jumpPadPlayers.get(player) == null || player.isOnGround()) {
 
 				if (fBlock != null) {
 					fBlock.remove();
