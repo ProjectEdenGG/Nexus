@@ -169,11 +169,11 @@ public class BNCore extends JavaPlugin {
 	public static Wiki wiki;
 
 	@Getter
-	private static Scheduler cron = new Scheduler();
-
-	// http://www.sauronsoftware.it/projects/cron4j/manual.php
-	@Getter
 	private static SignMenuFactory signMenuFactory;
+
+	@Getter
+	// http://www.sauronsoftware.it/projects/cron4j/manual.php
+	private static Scheduler cron = new Scheduler();
 
 	private void enableFeatures() {
 		// Load this first
