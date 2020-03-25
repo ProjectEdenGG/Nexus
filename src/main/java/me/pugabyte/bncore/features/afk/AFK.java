@@ -44,9 +44,8 @@ public class AFK {
 			return false;
 
 		boolean x = (int) from.getX() == (int) to.getX();
-		boolean y = (int) from.getY() == (int) to.getY();
 		boolean z = (int) from.getZ() == (int) to.getZ();
-		return x && y && z;
+		return x && z;
 	}
 
 	public static AFKPlayer get(Player player) {

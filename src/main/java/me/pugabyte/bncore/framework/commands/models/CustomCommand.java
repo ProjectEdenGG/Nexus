@@ -25,7 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.block.CommandBlock;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -132,11 +132,11 @@ public abstract class CustomCommand implements ICustomCommand {
 		return (ConsoleCommandSender) event.getSender();
 	}
 
-	protected CommandBlock commandBlock() {
-		if (!(event.getSender() instanceof CommandBlock))
+	protected BlockCommandSender commandBlock() {
+		if (!isCommandBlock())
 			throw new MustBeCommandBlockException();
 
-		return (CommandBlock) event.getSender();
+		return (BlockCommandSender) event.getSender();
 	}
 
 	protected boolean isPlayer() {
@@ -168,7 +168,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	private boolean isCommandBlock(Object object) {
-		return object instanceof CommandBlock;
+		return object instanceof BlockCommandSender;
 	}
 
 	protected boolean isSelf(OfflinePlayer player) {
@@ -196,9 +196,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void runCommandAsOp(CommandSender sender, String command) {
-		sender.setOp(true);
-		Bukkit.dispatchCommand(sender, command);
-		sender.setOp(false);
+		Utils.runCommandAsOp(sender, command);
 	}
 
 	protected void runCommandAsConsole(String command) {
