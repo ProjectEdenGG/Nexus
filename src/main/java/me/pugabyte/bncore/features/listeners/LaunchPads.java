@@ -103,9 +103,10 @@ public class LaunchPads implements Listener {
 		taskIDs.put(player, Tasks.repeat(0, 1, () -> {
 			boolean endFlight = false;
 			FallingBlock fBlock = jumpPadPlayers.get(player);
-			fBlock.setDropItem(false);
 
 			if (fBlock != null) {
+				fBlock.setDropItem(false);
+
 				if ((fBlock.getWorld() != null && !player.getLocation().getWorld().equals(fBlock.getWorld()))
 						|| fBlock.getLocation().clone().add(fBlock.getLocation().getDirection().clone().multiply(0.5)).getBlock().isLiquid())
 					endFlight = true;
