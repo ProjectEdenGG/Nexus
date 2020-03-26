@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -80,6 +81,13 @@ public class WorldGuardUtils {
 
 	public Collection<Player> getPlayersInRegion(String region) {
 		return Bukkit.getOnlinePlayers().stream().filter(player -> isInRegion(player.getLocation(), region)).collect(Collectors.toList());
+	}
+
+	public Collection<Entity> getEntitiesInRegion(String region) {
+		org.bukkit.World world = (org.bukkit.World) getRegion(region).getWorld();
+		if (world != null)
+			return world.getEntities().stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
+		return null;
 	}
 
 	public Set<ProtectedRegion> getRegionsLike(String name) {
