@@ -35,7 +35,7 @@ public class DailyRewardsFeature {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(5), () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				try {
-					if (((Hours) new HoursService().get(player)).getDaily() < (15 * 60)) continue;
+					if (((Hours) new HoursService().get(player)).getDaily() < Time.MINUTE.x(15)) continue;
 
 					DailyRewardService service = new DailyRewardService();
 					DailyReward dailyReward = service.get(player);

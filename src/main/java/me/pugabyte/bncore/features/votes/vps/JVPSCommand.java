@@ -16,7 +16,7 @@ public class JVPSCommand extends CustomCommand {
 
 	@Path("[page]")
 	void run(@Arg("1") int page) {
-		VPS.open(player(), VPS.getMenu(player()), page);
+		VPS.open(player(), page);
 	}
 
 }
