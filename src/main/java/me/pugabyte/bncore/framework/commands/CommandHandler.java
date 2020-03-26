@@ -28,7 +28,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
-		CommandEvent event = new CommandEvent(sender, customCommand, alias, Arrays.asList(args));
+		CommandEvent event = new CommandEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
 		call(event);
 		if (!event.isCancelled())
 			customCommand.execute(event);
