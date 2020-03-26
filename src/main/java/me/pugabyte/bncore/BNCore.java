@@ -39,7 +39,6 @@ import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.ModelListeners;
 import me.pugabyte.bncore.utils.Time.Timer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
@@ -49,6 +48,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class BNCore extends JavaPlugin {
 	private Commands commands;
@@ -130,7 +131,7 @@ public class BNCore extends JavaPlugin {
 				.map(Bukkit::getOfflinePlayer)
 				.filter(OfflinePlayer::isOnline)
 				.map(OfflinePlayer::getPlayer)
-				.forEach(player -> player.sendMessage(ChatColor.YELLOW + "!! Reloading BNCore"));
+				.forEach(player -> player.sendMessage(colorize("&c&l ! &c&l! &eReloading BNCore &c&l! &c&l!")));
 	}
 
 	private void setupConfig() {

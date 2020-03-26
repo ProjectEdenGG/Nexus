@@ -53,6 +53,8 @@ class PathParser {
 		private List<String> pathArgs;
 		private List<String> realArgs;
 		private List<TabCompleteArg> args = new ArrayList<>();
+		private Method finalTabCompleter;
+		private Object finalContextArg;
 
 		public TabCompleteHelper(Method method, List<String> realArgs) {
 			this.method = method;
@@ -76,11 +78,26 @@ class PathParser {
 					arg.setParamIndex(paramIndex++);
 					Parameter parameter = method.getParameters()[arg.getParamIndex()];
 					arg.setTabCompleter(parameter.getType());
-					if (parameter.getAnnotation(Arg.class) != null) {
-						arg.setTabCompleter(parameter.getAnnotation(Arg.class).tabCompleter());
-						if (parameter.getAnnotation(Arg.class).contextArg() > 0)
-							arg.setContextArg(command.getMethodParameters(method, event, false)[parameter.getAnnotation(Arg.class).contextArg() - 1]);
+					Arg annotation = parameter.getAnnotation(Arg.class);
+					if (annotation != null) {
+						if (List.class.isAssignableFrom(parameter.getType()) && annotation.type() != void.class)
+							arg.setTabCompleter(annotation.type());
+						arg.setTabCompleter(annotation.tabCompleter());
+						if (annotation.contextArg() > 0)
+							arg.setContextArg(command.getMethodParameters(method, event, false)[annotation.contextArg() - 1]);
 					}
+
+					if (finalTabCompleter == null) {
+						if (arg.getPathArg() != null && arg.getPathArg().contains("...")) {
+							finalTabCompleter = arg.getTabCompleter();
+							finalContextArg = arg.getContextArg();
+						}
+					}
+				}
+
+				if (finalTabCompleter != null) {
+					arg.setTabCompleter(finalTabCompleter);
+					arg.setContextArg(finalContextArg);
 				}
 
 				args.add(arg);
@@ -105,7 +122,6 @@ class PathParser {
 
 			return new ArrayList<>();
 		}
-
 	}
 
 	@Data
@@ -166,7 +182,7 @@ class PathParser {
 		List<String> tabComplete() {
 			if (isLiteral())
 				return getSplitPathArg(realArg);
-			else if (isVariable() && tabCompleter != null) {
+			else if (tabCompleter != null) {
 				CustomCommand tabCompleteCommand = command;
 				if (!(tabCompleter.getDeclaringClass().equals(command.getClass()) || Modifier.isAbstract(tabCompleter.getDeclaringClass().getModifiers())))
 					tabCompleteCommand = command.getNewCommand(command.getEvent(), tabCompleter.getDeclaringClass());
@@ -180,6 +196,10 @@ class PathParser {
 			}
 
 			return new ArrayList<>();
+		}
+
+		void setTabCompleter(Method tabCompleter) {
+			this.tabCompleter = tabCompleter;
 		}
 
 		void setTabCompleter(Class<?> clazz) {

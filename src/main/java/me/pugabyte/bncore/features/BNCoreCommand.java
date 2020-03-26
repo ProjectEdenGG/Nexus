@@ -50,6 +50,11 @@ public class BNCoreCommand extends CustomCommand {
 				String.valueOf(Bukkit.getOnlinePlayers().stream().filter(target -> Utils.canSee(event.getPlayer(), target)).count()));
 	}
 
+	@Path("listTest <player...>")
+	void listTest(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		send(players.stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
+	}
+
 	@Path("koda <message...>")
 	void koda(String message) {
 		Koda.say(message);

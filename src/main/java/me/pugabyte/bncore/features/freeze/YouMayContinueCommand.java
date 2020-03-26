@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands.staff;
+package me.pugabyte.bncore.features.freeze;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -21,7 +21,7 @@ public class YouMayContinueCommand extends CustomCommand {
 		runCommand("unfreeze " + player.getName());
 		runCommand("vanish on");
 		runCommand("forcechannel " + player.getName() + " g");
-		if (reason != null)
+		if (!isNullOrEmpty(reason))
 			runCommand("warn " + player.getName() + " " + reason);
 	}
 
