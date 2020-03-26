@@ -486,5 +486,13 @@
             <version>1.5.01-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!-- LiteBans -->
+        <dependency>
+            <groupId>com.gitlab.ruany</groupId>
+            <artifactId>LiteBansAPI</artifactId>
+            <version>0.3.1</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 </project>

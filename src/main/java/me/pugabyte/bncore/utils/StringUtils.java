@@ -309,6 +309,11 @@ public class StringUtils {
 			return number + "th";
 	}
 
+	public static String getLocationString(Location loc) {
+		return "&3World: &e" + loc.getWorld().getName() + " &3x: &e" + loc.getX() + " &3y: &e" +
+				loc.getY() + " &3z: &e" + loc.getZ();
+	}
+
 	public static void sendJsonLocation(String message, Location location, Player player) {
 		int x = (int) location.getX();
 		int y = (int) location.getY();
