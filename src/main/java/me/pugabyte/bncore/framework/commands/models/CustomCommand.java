@@ -53,9 +53,9 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void send(CommandSender sender, String message) {
-		if (isConsole() || isPlayer())
+		if (isConsole(sender) || isPlayer(sender))
 			sender.sendMessage(StringUtils.colorize(message));
-		else if (isOfflinePlayer())
+		else if (isOfflinePlayer(sender))
 			if (((OfflinePlayer) sender).isOnline())
 				((OfflinePlayer) sender).getPlayer().sendMessage(StringUtils.colorize(message));
 	}
@@ -219,6 +219,10 @@ public abstract class CustomCommand implements ICustomCommand {
 
 	protected List<String> args() {
 		return event.getArgs();
+	}
+
+	protected void setArgs(List<String> args) {
+		event.setArgs(args);
 	}
 
 	protected String arg(int i) {

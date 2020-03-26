@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.radar;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -33,10 +32,6 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 
 	public ReachWatchCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		BNCore.registerListener(new ReachWatchCommand());
 	}
 
 	@Path("<player>")

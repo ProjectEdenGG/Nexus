@@ -1,10 +1,12 @@
 package me.pugabyte.bncore.framework.commands;
 
 import lombok.Getter;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.utils.Time.Timer;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
@@ -13,6 +15,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static me.pugabyte.bncore.utils.StringUtils.listLast;
 import static org.reflections.ReflectionUtils.getMethods;
@@ -62,8 +65,18 @@ public class Commands {
 					mapUtils.register(alias, customCommand);
 					commands.put(alias, customCommand);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try {
+				if (customCommand instanceof Listener)
+					if (Stream.of(customCommand.getClass().getConstructors()).noneMatch((c) -> c.getParameterCount() == 0))
+						BNCore.warn("Cannot register listener on command " + customCommand.getClass().getSimpleName() + ", needs @NoArgsConstructor");
+					else
+						BNCore.registerListener((Listener) customCommand.getClass().newInstance());
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		});
 	}

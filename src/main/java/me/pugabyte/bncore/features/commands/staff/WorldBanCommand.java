@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -29,10 +28,6 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 
 	public WorldBanCommand(CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		BNCore.registerListener(new WorldBanCommand());
 	}
 
 	@Path("clearCache")

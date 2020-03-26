@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -29,10 +28,6 @@ public class FetchCommand extends CustomCommand implements Listener {
 
 	public FetchCommand(CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		BNCore.registerListener(new FetchCommand());
 	}
 
 	@Path("on")

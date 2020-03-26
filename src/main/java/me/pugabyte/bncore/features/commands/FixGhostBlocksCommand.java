@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -25,10 +24,6 @@ public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 
 	public FixGhostBlocksCommand(CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		BNCore.registerListener(new FixGhostBlocksCommand());
 	}
 
 	@Path("[radius]")

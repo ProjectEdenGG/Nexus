@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -38,10 +37,6 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 			playerData.put(player(), new SidewaysStairsPlayer(player()));
 
 		swsPlayer = playerData.get(player());
-	}
-
-	static {
-		BNCore.registerListener(new SidewaysStairsCommand());
 	}
 
 	@Path

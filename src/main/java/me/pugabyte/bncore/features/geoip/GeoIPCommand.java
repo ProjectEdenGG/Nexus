@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.geoip;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -20,16 +19,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.List;
 
-@Permission("group.moderator")
 @NoArgsConstructor
+@Permission("group.moderator")
 public class GeoIPCommand extends CustomCommand implements Listener {
 
 	public GeoIPCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		BNCore.registerListener(new GeoIPCommand());
 	}
 
 	@Path("<player>")
