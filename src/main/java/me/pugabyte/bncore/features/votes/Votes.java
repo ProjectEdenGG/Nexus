@@ -31,11 +31,7 @@ public class Votes implements Listener {
 		scheduler();
 		new VPS();
 
-		BNCore.getCron().schedule("00 00 1 * *", this::endOfMonth);
-	}
-
-	private void endOfMonth() {
-		// TODO
+		BNCore.getCron().schedule("00 00 1 * *", EndOfMonth::run);
 	}
 
 	private void scheduler() {

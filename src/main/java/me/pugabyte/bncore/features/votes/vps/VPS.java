@@ -11,6 +11,10 @@ import org.bukkit.entity.Player;
 public class VPS {
 	public static final String PREFIX = StringUtils.getPrefix("VotePoints");
 
+	public static void open(Player player, int page) {
+		open(player, getMenu(player), page);
+	}
+
 	public static void open(Player player, VPSMenu menu, int page) {
 		VPSPage vpsPage = menu.getPage(page);
 		SmartInventory.builder()
