@@ -4,12 +4,14 @@ import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 
+@Permission("group.staff")
 public class NicknamesCommand extends CustomCommand {
 	NerdService service = new NerdService();
 

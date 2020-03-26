@@ -295,7 +295,7 @@ public interface ICustomCommand {
 		checkCooldown(command, command.getEvent().getMethod().getAnnotation(Cooldown.class), command.getName() + "#" + command.getEvent().getMethod().getName());
 	}
 
-	default void checkCooldown(CustomCommand command, Cooldown cooldown, String id) {
+	default void checkCooldown(CustomCommand command, Cooldown cooldown, String commandId) {
 		if (cooldown != null) {
 			boolean bypass = false;
 			if (cooldown.bypass().length() > 0)
@@ -307,7 +307,12 @@ public interface ICustomCommand {
 				int ticks = 0;
 				for (Part part : cooldown.value())
 					ticks += part.value().get() * part.x();
-				new CooldownService().check(command.player(), "command:" + id, ticks);
+
+				String id = command.player().getUniqueId().toString();
+				if (cooldown.id().length() > 0)
+					id = cooldown.id();
+
+				new CooldownService().check(id, "command:" + commandId, ticks);
 			}
 		}
 	}

@@ -6,10 +6,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Aliases("nameitem")
 @Permission("itemname.use")
@@ -21,19 +20,15 @@ public class ItemNameCommand extends CustomCommand {
 
 	@Path("(null|none|reset)")
 	void name() {
-		rename(null);
+		name(null);
 	}
 
 	@Path("<name...>")
 	void name(String name) {
-		rename(name);
-	}
-
-	private void rename(String name) {
-		ItemStack itemInMainHand = player().getInventory().getItemInMainHand();
-		ItemMeta itemMeta = itemInMainHand.getItemMeta();
-		itemMeta.setDisplayName(colorize("&f" + name));
-		itemInMainHand.setItemMeta(itemMeta);
+		ItemStack item = player().getInventory().getItemInMainHand();
+		if (Utils.isNullOrAir(item))
+			error("You are not holding an item");
+		ItemBuilder.setName(item, name);
 	}
 
 }

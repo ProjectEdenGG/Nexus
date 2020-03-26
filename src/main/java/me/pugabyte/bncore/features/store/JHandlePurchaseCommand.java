@@ -78,7 +78,7 @@ public class JHandlePurchaseCommand extends CustomCommand {
 
 					DiscordUser user = new DiscordService().get(purchase.getPurchaserUuid());
 					if (user.getUserId() != null)
-						Discord.getGuild().addRoleToMember(user.getUserId(), Discord.getGuild().getRoleById(Role.SUPPORTER.getId())).queue();
+						Discord.addRole(user, Role.SUPPORTER);
 					else
 						discordMessage += "\nUser does not have a linked discord account";
 				}
