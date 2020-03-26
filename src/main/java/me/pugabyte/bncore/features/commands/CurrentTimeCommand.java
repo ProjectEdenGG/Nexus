@@ -10,6 +10,7 @@ import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,9 +29,10 @@ public class CurrentTimeCommand extends CustomCommand {
 
 	@Path("format <12/24>")
 	void format(int format) {
-		if (format != 12 && format != 24) {
-			line();
-			send(json(" &eClick &3 the time format you prefer:  ")
+		if (format != 12 && format != 24)
+			send(json()
+					.line()
+					.next(" &eClick &3 the time format you prefer:  ")
 					.next("&e12 hour")
 					.command("currenttime format 12")
 					.hover("&eClick &3to set the display format to &e12 hour")
@@ -40,11 +42,12 @@ public class CurrentTimeCommand extends CustomCommand {
 					.command("currenttime format 24")
 					.hover("&eClick &3to set the display format to &e24 hour")
 					.group());
+		else {
+			Setting setting = settingService.get(player(), "timezoneFormat");
+			setting.setValue(String.valueOf(format));
+			settingService.save(setting);
+			send(PREFIX + "Time format set to &e" + format + " hour");
 		}
-		Setting setting = settingService.get(player(), "timezoneFormat");
-		setting.setValue(String.valueOf(format));
-		settingService.save(setting);
-		send(PREFIX + "Time format set to &e" + format + " hour");
 	}
 
 	@Path("update")
@@ -53,6 +56,7 @@ public class CurrentTimeCommand extends CustomCommand {
 		GeoIP geoIp = geoIpService.request(player());
 		if (geoIp == null || geoIp.getIp() == null)
 			error("There was an error while updating your timezone. Please try again later.");
+
 		geoIpService.save(geoIp);
 		send(PREFIX + "Updated your timezone to &3" + geoIp.getTimezone());
 	}
@@ -62,18 +66,27 @@ public class CurrentTimeCommand extends CustomCommand {
 		GeoIP geoIp = geoIpService.get(player);
 		if (geoIp == null || geoIp.getIp() == null)
 			error("That player's timezone is not set.");
+
+		DateFormat format = getDateFormat();
+		format.setTimeZone(TimeZone.getTimeZone(geoIp.getTimezone().getId()));
+		send(PREFIX + "The current time for &e" + player.getName() + " &3is &e" + format.format(new Date()));
+	}
+
+	@NotNull
+	private DateFormat getDateFormat() {
 		Setting setting = settingService.get(player(), "timezoneFormat");
 		DateFormat format = new SimpleDateFormat("h:mm aa");
 		if (setting.getValue() != null && setting.getValue().equalsIgnoreCase("24"))
 			format = new SimpleDateFormat("HH:mm");
-		format.setTimeZone(TimeZone.getTimeZone(geoIp.getTimezone().getId()));
-		send(PREFIX + "The current time for &e" + player.getName() + " &3is &e" + format.format(new Date()));
+		return format;
 	}
 
 	@Path()
 	void help() {
 		send(PREFIX + "This command shows you what time it is for other players.");
-		send(json("&eClick here &3to change the time format.").command("/currenttime format").hover("&3The valid formats are &e12 &3and &e24 &3hours. It defaults to &e12 &3hours."));
+		send(json("&eClick here &3to change the time format.")
+				.hover("&3The valid formats are &e12 &3and &e24 &3hours. It defaults to &e12 &3hours.")
+				.command("/currenttime format"));
 		line();
 		send("&3Usage: &c/currenttime <player>");
 	}

@@ -18,13 +18,11 @@ public class PastNamesCommand extends CustomCommand {
 	@Path("<target>")
 	void run(@Arg("self") Player target) {
 		List<String> pastNames = new NerdService().getPastNames(target.getUniqueId());
-		String names = "";
-		for (int i = 0; i < pastNames.size(); i++) {
-			if (i == pastNames.size() - 1) names += pastNames.get(i);
-			names += pastNames.get(i) + ", ";
-		}
+		if (pastNames.size() < 2)
+			error("No known past names for " + target.getName());
+
 		send(PREFIX + "&e" + target.getName() + " &3 previous known names:");
-		send("&e" + names);
+		send("&e" + String.join(", ", pastNames));
 	}
 
 }

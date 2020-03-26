@@ -8,7 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.entity.Player;
 
-@Permission("group.staff")
+@Permission("group.moderator")
 public class SmiteWarnCommand extends CustomCommand {
 
 	public SmiteWarnCommand(@NonNull CommandEvent event) {

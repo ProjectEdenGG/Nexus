@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.staffwarp.StaffWarp;
 import me.pugabyte.bncore.models.staffwarp.StaffWarpService;
@@ -9,13 +10,13 @@ import me.pugabyte.bncore.utils.JsonBuilder;
 
 import java.util.List;
 
+@Permission("group.staff")
 public class StaffWarpsCommand extends CustomCommand {
+	StaffWarpService service = new StaffWarpService();
 
 	public StaffWarpsCommand(CommandEvent event) {
 		super(event);
 	}
-
-	StaffWarpService service = new StaffWarpService();
 
 	@Path("list")
 	void list() {
