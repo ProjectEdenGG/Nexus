@@ -28,17 +28,16 @@ public @interface Permission {
 		ladder.trusted = trusted and above
 		ladder.builder = builder, architect, operator, admin, owner
 	Rank Ladder:
-           ladder.guest
-           ladder.member
-           ladder.trusted
-           ladder.elite
-           ladder.veteran
-             /        \
-  ladder.moderator   ladder.builder
-            |        ladder.architect
-             \        /
-           ladder.operator
-           ladder.admin
            ladder.owner
-
+           ladder.admin
+           ladder.operator
+             /        \
+  ladder.moderator   ladder.architect
+            |        ladder.builder
+             \        /
+           ladder.veteran
+           ladder.elite
+           ladder.trusted
+           ladder.member
+           ladder.guest
  */
