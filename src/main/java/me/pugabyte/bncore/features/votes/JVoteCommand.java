@@ -23,6 +23,11 @@ public class JVoteCommand extends CustomCommand {
 		send("Voter: " + voter);
 	}
 
+	@Path("endOfMonth")
+	void endOfMonth() {
+		EndOfMonth.run();
+	}
+
 	@ConverterFor(Voter.class)
 	Voter convertToVoter(String value) {
 		return new VoteService().get(convertToOfflinePlayer(value));

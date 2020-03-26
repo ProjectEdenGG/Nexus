@@ -443,6 +443,7 @@ public class Utils {
 	}
 
 	public static <T> T getRandomElement(List list) {
+		if (list.size() == 0) return null;
 		return (T) list.get(new Random().nextInt(list.size()));
 	}
 

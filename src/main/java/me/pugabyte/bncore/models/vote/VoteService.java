@@ -4,6 +4,7 @@ import com.dieselpoint.norm.Query;
 import lombok.Data;
 import me.pugabyte.bncore.models.MySQLService;
 
+import java.time.Month;
 import java.util.List;
 
 @Data
@@ -42,6 +43,16 @@ public class VoteService extends MySQLService {
 
 	public void setPoints(String uuid, int balance) {
 		database.sql("update vote_point set balance = ? where uuid = ?", balance, uuid).execute();
+	}
+
+	public List<TopVoter> getTopVoters(Month month) {
+		return database.sql(
+				"select uuid, count(*) as count " +
+				"from vote where MONTH(timestamp) = ? " +
+				"group by 1 " +
+				"order by count desc")
+				.args(month.getValue())
+				.results(TopVoter.class);
 	}
 
 }
