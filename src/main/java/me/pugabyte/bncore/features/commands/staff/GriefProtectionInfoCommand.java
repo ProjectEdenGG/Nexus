@@ -2,11 +2,12 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
-import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.utils.Time;
 
 @Permission("group.staff")
 @Aliases({"gpi", "griefinfo"})
@@ -17,15 +18,10 @@ public class GriefProtectionInfoCommand extends CustomCommand {
 	}
 
 	@Path
+	@Cooldown(id = "staff", value = @Part(value = Time.SECOND, x = 30))
 	void info() {
-		try {
-			new CooldownService().check("staff", "grief", 30 * 20);
-
-			String message = "Grief is not allowed, and staff will repair any grief you find. However, we do have protection stones (/pstoneinfo) for prevention.";
-			runCommand("ch qm g " + message);
-		} catch (CooldownException ex) {
-			send("Prevented double sending");
-		}
+		String message = "Grief is not allowed, and staff will repair any grief you find. However, we do have protection stones (/pstoneinfo) for prevention.";
+		runCommand("ch qm g " + message);
 	}
 
 }

@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.discord.bridge;
 import com.google.common.base.Strings;
 import com.vdurmont.emoji.EmojiParser;
 import me.pugabyte.bncore.features.chatold.alerts.models.DiscordMessageEvent;
+import me.pugabyte.bncore.features.discord.DiscordId.User;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.nerd.Nerd;
@@ -35,7 +36,7 @@ public class BridgeListener extends ListenerAdapter {
 				return;
 
 			if (event.getAuthor().isBot())
-//				if (event.getMessage().getContentRaw().contains(">**"))
+				if (!event.getAuthor().getId().equals(User.UBER.getId()))
 					return;
 
 			JsonBuilder builder = new JsonBuilder(channel.getColor() + "[D] ");
@@ -61,7 +62,12 @@ public class BridgeListener extends ListenerAdapter {
 						.next(" &f&l[View Attachment]")
 						.url(attachment.getUrl());
 
-			Utils.callEvent(new DiscordMessageEvent(content, channel.getPermission()));
+			DiscordMessageEvent discordMessageEvent = new DiscordMessageEvent(content, channel.getPermission());
+			Utils.callEvent(discordMessageEvent);
+			if (discordMessageEvent.isCancelled()) {
+				event.getMessage().delete().queue();
+				return;
+			}
 
 			builder.next(" &o(Java)");
 

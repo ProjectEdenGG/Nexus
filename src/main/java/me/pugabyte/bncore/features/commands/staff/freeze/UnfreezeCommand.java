@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.freeze;
+package me.pugabyte.bncore.features.commands.staff.freeze;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;

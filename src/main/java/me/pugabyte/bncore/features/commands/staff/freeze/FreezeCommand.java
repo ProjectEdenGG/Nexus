@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.freeze;
+package me.pugabyte.bncore.features.commands.staff.freeze;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.discord.Discord;

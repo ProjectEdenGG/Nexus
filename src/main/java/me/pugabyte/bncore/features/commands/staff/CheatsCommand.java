@@ -2,16 +2,16 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import com.earth2me.essentials.Essentials;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 
 @Permission("group.staff")
-// TODO: Redirect
-@Aliases({"allcheats", "nocheats"})
+@Redirect(from = "/nocheats", to = "/cheats off")
+@Redirect(from = "/allcheats", to = "/cheats on")
 public class CheatsCommand extends CustomCommand {
 	Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 

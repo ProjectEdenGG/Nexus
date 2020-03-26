@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
 import java.text.DecimalFormat;
 
-@Permission("group.staff")
+@Permission("group.moderator")
 public class CalcBanCommand extends CustomCommand {
 
 	public CalcBanCommand(CommandEvent event) {

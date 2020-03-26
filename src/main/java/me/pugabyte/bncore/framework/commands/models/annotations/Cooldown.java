@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Cooldown {
 	Part[] value();
+	String id() default "";
 	String bypass() default "";
 
 	@Target({ElementType.TYPE, ElementType.METHOD})

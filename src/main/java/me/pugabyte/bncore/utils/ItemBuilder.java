@@ -153,7 +153,10 @@ public class ItemBuilder {
 
 	public static ItemStack setName(ItemStack item, String name) {
 		ItemMeta itemMeta = item.getItemMeta();
-		itemMeta.setDisplayName(colorize(name));
+		if (name == null)
+			itemMeta.setDisplayName(null);
+		else
+			itemMeta.setDisplayName(colorize("&f" + name));
 		item.setItemMeta(itemMeta);
 		return item;
 	}
