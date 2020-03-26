@@ -15,30 +15,30 @@ public @interface Permission {
 
 /*
 	Groups:
-		group.admin			- admin+
-		group.seniorstaff	- operator+
-		group.moderator		- moderator+
-		group.builder		- builder/architect
-		group.staff			- staff + builders
+		group.admin         - admin+
+		group.seniorstaff   - operator+
+		group.moderator     - moderator+
+		group.builder       - builder/architect
+		group.staff         - staff + builders
 
 	Rank Exclusive:
 		rank.<rankname>
 
-	Ex: ladder.trusted = trusted and above
+	Ex:
+		ladder.trusted = trusted and above
+		ladder.builder = builder, architect, operator, admin, owner
 	Rank Ladder:
-		ladder.guest 		- guest
-		ladder.member		- member+
-		ladder.trusted		- trusted+
-		ladder.elite		- elite+
-		ladder.veteran		- veteran+
-
-		ladder.builder		- builder & veteran+
-		ladder.architect	- architect+
-
-		ladder.moderator	- moderator & veteran+
-
-		ladder.operator		- operator & architect+ & moderator+
-		ladder.admin		- admin+
-		ladder.owner		- owner+
+           ladder.guest
+           ladder.member
+           ladder.trusted
+           ladder.elite
+           ladder.veteran
+             /        \
+  ladder.moderator   ladder.builder
+            |        ladder.architect
+             \        /
+           ladder.operator
+           ladder.admin
+           ladder.owner
 
  */
