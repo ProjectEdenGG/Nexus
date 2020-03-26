@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -32,10 +31,6 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 	public LockdownCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		BNCore.registerListener(new LockdownCommand());
 	}
 
 	@Path("start <reason...>")

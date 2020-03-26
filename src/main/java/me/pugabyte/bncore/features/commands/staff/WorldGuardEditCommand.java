@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -21,10 +20,6 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 
 	public WorldGuardEditCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		BNCore.registerListener(new WorldGuardEditCommand());
 	}
 
 	@Path("[enable]")

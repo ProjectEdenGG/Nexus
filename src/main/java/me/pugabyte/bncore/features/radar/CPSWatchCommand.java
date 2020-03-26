@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.radar;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -23,15 +22,11 @@ import java.util.Map;
 @NoArgsConstructor
 @Permission("group.moderator")
 public class CPSWatchCommand extends CustomCommand implements Listener {
-	static Map<Player, Integer> cpsMap = new HashMap<>();
-	static Map<Player, List<Player>> watchMap = new HashMap<>();
+	private static Map<Player, Integer> cpsMap = new HashMap<>();
+	private static Map<Player, List<Player>> watchMap = new HashMap<>();
 
 	public CPSWatchCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		BNCore.registerListener(new CPSWatchCommand());
 	}
 
 	@Path("<player>")

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -31,10 +30,6 @@ public class BackCommand extends CustomCommand implements Listener {
 	public BackCommand(CommandEvent event) {
 		super(event);
 		back = service.get(player());
-	}
-
-	static {
-		BNCore.registerListener(new BackCommand());
 	}
 
 	@Path("[count]")
@@ -88,9 +83,9 @@ public class BackCommand extends CustomCommand implements Listener {
 			if (from.getWorld().equals(Minigames.getGameworld()))
 				return;
 
-		Back back = service.get(player);
+		Back back = new BackService().get(player);
 		back.add(from);
-		service.save(back);
+		new BackService().save(back);
 	}
 
 }

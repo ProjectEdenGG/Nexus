@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -43,10 +42,6 @@ public class LavaCommand extends CustomCommand implements Listener {
 			new SettingService().save(setting);
 			send("&3Unlimited lava turned &eon&3.");
 		}
-	}
-
-	static {
-		BNCore.registerListener(new LavaCommand());
 	}
 
 	@EventHandler
