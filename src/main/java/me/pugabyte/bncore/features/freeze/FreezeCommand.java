@@ -1,9 +1,9 @@
-package me.pugabyte.bncore.features.commands.staff;
+package me.pugabyte.bncore.features.freeze;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -30,18 +30,19 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+import java.util.List;
+
 @NoArgsConstructor
 @Permission("group.staff")
 public class FreezeCommand extends CustomCommand implements Listener {
-
 	SettingService service = new SettingService();
 
 	public FreezeCommand(CommandEvent event) {
 		super(event);
 	}
 
-	static {
-		BNCore.registerListener(new FreezeCommand());
+	public boolean isFrozen(Player player) {
+		return new SettingService().get(player, "frozen").getBoolean();
 	}
 
 	@Path("cleanup")
@@ -56,15 +57,18 @@ public class FreezeCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Removed &e" + i + " &3freeze stands.");
 	}
 
-	@Path("<player>")
-	void freeze(Player player) {
-		Setting setting = service.get(player, "frozen");
-		if (setting.getBoolean()) error("That player is already frozen");
-		setting.setBoolean(true);
-		service.save(setting);
-		freezePlayer(player);
-		Utils.mod(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName());
-		send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
+	@Path("<players...>")
+//	void freeze(Player player) {
+	void freeze(@Arg(type = Player.class) List<Player> players) {
+		for (Player player : players) {
+			Setting setting = service.get(player, "frozen");
+			if (setting.getBoolean()) error("That player is already frozen");
+			setting.setBoolean(true);
+			service.save(setting);
+			freezePlayer(player);
+			Utils.mod(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName());
+			send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
+		}
 	}
 
 	public void freezePlayer(Player player) {
@@ -80,8 +84,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		Setting setting = service.get(event.getPlayer(), "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(event.getPlayer())) return;
 		Player player = event.getPlayer();
 		player.getVehicle().remove();
 		Utils.mod(PREFIX + "&e" + player.getName() + " &3has logged out while frozen.");
@@ -90,8 +93,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		Setting setting = service.get(event.getPlayer(), "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(event.getPlayer())) return;
 		Tasks.wait(5, () -> freezePlayer(event.getPlayer()));
 		Utils.mod(PREFIX + "&e" + event.getPlayer().getName() + " &3has logged in while frozen.");
 		Discord.log(PREFIX + event.getPlayer().getName() + " has logged in while frozen.");
@@ -101,8 +103,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	public void onExitVehicle(VehicleExitEvent event) {
 		if (!(event.getExited() instanceof Player)) return;
 		Player player = (Player) event.getExited();
-		Setting setting = service.get(player, "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
@@ -110,8 +111,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	public void onExitVehicle(VehicleEnterEvent event) {
 		if (!(event.getEntered() instanceof Player)) return;
 		Player player = (Player) event.getEntered();
-		Setting setting = service.get(player, "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
@@ -119,8 +119,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	public void onDismount(EntityDismountEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
-		Setting setting = service.get(player, "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(player)) return;
 		//event.setCancelled(true); 1.15
 		ArmorStand armorStand = (ArmorStand) event.getDismounted();
 		armorStand.addPassenger(player);
@@ -133,22 +132,19 @@ public class FreezeCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onClick(PlayerInteractEvent event) {
-		Setting setting = service.get(event.getPlayer(), "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(event.getPlayer())) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent event) {
-		Setting setting = service.get(event.getPlayer(), "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(event.getPlayer())) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onPickUp(PlayerPickupItemEvent event) {
-		Setting setting = service.get(event.getPlayer(), "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(event.getPlayer())) return;
 		event.setCancelled(true);
 	}
 
@@ -156,8 +152,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	public void onDamage(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player)) return;
 		Player player = (Player) event.getDamager();
-		Setting setting = service.get(player, "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
@@ -165,8 +160,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	public void onTakeDamage(EntityDamageByEntityEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
-		Setting setting = service.get(player, "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
@@ -174,15 +168,13 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	public void onTarget(EntityTargetEvent event) {
 		if (!(event.getTarget() instanceof Player)) return;
 		Player player = (Player) event.getTarget();
-		Setting setting = service.get(player, "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
-		Setting setting = service.get(event.getPlayer(), "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(event.getPlayer())) return;
 		switch (event.getMessage()) {
 			case "/rules":
 			case "/ch":
@@ -192,14 +184,13 @@ public class FreezeCommand extends CustomCommand implements Listener {
 			case "/sk":
 				return;
 			default:
+				event.setCancelled(true);
 		}
-		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onSwapHandS(PlayerSwapHandItemsEvent event) {
-		Setting setting = service.get(event.getPlayer(), "frozen");
-		if (!setting.getBoolean()) return;
+		if (!isFrozen(event.getPlayer())) return;
 		event.setCancelled(true);
 	}
 

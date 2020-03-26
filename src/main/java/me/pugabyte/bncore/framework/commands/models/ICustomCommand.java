@@ -35,6 +35,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -157,7 +158,7 @@ public interface ICustomCommand {
 
 			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && value != null));
 			try {
-				objects[i - 1] = convert(value, contextArg, parameter.getType(), event, required);
+				objects[i - 1] = convert(value, contextArg, parameter.getType(), annotation, event, required);
 			} catch (MissingArgumentException ex) {
 				event.getCommand().showUsage();
 			}
@@ -173,7 +174,14 @@ public interface ICustomCommand {
 	);
 
 	@SneakyThrows
-	default Object convert(String value, Object context, Class<?> type, CommandEvent event, boolean required) {
+	default Object convert(String value, Object context, Class<?> type, Arg annotation, CommandEvent event, boolean required) {
+		if (Collection.class.isAssignableFrom(type)) {
+			List<Object> values = new ArrayList<>();
+			for (String index : value.split(" "))
+				values.add(convert(index, context, annotation.type(), annotation, event, required));
+			return values;
+		}
+
 		try {
 			CustomCommand command = event.getCommand();
 			if (Commands.getConverters().containsKey(type)) {
