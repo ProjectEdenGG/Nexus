@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.Tasks.repeat;
 
-@Permission("leash.use")
+@Permission("group.staff")
 public class LeashCommand extends CustomCommand {
 	private static HashMap<UUID, Integer> leashes = new HashMap<>();
 	private static double velocity = .8;

@@ -13,4 +13,5 @@ public class DoNothingCommand extends CustomCommand {
 	@Path
 	void nothing() {
 	}
+
 }
