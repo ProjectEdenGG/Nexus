@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -42,10 +43,11 @@ public class LaunchPads implements Listener {
 		if (!(below.getType().equals(Material.GLOWING_REDSTONE_ORE) || below.getType().equals(Material.REDSTONE_ORE)))
 			return;
 
+		event.setCancelled(true);
+		event.setUseInteractedBlock(Event.Result.DENY);
+
 		Block belowBelow = below.getRelative(0, -1, 0).getLocation().getBlock();
 		if (Utils.isNullOrAir(belowBelow.getType())) return;
-
-		event.setCancelled(true);
 
 		if (Utils.isSign(belowBelow.getType())) {
 			Sign sign = (Sign) belowBelow.getState();
