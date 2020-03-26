@@ -42,6 +42,8 @@ public class Discord {
 	public static void send(String message, DiscordId.Channel... targets) {
 		message = stripColor(message);
 		for (DiscordId.Channel target : targets) {
+			if (target == null)
+				continue;
 			TextChannel channel = Bot.RELAY.jda().getTextChannelById(target.getId());
 			if (channel != null)
 				channel.sendMessage(message).queue();
