@@ -58,7 +58,6 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<players...>")
-//	void freeze(Player player) {
 	void freeze(@Arg(type = Player.class) List<Player> players) {
 		for (Player player : players) {
 			Setting setting = service.get(player, "frozen");
