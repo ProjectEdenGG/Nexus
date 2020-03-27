@@ -9,9 +9,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,13 +57,15 @@ public class GeoIPService extends MongoService {
 
 	@SneakyThrows
 	public GeoIP request(Player player) {
-		if (player.getAddress().getHostString().equals("217.182.168.113"))
-			throw new InvalidInputException("Player on EU IP, unable to get their location.");
+		return request(player, player.getAddress().getHostString());
+	}
 
-		BNCore.log("Requesting GeoIP info for " + player.getName() + " (" + player.getAddress().getHostString() + ")");
+	@SneakyThrows
+	public GeoIP request(OfflinePlayer player, String ip) {
+		BNCore.log("Requesting GeoIP info for " + player.getName() + " (" + ip + ")");
 
 		Request request = new Request.Builder()
-				.url("https://api.ipstack.com/" + player.getAddress().getHostString() + "?access_key=" + KEY)
+				.url("https://api.ipstack.com/" + ip + "?access_key=" + KEY)
 				.build();
 
 		try (Response response = new OkHttpClient().newCall(request).execute()) {
@@ -69,6 +73,10 @@ public class GeoIPService extends MongoService {
 			geoIp.setUuid(player.getUniqueId());
 			return geoIp;
 		}
+	}
+
+	public List<GeoIP> getAll() {
+		return database.createQuery(GeoIP.class).find().toList();
 	}
 
 }

@@ -14,11 +14,13 @@ import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
 
@@ -73,37 +75,46 @@ public class LiteBans implements Listener {
 				Discord.log("[LiteBans] " + event.getMessage());
 	}
 
+	private static final Events.Listener entryAdded;
+	private static final Events.Listener broadcastSent;
+
 	static {
-		Events.Listener entryAdded = new Events.Listener() {
+		entryAdded = new Events.Listener() {
 			@Override
 			public void entryAdded(Entry entry) {
+				Plugin liteBans = Bukkit.getPluginManager().getPlugin("LiteBans");
 				switch (entry.getType()) {
 					case "ban":
-						Tasks.sync(() -> Utils.callEvent(new BanEvent(entry)));
+						Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new BanEvent(entry)));
 						break;
 					case "kick":
-						Tasks.sync(() -> Utils.callEvent(new KickEvent(entry)));
+						Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new KickEvent(entry)));
 						break;
 					case "mute":
-						Tasks.sync(() -> Utils.callEvent(new MuteEvent(entry)));
+						Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new MuteEvent(entry)));
 						break;
 					case "warn":
-						Tasks.sync(() -> Utils.callEvent(new WarnEvent(entry)));
+						Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new WarnEvent(entry)));
 						break;
 				}
 			}
 		};
 
-		Events.Listener broadcastSent = new Events.Listener() {
+		broadcastSent = new Events.Listener() {
 			@Override
 			public void broadcastSent(String message, String type) {
-				Utils.callEvent(new BroadcastEvent(message, type));
+				Plugin liteBans = Bukkit.getPluginManager().getPlugin("LiteBans");
+				Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new BroadcastEvent(message, type)));
 			}
 		};
 
 		Events.get().register(entryAdded);
 		Events.get().register(broadcastSent);
+	}
 
+	public static void shutdown() {
+		Events.get().unregister(entryAdded);
+		Events.get().unregister(broadcastSent);
 	}
 
 	public static class EntryEvent extends Event {

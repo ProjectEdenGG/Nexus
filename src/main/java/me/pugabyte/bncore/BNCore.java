@@ -19,6 +19,7 @@ import me.pugabyte.bncore.features.honeypots.HoneyPots;
 import me.pugabyte.bncore.features.hours.HoursFeature;
 import me.pugabyte.bncore.features.inviterewards.InviteRewards;
 import me.pugabyte.bncore.features.listeners.Listeners;
+import me.pugabyte.bncore.features.listeners.LiteBans;
 import me.pugabyte.bncore.features.listeners.Sleep;
 import me.pugabyte.bncore.features.mcmmo.McMMO;
 import me.pugabyte.bncore.features.menus.SignMenuFactory;
@@ -115,14 +116,15 @@ public class BNCore extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		cron.stop();
 		Minigames.shutdown();
 		AFK.shutdown();
 		Discord.shutdown();
+		LiteBans.shutdown();
 		ProtocolLibrary.getProtocolManager().removePacketListeners(this);
 		MySQLPersistence.shutdown();
 		MongoDBPersistence.shutdown();
 		commands.unregisterAll();
-		cron.stop();
 		broadcastReload();
 	}
 
