@@ -36,6 +36,13 @@ public class DailyRewardsCommand extends CustomCommand {
 		DailyRewardsFeature.menu(player(), dailyReward);
 	}
 
+	@Path("getAll")
+	@Permission("getAll")
+	void getAll() {
+		for (DailyReward reward : service.getAll())
+			send("Object: " + reward);
+	}
+
 	@Path("dailyreset")
 	@Permission("dailyreset")
 	void dailyReset() {

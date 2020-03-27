@@ -15,17 +15,25 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+@Table(name = "daily_reward")
 public class DailyReward {
+	@Id
+	@GeneratedValue
+	private int dailyRewardId;
 	@NonNull
 	private String uuid;
 	private int streak;
 	private boolean earnedToday;
+	private boolean active = true;
 	@DbSerializer(IntegerListSerializer.class)
 	private List<Integer> claimed;
 

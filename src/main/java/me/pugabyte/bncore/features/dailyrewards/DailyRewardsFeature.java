@@ -35,7 +35,7 @@ public class DailyRewardsFeature {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(5), () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				try {
-					if (((Hours) new HoursService().get(player)).getDaily() < Time.MINUTE.x(15)) continue;
+					if (((Hours) new HoursService().get(player)).getDaily() < Time.MINUTE.x(15) / 20) continue;
 
 					DailyRewardService service = new DailyRewardService();
 					DailyReward dailyReward = service.get(player);
@@ -57,8 +57,9 @@ public class DailyRewardsFeature {
 		List<DailyReward> dailyRewards = service.getAll();
 		for (DailyReward dailyReward : dailyRewards) {
 			if (!dailyReward.isEarnedToday()) {
-				dailyReward.setStreak(0);
-				dailyReward.setClaimed(null);
+				dailyReward.setActive(false);
+				service.save(dailyReward);
+				dailyReward = new DailyReward(dailyReward.getUuid());
 			}
 
 			dailyReward.setEarnedToday(false);
