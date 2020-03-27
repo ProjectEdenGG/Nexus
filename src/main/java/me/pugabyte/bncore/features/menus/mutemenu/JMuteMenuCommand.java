@@ -5,9 +5,9 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-public class MuteMenuCommand extends CustomCommand {
+public class JMuteMenuCommand extends CustomCommand {
 
-	public MuteMenuCommand(CommandEvent event) {
+	public JMuteMenuCommand(CommandEvent event) {
 		super(event);
 	}
 
