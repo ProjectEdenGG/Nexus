@@ -10,15 +10,17 @@ import java.util.UUID;
 public class PoofService extends MySQLService {
 
 	public Poof getBySender(Player sender) {
-		Poof request = database.where("sender = ?", sender.getUniqueId().toString())
-				.and("expired = 0").first(Poof.class);
-		return request;
+		Poof first = database.where("sender = ? and expired = 0", sender.getUniqueId().toString()).first(Poof.class);
+		if (first.getSender() == null)
+			first = null;
+		return first;
 	}
 
 	public Poof getByReceiver(Player receiver) {
-		Poof request = database.where("receiver = ?", receiver.getUniqueId().toString())
-				.and("expired = 0").first(Poof.class);
-		return request;
+		Poof first = database.where("receiver = ? and expired = 0", receiver.getUniqueId().toString()).first(Poof.class);
+		if (first.getSender() == null)
+			first = null;
+		return first;
 	}
 
 	public List<Poof> getActivePoofs() {
