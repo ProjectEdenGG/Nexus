@@ -52,7 +52,7 @@ public class Discord {
 	public static void send(String message, DiscordId.Channel... targets) {
 		message = stripColor(message);
 		for (DiscordId.Channel target : targets) {
-			if (target == null)
+			if (target == null || Bot.RELAY.jda() == null)
 				continue;
 			TextChannel channel = Bot.RELAY.jda().getTextChannelById(target.getId());
 			if (channel != null)
@@ -63,7 +63,7 @@ public class Discord {
 	public static void koda(String message, DiscordId.Channel... targets) {
 		message = stripColor(message);
 		for (DiscordId.Channel target : targets) {
-			if (target == null)
+			if (target == null || Bot.KODA.jda() == null)
 				continue;
 			TextChannel channel = Bot.KODA.jda().getTextChannelById(target.getId());
 			if (channel != null)
