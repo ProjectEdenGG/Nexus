@@ -47,6 +47,7 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 				});
 
 		if (sortedMap.size() <= 0) error("There are currently no logs for Hopper Lag.");
+
 		for (int i = 1; i <= amount; i++) {
 			if (sortedMap.keySet().size() < i) break;
 			Location loc = (Location) sortedMap.keySet().toArray()[i - 1];
@@ -54,6 +55,7 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 			String message = StringUtils.getLocationString(loc) + " &7- " + nf.format(value);
 			StringUtils.sendJsonLocation("&3" + i + ". " + message, loc, player());
 		}
+
 		hopperLagMap.clear();
 	}
 
