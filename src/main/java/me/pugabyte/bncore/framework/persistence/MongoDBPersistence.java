@@ -30,7 +30,7 @@ public class MongoDBPersistence {
 
 		MongoCredential root = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
 		MongoClient mongoClient = new MongoClient(new ServerAddress(), root, MongoClientOptions.builder().build());
-		Datastore datastore = morphia.createDatastore(mongoClient, dbType.getDatabase());
+		Datastore datastore = morphia.createDatastore(mongoClient, config.getPrefix() + dbType.getDatabase());
 		databases.put(dbType, datastore);
 	}
 
