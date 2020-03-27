@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.commands.staff;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@Permission("rank.owner")
 public class SpamShitCommand extends CustomCommand implements Listener {
 	private static boolean spamming = false;
 	private static Map<Material, Integer> taskIds = new HashMap<>();
