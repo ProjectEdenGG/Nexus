@@ -192,7 +192,7 @@ public class BNCore extends JavaPlugin {
 
 	private void enableFeatures() {
 		// Load this first
-		//new Timer("  Discord", () -> discord = new Discord());
+		new Timer("  Discord", () -> discord = new Discord());
 
 		new Timer("  AFK", () -> afk = new AFK());
 		//new Timer("  AnimalTeleportPins", () -> animalTeleportPins = new AnimalTeleportPens());
