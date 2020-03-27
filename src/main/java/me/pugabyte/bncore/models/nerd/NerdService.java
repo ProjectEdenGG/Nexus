@@ -2,9 +2,11 @@ package me.pugabyte.bncore.models.nerd;
 
 import com.google.common.base.Strings;
 import me.pugabyte.bncore.models.MySQLService;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
@@ -76,15 +78,21 @@ public class NerdService extends MySQLService {
 	}
 
 	public void addNickname(UUID uuid, String nickname) {
-		database.sql("insert into nickname values (?, ?)", nickname, uuid.toString()).execute();
+		Tasks.async(() ->
+				database.sql("insert into nickname values (?, ?)", nickname, uuid.toString()).execute());
 	}
 
 	public void removeNickname(UUID uuid, String nickname) {
 		database.where("uuid = ?, nickname = ?", uuid.toString(), nickname).delete();
 	}
 
+	public void addPastName(Player player) {
+		Tasks.async(() ->
+				database.sql("insert ignore into name_history values (?, ?)").args(player.getName(), player.getUniqueId().toString()).execute());
+	}
+
 	public List<String> getPastNames(UUID uuid) {
-		return database.select("nickname").table("name_history").where("uuid = ?", uuid.toString()).results(String.class);
+		return database.select("name").table("name_history").where("uuid = ?", uuid.toString()).results(String.class);
 	}
 
 }
