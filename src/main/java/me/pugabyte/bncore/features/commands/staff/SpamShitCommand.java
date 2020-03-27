@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@NoArgsConstructor
 @Permission("rank.owner")
 public class SpamShitCommand extends CustomCommand implements Listener {
 	private static boolean spamming = false;
