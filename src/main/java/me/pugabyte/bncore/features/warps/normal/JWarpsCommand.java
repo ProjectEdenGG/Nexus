@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.warps;
+package me.pugabyte.bncore.features.warps.normal;
 
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -13,6 +13,6 @@ public class JWarpsCommand extends CustomCommand {
 
 	@Path
 	void menu() {
-
+		WarpsMenu.open(player(), WarpMenu.MAIN);
 	}
 }

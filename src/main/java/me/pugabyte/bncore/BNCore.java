@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.features.atp.AnimalTeleportPens;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chatold.ChatOld;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
@@ -153,6 +154,7 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public static AFK afk;
+	public static AnimalTeleportPens animalTeleportPins;
 	public static Chat chat;
 	public static ChatOld chatOld;
 	public static ClearInventory clearInventory;
@@ -190,9 +192,10 @@ public class BNCore extends JavaPlugin {
 
 	private void enableFeatures() {
 		// Load this first
-		new Timer("  Discord", () -> discord = new Discord());
+		//new Timer("  Discord", () -> discord = new Discord());
 
 		new Timer("  AFK", () -> afk = new AFK());
+		//new Timer("  AnimalTeleportPins", () -> animalTeleportPins = new AnimalTeleportPens());
 		new Timer("  Chat", () -> chat = new Chat());
 		new Timer("  ChatOld", () -> chatOld = new ChatOld());
 		new Timer("  ClearInventory", () -> clearInventory = new ClearInventory());
