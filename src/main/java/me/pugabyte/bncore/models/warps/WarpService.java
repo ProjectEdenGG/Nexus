@@ -7,19 +7,19 @@ import java.util.List;
 public class WarpService extends MySQLService {
 
 	public Warp get(String name, WarpType type) {
-		Warp warp = database.where("name = ? AND type = ?", name, type.name()).first(Warp.class);
+		Warp warp = database.where("type = ? AND name = ?", type.name(), name).first(Warp.class);
 		if (warp.getName() == null) return null;
 		return warp;
 	}
 
 	public Warp getNormalWarp(String name) {
-		Warp warp = database.where("name = ? AND type = ?", name, WarpType.NORMAL.name()).first(Warp.class);
+		Warp warp = database.where("type = ? AND name = ?", WarpType.NORMAL.name(), name).first(Warp.class);
 		if (warp.getName() == null) return null;
 		return warp;
 	}
 
 	public Warp getStaffWarp(String name) {
-		Warp warp = database.where("name = ? AND type = ?", name, WarpType.STAFF.name()).first(Warp.class);
+		Warp warp = database.where("type = ? AND name = ?", WarpType.STAFF.name(), name).first(Warp.class);
 		if (warp.getName() == null) return null;
 		return warp;
 	}
@@ -33,7 +33,7 @@ public class WarpService extends MySQLService {
 	}
 
 	public void delete(Warp warp) {
-		database.table("staff_warp").where("name = ? AND type = ?", warp.getName(), warp.getType()).delete();
+		database.table("staff_warp").where("type = ? AND name = ?", warp.getType(), warp.getName()).delete();
 	}
 
 }
