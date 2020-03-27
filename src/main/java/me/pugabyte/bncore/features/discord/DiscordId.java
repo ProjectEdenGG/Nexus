@@ -29,6 +29,22 @@ public class DiscordId {
 		}
 	}
 
+	public enum VoiceChannel {
+		MINIGAMES("133782271822921728"),
+		RED("133785819432353792"),
+		BLUE("133785864890351616"),
+		GREEN("133785902680899585"),
+		YELLOW("133785902680899585"),
+		WHITE("360496040501051392");
+
+		@Getter
+		private String id;
+
+		VoiceChannel(String id) {
+			this.id = id;
+		}
+	}
+
 	public enum User {
 		PUGABYTE("115552359458799616"),
 		RELAY("352231755551473664"),

@@ -20,10 +20,12 @@ public enum Bot {
 		@Override
 		@SneakyThrows
 		void connect() {
-			super.jda = new JDABuilder(AccountType.BOT)
-					.setToken(getToken("kodaBear"))
-					.build()
-					.awaitReady();
+			String token = getToken("kodaBear");
+			if (token != null && token.length() > 0)
+				super.jda = new JDABuilder(AccountType.BOT)
+						.setToken(token)
+						.build()
+						.awaitReady();
 		}
 	},
 
@@ -41,12 +43,14 @@ public enum Bot {
 			for (Class<? extends Command> command : reflections.getSubTypesOf(Command.class))
 				commands.addCommand(command.newInstance());
 
-			super.jda = new JDABuilder(AccountType.BOT)
-					.setToken(getToken("relayBot"))
-//					.addEventListeners(new BridgeListener())
-					.addEventListeners(commands.build())
-					.build()
-					.awaitReady();
+			String token = getToken("relayBot");
+			if (token != null && token.length() > 0)
+				super.jda = new JDABuilder(AccountType.BOT)
+						.setToken(getToken("relayBot"))
+//						.addEventListeners(new BridgeListener())
+						.addEventListeners(commands.build())
+						.build()
+						.awaitReady();
 		}
 	};
 
