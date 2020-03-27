@@ -41,10 +41,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -175,6 +178,13 @@ public class Utils {
 		z += (z >= 0) ? .5 : -.5;
 
 		return new Location(location.getWorld(), x, y, z);
+	}
+
+	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, int radius) {
+		return location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+				.entrySet().stream().sorted(Entry.comparingByValue())
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
 	public static <T extends Entity> T getTargetEntity(final LivingEntity entity) {

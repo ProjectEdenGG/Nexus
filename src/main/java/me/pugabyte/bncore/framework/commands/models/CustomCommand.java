@@ -28,6 +28,7 @@ import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -341,12 +342,33 @@ public abstract class CustomCommand implements ICustomCommand {
 				.collect(Collectors.toList());
 	}
 
+	@ConverterFor(EntityType.class)
+	EntityType convertToEntityType(String value) {
+		try {
+			return EntityType.valueOf(value.toUpperCase());
+		} catch (IllegalArgumentException ignore) {
+			throw new InvalidInputException("EntityType from " + value + " not found");
+		}
+	}
+
+	@TabCompleterFor(EntityType.class)
+	List<String> tabCompleteEntityType(String filter) {
+		return tabCompleteEnum(EntityType.class, filter);
+	}
+
 	@ConverterFor(Material.class)
 	Material convertToMaterial(String value) {
 		Material material = Material.matchMaterial(value);
 		if (material == null)
 			throw new InvalidInputException("Material from " + value + " not found");
 		return material;
+	}
+
+	protected List<String> tabCompleteEnum(Class<? extends Enum> clazz, String filter) {
+		return Arrays.stream(clazz.getEnumConstants())
+				.map(Enum::name)
+				.filter(value -> value.toLowerCase().startsWith(filter))
+				.collect(Collectors.toList());
 	}
 
 }
