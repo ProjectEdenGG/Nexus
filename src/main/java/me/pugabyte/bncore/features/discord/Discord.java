@@ -45,6 +45,10 @@ public class Discord {
 		send(message, Channel.STAFF_BRIDGE, Channel.STAFF_LOG);
 	}
 
+	public static void staffLog(String message) {
+		send(message, Channel.STAFF_LOG);
+	}
+
 	public static void adminLog(String message) {
 		send(message, Channel.ADMIN_LOG);
 	}
