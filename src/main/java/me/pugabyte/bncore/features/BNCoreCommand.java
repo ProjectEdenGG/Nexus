@@ -182,10 +182,7 @@ public class BNCoreCommand extends CustomCommand {
 
 	@TabCompleterFor(ColorType.class)
 	List<String> tabCompleteColorType(String filter) {
-		return Arrays.stream(ColorType.values())
-				.filter(value -> value.name().toLowerCase().startsWith(filter))
-				.map(Enum::name)
-				.collect(Collectors.toList());
+		return tabCompleteEnum(ColorType.class, filter);
 	}
 
 	@ConverterFor(WorldGroup.class)

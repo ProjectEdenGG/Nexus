@@ -7,6 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
@@ -117,10 +118,17 @@ public class ItemBuilder {
 		return this;
 	}
 
-	public ItemBuilder effectColor(Color color){
+	public ItemBuilder effectColor(Color color) {
 		PotionMeta potionMeta = (PotionMeta) itemMeta;
 		potionMeta.setColor(color);
 		itemMeta = potionMeta;
+		return this;
+	}
+
+	public ItemBuilder power(int power) {
+		FireworkMeta fireworkMeta = (FireworkMeta) itemMeta;
+		fireworkMeta.setPower(power);
+		itemMeta = fireworkMeta;
 		return this;
 	}
 
