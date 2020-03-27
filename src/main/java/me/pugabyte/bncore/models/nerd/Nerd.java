@@ -23,11 +23,14 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 public class Nerd {
 	private String uuid;
 	private String name;
+	private String preferredName;
 	private LocalDate birthday;
 	private LocalDateTime firstJoin;
 	private LocalDateTime lastJoin;
 	private LocalDateTime lastQuit;
 	private LocalDate promotionDate;
+	private String about;
+	private boolean meetMeVideo;
 
 	public Nerd(String name) {
 		this(Utils.getPlayer(name));

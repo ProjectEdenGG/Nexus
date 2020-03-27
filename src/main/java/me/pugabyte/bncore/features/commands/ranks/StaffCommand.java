@@ -8,6 +8,7 @@ import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.nerd.Nerd;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,11 @@ public class StaffCommand extends CustomCommand {
 		line();
 		List<Rank> ranks = Rank.getStaff();
 		Collections.reverse(ranks);
-		ranks.forEach(rank -> send(rank + "&f:&e " + rank.getNerds().stream().map(Nerd::getName).collect(Collectors.joining("&f, &e"))));
+		ranks.forEach(rank -> send(rank + "&f:&e " + rank.getNerds().stream()
+				.sorted(Comparator.comparing(Nerd::getName, String.CASE_INSENSITIVE_ORDER))
+				.map(Nerd::getName)
+				.filter(name -> !name.equals("KodaBear"))
+				.collect(Collectors.joining("&f, &e"))));
 		line();
 		send("&3View online staff with &c/onlinestaff&3.");
 		send("&3If you need to request a staff member's &ehelp&3, please use &c/ticket &c<message>");

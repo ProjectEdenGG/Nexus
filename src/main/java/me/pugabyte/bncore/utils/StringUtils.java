@@ -271,7 +271,11 @@ public class StringUtils {
 	}
 
 	public static String longDateTimeFormat(LocalDateTime dateTime) {
-		return longDateFormat(dateTime.toLocalDate()) + " " + timeFormat(dateTime);
+		return longDateFormat(dateTime.toLocalDate()) + " " + longTimeFormat(dateTime);
+	}
+
+	public static String shortDateTimeFormat(LocalDateTime dateTime) {
+		return shortDateFormat(dateTime.toLocalDate()) + " " + shortTimeFormat(dateTime);
 	}
 
 	public static String longDateFormat(LocalDate date) {
@@ -279,13 +283,15 @@ public class StringUtils {
 	}
 
 	public static String shortDateFormat(LocalDate date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/YY");
-		return date.format(formatter);
+		return date.format(DateTimeFormatter.ofPattern("M/d/YY"));
 	}
 
-	public static String timeFormat(LocalDateTime time) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss a");
-		return time.format(formatter);
+	public static String longTimeFormat(LocalDateTime time) {
+		return time.format(DateTimeFormatter.ofPattern("h:mm:ss a"));
+	}
+
+	public static String shortTimeFormat(LocalDateTime time) {
+		return time.format(DateTimeFormatter.ofPattern("h:mm a"));
 	}
 
 	public static String getNumberSuffix(int number) {
