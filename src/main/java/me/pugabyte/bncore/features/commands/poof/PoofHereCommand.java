@@ -1,18 +1,17 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.commands.poof;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.models.poof.Poof;
 import me.pugabyte.bncore.models.poof.PoofService;
-import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
+@Aliases("tpahere")
 public class PoofHereCommand extends CustomCommand {
-
 	PoofService service = new PoofService();
 
 	public PoofHereCommand(CommandEvent event) {
@@ -21,12 +20,14 @@ public class PoofHereCommand extends CustomCommand {
 
 	@Path("<player>")
 	void player(Player target) {
-		//if (target == player().getPlayer()) error("You cannot poof to yourself");
-		Poof request = new Poof(player().getUniqueId().toString(), target.getUniqueId().toString(), player().getLocation(), target.getLocation(), LocalDateTime.now());
+		if (target == player().getPlayer())
+			error("You cannot poof to yourself");
+
+		Poof request = new Poof(player(), target);
 		service.save(request);
 		send(json("&ePoof-here &3request sent to " + target.getName() + ". ").next("&eClick to cancel").command("poof cancel"));
 		send(target, "  &e" + player().getName() + " &3is asking you to poof &eto them&3.");
-		send(target, json("&3Click one || &a&lAccept")
+		send(target, json("&3  Click one  ||  &a&lAccept")
 				.command("poofhere accept")
 				.hover("&eClick &3to accept")
 				.group()
@@ -45,10 +46,14 @@ public class PoofHereCommand extends CustomCommand {
 		Poof request = service.getByReceiver(player().getPlayer());
 		if (request == null || request.isExpired())
 			error("You do not have any pending Poof-here requests");
-		Player receiver = Utils.getPlayer(UUID.fromString(request.getReceiver())).getPlayer();
-		receiver.teleport(request.getSenderLocation());
-		send(receiver, "&3You accepted &e" + receiver.getName() + "'s &3poof-here request");
-		send("&e" + Utils.getPlayer(UUID.fromString(request.getReceiver())).getName() + " &3accepted your poof-here request");
+
+		OfflinePlayer receiver = request.getReceiverPlayer();
+		if (!receiver.isOnline())
+			throw new PlayerNotOnlineException(receiver);
+
+		receiver.getPlayer().teleport(request.getSenderLocation());
+		send(receiver.getPlayer(), "&3You accepted &e" + receiver.getName() + "'s &3poof-here request");
+		send("&e" + request.getReceiverPlayer().getName() + " &3accepted your poof-here request");
 		request.setExpired(true);
 		service.save(request);
 	}
@@ -58,9 +63,13 @@ public class PoofHereCommand extends CustomCommand {
 		Poof request = service.getByReceiver(player().getPlayer());
 		if (request == null || request.isExpired())
 			error("You do not have any pending Poof-here requests");
-		Player receiver = Utils.getPlayer(UUID.fromString(request.getReceiver())).getPlayer();
-		send(receiver, "&3You denied &e" + receiver.getName() + "'s &3poof-here request");
-		send("&e" + Utils.getPlayer(UUID.fromString(request.getReceiver())).getName() + " &3denied your poof-here request");
+
+		OfflinePlayer receiver = request.getReceiverPlayer();
+		if (!receiver.isOnline())
+			throw new PlayerNotOnlineException(receiver);
+
+		send(receiver.getPlayer(), "&3You denied &e" + receiver.getName() + "'s &3poof-here request");
+		send("&e" + receiver.getName() + " &3denied your poof-here request");
 		request.setExpired(true);
 		service.save(request);
 	}
@@ -70,9 +79,13 @@ public class PoofHereCommand extends CustomCommand {
 		Poof request = service.getBySender(player().getPlayer());
 		if (request == null || request.isExpired())
 			error("You do not have any pending Poof-here requests");
-		Player receiver = Utils.getPlayer(UUID.fromString(request.getReceiver())).getPlayer();
-		Player sender = Utils.getPlayer(UUID.fromString(request.getSender())).getPlayer();
-		send(receiver, "&e" + sender.getName() + " &3canceled their poof-here request");
+
+		OfflinePlayer receiver = request.getReceiverPlayer();
+		OfflinePlayer sender = request.getSenderPlayer();
+		if (!receiver.isOnline())
+			throw new PlayerNotOnlineException(receiver);
+
+		send(receiver.getPlayer(), "&e" + sender.getName() + " &3canceled their poof-here request");
 		send("&3You canceled your poof-here request to &e" + receiver.getName());
 		request.setExpired(true);
 		service.save(request);
