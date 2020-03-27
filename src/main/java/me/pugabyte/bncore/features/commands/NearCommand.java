@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.commands;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Aliases("nearby")
 public class NearCommand extends CustomCommand {
 
 	public NearCommand(@NonNull CommandEvent event) {
@@ -22,18 +24,19 @@ public class NearCommand extends CustomCommand {
 	@Path("[player]")
 	void run(@Arg("self") Player player) {
 		List<Player> nearby = Bukkit.getOnlinePlayers().stream()
-				.filter(_player -> player.getWorld() == _player.getWorld())
-				.filter(_player -> Utils.canSee(player(), _player))
+				.filter(_player -> player.getUniqueId() != _player.getUniqueId()
+						 && player.getWorld() == _player.getWorld()
+						 && getDistance(player, _player) <= Chat.getLocalRadius()
+						 && Utils.canSee(player(), _player))
 				.collect(Collectors.toList());
 
 		boolean showDistance = player.hasPermission("near.distance");
 
-		String message = "&ePlayers nearby" + (isSelf(player) ? "" : " " + player.getName()) + ": &f";
+		String message = "&ePlayers nearby" + (isSelf(player) ? "" : " " + player.getName()) + "";
 		if (nearby.size() == 0)
-			send(message + "None");
+			send(message + ": &fNone");
 		else
-			send(message + nearby.stream()
-					.filter(_player -> player.getUniqueId() != _player.getUniqueId() && getDistance(player, _player) < Chat.getLocalRadius())
+			send(message + " (&3" + nearby.size() + "&e): &f" + nearby.stream()
 					.map(_player -> {
 						if (showDistance)
 							return _player.getName() + " (&3" + getDistance(player, _player) + "m&f)";
