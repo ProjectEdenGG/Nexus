@@ -21,7 +21,7 @@ public class PastNamesCommand extends CustomCommand {
 		if (pastNames.size() < 2)
 			error("No known past names for " + target.getName());
 
-		send(PREFIX + "&e" + target.getName() + " &3 previous known names:");
+		send(PREFIX + "&e" + target.getName() + " &3previous known names:");
 		send("&e" + String.join(", ", pastNames));
 	}
 

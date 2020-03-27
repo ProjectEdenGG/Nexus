@@ -19,6 +19,7 @@ public class NerdListener implements Listener {
 		Nerd nerd = service.get(event.getPlayer());
 		nerd.setLastJoin(Utils.epochMilli(System.currentTimeMillis()));
 		service.save(nerd);
+		service.addPastName(event.getPlayer());
 	}
 
 	@EventHandler
