@@ -29,7 +29,7 @@ public class NerdService extends MySQLService {
 				.table("nerd")
 				.leftJoin("hours")
 					.on("hours.uuid = nerd.uuid")
-				.where("nerd." + safe(column) + " like ?")
+				.where("nerd." + sanitize(column) + " like ?")
 				.orderBy("position(? in name), hours.total desc")
 				.args("%" + partialName + "%", partialName)
 				.results(Nerd.class);

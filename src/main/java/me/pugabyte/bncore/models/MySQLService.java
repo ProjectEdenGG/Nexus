@@ -53,11 +53,15 @@ public abstract class MySQLService {
 			BNCore.warn(object.getClass().getSimpleName() + " save time took " + time + "ms");
 	}
 
+	public <T> void delete(T object) {
+		database.delete(object);
+	}
+
 	protected String asList(List<String> list) {
 		return "'" + String.join("','", list) + "'";
 	}
 
-	public String safe(String input) {
+	public String sanitize(String input) {
 		if (Pattern.compile("[\\w\\d\\s]+").matcher(input).matches())
 			return input;
 		throw new InvalidInputException("Unsafe argument");

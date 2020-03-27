@@ -61,7 +61,10 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	void freeze(@Arg(type = Player.class) List<Player> players) {
 		for (Player player : players) {
 			Setting setting = service.get(player, "frozen");
-			if (setting.getBoolean()) error("That player is already frozen");
+			if (setting.getBoolean()) {
+				runCommand("unfreeze " + player.getName());
+				continue;
+			}
 			setting.setBoolean(true);
 			service.save(setting);
 			freezePlayer(player);
