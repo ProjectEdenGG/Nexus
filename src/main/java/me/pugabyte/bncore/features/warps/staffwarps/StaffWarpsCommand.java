@@ -1,28 +1,30 @@
-package me.pugabyte.bncore.features.commands.staff;
+package me.pugabyte.bncore.features.warps.staffwarps;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.staffwarp.StaffWarp;
-import me.pugabyte.bncore.models.staffwarp.StaffWarpService;
+import me.pugabyte.bncore.models.warps.Warp;
+import me.pugabyte.bncore.models.warps.WarpService;
+import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.JsonBuilder;
 
 import java.util.List;
 
 @Permission("group.staff")
 public class StaffWarpsCommand extends CustomCommand {
-	StaffWarpService service = new StaffWarpService();
 
 	public StaffWarpsCommand(CommandEvent event) {
 		super(event);
 	}
 
+	WarpService service = new WarpService();
+
 	@Path("list")
 	void list() {
-		List<StaffWarp> warps = service.getStaffWarps();
+		List<Warp> warps = service.getWarpsByType(WarpType.STAFF);
 		JsonBuilder builder = new JsonBuilder();
-		for (StaffWarp warp : warps) {
+		for (Warp warp : warps) {
 			if (!builder.isInitialized())
 				builder.initialize();
 			else
@@ -37,17 +39,17 @@ public class StaffWarpsCommand extends CustomCommand {
 	}
 
 	@Path("set <name>")
-	void run(String name) {
-		StaffWarp warp = service.get(name);
+	void set(String name) {
+		Warp warp = service.getStaffWarp(name);
 		if (warp != null) error("That warp is already set.");
-		StaffWarp newWarp = new StaffWarp(name, player().getLocation());
+		Warp newWarp = new Warp(name, player().getLocation(), WarpType.STAFF.name());
 		service.save(newWarp);
 		send(PREFIX + "&e" + name + " &3set to your current location");
 	}
 
 	@Path("(rm|remove|delete|del) <name>")
 	void delete(String name) {
-		StaffWarp warp = service.get(name);
+		Warp warp = service.getStaffWarp(name);
 		if (warp == null) error("That warp is not set.");
 		service.delete(warp);
 		send(PREFIX + "Sucessfully deleted the staff warp &e" + warp.getName());
@@ -55,9 +57,9 @@ public class StaffWarpsCommand extends CustomCommand {
 
 	@Path("(teleport|tp) <name>")
 	void teleport(String name) {
-		StaffWarp warp = service.get(name);
+		Warp warp = service.getStaffWarp(name);
 		if (warp == null) error("That warp is not set.");
-		player().teleport(warp.getLocation());
+		warp.teleport(player());
 	}
 
 	@Path("<name>")
@@ -67,7 +69,7 @@ public class StaffWarpsCommand extends CustomCommand {
 
 	@Path("")
 	void usage() {
-		send(PREFIX + "Not a valid action! Use &c/staffwarps <list|tp|set|del> [name]");
+		send(PREFIX + "Not a valid action! Use &c/Warps <list|tp|set|del> [name]");
 	}
 
 

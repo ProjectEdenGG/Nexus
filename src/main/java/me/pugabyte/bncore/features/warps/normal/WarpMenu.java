@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.warps;
+package me.pugabyte.bncore.features.warps.normal;
 
 public enum WarpMenu {
 	MAIN(4),

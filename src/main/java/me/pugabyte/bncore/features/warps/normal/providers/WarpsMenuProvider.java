@@ -1,11 +1,14 @@
-package me.pugabyte.bncore.features.warps.providers;
+package me.pugabyte.bncore.features.warps.normal.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.warps.WarpMenu;
-import me.pugabyte.bncore.features.warps.WarpsMenu;
+import me.pugabyte.bncore.features.warps.normal.WarpMenu;
+import me.pugabyte.bncore.features.warps.normal.Warps;
+import me.pugabyte.bncore.features.warps.normal.WarpsMenu;
+import me.pugabyte.bncore.models.warps.Warp;
+import me.pugabyte.bncore.models.warps.WarpService;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -36,6 +39,8 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				break;
 		}
 
+		WarpService service = new WarpService();
+
 		switch (menu) {
 			case MAIN:
 				ItemStack survival = nameItem(Material.GRASS, "&3Survival");
@@ -52,61 +57,12 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				break;
 
 			case SURVIVAL:
-//				ItemStack northwest2 = nameItem(Material.JUNGLE_LOG, "&3Northwest #2");
-//				ItemStack north2 = nameItem(Material.OAK_PLANKS, "&3North #2");
-//				ItemStack northeast2 = nameItem(Material.GRAY_TERRACOTTA, "&3Northeast #2");
-
-//				ItemStack northwest = nameItem(Material.PODZOL, "&3Northwest");
-				ItemStack north = nameItem(Material.BONE_BLOCK, "&3North");
-				ItemStack northeast = nameItem(Material.COBBLESTONE_STAIRS, "&3Northeast");
-
-//				ItemStack west2 = nameItem(Material.ACACIA_PLANKS, "&3West #2");
-//				ItemStack west = nameItem(Material.SPRUCE_LOG, "&3West");
-//				ItemStack spawn = nameItem(Material.CHISELED_STONE_BRICKS, "&3Spawn");
-				ItemStack east = nameItem(Material.ICE, "&3East");
-//				ItemStack east2 = nameItem(Material.OAK_LOG, "&3East #2");
-
-				ItemStack southwest = nameItem(Material.HAY_BLOCK, "&3Southwest");
-//				ItemStack south = nameItem(Material.GRAY_WOOL, "&3South");
-//				ItemStack southeast = nameItem(Material.BIRCH_PLANKS, "&3Southeast");
-
-				ItemStack southwest2 = nameItem(Material.SAND, "&3Southwest #2");
-//				ItemStack south2 = nameItem(Material.STONE_BRICKS, "&3South #2");
-				ItemStack southeast2 = nameItem(Material.SNOW_BLOCK, "&3Southeast #2");
-
-				ItemStack nether = nameItem(Material.NETHERRACK, "&3Nether");
-
-				ItemStack shub = nameItem(Material.EMERALD, "&3Shops Hub", "&eLearn all about||&eBear Nation's economy");
-				ItemStack market = nameItem(Material.SIGN, "&3Market", "&eWhere you'll find all||&ethe 'bear' neccessities.");
-//				ItemStack shops = nameItem(Material.PLAYER_HEAD, "&3Player Shops", "&eFind more items at||&echeaper prices");
-
-//				contents.set(0, 1, ClickableItem.from(northwest2, e -> warp(player, "northwest2")));
-//				contents.set(0, 3, ClickableItem.from(north2, e -> warp(player, "north2")));
-//				contents.set(0, 5, ClickableItem.from(northeast2, e -> warp(player, "northeast2")));
-//
-//				contents.set(1, 2, ClickableItem.from(northwest, e -> warp(player, "northwest")));
-//				contents.set(1, 3, ClickableItem.from(north, e -> warp(player, "north")));
-//				contents.set(1, 4, ClickableItem.from(northeast, e -> warp(player, "northeast")));
-//
-//				contents.set(2, 1, ClickableItem.from(west2, e -> warp(player, "west2")));
-//				contents.set(2, 2, ClickableItem.from(west, e -> warp(player, "west")));
-//				contents.set(2, 3, ClickableItem.from(spawn, e -> warp(player, "spawn")));
-//				contents.set(2, 4, ClickableItem.from(east, e -> warp(player, "east")));
-//				contents.set(2, 5, ClickableItem.from(east2, e -> warp(player, "east2")));
-//
-//				contents.set(3, 2, ClickableItem.from(southwest, e -> warp(player, "southwest")));
-//				contents.set(3, 3, ClickableItem.from(south, e -> warp(player, "south")));
-//				contents.set(3, 4, ClickableItem.from(southeast, e -> warp(player, "southeast")));
-//
-//				contents.set(4, 1, ClickableItem.from(southwest2, e -> warp(player, "southwest2")));
-//				contents.set(4, 3, ClickableItem.from(south2, e -> warp(player, "south2")));
-//				contents.set(4, 5, ClickableItem.from(southeast2, e -> warp(player, "southeast2")));
-
-				contents.set(4, 0, ClickableItem.from(nether, e -> warp(player, "nether")));
-
-				contents.set(1, 7, ClickableItem.from(shub, e -> warp(player, "shub")));
-				contents.set(2, 7, ClickableItem.from(market, e -> warp(player, "market")));
-//				contents.set(3, 7, ClickableItem.from(shops, e -> warp(player, "northeast2")));
+				for (Warps.SurvivalWarp warp : Warps.SurvivalWarp.values()) {
+					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&e" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
+						Warp warp1 = service.getNormalWarp(warp.name().replace("_", ""));
+						warp1.teleport(player);
+					}));
+				}
 				break;
 
 			case MINIGAMES:
