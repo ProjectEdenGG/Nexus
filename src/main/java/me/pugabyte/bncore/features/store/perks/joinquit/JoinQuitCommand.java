@@ -2,11 +2,13 @@ package me.pugabyte.bncore.features.store.perks.joinquit;
 
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.StringUtils;
 
+@Aliases("jq")
 public class JoinQuitCommand extends CustomCommand {
 
 	public JoinQuitCommand(@NonNull CommandEvent event) {
