@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.utils.YamlSerializationUtils;
+import me.pugabyte.bncore.utils.SerializationUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -29,7 +29,7 @@ public class Loadout implements ConfigurationSerializable {
 	private List<PotionEffect> effects = new ArrayList<>();
 
 	public Loadout(Map<String, Object> map) {
-		this.inventory = YamlSerializationUtils.deserializeItems((Map<String, Object>) map.getOrDefault("inventory", inventory));
+		this.inventory = SerializationUtils.yml_deserializeItems((Map<String, Object>) map.getOrDefault("inventory", inventory));
 		this.effects = (List<PotionEffect>) map.getOrDefault("effects", effects);
 		isLoadoutEmpty = Arrays.stream(inventory).noneMatch(Objects::nonNull);
 	}
@@ -37,7 +37,7 @@ public class Loadout implements ConfigurationSerializable {
 	@Override
 	public Map<String, Object> serialize() {
 		return new LinkedHashMap<String, Object>() {{
-			put("inventory", YamlSerializationUtils.serializeItems(inventory));
+			put("inventory", SerializationUtils.yml_serializeItems(inventory));
 			put("effects", effects);
 		}};
 	}

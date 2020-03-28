@@ -13,7 +13,7 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
-import me.pugabyte.bncore.utils.YamlSerializationUtils;
+import me.pugabyte.bncore.utils.SerializationUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -89,7 +89,7 @@ public class Arena implements ConfigurationSerializable {
 		this.minWinningScore = (Integer) map.getOrDefault("minWinningScore", minWinningScore);
 		this.maxWinningScore = (Integer) map.getOrDefault("maxWinningScore", maxWinningScore);
 		this.lives = (Integer) map.getOrDefault("lives", lives);
-		this.blockList = YamlSerializationUtils.deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
+		this.blockList = SerializationUtils.yml_deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 	}
@@ -113,7 +113,7 @@ public class Arena implements ConfigurationSerializable {
 			put("minWinningScore", getMinWinningScore());
 			put("maxWinningScore", getMaxWinningScore());
 			put("lives", getLives());
-			put("blockList", YamlSerializationUtils.serializeMaterialSet(getBlockList()));
+			put("blockList", SerializationUtils.yml_serializeMaterialSet(getBlockList()));
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 		}};
