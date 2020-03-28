@@ -61,6 +61,10 @@ public enum Rank {
 		return StringUtils.camelCase(name());
 	}
 
+	public String getColor() {
+		return format.replaceAll("&[lo]", "");
+	}
+
 	public List<Nerd> getNerds() {
 		Set<PermissionUser> users = PermissionsEx.getPermissionManager().getGroup(StringUtils.camelCase(name())).getUsers();
 		Set<Nerd> nerds = new HashSet<>();
