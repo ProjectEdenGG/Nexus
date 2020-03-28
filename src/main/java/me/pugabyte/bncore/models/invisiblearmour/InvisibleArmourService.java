@@ -24,6 +24,4 @@ public class InvisibleArmourService extends MySQLService {
 		return cache.get(uuid);
 	}
 
-
-
 }
