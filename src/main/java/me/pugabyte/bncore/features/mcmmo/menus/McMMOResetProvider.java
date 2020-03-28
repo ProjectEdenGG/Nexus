@@ -7,6 +7,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.mcmmo.McMMOPrestige;
@@ -204,7 +205,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		Koda.say(player.getName() + " has reset all of their McMMO skills!");
 
 		Utils.runConsoleCommand("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
-		Utils.runConsoleCommand("eco give " + player.getName() + " 20000");
+		BNCore.getEcon().depositPlayer(player, 20000);
 
 		for (SkillType skillType : SkillType.values()) {
 			if (skillType.isChildSkill()) continue;
@@ -219,7 +220,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
 		skill.onClick(player);
-		Utils.runConsoleCommand("eco give " + player.getName() + " 10000");
+		BNCore.getEcon().depositPlayer(player, 10000);
 		mcmmoPlayer.modifySkill(SkillType.valueOf(skill.name()), 0);
 
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());

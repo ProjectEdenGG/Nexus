@@ -39,6 +39,7 @@ import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.ModelListeners;
 import me.pugabyte.bncore.utils.Time.Timer;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
@@ -190,6 +191,9 @@ public class BNCore extends JavaPlugin {
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
 	private static Scheduler cron = new Scheduler();
 
+	@Getter
+	private static Economy econ = null;
+
 	private void enableFeatures() {
 		// Load this first
 		new Timer("  Discord", () -> discord = new Discord());
@@ -224,6 +228,7 @@ public class BNCore extends JavaPlugin {
 
 		signMenuFactory = new SignMenuFactory(this);
 		cron.start();
+		econ = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
 	}
 
 }
