@@ -165,8 +165,6 @@ public class Utils {
 		if (yaw < 135) newYaw = 90;
 		if (yaw < 45) newYaw = 0;
 
-		BNCore.log("Yaw: " + yaw + " -> " + newYaw);
-
 		return new Location(location.getWorld(), x, y, z, newYaw, 0F);
 	}
 
