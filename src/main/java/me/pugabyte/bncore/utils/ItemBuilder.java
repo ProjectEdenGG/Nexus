@@ -45,6 +45,10 @@ public class ItemBuilder {
 		return durability(colorType.getDurability().shortValue());
 	}
 
+	public ItemBuilder dyeColor(ColorType colorType) {
+		return durability(colorType.getDyeColor().getDyeData());
+	}
+
 	public ItemBuilder durability(int durability) {
 		return durability(Integer.valueOf(durability).shortValue());
 	}

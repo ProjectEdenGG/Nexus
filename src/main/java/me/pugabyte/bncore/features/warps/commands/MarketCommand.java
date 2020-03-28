@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.warps.commands.aliases;
+package me.pugabyte.bncore.features.warps.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -6,19 +6,22 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.WorldGroup;
 
-public class MallCommand extends CustomCommand {
+public class MarketCommand extends CustomCommand {
+	WarpService service = new WarpService();
 
-	public MallCommand(CommandEvent event) {
+	public MarketCommand(CommandEvent event) {
 		super(event);
 	}
 
-	WarpService service = new WarpService();
-
 	@Path
 	void run() {
-		Warp warp = service.get("mall", WarpType.NORMAL);
-		if (warp == null) error("There was an error while executing this command");
+		Warp warp;
+		if (WorldGroup.get(player().getWorld()) == WorldGroup.SKYBLOCK)
+			warp = service.get("skyblock-market", WarpType.NORMAL);
+		else
+			warp = service.get("market", WarpType.NORMAL);
 		warp.teleport(player());
 	}
 

@@ -42,7 +42,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import static me.pugabyte.bncore.utils.StringUtils.listLast;
-import static org.reflections.ReflectionUtils.getMethods;
+import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
@@ -254,7 +254,7 @@ public interface ICustomCommand {
 	}
 
 	default Set<Method> getPathMethods() {
-		return getMethods(this.getClass(), withAnnotation(Path.class));
+		return getAllMethods(this.getClass(), withAnnotation(Path.class));
 	}
 
 	// TODO: Use same methods as tab complete

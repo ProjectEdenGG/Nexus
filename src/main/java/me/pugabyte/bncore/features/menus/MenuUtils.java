@@ -14,10 +14,10 @@ import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -56,16 +56,18 @@ public abstract class MenuUtils {
 			meta.setDisplayName(colorize(name));
 		if (lore != null)
 			meta.setLore(Arrays.asList(loreize(colorize(lore)).split("\\|\\|")));
+
+		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		item.setItemMeta(meta);
 		return item;
 	}
 
 	protected void warp(Player player, String warp) {
-		Bukkit.dispatchCommand(player, "essentials:warp " + warp);
+		Utils.runCommand(player, "warp " + warp);
 	}
 
 	public void command(Player player, String command) {
-		Bukkit.dispatchCommand(player, command);
+		Utils.runCommand(player, command);
 	}
 
 	public static String getLocationLore(Location location) {
