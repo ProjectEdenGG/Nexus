@@ -5,7 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.warps.normal.Warps;
+import me.pugabyte.bncore.features.warps.Warps;
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
@@ -31,7 +31,7 @@ public class ATPMenuProvider extends MenuUtils implements InventoryProvider {
 			}));
 		}
 
-		contents.set(2, 7, ClickableItem.from(nameItem(Material.SIGN, "&3Homes", "&eClick to teleport to one of your homes."), e -> {
+		contents.set(2, 7, ClickableItem.from(nameItem(Material.SIGN, "&3Homes", "&eClick to teleport to||&3one of your homes."), e -> {
 			SmartInventory INV = SmartInventory.builder()
 					.title("ATP Homes")
 					.size(6, 9)
