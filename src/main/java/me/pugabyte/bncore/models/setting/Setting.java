@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.models.setting;
 
+import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,9 @@ import lombok.NonNull;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.LocationSerializer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -36,6 +40,14 @@ public class Setting {
 
 	public void setLocation(Location location) {
 		this.value = new LocationSerializer().serialize(location);
+	}
+
+	public Map<String, Object> getJson() {
+		return new Gson().fromJson(value, Map.class);
+	}
+
+	public void setJson(Map<String, Object> map) {
+		this.value = new Gson().toJson(new HashMap<>(map));
 	}
 
 }
