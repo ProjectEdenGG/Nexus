@@ -18,6 +18,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.invisiblearmour.InvisibleArmour;
 import me.pugabyte.bncore.models.invisiblearmour.InvisibleArmourService;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
+@Permission("invis.armour")
 @Aliases({"ia", "invisarmor", "invisarmour", "invisiblearmor"})
 public class InvisibleArmourCommand extends CustomCommand implements Listener {
 	private static List<ItemSlot> armourSlots = Arrays.asList(ItemSlot.HEAD, ItemSlot.CHEST, ItemSlot.LEGS, ItemSlot.FEET);
