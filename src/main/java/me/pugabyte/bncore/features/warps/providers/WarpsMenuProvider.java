@@ -7,16 +7,21 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.warps.WarpMenu;
 import me.pugabyte.bncore.features.warps.Warps;
 import me.pugabyte.bncore.features.warps.WarpsMenu;
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.SerializationUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 /*
 	TO UPDATE TO 1.13:
@@ -53,7 +58,10 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				break;
 		}
 
-		WarpService service = new WarpService();
+		WarpService warpService = new WarpService();
+		SettingService settingService = new SettingService();
+		Setting buildContestSetting = settingService.get("buildcontest", "info");
+		Map<String, Object> bcInfo = buildContestSetting.getJson();
 
 		switch (menu) {
 			case MAIN:
@@ -68,12 +76,18 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				contents.set(1, 5, ClickableItem.from(creative, e -> warp(player, "creative")));
 				contents.set(1, 7, ClickableItem.from(skyblock, e -> warp(player, "skyblock")));
 				contents.set(2, 4, ClickableItem.from(other, e -> WarpsMenu.open(player, WarpMenu.OTHER)));
+
+				if (bcInfo.get("item") != null && (Boolean.parseBoolean((String) bcInfo.get("active")))) {
+					contents.set(4, 4, ClickableItem.from(SerializationUtils.json_deserializeItem((String) bcInfo.get("item")), e -> {
+						warp(player, "buildcontest");
+					}));
+				}
 				break;
 
 			case SURVIVAL:
 				for (Warps.SurvivalWarp warp : Warps.SurvivalWarp.values()) {
 					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
-						Warp warp1 = service.getNormalWarp(warp.name().replace("_", ""));
+						Warp warp1 = warpService.getNormalWarp(warp.name().replace("_", ""));
 						warp1.teleport(player);
 					}));
 				}
