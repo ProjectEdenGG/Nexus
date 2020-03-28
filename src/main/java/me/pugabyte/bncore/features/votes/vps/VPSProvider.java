@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.votes.vps;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage;
 import me.pugabyte.bncore.models.vote.VoteService;
@@ -51,7 +52,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 				}
 
 				if (item.getMoney() > 0)
-					Utils.runConsoleCommand("eco give " + player.getName() + " " + item.getMoney());
+					BNCore.getEcon().depositPlayer(player, item.getMoney());
 				if (item.getConsoleCommand() != null && item.getConsoleCommand().length() > 0)
 					Utils.runConsoleCommand(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getCommand() != null && item.getCommand().length() > 0)

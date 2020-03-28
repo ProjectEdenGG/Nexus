@@ -1,16 +1,17 @@
 package me.pugabyte.bncore.models.dailyreward;
 
 import com.dieselpoint.norm.serialize.DbSerializer;
+import com.google.common.base.Strings;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.IntegerListSerializer;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -85,18 +86,14 @@ public class DailyReward {
 		Integer money = reward.getMoney();
 		String command = reward.getCommand();
 
-		if (items != null) {
+		if (items != null)
 			Utils.giveItems(player, items);
-		}
 
-		if (money != null) {
-			// TODO: Hook into vault
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + player.getName() + " " + money.toString());
-		}
+		if (money != null)
+			BNCore.getEcon().depositPlayer(player, money);
 
-		if (command != null && !command.isEmpty()) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("%player%", player.getName()));
-		}
+		if (!Strings.isNullOrEmpty(command))
+			Utils.runConsoleCommand(command.replaceAll("%player%", player.getName()));
 	}
 
 }

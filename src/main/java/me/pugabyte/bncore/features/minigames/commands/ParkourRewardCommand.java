@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.minigames.commands;
 
 import lombok.NonNull;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
@@ -17,7 +18,8 @@ public class ParkourRewardCommand extends CustomCommand {
 
 	@Path
 	void reward() {
-		runCommandAsConsole("eco give " + player().getName() + " 40");
+		BNCore.getEcon().depositPlayer(player(), 40);
+		send(PREFIX + "You have received $40");
 	}
 
 }
