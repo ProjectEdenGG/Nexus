@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.homes;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.warps.normal.Warps;
+import me.pugabyte.bncore.features.warps.Warps;
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;

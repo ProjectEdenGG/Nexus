@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.warps.normal;
+package me.pugabyte.bncore.features.warps;
 
 import lombok.Getter;
 import me.lucko.helper.item.ItemStackBuilder;

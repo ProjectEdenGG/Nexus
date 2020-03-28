@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
@@ -22,7 +23,7 @@ public class AnimalTeleportPensCommand extends CustomCommand {
 		super(event);
 	}
 
-
+	@Permission("group.seniorstaff")
 	@Path("(warp|warps) set <warp>")
 	void setWarp(String name) {
 		Warp warp = service.get(name, WarpType.ATP);
@@ -32,6 +33,7 @@ public class AnimalTeleportPensCommand extends CustomCommand {
 		send(PREFIX + "Successfully created ATP &e" + name);
 	}
 
+	@Permission("group.seniorstaff")
 	@Path("(warp|warps) (del|delete|rm|remove) <warp>")
 	void delete(String name) {
 		Warp warp = service.get(name, WarpType.ATP);

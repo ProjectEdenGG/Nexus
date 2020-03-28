@@ -1,7 +1,7 @@
-package me.pugabyte.bncore.features.warps.normal;
+package me.pugabyte.bncore.features.warps;
 
 import fr.minuskube.inv.SmartInventory;
-import me.pugabyte.bncore.features.warps.normal.providers.WarpsMenuProvider;
+import me.pugabyte.bncore.features.warps.providers.WarpsMenuProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
