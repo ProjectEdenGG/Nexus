@@ -152,7 +152,9 @@ public class Utils {
 		double x = Math.floor(location.getX());
 		double y = Math.floor(location.getY());
 		double z = Math.floor(location.getZ());
-		double yaw = Math.abs(location.getYaw()); // what the fuck minecraft
+		double yaw = location.getYaw();
+		if (yaw < 0)
+			yaw += 360; // what the fuck minecraft
 
 		x += .5;
 		z += .5;
@@ -162,6 +164,8 @@ public class Utils {
 		if (yaw < 225) newYaw = 180;
 		if (yaw < 135) newYaw = 90;
 		if (yaw < 45) newYaw = 0;
+
+		BNCore.log("Yaw: " + yaw + " -> " + newYaw);
 
 		return new Location(location.getWorld(), x, y, z, newYaw, 0F);
 	}
