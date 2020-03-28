@@ -83,8 +83,7 @@ public class WorldGuardUtils {
 		return Bukkit.getOnlinePlayers().stream().filter(player -> isInRegion(player.getLocation(), region)).collect(Collectors.toList());
 	}
 
-	public Collection<Entity> getEntitiesInRegion(String region) {
-		org.bukkit.World world = (org.bukkit.World) getRegion(region).getWorld();
+	public Collection<Entity> getEntitiesInRegion(org.bukkit.World world, String region) {
 		if (world != null)
 			return world.getEntities().stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
 		return null;
