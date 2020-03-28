@@ -92,7 +92,7 @@ public class Commands {
 		for (Class<? extends CustomCommand> command : commandSet)
 			try {
 				if (!Modifier.isAbstract(command.getModifiers()))
-					register(new ObjenesisStd().newInstance(command));
+					unregister(new ObjenesisStd().newInstance(command));
 			} catch (Exception ex) {
 				BNCore.log("Error while unregistering command " + command.getSimpleName());
 				ex.printStackTrace();

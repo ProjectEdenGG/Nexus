@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.warps.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
@@ -22,18 +23,18 @@ public abstract class _WarpCommand extends CustomCommand {
 
 	abstract WarpType getWarpType();
 
-	@Path("list")
-	void list() {
-		List<Warp> warps = service.getWarpsByType(getWarpType());
+	@Path("list [filter]")
+	void list(@Arg(tabCompleter = Warp.class) String filter) {
+		List<String> warps = tabCompleteWarp(filter);
 		JsonBuilder builder = new JsonBuilder();
-		for (Warp warp : warps) {
+		for (String warp : warps) {
 			if (!builder.isInitialized())
 				builder.initialize();
 			else
 				builder.next("&e, ").group();
 
-			builder.next("&3" + warp.getName())
-					.command(getAliasUsed() + " tp " + warp.getName())
+			builder.next("&3" + warp)
+					.command(getAliasUsed() + " tp " + warp)
 					.group();
 		}
 		line();
@@ -42,7 +43,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("set <name>")
-	void set(String name) {
+	void set(@Arg(tabCompleter = Warp.class) String name) {
 		Warp warp = service.get(name, getWarpType());
 		if (warp != null)
 			error("That warp is already set.");
