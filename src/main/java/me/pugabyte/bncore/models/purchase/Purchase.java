@@ -21,7 +21,7 @@ public class Purchase {
 	private LocalDateTime timestamp;
 	private String email;
 	private String ip;
-	private int packageId;
+	private String packageId;
 	private double packagePrice;
 	private String packageExpiry;
 	private String packageName;

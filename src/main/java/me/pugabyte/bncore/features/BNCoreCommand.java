@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features;
 
-import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -17,6 +16,8 @@ import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.task.Task;
+import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
@@ -29,8 +30,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.getLastColor;
@@ -55,7 +59,32 @@ public class BNCoreCommand extends CustomCommand {
 		send(players.stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
 	}
 
+	static {
+		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(30), () -> {
+			TaskService service = new TaskService();
+			service.process("command-test").forEach(task -> {
+				Tasks.wait(Time.MINUTE.x(2), () -> {
+					Map<String, Object> data = task.getJson();
+					OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
+					if (player.isOnline())
+						player.getPlayer().sendMessage((String) data.get("message"));
+					service.complete(task);
+				});
+			});
+		});
+	}
+
+	@Path("taskTest <message...>")
+	@Permission("group.seniorstaff")
+	void taskTest(String message) {
+		new TaskService().save(new Task("command-test", new HashMap<String, Object>() {{
+			put("uuid", player().getUniqueId().toString());
+			put("message", message);
+		}}, LocalDateTime.now().plusMinutes(1)));
+	}
+
 	@Path("koda <message...>")
+	@Permission("group.seniorstaff")
 	void koda(String message) {
 		Koda.say(message);
 	}
@@ -70,6 +99,7 @@ public class BNCoreCommand extends CustomCommand {
 		SkriptFunctions.redTint(player, fadeTime, intensity);
 	}
 
+	@Permission("group.seniorstaff")
 	@Path("expCooldown <cooldown>")
 	void expCooldown(@Arg("20") int cooldown) {
 		Tasks.Countdown.builder()
@@ -80,16 +110,19 @@ public class BNCoreCommand extends CustomCommand {
 				.start();
 	}
 
+	@Permission("group.seniorstaff")
 	@Path("setExp <number>")
 	void setExp(float exp) {
 		player().setExp(exp);
 	}
 
+	@Permission("group.seniorstaff")
 	@Path("setTotalExperience <number>")
 	void setTotalExperience(int exp) {
 		player().setTotalExperience(exp);
 	}
 
+	@Permission("group.seniorstaff")
 	@Path("setLevel <number>")
 	void setLevel(int exp) {
 		player().setLevel(exp);
@@ -100,7 +133,7 @@ public class BNCoreCommand extends CustomCommand {
 		Utils.sendActionBar(player(), message, duration, fade);
 	}
 
-	@SneakyThrows
+	@Permission("group.seniorstaff")
 	@Path("setting <type> [value]")
 	void setting(String type, String value) {
 		if (!isNullOrEmpty(value))
@@ -117,12 +150,14 @@ public class BNCoreCommand extends CustomCommand {
 			send(block.getType().name());
 	}
 
+	@Permission("group.seniorstaff")
 	@Path("getOnlineNerdsWith <permission>")
 	void getOnlineNerdsWith(String permission) {
 		send(new NerdService().getOnlineNerdsWith(permission).stream().map(Nerd::getName).collect(Collectors.joining(", ")));
 	}
 
 	@Path("schem save <name>")
+	@Permission("group.seniorstaff")
 	void schemSave(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
 		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
@@ -130,6 +165,7 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("schem paste <name>")
+	@Permission("group.seniorstaff")
 	void schemPaste(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
 		worldEditUtils.paste(name, player().getLocation());
