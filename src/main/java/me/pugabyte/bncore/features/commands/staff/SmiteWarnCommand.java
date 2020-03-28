@@ -17,7 +17,7 @@ public class SmiteWarnCommand extends CustomCommand {
 
 	@Path("<player>")
 	void smiteWarn(Player player) {
-		if (WorldGroup.MINIGAMES != WorldGroup.get(player.getWorld()))
+		if (WorldGroup.MINIGAMES != WorldGroup.get(player))
 			error("Target player is not in minigames");
 
 		player.getWorld().strikeLightningEffect(player.getLocation());

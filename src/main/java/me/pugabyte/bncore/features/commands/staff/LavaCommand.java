@@ -28,7 +28,7 @@ public class LavaCommand extends CustomCommand implements Listener {
 
 	@Path
 	void lava() {
-		WorldGroup world = WorldGroup.get(player().getWorld());
+		WorldGroup world = WorldGroup.get(player());
 		if (world.equals(WorldGroup.SKYBLOCK))
 			error("Not allowed in " + world);
 
@@ -54,7 +54,7 @@ public class LavaCommand extends CustomCommand implements Listener {
 		if (!material.equals(Material.LAVA_BUCKET))
 			return;
 
-		WorldGroup world = WorldGroup.get(player.getWorld());
+		WorldGroup world = WorldGroup.get(player);
 		if (world.equals(WorldGroup.SKYBLOCK))
 			return;
 

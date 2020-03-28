@@ -77,7 +77,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			Discord.send(message, DiscordId.Channel.STAFF_BRIDGE, DiscordId.Channel.STAFF_LOG);
 
 			if (player.isOnline())
-				if (WorldGroup.get(player.getPlayer().getWorld()).equals(worldGroup))
+				if (WorldGroup.get(player.getPlayer()).equals(worldGroup))
 					removeFromBannedWorld(player.getPlayer(), worldGroup);
 		}
 	}
@@ -87,7 +87,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 		Player player = event.getPlayer();
 		WorldBan worldBan = new WorldBanService().get(player);
 
-		WorldGroup worldGroup = WorldGroup.get(player.getWorld());
+		WorldGroup worldGroup = WorldGroup.get(player);
 		if (worldBan.getBans().contains(worldGroup))
 			removeFromBannedWorld(player, worldGroup);
 	}
@@ -100,7 +100,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 		if (worldBan.getBans().size() == 0)
 			return;
 
-		WorldGroup worldGroup = WorldGroup.get(player.getWorld());
+		WorldGroup worldGroup = WorldGroup.get(player);
 		if (worldBan.getBans().contains(worldGroup))
 			Tasks.wait(5, () -> removeFromBannedWorld(player, worldGroup));
 	}

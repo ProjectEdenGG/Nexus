@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.utils;
 
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import org.bukkit.entity.Entity;
@@ -7,6 +8,11 @@ import org.bukkit.entity.Entity;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class CitizensUtils {
+
+	public static void updateNameAndSkin(int id, String name) {
+		updateNameAndSkin(CitizensAPI.getNPCRegistry().getById(id), name);
+	}
+
 	public static void updateNameAndSkin(NPC npc, String name) {
 		npc.setName(name);
 		updateSkin(npc, name);

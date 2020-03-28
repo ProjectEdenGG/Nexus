@@ -19,9 +19,9 @@ public class SpawnCommand extends CustomCommand {
 	@Path
 	void run() {
 		Warp warp;
-		if (WorldGroup.get(player().getWorld()) == WorldGroup.SKYBLOCK)
+		if (WorldGroup.get(player()) == WorldGroup.SKYBLOCK)
 			warp = service.get("skyblock", WarpType.NORMAL);
-		else if (WorldGroup.get(player().getWorld()) == WorldGroup.CREATIVE)
+		else if (WorldGroup.get(player()) == WorldGroup.CREATIVE)
 			warp = service.get("creative", WarpType.NORMAL);
 		else
 			warp = service.get("spawn", WarpType.NORMAL);

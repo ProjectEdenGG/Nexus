@@ -51,7 +51,7 @@ public class Chatter {
 	}
 
 	public void updateChannels() {
-		WorldGroup worldGroup = WorldGroup.get(player.getWorld());
+		WorldGroup worldGroup = WorldGroup.get(player);
 
 		List<PublicChannel> toLeave = joinedChannels.stream()
 				.filter(channel -> channel.getWorldGroup() != null)

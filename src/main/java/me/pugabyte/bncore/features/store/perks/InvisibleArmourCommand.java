@@ -167,7 +167,7 @@ public class InvisibleArmourCommand extends CustomCommand implements Listener {
 			if (!invisibleArmour.isEnabled())
 				return;
 
-			if (WorldGroup.get(player.getWorld()) == WorldGroup.MINIGAMES) {
+			if (WorldGroup.get(player) == WorldGroup.MINIGAMES) {
 				invisibleArmour.setEnabled(false);
 				service.save(invisibleArmour);
 				return;
