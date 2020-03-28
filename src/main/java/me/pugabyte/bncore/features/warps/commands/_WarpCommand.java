@@ -72,14 +72,15 @@ public abstract class _WarpCommand extends CustomCommand {
 	@ConverterFor(Warp.class)
 	Warp convertToWarp(String value) {
 		Warp warp = service.get(value, getWarpType());
-		if (warp == null) error("That warp is not set.");
+		if (warp == null) error("That warp is not set");
 		return warp;
 	}
 
 	@TabCompleterFor(Warp.class)
-	List<Warp> tabCompleteWarp(String filter) {
+	List<String> tabCompleteWarp(String filter) {
 		return service.getWarpsByType(getWarpType()).stream()
 				.filter(warp -> warp.getName().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(Warp::getName)
 				.collect(Collectors.toList());
 	}
 
