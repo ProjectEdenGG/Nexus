@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.models.warps;
 
 public enum WarpType {
-	NORMAL,
-	STAFF,
-	QUEST,
+	ARENA,
 	ATP,
 	GILIHOUSE,
-	ARENAS
+	NORMAL,
+	STAFF,
+	QUEST
 }

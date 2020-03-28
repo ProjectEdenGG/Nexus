@@ -33,7 +33,7 @@ public class WarpService extends MySQLService {
 	}
 
 	public void delete(Warp warp) {
-		database.table("staff_warp").where("type = ? AND name = ?", warp.getType(), warp.getName()).delete();
+		database.table("warp").where("type = ? AND name = ?", warp.getType(), warp.getName()).delete();
 	}
 
 }

@@ -20,7 +20,7 @@ public class Warp {
 
 	public void teleport(Player player) {
 		player.teleport(location);
-		player.sendMessage(StringUtils.colorize("&cWarping to &3" + name.replace("legacy_", "")));
+		player.sendMessage(StringUtils.colorize("&3Warping to &e" + name));
 	}
 
 }
