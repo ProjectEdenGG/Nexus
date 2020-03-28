@@ -48,12 +48,13 @@ public class PoofHereCommand extends CustomCommand {
 			error("You do not have any pending Poof-here requests");
 
 		OfflinePlayer receiver = request.getReceiverPlayer();
-		if (!receiver.isOnline())
-			throw new PlayerNotOnlineException(receiver);
+		OfflinePlayer sender = request.getSenderPlayer();
+		if (!sender.isOnline())
+			throw new PlayerNotOnlineException(sender);
 
 		receiver.getPlayer().teleport(request.getSenderLocation());
-		send(receiver.getPlayer(), "&3You accepted &e" + receiver.getName() + "'s &3poof-here request");
-		send("&e" + request.getReceiverPlayer().getName() + " &3accepted your poof-here request");
+		send("&3You accepted &e" + sender.getName() + "'s &3poof-here request");
+		send(sender.getPlayer(), "&e" + receiver.getName() + " &3accepted your poof-here request");
 		request.setExpired(true);
 		service.save(request);
 	}
@@ -65,11 +66,12 @@ public class PoofHereCommand extends CustomCommand {
 			error("You do not have any pending Poof-here requests");
 
 		OfflinePlayer receiver = request.getReceiverPlayer();
-		if (!receiver.isOnline())
-			throw new PlayerNotOnlineException(receiver);
+		OfflinePlayer sender = request.getSenderPlayer();
+		if (!sender.isOnline())
+			throw new PlayerNotOnlineException(sender);
 
-		send(receiver.getPlayer(), "&3You denied &e" + receiver.getName() + "'s &3poof-here request");
-		send("&e" + receiver.getName() + " &3denied your poof-here request");
+		send("&3You denied &e" + sender.getName() + "'s &3poof-here request");
+		send(sender.getPlayer(), "&e" + receiver.getName() + " &3denied your poof-here request");
 		request.setExpired(true);
 		service.save(request);
 	}
