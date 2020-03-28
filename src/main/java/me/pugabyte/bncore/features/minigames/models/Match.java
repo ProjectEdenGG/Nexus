@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
@@ -25,7 +26,9 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.reflections.Reflections;
 
@@ -220,8 +223,15 @@ public class Match {
 			timer.stop();
 	}
 
+	private static List<EntityType> deletableTypes = Arrays.asList(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM);
+
 	private void clearEntities() {
-		// TODO: Clearing dropped entities & arrows
+		WorldEditUtils worldEditUtils = Minigames.getWorldEditUtils();
+		Minigames.getGameworld().getEntities().forEach(entity -> {
+			if (getArena().getRegion().contains(worldEditUtils.toVector(entity.getLocation())))
+				if (deletableTypes.contains(entity.getType()))
+					entity.remove();
+		});
 	}
 
 	public void clearHolograms() {
