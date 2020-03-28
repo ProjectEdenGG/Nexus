@@ -12,6 +12,7 @@ import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -52,7 +53,13 @@ public class Commands {
 
 	public void registerAll() {
 		for (Class<? extends CustomCommand> command : commandSet)
-			register(new ObjenesisStd().newInstance(command));
+			try {
+				if (!Modifier.isAbstract(command.getModifiers()))
+					register(new ObjenesisStd().newInstance(command));
+			} catch (Exception ex) {
+				BNCore.log("Error while registering command " + command.getSimpleName());
+				ex.printStackTrace();
+			}
 		plugin.getLogger().info("Registered " + commandSet.size() + " commands");
 	}
 
@@ -83,7 +90,13 @@ public class Commands {
 
 	public void unregisterAll() {
 		for (Class<? extends CustomCommand> command : commandSet)
-			unregister(new ObjenesisStd().newInstance(command));
+			try {
+				if (!Modifier.isAbstract(command.getModifiers()))
+					register(new ObjenesisStd().newInstance(command));
+			} catch (Exception ex) {
+				BNCore.log("Error while unregistering command " + command.getSimpleName());
+				ex.printStackTrace();
+			}
 	}
 
 	private void unregister(CustomCommand customCommand) {

@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.LocationSerializer;
-import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Data
 @NoArgsConstructor
@@ -19,8 +19,7 @@ public class Warp {
 	private String type;
 
 	public void teleport(Player player) {
-		player.teleport(location);
-		player.sendMessage(StringUtils.colorize("&3Warping to &e" + name));
+		player.teleport(location, TeleportCause.COMMAND);
 	}
 
 }
