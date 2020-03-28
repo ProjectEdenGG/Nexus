@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.minigames.models.arenas;
 
 import lombok.Data;
 import me.pugabyte.bncore.features.minigames.models.Arena;
-import me.pugabyte.bncore.utils.YamlSerializationUtils;
+import me.pugabyte.bncore.utils.SerializationUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -20,13 +20,13 @@ public class GrabAJumbuckArena extends Arena {
 
 	public GrabAJumbuckArena(Map<String, Object> map) {
 		super(map);
-		this.sheepSpawnBlocks = YamlSerializationUtils.deserializeMaterialSet((List<String>) map.getOrDefault("sheepSpawnBlocks", new ArrayList<>()));
+		this.sheepSpawnBlocks = SerializationUtils.yml_deserializeMaterialSet((List<String>) map.getOrDefault("sheepSpawnBlocks", new ArrayList<>()));
 	}
 
 	@Override
 	public Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
-		map.put("sheepSpawnBlocks", YamlSerializationUtils.serializeMaterialSet(sheepSpawnBlocks));
+		map.put("sheepSpawnBlocks", SerializationUtils.yml_serializeMaterialSet(sheepSpawnBlocks));
 
 		return map;
 	}
