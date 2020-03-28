@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.store;
 
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.store.annotations.Commands.Command;
+import me.pugabyte.bncore.features.store.annotations.ExpirationCommands.ExpirationCommand;
 import me.pugabyte.bncore.features.store.annotations.ExpirationDays;
 import me.pugabyte.bncore.features.store.annotations.Id;
 import me.pugabyte.bncore.features.store.annotations.Permissions.Permission;
@@ -15,19 +16,21 @@ import java.util.stream.Collectors;
 
 public enum Package {
 
-	@Id(2589641)
+	@Id("2589641")
 	CUSTOM_DONATION,
 
-	@Id(1922887)
+	@Id("1922887")
 	@Permission("set.my.prefix")
 	CUSTOM_PREFIX_LIFETIME,
 
-	@Id(2730030)
+	@Id("2730030")
 	@Permission("set.my.prefix")
 	@ExpirationDays(30)
+	@ExpirationCommand("/pex user [player] prefix \"\"")
+	@ExpirationCommand("/pex user [player] suffix \"\"")
 	CUSTOM_PREFIX_ONE_MONTH,
 
-	@Id(2019251)
+	@Id("2019251")
 	@Permission("automaticinventory.sortinventory")
 	@Permission("automaticinventory.sortchests")
 	@Permission("automaticinventory.quickdeposit")
@@ -35,7 +38,7 @@ public enum Package {
 	@Permission("automaticinventory.autocraft")
 	AUTO_SORT_LIFETIME,
 
-	@Id(2729981)
+	@Id("2729981")
 	@Permission("automaticinventory.sortinventory")
 	@Permission("automaticinventory.sortchests")
 	@Permission("automaticinventory.quickdeposit")
@@ -44,42 +47,42 @@ public enum Package {
 	@ExpirationDays(30)
 	AUTO_SORT_ONE_MONTH,
 
-	@Id(2965488)
+	@Id("2965488")
 	@Permission("jq.custom")
 	CUSTOM_JOIN_QUIT_MESSAGES_LIFETIME,
 
-	@Id(2965489)
+	@Id("2965489")
 	@Permission("jq.custom")
 	@ExpirationDays(30)
 	CUSTOM_JOIN_QUIT_MESSAGES_ONE_MONTH,
 
-	@Id(2982264)
+	@Id("2982264")
 	@Permission("durabilitywarning.use")
 	DURABILITY_WARNING_LIFETIME,
 
-	@Id(2982265)
+	@Id("2982265")
 	@Permission("durabilitywarning.use")
 	@ExpirationDays(30)
 	DURABILITY_WARNING_ONE_MONTH,
 
-	@Id(3239567)
+	@Id("3239567")
 	@Permission("emoticons.use")
 	EMOTES,
 
-	@Id(3218615)
+	@Id("3218615")
 	@Permission("wings.use")
 	@Permission("wings.style.*")
 	PARTICLE_WINGS,
 
-	@Id(2019259)
+	@Id("2019259")
 	@Command("/permhelper vaults add [player] 1")
 	VAULTS,
 
-	@Id(2019261)
+	@Id("2019261")
 	@Command("/permhelper homes add [player] 5")
 	FIVE_SETHOMES,
 
-	@Id(2559650)
+	@Id("2559650")
 	@Permission("citizens.help")
 	@Permission("citizens.npc.create")
 	@Permission("citizens.npc.create.*")
@@ -101,51 +104,51 @@ public enum Package {
 	@Command("/permhelper npcs add [player] 1")
 	NPC,
 
-	@Id(2019264)
+	@Id("2019264")
 	@Permission("essentials.skull")
 	DONOR_SKULL,
 
-	@Id(2496109)
+	@Id("2496109")
 	@Permission("essentials.hat")
 	HAT,
 
-	@Id(2019265)
+	@Id("2019265")
 	@Permission("essentials.ptime")
 	PTIME,
 
-	@Id(2559439)
+	@Id("2559439")
 	@Permission("itemname.use")
 	ITEM_NAME,
 
-	@Id(2495885)
+	@Id("2495885")
 	@Permission("firework.launch")
 	FIREWORKS,
 
-	@Id(2678902)
+	@Id("2678902")
 	@Permission("fireworkbow.single")
 	FIREWORK_BOW_SINGLE,
 
-	@Id(2678893)
+	@Id("2678893")
 	@Permission("fireworkbow.infinite")
 	FIREWORK_BOW_INFINITE,
 
-	@Id(2495909)
+	@Id("2495909")
 	@Command("/permhelper plots add [player] 1")
 	CREATIVE_PLOTS,
 
-	@Id(2495900)
+	@Id("2495900")
 	@Permission("rainbowarmour.use")
 	RAINBOW_ARMOUR,
 
-	@Id(2886239)
+	@Id("2886239")
 	@Permission("invis.armour")
 	INVISIBLE_ARMOUR,
 
-	@Id(2856645)
+	@Id("2856645")
 	@Permission("rainbow.beacon")
 	RAINBOW_BEACON,
 
-	@Id(2495867)
+	@Id("2495867")
 	@Permission("pet.type.cow")
 	@Permission("pet.type.chicken")
 	@Permission("pet.type.pig")
@@ -153,28 +156,28 @@ public enum Package {
 	@Permission("pet.type.mooshroom")
 	PETS_FARM_ANIMALS,
 
-	@Id(2495869)
+	@Id("2495869")
 	@Permission("pet.type.ocelot")
 	@Permission("pet.type.rabbit")
 	@Permission("pet.type.wolf")
 	@Permission("pet.type.parrot")
 	PETS_DOMESTIC_ANIMALS,
 
-	@Id(2495870)
+	@Id("2495870")
 	@Permission("pet.type.villager")
 	@Permission("pet.type.irongolem")
 	@Permission("pet.type.snowman")
 	@Permission("pet.type.squid")
 	PETS_LEFTOVERS,
 
-	@Id(2495871)
+	@Id("2495871")
 	@Permission("pet.type.horse")
 	@Permission("pet.type.llama")
 	@Permission("pet.type.horse.mount")
 	@Permission("pet.type.llama.mount")
 	PETS_RIDABLE_ANIMALS,
 
-	@Id(2495872)
+	@Id("2495872")
 	@Permission("pet.type.zombie")
 	@Permission("pet.type.skeleton")
 	@Permission("pet.type.cavespider")
@@ -182,7 +185,7 @@ public enum Package {
 	@Permission("pet.type.creeper")
 	PETS_MONSTERS,
 
-	@Id(2495873)
+	@Id("2495873")
 	@Permission("pet.type.blaze")
 	@Permission("pet.type.pigman")
 	@Permission("pet.type.ghast")
@@ -190,14 +193,14 @@ public enum Package {
 	@Permission("pet.type.witherskeleton")
 	PETS_NETHER,
 
-	@Id(2495874)
+	@Id("2495874")
 	@Permission("pet.type.enderman")
 	@Permission("pet.type.endermite")
 	@Permission("pet.type.shulker")
 	@Permission("pet.type.silverfish")
 	PETS_END_CREATURES,
 
-	@Id(2495875)
+	@Id("2495875")
 	@Permission("pet.type.bat")
 	@Permission("pet.type.witch")
 	@Permission("pet.type.slime")
@@ -205,14 +208,14 @@ public enum Package {
 	@Permission("pet.type.husk")
 	PETS_SPOOKIES,
 
-	@Id(2495876)
+	@Id("2495876")
 	@Permission("pet.type.evoker")
 	@Permission("pet.type.vex")
 	@Permission("pet.type.vindicator")
 	@Permission("pet.type.illusioner")
 	PETS_NEW_GENERATION_MONSTERS,
 
-	@Id(2496219)
+	@Id("2496219")
 	@Permission("miniaturepets.pet.BB8")
 	@Permission("miniaturepets.pet.Bee")
 	@Permission("miniaturepets.pet.Boxer")
@@ -284,7 +287,7 @@ public enum Package {
 	@Permission("miniaturepets.Squirrel")
 	MINIATURE_PETS,
 
-	@Id(2495938)
+	@Id("2495938")
 	@Permission("libsdisguises.disguise.cow.setBaby.setBurning.setArrowsSticking.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.chicken.setArrowsSticking.setBurning.setBaby.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.pig.setSaddled.setArrowsSticking.setBurning.setBaby.setViewSelfDisguise")
@@ -292,28 +295,28 @@ public enum Package {
 	@Permission("libsdisguises.disguise.mushroom_cow.setArrowsSticking.setBurning.setBaby.setViewSelfDisguise")
 	DISGUISES_FARM_ANIMALS,
 
-	@Id(2495940)
+	@Id("2495940")
 	@Permission("libsdisguises.disguise.ocelot.setArrowsSticking.setBurning.setBaby.setType.setSitting.setTamed.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.rabbit.setBaby.setType.setArrowsSticking.setBurning.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.wolf.setBaby.setSneaking.setTamed.setAngry.setBegging.setCollarColor.setArrowsSticking.setBurning.setSitting.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.parrot.setArrowsSticking.setBurning.setViewSelfDisguise.setBaby.setSitting.setTamed.setVariant")
 	DISGUISES_DOMESTIC_ANIMALS,
 
-	@Id(2495941)
+	@Id("2495941")
 	@Permission("libsdisguises.disguise.villager.setArrowsSticking.setBurning.setBaby.setProfession.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.iron_golem.setArrowsSticking.setBurning.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.snowman.setArrowsSticking.setBurning.setHat.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.squid.setArrowsSticking.setBurning.setViewSelfDisguise")
 	DISGUISES_LEFTOVERS,
 
-	@Id(2495942)
+	@Id("2495942")
 	@Permission("libsdisguises.disguise.mule.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.horse.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.donkey.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.llama.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setCarpet.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setViewSelfDisguise")
 	DISGUISES_RIDABLE_ANIMALS,
 
-	@Id(2495944)
+	@Id("2495944")
 	@Permission("libsdisguises.disguise.zombie.setArrowsSticking.setBurning.setArmor.setItemInMainHand.setItemInOffHand.setAggressive.setBaby.setProfession.setShaking.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.skeleton.setArrowsSticking.setBurning.setArmor.setItemInMainHand.setItemInOffHand.setSwingArms.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.cave_spider.setArrowsSticking.setBurning.setClimbing.setViewSelfDisguise")
@@ -321,7 +324,7 @@ public enum Package {
 	@Permission("libsdisguises.disguise.creeper.setIgnited.setPowered.setBurning.setArrowsSticking.setBurning.setViewSelfDisguise")
 	DISGUISES_MONSTERS,
 
-	@Id(2495945)
+	@Id("2495945")
 	@Permission("libsdisguises.disguise.blaze.setArrowsSticking.setBurning.setBlazing.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.pigman.setArrowsSticking.setBurning.setItemInMainHand.setItemInOffHand.setAggressive.setBaby.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.ghast.setArrowsSticking.setBurning.setAggressive.setViewSelfDisguise")
@@ -329,14 +332,14 @@ public enum Package {
 	@Permission("libsdisguises.disguise.wither_skeleton.setArrowsSticking.setBurning.setSwingArms.setItemInMainHand.setItemInOffHand.setArmor.setViewSelfDisguise")
 	DISGUISES_NETHER,
 
-	@Id(2495946)
+	@Id("2495946")
 	@Permission("libsdisguises.disguise.enderman.setArrowsSticking.setBurning.setAggressive.setItemInMainHand.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.endermite.setArrowsSticking.setBurning.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.shulker.setArrowsSticking.setBurning.setFacingDirection.setShieldHeight.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.silverfish.setArrowsSticking.setBurning.setViewSelfDisguise")
 	DISGUISES_END_CREATURES,
 
-	@Id(2495947)
+	@Id("2495947")
 	@Permission("libsdisguises.disguise.bat.setArrowsSticking.setBurning.setHanging.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.witch.setArrowsSticking.setBurning.setAggressive.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.slime.setArrowsSticking.setBurning.setSize.setViewSelfDisguise")
@@ -344,7 +347,7 @@ public enum Package {
 	@Permission("libsdisguises.disguise.husk.setArrowsSticking.setBurning.setBaby.setProfession.setShaking.setAggressive.setArmor.setViewSelfDisguise")
 	DISGUISES_SPOOKIES,
 
-	@Id(2495948)
+	@Id("2495948")
 	@Permission("libsdisguises.disguise.evoker.setArrowsSticking.setBurning.setSpellTicks.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.vex.setArrowsSticking.setBurning.setAngry.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.vindicator.setArrowsSticking.setBurning.setJohnny.setViewSelfDisguise")
@@ -356,7 +359,7 @@ public enum Package {
 		return getClass().getDeclaredField(name());
 	}
 
-	public int getId() {
+	public String getId() {
 		return getField().getAnnotation(Id.class).value();
 	}
 
@@ -377,9 +380,16 @@ public enum Package {
 		return Optional.of(getField().getAnnotation(ExpirationDays.class)).map(ExpirationDays::value).orElse(-1);
 	}
 
-	public static Package getPackage(int id) {
+	public List<String> getExpirationCommands() {
+		return Arrays.stream(getField().getAnnotationsByType(ExpirationCommand.class))
+				.map(ExpirationCommand::value)
+				.map(StringUtils::noSlash)
+				.collect(Collectors.toList());
+	}
+
+	public static Package getPackage(String id) {
 		for (Package value : values())
-			if (value.getId() == id)
+			if (value.getId().equals(id))
 				return value;
 		return null;
 	}

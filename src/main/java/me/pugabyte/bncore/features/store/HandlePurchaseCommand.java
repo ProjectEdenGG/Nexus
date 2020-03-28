@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.store;
 
+import com.google.gson.Gson;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.koda.Koda;
@@ -13,7 +14,11 @@ import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.purchase.Purchase;
 import me.pugabyte.bncore.models.purchase.PurchaseService;
+import me.pugabyte.bncore.models.task.Task;
+import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import ru.tehkode.permissions.PermissionUser;
@@ -21,15 +26,43 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.uuidFormat;
 
-public class JHandlePurchaseCommand extends CustomCommand {
+public class HandlePurchaseCommand extends CustomCommand {
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
 
-	public JHandlePurchaseCommand(@NonNull CommandEvent event) {
+	public HandlePurchaseCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	static {
+		Tasks.repeatAsync(Time.SECOND, Time.MINUTE, () -> {
+			TaskService service = new TaskService();
+			List<Task> tasks = service.process("package-expire");
+			tasks.forEach(task -> {
+				Map<String, String> map = new Gson().fromJson(task.getData(), Map.class);
+				String uuid = map.get("uuid");
+				String packageId = map.get("packageId");
+				Package packageType = Package.getPackage(packageId);
+				if (packageType == null) {
+					BNCore.severe("Tried to expire a package that doesn't exist: UUID: " + uuid + ", PackageId: " + packageId);
+					return;
+				}
+
+				packageType.getPermissions().forEach(permission -> PermissionsEx.getUser(uuid).removePermission(permission));
+				packageType.getExpirationCommands().stream()
+						.map(StringUtils::noSlash)
+						.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(uuid).getName()))
+						.forEach(Utils::runConsoleCommand);
+
+				service.complete(task);
+			});
+		});
 	}
 
 	@Path("<data...>")
@@ -46,7 +79,7 @@ public class JHandlePurchaseCommand extends CustomCommand {
 				.timestamp(LocalDateTime.parse(args[6] + " " + args[5], formatter))
 				.email(args[7])
 				.ip(args[8])
-				.packageId(Integer.parseInt(args[9]))
+				.packageId(args[9])
 				.packagePrice(Double.parseDouble(args[10]))
 				.packageExpiry(args[11])
 				.packageName(args[12])
@@ -86,8 +119,15 @@ public class JHandlePurchaseCommand extends CustomCommand {
 
 			PermissionUser pexUser = PermissionsEx.getUser(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
 			packageType.getPermissions().forEach(pexUser::addPermission);
-			packageType.getCommands().stream().map(StringUtils::noSlash).forEach(Utils::runConsoleCommand);
-			// TODO: Expiry
+			packageType.getCommands().stream()
+					.map(StringUtils::noSlash)
+					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))
+					.forEach(Utils::runConsoleCommand);
+
+			new TaskService().save(new Task("package-expire", new HashMap<String, Object>() {{
+				put("uuid", purchase.getUuid());
+				put("packageId", String.valueOf(purchase.getPackageId()));
+			}}, LocalDateTime.now().plusDays(packageType.getExpirationDays())));
 
 			discordMessage += "\nPurchase successfully processed.";
 		}
