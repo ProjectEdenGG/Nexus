@@ -18,7 +18,7 @@ public class PlayerVaultsCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		if (WorldGroup.get(player().getWorld()) != WorldGroup.SURVIVAL && !player().hasPermission("group.seniorstaff"))
+		if (WorldGroup.get(player()) != WorldGroup.SURVIVAL && !player().hasPermission("group.seniorstaff"))
 			error("You can't open vaults here");
 		fallback();
 	}

@@ -18,7 +18,7 @@ public class MarketCommand extends CustomCommand {
 	@Path
 	void run() {
 		Warp warp;
-		if (WorldGroup.get(player().getWorld()) == WorldGroup.SKYBLOCK)
+		if (WorldGroup.get(player()) == WorldGroup.SKYBLOCK)
 			warp = service.get("skyblock-market", WarpType.NORMAL);
 		else
 			warp = service.get("market", WarpType.NORMAL);

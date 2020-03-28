@@ -9,6 +9,7 @@ import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class McMMOService extends MySQLService {
+
 	public McMMOPrestige getPrestige(String uuid) {
 		List<HashMap> data = database.sql("select type, count from mcmmo_prestige where uuid = ?", uuid).results(HashMap.class);
 
@@ -25,4 +26,9 @@ public class McMMOService extends MySQLService {
 				.args(prestiges.getUuid(), type, count)
 				.execute()));
 	}
+
+	public static void getLeaderboard() {
+
+	}
+
 }

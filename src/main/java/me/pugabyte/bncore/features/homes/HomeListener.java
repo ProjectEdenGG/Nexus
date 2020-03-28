@@ -22,7 +22,7 @@ public class HomeListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		WorldGroup group = WorldGroup.get(event.getPlayer().getWorld());
+		WorldGroup group = WorldGroup.get(event.getPlayer());
 		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(group))
 			return;
 

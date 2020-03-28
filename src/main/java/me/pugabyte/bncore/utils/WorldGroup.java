@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.utils;
 
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 
 import java.util.Arrays;
 
@@ -28,6 +29,10 @@ public enum WorldGroup {
 
 	public String[] getWorlds() {
 		return worlds;
+	}
+
+	public static WorldGroup get(Entity entity) {
+		return get(entity.getWorld());
 	}
 
 	public static WorldGroup get(World world) {

@@ -1,5 +1,12 @@
 package me.pugabyte.bncore.features.mcmmo;
 
+import com.gmail.nossr50.datatypes.database.PlayerStat;
+import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.util.player.UserManager;
+import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.koda.Koda;
+import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -13,6 +20,8 @@ import org.bukkit.TreeType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.CocoaPlant;
@@ -23,10 +32,35 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+
 // TODO: Fix beetroot, melons stems, melons, pumpkin stems and pumpkins
 
-public class McMMOListener {
+public class McMMOListener implements Listener {
+
 	public McMMOListener() {
+		BNCore.registerListener(this);
+		scheduler();
+	}
+
+	@EventHandler
+	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
+		if (event.getSkillLevel() == 100)
+			Koda.say(event.getPlayer().getName() + " reached level 100 in " + camelCase(event.getSkill().name()) + "! Congratulations!");
+		if (UserManager.getOfflinePlayer(event.getPlayer()).getPowerLevel() == 1300)
+			Koda.say(event.getPlayer().getName() + " has mastered all their skills! Congratulations!");
+
+		Tasks.async(() -> {
+			List<PlayerStat> topThree = mcMMO.getDatabaseManager().readLeaderboard(null, 0, 3);
+			Tasks.sync(() -> {
+				CitizensUtils.updateNameAndSkin(466, topThree.get(0).name);
+				CitizensUtils.updateNameAndSkin(465, topThree.get(1).name);
+				CitizensUtils.updateNameAndSkin(467, topThree.get(2).name);
+			});
+		});
+	}
+
+	void scheduler() {
 		Tasks.repeat(0, 10, () -> {
 			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 			players.forEach(player -> {
@@ -39,7 +73,7 @@ public class McMMOListener {
 					return;
 
 				// if player is in survival
-				WorldGroup world = WorldGroup.get(player.getWorld());
+				WorldGroup world = WorldGroup.get(player);
 				if (!world.equals(WorldGroup.SURVIVAL))
 					return;
 

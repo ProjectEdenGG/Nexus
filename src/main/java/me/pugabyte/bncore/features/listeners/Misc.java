@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.listeners;
 import de.tr7zw.itemnbtapi.NBTItem;
 import de.tr7zw.itemnbtapi.NBTTileEntity;
 import me.pugabyte.bncore.features.chat.koda.Koda;
-import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -23,11 +22,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
-public class OnAction implements Listener {
+public class Misc implements Listener {
 
 	@EventHandler
 	public void onHorseLikeDamage(EntityDamageEvent event) {
@@ -83,7 +83,7 @@ public class OnAction implements Listener {
 		if (!event.getEntityType().equals(EntityType.ENDER_DRAGON))
 			return;
 
-		if (Utils.randomInt(1, 3) == 1)
+		if (Utils.chanceOf(33))
 			event.getDrops().add(new ItemStack(Material.DRAGON_EGG));
 	}
 
@@ -119,26 +119,13 @@ public class OnAction implements Listener {
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
-		Nerd nerd = new Nerd(player);
 
-		switch (WorldGroup.get(player.getWorld())) {
+		switch (WorldGroup.get(player)) {
 			case MINIGAMES:
-				if (nerd.isVanished())
-					new JsonBuilder()
-							.next("You've joined the gameworld vanished. Click here to unvanish and join the minigames channel.")
-							.suggest("/unvanishgameworld")
-							.send(player);
-				else
-					Tasks.wait(20, () -> Bukkit.dispatchCommand(player, "ch join m"));
+				Tasks.wait(5, () -> joinMinigames(player));
 				break;
 			case CREATIVE:
-				if (nerd.isVanished())
-					new JsonBuilder()
-							.next("You've joined creative vanished. Click here to unvanish and join the creative channel.")
-							.suggest("/unvanishcreative")
-							.send(player);
-				else
-					Tasks.wait(20, () -> Bukkit.dispatchCommand(player, "ch join c"));
+				Tasks.wait(5, () -> joinCreative(player));
 				break;
 			case SKYBLOCK:
 			case SURVIVAL:
@@ -155,15 +142,46 @@ public class OnAction implements Listener {
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
 			Tasks.wait(20, () -> {
 				player.sendMessage("Removing pets, disguises and ptime changes");
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "undisguiseplayer " + player.getName());
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "petadmin remove " + player.getName());
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mpet remove " + player.getName());
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ptime reset " + player.getName());
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "wings reset " + player.getName());
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "speed walk 1 " + player.getName());
+				Utils.runConsoleCommand("undisguiseplayer " + player.getName());
+				Utils.runConsoleCommand("petadmin remove " + player.getName());
+				Utils.runConsoleCommand("mpet remove " + player.getName());
+				Utils.runConsoleCommand("ptime reset " + player.getName());
+				Utils.runConsoleCommand("wings reset " + player.getName());
+				Utils.runConsoleCommand("speed walk 1 " + player.getName());
 			});
 
 		if (player.getWorld().getName().equalsIgnoreCase("staff_world"))
-			Tasks.wait(20, () -> Bukkit.dispatchCommand(player, "cheats off"));
+			Tasks.wait(20, () -> Utils.runCommand(player, "cheats off"));
+	}
+
+	public void joinMinigames(Player player) {
+		if (Utils.isVanished(player))
+			new JsonBuilder()
+					.next("You've joined the gameworld vanished. Click here to unvanish and join the minigames channel.")
+					.suggest("/unvanishgameworld")
+					.send(player);
+		else
+			Bukkit.dispatchCommand(player, "ch join m");
+	}
+
+	public void joinCreative(Player player) {
+		if (Utils.isVanished(player))
+			new JsonBuilder()
+					.next("You've joined creative vanished. Click here to unvanish and join the creative channel.")
+					.suggest("/unvanishcreative")
+					.send(player);
+		else
+			Bukkit.dispatchCommand(player, "ch join c");
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		Tasks.wait(5, () -> {
+			WorldGroup worldGroup = WorldGroup.get(event.getPlayer());
+			if (worldGroup == WorldGroup.MINIGAMES)
+				joinMinigames(event.getPlayer());
+			else if (worldGroup == WorldGroup.CREATIVE)
+				joinCreative(event.getPlayer());
+		});
 	}
 }

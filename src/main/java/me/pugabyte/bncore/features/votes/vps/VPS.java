@@ -26,7 +26,7 @@ public class VPS {
 	}
 
 	public static VPSMenu getMenu(Player player) {
-		return getMenu(WorldGroup.get(player.getWorld()).name());
+		return getMenu(WorldGroup.get(player).name());
 	}
 
 	public static VPSMenu getMenu(String type) {

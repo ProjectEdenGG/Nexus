@@ -93,7 +93,7 @@ public class OnlineCommand extends CustomCommand {
 
 		int ping = Utils.getPing(player);
 		String onlineFor = StringUtils.timespanDiff(nerd.getLastJoin());
-		WorldGroup world = WorldGroup.get(player.getWorld());
+		WorldGroup world = WorldGroup.get(player);
 		double balance = 0.0;
 		String totalHours = StringUtils.timespanFormat(hours.getTotal());
 		String afk = "";

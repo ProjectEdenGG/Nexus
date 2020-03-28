@@ -36,7 +36,7 @@ public class Restrictions implements Listener {
 
 		Player player = event.getPlayer();
 		Material clickedMaterial = event.getClickedBlock().getType();
-		if (WorldGroup.get(player.getWorld()).equals(WorldGroup.CREATIVE))
+		if (WorldGroup.get(player).equals(WorldGroup.CREATIVE))
 			if (clickedMaterial.equals(Material.TNT))
 				event.setCancelled(true);
 

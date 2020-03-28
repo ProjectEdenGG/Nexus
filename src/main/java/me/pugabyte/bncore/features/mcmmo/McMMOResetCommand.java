@@ -13,7 +13,7 @@ public class McMMOResetCommand extends CustomCommand {
 
 	@Path
 	void McMMOReset() {
-		if (WorldGroup.get(player().getWorld()) != WorldGroup.SURVIVAL)
+		if (WorldGroup.get(player()) != WorldGroup.SURVIVAL)
 			error("You cannot use this outside of survival");
 
 		McMMOResetMenu.openMcMMOReset(player());
