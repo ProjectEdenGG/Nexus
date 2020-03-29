@@ -5,7 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerd.NerdService;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class PastNamesCommand extends CustomCommand {
 	}
 
 	@Path("<target>")
-	void run(@Arg("self") Player target) {
+	void run(@Arg("self") OfflinePlayer target) {
 		List<String> pastNames = new NerdService().getPastNames(target.getUniqueId());
 		if (pastNames.size() < 2)
 			error("No known past names for " + target.getName());
