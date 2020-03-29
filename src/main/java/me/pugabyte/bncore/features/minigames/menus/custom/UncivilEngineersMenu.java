@@ -11,15 +11,16 @@ import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.UncivilEngineersArena;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -92,10 +93,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 			for (UncivilEngineers.MobPoint mobPoint : arena.getMobPoints()) {
 				for (MobHead head : MobHead.values()) {
 					if (mobPoint.getType() == head.getType()) {
-						ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
-						SkullMeta meta = (SkullMeta) skull.getItemMeta();
-						meta.setOwner(head.getMHFName());
-						skull.setItemMeta(meta);
+						ItemStack skull = new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).skullOwner(head.getMHFName()).build();
 						contents.set(row, column, ClickableItem.from(nameItem(skull, "&3" + head.getTitle(),
 								getLocationLore(mobPoint.getLocation()) +
 										"|| ||&7Click me to remove this Mob"),
@@ -175,11 +173,9 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 			int row = 1;
 			int column = 0;
 			for (MobHead head : MobHead.values()) {
-				ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
-				SkullMeta meta = (SkullMeta) skull.getItemMeta();
-				meta.setOwner(head.getMHFName());
-				skull.setItemMeta(meta);
-				contents.set(row, column, ClickableItem.from(nameItem(skull, "&e" + head.getTitle()), e -> {
+				ItemStack skull = new ItemBuilder(Material.SKULL_ITEM).name("&e" + head.getTitle())
+						.skullType(SkullType.PLAYER).skullOwner(head.getMHFName()).build();
+				contents.set(row, column, ClickableItem.from(skull, e -> {
 					arena.getMobPoints().add(new UncivilEngineers.MobPoint(player.getLocation(), head.getType()));
 					arena.write();
 					openMobPointsMenu(player);

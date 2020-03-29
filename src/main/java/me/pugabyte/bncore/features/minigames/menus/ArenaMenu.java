@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -113,7 +114,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				return null;
 			}
 		},
-		LIVES(3, 1, new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal())),
+		LIVES(3, 1, new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).build()),
 		SECONDS(3, 2, Material.WATCH) {
 			@Override
 			public String getTitle() {

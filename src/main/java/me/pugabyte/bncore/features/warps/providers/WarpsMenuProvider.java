@@ -93,7 +93,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 
 				ItemStack shub = nameItem(Material.EMERALD, "&3Shops Hub", "&eLearn all about||&eBear Nation's economy");
 				ItemStack market = nameItem(Material.SIGN, "&3Market", "&eWhere you'll find all||&ethe 'bear' neccessities.");
-				ItemStack shops = nameItem(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal()), "&3Player Shops", "&ePlayer owned run shops");
+				ItemStack shops = new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).name("&3Player Shops").lore("&ePlayer owned run shops").build();
 
 				contents.set(1, 7, ClickableItem.from(shub, e -> warp(player, "shub")));
 				contents.set(2, 7, ClickableItem.from(market, e -> warp(player, "market")));
@@ -107,14 +107,14 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack lobby = nameItem(Material.DIAMOND_SWORD, "&3Minigame Lobby");
 				ItemStack spvp = nameItem(Material.IRON_AXE, "&3Survival PVP Arena");
 //				ItemStack wither = nameItem(Material.WITHER_SKELETON_SKULL, "&3Wither Arena");
-				ItemStack wither = nameItem(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.WITHER.ordinal()), "&3Wither Arena"); // 1.12
+				ItemStack wither = new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.WITHER).name("&3Wither Arena").build(); // 1.12
 //				ItemStack stats = nameItem(Material.GOLDEN_HELMET, "&3Stats and Spectate Hall");
 				ItemStack stats = nameItem(Material.GOLD_HELMET, "&3Stats and Spectate Hall"); // 1.12
 				ItemStack parkour = nameItem(Material.IRON_BOOTS, "&3Parkour");
 //				ItemStack mazes = nameItem(Material.OAK_LEAVES, "&3Mazes");
 				ItemStack mazes = nameItem(Material.LEAVES, "&3Mazes"); // 1.12
 //				ItemStack mobarena = nameItem(Material.ZOMBIE_HEAD, "&3Mob Arena");
-				ItemStack mobarena = nameItem(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal()), "&3Mob Arena"); // 1.12
+				ItemStack mobarena = new ItemBuilder(Material.SKULL_ITEM).name("&3Mob Arena").skullType(SkullType.ZOMBIE).build(); // 1.12
 //				ItemStack connect4 = nameItem(Utils.getRandomElement(Material.BLUE_CONCRETE, Material.RED_CONCRETE), "&3Connect4");
 				ItemStack connect4 = nameItem(new ItemBuilder(Material.CONCRETE).color(Utils.getRandomElement(ColorType.BLUE, ColorType.RED)).build(), "&3Connect4"); // 1.12
 				ItemStack tictactoe = nameItem(Material.PAPER, "&3Tic Tac Toe");

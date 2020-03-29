@@ -2,6 +2,8 @@ package me.pugabyte.bncore.utils;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
@@ -10,6 +12,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -143,6 +146,21 @@ public class ItemBuilder {
 
 	public ItemBuilder spawnEgg(EntityType entityType) {
 		((SpawnEggMeta) itemMeta).setSpawnedType(entityType);
+		return this;
+	}
+
+	public ItemBuilder skullType(SkullType skullType) {
+		itemStack.setDurability((short) skullType.ordinal());
+		return this;
+	}
+
+	public ItemBuilder skullOwner(OfflinePlayer offlinePlayer) {
+		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer);
+		return this;
+	}
+
+	public ItemBuilder skullOwner(String name) {
+		((SkullMeta) itemMeta).setOwner(name);
 		return this;
 	}
 
