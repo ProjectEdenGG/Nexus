@@ -198,6 +198,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		bcInfo.put("active", true);
 		info.setJson(bcInfo);
 		settingService.save(info);
+		send(PREFIX + "Build contest " + id + " setup completed!");
 	}
 
 	@Path("setup item <theme...>")
