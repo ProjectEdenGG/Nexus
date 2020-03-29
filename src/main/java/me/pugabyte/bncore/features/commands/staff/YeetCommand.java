@@ -19,7 +19,7 @@ public class YeetCommand extends CustomCommand {
 	void run(Player player) {
 		int wait = 0;
 		for (int i = 0; i < 100; i++)
-			Tasks.wait(wait += 3, () -> runCommand("/slap " + player.getName()));
+			Tasks.wait(wait += 3, () -> runCommand("slap " + player.getName()));
 	}
 
 }
