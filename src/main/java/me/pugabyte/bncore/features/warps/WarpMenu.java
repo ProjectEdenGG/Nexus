@@ -1,5 +1,8 @@
 package me.pugabyte.bncore.features.warps;
 
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
+
 public enum WarpMenu {
 	MAIN(4),
 	SURVIVAL(5),
@@ -19,6 +22,14 @@ public enum WarpMenu {
 	}
 
 	public int getSize() {
+		if (this == MAIN) {
+			SettingService service = new SettingService();
+			Setting bc = service.get("buildcontest", "info");
+			if ((Boolean) bc.getJson().get("active"))
+				return size + 2;
+		}
 		return size;
 	}
+
+
 }
