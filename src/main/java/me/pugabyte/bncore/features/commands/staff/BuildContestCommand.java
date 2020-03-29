@@ -44,8 +44,8 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	public BuildContestCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (info == null || bcInfo == null) {
-			bcInfo = new HashMap<String, Object>();
-			bcInfo.put("id", (int) 6);
+			bcInfo = new HashMap<>();
+			bcInfo.put("id", 6);
 			bcInfo.put("active", false);
 			bcInfo.put("item", null);
 			info.setJson(bcInfo);

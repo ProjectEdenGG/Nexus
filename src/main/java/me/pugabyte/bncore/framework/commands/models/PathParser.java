@@ -43,7 +43,10 @@ class PathParser {
 		this.methods = new ArrayList<>(command.getPathMethods());
 
 		// Sort by most literal words first (most specific first)
-		methods.sort(Comparator.comparing(method -> getPathString(method).split(" ").length));
+		methods.sort(Comparator.comparing(method ->
+				Arrays.stream(getLiteralWords(getPathString(method)).split(" "))
+						.filter(string -> string.length() > 0)
+						.count()));
 		Collections.reverse(methods);
 	}
 

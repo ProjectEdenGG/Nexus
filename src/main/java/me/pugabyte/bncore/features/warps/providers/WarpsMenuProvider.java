@@ -23,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-
 /*
 	TO UPDATE TO 1.13:
 		CTRL+F '1.12'
@@ -101,8 +100,8 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				contents.set(2, 7, ClickableItem.from(market, e -> warp(player, "market")));
 				contents.set(3, 7, ClickableItem.from(shops, e -> command(player, "shops list")));
 
-				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&eInfo").lore("&eThese are " +
-						"the survival world warps. They are spread out across the entire world.").build()));
+				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
+						"survival world warps.").lore("&eThey are spread out across the entire world.").loreize(false).build()));
 				break;
 
 			case MINIGAMES:
