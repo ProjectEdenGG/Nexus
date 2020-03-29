@@ -9,7 +9,6 @@ import me.pugabyte.bncore.models.dailyreward.DailyReward;
 import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
 import me.pugabyte.bncore.models.dailyreward.Reward;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -60,7 +59,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		for (int i = 0; i < 7; ++i) {
 			Reward dailyReward = DailyRewardsFeature.getReward(day);
 
-			String reward = "||&f||&6&lReward: &e" + loreize(dailyReward.getDescription(), ChatColor.YELLOW);
+			String reward = "||&f||&6&lReward: &e" + loreize(dailyReward.getDescription());
 			if (this.dailyReward.getStreak() >= day) {
 				if (this.dailyReward.hasClaimed(day)) {
 					ItemStack item = nameItem(claimed.clone(), "&eDay " + day, "&3Claimed" + reward, day);

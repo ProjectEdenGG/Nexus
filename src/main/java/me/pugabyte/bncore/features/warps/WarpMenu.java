@@ -25,7 +25,7 @@ public enum WarpMenu {
 		if (this == MAIN) {
 			SettingService service = new SettingService();
 			Setting bc = service.get("buildcontest", "info");
-			if ((Boolean) bc.getJson().get("active"))
+			if (bc != null && (Boolean) bc.getJson().get("active"))
 				return size + 2;
 		}
 		return size;
