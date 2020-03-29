@@ -10,11 +10,13 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.HoliSpleggMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -28,7 +30,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
 
@@ -110,13 +111,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 		bootsMeta.setColor(Color.RED);
 		boots.setItemMeta(bootsMeta);
 		armorStand.setBoots(boots);
-
-		ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
-		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-		skullMeta.setOwner("9da0817559824f2aa231209164201e0d");
-		skull.setItemMeta(skullMeta);
-		armorStand.setHelmet(skull);
-
+		armorStand.setHelmet(new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).skullOwner("9da0817559824f2aa231209164201e0d").build());
 		armorStand.setItemInHand(new ItemStack(Material.BOOK));
 
 		return armorStand;

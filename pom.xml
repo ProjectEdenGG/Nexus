@@ -285,6 +285,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- skDragon -->
+        <dependency>
+            <groupId>skript.sashie</groupId>
+            <artifactId>skDragon</artifactId>
+            <version>1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/skDragon.jar</systemPath>
+        </dependency>
         <!-- EssentialsX -->
         <dependency>
             <groupId>net.ess3</groupId>

@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +25,7 @@ public class Infection extends UnbalancedTeamMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.ZOMBIE.ordinal());
+		return new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.ZOMBIE).build();
 	}
 
 	// TODO: Validation on start (e.g. only two teams, one has lives, balance percentages)

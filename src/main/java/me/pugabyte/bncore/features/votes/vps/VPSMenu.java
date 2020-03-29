@@ -251,7 +251,7 @@ public enum VPSMenu {
 								.price(250));
 						put(38, VPSSlot.builder()
 								.name("1 dragon head")
-								.displayAndGive(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.DRAGON.ordinal()))
+								.displayAndGive(new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.DRAGON))
 								.price(50));
 						put(39, VPSSlot.builder()
 								.name("1 purple shulker box")
@@ -259,7 +259,7 @@ public enum VPSMenu {
 								.price(80));
 						put(40, VPSSlot.builder()
 								.name("1 wither skeleton head")
-								.displayAndGive(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.WITHER.ordinal()))
+								.displayAndGive(new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.WITHER))
 								.price(40));
 						put(41, VPSSlot.builder()
 								.name("1 totem of undying")

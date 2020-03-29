@@ -11,6 +11,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundExcep
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -162,7 +163,7 @@ public class HomesMenu {
 									try {
 										OfflinePlayer offlinePlayer = Utils.getPlayer(input);
 										if (offlinePlayer != null) {
-											itemStack = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+											itemStack = new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).build();
 											SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
 											meta.setOwningPlayer(offlinePlayer);
 											itemStack.setItemMeta(meta);
