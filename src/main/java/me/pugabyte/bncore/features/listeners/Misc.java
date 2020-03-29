@@ -9,7 +9,6 @@ import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.AbstractHorse;
@@ -129,7 +128,7 @@ public class Misc implements Listener {
 				break;
 			case SKYBLOCK:
 			case SURVIVAL:
-				Tasks.wait(10, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ptime reset " + player.getName()));
+				Tasks.wait(10, () -> Utils.runConsoleCommand("ptime reset " + player.getName()));
 				if (WorldGroup.get(event.getFrom()).equals(WorldGroup.CREATIVE) || WorldGroup.get(event.getFrom()).equals(WorldGroup.EVENT)) {
 					if (!player.hasPermission("essentials.speed"))
 						Utils.runCommandAsOp(player, "flyspeed 1");
@@ -161,7 +160,7 @@ public class Misc implements Listener {
 					.suggest("/unvanishgameworld")
 					.send(player);
 		else
-			Bukkit.dispatchCommand(player, "ch join m");
+			Utils.runCommand(player, "ch join m");
 	}
 
 	public void joinCreative(Player player) {
@@ -171,7 +170,7 @@ public class Misc implements Listener {
 					.suggest("/unvanishcreative")
 					.send(player);
 		else
-			Bukkit.dispatchCommand(player, "ch join c");
+			Utils.runCommand(player, "ch join c");
 	}
 
 	@EventHandler

@@ -189,7 +189,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void runCommand(CommandSender sender, String command) {
-		Bukkit.dispatchCommand(sender, command);
+		Utils.runCommand(sender, command);
 	}
 
 	protected void runCommandAsOp(String command) {
@@ -201,7 +201,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void runCommandAsConsole(String command) {
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+		Utils.runConsoleCommand(command);
 	}
 
 	protected void checkPermission(String permission) {
@@ -293,7 +293,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	protected void fallback() {
 		Fallback fallback = getClass().getAnnotation(Fallback.class);
 		if (fallback != null)
-			Bukkit.dispatchCommand(sender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
+			Utils.runCommand(sender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
 		else
 			throw new InvalidInputException("Nothing to fallback to");
 	}

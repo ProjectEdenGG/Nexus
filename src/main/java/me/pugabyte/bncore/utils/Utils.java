@@ -23,6 +23,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -272,6 +273,8 @@ public class Utils {
 	}
 
 	public static void runCommand(CommandSender sender, String command) {
+		if (sender instanceof Player)
+			Utils.callEvent(new PlayerCommandPreprocessEvent((Player) sender, "/" + command));
 		Bukkit.dispatchCommand(sender, command);
 	}
 

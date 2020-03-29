@@ -5,7 +5,6 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import org.bukkit.Bukkit;
 
 @Permission("murder")
 public class MurderCommand extends CustomCommand {
@@ -16,7 +15,7 @@ public class MurderCommand extends CustomCommand {
 
 	@Path
 	void redirectToSkript() {
-		Bukkit.getServer().dispatchCommand(player(), "skmurder " + String.join(" ", event.getArgs()));
+		runCommand("skmurder " + String.join(" ", event.getArgs()));
 	}
 
 	@Path("kit")

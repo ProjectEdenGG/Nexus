@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.listeners;
 
-import org.bukkit.Bukkit;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +22,7 @@ public class CommandOverrideListener implements Listener {
 		if (args.size() == 0) return;
 		String argsString = event.getMessage().replace(args.get(0) + " ", "");
 
-		Consumer<String> redirect = command -> Bukkit.dispatchCommand(player, noSlash(command));
+		Consumer<String> redirect = command -> Utils.runCommand(player, noSlash(command));
 		Consumer<String> send = message -> player.sendMessage(colorize(message));
 
 		switch (args.get(0)) {

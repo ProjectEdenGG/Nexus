@@ -5,7 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.itemeditor.ItemEditMenu;
-import org.bukkit.Bukkit;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -29,7 +29,7 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	private void customEnchant(Player player, String enchant, String level) {
-			Bukkit.dispatchCommand(player, "customenchantments:ce enchant " + enchant + " " + level);
+		Utils.runCommand(player, "customenchantments:ce enchant " + enchant + " " + level);
 	}
 
 	public List<Enchantment> getApplicableEnchantments(ItemStack item) {

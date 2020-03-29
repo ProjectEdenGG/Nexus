@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,7 +45,7 @@ public class MinigameListener implements Listener {
 			Minigame minigame = event.getMinigame();
 			String name = minigame.getGametypeName().toLowerCase();
 			if (name.equals("walls"))
-				Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "clearentitieswalls");
+				Utils.runConsoleCommand("clearentitieswalls");
 			 else if (name.toLowerCase().matches("quake|ffa|one vs one|1v1|1 v 1|dogfighting|oitq"))
 				Tasks.wait(2, () -> shufflePlayers(minigame));
 		} catch (NullPointerException ignore) {}
