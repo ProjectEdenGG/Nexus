@@ -15,17 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CircleEffect {
 
-//	public CircleEffect(Player player, Location loc, int density, double radius){
-//		new CircleEffect(player, loc, true, Particle.REDSTONE, 1, density, 5 * 20, radius,
-//				0, 0, 0, 0, 1, true);
-//	}
-//
-//	public CircleEffect(Player player, Location location, boolean updateLoc, Particle particle, int count, int density, int ticks, double radius,
-//						Color color, int startDelay, int pulseDelay, boolean whole){
-//		new CircleEffect(player, location, updateLoc, particle, count, density, ticks, radius,
-//				color.getRed(), color.getGreen(), color.getBlue(), startDelay, pulseDelay, whole);
-//	}
-
 	@Builder
 	public CircleEffect(Player player, Location location, boolean updateLoc, Particle particle, boolean whole,
 						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed,
@@ -46,7 +35,7 @@ public class CircleEffect {
 		if (pulseDelay < 1) pulseDelay = 1;
 		if (speed <= 0) speed = 0.1;
 		if (count <= 0) count = 1;
-		if (ticks <= 0) ticks = Time.SECOND.x(5);
+		if (ticks == 0) ticks = Time.SECOND.x(5);
 		if (particle == null) particle = Particle.REDSTONE;
 
 		if (particle.equals(Particle.REDSTONE)) {
@@ -81,7 +70,7 @@ public class CircleEffect {
 			}
 
 			if (rainbow) {
-				double[] rgb = ParticleUtils.incRainbow(red.get(), green.get(), blue.get(), 2.5);
+				double[] rgb = ParticleUtils.incRainbow(red.get(), green.get(), blue.get(), 9);
 				red.set(rgb[0]);
 				green.set(rgb[1]);
 				blue.set(rgb[2]);

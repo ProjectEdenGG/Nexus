@@ -17,7 +17,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 @Aliases({"rainbowarmor", "rba"})
 @Permission("rainbow.armour")
 public class RainbowArmourCommand extends CustomCommand {
-	private int rate = 9;
+	private int rate = 12;
 	private int id = 0;
 
 	RainbowArmourCommand(CommandEvent event) {
@@ -81,34 +81,66 @@ public class RainbowArmourCommand extends CustomCommand {
 			int b = rbaPlayer.getB();
 
 			if (r > 0 && b == 0) {
-				r -= rate;
-				if (r < 0)
-					r = 0;
-
-				g += rate;
-				if (g > 255)
-					g = 255;
+				if (r == 255 && g < 255) {
+					g += rate;
+				} else {
+					r -= rate;
+					g += rate;
+				}
 			}
-
 			if (g > 0 && r == 0) {
-				g -= rate;
-				if (g < 0)
-					g = 0;
-
-				b += rate;
-				if (b > 255)
-					b = 255;
+				if (g == 255 && b < 255) {
+					b += rate;
+				} else {
+					g -= rate;
+					b += rate;
+				}
 			}
-
 			if (b > 0 && g == 0) {
-				b -= rate;
-				if (b < 0)
-					b = 0;
-
-				r += rate;
-				if (r > 255)
-					r = 255;
+				if (b == 255 && r < 255) {
+					r += rate;
+				} else {
+					b -= rate;
+					r += rate;
+				}
 			}
+
+			if (r < 0) r = 0;
+			if (r > 255) r = 255;
+			if (g < 0) g = 0;
+			if (g > 255) g = 255;
+			if (b < 0) b = 0;
+			if (b > 255) b = 255;
+
+//			if (r > 0 && b == 0) {
+//				r -= rate;
+//				if (r < 0)
+//					r = 0;
+//
+//				g += rate;
+//				if (g > 255)
+//					g = 255;
+//			}
+//
+//			if (g > 0 && r == 0) {
+//				g -= rate;
+//				if (g < 0)
+//					g = 0;
+//
+//				b += rate;
+//				if (b > 255)
+//					b = 255;
+//			}
+//
+//			if (b > 0 && g == 0) {
+//				b -= rate;
+//				if (b < 0)
+//					b = 0;
+//
+//				r += rate;
+//				if (r > 255)
+//					r = 255;
+//			}
 
 			PlayerInventory inv = player.getInventory();
 			ItemStack[] armour = inv.getArmorContents();
