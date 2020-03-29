@@ -38,6 +38,7 @@ import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.ModelListeners;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time.Timer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -48,6 +49,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.time.LocalDateTime;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -134,7 +136,8 @@ public class BNCore extends JavaPlugin {
 				.map(Bukkit::getOfflinePlayer)
 				.filter(OfflinePlayer::isOnline)
 				.map(OfflinePlayer::getPlayer)
-				.forEach(player -> player.sendMessage(colorize("&c&l ! &c&l! &eReloading BNCore &c&l! &c&l!")));
+				.forEach(player -> player.sendMessage(colorize("&7" + StringUtils.shortTimeFormat(LocalDateTime.now()) +
+						" &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!")));
 	}
 
 	private void setupConfig() {

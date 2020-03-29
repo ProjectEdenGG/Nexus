@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.particles.effects;
 import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Builder;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Color;
@@ -13,14 +12,14 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DotEffect {
+public class BandEffect {
 
 	@Builder
-	public DotEffect(Player player, Location loc, Particle particle, int count, int ticks, double speed,
-					 boolean rainbow, Color color, double disX, double disY, double disZ,
-					 int startDelay, int pulseDelay) {
+	public BandEffect(Player player, Particle particle,
+					  boolean rainbow, Color color, int ticks, double speed,
+					  double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
-		if (loc == null) throw new InvalidInputException("No location was provided");
+		int count = 1;
 
 		if (color != null) {
 			disX = color.getRed();
@@ -30,8 +29,7 @@ public class DotEffect {
 
 		if (pulseDelay < 1) pulseDelay = 1;
 		if (speed <= 0) speed = 0.1;
-		if (count <= 0) count = 1;
-		if (ticks == 0) ticks = Time.SECOND.x(5);
+		if (ticks <= 0) ticks = Time.SECOND.x(5);
 		if (particle == null) particle = Particle.REDSTONE;
 
 		if (particle.equals(Particle.REDSTONE)) {
@@ -64,18 +62,22 @@ public class DotEffect {
 				return;
 			}
 
-			if (rainbow) {
-				double[] rgb = ParticleUtils.incRainbow(red.get(), green.get(), blue.get(), 2.5);
-				red.set(rgb[0]);
-				green.set(rgb[1]);
-				blue.set(rgb[2]);
+			Location loc = player.getLocation();
+			for (int i = 0; i < 15; ++i) {
+				loc = loc.add(0, 0.1, 0);
+				loc.getWorld().spawnParticle(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+				if (rainbow) {
+					double[] rgb = ParticleUtils.incRainbow(red.get(), green.get(), blue.get(), 6);
+					red.set(rgb[0]);
+					green.set(rgb[1]);
+					blue.set(rgb[2]);
+				}
 			}
 
-			loc.getWorld().spawnParticle(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
 		});
-		ParticleUtils.addToMap(millis, player, taskId);
 
+		ParticleUtils.addToMap(millis, player, taskId);
 	}
 }
