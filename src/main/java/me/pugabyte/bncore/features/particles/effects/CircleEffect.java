@@ -33,6 +33,7 @@ public class CircleEffect {
 
 		if (location == null) throw new InvalidInputException("No location was provided");
 
+		if (density == 0) density = 20;
 		double inc = (2 * Math.PI) / density;
 		int steps = whole ? density : 1;
 
