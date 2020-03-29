@@ -23,6 +23,8 @@ public class LineEffect {
 					  boolean rainbow, Color color, double disX, double disY, double disZ,
 					  double distance, double maxLength, int startDelay, int pulseDelay) {
 
+		if (player == null) throw new InvalidInputException("No player was provided");
+
 		double maxLineLength = 200;
 		if (distance != 0) {
 			if (distance > maxLineLength) distance = maxLineLength;

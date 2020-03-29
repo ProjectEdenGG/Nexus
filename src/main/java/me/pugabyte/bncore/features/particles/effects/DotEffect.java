@@ -20,6 +20,7 @@ public class DotEffect {
 					 boolean rainbow, Color color, double disX, double disY, double disZ,
 					 int startDelay, int pulseDelay) {
 
+		if (player == null) throw new InvalidInputException("No player was provided");
 		if (loc == null) throw new InvalidInputException("No location was provided");
 
 		if (color != null) {
