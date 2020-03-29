@@ -208,7 +208,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		ItemStack item = player().getInventory().getItemInMainHand();
 		ItemBuilder.setName(item, "&6&lBuild Contest");
 		ItemBuilder.addLore(item, "&e&lJoin our latest build contest!");
-		ItemBuilder.addLore(item, "&e&lTheme: " + theme);
+		ItemBuilder.addLore(item, "&e&lTheme: &6&l" + theme);
 		bcInfo.put("item", SerializationUtils.json_serializeItem(item));
 		info.setJson(bcInfo);
 		settingService.save(info);

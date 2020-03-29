@@ -77,7 +77,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				contents.set(1, 7, ClickableItem.from(skyblock, e -> warp(player, "skyblock")));
 				contents.set(2, 4, ClickableItem.from(other, e -> WarpsMenu.open(player, WarpMenu.OTHER)));
 
-				if (bcInfo.get("item") != null && (Boolean.parseBoolean((String) bcInfo.get("active")))) {
+				if (bcInfo.get("item") != null && (Boolean) bcInfo.get("active")) {
 					contents.set(4, 4, ClickableItem.from(SerializationUtils.json_deserializeItem((String) bcInfo.get("item")), e -> {
 						warp(player, "buildcontest");
 					}));
