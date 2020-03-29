@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.particles.effects;
 import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Builder;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Color;
@@ -15,9 +16,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BandEffect {
 
 	@Builder
-	public BandEffect(Player player, Particle particle,
-					  boolean rainbow, Color color, int ticks, double speed,
+	public BandEffect(Player player, Particle particle, boolean rainbow, Color color, int ticks, double speed,
 					  double disX, double disY, double disZ, int startDelay, int pulseDelay) {
+
+		if (player == null) throw new InvalidInputException("No player was provided");
 
 		int count = 1;
 

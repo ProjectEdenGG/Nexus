@@ -20,6 +20,7 @@ public class CircleEffect {
 						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
+		if (player == null) throw new InvalidInputException("No player was provided");
 		if (location == null) throw new InvalidInputException("No location was provided");
 
 		if (density == 0) density = 20;

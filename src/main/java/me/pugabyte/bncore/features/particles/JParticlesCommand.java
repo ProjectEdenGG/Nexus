@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.particles.effects.BandEffect;
 import me.pugabyte.bncore.features.particles.effects.CircleEffect;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
+import me.pugabyte.bncore.features.particles.effects.NyanCatEffect;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -46,6 +47,11 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 
 	@Path("band")
 	void band() {
-		BandEffect.builder().player(player()).particle(Particle.REDSTONE).ticks(10 * 20).rainbow(true).build();
+		BandEffect.builder().player(player()).ticks(10 * 20).rainbow(true).build();
+	}
+
+	@Path("nyancat")
+	void nyancat() {
+		NyanCatEffect.builder().player(player()).ticks(10 * 20).build();
 	}
 }
