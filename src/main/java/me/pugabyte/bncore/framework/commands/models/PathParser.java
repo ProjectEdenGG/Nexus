@@ -42,11 +42,16 @@ class PathParser {
 		this.command = event.getCommand();
 		this.methods = new ArrayList<>(command.getPathMethods());
 
-		// Sort by most literal words first (most specific first)
-		methods.sort(Comparator.comparing(method ->
-				Arrays.stream(getLiteralWords(getPathString(method)).split(" "))
-						.filter(string -> string.length() > 0)
-						.count()));
+		// Sort by most specific first
+		methods.sort(
+				Comparator.comparing(method ->
+						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
+								.filter(string -> !Strings.isNullOrEmpty(string))
+								.count())
+				.thenComparing(method ->
+						Arrays.stream(getPathString((Method) method).split(" "))
+								.filter(string -> !Strings.isNullOrEmpty(string))
+								.count()));
 		Collections.reverse(methods);
 	}
 
