@@ -44,7 +44,7 @@ public class Nerd {
 		getPlayer().sendMessage(colorize(message));
 	}
 
-	protected void send(int delay, String message) {
+	public void send(int delay, String message) {
 		Tasks.wait(delay, () -> send(message));
 	}
 
