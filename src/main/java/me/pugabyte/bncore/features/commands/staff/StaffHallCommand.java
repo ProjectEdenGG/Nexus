@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.nerd.Nerd;
@@ -58,6 +59,11 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		})));
 	}
 
+	@Path
+	void tp() {
+		runCommand("warp staffhall");
+	}
+
 	@Path("view <player>")
 	void view(Nerd nerd) {
 		line(4);
@@ -86,6 +92,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("write")
+	@Permission("group.admin")
 	void write() {
 		writeHtml();
 	}
@@ -93,12 +100,12 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onNpcRightClick(NPCRightClickEvent event) {
 		NPC npc = event.getNPC();
-		Location location = npc.getEntity().getLocation();
+		Location location = event.getClicker().getLocation();
 		WorldGuardUtils wgUtils = new WorldGuardUtils(location.getWorld());
 
-		if (wgUtils.getRegionsLikeAt(location, ".*staffhall.*").size() > 0)
+		if (wgUtils.getRegionsLikeAt(location, "staffhall").size() > 0)
 			runCommand(event.getClicker(), "staffhall view " + stripColor(npc.getName()));
-		else if (wgUtils.getRegionsLikeAt(location, ".*hallofhistory.*").size() > 0)
+		else if (wgUtils.getRegionsLikeAt(location, "hallofhistory").size() > 0)
 			runCommand(event.getClicker(), "hoh view " + stripColor(npc.getName()));
 		else if (npc.getId() == 627)
 			runCommand(event.getClicker(), "pugawelc");
