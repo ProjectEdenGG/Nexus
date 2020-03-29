@@ -16,10 +16,10 @@ import me.pugabyte.bncore.models.warps.WarpType;
 @Redirect(from = "/creative", to = "/warp creative")
 @Redirect(from = "/skyblock", to = "/warp skyblock")
 @Redirect(from = {"/minigames", "/gamelobby", "/gl"}, to = "/warp minigames")
-@Aliases("warps")
-public class WarpCommand extends _WarpCommand {
+@Aliases("warp")
+public class WarpsCommand extends _WarpCommand {
 
-	public WarpCommand(CommandEvent event) {
+	public WarpsCommand(CommandEvent event) {
 		super(event);
 	}
 

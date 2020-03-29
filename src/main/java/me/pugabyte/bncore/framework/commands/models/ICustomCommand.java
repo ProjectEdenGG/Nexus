@@ -75,7 +75,7 @@ public interface ICustomCommand {
 	}
 
 	default String getName() {
-		return listLast(this.getClass().toString(), ".").replaceAll("Command", "");
+		return listLast(this.getClass().toString(), ".").replaceAll("Command$", "");
 	}
 
 	default List<String> getAliases() {
