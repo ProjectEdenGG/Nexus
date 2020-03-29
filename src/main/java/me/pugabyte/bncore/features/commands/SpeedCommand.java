@@ -18,6 +18,11 @@ public class SpeedCommand extends CustomCommand {
 
 	@Path
 	void speed() {
+		if (isConsole()) {
+			fallback();
+			return;
+		}
+
 		if (player().hasPermission("group.staff")) {
 			fallback();
 			return;
