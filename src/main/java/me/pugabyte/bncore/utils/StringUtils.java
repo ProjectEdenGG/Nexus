@@ -39,10 +39,6 @@ public class StringUtils {
 	}
 
 	public static String loreize(String string) {
-		return loreize(string, ChatColor.WHITE);
-	}
-
-	public static String loreize(String string, ChatColor color) {
 		int i = 0, lineLength = 0;
 		boolean watchForNewLine = false, watchForColor = false;
 		string = colorize(string);
@@ -84,7 +80,7 @@ public class StringUtils {
 							doSplit = true;
 
 						if (doSplit) {
-							string = before + "||" + color + excess.trim();
+							string = before + "||" + getLastColor(before) + excess.trim();
 							lineLength = 0;
 							i += 4;
 						}
@@ -94,7 +90,7 @@ public class StringUtils {
 			++i;
 		}
 
-		return color + string;
+		return string;
 	}
 
 	public static List<String> splitLore(String lore) {

@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // TODO: Balance hoverable
 
@@ -44,12 +45,12 @@ public class OnlineCommand extends CustomCommand {
 		send("&3There are &e" + counts + " &3out of maximum &e" + Bukkit.getMaxPlayers() + " &3players online");
 
 		ranks.forEach(rank -> {
-			List<Nerd> nerds = rank.getOnlineNerds();
+			List<Nerd> nerds = rank.getOnlineNerds().stream().filter(this::canSee).collect(Collectors.toList());
 			if (nerds.size() == 0) return;
 
 			JsonBuilder builder = new JsonBuilder(rank + "s&f: ");
 
-			nerds.stream().filter(this::canSee).forEach(nerd -> getNameWithModifiers(nerd, builder));
+			nerds.forEach(nerd -> getNameWithModifiers(nerd, builder));
 
 			send(builder);
 		});
