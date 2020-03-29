@@ -31,10 +31,10 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 
 	@Path("circle [radius] [density]")
 	void circle(@Arg("1.0") double radius, @Arg("20") int density) {
-		CircleEffect.builder().player(player()).location(player().getLocation()).density(10).radius(0.333).rainbow(true).build();
-		Tasks.wait(20, () -> CircleEffect.builder().player(player()).location(player().getLocation()).density(20).radius(0.666).rainbow(true).build());
-		Tasks.wait(40, () -> CircleEffect.builder().player(player()).location(player().getLocation()).density(40).radius(0.999).rainbow(true).build());
-		Tasks.wait(60, () -> CircleEffect.builder().player(player()).location(player().getLocation()).density(60).radius(1.333).rainbow(true).build());
+		CircleEffect.builder().player(player()).location(player().getLocation()).density(10).radius(0.333).ticks(20 * 20).whole(true).rainbow(true).build();
+		Tasks.wait(20, () -> CircleEffect.builder().player(player()).location(player().getLocation()).density(20).radius(0.666).ticks(20 * 20).whole(true).rainbow(true).build());
+		Tasks.wait(40, () -> CircleEffect.builder().player(player()).location(player().getLocation()).density(40).radius(0.999).ticks(20 * 20).whole(true).rainbow(true).build());
+		Tasks.wait(60, () -> CircleEffect.builder().player(player()).location(player().getLocation()).density(60).radius(1.333).ticks(20 * 20).whole(true).rainbow(true).build());
 	}
 
 	@Path("dot")
