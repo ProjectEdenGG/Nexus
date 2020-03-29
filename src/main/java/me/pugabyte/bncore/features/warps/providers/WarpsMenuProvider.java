@@ -15,7 +15,6 @@ import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.SerializationUtils;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
@@ -121,8 +120,8 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack tictactoe = nameItem(Material.PAPER, "&3Tic Tac Toe");
 
 				contents.set(1, 1, ClickableItem.from(lobby, e -> warp(player, "minigamelobby")));
-				contents.set(1, 3, ClickableItem.from(spvp, e -> Bukkit.dispatchCommand(player, "spvp")));
-				contents.set(1, 5, ClickableItem.from(wither, e -> Bukkit.dispatchCommand(player, "wither")));
+				contents.set(1, 3, ClickableItem.from(spvp, e -> Utils.runCommand(player, "spvp")));
+				contents.set(1, 5, ClickableItem.from(wither, e -> Utils.runCommand(player, "wither")));
 				contents.set(1, 7, ClickableItem.from(stats, e -> warp(player, "statshall")));
 				contents.set(2, 2, ClickableItem.from(parkour, e -> warp(player, "parkour")));
 				contents.set(2, 4, ClickableItem.from(mazes, e -> warp(player, "mazes")));

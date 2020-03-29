@@ -10,9 +10,9 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -48,7 +48,7 @@ public class PodiumsCommand extends CustomCommand {
 	@Path("<position> <player> <title...>")
 	void update(Position position, OfflinePlayer player, String title) {
 		CitizensUtils.updateNameAndSkin(getNpc(position), "&l" + player.getName());
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "hd setline podium_" + position + " 1 " + title);
+		Utils.runConsoleCommand("hd setline podium_" + position + " 1 " + title);
 		send(PREFIX + "Podium updated");
 	}
 

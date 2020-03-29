@@ -93,16 +93,16 @@ public class Murder extends UnbalancedTeamMechanic {
 
 		BNCore.log("Alive players: " + event.getMatch().getAlivePlayers());
 
-		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder stop " + event.getMatch().getArena().getName());
-		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder clearentities " + event.getMatch().getArena().getName());
+		Utils.runConsoleCommand("skmurder stop " + event.getMatch().getArena().getName());
+		Utils.runConsoleCommand("skmurder clearentities " + event.getMatch().getArena().getName());
 	}
 
 	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 
-		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder start " + event.getMatch().getArena().getName());
-		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "skmurder clearentities " + event.getMatch().getArena().getName());
+		Utils.runConsoleCommand("skmurder start " + event.getMatch().getArena().getName());
+		Utils.runConsoleCommand("skmurder clearentities " + event.getMatch().getArena().getName());
 
 		List<Minigamer> list = event.getMatch().getAlivePlayers();
 

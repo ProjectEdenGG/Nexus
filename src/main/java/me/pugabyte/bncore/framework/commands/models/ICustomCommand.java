@@ -22,7 +22,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionExcepti
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.Tasks;
-import org.bukkit.Bukkit;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.objenesis.ObjenesisStd;
@@ -264,7 +264,7 @@ public interface ICustomCommand {
 		if (method == null) {
 			Fallback fallback = event.getCommand().getClass().getAnnotation(Fallback.class);
 			if (fallback != null)
-				Bukkit.dispatchCommand(event.getSender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
+				Utils.runCommand(event.getSender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
 			else
 				// TODO No default path, what do?
 				throw new InvalidInputException("No matching path");
