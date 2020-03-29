@@ -1,7 +1,12 @@
 package me.pugabyte.bncore.features.particles.effects;
 
+import com.google.common.util.concurrent.AtomicDouble;
+import lombok.Builder;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -13,58 +18,95 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LineEffect {
 
-	public LineEffect(Player player, int distance, double density) {
-		Vector direction = player.getEyeLocation().getDirection();
-		Location start = player.getLocation().add(0, 1.5, 0);
-		Location end = start.clone().add(direction.multiply(distance));
-		new LineEffect(player, start, end, Particle.REDSTONE, 1, density, 10 * 20, 0, 0, 0);
-	}
+	@Builder
+	public LineEffect(Player player, Location start, Location end, Particle particle, int count, double density, int ticks, double speed,
+					  boolean rainbow, Color color, double disX, double disY, double disZ,
+					  double distance, double maxLength, int startDelay, int pulseDelay) {
 
-	// possible variables to add:
-	// pulse delay --> task interval
-	// length --> max distance
-	// start delay --> task start delay
-	// particle delay --> delay between spawning particles
-	//
-	public LineEffect(Player player, Location start, Location end, Particle particle, int count, double density, int ticks, double red, double green, double blue) {
-		double speed = 0.1;
+		double maxLineLength = 200;
+		if (distance != 0) {
+			if (distance > maxLineLength) distance = maxLineLength;
+			Vector direction = player.getEyeLocation().getDirection();
+			start = player.getLocation().add(0, 1.5, 0);
+			end = start.clone().add(direction.multiply(distance));
+		}
+
+		if (start == null) throw new InvalidInputException("No start location was provided");
+		if (end == null) throw new InvalidInputException("No end location was provided");
+
+		if (color != null) {
+			disX = color.getRed();
+			disY = color.getGreen();
+			disZ = color.getBlue();
+		}
+
+		if (pulseDelay < 1) pulseDelay = 1;
+		if (speed <= 0) speed = 0.1;
+		if (count <= 0) count = 1;
+		if (ticks == 0) ticks = Time.SECOND.x(5);
+		if (maxLength > maxLineLength) maxLength = maxLineLength;
+		if (particle == null) particle = Particle.REDSTONE;
+
 		if (particle.equals(Particle.REDSTONE)) {
 			count = 0;
-			red /= 255.0;
-			green /= 255.0;
-			blue /= 255.0;
 			speed = 1;
+			if (rainbow) {
+				disX = 1;
+				disY = 0;
+				disZ = 0;
+			} else {
+				disX /= 255.0;
+				disY /= 255.0;
+				disZ /= 255.0;
+			}
 		}
 
 		World world = start.getWorld();
-		double distance = start.distance(end);
+		double diff = start.distance(end);
+		if (diff > maxLineLength)
+			diff = maxLineLength;
+
 		AtomicReference<Vector> startV = new AtomicReference<>(start.toVector());
 		Vector endV = end.toVector();
 		Vector vector = endV.clone().subtract(startV.get()).normalize().multiply(density);
 
 		int finalCount = count;
-		double finalRed = red;
-		double finalGreen = green;
-		double finalBlue = blue;
+		final AtomicDouble red = new AtomicDouble(disX);
+		final AtomicDouble green = new AtomicDouble(disY);
+		final AtomicDouble blue = new AtomicDouble(disZ);
 		double finalSpeed = speed;
+		Location finalStart = start;
+		Particle finalParticle = particle;
+		int finalTicks = ticks;
+		double finalDiff = diff;
+		double finalMaxLength = maxLength;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 		long millis = System.currentTimeMillis();
 
-		// Draws a solid line from one point to another
-		int taskId = Tasks.repeat(0, 1, () -> {
-			if (ticksElapsed.get() >= ticks) {
+		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
+			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
 				ParticleUtils.cancelParticle(millis, player);
 				return;
 			}
 
-			for (double length = 0; length < distance; startV.get().add(vector)) {
-				Location location = startV.get().toLocation(world);
-				world.spawnParticle(particle, location, finalCount, finalRed, finalGreen, finalBlue, finalSpeed);
-				length += density;
+			if (rainbow) {
+				double[] rgb = ParticleUtils.incRainbow(red.get(), green.get(), blue.get(), 2.5);
+				red.set(rgb[0]);
+				green.set(rgb[1]);
+				blue.set(rgb[2]);
 			}
 
-			startV.set(start.toVector());
-			ticksElapsed.incrementAndGet();
+			for (double covered = 0; covered < finalDiff; startV.get().add(vector)) {
+				Location loc = startV.get().toLocation(world);
+				world.spawnParticle(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+				covered += density;
+				if (finalMaxLength != 0 && covered >= finalMaxLength)
+					break;
+			}
+
+			startV.set(finalStart.toVector());
+			if (finalTicks != -1)
+				ticksElapsed.incrementAndGet();
 		});
 
 		ParticleUtils.addToMap(millis, player, taskId);
