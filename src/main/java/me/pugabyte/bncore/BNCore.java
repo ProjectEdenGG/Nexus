@@ -38,6 +38,8 @@ import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.ModelListeners;
+import me.pugabyte.bncore.models.geoip.GeoIP;
+import me.pugabyte.bncore.models.geoip.GeoIPService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time.Timer;
 import net.milkbowl.vault.economy.Economy;
@@ -50,6 +52,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -125,10 +128,10 @@ public class BNCore extends JavaPlugin {
 		Discord.shutdown();
 		LiteBans.shutdown();
 		ProtocolLibrary.getProtocolManager().removePacketListeners(this);
-		MySQLPersistence.shutdown();
-		MongoDBPersistence.shutdown();
 		commands.unregisterAll();
 		broadcastReload();
+		MySQLPersistence.shutdown();
+		MongoDBPersistence.shutdown();
 	}
 
 	public void broadcastReload() {
@@ -136,8 +139,11 @@ public class BNCore extends JavaPlugin {
 				.map(Bukkit::getOfflinePlayer)
 				.filter(OfflinePlayer::isOnline)
 				.map(OfflinePlayer::getPlayer)
-				.forEach(player -> player.sendMessage(colorize("&7" + StringUtils.shortTimeFormat(LocalDateTime.now()) +
-						" &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!")));
+				.forEach(player -> {
+					GeoIP geoIp = new GeoIPService().get(player);
+					player.sendMessage(colorize("&7 " + StringUtils.shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId()))) +
+							" &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!"));
+				});
 	}
 
 	private void setupConfig() {

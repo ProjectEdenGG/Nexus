@@ -36,15 +36,16 @@ public class GeoIPService extends MongoService {
 
 			if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
 				if (geoIp != null)
-					if (!Bukkit.getPlayer(uuid).getAddress().getHostString().equals(geoIp.getIp()))
+					if (!Bukkit.getPlayer(uuid).getAddress().getHostString().equals(geoIp.getIp())) {
 						geoIp = request(Bukkit.getPlayer(uuid));
+						save(geoIp);
+					}
 
-				if (geoIp == null)
+				if (geoIp == null) {
 					geoIp = request(Bukkit.getPlayer(uuid));
+					save(geoIp);
+				}
 			}
-
-			if (geoIp != null && geoIp.getIp() != null)
-				save(geoIp);
 
 			return geoIp;
 		});
@@ -77,6 +78,11 @@ public class GeoIPService extends MongoService {
 
 	public List<GeoIP> getAll() {
 		return database.createQuery(GeoIP.class).find().toList();
+	}
+
+	public void save(GeoIP geoIp) {
+		if (geoIp != null && geoIp.getIp() != null)
+			super.save(geoIp);
 	}
 
 }
