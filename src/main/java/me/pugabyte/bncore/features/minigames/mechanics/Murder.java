@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Railgun;
 import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
+import me.pugabyte.bncore.features.minigames.models.arenas.MurderArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
@@ -20,6 +21,7 @@ import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -92,7 +94,6 @@ public class Murder extends UnbalancedTeamMechanic {
 
 		BNCore.log("Alive players: " + event.getMatch().getAliveMinigamers());
 
-		Utils.runConsoleCommand("skmurder stop " + event.getMatch().getArena().getName());
 		Utils.runConsoleCommand("skmurder clearentities " + event.getMatch().getArena().getName());
 	}
 
@@ -100,7 +101,17 @@ public class Murder extends UnbalancedTeamMechanic {
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 
-		Utils.runConsoleCommand("skmurder start " + event.getMatch().getArena().getName());
+		MurderArena arena = event.getMatch().getArena();
+
+		event.getMatch().getTasks().repeat(Time.SECOND.x(10), Time.SECOND.x(3), () -> {
+			for (Location loc : arena.getScrapPoints()) {
+				if (arena.getSpawnChance() != 0)
+					if (Utils.randomInt(1, arena.spawnChance) != 1)
+						continue;
+				loc.getWorld().dropItemNaturally(loc, scrap);
+			}
+		});
+
 		Utils.runConsoleCommand("skmurder clearentities " + event.getMatch().getArena().getName());
 
 		List<Minigamer> list = event.getMatch().getAliveMinigamers();

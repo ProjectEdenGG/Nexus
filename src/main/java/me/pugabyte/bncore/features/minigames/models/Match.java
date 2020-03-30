@@ -231,6 +231,8 @@ public class Match {
 			if (getArena().getRegion().contains(worldEditUtils.toVector(entity.getLocation())))
 				if (deletableTypes.contains(entity.getType()))
 					entity.remove();
+			if (entity.getType().equals(EntityType.ARMOR_STAND) && entity.getLocation().getY() < 0)
+				entity.remove();
 		});
 	}
 
@@ -282,8 +284,6 @@ public class Match {
 
 		scores.put(team, scores.getOrDefault(team, 0) + event.getAmount());
 		scoreboard.update();
-		if (scores.getOrDefault(team, 0) >= arena.getWinningScore())
-			end();
 	}
 
 	public void broadcast(String message) {
