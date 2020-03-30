@@ -8,7 +8,9 @@ import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NyanCatEffect {
@@ -23,15 +25,17 @@ public class NyanCatEffect {
 
 		int finalTicks = ticks;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
-		long millis = System.currentTimeMillis();
+		UUID uuid = UUID.randomUUID();
 
 		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				ParticleUtils.cancelParticle(millis, player);
+				ParticleUtils.cancelParticle(uuid, player);
 				return;
 			}
 
 			Location loc = player.getLocation();
+			Vector backward = player.getEyeLocation().getDirection().multiply(0.5);
+			loc = loc.subtract(backward);
 			for (int i = 0; i < 15; ++i) {
 				double[] rgb = ParticleUtils.incRainbow(i);
 				double r = rgb[0];
@@ -47,6 +51,6 @@ public class NyanCatEffect {
 				ticksElapsed.incrementAndGet();
 		});
 
-		ParticleUtils.addToMap(millis, player, taskId);
+		ParticleUtils.addToMap(uuid, player, taskId);
 	}
 }

@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -53,13 +54,14 @@ public class LineEffect {
 			count = 0;
 			speed = 1;
 			if (rainbow) {
-				disX = 1;
+				disX = 255;
 				disY = 0;
 				disZ = 0;
 			} else {
 				disX /= 255.0;
 				disY /= 255.0;
 				disZ /= 255.0;
+				disX = disX == 0.0 ? 0.001 : disX;
 			}
 		}
 
@@ -84,11 +86,11 @@ public class LineEffect {
 		double finalDiff = diff;
 		double finalMaxLength = maxLength;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
-		long millis = System.currentTimeMillis();
+		UUID uuid = UUID.randomUUID();
 
 		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				ParticleUtils.cancelParticle(millis, player);
+				ParticleUtils.cancelParticle(uuid, player);
 				return;
 			}
 
@@ -113,6 +115,6 @@ public class LineEffect {
 				ticksElapsed.incrementAndGet();
 		});
 
-		ParticleUtils.addToMap(millis, player, taskId);
+		ParticleUtils.addToMap(uuid, player, taskId);
 	}
 }
