@@ -19,8 +19,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LineEffect {
 
-	@Builder
-	public LineEffect(Player player, Location start, Location end, Particle particle, int count, double density, int ticks, double speed,
+	@Builder(buildMethodName = "start")
+	public LineEffect(Player player, Location startLoc, Location endLoc, Particle particle, int count, double density, int ticks, double speed,
 					  boolean rainbow, Color color, double disX, double disY, double disZ,
 					  double distance, double maxLength, int startDelay, int pulseDelay) {
 
@@ -30,12 +30,12 @@ public class LineEffect {
 		if (distance != 0) {
 			if (distance > maxLineLength) distance = maxLineLength;
 			Vector direction = player.getEyeLocation().getDirection();
-			start = player.getLocation().add(0, 1.5, 0);
-			end = start.clone().add(direction.multiply(distance));
+			startLoc = player.getLocation().add(0, 1.5, 0);
+			endLoc = startLoc.clone().add(direction.multiply(distance));
 		}
 
-		if (start == null) throw new InvalidInputException("No start location was provided");
-		if (end == null) throw new InvalidInputException("No end location was provided");
+		if (startLoc == null) throw new InvalidInputException("No start location was provided");
+		if (endLoc == null) throw new InvalidInputException("No end location was provided");
 
 		if (color != null) {
 			disX = color.getRed();
@@ -65,13 +65,13 @@ public class LineEffect {
 			}
 		}
 
-		World world = start.getWorld();
-		double diff = start.distance(end);
+		World world = startLoc.getWorld();
+		double diff = startLoc.distance(endLoc);
 		if (diff > maxLineLength)
 			diff = maxLineLength;
 
-		AtomicReference<Vector> startV = new AtomicReference<>(start.toVector());
-		Vector endV = end.toVector();
+		AtomicReference<Vector> startV = new AtomicReference<>(startLoc.toVector());
+		Vector endV = endLoc.toVector();
 		Vector vector = endV.clone().subtract(startV.get()).normalize().multiply(density);
 
 		int finalCount = count;
@@ -80,7 +80,7 @@ public class LineEffect {
 		final AtomicDouble green = new AtomicDouble(disY);
 		final AtomicDouble blue = new AtomicDouble(disZ);
 		double finalSpeed = speed;
-		Location finalStart = start;
+		Location finalStart = startLoc;
 		Particle finalParticle = particle;
 		int finalTicks = ticks;
 		double finalDiff = diff;
