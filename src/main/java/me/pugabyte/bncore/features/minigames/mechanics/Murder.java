@@ -10,7 +10,6 @@ import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Railgun;
 import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.bncore.features.minigames.models.arenas.MurderArena;
-import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
@@ -90,12 +89,6 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
-		super.onEnd(event);
-		Utils.runConsoleCommand("skmurder clearentities " + event.getMatch().getArena().getName());
-	}
-
-	@Override
 	public void announceWinners(Match match) {
 		boolean murdererAlive = match.getAliveTeams().stream().anyMatch(team -> team.getColor() == ChatColor.RED);
 
@@ -126,8 +119,6 @@ public class Murder extends UnbalancedTeamMechanic {
 				loc.getWorld().dropItemNaturally(loc, scrap);
 			}
 		});
-
-		Utils.runConsoleCommand("skmurder clearentities " + event.getMatch().getArena().getName());
 
 		List<Minigamer> list = event.getMatch().getAliveMinigamers();
 
