@@ -13,9 +13,8 @@ import java.util.Map;
 @Data
 @SerializableAs("MurderArena")
 public class MurderArena extends Arena {
-
-	public List<Location> scrapPoints = new ArrayList<>();
-	public int spawnChance;
+	private List<Location> scrapPoints = new ArrayList<>();
+	private int spawnChance;
 
 	public MurderArena(Map<String, Object> map) {
 		super(map);

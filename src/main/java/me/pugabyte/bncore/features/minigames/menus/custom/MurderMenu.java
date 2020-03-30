@@ -61,18 +61,16 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 				e -> openScrapPointsMenu(arena).open(player)));
 
 		contents.set(1, 5, ClickableItem.from(nameItem(Material.WATCH, "&eSpawn Chance", "&3Current value:||&e" + arena.getSpawnChance()),
-				e -> {
-					openAnvilMenu(player, arena, arena.getSpawnChance() + "", (Player p, String text) -> {
-						if (!Utils.isInt(text)) {
-							AnvilGUI.Response.close();
-							throw new InvalidInputException(PREFIX + "You must use an integer for spawn chance.");
-						}
-						arena.setSpawnChance(Integer.parseInt(text));
-						ArenaManager.write(arena);
-						menus.openCustomSettingsMenu(player, arena);
-						return AnvilGUI.Response.text(text);
-					});
-				}));
+				e -> openAnvilMenu(player, arena, arena.getSpawnChance() + "", (Player p, String text) -> {
+					if (!Utils.isInt(text)) {
+						AnvilGUI.Response.close();
+						throw new InvalidInputException(PREFIX + "You must use an integer for spawn chance.");
+					}
+					arena.setSpawnChance(Integer.parseInt(text));
+					ArenaManager.write(arena);
+					menus.openCustomSettingsMenu(player, arena);
+					return AnvilGUI.Response.text(text);
+				})));
 	}
 
 	@Override
@@ -100,12 +98,12 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 					Material.EMERALD_BLOCK,
 					"&eAdd Scrap Point Location",
 					"&3Click to add a Scrap Point||&3at your current location."
-					),
-					e -> {
-						arena.getScrapPoints().add(player.getLocation());
-						arena.write();
-						MurderMenu.openScrapPointsMenu(arena).open(player, page.getPage());
-					}));
+				),
+				e -> {
+					arena.getScrapPoints().add(player.getLocation().getBlock().getLocation());
+					arena.write();
+					MurderMenu.openScrapPointsMenu(arena).open(player, page.getPage());
+				}));
 
 			ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode.||&7Then, click a Scrap Point location with||&7me to delete the location.");
 			contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
