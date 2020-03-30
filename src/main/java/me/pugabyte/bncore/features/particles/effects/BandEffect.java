@@ -38,7 +38,7 @@ public class BandEffect {
 			count = 0;
 			speed = 1;
 			if (rainbow) {
-				disX = 1;
+				disX = 255;
 				disY = 0;
 				disZ = 0;
 			} else {
@@ -52,6 +52,7 @@ public class BandEffect {
 		int finalCount = count;
 		int finalTicks = ticks;
 		Particle finalParticle = particle;
+		final AtomicDouble hue = new AtomicDouble(0);
 		final AtomicDouble red = new AtomicDouble(disX);
 		final AtomicDouble green = new AtomicDouble(disY);
 		final AtomicDouble blue = new AtomicDouble(disZ);
@@ -69,7 +70,8 @@ public class BandEffect {
 				loc = loc.add(0, 0.1, 0);
 				loc.getWorld().spawnParticle(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 				if (rainbow) {
-					double[] rgb = ParticleUtils.incRainbow(red.get(), green.get(), blue.get(), 6);
+					hue.set(ParticleUtils.incHue(hue.get()));
+					double[] rgb = ParticleUtils.incRainbow(hue.get());
 					red.set(rgb[0]);
 					green.set(rgb[1]);
 					blue.set(rgb[2]);

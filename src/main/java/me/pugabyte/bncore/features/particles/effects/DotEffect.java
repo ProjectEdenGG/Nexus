@@ -53,6 +53,7 @@ public class DotEffect {
 		int finalCount = count;
 		int finalTicks = ticks;
 		Particle finalParticle = particle;
+		final AtomicDouble hue = new AtomicDouble(0);
 		final AtomicDouble red = new AtomicDouble(disX);
 		final AtomicDouble green = new AtomicDouble(disY);
 		final AtomicDouble blue = new AtomicDouble(disZ);
@@ -66,7 +67,8 @@ public class DotEffect {
 			}
 
 			if (rainbow) {
-				double[] rgb = ParticleUtils.incRainbow(red.get(), green.get(), blue.get(), 2.5);
+				hue.set(ParticleUtils.incHue(hue.get()));
+				double[] rgb = ParticleUtils.incRainbow(hue.get());
 				red.set(rgb[0]);
 				green.set(rgb[1]);
 				blue.set(rgb[2]);
