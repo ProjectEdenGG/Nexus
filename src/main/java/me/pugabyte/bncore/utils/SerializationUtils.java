@@ -19,101 +19,109 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SerializationUtils {
-	public static Map<String, ItemStack> yml_serializeItems(ItemStack[] itemStacks) {
-		Map<String, ItemStack> items = new HashMap<>();
-		int slot = 0;
-		for (ItemStack item : itemStacks) {
-			if (item != null)
-				items.put(String.valueOf(slot), item);
-			slot++;
+
+	public static class YML {
+
+		public static Map<String, ItemStack> serializeItems(ItemStack[] itemStacks) {
+			Map<String, ItemStack> items = new HashMap<>();
+			int slot = 0;
+			for (ItemStack item : itemStacks) {
+				if (item != null)
+					items.put(String.valueOf(slot), item);
+				slot++;
+			}
+
+			return items;
 		}
 
-		return items;
+		public static ItemStack[] deserializeItems(Map<String, Object> items) {
+			ItemStack[] inventory = new ItemStack[41];
+			if (items == null) return inventory;
+
+			for (Map.Entry<String, Object> item : items.entrySet())
+				inventory[Integer.parseInt(item.getKey())] = (ItemStack) item.getValue();
+
+			return inventory;
+		}
+
+		public static List<String> serializeMaterialSet(Set<Material> materials) {
+			if (materials == null) return null;
+			return new ArrayList<String>(){{ addAll(materials.stream().map(Material::name).collect(Collectors.toList())); }};
+		}
+
+		public static Set<Material> deserializeMaterialSet(List<String> materials) {
+			if (materials == null) return null;
+			return materials.stream().map(block -> Material.valueOf(block.toUpperCase())).collect(Collectors.toSet());
+		}
+
 	}
 
-	public static ItemStack[] yml_deserializeItems(Map<String, Object> items) {
-		ItemStack[] inventory = new ItemStack[41];
-		if (items == null) return inventory;
+	public static class JSON {
 
-		for (Map.Entry<String, Object> item : items.entrySet())
-			inventory[Integer.parseInt(item.getKey())] = (ItemStack) item.getValue();
+		public static String serializeItem(ItemStack item) {
+			Gson gson = new Gson();
+			Map<String, Object> serialized = item.serialize();
 
-		return inventory;
-	}
+			serialized.computeIfPresent("meta", ($, itemMeta) -> {
+				Map<String, Object> meta = new HashMap<>(((ItemMeta) itemMeta).serialize());
+				meta.put("==", "ItemMeta");
+				return meta;
+			});
 
-	public static List<String> yml_serializeMaterialSet(Set<Material> materials) {
-		if (materials == null) return null;
-		return new ArrayList<String>(){{ addAll(materials.stream().map(Material::name).collect(Collectors.toList())); }};
-	}
+			return gson.toJson(gson.toJsonTree(serialized));
+		}
 
-	public static Set<Material> yml_deserializeMaterialSet(List<String> materials) {
-		if (materials == null) return null;
-		return materials.stream().map(block -> Material.valueOf(block.toUpperCase())).collect(Collectors.toSet());
-	}
+		@NotNull
+		public static ItemStack deserializeItem(String value) {
+			return deserializeItem(new Gson().fromJson(value, Map.class));
+		}
 
+		@NotNull
+		public static ItemStack deserializeItem(Map<String, Object> value) {
+			fixItemClasses(value);
 
-	public static String json_serializeItem(ItemStack item) {
-		Gson gson = new Gson();
-		Map<String, Object> serialized = item.serialize();
+			value.computeIfPresent("meta", ($, meta) ->
+					ConfigurationSerialization.deserializeObject((Map<String, Object>) meta));
 
-		serialized.computeIfPresent("meta", ($, itemMeta) -> {
-			Map<String, Object> meta = new HashMap<>(((ItemMeta) itemMeta).serialize());
-			meta.put("==", "ItemMeta");
-			return meta;
-		});
+			return ItemStack.deserialize(value);
+		}
 
-		return gson.toJson(gson.toJsonTree(serialized));
-	}
+		// MongoDB deserializes some properties as the wrong class, do conversion
+		public static void fixItemClasses(Map<String, Object> deserialized) {
+			deserialized.computeIfPresent("meta", ($, meta) -> {
+				Arrays.asList("power", "repair-cost").forEach(key ->
+						((Map<String, Object>) meta).computeIfPresent(key, ($2, metaValue) -> {
+							if (metaValue instanceof Number)
+								return ((Number) metaValue).intValue();
+							return metaValue;
+						}));
+				return meta;
+			});
+		}
 
-	@NotNull
-	public static ItemStack json_deserializeItem(String value) {
-		return json_deserializeItem(new Gson().fromJson(value, Map.class));
-	}
+		@NotNull
+		public static String serializeLocation(Location location) {
+			DecimalFormat nf = new DecimalFormat("#.000");
+			return location.getWorld().getName() + "," +
+					nf.format(location.getX()) + "," +
+					nf.format(location.getY()) + "," +
+					nf.format(location.getZ()) + "," +
+					nf.format(location.getYaw()) + "," +
+					nf.format(location.getPitch());
+		}
 
-	@NotNull
-	public static ItemStack json_deserializeItem(Map<String, Object> value) {
-		fixItemClasses(value);
+		@NotNull
+		public static Location deserializeLocation(String in) {
+			List<String> parts = Arrays.asList(in.split(","));
+			return new Location(
+					Bukkit.getWorld(parts.get(0)),
+					Double.parseDouble(parts.get(1)),
+					Double.parseDouble(parts.get(2)),
+					Double.parseDouble(parts.get(3)),
+					Float.parseFloat(parts.get(4)),
+					Float.parseFloat(parts.get(5))
+			);
+		}
 
-		value.computeIfPresent("meta", ($, meta) ->
-				ConfigurationSerialization.deserializeObject((Map<String, Object>) meta));
-
-		return ItemStack.deserialize(value);
-	}
-
-	// MongoDB deserializes some properties as the wrong class, do conversion
-	public static void fixItemClasses(Map<String, Object> deserialized) {
-		deserialized.computeIfPresent("meta", ($, meta) -> {
-			Arrays.asList("power", "repair-cost").forEach(key ->
-					((Map<String, Object>) meta).computeIfPresent(key, ($2, metaValue) -> {
-						if (metaValue instanceof Number)
-							return ((Number) metaValue).intValue();
-						return metaValue;
-					}));
-			return meta;
-		});
-	}
-
-	@NotNull
-	public static String json_serializeLocation(Location location) {
-		DecimalFormat nf = new DecimalFormat("#.000");
-		return location.getWorld().getName() + "," +
-				nf.format(location.getX()) + "," +
-				nf.format(location.getY()) + "," +
-				nf.format(location.getZ()) + "," +
-				nf.format(location.getYaw()) + "," +
-				nf.format(location.getPitch());
-	}
-
-	@NotNull
-	public static Location json_deserializeLocation(String in) {
-		List<String> parts = Arrays.asList(in.split(","));
-		return new Location(
-				Bukkit.getWorld(parts.get(0)),
-				Double.parseDouble(parts.get(1)),
-				Double.parseDouble(parts.get(2)),
-				Double.parseDouble(parts.get(3)),
-				Float.parseFloat(parts.get(4)),
-				Float.parseFloat(parts.get(5))
-		);
 	}
 }

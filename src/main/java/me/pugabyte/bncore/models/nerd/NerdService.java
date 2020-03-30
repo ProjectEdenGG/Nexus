@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-// TODO: Support past names
 public class NerdService extends MySQLService {
 	@Override
 	public Nerd get(String uuid) {

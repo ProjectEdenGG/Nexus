@@ -89,7 +89,7 @@ public class Arena implements ConfigurationSerializable {
 		this.minWinningScore = (Integer) map.getOrDefault("minWinningScore", minWinningScore);
 		this.maxWinningScore = (Integer) map.getOrDefault("maxWinningScore", maxWinningScore);
 		this.lives = (Integer) map.getOrDefault("lives", lives);
-		this.blockList = SerializationUtils.yml_deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
+		this.blockList = SerializationUtils.YML.deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 	}
@@ -113,7 +113,7 @@ public class Arena implements ConfigurationSerializable {
 			put("minWinningScore", getMinWinningScore());
 			put("maxWinningScore", getMaxWinningScore());
 			put("lives", getLives());
-			put("blockList", SerializationUtils.yml_serializeMaterialSet(getBlockList()));
+			put("blockList", SerializationUtils.YML.serializeMaterialSet(getBlockList()));
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 		}};

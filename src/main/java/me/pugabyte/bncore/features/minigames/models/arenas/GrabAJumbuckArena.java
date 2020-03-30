@@ -20,13 +20,13 @@ public class GrabAJumbuckArena extends Arena {
 
 	public GrabAJumbuckArena(Map<String, Object> map) {
 		super(map);
-		this.sheepSpawnBlocks = SerializationUtils.yml_deserializeMaterialSet((List<String>) map.getOrDefault("sheepSpawnBlocks", new ArrayList<>()));
+		this.sheepSpawnBlocks = SerializationUtils.YML.deserializeMaterialSet((List<String>) map.getOrDefault("sheepSpawnBlocks", new ArrayList<>()));
 	}
 
 	@Override
 	public Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
-		map.put("sheepSpawnBlocks", SerializationUtils.yml_serializeMaterialSet(sheepSpawnBlocks));
+		map.put("sheepSpawnBlocks", SerializationUtils.YML.serializeMaterialSet(sheepSpawnBlocks));
 
 		return map;
 	}

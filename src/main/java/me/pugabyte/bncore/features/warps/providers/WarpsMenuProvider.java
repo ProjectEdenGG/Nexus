@@ -13,7 +13,7 @@ import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.SerializationUtils;
+import me.pugabyte.bncore.utils.SerializationUtils.JSON;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -77,7 +77,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				Setting buildContestSetting = settingService.get("buildcontest", "info");
 				Map<String, Object> bcInfo = buildContestSetting.getJson();
 				if (bcInfo != null && bcInfo.get("item") != null && (Boolean.parseBoolean((String) bcInfo.get("active")))) {
-					contents.set(4, 4, ClickableItem.from(SerializationUtils.json_deserializeItem((String) bcInfo.get("item")), e -> {
+					contents.set(4, 4, ClickableItem.from(JSON.deserializeItem((String) bcInfo.get("item")), e -> {
 						warp(player, "buildcontest");
 					}));
 				}

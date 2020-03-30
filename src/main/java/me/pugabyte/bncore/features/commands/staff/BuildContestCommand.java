@@ -17,7 +17,7 @@ import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.SerializationUtils;
+import me.pugabyte.bncore.utils.SerializationUtils.JSON;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -210,7 +210,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		ItemBuilder.setName(item, "&6&lBuild Contest");
 		ItemBuilder.addLore(item, "&e&lJoin our latest build contest!");
 		ItemBuilder.addLore(item, "&e&lTheme: &6&l" + theme);
-		bcInfo.put("item", SerializationUtils.json_serializeItem(item));
+		bcInfo.put("item", JSON.serializeItem(item));
 		info.setJson(bcInfo);
 		settingService.save(info);
 		send(PREFIX + "Saved the item to the item in your hand");
