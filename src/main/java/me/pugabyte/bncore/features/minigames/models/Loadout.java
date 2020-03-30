@@ -29,7 +29,7 @@ public class Loadout implements ConfigurationSerializable {
 	private List<PotionEffect> effects = new ArrayList<>();
 
 	public Loadout(Map<String, Object> map) {
-		this.inventory = SerializationUtils.yml_deserializeItems((Map<String, Object>) map.getOrDefault("inventory", inventory));
+		this.inventory = SerializationUtils.YML.deserializeItems((Map<String, Object>) map.getOrDefault("inventory", inventory));
 		this.effects = (List<PotionEffect>) map.getOrDefault("effects", effects);
 		isLoadoutEmpty = Arrays.stream(inventory).noneMatch(Objects::nonNull);
 	}
@@ -37,7 +37,7 @@ public class Loadout implements ConfigurationSerializable {
 	@Override
 	public Map<String, Object> serialize() {
 		return new LinkedHashMap<String, Object>() {{
-			put("inventory", SerializationUtils.yml_serializeItems(inventory));
+			put("inventory", SerializationUtils.YML.serializeItems(inventory));
 			put("effects", effects);
 		}};
 	}
