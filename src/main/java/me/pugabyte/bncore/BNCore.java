@@ -169,6 +169,7 @@ public class BNCore extends JavaPlugin {
 	public static ChatOld chatOld;
 	public static ClearInventory clearInventory;
 	public static Connect4 connect4;
+	//TODO: Integrate custom recipes with 1.15
 	public static DailyRewardsFeature dailyRewards;
 	public static Discord discord;
 	public static Documentation documentation;

@@ -142,9 +142,9 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 			if (!page.isLast())
-				contents.set(0, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW), "&fNext Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.next().getPage())));
+				contents.set(5, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW), "&fNext Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.next().getPage())));
 			if (!page.isFirst())
-				contents.set(0, 7, ClickableItem.from(nameItem(new ItemStack(Material.BARRIER), "&fPrevious Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.previous().getPage())));
+				contents.set(5, 0, ClickableItem.from(nameItem(new ItemStack(Material.BARRIER), "&fPrevious Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.previous().getPage())));
 		}
 
 		@Override
