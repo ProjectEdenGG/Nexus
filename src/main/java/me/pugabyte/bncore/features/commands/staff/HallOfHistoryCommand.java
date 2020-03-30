@@ -47,8 +47,9 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Path("view <player>")
 	void view(OfflinePlayer target) {
-		send("&e&l" + target.getName());
 		line(4);
+		send("&e&l" + target.getName());
+		line();
 		HallOfHistory hallOfHistory = service.get(target.getUniqueId());
 		for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
 			JsonBuilder builder = new JsonBuilder();
