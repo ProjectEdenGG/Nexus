@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics;
 
 import me.pugabyte.bncore.features.minigames.mechanics.*;
-import me.pugabyte.bncore.features.minigames.mechanics.custom.RavensNestEstate;
 
 public enum MechanicType {
 	ARCHERY(new Archery()),
@@ -18,6 +17,7 @@ public enum MechanicType {
 	GRAB_A_JUMBUCK(new GrabAJumbuck()),
 	HOLI_SPLEGG(new HoliSplegg()),
 	KANGAROO_JUMPING(new KangarooJumping()),
+	MAZE(new Maze()),
 	MONSTER_MAZE(new MonsterMaze()),
 	MURDER(new Murder()),
 	ONE_FLAG_CAPTURE_THE_FLAG(new OneFlagCaptureTheFlag()),
@@ -27,7 +27,7 @@ public enum MechanicType {
 	PIXEL_DROP(new PixelDrop()),
 	PIXEL_PAINTERS(new PixelPainters()),
 	QUAKE(new Quake()),
-	RAVENS_NEST_ESTATE(new RavensNestEstate()),
+//	RAVENS_NEST_ESTATE(new RavensNestEstate()),
 	SPLEEF(new Spleef()),
 	SPLEGG(new Splegg()),
 	TEAM_DEATHMATCH(new TeamDeathmatch()),

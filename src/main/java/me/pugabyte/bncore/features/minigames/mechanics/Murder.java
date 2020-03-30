@@ -202,16 +202,15 @@ public class Murder extends UnbalancedTeamMechanic {
 				.onTick(i -> armorStand.teleport(armorStand.getLocation().add(0, -.1, 0)))
 				.start();
 		minigamer.getMatch().getTasks().register(countdown.getTaskId());
-
 	}
 
 	private void assignGunner(Match match) {
-		List<Minigamer> innocent = match.getAliveMinigamers().stream()
+		Minigamer gunner = Utils.getRandomElement(match.getAliveMinigamers().stream()
 				.filter(minigamer -> !isMurderer(minigamer))
-				.collect(Collectors.toList());
+				.collect(Collectors.toList()));
 
-		Minigamer gunner = Utils.getRandomElement(innocent);
-		gunner.getPlayer().getInventory().setItem(1, gun);
+		if (gunner != null)
+			gunner.getPlayer().getInventory().setItem(1, gun);
 	}
 
 	private void sendAssignMessages(Match match) {
@@ -512,6 +511,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	public boolean isMurderer(Minigamer minigamer) {
+		if (minigamer == null) return false;
 		return isMurderer(minigamer.getPlayer());
 	}
 
@@ -520,6 +520,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	public boolean isGunner(Minigamer minigamer) {
+		if (minigamer == null) return false;
 		return isGunner(minigamer.getPlayer());
 	}
 
@@ -528,6 +529,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	public boolean isDrunk(Minigamer minigamer) {
+		if (minigamer == null) return false;
 		return isDrunk(minigamer.getPlayer());
 	}
 
@@ -536,6 +538,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	public boolean isInnocent(Minigamer minigamer) {
+		if (minigamer == null) return false;
 		return isInnocent(minigamer.getPlayer());
 	}
 
