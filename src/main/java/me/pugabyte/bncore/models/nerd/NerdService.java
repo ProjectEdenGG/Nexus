@@ -33,7 +33,7 @@ public class NerdService extends MySQLService {
 					.on("hours.uuid = nerd.uuid")
 				.where("nerd." + sanitize(column) + " like ?")
 				.orderBy("position(? in name), hours.total desc")
-				.args("%" + partialName + "%", partialName)
+				.args("%" + partialName.replaceAll("_", "\\\\_") + "%", partialName)
 				.results(Nerd.class);
 		for (Nerd nerd : nerds)
 			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));

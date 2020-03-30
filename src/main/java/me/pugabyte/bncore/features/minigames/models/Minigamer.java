@@ -266,7 +266,7 @@ public class Minigamer {
 			unhideAll();
 	}
 
-	private void unhideAll() {
+	public void unhideAll() {
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			showPlayer(player).to(_player);
 			showPlayer(_player).to(player);
@@ -280,9 +280,7 @@ public class Minigamer {
 		player.setGameMode(match.getArena().getMechanic().getGameMode());
 		clearGameModeState();
 
-		for (Player toUnhide : Bukkit.getOnlinePlayers())
-			if (player != toUnhide)
-				player.showPlayer(BNCore.getInstance(), toUnhide);
+		unhideAll();
 	}
 
 	private void clearGameModeState() {

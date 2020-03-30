@@ -125,6 +125,7 @@ public class Match {
 		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
 		minigamer.clearState();
 		minigamer.toGamelobby();
+		minigamer.unhideAll();
 
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
 		if (scoreboardTeams != null) scoreboardTeams.handleQuit(minigamer);
