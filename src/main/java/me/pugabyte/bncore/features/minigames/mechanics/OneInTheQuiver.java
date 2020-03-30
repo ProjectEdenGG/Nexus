@@ -30,10 +30,11 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
+		if (event.getAttacker() != null) {
+			event.getAttacker().getPlayer().getInventory().addItem(new ItemStack(Material.ARROW, 1));
+			event.getAttacker().scored();
+		}
 		super.onDeath(event);
-		if (event.getAttacker() == null) return;
-		event.getAttacker().scored();
-		event.getAttacker().getPlayer().getInventory().addItem(new ItemStack(Material.ARROW, 1));
 	}
 
 	@EventHandler
