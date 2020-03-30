@@ -127,6 +127,7 @@ public class Murder extends UnbalancedTeamMechanic {
 				minigamer.getMatch().getTasks().repeat(2, 5, () -> {
 					double dist = 1000;
 					Player target = null;
+					if (minigamer.getMatch() == null) return;
 
 					// Find the closest player by looping all minigame
 					// players and saving the shortest distance
@@ -148,13 +149,13 @@ public class Murder extends UnbalancedTeamMechanic {
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
 		spawnCorpse(event.getMinigamer());
-		super.onDeath(event);
 
 		// If the attacker was a gunner and the victim was not the murderer, intoxicate
 		if (isGunner(event.getAttacker()) && !isMurderer(event.getMinigamer()))
 			intoxicate(event.getAttacker().getPlayer());
 
 		event.getMinigamer().tell("You were killed!");
+		super.onDeath(event);
 	}
 
 	@Override

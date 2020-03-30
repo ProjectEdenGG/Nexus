@@ -40,8 +40,8 @@ public class RavensNestEstate implements Listener {
 
 	// Sounds & Their Locations
 	private Location musicLocation = new Location(Minigames.getGameworld(), 3075, 60, 1282);
-	private Location fireplaceTrigger1 = new Location(Minigames.getGameworld(), 3087, 25, 1269);
-	private Location fireplaceTrigger2 = new Location(Minigames.getGameworld(), 3090, 25, 1242);
+	private Location fireplaceTrigger1 = new Location(Minigames.getGameworld(), 3087.5, 25.5, 1269.5);
+	private Location fireplaceTrigger2 = new Location(Minigames.getGameworld(), 3090.5, 25.5, 1242.5);
 	private Location freezerSound = new Location(Minigames.getGameworld(), 3086, 25, 1280);
 	private Sound[] sounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,
 			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSION_ILLAGER_PREPARE_MIRROR, Sound.ENTITY_ILLUSION_ILLAGER_PREPARE_BLINDNESS,
@@ -91,7 +91,7 @@ public class RavensNestEstate implements Listener {
 	public boolean isPlayingThis(Minigamer minigamer) {
 		if (minigamer == null || minigamer.getMatch() == null) return false;
 		if (!minigamer.getMatch().getArena().getName().equalsIgnoreCase(getClass().getSimpleName())) return false;
-		return minigamer.isPlaying(ArenaManager.get(getClass().getSimpleName()).getMechanic());
+		return minigamer.isIn(ArenaManager.get(getClass().getSimpleName()).getMechanic());
 	}
 
 	public boolean isPlayingThis(Match match) {
@@ -102,6 +102,7 @@ public class RavensNestEstate implements Listener {
 	@EventHandler
 	public void onMatchStart(MatchStartEvent event) {
 		if (!isPlayingThis(event.getMatch())) return;
+		statusFireplace = false;
 		soundTasks(event.getMatch());
 	}
 
@@ -144,9 +145,7 @@ public class RavensNestEstate implements Listener {
 	}
 
 	private void resetMap(Match match) {
-		statusFireplace = false;
-		String fireplaceFile = schemFireplace + 1;
-		WEUtils.paste(fireplaceFile, doorFireplace);
+		WEUtils.paste(schemFireplace + 1, doorFireplace);
 
 		Region region = match.getArena().getRegion("torches");
 		List<Block> blocks = WEUtils.getBlocks(region);
@@ -195,8 +194,10 @@ public class RavensNestEstate implements Listener {
 		match.getTasks().repeat(delay, 5 * 20, () -> {
 			if (!statusFireplace) {
 				World world = fireplaceTrigger1.getWorld();
-				world.spawnParticle(Particle.VILLAGER_HAPPY, fireplaceTrigger1, 50, 0.5, 0.5, 0.5, 0.1);
-				world.spawnParticle(Particle.VILLAGER_HAPPY, fireplaceTrigger2, 50, 0.5, 0.5, 0.5, 0.1);
+				Location loc1 = Utils.getCenteredLocation(fireplaceTrigger1).add(0, 0.5, 0);
+				Location loc2 = Utils.getCenteredLocation(fireplaceTrigger2).add(0, 0.5, 0);
+				world.spawnParticle(Particle.VILLAGER_HAPPY, loc1, 50, 0.5, 0.5, 0.5, 0.1);
+				world.spawnParticle(Particle.VILLAGER_HAPPY, loc2, 50, 0.5, 0.5, 0.5, 0.1);
 			}
 		});
 	}
@@ -233,7 +234,7 @@ public class RavensNestEstate implements Listener {
 			case WOOD_BUTTON:
 				String schematic = findDoor(loc, match);
 				if (schematic != null)
-					toggleDoor(schematic);
+					toggleDoor(schematic, match);
 				break;
 		}
 	}
@@ -244,11 +245,15 @@ public class RavensNestEstate implements Listener {
 	}
 
 	private void openFireplace(Location location, Match match) {
-		if (!(location.equals(fireplaceTrigger1) || location.equals(fireplaceTrigger2))) return;
-		if (!statusFireplace) return;
+		if (!(location.equals(fireplaceTrigger1.getBlock().getLocation()) || location.equals(fireplaceTrigger2.getBlock().getLocation()))) {
+			return;
+		}
+		if (statusFireplace) {
+			return;
+		}
 
 		statusFireplace = true;
-		Location loc = fireplaceTrigger1;
+		Location loc = fireplaceTrigger1.clone();
 		World world = loc.getWorld();
 		Sound sound = Sound.BLOCK_NOTE_HARP;
 
@@ -257,13 +262,13 @@ public class RavensNestEstate implements Listener {
 		world.playSound(loc, sound, 2F, 1.05F);
 		match.getTasks().wait(wait += 4, () -> world.playSound(loc, sound, 2F, 1F));
 		match.getTasks().wait(wait += 4, () -> world.playSound(loc, sound, 2F, 0.85F));
-		match.getTasks().wait(wait += 4, () -> world.playSound(loc, sound, 2F, 1.6F));
-		match.getTasks().wait(wait += 4, () -> world.playSound(loc, sound, 2F, 1.55F));
-		match.getTasks().wait(wait += 4, () -> world.playSound(loc, sound, 2F, 1.9F));
+		match.getTasks().wait(wait += 4, () -> world.playSound(loc, sound, 2F, 0.6F));
+		match.getTasks().wait(wait += 4, () -> world.playSound(loc, sound, 2F, 0.55F));
+		match.getTasks().wait(wait += 4, () -> world.playSound(loc, sound, 2F, 0.9F));
 		match.getTasks().wait(wait += 4, () -> world.playSound(loc, sound, 2F, 1.125F));
 		match.getTasks().wait(wait += 4, () -> {
 			world.playSound(loc, sound, 2F, 1.4F);
-			toggleDoor(schemFireplace);
+			toggleDoor(schemFireplace, match);
 			world.playSound(loc, Sound.ENTITY_ENDERDRAGON_GROWL, 2F, 0.1F);
 		});
 		match.getTasks().wait(wait += 4, () -> {
@@ -298,22 +303,30 @@ public class RavensNestEstate implements Listener {
 		String key = match.getArena().getRegionBaseName() + "_door_";
 		for (ProtectedRegion region : regions) {
 			String regionName = region.getId();
-			if (regionName.contains(key))
-				return "Animations/RavensNestEstate/" + StringUtils.camelCase(regionName.replaceAll(key, ""));
+			if (regionName.contains(key)) {
+				String door = StringUtils.camelCaseWithUnderscores(regionName.replaceAll(key, ""));
+				String folder = door;
+				if (door.toLowerCase().contains("small"))
+					folder = "Small";
+				else
+					door += "_";
+
+				return "Animations/RavensNestEstate/" + folder + "/" + door;
+			}
 		}
 		return null;
 	}
 
-	private void toggleDoor(String schematic) {
+	private void toggleDoor(String schematic, Match match) {
 		int frames;
 		Location pasteLoc;
 		boolean status;
+		int extra = 0;
 		if (schematic.contains(schemFireplace)) {
 			frames = framesFireplace;
 			pasteLoc = doorFireplace;
 			status = statusFireplace;
-			statusFireplace = !statusFireplace;
-
+			extra = 7;
 		} else if (schematic.contains(schemBasement)) {
 			frames = framesBasement;
 			pasteLoc = doorBasement;
@@ -341,7 +354,8 @@ public class RavensNestEstate implements Listener {
 			statusStudy = !statusStudy;
 		} else if (schematic.contains(schemSmall)) {
 			frames = framesSmall;
-			String direction = schematic.replaceAll(schemSmall + "_", "");
+			String direction = schematic.replaceAll(schemSmall, "");
+			schematic += "_";
 			switch (direction) {
 				case "S":
 					pasteLoc = doorSmall_S;
@@ -364,12 +378,20 @@ public class RavensNestEstate implements Listener {
 		} else
 			return;
 
-		if (status)
-			for (int frame = 1; frame < frames; frame++)
-				WEUtils.paste(schematic + frame, pasteLoc);
-		else
-			for (int frame = frames; frame > 0; frame--)
-				WEUtils.paste(schematic + frame, pasteLoc);
+		int wait = 0;
+		String finalSchematic = schematic;
+		if (status) {
+			for (int frame = 1; frame <= frames; frame++) {
+				int finalFrame = frame;
+				match.getTasks().wait(wait += 3 + extra, () -> WEUtils.paste(finalSchematic + finalFrame, pasteLoc));
+			}
+		} else {
+			for (int frame = frames; frame > 0; frame--) {
+				int finalFrame = frame;
+				match.getTasks().wait(wait += 3, () -> WEUtils.paste(finalSchematic + finalFrame, pasteLoc));
+
+			}
+		}
 	}
 }
 
