@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class BandEffect {
 
-	@Builder
+	@Builder(buildMethodName = "start")
 	public BandEffect(Player player, Particle particle, boolean rainbow, Color color, int ticks, double speed,
 					  double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 

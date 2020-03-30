@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CircleEffect {
 
-	@Builder
+	@Builder(buildMethodName = "start")
 	public CircleEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean whole, boolean randomRotation,
 						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed, boolean fast,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay) {

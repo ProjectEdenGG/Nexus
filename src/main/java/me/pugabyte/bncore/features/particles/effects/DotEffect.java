@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DotEffect {
 
-	@Builder
+	@Builder(buildMethodName = "start")
 	public DotEffect(Player player, Location loc, Particle particle, int count, int ticks, double speed,
 					 boolean rainbow, Color color, double disX, double disY, double disZ,
 					 int startDelay, int pulseDelay) {

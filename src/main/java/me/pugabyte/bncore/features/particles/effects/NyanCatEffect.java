@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class NyanCatEffect {
 
-	@Builder
+	@Builder(buildMethodName = "start")
 	public NyanCatEffect(Player player, int ticks, int startDelay, int pulseDelay) {
 
 		if (player == null) throw new InvalidInputException("No player was provided");
