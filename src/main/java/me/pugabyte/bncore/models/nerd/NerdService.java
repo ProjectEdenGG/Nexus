@@ -26,13 +26,17 @@ public class NerdService extends MySQLService {
 	}
 
 	public List<Nerd> find(String partialName, String column) {
-		List<Nerd> nerds = database
-				.select("nerd.*")
-				.table("nerd")
-				.leftJoin("hours")
-					.on("hours.uuid = nerd.uuid")
-				.where("nerd." + sanitize(column) + " like ?")
-				.orderBy("position(? in name), hours.total desc")
+		List<Nerd> nerds = database.sql(
+				"select nerd.* " +
+				"from name_history " +
+				"inner join nerd " +
+					"on name_history.uuid = nerd.uuid " +
+				"left join hours " +
+					"on hours.uuid = nerd.uuid " +
+				"where name_history." + sanitize(column) + " like ? " +
+				"group by nerd.uuid " +
+				"order by hours.total desc, position(? in name_history.name) " +
+				"limit 50")
 				.args("%" + partialName.replaceAll("_", "\\\\_") + "%", partialName)
 				.results(Nerd.class);
 		for (Nerd nerd : nerds)
