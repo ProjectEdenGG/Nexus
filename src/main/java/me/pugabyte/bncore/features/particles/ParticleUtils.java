@@ -9,17 +9,17 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ParticleUtils {
-	public static Map<Long, Map<UUID, Integer>> activeParticles = new HashMap<>();
+	public static Map<UUID, Map<UUID, Integer>> activeParticles = new HashMap<>();
 
-	public static void addToMap(long millis, Player player, int taskId) {
-		ParticleUtils.activeParticles.put(millis, new HashMap<UUID, Integer>() {{
+	public static void addToMap(UUID uuid, Player player, int taskId) {
+		ParticleUtils.activeParticles.put(uuid, new HashMap<UUID, Integer>() {{
 			put(player.getUniqueId(), taskId);
 		}});
 	}
 
-	public static void cancelParticle(long millis, Player player) {
-		Tasks.cancel(activeParticles.get(millis).get(player.getUniqueId()));
-		activeParticles.remove(millis);
+	public static void cancelParticle(UUID uuid, Player player) {
+		Tasks.cancel(activeParticles.get(uuid).get(player.getUniqueId()));
+		activeParticles.remove(uuid);
 	}
 
 	public static double incHue(double hue) {
