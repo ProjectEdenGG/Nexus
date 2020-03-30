@@ -126,8 +126,6 @@ public enum Rank {
 					return Rank.MODERATOR;
 				case "arch":
 					return Rank.ARCHITECT;
-				case "builder":
-					return Rank.BUILDER;
 				case "vet":
 					return Rank.VETERAN;
 			}

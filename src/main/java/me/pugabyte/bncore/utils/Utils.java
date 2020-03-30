@@ -458,10 +458,10 @@ public class Utils {
 	}
 
 	public static <T> T getRandomElement(Object... list) {
-		return getRandomElement(Arrays.asList(list));
+		return (T) getRandomElement(Arrays.asList(list));
 	}
 
-	public static <T> T getRandomElement(List list) {
+	public static <T> T getRandomElement(List<T> list) {
 		if (list.size() == 0) return null;
 		return (T) list.get(new Random().nextInt(list.size()));
 	}

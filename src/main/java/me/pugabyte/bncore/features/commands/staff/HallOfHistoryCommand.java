@@ -57,7 +57,13 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 		line();
 		Nerd nerd = new NerdService().get(target.getUniqueId());
-		send(" &eAbout me: &3" + nerd.getAbout());
+		if (!isNullOrEmpty(nerd.getAbout()))
+			send("  &eAbout me: &3" + nerd.getAbout());
+		if (nerd.isMeetMeVideo()) {
+			line();
+			String url = "https://bnn.gg/meet/" + nerd.getName().toLowerCase();
+			send(json("  &eMeet Me!&c " + url).url(url));
+		}
 	}
 
 	@Permission("hoh.edit")
