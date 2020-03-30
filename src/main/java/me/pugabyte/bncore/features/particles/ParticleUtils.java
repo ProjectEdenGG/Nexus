@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.particles;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -21,47 +22,23 @@ public class ParticleUtils {
 		activeParticles.remove(millis);
 	}
 
-	// Change in 1.13, with new DustOptions option, also use RBA formula instead!
-	public static double[] incRainbow(double red, double green, double blue, double rate) {
-		if (red == 0.001) red = 0;
-		int r = (int) (red * 255);
-		int g = (int) (green * 255);
-		int b = (int) (blue * 255);
+	public static double incHue(double hue) {
+		if (hue >= 20.0) hue = 0.0;
+		hue += 0.1;
+		return hue;
+	}
 
-		// Working
-		if (r > 0 && b == 0) {
-			r -= rate;
-			g += rate;
-		}
-
-		if (g > 0 && r == 0) {
-			g -= rate;
-			b += rate;
-		}
-
-		if (b > 0 && g == 0) {
-			b -= rate;
-			r += rate;
-		}
-
-		if (r < 0) r = 0;
-		if (r > 255) r = 255;
-		if (g < 0) g = 0;
-		if (g > 255) g = 255;
-		if (b < 0) b = 0;
-		if (b > 255) b = 255;
+	public static double[] incRainbow(double hue) {
+		int argb = Color.HSBtoRGB((float) (hue / 20.0F), 1.0F, 1.0F);
+		float r = (float) (argb >> 16 & 255) / 255.0F;
+		float g = (float) (argb >> 8 & 255) / 255.0F;
+		float b = (float) (argb & 255) / 255.0F;
+		r = r == 0.0F ? 0.001F : r;
 
 		double[] rgb = new double[3];
 		rgb[0] = r;
 		rgb[1] = g;
 		rgb[2] = b;
-
-		rgb[0] = rgb[0] / 255;
-		rgb[1] = rgb[1] / 255;
-		rgb[2] = rgb[2] / 255;
-
-		if (rgb[0] <= 0) rgb[0] = 0.001;
-
 		return rgb;
 	}
 }

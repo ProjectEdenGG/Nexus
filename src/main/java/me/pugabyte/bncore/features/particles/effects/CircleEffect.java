@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.particles.effects;
 import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Builder;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
+import me.pugabyte.bncore.features.particles.VectorUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -10,14 +11,15 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CircleEffect {
 
 	@Builder
-	public CircleEffect(Player player, Location location, boolean updateLoc, Particle particle, boolean whole,
-						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed,
+	public CircleEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean whole, boolean randomRotation,
+						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed, boolean fast,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player == null) throw new InvalidInputException("No player was provided");
@@ -26,6 +28,11 @@ public class CircleEffect {
 		if (density == 0) density = 20;
 		double inc = (2 * Math.PI) / density;
 		int steps = whole ? density : 1;
+		int loops = 1;
+		if (fast) loops = 10;
+		if (updateVector != null) updateLoc = true;
+		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);
+
 
 		if (color != null) {
 			disX = color.getRed();
@@ -43,7 +50,7 @@ public class CircleEffect {
 			count = 0;
 			speed = 1;
 			if (rainbow) {
-				disX = 1;
+				disX = 255;
 				disY = 0;
 				disZ = 0;
 			} else {
@@ -53,15 +60,23 @@ public class CircleEffect {
 			}
 		}
 
+		double angularVelocityX = Math.PI / 200;
+		double angularVelocityY = Math.PI / 170;
+		double angularVelocityZ = Math.PI / 155;
+
 		double finalSpeed = speed;
 		int finalCount = count;
 		int finalTicks = ticks;
 		Particle finalParticle = particle;
+		int finalLoops = loops;
+		boolean finalUpdateLoc = updateLoc;
+		Vector finalUpdateVector = updateVector;
+		final AtomicDouble hue = new AtomicDouble(0);
 		final AtomicDouble red = new AtomicDouble(disX);
 		final AtomicDouble green = new AtomicDouble(disY);
 		final AtomicDouble blue = new AtomicDouble(disZ);
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
-		AtomicInteger step = new AtomicInteger();
+		AtomicInteger step = new AtomicInteger(0);
 		long millis = System.currentTimeMillis();
 
 		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
@@ -70,25 +85,29 @@ public class CircleEffect {
 				return;
 			}
 
-			if (rainbow) {
-				double[] rgb = ParticleUtils.incRainbow(red.get(), green.get(), blue.get(), 9);
-				red.set(rgb[0]);
-				green.set(rgb[1]);
-				blue.set(rgb[2]);
-			}
+			for (int j = 0; j < finalLoops; j++) {
+				if (rainbow) {
+					hue.set(ParticleUtils.incHue(hue.get()));
+					double[] rgb = ParticleUtils.incRainbow(hue.get());
+					red.set(rgb[0]);
+					green.set(rgb[1]);
+					blue.set(rgb[2]);
+				}
 
-			Location loc = location;
-			if (updateLoc)
-				loc = player.getLocation();
+				Location loc = location;
+				if (finalUpdateLoc)
+					loc = player.getLocation().add(finalUpdateVector);
 
-			for (int i = 0; i < steps; i++) {
-				double angle = step.get() * inc;
-				double x = Math.cos(angle) * radius;
-				double z = Math.sin(angle) * radius;
-				loc.add(x, 0, z);
-				loc.getWorld().spawnParticle(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
-				loc.subtract(x, 0, z);
-				step.getAndIncrement();
+				for (int i = 0; i < steps; i++) {
+					double angle = step.get() * inc;
+					Vector v = new Vector();
+					v.setX(Math.cos(angle) * radius);
+					v.setZ(Math.sin(angle) * radius);
+					if (randomRotation)
+						VectorUtils.rotateVector(v, angularVelocityX * step.get(), angularVelocityY * step.get(), angularVelocityZ * step.get());
+					loc.getWorld().spawnParticle(finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+					step.getAndIncrement();
+				}
 			}
 
 			if (finalTicks != -1)

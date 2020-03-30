@@ -33,11 +33,10 @@ public class NyanCatEffect {
 
 			Location loc = player.getLocation();
 			for (int i = 0; i < 15; ++i) {
-				int argb = java.awt.Color.HSBtoRGB(i / 20.0F, 1.0F, 1.0F);
-				float r = (float) (argb >> 16 & 255) / 255.0F;
-				float g = (float) (argb >> 8 & 255) / 255.0F;
-				float b = (float) (argb & 255) / 255.0F;
-				r = r == 0.0F ? 0.001F : r;
+				double[] rgb = ParticleUtils.incRainbow(i);
+				double r = rgb[0];
+				double g = rgb[1];
+				double b = rgb[2];
 
 				loc.getWorld().spawnParticle(Particle.REDSTONE, loc, 0, r, g, b, 1);
 
