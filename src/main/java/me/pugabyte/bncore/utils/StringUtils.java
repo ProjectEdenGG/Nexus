@@ -148,6 +148,16 @@ public class StringUtils {
 				.collect(Collectors.joining(" "));
 	}
 
+	public static String camelCaseWithUnderscores(String text) {
+		if (text == null || text.isEmpty()) {
+			return text;
+		}
+
+		return Arrays.stream(text.split("_"))
+				.map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase())
+				.collect(Collectors.joining("_"));
+	}
+
 	public static String listFirst(String string, String delimiter) {
 		return string.split(delimiter)[0];
 	}
