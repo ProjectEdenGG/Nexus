@@ -28,4 +28,8 @@ public class Koda {
 		Discord.send("<@&&f331634959351545857> **>** " + message, Channel.BRIDGE);
 	}
 
+	public static void announce(String message) {
+		Discord.send(message, Channel.ANNOUNCEMENTS);
+	}
+
 }

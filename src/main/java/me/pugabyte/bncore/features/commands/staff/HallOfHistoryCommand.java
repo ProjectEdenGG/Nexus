@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -8,54 +9,54 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.hallofhistory.HallOfHistory;
+import me.pugabyte.bncore.models.hallofhistory.HallOfHistory.RankHistory;
 import me.pugabyte.bncore.models.hallofhistory.HallOfHistoryService;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
-import me.pugabyte.bncore.models.warps.Warp;
-import me.pugabyte.bncore.models.warps.WarpService;
-import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static me.pugabyte.bncore.utils.StringUtils.shortDateFormat;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @Aliases("hoh")
 public class HallOfHistoryCommand extends CustomCommand {
-
-	WarpService warpService = new WarpService();
-	NerdService nerdService = new NerdService();
-	HallOfHistoryService hohService = new HallOfHistoryService();
+	HallOfHistoryService service = new HallOfHistoryService();
 
 	public HallOfHistoryCommand(CommandEvent event) {
 		super(event);
 	}
 
-	@Path()
+	@Path
 	void warp() {
-		Warp warp = warpService.get("hallofhistory", WarpType.NORMAL);
-		if (warp == null) error("The HOH warp is not set.");
-		warp.teleport(player());
+		runCommand("warp hallofhistory");
 	}
 
 	@Path("view <player>")
 	void view(OfflinePlayer target) {
 		send("&e&l" + target.getName());
 		line();
-		for (HallOfHistory hoh : hohService.getHistory(target.getUniqueId())) {
+		HallOfHistory hallOfHistory = service.get(target.getUniqueId());
+		for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
 			JsonBuilder builder = new JsonBuilder();
-			builder.next("  " + (hoh.isCurrent() ? "&2Current" : "&cFormer") + " " + Rank.valueOf(hoh.getRank()).getPrefix().replaceAll("&[ol]", ""));
-			if (player().hasPermission("hoh.edit"))
-				builder.next("  &c[x]").command("hoh removerankconfirm " + target.getName() + " " + (hoh.isCurrent() ? "current " : "former ") + hoh.getRank());
+			builder.next("  " + (rankHistory.isCurrent() ? "&2Current" : "&cFormer") + " " + rankHistory.getRank().getColor() + rankHistory.getRank().plain());
+			if (isPlayer() && player().hasPermission("hoh.edit"))
+				builder.next("  &c[x]").command("/hoh removerank " + target.getName() + " " + getRankCommandArgs(rankHistory));
+
 			send(builder);
-			send("   &3Promotion Date: &3" + StringUtils.shortDateFormat(hoh.getPromotionDate()));
-			send("   &3Resignation Date: &3" + StringUtils.shortDateFormat(hoh.getResignationDate()));
+			send("    &ePromotion Date: &3" + shortDateFormat(rankHistory.getPromotionDate()));
+			if (rankHistory.getResignationDate() != null)
+				send("    &eResignation Date: &3" + shortDateFormat(rankHistory.getResignationDate()));
 		}
+
 		line();
-		Nerd nerd = nerdService.get(target.getUniqueId());
+		Nerd nerd = new NerdService().get(target.getUniqueId());
 		send(" &eAbout me: &3" + nerd.getAbout());
 	}
 
@@ -67,108 +68,57 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Permission("hoh.edit")
-	@Path("addrank <player> <current|former> <rank> [p:promotionDate] [r:resignationDate]")
-	void addRank(OfflinePlayer target, String currentParam, String rankParam) {
-		boolean current;
-		Rank rank;
-		LocalDate promotion = null;
-		LocalDate resignation = null;
-		if (currentParam.equalsIgnoreCase("current"))
-			current = true;
-		else if (currentParam.equalsIgnoreCase("former") || currentParam.equalsIgnoreCase("past"))
-			current = false;
-		else {
-			error("Argument 2 must be \"current\" or \"former\"");
-			return;
-		}
-		switch (rankParam.toLowerCase()) {
-			case "owner":
-				if (!target.getName().equalsIgnoreCase("pugabyte"))
-					error("You cannot set that player to owner.");
-				rank = Rank.OWNER;
-				break;
-			case "admin":
-			case "administrator":
-				rank = Rank.ADMIN;
-				break;
-			case "op":
-			case "operator":
-				rank = Rank.OPERATOR;
-				break;
-			case "mod":
-			case "moderator":
-				rank = Rank.MODERATOR;
-				break;
-			case "arch":
-			case "architect":
-				rank = Rank.ARCHITECT;
-				break;
-			case "builder":
-				rank = Rank.BUILDER;
-				break;
-			default:
-				error("Unknown rank");
-				return;
-		}
-		try {
-			if (arg(3) != null && (arg(3).startsWith("p:") || arg(3).startsWith("r:"))) {
-				String date = StringUtils.right(arg(3), 10);
-				if (arg(3).startsWith("p:")) {
-					promotion = LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-				} else {
-					resignation = LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-				}
-			}
-			if (arg(4) != null && (arg(4).startsWith("p:") || arg(4).startsWith("r:"))) {
-				String date = StringUtils.right(arg(4), 10);
-				if (arg(3).startsWith("p:")) {
-					promotion = LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-				} else {
-					resignation = LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-				}
-			}
-		} catch (DateTimeParseException ex) {
-			error("Invalid date format. Correct format: &e(MM/dd/yyyy)");
-		}
-		HallOfHistory history = new HallOfHistory(target.getUniqueId().toString(), rank.name(), current, promotion, resignation);
-		hohService.save(history);
-		send(PREFIX + "Successfully saved data for &e" + target.getName());
+	@Path("addRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
+	void addRank(OfflinePlayer target, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
+		boolean current = "current".equalsIgnoreCase(when);
+
+		if (!current && resignation == null)
+			error("Resignation date was not provided");
+
+		HallOfHistory history = service.get(target);
+		history.getRankHistory().add(new RankHistory(rank, current, promotion, resignation));
+		service.save(history);
+		send(PREFIX + "Successfully saved rank data for &e" + target.getName());
 	}
 
 	@Permission("hoh.edit")
-	@Path("removerank <player> <current|formal> <rank>")
-	void removeRank(OfflinePlayer player, String current, String rank) {
-		if (current.equalsIgnoreCase("current") || current.equalsIgnoreCase("former"))
-			error("Argument 2 must be either \"current\" or \"former\"");
-		try {
-			Rank.valueOf(rank.toUpperCase());
-		} catch (Exception ex) {
-			error("Invalid rank");
-		}
-		removeRankConfirm(player, current, rank);
-	}
+	@Path("removeRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
+	void removeRankConfirm(OfflinePlayer player, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
+		boolean current = "current".equalsIgnoreCase(when);
 
-	@Permission("hoh.edit")
-	@Path("removerankConfirm <player> <current|formal> <rank>")
-	void removeRankConfirm(OfflinePlayer player, String current, String rank) {
-		boolean bol;
-		if (current.equalsIgnoreCase("current"))
-			bol = true;
-		else bol = false;
-		MenuUtils.confirmMenu(player(), MenuUtils.ConfirmationMenu.builder()
+		HallOfHistory history = service.get(player.getUniqueId());
+		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder()
 				.title("Remove rank from " + player.getName() + "?")
 				.onConfirm((item) -> {
-					hohService.delete(player.getUniqueId(), rank, bol);
-					send(PREFIX + "Removed the rank from &e" + player.getName());
+					for (RankHistory rankHistory : new ArrayList<>(history.getRankHistory())) {
+						if (!new RankHistory(rank, current, promotion, resignation).equals(rankHistory)) continue;
+
+						history.getRankHistory().remove(rankHistory);
+						service.save(history);
+						send(PREFIX + "Removed the rank from &e" + player.getName());
+						send(json(PREFIX + "&eClick here &3to generate a command to re-add rank")
+								.suggest("/hoh addrank " + player.getName() + " " + getRankCommandArgs(rankHistory)));
+						return;
+					}
+					send(PREFIX + "Could not find the rank to delete");
 				}).build());
+	}
+
+	private String getRankCommandArgs(RankHistory rankHistory) {
+		String command = (rankHistory.isCurrent() ? "Current" : "Former") + " " + rankHistory.getRank() + " ";
+		if (rankHistory.getPromotionDate() != null)
+			command += shortDateFormat(rankHistory.getPromotionDate()) + " ";
+		if (rankHistory.getResignationDate() != null)
+			command += shortDateFormat(rankHistory.getResignationDate());
+		return command.trim();
 	}
 
 	@Permission("hoh.edit")
 	@Path("clear <player>")
 	void clear(OfflinePlayer player) {
-		for (HallOfHistory hoh : hohService.getHistory(player.getUniqueId())) {
-			hohService.delete(player.getUniqueId(), hoh.getRank(), hoh.isCurrent());
-		}
+		HallOfHistory history = service.get(player.getUniqueId());
+		history.getRankHistory().clear();
+		service.save(history);
 		send(PREFIX + "Cleared all data for &e" + player.getName());
 	}
 
@@ -176,40 +126,27 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Permission("hoh.edit")
 	void setWarp() {
 		runCommand("blockcenter");
-		Tasks.wait(3, () -> {
-			Warp warp = warpService.get("hallofhistory", WarpType.NORMAL);
-			if (warp == null) {
-				warp = new Warp("hallofhistory", player().getLocation(), WarpType.NORMAL.name());
-			} else
-				warp.setLocation(player().getLocation());
-			warpService.save(warp);
-			send(PREFIX + "Set the HOH warp to your current location");
-		});
+		Tasks.wait(3, () -> runCommand("warps set hallofhistory"));
 	}
 
 	@Path("expand")
 	@Permission("hoh.edit")
 	void expand() {
-		send(PREFIX + "Expanding HOH. &c&lDon't move!");
+		send(PREFIX + "Expanding HOH. &4&lDon't move!");
 		int wait = 40;
-		Tasks.wait(wait, () -> {
-			Warp warp = warpService.get("hallofhistory", WarpType.NORMAL);
-			warp.teleport(player());
-			warp.setLocation(player().getLocation().clone().add(16, 0, 0));
-			warpService.save(warp);
-		});
-		Tasks.wait(wait += 5, () -> runCommand("/pos1"));
+		AtomicReference<Location> newLocation = new AtomicReference<>(player().getLocation());
+		Tasks.wait(wait, () -> runCommand("/warp hallofhistory"));
+		Tasks.wait(wait += 20, () -> newLocation.set(player().getLocation().add(16, 0, 0).clone()));
+		Tasks.wait(wait += 3, () -> runCommand("/pos1"));
 		Tasks.wait(wait += 3, () -> runCommand("/pos2"));
 		Tasks.wait(wait += 3, () -> runCommand("/expand 7"));
 		Tasks.wait(wait += 3, () -> runCommand("/expand 15 s"));
 		Tasks.wait(wait += 3, () -> runCommand("/expand 15 n"));
 		Tasks.wait(wait += 3, () -> runCommand("/expand 10 e"));
 		Tasks.wait(wait += 3, () -> runCommand("/expandv 10"));
-		Tasks.wait(wait += 30, () -> runCommand("/move 16 e"));
-		Tasks.wait(wait += 40, () -> {
-			Warp warp = warpService.get("hallofhistory", WarpType.NORMAL);
-			warp.teleport(player());
-		});
+		Tasks.wait(wait += 3, () -> runCommand("/move 16 e"));
+		Tasks.wait(wait += 20, () -> player().teleport(newLocation.get()));
+		Tasks.wait(wait += 5, () -> runCommand("/hoh setwarp"));
 		Tasks.wait(wait += 5, () -> runCommand("/schem load hoh-expansion"));
 		Tasks.wait(wait += 20, () -> runCommand("/paste"));
 		Tasks.wait(wait += 20, () -> runCommand("/contract 17"));
@@ -217,8 +154,9 @@ public class HallOfHistoryCommand extends CustomCommand {
 		Tasks.wait(wait += 3, () -> runCommand("/contract 1"));
 		Tasks.wait(wait += 3, () -> runCommand("/contract 12 d"));
 		Tasks.wait(wait += 3, () -> runCommand("/contracth 5"));
-		Tasks.wait(wait += 30, () -> runCommand("/contract 3 u"));
+		Tasks.wait(wait += 3, () -> runCommand("/contract 3 u"));
 		Tasks.wait(wait += 3, () -> runCommand("/cut"));
+		Tasks.wait(wait += 3, () -> runCommand("/expand -1"));
 		Tasks.wait(wait += 3, () -> runCommand("/contract -1"));
 		Tasks.wait(wait += 3, () -> runCommand("/stack 1"));
 		Tasks.wait(wait += 3, () -> runCommand("/expand -15"));
@@ -230,10 +168,11 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Path("about <about...>")
 	void about(String about) {
-		Nerd nerd = nerdService.get(player());
-		nerd.setAbout(about);
-		nerdService.save(nerd);
-		send(PREFIX + "Set your about to: &e" + about);
+		NerdService service = new NerdService();
+		Nerd nerd = service.get(player());
+		nerd.setAbout(stripColor(about));
+		service.save(nerd);
+		send(PREFIX + "Set your about to: &e" + nerd.getAbout());
 	}
 
 }

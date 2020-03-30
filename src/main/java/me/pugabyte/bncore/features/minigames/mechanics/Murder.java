@@ -90,7 +90,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
 
-		BNCore.log("Alive players: " + event.getMatch().getAlivePlayers());
+		BNCore.log("Alive players: " + event.getMatch().getAliveMinigamers());
 
 		Utils.runConsoleCommand("skmurder stop " + event.getMatch().getArena().getName());
 		Utils.runConsoleCommand("skmurder clearentities " + event.getMatch().getArena().getName());
@@ -103,7 +103,7 @@ public class Murder extends UnbalancedTeamMechanic {
 		Utils.runConsoleCommand("skmurder start " + event.getMatch().getArena().getName());
 		Utils.runConsoleCommand("skmurder clearentities " + event.getMatch().getArena().getName());
 
-		List<Minigamer> list = event.getMatch().getAlivePlayers();
+		List<Minigamer> list = event.getMatch().getAliveMinigamers();
 
 		// Don't try to process any further if there's only one player; causes crashes
 		if (list.size() < 2) return;
@@ -195,7 +195,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	private void assignGunner(Match match) {
-		List<Minigamer> innocent = match.getAlivePlayers().stream()
+		List<Minigamer> innocent = match.getAliveMinigamers().stream()
 				.filter(minigamer -> !isMurderer(minigamer))
 				.collect(Collectors.toList());
 
@@ -204,7 +204,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	private void sendAssignMessages(Match match) {
-		match.getAlivePlayers().forEach(minigamer -> {
+		match.getAliveMinigamers().forEach(minigamer -> {
 			if (isMurderer(minigamer))
 				minigamer.tell("You are the &cmurderer&3! Kill everyone in your path, but don't get caught!");
 			else if (isGunner(minigamer))
@@ -274,7 +274,7 @@ public class Murder extends UnbalancedTeamMechanic {
 				.duration(20 * 14)
 				.onSecond(i -> {
 					if (i % 2 == 0)
-						minigamer.getMatch().getAlivePlayers().forEach(_minigamer -> {
+						minigamer.getMatch().getAliveMinigamers().forEach(_minigamer -> {
 							Player player = _minigamer.getPlayer();
 							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.MASTER, 2F, 0.1F);
 							player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
@@ -533,7 +533,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	private Minigamer getMurderer(Match match) {
-		for (Minigamer minigamer : match.getAlivePlayers())
+		for (Minigamer minigamer : match.getAliveMinigamers())
 			if (isMurderer(minigamer.getPlayer()))
 				return minigamer;
 

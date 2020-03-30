@@ -10,6 +10,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -25,6 +26,8 @@ import org.bukkit.util.Vector;
 import java.util.Objects;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.Utils.hidePlayer;
+import static me.pugabyte.bncore.utils.Utils.showPlayer;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
@@ -203,6 +206,9 @@ public class Minigamer {
 
 		this.score += event.getAmount();
 		match.getScoreboard().update();
+		// TODO: This should be in a mechanic (also match#setScore)
+		if (score >= getMatch().getArena().getWinningScore())
+			getMatch().end();
 	}
 
 	public void died() {
@@ -233,12 +239,38 @@ public class Minigamer {
 		}
 	}
 
+	// respawning
+	//     you see alive players = false;
+	//     you see dead players = false;
+	//     alive players see you = false;
+	// spectating
+	//     you see alive players = true;
+	//     you see dead players = true;
+	//     alive players see you = false;
+
 	private void hideAll() {
-		match.getAlivePlayers().forEach(minigamer -> getPlayer().hidePlayer(BNCore.getInstance(), minigamer.getPlayer()));
+		if (respawning)
+			Bukkit.getOnlinePlayers().forEach(_player -> {
+				hidePlayer(_player).from(this);
+				hidePlayer(this).from(_player);
+			});
+		else if (!isAlive)
+			Bukkit.getOnlinePlayers().forEach(_player -> {
+				showPlayer(_player).to(this);
+
+				Minigamer minigamer = PlayerManager.get(_player);
+				if (minigamer.isPlaying(match) && minigamer.isAlive())
+					hidePlayer(_player).from(this);
+			});
+		 else
+			unhideAll();
 	}
 
 	private void unhideAll() {
-		Bukkit.getOnlinePlayers().forEach(minigamer -> getPlayer().showPlayer(BNCore.getInstance(), minigamer.getPlayer()));
+		Bukkit.getOnlinePlayers().forEach(_player -> {
+			showPlayer(player).to(_player);
+			showPlayer(_player).to(player);
+		});
 	}
 
 	public void clearState() {

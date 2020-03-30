@@ -12,6 +12,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.models.setting.Setting;
@@ -30,6 +31,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +40,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.getLastColor;
+import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
 
 @Permission("group.seniorstaff")
 public class BNCoreCommand extends CustomCommand {
@@ -236,5 +239,25 @@ public class BNCoreCommand extends CustomCommand {
 				.filter(worldGroup -> worldGroup.name().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(WorldGroup::toString)
 				.collect(Collectors.toList());
+	}
+
+	@ConverterFor(Rank.class)
+	Rank convertToRank(String value) {
+		try {
+			return Rank.getByString(value);
+		} catch (IllegalArgumentException ignore) {
+			throw new InvalidInputException("Rank from " + value + " not found");
+		}
+	}
+
+	@TabCompleterFor(Rank.class)
+	List<String> tabCompleteRank(String value) {
+		return tabCompleteEnum(Rank.class, value);
+	}
+
+	@ConverterFor(LocalDate.class)
+	LocalDate convertToLocalDate(String value) {
+		try { return parseShortDate(value); } catch (Exception ignore) {}
+		throw new InvalidInputException("Could not parse date");
 	}
 }

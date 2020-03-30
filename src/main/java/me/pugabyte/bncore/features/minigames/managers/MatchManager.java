@@ -61,7 +61,7 @@ public class MatchManager {
 
 	public static void janitor() {
 		List<Match> toRemove = new ArrayList<>();
-		matches.forEach(match -> {
+		new ArrayList<>(matches).forEach(match -> {
 			if (match.getMinigamers() == null || match.getMinigamers().size() == 0) {
 				match.end();
 				toRemove.add(match);

@@ -2,27 +2,29 @@ package me.pugabyte.bncore.models.hallofhistory;
 
 import me.pugabyte.bncore.models.MongoService;
 
-import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class HallOfHistoryService extends MongoService {
-	public static Map<UUID, List<HallOfHistory>> cache = new HashMap<>();
+	public static Map<UUID, HallOfHistory> cache = new HashMap<>();
 
-	public List<HallOfHistory> getHistory(UUID uuid) {
-		return cache.computeIfAbsent(uuid, $ -> {
-			List<HallOfHistory> list;
+	public HallOfHistory get(UUID uuid) {
+		cache.computeIfAbsent(uuid, $ -> {
+			HallOfHistory history = database.createQuery(HallOfHistory.class).field(_id).equal(uuid).first();
+			if (history == null)
+				return new HallOfHistory(uuid);
+			return history;
 		});
+
+		return cache.get(uuid);
 	}
 
-	public HallOfHistory getByAllArgs(UUID uuid, String rank, String current, LocalDate promotionDate, LocalDate resignationDate) {
-		return new HallOfHistory();
-	}
-
-	public void delete(UUID uuid, String rank, boolean current) {
-		database.where("uuid = ? AND rank = ? AND current = ?", uuid, rank, current).delete();
+	public void save(HallOfHistory hallOfHistory) {
+		if (hallOfHistory.getRankHistory() == null || hallOfHistory.getRankHistory().size() == 0)
+			super.delete(hallOfHistory);
+		else
+			super.save(hallOfHistory);
 	}
 
 }
