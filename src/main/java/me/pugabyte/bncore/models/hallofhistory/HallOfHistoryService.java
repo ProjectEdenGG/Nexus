@@ -9,6 +9,10 @@ import java.util.UUID;
 public class HallOfHistoryService extends MongoService {
 	public static Map<UUID, HallOfHistory> cache = new HashMap<>();
 
+	public void clearCache() {
+		cache.clear();
+	}
+
 	public HallOfHistory get(UUID uuid) {
 		cache.computeIfAbsent(uuid, $ -> {
 			HallOfHistory history = database.createQuery(HallOfHistory.class).field(_id).equal(uuid).first();

@@ -38,10 +38,17 @@ public class HallOfHistoryCommand extends CustomCommand {
 		runCommand("warp hallofhistory");
 	}
 
+	@Path("clearCache")
+	@Permission("group.seniorstaff")
+	void clearCache() {
+		service.clearCache();
+		send(PREFIX + "Successfully cleared cache");
+	}
+
 	@Path("view <player>")
 	void view(OfflinePlayer target) {
 		send("&e&l" + target.getName());
-		line();
+		line(4);
 		HallOfHistory hallOfHistory = service.get(target.getUniqueId());
 		for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
 			JsonBuilder builder = new JsonBuilder();
