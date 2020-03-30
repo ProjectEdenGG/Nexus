@@ -316,8 +316,12 @@ public class Match {
 		}
 	}
 
-	public List<Minigamer> getAlivePlayers() {
+	public List<Minigamer> getAliveMinigamers() {
 		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
+	}
+
+	public List<Player> getAlivePlayers() {
+		return minigamers.stream().filter(Minigamer::isAlive).map(Minigamer::getPlayer).collect(Collectors.toList());
 	}
 
 	public List<Minigamer> getUnassignedPlayers() {

@@ -4,6 +4,7 @@ import com.dieselpoint.norm.Query;
 import lombok.Data;
 import me.pugabyte.bncore.models.MySQLService;
 
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
@@ -46,12 +47,16 @@ public class VoteService extends MySQLService {
 	}
 
 	public List<TopVoter> getTopVoters(Month month) {
+		LocalDateTime first = LocalDateTime.now().withMonth(month.getValue()).withDayOfMonth(1);
+		if (first.isAfter(LocalDateTime.now()))
+			first = first.minusYears(1);
+
 		return database.sql(
 				"select uuid, count(*) as count " +
-				"from vote where MONTH(timestamp) = ? " +
+				"from vote where MONTH(timestamp) = ? AND YEAR(timestamp) = ? " +
 				"group by 1 " +
 				"order by count desc")
-				.args(month.getValue())
+				.args(month.getValue(), first.getYear())
 				.results(TopVoter.class);
 	}
 

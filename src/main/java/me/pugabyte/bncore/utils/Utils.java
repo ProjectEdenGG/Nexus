@@ -2,6 +2,7 @@ package me.pugabyte.bncore.utils;
 
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.Rank;
@@ -513,6 +514,54 @@ public class Utils {
 		}
 
 		return null;
+	}
+
+	public static HidePlayer hidePlayer(Player player) {
+		return new HidePlayer(player);
+	}
+
+	public static HidePlayer hidePlayer(Minigamer minigamer) {
+		return new HidePlayer(minigamer.getPlayer());
+	}
+
+	public static ShowPlayer showPlayer(Player player) {
+		return new ShowPlayer(player);
+	}
+
+	public static ShowPlayer showPlayer(Minigamer minigamer) {
+		return new ShowPlayer(minigamer.getPlayer());
+	}
+
+	public static class HidePlayer {
+		private Player player;
+
+		public HidePlayer(Player player) {
+			this.player = player;
+		}
+
+		public void from(Minigamer minigamer) {
+			from(minigamer.getPlayer());
+		}
+
+		public void from(Player player) {
+			player.hidePlayer(BNCore.getInstance(), this.player);
+		}
+	}
+
+	public static class ShowPlayer {
+		private Player player;
+
+		public ShowPlayer(Player player) {
+			this.player = player;
+		}
+
+		public void to(Minigamer minigamer) {
+			to(minigamer.getPlayer());
+		}
+
+		public void to(Player player) {
+			player.showPlayer(BNCore.getInstance(), this.player);
+		}
 	}
 
 }

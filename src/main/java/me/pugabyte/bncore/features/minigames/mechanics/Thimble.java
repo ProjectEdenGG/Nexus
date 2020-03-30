@@ -218,7 +218,7 @@ public final class Thimble extends TeamlessMechanic {
 	private void newRound(Match match) {
 		ThimbleMatchData matchData = match.getMatchData();
 
-		if (match.getAlivePlayers().size() <= 1) {
+		if (match.getAliveMinigamers().size() <= 1) {
 			match.broadcast("Alive Players <= 1, Ending game.");
 			match.end();
 			return;
@@ -240,7 +240,7 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 
 		match.broadcast("New Round!");
-		matchData.setTurnList(new ArrayList<>(match.getAlivePlayers()));
+		matchData.setTurnList(new ArrayList<>(match.getAliveMinigamers()));
 		Collections.shuffle(matchData.getTurnList());
 		match.getTasks().wait(30, () -> nextTurn(match));
 	}

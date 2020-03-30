@@ -31,7 +31,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 		Arena arena = match.getArena();
 		Map<Minigamer, Integer> scores = new HashMap<>();
 
-		match.getAlivePlayers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
+		match.getAliveMinigamers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
 		if (scores.size() == 0) return;
 		int winningScore = getWinningScore(scores.values());
 		List<Minigamer> winners = getWinners(winningScore, scores);
@@ -40,7 +40,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 		if (winningScore == 0 && winners.size() != 1)
 			announcement = "No players scored in " + arena.getDisplayName();
 		else {
-			if (match.getAlivePlayers().size() == winners.size() && match.getAlivePlayers().size() > 1)
+			if (match.getAliveMinigamers().size() == winners.size() && match.getAliveMinigamers().size() > 1)
 				announcement = "All players tied in " + arena.getDisplayName();
 			else
 				announcement = getWinnersString(winners) + "&e" + arena.getDisplayName();
@@ -79,7 +79,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 
 	@Override
 	public boolean shouldBeOver(Match match) {
-		return match.getAlivePlayers().size() <= 1;
+		return match.getAliveMinigamers().size() <= 1;
 	}
 
 }

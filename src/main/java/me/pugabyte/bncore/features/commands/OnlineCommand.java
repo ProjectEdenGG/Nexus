@@ -48,7 +48,7 @@ public class OnlineCommand extends CustomCommand {
 			List<Nerd> nerds = rank.getOnlineNerds().stream().filter(this::canSee).collect(Collectors.toList());
 			if (nerds.size() == 0) return;
 
-			JsonBuilder builder = new JsonBuilder(rank + "s&f: ");
+			JsonBuilder builder = new JsonBuilder(rank.withFormat() + "s&f: ");
 
 			nerds.forEach(nerd -> getNameWithModifiers(nerd, builder));
 

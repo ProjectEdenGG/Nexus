@@ -39,7 +39,7 @@ public class AntiCampingTask {
 
 	public void start() {
 		taskId = match.getTasks().repeat(Time.SECOND, Time.SECOND, () -> {
-			for (Minigamer minigamer : match.getAlivePlayers()) {
+			for (Minigamer minigamer : match.getAliveMinigamers()) {
 				if (match.isEnded()) {
 					stop();
 					return;

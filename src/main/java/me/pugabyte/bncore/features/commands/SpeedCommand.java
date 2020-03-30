@@ -28,7 +28,7 @@ public class SpeedCommand extends CustomCommand {
 			return;
 		}
 
-		if (isIntArg(1))
+		if (!isIntArg(1))
 			error("First argument must be a number");
 
 		int speed = intArg(1);

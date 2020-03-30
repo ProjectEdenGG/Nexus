@@ -5,7 +5,6 @@ import de.tr7zw.itemnbtapi.NBTTileEntity;
 import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -153,26 +152,6 @@ public class Misc implements Listener {
 			Tasks.wait(20, () -> Utils.runCommand(player, "cheats off"));
 	}
 
-	public void joinMinigames(Player player) {
-		if (Utils.isVanished(player))
-			new JsonBuilder()
-					.next("You've joined the gameworld vanished. Click here to unvanish and join the minigames channel.")
-					.suggest("/unvanishgameworld")
-					.send(player);
-		else
-			Utils.runCommand(player, "ch join m");
-	}
-
-	public void joinCreative(Player player) {
-		if (Utils.isVanished(player))
-			new JsonBuilder()
-					.next("You've joined creative vanished. Click here to unvanish and join the creative channel.")
-					.suggest("/unvanishcreative")
-					.send(player);
-		else
-			Utils.runCommand(player, "ch join c");
-	}
-
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Tasks.wait(5, () -> {
@@ -182,5 +161,13 @@ public class Misc implements Listener {
 			else if (worldGroup == WorldGroup.CREATIVE)
 				joinCreative(event.getPlayer());
 		});
+	}
+
+	public void joinMinigames(Player player) {
+		Utils.runCommand(player, "ch join m");
+	}
+
+	public void joinCreative(Player player) {
+		Utils.runCommand(player, "ch join c");
 	}
 }

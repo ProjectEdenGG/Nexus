@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -288,6 +289,10 @@ public class StringUtils {
 
 	public static String shortTimeFormat(LocalDateTime time) {
 		return time.format(DateTimeFormatter.ofPattern("h:mm a"));
+	}
+
+	public static LocalDate parseShortDate(String input) {
+		return LocalDate.from(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).parse(input));
 	}
 
 	public static String getNumberSuffix(int number) {

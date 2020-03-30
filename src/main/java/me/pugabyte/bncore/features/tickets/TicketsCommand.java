@@ -83,7 +83,7 @@ public class TicketsCommand extends CustomCommand {
 	@Path("confirmclose <id>")
 	void confirmClose(Ticket ticket) {
 		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder().onConfirm((e) -> {
-			if (ticket.isOpen())
+			if (service.get(ticket.getId()).isOpen())
 				close(ticket);
 			else
 				send(e.getPlayer(), PREFIX + "&cTicket already closed");

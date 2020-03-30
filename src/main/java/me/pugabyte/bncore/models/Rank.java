@@ -30,6 +30,7 @@ public enum Rank {
 	VETERAN("&6&l", true, false),
 	BUILDER("&5", true, true),
 	ARCHITECT("&5&l", true, true),
+	MINIGAME_MODERATOR("&b&o", true, true),
 	MODERATOR("&b&o", true, true),
 	OPERATOR("&3&o", true, true),
 	ADMIN("&9&o", true, true),
@@ -52,12 +53,15 @@ public enum Rank {
 		return "";
 	}
 
-	@Override
-	public String toString() {
+	public String withFormat() {
 		return format + StringUtils.camelCase(name());
 	}
 
-	public String noFormat() {
+	public String withColor() {
+		return getColor() + StringUtils.camelCase(name());
+	}
+
+	public String plain() {
 		return StringUtils.camelCase(name());
 	}
 
@@ -107,6 +111,28 @@ public enum Rank {
 				return rank;
 
 		return GUEST;
+	}
+
+	public static Rank getByString(String input) {
+		try {
+			return Rank.valueOf(input.toUpperCase());
+		} catch (IllegalArgumentException missing) {
+			switch (input.toLowerCase()) {
+				case "administrator":
+					return Rank.ADMIN;
+				case "op":
+					return Rank.OPERATOR;
+				case "mod":
+					return Rank.MODERATOR;
+				case "arch":
+					return Rank.ARCHITECT;
+				case "builder":
+					return Rank.BUILDER;
+				case "vet":
+					return Rank.VETERAN;
+			}
+		}
+		return null;
 	}
 
 	public enum Group {

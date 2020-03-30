@@ -41,7 +41,7 @@ public class SuggestCommand extends Command {
 
 				Nerd nerd = new NerdService().get(Utils.getPlayer(args[0]));
 				if (!Arrays.asList(Rank.MEMBER, Rank.TRUSTED).contains(nerd.getRank()))
-					throw new InvalidInputException(nerd.getName() + " is not eligble for promotion (They are " + nerd.getRank().noFormat() + ")");
+					throw new InvalidInputException(nerd.getName() + " is not eligble for promotion (They are " + nerd.getRank().plain() + ")");
 
 				Hours hours = new HoursService().get(nerd);
 
