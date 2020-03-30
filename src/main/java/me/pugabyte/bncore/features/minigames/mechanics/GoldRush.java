@@ -59,8 +59,8 @@ public final class GoldRush extends TeamlessMechanic {
 		super.onStart(event);
 		Match match = event.getMatch();
 		GoldRushArena goldRushArena = match.getArena();
-		createMineStacks(goldRushArena.getMineStackHeight(), match.getTeams().get(0).getSpawnpoints());
-		for (Location loc : match.getTeams().get(0).getSpawnpoints())
+		createMineStacks(goldRushArena.getMineStackHeight(), match.getAliveTeams().get(0).getSpawnpoints());
+		for (Location loc : match.getAliveTeams().get(0).getSpawnpoints())
 			loc.clone().subtract(0, 1, 0).getBlock().setType(Material.GLASS);
 
 		Tasks.Countdown.builder()
@@ -68,7 +68,7 @@ public final class GoldRush extends TeamlessMechanic {
 				.onSecond(i -> match.broadcast("Starting in " + i + "..."))
 				.onComplete(() -> {
 					match.broadcast("Mine!");
-					for (Location location : match.getTeams().get(0).getSpawnpoints())
+					for (Location location : match.getAliveTeams().get(0).getSpawnpoints())
 						location.clone().subtract(0, 1, 0).getBlock().breakNaturally();
 					for (Minigamer minigamer : match.getMinigamers())
 						minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
@@ -81,7 +81,7 @@ public final class GoldRush extends TeamlessMechanic {
 		super.onEnd(event);
 		if (event.getMatch().isStarted()) {
 			GoldRushArena goldRushArena = event.getMatch().getArena();
-			for (Location location : event.getMatch().getTeams().get(0).getSpawnpoints()) {
+			for (Location location : event.getMatch().getAliveTeams().get(0).getSpawnpoints()) {
 				removeMineStacks(goldRushArena.getMineStackHeight(), location);
 			}
 		}

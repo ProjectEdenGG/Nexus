@@ -81,6 +81,15 @@ public class JMinigamesCommand extends CustomCommand {
 		getRunningMatch(arena).end();
 	}
 
+	@Path("setTime <seconds>")
+	@Permission("manage")
+	void setTime(int seconds) {
+		if (minigamer.getMatch() == null)
+			error("You are not in a match");
+		minigamer.getMatch().getTimer().setTime(seconds);
+		minigamer.getMatch().getTimer().broadcastTimeLeft();
+	}
+
 	@Path("create <name>")
 	@Permission("manage")
 	void create(String name) {

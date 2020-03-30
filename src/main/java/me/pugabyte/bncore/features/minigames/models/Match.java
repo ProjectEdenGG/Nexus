@@ -72,8 +72,8 @@ public class Match {
 		return minigamers.stream().map(Minigamer::getPlayer).collect(Collectors.toList());
 	}
 
-	public List<Team> getTeams() {
-		return minigamers.stream().filter(minigamer -> minigamer.getTeam() != null).map(Minigamer::getTeam).collect(Collectors.toList());
+	public List<Team> getAliveTeams() {
+		return getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam() != null).map(Minigamer::getTeam).collect(Collectors.toList());
 	}
 
 	public <T extends Arena> T getArena() {
@@ -359,11 +359,11 @@ public class Match {
 
 		void start() {
 			if (time > 0) {
-				match.getTasks().wait(1, () -> match.broadcast("&e" + (time + 1) + " &7seconds left..."));
+				match.getTasks().wait(1, () -> broadcastTimeLeft(time + 1));
 				taskId = match.getTasks().repeat(0, Time.SECOND, () -> {
 					if (--time > 0) {
 						if (broadcasts.contains(time)) {
-							match.broadcast("&e" + time + " &7seconds left...");
+							broadcastTimeLeft();
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, .75F, .6F));
 						}
 					} else {
@@ -377,6 +377,14 @@ public class Match {
 					Utils.callEvent(event);
 				});
 			}
+		}
+
+		public void broadcastTimeLeft() {
+			broadcastTimeLeft(time);
+		}
+
+		public void broadcastTimeLeft(int time) {
+			match.broadcast("&e" + time + " &7seconds left...");
 		}
 
 		void stop() {

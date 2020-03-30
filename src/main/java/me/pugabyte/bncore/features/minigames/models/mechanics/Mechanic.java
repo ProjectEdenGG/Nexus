@@ -155,7 +155,7 @@ public abstract class Mechanic implements Listener {
 		Map<String, Integer> lines = new HashMap<>();
 
 		if (match.getArena().getMechanic() instanceof TeamMechanic)
-			for (Team team : match.getTeams())
+			for (Team team : match.getAliveTeams())
 				lines.put("- " + team.getColoredName(), team.getScore(match));
 
 		// TODO: Max number of lines is 15, only show max/min scores

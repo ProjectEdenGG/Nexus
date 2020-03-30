@@ -80,7 +80,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 			new ItemBuilder(Material.LEATHER_BOOTS).glow().build(),
 			minigamer -> {
 				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 20), true);
-				minigamer.getMatch().getTasks().wait(10 * 20, () -> minigamer.getMatch().getTeams().get(0).getLoadout().apply(minigamer));
+				minigamer.getMatch().getTasks().wait(10 * 20, () -> minigamer.getMatch().getAliveTeams().get(0).getLoadout().apply(minigamer));
 			});
 
 	PowerUpUtils.PowerUp POSITIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", true,
