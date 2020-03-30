@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import litebans.api.Entry;
 import litebans.api.Events;
 import me.pugabyte.bncore.features.discord.Discord;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.hours.Hours;

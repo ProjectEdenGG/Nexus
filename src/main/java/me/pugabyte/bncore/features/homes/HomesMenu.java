@@ -7,7 +7,7 @@ import me.pugabyte.bncore.features.homes.providers.EditHomesProvider;
 import me.pugabyte.bncore.features.homes.providers.SetHomeProvider;
 import me.pugabyte.bncore.features.menus.SignMenuFactory;
 import me.pugabyte.bncore.framework.exceptions.BNException;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;

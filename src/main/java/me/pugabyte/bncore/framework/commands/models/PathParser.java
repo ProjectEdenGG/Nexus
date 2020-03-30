@@ -234,7 +234,7 @@ class PathParser {
 			completions.addAll(helper.tabComplete());
 		}
 
-		return completions;
+		return completions.stream().distinct().collect(Collectors.toList());
 	}
 
 	Method match(List<String> args) {

@@ -372,7 +372,7 @@ public enum Package {
 	public List<String> getCommands() {
 		return Arrays.stream(getField().getAnnotationsByType(Command.class))
 				.map(Command::value)
-				.map(StringUtils::noSlash)
+				.map(StringUtils::trimFirst)
 				.collect(Collectors.toList());
 	}
 
@@ -383,7 +383,7 @@ public enum Package {
 	public List<String> getExpirationCommands() {
 		return Arrays.stream(getField().getAnnotationsByType(ExpirationCommand.class))
 				.map(ExpirationCommand::value)
-				.map(StringUtils::noSlash)
+				.map(StringUtils::trimFirst)
 				.collect(Collectors.toList());
 	}
 

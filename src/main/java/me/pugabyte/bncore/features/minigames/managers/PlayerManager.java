@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import org.bukkit.entity.Player;
 
 public class PlayerManager {
+
 	public static Minigamer get(Player player) {
 		for (Match match : MatchManager.getAll()) {
 			for (Minigamer minigamer : match.getMinigamers()) {
