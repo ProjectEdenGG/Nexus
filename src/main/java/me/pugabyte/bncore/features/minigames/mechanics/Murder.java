@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -57,8 +58,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Scoreboard(teams = false, sidebarType = Type.NONE)
 @Railgun(damageWithConsole = true)
+@Scoreboard(teams = false, sidebarType = Type.NONE)
 public class Murder extends UnbalancedTeamMechanic {
 
 	@Override
@@ -91,10 +92,24 @@ public class Murder extends UnbalancedTeamMechanic {
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
-
-		BNCore.log("Alive players: " + event.getMatch().getAliveMinigamers());
-
 		Utils.runConsoleCommand("skmurder clearentities " + event.getMatch().getArena().getName());
+	}
+
+	@Override
+	public void announceWinners(Match match) {
+		boolean murdererAlive = match.getAliveTeams().stream().anyMatch(team -> team.getColor() == ChatColor.RED);
+
+		String broadcast = "";
+		if (!murdererAlive)
+			broadcast = "The murderer has been stopped on";
+		else
+			if (match.getTimer().getTime() != 0)
+				broadcast = "The &cMurderer &3has won";
+			else
+				broadcast = "The &9innocents &3have won";
+
+
+		Minigames.broadcast(broadcast + " &e" + match.getArena().getDisplayName());
 	}
 
 	@Override

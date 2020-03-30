@@ -291,6 +291,7 @@ public class Minigamer {
 		player.setTotalExperience(0);
 		player.setLevel(0);
 		player.getInventory().setHeldItemSlot(0);
+		player.setFoodLevel(20);
 
 		if (match.getArena().getMechanic().shouldClearInventory())
 			player.getInventory().clear();
