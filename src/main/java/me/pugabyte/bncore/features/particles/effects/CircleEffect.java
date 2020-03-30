@@ -13,6 +13,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CircleEffect {
@@ -57,6 +58,7 @@ public class CircleEffect {
 				disX /= 255.0;
 				disY /= 255.0;
 				disZ /= 255.0;
+				disX = disX == 0.0 ? 0.001 : disX;
 			}
 		}
 
@@ -77,11 +79,11 @@ public class CircleEffect {
 		final AtomicDouble blue = new AtomicDouble(disZ);
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 		AtomicInteger step = new AtomicInteger(0);
-		long millis = System.currentTimeMillis();
+		UUID uuid = UUID.randomUUID();
 
 		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				ParticleUtils.cancelParticle(millis, player);
+				ParticleUtils.cancelParticle(uuid, player);
 				return;
 			}
 
@@ -114,6 +116,6 @@ public class CircleEffect {
 				ticksElapsed.incrementAndGet();
 		});
 
-		ParticleUtils.addToMap(millis, player, taskId);
+		ParticleUtils.addToMap(uuid, player, taskId);
 	}
 }

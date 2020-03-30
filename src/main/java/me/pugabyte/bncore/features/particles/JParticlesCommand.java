@@ -14,6 +14,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
@@ -65,6 +66,15 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 		Vector vector = new Vector(0, 1.5, 0);
 		Location loc = player().getLocation().add(vector);
 		CircleEffect.builder().player(player()).location(loc).updateVector(vector).density(100).radius(1.5).ticks(20 * 20).randomRotation(true).rainbow(true).fast(true).build();
+	}
+
+	@Path("BNRings")
+	void bnrings() {
+		Vector vector = new Vector(0, 1.5, 0);
+		Location loc = player().getLocation().add(vector);
+		CircleEffect.builder().player(player()).location(loc).updateVector(vector).density(100).radius(1.5).ticks(20 * 20).randomRotation(true).color(Color.TEAL).fast(true).build();
+		Tasks.wait(20, () ->
+				CircleEffect.builder().player(player()).location(loc).updateVector(vector).density(100).radius(1.5).ticks(20 * 20).randomRotation(true).color(Color.YELLOW).fast(true).build());
 	}
 
 	@Path("dot")

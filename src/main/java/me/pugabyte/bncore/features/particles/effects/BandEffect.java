@@ -10,7 +10,9 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BandEffect {
@@ -45,6 +47,7 @@ public class BandEffect {
 				disX /= 255.0;
 				disY /= 255.0;
 				disZ /= 255.0;
+				disX = disX == 0.0 ? 0.001 : disX;
 			}
 		}
 
@@ -57,15 +60,17 @@ public class BandEffect {
 		final AtomicDouble green = new AtomicDouble(disY);
 		final AtomicDouble blue = new AtomicDouble(disZ);
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
-		long millis = System.currentTimeMillis();
+		UUID uuid = UUID.randomUUID();
 
 		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				ParticleUtils.cancelParticle(millis, player);
+				ParticleUtils.cancelParticle(uuid, player);
 				return;
 			}
 
 			Location loc = player.getLocation();
+			Vector backward = player.getEyeLocation().getDirection().multiply(0.5);
+			loc = loc.subtract(backward);
 			for (int i = 0; i < 15; ++i) {
 				loc = loc.add(0, 0.1, 0);
 				loc.getWorld().spawnParticle(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
@@ -82,6 +87,6 @@ public class BandEffect {
 				ticksElapsed.incrementAndGet();
 		});
 
-		ParticleUtils.addToMap(millis, player, taskId);
+		ParticleUtils.addToMap(uuid, player, taskId);
 	}
 }

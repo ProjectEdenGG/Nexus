@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DotEffect {
@@ -39,13 +40,14 @@ public class DotEffect {
 			count = 0;
 			speed = 1;
 			if (rainbow) {
-				disX = 1;
+				disX = 255;
 				disY = 0;
 				disZ = 0;
 			} else {
-				disX /= 255.0;
-				disY /= 255.0;
-				disZ /= 255.0;
+				disX /= 255.0F;
+				disY /= 255.0F;
+				disZ /= 255.0F;
+				disX = disX == 0.0 ? 0.001 : disX;
 			}
 		}
 
@@ -58,11 +60,11 @@ public class DotEffect {
 		final AtomicDouble green = new AtomicDouble(disY);
 		final AtomicDouble blue = new AtomicDouble(disZ);
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
-		long millis = System.currentTimeMillis();
+		UUID uuid = UUID.randomUUID();
 
 		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				ParticleUtils.cancelParticle(millis, player);
+				ParticleUtils.cancelParticle(uuid, player);
 				return;
 			}
 
@@ -78,7 +80,7 @@ public class DotEffect {
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
 		});
-		ParticleUtils.addToMap(millis, player, taskId);
+		ParticleUtils.addToMap(uuid, player, taskId);
 
 	}
 }
