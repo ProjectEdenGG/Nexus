@@ -56,7 +56,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 
 				packageType.getPermissions().forEach(permission -> PermissionsEx.getUser(uuid).removePermission(permission));
 				packageType.getExpirationCommands().stream()
-						.map(StringUtils::noSlash)
+						.map(StringUtils::trimFirst)
 						.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(uuid).getName()))
 						.forEach(Utils::runConsoleCommand);
 
@@ -120,7 +120,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 			PermissionUser pexUser = PermissionsEx.getUser(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
 			packageType.getPermissions().forEach(pexUser::addPermission);
 			packageType.getCommands().stream()
-					.map(StringUtils::noSlash)
+					.map(StringUtils::trimFirst)
 					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))
 					.forEach(Utils::runConsoleCommand);
 

@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import static me.pugabyte.bncore.utils.StringUtils.noSlash;
+import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 
 @NoArgsConstructor
 public class CommandListener implements Listener {
@@ -18,7 +18,7 @@ public class CommandListener implements Listener {
 
 			event.setCancelled(true);
 			String to = Commands.getRedirects().get(event.getMessage());
-			Utils.runCommand(event.getPlayer(), noSlash(to));
+			Utils.runCommand(event.getPlayer(), trimFirst(to));
 			return;
 		}
 	}

@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.minigames.listeners;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
@@ -51,8 +52,10 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (minigamer.getMatch() == null) return;
 		if (minigamer.canTeleport()) return;
+		if (event.getFrom().distance(event.getTo()) < 1) return;
 
 		event.setCancelled(true);
+		BNCore.log("Minigamer tried to teleport to " + event.getTo() + " but was denied");
 		minigamer.tell("You cannot teleport while in a game!");
 	}
 

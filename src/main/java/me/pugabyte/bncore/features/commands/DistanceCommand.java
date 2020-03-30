@@ -4,7 +4,7 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
@@ -23,7 +23,7 @@ public class DistanceCommand extends CustomCommand {
 			error("Player is not in the same world.");
 
 		if (Utils.isVanished(target) && !player().hasPermission("vanish.see"))
-			throw new PlayerNotFoundException();
+			throw new PlayerNotOnlineException(target);
 
 		send(PREFIX + player().getLocation().distance(target.getLocation()) + " blocks.");
 	}

@@ -19,9 +19,13 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RelativeLocation;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -113,10 +117,27 @@ public class JMinigamesCommand extends CustomCommand {
 		Minigames.getMenus().openArenaMenu(player(), arena);
 	}
 
-	@Path("(teleport|tp) <arena>")
+	@Path("warp <arena>")
 	@Permission("manage")
 	void teleport(Arena arena) {
 		arena.teleport(minigamer);
+	}
+
+	@Path("(tp|teleport) <player> [player]")
+	@Permission("manage")
+	void teleport(Minigamer minigamer1, Minigamer minigamer2) {
+		if (minigamer2 == null)
+			minigamer.teleport(minigamer1.getPlayer().getLocation());
+		else
+			minigamer1.teleport(minigamer2.getPlayer().getLocation());
+	}
+
+	@Path("tppos <player> <x> <y> <z> [yaw] [pitch]")
+	@Permission("manage")
+	void teleport(Minigamer minigamer, String x, String y, String z, String yaw, String pitch) {
+		Location location = minigamer.getPlayer().getLocation();
+		RelativeLocation.modify(location).x(x).y(y).z(z).yaw(yaw).pitch(pitch).update();
+		minigamer.teleport(location);
 	}
 
 	@Path("(delete|remove) <arena>")
@@ -228,7 +249,10 @@ public class JMinigamesCommand extends CustomCommand {
 	Minigamer convertToMinigamer(String value) {
 		if ("self".equalsIgnoreCase(value))
 			return minigamer;
-		return PlayerManager.get(Utils.getPlayer(value).getPlayer());
+		OfflinePlayer player = Utils.getPlayer(value);
+		if (!player.isOnline())
+			throw new PlayerNotOnlineException(player);
+		return PlayerManager.get(player.getPlayer());
 	}
 
 	@TabCompleterFor(Minigamer.class)

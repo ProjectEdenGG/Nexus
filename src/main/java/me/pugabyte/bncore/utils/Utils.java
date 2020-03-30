@@ -1,10 +1,14 @@
 package me.pugabyte.bncore.utils;
 
+import com.google.common.base.Strings;
+import lombok.Data;
+import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
@@ -116,6 +120,7 @@ public class Utils {
 		if (partialName == null || partialName.length() == 0)
 			throw new InvalidInputException("No player name given");
 
+		String original = partialName;
 		partialName = partialName.toLowerCase().trim();
 
 		if (partialName.length() == 36)
@@ -140,7 +145,7 @@ public class Utils {
 				return nerd.getOfflinePlayer();
 		}
 
-		throw new PlayerNotFoundException();
+		throw new PlayerNotFoundException(original);
 	}
 
 	@SneakyThrows
@@ -475,6 +480,15 @@ public class Utils {
 		return true;
 	}
 
+	public static boolean isDouble(String text) {
+		try {
+			Double.parseDouble(text);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
 	public static BlockFace getBlockFaceBetween(BlockFace face1, BlockFace face2) {
 		int x = face1.getModX() + face2.getModX();
 		int y = face1.getModY() + face2.getModY();
@@ -561,6 +575,45 @@ public class Utils {
 
 		public void to(Player player) {
 			player.showPlayer(BNCore.getInstance(), this.player);
+		}
+	}
+
+	public static class RelativeLocation {
+
+		public static Modify modify(Location location) {
+			return new Modify(location);
+		}
+
+		@Data
+		@Accessors(fluent = true)
+		public static class Modify {
+			@NonNull
+			private Location location;
+			private String x;
+			private String y;
+			private String z;
+			private String yaw;
+			private String pitch;
+
+			public Modify(@NonNull Location location) {
+				this.location = location;
+			}
+
+			public void update() {
+				location.setX((x.startsWith("~") ? location.getX() + trim(x) : trim(x)));
+				location.setY((y.startsWith("~") ? location.getY() + trim(y) : trim(y)));
+				location.setZ((z.startsWith("~") ? location.getZ() + trim(z) : trim(z)));
+				location.setYaw((float) (x.startsWith("~") ? location.getYaw() + trim(yaw) : trim(yaw)));
+				location.setPitch((float) (x.startsWith("~") ? location.getPitch() + trim(pitch) : trim(pitch)));
+			}
+		}
+
+		private static double trim(String string) {
+			if (Strings.isNullOrEmpty(string)) return 0;
+			if (Utils.isDouble(string)) return Double.parseDouble(string);
+			string = StringUtils.right(string, string.length() - 1);
+			if (Strings.isNullOrEmpty(string)) return 0;
+			return Double.parseDouble(string);
 		}
 	}
 

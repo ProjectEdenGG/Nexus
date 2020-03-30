@@ -1,11 +1,11 @@
-package me.pugabyte.bncore.features.minigames.mechanics.custom;
+package me.pugabyte.bncore.features.minigames.listeners;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.Minigames;
+import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
-import me.pugabyte.bncore.features.minigames.mechanics.Murder;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
@@ -14,6 +14,8 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -23,14 +25,19 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.material.MaterialData;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class RavensNestEstate extends Murder {
+public class RavensNestEstate implements Listener {
+	protected WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
+	protected WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
+
 	// Sounds & Their Locations
 	private Location musicLocation = new Location(Minigames.getGameworld(), 3075, 60, 1282);
 	private Location fireplaceTrigger1 = new Location(Minigames.getGameworld(), 3087, 25, 1269);
@@ -81,28 +88,39 @@ public class RavensNestEstate extends Murder {
 	private Location doorStudy = new Location(Minigames.getGameworld(), 3079, 24, 1254);
 	private Location doorFireplace = new Location(Minigames.getGameworld(), 3092, 24, 1264);
 
-	@Override
-	public void onStart(MatchStartEvent event) {
-		super.onStart(event);
-		Match match = event.getMatch();
-		soundTasks(match);
+	public boolean isPlayingThis(Minigamer minigamer) {
+		if (minigamer == null || minigamer.getMatch() == null) return false;
+		if (!minigamer.getMatch().getArena().getName().equalsIgnoreCase(getClass().getSimpleName())) return false;
+		return minigamer.isPlaying(ArenaManager.get(getClass().getSimpleName()).getMechanic());
 	}
 
-	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public boolean isPlayingThis(Match match) {
+		if (match == null) return false;
+		return match.getArena().getName().equalsIgnoreCase(getClass().getSimpleName());
+	}
+
+	@EventHandler
+	public void onMatchStart(MatchStartEvent event) {
+		if (!isPlayingThis(event.getMatch())) return;
+		soundTasks(event.getMatch());
+	}
+
+	@EventHandler
+	public void onMatchQuit(MatchQuitEvent event) {
+		if (!isPlayingThis(event.getMinigamer())) return;
 		stopSounds(event.getMinigamer());
-		super.onQuit(event);
 	}
 
-	@Override
-	public void onEnd(MatchEndEvent event) {
+	@EventHandler
+	public void onMatchEnd(MatchEndEvent event) {
+		if (!isPlayingThis(event.getMatch())) return;
 		resetMap(event.getMatch());
-		super.onEnd(event);
 	}
 
-	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	@EventHandler
+	public void onMatchDeath(MinigamerDeathEvent event) {
 		Match match = event.getMatch();
+		if (!isPlayingThis(event.getMinigamer())) return;
 		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(event.getMinigamer().getPlayer().getLocation());
 		for (ProtectedRegion region : regions) {
 			if (region.getId().equalsIgnoreCase(match.getArena().getProtectedRegion("deathzone").getId())) {
@@ -110,25 +128,24 @@ public class RavensNestEstate extends Murder {
 				break;
 			}
 		}
-		super.onDeath(event);
 	}
 
 	@EventHandler
 	public void onEnterRegion(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isPlaying(this)) return;
+		if (!isPlayingThis(minigamer)) return;
 
 		Match match = minigamer.getMatch();
 		if (!event.getRegion().getId().equalsIgnoreCase(match.getArena().getProtectedRegion("deathzone").getId()))
 			return;
-		kill(minigamer);
+		match.getArena().getMechanic().kill(minigamer);
 
 	}
 
 	private void resetMap(Match match) {
 		statusFireplace = false;
-		String fireplaceFile = schemFireplace.replace("[1-8]", "1");
+		String fireplaceFile = schemFireplace + 1;
 		WEUtils.paste(fireplaceFile, doorFireplace);
 
 		Region region = match.getArena().getRegion("torches");
@@ -142,7 +159,6 @@ public class RavensNestEstate extends Murder {
 					block.setData(data);
 				});
 			}
-
 		}
 	}
 
@@ -173,7 +189,7 @@ public class RavensNestEstate extends Murder {
 		match.getTasks().repeat(delay, 3 * 20, () -> {
 			World world = freezerSound.getWorld();
 			world.playSound(freezerSound, Sound.ENTITY_MINECART_RIDING, 0.7F, 0.1F);
-			world.spawnParticle(Particle.FALLING_DUST, freezerSound, 100, 2.5, 1.5, 2.5, 0.000001, 80);
+			world.spawnParticle(Particle.FALLING_DUST, freezerSound, 100, 2.5, 1.5, 2.5, 0.000001, new MaterialData(Material.SNOW_BLOCK));
 		});
 
 		match.getTasks().repeat(delay, 5 * 20, () -> {
@@ -193,15 +209,15 @@ public class RavensNestEstate extends Murder {
 		}
 	}
 
-	@Override
-	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
-		super.onPlayerInteract(minigamer, event);
-
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.isCancelled()) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Material material = event.getClickedBlock().getType();
 		Location loc = event.getClickedBlock().getLocation();
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!isPlayingThis(minigamer)) return;
 		Match match = minigamer.getMatch();
 		switch (material) {
 			case RAILS:
@@ -212,7 +228,7 @@ public class RavensNestEstate extends Murder {
 				break;
 			case REDSTONE_TORCH_OFF:
 			case REDSTONE_TORCH_ON:
-				toggleTorch(loc, event.getClickedBlock(), match);
+//				toggleTorch(loc, event.getClickedBlock(), match);
 				break;
 			case WOOD_BUTTON:
 				String schematic = findDoor(loc, match);
@@ -220,7 +236,6 @@ public class RavensNestEstate extends Murder {
 					toggleDoor(schematic);
 				break;
 		}
-
 	}
 
 	private void playPiano(Location location) {
@@ -256,7 +271,6 @@ public class RavensNestEstate extends Murder {
 			match.getTasks().wait((long) (2.5 * 20), () ->
 					world.playSound(loc, Sound.ENTITY_VEX_AMBIENT, 2F, 0.1F));
 		});
-
 	}
 
 	private void toggleTorch(Location location, Block block, Match match) {
@@ -277,7 +291,6 @@ public class RavensNestEstate extends Murder {
 				block.setData(data);
 			});
 		}
-
 	}
 
 	private String findDoor(Location location, Match match) {
@@ -351,15 +364,12 @@ public class RavensNestEstate extends Murder {
 		} else
 			return;
 
-		if (status) {
-			for (int frame = 1; frame < frames; frame++) {
+		if (status)
+			for (int frame = 1; frame < frames; frame++)
 				WEUtils.paste(schematic + frame, pasteLoc);
-			}
-		} else {
-			for (int frame = frames; frame < 1; frame--) {
+		else
+			for (int frame = frames; frame > 0; frame--)
 				WEUtils.paste(schematic + frame, pasteLoc);
-			}
-		}
 	}
 }
 

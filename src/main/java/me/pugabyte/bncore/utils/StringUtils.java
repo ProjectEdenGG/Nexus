@@ -126,8 +126,8 @@ public class StringUtils {
 		return result.toString();
 	}
 
-	public static String noSlash(String command) {
-		return right(command, command.length() - 1);
+	public static String trimFirst(String string) {
+		return right(string, string.length() - 1);
 	}
 
 	public static String right(String string, int number) {
