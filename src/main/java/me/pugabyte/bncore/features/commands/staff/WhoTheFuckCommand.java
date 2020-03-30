@@ -16,8 +16,10 @@ import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static me.pugabyte.bncore.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
 
 @Aliases("whotf")
 @Permission("group.staff")
@@ -38,23 +40,21 @@ public class WhoTheFuckCommand extends CustomCommand {
 		GeoIPService geoIpService = new GeoIPService();
 
 		Hours hours = hoursService.get(nerd);
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy HH:mm");
-
-		String rank = nerd.getRank().toString();
-		String firstJoin = nerd.getFirstJoin().format(dateTimeFormatter);
+		String rank = nerd.getRank().withFormat();
+		String firstJoin = shortDateTimeFormat(nerd.getFirstJoin());
 		String lastJoinQuitLabel = null;
 		String lastJoinQuitDate = null;
 		String lastJoinQuitDiff = null;
 		if (nerd.getOfflinePlayer().isOnline()) {
 			if (nerd.getLastQuit() != null) {
 				lastJoinQuitLabel = "Last Quit";
-				lastJoinQuitDate = nerd.getLastQuit().format(dateTimeFormatter);
-				lastJoinQuitDiff = StringUtils.timespanDiff(nerd.getLastQuit());
+				lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
+				lastJoinQuitDiff = timespanDiff(nerd.getLastQuit());
 			}
 		} else {
 			lastJoinQuitLabel = "Last Join";
-			lastJoinQuitDate = nerd.getLastJoin().format(dateTimeFormatter);
-			lastJoinQuitDiff = StringUtils.timespanDiff(nerd.getLastJoin());
+			lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
+			lastJoinQuitDiff = timespanDiff(nerd.getLastJoin());
 		}
 
 		int history = liteBansService.getHistory(nerd.getUuid());
