@@ -106,7 +106,7 @@ public class Murder extends UnbalancedTeamMechanic {
 		event.getMatch().getTasks().repeat(Time.SECOND.x(10), Time.SECOND.x(3), () -> {
 			for (Location loc : arena.getScrapPoints()) {
 				if (arena.getSpawnChance() != 0)
-					if (Utils.randomInt(1, arena.spawnChance) != 1)
+					if (Utils.randomInt(1, arena.getSpawnChance()) != 1)
 						continue;
 				loc.getWorld().dropItemNaturally(loc, scrap);
 			}
