@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.utils.Jingles;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -42,6 +43,9 @@ public class TicketCommand extends CustomCommand {
 
 		if (Utils.isInt(description))
 			error("Prevented accidental ticket");
+
+		if (StringUtils.right(description, 5).equalsIgnoreCase("close") || player().hasPermission(Tickets.PERMISSION_MOD))
+			error("Prevented accidental ticket (close)");
 
 		Ticket ticket = new Ticket(player(), stripColor(description));
 		service.saveSync(ticket);
