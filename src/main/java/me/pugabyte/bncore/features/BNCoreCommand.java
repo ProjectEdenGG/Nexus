@@ -21,6 +21,7 @@ import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -200,6 +201,11 @@ public class BNCoreCommand extends CustomCommand {
 		send("Hello!");
 	}
 
+	@Path("jingles <jingle>")
+	void jingles(Jingle jingle) {
+		jingle.play(player());
+	}
+
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
 		return new NerdService().get(convertToOfflinePlayer(value));
@@ -259,5 +265,19 @@ public class BNCoreCommand extends CustomCommand {
 	LocalDate convertToLocalDate(String value) {
 		try { return parseShortDate(value); } catch (Exception ignore) {}
 		throw new InvalidInputException("Could not parse date");
+	}
+
+	@ConverterFor(Jingle.class)
+	Jingle convertToJingle(String value) {
+		try {
+			return Jingle.valueOf(value.toUpperCase());
+		} catch (IllegalArgumentException ignore) {
+			throw new InvalidInputException("Jingle from " + value + " not found");
+		}
+	}
+
+	@TabCompleterFor(Jingle.class)
+	List<String> tabCompleteJingle(String value) {
+		return tabCompleteEnum(Jingle.class, value);
 	}
 }

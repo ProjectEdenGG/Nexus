@@ -61,9 +61,9 @@ public class McMMOListener implements Listener {
 					OfflinePlayer first = Utils.getPlayer(topThree.get(0).name);
 					OfflinePlayer second = Utils.getPlayer(topThree.get(1).name);
 					OfflinePlayer third = Utils.getPlayer(topThree.get(2).name);
-					CitizensUtils.updateNameAndSkin(466, new Nerd(first).getRank().getColor() + first.getName());
-					CitizensUtils.updateNameAndSkin(465, new Nerd(second).getRank().getColor() + second.getName());
-					CitizensUtils.updateNameAndSkin(467, new Nerd(third).getRank().getColor() + third.getName());
+					CitizensUtils.updateNameAndSkin(466, new Nerd(first).getRank().getChatColor() + first.getName());
+					CitizensUtils.updateNameAndSkin(465, new Nerd(second).getRank().getChatColor() + second.getName());
+					CitizensUtils.updateNameAndSkin(467, new Nerd(third).getRank().getChatColor() + third.getName());
 				});
 		});
 	}

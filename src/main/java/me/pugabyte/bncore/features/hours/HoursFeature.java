@@ -6,7 +6,7 @@ import me.pugabyte.bncore.features.chat.koda.Koda;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
-import me.pugabyte.bncore.utils.Jingles;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -52,7 +52,7 @@ public class HoursFeature {
 								PermissionsEx.getUser(player).removeGroup("Guest");
 								PermissionsEx.getUser(player).addGroup("Member");
 								Koda.say("Congrats on Member rank, " + player.getName());
-								Jingles.rankup(player);
+								Jingle.RANKUP.play(player);
 								player.sendMessage("");
 								player.sendMessage("");
 								player.sendMessage(colorize("&e&lCongratulations! &3You have been promoted to &fMember&3 for " +

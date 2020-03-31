@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,14 +28,14 @@ public enum Rank {
 	MEMBER("&f", false, false),
 	TRUSTED("&e", false, false),
 	ELITE("&6", false, false),
-	VETERAN("&6&l", true, false),
-	BUILDER("&5", true, true),
-	ARCHITECT("&5&l", true, true),
-	MINIGAME_MODERATOR("&b&o", true, true),
-	MODERATOR("&b&o", true, true),
-	OPERATOR("&3&o", true, true),
-	ADMIN("&9&o", true, true),
-	OWNER("&4&o", true, true);
+	VETERAN("&6&l", true, false, new Color(241, 196, 15)),
+	BUILDER("&5", true, true, new Color(230, 126, 34)),
+	ARCHITECT("&5&l", true, true, new Color(230, 126, 34)),
+	MINIGAME_MODERATOR("&b&o", true, true, new Color(132, 61, 164)),
+	MODERATOR("&b&o", true, true, new Color(132, 61, 164)),
+	OPERATOR("&3&o", true, true, new Color(25, 211, 211)),
+	ADMIN("&9&o", true, true, new Color(0, 170, 170)),
+	OWNER("&4&o", true, true, new Color(32, 102, 148));
 
 	@Getter
 	private String format;
@@ -44,6 +45,14 @@ public enum Rank {
 	@Getter
 	@Accessors(fluent = true)
 	private boolean isStaff;
+	@Getter
+	private Color color;
+
+	Rank(String format, boolean hasPrefix, boolean isStaff) {
+		this.format = format;
+		this.hasPrefix = hasPrefix;
+		this.isStaff = isStaff;
+	}
 
 	public String getPrefix() {
 		if (hasPrefix) {
@@ -58,14 +67,14 @@ public enum Rank {
 	}
 
 	public String withColor() {
-		return getColor() + StringUtils.camelCase(name());
+		return getChatColor() + StringUtils.camelCase(name());
 	}
 
 	public String plain() {
 		return StringUtils.camelCase(name());
 	}
 
-	public String getColor() {
+	public String getChatColor() {
 		return format.replaceAll("&[lo]", "");
 	}
 

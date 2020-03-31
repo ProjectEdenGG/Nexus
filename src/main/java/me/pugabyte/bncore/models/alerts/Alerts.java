@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.utils.Jingles;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 
@@ -108,7 +108,7 @@ public class Alerts {
 
 	public void playSound() {
 		if (!isMuted())
-			Jingles.ping(Utils.getPlayer(uuid).getPlayer());
+			Jingle.PING.play(Utils.getPlayer(uuid).getPlayer());
 	}
 
 	@Data

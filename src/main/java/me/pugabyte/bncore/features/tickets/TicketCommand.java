@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
-import me.pugabyte.bncore.utils.Jingles;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -57,7 +57,7 @@ public class TicketCommand extends CustomCommand {
 		Discord.log("[Tickets] " + player().getName() + " (" + ticket.getId() + "): " + ticket.getDescription());
 
 		Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission(Tickets.PERMISSION_MOD)).forEach(staff -> {
-			Jingles.ping(staff);
+			Jingle.PING.play(staff);
 			send(staff, "");
 			send(staff, PREFIX + "&e" + player().getName() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription());
 			Tickets.sendTicketButtons(staff, ticket);

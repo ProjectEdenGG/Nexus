@@ -190,8 +190,8 @@ public class EndOfMonth {
 		OfflinePlayer first = Utils.getPlayer(data.getTopVoters().get(0).getUuid());
 		OfflinePlayer second = Utils.getPlayer(data.getTopVoters().get(1).getUuid());
 		OfflinePlayer third = Utils.getPlayer(data.getTopVoters().get(2).getUuid());
-		CitizensUtils.updateNameAndSkin(1043, new Nerd(first).getRank().getColor() + first.getName());
-		CitizensUtils.updateNameAndSkin(447, new Nerd(second).getRank().getColor() + second.getName());
-		CitizensUtils.updateNameAndSkin(1044, new Nerd(third).getRank().getColor() + third.getName());
+		CitizensUtils.updateNameAndSkin(1043, new Nerd(first).getRank().getChatColor() + first.getName());
+		CitizensUtils.updateNameAndSkin(447, new Nerd(second).getRank().getChatColor() + second.getName());
+		CitizensUtils.updateNameAndSkin(1044, new Nerd(third).getRank().getChatColor() + third.getName());
 	}
 }

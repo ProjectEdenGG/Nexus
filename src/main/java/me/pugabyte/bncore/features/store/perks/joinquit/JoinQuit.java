@@ -8,7 +8,7 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
-import me.pugabyte.bncore.utils.Jingles;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -67,9 +67,9 @@ public class JoinQuit implements Listener {
 				_player.sendMessage(colorize(ingame));
 
 				if (!player.hasPlayedBefore())
-					Jingles.firstJoin(player);
+					Jingle.FIRST_JOIN.playAll();
 				else
-					Jingles.join(player);
+					Jingle.JOIN.playAll();
 			});
 
 			message = message.replaceAll("_", "\\_");
@@ -91,7 +91,7 @@ public class JoinQuit implements Listener {
 		// TODO: mutemenu
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			_player.sendMessage(colorize(ingame));
-			Jingles.quit(player);
+			Jingle.QUIT.playAll();
 		});
 
 		message = message.replaceAll("_", "\\_");
