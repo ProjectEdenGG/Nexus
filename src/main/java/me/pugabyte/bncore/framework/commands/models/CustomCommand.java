@@ -90,9 +90,8 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void line(int count) {
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count; i++)
 			send("");
-		}
 	}
 
 	protected JsonBuilder json() {
