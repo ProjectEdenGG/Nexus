@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.chatold.alerts;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Jingles;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import org.bukkit.entity.Player;
 
 public class AlertCommand extends CustomCommand {
@@ -14,7 +14,7 @@ public class AlertCommand extends CustomCommand {
 
 	@Path("<player>")
 	void alert(Player player) {
-		Jingles.ping(player);
+		Jingle.PING.play(player);
 	}
 
 }

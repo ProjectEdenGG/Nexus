@@ -53,7 +53,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		HallOfHistory hallOfHistory = service.get(target.getUniqueId());
 		for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
 			JsonBuilder builder = new JsonBuilder();
-			builder.next("  " + (rankHistory.isCurrent() ? "&2Current" : "&cFormer") + " " + rankHistory.getRank().getColor() + rankHistory.getRank().plain());
+			builder.next("  " + (rankHistory.isCurrent() ? "&2Current" : "&cFormer") + " " + rankHistory.getRank().getChatColor() + rankHistory.getRank().plain());
 			if (isPlayer() && player().hasPermission("hoh.edit"))
 				builder.next("  &c[x]").command("/hoh removerank " + target.getName() + " " + getRankCommandArgs(rankHistory));
 
