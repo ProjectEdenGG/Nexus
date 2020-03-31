@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -117,11 +118,18 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	public boolean shouldBeOver(Match match) {
 		Set<Team> teams = new HashSet<>();
 		match.getMinigamers().forEach(minigamer -> teams.add(minigamer.getTeam()));
-		if (teams.size() == 1) return true;
+		if (teams.size() == 1) {
+			BNCore.log("Match has only one team left, ending");
+			return true;
+		}
 
-		for (Team team : teams)
-			if (team.getScore(match) >= match.getArena().getCalculatedWinningScore(match))
-				return true;
+		int winningScore = match.getArena().getCalculatedWinningScore(match);
+		if (winningScore > 0)
+			for (Team team : teams)
+				if (team.getScore(match) >= winningScore) {
+					BNCore.log("Team match has reached calculated winning score (" + winningScore + "), ending");
+					return true;
+				}
 
 		return false;
 	}

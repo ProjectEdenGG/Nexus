@@ -156,7 +156,6 @@ public class Murder extends UnbalancedTeamMechanic {
 		else
 			broadcast = "The &9innocents &3have won";
 
-
 		Minigames.broadcast(broadcast + " &e" + match.getArena().getDisplayName());
 	}
 
