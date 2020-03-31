@@ -65,11 +65,9 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	private List<Team> getWinners(int winningScore, Map<Team, Integer> scores) {
 		List<Team> winners = new ArrayList<>();
 
-		for (Team team : scores.keySet()) {
-			if (scores.getOrDefault(team, 0).equals(winningScore)) {
+		for (Team team : scores.keySet())
+			if (scores.getOrDefault(team, 0).equals(winningScore))
 				winners.add(team);
-			}
-		}
 
 		return winners;
 	}
@@ -119,7 +117,13 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	public boolean shouldBeOver(Match match) {
 		Set<Team> teams = new HashSet<>();
 		match.getMinigamers().forEach(minigamer -> teams.add(minigamer.getTeam()));
-		return teams.size() == 1;
+		if (teams.size() == 1) return true;
+
+		for (Team team : teams)
+			if (team.getScore(match) >= match.getArena().getCalculatedWinningScore(match))
+				return true;
+
+		return false;
 	}
 
 }

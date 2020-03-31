@@ -206,9 +206,6 @@ public class Minigamer {
 
 		this.score += event.getAmount();
 		match.getScoreboard().update();
-		// TODO: This should be in a mechanic (also match#setScore)
-		if (score >= getMatch().getArena().getWinningScore())
-			getMatch().end();
 	}
 
 	public void died() {

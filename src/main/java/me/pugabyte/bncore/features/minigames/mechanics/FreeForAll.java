@@ -24,9 +24,9 @@ public final class FreeForAll extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
-		super.onDeath(event);
 		if (event.getAttacker() != null)
 			event.getAttacker().scored();
+		super.onDeath(event);
 	}
 
 }
