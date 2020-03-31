@@ -151,9 +151,9 @@ public class RavensNestEstate implements Listener {
 		WEUtils.paste(schemMaster + 1, doorMaster);
 		WEUtils.paste(schemMain + 1, doorMain);
 		WEUtils.paste(schemStudy + 1, doorStudy);
-		WEUtils.paste(schemSmall + "_S_1", doorSmall_S);
-		WEUtils.paste(schemSmall + "_E_1", doorSmall_E);
-		WEUtils.paste(schemSmall + "_W_1", doorSmall_W);
+		WEUtils.paste(schemSmall + "S_1", doorSmall_S);
+		WEUtils.paste(schemSmall + "E_1", doorSmall_E);
+		WEUtils.paste(schemSmall + "W_1", doorSmall_W);
 
 		statusFireplace = false;
 		statusBasement = false;
