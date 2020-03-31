@@ -24,7 +24,6 @@ import me.pugabyte.bncore.features.listeners.Sleep;
 import me.pugabyte.bncore.features.mcmmo.McMMO;
 import me.pugabyte.bncore.features.menus.SignMenuFactory;
 import me.pugabyte.bncore.features.minigames.Minigames;
-import me.pugabyte.bncore.features.oldminigames.OldMinigames;
 import me.pugabyte.bncore.features.quests.Quests;
 import me.pugabyte.bncore.features.rainbowarmour.RainbowArmour;
 import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
@@ -183,7 +182,6 @@ public class BNCore extends JavaPlugin {
 	public static McMMO mcmmo;
 	public static ModelListeners modelListeners;
 	public static Minigames minigames;
-	public static OldMinigames oldMinigames;
 	public static Quests quests;
 	public static RainbowArmour rainbowArmour;
 	public static RestoreInventory restoreInventory;
@@ -225,7 +223,6 @@ public class BNCore extends JavaPlugin {
 		new Timer("  McMMO", () -> mcmmo = new McMMO());
 		new Timer("  ModelListeners", () -> modelListeners = new ModelListeners());
 		new Timer("  Minigames", () -> minigames = new Minigames());
-		new Timer("  OldMinigames", () -> oldMinigames = new OldMinigames());
 		new Timer("  Quests", () -> quests = new Quests());
 		new Timer("  RainbowArmour", () -> rainbowArmour = new RainbowArmour());
 		new Timer("  RestoreInventory", () -> restoreInventory = new RestoreInventory());
