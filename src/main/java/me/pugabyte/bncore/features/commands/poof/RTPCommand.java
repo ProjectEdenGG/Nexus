@@ -13,6 +13,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +61,7 @@ public class RTPCommand extends CustomCommand {
 				Tasks.async(this::rtp);
 				return;
 			}
-			player().teleport(highestBlock.getLocation().add(0, 1, 0));
+			player().teleport(highestBlock.getLocation().add(0, 1, 0), TeleportCause.COMMAND);
 		});
 	}
 

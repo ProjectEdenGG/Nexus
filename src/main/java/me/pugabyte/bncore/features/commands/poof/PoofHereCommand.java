@@ -9,6 +9,7 @@ import me.pugabyte.bncore.models.poof.Poof;
 import me.pugabyte.bncore.models.poof.PoofService;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Aliases("tpahere")
 public class PoofHereCommand extends CustomCommand {
@@ -52,7 +53,7 @@ public class PoofHereCommand extends CustomCommand {
 		if (!sender.isOnline())
 			throw new PlayerNotOnlineException(sender);
 
-		receiver.getPlayer().teleport(request.getSenderLocation());
+		receiver.getPlayer().teleport(request.getSenderLocation(), TeleportCause.COMMAND);
 		send("&3You accepted &e" + sender.getName() + "'s &3poof-here request");
 		send(sender.getPlayer(), "&e" + receiver.getName() + " &3accepted your poof-here request");
 		request.setExpired(true);

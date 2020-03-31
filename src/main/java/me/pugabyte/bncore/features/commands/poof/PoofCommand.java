@@ -13,6 +13,7 @@ import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.LocalDateTime;
 
@@ -71,7 +72,7 @@ public class PoofCommand extends CustomCommand {
 		if (!sender.isOnline())
 			throw new PlayerNotOnlineException(sender);
 
-		sender.getPlayer().teleport(request.getReceiverLocation());
+		sender.getPlayer().teleport(request.getReceiverLocation(), TeleportCause.COMMAND);
 		send("&3You accepted &e" + sender.getName() + "'s &3poof request");
 		send(sender.getPlayer(), "&e" + request.getReceiverPlayer().getName() + " &3accepted your poof request");
 		request.setExpired(true);
