@@ -57,7 +57,7 @@ public abstract class UnbalancedTeamMechanic extends TeamMechanic {
 			while (minigamer.getTeam() == null && ++SAFETY < 50) {
 				Collections.shuffle(teams);
 				for (Team team : teams)
-					if (team.getMaxPlayers() < 0 || team.getMinigamers(match).size() <= team.getMaxPlayers())
+					if (team.getMaxPlayers() < 0 || team.getMinigamers(match).size() < team.getMaxPlayers())
 						if (Utils.chanceOf(team.getBalancePercentage())) {
 							minigamer.setTeam(team);
 							continue playerLoop;

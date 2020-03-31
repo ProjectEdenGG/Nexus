@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.utils.Utils.getNearestPlayer;
 
 @Data
 @Builder
@@ -106,6 +109,7 @@ public class Team implements ConfigurationSerializable {
 			return;
 		}
 
+		int SAFETY = 0;
 		while (members.size() > 0) {
 			List<Location> locs = new ArrayList<>(spawnpoints);
 			if (members.get(0).getMatch().getArena().getMechanic().shuffleSpawnpoints())
@@ -113,6 +117,12 @@ public class Team implements ConfigurationSerializable {
 
 			List<Minigamer> toRemove = new ArrayList<>();
 			for (Minigamer minigamer : members) {
+				if (SAFETY < 50) {
+					Player nearestPlayer = getNearestPlayer(minigamer.getPlayer());
+					double distance = nearestPlayer.getLocation().distance(minigamer.getPlayer().getLocation());
+					if (distance < 1)
+						continue;
+				}
 				minigamer.teleport(locs.get(0));
 				locs.remove(0);
 				if (locs.size() == 0)
@@ -121,6 +131,7 @@ public class Team implements ConfigurationSerializable {
 				toRemove.add(minigamer);
 			}
 			members.removeAll(toRemove);
+			++SAFETY;
 		}
 	}
 

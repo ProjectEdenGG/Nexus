@@ -17,7 +17,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.util.BlockIterator;
+
+import static me.pugabyte.bncore.utils.Utils.getBlockHit;
 
 public final class Splegg extends SpleefMechanic {
 
@@ -75,14 +76,7 @@ public final class Splegg extends SpleefMechanic {
 		if (!minigamer.isPlaying(this)) return;
 
 		projectile.remove();
-		BlockIterator blockIter = new BlockIterator(projectile.getWorld(), projectile.getLocation().toVector(), projectile.getVelocity().normalize(), 0, 4);
-		Block blockHit = null;
-
-		while (blockIter.hasNext()) {
-			blockHit = blockIter.next();
-			if (blockHit.getType() != Material.AIR) break;
-		}
-
+		Block blockHit = getBlockHit(event);
 		if (blockHit == null) return;
 
 		breakBlock(minigamer.getMatch(), blockHit.getLocation());
