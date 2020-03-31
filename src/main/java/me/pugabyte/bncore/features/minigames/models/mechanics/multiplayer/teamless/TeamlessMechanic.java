@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -79,12 +80,18 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 
 	@Override
 	public boolean shouldBeOver(Match match) {
-		if (match.getAliveMinigamers().size() <= 1)
+		if (match.getAliveMinigamers().size() <= 1) {
+			BNCore.log("Match has only one player, ending");
 			return true;
+		}
 
-		for (Minigamer minigamer : match.getAliveMinigamers())
-			if (minigamer.getScore() >= match.getArena().getCalculatedWinningScore(match))
-				return true;
+		int winningScore = match.getArena().getCalculatedWinningScore(match);
+		if (winningScore > 0)
+			for (Minigamer minigamer : match.getAliveMinigamers())
+				if (minigamer.getScore() >= winningScore) {
+					BNCore.log("Teamless match has reached calculated winning score (" + winningScore + "), ending");
+					return true;
+				}
 
 		return false;
 	}
