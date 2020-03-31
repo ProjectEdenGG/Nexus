@@ -14,7 +14,7 @@ public class StaffWarpsCommand extends _WarpCommand {
 	}
 
 	@Override
-	WarpType getWarpType() {
+	public WarpType getWarpType() {
 		return WarpType.STAFF;
 	}
 

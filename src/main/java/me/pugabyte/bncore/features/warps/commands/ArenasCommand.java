@@ -14,7 +14,7 @@ public class ArenasCommand extends _WarpCommand {
 	}
 
 	@Override
-	WarpType getWarpType() {
+	public WarpType getWarpType() {
 		return WarpType.ARENA;
 	}
 

@@ -153,9 +153,10 @@ public class Utils {
 	}
 
 	public static Player getNearestPlayer(Player player) {
-		double distance = Double.MAX_VALUE;
 		Player nearest = null;
+		double distance = Double.MAX_VALUE;
 		for (Player _player : player.getWorld().getPlayers()) {
+			if (player.getLocation().getWorld() != _player.getLocation().getWorld()) continue;
 			double _distance = player.getLocation().distance(_player.getLocation());
 			if (_distance < distance) {
 				distance = _distance;
