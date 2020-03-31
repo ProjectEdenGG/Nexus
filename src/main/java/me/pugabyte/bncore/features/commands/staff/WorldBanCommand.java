@@ -77,8 +77,12 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			Discord.send(message, DiscordId.Channel.STAFF_BRIDGE, DiscordId.Channel.STAFF_LOG);
 
 			if (player.isOnline())
-				if (WorldGroup.get(player.getPlayer()).equals(worldGroup))
+				if (WorldGroup.get(player.getPlayer()).equals(worldGroup)) {
+					if (player.getPlayer().getVehicle() != null)
+						player.getPlayer().getVehicle().removePassenger(player.getPlayer());
+
 					removeFromBannedWorld(player.getPlayer(), worldGroup);
+				}
 		}
 	}
 
@@ -106,6 +110,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 	}
 
 	public void removeFromBannedWorld(Player player, WorldGroup worldGroup) {
+
 		runCommand(player, "warp spawn");
 		Tasks.wait(10, () -> {
 			send(player, "");

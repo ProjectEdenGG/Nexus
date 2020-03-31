@@ -189,7 +189,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	public void spawnCorpse(Minigamer minigamer) {
 		// TODO: Sleeping NPC?
 		Player player = minigamer.getPlayer();
-		ArmorStand armorStand = player.getWorld().spawn(player.getLocation().add(0, -1.4, 0), ArmorStand.class);
+		ArmorStand armorStand = minigamer.getMatch().spawn(player.getLocation().add(0, -1.4, 0), ArmorStand.class);
 		armorStand.setGravity(false);
 		armorStand.setVisible(false);
 		armorStand.setHelmet(new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).skullOwner(player).build());

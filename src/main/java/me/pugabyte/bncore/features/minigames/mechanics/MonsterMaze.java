@@ -85,7 +85,7 @@ public class MonsterMaze extends TeamlessMechanic {
 
 		List<Block> spawnpoints = WGUtils.getRandomBlocks(floor, floorMaterial, MONSTERS);
 		spawnpoints.stream().map(block -> block.getLocation().add(.5, 1, .5)).forEach(spawnpoint -> {
-			LivingEntity monster = spawnpoint.getWorld().spawn(spawnpoint, Zombie.class);
+			LivingEntity monster = match.spawn(spawnpoint, Zombie.class);
 			monster.setAI(false);
 			monster.setSilent(true);
 			monster.setInvulnerable(true);
