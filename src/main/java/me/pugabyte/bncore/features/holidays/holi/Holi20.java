@@ -45,7 +45,7 @@ public class Holi20 implements Listener {
 		if (!event.getMaterial().equals(Material.MAGMA_CREAM)) return;
 
 		String itemName = ChatColor.stripColor(event.getItem().getItemMeta().getDisplayName());
-		if (!itemName.equalsIgnoreCase("Dye Bomb")) return;
+		if (!"Dye Bomb".equalsIgnoreCase(itemName)) return;
 		if (!event.getItem().getItemMeta().getLore().contains(StringUtils.colorize("&bHoli20 Event Item"))) return;
 
 		Player player = event.getPlayer();
