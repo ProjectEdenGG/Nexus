@@ -120,10 +120,11 @@ public class MatchListener implements Listener {
 
 		Minigamer victim = PlayerManager.get((Player) event.getEntity());
 		Minigamer attacker;
+		Projectile projectile = null;
 		if (event.getDamager() instanceof Player) {
 			attacker = PlayerManager.get((Player) event.getDamager());
 		} else if (event.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) event.getDamager();
+			projectile = (Projectile) event.getDamager();
 			if (projectile.getShooter() instanceof Player) {
 				attacker = PlayerManager.get((Player) projectile.getShooter());
 			} else {
@@ -188,6 +189,9 @@ public class MatchListener implements Listener {
 				}
 
 				event.setCancelled(true);
+
+				if (projectile != null)
+					projectile.remove();
 
 				if (event.getDamager() instanceof Arrow)
 					attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
