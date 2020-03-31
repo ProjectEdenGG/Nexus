@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -21,8 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-// TODO: Balance hoverable
 
 @Aliases({"list", "ls", "who", "players", "eonline", "elist", "ewho", "eplayers"})
 public class OnlineCommand extends CustomCommand {
@@ -61,7 +60,7 @@ public class OnlineCommand extends CustomCommand {
 	}
 
 	private boolean canSee(Nerd nerd) {
-		return Utils.canSee(player(), nerd.getPlayer());
+		return Utils.canSee(player(), nerd.getPlayer()) && player().canSee(nerd.getPlayer());
 	}
 
 	void getNameWithModifiers(Nerd nerd, JsonBuilder builder) {
@@ -95,7 +94,7 @@ public class OnlineCommand extends CustomCommand {
 		int ping = Utils.getPing(player);
 		String onlineFor = StringUtils.timespanDiff(nerd.getLastJoin());
 		WorldGroup world = WorldGroup.get(player);
-		double balance = 0.0;
+		double balance = BNCore.getEcon().getBalance(player);
 		String totalHours = StringUtils.timespanFormat(hours.getTotal());
 		String afk = "";
 
@@ -108,7 +107,7 @@ public class OnlineCommand extends CustomCommand {
 		return afk +
 				"&3Ping: &e" + ping + "\n" +
 				"&3World: &e" + world + "\n" +
-//				"&3Balance: &e$" + balance + "\n" +
+				"&3Balance: &e$" + balance + "\n" +
 				"&3Online for: &e" + onlineFor + "\n" +
 				"&3Hours: &e" + totalHours;
 	}

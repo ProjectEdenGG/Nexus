@@ -26,9 +26,9 @@ public class Quake extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
+		if (event.getAttacker() != null)
+			event.getAttacker().scored();
 		super.onDeath(event);
-		if (event.getAttacker() == null) return;
-		event.getAttacker().scored();
 	}
 
 }

@@ -190,4 +190,12 @@ public class Arena implements ConfigurationSerializable {
 			minigamer.tell("No teleport location found");
 	}
 
+	public int getCalculatedWinningScore(Match match) {
+		if (minWinningScore == 0 || maxWinningScore == 0)
+			return winningScore;
+
+		int players = Math.min(Math.max(match.getAlivePlayers().size(), minPlayers), maxPlayers);
+		return Math.min(winningScore, Math.round((players - minPlayers) / (maxPlayers - minPlayers) * (maxWinningScore - minWinningScore) + minWinningScore));
+	}
+
 }

@@ -45,7 +45,7 @@ public class OnlineStaffCommand extends CustomCommand {
 	}
 
 	private boolean canSee(Nerd nerd) {
-		return Utils.canSee(player(), nerd.getPlayer());
+		return Utils.canSee(player(), nerd.getPlayer()) && player().canSee(nerd.getPlayer());
 	}
 
 	String getNameWithModifiers(Nerd nerd) {

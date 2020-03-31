@@ -24,10 +24,11 @@ public final class TeamDeathmatch extends BalancedTeamMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
+		if (event.getAttacker() != null) {
+			event.getAttacker().scored();
+			event.getAttacker().getMatch().scored(event.getAttacker().getTeam());
+		}
 		super.onDeath(event);
-		if (event.getAttacker() == null) return;
-		event.getAttacker().scored();
-		event.getAttacker().getMatch().scored(event.getAttacker().getTeam());
 	}
 
 }
