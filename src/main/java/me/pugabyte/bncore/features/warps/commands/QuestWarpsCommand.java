@@ -14,7 +14,7 @@ public class QuestWarpsCommand extends _WarpCommand {
 	}
 
 	@Override
-	WarpType getWarpType() {
+	public WarpType getWarpType() {
 		return WarpType.QUEST;
 	}
 

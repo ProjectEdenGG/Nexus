@@ -10,6 +10,7 @@ import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import org.bukkit.Location;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,10 +22,10 @@ public abstract class _WarpCommand extends CustomCommand {
 		super(event);
 	}
 
-	abstract WarpType getWarpType();
+	public abstract WarpType getWarpType();
 
 	@Path("list [filter]")
-	void list(@Arg(tabCompleter = Warp.class) String filter) {
+	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		List<String> warps = tabCompleteWarp(filter);
 		JsonBuilder builder = new JsonBuilder();
 		for (String warp : warps) {
@@ -43,7 +44,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("set <name>")
-	void set(@Arg(tabCompleter = Warp.class) String name) {
+	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		Warp warp = service.get(name, getWarpType());
 		if (warp != null)
 			error("That warp is already set.");
@@ -54,20 +55,47 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(rm|remove|delete|del) <name>")
-	void delete(Warp warp) {
+	public void delete(Warp warp) {
 		service.delete(warp);
 		send(PREFIX + "Successfully deleted warp &e" + warp.getName());
 	}
 
 	@Path("(teleport|tp) <name>")
-	void teleport(Warp warp) {
+	public void teleport(Warp warp) {
 		warp.teleport(player());
 		send(PREFIX + "&3Warping to &e" + warp.getName());
 	}
 
 	@Path("<name>")
-	void name(Warp warp) {
+	public void tp(Warp warp) {
 		teleport(warp);
+	}
+
+	@Path("tp nearest")
+	public void teleportNearest() {
+		teleport(getNearestWarp(player().getLocation()));
+	}
+
+	@Path("nearest")
+	public void nearest() {
+		Warp warp = getNearestWarp(player().getLocation());
+		if (warp == null)
+			error("No nearest warp found");
+		send(PREFIX + "Nearest warp is &e" + warp.getName() + " &3(&e" + (int) warp.getLocation().distance(player().getLocation()) + " &3blocks away)");
+	}
+
+	public Warp getNearestWarp(Location location) {
+		Warp nearest = null;
+		double distance = Double.MAX_VALUE;
+		for (Warp warp : new WarpService().getWarpsByType(getWarpType())) {
+			if (location.getWorld() != warp.getLocation().getWorld()) continue;
+			double _distance = location.distance(warp.getLocation());
+			if (_distance < distance) {
+				distance = _distance;
+				nearest = warp;
+			}
+		}
+		return nearest;
 	}
 
 	@ConverterFor(Warp.class)

@@ -24,7 +24,7 @@ public class WarpsCommand extends _WarpCommand {
 	}
 
 	@Override
-	WarpType getWarpType() {
+	public WarpType getWarpType() {
 		return WarpType.NORMAL;
 	}
 

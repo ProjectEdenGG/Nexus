@@ -14,7 +14,7 @@ public class GiliHousesCommand extends _WarpCommand {
 	}
 
 	@Override
-	WarpType getWarpType() {
+	public WarpType getWarpType() {
 		return WarpType.GILIHOUSE;
 	}
 

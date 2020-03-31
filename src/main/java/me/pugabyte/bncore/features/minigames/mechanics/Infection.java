@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -12,6 +13,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Infection extends UnbalancedTeamMechanic {
 
@@ -30,9 +34,23 @@ public class Infection extends UnbalancedTeamMechanic {
 		return new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.ZOMBIE).build();
 	}
 
+	public List<Minigamer> getZombies(Match match) {
+		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam().getColor() == ChatColor.RED).collect(Collectors.toList());
+	}
+
+	public List<Minigamer> getHumans(Match match) {
+		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam().getColor() != ChatColor.RED).collect(Collectors.toList());
+	}
+
+	@Override
+	public void onStart(MatchStartEvent event) {
+		getZombies(event.getMatch()).forEach(Minigamer::respawn);
+		super.onStart(event);
+	}
+
 	@Override
 	public void announceWinners(Match match) {
-		boolean humansAlive = match.getAliveTeams().stream().anyMatch(team -> team.getColor() != ChatColor.RED);
+		boolean humansAlive = getHumans(match).size() > 0;
 
 		String broadcast = "";
 		if (!humansAlive)
