@@ -263,12 +263,10 @@ public class RavensNestEstate implements Listener {
 	}
 
 	private void openFireplace(Location location, Match match) {
-		if (!(location.equals(fireplaceTrigger1.getBlock().getLocation()) || location.equals(fireplaceTrigger2.getBlock().getLocation()))) {
+		if (!(location.equals(fireplaceTrigger1.getBlock().getLocation()) || location.equals(fireplaceTrigger2.getBlock().getLocation())))
 			return;
-		}
-		if (statusFireplace) {
+		if (statusFireplace)
 			return;
-		}
 
 		statusFireplace = true;
 		Location loc = fireplaceTrigger1.clone();
@@ -398,18 +396,19 @@ public class RavensNestEstate implements Listener {
 
 		int wait = 0;
 		String finalSchematic = schematic;
-		if (status) {
+
+		if (!status || schematic.contains(schemFireplace))
+			// Open
 			for (int frame = 1; frame <= frames; frame++) {
 				int finalFrame = frame;
 				match.getTasks().wait(wait += 3 + extra, () -> WEUtils.paste(finalSchematic + finalFrame, pasteLoc));
 			}
-		} else {
+		else
+			// Close
 			for (int frame = frames; frame > 0; frame--) {
 				int finalFrame = frame;
 				match.getTasks().wait(wait += 3, () -> WEUtils.paste(finalSchematic + finalFrame, pasteLoc));
-
 			}
-		}
 	}
 }
 
