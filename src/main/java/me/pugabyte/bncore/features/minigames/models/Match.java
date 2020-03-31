@@ -27,7 +27,9 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.reflections.Reflections;
@@ -56,6 +58,7 @@ public class Match {
 	private MatchTimer timer;
 	private MinigameScoreboard scoreboard;
 	private MinigameScoreboard.Teams scoreboardTeams;
+	private ArrayList<Entity> entities = new ArrayList<>();
 	private ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
@@ -228,12 +231,11 @@ public class Match {
 
 	private void clearEntities() {
 		WorldEditUtils worldEditUtils = Minigames.getWorldEditUtils();
+		entities.forEach(Entity::remove);
 		Minigames.getGameworld().getEntities().forEach(entity -> {
 			if (getArena().getRegion().contains(worldEditUtils.toVector(entity.getLocation())))
 				if (deletableTypes.contains(entity.getType()))
 					entity.remove();
-			if (entity.getType().equals(EntityType.ARMOR_STAND) && entity.getLocation().getY() < 0)
-				entity.remove();
 		});
 	}
 
@@ -337,6 +339,12 @@ public class Match {
 
 	public boolean isMechanic(Class<? extends Mechanic> mechanic) {
 		return mechanic.isInstance(getArena().getMechanic());
+	}
+
+	public <T extends Entity> T spawn(Location location, Class<T> type) {
+		T entity = location.getWorld().spawn(location, type);
+		entities.add(entity);
+		return entity;
 	}
 
 	public class MatchTimer {

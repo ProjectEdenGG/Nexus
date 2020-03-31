@@ -211,7 +211,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		for (MobPoint point : arena.getMobPoints()) {
 			if (point.getType() == type) {
 				Location spawnLoc = getLocationOffFirst(minigamer, point.getLocation());
-				spawnLoc.getWorld().spawn(spawnLoc, type.getEntityClass());
+				match.spawn(spawnLoc, type.getEntityClass());
 				List<EntityType> entities = new ArrayList<>();
 				if (matchData.getPlayerEntities().containsKey(minigamer.getPlayer().getUniqueId())) {
 					entities = matchData.getPlayerEntities().get(minigamer.getPlayer().getUniqueId());

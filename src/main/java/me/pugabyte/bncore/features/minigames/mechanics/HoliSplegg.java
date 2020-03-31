@@ -58,7 +58,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 		HoliSpleggMatchData matchData = event.getMatch().getMatchData();
-		matchData.setArmorStand(summonArmorStand());
+		matchData.setArmorStand(summonArmorStand(event.getMatch()));
 
 		event.getMatch().getTasks().repeat(Time.SECOND, Time.SECOND, () -> {
 			matchData.setTime(matchData.getTime() + 1);
@@ -86,8 +86,8 @@ public final class HoliSplegg extends TeamlessMechanic {
 			matchData.getArmorStand().remove();
 	}
 
-	private ArmorStand summonArmorStand() {
-		ArmorStand armorStand = Minigames.getGameworld().spawn(new Location(Minigames.getGameworld(), 2548, 29, 710), ArmorStand.class);
+	private ArmorStand summonArmorStand(Match match) {
+		ArmorStand armorStand = match.spawn(new Location(Minigames.getGameworld(), 2548, 29, 710), ArmorStand.class);
 		armorStand.setInvulnerable(true);
 		armorStand.setFireTicks(9999999);
 		armorStand.setCustomNameVisible(true);
