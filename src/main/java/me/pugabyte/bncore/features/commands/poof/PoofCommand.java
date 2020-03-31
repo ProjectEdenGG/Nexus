@@ -68,15 +68,16 @@ public class PoofCommand extends CustomCommand {
 		if (request == null || request.isExpired())
 			error("You do not have any pending Poof requests");
 
+		request.setExpired(true);
+		service.save(request);
+
 		OfflinePlayer sender = request.getSenderPlayer();
 		if (!sender.isOnline())
 			throw new PlayerNotOnlineException(sender);
 
-		sender.getPlayer().teleport(request.getReceiverLocation(), TeleportCause.COMMAND);
+		sender.getPlayer().teleport(player().getLocation(), TeleportCause.COMMAND);
 		send("&3You accepted &e" + sender.getName() + "'s &3poof request");
 		send(sender.getPlayer(), "&e" + request.getReceiverPlayer().getName() + " &3accepted your poof request");
-		request.setExpired(true);
-		service.save(request);
 	}
 
 	@Path("deny")
@@ -85,14 +86,15 @@ public class PoofCommand extends CustomCommand {
 		if (request == null || request.isExpired())
 			error("You do not have any pending Poof requests");
 
+		request.setExpired(true);
+		service.save(request);
+
 		OfflinePlayer sender = request.getSenderPlayer();
 		if (!sender.isOnline())
 			throw new PlayerNotOnlineException(sender);
 
 		send("&3You denied &e" + sender.getName() + "'s &3poof request");
 		send(sender.getPlayer(), "&e" + Utils.getPlayer(request.getReceiver()).getName() + " &3denied your poof request");
-		request.setExpired(true);
-		service.save(request);
 	}
 
 	@Path("cancel")
@@ -101,6 +103,9 @@ public class PoofCommand extends CustomCommand {
 		if (request == null || request.isExpired())
 			error("You do not have any pending Poof requests");
 
+		request.setExpired(true);
+		service.save(request);
+
 		OfflinePlayer receiver = request.getReceiverPlayer();
 		OfflinePlayer sender = request.getSenderPlayer();
 		if (!receiver.isOnline())
@@ -108,8 +113,6 @@ public class PoofCommand extends CustomCommand {
 
 		send(receiver.getPlayer(), "&e" + sender.getName() + " &3canceled their poof request");
 		send("&3You canceled your poof request to &e" + receiver.getName());
-		request.setExpired(true);
-		service.save(request);
 	}
 
 }

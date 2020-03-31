@@ -48,6 +48,9 @@ public class PoofHereCommand extends CustomCommand {
 		if (request == null || request.isExpired())
 			error("You do not have any pending Poof-here requests");
 
+		request.setExpired(true);
+		service.save(request);
+
 		OfflinePlayer receiver = request.getReceiverPlayer();
 		OfflinePlayer sender = request.getSenderPlayer();
 		if (!sender.isOnline())
@@ -56,7 +59,6 @@ public class PoofHereCommand extends CustomCommand {
 		receiver.getPlayer().teleport(request.getSenderLocation(), TeleportCause.COMMAND);
 		send("&3You accepted &e" + sender.getName() + "'s &3poof-here request");
 		send(sender.getPlayer(), "&e" + receiver.getName() + " &3accepted your poof-here request");
-		request.setExpired(true);
 		service.save(request);
 	}
 
@@ -66,6 +68,9 @@ public class PoofHereCommand extends CustomCommand {
 		if (request == null || request.isExpired())
 			error("You do not have any pending Poof-here requests");
 
+		request.setExpired(true);
+		service.save(request);
+
 		OfflinePlayer receiver = request.getReceiverPlayer();
 		OfflinePlayer sender = request.getSenderPlayer();
 		if (!sender.isOnline())
@@ -73,8 +78,6 @@ public class PoofHereCommand extends CustomCommand {
 
 		send("&3You denied &e" + sender.getName() + "'s &3poof-here request");
 		send(sender.getPlayer(), "&e" + receiver.getName() + " &3denied your poof-here request");
-		request.setExpired(true);
-		service.save(request);
 	}
 
 	@Path("cancel")
@@ -83,6 +86,9 @@ public class PoofHereCommand extends CustomCommand {
 		if (request == null || request.isExpired())
 			error("You do not have any pending Poof-here requests");
 
+		request.setExpired(true);
+		service.save(request);
+
 		OfflinePlayer receiver = request.getReceiverPlayer();
 		OfflinePlayer sender = request.getSenderPlayer();
 		if (!receiver.isOnline())
@@ -90,8 +96,6 @@ public class PoofHereCommand extends CustomCommand {
 
 		send(receiver.getPlayer(), "&e" + sender.getName() + " &3canceled their poof-here request");
 		send("&3You canceled your poof-here request to &e" + receiver.getName());
-		request.setExpired(true);
-		service.save(request);
 	}
 
 }
