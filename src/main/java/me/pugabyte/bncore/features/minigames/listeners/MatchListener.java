@@ -26,6 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -83,18 +84,22 @@ public class MatchListener implements Listener {
 		minigamer.getMatch().getArena().getMechanic().onPlayerInteract(minigamer, event);
 	}
 
+	@EventHandler
+	public void onInventoryMove(InventoryInteractEvent event) {
+		if (!(event.getWhoClicked() instanceof Player)) return;
+		Minigamer minigamer = PlayerManager.get((Player) event.getWhoClicked());
+		if (!minigamer.isPlaying()) return;
+
+		event.setCancelled(true);
+	}
+
 	// TODO: Prevent damage of hanging entities/armor stands/etc
 	public void onDamage(EntityDamageByEntityEvent event) {
 		if (event.isCancelled()) return;
+		if (!(event.getEntity() instanceof Player)) return;
 
-		Minigamer victim, attacker;
-
-		if (event.getEntity() instanceof Player) {
-			victim = PlayerManager.get((Player) event.getEntity());
-		} else {
-			return;
-		}
-
+		Minigamer victim = PlayerManager.get((Player) event.getEntity());
+		Minigamer attacker;
 		if (event.getDamager() instanceof Player) {
 			attacker = PlayerManager.get((Player) event.getDamager());
 		} else if (event.getDamager() instanceof Projectile) {

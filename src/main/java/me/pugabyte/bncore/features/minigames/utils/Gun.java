@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.minigames.utils;
 
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
@@ -34,6 +35,10 @@ public class Gun {
 	private Set<Material> passthroughMaterials = new HashSet<Material>() {{
 		add(Material.AIR);
 		add(Material.DOUBLE_PLANT);
+		add(Material.LONG_GRASS);
+		add(Material.TRIPWIRE_HOOK);
+		add(Material.TRIPWIRE);
+		add(Material.STRING);
 	}};
 
 	public void shoot() {
@@ -73,11 +78,12 @@ public class Gun {
 			if (notTargetingSelf && inGunRange && sameMatch)
 				if (Vector3D.hasIntersection(observerStart, observerEnd, minimum, maximum)) {
 					minigamer.getPlayer().playSound(location, Sound.ENTITY_SHULKER_BULLET_HIT, 1, 1);
-					target.damage(getDamage(), shouldDamageWithConsole ? null : minigamer.getPlayer());
+					minigamer.getMatch().getArena().getMechanic().kill(PlayerManager.get(target), minigamer);
 				}
 		}
 
-		startCooldown();
+		if (cooldown > 0)
+			startCooldown();
 	}
 
 	private void startCooldown() {

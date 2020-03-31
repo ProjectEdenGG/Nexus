@@ -25,13 +25,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
@@ -148,6 +152,19 @@ public class Utils {
 		throw new PlayerNotFoundException(original);
 	}
 
+	public static Player getNearestPlayer(Player player) {
+		double distance = Double.MAX_VALUE;
+		Player nearest = null;
+		for (Player _player : player.getWorld().getPlayers()) {
+			double _distance = player.getLocation().distance(_player.getLocation());
+			if (_distance < distance) {
+				distance = _distance;
+				nearest = _player;
+			}
+		}
+		return nearest;
+	}
+
 	@SneakyThrows
 	public static int getPing(Player player) {
 		Object entityPlayer = player.getClass().getMethod("getHandle").invoke(player);
@@ -195,6 +212,13 @@ public class Utils {
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
+	public static LinkedHashMap<EntityType, Long> getNearbyEntityTypes(Location location, int radius) {
+		return location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
+				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting()))
+				.entrySet().stream().sorted(Entry.comparingByValue())
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+	}
+
 	public static <T extends Entity> T getTargetEntity(final LivingEntity entity) {
 		if (entity instanceof Creature)
 			return (T) ((Creature) entity).getTarget();
@@ -219,6 +243,19 @@ public class Utils {
 		}
 
 		return target;
+	}
+
+	public static Block getBlockHit(ProjectileHitEvent event) {
+		Projectile projectile = event.getEntity();
+		BlockIterator blockIter = new BlockIterator(projectile.getWorld(), projectile.getLocation().toVector(), projectile.getVelocity().normalize(), 0, 4);
+		Block blockHit = null;
+
+		while (blockIter.hasNext()) {
+			blockHit = blockIter.next();
+			if (blockHit.getType() != Material.AIR) break;
+		}
+
+		return blockHit;
 	}
 
 	public static void lookAt(Player player, Location lookAt) {

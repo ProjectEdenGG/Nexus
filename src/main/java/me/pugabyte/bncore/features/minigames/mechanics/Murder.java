@@ -10,7 +10,6 @@ import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Railgun;
 import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.bncore.features.minigames.models.arenas.MurderArena;
-import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
@@ -30,6 +29,7 @@ import org.bukkit.SkullType;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
@@ -41,7 +41,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -57,8 +56,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Railgun(damageWithConsole = true)
-@Scoreboard(teams = false, sidebarType = Type.NONE)
+import static me.pugabyte.bncore.utils.Utils.getBlockHit;
+
+@Railgun
+@Scoreboard(teams = false, sidebarType = Type.MATCH)
 public class Murder extends UnbalancedTeamMechanic {
 
 	@Override
@@ -74,35 +75,6 @@ public class Murder extends UnbalancedTeamMechanic {
 	@Override
 	public ItemStack getMenuItem() {
 		return new ItemStack(Material.IRON_SWORD);
-	}
-
-	@Override
-	public void onQuit(MatchQuitEvent event) {
-		Player player = event.getMinigamer().getPlayer();
-		// Drop a gun if they had one
-		if (isGunner(player)) {
-			BNCore.log("Gunner quit");
-			player.getLocation().getWorld().dropItem(player.getLocation(), gun);
-		}
-
-		super.onQuit(event);
-	}
-
-	@Override
-	public void announceWinners(Match match) {
-		boolean murdererAlive = match.getAliveTeams().stream().anyMatch(team -> team.getColor() == ChatColor.RED);
-
-		String broadcast = "";
-		if (!murdererAlive)
-			broadcast = "The murderer has been stopped on";
-		else
-			if (match.getTimer().getTime() != 0)
-				broadcast = "The &cMurderer &3has won";
-			else
-				broadcast = "The &9innocents &3have won";
-
-
-		Minigames.broadcast(broadcast + " &e" + match.getArena().getDisplayName());
 	}
 
 	@Override
@@ -154,14 +126,38 @@ public class Murder extends UnbalancedTeamMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
-		spawnCorpse(event.getMinigamer());
+		Minigamer victim = event.getMinigamer();
+		Minigamer attacker = event.getAttacker();
+		spawnCorpse(victim);
 
 		// If the attacker was a gunner and the victim was not the murderer, intoxicate
-		if (isGunner(event.getAttacker()) && !isMurderer(event.getMinigamer()))
-			intoxicate(event.getAttacker().getPlayer());
+		if (isGunner(attacker) && !isMurderer(victim))
+			intoxicate(attacker.getPlayer());
 
-		event.getMinigamer().tell("You were killed!");
+		// Drop a gun if they had one
+		if (isGunner(victim))
+			victim.getPlayer().getLocation().getWorld().dropItem(victim.getPlayer().getLocation(), gun);
+
+		event.setDeathMessage(victim.getColoredName() + " &3died");
+		victim.tell("You were killed!");
 		super.onDeath(event);
+	}
+
+	@Override
+	public void announceWinners(Match match) {
+		boolean murdererAlive = match.getAliveTeams().stream().anyMatch(team -> team.getColor() == ChatColor.RED);
+
+		String broadcast = "";
+		if (!murdererAlive)
+			broadcast = "The murderer has been stopped by the &9gunner &3on";
+		else
+		if (match.getTimer().getTime() != 0)
+			broadcast = "The &cMurderer &3has won";
+		else
+			broadcast = "The &9innocents &3have won";
+
+
+		Minigames.broadcast(broadcast + " &e" + match.getArena().getDisplayName());
 	}
 
 	@Override
@@ -186,29 +182,18 @@ public class Murder extends UnbalancedTeamMechanic {
 	public Map<String, Integer> getScoreboardLines(Match match) {
 		return new HashMap<String, Integer>() {{
 			match.getMinigamers().stream().filter(Minigamer::isAlive)
-					.forEach(minigamer -> put(minigamer.getColoredName(), 0));
+					.forEach(minigamer -> put(minigamer.getName(), 0));
 		}};
 	}
 
 	public void spawnCorpse(Minigamer minigamer) {
 		// TODO: Sleeping NPC?
 		Player player = minigamer.getPlayer();
-		Location location = player.getLocation().clone();
-		location.setY(255);
-		ArmorStand armorStand = player.getWorld().spawn(location, ArmorStand.class);
+		ArmorStand armorStand = player.getWorld().spawn(player.getLocation().add(0, -1.4, 0), ArmorStand.class);
 		armorStand.setGravity(false);
 		armorStand.setVisible(false);
-		ItemStack skull = new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).skullOwner(player).build();
-		armorStand.setHelmet(skull);
-		armorStand.teleport(player.getLocation());
+		armorStand.setHelmet(new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).skullOwner(player).build());
 		// armorStand.setDisableSlots?
-
-		Countdown countdown = Tasks.Countdown.builder()
-				.duration(15)
-				.doZero(true)
-				.onTick(i -> armorStand.teleport(armorStand.getLocation().add(0, -.1, 0)))
-				.start();
-		minigamer.getMatch().getTasks().register(countdown.getTaskId());
 	}
 
 	private void assignGunner(Match match) {
@@ -351,11 +336,13 @@ public class Murder extends UnbalancedTeamMechanic {
 		// If it was an arrow, it was from a knife throw, so we want to spawn a knife item
 		if (event.getEntityType() == EntityType.ARROW) {
 			World world = attacker.getPlayer().getWorld();
-			if (event.getHitBlock() != null) {
-				world.dropItem(event.getHitBlock().getLocation(), knife);
+			Block hitBlock = getBlockHit(event);
+			if (hitBlock != null) {
+				world.dropItem(hitBlock.getLocation(), knife);
 				event.getEntity().remove();
-			} else if (event.getHitEntity() != null)
+			} else if (event.getHitEntity() != null) {
 				world.dropItem(event.getHitEntity().getLocation(), knife);
+			}
 		}
 
 		if (victim != null)
@@ -447,17 +434,7 @@ public class Murder extends UnbalancedTeamMechanic {
 				event.getItem().remove();
 				player.getInventory().setItem(1, knife);
 			}
-
 		}
-	}
-
-	@EventHandler
-	public void onInventoryMove(InventoryInteractEvent event) {
-		if (!(event.getWhoClicked() instanceof Player)) return;
-		Minigamer minigamer = PlayerManager.get((Player) event.getWhoClicked());
-		if (!minigamer.isPlaying(this)) return;
-
-		event.setCancelled(true);
 	}
 
 	@EventHandler

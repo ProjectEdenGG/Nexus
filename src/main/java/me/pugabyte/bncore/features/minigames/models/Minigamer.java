@@ -274,6 +274,7 @@ public class Minigamer {
 	}
 
 	public void clearState() {
+		BNCore.log("Clearing state");
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		// TODO: Unvanish
 		clearGameModeState();

@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.commands.info;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -17,4 +17,5 @@ public class WhatWorldCommand extends CustomCommand {
 	void world(@Arg("self") Player player) {
 		send("&3" + (isSelf(player) ? "You are" : player.getName() + " is") + " in world &e" + player.getWorld().getName() + " &3in group &e" + WorldGroup.get(player));
 	}
+
 }

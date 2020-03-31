@@ -135,7 +135,7 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public void broadcastReload() {
-		Stream.of("Pugabyte", "WakkaFlocka", "Blast")
+		Stream.of("Pugabyte", "WakkaFlocka", "Blast", "lexikiq")
 				.map(Bukkit::getOfflinePlayer)
 				.filter(OfflinePlayer::isOnline)
 				.map(OfflinePlayer::getPlayer)

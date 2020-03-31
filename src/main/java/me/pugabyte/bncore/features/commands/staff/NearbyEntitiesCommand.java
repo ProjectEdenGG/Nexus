@@ -9,14 +9,13 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-import java.util.LinkedHashMap;
-
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+import static me.pugabyte.bncore.utils.Utils.getNearbyEntities;
+import static me.pugabyte.bncore.utils.Utils.getNearbyEntityTypes;
 
 @Permission("group.staff")
 public class NearbyEntitiesCommand extends CustomCommand {
@@ -25,20 +24,17 @@ public class NearbyEntitiesCommand extends CustomCommand {
 		super(event);
 	}
 
-	private LinkedHashMap<Entity, Long> getNearbyEntities(int radius) {
-		return Utils.getNearbyEntities(player().getLocation(), radius);
-	}
-
 	@Path("[radius]")
 	void run(@Arg("200") int radius) {
 		line();
 		send(PREFIX + "Found:");
-		getNearbyEntities(radius).forEach((entity, count) -> send("&e" + StringUtils.camelCase(entity.getType().name()) + " &7- " + count));
+		getNearbyEntityTypes(player().getLocation(), radius).forEach((entityType, count) ->
+				send("&e" + StringUtils.camelCase(entityType.name()) + " &7- " + count));
 	}
 
 	@Path("find <type> [radius]")
 	void find(EntityType type, @Arg("200") int radius) {
-		getNearbyEntities(radius).entrySet().stream()
+		getNearbyEntities(player().getLocation(), radius).entrySet().stream()
 				.filter(entry -> entry.getKey().getType() == type)
 				.forEach(entry -> {
 					Entity entity = entry.getKey();

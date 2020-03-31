@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.commands.info;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
