@@ -103,6 +103,7 @@ public class ArcheryMatchData extends MatchData {
 	}
 
 	public Direction getRangeDirection(int range, Match match) {
+		if (match.getAliveTeams().size() == 0) return null;
 		List<Location> spawnpoints = match.getAliveTeams().get(0).getSpawnpoints();
 		Location spawnpoint = spawnpoints.get(range - 1);
 		Location down = spawnpoint.getBlock().getRelative(0, -1, 0).getLocation();
