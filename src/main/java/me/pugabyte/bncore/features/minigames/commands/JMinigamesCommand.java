@@ -21,11 +21,15 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.RelativeLocation;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -79,6 +83,35 @@ public class JMinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	void end(@Arg("current") Arena arena) {
 		getRunningMatch(arena).end();
+	}
+
+	@Permission("manage")
+	@Path("signs join <arena>")
+	void joinSign(@Arg Arena arena) {
+		Sign sign = getTargetSign(player());
+		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
+		sign.setLine(1, StringUtils.colorize("&aJoin"));
+		String arenaName = arena.getName();
+		if (arenaName.length() > 15) {
+			sign.setLine(2, arenaName.substring(0, 15));
+			sign.setLine(3, arenaName.substring(15));
+		} else {
+			sign.setLine(2, arena.getName());
+			sign.setLine(3, "");
+		}
+
+		sign.update();
+	}
+
+	@Permission("manage")
+	@Path("signs quit")
+	void quitSign() {
+		Sign sign = getTargetSign(player());
+		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
+		sign.setLine(1, StringUtils.colorize("&aQuit"));
+		sign.setLine(2, "");
+		sign.setLine(3, "");
+		sign.update();
 	}
 
 	@Path("setTime <seconds>")
@@ -218,6 +251,14 @@ public class JMinigamesCommand extends CustomCommand {
 		team.getSpawnpoints().add(player().getLocation());
 		arena.write();
 		send(PREFIX + "Spawnpoint added");
+	}
+
+	private Sign getTargetSign(Player player) {
+		Block targetBlock = player.getTargetBlock(null, 5);
+		Material material = targetBlock.getType();
+		if (Utils.isNullOrAir(material) && !Utils.isSign(material))
+			error(player, "Look at a sign!");
+		return (Sign) targetBlock.getState();
 	}
 
 	private Match getRunningMatch(Arena arena) {
