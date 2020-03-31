@@ -146,6 +146,24 @@ public class RavensNestEstate implements Listener {
 
 	private void resetMap(Match match) {
 		WEUtils.paste(schemFireplace + 1, doorFireplace);
+		WEUtils.paste(schemBasement + 1, doorBasement);
+		WEUtils.paste(schemCloset + 1, doorCloset);
+		WEUtils.paste(schemMaster + 1, doorMaster);
+		WEUtils.paste(schemMain + 1, doorMain);
+		WEUtils.paste(schemStudy + 1, doorStudy);
+		WEUtils.paste(schemSmall + "_S_1", doorSmall_S);
+		WEUtils.paste(schemSmall + "_E_1", doorSmall_E);
+		WEUtils.paste(schemSmall + "_W_1", doorSmall_W);
+
+		statusFireplace = false;
+		statusBasement = false;
+		statusCloset = false;
+		statusMaster = false;
+		statusMain = false;
+		statusStudy = false;
+		statusSmall_S = false;
+		statusSmall_E = false;
+		statusSmall_W = false;
 
 		Region region = match.getArena().getRegion("torches");
 		List<Block> blocks = WEUtils.getBlocks(region);

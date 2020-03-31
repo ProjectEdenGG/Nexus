@@ -85,12 +85,13 @@ public class LaunchPads implements Listener {
 			direction = player.getLocation().getYaw();
 		power *= 2;
 
-		Location launchLocation = player.getLocation();
+		Location launchLocation = Utils.getCenteredLocation(player.getLocation());
 		launchLocation.setPitch((float) -angle);
 		launchLocation.setYaw((float) direction);
 
-		// Piston Moving Piece is invisible?
 		MaterialData PISTON = new MaterialData(Material.PISTON_MOVING_PIECE);
+		// 1.13
+//		MaterialData PISTON = new MaterialData(Material.LEGACY_PISTON_MOVING_PIECE);
 
 		FallingBlock fallingBlock = launchLocation.getWorld().spawnFallingBlock(launchLocation, PISTON.getItemType(), PISTON.getData());
 		jumpPadPlayers.put(player, fallingBlock);
