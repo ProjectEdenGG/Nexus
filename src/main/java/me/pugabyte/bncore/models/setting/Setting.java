@@ -43,7 +43,10 @@ public class Setting {
 	}
 
 	public Map<String, Object> getJson() {
-		return new Gson().fromJson(value, Map.class);
+		Map<String, Object> map = new Gson().fromJson(value, Map.class);
+		if (map == null)
+			return new HashMap<String, Object>();
+		return map;
 	}
 
 	public void setJson(Map<String, Object> map) {
