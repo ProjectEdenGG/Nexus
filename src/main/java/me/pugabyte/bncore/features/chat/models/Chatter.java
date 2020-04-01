@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static me.pugabyte.bncore.features.chat.ChatManager.getChannels;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Data
@@ -61,7 +60,7 @@ public class Chatter {
 	}
 
 	public void updateChannels() {
-		getChannels().forEach(channel -> {
+		ChatManager.getChannels().forEach(channel -> {
 			if (player.hasPermission(channel.getPermission())) {
 				if (!hasJoined(channel))
 					join(channel);
