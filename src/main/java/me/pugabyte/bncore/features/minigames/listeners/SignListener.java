@@ -44,6 +44,11 @@ public class SignListener implements Listener {
 			if ((ChatColor.GREEN + "Quit").equalsIgnoreCase(sign.getLine(1))) {
 				PlayerManager.get(event.getPlayer()).quit();
 			}
+
+			if ((ChatColor.GREEN + "Lobby").equalsIgnoreCase(sign.getLine(1))) {
+				Utils.runCommand(event.getPlayer(), "gl");
+			}
+
 			if ((ChatColor.GREEN + "Force Start").equalsIgnoreCase(sign.getLine(1))) {
 				Utils.runCommandAsOp(event.getPlayer(), "newmgm start");
 			}
