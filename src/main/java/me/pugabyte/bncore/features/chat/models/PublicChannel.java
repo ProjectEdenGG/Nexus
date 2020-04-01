@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+
 @Data
 @Builder
 public class PublicChannel implements Channel {
@@ -60,27 +62,36 @@ public class PublicChannel implements Channel {
 	}
 
 	public void broadcast(String message) {
-		Bukkit.getConsoleSender().sendMessage(message);
-		Bukkit.getOnlinePlayers().stream()
-				.map(ChatManager::getChatter)
-				.filter(chatter -> chatter.hasJoined(this))
-				.forEach(chatter -> chatter.send(message));
+		broadcastIngame(message);
 		if (discordChannel != null)
 			Discord.send(message, discordChannel);
 	}
 
-	public void broadcast(JsonBuilder builder) {
+	public void broadcastIngame(String message) {
+		Bukkit.getConsoleSender().sendMessage(stripColor(message));
 		Bukkit.getOnlinePlayers().stream()
 				.map(ChatManager::getChatter)
 				.filter(chatter -> chatter.hasJoined(this))
-				.forEach(chatter -> chatter.send(builder));
+				.forEach(chatter -> chatter.send(message));
+	}
+
+	public void broadcast(JsonBuilder builder) {
+		broadcastIngame(builder);
 		if (discordChannel != null)
 			Discord.send(builder.toString(), discordChannel);
 	}
 
+	public void broadcastIngame(JsonBuilder builder) {
+		Bukkit.getConsoleSender().spigot().sendMessage(builder.build());
+		Bukkit.getOnlinePlayers().stream()
+				.map(ChatManager::getChatter)
+				.filter(chatter -> chatter.hasJoined(this))
+				.forEach(chatter -> chatter.send(builder));
+	}
+
 	public String getPermission() {
 		if (permission == null)
-			return "chat.join." + name.toLowerCase();
+			return "chat.use." + name.toLowerCase();
 		return permission;
 	}
 

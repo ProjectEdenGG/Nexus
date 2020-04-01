@@ -101,7 +101,7 @@ public class ChatManager {
 
 		event.getRecipients().forEach(recipient -> recipient.send(json));
 
-		Bukkit.getConsoleSender().sendMessage(json.toString());
+		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
 	}
 
 	public static void process(PrivateChatEvent event) {
