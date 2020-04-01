@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.chat.koda;
 
 import lombok.Getter;
-import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
@@ -24,7 +24,7 @@ public class Koda {
 	}
 
 	public static void say(String message) {
-		Chat.broadcast(globalFormat + message);
+		ChatManager.getMainChannel().broadcastIngame(globalFormat + message);
 		Discord.send("<@&&f" + Role.KODA.getId() + "> **>** " + message, Channel.BRIDGE);
 
 		// TEMP

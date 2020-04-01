@@ -27,7 +27,7 @@ public class Chat {
 	}
 
 	public static void broadcast(String message) {
-		broadcast(message, "Global");
+		broadcast(message, ChatManager.getMainChannel());
 	}
 
 	public static void broadcast(String message, String channel) {
