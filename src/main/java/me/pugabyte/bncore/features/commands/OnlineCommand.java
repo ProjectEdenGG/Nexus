@@ -18,6 +18,7 @@ import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -107,7 +108,7 @@ public class OnlineCommand extends CustomCommand {
 		return afk +
 				"&3Ping: &e" + ping + "\n" +
 				"&3World: &e" + world + "\n" +
-				"&3Balance: &e$" + balance + "\n" +
+				"&3Balance: &e$" + new DecimalFormat("#.00").format(balance) + "\n" +
 				"&3Online for: &e" + onlineFor + "\n" +
 				"&3Hours: &e" + totalHours;
 	}

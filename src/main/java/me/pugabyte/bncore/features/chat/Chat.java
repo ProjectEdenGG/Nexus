@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.chat.translator.Translator;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -100,7 +99,6 @@ public class Chat {
 				.color(ChatColor.DARK_AQUA)
 				.local(false)
 				.crossWorld(false)
-				.worldGroup(WorldGroup.MINIGAMES)
 				.build();
 
 		PublicChannel creative = PublicChannel.builder()
@@ -109,7 +107,6 @@ public class Chat {
 				.color(ChatColor.AQUA)
 				.local(false)
 				.crossWorld(false)
-				.worldGroup(WorldGroup.CREATIVE)
 				.build();
 
 		ChatManager.addChannel(global);

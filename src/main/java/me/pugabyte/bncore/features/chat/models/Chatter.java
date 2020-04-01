@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
@@ -47,6 +48,8 @@ public class Chatter {
 
 	public void leave(PublicChannel channel) {
 		joinedChannels.remove(channel);
+		if (activeChannel == channel && channel != ChatManager.getMainChannel())
+			setActiveChannel(ChatManager.getMainChannel());
 	}
 
 	public void send(String message) {

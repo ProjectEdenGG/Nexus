@@ -8,10 +8,8 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -30,8 +28,6 @@ public class PublicChannel implements Channel {
 	private boolean isPrivate;
 	private boolean local;
 	private boolean crossWorld;
-	private WorldGroup worldGroup;
-	private List<World> worlds;
 	private String permission;
 
 	public ChatColor getDiscordColor() {

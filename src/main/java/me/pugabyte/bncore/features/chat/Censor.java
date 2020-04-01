@@ -15,21 +15,20 @@ public class Censor {
 
 	public static void process(ChatEvent event) {
 		String message = process(event.getMessage());
+		message = Emotes.process(message);
 
 		// The following may make the message null
 		message = dots(event.getOrigin(), message);
 		// TODO: swear count
 
+		event.setMessage(message);
 		if (message == null)
 			event.setCancelled(true);
-		else
-			event.setMessage(message);
 	}
 
 	public static String process(String message) {
 		message = dynmapLinkShorten(message);
 		message = deUnicode(message);
-		message = Emotes.process(message);
 		message = dotCommand(message);
 		message = lowercase(message);
 
