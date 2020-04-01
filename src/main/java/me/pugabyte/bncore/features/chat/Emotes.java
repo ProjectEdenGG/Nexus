@@ -1,12 +1,17 @@
 package me.pugabyte.bncore.features.chat;
 
 import lombok.Getter;
+import me.pugabyte.bncore.features.chat.models.events.ChatEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.indexOfIgnoreCase;
 
 public enum Emotes {
 	CHECKMARK("&2✔", ":yes:"),
@@ -68,16 +73,23 @@ public enum Emotes {
 		this.colors = colors;
 	}
 
-	public static String process(String input) {
+	public static void process(ChatEvent event) {
+		OfflinePlayer player = event.getChatter().getOfflinePlayer();
+		if (!PermissionsEx.getUser(player.getName()).has("emoticons.use"))
+			return;
+
+		String message = event.getMessage();
 		for (Emotes value : values())
-			while (input.contains(value.getKey())) {
+			while (indexOfIgnoreCase(message, value.getKey()) > 0) {
 				String result = value.getEmote();
 
 				if (value.getColors().size() > 0)
 					result = Utils.getRandomElement(value.getColors()) + result;
 
-				input = input.replaceFirst(value.getKey(), result + "&f");
+				int index = indexOfIgnoreCase(message, value.getKey());
+				message = message.substring(0, index) + result + event.getChannel().getMessageColor() + message.substring(index + value.getKey().length());
 			}
-		return input;
+
+		event.setMessage(message);
 	}
 }

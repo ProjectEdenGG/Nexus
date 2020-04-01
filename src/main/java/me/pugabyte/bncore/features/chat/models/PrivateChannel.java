@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.chat.models;
 
 import lombok.Data;
+import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class PrivateChannel implements Channel {
 
 	public Set<String> getOthersNames(Chatter chatter) {
 		return getOthers(chatter).stream()
-				.map(recipient -> recipient.getPlayer().getName())
+				.map(recipient -> recipient.getOfflinePlayer().getName())
 				.collect(Collectors.toSet());
 	}
 
@@ -35,6 +36,11 @@ public class PrivateChannel implements Channel {
 	@Override
 	public String getAssignMessage(Chatter chatter) {
 		return "Now chatting with &f" + String.join(", ", getOthersNames(chatter));
+	}
+
+	@Override
+	public ChatColor getMessageColor() {
+		return ChatColor.YELLOW;
 	}
 
 }

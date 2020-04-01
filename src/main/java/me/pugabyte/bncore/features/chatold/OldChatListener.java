@@ -5,13 +5,15 @@ import com.dthielke.herochat.ChannelChatEvent;
 import com.dthielke.herochat.Chatter;
 import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.Censor;
 import me.pugabyte.bncore.features.chat.models.events.DiscordChatEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class OldChatListener implements Listener {
 
@@ -21,12 +23,23 @@ public class OldChatListener implements Listener {
 
 	@EventHandler
 	public void onIngameChat(ChannelChatEvent event) {
-		event.setMessage(Censor.dotCommand(event.getMessage()));
+		event.setMessage(dotCommand(event.getMessage()));
 	}
 
 	@EventHandler
 	public void onDiscordChat(DiscordChatEvent event) {
-		event.setMessage(Censor.dotCommand(event.getMessage()));
+		event.setMessage(dotCommand(event.getMessage()));
+	}
+
+	public static String dotCommand(String message) {
+		Pattern pattern = Pattern.compile("(\\ |^).\\/(\\/|)[a-zA-Z0-9\\-_]+");
+		Matcher matcher = pattern.matcher(message);
+		while (matcher.find()) {
+			String group = matcher.group();
+			String replace = group.replace("./", "/");
+			message = message.replace(group, replace);
+		}
+		return message;
 	}
 
 	@EventHandler

@@ -12,8 +12,9 @@ import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import static me.pugabyte.bncore.utils.Utils.canSee;
 
 public class ChatManager {
 	@Getter
-	private static Map<Player, Chatter> chatters = new HashMap<>();
+	private static Map<OfflinePlayer, Chatter> chatters = new HashMap<>();
 	@Getter
 	private static List<PublicChannel> channels = new ArrayList<>();
 
@@ -36,7 +37,7 @@ public class ChatManager {
 	@Setter
 	private static PublicChannel mainChannel;
 
-	public static Chatter getChatter(Player player) {
+	public static Chatter getChatter(OfflinePlayer player) {
 		chatters.computeIfAbsent(player, $ -> new Chatter((player)));
 		return chatters.get(player);
 	}
@@ -63,7 +64,7 @@ public class ChatManager {
 		if (chatter == null || message == null)
 			return;
 
-		if (!chatter.getPlayer().hasPermission("group.admin"))
+		if (!chatter.getOfflinePlayer().getPlayer().hasPermission("group.admin"))
 			message = stripColor(message);
 
 		if (message.length() == 0)
@@ -92,39 +93,34 @@ public class ChatManager {
 		if (!event.wasSeen())
 			Tasks.wait(1, () -> event.getChatter().send("&eNo one can hear you! Type &c/ch g &eto talk globally"));
 
-		if (!event.getChatter().getPlayer().hasPermission("group.admin"))
-			event.setMessage(stripColor(event.getMessage()));
-
 		JsonBuilder json = new JsonBuilder()
 				.next(event.getChannel().getColor() + "[" + event.getChannel().getNickname() + "]")
-				.next(new Nerd(event.getChatter().getPlayer()).getChatFormat())
+				.next(new Nerd(event.getChatter().getOfflinePlayer()).getChatFormat())
 				.next(" " + event.getChannel().getColor() + ChatColor.BOLD + "> ")
-				.next(event.getMessage());
+				.next(event.getChannel().getMessageColor() + event.getMessage());
 
 		event.getRecipients().forEach(recipient -> recipient.send(json));
+
+		Bukkit.getConsoleSender().sendMessage(json.toString());
 	}
 
 	public static void process(PrivateChatEvent event) {
 		Set<String> othersNames = event.getChannel().getOthersNames(event.getChatter());
-		JsonBuilder to = new JsonBuilder()
-				.next("&3&l[&bPM&3&l] &eTo &3")
-				.next(String.join(", ", othersNames))
-				.next(" &b&l> &e")
-				.next(event.getMessage());
 
-		JsonBuilder from = new JsonBuilder()
-				.next("&3&l[&bPM&3&l] &eFrom &3")
-				.next(event.getChatter().getPlayer().getName())
-				.next(" &b&l> &e")
-				.next(event.getMessage());
+		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + String.join(", ", othersNames) + " &b&l> "
+				+ event.getChannel().getMessageColor() + event.getMessage());
+		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + event.getChatter().getOfflinePlayer().getName() + " &b&l> "
+				+ event.getChannel().getMessageColor() + event.getMessage());
 
 		event.getChatter().send(to);
 
 		event.getRecipients().forEach(recipient -> {
-			if (canSee(event.getChatter().getPlayer(), recipient.getPlayer()))
+			if (canSee(event.getChatter().getOfflinePlayer(), recipient.getOfflinePlayer()))
 				if (!recipient.equals(event.getChatter()))
 					recipient.send(from);
 		});
+
+		Bukkit.getConsoleSender().sendMessage(event.getChatter().getOfflinePlayer().getName() + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
 	}
 
 }

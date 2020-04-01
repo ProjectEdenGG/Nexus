@@ -90,6 +90,11 @@ public class Utils {
 		return false;
 	}
 
+	public static boolean canSee(OfflinePlayer viewer, OfflinePlayer target) {
+		if (!viewer.isOnline() || !target.isOnline()) return false;
+		return (canSee(viewer.getPlayer(), target.getPlayer()));
+	}
+
 	public static boolean canSee(Player viewer, Player target) {
 		return !isVanished(target) || viewer.hasPermission("vanish.see");
 	}

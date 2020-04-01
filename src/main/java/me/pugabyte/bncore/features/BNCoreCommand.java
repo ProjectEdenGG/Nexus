@@ -22,6 +22,7 @@ import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -40,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.utils.StringUtils.getLastColor;
 import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
 
 @Permission("group.seniorstaff")
@@ -91,6 +91,12 @@ public class BNCoreCommand extends CustomCommand {
 	@Permission("group.seniorstaff")
 	void koda(String message) {
 		Koda.say(message);
+	}
+
+	@Path("getLastColor <message...>")
+	@Permission("group.seniorstaff")
+	void getLastColor(String message) {
+		send(StringUtils.getLastColor(message) + "Last color");
 	}
 
 	@Path("getPlayer [player]")
@@ -185,11 +191,6 @@ public class BNCoreCommand extends CustomCommand {
 						send(string);
 				})
 				.open(player());
-	}
-
-	@Path("lastColor <text...>")
-	void lastColor(String text) {
-		send(getLastColor(text) + "color");
 	}
 
 	@Path("cooldown")
