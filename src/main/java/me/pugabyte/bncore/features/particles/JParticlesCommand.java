@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.particles.effects.BandEffect;
 import me.pugabyte.bncore.features.particles.effects.CircleEffect;
+import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
 import me.pugabyte.bncore.features.particles.effects.NyanCatEffect;
@@ -91,5 +92,13 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	@Path("nyancat")
 	void nyancat() {
 		NyanCatEffect.builder().player(player()).ticks(10 * 20).start();
+	}
+
+	@Path("disco")
+	void disco() {
+		Vector vector = new Vector(0, 4, 0);
+		Location loc = player().getLocation().add(vector);
+		DiscoEffect.builder().player(player()).location(loc).ticks(10 * 20).lineLength(5).maxLines(4).sphereRadius(0.4)
+				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).start();
 	}
 }
