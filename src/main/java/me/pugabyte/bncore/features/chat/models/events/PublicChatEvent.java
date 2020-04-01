@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-public class ChannelChatEvent extends ChatEvent {
+public class PublicChatEvent extends MinecraftChatEvent {
 	private final Chatter chatter;
 	private PublicChannel channel;
 	private String message;
@@ -18,6 +18,7 @@ public class ChannelChatEvent extends ChatEvent {
 	private Set<Chatter> recipients;
 
 	public boolean wasSeen() {
+		if (channel.getDiscordChannel() != null) return true;
 		return recipients.stream().anyMatch(recipient -> Utils.canSee(chatter.getPlayer(), recipient.getPlayer()));
 	}
 

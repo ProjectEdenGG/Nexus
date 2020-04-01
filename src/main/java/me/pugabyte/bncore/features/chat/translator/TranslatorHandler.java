@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.chatold.translator;
+package me.pugabyte.bncore.features.chat.translator;
 
 import com.google.gson.Gson;
 import lombok.Data;

@@ -9,11 +9,16 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-public class PrivateChatEvent extends ChatEvent {
+public class PrivateChatEvent extends MinecraftChatEvent {
 	private final Chatter chatter;
 	private PrivateChannel channel;
 	private String message;
 
 	private Set<Chatter> recipients;
+
+	@Override
+	public boolean wasSeen() {
+		return true;
+	}
 
 }

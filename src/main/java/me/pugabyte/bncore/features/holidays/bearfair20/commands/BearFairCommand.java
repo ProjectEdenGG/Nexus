@@ -50,7 +50,7 @@ public class BearFairCommand extends _WarpCommand {
 
 	@Path("warps tp nearest")
 	public void teleportNearest() {
-		super.teleportNearest();
+		getNearestWarp(player().getLocation()).teleport(player());
 	}
 
 	@Override

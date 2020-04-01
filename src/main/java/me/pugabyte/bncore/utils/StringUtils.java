@@ -39,6 +39,14 @@ public class StringUtils {
 		return "§";
 	}
 
+	public static int countUpperCase(String s) {
+		return (int) s.codePoints().filter(c-> c >= 'A' && c <= 'Z').count();
+	}
+
+	public static int countLowerCase(String s) {
+		return (int) s.codePoints().filter(c-> c >= 'a' && c <= 'z').count();
+	}
+
 	public static String loreize(String string) {
 		int i = 0, lineLength = 0;
 		boolean watchForNewLine = false, watchForColor = false;

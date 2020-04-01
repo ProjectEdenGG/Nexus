@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.ChatManager;
+import me.pugabyte.bncore.features.discord.Discord;
+import me.pugabyte.bncore.features.discord.DiscordId;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
@@ -22,11 +25,18 @@ public class PublicChannel implements Channel {
 	private String name;
 	private String nickname;
 	private ChatColor color;
+	private DiscordId.Channel discordChannel;
+	private ChatColor discordColor;
 	private boolean isPrivate;
 	private boolean local;
 	private boolean crossWorld;
 	private WorldGroup worldGroup;
 	private List<World> worlds;
+	private String permission;
+
+	public ChatColor getDiscordColor() {
+		return discordColor == null ? color : discordColor;
+	}
 
 	@Override
 	public String getAssignMessage(Chatter chatter) {
@@ -49,10 +59,28 @@ public class PublicChannel implements Channel {
 	}
 
 	public void broadcast(String message) {
+		Bukkit.getConsoleSender().sendMessage(message);
 		Bukkit.getOnlinePlayers().stream()
 				.map(ChatManager::getChatter)
 				.filter(chatter -> chatter.hasJoined(this))
 				.forEach(chatter -> chatter.send(message));
+		if (discordChannel != null)
+			Discord.send(message, discordChannel);
+	}
+
+	public void broadcast(JsonBuilder builder) {
+		Bukkit.getOnlinePlayers().stream()
+				.map(ChatManager::getChatter)
+				.filter(chatter -> chatter.hasJoined(this))
+				.forEach(chatter -> chatter.send(builder));
+		if (discordChannel != null)
+			Discord.send(builder.toString(), discordChannel);
+	}
+
+	public String getPermission() {
+		if (permission == null)
+			return "chat.join." + name.toLowerCase();
+		return permission;
 	}
 
 }

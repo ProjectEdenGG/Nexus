@@ -6,9 +6,9 @@ import me.pugabyte.bncore.features.chat.models.Channel;
 import me.pugabyte.bncore.features.chat.models.Chatter;
 import me.pugabyte.bncore.features.chat.models.PrivateChannel;
 import me.pugabyte.bncore.features.chat.models.PublicChannel;
-import me.pugabyte.bncore.features.chat.models.events.ChannelChatEvent;
 import me.pugabyte.bncore.features.chat.models.events.ChatEvent;
 import me.pugabyte.bncore.features.chat.models.events.PrivateChatEvent;
+import me.pugabyte.bncore.features.chat.models.events.PublicChatEvent;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.entity.Player;
@@ -54,6 +54,10 @@ public class ChatManager {
 				.collect(Collectors.toList());
 	}
 
+	public static Optional<PublicChannel> getChannelByDiscordId(String id) {
+		return channels.stream().filter(_channel -> _channel.getDiscordChannel().getId().equalsIgnoreCase(id)).findFirst();
+	}
+
 	public static void addChannel(PublicChannel channel) {
 		channels.add(channel);
 	}
@@ -67,7 +71,7 @@ public class ChatManager {
 		ChatEvent event = null;
 		Set<Chatter> recipients = channel.getRecipients(chatter);
 		if (channel instanceof PublicChannel)
-			event = new ChannelChatEvent(chatter, (PublicChannel) channel, message, recipients);
+			event = new PublicChatEvent(chatter, (PublicChannel) channel, message, recipients);
 		else if (channel instanceof PrivateChannel)
 			event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, recipients);
 
