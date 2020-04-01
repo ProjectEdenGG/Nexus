@@ -6,13 +6,12 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.WorldGroup;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.chat.ChatManager.getChannels;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -24,6 +23,14 @@ public class Chatter {
 	private Player player;
 	private Channel activeChannel;
 	private List<PublicChannel> joinedChannels = new ArrayList<>();
+
+	public String getUuid() {
+		return player.getUniqueId().toString();
+	}
+
+	public void playSound() {
+		Jingle.PING.play(player);
+	}
 
 	public void setActiveChannel(Channel channel) {
 		this.activeChannel = channel;
@@ -51,16 +58,14 @@ public class Chatter {
 	}
 
 	public void updateChannels() {
-		WorldGroup worldGroup = WorldGroup.get(player);
-
-		List<PublicChannel> toLeave = joinedChannels.stream()
-				.filter(channel -> channel.getWorldGroup() != null)
-				.filter(channel -> channel.getWorldGroup() != worldGroup)
-				.collect(Collectors.toList());
-		List<PublicChannel> toJoin = getChannels(worldGroup);
-
-		toLeave.forEach(this::leave);
-		toJoin.forEach(this::join);
+		getChannels().forEach(channel -> {
+			if (player.hasPermission(channel.getPermission())) {
+				if (!hasJoined(channel))
+					join(channel);
+			} else {
+				leave(channel);
+			}
+		});
 	}
 
 	@Override

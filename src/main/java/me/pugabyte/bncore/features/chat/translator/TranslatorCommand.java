@@ -1,6 +1,5 @@
-package me.pugabyte.bncore.features.chatold.translator;
+package me.pugabyte.bncore.features.chat.translator;
 
-import me.pugabyte.bncore.features.chatold.ChatOld;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -15,8 +14,6 @@ import java.util.UUID;
 @Aliases("translate")
 @Permission("translate")
 public class TranslatorCommand extends CustomCommand {
-	Translator translator = ChatOld.translator;
-
 	public TranslatorCommand(CommandEvent event) {
 		super(event);
 	}
@@ -25,9 +22,9 @@ public class TranslatorCommand extends CustomCommand {
 	@Permission("use")
 	void remove(Player player) {
 		if (player != null) {
-			ArrayList<UUID> translators = translator.map.get(player.getUniqueId());
+			ArrayList<UUID> translators = Translator.getMap().get(player.getUniqueId());
 			if (translators != null && translators.contains(player().getUniqueId())) {
-				translator.map.get(player.getUniqueId()).remove(player().getUniqueId());
+				Translator.getMap().get(player.getUniqueId()).remove(player().getUniqueId());
 				send(PREFIX + "You are no longer translating " + player.getDisplayName());
 			} else {
 				send(PREFIX + "You are not translating that player");
@@ -35,8 +32,8 @@ public class TranslatorCommand extends CustomCommand {
 			return;
 		}
 
-		for (UUID uuid : translator.map.keySet())
-			translator.map.get(uuid).remove(player().getUniqueId());
+		for (UUID uuid : Translator.getMap().keySet())
+			Translator.getMap().get(uuid).remove(player().getUniqueId());
 
 		send(PREFIX + "Stopping all active translations.");
 	}
@@ -49,10 +46,10 @@ public class TranslatorCommand extends CustomCommand {
 
 		ArrayList<UUID> uuids = new ArrayList<UUID>() {{
 			add(player().getUniqueId());
-			if (translator.map.containsKey(player.getUniqueId()))
-				addAll(translator.map.get(player.getUniqueId()));
+			if (Translator.getMap().containsKey(player.getUniqueId()))
+				addAll(Translator.getMap().get(player.getUniqueId()));
 		}};
-		translator.map.put(player.getUniqueId(), uuids);
+		Translator.getMap().put(player.getUniqueId(), uuids);
 
 		send(PREFIX + "You are now translating messages from " + player.getDisplayName() + ".");
 	}

@@ -73,7 +73,8 @@ public class DiscordId {
 	public enum Role {
 		SUPPORTER("269916102199476236"),
 		VERIFIED("411658569444884495"),
-		NERD("387029729401896980");
+		NERD("387029729401896980"),
+		KODA("694694615290347600");
 
 		@Getter
 		private String id;

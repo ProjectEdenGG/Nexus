@@ -100,7 +100,7 @@ public class JsonBuilder {
 
 	public BaseComponent[] build() {
 		group();
-		return result.create();
+		return new ComponentBuilder(result).create();
 	}
 
 	private String getColoredWords(String text) {
@@ -112,6 +112,10 @@ public class JsonBuilder {
 		String result = builder.toString().replaceFirst("\\s++$", "");
 		if (text.endsWith(" ")) result += " ";
 		return result;
+	}
+
+	public String toString() {
+		return BaseComponent.toPlainText(new ComponentBuilder(result).create());
 	}
 
 }

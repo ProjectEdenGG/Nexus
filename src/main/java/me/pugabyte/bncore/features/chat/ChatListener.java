@@ -4,8 +4,8 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.models.Chatter;
 import me.pugabyte.bncore.features.chat.models.PrivateChannel;
 import me.pugabyte.bncore.features.chat.models.PublicChannel;
-import me.pugabyte.bncore.features.chat.models.events.ChannelChatEvent;
 import me.pugabyte.bncore.features.chat.models.events.PrivateChatEvent;
+import me.pugabyte.bncore.features.chat.models.events.PublicChatEvent;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
@@ -37,7 +37,7 @@ public class ChatListener implements Listener {
 	}
 
 	@EventHandler
-	public void onChannelChat(ChannelChatEvent event) {
+	public void onChannelChat(PublicChatEvent event) {
 		if (!event.wasSeen())
 			Tasks.wait(1, () -> event.getChatter().send("&eNo one can hear you! Type &c/ch g &eto talk globally"));
 

@@ -5,8 +5,10 @@ import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
@@ -27,6 +29,22 @@ public class Discord {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public static String getName(Member member) {
+		User user = null;
+		if (member != null)
+			user = member.getUser();
+		return getName(member, user);
+	}
+
+	public static String getName(Member member, User user) {
+		if (member == null || member.getNickname() == null)
+			if (user == null)
+				return "NULL";
+			else
+				return user.getName();
+		return member.getNickname();
 	}
 
 	public static Guild getGuild() {

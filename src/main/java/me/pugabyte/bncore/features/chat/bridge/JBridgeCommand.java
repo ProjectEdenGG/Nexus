@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.discord.bridge;
+package me.pugabyte.bncore.features.chat.bridge;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;

@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.chatold.alerts;
+package me.pugabyte.bncore.features.chat.alerts;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
