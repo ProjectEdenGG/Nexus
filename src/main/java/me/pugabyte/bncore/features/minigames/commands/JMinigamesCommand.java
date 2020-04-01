@@ -120,6 +120,17 @@ public class JMinigamesCommand extends CustomCommand {
 		sign.update();
 	}
 
+	@Permission("manage")
+	@Path("signs lobby")
+	void lobbySign() {
+		Sign sign = getTargetSign(player());
+		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
+		sign.setLine(1, StringUtils.colorize("&aLobby"));
+		sign.setLine(2, "");
+		sign.setLine(3, "");
+		sign.update();
+	}
+
 	@Path("setTime <seconds>")
 	@Permission("manage")
 	void setTime(int seconds) {
