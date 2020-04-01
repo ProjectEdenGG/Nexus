@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.particles.effects;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Builder;
+import lombok.Getter;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
 import me.pugabyte.bncore.features.particles.VectorUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -13,10 +14,11 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CircleEffect {
+	@Getter
+	private int taskId;
 
 	@Builder(buildMethodName = "start")
 	public CircleEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean whole, boolean randomRotation,
@@ -79,11 +81,10 @@ public class CircleEffect {
 		final AtomicDouble blue = new AtomicDouble(disZ);
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 		AtomicInteger step = new AtomicInteger(0);
-		UUID uuid = UUID.randomUUID();
 
-		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
+		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				ParticleUtils.cancelParticle(uuid, player);
+				ParticleUtils.cancelEffectTask(taskId);
 				return;
 			}
 
@@ -115,7 +116,5 @@ public class CircleEffect {
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
 		});
-
-		ParticleUtils.addToMap(uuid, player, taskId);
 	}
 }

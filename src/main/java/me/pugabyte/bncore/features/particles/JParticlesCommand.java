@@ -2,23 +2,25 @@ package me.pugabyte.bncore.features.particles;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.features.particles.effects.BandEffect;
-import me.pugabyte.bncore.features.particles.effects.CircleEffect;
 import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
-import me.pugabyte.bncore.features.particles.effects.NyanCatEffect;
+import me.pugabyte.bncore.features.particles.effects.StarEffect;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
+
+import java.util.List;
 
 @NoArgsConstructor
 @Permission("group.admin")
@@ -28,54 +30,24 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@Path("<effectType>")
+	void run(EffectType effectType) {
+		effectType.run(player());
+	}
+
+	@Path("stop <effectType>")
+	void stop(EffectType effectType) {
+		ParticleUtils.cancelEffect(player(), effectType);
+	}
+
+	@Path("stopall")
+	void stopAll() {
+		ParticleUtils.cancelAllEffects(player());
+	}
+
 	@Path("line [distance] [density]")
 	void line(@Arg("10") int distance, @Arg("0.1") double density) {
 		LineEffect.builder().player(player()).distance(distance).density(density).rainbow(true).start();
-	}
-
-	@Path("circles")
-	void circles() {
-		CircleEffect.builder().player(player()).location(player().getLocation()).density(10).radius(0.333).ticks(20 * 20).whole(true).updateLoc(true).rainbow(true).start();
-		Tasks.wait(20, () -> CircleEffect.builder().player(player()).location(player().getLocation()).density(20).radius(0.666).ticks(20 * 20).whole(true).updateLoc(true).rainbow(true).start());
-		Tasks.wait(40, () -> CircleEffect.builder().player(player()).location(player().getLocation()).density(40).radius(0.999).ticks(20 * 20).whole(true).updateLoc(true).rainbow(true).start());
-		Tasks.wait(60, () -> CircleEffect.builder().player(player()).location(player().getLocation()).density(60).radius(1.333).ticks(20 * 20).whole(true).updateLoc(true).rainbow(true).start());
-	}
-
-	@Path("circle")
-	void circle() {
-		Vector vector = new Vector(0, 1, 0);
-		Location loc = player().getLocation().add(vector);
-		CircleEffect.builder().player(player()).location(loc).updateVector(vector).density(100).radius(1.5).ticks(20 * 20).rainbow(true).start();
-	}
-
-	@Path("halo")
-	void halo() {
-		Vector vector = new Vector(0, 2.1, 0);
-		Location loc = player().getLocation().add(vector);
-		CircleEffect.builder().player(player()).location(loc).updateVector(vector).density(20).radius(0.5).ticks(20 * 20).rainbow(true).start();
-	}
-
-	@Path("slowsphere")
-	void slowsphere() {
-		Vector vector = new Vector(0, 1.5, 0);
-		Location loc = player().getLocation().add(vector);
-		CircleEffect.builder().player(player()).location(loc).updateVector(vector).density(100).radius(1.5).ticks(20 * 20).randomRotation(true).rainbow(true).start();
-	}
-
-	@Path("fastsphere")
-	void fastsphere() {
-		Vector vector = new Vector(0, 1.5, 0);
-		Location loc = player().getLocation().add(vector);
-		CircleEffect.builder().player(player()).location(loc).updateVector(vector).density(100).radius(1.5).ticks(20 * 20).randomRotation(true).rainbow(true).fast(true).start();
-	}
-
-	@Path("BNRings")
-	void bnrings() {
-		Vector vector = new Vector(0, 1.5, 0);
-		Location loc = player().getLocation().add(vector);
-		CircleEffect.builder().player(player()).location(loc).updateVector(vector).density(100).radius(1.5).ticks(20 * 20).randomRotation(true).color(Color.TEAL).fast(true).start();
-		Tasks.wait(20, () ->
-				CircleEffect.builder().player(player()).location(loc).updateVector(vector).density(100).radius(1.5).ticks(20 * 20).randomRotation(true).color(Color.YELLOW).fast(true).start());
 	}
 
 	@Path("dot")
@@ -84,21 +56,46 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 		DotEffect.builder().player(player()).loc(loc).ticks(10 * 20).rainbow(true).start();
 	}
 
-	@Path("band")
-	void band() {
-		BandEffect.builder().player(player()).ticks(10 * 20).rainbow(true).start();
-	}
-
-	@Path("nyancat")
-	void nyancat() {
-		NyanCatEffect.builder().player(player()).ticks(10 * 20).start();
-	}
-
-	@Path("disco")
-	void disco() {
+	@Path("disco slow")
+	void discoslow() {
 		Vector vector = new Vector(0, 4, 0);
 		Location loc = player().getLocation().add(vector);
 		DiscoEffect.builder().player(player()).location(loc).ticks(10 * 20).lineLength(5).maxLines(4).sphereRadius(0.5)
-				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).start();
+				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).rainbowOption(DiscoEffect.RainbowOption.SLOW).start();
+	}
+
+	@Path("disco fast")
+	void discofast() {
+		Vector vector = new Vector(0, 4, 0);
+		Location loc = player().getLocation().add(vector);
+		DiscoEffect.builder().player(player()).location(loc).ticks(10 * 20).lineLength(5).maxLines(4).sphereRadius(0.5)
+				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).rainbowOption(DiscoEffect.RainbowOption.FAST).start();
+	}
+
+	@Path("disco line")
+	void discoline() {
+		Vector vector = new Vector(0, 4, 0);
+		Location loc = player().getLocation().add(vector);
+		DiscoEffect.builder().player(player()).location(loc).ticks(10 * 20).lineLength(5).maxLines(4).sphereRadius(0.5)
+				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).rainbowOption(DiscoEffect.RainbowOption.LINE).start();
+	}
+
+	@Path("star")
+	void star() {
+		StarEffect.builder().player(player()).location(player().getLocation()).start();
+	}
+
+	@ConverterFor(EffectType.class)
+	EffectType convertToEffectType(String value) {
+		try {
+			return EffectType.valueOf(value.toUpperCase());
+		} catch (IllegalArgumentException ignore) {
+			throw new InvalidInputException("EffectType from " + value + " not found");
+		}
+	}
+
+	@TabCompleterFor(EffectType.class)
+	List<String> tabCompleteEffectType(String filter) {
+		return tabCompleteEnum(EffectType.class, filter);
 	}
 }

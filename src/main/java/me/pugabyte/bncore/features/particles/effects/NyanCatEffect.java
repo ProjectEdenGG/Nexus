@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.particles.effects;
 
 import lombok.Builder;
+import lombok.Getter;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
@@ -10,10 +11,11 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NyanCatEffect {
+	@Getter
+	private int taskId;
 
 	@Builder(buildMethodName = "start")
 	public NyanCatEffect(Player player, int ticks, int startDelay, int pulseDelay) {
@@ -25,11 +27,10 @@ public class NyanCatEffect {
 
 		int finalTicks = ticks;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
-		UUID uuid = UUID.randomUUID();
 
-		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
+		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				ParticleUtils.cancelParticle(uuid, player);
+				ParticleUtils.cancelEffectTask(taskId);
 				return;
 			}
 
@@ -50,7 +51,5 @@ public class NyanCatEffect {
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
 		});
-
-		ParticleUtils.addToMap(uuid, player, taskId);
 	}
 }

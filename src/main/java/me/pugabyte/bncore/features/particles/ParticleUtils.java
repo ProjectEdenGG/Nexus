@@ -1,25 +1,42 @@
 package me.pugabyte.bncore.features.particles;
 
+import lombok.Getter;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ParticleUtils {
-	public static Map<UUID, Map<UUID, Integer>> activeParticles = new HashMap<>();
+	@Getter
+	public static List<EffectTask> tasks = new ArrayList<>();
 
-	public static void addToMap(UUID uuid, Player player, int taskId) {
-		ParticleUtils.activeParticles.put(uuid, new HashMap<UUID, Integer>() {{
-			put(player.getUniqueId(), taskId);
-		}});
+	public static List<EffectTask> getTasks(Player player) {
+		return tasks.stream().filter(task -> task.getPlayer().equals(player)).collect(Collectors.toList());
 	}
 
-	public static void cancelParticle(UUID uuid, Player player) {
-		Tasks.cancel(activeParticles.get(uuid).get(player.getUniqueId()));
-		activeParticles.remove(uuid);
+	public static List<EffectTask> getTasks(Player player, EffectType effectType) {
+		return tasks.stream().filter(task -> task.getPlayer().equals(player) && task.getEffectType() == effectType).collect(Collectors.toList());
+	}
+
+	public static void cancelAllEffects(Player player) {
+		getTasks(player).stream().map(EffectTask::getTaskId).forEach(Tasks::cancel);
+	}
+
+	public static void cancelEffect(Player player, EffectType effectType) {
+		getTasks(player, effectType).stream().map(EffectTask::getTaskId).forEach(Tasks::cancel);
+	}
+
+	public static void cancelEffectTask(int taskId) {
+		Tasks.cancel(taskId);
+	}
+
+	public static void addEffectTask(Player player, EffectType effectType, int... taskIds) {
+		for (int taskId : taskIds) {
+			tasks.add(new EffectTask(effectType, player, taskId));
+		}
 	}
 
 	public static double incHue(double hue) {
