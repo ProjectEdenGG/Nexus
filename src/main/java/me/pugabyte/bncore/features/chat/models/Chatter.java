@@ -5,9 +5,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.ChatManager;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -20,21 +22,30 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 @RequiredArgsConstructor
 public class Chatter {
 	@NonNull
-	private Player player;
+	private OfflinePlayer offlinePlayer;
 	private Channel activeChannel;
 	private List<PublicChannel> joinedChannels = new ArrayList<>();
 
 	public String getUuid() {
-		return player.getUniqueId().toString();
+		return offlinePlayer.getUniqueId().toString();
+	}
+
+	public Player getPlayer() {
+		if (!offlinePlayer.isOnline())
+			throw new PlayerNotOnlineException(offlinePlayer);
+		return offlinePlayer.getPlayer();
 	}
 
 	public void playSound() {
-		Jingle.PING.play(player);
+		if (offlinePlayer.isOnline())
+			Jingle.PING.play(offlinePlayer.getPlayer());
 	}
 
 	public void setActiveChannel(Channel channel) {
 		this.activeChannel = channel;
-		new Nerd(player).send(Chat.PREFIX + channel.getAssignMessage(this));
+		if (channel instanceof PublicChannel)
+			join((PublicChannel) channel);
+		new Nerd(offlinePlayer).send(Chat.PREFIX + channel.getAssignMessage(this));
 	}
 
 	public void join(PublicChannel channel) {
@@ -52,22 +63,25 @@ public class Chatter {
 	}
 
 	public void send(String message) {
-		player.sendMessage(colorize(message));
+		if (offlinePlayer.isOnline())
+			offlinePlayer.getPlayer().sendMessage(colorize(message));
 	}
 
 	public void send(JsonBuilder message) {
-		player.spigot().sendMessage(message.build());
+		if (offlinePlayer.isOnline())
+			offlinePlayer.getPlayer().spigot().sendMessage(message.build());
 	}
 
 	public void updateChannels() {
-		ChatManager.getChannels().forEach(channel -> {
-			if (player.hasPermission(channel.getPermission())) {
-				if (!hasJoined(channel))
-					join(channel);
-			} else {
-				leave(channel);
-			}
-		});
+		if (offlinePlayer.isOnline())
+			ChatManager.getChannels().forEach(channel -> {
+				if (offlinePlayer.getPlayer().hasPermission(channel.getPermission())) {
+					if (!hasJoined(channel))
+						join(channel);
+				} else {
+					leave(channel);
+				}
+			});
 	}
 
 	@Override
@@ -75,7 +89,7 @@ public class Chatter {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Chatter chatter = (Chatter) o;
-		return Objects.equals(player.getUniqueId(), chatter.getPlayer().getUniqueId());
+		return Objects.equals(offlinePlayer.getUniqueId(), chatter.getOfflinePlayer().getUniqueId());
 	}
 
 }

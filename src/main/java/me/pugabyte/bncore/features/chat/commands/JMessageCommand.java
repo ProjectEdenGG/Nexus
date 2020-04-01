@@ -5,11 +5,10 @@ import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.features.chat.models.Chatter;
 import me.pugabyte.bncore.features.chat.models.PrivateChannel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-@Aliases({"msg", "whisper", "w", "tell", "dm"})
+//@Aliases({"msg", "whisper", "w", "tell", "dm"})
 public class JMessageCommand extends CustomCommand {
 	private Chatter chatter;
 
@@ -21,6 +20,9 @@ public class JMessageCommand extends CustomCommand {
 
 	@Path("<player> [message...]")
 	void message(Chatter to, String message) {
+		if (chatter == to)
+			error("You cannot message yourself");
+
 		PrivateChannel dm = new PrivateChannel(chatter, to);
 		if (isNullOrEmpty(message))
 			chatter.setActiveChannel(dm);

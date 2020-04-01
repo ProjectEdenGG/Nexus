@@ -11,7 +11,6 @@ import me.pugabyte.bncore.models.alerts.AlertsService;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.util.List;
@@ -26,15 +25,15 @@ public class AlertsListener implements Listener {
 		BNCore.registerListener(this);
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onChat(MinecraftChatEvent event) {
 		if (event.getChannel() instanceof PrivateChannel)
-			event.getRecipients().forEach(Chatter::playSound);
+			event.getRecipients().stream().filter(chatter -> !chatter.equals(event.getChatter())).forEach(Chatter::playSound);
 		else
 			tryAlerts(event.getRecipients(), event.getMessage());
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onDiscordMessage(DiscordChatEvent event) {
 		tryAlerts(event.getRecipients(), event.getMessage());
 	}
@@ -49,7 +48,7 @@ public class AlertsListener implements Listener {
 		new AlertsService().getAll(uuids).forEach(alerts -> alerts.tryAlerts(message));
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler
 	public void onChat(com.dthielke.herochat.ChannelChatEvent event) {
 		String channelName = event.getChannel().getName();
 		String message = event.getMessage();

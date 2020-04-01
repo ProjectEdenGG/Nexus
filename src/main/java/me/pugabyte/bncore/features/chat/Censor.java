@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.features.chat;
 
 import me.pugabyte.bncore.features.chat.models.events.ChatEvent;
+import org.apache.commons.lang.StringEscapeUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,28 +14,18 @@ import static me.pugabyte.bncore.utils.StringUtils.countUpperCase;
 public class Censor {
 
 	public static void process(ChatEvent event) {
-		String message = process(event.getMessage());
-		message = Emotes.process(message);
+		dynmapLinkShorten(event);
+		deUnicode(event);
+		Emotes.process(event);
+		dotCommand(event);
+		lowercase(event);
+		dots(event);
 
-		// The following may make the message null
-		message = dots(event.getOrigin(), message);
 		// TODO: swear count
-
-		event.setMessage(message);
-		if (message == null)
-			event.setCancelled(true);
 	}
 
-	public static String process(String message) {
-		message = dynmapLinkShorten(message);
-		message = deUnicode(message);
-		message = dotCommand(message);
-		message = lowercase(message);
-
-		return message;
-	}
-
-	private static String lowercase(String message) {
+	private static void lowercase(ChatEvent event) {
+		String message = event.getMessage();
 		String characters = message.replaceAll(" ", "");
 		int upper = countUpperCase(message);
 		int pct = upper / characters.length() * 100;
@@ -43,19 +33,18 @@ public class Censor {
 		if (upper > 7 && pct > 40)
 			message = message.toLowerCase();
 
-		return message;
+		event.setMessage(message);
 	}
 
-	public static String dots(String origin, String message) {
-		if (message.contains("(dot)") || message.contains("<dot>") || message.contains("{dot}") || message.contains("[dot]")) {
-			Chat.broadcast("Prevented a possible advertisement attempt by " + origin, ": " + message);
-			message = null;
+	public static void dots(ChatEvent event) {
+		if (event.getMessage().toLowerCase().matches("(\\(|<|\\{|\\[)dot(]|}|>|\\))")) {
+			Chat.broadcast("Prevented a possible advertisement attempt by " + event.getOrigin() + ": " + event.getMessage(), "Staff");
+			event.setCancelled(true);
 		}
-
-		return message;
 	}
 
-	public static String dotCommand(String message) {
+	public static void dotCommand(ChatEvent event) {
+		String message = event.getMessage();
 		Pattern pattern = Pattern.compile("(\\ |^).\\/(\\/|)[a-zA-Z0-9\\-_]+");
 		Matcher matcher = pattern.matcher(message);
 		while (matcher.find()) {
@@ -63,10 +52,11 @@ public class Censor {
 			String replace = group.replace("./", "/");
 			message = message.replace(group, replace);
 		}
-		return message;
+		event.setMessage(message);
 	}
 
-	public static String dynmapLinkShorten(String message) {
+	public static void dynmapLinkShorten(ChatEvent event) {
+		String message = event.getMessage();
 		if (message.contains("map.bnn.gg")) {
 			List<String> words = Arrays.asList(message.split(" "));
 
@@ -91,7 +81,7 @@ public class Censor {
 			}
 		}
 
-		return message;
+		event.setMessage(message);
 	}
 
 	// Supports:
@@ -110,8 +100,9 @@ public class Censor {
 	private static final int LOWER = 97;
 	private static final int UPPER = 65;
 
-	public static String deUnicode(String input) {
-		List<String> characters = Arrays.asList(input.split(" "));
+	public static void deUnicode(ChatEvent event) {
+		String message = event.getMessage();
+		List<String> characters = Arrays.asList(message.split(""));
 
 		int index = 0;
 		for (String character : new ArrayList<>(characters)) {
@@ -150,12 +141,12 @@ public class Censor {
 					characters.set(index, "\\u00" + Integer.toString(i, 16));
 			}
 
-			characters.set(index, new String(characters.get(index).getBytes(), StandardCharsets.UTF_8));
+			characters.set(index, StringEscapeUtils.unescapeJava(characters.get(index)));
 
 			++index;
 		}
 
-		return String.join("", characters);
+		event.setMessage(String.join("", characters));
 	}
 
 	public static String toUnicode(String input) {

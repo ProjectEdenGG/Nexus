@@ -23,6 +23,7 @@ public class PublicChannel implements Channel {
 	private String name;
 	private String nickname;
 	private ChatColor color;
+	private ChatColor messageColor;
 	private DiscordId.Channel discordChannel;
 	private ChatColor discordColor;
 	private boolean isPrivate;
@@ -32,6 +33,10 @@ public class PublicChannel implements Channel {
 
 	public ChatColor getDiscordColor() {
 		return discordColor == null ? color : discordColor;
+	}
+
+	public ChatColor getMessageColor() {
+		return messageColor == null ? Channel.super.getMessageColor() : messageColor;
 	}
 
 	@Override

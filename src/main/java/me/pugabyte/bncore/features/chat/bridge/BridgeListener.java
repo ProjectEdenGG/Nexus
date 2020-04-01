@@ -85,7 +85,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 		});
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onChannelChat(PublicChatEvent event) {
 		DiscordId.Channel discordChannel = event.getChannel().getDiscordChannel();
 		if (discordChannel == null) return;

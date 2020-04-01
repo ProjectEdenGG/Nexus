@@ -12,6 +12,8 @@ import java.util.Set;
 
 public abstract class ChatEvent extends Event implements Cancellable {
 
+	public abstract Chatter getChatter();
+
 	public abstract String getOrigin();
 
 	public abstract String getMessage();

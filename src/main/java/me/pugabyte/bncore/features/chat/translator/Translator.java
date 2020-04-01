@@ -98,7 +98,7 @@ public class Translator implements Listener {
 				ex.printStackTrace();
 				for (UUID uuid : map.get(sender.getUniqueId())) {
 					Player translating = Utils.getPlayer(uuid).getPlayer();
-					translating.sendMessage(StringUtils.colorize(PREFIX + "Failed to translate message from " + event.getChatter().getPlayer().getDisplayName() + "."));
+					translating.sendMessage(StringUtils.colorize(PREFIX + "Failed to translate message from " + sender.getDisplayName() + "."));
 				}
 			}
 		});

@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.utils;
 
 import com.google.common.base.Strings;
+import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,6 +18,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class StringUtils {
+	@Getter
+	public static final String colorChar = "§";
+
 	public static String getPrefix(String prefix) {
 		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
 	}
@@ -33,10 +37,6 @@ public class StringUtils {
 
 	public static String stripColor(String string) {
 		return ChatColor.stripColor(colorize(string));
-	}
-
-	public static String getColorChar() {
-		return "§";
 	}
 
 	public static int countUpperCase(String s) {
