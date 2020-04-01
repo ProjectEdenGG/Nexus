@@ -98,7 +98,7 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	void disco() {
 		Vector vector = new Vector(0, 4, 0);
 		Location loc = player().getLocation().add(vector);
-		DiscoEffect.builder().player(player()).location(loc).ticks(10 * 20).lineLength(5).maxLines(4).sphereRadius(0.4)
+		DiscoEffect.builder().player(player()).location(loc).ticks(10 * 20).lineLength(5).maxLines(4).sphereRadius(0.5)
 				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).start();
 	}
 }
