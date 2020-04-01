@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DiscoEffect {
 
+	//TODO: Try disco lines like band, each line a new color
 	@Builder(buildMethodName = "start")
 	public DiscoEffect(Player player, Location location, boolean updateLoc, Vector updateVector,
 					   Direction direction, int ticks, boolean rainbow,
