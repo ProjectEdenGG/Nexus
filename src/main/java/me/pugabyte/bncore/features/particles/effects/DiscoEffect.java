@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.particles.effects;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Builder;
+import lombok.Getter;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
 import me.pugabyte.bncore.features.particles.RandomUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -13,15 +14,15 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DiscoEffect {
+	@Getter
+	private int taskId;
 
-	//TODO: add an option to make disco lines like band, each line a new color
 	@Builder(buildMethodName = "start")
 	public DiscoEffect(Player player, Location location, boolean updateLoc, Vector updateVector,
-					   Direction direction, int ticks, boolean rainbow,
+					   Direction direction, int ticks, boolean rainbow, RainbowOption rainbowOption,
 					   Particle lineParticle, int maxLines, int lineDensity, int lineLength, double lineSpeed, boolean lineRainbow, Color lineColor, double disX1, double disY1, double disZ1,
 					   Particle sphereParticle, double sphereRadius, int sphereDensity, double sphereSpeed, boolean sphereRainbow, Color sphereColor, double disX2, double disY2, double disZ2,
 					   int startDelay, int pulseDelay) {
@@ -37,6 +38,9 @@ public class DiscoEffect {
 			lineRainbow = true;
 			sphereRainbow = true;
 		}
+
+		if (lineRainbow || sphereRainbow)
+			if (rainbowOption == null) throw new InvalidInputException("No rainbow option was provided");
 
 		if (lineColor != null) {
 			disX1 = lineColor.getRed();
@@ -117,28 +121,18 @@ public class DiscoEffect {
 		Vector finalUpdateVector = updateVector;
 		int finalTicks = ticks;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
-		UUID uuid = UUID.randomUUID();
 
-		int taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
+		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				ParticleUtils.cancelParticle(uuid, player);
+				ParticleUtils.cancelEffectTask(taskId);
 				return;
 			}
 
-			if (finalLineRainbow) {
-				lineHue.set(ParticleUtils.incHue(lineHue.get()));
-				double[] rgb = ParticleUtils.incRainbow(lineHue.get());
-				lineRed.set(rgb[0]);
-				lineGreen.set(rgb[1]);
-				lineBlue.set(rgb[2]);
-			}
-
-			if (finalSphereRainbow) {
-				sphereHue.set(ParticleUtils.incHue(sphereHue.get()));
-				double[] rgb = ParticleUtils.incRainbow(sphereHue.get());
-				sphereRed.set(rgb[0]);
-				sphereGreen.set(rgb[1]);
-				sphereBlue.set(rgb[2]);
+			if (rainbowOption == RainbowOption.SLOW) {
+				if (finalLineRainbow)
+					incLineRainbow(lineHue, lineRed, lineGreen, lineBlue);
+				if (finalSphereRainbow)
+					incSphereRainbow(sphereHue, sphereRed, sphereGreen, sphereBlue);
 			}
 
 			Location loc = location;
@@ -148,6 +142,13 @@ public class DiscoEffect {
 			//Lines
 			int mL = RandomUtils.random.nextInt(maxLines - 2) + 2;
 			for (int m = 0; m < mL * 2; m++) {
+				if (rainbowOption == RainbowOption.FAST) {
+					if (finalLineRainbow)
+						incLineRainbow(lineHue, lineRed, lineGreen, lineBlue);
+					if (finalSphereRainbow)
+						incSphereRainbow(sphereHue, sphereRed, sphereGreen, sphereBlue);
+				}
+
 				double x = RandomUtils.random.nextInt(lineLength - lineLength * (-1)) + lineLength * (-1);
 				double y = RandomUtils.random.nextInt(lineLength - lineLength * (-1)) + lineLength * (-1);
 				double z = RandomUtils.random.nextInt(lineLength - lineLength * (-1)) + lineLength * (-1);
@@ -158,7 +159,7 @@ public class DiscoEffect {
 
 				Location target = loc.clone().subtract(x, y, z);
 				if (target == null) {
-					ParticleUtils.cancelParticle(uuid, player);
+					ParticleUtils.cancelEffectTask(taskId);
 					return;
 				}
 
@@ -170,6 +171,12 @@ public class DiscoEffect {
 				Vector v = link.multiply(ratio);
 				target = loc.clone().subtract(v);
 				for (int i = 0; i < finalLineDensity; i++) {
+					if (rainbowOption == RainbowOption.LINE) {
+						if (finalLineRainbow)
+							incLineRainbow(lineHue, lineRed, lineGreen, lineBlue);
+						if (finalSphereRainbow)
+							incSphereRainbow(sphereHue, sphereRed, sphereGreen, sphereBlue);
+					}
 					target.add(v);
 					target.getWorld().spawnParticle(finalLineParticle, target, finalLineCount, lineRed.get(), lineGreen.get(), lineBlue.get(), finalLineSpeed);
 				}
@@ -186,9 +193,25 @@ public class DiscoEffect {
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
 		});
+	}
 
-		ParticleUtils.addToMap(uuid, player, taskId);
+	private void incSphereRainbow(AtomicDouble sphereHue, AtomicDouble sphereRed, AtomicDouble sphereGreen, AtomicDouble sphereBlue) {
+		sphereHue.set(ParticleUtils.incHue(sphereHue.get()));
+		double[] rgb = ParticleUtils.incRainbow(sphereHue.get());
+		sphereRed.set(rgb[0]);
+		sphereGreen.set(rgb[1]);
+		sphereBlue.set(rgb[2]);
+	}
+
+	private void incLineRainbow(AtomicDouble lineHue, AtomicDouble lineRed, AtomicDouble lineGreen, AtomicDouble lineBlue) {
+		lineHue.set(ParticleUtils.incHue(lineHue.get()));
+		double[] rgb = ParticleUtils.incRainbow(lineHue.get());
+		lineRed.set(rgb[0]);
+		lineGreen.set(rgb[1]);
+		lineBlue.set(rgb[2]);
 	}
 
 	public enum Direction {UP, DOWN, BOTH}
+
+	public enum RainbowOption {SLOW, FAST, LINE}
 }
