@@ -77,10 +77,14 @@ public class ArenaManager {
 	}
 
 	public static Arena find(String name) {
-		if (!Strings.isNullOrEmpty(name))
+		if (!Strings.isNullOrEmpty(name)) {
+			for (Arena arena : arenas)
+				if (arena.getName().equalsIgnoreCase(name))
+					return arena;
 			for (Arena arena : arenas)
 				if (arena.getName().toLowerCase().startsWith(name.toLowerCase()))
 					return arena;
+		}
 		throw new InvalidInputException("Arena not found");
 	}
 

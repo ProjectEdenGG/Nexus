@@ -3,10 +3,8 @@ package me.pugabyte.bncore.features.chat.bridge;
 import com.google.common.base.Strings;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.features.chat.Censor;
 import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.features.chat.models.PublicChannel;
-import me.pugabyte.bncore.features.chat.models.events.ChatEvent;
 import me.pugabyte.bncore.features.chat.models.events.DiscordChatEvent;
 import me.pugabyte.bncore.features.chat.models.events.PublicChatEvent;
 import me.pugabyte.bncore.features.discord.Discord;
@@ -85,11 +83,6 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 				if (player.hasPermission(channel.get().getPermission()))
 					builder.send(player);
 		});
-	}
-
-	@EventHandler
-	public void onChat(ChatEvent event) {
-		Censor.process(event);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

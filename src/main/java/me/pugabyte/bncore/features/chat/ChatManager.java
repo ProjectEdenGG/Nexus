@@ -6,11 +6,13 @@ import me.pugabyte.bncore.features.chat.models.Channel;
 import me.pugabyte.bncore.features.chat.models.Chatter;
 import me.pugabyte.bncore.features.chat.models.PrivateChannel;
 import me.pugabyte.bncore.features.chat.models.PublicChannel;
-import me.pugabyte.bncore.features.chat.models.events.ChatEvent;
 import me.pugabyte.bncore.features.chat.models.events.PrivateChatEvent;
 import me.pugabyte.bncore.features.chat.models.events.PublicChatEvent;
+import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGroup;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -19,9 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.chat.Chat.PREFIX;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+import static me.pugabyte.bncore.utils.Utils.canSee;
 
 public class ChatManager {
 	@Getter
@@ -48,12 +51,6 @@ public class ChatManager {
 		return channel;
 	}
 
-	public static List<PublicChannel> getChannels(WorldGroup worldGroup) {
-		return channels.stream()
-				.filter(channel -> channel.getWorldGroup() == worldGroup)
-				.collect(Collectors.toList());
-	}
-
 	public static Optional<PublicChannel> getChannelByDiscordId(String id) {
 		return channels.stream().filter(_channel -> _channel.getDiscordChannel().getId().equalsIgnoreCase(id)).findFirst();
 	}
@@ -63,20 +60,71 @@ public class ChatManager {
 	}
 
 	public static void process(Chatter chatter, Channel channel, String message) {
+		if (chatter == null || message == null)
+			return;
+
+		if (!chatter.getPlayer().hasPermission("group.admin"))
+			message = stripColor(message);
+
+		if (message.length() == 0)
+			return;
+
 		if (channel == null) {
-			chatter.send(PREFIX + "You are not speaking in a channel");
+			chatter.send(PREFIX + "&cYou are not speaking in a channel. &3Use &c/ch g &3to return to Global chat.");
 			return;
 		}
 
-		ChatEvent event = null;
 		Set<Chatter> recipients = channel.getRecipients(chatter);
-		if (channel instanceof PublicChannel)
-			event = new PublicChatEvent(chatter, (PublicChannel) channel, message, recipients);
-		else if (channel instanceof PrivateChannel)
-			event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, recipients);
-
-		if (event != null)
+		if (channel instanceof PublicChannel) {
+			PublicChatEvent event = new PublicChatEvent(chatter, (PublicChannel) channel, message, recipients);
 			Utils.callEvent(event);
+			if (!event.isCancelled())
+				process(event);
+		} else if (channel instanceof PrivateChannel) {
+			PrivateChatEvent event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, recipients);
+			Utils.callEvent(event);
+			if (!event.isCancelled())
+				process(event);
+		}
+	}
+
+	public static void process(PublicChatEvent event) {
+		if (!event.wasSeen())
+			Tasks.wait(1, () -> event.getChatter().send("&eNo one can hear you! Type &c/ch g &eto talk globally"));
+
+		if (!event.getChatter().getPlayer().hasPermission("group.admin"))
+			event.setMessage(stripColor(event.getMessage()));
+
+		JsonBuilder json = new JsonBuilder()
+				.next(event.getChannel().getColor() + "[" + event.getChannel().getNickname() + "]")
+				.next(new Nerd(event.getChatter().getPlayer()).getChatFormat())
+				.next(" " + event.getChannel().getColor() + ChatColor.BOLD + "> ")
+				.next(event.getMessage());
+
+		event.getRecipients().forEach(recipient -> recipient.send(json));
+	}
+
+	public static void process(PrivateChatEvent event) {
+		Set<String> othersNames = event.getChannel().getOthersNames(event.getChatter());
+		JsonBuilder to = new JsonBuilder()
+				.next("&3&l[&bPM&3&l] &eTo &3")
+				.next(String.join(", ", othersNames))
+				.next(" &b&l> &e")
+				.next(event.getMessage());
+
+		JsonBuilder from = new JsonBuilder()
+				.next("&3&l[&bPM&3&l] &eFrom &3")
+				.next(event.getChatter().getPlayer().getName())
+				.next(" &b&l> &e")
+				.next(event.getMessage());
+
+		event.getChatter().send(to);
+
+		event.getRecipients().forEach(recipient -> {
+			if (canSee(event.getChatter().getPlayer(), recipient.getPlayer()))
+				if (!recipient.equals(event.getChatter()))
+					recipient.send(from);
+		});
 	}
 
 }
