@@ -33,6 +33,8 @@ public enum EffectSetting {
 		}
 	},
 
+	CIRCLE_WHOLE(Material.SNOW_BALL, EffectType.CIRCLE),
+
 	STAR_ROTATE_SPEED(Material.SUGAR, EffectType.STAR, EffectType.GROWING_STARS) {
 		@Override
 		Object validate(EffectType effectType, Object object) {
