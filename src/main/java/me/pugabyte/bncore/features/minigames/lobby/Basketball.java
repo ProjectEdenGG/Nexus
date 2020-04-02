@@ -34,7 +34,7 @@ public class Basketball implements Listener {
 	@Getter
 	static ItemStack basketball = (ItemStack) BNCore.getInstance().getConfig().get("minigames.lobby.basketball.item");
 	static Map<UUID, ItemStack> basketballs = new HashMap<>();
-	static World world = Minigames.getGameworld();
+	static World world = Minigames.getWorld();
 	static String region = "minigamelobby_basketball";
 
 	public Basketball() {
@@ -86,7 +86,7 @@ public class Basketball implements Listener {
 	}
 
 	private static Collection<Entity> getLobbyEntities() {
-		return world.getNearbyEntities(Minigames.getGamelobby(), 200, 200, 200);
+		return world.getNearbyEntities(Minigames.getLobby(), 200, 200, 200);
 	}
 
 	private static void cleanupBasketballs() {

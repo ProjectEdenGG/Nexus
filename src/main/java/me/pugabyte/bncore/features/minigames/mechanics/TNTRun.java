@@ -44,7 +44,7 @@ public class TNTRun extends TeamlessMechanic {
 
 	@EventHandler
 	public void onExplode(EntityExplodeEvent event) {
-		if (!event.getLocation().getWorld().equals(Minigames.getGameworld()))
+		if (!event.getLocation().getWorld().equals(Minigames.getWorld()))
 			return;
 
 		Arena arena = ArenaManager.getFromLocation(event.getLocation());

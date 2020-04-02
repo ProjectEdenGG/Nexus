@@ -112,7 +112,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		z = (int) (location.getZ() - arena.getOrigins().get(1).getZ());
 		Vector vector = new Vector(x, y, z);
 		Location origin = arena.getOrigins().get(originID);
-		return origin.toVector().add(vector).toLocation(Minigames.getGameworld());
+		return origin.toVector().add(vector).toLocation(Minigames.getWorld());
 	}
 
 	@EventHandler

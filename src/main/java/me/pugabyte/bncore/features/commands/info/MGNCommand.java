@@ -1,17 +1,20 @@
 package me.pugabyte.bncore.features.commands.info;
 
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.models.geoip.GeoIP;
+import me.pugabyte.bncore.models.geoip.GeoIPService;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.TextStyle;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Locale;
+
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.getNumberSuffix;
 
 public class MGNCommand extends CustomCommand {
 
@@ -21,33 +24,38 @@ public class MGNCommand extends CustomCommand {
 
 	@Path
 	void help() {
-		LocalDateTime dateTime = LocalDateTime.now();
-		LocalTime time = dateTime.toLocalTime();
-		LocalDateTime nextMGM = dateTime.withHour(16).withMinute(0).withSecond(0);
-		if (dateTime.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
-			if (time.isAfter(LocalTime.parse("16:00:00")) && time.isBefore(LocalTime.parse("18:00:00"))) {
-				line();
-				send("&3Minigame night is happening right now! Join with &e/gl");
-				return;
-			}
-		} else nextMGM = nextMGM.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+		ZoneId zoneId = ZoneId.systemDefault();
+		if (isPlayer()) {
+			GeoIP geoIp = new GeoIPService().get(player());
+			zoneId = ZoneId.of(geoIp.getTimezone().getId());
+		}
+
+		ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(zoneId);
+		ZonedDateTime next = Minigames.getNextMGN().atZone(ZoneId.systemDefault()).withZoneSameInstant(zoneId);
+
+		if (now.isAfter(next)) {
+			line();
+			send("&3Minigame night is happening right now! Join with &e/gl");
+			return;
+		}
 
 		long days, hours, minutes;
-		days = ChronoUnit.DAYS.between(dateTime, nextMGM);
-		hours = ChronoUnit.HOURS.between(dateTime, nextMGM) % 24;
-		minutes = 60 - dateTime.getMinute();
+		days = ChronoUnit.DAYS.between(now, next);
+		hours = ChronoUnit.HOURS.between(now, next) % 24;
+		minutes = 60 - now.getMinute();
 
 		String until = "";
-		if (days > 0) {
+		if (days > 0)
 			until += days + " day" + ((days <= 1) ? "" : "s") + ", ";
-		}
-		if (hours > 0) {
+		if (hours > 0)
 			until += hours + " hour" + ((hours <= 1) ? "" : "s") + ", ";
-		}
+
 		until += ((hours > 0 || days > 0) ? "and " : "") + minutes + " minute" + ((minutes == 1) ? "" : "s");
 
 		line();
-		send("&3The next &eMinigame Night &3will be hosted on &eSaturday, " + nextMGM.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + StringUtils.getNumberSuffix(nextMGM.getDayOfMonth()) + "&3 at &e4:00 PM &3EST. That is in &e" + until);
+		send("&3The next &eMinigame Night &3will be hosted on &e" + camelCase(next.getDayOfWeek().name()) + ", " + camelCase(next.getMonth().name()) +
+				" " + getNumberSuffix(next.getDayOfMonth()) + "&3 at &e" + next.format(DateTimeFormatter.ofPattern("h:mm a z"))
+				+ "&3. That is in &e" + until);
 	}
 
 }
