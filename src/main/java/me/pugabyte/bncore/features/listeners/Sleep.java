@@ -45,7 +45,7 @@ public class Sleep implements Listener {
 			else if (AFK.get(player).isAfk())
 				sleeping++;
 
-		if (sleeping == 0)
+		if (sleepers.size() == 0)
 			return;
 
 		int needed = (int) Math.ceil((double) players.size() / 2);
