@@ -20,10 +20,10 @@ public enum EffectType {
 	CIRCLES(Material.EYE_OF_ENDER) {
 		@Override
 		int[] start(Player player) {
-			int taskId1 = CircleEffect.builder().player(player).location(player.getLocation()).density(10).radius(0.333).ticks(-1).whole(true).updateLoc(true).rainbow(true).start().getTaskId();
-			int taskId2 = CircleEffect.builder().player(player).location(player.getLocation()).density(20).radius(0.666).ticks(-1).whole(true).updateLoc(true).rainbow(true).startDelay(20).start().getTaskId();
-			int taskId3 = CircleEffect.builder().player(player).location(player.getLocation()).density(40).radius(0.999).ticks(-1).whole(true).updateLoc(true).rainbow(true).startDelay(40).start().getTaskId();
-			int taskId4 = CircleEffect.builder().player(player).location(player.getLocation()).density(60).radius(1.333).ticks(-1).whole(true).updateLoc(true).rainbow(true).startDelay(60).start().getTaskId();
+			int taskId1 = CircleEffect.builder().player(player).density(10).radius(0.333).ticks(-1).whole(true).updateLoc(true).rainbow(true).start().getTaskId();
+			int taskId2 = CircleEffect.builder().player(player).density(20).radius(0.666).ticks(-1).whole(true).updateLoc(true).rainbow(true).startDelay(20).start().getTaskId();
+			int taskId3 = CircleEffect.builder().player(player).density(40).radius(0.999).ticks(-1).whole(true).updateLoc(true).rainbow(true).startDelay(40).start().getTaskId();
+			int taskId4 = CircleEffect.builder().player(player).density(60).radius(1.333).ticks(-1).whole(true).updateLoc(true).rainbow(true).startDelay(60).start().getTaskId();
 			return new int[] {taskId1, taskId2, taskId3, taskId4};
 		}
 	},

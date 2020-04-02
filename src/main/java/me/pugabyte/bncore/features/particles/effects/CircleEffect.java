@@ -25,8 +25,9 @@ public class CircleEffect {
 						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed, boolean fast,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
+		if (player != null && location == null)
+			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
-		if (location == null) throw new InvalidInputException("No location was provided");
 
 		if (density == 0) density = 20;
 		double inc = (2 * Math.PI) / density;
@@ -73,6 +74,7 @@ public class CircleEffect {
 		int finalTicks = ticks;
 		Particle finalParticle = particle;
 		int finalLoops = loops;
+		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;
 		Vector finalUpdateVector = updateVector;
 		final AtomicDouble hue = new AtomicDouble(0);
@@ -97,7 +99,7 @@ public class CircleEffect {
 					blue.set(rgb[2]);
 				}
 
-				Location loc = location;
+				Location loc = finalLocation;
 				if (finalUpdateLoc)
 					loc = player.getLocation().add(finalUpdateVector);
 

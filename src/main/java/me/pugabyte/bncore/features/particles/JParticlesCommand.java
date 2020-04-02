@@ -2,9 +2,11 @@ package me.pugabyte.bncore.features.particles;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.particles.effects.CircleEffect;
 import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
+import me.pugabyte.bncore.features.particles.effects.StarEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -58,7 +60,7 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	@Path("dot")
 	void dot() {
 		Location loc = Utils.getCenteredLocation(player().getLocation()).add(0, 1, 0);
-		DotEffect.builder().player(player()).loc(loc).ticks(10 * 20).rainbow(true).start();
+		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();
 	}
 
 	@Path("disco slow")
@@ -85,6 +87,16 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).rainbowOption(DiscoEffect.RainbowOption.LINE).start();
 	}
 
+	@Path("pentagram")
+	void pentagram() {
+		CircleEffect.builder().player(player()).density(40).radius(2).ticks(25 * 20).whole(true).updateLoc(true).color(Color.BLACK).start();
+		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).color(Color.RED).rotateSpeed(0.2).start();
+	}
+
+	@Path("star")
+	void star() {
+		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).rainbow(true).rotateSpeed(0.2).start();
+	}
 
 	@ConverterFor(EffectType.class)
 	EffectType convertToEffectType(String value) {

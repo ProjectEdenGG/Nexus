@@ -26,6 +26,11 @@ public class LineEffect {
 					  boolean rainbow, Color color, double disX, double disY, double disZ,
 					  double distance, double maxLength, int startDelay, int pulseDelay) {
 
+		if (player != null && startLoc == null)
+			startLoc = player.getLocation();
+		if (player != null && endLoc == null)
+			endLoc = player.getLocation();
+
 		if (player == null) throw new InvalidInputException("No player was provided");
 
 		double maxLineLength = 200;
@@ -35,9 +40,6 @@ public class LineEffect {
 			startLoc = player.getLocation().add(0, 1.5, 0);
 			endLoc = startLoc.clone().add(direction.multiply(distance));
 		}
-
-		if (startLoc == null) throw new InvalidInputException("No start location was provided");
-		if (endLoc == null) throw new InvalidInputException("No end location was provided");
 
 		if (color != null) {
 			disX = color.getRed();

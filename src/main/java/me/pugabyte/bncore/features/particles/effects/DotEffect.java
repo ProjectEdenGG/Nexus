@@ -19,12 +19,13 @@ public class DotEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public DotEffect(Player player, Location loc, Particle particle, int count, int ticks, double speed,
+	public DotEffect(Player player, Location location, Particle particle, int count, int ticks, double speed,
 					 boolean rainbow, Color color, double disX, double disY, double disZ,
 					 int startDelay, int pulseDelay) {
 
+		if (player != null && location == null)
+			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
-		if (loc == null) throw new InvalidInputException("No location was provided");
 
 		if (color != null) {
 			disX = color.getRed();
@@ -57,6 +58,7 @@ public class DotEffect {
 		int finalCount = count;
 		int finalTicks = ticks;
 		Particle finalParticle = particle;
+		Location finalLocation = location;
 		final AtomicDouble hue = new AtomicDouble(0);
 		final AtomicDouble red = new AtomicDouble(disX);
 		final AtomicDouble green = new AtomicDouble(disY);
@@ -77,7 +79,7 @@ public class DotEffect {
 				blue.set(rgb[2]);
 			}
 
-			loc.getWorld().spawnParticle(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+			finalLocation.getWorld().spawnParticle(finalParticle, finalLocation, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
 		});
