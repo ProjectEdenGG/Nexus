@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.discord.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.bncore.features.discord.DiscordId;
+import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.hours.Hours;
@@ -25,7 +26,7 @@ public class SuggestCommand extends Command {
 
 	public SuggestCommand() {
 		this.name = "suggest";
-		this.requiredRole = "Staff";
+		this.requiredRole = Role.STAFF.name();
 		this.guildOnly = true;
 	}
 
