@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.particles;
 
+import lombok.Getter;
 import me.pugabyte.bncore.features.particles.effects.BandsEffect;
 import me.pugabyte.bncore.features.particles.effects.CircleEffect;
 import me.pugabyte.bncore.features.particles.effects.NyanCatEffect;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+@Getter
 public enum EffectType {
 	CIRCLES(Material.EYE_OF_ENDER) {
 		@Override

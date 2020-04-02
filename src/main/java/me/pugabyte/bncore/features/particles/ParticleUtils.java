@@ -5,13 +5,14 @@ import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ParticleUtils {
 	@Getter
-	public static List<EffectTask> tasks = new ArrayList<>();
+	public static Set<EffectTask> tasks = new HashSet<>();
 
 	public static List<EffectTask> getTasks(Player player) {
 		return tasks.stream().filter(task -> task.getPlayer().equals(player)).collect(Collectors.toList());
@@ -26,7 +27,10 @@ public class ParticleUtils {
 	}
 
 	public static void cancelEffect(Player player, EffectType effectType) {
-		getTasks(player, effectType).stream().map(EffectTask::getTaskId).forEach(Tasks::cancel);
+		getTasks(player, effectType).forEach(effectTask -> {
+			Tasks.cancel(effectTask.getTaskId());
+			tasks.remove(effectTask);
+		});
 	}
 
 	public static void cancelEffectTask(int taskId) {
@@ -58,4 +62,10 @@ public class ParticleUtils {
 		rgb[2] = b;
 		return rgb;
 	}
+
+//	Only works with async
+//	public static boolean isActive(int taskId) {
+//		return BNCore.getInstance().getServer().getScheduler().isCurrentlyRunning(taskId);
+//	}
+
 }
