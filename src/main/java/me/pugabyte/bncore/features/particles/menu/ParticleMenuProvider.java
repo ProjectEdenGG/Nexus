@@ -5,8 +5,9 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.particles.EffectType;
-import me.pugabyte.bncore.features.particles.ParticleUtils;
+import me.pugabyte.bncore.models.particleeffect.EffectOwner;
+import me.pugabyte.bncore.models.particleeffect.EffectService;
+import me.pugabyte.bncore.models.particleeffect.EffectType;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -29,6 +30,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
+		EffectOwner effectOwner = new EffectService().get(player);
 
 		Pagination page = contents.pagination();
 
@@ -66,7 +68,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 
 		contents.set(3, 1, ClickableItem.from(nameItem(Material.BARRIER, "&cStop Particles"),
 				e -> {
-					ParticleUtils.cancelAllEffects(player);
+					effectOwner.cancelTasks();
 					player.closeInventory();
 				}));
 
@@ -75,7 +77,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 			EffectType effect = EffectType.values()[i];
 
 			AtomicBoolean active = new AtomicBoolean(false);
-			if (ParticleUtils.getTasks(player, effect).size() > 0)
+			if (effectOwner.getTasks(effect).size() > 0)
 				active.set(true);
 
 			if (!player.hasPermission("particles." + effect.getCommandName())) continue;
@@ -87,7 +89,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 			items.add(ClickableItem.from(item,
 					e -> {
 						if (active.get())
-							ParticleUtils.cancelEffect(player, effect);
+							effectOwner.cancelTasks(effect);
 						else
 							effect.run(player);
 						ParticleMenu.openMain(player, page.getPage());
