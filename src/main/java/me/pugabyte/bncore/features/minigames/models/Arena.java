@@ -182,7 +182,7 @@ public class Arena implements ConfigurationSerializable {
 			minigamer.teleport(respawnLocation);
 		else if (spectateLocation != null)
 			minigamer.teleport(spectateLocation);
-		else if (lobby != null && lobby.getLocation() != null && !lobby.getLocation().equals(Minigames.getGamelobby()))
+		else if (lobby != null && lobby.getLocation() != null && !lobby.getLocation().equals(Minigames.getLobby()))
 			minigamer.teleport(lobby.getLocation());
 		else if (teams != null && teams.size() > 0 && teams.get(0).getSpawnpoints() != null && teams.get(0).getSpawnpoints().size() > 0)
 			minigamer.teleport(teams.get(0).getSpawnpoints().get(0));

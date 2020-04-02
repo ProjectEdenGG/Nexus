@@ -83,7 +83,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 	@EventHandler
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
 		Player player = event.getPlayer();
-		if (!player.getWorld().equals(Minigames.getGameworld())) return;
+		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
@@ -98,7 +98,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		if (!(source instanceof Player)) return;
 		Player player = (Player) projectile.getShooter();
 
-		if (!player.getWorld().equals(Minigames.getGameworld())) return;
+		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
 		Minigamer minigamer = PlayerManager.get((Player) source);
 		if (!minigamer.isPlaying(this)) return;
@@ -125,7 +125,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		if (!(source instanceof Player)) return;
 
 		Player player = (Player) projectile.getShooter();
-		if (!player.getWorld().equals(Minigames.getGameworld())) return;
+		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
 		Minigamer minigamer = PlayerManager.get((Player) source);
 		if (!minigamer.isPlaying(this)) return;
@@ -169,7 +169,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 	@EventHandler
 	public void onGlassBottleFill(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!player.getWorld().equals(Minigames.getGameworld())) return;
+		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
@@ -236,7 +236,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (!event.getPlayer().getWorld().equals(Minigames.getGameworld())) return;
+		if (!event.getPlayer().getWorld().equals(Minigames.getWorld())) return;
 
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
@@ -253,7 +253,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 	@EventHandler
 	public void onFireSpread(BlockSpreadEvent event) {
-		if (!event.getBlock().getWorld().equals(Minigames.getGameworld())) return;
+		if (!event.getBlock().getWorld().equals(Minigames.getWorld())) return;
 
 		Location location = event.getBlock().getLocation();
 
@@ -270,7 +270,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 	@EventHandler
 	public void onBlockBurn(BlockBurnEvent event) {
-		if (!event.getBlock().getWorld().equals(Minigames.getGameworld())) return;
+		if (!event.getBlock().getWorld().equals(Minigames.getWorld())) return;
 
 		Location location = event.getBlock().getLocation();
 

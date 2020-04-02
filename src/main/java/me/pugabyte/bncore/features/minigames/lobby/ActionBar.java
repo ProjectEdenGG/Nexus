@@ -40,7 +40,7 @@ public class ActionBar {
 			AtomicInteger wait = new AtomicInteger(0);
 			messages.iterator().forEachRemaining(message ->
 					Tasks.wait(wait.getAndAdd(DELAY), () ->
-							Minigames.getGameworld().getPlayers().stream().filter(this::isInRegion).forEach(player ->
+							Minigames.getWorld().getPlayers().stream().filter(this::isInRegion).forEach(player ->
 									Utils.sendActionBar(player, interpolate(message, player), DELAY))));
 		});
 	}
