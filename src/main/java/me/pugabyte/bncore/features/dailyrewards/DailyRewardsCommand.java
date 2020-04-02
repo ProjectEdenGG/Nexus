@@ -4,12 +4,15 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.dailyreward.DailyReward;
 import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -87,6 +90,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	}
 
 	@Path("reset")
+	@Cooldown(@Part(Time.DAY))
 	void reset() {
 		MenuUtils.ConfirmationMenu confirm = MenuUtils.ConfirmationMenu.builder().onConfirm((e) -> {
 			dailyReward.reset();
