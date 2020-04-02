@@ -318,7 +318,7 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 
 		Player player = event.getPlayer();
-		if (!player.getWorld().equals(Minigames.getGameworld())) return;
+		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isInLobby(this)) return;

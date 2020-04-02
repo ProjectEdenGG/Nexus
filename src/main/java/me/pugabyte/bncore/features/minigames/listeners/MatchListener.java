@@ -276,7 +276,7 @@ public class MatchListener implements Listener {
 
 	@EventHandler
 	public void onItemPickup(EntityPickupItemEvent event) {
-		if (!event.getEntity().getWorld().equals(Minigames.getGameworld())) return;
+		if (!event.getEntity().getWorld().equals(Minigames.getWorld())) return;
 		// TODO: Entity pickups?
 		if (!(event.getEntity() instanceof Player)) return;
 

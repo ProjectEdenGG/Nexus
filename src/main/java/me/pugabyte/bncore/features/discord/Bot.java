@@ -14,16 +14,17 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import org.reflections.Reflections;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 public enum Bot {
 
 	KODA {
 		@Override
 		@SneakyThrows
 		void connect() {
-			String token = getToken("kodaBear");
-			if (token != null && token.length() > 0)
+			if (!isNullOrEmpty(getToken()))
 				super.jda = new JDABuilder(AccountType.BOT)
-						.setToken(token)
+						.setToken(getToken())
 						.build()
 						.awaitReady();
 		}
@@ -43,10 +44,9 @@ public enum Bot {
 			for (Class<? extends Command> command : reflections.getSubTypesOf(Command.class))
 				commands.addCommand(command.newInstance());
 
-			String token = getToken("relayBot");
-			if (token != null && token.length() > 0)
+			if (!isNullOrEmpty(getToken()))
 				super.jda = new JDABuilder(AccountType.BOT)
-						.setToken(getToken("relayBot"))
+						.setToken(getToken())
 //						.addEventListeners(new BridgeListener())
 						.addEventListeners(commands.build())
 						.build()
@@ -67,7 +67,7 @@ public enum Bot {
 		}
 	}
 
-	private static String getToken(String id) {
-		return BNCore.getInstance().getConfig().getString("tokens.discord." + id);
+	protected String getToken() {
+		return BNCore.getInstance().getConfig().getString("tokens.discord." + name().toLowerCase());
 	}
 }

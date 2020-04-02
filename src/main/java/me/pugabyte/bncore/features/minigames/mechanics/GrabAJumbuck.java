@@ -81,7 +81,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	public void spawnSheep(Match match, int sheepAmount) {
 		GrabAJumbuckMatchData matchData = match.getMatchData();
 		while (sheepAmount != 0) {
-			Sheep sheep = Minigames.getGameworld().spawn(getRandomSheepSpawnLocation(match), Sheep.class);
+			Sheep sheep = Minigames.getWorld().spawn(getRandomSheepSpawnLocation(match), Sheep.class);
 			sheep.setInvulnerable(true);
 			DyeColor color = ColorType.values()[Utils.randomInt(1, ColorType.values().length - 1)].getDyeColor();
 			if (Utils.randomInt(0, 100) > 80) sheep.setColor(color);
@@ -94,7 +94,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		Block block = WGUtils.getRandomBlock(match.getArena().getProtectedRegion("sheep"));
 		if (block == null)
 			return getRandomSheepSpawnLocation(match);
-		block = Minigames.getGameworld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().clone().subtract(0, 1, 0).getBlock();
+		block = Minigames.getWorld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().clone().subtract(0, 1, 0).getBlock();
 		GrabAJumbuckArena arena = (GrabAJumbuckArena) ArenaManager.convert(match.getArena(), GrabAJumbuckArena.class);
 		if (!arena.getSheepSpawnBlocks().contains(block.getType()))
 			return getRandomSheepSpawnLocation(match);
@@ -116,7 +116,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	public Item spawnItem(Location loc) {
-		Item item = Minigames.getGameworld().dropItem(loc, new ItemStack(Material.STONE_BUTTON));
+		Item item = Minigames.getWorld().dropItem(loc, new ItemStack(Material.STONE_BUTTON));
 		item.setItemStack(new ItemStack(Material.STONE_BUTTON));
 		item.setInvulnerable(true);
 		item.setPickupDelay(99999999);
