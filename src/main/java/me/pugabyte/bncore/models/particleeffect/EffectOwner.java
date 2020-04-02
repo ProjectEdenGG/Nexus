@@ -35,6 +35,10 @@ public class EffectOwner extends PlayerOwnedObject {
 	private UUID uuid;
 	private Map<EffectType, Map<EffectSetting, Object>> settings = new HashMap<>();
 
+	public Map<EffectSetting, Object> getSettings(EffectType effectType) {
+		return settings.get(effectType);
+	}
+
 	@Transient
 	private Set<EffectTask> tasks = new HashSet<>();
 
