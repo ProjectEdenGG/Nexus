@@ -49,6 +49,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	void prune() {
 		int i = 0;
 		for (Entity entity : player().getWorld().getEntitiesByClass(ArmorStand.class)) {
+			if (entity.getCustomName() == null) continue;
 			if (entity.getCustomName().contains("FreezeStand-")) {
 				entity.remove();
 				i++;
