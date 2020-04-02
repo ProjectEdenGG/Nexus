@@ -232,7 +232,7 @@ public class Match {
 	private void clearEntities() {
 		WorldEditUtils worldEditUtils = Minigames.getWorldEditUtils();
 		entities.forEach(Entity::remove);
-		Minigames.getGameworld().getEntities().forEach(entity -> {
+		Minigames.getWorld().getEntities().forEach(entity -> {
 			if (getArena().getRegion().contains(worldEditUtils.toVector(entity.getLocation())))
 				if (deletableTypes.contains(entity.getType()))
 					entity.remove();

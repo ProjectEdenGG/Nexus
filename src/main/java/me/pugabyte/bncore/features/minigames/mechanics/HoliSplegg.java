@@ -87,7 +87,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 	}
 
 	private ArmorStand summonArmorStand(Match match) {
-		ArmorStand armorStand = match.spawn(new Location(Minigames.getGameworld(), 2548, 29, 710), ArmorStand.class);
+		ArmorStand armorStand = match.spawn(new Location(Minigames.getWorld(), 2548, 29, 710), ArmorStand.class);
 		armorStand.setInvulnerable(true);
 		armorStand.setFireTicks(9999999);
 		armorStand.setCustomNameVisible(true);

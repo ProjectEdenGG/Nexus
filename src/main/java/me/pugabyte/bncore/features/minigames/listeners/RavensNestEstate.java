@@ -39,10 +39,10 @@ public class RavensNestEstate implements Listener {
 	protected WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
 
 	// Sounds & Their Locations
-	private Location musicLocation = new Location(Minigames.getGameworld(), 3075, 60, 1282);
-	private Location fireplaceTrigger1 = new Location(Minigames.getGameworld(), 3087.5, 25.5, 1269.5);
-	private Location fireplaceTrigger2 = new Location(Minigames.getGameworld(), 3090.5, 25.5, 1242.5);
-	private Location freezerSound = new Location(Minigames.getGameworld(), 3086, 25, 1280);
+	private Location musicLocation = new Location(Minigames.getWorld(), 3075, 60, 1282);
+	private Location fireplaceTrigger1 = new Location(Minigames.getWorld(), 3087.5, 25.5, 1269.5);
+	private Location fireplaceTrigger2 = new Location(Minigames.getWorld(), 3090.5, 25.5, 1242.5);
+	private Location freezerSound = new Location(Minigames.getWorld(), 3086, 25, 1280);
 	private Sound[] sounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,
 			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSION_ILLAGER_PREPARE_MIRROR, Sound.ENTITY_ILLUSION_ILLAGER_PREPARE_BLINDNESS,
 			Sound.ENTITY_ILLUSION_ILLAGER_CAST_SPELL, Sound.ENTITY_ELDER_GUARDIAN_AMBIENT, Sound.ENTITY_SHULKER_AMBIENT};
@@ -78,15 +78,15 @@ public class RavensNestEstate implements Listener {
 	private int framesStudy = 6;
 
 	//Door Schem Paste Locations
-	private Location doorSmall_S = new Location(Minigames.getGameworld(), 3054, 24, 1272);
-	private Location doorSmall_E = new Location(Minigames.getGameworld(), 3046, 32, 1297);
-	private Location doorSmall_W = new Location(Minigames.getGameworld(), 3095, 32, 1293);
-	private Location doorBasement = new Location(Minigames.getGameworld(), 3067, 24, 1270);
-	private Location doorCloset = new Location(Minigames.getGameworld(), 3046, 32, 1275);
-	private Location doorMain = new Location(Minigames.getGameworld(), 3069, 24, 1244);
-	private Location doorMaster = new Location(Minigames.getGameworld(), 3074, 30, 1272);
-	private Location doorStudy = new Location(Minigames.getGameworld(), 3079, 24, 1254);
-	private Location doorFireplace = new Location(Minigames.getGameworld(), 3092, 24, 1264);
+	private Location doorSmall_S = new Location(Minigames.getWorld(), 3054, 24, 1272);
+	private Location doorSmall_E = new Location(Minigames.getWorld(), 3046, 32, 1297);
+	private Location doorSmall_W = new Location(Minigames.getWorld(), 3095, 32, 1293);
+	private Location doorBasement = new Location(Minigames.getWorld(), 3067, 24, 1270);
+	private Location doorCloset = new Location(Minigames.getWorld(), 3046, 32, 1275);
+	private Location doorMain = new Location(Minigames.getWorld(), 3069, 24, 1244);
+	private Location doorMaster = new Location(Minigames.getWorld(), 3074, 30, 1272);
+	private Location doorStudy = new Location(Minigames.getWorld(), 3079, 24, 1254);
+	private Location doorFireplace = new Location(Minigames.getWorld(), 3092, 24, 1264);
 
 	public boolean isPlayingThis(Minigamer minigamer) {
 		if (minigamer == null || minigamer.getMatch() == null) return false;

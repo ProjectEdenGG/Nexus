@@ -46,13 +46,13 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 public class Minigames {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	@Getter
-	private static World gameworld = Bukkit.getWorld("gameworld");
+	private static World world = Bukkit.getWorld("gameworld");
 	@Getter
-	private static Location gamelobby = new Location(gameworld, 1861.5, 38.1, 247.5, 0, 0);
+	private static Location lobby = new Location(world, 1861.5, 38.1, 247.5, 0, 0);
 	@Getter
-	private static WorldGuardUtils worldGuardUtils = new WorldGuardUtils(gameworld);
+	private static WorldGuardUtils worldGuardUtils = new WorldGuardUtils(world);
 	@Getter
-	private static WorldEditUtils worldEditUtils = new WorldEditUtils(gameworld);
+	private static WorldEditUtils worldEditUtils = new WorldEditUtils(world);
 	@Getter
 	private static ProtectedRegion lobbyRegion = worldGuardUtils.getProtectedRegion("minigamelobby");
 	@Getter
@@ -76,7 +76,7 @@ public class Minigames {
 	}
 
 	public static List<Player> getPlayers() {
-		return Bukkit.getOnlinePlayers().stream().filter(player -> player.getWorld() == gameworld).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream().filter(player -> player.getWorld() == world).collect(Collectors.toList());
 	}
 
 	public static List<Minigamer> getMinigamers() {
@@ -89,7 +89,7 @@ public class Minigames {
 
 	public static void broadcast(String announcement) {
 		Bukkit.getOnlinePlayers().stream()
-				.filter(player -> player.getWorld().equals(getGameworld()))
+				.filter(player -> player.getWorld().equals(getWorld()))
 				.forEach(player -> player.sendMessage(Minigames.PREFIX + colorize(announcement)));
 
 		// TODO: If arena is public, announce to discord and whole server

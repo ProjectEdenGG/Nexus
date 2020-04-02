@@ -156,7 +156,7 @@ public class Minigamer {
 
 	public void toGamelobby() {
 		player.setGameMode(GameMode.SURVIVAL);
-		teleport(Minigames.getGamelobby());
+		teleport(Minigames.getLobby());
 	}
 
 	public void toSpectate() {
