@@ -23,7 +23,7 @@ public class NyanCatEffect {
 		if (player == null) throw new InvalidInputException("No player was provided");
 
 		if (pulseDelay < 1) pulseDelay = 1;
-		if (ticks <= 0) ticks = Time.SECOND.x(5);
+		if (ticks == 0) ticks = Time.SECOND.x(5);
 
 		int finalTicks = ticks;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
