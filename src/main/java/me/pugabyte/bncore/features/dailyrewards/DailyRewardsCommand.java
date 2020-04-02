@@ -4,11 +4,11 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
-import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
-import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.dailyreward.DailyReward;
 import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
 import me.pugabyte.bncore.utils.Tasks;
@@ -18,6 +18,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Aliases({"dr", "dailyreward"})
 @Permission("daily.rewards")
@@ -90,13 +92,17 @@ public class DailyRewardsCommand extends CustomCommand {
 	}
 
 	@Path("reset")
-	@Cooldown(@Part(Time.DAY))
 	void reset() {
 		MenuUtils.ConfirmationMenu confirm = MenuUtils.ConfirmationMenu.builder().onConfirm((e) -> {
-			dailyReward.reset();
-			service.save(dailyReward);
-			e.getPlayer().sendMessage(PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
-			e.getPlayer().closeInventory();
+			try {
+				new CooldownService().check(player(), "dailyRewards-reset", Time.DAY);
+				dailyReward.reset();
+				service.save(dailyReward);
+				e.getPlayer().sendMessage(PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
+				e.getPlayer().closeInventory();
+			} catch (CooldownException ex) {
+				e.getPlayer().sendMessage(colorize(ex.getMessage()));
+			}
 		}).build();
 
 		MenuUtils.confirmMenu(player(), confirm);

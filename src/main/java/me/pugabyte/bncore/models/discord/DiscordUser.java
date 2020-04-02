@@ -25,7 +25,7 @@ public class DiscordUser {
 		OfflinePlayer player = Utils.getPlayer(uuid);
 		String name = "**" + player.getName() + " >** ";
 		if (roleId != null)
-			name = "<@&" + roleId + "> **>** ";
+			name = "<@&&f" + roleId + "> **>** ";
 		return name;
 	}
 }

@@ -19,9 +19,10 @@ public class Chat {
 
 	public Chat() {
 		BNCore.getInstance().addConfigDefault("localRadius", 500);
-		new AlertsListener();
 		new Translator();
-		new ChatListener();
+		BNCore.registerListener(new AlertsListener());
+//		BNCore.registerListener(new BridgeListener());
+//		BNCore.registerListener(new ChatListener());
 		addChannels();
 //		updateChannels();
 	}

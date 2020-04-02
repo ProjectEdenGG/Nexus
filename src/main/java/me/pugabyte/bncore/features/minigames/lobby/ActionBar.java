@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.Utils.isNPC;
 
 public class ActionBar {
 	private static final int DELAY = Time.SECOND.x(5);
@@ -40,8 +41,10 @@ public class ActionBar {
 			AtomicInteger wait = new AtomicInteger(0);
 			messages.iterator().forEachRemaining(message ->
 					Tasks.wait(wait.getAndAdd(DELAY), () ->
-							Minigames.getWorld().getPlayers().stream().filter(this::isInRegion).forEach(player ->
-									Utils.sendActionBar(player, interpolate(message, player), DELAY))));
+							Minigames.getWorld().getPlayers().stream().filter(this::isInRegion).forEach(player -> {
+								if (!isNPC(player))
+									Utils.sendActionBar(player, interpolate(message, player), DELAY);
+							})));
 		});
 	}
 
