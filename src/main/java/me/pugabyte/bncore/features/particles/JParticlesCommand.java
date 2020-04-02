@@ -16,6 +16,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.particleeffect.EffectOwner;
+import me.pugabyte.bncore.models.particleeffect.EffectService;
+import me.pugabyte.bncore.models.particleeffect.EffectType;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -27,9 +30,12 @@ import java.util.List;
 @NoArgsConstructor
 @Permission("group.admin")
 public class JParticlesCommand extends CustomCommand implements Listener {
+	EffectService service = new EffectService();
+	EffectOwner effectOwner;
 
 	public JParticlesCommand(@NonNull CommandEvent event) {
 		super(event);
+		effectOwner = service.get(player());
 	}
 
 	@Path()
@@ -44,12 +50,12 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 
 	@Path("stop <effectType>")
 	void stop(EffectType effectType) {
-		ParticleUtils.cancelEffect(player(), effectType);
+		effectOwner.cancelTasks(effectType);
 	}
 
 	@Path("stopall")
 	void stopAll() {
-		ParticleUtils.cancelAllEffects(player());
+		effectOwner.cancelTasks();
 	}
 
 	@Path("line [distance] [density]")

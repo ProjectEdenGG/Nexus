@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.particles;
+package me.pugabyte.bncore.models.particleeffect;
 
 import lombok.Getter;
 import me.pugabyte.bncore.features.particles.effects.BandsEffect;
@@ -143,7 +143,6 @@ public enum EffectType {
 	abstract int[] start(Player player);
 
 	public void run(Player player) {
-		int[] taskIds = start(player);
-		ParticleUtils.addEffectTask(player, this, taskIds);
+		((EffectOwner) new EffectService().get(player)).addTasks(this, start(player));
 	}
 }

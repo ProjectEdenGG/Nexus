@@ -6,6 +6,8 @@ import lombok.Getter;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
 import me.pugabyte.bncore.features.particles.RandomUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.particleeffect.EffectOwner;
+import me.pugabyte.bncore.models.particleeffect.EffectService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Color;
@@ -126,7 +128,7 @@ public class DiscoEffect {
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				ParticleUtils.cancelEffectTask(taskId);
+				((EffectOwner) new EffectService().get(player)).cancelTasks(taskId);
 				return;
 			}
 
@@ -161,7 +163,7 @@ public class DiscoEffect {
 
 				Location target = loc.clone().subtract(x, y, z);
 				if (target == null) {
-					ParticleUtils.cancelEffectTask(taskId);
+					((EffectOwner) new EffectService().get(player)).cancelTasks(taskId);
 					return;
 				}
 

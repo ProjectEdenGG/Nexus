@@ -29,7 +29,7 @@ public class WorldBan extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	UUID uuid;
-	List<WorldGroup> bans = new ArrayList<>();;
+	List<WorldGroup> bans = new ArrayList<>();
 
 	public List<String> getBanNames() {
 		return bans.stream().map(WorldGroup::toString).collect(Collectors.toList());
