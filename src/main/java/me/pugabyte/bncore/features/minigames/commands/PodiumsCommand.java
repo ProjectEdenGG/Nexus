@@ -83,7 +83,7 @@ public class PodiumsCommand extends CustomCommand {
 		return CitizensAPI.getNPCRegistry().getById(podiumId);
 	}
 
-	private static NPC getNpc(Position position) {
+	public static NPC getNpc(Position position) {
 		return CitizensAPI.getNPCRegistry().getById(getPodiumId(position));
 	}
 
