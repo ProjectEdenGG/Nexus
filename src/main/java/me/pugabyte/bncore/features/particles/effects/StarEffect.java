@@ -21,11 +21,9 @@ public class StarEffect {
 	@Getter
 	private int taskId;
 
-	// Density, ringCount, radius, scan
-
 	@Builder(buildMethodName = "start")
 	StarEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean rotate, double rotateSpeed,
-			   boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed,
+			   boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed, double growthSpeed,
 			   double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player != null && location == null)
@@ -38,6 +36,15 @@ public class StarEffect {
 		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);
 		if (rotateSpeed != 0 && !rotate) rotate = true;
 		if (rotate && rotateSpeed <= 0) rotateSpeed = 0.1;
+		boolean growth = false;
+		double growthMax = radius;
+		double growthMin = 0;
+		if (growthSpeed <= 0) {
+			growthMin = growthMax;
+			growthSpeed = growthMax;
+		} else {
+			growth = true;
+		}
 
 		if (color != null) {
 			disX = color.getRed();
@@ -67,7 +74,6 @@ public class StarEffect {
 			}
 		}
 
-		double finalRadius = radius;
 		boolean finalRotate = rotate;
 		double finalRotateSpeed = rotateSpeed;
 		double finalDensity = density;
@@ -85,6 +91,13 @@ public class StarEffect {
 		final AtomicDouble green = new AtomicDouble(disY);
 		final AtomicDouble blue = new AtomicDouble(disZ);
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
+
+		double finalGrowthMin = growthMin;
+		double finalGrowthSpeed = growthSpeed;
+		boolean finalGrowth = growth;
+//		double finalRadius = radius;
+		final AtomicDouble growthRadius = new AtomicDouble(radius);
+
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
@@ -106,10 +119,16 @@ public class StarEffect {
 
 			double angleForward = 2.5132741928100586D;
 
+			if (finalGrowth) {
+				growthRadius.set(growthRadius.get() + finalGrowthSpeed);
+				if (growthRadius.get() >= growthMax)
+					growthRadius.set(finalGrowthMin);
+			}
+
 			for (int i = 1; i < 6; ++i) {
 				double angleY = (float) i * 1.2566371F;
-				double x = Math.cos(angleY) * finalRadius;
-				double z = Math.sin(angleY) * finalRadius;
+				double x = Math.cos(angleY) * growthRadius.get();
+				double z = Math.sin(angleY) * growthRadius.get();
 				Vector v = new Vector(x, 0, z);
 				Vector star = v.clone();
 				VectorUtils.rotateAroundAxisY(star, angleForward);

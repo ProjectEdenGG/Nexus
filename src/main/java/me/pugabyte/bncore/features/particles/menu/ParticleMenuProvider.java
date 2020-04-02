@@ -11,7 +11,6 @@ import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -74,8 +73,6 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 		List<ClickableItem> items = new ArrayList<>();
 		for (int i = 0; i < EffectType.values().length; i++) {
 			EffectType effect = EffectType.values()[i];
-
-			Utils.blast(ParticleUtils.getTasks(player, effect).toString());
 
 			AtomicBoolean active = new AtomicBoolean(false);
 			if (ParticleUtils.getTasks(player, effect).size() > 0)

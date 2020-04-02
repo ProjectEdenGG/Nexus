@@ -89,13 +89,18 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 
 	@Path("pentagram")
 	void pentagram() {
-		CircleEffect.builder().player(player()).density(40).radius(2).ticks(25 * 20).whole(true).updateLoc(true).color(Color.BLACK).start();
+		CircleEffect.builder().player(player()).density(50).radius(2).ticks(25 * 20).whole(true).updateLoc(true).color(Color.BLACK).start();
 		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).color(Color.RED).rotateSpeed(0.2).start();
 	}
 
 	@Path("star")
 	void star() {
 		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).rainbow(true).rotateSpeed(0.2).start();
+	}
+
+	@Path("growingstar")
+	void growingstar() {
+		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).rainbow(true).growthSpeed(0.1).rotateSpeed(0.2).start();
 	}
 
 	@ConverterFor(EffectType.class)
