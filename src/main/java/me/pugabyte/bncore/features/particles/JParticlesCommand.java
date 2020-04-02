@@ -5,7 +5,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
-import me.pugabyte.bncore.features.particles.effects.StarEffect;
+import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -28,6 +28,11 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 
 	public JParticlesCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path()
+	void menu() {
+		ParticleMenu.openMain(player(), 0);
 	}
 
 	@Path("<effectType>")
@@ -80,10 +85,6 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).rainbowOption(DiscoEffect.RainbowOption.LINE).start();
 	}
 
-	@Path("star")
-	void star() {
-		StarEffect.builder().player(player()).location(player().getLocation()).start();
-	}
 
 	@ConverterFor(EffectType.class)
 	EffectType convertToEffectType(String value) {
