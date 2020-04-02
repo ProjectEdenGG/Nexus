@@ -27,8 +27,9 @@ public class DiscoEffect {
 					   Particle sphereParticle, double sphereRadius, int sphereDensity, double sphereSpeed, boolean sphereRainbow, Color sphereColor, double disX2, double disY2, double disZ2,
 					   int startDelay, int pulseDelay) {
 
+		if (player != null && location == null)
+			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
-		if (location == null) throw new InvalidInputException("No location was provided");
 
 		if (lineDensity == 0) lineDensity = 15;
 		if (sphereDensity == 0) sphereDensity = 25;
@@ -117,6 +118,7 @@ public class DiscoEffect {
 		boolean finalSphereRainbow = sphereRainbow;
 		int finalSphereCount = sphereCount;
 
+		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;
 		Vector finalUpdateVector = updateVector;
 		int finalTicks = ticks;
@@ -135,7 +137,7 @@ public class DiscoEffect {
 					incSphereRainbow(sphereHue, sphereRed, sphereGreen, sphereBlue);
 			}
 
-			Location loc = location;
+			Location loc = finalLocation;
 			if (finalUpdateLoc)
 				loc = player.getLocation().add(finalUpdateVector);
 
@@ -163,7 +165,7 @@ public class DiscoEffect {
 					return;
 				}
 
-				Vector link = target.toVector().subtract(location.toVector());
+				Vector link = target.toVector().subtract(loc.toVector());
 				float length = (float) link.length();
 				link.normalize();
 
