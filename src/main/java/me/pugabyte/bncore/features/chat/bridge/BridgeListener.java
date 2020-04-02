@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.chat.bridge;
 import com.google.common.base.Strings;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.features.chat.models.PublicChannel;
 import me.pugabyte.bncore.features.chat.models.events.DiscordChatEvent;
@@ -44,8 +43,6 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		Tasks.async(() -> {
-			BNCore.log("Message received: " + event.getMessage().getContentRaw());
-			if (true) return;
 			Optional<PublicChannel> channel = ChatManager.getChannelByDiscordId(event.getChannel().getId());
 			if (!channel.isPresent()) return;
 
@@ -53,7 +50,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 				if (!event.getAuthor().getId().equals(User.UBER.getId()))
 					return;
 
-			JsonBuilder builder = new JsonBuilder(channel.get().getColor() + "[D] ");
+			JsonBuilder builder = new JsonBuilder(channel.get().getDiscordColor() + "[D] ");
 
 			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
 

@@ -26,16 +26,16 @@ import java.util.stream.Collectors;
 public enum Rank {
 	GUEST("&7", false, false),
 	MEMBER("&f", false, false),
-	TRUSTED("&e", false, false),
-	ELITE("&6", false, false),
-	VETERAN("&6&l", true, false, new Color(241, 196, 15)),
-	BUILDER("&5", true, true, new Color(230, 126, 34)),
-	ARCHITECT("&5&l", true, true, new Color(230, 126, 34)),
-	MINIGAME_MODERATOR("&b&o", true, true, new Color(132, 61, 164)),
-	MODERATOR("&b&o", true, true, new Color(132, 61, 164)),
-	OPERATOR("&3&o", true, true, new Color(25, 211, 211)),
-	ADMIN("&9&o", true, true, new Color(0, 170, 170)),
-	OWNER("&4&o", true, true, new Color(32, 102, 148));
+	TRUSTED("&e", false, false, new Color(241, 196, 15)),
+	ELITE("&6", false, false, new Color(230, 126, 34)),
+	VETERAN("&6&l", true, false, new Color(230, 126, 34)),
+	BUILDER("&5", true, true, new Color(132, 61, 164)),
+	ARCHITECT("&5&l", true, true, new Color(132, 61, 164)),
+	MINIGAME_MODERATOR("&b&o", true, true, new Color(25, 211, 211)),
+	MODERATOR("&b&o", true, true, new Color(25, 211, 211)),
+	OPERATOR("&3&o", true, true, new Color(0, 170, 170)),
+	ADMIN("&9&o", true, true, new Color(32, 102, 148)),
+	OWNER("&4&o", true, true, new Color(153, 45, 34));
 
 	@Getter
 	private String format;
