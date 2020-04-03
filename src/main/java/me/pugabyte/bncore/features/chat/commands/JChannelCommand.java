@@ -3,16 +3,18 @@ package me.pugabyte.bncore.features.chat.commands;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.ChatManager;
-import me.pugabyte.bncore.features.chat.models.Channel;
-import me.pugabyte.bncore.features.chat.models.Chatter;
-import me.pugabyte.bncore.features.chat.models.PublicChannel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.bncore.models.chat.Channel;
+import me.pugabyte.bncore.models.chat.ChatService;
+import me.pugabyte.bncore.models.chat.Chatter;
+import me.pugabyte.bncore.models.chat.PublicChannel;
+import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +26,7 @@ public class JChannelCommand extends CustomCommand {
 	public JChannelCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = Chat.PREFIX;
-		chatter = ChatManager.getChatter(player());
+		chatter = new ChatService().get(player());
 	}
 
 	@Path("<channel> [message...]")
@@ -40,12 +42,12 @@ public class JChannelCommand extends CustomCommand {
 
 	@Path("qm <channel> <message...>")
 	void quickMessage(PublicChannel channel, String message) {
-		ChatManager.process(chatter, channel, message);
+		chatter.say(channel, message);
 	}
 
 	@ConverterFor({Channel.class, PublicChannel.class})
 	PublicChannel convertToChannel(String value) {
-		return ChatManager.getChannel(value).orElseThrow(() -> new InvalidInputException("Channel not found"));
+		return ChatManager.getChannel(value);
 	}
 
 	@TabCompleterFor({Channel.class, PublicChannel.class})
@@ -59,7 +61,10 @@ public class JChannelCommand extends CustomCommand {
 
 	@ConverterFor(Chatter.class)
 	Chatter convertToChatter(String value) {
-		return ChatManager.getChatter(convertToPlayer(value));
+		OfflinePlayer player = convertToOfflinePlayer(value);
+		if (!player.isOnline())
+			throw new PlayerNotOnlineException(player);
+		return new ChatService().get(player);
 	}
 
 	@TabCompleterFor(Chatter.class)

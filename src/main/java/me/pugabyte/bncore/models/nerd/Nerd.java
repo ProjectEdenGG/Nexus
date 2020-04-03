@@ -79,8 +79,9 @@ public class Nerd {
 	public String getChatFormat() {
 		Rank rank = getRank();
 		String prefix = PermissionsEx.getUser(uuid).getPrefix();
-		if (prefix == null) prefix = rank.getPrefix();
-		return prefix + " " + rank.getFormat() + getName();
+		if (prefix == null)
+			prefix = rank.getPrefix();
+		return (prefix + " " + rank.getFormat() + getName()).trim();
 	}
 
 	public boolean isVanished() {

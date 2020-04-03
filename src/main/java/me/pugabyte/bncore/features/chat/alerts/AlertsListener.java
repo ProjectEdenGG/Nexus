@@ -1,13 +1,13 @@
 package me.pugabyte.bncore.features.chat.alerts;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.models.Chatter;
-import me.pugabyte.bncore.features.chat.models.PrivateChannel;
-import me.pugabyte.bncore.features.chat.models.events.DiscordChatEvent;
-import me.pugabyte.bncore.features.chat.models.events.MinecraftChatEvent;
+import me.pugabyte.bncore.features.chat.events.DiscordChatEvent;
+import me.pugabyte.bncore.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.bncore.features.chatold.herochat.HerochatAPI;
 import me.pugabyte.bncore.models.alerts.Alerts;
 import me.pugabyte.bncore.models.alerts.AlertsService;
+import me.pugabyte.bncore.models.chat.Chatter;
+import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,7 +39,7 @@ public class AlertsListener implements Listener {
 	}
 
 	public void tryAlerts(Set<Chatter> recipients, String message) {
-		List<String> uuids = recipients.stream().map(Chatter::getUuid).collect(Collectors.toList());
+		List<String> uuids = recipients.stream().map(chatter -> chatter.getUuid().toString()).collect(Collectors.toList());
 		new AlertsService().getAll(uuids).forEach(alerts -> alerts.tryAlerts(message));
 	}
 

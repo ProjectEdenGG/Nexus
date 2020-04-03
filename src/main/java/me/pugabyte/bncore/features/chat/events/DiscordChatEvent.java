@@ -1,11 +1,11 @@
-package me.pugabyte.bncore.features.chat.models.events;
+package me.pugabyte.bncore.features.chat.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import me.pugabyte.bncore.features.chat.ChatManager;
-import me.pugabyte.bncore.features.chat.models.Channel;
-import me.pugabyte.bncore.features.chat.models.Chatter;
 import me.pugabyte.bncore.features.discord.Discord;
+import me.pugabyte.bncore.models.chat.Channel;
+import me.pugabyte.bncore.models.chat.ChatService;
+import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.Utils;
@@ -46,7 +46,7 @@ public class DiscordChatEvent extends ChatEvent {
 		if (member != null) {
 			DiscordUser user = new DiscordService().getFromUserId(member.getUser().getId());
 			if (!isNullOrEmpty(user.getUuid()))
-				return ChatManager.getChatter(Utils.getPlayer(user.getUuid()));
+				return new ChatService().get(Utils.getPlayer(user.getUuid()));
 		}
 		return null;
 	}
@@ -62,7 +62,7 @@ public class DiscordChatEvent extends ChatEvent {
 	public Set<Chatter> getRecipients() {
 		return Bukkit.getOnlinePlayers().stream()
 						.filter(player -> player.hasPermission(permission))
-						.map(ChatManager::getChatter)
+						.map(player -> (Chatter) new ChatService().get(player))
 						.collect(Collectors.toSet());
 	}
 

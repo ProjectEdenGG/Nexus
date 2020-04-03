@@ -51,7 +51,7 @@ public class HoursFeature {
 							Tasks.sync(() -> {
 								PermissionsEx.getUser(player).removeGroup("Guest");
 								PermissionsEx.getUser(player).addGroup("Member");
-								Koda.say("Congrats on Member rank, " + player.getName());
+								Koda.say("Congrats on Member rank, " + player.getName() + "!");
 								Jingle.RANKUP.play(player);
 								player.sendMessage("");
 								player.sendMessage("");

@@ -125,6 +125,7 @@ public class BNCore extends JavaPlugin {
 		Minigames.shutdown();
 		AFK.shutdown();
 		Discord.shutdown();
+		Chat.shutdown();
 		LiteBans.shutdown();
 		ProtocolLibrary.getProtocolManager().removePacketListeners(this);
 		commands.unregisterAll();

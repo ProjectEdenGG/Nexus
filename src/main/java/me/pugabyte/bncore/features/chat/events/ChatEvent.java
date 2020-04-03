@@ -1,8 +1,8 @@
-package me.pugabyte.bncore.features.chat.models.events;
+package me.pugabyte.bncore.features.chat.events;
 
-import me.pugabyte.bncore.features.chat.ChatManager;
-import me.pugabyte.bncore.features.chat.models.Channel;
-import me.pugabyte.bncore.features.chat.models.Chatter;
+import me.pugabyte.bncore.models.chat.Channel;
+import me.pugabyte.bncore.models.chat.ChatService;
+import me.pugabyte.bncore.models.chat.Chatter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -25,7 +25,7 @@ public abstract class ChatEvent extends Event implements Cancellable {
 	public abstract Set<Chatter> getRecipients();
 
 	public boolean wasSentTo(Player player) {
-		return wasSentTo(ChatManager.getChatter(player));
+		return wasSentTo((Chatter) new ChatService().get(player));
 	}
 
 	public boolean wasSentTo(Chatter chatter) {

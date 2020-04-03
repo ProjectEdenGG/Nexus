@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.chat.models;
+package me.pugabyte.bncore.models.chat;
 
 import org.bukkit.ChatColor;
 

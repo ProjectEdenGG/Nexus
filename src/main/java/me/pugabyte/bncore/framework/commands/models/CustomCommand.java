@@ -89,7 +89,15 @@ public abstract class CustomCommand implements ICustomCommand {
 		line(1);
 	}
 
+	protected void line(CommandSender player) {
+		line(player, 1);
+	}
+
 	protected void line(int count) {
+		line(sender(), count);
+	}
+
+	protected void line(CommandSender player, int count) {
 		for (int i = 0; i < count; i++)
 			send("");
 	}

@@ -1,9 +1,8 @@
-package me.pugabyte.bncore.features.chat.models;
+package me.pugabyte.bncore.models.chat;
 
 import lombok.Builder;
 import lombok.Data;
 import me.pugabyte.bncore.features.chat.Chat;
-import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -56,8 +55,8 @@ public class PublicChannel implements Channel {
 			recipients.addAll(Utils.getPlayersInWorld(chatter.getPlayer().getWorld()));
 
 		return recipients.stream()
-				.map(ChatManager::getChatter)
-				.filter(_chatter -> chatter.hasJoined(this))
+				.map(player -> (Chatter) new ChatService().get(player))
+				.filter(_chatter -> _chatter.hasJoined(this))
 				.collect(Collectors.toSet());
 	}
 
@@ -70,7 +69,7 @@ public class PublicChannel implements Channel {
 	public void broadcastIngame(String message) {
 		Bukkit.getConsoleSender().sendMessage(stripColor(message));
 		Bukkit.getOnlinePlayers().stream()
-				.map(ChatManager::getChatter)
+				.map(player -> (Chatter) new ChatService().get(player))
 				.filter(chatter -> chatter.hasJoined(this))
 				.forEach(chatter -> chatter.send(message));
 	}
@@ -84,7 +83,7 @@ public class PublicChannel implements Channel {
 	public void broadcastIngame(JsonBuilder builder) {
 		Bukkit.getConsoleSender().spigot().sendMessage(builder.build());
 		Bukkit.getOnlinePlayers().stream()
-				.map(ChatManager::getChatter)
+				.map(player -> (Chatter) new ChatService().get(player))
 				.filter(chatter -> chatter.hasJoined(this))
 				.forEach(chatter -> chatter.send(builder));
 	}

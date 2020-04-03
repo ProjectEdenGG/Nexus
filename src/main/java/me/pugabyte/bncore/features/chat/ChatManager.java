@@ -2,24 +2,23 @@ package me.pugabyte.bncore.features.chat;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.pugabyte.bncore.features.chat.models.Channel;
-import me.pugabyte.bncore.features.chat.models.Chatter;
-import me.pugabyte.bncore.features.chat.models.PrivateChannel;
-import me.pugabyte.bncore.features.chat.models.PublicChannel;
-import me.pugabyte.bncore.features.chat.models.events.PrivateChatEvent;
-import me.pugabyte.bncore.features.chat.models.events.PublicChatEvent;
+import me.pugabyte.bncore.features.chat.events.PrivateChatEvent;
+import me.pugabyte.bncore.features.chat.events.PublicChatEvent;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.bncore.models.chat.Channel;
+import me.pugabyte.bncore.models.chat.Chatter;
+import me.pugabyte.bncore.models.chat.PrivateChannel;
+import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,31 +28,24 @@ import static me.pugabyte.bncore.utils.Utils.canSee;
 
 public class ChatManager {
 	@Getter
-	private static Map<OfflinePlayer, Chatter> chatters = new HashMap<>();
-	@Getter
 	private static List<PublicChannel> channels = new ArrayList<>();
 
 	@Getter
 	@Setter
 	private static PublicChannel mainChannel;
 
-	public static Chatter getChatter(OfflinePlayer player) {
-		chatters.computeIfAbsent(player, $ -> new Chatter((player)));
-		return chatters.get(player);
-	}
-
-	public static Optional<PublicChannel> getChannel(String id) {
+	public static PublicChannel getChannel(String id) {
 		Optional<PublicChannel> channel = channels.stream().filter(_channel -> _channel.getNickname().equalsIgnoreCase(id)).findFirst();
 		if (!channel.isPresent())
 			channel = channels.stream().filter(_channel -> _channel.getName().equalsIgnoreCase(id)).findFirst();
 		if (!channel.isPresent())
 			channel = channels.stream().filter(_channel -> _channel.getName().toLowerCase().startsWith(id.toLowerCase())).findFirst();
 
-		return channel;
+		return channel.orElseThrow(() -> new InvalidInputException("Channel not found"));
 	}
 
 	public static Optional<PublicChannel> getChannelByDiscordId(String id) {
-		return channels.stream().filter(_channel -> _channel.getDiscordChannel().getId().equalsIgnoreCase(id)).findFirst();
+		return channels.stream().filter(_channel -> _channel.getDiscordChannel() != null && _channel.getDiscordChannel().getId().equalsIgnoreCase(id)).findFirst();
 	}
 
 	public static void addChannel(PublicChannel channel) {
@@ -63,6 +55,8 @@ public class ChatManager {
 	public static void process(Chatter chatter, Channel channel, String message) {
 		if (chatter == null || message == null)
 			return;
+
+		message = message.trim();
 
 		if (!chatter.getOfflinePlayer().getPlayer().hasPermission("group.admin"))
 			message = stripColor(message);
@@ -95,7 +89,7 @@ public class ChatManager {
 
 		JsonBuilder json = new JsonBuilder()
 				.next(event.getChannel().getColor() + "[" + event.getChannel().getNickname().toUpperCase() + "] ")
-				.next(new Nerd(event.getChatter().getOfflinePlayer()).getChatFormat())
+				.next(new Nerd(event.getChatter().getOfflinePlayer()).getChatFormat().trim())
 				.next(" " + event.getChannel().getColor() + ChatColor.BOLD + "> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
 
@@ -112,13 +106,27 @@ public class ChatManager {
 		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + event.getChatter().getOfflinePlayer().getName() + " &b&l> "
 				+ event.getChannel().getMessageColor() + event.getMessage());
 
-		event.getChatter().send(to);
+		int seen = 0;
+		for (Chatter recipient : event.getRecipients()) {
+			recipient.setLastPrivateMessage(event.getChannel());
 
-		event.getRecipients().forEach(recipient -> {
-			if (canSee(event.getChatter().getOfflinePlayer(), recipient.getOfflinePlayer()))
-				if (!recipient.equals(event.getChatter()))
+			if (!recipient.equals(event.getChatter())) {
+				boolean canSee = canSee(event.getChatter().getOfflinePlayer(), recipient.getOfflinePlayer());
+				String notOnline = new PlayerNotOnlineException(recipient.getOfflinePlayer()).getMessage();
+				if (!recipient.getOfflinePlayer().isOnline())
+					event.getChatter().send(PREFIX + notOnline);
+				else {
 					recipient.send(from);
-		});
+					if (canSee)
+						++seen;
+					else
+						event.getChatter().send(PREFIX + notOnline);
+				}
+			}
+		}
+
+		if (seen > 0)
+			event.getChatter().send(to);
 
 		Bukkit.getConsoleSender().sendMessage(event.getChatter().getOfflinePlayer().getName() + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
 	}
