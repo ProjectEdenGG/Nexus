@@ -8,6 +8,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.warps.Warp;
+import me.pugabyte.bncore.models.warps.WarpService;
+import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.SerializationUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
@@ -22,14 +25,26 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 import java.util.Map;
 
-@Aliases("removesign")
 @NoArgsConstructor
+@Aliases("removesign")
 public class WallsOfGraceCommand extends CustomCommand implements Listener {
 
 	SettingService service = new SettingService();
 
 	public WallsOfGraceCommand(CommandEvent event) {
 		super(event);
+	}
+
+	@Path()
+	void warpNone() {
+		warp();
+	}
+
+	@Path("warp")
+	void warp() {
+		Warp warp = new WarpService().get("wallsofgrace", WarpType.NORMAL);
+		warp.teleport(player());
+		send("&3Warping to the &eWalls of Grace");
 	}
 
 	@Path("<id>")
