@@ -9,9 +9,9 @@ import me.pugabyte.bncore.features.store.annotations.Permissions.Permission;
 import me.pugabyte.bncore.utils.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public enum Package {
@@ -364,27 +364,35 @@ public enum Package {
 	}
 
 	public List<String> getPermissions() {
-		return Arrays.stream(getField().getAnnotationsByType(Permission.class))
-				.map(Permission::value)
-				.collect(Collectors.toList());
+		if (getField().getAnnotation(Permission.class) != null)
+			return Arrays.stream(getField().getAnnotationsByType(Permission.class))
+					.map(Permission::value)
+					.collect(Collectors.toList());
+		return new ArrayList<>();
 	}
 
 	public List<String> getCommands() {
-		return Arrays.stream(getField().getAnnotationsByType(Command.class))
-				.map(Command::value)
-				.map(StringUtils::trimFirst)
-				.collect(Collectors.toList());
+		if (getField().getAnnotation(Command.class) != null)
+			return Arrays.stream(getField().getAnnotationsByType(Command.class))
+					.map(Command::value)
+					.map(StringUtils::trimFirst)
+					.collect(Collectors.toList());
+		return new ArrayList<>();
 	}
 
 	public int getExpirationDays() {
-		return Optional.of(getField().getAnnotation(ExpirationDays.class)).map(ExpirationDays::value).orElse(-1);
+		if (getField().getAnnotation(ExpirationDays.class) != null)
+			return getField().getAnnotation(ExpirationDays.class).value();
+		return -1;
 	}
 
 	public List<String> getExpirationCommands() {
-		return Arrays.stream(getField().getAnnotationsByType(ExpirationCommand.class))
-				.map(ExpirationCommand::value)
-				.map(StringUtils::trimFirst)
-				.collect(Collectors.toList());
+		if (getField().getAnnotation(ExpirationCommand.class) != null)
+			return Arrays.stream(getField().getAnnotationsByType(ExpirationCommand.class))
+					.map(ExpirationCommand::value)
+					.map(StringUtils::trimFirst)
+					.collect(Collectors.toList());
+		return new ArrayList<>();
 	}
 
 	public static Package getPackage(String id) {

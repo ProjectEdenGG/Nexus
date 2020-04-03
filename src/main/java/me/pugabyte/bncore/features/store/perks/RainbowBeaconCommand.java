@@ -22,10 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Permission("rainbow.beacon")
 public class RainbowBeaconCommand extends CustomCommand implements Listener {
-
 	SettingService service = new SettingService();
 
-	public RainbowBeaconCommand() {
+	static {
 		startAll();
 	}
 
@@ -84,7 +83,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Successfully deleted your rainbow beacon");
 	}
 
-	public int startTask(UUID player) {
+	public static int startTask(UUID player) {
 		SettingService service = new SettingService();
 		Setting setting = service.get(player.toString(), "rainbowBeaconLocation");
 		Location location = setting.getLocation();
@@ -99,14 +98,13 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			add(ColorType.MAGENTA);
 		}};
 		AtomicInteger i = new AtomicInteger(0);
-		int taskId = Tasks.repeat(0, Time.SECOND.x(1), () -> {
+		return Tasks.repeat(0, Time.SECOND.x(1), () -> {
 			if (!location.getBlock().getChunk().isLoaded()) return;
 			location.getBlock().setType(Material.STAINED_GLASS_PANE);
 			location.getBlock().setData(colors.get(i.getAndIncrement()).getDurability().byteValue());
 			if (i.get() == 8)
 				i.set(0);
 		});
-		return taskId;
 	}
 
 	@EventHandler
@@ -120,7 +118,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	public void startAll() {
+	public static void startAll() {
 		SettingService service = new SettingService();
 		List<Setting> settings = new SettingService().getFromType("rainbowBeaconTaskId");
 		for (Setting setting : settings) {

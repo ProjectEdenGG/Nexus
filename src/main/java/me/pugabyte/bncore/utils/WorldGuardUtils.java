@@ -47,7 +47,7 @@ public class WorldGuardUtils {
 	public ProtectedRegion getProtectedRegion(String name) {
 		ProtectedRegion region = manager.getRegion(name.toLowerCase());
 		if (region == null)
-			throw new InvalidInputException("Region not found");
+			throw new InvalidInputException("Region &e" + name + " &cnot found");
 		return region;
 	}
 
