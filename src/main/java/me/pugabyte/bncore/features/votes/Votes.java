@@ -73,20 +73,22 @@ public class Votes implements Listener {
 
 	private void sendVoteReminder(Vote vote) {
 		DiscordUser discordUser = new DiscordService().get(vote.getUuid());
-		if (discordUser.getUserId() != null) {
-			Setting reminders = new SettingService().get(vote.getUuid(), "vote-reminders");
-			if (reminders.getValue() == null || reminders.getBoolean()) {
-				try {
-					new CooldownService().check(vote.getUuid(), "vote-reminder", Time.MINUTE.x(10));
-					User user = Bot.KODA.jda().getUserById(discordUser.getUserId());
-					if (user != null && user.getMutualGuilds().size() > 0) {
-						BNCore.log("[Votes] Sending vote reminder to " + Utils.getPlayer(vote.getUuid()));
-						MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(voteLinksEmbed);
-						user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
-					}
-				} catch (CooldownException ignore) {}
+		if (discordUser.getUserId() == null)
+			return;
+
+		Setting reminders = new SettingService().get(vote.getUuid(), "vote-reminders");
+		if (reminders.getValue() != null && reminders.getBoolean())
+			return;
+
+		try {
+			new CooldownService().check(vote.getUuid(), "vote-reminder", Time.MINUTE.x(10));
+			User user = Bot.KODA.jda().getUserById(discordUser.getUserId());
+			if (user != null && user.getMutualGuilds().size() > 0) {
+				BNCore.log("[Votes] Sending vote reminder to " + Utils.getPlayer(vote.getUuid()));
+				MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(voteLinksEmbed);
+				user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
 			}
-		}
+		} catch (CooldownException ignore) {}
 	}
 
 	@EventHandler

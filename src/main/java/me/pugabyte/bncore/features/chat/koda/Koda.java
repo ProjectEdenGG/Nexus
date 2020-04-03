@@ -6,9 +6,6 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.utils.Tasks;
-import org.bukkit.Bukkit;
-
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Koda {
 	private static String nameFormat = "&5&oKodaBear";
@@ -26,10 +23,6 @@ public class Koda {
 	public static void say(String message) {
 		ChatManager.getMainChannel().broadcastIngame(globalFormat + message);
 		Discord.send("<@&&f" + Role.KODA.getId() + "> **>** " + message, Channel.BRIDGE);
-
-		// TEMP
-		Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(colorize(globalFormat + message)));
-		// TEMP
 	}
 
 	public static void announce(String message) {
