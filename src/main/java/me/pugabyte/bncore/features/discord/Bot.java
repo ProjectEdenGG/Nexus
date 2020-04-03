@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.bridge.BridgeListener;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
@@ -47,7 +48,7 @@ public enum Bot {
 			if (!isNullOrEmpty(getToken()))
 				super.jda = new JDABuilder(AccountType.BOT)
 						.setToken(getToken())
-//						.addEventListeners(new BridgeListener())
+						.addEventListeners(new BridgeListener(), new DiscordListener())
 						.addEventListeners(commands.build())
 						.build()
 						.awaitReady();

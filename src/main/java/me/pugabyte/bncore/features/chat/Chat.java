@@ -1,10 +1,13 @@
 package me.pugabyte.bncore.features.chat;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.alerts.AlertsListener;
+import me.pugabyte.bncore.features.chat.bridge.BridgeListener;
 import me.pugabyte.bncore.features.chat.translator.Translator;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
+import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -14,6 +17,14 @@ public class Chat {
 
 	// TODO:
 	//   Discord queue
+	//   Censor
+	//   Vote reminders
+	//   Koda stuff
+	//   All other discord stuff (/discord link)
+	//   Staff alerts
+	//   ShowEnchants on bridge
+	//   /bridge command
+	//   Honeypot announcement
 
 	public static final String PREFIX = StringUtils.getPrefix("Chat");
 
@@ -21,10 +32,28 @@ public class Chat {
 		BNCore.getInstance().addConfigDefault("localRadius", 500);
 		new Translator();
 		BNCore.registerListener(new ChatListener());
-//		BNCore.registerListener(new BridgeListener());
-//		BNCore.registerListener(new AlertsListener());
+		BNCore.registerListener(new BridgeListener());
+		BNCore.registerListener(new AlertsListener());
 		addChannels();
-//		updateChannels();
+		updateChannels();
+	}
+
+	static {
+		BNCore.registerPlaceholder("currentchannel", event -> {
+			Chatter chatter = new ChatService().get(event.getOfflinePlayer());
+			if (chatter == null)
+				return "&eNone";
+			me.pugabyte.bncore.models.chat.Channel activeChannel = chatter.getActiveChannel();
+			if (activeChannel == null)
+				return "&eNone";
+			if (activeChannel instanceof PrivateChannel)
+				return "&bDM / " + ((PrivateChannel) activeChannel).getOthersNames(chatter);
+			if (activeChannel instanceof PublicChannel) {
+				PublicChannel channel = (PublicChannel) activeChannel;
+				return channel.getColor() + channel.getName();
+			}
+			return "&eUnknown";
+		});
 	}
 
 	public static void shutdown() {

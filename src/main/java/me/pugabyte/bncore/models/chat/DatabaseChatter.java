@@ -33,25 +33,25 @@ class DatabaseChatter {
 			activePublicChannel = ((PublicChannel) chatter.getActiveChannel()).getName();
 		else if (chatter.getActiveChannel() instanceof PrivateChannel)
 			activePrivateChannel = getRecipients((PrivateChannel) chatter.getActiveChannel());
-		joinedChannels = chatter.getJoinedChannels().stream().map(PublicChannel::getName).collect(Collectors.toList());
+		if (chatter.getJoinedChannels() != null)
+			joinedChannels = chatter.getJoinedChannels().stream().map(PublicChannel::getName).collect(Collectors.toList());
 		lastPrivateMessage = getRecipients(chatter.getLastPrivateMessage());
 	}
 
 	public Chatter deserialize() {
 		Channel activeChannel = null;
+		Set<PublicChannel> joinedChannels = null;
+		PrivateChannel lastPrivateMessage = null;
 		if (this.activePublicChannel != null)
 			activeChannel = ChatManager.getChannel(this.activePublicChannel);
 		else if (this.activePrivateChannel != null)
-			activeChannel = getPrivateChannel(this.activePrivateChannel);
-		Set<PublicChannel> joinedChannels = this.joinedChannels.stream().map(ChatManager::getChannel).collect(Collectors.toSet());
-		PrivateChannel lastPrivateMessage = getPrivateChannel(this.lastPrivateMessage);
-		return new Chatter(uuid, activeChannel, joinedChannels, lastPrivateMessage);
-	}
+			activeChannel = new PrivateChannel(this.lastPrivateMessage);
+		if (this.joinedChannels != null)
+			joinedChannels = this.joinedChannels.stream().map(ChatManager::getChannel).collect(Collectors.toSet());
+		if (this.lastPrivateMessage != null)
+			lastPrivateMessage = new PrivateChannel(this.lastPrivateMessage);
 
-	public PrivateChannel getPrivateChannel(List<String> uuids) {
-		if (uuids != null)
-			return new PrivateChannel(uuids);
-		return null;
+		return new Chatter(uuid, activeChannel, joinedChannels, lastPrivateMessage);
 	}
 
 	public List<String> getRecipients(PrivateChannel privateChannel) {

@@ -19,11 +19,11 @@ import org.bukkit.OfflinePlayer;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Aliases("jch")
-public class JChannelCommand extends CustomCommand {
+@Aliases({"ch", "chat"})
+public class ChannelCommand extends CustomCommand {
 	private Chatter chatter;
 
-	public JChannelCommand(@NonNull CommandEvent event) {
+	public ChannelCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = Chat.PREFIX;
 		chatter = new ChatService().get(player());
@@ -43,6 +43,11 @@ public class JChannelCommand extends CustomCommand {
 	@Path("qm <channel> <message...>")
 	void quickMessage(PublicChannel channel, String message) {
 		chatter.say(channel, message);
+	}
+
+	@Path("join <channel>")
+	void join(PublicChannel channel) {
+		chatter.join(channel);
 	}
 
 	@ConverterFor({Channel.class, PublicChannel.class})

@@ -1,9 +1,8 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.dthielke.herochat.ChannelChatEvent;
-import com.dthielke.herochat.Chatter.Result;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.Region;
+import me.pugabyte.bncore.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -243,8 +242,8 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onHerochatChat(ChannelChatEvent event) {
-		Player player = event.getSender().getPlayer();
+	public void onChat(MinecraftChatEvent event) {
+		Player player = event.getChatter().getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 
@@ -254,7 +253,7 @@ public class PixelDrop extends TeamlessMechanic {
 		if (player.hasPermission("group.staff"))
 			return;
 
-		event.setResult(Result.FAIL);
+		event.setCancelled(true);
 	}
 
 	@EventHandler

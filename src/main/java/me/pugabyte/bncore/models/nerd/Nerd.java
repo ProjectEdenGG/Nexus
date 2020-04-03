@@ -4,17 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Data
@@ -76,12 +80,27 @@ public class Nerd {
 		return Rank.getHighestRank(getOfflinePlayer());
 	}
 
+	private static final String CHECKMARK = "&a✔";
+
 	public String getChatFormat() {
+		PermissionUser user = PermissionsEx.getUser(uuid);
 		Rank rank = getRank();
-		String prefix = PermissionsEx.getUser(uuid).getPrefix();
-		if (prefix == null)
+		String prefix = null;
+		Setting checkmarkSetting = new SettingService().get(getOfflinePlayer(), "checkmark");
+		Setting prefixSetting = new SettingService().get(getOfflinePlayer(), "prefix");
+
+		if (prefixSetting != null)
+			prefix = prefixSetting.getValue();
+
+		if (isNullOrEmpty(prefix))
 			prefix = rank.getPrefix();
-		return (prefix.trim() + " " + (rank.getFormat() + getName()).trim()).trim();
+
+		if (!isNullOrEmpty(prefix))
+			prefix = "&8&l[&f" + prefix + "&8&l]";
+
+		if (user.has("donated") && checkmarkSetting != null && checkmarkSetting.getBoolean())
+			prefix = CHECKMARK + " " + prefix;
+		return colorize((prefix.trim() + " " + (rank.getFormat() + getName()).trim())).trim();
 	}
 
 	public boolean isVanished() {

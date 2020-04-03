@@ -9,7 +9,6 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
-import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import net.md_5.bungee.api.ChatMessageType;
@@ -37,9 +36,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
-import ru.tehkode.permissions.PermissionGroup;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -294,30 +290,8 @@ public class Utils {
 		}
 	}
 
-	public static String getRankDisplay(Player player) {
-		PermissionUser user = PermissionsEx.getUser(player);
-		PermissionGroup[] ranks = user.getGroups();
-		for (PermissionGroup rank : ranks) {
-			return rank.getPrefix() + rank.getSuffix();
-		}
-		return null;
-	}
-
 	public static void updatePrefix(Player player, String prefix) {
-		PermissionUser user = PermissionsEx.getUser(player);
-		PermissionGroup[] groups = user.getGroups();
-		String rank = "";
-		TEST:
-		for (Rank test : Rank.values()) {
-			for (PermissionGroup group : groups) {
-				if (group.getName().equalsIgnoreCase(test.name())) {
-					rank = test.name();
-					break TEST;
-				}
-			}
-		}
 		runConsoleCommand("pex user " + player.getName() + " prefix \"" + prefix + "\"");
-		runConsoleCommand("pex user " + player.getName() + " suffix \"" + Rank.valueOf(rank).getFormat() + "\"");
 	}
 
 	public static void runCommand(CommandSender sender, String command) {
