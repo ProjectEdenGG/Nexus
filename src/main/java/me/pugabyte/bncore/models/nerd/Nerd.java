@@ -81,7 +81,7 @@ public class Nerd {
 		String prefix = PermissionsEx.getUser(uuid).getPrefix();
 		if (prefix == null)
 			prefix = rank.getPrefix();
-		return (prefix + " " + rank.getFormat() + getName()).trim();
+		return (prefix.trim() + " " + (rank.getFormat() + getName()).trim()).trim();
 	}
 
 	public boolean isVanished() {
