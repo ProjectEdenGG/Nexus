@@ -9,6 +9,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -40,7 +41,7 @@ class DatabaseChatter {
 
 	public Chatter deserialize() {
 		Channel activeChannel = null;
-		Set<PublicChannel> joinedChannels = null;
+		Set<PublicChannel> joinedChannels = new HashSet<>();
 		PrivateChannel lastPrivateMessage = null;
 		if (this.activePublicChannel != null)
 			activeChannel = ChatManager.getChannel(this.activePublicChannel);
