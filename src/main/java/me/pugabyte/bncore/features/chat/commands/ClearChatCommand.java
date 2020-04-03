@@ -22,10 +22,9 @@ public class ClearChatCommand extends CustomCommand {
 	void run() {
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (!player.hasPermission("group.staff"))
-				for (int i = 0; i < 40; i++)
-					player.sendMessage("");
+				line(player, 40);
 
-		Koda.say("Chat has been cleared. Sorry for any inconvenience.");
+		Koda.say("Chat has been cleared, sorry for any inconvenience.");
 	}
 
 

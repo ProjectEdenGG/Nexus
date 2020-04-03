@@ -4,13 +4,13 @@ import com.google.common.base.Strings;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.chat.ChatManager;
-import me.pugabyte.bncore.features.chat.models.PublicChannel;
-import me.pugabyte.bncore.features.chat.models.events.DiscordChatEvent;
-import me.pugabyte.bncore.features.chat.models.events.PublicChatEvent;
+import me.pugabyte.bncore.features.chat.events.DiscordChatEvent;
+import me.pugabyte.bncore.features.chat.events.PublicChatEvent;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.nerd.Nerd;
@@ -59,7 +59,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 			else
 				builder.next(Discord.getName(event.getMember(), event.getAuthor()));
 
-			builder.next(" " + channel.get().getColor() + "&l>&f");
+			builder.next(" " + channel.get().getDiscordColor() + "&l>&f");
 
 			String content = EmojiParser.parseToAliases(event.getMessage().getContentDisplay().trim());
 			if (content.length() > 0)

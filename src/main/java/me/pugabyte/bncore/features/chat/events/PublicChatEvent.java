@@ -1,9 +1,9 @@
-package me.pugabyte.bncore.features.chat.models.events;
+package me.pugabyte.bncore.features.chat.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import me.pugabyte.bncore.features.chat.models.Chatter;
-import me.pugabyte.bncore.features.chat.models.PublicChannel;
+import me.pugabyte.bncore.models.chat.Chatter;
+import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.utils.Utils;
 
 import java.util.Set;

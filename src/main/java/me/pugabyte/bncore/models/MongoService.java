@@ -53,7 +53,7 @@ public class MongoService {
 				ex2.printStackTrace();
 			}
 		} catch (Exception ex3) {
-			BNCore.log("Error saving " + object.getClass().getSimpleName() + ": " + object.toString());
+			BNCore.log("Error updating " + object.getClass().getSimpleName() + ": " + object.toString());
 			ex3.printStackTrace();
 		}
 	}

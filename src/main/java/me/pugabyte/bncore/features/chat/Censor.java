@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.chat;
 
-import me.pugabyte.bncore.features.chat.models.events.ChatEvent;
+import me.pugabyte.bncore.features.chat.events.ChatEvent;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.ArrayList;
@@ -25,6 +25,8 @@ public class Censor {
 	}
 
 	private static void lowercase(ChatEvent event) {
+		if (event.getMessage().length() > 0)
+			return;
 		String message = event.getMessage();
 		String characters = message.replaceAll(" ", "");
 		int upper = countUpperCase(message);

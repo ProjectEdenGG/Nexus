@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.chat.models.events;
+package me.pugabyte.bncore.features.chat.events;
 
 public abstract class MinecraftChatEvent extends ChatEvent {
 

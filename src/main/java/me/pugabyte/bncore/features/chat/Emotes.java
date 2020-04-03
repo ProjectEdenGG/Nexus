@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.chat;
 
 import lombok.Getter;
-import me.pugabyte.bncore.features.chat.models.events.ChatEvent;
+import me.pugabyte.bncore.features.chat.events.ChatEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -80,7 +80,7 @@ public enum Emotes {
 
 		String message = event.getMessage();
 		for (Emotes value : values())
-			while (indexOfIgnoreCase(message, value.getKey()) > 0) {
+			while (indexOfIgnoreCase(message, value.getKey()) > -1) {
 				String result = value.getEmote();
 
 				if (value.getColors().size() > 0)

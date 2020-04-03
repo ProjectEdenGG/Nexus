@@ -5,6 +5,8 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.votes.vps.VPS;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.vote.Vote;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.VoteSite;
@@ -60,13 +62,16 @@ public class Votes implements Listener {
 
 		if (true) return;
 
-		if (site == VoteSite.PMC) {
-			Chat.broadcast("&a[✔] &3" + player.getName() + " &bvoted &3for the server and received &b1 &3vote point per site!");
-			Discord.send(":white_check_mark: **" + player.getName() + " voted** for the server and received **1 vote point** per site!");
-		}
+		try {
+			new CooldownService().check(player, "vote-announcement", Time.HOUR.x(12));
+			if (site == VoteSite.PMC) {
+				Chat.broadcastIngame("&a[✔] &3" + player.getName() + " &bvoted &3for the server and received &b1 &3vote point per site!");
+				Discord.send(":white_check_mark: **" + player.getName() + " voted** for the server and received **1 vote point** per site!");
+			}
+		} catch (CooldownException ignore) {}
 
 		if (vote.getExtra() > 0) {
-			Chat.broadcast("&3[✦] &e" + player.getName() + " &3received &e" + vote.getExtra() + " extra &3vote points!");
+			Chat.broadcastIngame("&3[✦] &e" + player.getName() + " &3received &e" + vote.getExtra() + " extra &3vote points!");
 			Discord.send(":star: **" + player.getName() + "** received **" + vote.getExtra() + "** extra vote points!");
 		}
 
