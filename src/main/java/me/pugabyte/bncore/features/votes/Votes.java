@@ -93,12 +93,13 @@ public class Votes implements Listener {
 
 	@EventHandler
 	public void onVote(VotifierEvent event) {
-		OfflinePlayer player = Bukkit.getOfflinePlayer(event.getVote().getUsername());
+		String username = event.getVote().getUsername().replaceAll(" ", "");
+		OfflinePlayer player = Bukkit.getOfflinePlayer(username);
 		String name = player != null ? player.getName() : "null";
 		String uuid = player != null ? player.getUniqueId().toString() : "00000000-0000-0000-0000-000000000000";
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 
-		BNCore.log("[Votes] Vote received from " + event.getVote().getServiceName() + ": " + event.getVote().getUsername() + " (" + name + " | " + uuid + ")");
+		BNCore.log("[Votes] Vote received from " + event.getVote().getServiceName() + ": " + username + " (" + name + " | " + uuid + ")");
 
 		Vote vote = new Vote(uuid, site, extraVotePoints(), epochSecond(event.getVote().getTimeStamp()));
 		new VoteService().save(vote);

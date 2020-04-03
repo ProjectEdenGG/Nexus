@@ -34,10 +34,10 @@ public class PrefixCommand extends CustomCommand {
 
 	@Path("<prefix>")
 	@Permission("set.my.prefix")
-	void prefix(String prefix) {
-		this.prefix.setValue(prefix);
+	void prefix(String value) {
+		prefix.setValue(value);
 		service.save(prefix);
-		send(PREFIX + "Your prefix has been set to &8&l[&f" + prefix + "&8&l]");
+		send(PREFIX + "Your prefix has been set to &8&l[&f" + value + "&8&l]");
 	}
 
 }
