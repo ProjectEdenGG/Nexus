@@ -46,7 +46,7 @@ public class Setting {
 	public Map<String, Object> getJson() {
 		Map<String, Object> map = new Gson().fromJson(value, Map.class);
 		if (map == null)
-			return new HashMap<String, Object>();
+			return new HashMap<>();
 		return map;
 	}
 

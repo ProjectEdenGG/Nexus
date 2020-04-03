@@ -85,7 +85,7 @@ public class ChatManager {
 
 	public static void process(PublicChatEvent event) {
 		if (!event.wasSeen())
-			Tasks.wait(1, () -> event.getChatter().send("&eNo one can hear you! Type &c/ch g &eto talk globally"));
+			Tasks.wait(1, () -> event.getChatter().send(PREFIX + "No one can hear you! Type &c/ch g to talk globally"));
 
 		JsonBuilder json = new JsonBuilder()
 				.next(event.getChannel().getColor() + "[" + event.getChannel().getNickname().toUpperCase() + "] ")
