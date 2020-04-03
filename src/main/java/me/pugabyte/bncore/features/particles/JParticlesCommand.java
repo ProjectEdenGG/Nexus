@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.particles.effects.CircleEffect;
 import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
+import me.pugabyte.bncore.features.particles.effects.PolygonEffect;
 import me.pugabyte.bncore.features.particles.effects.StarEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -16,9 +17,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.models.particleeffect.EffectOwner;
-import me.pugabyte.bncore.models.particleeffect.EffectService;
-import me.pugabyte.bncore.models.particleeffect.EffectType;
+import me.pugabyte.bncore.models.particle.ParticleOwner;
+import me.pugabyte.bncore.models.particle.ParticleService;
+import me.pugabyte.bncore.models.particle.ParticleType;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -30,12 +31,12 @@ import java.util.List;
 @NoArgsConstructor
 @Permission("group.admin")
 public class JParticlesCommand extends CustomCommand implements Listener {
-	EffectService service = new EffectService();
-	EffectOwner effectOwner;
+	ParticleService service = new ParticleService();
+	ParticleOwner particleOwner;
 
 	public JParticlesCommand(@NonNull CommandEvent event) {
 		super(event);
-		effectOwner = service.get(player());
+		particleOwner = service.get(player());
 	}
 
 	@Path()
@@ -44,18 +45,18 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<effectType>")
-	void run(EffectType effectType) {
-		effectType.run(player());
+	void run(ParticleType particleType) {
+		particleType.run(player());
 	}
 
 	@Path("stop <effectType>")
-	void stop(EffectType effectType) {
-		effectOwner.cancelTasks(effectType);
+	void stop(ParticleType particleType) {
+		particleOwner.cancelTasks(particleType);
 	}
 
 	@Path("stopall")
 	void stopAll() {
-		effectOwner.cancelTasks();
+		particleOwner.cancelTasks();
 	}
 
 	@Path("line [distance] [density]")
@@ -67,22 +68,6 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	void dot() {
 		Location loc = Utils.getCenteredLocation(player().getLocation()).add(0, 1, 0);
 		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();
-	}
-
-	@Path("disco slow")
-	void discoslow() {
-		Vector vector = new Vector(0, 4, 0);
-		Location loc = player().getLocation().add(vector);
-		DiscoEffect.builder().player(player()).location(loc).ticks(10 * 20).lineLength(5).maxLines(4).sphereRadius(0.5)
-				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).rainbowOption(DiscoEffect.RainbowOption.SLOW).start();
-	}
-
-	@Path("disco fast")
-	void discofast() {
-		Vector vector = new Vector(0, 4, 0);
-		Location loc = player().getLocation().add(vector);
-		DiscoEffect.builder().player(player()).location(loc).ticks(10 * 20).lineLength(5).maxLines(4).sphereRadius(0.5)
-				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).rainbowOption(DiscoEffect.RainbowOption.FAST).start();
 	}
 
 	@Path("disco line")
@@ -99,27 +84,89 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).color(Color.RED).rotateSpeed(0.2).start();
 	}
 
-	@Path("star")
-	void star() {
-		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).rainbow(true).rotateSpeed(0.2).start();
+	@Path("polygondots <number> [number]")
+	void polygonDots(@Arg int points, @Arg("1.5") double radius) {
+		PolygonEffect.Polygon polygon;
+		switch (points) {
+			case 4:
+				polygon = PolygonEffect.Polygon.SQUARE;
+				break;
+			case 5:
+				polygon = PolygonEffect.Polygon.PENTAGON;
+				break;
+			case 6:
+				polygon = PolygonEffect.Polygon.HEXAGON;
+				break;
+			case 7:
+				polygon = PolygonEffect.Polygon.HEPTAGON;
+				break;
+			case 8:
+				polygon = PolygonEffect.Polygon.OCTAGON;
+				break;
+			default:
+				polygon = PolygonEffect.Polygon.TRIANGLE;
+				break;
+		}
+		PolygonEffect.builder()
+				.player(particleOwner.getPlayer())
+				.updateLoc(true)
+				.whole(false)
+				.polygon(polygon)
+				.radius(radius)
+				.ticks(5 * 20)
+				.rainbow(true)
+				.rotate(true)
+				.rotateSpeed(0.1)
+				.start();
 	}
 
-	@Path("growingstar")
-	void growingstar() {
-		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).rainbow(true).growthSpeed(0.1).rotateSpeed(0.2).start();
+	@Path("polygon <number> [number]")
+	void polygon(@Arg int points, @Arg("1.5") double radius) {
+		PolygonEffect.Polygon polygon;
+		switch (points) {
+			case 4:
+				polygon = PolygonEffect.Polygon.SQUARE;
+				break;
+			case 5:
+				polygon = PolygonEffect.Polygon.PENTAGON;
+				break;
+			case 6:
+				polygon = PolygonEffect.Polygon.HEXAGON;
+				break;
+			case 7:
+				polygon = PolygonEffect.Polygon.HEPTAGON;
+				break;
+			case 8:
+				polygon = PolygonEffect.Polygon.OCTAGON;
+				break;
+			default:
+				polygon = PolygonEffect.Polygon.TRIANGLE;
+				break;
+		}
+		PolygonEffect.builder()
+				.player(particleOwner.getPlayer())
+				.updateLoc(true)
+				.whole(true)
+				.polygon(polygon)
+				.radius(radius)
+				.ticks(5 * 20)
+				.rainbow(true)
+				.rotate(true)
+				.rotateSpeed(0.1)
+				.start();
 	}
 
-	@ConverterFor(EffectType.class)
-	EffectType convertToEffectType(String value) {
+	@ConverterFor(ParticleType.class)
+	ParticleType convertToEffectType(String value) {
 		try {
-			return EffectType.valueOf(value.toUpperCase());
+			return ParticleType.valueOf(value.toUpperCase());
 		} catch (IllegalArgumentException ignore) {
 			throw new InvalidInputException("EffectType from " + value + " not found");
 		}
 	}
 
-	@TabCompleterFor(EffectType.class)
+	@TabCompleterFor(ParticleType.class)
 	List<String> tabCompleteEffectType(String filter) {
-		return tabCompleteEnum(EffectType.class, filter);
+		return tabCompleteEnum(ParticleType.class, filter);
 	}
 }
