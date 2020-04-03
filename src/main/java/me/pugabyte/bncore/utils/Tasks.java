@@ -5,19 +5,25 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.inventivetalent.glow.GlowAPI;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public class Tasks {
+	private static BukkitScheduler scheduler = BNCore.getInstance().getServer().getScheduler();
+	private static BNCore instance = BNCore.getInstance();
 
 	public static int wait(Time delay, Runnable runnable) {
 		return wait(delay.get(), runnable);
 	}
 
 	public static int wait(long delay, Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), runnable, delay).getTaskId();
+		if (instance.isEnabled())
+			return scheduler.runTaskLater(instance, runnable, delay).getTaskId();
+		BNCore.log("Attempted to register wait task while disabled");
+		return -1;
 	}
 
 	public static int repeat(Time startDelay, long interval, Runnable runnable) {
@@ -33,11 +39,17 @@ public class Tasks {
 	}
 
 	public static int repeat(long startDelay, long interval, Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().scheduleSyncRepeatingTask(BNCore.getInstance(), runnable, startDelay, interval);
+		if (instance.isEnabled())
+			return scheduler.scheduleSyncRepeatingTask(instance, runnable, startDelay, interval);
+		BNCore.log("Attempted to register repeat task while disabled");
+		return -1;
 	}
 
 	public static int sync(Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTask(BNCore.getInstance(), runnable).getTaskId();
+		if (instance.isEnabled())
+			return scheduler.runTask(instance, runnable).getTaskId();
+		BNCore.log("Attempted to register sync task while disabled");
+		return -1;
 	}
 
 	public static int waitAsync(Time delay, Runnable runnable) {
@@ -45,7 +57,10 @@ public class Tasks {
 	}
 
 	public static int waitAsync(long delay, Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskLater(BNCore.getInstance(), () -> async(runnable), delay).getTaskId();
+		if (instance.isEnabled())
+			return scheduler.runTaskLater(instance, () -> async(runnable), delay).getTaskId();
+		BNCore.log("Attempted to register waitAsync task while disabled");
+		return -1;
 	}
 
 	public static int repeatAsync(long startDelay, Time interval, Runnable runnable) {
@@ -61,15 +76,21 @@ public class Tasks {
 	}
 
 	public static int repeatAsync(long startDelay, long interval, Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskTimerAsynchronously(BNCore.getInstance(), runnable, startDelay, interval).getTaskId();
+		if (instance.isEnabled())
+			return scheduler.runTaskTimerAsynchronously(instance, runnable, startDelay, interval).getTaskId();
+		BNCore.log("Attempted to register repeatAsync task while disabled");
+		return -1;
 	}
 
 	public static int async(Runnable runnable) {
-		return BNCore.getInstance().getServer().getScheduler().runTaskAsynchronously(BNCore.getInstance(), runnable).getTaskId();
+		if (instance.isEnabled())
+			return scheduler.runTaskAsynchronously(instance, runnable).getTaskId();
+		BNCore.log("Attempted to register async task while disabled");
+		return -1;
 	}
 
 	public static void cancel(int taskId) {
-		BNCore.getInstance().getServer().getScheduler().cancelTask(taskId);
+		scheduler.cancelTask(taskId);
 	}
 
 	public static class Countdown {

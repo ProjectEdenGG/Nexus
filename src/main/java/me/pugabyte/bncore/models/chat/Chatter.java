@@ -64,7 +64,9 @@ public class Chatter extends PlayerOwnedObject {
 	}
 
 	public boolean hasJoined(PublicChannel channel) {
-		return joinedChannels.contains(channel);
+		if (joinedChannels != null)
+			return joinedChannels.contains(channel);
+		return false;
 	}
 
 	public void join(PublicChannel channel) {

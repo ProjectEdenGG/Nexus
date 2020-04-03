@@ -78,7 +78,14 @@ public enum Emotes {
 		if (!PermissionsEx.getUser(player.getName()).has("emoticons.use"))
 			return;
 
-		String message = event.getMessage();
+		event.setMessage(process(event.getMessage(), event.getChannel().getMessageColor()));
+	}
+
+	public static String process(String message) {
+		return process(message, null);
+	}
+
+	public static String process(String message, ChatColor resetColor) {
 		for (Emotes value : values())
 			while (indexOfIgnoreCase(message, value.getKey()) > -1) {
 				String result = value.getEmote();
@@ -87,9 +94,8 @@ public enum Emotes {
 					result = Utils.getRandomElement(value.getColors()) + result;
 
 				int index = indexOfIgnoreCase(message, value.getKey());
-				message = message.substring(0, index) + result + event.getChannel().getMessageColor() + message.substring(index + value.getKey().length());
+				message = message.substring(0, index) + result + (resetColor != null ? resetColor : "") + message.substring(index + value.getKey().length());
 			}
-
-		event.setMessage(message);
+		return message;
 	}
 }
