@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.store;
 import com.google.gson.Gson;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.koda.Koda;
+import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
@@ -111,7 +111,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 
 					DiscordUser user = new DiscordService().get(purchase.getPurchaserUuid());
 					if (user.getUserId() != null)
-						Discord.addRole(user, Role.SUPPORTER);
+						Discord.addRole(user.getUserId(), Role.SUPPORTER);
 					else
 						discordMessage += "\nUser does not have a linked discord account";
 				}
@@ -124,10 +124,11 @@ public class HandlePurchaseCommand extends CustomCommand {
 					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))
 					.forEach(Utils::runConsoleCommand);
 
-			new TaskService().save(new Task("package-expire", new HashMap<String, Object>() {{
-				put("uuid", purchase.getUuid());
-				put("packageId", String.valueOf(purchase.getPackageId()));
-			}}, LocalDateTime.now().plusDays(packageType.getExpirationDays())));
+			if (packageType.getExpirationDays() > 0)
+				new TaskService().save(new Task("package-expire", new HashMap<String, Object>() {{
+					put("uuid", purchase.getUuid());
+					put("packageId", String.valueOf(purchase.getPackageId()));
+				}}, LocalDateTime.now().plusDays(packageType.getExpirationDays())));
 
 			discordMessage += "\nPurchase successfully processed.";
 		}

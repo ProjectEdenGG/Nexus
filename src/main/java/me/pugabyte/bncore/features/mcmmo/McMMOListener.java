@@ -5,7 +5,7 @@ import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.koda.Koda;
+import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.Tasks;

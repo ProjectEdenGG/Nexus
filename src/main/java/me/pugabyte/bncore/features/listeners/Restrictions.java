@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.listeners;
 
-import me.pugabyte.bncore.features.chat.koda.Koda;
+import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;

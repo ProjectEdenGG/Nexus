@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.chat.commands;
 
 import lombok.NonNull;
-import me.pugabyte.bncore.features.chat.koda.Koda;
+import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;

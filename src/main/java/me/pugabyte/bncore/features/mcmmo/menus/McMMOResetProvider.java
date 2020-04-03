@@ -8,7 +8,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.koda.Koda;
+import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.mcmmo.McMMOPrestige;
 import me.pugabyte.bncore.models.mcmmo.McMMOService;

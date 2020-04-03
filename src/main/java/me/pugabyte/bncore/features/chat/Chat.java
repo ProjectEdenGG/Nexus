@@ -85,6 +85,18 @@ public class Chat {
 		channel.broadcastIngame(message);
 	}
 
+	public static void broadcastDiscord(String message) {
+		broadcastDiscord(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastDiscord(String message, String channel) {
+		broadcastDiscord(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcastDiscord(String message, PublicChannel channel) {
+		channel.broadcastDiscord(message);
+	}
+
 	private void updateChannels() {
 		Bukkit.getOnlinePlayers().stream()
 				.map(player -> (Chatter) new ChatService().get(player))

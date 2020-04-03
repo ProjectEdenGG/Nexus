@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.store.perks.joinquit;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chat.koda.Koda;
+import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
@@ -55,7 +55,7 @@ public class JoinQuit implements Listener {
 			return;
 
 		String message = "&a[player] &5has joined the server";
-		if (player.hasPermission("jq.custom"))
+		if (player.hasPermission("jq.custom") && joinMessages.size() > 0)
 			message = Utils.getRandomElement(joinMessages);
 
 		if (player.isOnline()) {
@@ -82,7 +82,7 @@ public class JoinQuit implements Listener {
 			return;
 
 		String message = "&c[player] &5has left the server";
-		if (player.hasPermission("jq.custom"))
+		if (player.hasPermission("jq.custom") && quitMessages.size() > 0)
 			message = Utils.getRandomElement(quitMessages);
 
 		message = message.replaceAll("\\[player]", "&c" + player.getName() + "&5");
@@ -111,7 +111,8 @@ public class JoinQuit implements Listener {
 	public void onJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
-			Koda.reply("&lWelcome to Bear Nation, " + player.getName() + "!");
+			Koda.replyIngame("&lWelcome to Bear Nation, " + player.getName() + "!");
+			Koda.replyDiscord("**Welcome to Bear Nation, " + player.getName() + "!**");
 		}
 
 		if (!Utils.isVanished(player))
