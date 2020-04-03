@@ -105,11 +105,9 @@ public class Votes implements Listener {
 		new VoteService().save(vote);
 
 		try {
-			new CooldownService().check(uuid, "vote-announcement", Time.HOUR.x(12));
-			if (site == VoteSite.PMC) {
-				Chat.broadcastIngame("&a[✔] &3" + name + " &bvoted &3for the server and received &b1 &3vote point per site!");
-				Discord.send(":white_check_mark: **" + name + " voted** for the server and received **1 vote point** per site!");
-			}
+			new CooldownService().check(uuid, "vote-announcement", Time.HOUR);
+			Chat.broadcastIngame("&a[✔] &3" + name + " &bvoted &3for the server and received &b1 &3vote point per site!");
+			Discord.send(":white_check_mark: **" + name + " voted** for the server and received **1 vote point** per site!");
 		} catch (CooldownException ignore) {}
 
 		if (vote.getExtra() > 0) {
