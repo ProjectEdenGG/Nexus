@@ -37,7 +37,7 @@ public class RedHandedCommand extends CustomCommand {
 					player().setGameMode(GameMode.SURVIVAL);
 			runCommand("freeze " + player.getName());
 			runCommand("forcechannel " + player.getName() + " l");
-			Tasks.wait(1, () -> send(json("&c&lClick here to let them continue. Type a reason to warn them").suggest("youmaycontinue " + player.getName() + " ")));
+			Tasks.wait(1, () -> send(json("&c&lClick here to let them continue. Type a reason to warn them").suggest("/youmaycontinue " + player.getName() + " ")));
 		}
 		runCommand("vanish off");
 		runCommand("fly on");
