@@ -5,9 +5,9 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.models.particleeffect.EffectOwner;
-import me.pugabyte.bncore.models.particleeffect.EffectService;
-import me.pugabyte.bncore.models.particleeffect.EffectType;
+import me.pugabyte.bncore.models.particle.ParticleOwner;
+import me.pugabyte.bncore.models.particle.ParticleService;
+import me.pugabyte.bncore.models.particle.ParticleType;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -30,7 +30,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		EffectOwner effectOwner = new EffectService().get(player);
+		ParticleOwner particleOwner = new ParticleService().get(player);
 
 		Pagination page = contents.pagination();
 
@@ -68,16 +68,16 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 
 		contents.set(3, 1, ClickableItem.from(nameItem(Material.BARRIER, "&cStop Particles"),
 				e -> {
-					effectOwner.cancelTasks();
+					particleOwner.cancelTasks();
 					player.closeInventory();
 				}));
 
 		List<ClickableItem> items = new ArrayList<>();
-		for (int i = 0; i < EffectType.values().length; i++) {
-			EffectType effect = EffectType.values()[i];
+		for (int i = 0; i < ParticleType.values().length; i++) {
+			ParticleType effect = ParticleType.values()[i];
 
 			AtomicBoolean active = new AtomicBoolean(false);
-			if (effectOwner.getTasks(effect).size() > 0)
+			if (particleOwner.getTasks(effect).size() > 0)
 				active.set(true);
 
 			if (!player.hasPermission("particles." + effect.getCommandName())) continue;
@@ -89,7 +89,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 			items.add(ClickableItem.from(item,
 					e -> {
 						if (active.get())
-							effectOwner.cancelTasks(effect);
+							particleOwner.cancelTasks(effect);
 						else
 							effect.run(player);
 						ParticleMenu.openMain(player, page.getPage());

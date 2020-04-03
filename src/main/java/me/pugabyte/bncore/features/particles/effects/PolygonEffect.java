@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
-import me.pugabyte.bncore.features.particles.VectorUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
@@ -19,34 +18,26 @@ import org.bukkit.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class StarEffect {
+public class PolygonEffect {
 	@Getter
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	StarEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean rotate, double rotateSpeed,
-			   boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed, double growthSpeed,
-			   double disX, double disY, double disZ, int startDelay, int pulseDelay) {
+	public PolygonEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
+						 Boolean whole, boolean rotate, double rotateSpeed, Polygon polygon,
+						 boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed,
+						 double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player != null && location == null)
 			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
-
 
 		if (density == 0) density = 20;
 		if (updateVector != null) updateLoc = true;
 		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);
 		if (rotateSpeed != 0 && !rotate) rotate = true;
 		if (rotate && rotateSpeed <= 0) rotateSpeed = 0.1;
-		boolean growth = false;
-		double growthMax = radius;
-		double growthMin = 0;
-		if (growthSpeed <= 0) {
-			growthMin = growthMax;
-			growthSpeed = growthMax;
-		} else {
-			growth = true;
-		}
+		if (whole == null) whole = true;
 
 		if (color != null) {
 			disX = color.getRed();
@@ -76,10 +67,13 @@ public class StarEffect {
 			}
 		}
 
+		int points = polygon.getPoints(); // the amount of points the polygon should have.
+
+		Boolean finalWhole = whole;
 		boolean finalRotate = rotate;
 		double finalRotateSpeed = rotateSpeed;
 		double finalDensity = density;
-
+		double finalRadius = radius;
 		int finalCount = count;
 		double finalSpeed = speed;
 		int finalTicks = ticks;
@@ -93,12 +87,6 @@ public class StarEffect {
 		final AtomicDouble green = new AtomicDouble(disY);
 		final AtomicDouble blue = new AtomicDouble(disZ);
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
-
-		double finalGrowthMin = growthMin;
-		double finalGrowthSpeed = growthSpeed;
-		boolean finalGrowth = growth;
-//		double finalRadius = radius;
-		final AtomicDouble growthRadius = new AtomicDouble(radius);
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
@@ -118,44 +106,63 @@ public class StarEffect {
 			if (finalUpdateLoc)
 				newLoc = player.getLocation().add(finalUpdateVector);
 
-			double angleForward = 2.5132741928100586D;
+//			if (finalRotate) {
+//				VectorUtils.rotateAroundAxisY(v, yRotation.get() * 0.01745329238474369D);
+//				VectorUtils.rotateAroundAxisY(star, yRotation.get() * 0.01745329238474369D);
+//				yRotation.updateAndGet(v1 -> v1 + finalRotateSpeed);
+//			}
 
-			if (finalGrowth) {
-				growthRadius.set(growthRadius.get() + finalGrowthSpeed);
-				if (growthRadius.get() >= growthMax)
-					growthRadius.set(finalGrowthMin);
-			}
+			for (int iteration = 0; iteration < points; iteration++) {
+				double angle = 360.0 / points * iteration;
+				double nextAngle = 360.0 / points * (iteration + 1); // the angle for the next point.
+				angle = Math.toRadians(angle);
+				nextAngle = Math.toRadians(nextAngle); // convert to radians.
+				double x = Math.cos(angle) * finalRadius;
+				double z = Math.sin(angle) * finalRadius;
+				double x2 = Math.cos(nextAngle) * finalRadius;
+				double z2 = Math.sin(nextAngle) * finalRadius;
+				double deltaX = x2 - x; // get the x-difference between the points.
+				double deltaZ = z2 - z; // get the z-difference between the points.
+				double distance = Math.sqrt(Math.pow(deltaX - x, 2) + Math.pow(deltaZ - z, 2));
+				if (finalWhole) {
+					// (distance - (2.0 - (2.0 * (points / 10.0))))
+					for (double d = 0; d < (distance - (2.0 - (2.0 * (points / 10.0)))); d += .1) { // we subtract .1 from the distance because otherwise it would make 1 step too many.
+						double finalX = (x + deltaX * d);
+						double finalZ = (z + deltaZ * d);
+						newLoc.add(finalX, 0, finalZ);
+						newLoc.getWorld().spawnParticle(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+						newLoc.subtract(finalX, 0, finalZ);
+					}
+				} else {
+					newLoc.add(x, 0, z);
+					newLoc.getWorld().spawnParticle(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+					newLoc.subtract(x, 0, z);
 
-			for (int i = 1; i < 6; ++i) {
-				double angleY = (float) i * 1.2566371F;
-				double x = Math.cos(angleY) * growthRadius.get();
-				double z = Math.sin(angleY) * growthRadius.get();
-				Vector v = new Vector(x, 0, z);
-				Vector star = v.clone();
-				VectorUtils.rotateAroundAxisY(star, angleForward);
-				if (finalRotate) {
-					VectorUtils.rotateAroundAxisY(v, yRotation.get() * 0.01745329238474369D);
-					VectorUtils.rotateAroundAxisY(star, yRotation.get() * 0.01745329238474369D);
-					yRotation.updateAndGet(v1 -> v1 + finalRotateSpeed);
+					newLoc.add(x2, 0, z2);
+					newLoc.getWorld().spawnParticle(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+					newLoc.subtract(x2, 0, z2);
 				}
-
-				newLoc.add(v);
-				Vector link = star.clone().subtract(v.clone());
-				float length = (float) link.length();
-				link.normalize();
-				float ratio = length / (float) finalDensity;
-				Vector v3 = link.multiply(ratio);
-				Location loc = newLoc.clone().subtract(v3);
-
-				for (int i2 = 0; i2 < finalDensity; ++i2) {
-					newLoc.getWorld().spawnParticle(finalParticle, loc.add(v3), finalCount, red.get(), green.get(), blue.get(), finalSpeed);
-				}
-
-				newLoc.subtract(v);
 			}
 
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
+
 		});
+	}
+
+	@Getter
+	public enum Polygon {
+		TRIANGLE(3),
+		SQUARE(4),
+		PENTAGON(5),
+		HEXAGON(6),
+		HEPTAGON(7),
+		OCTAGON(8);
+
+		int points;
+
+		Polygon(int points) {
+			this.points = points;
+		}
 	}
 }
