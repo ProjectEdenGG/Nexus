@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.store.perks;
 
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@NoArgsConstructor
 @Permission("rainbow.beacon")
 public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	SettingService service = new SettingService();
