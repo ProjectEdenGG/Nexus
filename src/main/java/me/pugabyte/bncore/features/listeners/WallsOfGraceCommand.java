@@ -25,8 +25,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 import java.util.Map;
 
-@Aliases("removesign")
 @NoArgsConstructor
+@Aliases("removesign")
 public class WallsOfGraceCommand extends CustomCommand implements Listener {
 
 	SettingService service = new SettingService();
