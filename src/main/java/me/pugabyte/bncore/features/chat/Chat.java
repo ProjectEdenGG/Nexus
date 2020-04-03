@@ -13,6 +13,8 @@ import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import java.util.HashMap;
+
 public class Chat {
 
 	// TODO:
@@ -56,7 +58,7 @@ public class Chat {
 	}
 
 	public static void shutdown() {
-		ChatService.getCache().forEach((uuid, chatter) -> new ChatService().saveSync(chatter));
+		new HashMap<>(ChatService.getCache()).forEach((uuid, chatter) -> new ChatService().saveSync(chatter));
 	}
 
 	public static void broadcast(String message) {

@@ -1,11 +1,14 @@
 package me.pugabyte.bncore.features.store.perks;
 
+import me.pugabyte.bncore.features.chat.Emotes;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class PrefixCommand extends CustomCommand {
 
@@ -32,9 +35,15 @@ public class PrefixCommand extends CustomCommand {
 		send(PREFIX + "Reset prefix");
 	}
 
-	@Path("<prefix>")
+	@Path("<prefix...>")
 	@Permission("set.my.prefix")
 	void prefix(String value) {
+		if (player().hasPermission("emoticons.use"))
+			value = Emotes.process(value);
+
+		if (stripColor(value).length() > 10)
+			error("Your prefix cannot be more than 10 characters");
+
 		prefix.setValue(value);
 		service.save(prefix);
 		send(PREFIX + "Your prefix has been set to &8&l[&f" + value + "&8&l]");

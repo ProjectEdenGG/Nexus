@@ -177,7 +177,6 @@ public class Minigamer {
 		if (location == null)
 			throw new InvalidInputException("Tried to teleport " + player.getName() + " to a null location");
 
-		// TODO: Allow/disallow teleportation
 		player.setVelocity(new Vector(0, 0, 0));
 		canTeleport = true;
 		player.teleport(location.clone().add(0, .5, 0));
