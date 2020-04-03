@@ -38,10 +38,12 @@ public enum EffectType {
 		int[] start(EffectOwner effectOwner) {
 			Double radius = null;
 			Boolean rainbow = null;
+			Boolean whole = null;
 			Color color = null;
 
-			if (radius == null) radius = 1.5;
+			if (radius == null) radius = 2.0;
 			if (rainbow == null) rainbow = true;
+			if (whole == null) whole = true;
 			if (color == null) color = Color.RED;
 
 			int taskId = CircleEffect.builder()
@@ -50,6 +52,7 @@ public enum EffectType {
 					.density(100)
 					.radius(radius)
 					.ticks(-1)
+					.whole(whole)
 					.color(color)
 					.rainbow(rainbow)
 					.start()
@@ -60,12 +63,12 @@ public enum EffectType {
 	STAR(Material.FIREWORK_CHARGE) {
 		@Override
 		int[] start(EffectOwner effectOwner) {
-			Integer radius = null;
+			Double radius = null;
 			Double rotateSpeed = null;
 			Boolean rainbow = null;
 			Color color = null;
 
-			if (radius == null) radius = 2;
+			if (radius == null) radius = 2.0;
 			if (rotateSpeed == null) rotateSpeed = 0.2;
 			if (rainbow == null) rainbow = true;
 			if (color == null) color = Color.RED;

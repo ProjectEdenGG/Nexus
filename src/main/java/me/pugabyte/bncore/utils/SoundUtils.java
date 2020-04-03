@@ -57,20 +57,20 @@ public class SoundUtils {
 			public void play(Player player) {
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> {
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, .5F, 0.561231F);
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BELL, .5F, 0.561231F);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, .3F, 0.561231F);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BELL, .3F, 0.561231F);
 				});
 				Tasks.wait(wait += 2, () -> {
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, .5F, 0.629961F);
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BELL, .5F, 0.629961F);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, .3F, 0.629961F);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BELL, .3F, 0.629961F);
 				});
 				Tasks.wait(wait += 2, () -> {
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, .5F, 0.561231F);
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BELL, .5F, 0.561231F);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, .3F, 0.561231F);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BELL, .3F, 0.561231F);
 				});
 				Tasks.wait(wait += 2, () -> {
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, .5F, 0.840896F);
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BELL, .5F, 0.840896F);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, .3F, 0.840896F);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BELL, .3F, 0.840896F);
 				});
 			}
 		},
