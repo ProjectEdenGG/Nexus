@@ -1,13 +1,14 @@
 package me.pugabyte.bncore.models.setting;
 
 import me.pugabyte.bncore.models.MySQLService;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class SettingService extends MySQLService {
 
-	public Setting get(Player player, String type) {
+	public Setting get(OfflinePlayer player, String type) {
 		return get(player.getUniqueId().toString(), type);
 	}
 

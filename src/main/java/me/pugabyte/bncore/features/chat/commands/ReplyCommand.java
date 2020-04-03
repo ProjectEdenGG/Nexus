@@ -3,31 +3,30 @@ package me.pugabyte.bncore.features.chat.commands;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
-import me.pugabyte.bncore.models.chat.PrivateChannel;
 
-//@Aliases({"m", "msg", "w", "whisper", "t", "tell", "pm", "dm"})
-public class JMessageCommand extends CustomCommand {
+@Aliases("r")
+public class ReplyCommand extends CustomCommand {
 	private Chatter chatter;
 
-	public JMessageCommand(@NonNull CommandEvent event) {
+	public ReplyCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = Chat.PREFIX;
 		chatter = new ChatService().get(player());
 	}
 
-	@Path("<player> [message...]")
-	void message(Chatter to, String message) {
-		if (chatter == to)
-			error("You cannot message yourself");
+	@Path("[message...]")
+	void reply(String message) {
+		if (chatter.getLastPrivateMessage() == null)
+			error("No one has messaged you");
 
-		PrivateChannel dm = new PrivateChannel(chatter, to);
 		if (isNullOrEmpty(message))
-			chatter.setActiveChannel(dm);
+			chatter.setActiveChannel(chatter.getLastPrivateMessage());
 		else
-			chatter.say(dm, message);
+			chatter.say(chatter.getLastPrivateMessage(), message);
 	}
 }

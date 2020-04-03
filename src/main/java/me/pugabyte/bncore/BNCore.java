@@ -7,7 +7,6 @@ import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
-import me.pugabyte.bncore.features.chatold.ChatOld;
 import me.pugabyte.bncore.features.clearinventory.ClearInventory;
 import me.pugabyte.bncore.features.connect4.Connect4;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
@@ -40,6 +39,7 @@ import me.pugabyte.bncore.models.ModelListeners;
 import me.pugabyte.bncore.models.geoip.GeoIP;
 import me.pugabyte.bncore.models.geoip.GeoIPService;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -50,6 +50,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.BufferedWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.function.Function;
@@ -105,6 +110,16 @@ public class BNCore extends JavaPlugin {
 
 	public static void registerPlaceholder(String id, Function<PlaceholderReplaceEvent, String> function) {
 		PlaceholderAPI.registerPlaceholder(getInstance(), id, function::apply);
+	}
+
+	public static void fileLog(String file, String message) {
+		Tasks.async(() -> {
+			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/BNCore/logs/" + file + ".log"), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+				writer.append(System.lineSeparator()).append("[").append(StringUtils.shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 
 	@Override
@@ -166,7 +181,6 @@ public class BNCore extends JavaPlugin {
 
 	public static AFK afk;
 	public static Chat chat;
-	public static ChatOld chatOld;
 	public static ClearInventory clearInventory;
 	public static Connect4 connect4;
 	//TODO: Integrate custom recipes with 1.15
@@ -209,7 +223,6 @@ public class BNCore extends JavaPlugin {
 
 		new Timer("  AFK", () -> afk = new AFK());
 		new Timer("  Chat", () -> chat = new Chat());
-		new Timer("  ChatOld", () -> chatOld = new ChatOld());
 		new Timer("  ClearInventory", () -> clearInventory = new ClearInventory());
 		new Timer("  Connect4", () -> connect4 = new Connect4());
 		new Timer("  DailyRewardsFeature", () -> dailyRewards = new DailyRewardsFeature());

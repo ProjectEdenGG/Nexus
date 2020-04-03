@@ -55,9 +55,8 @@ public enum Rank {
 	}
 
 	public String getPrefix() {
-		if (hasPrefix) {
-			return "&8&l[" + toString() + "&8&l]";
-		}
+		if (hasPrefix)
+			return withFormat();
 
 		return "";
 	}
@@ -148,6 +147,14 @@ public enum Rank {
 		STAFF,
 		BUILDERS,
 		PLAYERS;
+	}
+
+	public Rank next() {
+		return values()[Math.min(values().length - 1, this.ordinal() + 1 % values().length)];
+	}
+
+	public Rank previous() {
+		return values()[Math.max(0, this.ordinal() - 1 % values().length)];
 	}
 
 }

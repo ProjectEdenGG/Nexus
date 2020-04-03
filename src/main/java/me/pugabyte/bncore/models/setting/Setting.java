@@ -27,6 +27,7 @@ public class Setting {
 	}
 
 	public boolean getBoolean() {
+		if ("1".equalsIgnoreCase(value)) return true;
 		return Boolean.parseBoolean(value);
 	}
 

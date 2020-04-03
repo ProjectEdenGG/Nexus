@@ -1,13 +1,12 @@
 package me.pugabyte.bncore.features.showenchants;
 
-import com.dthielke.herochat.Channel;
-import com.dthielke.herochat.Chatter;
-import com.dthielke.herochat.Herochat;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.chatold.herochat.HerochatAPI;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.chat.Channel;
+import me.pugabyte.bncore.models.chat.ChatService;
+import me.pugabyte.bncore.models.chat.Chatter;
+import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.models.nerd.Nerd;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.StringUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -70,8 +69,10 @@ public class ShowEnchantsCommand implements CommandExecutor {
 			int count = item.getAmount();
 			getEnchants();
 
-			Chatter chatter = Herochat.getChatterManager().getChatter(player);
+			Chatter chatter = new ChatService().get(player);
 			Channel channel = chatter.getActiveChannel();
+			if (!(channel instanceof PublicChannel))
+				throw new InvalidInputException("This command cannot be used in private messages, use /ch g first");
 
 			coolDownMap.put(player, LocalDateTime.now());
 
@@ -89,8 +90,8 @@ public class ShowEnchantsCommand implements CommandExecutor {
 				}
 
 				int durability = item.getDurability();
-				String prefix = channel.getNick();
-				ChatColor color = channel.getColor();
+				String prefix = ((PublicChannel) channel).getNickname();
+				ChatColor color = ((PublicChannel) channel).getColor();
 				String format = color + "[" + prefix + "]" + new Nerd(player).getChatFormat();
 
 				ComponentBuilder herochat = new ComponentBuilder(format + color + ChatColor.BOLD + " > ").append(message);
@@ -100,10 +101,8 @@ public class ShowEnchantsCommand implements CommandExecutor {
 
 				BaseComponent[] component = herochat.append(enchantedItem.create()).append((count > 1 ? " x" + count : "")).create();
 
-				player.spigot().sendMessage(component); // Recipients doesn't include the sender
-				for (Chatter loopChatter : HerochatAPI.getRecipients(chatter, channel)) {
+				for (Chatter loopChatter : channel.getRecipients(chatter))
 					loopChatter.getPlayer().spigot().sendMessage(component);
-				}
 			}
 
 			// Discord
@@ -118,7 +117,8 @@ public class ShowEnchantsCommand implements CommandExecutor {
 					discordName += "(" + material + ")";
 				if (count > 1) discordName += " x" + count;
 
-				SkriptFunctions.showEnchantsOnBridge(player, message, discordName, enchants, durability, channel.getName());
+				// TODO
+//				SkriptFunctions.showEnchantsOnBridge(player, message, discordName, enchants, durability, channel.getName());
 			}
 
 			return true;

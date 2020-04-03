@@ -52,11 +52,6 @@
                                     <pattern>net.minidev.json</pattern>
                                     <shadedPattern>com.onarandombox.multiverseinventories.util.json</shadedPattern>
                                 </relocation>
-                                <!-- Conflicts with something else shading neovisionaries (vixio?) -->
-                                <relocation>
-                                    <pattern>com.neovisionaries.</pattern>
-                                    <shadedPattern>me.pugabyte.bncore.neovisionaries.</shadedPattern>
-                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -214,7 +209,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.1.1_104</version>
+            <version>4.1.1_127</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>
@@ -263,14 +258,6 @@
             <artifactId>mcMMO</artifactId>
             <version>1.5.01-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- Herochat -->
-        <dependency>
-            <groupId>com.dthielke.herochat</groupId>
-            <artifactId>Herochat</artifactId>
-            <version>6.0-SNAPSHOT-bb16</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Herochat-6.0-SNAPSHOT-bb16.jar</systemPath>
         </dependency>
         <!-- Skript -->
         <dependency>

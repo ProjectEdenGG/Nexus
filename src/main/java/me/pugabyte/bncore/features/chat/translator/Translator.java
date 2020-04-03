@@ -1,12 +1,8 @@
 package me.pugabyte.bncore.features.chat.translator;
 
-import com.dthielke.herochat.ChannelChatEvent;
-import com.dthielke.herochat.Chatter;
-import com.dthielke.herochat.Herochat;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.events.MinecraftChatEvent;
-import me.pugabyte.bncore.features.chatold.herochat.HerochatAPI;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -18,7 +14,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class Translator implements Listener {
@@ -35,41 +30,6 @@ public class Translator implements Listener {
 	public static TranslatorHandler handler = new TranslatorHandler(apiKey);
 
 	public static final String PREFIX = StringUtils.getPrefix("Translator");
-
-	@EventHandler
-	public void onChat(ChannelChatEvent event) {
-		if (!event.getResult().toString().equals("ALLOWED")) return;
-		Player sender = event.getSender().getPlayer();
-		List<Chatter> chatters = HerochatAPI.getRecipients(event.getSender(), event.getChannel());
-
-		Tasks.waitAsync(1, () -> {
-			try {
-				if (!map.containsKey(sender.getUniqueId())) return;
-
-				Language language = handler.detect(event.getMessage());
-				if (language == Language.EN) return;
-
-				String translated = handler.translate(event.getMessage(), language, Language.EN);
-				for (UUID uuid : map.get(sender.getUniqueId())) {
-					Player translating = Utils.getPlayer(uuid).getPlayer();
-
-					if (uuid == sender.getUniqueId()) continue;
-					if (!chatters.contains(Herochat.getChatterManager().getChatter(translating))) continue;
-
-					new JsonBuilder()
-							.next(PREFIX + sender.getName() + " &e(&3" + language.name() + "&e) &3&l> &7" + translated)
-							.hover(language.getName())
-							.send(translating);
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				for (UUID uuid : map.get(sender.getUniqueId())) {
-					Player translating = Utils.getPlayer(uuid).getPlayer();
-					translating.sendMessage(StringUtils.colorize(PREFIX + "Failed to translate message from " + event.getSender().getPlayer().getDisplayName() + "."));
-				}
-			}
-		});
-	}
 
 	@EventHandler
 	public void onChat(MinecraftChatEvent event) {
