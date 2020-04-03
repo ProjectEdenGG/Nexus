@@ -78,6 +78,8 @@ public class Chatter extends PlayerOwnedObject {
 	}
 
 	public void leave(PublicChannel channel) {
+		if (joinedChannels == null)
+			joinedChannels = new HashSet<>();
 		joinedChannels.remove(channel);
 		if (activeChannel == channel && channel != ChatManager.getMainChannel())
 			setActiveChannel(ChatManager.getMainChannel());

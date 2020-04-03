@@ -25,10 +25,10 @@ public class Censor {
 	}
 
 	private static void lowercase(ChatEvent event) {
-		if (event.getMessage().length() == 0)
-			return;
 		String message = event.getMessage();
 		String characters = message.replaceAll(" ", "");
+		if (characters.length() == 0)
+			return;
 		int upper = countUpperCase(message);
 		int pct = upper / characters.length() * 100;
 
