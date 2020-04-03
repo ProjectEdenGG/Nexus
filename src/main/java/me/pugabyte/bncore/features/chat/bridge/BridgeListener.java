@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.chat.bridge;
 import com.google.common.base.Strings;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.features.chat.events.DiscordChatEvent;
 import me.pugabyte.bncore.features.chat.events.PublicChatEvent;
@@ -19,6 +20,7 @@ import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -29,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
@@ -108,7 +111,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 		message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
 
 		if (message.contains("@")) {
-			Matcher matcher = Pattern.compile("@[A-Za-z0-9_]").matcher(message);
+			Matcher matcher = Pattern.compile("@[A-Za-z0-9_]+").matcher(message);
 			while (matcher.find()) {
 				String group = matcher.group().replace("@", "");
 				try {
@@ -130,6 +133,12 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 			OfflinePlayer player = Utils.getPlayer(event.getEntity().getName());
 			RoleManager.update(new DiscordService().get(player));
 		}
+	}
+
+	@EventHandler
+	public void onDeath(PlayerDeathEvent event) {
+		if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
+			Chat.broadcastDiscord(event.getDeathMessage().replaceAll("_", "\\_"));
 	}
 
 	@EventHandler
