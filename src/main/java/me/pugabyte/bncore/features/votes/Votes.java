@@ -84,7 +84,7 @@ public class Votes implements Listener {
 			new CooldownService().check(vote.getUuid(), "vote-reminder", Time.MINUTE.x(10));
 			User user = Bot.KODA.jda().getUserById(discordUser.getUserId());
 			if (user != null && user.getMutualGuilds().size() > 0) {
-				BNCore.log("[Votes] Sending vote reminder to " + Utils.getPlayer(vote.getUuid()));
+				BNCore.log("[Votes] Sending vote reminder to " + Utils.getPlayer(vote.getUuid()).getName());
 				MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(voteLinksEmbed);
 				user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
 			}
@@ -95,7 +95,7 @@ public class Votes implements Listener {
 	public void onVote(VotifierEvent event) {
 		OfflinePlayer player = Bukkit.getOfflinePlayer(event.getVote().getUsername());
 		String name = player != null ? player.getName() : "null";
-		String uuid = player != null ? player.getName() : "00000000-0000-0000-0000-000000000000";
+		String uuid = player != null ? player.getUniqueId().toString() : "00000000-0000-0000-0000-000000000000";
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 
 		BNCore.log("[Votes] Vote received from " + event.getVote().getServiceName() + ": " + event.getVote().getUsername() + " (" + name + " | " + uuid + ")");
