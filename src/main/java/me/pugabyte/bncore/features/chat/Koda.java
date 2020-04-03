@@ -1,7 +1,6 @@
-package me.pugabyte.bncore.features.chat.koda;
+package me.pugabyte.bncore.features.chat;
 
 import lombok.Getter;
-import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
@@ -20,9 +19,25 @@ public class Koda {
 		Tasks.wait(10, () -> say(message));
 	}
 
+	public static void replyIngame(String message) {
+		Tasks.wait(10, () -> sayIngame(message));
+	}
+
+	public static void replyDiscord(String message) {
+		Tasks.wait(10, () -> sayDiscord(message));
+	}
+
 	public static void say(String message) {
-		ChatManager.getMainChannel().broadcastIngame(globalFormat + message);
-		Discord.send("<@&&f" + Role.KODA.getId() + "> **>** " + message, Channel.BRIDGE);
+		sayIngame(message);
+		sayDiscord(message);
+	}
+
+	public static void sayIngame(String message) {
+		Chat.broadcastIngame(globalFormat + message);
+	}
+
+	public static void sayDiscord(String message) {
+		Chat.broadcastDiscord("<@&&f" + Role.KODA.getId() + "> **>** " + message);
 	}
 
 	public static void announce(String message) {

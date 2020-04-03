@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.persistence.MySQLDatabase;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.MySQLService;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class LiteBansService extends MySQLService {
@@ -26,11 +27,15 @@ public class LiteBansService extends MySQLService {
 				.select("DISTINCT alts.name")
 				.table("history")
 				.innerJoin("history AS alts")
-					.on("alts.ip = history.ip")
+				.on("alts.ip = history.ip")
 				.where("history.uuid = ?")
 				.orderBy("alts.name")
 				.args(uuid)
 				.results(String.class);
+	}
 
+	public boolean isBanned(String uuid) {
+		List<HashMap> bans = database.table("bans").where("uuid = ?").and("active = 1").args(uuid).results(HashMap.class);
+		return bans.size() > 0;
 	}
 }

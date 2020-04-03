@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.discord;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
-import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -51,14 +50,6 @@ public class Discord {
 		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());
 	}
 
-	public static void addRole(DiscordUser user, DiscordId.Role role) {
-		Role roleById = getGuild().getRoleById(role.getId());
-		if (roleById == null)
-			BNCore.log("Role from " + role.name() + " not found");
-		else
-			getGuild().addRoleToMember(user.getUserId(), roleById).queue();
-	}
-
 	public static void log(String message) {
 		send(message, Channel.STAFF_BRIDGE, Channel.STAFF_LOG);
 	}
@@ -91,6 +82,22 @@ public class Discord {
 			if (channel != null)
 				channel.sendMessage(message).queue();
 		}
+	}
+
+	public static void addRole(String userId, DiscordId.Role role) {
+		Role roleById = getGuild().getRoleById(role.getId());
+		if (roleById == null)
+			BNCore.log("Role from " + role.name() + " not found");
+		else
+			getGuild().addRoleToMember(userId, roleById).queue();
+	}
+
+	public static void removeRole(String userId, DiscordId.Role role) {
+		Role roleById = getGuild().getRoleById(role.getId());
+		if (roleById == null)
+			BNCore.log("Role from " + role.name() + " not found");
+		else
+			getGuild().removeRoleFromMember(userId, roleById).queue();
 	}
 
 }

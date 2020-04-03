@@ -62,8 +62,7 @@ public class PublicChannel implements Channel {
 
 	public void broadcast(String message) {
 		broadcastIngame(message);
-		if (discordChannel != null)
-			Discord.send(message, discordChannel);
+		broadcastDiscord(message);
 	}
 
 	public void broadcastIngame(String message) {
@@ -74,10 +73,14 @@ public class PublicChannel implements Channel {
 				.forEach(chatter -> chatter.send(message));
 	}
 
+	public void broadcastDiscord(String message) {
+		if (discordChannel != null)
+			Discord.send(message, discordChannel);
+	}
+
 	public void broadcast(JsonBuilder builder) {
 		broadcastIngame(builder);
-		if (discordChannel != null)
-			Discord.send(builder.toString(), discordChannel);
+		broadcastDiscord(builder);
 	}
 
 	public void broadcastIngame(JsonBuilder builder) {
@@ -86,6 +89,11 @@ public class PublicChannel implements Channel {
 				.map(player -> (Chatter) new ChatService().get(player))
 				.filter(chatter -> chatter.hasJoined(this))
 				.forEach(chatter -> chatter.send(builder));
+	}
+
+	public void broadcastDiscord(JsonBuilder builder) {
+		if (discordChannel != null)
+			Discord.send(builder.toString(), discordChannel);
 	}
 
 	public String getPermission() {

@@ -45,7 +45,7 @@ public class DiscordChatEvent extends ChatEvent {
 	public Chatter getChatter() {
 		if (member != null) {
 			DiscordUser user = new DiscordService().getFromUserId(member.getUser().getId());
-			if (!isNullOrEmpty(user.getUuid()))
+			if (user != null && !isNullOrEmpty(user.getUuid()))
 				return new ChatService().get(Utils.getPlayer(user.getUuid()));
 		}
 		return null;

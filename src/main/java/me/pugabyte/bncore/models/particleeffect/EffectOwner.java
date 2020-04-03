@@ -51,7 +51,7 @@ public class EffectOwner extends PlayerOwnedObject {
 	}
 
 	public void cancelTasks() {
-		tasks.forEach(task -> {
+		new HashSet<>(tasks).forEach(task -> {
 			Tasks.cancel(task.getTaskId());
 			tasks.remove(task);
 		});
