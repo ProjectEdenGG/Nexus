@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
 import me.pugabyte.bncore.features.particles.effects.PolygonEffect;
+import me.pugabyte.bncore.features.particles.effects.SpiralEffect;
 import me.pugabyte.bncore.features.particles.effects.StarEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -82,6 +83,11 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	void pentagram() {
 		CircleEffect.builder().player(player()).density(50).radius(2).ticks(25 * 20).whole(true).updateLoc(true).color(Color.BLACK).start();
 		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).color(Color.RED).rotateSpeed(0.2).start();
+	}
+
+	@Path("Spiral <number>")
+	void spiral(@Arg double number) {
+		SpiralEffect.builder().player(player()).radius(number).ticks(5 * 20).pulseDelay(2).rainbow(true).updateLoc(true).start();
 	}
 
 	@Path("polygondots <number> [number]")
