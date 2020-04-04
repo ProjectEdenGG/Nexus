@@ -469,7 +469,7 @@ public enum ParticleType {
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
 			DiscoEffect.Direction direction = (DiscoEffect.Direction) settings.get(ParticleSetting.DISCO_DIRECTION);
-			DiscoEffect.RainbowOption rainbowOption = (DiscoEffect.RainbowOption) settings.get(ParticleSetting.DISCO_RAINBOW);
+			DiscoEffect.RainbowOption rainbowOption = (DiscoEffect.RainbowOption) settings.get(ParticleSetting.DISCO_RAINBOW_OPTION);
 			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
 			Integer lineLength = (Integer) settings.get(ParticleSetting.DISCO_LINE_LENGTH);
 
