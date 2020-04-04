@@ -34,7 +34,7 @@ public enum ParticleType {
 			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
 			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
 			Color color = (Color) settings.get(ParticleSetting.COLOR);
-			Boolean whole = (Boolean) settings.get(ParticleSetting.CIRCLE_WHOLE);
+			Boolean whole = (Boolean) settings.get(ParticleSetting.WHOLE);
 
 			if (radius == null) radius = 2.0;
 			if (rainbow == null) rainbow = true;
@@ -59,7 +59,7 @@ public enum ParticleType {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
-			Double rotateSpeed = (Double) settings.get(ParticleSetting.STAR_ROTATE_SPEED);
+			Double rotateSpeed = (Double) settings.get(ParticleSetting.ROTATE_SPEED);
 			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
 			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
 			Color color = (Color) settings.get(ParticleSetting.COLOR);
@@ -87,8 +87,8 @@ public enum ParticleType {
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
 			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
-			Boolean whole = null; // TODO Setting - Whole
-			Double rotateSpeed = null; //TODO Setting - Polygon Speed
+			Boolean whole = (Boolean) settings.get(ParticleSetting.WHOLE);
+			Double rotateSpeed = (Double) settings.get(ParticleSetting.ROTATE_SPEED);
 			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
 			Color color = (Color) settings.get(ParticleSetting.COLOR);
 
@@ -118,8 +118,8 @@ public enum ParticleType {
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
 			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
-			Boolean whole = null; // TODO Setting - Whole
-			Double rotateSpeed = null; //TODO Setting - Polygon Speed
+			Boolean whole = (Boolean) settings.get(ParticleSetting.WHOLE);
+			Double rotateSpeed = (Double) settings.get(ParticleSetting.ROTATE_SPEED);
 			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
 			Color color = (Color) settings.get(ParticleSetting.COLOR);
 
@@ -149,8 +149,8 @@ public enum ParticleType {
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
 			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
-			Boolean whole = null; // TODO Setting - Whole
-			Double rotateSpeed = null; //TODO Setting - Polygon Speed
+			Boolean whole = (Boolean) settings.get(ParticleSetting.WHOLE);
+			Double rotateSpeed = (Double) settings.get(ParticleSetting.ROTATE_SPEED);
 			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
 			Color color = (Color) settings.get(ParticleSetting.COLOR);
 
@@ -180,8 +180,8 @@ public enum ParticleType {
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
 			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
-			Boolean whole = null; // TODO Setting - Whole
-			Double rotateSpeed = null; //TODO Setting - Polygon Speed
+			Boolean whole = (Boolean) settings.get(ParticleSetting.WHOLE);
+			Double rotateSpeed = (Double) settings.get(ParticleSetting.ROTATE_SPEED);
 			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
 			Color color = (Color) settings.get(ParticleSetting.COLOR);
 
@@ -346,7 +346,7 @@ public enum ParticleType {
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
 			Double growthSpeed = (Double) settings.get(ParticleSetting.STAR_GROWTH_SPEED);
-			Double rotateSpeed = (Double) settings.get(ParticleSetting.STAR_ROTATE_SPEED);
+			Double rotateSpeed = (Double) settings.get(ParticleSetting.ROTATE_SPEED);
 			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
 			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
 			Color color = (Color) settings.get(ParticleSetting.COLOR);
@@ -375,7 +375,7 @@ public enum ParticleType {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
-			Double radius = null; //TODO Custom Setting: .15 -> .35
+			Double radius = (Double) settings.get(ParticleSetting.SPIRAL_RADIUS);
 			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
 			Color color = (Color) settings.get(ParticleSetting.COLOR);
 
