@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff.freeze;
 
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -7,7 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class UnfreezeCommand extends CustomCommand {
 
 	public UnfreezeCommand(CommandEvent event) {
 		super(event);
+		PREFIX = StringUtils.getPrefix("Freeze");
 	}
 
 	@Path("<players...>")
@@ -32,8 +34,9 @@ public class UnfreezeCommand extends CustomCommand {
 	}
 
 	public void unfreezePlayer(Player player) {
-		player.getVehicle().remove();
+		if (player.getVehicle() != null)
+			player.getVehicle().remove();
 		send(player, "&cYou have been unfrozen.");
-		Utils.mod(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName());
+		Chat.broadcast(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName(), "Staff");
 	}
 }

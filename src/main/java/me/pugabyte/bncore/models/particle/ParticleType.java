@@ -24,7 +24,6 @@ import org.bukkit.util.Vector;
 import java.util.Arrays;
 import java.util.Map;
 
-// TODO: SPIRAL & POLYGON: TRIANGLE, SQUARE, PENTAGON, HEXAGON
 @Getter
 public enum ParticleType {
 	CIRCLE(Material.ENDER_PEARL) {
@@ -82,78 +81,126 @@ public enum ParticleType {
 					.getTaskId();
 			return new int[] {taskId};
 		}
-	}, //TODO
+	},
 	TRIANGLE(Material.PAPER) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
+			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
+			Boolean whole = null; // TODO Setting - Whole
+			Double rotateSpeed = null; //TODO Setting - Polygon Speed
+			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
+			Color color = (Color) settings.get(ParticleSetting.COLOR);
+
+			if (radius == null) radius = 1.5;
+			if (whole == null) whole = true;
+			if (rotateSpeed == null) rotateSpeed = 0.1;
+			if (color == null) color = Color.RED;
+			if (rainbow == null) rainbow = true;
+
 			int taskId = PolygonEffect.builder()
 					.player(particleOwner.getPlayer())
 					.updateLoc(true)
-					.whole(true)
+					.whole(whole)
 					.polygon(PolygonEffect.Polygon.TRIANGLE)
-					.radius(1.5)
-					.ticks(25 * 20)
-					.rainbow(true)
-					.rotate(true)
-					.rotateSpeed(0.1)
+					.radius(radius)
+					.ticks(-1)
+					.color(color)
+					.rainbow(rainbow)
+					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
 			return new int[] {taskId};
 		}
-	}, //TODO
+	},
 	SQUARE(new ItemBuilder(Material.CARPET).dyeColor(ColorType.YELLOW).build()) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
+			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
+			Boolean whole = null; // TODO Setting - Whole
+			Double rotateSpeed = null; //TODO Setting - Polygon Speed
+			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
+			Color color = (Color) settings.get(ParticleSetting.COLOR);
+
+			if (radius == null) radius = 1.5;
+			if (whole == null) whole = true;
+			if (rotateSpeed == null) rotateSpeed = 0.1;
+			if (color == null) color = Color.RED;
+			if (rainbow == null) rainbow = true;
+
 			int taskId = PolygonEffect.builder()
 					.player(particleOwner.getPlayer())
 					.updateLoc(true)
-					.whole(true)
+					.whole(whole)
 					.polygon(PolygonEffect.Polygon.SQUARE)
-					.radius(1.5)
-					.ticks(25 * 20)
-					.rainbow(true)
-					.rotate(true)
-					.rotateSpeed(0.1)
+					.radius(radius)
+					.ticks(-1)
+					.color(color)
+					.rainbow(rainbow)
+					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
 			return new int[] {taskId};
 		}
-	}, //TODO
+	},
 	PENTAGON(Material.PAPER) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
+			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
+			Boolean whole = null; // TODO Setting - Whole
+			Double rotateSpeed = null; //TODO Setting - Polygon Speed
+			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
+			Color color = (Color) settings.get(ParticleSetting.COLOR);
+
+			if (radius == null) radius = 1.5;
+			if (whole == null) whole = true;
+			if (rotateSpeed == null) rotateSpeed = 0.1;
+			if (color == null) color = Color.RED;
+			if (rainbow == null) rainbow = true;
+
 			int taskId = PolygonEffect.builder()
 					.player(particleOwner.getPlayer())
 					.updateLoc(true)
-					.whole(true)
+					.whole(whole)
 					.polygon(PolygonEffect.Polygon.PENTAGON)
-					.radius(1.5)
-					.ticks(25 * 20)
-					.rainbow(true)
-					.rotate(true)
-					.rotateSpeed(0.1)
+					.radius(radius)
+					.ticks(-1)
+					.color(color)
+					.rainbow(rainbow)
+					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
 			return new int[] {taskId};
 		}
-	}, //TODO
+	},
 	HEXAGON(Material.PAPER) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
+			Double radius = (Double) settings.get(ParticleSetting.RADIUS);
+			Boolean whole = null; // TODO Setting - Whole
+			Double rotateSpeed = null; //TODO Setting - Polygon Speed
+			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
+			Color color = (Color) settings.get(ParticleSetting.COLOR);
+
+			if (radius == null) radius = 1.5;
+			if (whole == null) whole = true;
+			if (rotateSpeed == null) rotateSpeed = 0.1;
+			if (color == null) color = Color.RED;
+			if (rainbow == null) rainbow = true;
+
 			int taskId = PolygonEffect.builder()
 					.player(particleOwner.getPlayer())
 					.updateLoc(true)
-					.whole(true)
+					.whole(whole)
 					.polygon(PolygonEffect.Polygon.HEXAGON)
-					.radius(1.5)
-					.ticks(25 * 20)
-					.rainbow(true)
-					.rotate(true)
-					.rotateSpeed(0.1)
+					.radius(radius)
+					.ticks(-1)
+					.color(color)
+					.rainbow(rainbow)
+					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
 			return new int[] {taskId};
@@ -214,7 +261,6 @@ public enum ParticleType {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
-			// TODO: Edit rainbow/color of each circle?
 			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
 			Color color = (Color) settings.get(ParticleSetting.COLOR);
 
@@ -324,12 +370,29 @@ public enum ParticleType {
 					.getTaskId();
 			return new int[] {taskId};
 		}
-	}, //TODO
+	},
 	SPIRAL(Material.STRING) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
-			int taskId = SpiralEffect.builder().start().getTaskId();
+			Double radius = null; //TODO Custom Setting: .15 -> .35
+			Boolean rainbow = (Boolean) settings.get(ParticleSetting.RAINBOW);
+			Color color = (Color) settings.get(ParticleSetting.COLOR);
+
+			if (radius == null) radius = .15;
+			if (rainbow == null) rainbow = true;
+			if (color == null) color = Color.RED;
+
+			int taskId = SpiralEffect.builder()
+					.player(particleOwner.getPlayer())
+					.radius(radius)
+					.ticks(-1)
+					.pulseDelay(2)
+					.color(color)
+					.rainbow(rainbow)
+					.updateLoc(true)
+					.start()
+					.getTaskId();
 			return new int[] {taskId};
 		}
 	},
@@ -487,7 +550,6 @@ public enum ParticleType {
 			if (sphereRainbow == null) sphereRainbow = false;
 			if (lineColor == null) lineColor = Color.RED;
 			if (lineRainbow == null) lineRainbow = true;
-
 
 			int taskId = DiscoEffect.builder()
 					.player(particleOwner.getPlayer())

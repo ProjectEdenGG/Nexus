@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -41,10 +42,10 @@ public class WelcomeCommand extends CustomCommand {
 			if (Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("group.moderator")).count() < 3) return;
 			try {
 				new CooldownService().check("staff", "bumpReminder", Time.DAY);
-				Utils.mod("");
-				Utils.mod("&eHi Staff. &3It looks like there's a few of you online. Could you consider &ebumping the server?");
-				Utils.mod("&3Instructions: &ehttps://bnn.gg/mod");
-				Utils.mod("");
+				Chat.broadcastIngame("", "Staff");
+				Chat.broadcastIngame("&eHi Staff. &3It looks like there's a few of you online. Could you consider &ebumping the server?", "Staff");
+				Chat.broadcastIngame("&3Instructions: &ehttps://bnn.gg/mod", "Staff");
+				Chat.broadcastIngame("", "Staff");
 			} catch (CooldownException ignore) {
 			}
 		});

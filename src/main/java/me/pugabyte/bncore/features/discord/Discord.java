@@ -46,6 +46,12 @@ public class Discord {
 		return member.getNickname();
 	}
 
+	public static String discordize(String message) {
+		message = message.replaceAll("_", "\\_");
+		message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
+		return message;
+	}
+
 	public static Guild getGuild() {
 		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());
 	}

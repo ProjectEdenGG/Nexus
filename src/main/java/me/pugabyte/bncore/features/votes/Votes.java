@@ -4,9 +4,9 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Bot;
-import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.votes.vps.VPS;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
@@ -23,7 +23,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -94,7 +93,8 @@ public class Votes implements Listener {
 	@EventHandler
 	public void onVote(VotifierEvent event) {
 		String username = event.getVote().getUsername().replaceAll(" ", "");
-		OfflinePlayer player = Bukkit.getOfflinePlayer(username);
+		OfflinePlayer player = null;
+		try { player = Utils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
 		String name = player != null ? player.getName() : "null";
 		String uuid = player != null ? player.getUniqueId().toString() : "00000000-0000-0000-0000-000000000000";
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
@@ -107,12 +107,12 @@ public class Votes implements Listener {
 		try {
 			new CooldownService().check(uuid, "vote-announcement", Time.HOUR);
 			Chat.broadcastIngame("&a[✔] &3" + name + " &bvoted &3for the server and received &b1 &3vote point per site!");
-			Discord.send(":white_check_mark: **" + name + " voted** for the server and received **1 vote point** per site!");
+			Chat.broadcastDiscord(":white_check_mark: **" + name + " voted** for the server and received **1 vote point** per site!");
 		} catch (CooldownException ignore) {}
 
 		if (vote.getExtra() > 0) {
 			Chat.broadcastIngame("&3[✦] &e" + name + " &3received &e" + vote.getExtra() + " extra &3vote points!");
-			Discord.send(":star: **" + name + "** received **" + vote.getExtra() + "** extra vote points!");
+			Chat.broadcastDiscord(":star: **" + name + "** received **" + vote.getExtra() + "** extra vote points!");
 		}
 
 		if (player != null && player.hasPlayedBefore()) {

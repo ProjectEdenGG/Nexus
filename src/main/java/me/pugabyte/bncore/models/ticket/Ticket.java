@@ -3,7 +3,6 @@ package me.pugabyte.bncore.models.ticket;
 import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.features.tickets.Tickets;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.LocationSerializer;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -59,7 +58,7 @@ public class Ticket {
 	}
 	
 	public boolean canBeSeenBy(Player player) {
-		return player.hasPermission(Tickets.PERMISSION_MOD) || ownsTicket(player);
+		return player.hasPermission("group.moderator") || ownsTicket(player);
 	}
 
 	public void setOpen(boolean open) {

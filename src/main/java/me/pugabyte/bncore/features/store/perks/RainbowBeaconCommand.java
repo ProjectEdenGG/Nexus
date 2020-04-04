@@ -25,56 +25,58 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Permission("rainbow.beacon")
 public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	SettingService service = new SettingService();
+	Setting locationSetting;
+	Setting rainbowTask;
 
 	static {
-		startAll();
+		Tasks.wait(1, RainbowBeaconCommand::startAll);
 	}
 
 	public RainbowBeaconCommand(CommandEvent event) {
 		super(event);
+		locationSetting = service.get(player(), "rainbowBeaconLocation");
+		rainbowTask = service.get(player(), "rainbowBeaconTaskId");
 	}
 
 	@Path("set")
 	void set() {
-		Setting setting = service.get(player(), "rainbowBeaconLocation");
-		if (setting.getValue() != null)
-			error("You can only place one Rainbow Beacon");
-		if (!player().getLocation().clone().subtract(0, 1, 0).getBlock().getType().equals(Material.BEACON))
-			error("You must be standing on a beacon to set a rainbow beacon");
-		setting.setLocation(player().getLocation().getBlock().getLocation());
-		service.save(setting);
-		send(PREFIX + "Set the location of the rainbow beacon to your location");
+		if (locationSetting.getValue() != null)
+			error("You can only place one Rainbow Beacon. &3Use &c/rainbowbeacon reset &3to change locations");
+		reset();
 	}
 
-	@Path("activate")
+	@Path("reset")
+	void reset() {
+		if (!player().getLocation().clone().subtract(0, 1, 0).getBlock().getType().equals(Material.BEACON))
+			error("You must be standing on a beacon");
+		locationSetting.setLocation(player().getLocation().getBlock().getLocation());
+		service.save(locationSetting);
+		send(PREFIX + "Set to your location");
+	}
+
+	@Path("start")
 	void activate() {
-		Setting locationSetting = service.get(player(), "rainbowBeaconLocation");
-		Setting rainbowTask = service.get(player(), "rainbowBeaconTaskId");
 		if (locationSetting.getValue() == null)
-			error("You must first set a rainbow becaon before activating it");
+			error("You must set your rainbow beacon's location before activating it with /rainbowbeacon set");
 		if (rainbowTask.getValue() != null)
-			error("You already have a running rainbow beacon");
+			error("Your rainbow beacon is already activated");
 		rainbowTask.setValue(startTask(player().getUniqueId()) + "");
 		service.save(rainbowTask);
-		send(PREFIX + "Activated a rainbow beacon");
+		send(PREFIX + "Activated your rainbow beacon");
 	}
 
-	@Path("(stop|halt|cancel)")
+	@Path("stop")
 	void stop() {
-		Setting rainbowTask = service.get(player(), "rainbowBeaconTaskId");
-		Setting locationSetting = service.get(player(), "rainbowBeaconLocation");
 		if (rainbowTask.getValue() == null)
 			error("You do not have a running rainbow beacon");
 		Tasks.cancel(Integer.parseInt(rainbowTask.getValue()));
 		locationSetting.getLocation().getBlock().setType(Material.AIR);
 		service.delete(rainbowTask);
-		send("Successfully canceled ended your rainbow beacon");
+		send(PREFIX + "Successfully deactivated your rainbow beacon");
 	}
 
-	@Path("(delete|remove)")
+	@Path("delete")
 	void delete() {
-		Setting locationSetting = service.get(player(), "rainbowBeaconLocation");
-		Setting rainbowTask = service.get(player(), "rainbowBeaconTaskId");
 		if (locationSetting.getValue() == null)
 			error("You do not have a rainbow beacon set");
 		if (rainbowTask.getValue() != null)
@@ -83,30 +85,6 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		service.delete(locationSetting);
 		service.delete(rainbowTask);
 		send(PREFIX + "Successfully deleted your rainbow beacon");
-	}
-
-	public static int startTask(UUID player) {
-		SettingService service = new SettingService();
-		Setting setting = service.get(player.toString(), "rainbowBeaconLocation");
-		Location location = setting.getLocation();
-		List<ColorType> colors = new ArrayList<ColorType>() {{
-			add(ColorType.RED);
-			add(ColorType.ORANGE);
-			add(ColorType.YELLOW);
-			add(ColorType.LIGHT_GREEN);
-			add(ColorType.LIGHT_BLUE);
-			add(ColorType.BLUE);
-			add(ColorType.PURPLE);
-			add(ColorType.MAGENTA);
-		}};
-		AtomicInteger i = new AtomicInteger(0);
-		return Tasks.repeat(0, Time.SECOND.x(1), () -> {
-			if (!location.getBlock().getChunk().isLoaded()) return;
-			location.getBlock().setType(Material.STAINED_GLASS_PANE);
-			location.getBlock().setData(colors.get(i.getAndIncrement()).getDurability().byteValue());
-			if (i.get() == 8)
-				i.set(0);
-		});
 	}
 
 	@EventHandler
@@ -128,6 +106,31 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			setting.setValue(startTask(player) + "");
 			service.save(setting);
 		}
+	}
+
+	private static final List<ColorType> colors = new ArrayList<ColorType>() {{
+		add(ColorType.RED);
+		add(ColorType.ORANGE);
+		add(ColorType.YELLOW);
+		add(ColorType.LIGHT_GREEN);
+		add(ColorType.LIGHT_BLUE);
+		add(ColorType.BLUE);
+		add(ColorType.PURPLE);
+		add(ColorType.MAGENTA);
+	}};
+
+	public static int startTask(UUID player) {
+		SettingService service = new SettingService();
+		Setting setting = service.get(player.toString(), "rainbowBeaconLocation");
+		Location location = setting.getLocation();
+		AtomicInteger i = new AtomicInteger(0);
+		return Tasks.repeat(0, Time.SECOND.x(1), () -> {
+			if (!location.getBlock().getChunk().isLoaded()) return;
+			location.getBlock().setType(Material.STAINED_GLASS_PANE);
+			location.getBlock().setData(colors.get(i.getAndIncrement()).getDurability().byteValue());
+			if (i.get() == 8)
+				i.set(0);
+		});
 	}
 
 }

@@ -9,6 +9,7 @@ import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.models.chat.PublicChannel;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -61,42 +62,6 @@ public class Chat {
 		new HashMap<>(ChatService.getCache()).forEach((uuid, chatter) -> new ChatService().saveSync(chatter));
 	}
 
-	public static void broadcast(String message) {
-		broadcast(message, ChatManager.getMainChannel());
-	}
-
-	public static void broadcast(String message, String channel) {
-		broadcast(message, ChatManager.getChannel(channel));
-	}
-
-	public static void broadcast(String message, PublicChannel channel) {
-		channel.broadcast(message);
-	}
-
-	public static void broadcastIngame(String message) {
-		broadcastIngame(message, ChatManager.getMainChannel());
-	}
-
-	public static void broadcastIngame(String message, String channel) {
-		broadcastIngame(message, ChatManager.getChannel(channel));
-	}
-
-	public static void broadcastIngame(String message, PublicChannel channel) {
-		channel.broadcastIngame(message);
-	}
-
-	public static void broadcastDiscord(String message) {
-		broadcastDiscord(message, ChatManager.getMainChannel());
-	}
-
-	public static void broadcastDiscord(String message, String channel) {
-		broadcastDiscord(message, ChatManager.getChannel(channel));
-	}
-
-	public static void broadcastDiscord(String message, PublicChannel channel) {
-		channel.broadcastDiscord(message);
-	}
-
 	private void updateChannels() {
 		Bukkit.getOnlinePlayers().stream()
 				.map(player -> (Chatter) new ChatService().get(player))
@@ -125,6 +90,80 @@ public class Chat {
 
 	public static int getLocalRadius() {
 		return BNCore.getInstance().getConfig().getInt("localRadius");
+	}
+
+	// Broadcasts
+
+	public static void broadcast(String message) {
+		broadcast(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcast(String message, String channel) {
+		broadcast(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcast(String message, PublicChannel channel) {
+		channel.broadcast(message);
+	}
+
+	public static void broadcast(JsonBuilder message) {
+		broadcast(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcast(JsonBuilder message, String channel) {
+		broadcast(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcast(JsonBuilder message, PublicChannel channel) {
+		channel.broadcast(message);
+	}
+
+	public static void broadcastIngame(String message) {
+		broadcastIngame(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastIngame(String message, String channel) {
+		broadcastIngame(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcastIngame(String message, PublicChannel channel) {
+		channel.broadcastIngame(message);
+	}
+
+	public static void broadcastIngame(JsonBuilder message) {
+		broadcastIngame(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastIngame(JsonBuilder message, String channel) {
+		broadcastIngame(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcastIngame(JsonBuilder message, PublicChannel channel) {
+		channel.broadcastIngame(message);
+	}
+
+	public static void broadcastDiscord(String message) {
+		broadcastDiscord(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastDiscord(String message, String channel) {
+		broadcastDiscord(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcastDiscord(String message, PublicChannel channel) {
+		channel.broadcastDiscord(message);
+	}
+
+	public static void broadcastDiscord(JsonBuilder message) {
+		broadcastDiscord(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastDiscord(JsonBuilder message, String channel) {
+		broadcastDiscord(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcastDiscord(JsonBuilder message, PublicChannel channel) {
+		channel.broadcastDiscord(message);
 	}
 
 }

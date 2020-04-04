@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.commands.staff.freeze;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.features.discord.Discord;
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -10,8 +10,8 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -47,15 +47,19 @@ public class FreezeCommand extends CustomCommand implements Listener {
 
 	@Path("cleanup")
 	void prune() {
+		send(PREFIX + "Removed &e" + cleanup(player().getWorld()) + " &3freeze stands.");
+	}
+
+	public static int cleanup(World world) {
 		int i = 0;
-		for (Entity entity : player().getWorld().getEntitiesByClass(ArmorStand.class)) {
+		for (Entity entity : world.getEntitiesByClass(ArmorStand.class)) {
 			if (entity.getCustomName() == null) continue;
 			if (entity.getCustomName().contains("FreezeStand-")) {
 				entity.remove();
 				i++;
 			}
 		}
-		send(PREFIX + "Removed &e" + i + " &3freeze stands.");
+		return i;
 	}
 
 	@Path("<players...>")
@@ -63,14 +67,18 @@ public class FreezeCommand extends CustomCommand implements Listener {
 		for (Player player : players) {
 			Setting setting = service.get(player, "frozen");
 			if (setting.getBoolean()) {
-				runCommand("unfreeze " + player.getName());
+				if (player.getVehicle() != null)
+					runCommand("unfreeze " + player.getName());
+				else
+					freezePlayer(player);
 				continue;
 			}
+
+			freezePlayer(player);
+			Chat.broadcast(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName(), "Staff");
+			send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 			setting.setBoolean(true);
 			service.save(setting);
-			freezePlayer(player);
-			Utils.mod(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName());
-			send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 		}
 	}
 
@@ -90,16 +98,14 @@ public class FreezeCommand extends CustomCommand implements Listener {
 		if (!isFrozen(event.getPlayer())) return;
 		Player player = event.getPlayer();
 		player.getVehicle().remove();
-		Utils.mod(PREFIX + "&e" + player.getName() + " &3has logged out while frozen.");
-		Discord.log(PREFIX + player.getName() + " has logged out while frozen.");
+		Chat.broadcast(PREFIX + "&e" + player.getName() + " &3has logged out while frozen.", "Staff");
 	}
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
 		Tasks.wait(5, () -> freezePlayer(event.getPlayer()));
-		Utils.mod(PREFIX + "&e" + event.getPlayer().getName() + " &3has logged in while frozen.");
-		Discord.log(PREFIX + event.getPlayer().getName() + " has logged in while frozen.");
+		Chat.broadcast(PREFIX + "&e" + event.getPlayer().getName() + " &3has logged in while frozen.", "Staff");
 	}
 
 	@EventHandler
@@ -184,7 +190,6 @@ public class FreezeCommand extends CustomCommand implements Listener {
 			case "/msg":
 			case "/pm":
 			case "/freeze":
-			case "/sk":
 				return;
 			default:
 				event.setCancelled(true);
@@ -192,7 +197,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onSwapHandS(PlayerSwapHandItemsEvent event) {
+	public void onSwapHands(PlayerSwapHandItemsEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
 		event.setCancelled(true);
 	}
