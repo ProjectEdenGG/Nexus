@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.particles.menu;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
@@ -88,11 +89,17 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 
 			items.add(ClickableItem.from(item,
 					e -> {
-						if (active.get())
-							particleOwner.cancelTasks(effect);
-						else
-							effect.run(player);
-						ParticleMenu.openMain(player, page.getPage());
+						SmartInventory INV = SmartInventory.builder()
+								.title("Particle Settings")
+								.provider(new EffectSettingProvider(effect))
+								.size(6, 9)
+								.build();
+						INV.open(player);
+//						if (active.get())
+//							particleOwner.cancelTasks(effect);
+//						else
+//							effect.run(player);
+//						ParticleMenu.openMain(player, page.getPage());
 					}));
 		}
 		ClickableItem[] clickableItems = items.toArray(new ClickableItem[0]);
