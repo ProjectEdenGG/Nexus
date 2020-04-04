@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.particleeffect;
+package me.pugabyte.bncore.models.particle;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
@@ -29,24 +29,24 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class EffectOwner extends PlayerOwnedObject {
+public class ParticleOwner extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<EffectType, Map<EffectSetting, Object>> settings = new HashMap<>();
+	private Map<ParticleType, Map<ParticleSetting, Object>> settings = new HashMap<>();
 
-	public Map<EffectSetting, Object> getSettings(EffectType effectType) {
-		return settings.get(effectType);
+	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
+		return settings.get(particleType);
 	}
 
 	@Transient
-	private Set<EffectTask> tasks = new HashSet<>();
+	private Set<ParticleTask> tasks = new HashSet<>();
 
-	public List<EffectTask> getTasks(EffectType effectType) {
-		return tasks.stream().filter(task -> task.getEffectType() == effectType).collect(Collectors.toList());
+	public List<ParticleTask> getTasks(ParticleType particleType) {
+		return tasks.stream().filter(task -> task.getParticleType() == particleType).collect(Collectors.toList());
 	}
 
-	public List<EffectTask> getTasks(int taskId) {
+	public List<ParticleTask> getTasks(int taskId) {
 		return tasks.stream().filter(task -> task.getTaskId() == taskId).collect(Collectors.toList());
 	}
 
@@ -57,23 +57,23 @@ public class EffectOwner extends PlayerOwnedObject {
 		});
 	}
 
-	public void cancelTasks(EffectType effectType) {
-		getTasks(effectType).forEach(effectTask -> {
-			Tasks.cancel(effectTask.getTaskId());
-			tasks.remove(effectTask);
+	public void cancelTasks(ParticleType particleType) {
+		getTasks(particleType).forEach(particleTask -> {
+			Tasks.cancel(particleTask.getTaskId());
+			tasks.remove(particleTask);
 		});
 	}
 
 	public void cancelTasks(int taskId) {
-		getTasks(taskId).forEach(effectTask -> {
-			Tasks.cancel(effectTask.getTaskId());
-			tasks.remove(effectTask);
+		getTasks(taskId).forEach(particleTask -> {
+			Tasks.cancel(particleTask.getTaskId());
+			tasks.remove(particleTask);
 		});
 	}
 
-	public void addTasks(EffectType effectType, int... taskIds) {
+	public void addTasks(ParticleType particleType, int... taskIds) {
 		for (int taskId : taskIds)
-			tasks.add(new EffectTask(effectType, taskId));
+			tasks.add(new ParticleTask(particleType, taskId));
 	}
 
 }

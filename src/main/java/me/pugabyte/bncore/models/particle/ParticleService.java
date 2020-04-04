@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.models.particleeffect;
+package me.pugabyte.bncore.models.particle;
 
 import me.pugabyte.bncore.models.MongoService;
 
@@ -6,20 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class EffectService extends MongoService {
-	public static final Map<UUID, EffectOwner> cache = new HashMap<>();
+public class ParticleService extends MongoService {
+	public static final Map<UUID, ParticleOwner> cache = new HashMap<>();
 
 	public void clearCache() {
 		cache.clear();
 	}
 
 	@Override
-	public EffectOwner get(UUID uuid) {
+	public ParticleOwner get(UUID uuid) {
 		cache.computeIfAbsent(uuid, $ -> {
-			EffectOwner effectOwner = database.createQuery(EffectOwner.class).field(_id).equal(uuid).first();
-			if (effectOwner == null)
-				effectOwner = new EffectOwner(uuid);
-			return effectOwner;
+			ParticleOwner particleOwner = database.createQuery(ParticleOwner.class).field(_id).equal(uuid).first();
+			if (particleOwner == null)
+				particleOwner = new ParticleOwner(uuid);
+			return particleOwner;
 		});
 
 		return cache.get(uuid);
