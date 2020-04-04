@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.rainbowarmour.models;
+package me.pugabyte.bncore.features.store.perks.rainbowarmour.models;
 
 import lombok.Getter;
 import lombok.Setter;

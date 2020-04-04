@@ -1,7 +1,7 @@
-package me.pugabyte.bncore.features.stattrack.models;
+package me.pugabyte.bncore.features.store.perks.stattrack.models;
 
 /*
-import me.pugabyte.bncore.features.stattrack.utils.HiddenLore;
+import me.pugabyte.bncore.features.store.perks.stattrack.utils.HiddenLore;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

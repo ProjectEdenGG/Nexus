@@ -1,11 +1,11 @@
-package me.pugabyte.bncore.features.stattrack;
+package me.pugabyte.bncore.features.store.perks.stattrack;
 
 /* 1.13
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.stattrack.models.Stat;
-import me.pugabyte.bncore.features.stattrack.models.StatIncreaseEvent;
-import me.pugabyte.bncore.features.stattrack.models.StatItem;
-import me.pugabyte.bncore.features.stattrack.utils.StatTrackUtils;
+import me.pugabyte.bncore.features.store.perks.stattrack.models.Stat;
+import me.pugabyte.bncore.features.store.perks.stattrack.models.StatIncreaseEvent;
+import me.pugabyte.bncore.features.store.perks.stattrack.models.StatItem;
+import me.pugabyte.bncore.features.store.perks.stattrack.utils.StatTrackUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.*;

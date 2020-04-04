@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.stattrack.utils;
+package me.pugabyte.bncore.features.store.perks.stattrack.utils;
 
 import org.bukkit.ChatColor;
 

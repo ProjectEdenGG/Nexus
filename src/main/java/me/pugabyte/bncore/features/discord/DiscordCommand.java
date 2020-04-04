@@ -13,7 +13,8 @@ public class DiscordCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send("https://discord.bnn.gg");
+		send("&3Join our discord to stay up to date with the community");
+		send("&ehttps://discord.bnn.gg");
 	}
 
 }

@@ -4,7 +4,6 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Bot;
-import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.votes.vps.VPS;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
@@ -107,12 +106,12 @@ public class Votes implements Listener {
 		try {
 			new CooldownService().check(uuid, "vote-announcement", Time.HOUR);
 			Chat.broadcastIngame("&a[✔] &3" + name + " &bvoted &3for the server and received &b1 &3vote point per site!");
-			Discord.send(":white_check_mark: **" + name + " voted** for the server and received **1 vote point** per site!");
+			Chat.broadcastDiscord(":white_check_mark: **" + name + " voted** for the server and received **1 vote point** per site!");
 		} catch (CooldownException ignore) {}
 
 		if (vote.getExtra() > 0) {
 			Chat.broadcastIngame("&3[✦] &e" + name + " &3received &e" + vote.getExtra() + " extra &3vote points!");
-			Discord.send(":star: **" + name + "** received **" + vote.getExtra() + "** extra vote points!");
+			Chat.broadcastDiscord(":star: **" + name + "** received **" + vote.getExtra() + "** extra vote points!");
 		}
 
 		if (player != null && player.hasPlayedBefore()) {
