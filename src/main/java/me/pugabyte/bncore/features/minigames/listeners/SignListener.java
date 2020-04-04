@@ -6,7 +6,6 @@ import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -18,6 +17,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import java.util.Arrays;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class SignListener implements Listener {
@@ -33,24 +33,24 @@ public class SignListener implements Listener {
 		Sign sign = (Sign) event.getClickedBlock().getState();
 
 		if (header.equals(sign.getLine(0))) {
-			if ((ChatColor.GREEN + "Join").equalsIgnoreCase(sign.getLine(1))) {
-				try {
-					Arena arena = ArenaManager.find(sign.getLine(2));
-					PlayerManager.get(event.getPlayer()).join(arena);
-				} catch (Exception ex) {
-					event.getPlayer().sendMessage(colorize(Minigames.PREFIX + ex.getMessage()));
-				}
-			}
-			if ((ChatColor.GREEN + "Quit").equalsIgnoreCase(sign.getLine(1))) {
-				PlayerManager.get(event.getPlayer()).quit();
-			}
-
-			if ((ChatColor.GREEN + "Lobby").equalsIgnoreCase(sign.getLine(1))) {
-				Utils.runCommand(event.getPlayer(), "gl");
-			}
-
-			if ((ChatColor.GREEN + "Force Start").equalsIgnoreCase(sign.getLine(1))) {
-				Utils.runCommandAsOp(event.getPlayer(), "newmgm start");
+			switch (stripColor(sign.getLine(1).toLowerCase())) {
+				case "join":
+					try {
+						Arena arena = ArenaManager.find(sign.getLine(2));
+						PlayerManager.get(event.getPlayer()).join(arena);
+					} catch (Exception ex) {
+						event.getPlayer().sendMessage(colorize(Minigames.PREFIX + ex.getMessage()));
+					}
+					break;
+				case "quit":
+					PlayerManager.get(event.getPlayer()).quit();
+					break;
+				case "lobby":
+					Utils.runCommand(event.getPlayer(), "warp minigames");
+					break;
+				case "force start":
+					Utils.runCommandAsOp(event.getPlayer(), "newmgm start");
+					break;
 			}
 		}
 	}
