@@ -1,9 +1,9 @@
-package me.pugabyte.bncore.features.stattrack;
+package me.pugabyte.bncore.features.store.perks.stattrack;
 
 /*
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.stattrack.models.StatItem;
-import me.pugabyte.bncore.features.stattrack.models.Tool;
+import me.pugabyte.bncore.features.store.perks.stattrack.models.StatItem;
+import me.pugabyte.bncore.features.store.perks.stattrack.models.Tool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

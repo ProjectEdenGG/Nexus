@@ -45,6 +45,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.features.discord.Discord.discordize;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @NoArgsConstructor
@@ -71,7 +72,8 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 
 			builder.next(" " + channel.get().getDiscordColor() + "&l>&f");
 
-			String content = EmojiParser.parseToAliases(event.getMessage().getContentDisplay().trim());
+			String content = event.getMessage().getContentDisplay().trim();
+			try { content = EmojiParser.parseToAliases(content); } catch (Exception ignore) {}
 			if (content.length() > 0)
 				builder.next(" " + colorize(content.replaceAll("&", "&&f")));
 
@@ -102,14 +104,13 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 		DiscordUser user = new DiscordService().get(player);
 		RoleManager.update(user);
 
-		String message = discordize(event.getMessage());
+		String message = event.getMessage();
+		message = discordize(message);
+		message = parseMentions(message);
 		Discord.send(user.getBridgeName() + message, discordChannel);
 	}
 
-	@NotNull
-	public String discordize(String message) {
-		message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
-
+	public String parseMentions(String message) {
 		if (message.contains("@")) {
 			Matcher matcher = Pattern.compile("@[A-Za-z0-9_]+").matcher(message);
 			while (matcher.find()) {
@@ -121,7 +122,6 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 				} catch (PlayerNotFoundException ignore) {}
 			}
 		}
-
 		return message;
 	}
 
@@ -138,7 +138,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
-			Chat.broadcastDiscord(event.getDeathMessage().replaceAll("_", "\\_"));
+			Chat.broadcastDiscord(discordize(event.getDeathMessage()));
 	}
 
 	@EventHandler

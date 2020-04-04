@@ -1,7 +1,7 @@
-package me.pugabyte.bncore.features.rainbowarmour;
+package me.pugabyte.bncore.features.store.perks.rainbowarmour;
 
 import lombok.Getter;
-import me.pugabyte.bncore.features.rainbowarmour.models.RainbowArmourPlayer;
+import me.pugabyte.bncore.features.store.perks.rainbowarmour.models.RainbowArmourPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

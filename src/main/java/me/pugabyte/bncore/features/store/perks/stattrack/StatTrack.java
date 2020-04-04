@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.stattrack;
+package me.pugabyte.bncore.features.store.perks.stattrack;
 
 /*
 public class StatTrack {

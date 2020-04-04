@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.rainbowarmour;
+package me.pugabyte.bncore.features.store.perks.rainbowarmour;
 
 import me.pugabyte.bncore.BNCore;
 import org.bukkit.GameMode;

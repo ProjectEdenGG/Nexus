@@ -16,8 +16,7 @@ public class ShrugCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommandAsConsole("essentials:sudo " + player().getName() + " c:" + argsString() + " ¯\\_(ツ)_/¯");
-//		chatter.say(argsString() + " ¯\\_(ツ)_/¯");
+		chatter.say(argsString() + " ¯\\_(ツ)_/¯");
 	}
 
 }

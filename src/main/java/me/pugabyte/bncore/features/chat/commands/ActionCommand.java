@@ -5,7 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-@Aliases({"eme", "descibe", "edescribe", "eaction"})
+@Aliases({"me", "eme", "descibe", "edescribe", "eaction"})
 public class ActionCommand extends CustomCommand {
 
 	public ActionCommand(CommandEvent event) {
@@ -14,7 +14,7 @@ public class ActionCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommand("me " + argsString());
+		send("&cTemporarily disabled");
 	}
 
 }

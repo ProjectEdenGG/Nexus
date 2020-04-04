@@ -1,7 +1,7 @@
-package me.pugabyte.bncore.features.rainbowarmour;
+package me.pugabyte.bncore.features.store.perks.rainbowarmour;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.rainbowarmour.models.RainbowArmourPlayer;
+import me.pugabyte.bncore.features.store.perks.rainbowarmour.models.RainbowArmourPlayer;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
