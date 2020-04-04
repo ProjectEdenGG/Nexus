@@ -7,7 +7,6 @@ import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
 import me.pugabyte.bncore.features.particles.effects.PolygonEffect;
-import me.pugabyte.bncore.features.particles.effects.SpiralEffect;
 import me.pugabyte.bncore.features.particles.effects.StarEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -85,47 +84,6 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).color(Color.RED).rotateSpeed(0.2).start();
 	}
 
-	@Path("Spiral <number>")
-	void spiral(@Arg double number) {
-		SpiralEffect.builder().player(player()).radius(number).ticks(5 * 20).pulseDelay(2).rainbow(true).updateLoc(true).start();
-	}
-
-	@Path("polygondots <number> [number]")
-	void polygonDots(@Arg int points, @Arg("1.5") double radius) {
-		PolygonEffect.Polygon polygon;
-		switch (points) {
-			case 4:
-				polygon = PolygonEffect.Polygon.SQUARE;
-				break;
-			case 5:
-				polygon = PolygonEffect.Polygon.PENTAGON;
-				break;
-			case 6:
-				polygon = PolygonEffect.Polygon.HEXAGON;
-				break;
-			case 7:
-				polygon = PolygonEffect.Polygon.HEPTAGON;
-				break;
-			case 8:
-				polygon = PolygonEffect.Polygon.OCTAGON;
-				break;
-			default:
-				polygon = PolygonEffect.Polygon.TRIANGLE;
-				break;
-		}
-		PolygonEffect.builder()
-				.player(particleOwner.getPlayer())
-				.updateLoc(true)
-				.whole(false)
-				.polygon(polygon)
-				.radius(radius)
-				.ticks(5 * 20)
-				.rainbow(true)
-				.rotate(true)
-				.rotateSpeed(0.1)
-				.start();
-	}
-
 	@Path("polygon <number> [number]")
 	void polygon(@Arg int points, @Arg("1.5") double radius) {
 		PolygonEffect.Polygon polygon;
@@ -157,8 +115,7 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 				.radius(radius)
 				.ticks(5 * 20)
 				.rainbow(true)
-				.rotate(true)
-				.rotateSpeed(0.1)
+				.rotateSpeed(0.0)
 				.start();
 	}
 

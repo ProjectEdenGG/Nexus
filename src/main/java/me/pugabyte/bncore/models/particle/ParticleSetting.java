@@ -43,11 +43,20 @@ public enum ParticleSetting {
 		}
 	},
 
-	CIRCLE_WHOLE(Material.SNOW_BALL, Boolean.class, ParticleType.CIRCLE),
+	SPIRAL_RADIUS(Material.HOPPER, Double.class, ParticleType.SPIRAL) {
+		@Override
+		Object validate(ParticleType particleType, Object object) {
+			Double value = (Double) object;
+			if (value < 0.15)
+				return 0.15;
+			if (value > 0.35)
+				return 0.35;
+			return value;
+		}
+	},
 
-	STORM_RAIN_PARTICLE(Material.PAPER, StormEffect.RainPartile.class, ParticleType.STORM),
-
-	STAR_ROTATE_SPEED(Material.SUGAR, Double.class, ParticleType.STAR, ParticleType.GROWING_STARS) {
+	WHOLE(Material.SNOW_BALL, Boolean.class, ParticleType.CIRCLE, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON),
+	ROTATE_SPEED(Material.SUGAR, Double.class, ParticleType.STAR, ParticleType.GROWING_STARS, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON) {
 		@Override
 		Object validate(ParticleType particleType, Object object) {
 			Double value = (Double) object;
@@ -58,12 +67,15 @@ public enum ParticleSetting {
 			return value;
 		}
 	},
+
 	STAR_GROWTH_SPEED(new ItemBuilder(Material.INK_SACK).dyeColor(ColorType.WHITE).build(), Double.class, ParticleType.STAR, ParticleType.GROWING_STARS) {
 		@Override
 		Object validate(ParticleType particleType, Object object) {
-			return ParticleSetting.STAR_ROTATE_SPEED.validate(particleType, object);
+			return ParticleSetting.ROTATE_SPEED.validate(particleType, object);
 		}
 	},
+
+	STORM_RAIN_PARTICLE(Material.PAPER, StormEffect.RainPartile.class, ParticleType.STORM),
 
 	DOUBLE_CHAOS_COLOR_ONE(Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DOUBLE_CHAOS),
 	DOUBLE_CHAOS_RAINBOW_ONE(Material.MAGMA_CREAM, Boolean.class, ParticleType.DOUBLE_CHAOS),

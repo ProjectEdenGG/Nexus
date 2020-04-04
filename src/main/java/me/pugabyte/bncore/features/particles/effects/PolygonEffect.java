@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
+import me.pugabyte.bncore.features.particles.VectorUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
@@ -18,7 +19,6 @@ import org.bukkit.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-// TODO: Figure out how to do radius
 public class PolygonEffect {
 	@Getter
 	private int taskId;
@@ -26,14 +26,13 @@ public class PolygonEffect {
 	@Builder(buildMethodName = "start")
 	public PolygonEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
 						 Boolean whole, boolean rotate, double rotateSpeed, Polygon polygon,
-						 boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed,
+						 boolean rainbow, Color color, int count, double radius, int ticks, double speed,
 						 double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player != null && location == null)
 			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
 
-		if (density == 0) density = 20;
 		if (updateVector != null) updateLoc = true;
 		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);
 		if (rotateSpeed != 0 && !rotate) rotate = true;
@@ -73,7 +72,6 @@ public class PolygonEffect {
 		Boolean finalWhole = whole;
 		boolean finalRotate = rotate;
 		double finalRotateSpeed = rotateSpeed;
-		double finalDensity = density;
 		double finalRadius = radius;
 		int finalCount = count;
 		double finalSpeed = speed;
@@ -107,11 +105,6 @@ public class PolygonEffect {
 			if (finalUpdateLoc)
 				newLoc = player.getLocation().add(finalUpdateVector);
 
-//			if (finalRotate) {
-//				VectorUtils.rotateAroundAxisY(v, yRotation.get() * 0.01745329238474369D);
-//				VectorUtils.rotateAroundAxisY(star, yRotation.get() * 0.01745329238474369D);
-//				yRotation.updateAndGet(v1 -> v1 + finalRotateSpeed);
-//			}
 
 			for (int iteration = 0; iteration < points; iteration++) {
 				double angle = 360.0 / points * iteration;
@@ -122,15 +115,46 @@ public class PolygonEffect {
 				double z = Math.sin(angle) * finalRadius;
 				double x2 = Math.cos(nextAngle) * finalRadius;
 				double z2 = Math.sin(nextAngle) * finalRadius;
-				double deltaX = x2 - x; // get the x-difference between the points.
-				double deltaZ = z2 - z; // get the z-difference between the points.
-				double distance = Math.sqrt(Math.pow(deltaX - x, 2) + Math.pow(deltaZ - z, 2));
+				Vector v1 = new Vector(x, 0, z);
+				Vector v2 = new Vector(x2, 0, z2);
+				if (finalRotate) {
+					VectorUtils.rotateAroundAxisY(v1, yRotation.get() * 0.01745329238474369D);
+					VectorUtils.rotateAroundAxisY(v2, yRotation.get() * 0.01745329238474369D);
+					yRotation.updateAndGet(v -> v + finalRotateSpeed);
+					x = v1.getX();
+					z = v1.getZ();
+					x2 = v2.getX();
+					z2 = v2.getZ();
+				}
+
+				Vector link = v1.clone().subtract(v2.clone());
+				double distance = link.length() / finalRadius;
+
 				if (finalWhole) {
-					// (distance - (2.0 - (2.0 * (points / 10.0))))
-					// (distance - (distance + 1) * .1)
-					for (double d = 0; d < distance - (distance + 1) * .1; d += .1) { // we subtract .1 from the distance because otherwise it would make 1 step too many.
-						double finalX = (x + deltaX * d);
-						double finalZ = (z + deltaZ * d);
+					double change = .1;
+					double sub = -.1;
+					switch (points) {
+						case 3:
+							change = .05;
+							sub -= .55;
+							break;
+						case 4:
+							change = .05;
+							sub -= .25;
+							break;
+						case 6:
+							sub += .1;
+							break;
+						case 7:
+							sub += .2;
+							break;
+						case 8:
+							sub += .3;
+							break;
+					}
+					for (double d = 0; d < distance + sub; d += change) {
+						double finalX = x - link.getX() * d;
+						double finalZ = z - link.getZ() * d;
 						newLoc.add(finalX, 0, finalZ);
 						newLoc.getWorld().spawnParticle(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 						newLoc.subtract(finalX, 0, finalZ);
