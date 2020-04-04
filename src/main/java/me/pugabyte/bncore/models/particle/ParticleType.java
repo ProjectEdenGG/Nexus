@@ -1,15 +1,7 @@
 package me.pugabyte.bncore.models.particle;
 
 import lombok.Getter;
-import me.pugabyte.bncore.features.particles.effects.BandsEffect;
-import me.pugabyte.bncore.features.particles.effects.CircleEffect;
-import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
-import me.pugabyte.bncore.features.particles.effects.NyanCatEffect;
-import me.pugabyte.bncore.features.particles.effects.PolygonEffect;
-import me.pugabyte.bncore.features.particles.effects.SphereEffect;
-import me.pugabyte.bncore.features.particles.effects.SpiralEffect;
-import me.pugabyte.bncore.features.particles.effects.StarEffect;
-import me.pugabyte.bncore.features.particles.effects.StormEffect;
+import me.pugabyte.bncore.features.particles.effects.*;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -26,7 +18,7 @@ import java.util.Map;
 
 @Getter
 public enum ParticleType {
-	CIRCLE(Material.ENDER_PEARL) {
+	CIRCLE(Material.ENDER_PEARL, true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
@@ -52,10 +44,10 @@ public enum ParticleType {
 					.rainbow(rainbow)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
-	STAR(Material.FIREWORK_CHARGE) {
+	STAR(Material.FIREWORK_CHARGE, true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
@@ -79,10 +71,10 @@ public enum ParticleType {
 					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
-	TRIANGLE(Material.PAPER) {
+	TRIANGLE(Material.PAPER, true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
@@ -110,10 +102,10 @@ public enum ParticleType {
 					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
-	SQUARE(new ItemBuilder(Material.CARPET).dyeColor(ColorType.YELLOW).build()) {
+	SQUARE(new ItemBuilder(Material.CARPET).dyeColor(ColorType.YELLOW).build(), true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
@@ -141,10 +133,10 @@ public enum ParticleType {
 					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
-	PENTAGON(Material.PAPER) {
+	PENTAGON(Material.PAPER, true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
@@ -172,10 +164,10 @@ public enum ParticleType {
 					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
-	HEXAGON(Material.PAPER) {
+	HEXAGON(Material.PAPER, true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Map<ParticleSetting, Object> settings = particleOwner.getSettings(this);
@@ -203,7 +195,7 @@ public enum ParticleType {
 					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
 	NYAN_CAT(new ItemBuilder(Material.MONSTER_EGG).spawnEgg(EntityType.OCELOT).build()) {
@@ -214,7 +206,7 @@ public enum ParticleType {
 					.ticks(-1)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
 	BANDS(Material.END_ROD) {
@@ -226,7 +218,7 @@ public enum ParticleType {
 					.rainbow(true)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
 	HALO(Material.GOLD_HELMET) {
@@ -338,7 +330,7 @@ public enum ParticleType {
 					.rainbow(rainbow)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
 	GROWING_STARS(new ItemBuilder(Material.INK_SACK).dyeColor(ColorType.WHITE).build()) {
@@ -368,7 +360,7 @@ public enum ParticleType {
 					.rotateSpeed(rotateSpeed)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
 	SPIRAL(Material.STRING) {
@@ -393,7 +385,7 @@ public enum ParticleType {
 					.updateLoc(true)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
 	SPRITE(Material.SOUL_SAND) {
@@ -524,7 +516,7 @@ public enum ParticleType {
 					.rainParticle(rainPartile)
 					.start()
 					.getTaskId();
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	},
 	DISCO(Material.REDSTONE_LAMP_OFF) {
@@ -566,11 +558,12 @@ public enum ParticleType {
 					.start()
 					.getTaskId();
 
-			return new int[] {taskId};
+			return new int[]{taskId};
 		}
 	};
 
 	ItemStack itemStack;
+	boolean isShape = false;
 	String commandName = name().replace("_", "").toLowerCase();
 	String displayName = StringUtils.camelCase(name().replace("_", " "));
 
@@ -582,13 +575,26 @@ public enum ParticleType {
 		this.itemStack = new ItemStack(material);
 	}
 
-	ParticleType(ItemStack itemStack, String displayName) {
+	ParticleType(Material material, boolean isShape) {
+		this.itemStack = new ItemStack(material);
+		this.isShape = isShape;
+	}
+
+	ParticleType(ItemStack itemStack, boolean isShape) {
 		this.itemStack = itemStack;
-		this.displayName = displayName;
+		this.isShape = isShape;
+	}
+
+	public static ParticleType[] getShapes() {
+		return Arrays.stream(ParticleType.values()).filter(effectType -> effectType.isShape).toArray(ParticleType[]::new);
+	}
+
+	public static ParticleType[] getPresets() {
+		return Arrays.stream(ParticleType.values()).filter(effectType -> !effectType.isShape).toArray(ParticleType[]::new);
 	}
 
 	static ParticleType[] valuesExcept(ParticleType... particleTypes) {
-		return Arrays.stream(particleTypes).filter(effectType -> !Arrays.asList(particleTypes).contains(effectType)).toArray(ParticleType[]::new);
+		return Arrays.stream(ParticleType.values()).filter(effectType -> !Arrays.asList(particleTypes).contains(effectType)).toArray(ParticleType[]::new);
 	}
 
 	abstract int[] start(ParticleOwner particleOwner);
