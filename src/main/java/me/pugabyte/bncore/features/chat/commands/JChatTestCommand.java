@@ -23,7 +23,6 @@ public class JChatTestCommand extends CustomCommand {
 		send("Cache cleared");
 	}
 
-
 	@Path("get [chatter]")
 	void get(@Arg("self") Chatter chatter) {
 		if (chatter == null)

@@ -40,6 +40,17 @@ public class ChannelCommand extends CustomCommand {
 			quickMessage(channel, message);
 	}
 
+	@Path("list [filter]")
+	void list(String filter) {
+		ChatManager.getChannels().forEach(channel -> {
+			if (!isNullOrEmpty(filter) && !channel.getName().toLowerCase().startsWith(filter))
+				return;
+
+			if (chatter.canJoin(channel))
+				send(channel.getColor() + "[" + channel.getNickname() + "] " + channel.getName() + (chatter.hasJoined(channel) ? " &7(Joined)" : ""));
+		});
+	}
+
 	@Path("qm <channel> <message...>")
 	void quickMessage(PublicChannel channel, String message) {
 		chatter.say(channel, message);
