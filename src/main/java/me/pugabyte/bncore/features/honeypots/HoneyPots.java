@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.honeypots;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -21,6 +22,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import java.util.Set;
 
 public class HoneyPots implements Listener {
+	public static final String PREFIX = StringUtils.getPrefix("HoneyPots");
 	SettingService service = new SettingService();
 
 	public HoneyPots() {
@@ -74,7 +76,7 @@ public class HoneyPots implements Listener {
 				triggered = Integer.parseInt(setting.getValue()) + 1;
 			} catch (NumberFormatException ex) {
 				triggered = 1;
-				Utils.mod(StringUtils.getPrefix("HoneyPots") + "&e" + player.getName() + " &3has triggered a Honey Pot &e(HP: " + getHP(region) + ")");
+				Chat.broadcast(PREFIX + "&e" + player.getName() + " &3has triggered a Honey Pot &e(HP: " + getHP(region) + ")", "Staff");
 			}
 			if (triggered > 9) {
 				Utils.runConsoleCommand("sudo " + player.getName() + " ticket [HoneyPot] Grief trap triggered! " +

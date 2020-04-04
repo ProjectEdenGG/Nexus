@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.tickets;
 
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -7,13 +8,13 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Bukkit;
 
 import java.util.Arrays;
 
@@ -44,7 +45,7 @@ public class TicketCommand extends CustomCommand {
 		if (Utils.isInt(description))
 			error("Prevented accidental ticket");
 
-		if (StringUtils.right(description, 5).equalsIgnoreCase("close") || player().hasPermission(Tickets.PERMISSION_MOD))
+		if (StringUtils.right(description, 5).equalsIgnoreCase("close") || player().hasPermission("group.moderator"))
 			error("Prevented accidental ticket (close)");
 
 		Ticket ticket = new Ticket(player(), stripColor(description));
@@ -56,12 +57,10 @@ public class TicketCommand extends CustomCommand {
 		// TODO: #staff-alerts if no staff are on
 		Discord.log("[Tickets] " + player().getName() + " (" + ticket.getId() + "): " + ticket.getDescription());
 
-		Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission(Tickets.PERMISSION_MOD)).forEach(staff -> {
-			Jingle.PING.play(staff);
-			send(staff, "");
-			send(staff, PREFIX + "&e" + player().getName() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription());
-			Tickets.sendTicketButtons(staff, ticket);
-		});
+		Rank.getOnlineMods().forEach(mod -> Jingle.PING.play(mod.getPlayer()));
+		Chat.broadcastIngame("", "Staff");
+		Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription(), "Staff");
+		Chat.broadcastIngame(Tickets.getTicketButtons(ticket), "Staff");
 	}
 
 }
