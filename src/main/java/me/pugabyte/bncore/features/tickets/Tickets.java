@@ -13,7 +13,6 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Tickets {
 	public static final String PREFIX = StringUtils.getPrefix("Tickets");
-	public static String PERMISSION_MOD = "tickets.mod";
 
 	static {
 		BNCore.registerPlaceholder("tickets_open", event ->
@@ -29,9 +28,9 @@ public class Tickets {
 				.send(player);
 	}
 
-	public static void sendTicketButtons(Player staff, Ticket ticket) {
-		staff.sendMessage("");
-		new JsonBuilder()
+	public static JsonBuilder getTicketButtons(Ticket ticket) {
+		return new JsonBuilder()
+				.line()
 				.next("&3 |&3|   &3").group()
 				.next("&6&lTeleport").command("/tickets tp " + ticket.getId()).hover("&eClick to teleport").group()
 				.next("&3   |&3|   &3").group()
@@ -39,8 +38,7 @@ public class Tickets {
 				.next("&3   |&3|   &3").group()
 				.next("&c&lClose").command("/tickets confirmclose " + ticket.getId()).hover("&eClick to close").group()
 				.next("&3   |&3|")
-				.send(staff);
-		staff.sendMessage("");
+				.line();
 	}
 
 	public static void tellOtherStaff(Player player, String message) {
@@ -48,7 +46,7 @@ public class Tickets {
 
 		Bukkit.getOnlinePlayers().stream()
 				.filter(staff -> !staff.getUniqueId().equals(player.getUniqueId()))
-				.filter(staff -> staff.hasPermission(PERMISSION_MOD))
+				.filter(staff -> staff.hasPermission("group.moderator"))
 				.forEach(staff -> staff.sendMessage(colorize(message)));
 	}
 

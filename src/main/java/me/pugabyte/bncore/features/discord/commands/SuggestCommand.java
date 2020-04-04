@@ -18,9 +18,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import org.bukkit.ChatColor;
 
-import java.awt.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 public class SuggestCommand extends Command {
 
@@ -38,11 +39,11 @@ public class SuggestCommand extends Command {
 			try {
 				String[] args = event.getArgs().split(" ");
 				if (args.length == 0)
-					throw new InvalidInputException("Correct usage: /suggest <player>");
+					throw new InvalidInputException("Correct usage: `/suggest <player>`");
 
 				Nerd nerd = new NerdService().get(Utils.getPlayer(args[0]));
 				if (!Arrays.asList(Rank.MEMBER, Rank.TRUSTED).contains(nerd.getRank()))
-					throw new InvalidInputException(nerd.getName() + " is not eligble for promotion (They are " + nerd.getRank().plain() + ")");
+					throw new InvalidInputException(nerd.getName() + " is not eligible for promotion (They are " + nerd.getRank().plain() + ")");
 
 				Hours hours = new HoursService().get(nerd);
 
@@ -60,17 +61,11 @@ public class SuggestCommand extends Command {
 						.appendDescription("\n:scroll: **History**: " + history)
 						.setThumbnail("https://minotar.net/helm/" + nerd.getName() + "/100.png");
 
-				String rank = null;
-				if (nerd.getRank() == Rank.MEMBER) {
-					embed.setColor(new Color(255, 255, 85));
-					rank = "Trusted";
-				} else if (nerd.getRank() == Rank.TRUSTED) {
-					embed.setColor(new Color(255, 170, 0));
-					rank = "Elite";
-				}
+				Rank next = nerd.getRank().next();
+				embed.setColor(next.getColor());
 
 				event.reply(new MessageBuilder()
-						.setContent(event.getAuthor().getAsMention() + " is suggesting **" + nerd.getName() + "** for **" + rank + "**")
+						.setContent(event.getAuthor().getAsMention() + " is suggesting **" + nerd.getName() + "** for **" + camelCase(next.plain()) + "**")
 						.setEmbed(embed.build())
 						.build());
 			} catch (Exception ex) {

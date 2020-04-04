@@ -16,8 +16,7 @@ public class FacepalmCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommandAsConsole("essentials:sudo " + player().getName() + " c:" + argsString() + " (ლ‸－)");
-//		chatter.say(argsString() + " (ლ‸－)");
+		chatter.say(argsString() + " (ლ‸－)");
 	}
 
 }

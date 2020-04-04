@@ -52,7 +52,7 @@ public class TicketsCommand extends CustomCommand {
 		send("&3Owner: &e" + ticket.getOwnerName());
 		send("&3When: &e" + ticket.getTimespan() + " &3ago");
 		send("&3Description: &e" + ticket.getDescription());
-		Tickets.sendTicketButtons(player(), ticket);
+		send(Tickets.getTicketButtons(ticket));
 	}
 
 	@Path("(tp|teleport) <id>")

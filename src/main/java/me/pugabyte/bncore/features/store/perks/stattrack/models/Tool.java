@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.stattrack.models;
+package me.pugabyte.bncore.features.store.perks.stattrack.models;
 
 import org.bukkit.Material;
 

@@ -24,18 +24,18 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum Rank {
-	GUEST("&7", false, false),
-	MEMBER("&f", false, false),
-	TRUSTED("&e", false, false, new Color(241, 196, 15)),
-	ELITE("&6", false, false, new Color(230, 126, 34)),
-	VETERAN("&6&l", true, false, new Color(230, 126, 34)),
-	BUILDER("&5", true, true, new Color(132, 61, 164)),
-	ARCHITECT("&5&l", true, true, new Color(132, 61, 164)),
-	MINIGAME_MODERATOR("&b&o", true, true, new Color(25, 211, 211)),
-	MODERATOR("&b&o", true, true, new Color(25, 211, 211)),
-	OPERATOR("&3&o", true, true, new Color(0, 170, 170)),
-	ADMIN("&9&o", true, true, new Color(32, 102, 148)),
-	OWNER("&4&o", true, true, new Color(153, 45, 34));
+	GUEST("&7", false, false, false),
+	MEMBER("&f", false, false, false),
+	TRUSTED("&e", false, false, false, new Color(241, 196, 15)),
+	ELITE("&6", false, false, false, new Color(230, 126, 34)),
+	VETERAN("&6&l", true, false, false, new Color(230, 126, 34)),
+	BUILDER("&5", true, true, false, new Color(132, 61, 164)),
+	ARCHITECT("&5&l", true, true, false, new Color(132, 61, 164)),
+	MINIGAME_MODERATOR("&b&o", true, true, false, new Color(25, 211, 211)),
+	MODERATOR("&b&o", true, true, true, new Color(25, 211, 211)),
+	OPERATOR("&3&o", true, true, true, new Color(0, 170, 170)),
+	ADMIN("&9&o", true, true, true, new Color(32, 102, 148)),
+	OWNER("&4&o", true, true, true, new Color(153, 45, 34));
 
 	@Getter
 	private String format;
@@ -46,12 +46,16 @@ public enum Rank {
 	@Accessors(fluent = true)
 	private boolean isStaff;
 	@Getter
+	@Accessors(fluent = true)
+	private boolean isMod;
+	@Getter
 	private Color color;
 
-	Rank(String format, boolean hasPrefix, boolean isStaff) {
+	Rank(String format, boolean hasPrefix, boolean isStaff, boolean isMod) {
 		this.format = format;
 		this.hasPrefix = hasPrefix;
 		this.isStaff = isStaff;
+		this.isMod = isMod;
 	}
 
 	public String getPrefix() {
@@ -99,6 +103,18 @@ public enum Rank {
 	public static List<Nerd> getOnlineStaff() {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> new Nerd(player).getRank().isStaff())
+				.sorted(Comparator.comparing(Player::getName))
+				.map(player -> (Nerd) new NerdService().get(player))
+				.collect(Collectors.toList());
+	}
+
+	public static List<Rank> getMods() {
+		return Arrays.stream(Rank.values()).filter(Rank::isMod).collect(Collectors.toList());
+	}
+
+	public static List<Nerd> getOnlineMods() {
+		return Bukkit.getOnlinePlayers().stream()
+				.filter(player -> new Nerd(player).getRank().isMod())
 				.sorted(Comparator.comparing(Player::getName))
 				.map(player -> (Nerd) new NerdService().get(player))
 				.collect(Collectors.toList());

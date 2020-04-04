@@ -16,8 +16,7 @@ public class TMCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommandAsConsole("essentials:sudo " + player().getName() + " c:" + argsString() + "™");
-//		chatter.say(argsString() + "™");
+		chatter.say(argsString() + "™");
 	}
 
 }

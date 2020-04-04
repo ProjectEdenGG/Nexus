@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+// TODO: Figure out how to do radius
 public class PolygonEffect {
 	@Getter
 	private int taskId;
@@ -126,7 +127,8 @@ public class PolygonEffect {
 				double distance = Math.sqrt(Math.pow(deltaX - x, 2) + Math.pow(deltaZ - z, 2));
 				if (finalWhole) {
 					// (distance - (2.0 - (2.0 * (points / 10.0))))
-					for (double d = 0; d < (distance - (2.0 - (2.0 * (points / 10.0)))); d += .1) { // we subtract .1 from the distance because otherwise it would make 1 step too many.
+					// (distance - (distance + 1) * .1)
+					for (double d = 0; d < distance - (distance + 1) * .1; d += .1) { // we subtract .1 from the distance because otherwise it would make 1 step too many.
 						double finalX = (x + deltaX * d);
 						double finalZ = (z + deltaZ * d);
 						newLoc.add(finalX, 0, finalZ);
