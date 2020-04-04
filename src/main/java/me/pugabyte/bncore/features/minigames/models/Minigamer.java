@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -179,7 +180,10 @@ public class Minigamer {
 
 		player.setVelocity(new Vector(0, 0, 0));
 		canTeleport = true;
-		player.teleport(location.clone().add(0, .5, 0));
+		if (match == null)
+			player.teleport(location.clone().add(0, .5, 0), TeleportCause.COMMAND);
+		else
+			player.teleport(location.clone().add(0, .5, 0));
 		canTeleport = false;
 		player.setVelocity(new Vector(0, 0, 0));
 		if (withSlowness) {
