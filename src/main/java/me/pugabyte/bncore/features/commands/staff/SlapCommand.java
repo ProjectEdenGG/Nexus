@@ -15,7 +15,7 @@ public class SlapCommand extends CustomCommand {
 
 	@Path("<player>")
 	void slap(Player player) {
-		player.setVelocity(player.getLocation().getDirection().multiply(-2).setY(1));
+		player.setVelocity(player.getLocation().getDirection().multiply(-2).setY(player.getEyeLocation().getPitch() > 0 ? 1.5 : -1.5));
 		send(player, "&6You have been slapped!");
 	}
 

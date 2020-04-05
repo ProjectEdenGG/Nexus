@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -21,7 +22,7 @@ public class WeeeCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	void weee(Player player) {
+	void weee(@Arg("self") Player player) {
 		List<Vector> vectors = Arrays.asList(new Vector(1, 1, 0), new Vector(-1, 1, 0), new Vector(0, 1, 1), new Vector(0, 1, -1));
 
 		Tasks.Countdown.builder()

@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
+@NoArgsConstructor
 @Aliases({"clean", "clear", "ci", "clearinvent", "eclean", "eclear", "eci", "eclearinvent", "eclearinventory"})
 public class ClearInventoryCommand extends CustomCommand implements Listener {
 	private ClearInventoryPlayer ciPlayer;

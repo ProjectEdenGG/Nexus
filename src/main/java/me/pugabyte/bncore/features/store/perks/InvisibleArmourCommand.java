@@ -25,7 +25,6 @@ import me.pugabyte.bncore.models.invisiblearmour.InvisibleArmourService;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
@@ -33,7 +32,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
@@ -49,7 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @NoArgsConstructor
 @Permission("invis.armour")
 @Aliases({"ia", "invisarmor", "invisarmour", "invisiblearmor"})
-public class InvisibleArmourCommand extends CustomCommand implements Listener {
+public class InvisibleArmourCommand extends CustomCommand {
 	private static List<ItemSlot> armourSlots = Arrays.asList(ItemSlot.HEAD, ItemSlot.CHEST, ItemSlot.LEGS, ItemSlot.FEET);
 	private InvisibleArmourService service = new InvisibleArmourService();
 	private InvisibleArmour invisibleArmour;
@@ -60,7 +58,13 @@ public class InvisibleArmourCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND, Time.SECOND.x(5), InvisibleArmourCommand::sendPackets);
+//		Tasks.repeat(Time.SECOND, Time.SECOND.x(5), InvisibleArmourCommand::sendPackets);
+	}
+
+	@Path("clearCache")
+	void clearCache() {
+		service.clearCache();
+		send("Cache cleared");
 	}
 
 	@Path("[on|off]")
@@ -71,13 +75,12 @@ public class InvisibleArmourCommand extends CustomCommand implements Listener {
 			invisibleArmour.setEnabled(enable);
 
 		service.save(invisibleArmour);
+		sendPackets();
 
 		if (invisibleArmour.isEnabled()) {
-			sendPackets();
-			send(PREFIX + "Armour hidden");
+			send(PREFIX + "&cArmour hidden");
 		} else {
-			armourSlots.forEach(slot -> sendPackets(invisibleArmour, slot));
-			send(PREFIX + "Armour shown");
+			send(PREFIX + "&aArmour shown");
 		}
 	}
 
@@ -150,10 +153,6 @@ public class InvisibleArmourCommand extends CustomCommand implements Listener {
 		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(BNCore.getInstance(), Client.CLOSE_WINDOW) {
 			@Override
 			public void onPacketReceiving(PacketEvent event) {
-				InvisibleArmour invisibleArmour = new InvisibleArmourService().get(event.getPlayer());
-				if (!invisibleArmour.isEnabled())
-					return;
-
 				Tasks.wait(1, InvisibleArmourCommand::sendPackets);
 			}
 		});
@@ -164,8 +163,6 @@ public class InvisibleArmourCommand extends CustomCommand implements Listener {
 		Bukkit.getOnlinePlayers().forEach(player -> Tasks.wait(wait.getAndIncrement(), () -> {
 			InvisibleArmourService service = new InvisibleArmourService();
 			InvisibleArmour invisibleArmour = service.get(player);
-			if (!invisibleArmour.isEnabled())
-				return;
 
 			if (WorldGroup.get(player) == WorldGroup.MINIGAMES) {
 				invisibleArmour.setEnabled(false);
@@ -173,19 +170,17 @@ public class InvisibleArmourCommand extends CustomCommand implements Listener {
 				return;
 			}
 
-			armourSlots.forEach(slot -> {
-				if (invisibleArmour.show(slot))
-					sendPackets(invisibleArmour, slot);
-			});
+			armourSlots.forEach(slot -> sendPackets(invisibleArmour, slot));
 		}));
 	}
 
 	private static void sendPackets(InvisibleArmour invisibleArmour, ItemSlot slot) {
+		if (true) return;
 		Player player = Utils.getPlayer(invisibleArmour.getUuid()).getPlayer();
 		PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(Server.ENTITY_EQUIPMENT);
 		packet.getItemSlots().write(0, slot);
 		packet.getEntityModifier(player.getWorld()).write(0, player);
-		packet.getItemModifier().write(0, new ItemStack(Material.AIR));
+		packet.getItemModifier().write(0, invisibleArmour.isEnabled() ? new ItemStack(Material.AIR) : invisibleArmour.getItem(slot));
 
 		Bukkit.getOnlinePlayers().stream().filter(_player -> player.getWorld() == _player.getWorld()).forEach(_player -> {
 			boolean self = player.getUniqueId() == _player.getUniqueId();
@@ -263,9 +258,9 @@ public class InvisibleArmourCommand extends CustomCommand implements Listener {
 
 			ItemBuilder toggle = new ItemBuilder(Material.LEVER);
 			if (invisibleArmour.isEnabled())
-				toggle.name("&aArmour hidden").lore("&cClick to show armour");
+				toggle.name("&cArmour hidden").lore("&eClick to show armour");
 			else
-				toggle.name("&cArmour shown").lore("&aClick to hide armour");
+				toggle.name("&aArmour shown").lore("&eClick to hide armour");
 			contents.set(4, 8, ClickableItem.from(toggle.build(), e -> {
 				run(null);
 				menu();

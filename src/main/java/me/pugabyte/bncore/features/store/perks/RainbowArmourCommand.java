@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.store.perks;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -25,8 +26,9 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.HashMap;
 
-@Aliases({"rainbowarmor", "rba"})
+@NoArgsConstructor
 @Permission("rainbow.armour")
+@Aliases({"rainbowarmor", "rba"})
 public class RainbowArmourCommand extends CustomCommand implements Listener {
 	@Getter
 	private static HashMap<Player, RainbowArmourPlayer> enabledPlayers = new HashMap<>();

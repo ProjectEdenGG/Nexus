@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
 	private static Map<Player, TameablesAction> actions = new HashMap<>();
 
