@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.geoip;
+package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

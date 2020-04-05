@@ -47,7 +47,7 @@ public class ChannelCommand extends CustomCommand {
 				return;
 
 			if (chatter.canJoin(channel))
-				send(channel.getColor() + "[" + channel.getNickname() + "] " + channel.getName() + (chatter.hasJoined(channel) ? " &7(Joined)" : ""));
+				send(channel.getColor() + "[" + channel.getNickname().toUpperCase() + "] " + channel.getName() + (chatter.hasJoined(channel) ? " &7(Joined)" : ""));
 		});
 	}
 
