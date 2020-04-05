@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
 import me.pugabyte.bncore.features.particles.effects.PolygonEffect;
 import me.pugabyte.bncore.features.particles.effects.StarEffect;
+import me.pugabyte.bncore.features.particles.effects.WingsEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -68,6 +69,23 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	void dot() {
 		Location loc = Utils.getCenteredLocation(player().getLocation()).add(0, 1, 0);
 		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();
+	}
+
+	@Path("Wings [boolean]")
+	void wings(@Arg("true") boolean flapMode) {
+		WingsEffect.builder()
+				.player(player())
+				.flapMode(flapMode)
+				.flapSpeed(1)
+				.color1(Color.BLACK)
+				.rainbow1(false)
+				.color2(Color.BLACK)
+				.rainbow2(true)
+				.color3(Color.BLACK)
+				.rainbow3(false)
+				.ticks(10 * 20)
+				.wingStyle(WingsEffect.WingStyle.FOURTEEN)
+				.start();
 	}
 
 	@Path("disco line")
