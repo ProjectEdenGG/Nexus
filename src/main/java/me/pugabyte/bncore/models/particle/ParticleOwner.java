@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.Tasks;
+import org.bukkit.Color;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +37,18 @@ public class ParticleOwner extends PlayerOwnedObject {
 	private Map<ParticleType, Map<ParticleSetting, Object>> settings = new HashMap<>();
 
 	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
-		return settings.get(particleType);
+		if (!settings.containsKey(particleType))
+			settings.put(particleType, new HashMap<>());
+		Map<ParticleSetting, Object> map = settings.get(particleType);
+
+		// Do some deserialization if necessary
+		new HashMap<>(map).forEach((key, value) -> {
+			if (Map.class.isAssignableFrom(value.getClass()) && ((Map<?, ?>) value).containsKey("r")) {
+				Map<String, Integer> color = (Map<String, Integer>) value;
+				map.put(key, Color.fromRGB(color.get("r"), color.get("g"), color.get("b")));
+			}
+		});
+		return map;
 	}
 
 	@Transient
