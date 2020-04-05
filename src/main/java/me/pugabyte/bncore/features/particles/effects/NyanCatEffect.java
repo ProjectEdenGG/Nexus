@@ -45,7 +45,7 @@ public class NyanCatEffect {
 				double g = rgb[1];
 				double b = rgb[2];
 
-				loc.getWorld().spawnParticle(Particle.REDSTONE, loc, 0, r, g, b, 1);
+				ParticleUtils.display(Particle.REDSTONE, loc, 0, r, g, b, 1);
 
 				loc = loc.add(0, 0.1, 0);
 			}

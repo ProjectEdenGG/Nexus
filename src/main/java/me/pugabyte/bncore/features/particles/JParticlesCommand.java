@@ -2,10 +2,16 @@ package me.pugabyte.bncore.features.particles;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.features.particles.effects.*;
+import me.pugabyte.bncore.features.particles.effects.DotEffect;
+import me.pugabyte.bncore.features.particles.effects.LineEffect;
+import me.pugabyte.bncore.features.particles.effects.WingsEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.*;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
@@ -15,7 +21,6 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
 
 import java.util.List;
 
@@ -78,58 +83,6 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 				.rainbow3(false)
 				.ticks(10 * 20)
 				.wingStyle(WingsEffect.WingStyle.FOURTEEN)
-				.start();
-	}
-
-	@Path("disco line")
-	@Permission("group.admin")
-	void discoline() {
-		Vector vector = new Vector(0, 4, 0);
-		Location loc = player().getLocation().add(vector);
-		DiscoEffect.builder().player(player()).location(loc).ticks(10 * 20).lineLength(5).maxLines(4).sphereRadius(0.5)
-				.direction(DiscoEffect.Direction.BOTH).sphereColor(Color.WHITE).lineRainbow(true).rainbowOption(DiscoEffect.RainbowOption.LINE).start();
-	}
-
-	@Path("pentagram")
-	@Permission("group.admin")
-	void pentagram() {
-		CircleEffect.builder().player(player()).density(50).radius(2).ticks(25 * 20).whole(true).updateLoc(true).color(Color.BLACK).start();
-		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).color(Color.RED).rotateSpeed(0.2).start();
-	}
-
-	@Permission("group.admin")
-	@Path("polygon <number> [number]")
-	void polygon(@Arg int points, @Arg("1.5") double radius) {
-		PolygonEffect.Polygon polygon;
-		switch (points) {
-			case 4:
-				polygon = PolygonEffect.Polygon.SQUARE;
-				break;
-			case 5:
-				polygon = PolygonEffect.Polygon.PENTAGON;
-				break;
-			case 6:
-				polygon = PolygonEffect.Polygon.HEXAGON;
-				break;
-			case 7:
-				polygon = PolygonEffect.Polygon.HEPTAGON;
-				break;
-			case 8:
-				polygon = PolygonEffect.Polygon.OCTAGON;
-				break;
-			default:
-				polygon = PolygonEffect.Polygon.TRIANGLE;
-				break;
-		}
-		PolygonEffect.builder()
-				.player(particleOwner.getPlayer())
-				.updateLoc(true)
-				.whole(true)
-				.polygon(polygon)
-				.radius(radius)
-				.ticks(5 * 20)
-				.rainbow(true)
-				.rotateSpeed(0.0)
 				.start();
 	}
 
