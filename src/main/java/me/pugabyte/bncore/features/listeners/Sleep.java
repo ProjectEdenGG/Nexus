@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Sleep implements Listener {
-	private final String PREFIX = StringUtils.getPrefix("Sleep");
+	private static final String PREFIX = StringUtils.getPrefix("Sleep");
 	@Getter
 	@Setter
 	public boolean handling = false;

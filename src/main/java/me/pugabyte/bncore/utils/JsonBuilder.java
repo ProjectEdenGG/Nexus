@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.utils;
 
+import me.pugabyte.bncore.BNCore;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -7,6 +8,9 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.entity.Player;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.getLastColor;
@@ -57,6 +61,56 @@ public class JsonBuilder {
 	public JsonBuilder url(String url) {
 		builder.event(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
 		return this;
+	}
+
+	// https://stackoverflow.com/a/6041965
+	private static final Pattern URL_PATTERN = Pattern.compile("(https?)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
+
+	public JsonBuilder urlize(String input) {
+		Matcher matcher = URL_PATTERN.matcher(input);
+		if (matcher.groupCount() > 0) {
+			int index = 0;
+			while (matcher.find()) {
+				++index;
+				debug("Matches");
+				debug("  toString() before: " + toString());
+				debug("  Input before: " + input);
+				String original = matcher.group();
+				String[] split = input.split(original.replaceAll("\\?", "\\\\?").replaceAll("\\+", "\\\\+"));
+				String url = colorize(original).replaceAll(StringUtils.getColorChar(), "&&f");
+
+				debug("  Match: " + url + ", Split: " + String.join(" // ", split) + " (" + split.length + ")");
+				if (split.length == 0) {
+					next(url).url(original);
+					input = input.replace(original, "");
+				} else if (split.length == 1) {
+					next(split[0]).group().next(url).url(original);
+					input = input.replace(split[0] + original, "");
+				} else {
+					debug("  Index: " + index + ", Groups: " + matcher.groupCount());
+					if (index == matcher.groupCount() - 1) {
+						debug("  Final match");
+						next(split[0]).group().next(url).url(original).group().next(split[1]);
+						input = input.replace(split[0] + original + split[1], "");
+					} else {
+						debug("  Not final match");
+						next(split[0]).group().next(url).url(original);
+						input = input.replace(split[0] + original, "");
+					}
+				}
+				group();
+				debug("  toString() after: " + toString());
+				debug("  Input after: " + input);
+			}
+		}
+
+		next(input);
+		return this;
+	}
+
+	private void debug(String message) {
+		if (false)
+			BNCore.log(message);
 	}
 
 	public JsonBuilder command(String command) {

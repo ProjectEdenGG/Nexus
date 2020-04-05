@@ -94,9 +94,13 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("getLastColor <message...>")
-	@Permission("group.seniorstaff")
 	void getLastColor(String message) {
 		send(StringUtils.getLastColor(message) + "Last color");
+	}
+
+	@Path("urlize <message...>")
+	void urlize(String message) {
+		send(json("Urlized: ").urlize(message));
 	}
 
 	@Path("getPlayer [player]")
