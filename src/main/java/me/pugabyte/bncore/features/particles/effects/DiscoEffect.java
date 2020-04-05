@@ -182,7 +182,7 @@ public class DiscoEffect {
 							incSphereRainbow(sphereHue, sphereRed, sphereGreen, sphereBlue);
 					}
 					target.add(v);
-					target.getWorld().spawnParticle(finalLineParticle, target, finalLineCount, lineRed.get(), lineGreen.get(), lineBlue.get(), finalLineSpeed);
+					ParticleUtils.display(finalLineParticle, target, finalLineCount, lineRed.get(), lineGreen.get(), lineBlue.get(), finalLineSpeed);
 				}
 			}
 
@@ -190,7 +190,7 @@ public class DiscoEffect {
 			for (int i = 0; i < finalSphereDensity; i++) {
 				Vector vector = RandomUtils.getRandomVector().multiply(sphereRadius);
 				loc.add(vector);
-				loc.getWorld().spawnParticle(finalSphereParticle, loc, finalSphereCount, sphereRed.get(), sphereGreen.get(), sphereBlue.get(), finalSphereSpeed);
+				ParticleUtils.display(finalSphereParticle, loc, finalSphereCount, sphereRed.get(), sphereGreen.get(), sphereBlue.get(), finalSphereSpeed);
 				loc.subtract(vector);
 			}
 

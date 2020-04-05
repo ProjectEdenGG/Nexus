@@ -148,7 +148,7 @@ public class StarEffect {
 				Location loc = newLoc.clone().subtract(v3);
 
 				for (int i2 = 0; i2 < finalDensity; ++i2) {
-					newLoc.getWorld().spawnParticle(finalParticle, loc.add(v3), finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+					ParticleUtils.display(finalParticle, loc.add(v3), finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 				}
 
 				newLoc.subtract(v);
