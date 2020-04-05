@@ -6,6 +6,7 @@ import lombok.experimental.Accessors;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -166,11 +167,11 @@ public enum Rank {
 	}
 
 	public Rank next() {
-		return values()[Math.min(values().length - 1, this.ordinal() + 1 % values().length)];
+		return EnumUtils.next(Rank.class, this.ordinal());
 	}
 
 	public Rank previous() {
-		return values()[Math.max(0, this.ordinal() - 1 % values().length)];
+		return EnumUtils.previous(Rank.class, this.ordinal());
 	}
 
 }
