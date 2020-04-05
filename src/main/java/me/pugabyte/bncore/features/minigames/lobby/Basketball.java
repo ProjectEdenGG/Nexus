@@ -5,8 +5,14 @@ import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import de.tr7zw.itemnbtapi.NBTEntity;
 import de.tr7zw.itemnbtapi.NBTItem;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -20,8 +26,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,16 +38,39 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
-public class Basketball implements Listener {
+@NoArgsConstructor
+@Permission("group.staff")
+public class Basketball extends CustomCommand implements Listener {
 	@Getter
 	static ItemStack basketball = (ItemStack) BNCore.getInstance().getConfig().get("minigames.lobby.basketball.item");
 	static Map<UUID, ItemStack> basketballs = new HashMap<>();
 	static World world = Minigames.getWorld();
 	static String region = "minigamelobby_basketball";
 
-	public Basketball() {
-		BNCore.registerListener(this);
+	static {
 		janitor();
+	}
+
+	public Basketball(CommandEvent event) {
+		super(event);
+	}
+
+	@Path("save")
+	void save() {
+		ItemStack basketball = player().getInventory().getItemInMainHand();
+		ItemMeta meta = basketball.getItemMeta();
+		meta.setDisplayName(colorize("&6&lBasketball"));
+		meta.setLore(Collections.singletonList(colorize("&eMinigame Lobby Basketball")));
+		basketball.setItemMeta(meta);
+		BNCore.getInstance().getConfig().set("minigames.lobby.basketball.item", basketball);
+		BNCore.getInstance().saveConfig();
+		Basketball.basketball = basketball;
+		send(PREFIX + "Basketball saved");
+	}
+
+	@Path("give [player]")
+	void give(@Arg("self") Player player) {
+		Basketball.giveBasketball(player);
 	}
 
 	public static ItemStack getBasketball(Player player) {
@@ -97,7 +128,7 @@ public class Basketball implements Listener {
 		});
 	}
 
-	private void janitor() {
+	private static void janitor() {
 		WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
 		Tasks.repeat(0, 20 * 20, () -> {
 			cleanupBasketballs();

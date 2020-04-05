@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class StringUtils {
@@ -25,18 +26,22 @@ public class StringUtils {
 		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
 	}
 
-	public static String colorize(String string) {
-		if (string == null)
+	public static String colorize(String input) {
+		if (input == null)
 			return null;
-		return ChatColor.translateAlternateColorCodes('&', string);
+		return ChatColor.translateAlternateColorCodes('&', input);
 	}
 
-	public static String decolorize(String string) {
-		return string.replaceAll(getColorChar(), "&");
+	public static String decolorize(String input) {
+		return input.replaceAll(getColorChar(), "&");
 	}
 
-	public static String stripColor(String string) {
-		return ChatColor.stripColor(colorize(string));
+	public static String stripColor(String input) {
+		return ChatColor.stripColor(colorize(input));
+	}
+
+	public static String stripFormat(String input) {
+		return Pattern.compile("(?i)" + colorChar + "[K-OR]").matcher(colorize(input)).replaceAll("");
 	}
 
 	public static int countUpperCase(String s) {
@@ -239,7 +244,11 @@ public class StringUtils {
 	}
 
 	public static String timespanDiff(LocalDateTime from) {
-		return timespanDiff(from, LocalDateTime.now());
+		LocalDateTime now = LocalDateTime.now();
+		if (from.isBefore(now))
+			return timespanDiff(from, now);
+		else
+			return timespanDiff(now, from);
 	}
 
 	public static String timespanDiff(LocalDateTime from, LocalDateTime to) {
