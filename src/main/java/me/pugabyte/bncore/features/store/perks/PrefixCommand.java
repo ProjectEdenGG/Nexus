@@ -9,6 +9,7 @@ import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+import static me.pugabyte.bncore.utils.StringUtils.stripFormat;
 
 public class PrefixCommand extends CustomCommand {
 
@@ -43,6 +44,8 @@ public class PrefixCommand extends CustomCommand {
 
 		if (stripColor(value).length() > 10)
 			error("Your prefix cannot be more than 10 characters");
+
+		value = stripFormat(value);
 
 		prefix.setValue(value);
 		service.save(prefix);

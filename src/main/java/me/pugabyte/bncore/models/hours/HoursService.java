@@ -1,7 +1,5 @@
 package me.pugabyte.bncore.models.hours;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.MySQLService;
 
@@ -10,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 public class HoursService extends MySQLService {
 	private final static Map<String, Hours> cache = new HashMap<>();
@@ -35,7 +35,7 @@ public class HoursService extends MySQLService {
 	}
 
 	public List<Hours> getPage(HoursType type, int page) {
-		return database.orderBy(type.columnName() + " desc").limit(10).offset((page - 1) * 10).results(Hours.class);
+		return database.orderBy(type.columnName().replaceAll("_", "") + " desc").limit(10).offset((page - 1) * 10).results(Hours.class);
 	}
 
 	public int cleanup() {
@@ -45,7 +45,7 @@ public class HoursService extends MySQLService {
 				.innerJoin("nerd")
 					.on("nerd.uuid = hours.uuid")
 				.where("hours.total < (30 * 60)")
-				.and("nerd.lastJoin < DATE_ADD(NOW(), INTERVAL -30 DAY)")
+				.and("nerd.lastJoin < DATE_ADD(NOW(), INTERVAL -60 DAY)")
 				.delete()
 				.getRowsAffected();
 	}

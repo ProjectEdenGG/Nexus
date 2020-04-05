@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.inviterewards;
+package me.pugabyte.bncore.features.commands;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -8,11 +8,15 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
+import me.pugabyte.bncore.models.vote.VoteService;
+import me.pugabyte.bncore.models.vote.Voter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
@@ -67,7 +71,7 @@ public class InviteRewardsCommand extends CustomCommand {
 		invited.sendMessage(colorize("You have confirmed &e" + inviter.getName() + "'s &3invite. Thank you " +
 				"for flying Bear Nation!"));
 		reward(inviter);
-		InviteRewards.saveInvitation(invited, inviter);
+		saveInvitation(invited, inviter);
 	}
 
 	@Path("deny <inviter>")
@@ -115,8 +119,26 @@ public class InviteRewardsCommand extends CustomCommand {
 				.create());
 	}
 
+	static void saveInvitation(Player invitee, Player inviter) {
+		String UUIDer = inviter.getUniqueId().toString();
+		String UUIDed = invitee.getUniqueId().toString();
+
+		Configuration config = BNCore.getInstance().getConfig();
+
+		List<String> invited = config.getStringList("inviterewards.invited." + UUIDer);
+		invited.add(UUIDed);
+		config.set("inviterewards.invited." + UUIDer, invited);
+
+		try {
+			BNCore.getInstance().saveConfig();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void reward(Player inviter) {
-		InviteRewards.getPlayerPoints().getAPI().give(inviter.getUniqueId(), 15);
+		Voter voter = new VoteService().get(inviter);
+		voter.addPoints(15);
 	}
 
 	private long getMinutesPlayed(Player player) {

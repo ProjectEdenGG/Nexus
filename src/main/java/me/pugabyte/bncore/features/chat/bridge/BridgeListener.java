@@ -114,11 +114,12 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 		if (message.contains("@")) {
 			Matcher matcher = Pattern.compile("@[A-Za-z0-9_]+").matcher(message);
 			while (matcher.find()) {
-				String group = matcher.group().replace("@", "");
+				String group = matcher.group();
 				try {
 					OfflinePlayer player = Utils.getPlayer(group);
 					DiscordUser mentioned = new DiscordService().get(player);
-					message = message.replace(group, "<@" + mentioned.getUserId() + ">");
+					if (mentioned.getUserId() != null)
+						message = message.replace(group, "<@" + mentioned.getUserId() + ">");
 				} catch (PlayerNotFoundException ignore) {}
 			}
 		}
