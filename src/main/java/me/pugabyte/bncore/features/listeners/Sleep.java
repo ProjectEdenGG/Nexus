@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -22,6 +24,8 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Sleep implements Listener {
 	private final String PREFIX = StringUtils.getPrefix("Sleep");
+	@Getter
+	@Setter
 	public boolean handling = false;
 
 	public void calculate(World world) {
@@ -63,14 +67,6 @@ public class Sleep implements Listener {
 				setHandling(false);
 			});
 		}
-	}
-
-	private void setHandling(boolean handling) {
-		this.handling = handling;
-	}
-
-	boolean isHandling() {
-		return handling;
 	}
 
 	@EventHandler
