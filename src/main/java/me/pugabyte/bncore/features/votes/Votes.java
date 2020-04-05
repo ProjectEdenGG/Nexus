@@ -66,7 +66,7 @@ public class Votes implements Listener {
 	static {
 		EmbedBuilder builder = new EmbedBuilder().setTitle("https://bnn.gg/vote").setDescription("");
 		for (VoteSite value : VoteSite.values())
-			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getLink() + ")");
+			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl() + ")");
 		voteLinksEmbed = builder.build();
 	}
 
@@ -95,7 +95,7 @@ public class Votes implements Listener {
 		String username = event.getVote().getUsername().replaceAll(" ", "");
 		OfflinePlayer player = null;
 		try { player = Utils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
-		String name = player != null ? player.getName() : "null";
+		String name = player != null ? player.getName() : "Unknown";
 		String uuid = player != null ? player.getUniqueId().toString() : "00000000-0000-0000-0000-000000000000";
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 

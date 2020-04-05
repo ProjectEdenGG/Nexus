@@ -136,11 +136,11 @@ public class PolygonEffect {
 					switch (points) {
 						case 3:
 							change = .05;
-							sub -= .55;
+							sub -= .65;
 							break;
 						case 4:
 							change = .05;
-							sub -= .25;
+							sub -= .35;
 							break;
 						case 6:
 							sub += .1;
