@@ -25,6 +25,8 @@ import java.util.List;
 @NoArgsConstructor
 @Permission("group.staff")
 public class WelcomeCommand extends CustomCommand {
+	private static String lastMessage = null;
+
 	List<String> messages = new ArrayList<String>() {{
 		add("Welcome to the server [player]! Make sure to read the /rules and feel free to ask questions.");
 		add("Welcome to Bear Nation [player]! Please take a moment to read the /rules and feel free to ask any questions you have.");
@@ -63,7 +65,7 @@ public class WelcomeCommand extends CustomCommand {
 		try {
 			new CooldownService().check("staff", "welc", Time.SECOND.x(20));
 
-			String message = Utils.getRandomElement(messages);
+			String message = getMessage();
 			if (player == null)
 				message = message.replaceAll(" \\[player]", "");
 			else
@@ -77,4 +79,14 @@ public class WelcomeCommand extends CustomCommand {
 				runCommand("ch qm g Welcome to the server, " + player.getName());
 		}
 	}
+
+	private String getMessage() {
+		ArrayList<String> list = new ArrayList<>(messages);
+		if (lastMessage != null)
+			list.remove(lastMessage);
+		String message = Utils.getRandomElement(list);
+		lastMessage = message;
+		return message;
+	}
+
 }
