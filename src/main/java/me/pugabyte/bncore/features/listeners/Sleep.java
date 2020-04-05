@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.BNCore.sleep;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Sleep implements Listener {
@@ -76,19 +75,19 @@ public class Sleep implements Listener {
 
 	@EventHandler
 	public void onBedEnter(PlayerBedEnterEvent event) {
-		if (!sleep.isHandling())
-			Tasks.wait(1, () -> sleep.calculate(event.getPlayer().getWorld()));
+		if (!isHandling())
+			Tasks.wait(1, () -> calculate(event.getPlayer().getWorld()));
 	}
 
 	@EventHandler
 	public void onBedLeave(PlayerBedLeaveEvent event) {
-		if (!sleep.isHandling())
-			Tasks.wait(1, () -> sleep.calculate(event.getPlayer().getWorld()));
+		if (!isHandling())
+			Tasks.wait(1, () -> calculate(event.getPlayer().getWorld()));
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		if (!sleep.isHandling())
-			Tasks.wait(1, () -> sleep.calculate(event.getPlayer().getWorld()));
+		if (!isHandling())
+			Tasks.wait(1, () -> calculate(event.getPlayer().getWorld()));
 	}
 }

@@ -2,20 +2,10 @@ package me.pugabyte.bncore.features.particles;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.features.particles.effects.CircleEffect;
-import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
-import me.pugabyte.bncore.features.particles.effects.DotEffect;
-import me.pugabyte.bncore.features.particles.effects.LineEffect;
-import me.pugabyte.bncore.features.particles.effects.PolygonEffect;
-import me.pugabyte.bncore.features.particles.effects.StarEffect;
-import me.pugabyte.bncore.features.particles.effects.WingsEffect;
+import me.pugabyte.bncore.features.particles.effects.*;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
-import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
-import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
-import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.*;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
@@ -30,7 +20,6 @@ import org.bukkit.util.Vector;
 import java.util.List;
 
 @NoArgsConstructor
-@Permission("group.admin")
 public class JParticlesCommand extends CustomCommand implements Listener {
 	ParticleService service = new ParticleService();
 	ParticleOwner particleOwner;
@@ -42,10 +31,11 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 
 	@Path()
 	void menu() {
-		ParticleMenu.openMain(player(), 0);
+		ParticleMenu.openMain(player());
 	}
 
 	@Path("<effectType>")
+	@Permission("group.admin")
 	void run(ParticleType particleType) {
 		particleType.run(player());
 	}
@@ -61,17 +51,20 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("line [distance] [density]")
+	@Permission("group.admin")
 	void line(@Arg("10") int distance, @Arg("0.1") double density) {
 		LineEffect.builder().player(player()).distance(distance).density(density).rainbow(true).start();
 	}
 
 	@Path("dot")
+	@Permission("group.admin")
 	void dot() {
 		Location loc = Utils.getCenteredLocation(player().getLocation()).add(0, 1, 0);
 		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();
 	}
 
 	@Path("Wings [boolean]")
+	@Permission("group.admin")
 	void wings(@Arg("true") boolean flapMode) {
 		WingsEffect.builder()
 				.player(player())
@@ -89,6 +82,7 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("disco line")
+	@Permission("group.admin")
 	void discoline() {
 		Vector vector = new Vector(0, 4, 0);
 		Location loc = player().getLocation().add(vector);
@@ -97,11 +91,13 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("pentagram")
+	@Permission("group.admin")
 	void pentagram() {
 		CircleEffect.builder().player(player()).density(50).radius(2).ticks(25 * 20).whole(true).updateLoc(true).color(Color.BLACK).start();
 		StarEffect.builder().player(player()).radius(2).ticks(25 * 20).updateLoc(true).color(Color.RED).rotateSpeed(0.2).start();
 	}
 
+	@Permission("group.admin")
 	@Path("polygon <number> [number]")
 	void polygon(@Arg int points, @Arg("1.5") double radius) {
 		PolygonEffect.Polygon polygon;

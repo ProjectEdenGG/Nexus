@@ -189,7 +189,6 @@ public class BNCore extends JavaPlugin {
 	public static ModelListeners modelListeners;
 	public static Minigames minigames;
 	public static Quests quests;
-	public static RainbowArmour rainbowArmour;
 	public static RestoreInventory restoreInventory;
 	public static ShowEnchants showEnchants;
 	public static Tickets tickets;
@@ -224,7 +223,6 @@ public class BNCore extends JavaPlugin {
 		new Timer("  ModelListeners", () -> modelListeners = new ModelListeners());
 		new Timer("  Minigames", () -> minigames = new Minigames());
 		new Timer("  Quests", () -> quests = new Quests());
-		new Timer("  RainbowArmour", () -> rainbowArmour = new RainbowArmour());
 		new Timer("  RestoreInventory", () -> restoreInventory = new RestoreInventory());
 		new Timer("  ShowEnchants", () -> showEnchants = new ShowEnchants());
 		new Timer("  Tickets", () -> tickets = new Tickets());

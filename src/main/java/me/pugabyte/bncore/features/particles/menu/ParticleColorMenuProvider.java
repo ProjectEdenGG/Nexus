@@ -5,8 +5,10 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.particle.ParticleOwner;
+import me.pugabyte.bncore.models.particle.ParticleService;
+import me.pugabyte.bncore.models.particle.ParticleSetting;
+import me.pugabyte.bncore.models.particle.ParticleType;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -18,13 +20,18 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParticleColorMenuProvider extends MenuUtils implements InventoryProvider {
 
-	SettingService service = new SettingService();
+	ParticleService service = new ParticleService();
+	ParticleType type;
+	ParticleSetting setting;
+
+	public ParticleColorMenuProvider(ParticleType type, ParticleSetting setting) {
+		this.type = type;
+		this.setting = setting;
+	}
 
 	@Getter
 	enum ColorItem {
@@ -64,45 +71,27 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> ParticleMenu.openMain(player, 0));
+		addBackItem(contents, e -> ParticleMenu.openSettingEditor(player, type));
 
-		Setting rgb = service.get(player, "particlesRGB");
-		Map<String, Object> json = rgb.getJson();
-		if (!json.containsKey("r"))
-			json = new HashMap<String, Object>() {{
-				put("r", 0);
-				put("g", 0);
-				put("b", 0);
-			}};
-		rgb.setJson(json);
-		service.save(rgb);
+		ParticleOwner owner = service.get(player);
+		Color color = setting.get(owner, type);
 
 		ItemStack chestplate = nameItem(new ItemStack(Material.LEATHER_CHESTPLATE), "&fCurrent Color");
 		LeatherArmorMeta meta = (LeatherArmorMeta) chestplate.getItemMeta();
-		meta.setColor(Color.fromRGB(Double.valueOf((double) json.get("r")).intValue(),
-				Double.valueOf((double) json.get("g")).intValue(),
-				Double.valueOf((double) json.get("b")).intValue()));
+		meta.setColor(color);
 		chestplate.setItemMeta(meta);
-		ItemBuilder.addLore(chestplate,
-				"&cR: " + json.get("r"),
-				"&aG: " + json.get("g"),
-				"&bB: " + json.get("b"));
+		ItemBuilder.addLore(chestplate, setting.getLore(player, type));
 
-		contents.set(2, 4, ClickableItem.from(chestplate,
-				e -> ParticleMenu.openColor(player)));
+		contents.set(2, 4, ClickableItem.empty(chestplate));
 
-		for (ColorItem color : ColorItem.values()) {
-			String name = color.getColorType().getChatColor() + StringUtils.camelCase(color.name().replace("_", " "));
-			contents.set(color.getColumn(), color.getRow(), ClickableItem.from(
-					new ItemBuilder(Material.INK_SACK).name(name).dyeColor(color.getColorType()).build(),
+		for (ColorItem colorItem : ColorItem.values()) {
+			String name = colorItem.getColorType().getChatColor() + StringUtils.camelCase(colorItem.name().replace("_", " "));
+			contents.set(colorItem.getColumn(), colorItem.getRow(), ClickableItem.from(
+					new ItemBuilder(Material.INK_SACK).name(name).dyeColor(colorItem.getColorType()).build(),
 					e -> {
-						Map<String, Object> json2 = rgb.getJson();
-						json2.put("r", color.getColorType().getColor().getRed());
-						json2.put("g", color.getColorType().getColor().getGreen());
-						json2.put("b", color.getColorType().getColor().getBlue());
-						rgb.setJson(json2);
-						service.save(rgb);
-						Tasks.wait(5, () -> ParticleMenu.openColor(player));
+						owner.getSettings(type).put(setting, colorItem.getColorType().getColor());
+						service.save(owner);
+						Tasks.wait(5, () -> ParticleMenu.openColor(player, type, setting));
 					}));
 		}
 
@@ -110,23 +99,37 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 		int[] amount = new int[]{1, 10, 64};
 		for (int i = 0; i < RGB.values().length; i++) {
 			for (int j = 0; j < 3; j++) {
-				AtomicInteger color = new AtomicInteger(i);
+				AtomicInteger dye = new AtomicInteger(i);
 				AtomicInteger index = new AtomicInteger(j);
 				contents.set(i + 1, slots[j], ClickableItem.from(nameItem(
 						new ItemStack(Material.INK_SACK, 1, (byte) RGB.values()[i].getData()),
 						"+/- " + amount[j]),
 						e -> {
-							Map<String, Object> json2 = rgb.getJson();
-							String name = RGB.values()[color.get()].name().toLowerCase();
-							if (((InventoryClickEvent) e.getEvent()).isLeftClick()) {
-								json2.put(name,
-										Math.min((Double.valueOf((double) json2.get(name)).intValue() + amount[index.get()]), 255));
-							} else
-								json2.put(name,
-										Math.max((Double.valueOf((double) json2.get(name)).intValue() - amount[index.get()]), 0));
-							rgb.setJson(json2);
-							service.save(rgb);
-							Tasks.wait(5, () -> ParticleMenu.openColor(player));
+							Color newColor = null;
+							switch (RGB.values()[dye.get()]) {
+								case R:
+									if (((InventoryClickEvent) e.getEvent()).isLeftClick())
+										newColor = color.setRed(Math.min(color.getRed() + amount[index.get()], 255));
+									else
+										newColor = color.setRed(Math.max(color.getRed() - amount[index.get()], 0));
+									break;
+								case G:
+									if (((InventoryClickEvent) e.getEvent()).isLeftClick())
+										newColor = color.setGreen(Math.min(color.getGreen() + amount[index.get()], 255));
+									else
+										newColor = color.setGreen(Math.max(color.getGreen() - amount[index.get()], 0));
+									break;
+								case B:
+									if (((InventoryClickEvent) e.getEvent()).isLeftClick())
+										newColor = color.setBlue(Math.min(color.getBlue() + amount[index.get()], 255));
+									else
+										newColor = color.setBlue(Math.max(color.getBlue() - amount[index.get()], 0));
+									break;
+								default:
+							}
+							owner.getSettings(type).put(setting, newColor);
+							service.save(owner);
+							Tasks.wait(5, () -> ParticleMenu.openColor(player, type, setting));
 						}));
 			}
 		}
