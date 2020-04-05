@@ -103,4 +103,10 @@ public class VectorUtils {
 	public static final double angleToXAxis(Vector vector) {
 		return Math.atan2(vector.getX(), vector.getY());
 	}
+
+	public static Vector getBackVector(Location location) {
+		float newZ = (float) (location.getZ() + 1.0D * Math.sin(Math.toRadians((double) (location.getYaw() + 90.0F))));
+		float newX = (float) (location.getX() + 1.0D * Math.cos(Math.toRadians((double) (location.getYaw() + 90.0F))));
+		return new Vector((double) newX - location.getX(), 0.0D, (double) newZ - location.getZ());
+	}
 }
