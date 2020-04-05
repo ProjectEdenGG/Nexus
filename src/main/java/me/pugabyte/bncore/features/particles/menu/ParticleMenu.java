@@ -40,4 +40,13 @@ public class ParticleMenu {
 		INV.open(player);
 	}
 
+	public static void openWingsStyle(Player player) {
+		SmartInventory INV = SmartInventory.builder()
+				.title("Wings Style")
+				.size(5, 9)
+				.provider(new WingsTypeProvider())
+				.build();
+		INV.open(player);
+	}
+
 }
