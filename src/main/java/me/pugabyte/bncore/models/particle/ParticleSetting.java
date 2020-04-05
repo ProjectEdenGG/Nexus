@@ -22,19 +22,19 @@ import java.util.Map;
 
 @Getter
 public enum ParticleSetting {
-	COLOR(2, 2, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS)) {
+	COLOR(2, 2, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS, ParticleType.NYAN_CAT, ParticleType.BANDS, ParticleType.WINGS)) {
 		@Override
 		Object getDefault(ParticleType particleType) {
 			return Color.RED;
 		}
 	},
-	RAINBOW(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS)) {
+	RAINBOW(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS, ParticleType.NYAN_CAT, ParticleType.BANDS, ParticleType.WINGS)) {
 		@Override
 		Object getDefault(ParticleType particleType) {
 			return true;
 		}
 	},
-	RADIUS(2, 4, Material.HOPPER, Double.class, ParticleType.valuesExcept(ParticleType.BANDS, ParticleType.NYAN_CAT, ParticleType.CIRCLES, ParticleType.DOUBLE_CHAOS, ParticleType.SPIRAL)) {
+	RADIUS(2, 4, Material.HOPPER, Double.class, ParticleType.valuesExcept(ParticleType.BANDS, ParticleType.NYAN_CAT, ParticleType.CIRCLES, ParticleType.DOUBLE_CHAOS, ParticleType.SPIRAL, ParticleType.WINGS)) {
 		@Override
 		Object getDefault(ParticleType particleType) {
 			switch (particleType) {
@@ -249,6 +249,11 @@ public enum ParticleSetting {
 		}
 	},
 	WINGS_STYLE(2, 7, Material.ELYTRA, WingsEffect.WingStyle.class, ParticleType.WINGS) {
+		@Override
+		public void onClick(Player player, ParticleType type) {
+			ParticleMenu.openWingsStyle(player);
+		}
+
 		@Override
 		Object getDefault(ParticleType particleType) {
 			return WingsEffect.WingStyle.ONE;

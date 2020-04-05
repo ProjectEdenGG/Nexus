@@ -76,7 +76,7 @@ public class BandsEffect {
 			loc = loc.subtract(backward);
 			for (int i = 0; i < 15; ++i) {
 				loc = loc.add(0, 0.1, 0);
-				loc.getWorld().spawnParticle(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+				ParticleUtils.display(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 				if (rainbow) {
 					hue.set(ParticleUtils.incHue(hue.get()));
 					double[] rgb = ParticleUtils.incRainbow(hue.get());

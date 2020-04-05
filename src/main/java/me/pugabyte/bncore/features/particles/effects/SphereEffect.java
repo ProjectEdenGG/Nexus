@@ -106,7 +106,7 @@ public class SphereEffect {
 				double y = finalRadius * Math.cos(t.get());
 				double z = finalRadius * Math.sin(theta) * Math.sin(t.get());
 				newLoc.add(x, y, z);
-				newLoc.getWorld().spawnParticle(finalParticle, newLoc.clone(), finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+				ParticleUtils.display(finalParticle, newLoc.clone(), finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 				newLoc.subtract(x, y, z);
 			}
 

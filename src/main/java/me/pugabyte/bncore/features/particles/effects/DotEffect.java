@@ -81,7 +81,7 @@ public class DotEffect {
 				blue.set(rgb[2]);
 			}
 
-			finalLocation.getWorld().spawnParticle(finalParticle, finalLocation, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+			ParticleUtils.display(finalParticle, finalLocation, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
 		});

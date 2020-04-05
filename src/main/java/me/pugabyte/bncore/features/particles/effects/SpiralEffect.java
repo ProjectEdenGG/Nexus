@@ -107,7 +107,7 @@ public class SpiralEffect {
 					double z = finalRadius * (2 * Math.PI - t) * sin(t + phi.get() + i * Math.PI);
 
 					newLoc.add(x, y, z);
-					newLoc.getWorld().spawnParticle(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+					ParticleUtils.display(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 					newLoc.subtract(x, y, z);
 				}
 			}

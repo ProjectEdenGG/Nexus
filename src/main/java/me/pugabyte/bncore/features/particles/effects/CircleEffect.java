@@ -112,7 +112,7 @@ public class CircleEffect {
 					v.setZ(Math.sin(angle) * radius);
 					if (randomRotation)
 						VectorUtils.rotateVector(v, angularVelocityX * step.get(), angularVelocityY * step.get(), angularVelocityZ * step.get());
-					loc.getWorld().spawnParticle(finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+					ParticleUtils.display(finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 					step.getAndIncrement();
 				}
 			}

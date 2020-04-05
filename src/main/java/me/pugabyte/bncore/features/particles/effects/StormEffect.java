@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.particles.effects;
 
 import lombok.Builder;
 import lombok.Getter;
+import me.pugabyte.bncore.features.particles.ParticleUtils;
 import me.pugabyte.bncore.features.particles.RandomUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
@@ -67,7 +68,7 @@ public class StormEffect {
 			for (int i = 0; i < finalDensity; i++) {
 				Vector v = RandomUtils.getRandomCircleVector().multiply(RandomUtils.random.nextDouble() * finalCloudRadius);
 				newLoc.add(v);
-				newLoc.getWorld().spawnParticle(cloudParticle, newLoc.clone(), 0, cloudRed, cloudGreen, cloudBlue, 1);
+				ParticleUtils.display(cloudParticle, newLoc.clone(), 0, cloudRed, cloudGreen, cloudBlue, 1);
 				newLoc.subtract(v);
 			}
 
@@ -75,7 +76,7 @@ public class StormEffect {
 			for (int i = 0; i < finalDensity; i++) {
 				Vector v = RandomUtils.getRandomCircleVector().multiply(RandomUtils.random.nextDouble() * (finalCloudRadius - 0.25));
 				l1.add(v);
-				l1.getWorld().spawnParticle(cloudParticle, l1.clone(), 0, cloudRed, cloudGreen, cloudBlue, 1);
+				ParticleUtils.display(cloudParticle, l1.clone(), 0, cloudRed, cloudGreen, cloudBlue, 1);
 				l1.subtract(v);
 			}
 
@@ -83,7 +84,7 @@ public class StormEffect {
 			for (int i = 0; i < 15; i++) {
 				Vector v = RandomUtils.getRandomCircleVector().multiply(RandomUtils.random.nextDouble() * rainRadius);
 				l2.add(v);
-				l2.getWorld().spawnParticle(finalRainParticle.getParticle(), l2.clone(), 0, 0, 0, 0, 0.1);
+				ParticleUtils.display(finalRainParticle.getParticle(), l2.clone(), 0, 0, 0, 0, 0.1);
 				l2.subtract(v);
 			}
 
