@@ -109,7 +109,7 @@ public class LineEffect {
 
 			for (double covered = 0; covered < finalDiff; startV.get().add(vector)) {
 				Location loc = startV.get().toLocation(world);
-				world.spawnParticle(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+				ParticleUtils.display(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 				covered += density;
 				if (finalMaxLength != 0 && covered >= finalMaxLength)
 					break;
