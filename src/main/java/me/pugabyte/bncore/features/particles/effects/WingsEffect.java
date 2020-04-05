@@ -169,8 +169,8 @@ public class WingsEffect {
 						vR = (VectorUtils.rotateAroundAxisY(vR, -rightWing));
 						vL = (VectorUtils.rotateAroundAxisY(vL, -leftWing));
 						v2.setY(0).multiply(-0.2D);
-						newLoc.getWorld().spawnParticle(wingParticle, newLoc.clone().add(vL).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1);
-						newLoc.getWorld().spawnParticle(wingParticle, newLoc.clone().add(vR).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1);
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1);
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1);
 					}
 
 					x += space;
@@ -194,8 +194,8 @@ public class WingsEffect {
 						vR = (VectorUtils.rotateAroundAxisY(vR, -rightWing));
 						vL = (VectorUtils.rotateAroundAxisY(vL, -leftWing));
 						v2.setY(0).multiply(-0.2D);
-						newLoc.getWorld().spawnParticle(wingParticle, newLoc.clone().add(vL).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1);
-						newLoc.getWorld().spawnParticle(wingParticle, newLoc.clone().add(vR).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1);
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1);
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1);
 					}
 
 					x += space;
@@ -219,8 +219,8 @@ public class WingsEffect {
 						vR = (VectorUtils.rotateAroundAxisY(vR, -rightWing));
 						vL = (VectorUtils.rotateAroundAxisY(vL, -leftWing));
 						v2.setY(0).multiply(-0.2D);
-						newLoc.getWorld().spawnParticle(wingParticle, newLoc.clone().add(vL).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1);
-						newLoc.getWorld().spawnParticle(wingParticle, newLoc.clone().add(vR).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1);
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1);
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1);
 					}
 					x += space;
 				}

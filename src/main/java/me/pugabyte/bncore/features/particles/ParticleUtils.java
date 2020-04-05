@@ -1,5 +1,8 @@
 package me.pugabyte.bncore.features.particles;
 
+import org.bukkit.Location;
+import org.bukkit.Particle;
+
 import java.awt.*;
 
 public class ParticleUtils {
@@ -22,6 +25,10 @@ public class ParticleUtils {
 		rgb[1] = g;
 		rgb[2] = b;
 		return rgb;
+	}
+
+	public static void display(Particle particle, Location location, int count, double x, double y, double z, double speed) {
+		location.getWorld().spawnParticle(particle, location, count, x, y, z, speed);
 	}
 
 //	Only works with async

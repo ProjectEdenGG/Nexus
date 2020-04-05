@@ -156,16 +156,16 @@ public class PolygonEffect {
 						double finalX = x - link.getX() * d;
 						double finalZ = z - link.getZ() * d;
 						newLoc.add(finalX, 0, finalZ);
-						newLoc.getWorld().spawnParticle(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+						ParticleUtils.display(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 						newLoc.subtract(finalX, 0, finalZ);
 					}
 				} else {
 					newLoc.add(x, 0, z);
-					newLoc.getWorld().spawnParticle(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+					ParticleUtils.display(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 					newLoc.subtract(x, 0, z);
 
 					newLoc.add(x2, 0, z2);
-					newLoc.getWorld().spawnParticle(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+					ParticleUtils.display(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
 					newLoc.subtract(x2, 0, z2);
 				}
 			}
