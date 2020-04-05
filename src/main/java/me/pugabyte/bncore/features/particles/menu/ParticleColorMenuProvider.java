@@ -76,11 +76,10 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 		ParticleOwner owner = service.get(player);
 		Color color = setting.get(owner, type);
 
-		ItemStack chestplate = nameItem(new ItemStack(Material.LEATHER_CHESTPLATE), "&fCurrent Color");
+		ItemStack chestplate = nameItem(new ItemStack(Material.LEATHER_CHESTPLATE), "&fCurrent Color", setting.getLore(player, type));
 		LeatherArmorMeta meta = (LeatherArmorMeta) chestplate.getItemMeta();
 		meta.setColor(color);
 		chestplate.setItemMeta(meta);
-		ItemBuilder.addLore(chestplate, setting.getLore(player, type));
 
 		contents.set(2, 4, ClickableItem.empty(chestplate));
 
@@ -102,7 +101,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 				AtomicInteger dye = new AtomicInteger(i);
 				AtomicInteger index = new AtomicInteger(j);
 				contents.set(i + 1, slots[j], ClickableItem.from(nameItem(
-						new ItemStack(Material.INK_SACK, 1, (byte) RGB.values()[i].getData()),
+						new ItemStack(Material.INK_SACK, amount[index.get()], (byte) RGB.values()[i].getData()),
 						"+/- " + amount[j]),
 						e -> {
 							Color newColor = null;

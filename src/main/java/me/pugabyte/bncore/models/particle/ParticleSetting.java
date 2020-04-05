@@ -239,10 +239,10 @@ public enum ParticleSetting {
 
 		@Override
 		Object validate(ParticleType particleType, Object object) {
-			Integer value = (Integer) object;
-			if (value < 1)
+			Double value = (Double) object;
+			if (value < 1.0)
 				return 1;
-			if (value > 5)
+			if (value > 5.0)
 				return 5;
 			return value;
 		}
@@ -284,7 +284,12 @@ public enum ParticleSetting {
 			Color color = get(new ParticleService().get(player), type);
 			return "||&cR: " + color.getRed() + "||&aG: " + color.getGreen() + "||&bB: " + color.getBlue();
 		}
-		return "||&eCurrent value: &3" + getter(player, type);
+		Object min = 0.0;
+		Object max = 10.0;
+		return "||&eCurrent value: &3" + getter(player, type) +
+				((validate(type, min).equals(min)) ? "" : "|| ||&eMin Value:&3 " + validate(type, min)) +
+				((validate(type, max).equals(max)) ? "" : "||&eMax Value:&3 " + validate(type, max));
+
 	}
 
 	public void onClick(Player player, ParticleType type) {

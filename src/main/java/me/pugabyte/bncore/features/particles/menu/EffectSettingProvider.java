@@ -8,8 +8,11 @@ import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
 import me.pugabyte.bncore.models.particle.ParticleSetting;
 import me.pugabyte.bncore.models.particle.ParticleType;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class EffectSettingProvider extends MenuUtils implements InventoryProvider {
 
@@ -37,9 +40,16 @@ public class EffectSettingProvider extends MenuUtils implements InventoryProvide
 		}));
 
 		for (ParticleSetting setting : ParticleSetting.values()) {
-			if (setting.getApplicableEffects().contains(type))
-				contents.set(setting.getRow(), setting.getColumn(), ClickableItem.from(nameItem(setting.getItemStack(), "&3" + setting.getTitle(), setting.getLore(player, type)),
+			if (setting.getApplicableEffects().contains(type)) {
+				ItemStack item = nameItem(setting.getItemStack(), "&3" + setting.getTitle(), setting.getLore(player, type));
+				if (setting.getValue() == Color.class) {
+					LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+					meta.setColor(setting.get(new ParticleService().get(player), type));
+					item.setItemMeta(meta);
+				}
+				contents.set(setting.getRow(), setting.getColumn(), ClickableItem.from(item,
 						e -> setting.onClick(player, type)));
+			}
 		}
 	}
 
