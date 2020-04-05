@@ -91,7 +91,7 @@ public class ChatManager {
 				.next(event.getChannel().getColor() + "[" + event.getChannel().getNickname().toUpperCase() + "] ")
 				.next(new Nerd(event.getChatter().getOfflinePlayer()).getChatFormat().trim())
 				.next(" " + event.getChannel().getColor() + ChatColor.BOLD + "> ")
-				.next(event.getChannel().getMessageColor() + event.getMessage());
+				.urlize(event.getChannel().getMessageColor() + event.getMessage());
 
 		event.getRecipients().forEach(recipient -> recipient.send(json));
 
