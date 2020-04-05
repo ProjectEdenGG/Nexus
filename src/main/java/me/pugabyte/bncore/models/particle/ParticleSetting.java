@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.StormEffect;
+import me.pugabyte.bncore.features.particles.effects.WingsEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.ColorType;
@@ -245,6 +246,70 @@ public enum ParticleSetting {
 			if (value > 5.0)
 				return 5;
 			return value;
+		}
+	},
+	WINGS_STYLE(2, 7, Material.ELYTRA, WingsEffect.WingStyle.class, ParticleType.WINGS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return WingsEffect.WingStyle.ONE;
+		}
+	},
+	WINGS_FLAP_MODE(2, 4, Material.FEATHER, Boolean.class, ParticleType.WINGS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return true;
+		}
+	},
+	WINGS_FLAP_SPEED(2, 5, Material.SUGAR, Integer.class, ParticleType.WINGS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return 1;
+		}
+
+		@Override
+		Object validate(ParticleType particleType, Object object) {
+			Double value = (Double) object;
+			if (value < 1.0)
+				return 1;
+			if (value > 4.0)
+				return 4;
+			return value;
+		}
+	},
+	WINGS_COLOR_ONE(1, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.WINGS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return Color.RED;
+		}
+	},
+	WINGS_COLOR_TWO(2, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.WINGS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return Color.GREEN;
+		}
+	},
+	WINGS_COLOR_THREE(3, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.WINGS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return Color.BLUE;
+		}
+	},
+	WINGS_RAINBOW_ONE(1, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.WINGS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return true;
+		}
+	},
+	WINGS_RAINBOW_TWO(2, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.WINGS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return true;
+		}
+	},
+	WINGS_RAINBOW_THREE(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.WINGS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return true;
 		}
 	};
 

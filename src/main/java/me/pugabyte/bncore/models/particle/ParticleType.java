@@ -1,7 +1,16 @@
 package me.pugabyte.bncore.models.particle;
 
 import lombok.Getter;
-import me.pugabyte.bncore.features.particles.effects.*;
+import me.pugabyte.bncore.features.particles.effects.BandsEffect;
+import me.pugabyte.bncore.features.particles.effects.CircleEffect;
+import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
+import me.pugabyte.bncore.features.particles.effects.NyanCatEffect;
+import me.pugabyte.bncore.features.particles.effects.PolygonEffect;
+import me.pugabyte.bncore.features.particles.effects.SphereEffect;
+import me.pugabyte.bncore.features.particles.effects.SpiralEffect;
+import me.pugabyte.bncore.features.particles.effects.StarEffect;
+import me.pugabyte.bncore.features.particles.effects.StormEffect;
+import me.pugabyte.bncore.features.particles.effects.WingsEffect;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -461,7 +470,37 @@ public enum ParticleType {
 					.location(loc)
 					.start()
 					.getTaskId();
-			return new int[]{taskId};
+			return new int[] {taskId};
+		}
+	},
+	WINGS(Material.ELYTRA) {
+		@Override
+		int[] start(ParticleOwner particleOwner) {
+			Boolean flapMode = ParticleSetting.WINGS_FLAP_MODE.get(particleOwner, this);
+			Integer flapSpeed = ParticleSetting.WINGS_FLAP_SPEED.get(particleOwner, this);
+			WingsEffect.WingStyle style = ParticleSetting.WINGS_STYLE.get(particleOwner, this);
+			Color color1 = ParticleSetting.WINGS_COLOR_ONE.get(particleOwner, this);
+			Color color2 = ParticleSetting.WINGS_COLOR_TWO.get(particleOwner, this);
+			Color color3 = ParticleSetting.WINGS_COLOR_THREE.get(particleOwner, this);
+			Boolean rainbow1 = ParticleSetting.WINGS_RAINBOW_ONE.get(particleOwner, this);
+			Boolean rainbow2 = ParticleSetting.WINGS_RAINBOW_TWO.get(particleOwner, this);
+			Boolean rainbow3 = ParticleSetting.WINGS_RAINBOW_THREE.get(particleOwner, this);
+
+			int taskId = WingsEffect.builder()
+					.player(particleOwner.getPlayer())
+					.flapMode(flapMode)
+					.flapSpeed(flapSpeed)
+					.color1(color1)
+					.rainbow1(rainbow1)
+					.color2(color2)
+					.rainbow2(rainbow2)
+					.color3(color3)
+					.rainbow3(rainbow3)
+					.ticks(-1)
+					.wingStyle(style)
+					.start()
+					.getTaskId();
+			return new int[] {taskId};
 		}
 	};
 
