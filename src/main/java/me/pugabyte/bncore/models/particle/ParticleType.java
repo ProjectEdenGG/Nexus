@@ -1,15 +1,7 @@
 package me.pugabyte.bncore.models.particle;
 
 import lombok.Getter;
-import me.pugabyte.bncore.features.particles.effects.BandsEffect;
-import me.pugabyte.bncore.features.particles.effects.CircleEffect;
-import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
-import me.pugabyte.bncore.features.particles.effects.NyanCatEffect;
-import me.pugabyte.bncore.features.particles.effects.PolygonEffect;
-import me.pugabyte.bncore.features.particles.effects.SphereEffect;
-import me.pugabyte.bncore.features.particles.effects.SpiralEffect;
-import me.pugabyte.bncore.features.particles.effects.StarEffect;
-import me.pugabyte.bncore.features.particles.effects.StormEffect;
+import me.pugabyte.bncore.features.particles.effects.*;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -33,11 +25,6 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 			Boolean whole = ParticleSetting.WHOLE.get(particleOwner, this);
 
-			if (radius == null) radius = 2.0;
-			if (rainbow == null) rainbow = true;
-			if (whole == null) whole = true;
-			if (color == null) color = Color.RED;
-
 			int taskId = CircleEffect.builder()
 					.player(particleOwner.getPlayer())
 					.updateLoc(true)
@@ -60,11 +47,6 @@ public enum ParticleType {
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
-			if (radius == null) radius = 2.0;
-			if (rotateSpeed == null) rotateSpeed = 0.2;
-			if (rainbow == null) rainbow = true;
-			if (color == null) color = Color.RED;
-
 			int taskId = StarEffect.builder()
 					.player(particleOwner.getPlayer())
 					.radius(radius)
@@ -78,7 +60,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	TRIANGLE(Material.PAPER, true) {
+	TRIANGLE(Material.REDSTONE, true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
@@ -86,12 +68,6 @@ public enum ParticleType {
 			Double rotateSpeed = ParticleSetting.ROTATE_SPEED.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
-
-			if (radius == null) radius = 1.5;
-			if (whole == null) whole = true;
-			if (rotateSpeed == null) rotateSpeed = 0.1;
-			if (color == null) color = Color.RED;
-			if (rainbow == null) rainbow = true;
 
 			int taskId = PolygonEffect.builder()
 					.player(particleOwner.getPlayer())
@@ -117,12 +93,6 @@ public enum ParticleType {
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
-			if (radius == null) radius = 1.5;
-			if (whole == null) whole = true;
-			if (rotateSpeed == null) rotateSpeed = 0.1;
-			if (color == null) color = Color.RED;
-			if (rainbow == null) rainbow = true;
-
 			int taskId = PolygonEffect.builder()
 					.player(particleOwner.getPlayer())
 					.updateLoc(true)
@@ -147,12 +117,6 @@ public enum ParticleType {
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
-			if (radius == null) radius = 1.5;
-			if (whole == null) whole = true;
-			if (rotateSpeed == null) rotateSpeed = 0.1;
-			if (color == null) color = Color.RED;
-			if (rainbow == null) rainbow = true;
-
 			int taskId = PolygonEffect.builder()
 					.player(particleOwner.getPlayer())
 					.updateLoc(true)
@@ -176,12 +140,6 @@ public enum ParticleType {
 			Double rotateSpeed = ParticleSetting.ROTATE_SPEED.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
-
-			if (radius == null) radius = 1.5;
-			if (whole == null) whole = true;
-			if (rotateSpeed == null) rotateSpeed = 0.1;
-			if (color == null) color = Color.RED;
-			if (rainbow == null) rainbow = true;
 
 			int taskId = PolygonEffect.builder()
 					.player(particleOwner.getPlayer())
@@ -228,10 +186,6 @@ public enum ParticleType {
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
-			if (radius == null) radius = 0.5;
-			if (rainbow == null) rainbow = true;
-			if (color == null) color = Color.RED;
-
 			Vector vector = new Vector(0, 2.1, 0);
 			Location loc = particleOwner.getPlayer().getLocation().add(vector);
 			int taskId = CircleEffect.builder()
@@ -253,9 +207,6 @@ public enum ParticleType {
 		int[] start(ParticleOwner particleOwner) {
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
-
-			if (rainbow == null) rainbow = true;
-			if (color == null) color = Color.RED;
 
 			int taskId1 = CircleEffect.builder()
 					.player(particleOwner.getPlayer())
@@ -314,10 +265,6 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 
-			if (radius == null) radius = 1.5;
-			if (color == null) color = Color.RED;
-			if (rainbow == null) rainbow = true;
-
 			int taskId = SphereEffect.builder()
 					.player(particleOwner.getPlayer())
 					.radius(radius)
@@ -338,12 +285,6 @@ public enum ParticleType {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
-
-			if (growthSpeed == null) growthSpeed = 0.1;
-			if (rotateSpeed == null) rotateSpeed = 0.2;
-			if (rainbow == null) rainbow = true;
-			if (color == null) color = Color.RED;
-			if (radius == null) radius = 2.0;
 
 			int taskId = StarEffect.builder()
 					.player(particleOwner.getPlayer())
@@ -366,10 +307,6 @@ public enum ParticleType {
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
-			if (radius == null) radius = .15;
-			if (rainbow == null) rainbow = true;
-			if (color == null) color = Color.RED;
-
 			int taskId = SpiralEffect.builder()
 					.player(particleOwner.getPlayer())
 					.radius(radius)
@@ -389,10 +326,6 @@ public enum ParticleType {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
-
-			if (radius == null) radius = 1.5;
-			if (rainbow == null) rainbow = true;
-			if (color == null) color = Color.RED;
 
 			Vector vector = new Vector(0, 1.5, 0);
 			Location loc = particleOwner.getPlayer().getLocation().add(vector);
@@ -417,10 +350,6 @@ public enum ParticleType {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
-
-			if (radius == null) radius = 1.5;
-			if (rainbow == null) rainbow = true;
-			if (color == null) color = Color.RED;
 
 			Vector vector = new Vector(0, 1.5, 0);
 			Location loc = particleOwner.getPlayer().getLocation().add(vector);
@@ -450,13 +379,6 @@ public enum ParticleType {
 			Double radius2 = ParticleSetting.DOUBLE_CHAOS_RADIUS_TWO.get(particleOwner, this);
 			Boolean rainbow2 = ParticleSetting.DOUBLE_CHAOS_RAINBOW_TWO.get(particleOwner, this);
 			Color color2 = ParticleSetting.DOUBLE_CHAOS_COLOR_TWO.get(particleOwner, this);
-
-			if (radius1 == null) radius1 = 1.5;
-			if (radius2 == null) radius2 = 1.5;
-			if (rainbow1 == null) rainbow1 = false;
-			if (rainbow2 == null) rainbow2 = false;
-			if (color1 == null) color1 = Color.TEAL;
-			if (color2 == null) color2 = Color.YELLOW;
 
 			Vector vector = new Vector(0, 1.5, 0);
 			Location loc = particleOwner.getPlayer().getLocation().add(vector);
@@ -496,9 +418,6 @@ public enum ParticleType {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			StormEffect.RainPartile rainPartile = ParticleSetting.STORM_RAIN_PARTICLE.get(particleOwner, this);
 
-			if (radius == null) radius = 1.5;
-			if (rainPartile == null) rainPartile = StormEffect.RainPartile.RAIN;
-
 			int taskId = StormEffect.builder()
 					.player(particleOwner.getPlayer())
 					.ticks(-1)
@@ -524,14 +443,8 @@ public enum ParticleType {
 			Color lineColor = ParticleSetting.DISCO_LINE_COLOR.get(particleOwner, this);
 			Boolean lineRainbow = ParticleSetting.DISCO_LINE_RAINBOW.get(particleOwner, this);
 
-			if (direction == null) direction = DiscoEffect.Direction.BOTH;
-			if (rainbowOption == null) rainbowOption = DiscoEffect.RainbowOption.SLOW;
-			if (radius == null) radius = 0.5;
-			if (lineLength == null) lineLength = 5;
-			if (sphereColor == null) sphereColor = Color.WHITE;
-			if (sphereRainbow == null) sphereRainbow = false;
-			if (lineColor == null) lineColor = Color.RED;
-			if (lineRainbow == null) lineRainbow = true;
+			Vector vector = new Vector(0, 4, 0);
+			Location loc = particleOwner.getPlayer().getLocation().add(vector);
 
 			int taskId = DiscoEffect.builder()
 					.player(particleOwner.getPlayer())
@@ -545,9 +458,9 @@ public enum ParticleType {
 					.lineColor(lineColor)
 					.lineRainbow(lineRainbow)
 					.rainbowOption(rainbowOption)
+					.location(loc)
 					.start()
 					.getTaskId();
-
 			return new int[]{taskId};
 		}
 	};

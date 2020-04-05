@@ -4,26 +4,60 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.StormEffect;
+import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Getter
 public enum ParticleSetting {
-	COLOR(Material.LEATHER_CHESTPLATE, Color.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS)),
-	RAINBOW(Material.MAGMA_CREAM, Boolean.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS)),
-	RADIUS(Material.HOPPER, Double.class, ParticleType.valuesExcept(ParticleType.BANDS, ParticleType.NYAN_CAT, ParticleType.CIRCLES, ParticleType.DOUBLE_CHAOS)) {
+	COLOR(2, 2, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS)) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return Color.RED;
+		}
+	},
+	RAINBOW(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS)) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return true;
+		}
+	},
+	RADIUS(2, 4, Material.HOPPER, Double.class, ParticleType.valuesExcept(ParticleType.BANDS, ParticleType.NYAN_CAT, ParticleType.CIRCLES, ParticleType.DOUBLE_CHAOS, ParticleType.SPIRAL)) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			switch (particleType) {
+				case CIRCLE:
+				case STAR:
+				case GROWING_STARS:
+					return 2.0;
+				case TRIANGLE:
+				case SQUARE:
+				case PENTAGON:
+				case HEXAGON:
+				case SPHERE:
+				case SPRITE:
+				case CHAOS:
+				case STORM:
+					return 1.5;
+				case HALO:
+				case DISCO:
+					return 0.5;
+				default:
+					throw new InvalidInputException("Particle type does not support this particle setting");
+			}
+		}
+
 		@Override
 		Object validate(ParticleType particleType, Object object) {
 			Double value = (Double) object;
@@ -43,20 +77,47 @@ public enum ParticleSetting {
 		}
 	},
 
-	SPIRAL_RADIUS(Material.HOPPER, Double.class, ParticleType.SPIRAL) {
+	SPIRAL_RADIUS(2, 4, Material.HOPPER, Double.class, ParticleType.SPIRAL) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return .15;
+		}
+
 		@Override
 		Object validate(ParticleType particleType, Object object) {
 			Double value = (Double) object;
 			if (value < 0.15)
 				return 0.15;
-			if (value > 0.35)
+			if (value > 0.35) {
 				return 0.35;
+			}
 			return value;
 		}
 	},
 
-	WHOLE(Material.SNOW_BALL, Boolean.class, ParticleType.CIRCLE, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON),
-	ROTATE_SPEED(Material.SUGAR, Double.class, ParticleType.STAR, ParticleType.GROWING_STARS, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON) {
+	WHOLE(2, 5, Material.SNOW_BALL, Boolean.class, ParticleType.CIRCLE, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return true;
+		}
+	},
+	ROTATE_SPEED(2, 6, Material.SUGAR, Double.class, ParticleType.STAR, ParticleType.GROWING_STARS, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			switch (particleType) {
+				case STAR:
+				case GROWING_STARS:
+					return 0.2;
+				case TRIANGLE:
+				case SQUARE:
+				case PENTAGON:
+				case HEXAGON:
+					return 1.5;
+				default:
+					throw new InvalidInputException("Particle type does not support this particle setting");
+			}
+		}
+
 		@Override
 		Object validate(ParticleType particleType, Object object) {
 			Double value = (Double) object;
@@ -68,39 +129,114 @@ public enum ParticleSetting {
 		}
 	},
 
-	STAR_GROWTH_SPEED(new ItemBuilder(Material.INK_SACK).dyeColor(ColorType.WHITE).build(), Double.class, ParticleType.STAR, ParticleType.GROWING_STARS) {
+	STAR_GROWTH_SPEED(2, 5, new ItemBuilder(Material.INK_SACK).dyeColor(ColorType.WHITE).build(), Double.class, ParticleType.STAR, ParticleType.GROWING_STARS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return .1;
+		}
+
 		@Override
 		Object validate(ParticleType particleType, Object object) {
 			return ParticleSetting.ROTATE_SPEED.validate(particleType, object);
 		}
 	},
 
-	STORM_RAIN_PARTICLE(Material.PAPER, StormEffect.RainPartile.class, ParticleType.STORM),
+	STORM_RAIN_PARTICLE(2, 5, Material.PAPER, StormEffect.RainPartile.class, ParticleType.STORM) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return StormEffect.RainPartile.RAIN;
+		}
+	},
 
-	DOUBLE_CHAOS_COLOR_ONE(Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DOUBLE_CHAOS),
-	DOUBLE_CHAOS_RAINBOW_ONE(Material.MAGMA_CREAM, Boolean.class, ParticleType.DOUBLE_CHAOS),
-	DOUBLE_CHAOS_RADIUS_ONE(Material.HOPPER, Double.class, ParticleType.DOUBLE_CHAOS) {
+	DOUBLE_CHAOS_COLOR_ONE(2, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DOUBLE_CHAOS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return Color.RED;
+		}
+	},
+	DOUBLE_CHAOS_RAINBOW_ONE(3, 1, Material.MAGMA_CREAM, Boolean.class, ParticleType.DOUBLE_CHAOS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return true;
+		}
+	},
+	DOUBLE_CHAOS_RADIUS_ONE(2, 4, Material.HOPPER, Double.class, ParticleType.DOUBLE_CHAOS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return 1.5;
+		}
+
 		@Override
 		Object validate(ParticleType particleType, Object object) {
 			return ParticleSetting.RADIUS.validate(particleType, object);
 		}
 	},
-	DOUBLE_CHAOS_COLOR_TWO(Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DOUBLE_CHAOS),
-	DOUBLE_CHAOS_RAINBOW_TWO(Material.MAGMA_CREAM, Boolean.class, ParticleType.DOUBLE_CHAOS),
-	DOUBLE_CHAOS_RADIUS_TWO(Material.HOPPER, Double.class, ParticleType.DOUBLE_CHAOS) {
+	DOUBLE_CHAOS_COLOR_TWO(2, 2, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DOUBLE_CHAOS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return Color.RED;
+		}
+	},
+	DOUBLE_CHAOS_RAINBOW_TWO(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.DOUBLE_CHAOS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return true;
+		}
+	},
+	DOUBLE_CHAOS_RADIUS_TWO(2, 5, Material.HOPPER, Double.class, ParticleType.DOUBLE_CHAOS) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return 1.5;
+		}
+
 		@Override
 		Object validate(ParticleType particleType, Object object) {
 			return ParticleSetting.RADIUS.validate(particleType, object);
 		}
 	},
 
-	DISCO_SPHERE_COLOR(Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DISCO),
-	DISCO_SPHERE_RAINBOW(Material.MAGMA_CREAM, Boolean.class, ParticleType.DISCO),
-	DISCO_LINE_COLOR(Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DISCO),
-	DISCO_LINE_RAINBOW(Material.END_ROD, Boolean.class, ParticleType.DISCO),
-	DISCO_DIRECTION(Material.MAGENTA_GLAZED_TERRACOTTA, DiscoEffect.Direction.class, ParticleType.DISCO),
-	DISCO_RAINBOW_OPTION(Material.SPECKLED_MELON, DiscoEffect.RainbowOption.class, ParticleType.DISCO),
-	DISCO_LINE_LENGTH(Material.DIODE, Integer.class, ParticleType.DISCO) {
+	DISCO_SPHERE_COLOR(2, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DISCO) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return Color.WHITE;
+		}
+	},
+	DISCO_SPHERE_RAINBOW(3, 1, Material.MAGMA_CREAM, Boolean.class, ParticleType.DISCO) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return false;
+		}
+	},
+	DISCO_LINE_COLOR(2, 2, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DISCO) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return Color.RED;
+		}
+	},
+	DISCO_LINE_RAINBOW(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.DISCO) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return true;
+		}
+	},
+	DISCO_DIRECTION(2, 5, Material.MAGENTA_GLAZED_TERRACOTTA, DiscoEffect.Direction.class, ParticleType.DISCO) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return DiscoEffect.Direction.BOTH;
+		}
+	},
+	DISCO_RAINBOW_OPTION(2, 6, Material.SPECKLED_MELON, DiscoEffect.RainbowOption.class, ParticleType.DISCO) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return DiscoEffect.RainbowOption.SLOW;
+		}
+	},
+	DISCO_LINE_LENGTH(2, 7, Material.DIODE, Integer.class, ParticleType.DISCO) {
+		@Override
+		Object getDefault(ParticleType particleType) {
+			return 5;
+		}
+
 		@Override
 		Object validate(ParticleType particleType, Object object) {
 			Integer value = (Integer) object;
@@ -115,17 +251,22 @@ public enum ParticleSetting {
 	List<ParticleType> applicableEffects;
 	ItemStack itemStack;
 	Class<?> value;
+	int row, column;
 
-	ParticleSetting(Material material, Class<?> value, ParticleType... applicableEffects) {
+	ParticleSetting(int row, int column, Material material, Class<?> value, ParticleType... applicableEffects) {
 		this.applicableEffects = Arrays.asList(applicableEffects);
 		this.itemStack = new ItemStack(material);
 		this.value = value;
+		this.row = row;
+		this.column = column;
 	}
 
-	ParticleSetting(ItemStack itemStack, Class<?> value, ParticleType... applicableEffects) {
+	ParticleSetting(int row, int column, ItemStack itemStack, Class<?> value, ParticleType... applicableEffects) {
 		this.applicableEffects = Arrays.asList(applicableEffects);
 		this.itemStack = itemStack;
 		this.value = value;
+		this.row = row;
+		this.column = column;
 	}
 
 	Object validate(ParticleType particleType, Object object) {
@@ -137,27 +278,39 @@ public enum ParticleSetting {
 	}
 
 	public String getLore(Player player, ParticleType type) {
+		if (this.value == Boolean.class)
+			return (Boolean.parseBoolean(getter(player, type))) ? "&aEnabled" : "&cDisabled";
+		if (this.value == Color.class) {
+			Color color = get(new ParticleService().get(player), type);
+			return "||&cR: " + color.getRed() + "||&aG: " + color.getGreen() + "||&bB: " + color.getBlue();
+		}
 		return "||&eCurrent value: &3" + getter(player, type);
 	}
 
 	public void onClick(Player player, ParticleType type) {
-		BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter new value for", getTitle())
-				.response((player1, response) ->
-						setter(player, type, response[0]))
-				.open(player);
-	}
-
-	private PropertyDescriptor getPropertyDescriptor() throws IntrospectionException {
-		return new PropertyDescriptor(Character.toLowerCase(name().charAt(0)) + StringUtils.camelCase(name()).substring(1).replaceAll(" ", ""), ParticleType.class);
+		if (value == Double.class || value == Integer.class)
+			BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter new value for", getTitle())
+					.response((player1, response) -> {
+						setter(player, type, response[0]);
+						ParticleMenu.openSettingEditor(player, type);
+					})
+					.open(player);
+		else if (value == Boolean.class) {
+			Boolean bool = !Boolean.parseBoolean(getter(player, type));
+			setter(player, type, bool.toString());
+			ParticleMenu.openSettingEditor(player, type);
+		} else if (value == Color.class) {
+			ParticleMenu.openColor(player, type, this);
+		} else if (Enum.class.isAssignableFrom(value)) {
+			Enum<?> val = get(new ParticleService().get(player), type);
+			Enum<?> next = Utils.EnumUtils.nextWithLoop(val.getClass(), val.ordinal());
+			setter(player, type, next.name());
+			ParticleMenu.openSettingEditor(player, type);
+		}
 	}
 
 	String getter(Player player, ParticleType type) {
-		ParticleService service = new ParticleService();
-		ParticleOwner owner = service.get(player);
-		Object value = owner.getSettings(type).get(this);
-		if (value != null)
-			return "" + value;
-		return "";
+		return get(new ParticleService().get(player), type).toString();
 	}
 
 	void setter(Player player, ParticleType type, String text) {
@@ -172,16 +325,23 @@ public enum ParticleSetting {
 			else if (Enum.class.isAssignableFrom(this.value))
 				value = Enum.valueOf((Class<Enum>) this.value, text);
 
+			ParticleService service = new ParticleService();
+			ParticleOwner owner = service.get(player);
+			Map<ParticleSetting, Object> settings = owner.getSettings(type);
+			settings.put(this, this.validate(type, value));
+			service.save(owner);
 		} catch (Exception ignore) {
 		}
-
-		ParticleService service = new ParticleService();
-		ParticleOwner owner = service.get(player);
-		Map<ParticleType, Map<ParticleSetting, Object>> map = owner.getSettings();
-		Map<ParticleSetting, Object> map2 = map.getOrDefault(type, new HashMap<>());
-		map2.put(this, value);
-		map.put(type, map2);
-		owner.setSettings(map);
-		service.save(owner);
 	}
+
+	public <T> T get(ParticleOwner particleOwner, ParticleType particleType) {
+		Map<ParticleSetting, Object> settings = particleOwner.getSettings(particleType);
+		if (settings != null && settings.containsKey(this)) {
+			return (T) settings.get(this);
+		}
+		return (T) getDefault(particleType);
+	}
+
+	abstract Object getDefault(ParticleType particleType);
+
 }
