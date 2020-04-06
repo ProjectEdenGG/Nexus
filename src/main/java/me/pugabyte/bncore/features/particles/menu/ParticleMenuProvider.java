@@ -32,6 +32,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 				e -> {
 					owner.cancelTasks();
 					owner.getActiveParticles().clear();
+					new ParticleService().save(owner);
 					player.closeInventory();
 				}));
 

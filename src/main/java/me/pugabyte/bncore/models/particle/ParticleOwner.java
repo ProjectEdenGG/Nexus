@@ -73,6 +73,8 @@ public class ParticleOwner extends PlayerOwnedObject {
 	}
 
 	public void cancelTasks() {
+		activeParticles.clear();
+		new ParticleService().save(this);
 		new HashSet<>(tasks).forEach(task -> {
 			Tasks.cancel(task.getTaskId());
 			tasks.remove(task);

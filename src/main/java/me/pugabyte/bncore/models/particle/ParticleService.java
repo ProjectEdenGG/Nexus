@@ -25,11 +25,8 @@ public class ParticleService extends MongoService {
 		return cache.get(uuid);
 	}
 
-//	public void save(EffectOwner effectOwner) {
-//		if (effectOwner.getSettings() == null || effectOwner.getSettings().size() == 0)
-//			super.delete(effectOwner);
-//		else
-//			super.save(effectOwner);
-//	}
+	public void save(ParticleOwner particleOwner) {
+		database.save(particleOwner);
+	}
 
 }
