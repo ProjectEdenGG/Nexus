@@ -4,14 +4,27 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Transient;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ColorConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Color;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
@@ -27,6 +40,8 @@ public class ParticleOwner extends PlayerOwnedObject {
 	private UUID uuid;
 	@Getter(AccessLevel.PRIVATE)
 	private Map<ParticleType, Map<ParticleSetting, Object>> settings = new HashMap<>();
+	@Getter
+	private List<ParticleType> activeParticles = new ArrayList<>();
 
 	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
 		if (!settings.containsKey(particleType))
@@ -76,6 +91,7 @@ public class ParticleOwner extends PlayerOwnedObject {
 	}
 
 	public void addTasks(ParticleType particleType, int... taskIds) {
+		activeParticles.add(particleType);
 		for (int taskId : taskIds)
 			tasks.add(new ParticleTask(particleType, taskId));
 	}

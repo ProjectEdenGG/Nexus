@@ -2,9 +2,10 @@ package me.pugabyte.bncore.features.particles;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
-import me.pugabyte.bncore.features.particles.effects.WingsEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -18,9 +19,12 @@ import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
 import me.pugabyte.bncore.models.particle.ParticleType;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
 
@@ -55,6 +59,36 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 		particleOwner.cancelTasks();
 	}
 
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		stopParticles(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		startParticles(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onMatchJoin(MatchJoinEvent event) {
+		stopParticles(event.getMinigamer().getPlayer());
+	}
+
+	@EventHandler
+	public void onMatchQuit(MatchQuitEvent event) {
+		startParticles(event.getMinigamer().getPlayer());
+	}
+
+	private void startParticles(Player player) {
+		ParticleOwner particleOwner = new ParticleService().get(player);
+		particleOwner.cancelTasks();
+	}
+
+	private void stopParticles(Player player) {
+		ParticleOwner particleOwner = new ParticleService().get(player);
+		particleOwner.cancelTasks();
+	}
+
 	@Path("line [distance] [density]")
 	@Permission("group.admin")
 	void line(@Arg("10") int distance, @Arg("0.1") double density) {
@@ -66,24 +100,6 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	void dot() {
 		Location loc = Utils.getCenteredLocation(player().getLocation()).add(0, 1, 0);
 		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();
-	}
-
-	@Path("Wings [boolean]")
-	@Permission("group.admin")
-	void wings(@Arg("true") boolean flapMode) {
-		WingsEffect.builder()
-				.player(player())
-				.flapMode(flapMode)
-				.flapSpeed(1)
-				.color1(Color.BLACK)
-				.rainbow1(false)
-				.color2(Color.BLACK)
-				.rainbow2(true)
-				.color3(Color.BLACK)
-				.rainbow3(false)
-				.ticks(10 * 20)
-				.wingStyle(WingsEffect.WingStyle.FOURTEEN)
-				.start();
 	}
 
 	@ConverterFor(ParticleType.class)
