@@ -31,6 +31,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 		contents.set(0, 8, ClickableItem.from(nameItem(Material.TNT, "&cStop All Effects"),
 				e -> {
 					owner.cancelTasks();
+					owner.getActiveParticles().clear();
 					player.closeInventory();
 				}));
 
