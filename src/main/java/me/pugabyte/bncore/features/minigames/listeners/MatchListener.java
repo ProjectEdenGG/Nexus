@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
@@ -84,13 +85,22 @@ public class MatchListener implements Listener {
 
 	@EventHandler
 	public void onMatchStart(MatchStartEvent event) {
-		event.getMatch().getPlayers().forEach(player -> {
-			if (player.hasPermission("voxelsniper.sniper"))
-				runCommand(player, "b paint");
-			if (player.hasPermission("worldguard.region.bypass.*"))
-				runCommand(player, "wgedit off");
-			runCommandAsOp(player, "pweather clear");
-		});
+		event.getMatch().getPlayers().forEach(this::disableCheats);
+	}
+
+	@EventHandler
+	public void onMatchJoin(MatchJoinEvent event) {
+		disableCheats(event.getMinigamer().getPlayer());
+	}
+
+	public void disableCheats(Player player) {
+		if (player.hasPermission("voxelsniper.sniper"))
+			runCommand(player, "b paint");
+		if (player.hasPermission("worldguard.region.bypass.*"))
+			runCommand(player, "wgedit off");
+		if (Utils.isVanished(player))
+			runCommand(player, "vanish off");
+		runCommandAsOp(player, "pweather clear");
 	}
 
 	@EventHandler
