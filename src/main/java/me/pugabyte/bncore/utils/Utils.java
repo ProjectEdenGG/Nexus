@@ -628,6 +628,14 @@ public class Utils {
 	}
 
 	public static class EnumUtils {
+		public static <T> T valueOf(Class<? extends T> clazz, String value) {
+			T[] values = clazz.getEnumConstants();
+			for (T enumValue : values)
+				if (((Enum) enumValue).name().equalsIgnoreCase(value))
+					return enumValue;
+			throw new IllegalArgumentException();
+		}
+
 		public static <T> T next(Class<? extends T> clazz, int ordinal) {
 			T[] values = clazz.getEnumConstants();
 			return values[Math.min(values.length - 1, ordinal + 1 % values.length)];

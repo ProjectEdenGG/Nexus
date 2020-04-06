@@ -18,8 +18,12 @@ public class Particles {
 	}
 
 	protected static void startParticles(Player player) {
-		ParticleOwner particleOwner = new ParticleService().get(player);
-		new ArrayList<>(particleOwner.getActiveParticles()).forEach(particleType -> particleType.run(player));
+		try {
+			ParticleOwner particleOwner = new ParticleService().get(player);
+			new ArrayList<>(particleOwner.getActiveParticles()).forEach(particleType -> particleType.run(player));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	protected static void stopParticles(Player player) {
