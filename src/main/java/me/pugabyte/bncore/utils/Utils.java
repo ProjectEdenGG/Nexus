@@ -464,7 +464,7 @@ public class Utils {
 	public static double randomDouble(double min, double max) {
 		if (min == max) return min;
 		if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
-		return (Math.random() * ((max - min) + 1)) + min;
+		return min + (max - min) * new Random().nextDouble();
 	}
 
 
