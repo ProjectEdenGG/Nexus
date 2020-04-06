@@ -20,13 +20,15 @@ import me.pugabyte.bncore.models.particle.ParticleService;
 import me.pugabyte.bncore.models.particle.ParticleType;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
+
+import static me.pugabyte.bncore.features.particles.Particles.startParticles;
+import static me.pugabyte.bncore.features.particles.Particles.stopParticles;
 
 @NoArgsConstructor
 public class JParticlesCommand extends CustomCommand implements Listener {
@@ -60,13 +62,13 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		stopParticles(event.getPlayer());
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		startParticles(event.getPlayer());
 	}
 
 	@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		startParticles(event.getPlayer());
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		stopParticles(event.getPlayer());
 	}
 
 	@EventHandler
@@ -77,16 +79,6 @@ public class JParticlesCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onMatchQuit(MatchQuitEvent event) {
 		startParticles(event.getMinigamer().getPlayer());
-	}
-
-	private void startParticles(Player player) {
-		ParticleOwner particleOwner = new ParticleService().get(player);
-		particleOwner.cancelTasks();
-	}
-
-	private void stopParticles(Player player) {
-		ParticleOwner particleOwner = new ParticleService().get(player);
-		particleOwner.cancelTasks();
 	}
 
 	@Path("line [distance] [density]")
