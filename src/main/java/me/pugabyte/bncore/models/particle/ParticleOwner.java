@@ -47,7 +47,7 @@ public class ParticleOwner extends PlayerOwnedObject {
 			settings.put(particleType, new HashMap<>());
 		Map<ParticleSetting, Object> map = settings.get(particleType);
 
-		if (map != null)
+		if (map != null && !map.isEmpty())
 			// Do some deserialization if necessary
 			new HashMap<>(map).forEach((key, value) -> {
 				if (Map.class.isAssignableFrom(value.getClass()) && ((Map<?, ?>) value).containsKey("r")) {
@@ -78,6 +78,7 @@ public class ParticleOwner extends PlayerOwnedObject {
 
 	public void cancelTasks(ParticleType particleType) {
 		activeParticles.remove(particleType);
+		new ParticleService().save(this);
 		getTasks(particleType).forEach(particleTask -> {
 			Tasks.cancel(particleTask.getTaskId());
 			tasks.remove(particleTask);
