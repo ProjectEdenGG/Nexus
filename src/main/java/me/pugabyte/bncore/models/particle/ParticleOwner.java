@@ -16,6 +16,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ColorConverte
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import org.bukkit.Color;
 
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class ParticleOwner extends PlayerOwnedObject {
 	private Set<ParticleType> activeParticles = new HashSet<>();
 
 	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
-		if (!settings.containsKey(particleType))
+		if (!settings.containsKey(particleType) || settings.get(particleType) == null)
 			settings.put(particleType, new HashMap<>());
 		Map<ParticleSetting, Object> map = settings.get(particleType);
 
@@ -53,6 +54,8 @@ public class ParticleOwner extends PlayerOwnedObject {
 				if (Map.class.isAssignableFrom(value.getClass()) && ((Map<?, ?>) value).containsKey("r")) {
 					Map<String, Integer> color = (Map<String, Integer>) value;
 					map.put(key, Color.fromRGB(color.get("r"), color.get("g"), color.get("b")));
+				} else if (Enum.class.isAssignableFrom(key.getValue()) && value instanceof String) {
+					map.put(key, EnumUtils.valueOf(key.getValue(), (String) value));
 				}
 			});
 		return map;
