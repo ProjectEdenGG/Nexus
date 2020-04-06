@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.listeners;
+package me.pugabyte.bncore.features.commands;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
