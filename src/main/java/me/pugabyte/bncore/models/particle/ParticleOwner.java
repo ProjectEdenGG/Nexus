@@ -18,7 +18,6 @@ import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Color;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,20 +40,21 @@ public class ParticleOwner extends PlayerOwnedObject {
 	@Getter(AccessLevel.PRIVATE)
 	private Map<ParticleType, Map<ParticleSetting, Object>> settings = new HashMap<>();
 	@Getter
-	private List<ParticleType> activeParticles = new ArrayList<>();
+	private Set<ParticleType> activeParticles = new HashSet<>();
 
 	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
 		if (!settings.containsKey(particleType))
 			settings.put(particleType, new HashMap<>());
 		Map<ParticleSetting, Object> map = settings.get(particleType);
 
-		// Do some deserialization if necessary
-		new HashMap<>(map).forEach((key, value) -> {
-			if (Map.class.isAssignableFrom(value.getClass()) && ((Map<?, ?>) value).containsKey("r")) {
-				Map<String, Integer> color = (Map<String, Integer>) value;
-				map.put(key, Color.fromRGB(color.get("r"), color.get("g"), color.get("b")));
-			}
-		});
+		if (map != null)
+			// Do some deserialization if necessary
+			new HashMap<>(map).forEach((key, value) -> {
+				if (Map.class.isAssignableFrom(value.getClass()) && ((Map<?, ?>) value).containsKey("r")) {
+					Map<String, Integer> color = (Map<String, Integer>) value;
+					map.put(key, Color.fromRGB(color.get("r"), color.get("g"), color.get("b")));
+				}
+			});
 		return map;
 	}
 
@@ -77,6 +77,7 @@ public class ParticleOwner extends PlayerOwnedObject {
 	}
 
 	public void cancelTasks(ParticleType particleType) {
+		activeParticles.remove(particleType);
 		getTasks(particleType).forEach(particleTask -> {
 			Tasks.cancel(particleTask.getTaskId());
 			tasks.remove(particleTask);
@@ -92,6 +93,7 @@ public class ParticleOwner extends PlayerOwnedObject {
 
 	public void addTasks(ParticleType particleType, int... taskIds) {
 		activeParticles.add(particleType);
+		new ParticleService().save(this);
 		for (int taskId : taskIds)
 			tasks.add(new ParticleTask(particleType, taskId));
 	}
