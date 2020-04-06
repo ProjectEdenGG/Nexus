@@ -218,4 +218,8 @@ public abstract class Mechanic implements Listener {
 		return null;
 	}
 
+	public boolean canOpenInventoryBlocks() {
+		return false;
+	}
+
 }

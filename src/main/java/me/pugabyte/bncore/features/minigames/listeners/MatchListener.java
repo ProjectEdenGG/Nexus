@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
@@ -28,12 +29,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.text.DecimalFormat;
+
+import static me.pugabyte.bncore.utils.Utils.runCommand;
+import static me.pugabyte.bncore.utils.Utils.runCommandAsOp;
 
 public class MatchListener implements Listener {
 
@@ -52,9 +57,9 @@ public class MatchListener implements Listener {
 			else {
 				WorldGuardUtils worldGuardUtils = new WorldGuardUtils(player.getWorld());
 				if (worldGuardUtils.getRegionsLikeAt(player.getLocation(), "mobarena_.*").size() > 0)
-					Utils.runCommand(player, "ma leave");
+					runCommand(player, "ma leave");
 				else
-					Utils.runCommand(player, "minigames:mgm quit");
+					runCommand(player, "minigames:mgm quit");
 			}
 		}
 	}
@@ -66,6 +71,26 @@ public class MatchListener implements Listener {
 				if (minigamer.isInMatchRegion("waterdamage") && Utils.isInWater(minigamer.getPlayer()))
 					minigamer.getPlayer().damage(1.25);
 		}));
+	}
+
+	@EventHandler
+	public void onInventoryOpen(InventoryOpenEvent event) {
+		Minigamer minigamer = PlayerManager.get((Player) event.getPlayer());
+		if (minigamer.getMatch() == null) return;
+		if (event.getInventory().getLocation() == null) return;
+		if (minigamer.getMatch().getArena().getMechanic().canOpenInventoryBlocks()) return;
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onMatchStart(MatchStartEvent event) {
+		event.getMatch().getPlayers().forEach(player -> {
+			if (player.hasPermission("voxelsniper.sniper"))
+				runCommand(player, "b paint");
+			if (player.hasPermission("worldguard.region.bypass.*"))
+				runCommand(player, "wgedit off");
+			runCommandAsOp(player, "pweather clear");
+		});
 	}
 
 	@EventHandler
