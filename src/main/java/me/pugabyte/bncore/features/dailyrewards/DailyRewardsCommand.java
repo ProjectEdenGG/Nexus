@@ -96,7 +96,7 @@ public class DailyRewardsCommand extends CustomCommand {
 		MenuUtils.ConfirmationMenu confirm = MenuUtils.ConfirmationMenu.builder().onConfirm((e) -> {
 			try {
 				new CooldownService().check(player(), "dailyRewards-reset", Time.DAY);
-				dailyReward.reset();
+				dailyReward.setActive(false);
 				service.save(dailyReward);
 				e.getPlayer().sendMessage(PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
 				e.getPlayer().closeInventory();
