@@ -119,7 +119,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack connect4 = nameItem(new ItemBuilder(Material.CONCRETE).color(Utils.getRandomElement(ColorType.BLUE, ColorType.RED)).build(), "&3Connect4"); // 1.12
 				ItemStack tictactoe = nameItem(Material.PAPER, "&3Tic Tac Toe");
 
-				contents.set(1, 1, ClickableItem.from(lobby, e -> warp(player, "minigamelobby")));
+				contents.set(1, 1, ClickableItem.from(lobby, e -> warp(player, "minigames")));
 				contents.set(1, 3, ClickableItem.from(spvp, e -> Utils.runCommand(player, "spvp")));
 				contents.set(1, 5, ClickableItem.from(wither, e -> Utils.runCommand(player, "wither")));
 				contents.set(1, 7, ClickableItem.from(stats, e -> warp(player, "statshall")));

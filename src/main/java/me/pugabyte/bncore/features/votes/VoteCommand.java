@@ -67,6 +67,13 @@ public class VoteCommand extends CustomCommand {
 		EndOfMonth.run(month);
 	}
 
+	@Path("write")
+	@Permission("group.admin")
+	void write() {
+		Votes.write();
+		send(PREFIX + "Done");
+	}
+
 	@ConverterFor(Voter.class)
 	Voter convertToVoter(String value) {
 		return new VoteService().get(convertToOfflinePlayer(value));

@@ -38,6 +38,11 @@ public class VoteService extends MySQLService {
 		return query.results(Vote.class);
 	}
 
+	public List<Vote> getRecentVotes() {
+		Query query = database.where("expired = 0").orderBy("timestamp desc");
+		return query.results(Vote.class);
+	}
+
 	public int getPoints(String uuid) {
 		return database.select("balance").table("vote_point").where("uuid = ?", uuid).first(Integer.class);
 	}
@@ -57,6 +62,16 @@ public class VoteService extends MySQLService {
 				"group by 1 " +
 				"order by count desc")
 				.args(month.getValue(), first.getYear())
+				.results(TopVoter.class);
+	}
+
+	public List<TopVoter> getTopVoters() {
+		return database.sql(
+				"select uuid, count(*) as count " +
+				"from vote " +
+				"group by 1 " +
+				"order by count desc " +
+				"limit 50")
 				.results(TopVoter.class);
 	}
 

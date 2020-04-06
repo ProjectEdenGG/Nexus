@@ -123,7 +123,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 				writer.write("    <th>" + index + "</th>" + System.lineSeparator());
 				writer.write("    <th>" + country + "</th>" + System.lineSeparator());
 				writer.write("    <th>" + count + "</th>" + System.lineSeparator());
-				writer.write("  <tr>" + System.lineSeparator());
+				writer.write("  </tr>" + System.lineSeparator());
 			}
 		} catch(Exception ex) {
 			ex.printStackTrace();
