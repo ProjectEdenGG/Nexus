@@ -12,6 +12,7 @@ import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.vote.TopVoter;
 import me.pugabyte.bncore.models.vote.Vote;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.VoteSite;
@@ -24,11 +25,18 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -138,6 +146,103 @@ public class Votes implements Listener {
 			if (randomInt(pair.getKey()) == 1)
 				return pair.getValue();
 		return 0;
+	}
+
+	protected static void write() {
+		Tasks.async(() -> {
+			List<TopVoter> topVoters = new VoteService().getTopVoters(LocalDateTime.now().getMonth());
+
+			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/website/votes_monthly_top.html"), StandardCharsets.UTF_8)) {
+				int index = 0;
+				for (TopVoter topVoter : topVoters) {
+					if (++index <= 3) {
+						String name = "Unknown";
+						try { name = Utils.getPlayer(topVoter.getUuid()).getName(); } catch (PlayerNotFoundException ignore) {}
+
+						writer.write("<div class=\"col-sm-4\">" + System.lineSeparator());
+						writer.write("  <h3 style=\"text-align: center;\">#" + index + "</h3>" + System.lineSeparator());
+						writer.write("  <img class=\"center\" style=\"border-radius: 12px; width: 75%%\" src=\"https://crafatar.com/avatars/" + topVoter.getUuid() + "?overlay\">" + System.lineSeparator());
+						writer.write("  <h3 style=\"text-align: center;\">" + name + "</h3>" + System.lineSeparator());
+						writer.write("  <h4 style=\"text-align: center;\">" + topVoter.getCount() + "</p>" + System.lineSeparator());
+						writer.write("</div>" + System.lineSeparator());
+					} else
+						break;
+				}
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/website/votes_monthly.html"), StandardCharsets.UTF_8)) {
+				int index = 0;
+				for (TopVoter topVoter : topVoters) {
+					if (++index > 3) {
+						if (index < 54) {
+							String name = "Unknown";
+							try {
+								name = Utils.getPlayer(topVoter.getUuid()).getName();
+							} catch (PlayerNotFoundException ignore) {}
+
+							writer.write("  <tr>" + System.lineSeparator());
+							writer.write("    <th>" + index + "</th>" + System.lineSeparator());
+							writer.write("    <th>" + name + "</th>" + System.lineSeparator());
+							writer.write("    <th>" + topVoter.getCount() + "</th>" + System.lineSeparator());
+							writer.write("  </tr>" + System.lineSeparator());
+						} else
+							break;
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+
+			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/website/votes.html"), StandardCharsets.UTF_8)) {
+				List<TopVoter> allTimeTopVoters = new VoteService().getTopVoters();
+
+				int index = 0;
+				for (TopVoter topVoter : allTimeTopVoters) {
+					if (++index <= 50) {
+						String name = "Unknown";
+						try {
+							name = Utils.getPlayer(topVoter.getUuid()).getName();
+						} catch (PlayerNotFoundException ignore) {}
+
+						writer.write("  <tr>" + System.lineSeparator());
+						writer.write("    <th>" + index + "</th>" + System.lineSeparator());
+						writer.write("    <th>" + name + "</th>" + System.lineSeparator());
+						writer.write("    <th>" + topVoter.getCount() + "</th>" + System.lineSeparator());
+						writer.write("  </tr>" + System.lineSeparator());
+					} else
+						break;
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			int sum = topVoters.stream().mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
+			try {
+				Files.write(Paths.get("plugins/website/votes_monthly_total.html"), String.valueOf(sum).getBytes());
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try {
+				List<Vote> activeVotes = new VoteService().getActiveVotes();
+				File file = Paths.get("plugins/website/votes_voted.yml").toFile();
+				if (!file.exists()) file.createNewFile();
+				YamlConfiguration config = new YamlConfiguration();
+				activeVotes.forEach(vote -> {
+					OfflinePlayer player = Utils.getPlayer(vote.getUuid());
+					if (!config.isConfigurationSection(player.getName()))
+						config.createSection(player.getName());
+					config.getConfigurationSection(player.getName()).set(vote.getSite().name().toLowerCase(), true);
+				});
+				config.save(file);
+			} catch (PlayerNotFoundException ignore) {
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 
 }
