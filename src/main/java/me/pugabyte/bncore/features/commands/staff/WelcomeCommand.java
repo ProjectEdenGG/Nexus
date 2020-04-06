@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -41,7 +42,10 @@ public class WelcomeCommand extends CustomCommand {
 
 	static {
 		Tasks.repeat(0, Time.SECOND.x(60), () -> {
-			if (Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("group.moderator")).count() < 3) return;
+			if (Bukkit.getOnlinePlayers().stream().filter(player ->
+					player.hasPermission("group.moderator") &&
+					!player.getName().equals("KodaBear") &&
+					!AFK.get(player).isAfk()).count() < 4) return;
 			try {
 				new CooldownService().check("staff", "bumpReminder", Time.DAY);
 				Chat.broadcastIngame("", "Staff");
