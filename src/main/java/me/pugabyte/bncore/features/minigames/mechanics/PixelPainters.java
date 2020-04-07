@@ -221,7 +221,7 @@ public class PixelPainters extends TeamlessMechanic {
 		if (matchData.getCurrentRound() != 0) {
 			minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
 				Utils.sendActionBar(player, "&c&lRound Over!");
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.7F);
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.7F);
 			});
 			match.broadcast("&c&lRound Over!");
 		}
@@ -236,9 +236,9 @@ public class PixelPainters extends TeamlessMechanic {
 			match.getTasks().wait(3 * 20, () -> {
 				minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
 					Utils.sendActionBar(player, "&c&lGame Over!");
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 1F);
-					match.getTasks().wait(20, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.85F));
-					match.getTasks().wait(40, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.65F));
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 1F);
+					match.getTasks().wait(20, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.85F));
+					match.getTasks().wait(40, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.65F));
 				});
 				match.broadcast("&c&lGame Over!");
 				match.getTasks().wait(3 * 20, match::end);
@@ -259,7 +259,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 							Utils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
 									if (i <= 3)
-										player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
+										player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 								}))
 								.onComplete(() -> newRound(match))
 								.start();
@@ -350,7 +350,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(block.getLocation());
 		regionsAt.forEach(region -> {
 			if (region.getId().matches(arena.getRegionTypeRegex("floor"))) {
-				ItemStack item = new ItemStack(block.getType(), 1, block.getData());
+				ItemStack item = new ItemStack(block.getType());
 				event.getClickedBlock().setType(Material.AIR);
 				Player player = minigamer.getPlayer();
 				player.getInventory().addItem(item);
@@ -392,7 +392,7 @@ public class PixelPainters extends TeamlessMechanic {
 		int incorrect = checkDesign((CuboidRegion) WGUtils.convert(floorRg), match);
 		Player player = minigamer.getPlayer();
 		if (incorrect == 0) {
-			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_XYLOPHONE, 10F, 0.5F);
+			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10F, 0.5F);
 			long miliseconds = System.currentTimeMillis() - matchData.getRoundStart();
 			long seconds = miliseconds / 1000;
 			match.broadcast("&a" + minigamer.getName() + " &2finished in &a" + seconds + " &2seconds!");
@@ -420,7 +420,7 @@ public class PixelPainters extends TeamlessMechanic {
 	public void startRoundCountdown(Match match) {
 		List<Minigamer> minigamers = match.getMinigamers();
 		minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F));
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F));
 
 		PixelPaintersMatchData matchData = match.getMatchData();
 		Tasks.Countdown countdown = Tasks.Countdown.builder()
@@ -432,7 +432,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 					Utils.sendActionBar(player, "&cRound ends in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
 					if (i <= 3)
-						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
+						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 				}))
 				.onComplete(() -> endOfRound(match))
 				.start();
@@ -463,7 +463,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 				Block floorBlock = WEUtils.toLocation(floorV).getBlock();
 				Block designBlock = WEUtils.toLocation(designV).getBlock();
-				if (!(floorBlock.getType().equals(designBlock.getType()) && floorBlock.getData() == floorBlock.getData()))
+				if (!floorBlock.getType().equals(designBlock.getType()))
 					++incorrect;
 			}
 		}
@@ -527,9 +527,8 @@ public class PixelPainters extends TeamlessMechanic {
 		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) arena.getNextDesignRegion());
 
 		List<ItemStack> items = new ArrayList<>();
-		for (Block block : blocks) {
-			items.add(new ItemStack(block.getType(), 1, block.getData()));
-		}
+		for (Block block : blocks)
+			items.add(new ItemStack(block.getType(), 1));
 
 		List<Minigamer> minigamers = match.getMinigamers();
 		minigamers.forEach(minigamer -> Utils.giveItems(minigamer.getPlayer(), items));

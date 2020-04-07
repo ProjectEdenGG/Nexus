@@ -16,7 +16,6 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -111,7 +110,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 		bootsMeta.setColor(Color.RED);
 		boots.setItemMeta(bootsMeta);
 		armorStand.setBoots(boots);
-		armorStand.setHelmet(new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).skullOwner("9da0817559824f2aa231209164201e0d").build());
+		armorStand.setHelmet(new ItemBuilder(Material.PLAYER_HEAD).skullOwner("9da0817559824f2aa231209164201e0d").build());
 		armorStand.setItemInHand(new ItemStack(Material.BOOK));
 
 		return armorStand;

@@ -18,6 +18,7 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.ArcheryMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -226,7 +227,7 @@ public class Archery extends TeamlessMechanic {
 	public boolean canPlaceTarget(Location location) {
 		List<Block> nearbyBlocks = Utils.getBlocksInRadius(location, 3);
 		for (Block block : nearbyBlocks) {
-			if (block.getType().equals(Material.CONCRETE) || block.getType().equals(Material.STONE_BUTTON))
+			if (MaterialTag.CONCRETES.isTagged(block.getType()) || block.getType().equals(Material.STONE_BUTTON))
 				return false;
 		}
 		return true;
@@ -240,7 +241,7 @@ public class Archery extends TeamlessMechanic {
 				CuboidRegion expandedRegion = (CuboidRegion) WEUtils.expandAll(WGUtils.convert(region), 2);
 				List<Block> blocks = WEUtils.getBlocks(expandedRegion);
 				blocks.forEach(block -> {
-					if (block.getType().equals(Material.CONCRETE) && block.getData() == 0)
+					if (block.getType().equals(Material.WHITE_CONCRETE))
 						removeTarget(block);
 				});
 			});
@@ -275,7 +276,7 @@ public class Archery extends TeamlessMechanic {
 		if (hitBlock == null)
 			return;
 
-		if (!(hitBlock.getType().equals(Material.CONCRETE) && hitBlock.getData() == 0))
+		if (!hitBlock.getType().equals(Material.WHITE_CONCRETE))
 			return;
 
 		if (!(projectile.getShooter() instanceof Player))
@@ -286,7 +287,7 @@ public class Archery extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
-		String color = ColorType.fromDurability(hitBlock.getRelative(0, 1, 0).getData()).getName();
+		String color = ColorType.fromMaterial(hitBlock.getRelative(0, 1, 0).getType()).getName();
 		minigamer.scored(getPoints(color));
 
 		ArcheryMatchData matchData = minigamer.getMatch().getMatchData();
@@ -311,20 +312,17 @@ public class Archery extends TeamlessMechanic {
 
 	public void removeTarget(Block target) {
 		Collection<Entity> entities = target.getWorld().getNearbyEntities(target.getLocation(), 2, 2, 2);
-		for (Entity entity : entities) {
+		for (Entity entity : entities)
 			if (entity.getType().equals(EntityType.ARROW))
 				entity.remove();
-		}
 
 		List<Block> blocks = Utils.getBlocksInRadius(target, 2);
-		for (Block block : blocks) {
+		for (Block block : blocks)
 			if (block.getType().equals(Material.STONE_BUTTON))
 				block.setType(Material.AIR);
-		}
 
-		for (Block block : blocks) {
-			if (block.getType().equals(Material.CONCRETE))
+		for (Block block : blocks)
+			if (MaterialTag.CONCRETES.isTagged(block.getType()))
 				block.setType(Material.AIR);
-		}
 	}
 }

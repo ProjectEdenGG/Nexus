@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.Flag;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
+import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -26,11 +27,9 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 				event.getClickedBlock() != null &&
 				event.getHand() != null &&
 				event.getHand().equals(EquipmentSlot.HAND) &&
-				minigamer.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR
+				minigamer.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR &&
+				!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())
 		)) return;
-
-		Material material = event.getClickedBlock().getType();
-		if (!(material == Material.SIGN || material == Material.WALL_SIGN)) return;
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
 

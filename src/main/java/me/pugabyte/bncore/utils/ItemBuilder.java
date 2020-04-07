@@ -3,7 +3,6 @@ package me.pugabyte.bncore.utils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
@@ -46,10 +45,6 @@ public class ItemBuilder {
 
 	public ItemBuilder color(ColorType colorType) {
 		return durability(colorType.getDurability().shortValue());
-	}
-
-	public ItemBuilder dyeColor(ColorType colorType) {
-		return durability(colorType.getDyeColor().getDyeData());
 	}
 
 	public ItemBuilder durability(int durability) {
@@ -146,11 +141,6 @@ public class ItemBuilder {
 
 	public ItemBuilder spawnEgg(EntityType entityType) {
 		((SpawnEggMeta) itemMeta).setSpawnedType(entityType);
-		return this;
-	}
-
-	public ItemBuilder skullType(SkullType skullType) {
-		itemStack.setDurability((short) skullType.ordinal());
 		return this;
 	}
 

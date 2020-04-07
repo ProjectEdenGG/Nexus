@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -35,7 +34,7 @@ public class SignLinesCommand extends CustomCommand {
 	}
 
 	@Path("[arguments...]")
-	void signLines(@Arg String arguments) {
+	void signLines(String arguments) {
 		Block targetBlock = player().getTargetBlock(null, 5);
 		Material material = targetBlock.getType();
 		if (Utils.isNullOrAir(material) || !Utils.isSign(material)) {

@@ -58,7 +58,7 @@ public class NearestBlockCommand extends CustomCommand {
 				if (block != null) {
 					Location blockLoc = Utils.getCenteredLocation(block.getLocation());
 					World blockWorld = blockLoc.getWorld();
-					FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, block.getType(), block.getData());
+					FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, block.getType().createBlockData());
 					fallingBlock.setDropItem(false);
 					fallingBlock.setGravity(false);
 					fallingBlock.setInvulnerable(true);
@@ -76,7 +76,7 @@ public class NearestBlockCommand extends CustomCommand {
 								fallingBlock.remove();
 								for (Player player : Bukkit.getOnlinePlayers())
 									if (player.getWorld() == blockWorld)
-										player.sendBlockChange(blockLoc, block.getType(), block.getData());
+										player.sendBlockChange(blockLoc, block.getType().createBlockData());
 							})
 							.start();
 

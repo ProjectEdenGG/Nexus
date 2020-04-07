@@ -93,7 +93,7 @@ public class JMinigamesCommand extends CustomCommand {
 
 	@Permission("manage")
 	@Path("signs join <arena>")
-	void joinSign(@Arg Arena arena) {
+	void joinSign(Arena arena) {
 		Sign sign = getTargetSign(player());
 		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
 		sign.setLine(1, StringUtils.colorize("&aJoin"));

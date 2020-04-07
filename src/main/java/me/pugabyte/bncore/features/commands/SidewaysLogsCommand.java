@@ -5,8 +5,9 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import org.bukkit.Material;
+import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,9 +46,10 @@ public class SidewaysLogsCommand extends CustomCommand implements Listener {
 		Block block = event.getBlockPlaced();
 		Player player = event.getPlayer();
 
-		if (!(block.getType() == Material.LOG || block.getType() == Material.LOG_2)) return;
+		if (!MaterialTag.LOGS.isTagged(block.getType())) return;
 		if (!enabledPlayers.contains(player)) return;
 
-		block.setData((byte) (block.getData() % 4));
+		// TODO Test this
+		((Directional) block.getBlockData()).setFacing(event.getBlockAgainst().getFace(event.getBlock()).getOppositeFace());
 	}
 }

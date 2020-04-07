@@ -7,7 +7,6 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
-import me.pugabyte.bncore.utils.ColorType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +23,7 @@ public class DeleteTeamMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		ItemStack cancel = nameItem(ColorType.LIGHT_GREEN.getItemStack(Material.STAINED_GLASS_PANE), "&7Cancel");
+		ItemStack cancel = nameItem(Material.LIME_STAINED_GLASS_PANE, "&7Cancel");
 		contents.fillRect(0, 0, 2, 8, ClickableItem.from(cancel, e -> menus.openTeamsMenu(player, arena)));
 		contents.fillRect(1, 1, 1, 7, ClickableItem.from(cancel, e -> menus.openTeamsMenu(player, arena)));
 

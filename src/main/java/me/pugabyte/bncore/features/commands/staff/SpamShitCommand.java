@@ -31,8 +31,8 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 	private static Map<Material, Integer> taskIds = new HashMap<>();
 	private static Map<Material, Class<? extends Projectile>> projectiles = new HashMap<Material, Class<? extends Projectile>>() {{
 		put(Material.ARROW, Arrow.class);
-		put(Material.SNOW_BALL, Snowball.class);
-		put(Material.FIREBALL, Fireball.class);
+		put(Material.SNOWBALL, Snowball.class);
+		put(Material.FIRE_CHARGE, Fireball.class);
 	}};
 
 	public SpamShitCommand(@NonNull CommandEvent event) {

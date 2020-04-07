@@ -49,7 +49,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.WOOD_PICKAXE);
+		return new ItemStack(Material.WOODEN_PICKAXE);
 	}
 
 	@Override

@@ -50,7 +50,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.WOOL);
+		return new ItemStack(Material.WHITE_WOOL);
 	}
 
 	@Override

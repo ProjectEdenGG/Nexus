@@ -11,6 +11,8 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.MaterialTag;
+import me.pugabyte.bncore.utils.MaterialTag.MatchMode;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -166,34 +168,27 @@ public class JWitherCommand extends CustomCommand implements Listener {
 	public void onItemPickup(EntityPickupItemEvent event) {
 		if (!event.getEntity().getWorld().getName().equalsIgnoreCase("wither")) return;
 		if (!enabled) return;
+
 		List<Material> materialsToBlock = new ArrayList<Material>() {{
 			add(Material.GLOWSTONE);
 			add(Material.GLOWSTONE_DUST);
-			add(Material.MAGMA);
+			add(Material.MAGMA_BLOCK);
 			add(Material.MAGMA_CREAM);
-			add(Material.NETHERRACK);
-			add(Material.NETHER_BRICK);
-			add(Material.NETHER_BRICK_ITEM);
-			add(Material.NETHER_BRICK_STAIRS);
-			add(Material.RED_NETHER_BRICK);
 			add(Material.BONE_BLOCK);
 			add(Material.BOOK);
 			add(Material.BOOKSHELF);
-			add(Material.QUARTZ_ORE);
 			add(Material.END_ROD);
 			add(Material.SOUL_SAND);
-			add(Material.NETHER_WARTS);
-			add(Material.NETHER_WART_BLOCK);
-			add(Material.STAINED_CLAY);
-			add(Material.CARPET);
 			add(Material.GRAVEL);
-			add(Material.STEP);
-			add(Material.STONE_SLAB2);
-			add(Material.NETHER_FENCE);
 			add(Material.GOLD_BLOCK);
 			add(Material.GOLD_INGOT);
 			add(Material.GOLD_NUGGET);
 			add(Material.QUARTZ);
+			addAll(MaterialTag.TERRACOTTAS.getValues());
+			addAll(MaterialTag.CARPET.getValues());
+			addAll(MaterialTag.STAIRS.getValues());
+			addAll(MaterialTag.SLABS.getValues());
+			addAll(new MaterialTag("NETHER", MatchMode.CONTAINS).getValues());
 		}};
 		if (materialsToBlock.contains(event.getItem().getItemStack().getType()))
 			event.setCancelled(true);

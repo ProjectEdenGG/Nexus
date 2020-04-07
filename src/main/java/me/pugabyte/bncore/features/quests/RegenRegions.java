@@ -37,7 +37,6 @@ public class RegenRegions implements Listener {
 		return null;
 	}
 
-	// Will need to be 1.13 ified
 	@EventHandler
 	public void onBreakBlock(BlockBreakEvent event) {
 		if (!(event.getPlayer().getGameMode().equals(GameMode.SURVIVAL))) return;
@@ -49,52 +48,32 @@ public class RegenRegions implements Listener {
 		for (ProtectedRegion region : WGUtils.getRegionsAt(loc)) {
 			String regionName = region.getId();
 			if (regionName.contains(key)) {
+				int ndx = regionName.indexOf('_');
+				String variables = regionName.substring(ndx + key.length()-1);
+				String[] varSplit = variables.split("_");
 
-				// 1.13+: ..._regen_<material>[_<cooldown>]
-//				int ndx = regionName.indexOf('_');
-//				String variables = regionName.substring(ndx + key.length()-1);
-//				String[] varSplit = variables.split("_");
-//
-//				String cooldownStr = varSplit[varSplit.length-1];
-//				int cooldown = getInteger(cooldownStr);
-//				String materialStr = variables;
-//				if(cooldown != -1)
-//					materialStr = variables.substring(0, variables.indexOf(cooldownStr));
-//
-//
-//				Material material = getMaterial(materialStr);
-//
-//				if(material == null) {
-//					// throw error?
-//					BNCore.log("Unknown material to regen");
-//					return;
-//				}
+				String cooldownStr = varSplit[varSplit.length-1];
+				int cooldown = getInteger(cooldownStr);
+				String materialStr = variables;
+				if(cooldown != -1)
+					materialStr = variables.substring(0, variables.indexOf(cooldownStr));
 
-				// 1.12: ..._regen_<id>_<data>
-				String[] regionSplit = regionName.split("_");
-				String regenBlockStr = regionSplit[2];
-				String[] regenBlockSplit = regenBlockStr.split("-");
-				int regenBlockID = Integer.parseInt(regenBlockSplit[0]);
-				int regenBlockData = Integer.parseInt(regenBlockSplit[1]);
 
-				int eventBlockID = eventBlock.getTypeId();
-				int eventBlockData = eventBlock.getData();
+				Material material = getMaterial(materialStr);
 
-				if (regenBlockID == eventBlockID && regenBlockData == eventBlockData) {
-					regenBlock(loc, eventBlock.getType(), eventBlock.getData(), 30);
-					break;
-				} else {
-					event.setCancelled(true);
+				if(material == null) {
+					// throw error?
+					BNCore.log("Unknown material to regen");
+					return;
 				}
 			}
 		}
 	}
 
-	public void regenBlock(Location location, Material material, byte data, int seconds) {
+	public void regenBlock(Location location, Material material, int seconds) {
 		Tasks.wait(seconds * 20, () -> {
 			Block block = location.getBlock();
 			block.setType(material);
-			block.setData(data);
 		});
 	}
 

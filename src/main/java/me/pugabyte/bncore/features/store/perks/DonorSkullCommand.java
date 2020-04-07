@@ -11,7 +11,6 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 
 @Cooldown(@Part(Time.DAY))
 @Permission("essentials.skull")
@@ -23,7 +22,7 @@ public class DonorSkullCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		Utils.giveItem(player(), new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).skullOwner(player()).build());
+		Utils.giveItem(player(), new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player()).build());
 	}
 
 }

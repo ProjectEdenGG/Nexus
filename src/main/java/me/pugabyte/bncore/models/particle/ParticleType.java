@@ -11,13 +11,10 @@ import me.pugabyte.bncore.features.particles.effects.SpiralEffect;
 import me.pugabyte.bncore.features.particles.effects.StarEffect;
 import me.pugabyte.bncore.features.particles.effects.StormEffect;
 import me.pugabyte.bncore.features.particles.effects.WingsEffect;
-import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -48,7 +45,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	STAR(Material.FIREWORK_CHARGE, true) {
+	STAR(Material.FIREWORK_STAR, true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Double rotateSpeed = ParticleSetting.ROTATE_SPEED.get(particleOwner, this);
@@ -93,7 +90,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	SQUARE(new ItemBuilder(Material.CARPET).dyeColor(ColorType.YELLOW).build(), true) {
+	SQUARE(new ItemStack(Material.YELLOW_CARPET), true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
@@ -165,7 +162,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	NYAN_CAT(new ItemBuilder(Material.MONSTER_EGG).spawnEgg(EntityType.OCELOT).build()) {
+	NYAN_CAT(new ItemStack(Material.OCELOT_SPAWN_EGG)) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			int taskId = NyanCatEffect.builder()
@@ -188,7 +185,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	HALO(Material.GOLD_HELMET) {
+	HALO(Material.GOLDEN_HELMET) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
@@ -211,7 +208,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	CIRCLES(Material.EYE_OF_ENDER) {
+	CIRCLES(Material.ENDER_EYE) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
@@ -286,7 +283,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	GROWING_STARS(new ItemBuilder(Material.INK_SACK).dyeColor(ColorType.WHITE).build()) {
+	GROWING_STARS(Material.BONE_MEAL) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Double growthSpeed = ParticleSetting.STAR_GROWTH_SPEED.get(particleOwner, this);
@@ -378,7 +375,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	DOUBLE_CHAOS(new ItemBuilder(Material.WOOL).color(ColorType.CYAN).build()) {
+	DOUBLE_CHAOS(Material.CYAN_WOOL) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Double radius1 = ParticleSetting.DOUBLE_CHAOS_RADIUS_ONE.get(particleOwner, this);
@@ -421,7 +418,7 @@ public enum ParticleType {
 			return new int[]{taskId1, taskId2};
 		}
 	},
-	STORM(Material.WEB) {
+	STORM(Material.COBWEB) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
@@ -438,7 +435,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	DISCO(Material.REDSTONE_LAMP_OFF) {
+	DISCO(Material.REDSTONE_LAMP) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			DiscoEffect.Direction direction = ParticleSetting.DISCO_DIRECTION.get(particleOwner, this);

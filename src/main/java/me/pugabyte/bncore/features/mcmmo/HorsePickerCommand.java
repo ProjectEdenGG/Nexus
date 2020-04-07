@@ -34,13 +34,13 @@ public class HorsePickerCommand extends CustomCommand {
 	}
 
 	public enum HorseColor {
-		WHITE(new ItemStack(Material.WOOL), "&f"),
-		GRAY(new ItemStack(Material.WOOL, 1, (byte) 8), "&7", "Dapple Gray"),
-		BLACK(new ItemStack(Material.STAINED_CLAY, 1, (byte) 15), "&8"),
-		CREAMY(new ItemStack(Material.WOOD), "&e"),
-		CHESTNUT(new ItemStack(Material.STAINED_CLAY, 1, (byte) 14), "&c"),
-		BROWN(new ItemStack(Material.WOOL, 1, (byte) 12), "&6"),
-		DARK_BROWN(new ItemStack(Material.STAINED_CLAY, 1, (byte) 12), "&6");
+		WHITE(new ItemStack(Material.WHITE_WOOL), "&f"),
+		GRAY(new ItemStack(Material.LIGHT_GRAY_WOOL), "&7", "Dapple Gray"),
+		BLACK(new ItemStack(Material.BLACK_TERRACOTTA), "&8"),
+		CREAMY(new ItemStack(Material.OAK_WOOD), "&e"),
+		CHESTNUT(new ItemStack(Material.RED_TERRACOTTA), "&c"),
+		BROWN(new ItemStack(Material.BROWN_WOOL), "&6"),
+		DARK_BROWN(new ItemStack(Material.BROWN_TERRACOTTA), "&6");
 
 		ItemStack item;
 		String color, name;
@@ -71,11 +71,11 @@ public class HorsePickerCommand extends CustomCommand {
 	}
 
 	public enum HorseMarking {
-		NONE(new ItemStack(Material.WOOL), "&7No Markings"),
+		NONE(new ItemStack(Material.WHITE_WOOL), "&7No Markings"),
 		WHITE(new ItemStack(Material.QUARTZ_BLOCK), "&7White Stockings"),
-		WHITEFIELD(new ItemStack(Material.CONCRETE), "&7White Patches"),
+		WHITEFIELD(new ItemStack(Material.WHITE_CONCRETE), "&7White Patches"),
 		WHITE_DOTS(new ItemStack(Material.SNOW_BLOCK), "&7White Dots"),
-		BLACK_DOTS(new ItemStack(Material.WOOL, 1, (byte) 7), "&7Black Dots");
+		BLACK_DOTS(new ItemStack(Material.BLACK_WOOL), "&7Black Dots");
 
 		ItemStack item;
 		String name;

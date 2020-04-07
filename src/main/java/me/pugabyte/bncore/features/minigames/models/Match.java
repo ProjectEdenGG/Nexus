@@ -372,7 +372,7 @@ public class Match {
 					if (--time > 0) {
 						if (broadcasts.contains(time)) {
 							broadcastTimeLeft();
-							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, .75F, .6F));
+							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
 					} else {
 						match.end();

@@ -9,7 +9,6 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.ColorType;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,7 +30,7 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 		int row = 1;
 		for (ColorType colorType : ColorType.values())
 			if (colorType.getChatColor() != null && colorType.getDurability() != null && colorType.getChatColor() != ChatColor.BLACK) {
-				ItemStack item = nameItem(colorType.getItemStack(Material.WOOL), colorType.getDisplayName());
+				ItemStack item = nameItem(colorType.getWool(), colorType.getDisplayName());
 
 				if (colorType.getChatColor() == team.getColor())
 					addGlowing(item);

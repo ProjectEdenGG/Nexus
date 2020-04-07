@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import org.bukkit.Bukkit;
@@ -34,11 +35,10 @@ public class Gun {
 	private boolean shouldDamageWithConsole;
 	private Set<Material> passthroughMaterials = new HashSet<Material>() {{
 		add(Material.AIR);
-		add(Material.DOUBLE_PLANT);
-		add(Material.LONG_GRASS);
 		add(Material.TRIPWIRE_HOOK);
 		add(Material.TRIPWIRE);
 		add(Material.STRING);
+		addAll(MaterialTag.PLANTS.getValues());
 	}};
 
 	public void shoot() {
@@ -58,7 +58,7 @@ public class Gun {
 					_player.spawnParticle(Particle.CRIT, point, 1, 0, 0, 0, 0.1);
 		}
 
-		minigamer.getPlayer().playSound(location, Sound.ENTITY_FIREWORK_LAUNCH, 1, 0.8F);
+		minigamer.getPlayer().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1, 0.8F);
 
 		Location observerPos = minigamer.getPlayer().getEyeLocation();
 		Vector3D observerDir = new Vector3D(observerPos.getDirection());

@@ -23,6 +23,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -74,7 +75,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.BOAT);
+		return new ItemStack(Material.OAK_BOAT);
 	}
 
 	@Override
@@ -163,7 +164,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 		ShipType shipType = ShipType.get(event.getBlockPlaced());
 		if (shipType == null) return;
-		if (event.getBlockAgainst().getType() != Material./*1.13 YELLOW_*/WOOL) return;
+		if (event.getBlockAgainst().getType() != Material.YELLOW_WOOL) return;
 
 		Location floor = event.getBlockAgainst().getLocation();
 		if (!minigamer.getMatch().getArena().isInRegion(floor, "floor")) return;
@@ -212,7 +213,7 @@ public class Battleship extends BalancedTeamMechanic {
 	private void deleteKit(Location location) {
 		location.getBlock().setType(Material.AIR);
 		for (Block block : Utils.getBlocksInRadius(location, 1))
-			if (block.getType() == Material.WOOL) {
+			if (Tag.WOOL.isTagged(block.getType())) {
 				block.setType(Material.AIR);
 				deleteKit(block.getLocation());
 			}
@@ -255,14 +256,13 @@ public class Battleship extends BalancedTeamMechanic {
 		grid.vacate(shipType);
 
 		location.getBlock().setType(shipType.getItem().getType());
-		location.getBlock().setData((byte) shipType.getItem().getDurability());
 		grid.getCoordinate(location).occupy(ship);
 		ship.setOrigin(location);
 
 		Block index = location.getBlock();
 		for (int i = 0; i < shipType.getKitLength(); i++) {
 			index = index.getRelative(direction);
-			index.setType(Material./*1.13 WHITE_*/WOOL);
+			index.setType(Material.WHITE_WOOL);
 			grid.getCoordinate(index.getLocation()).occupy(ship);
 		}
 
@@ -281,7 +281,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 			// Hasnt gone off the board
 			// 1.13 yellow wool, blue/black concrete
-			List<Material> floorMaterials = Arrays.asList(Material.WOOL, Material.CONCRETE);
+			List<Material> floorMaterials = Arrays.asList(Material.YELLOW_WOOL, Material.BLUE_CONCRETE, Material.BLACK_CONCRETE);
 			Material floorType = index.getLocation().add(0, -3, 0).getBlock().getType();
 			if (!floorMaterials.contains(floorType)) {
 				debug("Kit doesnt fit, floor is not wool/concrete (" + floorType + ")");
@@ -302,7 +302,7 @@ public class Battleship extends BalancedTeamMechanic {
 		List<Block> blocks = Utils.getBlocksInRadius(location, 1);
 		BlockFace direction = null;
 		for (Block block : blocks)
-			if (block.getType() == Material./*1.13 WHITE_*/WOOL)
+			if (block.getType() == Material.WHITE_WOOL)
 				if (isCardinal(block.getFace(location.getBlock())))
 					direction = block.getFace(location.getBlock()).getOppositeFace();
 
@@ -331,7 +331,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 	public enum ShipType {
 		CRUISER(2, ColorType.LIGHT_GREEN),
-		SUBMARINE(3, ColorType.LIGHT_RED),
+		SUBMARINE(3, ColorType.RED),
 		DESTROYER(3, ColorType.PURPLE),
 		BATTLESHIP(4, ColorType.ORANGE),
 		CARRIER(5, ColorType.CYAN);
@@ -346,7 +346,7 @@ public class Battleship extends BalancedTeamMechanic {
 		ShipType(int length, ColorType color) {
 			this.length = length;
 			this.color = color;
-			this.item = new ItemBuilder(Material.CONCRETE)
+			this.item = new ItemBuilder(ColorType.getConcrete(color))
 					.name(color.getChatColor() + toString() + " &8| &7Size: &e" + length)
 					.lore("&fPlace on the yellow wool to configure")
 					.durability(color.getDurability())
@@ -363,8 +363,9 @@ public class Battleship extends BalancedTeamMechanic {
 		}
 
 		public static ShipType get(Block block) {
+			ColorType colorType = ColorType.fromMaterial(block.getType());
 			for (ShipType shipType : ShipType.values())
-				if (block.getData() == shipType.getColor().getDurability())
+				if (colorType == shipType.getColor())
 					return shipType;
 
 			return null;

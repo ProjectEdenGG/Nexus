@@ -7,8 +7,6 @@ import me.pugabyte.bncore.features.particles.effects.StormEffect;
 import me.pugabyte.bncore.features.particles.effects.WingsEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
@@ -96,7 +94,7 @@ public enum ParticleSetting {
 		}
 	},
 
-	WHOLE(2, 5, Material.SNOW_BALL, Boolean.class, ParticleType.CIRCLE, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON) {
+	WHOLE(2, 5, Material.SNOWBALL, Boolean.class, ParticleType.CIRCLE, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON) {
 		@Override
 		Object getDefault(ParticleType particleType) {
 			return true;
@@ -130,7 +128,7 @@ public enum ParticleSetting {
 		}
 	},
 
-	STAR_GROWTH_SPEED(2, 5, new ItemBuilder(Material.INK_SACK).dyeColor(ColorType.WHITE).build(), Double.class, ParticleType.STAR, ParticleType.GROWING_STARS) {
+	STAR_GROWTH_SPEED(2, 5, Material.BONE_MEAL, Double.class, ParticleType.STAR, ParticleType.GROWING_STARS) {
 		@Override
 		Object getDefault(ParticleType particleType) {
 			return .1;
@@ -226,13 +224,13 @@ public enum ParticleSetting {
 			return DiscoEffect.Direction.BOTH;
 		}
 	},
-	DISCO_RAINBOW_OPTION(2, 6, Material.SPECKLED_MELON, DiscoEffect.RainbowOption.class, ParticleType.DISCO) {
+	DISCO_RAINBOW_OPTION(2, 6, Material.GLISTERING_MELON_SLICE, DiscoEffect.RainbowOption.class, ParticleType.DISCO) {
 		@Override
 		Object getDefault(ParticleType particleType) {
 			return DiscoEffect.RainbowOption.SLOW;
 		}
 	},
-	DISCO_LINE_LENGTH(2, 7, Material.DIODE, Integer.class, ParticleType.DISCO) {
+	DISCO_LINE_LENGTH(2, 7, Material.REPEATER, Integer.class, ParticleType.DISCO) {
 		@Override
 		Object getDefault(ParticleType particleType) {
 			return 5;

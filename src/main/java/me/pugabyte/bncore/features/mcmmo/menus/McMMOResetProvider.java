@@ -38,7 +38,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 					player.sendMessage(StringUtils.colorize("&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own."));
 				}
 		},
-		EXCAVATION(2, 2, Material.DIAMOND_SPADE,
+		EXCAVATION(2, 2, Material.DIAMOND_SHOVEL,
 				"A shovel that hastens the user after every block broken") {
 				@Override
 				void onClick(Player player) {
@@ -56,7 +56,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"The boots of Demeter give you the power to increase agricultural rates around you.") {
 			@Override
 			void onClick(Player player) {
-				Utils.giveItem(player, new ItemBuilder(Material.GOLD_BOOTS).lore("&bBonemeal Boots").build());
+				Utils.giveItem(player, new ItemBuilder(Material.GOLDEN_BOOTS).lore("&bBonemeal Boots").build());
 			}
 		},
 		FISHING(3, 1, Material.FISHING_ROD,
@@ -96,7 +96,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 					player.sendMessage(StringUtils.colorize("&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!"));
 				}
 		},
-		WOODCUTTING(4, 2, Material.WOOD,
+		WOODCUTTING(4, 2, Material.OAK_WOOD,
 				"For every log or plank broken this shiny new axe will give you a short burst of haste") {
 				@Override
 				void onClick(Player player) {

@@ -36,8 +36,8 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 					player.closeInventory();
 				}));
 
-		contents.set(1, 0, ClickableItem.empty(nameItem(Material.EMPTY_MAP, "&3Shapes")));
-		contents.set(3, 0, ClickableItem.empty(nameItem(Material.EMPTY_MAP, "&3Presets")));
+		contents.set(1, 0, ClickableItem.empty(nameItem(Material.MAP, "&3Shapes")));
+		contents.set(3, 0, ClickableItem.empty(nameItem(Material.MAP, "&3Presets")));
 
 		if (player.hasPermission("particle.shapes")) {
 			int i = 1;

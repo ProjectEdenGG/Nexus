@@ -61,7 +61,7 @@ public class MonsterMaze extends TeamlessMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.MOB_SPAWNER);
+		return new ItemStack(Material.SPAWNER);
 	}
 
 	@Override

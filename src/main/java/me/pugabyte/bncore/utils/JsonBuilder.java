@@ -30,6 +30,14 @@ public class JsonBuilder {
 		next(text);
 	}
 
+	public JsonBuilder(ComponentBuilder builder) {
+		this.builder = builder;
+	}
+
+	public JsonBuilder(BaseComponent[] builder) {
+		this.builder = new ComponentBuilder().append(builder);
+	}
+
 	public JsonBuilder next(String text) {
 		builder.append(getColoredWords(colorize(text)));
 		return this;

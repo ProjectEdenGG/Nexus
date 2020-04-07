@@ -97,10 +97,10 @@ public final class KangarooJumping extends TeamlessMechanic {
 			new ItemBuilder(Material.POTION).effectColor(ColorType.BLACK.getColor()).build(),
 			minigamer -> minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1)));
 
-	PowerUpUtils.PowerUp SNOWBALL = new PowerUpUtils.PowerUp("Snowball", true, Material.SNOW_BALL,
+	PowerUpUtils.PowerUp SNOWBALL = new PowerUpUtils.PowerUp("Snowball", true, Material.SNOWBALL,
 			minigamer ->
 				minigamer.getMatch().getMinigamers().forEach(_minigamer -> _minigamer.getPlayer().getInventory().addItem(
-						new ItemBuilder(Material.SNOW_BALL)
+						new ItemBuilder(Material.SNOWBALL)
 								.name("&bKnockback Snowball")
 								.enchant(Enchantment.KNOCKBACK, 2)
 								.amount(3)

@@ -8,7 +8,6 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -112,7 +111,7 @@ public class LoadoutMenu extends MenuUtils implements InventoryProvider {
 			),
 			e -> menus.getTeamMenus().openDeleteLoadoutMenu(player, arena, team)));
 
-		ItemStack redPane = ColorType.RED.getItemStack(Material.STAINED_GLASS_PANE);
+		ItemStack redPane = new ItemStack(Material.RED_STAINED_GLASS_PANE);
 		contents.set(4, 4, ClickableItem.empty(nameItem(redPane.clone(), "&eArmor ➝")));
 		contents.set(4, 1, ClickableItem.empty(nameItem(redPane.clone(), "&e← Offhand")));
 		contents.fillRect(4, 2, 4, 3, ClickableItem.empty(nameItem(redPane.clone(), "&e⬇ Hot Bar ⬇")));

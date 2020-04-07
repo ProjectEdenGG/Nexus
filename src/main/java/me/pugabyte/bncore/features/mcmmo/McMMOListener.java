@@ -8,6 +8,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.CitizensUtils;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -17,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
+import org.bukkit.Tag;
 import org.bukkit.TreeSpecies;
 import org.bukkit.TreeType;
 import org.bukkit.block.Block;
@@ -77,7 +79,7 @@ public class McMMOListener implements Listener {
 					return;
 
 				// If player is wearing gold boots
-				if (!player.getInventory().getBoots().getType().equals(Material.GOLD_BOOTS))
+				if (!player.getInventory().getBoots().getType().equals(Material.GOLDEN_BOOTS))
 					return;
 
 				// if player is in survival
@@ -110,7 +112,7 @@ public class McMMOListener implements Listener {
 							Material blockType = block.getType();
 
 							// If loop block is farmland
-							if (blockType.equals(Material.SOIL)) {
+							if (blockType.equals(Material.FARMLAND)) {
 
 								// if block above dirt, is crops
 								Block blockAbove = block.getRelative(0, 1, 0);
@@ -126,12 +128,12 @@ public class McMMOListener implements Listener {
 
 								int i = Arrays.asList(CropState.values()).indexOf(crop.getState());
 								CropState newState = Arrays.asList(CropState.values()).get(i + 1);
-								blockAbove.setData(newState.getData());
+								crop.setState(newState);
 
 								showParticle(player, blockAbove.getLocation());
 
 								// if loop block is sapling
-							} else if (Arrays.asList(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.SAPLING).contains(blockType)) {
+							} else if (MaterialTag.SAPLINGS.isTagged(blockType) || Arrays.asList(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM).contains(blockType)) {
 								TreeType treeType = getTreeType(block.getLocation());
 								if (treeType == null)
 									continue;
@@ -147,7 +149,7 @@ public class McMMOListener implements Listener {
 										treeType = getVariant(treeType);
 								}
 
-								boolean isSapling = block.getType().equals(Material.SAPLING);
+								boolean isSapling = Tag.SAPLINGS.isTagged(blockType);
 								block.setType(Material.AIR);
 								if (block.getWorld().generateTree(treeLoc, treeType))
 									showParticle(player, block.getLocation());
@@ -159,14 +161,14 @@ public class McMMOListener implements Listener {
 									}
 								}
 
-							} else if (blockType.equals(Material.SUGAR_CANE_BLOCK)) {
+							} else if (blockType.equals(Material.SUGAR_CANE)) {
 								Block ground = block.getRelative(0, -1, 0);
-								if (ground.getType().equals(Material.SUGAR_CANE_BLOCK)) {
+								if (ground.getType().equals(Material.SUGAR_CANE)) {
 									ground = block.getRelative(0, -2, 0);
-									if (ground.getType().equals(Material.SUGAR_CANE_BLOCK))
+									if (ground.getType().equals(Material.SUGAR_CANE))
 										ground = block.getRelative(0, -3, 0);
 								}
-								if (ground.getType().equals(Material.SUGAR_CANE_BLOCK))
+								if (ground.getType().equals(Material.SUGAR_CANE))
 									continue;
 
 								Location groundLoc = ground.getLocation();
@@ -177,7 +179,7 @@ public class McMMOListener implements Listener {
 									continue;
 
 								// If the block above the sugarcane is air or sugarcane
-								if ((above.getType().equals(Material.AIR) || above.getType().equals(Material.SUGAR_CANE_BLOCK))) {
+								if ((above.getType().equals(Material.AIR) || above.getType().equals(Material.SUGAR_CANE))) {
 									if (!above.getType().equals(Material.AIR)) {
 										above = above.getRelative(0, 1, 0);
 										if (groundLoc.distance(above.getLocation()) > 3)
@@ -185,7 +187,7 @@ public class McMMOListener implements Listener {
 									}
 
 									if (above.getType().equals(Material.AIR)) {
-										above.setType(Material.SUGAR_CANE_BLOCK);
+										above.setType(Material.SUGAR_CANE);
 										showParticle(player, above.getLocation());
 									}
 								}
@@ -219,10 +221,11 @@ public class McMMOListener implements Listener {
 										showParticle(player, above.getLocation());
 									}
 								}
-							} else if (blockType.equals(Material.COCOA)) {
+							}
+							else if (blockType.equals(Material.COCOA)) {
 								CocoaPlant cocoaPlant = (CocoaPlant) block.getState().getData();
 								cocoaPlant.setSize(nextCocoaSize(cocoaPlant.getSize()));
-								block.setData(cocoaPlant.getData());
+								//  block.setData(cocoaPlant.getData()); TODO: Don't need this on 1.13?
 							}
 						}
 					}
@@ -249,13 +252,12 @@ public class McMMOListener implements Listener {
 
 	boolean isCrop(Material material) {
 		switch (material) {
-			case POTATO:
-			case CARROT:
-			case BEETROOT_BLOCK:
+			case POTATOES:
+			case CARROTS:
+			case BEETROOTS:
 			case WHEAT:
 			case PUMPKIN_STEM:
 			case MELON_STEM:
-			case CROPS:
 				return true;
 		}
 		return false;
@@ -304,7 +306,7 @@ public class McMMOListener implements Listener {
 	}
 
 	private Location getMegaTree(Block block) {
-		if (!block.getType().equals(Material.SAPLING))
+		if (!Tag.SAPLINGS.isTagged(block.getType()))
 			return null;
 
 		Location start = block.getLocation();

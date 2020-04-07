@@ -1,142 +1,111 @@
 package me.pugabyte.bncore.features.showenchants;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.models.chat.Channel;
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PublicChannel;
-import me.pugabyte.bncore.models.nerd.Nerd;
-import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.skript.SkriptFunctions;
+import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.Time;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.bncore.features.showenchants.ShowEnchants.coolDownMap;
 
-public class ShowEnchantsCommand implements CommandExecutor {
-	private final static String PREFIX = StringUtils.getPrefix("ShowEnchants");
-	private final static String USAGE = "Correct usage: " + ChatColor.RED + "/showenchants <hand|offhand|hat|chest|pants|boots> [text]";
-
+public class ShowEnchantsCommand extends CustomCommand {
 	private Player player;
 	private String message;
 	private ItemStack item;
-	private String itemId;
-	private String material;
-	private String itemName;
 	private Map<Enchantment, Integer> enchantsMap;
 	private List<String> customEnchantsList;
 	private List<String> loreList;
 
-	public ShowEnchantsCommand() {
-		BNCore.registerCommand("showenchants", this);
-	}
+	@Path("(hand|offhand|helmet|chestplate|leggings|boots) [message...]")
+	@Permission("showenchants.use")
+	@Cooldown(value = @Part(Time.MINUTE), bypass = "showenchants.bypasscooldown")
+	void run(String message) {
+		player = player();
 
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		try {
-			checkPlayer(sender);
+		item = getItem(arg(1));
+		String itemId = item.getType().name();
+		if (item.getItemMeta() == null)
+			error("Your item has no meta");
 
-			if (args.length == 0)
-				throw new InvalidInputException(USAGE);
+		String itemName = item.getItemMeta().getDisplayName();
+		String material = ShowEnchants.getPrettyName(itemId);
+		if (isNullOrEmpty(itemName))
+			itemName = material;
 
-			message = "";
-			if (args.length > 1)
-				message = String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + " ";
+		int amount = item.getAmount();
+		getEnchants();
 
-			item = getItem(args[0]);
-			itemId = ShowEnchants.getRealName(item.getType().name());
-			itemName = item.getItemMeta().getDisplayName();
-			material = ShowEnchants.getPrettyName(itemId);
+		Chatter chatter = new ChatService().get(player);
+		if (!(chatter.getActiveChannel() instanceof PublicChannel))
+			error("You can't show enchants in private channels");
+		PublicChannel channel = (PublicChannel) chatter.getActiveChannel();
 
-			if (itemName == null) itemName = material; // If item does not have a custom name
-			int count = item.getAmount();
-			getEnchants();
+		coolDownMap.put(player, LocalDateTime.now());
 
-			Chatter chatter = new ChatService().get(player);
-			Channel channel = chatter.getActiveChannel();
-			if (!(channel instanceof PublicChannel))
-				throw new InvalidInputException("This command cannot be used in private messages, use /ch g first");
+		// Ingame
+		{
+			String enchants = getEnchantsIngame();
 
-			coolDownMap.put(player, LocalDateTime.now());
-
-			// Ingame
-			{
-				String enchants = getEnchantsIngame();
-
-				String lore = "";
-				if (customEnchantsList.size() == 0) {
-					if (loreList != null) {
-						lore = getLoreIngame();
-					}
-				} else {
-					lore = getCustomEnchantsIngame();
+			String lore = "";
+			if (customEnchantsList == null || customEnchantsList.size() == 0) {
+				if (loreList != null) {
+					lore = getLoreIngame();
 				}
-
-				int durability = item.getDurability();
-				String prefix = ((PublicChannel) channel).getNickname();
-				ChatColor color = ((PublicChannel) channel).getColor();
-				String format = color + "[" + prefix + "]" + new Nerd(player).getChatFormat();
-
-				ComponentBuilder herochat = new ComponentBuilder(format + color + ChatColor.BOLD + " > ").append(message);
-				ComponentBuilder json = new ComponentBuilder("{id:\"minecraft:" + itemId + "\",Count:1,Damage:" + durability + ",tag:{ench:[" + enchants + "],display:{Lore:[" + lore + "]}}}");
-				ComponentBuilder hover = new ComponentBuilder(itemName).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, json.create()));
-				ComponentBuilder enchantedItem = new ComponentBuilder("").append("[").bold(true).append(hover.create()).bold(true).append("]").bold(true);
-
-				BaseComponent[] component = herochat.append(enchantedItem.create()).append((count > 1 ? " x" + count : "")).create();
-
-				for (Chatter loopChatter : channel.getRecipients(chatter))
-					loopChatter.getPlayer().spigot().sendMessage(component);
+			} else {
+				lore = getCustomEnchantsIngame();
 			}
 
-			// Discord
-			{
-				String enchants = getEnchantsDiscord();
+			int durability = ((Damageable) item.getItemMeta()).getDamage();
 
-				String durability = String.valueOf(((int) item.getType().getMaxDurability()) - item.getDurability());
-				durability += "/" + item.getType().getMaxDurability();
+			ComponentBuilder herochat = new ComponentBuilder(channel.getChatterFormat(chatter));
+			ComponentBuilder json = new ComponentBuilder("{\"id\":\"minecraft:" + itemId.toLowerCase() + "\",\"Count\":1,\"tag\":{\"display\":{\"Lore\":[" + lore + "]},\"Damage\":" + durability + ",\"Enchantments\":[" + enchants + "]}}");
+			ComponentBuilder hover = new ComponentBuilder(itemName).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, json.create()));
+			ComponentBuilder enchantedItem = new ComponentBuilder(" ").append("[").bold(true).append(hover.create()).bold(true).append("]").bold(true);
 
-				String discordName = ChatColor.stripColor(itemName) + " ";
-				if (itemName.equalsIgnoreCase(item.getItemMeta().getDisplayName()))
-					discordName += "(" + material + ")";
-				if (count > 1) discordName += " x" + count;
+			BaseComponent[] component = herochat.append(enchantedItem.create()).append((amount > 1 ? " x" + amount : "")).create();
 
-				// TODO
-//				SkriptFunctions.showEnchantsOnBridge(player, message, discordName, enchants, durability, channel.getName());
-			}
-
-			return true;
-		} catch (InvalidInputException ex) {
-			sender.sendMessage(PREFIX + ex.getMessage());
-			return false;
+			Chat.broadcastIngame(new JsonBuilder(component));
 		}
-	}
 
-	private void checkPlayer(CommandSender sender) throws InvalidInputException {
-		if (!(sender instanceof Player))
-			throw new InvalidInputException("You must be in-game to use this command");
-		player = (Player) sender;
+		// Discord
+		{
+			String enchants = getEnchantsDiscord();
 
-		if (!player.hasPermission("showenchants.use"))
-			throw new InvalidInputException("You do not have permission to use this command.");
-		if (!player.hasPermission("showenchants.bypasscooldown"))
-			checkCooldown();
+			String durability = String.valueOf(((int) item.getType().getMaxDurability()) - ((Damageable) item.getItemMeta()).getDamage());
+			durability += "/" + item.getType().getMaxDurability();
+
+			String discordName = ChatColor.stripColor(itemName) + " ";
+			if (itemName.equalsIgnoreCase(item.getItemMeta().getDisplayName()))
+				discordName += "(" + material + ")";
+			if (amount > 1) discordName += " x" + amount;
+
+			SkriptFunctions.showEnchantsOnBridge(player, message, discordName, enchants, durability, channel.getName());
+		}
 	}
 
 	private void getEnchants() {
@@ -152,14 +121,14 @@ public class ShowEnchantsCommand implements CommandExecutor {
 	private String getEnchantsIngame() {
 		StringBuilder string = new StringBuilder();
 		int i = 0;
-		for (Map.Entry<Enchantment, Integer> entry : enchantsMap.entrySet()) {
-			Enchantment enchantment = entry.getKey();
-			Integer level = entry.getValue();
-			if (enchantment.getId() != 100) {
-				string.append(("{id:-,lvl:_}".replaceAll("-", (enchantment.getId() + "")).replaceAll("_", level.toString())));
-				if (i < enchantsMap.size() - 1) string.append(",");
-				i++;
-			}
+		for (Map.Entry<Enchantment, Integer> entry : item.getItemMeta().getEnchants().entrySet()) {
+			String enchant = entry.getKey().getKey().getKey();
+			String level = entry.getValue().toString();
+
+			i++;
+			string.append("{\"id\":\"minecraft:-\",\"lvl\":#}".replaceAll("-", enchant).replaceAll("#", level));
+			if (i < item.getItemMeta().getEnchants().size())
+				string.append(",");
 		}
 		return string.toString();
 	}
@@ -167,32 +136,28 @@ public class ShowEnchantsCommand implements CommandExecutor {
 	private String getEnchantsDiscord() {
 		StringBuilder string = new StringBuilder();
 		for (Map.Entry<Enchantment, Integer> entry : enchantsMap.entrySet()) {
-			Enchantment enchantment = entry.getKey();
-			Integer level = entry.getValue();
-			if (enchantment.getId() != 100) {
-				string.append(ShowEnchants.getEnchantNameAndLevel(enchantment.getId(), level)).append(System.lineSeparator());
-			}
+			String enchant = entry.getKey().getKey().getKey();
+			int level = entry.getValue();
+			string.append(ShowEnchants.getEnchantNameAndLevel(enchant, level)).append(System.lineSeparator());
 		}
 		string.append(getCustomEnchantsDiscord());
 		return ChatColor.stripColor(string.toString());
 	}
 
 	private void getCustomEnchants() {
-		// Check custom enchantments first
+		// Check lore
 		customEnchantsList = new ArrayList<>();
-		for (Map.Entry<Enchantment, Integer> entry : enchantsMap.entrySet()) {
-			Enchantment enchantment = entry.getKey();
-			// if its a custom enchantment, add it to the list
-			if (enchantment.getId() == 100) {
-				customEnchantsList.addAll(item.getItemMeta().getLore());
-			}
-		}
-		// if there are no custom enchants, check for lore
-		if (customEnchantsList.size() == 0) {
-			// if there is lore, add it to the list
-			if (item.getItemMeta().hasLore()) {
-				loreList = new ArrayList<>();
-				loreList.addAll(item.getItemMeta().getLore());
+		loreList = new ArrayList<>();
+		if (item.getItemMeta().hasLore()) {
+			List<String> lore = item.getItemMeta().getLore();
+			for (String line : lore) {
+				// if the lore is colored, its a custom enchantment, so add it to the list
+				if (line.length() != ChatColor.stripColor(line).length()) {
+					customEnchantsList.add(line);
+				} else {
+					// else, it's just lore
+					loreList.add(line);
+				}
 			}
 		}
 	}
@@ -213,7 +178,8 @@ public class ShowEnchantsCommand implements CommandExecutor {
 		int i = 0;
 		for (String customEnchant : customEnchantsList) {
 			string.append("\"").append(customEnchant).append("\"");
-			if (i < customEnchantsList.size() - 1) string.append(",");
+			if (i < customEnchantsList.size() - 1)
+				string.append(",");
 			i++;
 		}
 		return string.toString();

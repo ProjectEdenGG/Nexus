@@ -47,14 +47,14 @@ public class MurderCommand extends CustomCommand {
 	@Path("(scraps|scrapoints) show")
 	void showScraps() {
 		MurderArena murderArena = getMurderArena();
-		murderArena.getScrapPoints().forEach(location -> player().sendBlockChange(location, Material.EMERALD_BLOCK, (byte) 0));
+		murderArena.getScrapPoints().forEach(location -> player().sendBlockChange(location, Material.EMERALD_BLOCK.createBlockData()));
 		send(PREFIX + "Scrap points shown with emerald blocks");
 	}
 
 	@Path("(scraps|scrapoints) hide")
 	void hideScraps() {
 		MurderArena murderArena = getMurderArena();
-		murderArena.getScrapPoints().forEach(location -> player().sendBlockChange(location, location.getBlock().getType(), location.getBlock().getData()));
+		murderArena.getScrapPoints().forEach(location -> player().sendBlockChange(location, location.getBlock().getType().createBlockData()));
 		send(PREFIX + "Scrap points hidden");
 	}
 

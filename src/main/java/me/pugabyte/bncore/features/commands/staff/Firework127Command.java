@@ -20,7 +20,7 @@ public class Firework127Command extends CustomCommand {
 
 	@Path
 	void run() {
-		Utils.giveItem(player(), new ItemBuilder(Material.FIREWORK).power(127).build());
+		Utils.giveItem(player(), new ItemBuilder(Material.FIREWORK_ROCKET).power(127).build());
 	}
 
 }

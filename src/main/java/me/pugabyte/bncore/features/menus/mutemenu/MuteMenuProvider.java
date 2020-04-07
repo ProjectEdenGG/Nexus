@@ -7,7 +7,6 @@ import lombok.Getter;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.mutemenu.MuteMenu;
 import me.pugabyte.bncore.models.mutemenu.MuteMenuService;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,13 +18,13 @@ public class MuteMenuProvider extends MenuUtils implements InventoryProvider {
 
 	@Getter
 	public enum MuteMenuItem {
-		GLOBAL("Global and Discord", new ItemStack(Material.WOOL, 1, ColorType.GREEN.getDurability().byteValue())),
-		LOCAL("Local Chat", new ItemStack(Material.WOOL, 1, ColorType.YELLOW.getDurability().byteValue())),
-		AUTO("Automatic Broadcasts", new ItemStack(Material.DIODE)),
-		JQ("Join/Quit Messages", new ItemStack(Material.FENCE_GATE)),
+		GLOBAL("Global and Discord", new ItemStack(Material.GREEN_WOOL)),
+		LOCAL("Local Chat", new ItemStack(Material.YELLOW_WOOL)),
+		AUTO("Automatic Broadcasts", new ItemStack(Material.REPEATER)),
+		JQ("Join/Quit Messages", new ItemStack(Material.OAK_FENCE_GATE)),
 		FIRSTJOIN("First Join Sounds", new ItemStack(Material.GOLD_BLOCK)),
 		JQSOUND("Join/Quit Sounds", new ItemStack(Material.NOTE_BLOCK)),
-		AFK("AFK Announcements", new ItemStack(Material.REDSTONE_LAMP_OFF)),
+		AFK("AFK Announcements", new ItemStack(Material.REDSTONE_LAMP)),
 		MINIGAME_ANNOUNCEMENTS("Minigame Announcements", new ItemStack(Material.DIAMOND_SWORD));
 
 		public String title;

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.minigames.listeners;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
@@ -22,7 +21,6 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,7 +29,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.material.MaterialData;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 public class RavensNestEstate implements Listener {
@@ -44,8 +41,8 @@ public class RavensNestEstate implements Listener {
 	private Location fireplaceTrigger2 = new Location(Minigames.getWorld(), 3090.5, 25.5, 1242.5);
 	private Location freezerSound = new Location(Minigames.getWorld(), 3086, 25, 1280);
 	private Sound[] sounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,
-			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSION_ILLAGER_PREPARE_MIRROR, Sound.ENTITY_ILLUSION_ILLAGER_PREPARE_BLINDNESS,
-			Sound.ENTITY_ILLUSION_ILLAGER_CAST_SPELL, Sound.ENTITY_ELDER_GUARDIAN_AMBIENT, Sound.ENTITY_SHULKER_AMBIENT};
+			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS,
+			Sound.ENTITY_ILLUSIONER_CAST_SPELL, Sound.ENTITY_ELDER_GUARDIAN_AMBIENT, Sound.ENTITY_SHULKER_AMBIENT};
 
 	// Door Status, true = open, false = closed
 	private boolean statusFireplace = false;
@@ -164,27 +161,14 @@ public class RavensNestEstate implements Listener {
 		statusSmall_S = false;
 		statusSmall_E = false;
 		statusSmall_W = false;
-
-		Region region = match.getArena().getRegion("torches");
-		List<Block> blocks = WEUtils.getBlocks(region);
-		for (Block block : blocks) {
-			if (block.getType().equals(Material.REDSTONE_TORCH_ON) && block.getLocation().getY() <= 17) {
-				byte data = block.getData();
-				block.setType(Material.AIR);
-				match.getTasks().wait(1, () -> {
-					block.setType(Material.REDSTONE_COMPARATOR_ON);
-					block.setData(data);
-				});
-			}
-		}
 	}
 
 	private void soundTasks(Match match) {
 		int delay = 2 * 20;
 		match.getTasks().repeat(delay, 350 * 20, () ->
 				match.getMinigamers().stream().map(Minigamer::getPlayer).forEach(player -> {
-					player.stopSound(Sound.RECORD_13);
-					player.playSound(musicLocation, Sound.RECORD_13, SoundCategory.BLOCKS, 6F, 0.1F);
+					player.stopSound(Sound.MUSIC_DISC_13);
+					player.playSound(musicLocation, Sound.MUSIC_DISC_13, SoundCategory.BLOCKS, 6F, 0.1F);
 				}));
 
 		match.getTasks().repeat(delay, 30 * 20, () -> {
@@ -198,7 +182,7 @@ public class RavensNestEstate implements Listener {
 		match.getTasks().repeat(delay, 25 * 20, () -> {
 			if (Utils.chanceOf(25))
 				match.getMinigamers().stream().map(Minigamer::getPlayer).forEach(player ->
-						player.playSound(musicLocation, Sound.ENTITY_LIGHTNING_THUNDER, 10F, 0.1F));
+						player.playSound(musicLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10F, 0.1F));
 			else if (Utils.chanceOf(25))
 				musicLocation.getWorld().strikeLightning(musicLocation);
 		});
@@ -222,7 +206,7 @@ public class RavensNestEstate implements Listener {
 
 	private void stopSounds(Minigamer minigamer) {
 		Player player = minigamer.getPlayer();
-		player.stopSound(Sound.RECORD_13);
+		player.stopSound(Sound.MUSIC_DISC_BLOCKS);
 		for (Sound sound : sounds) {
 			player.stopSound(sound);
 		}
@@ -239,17 +223,13 @@ public class RavensNestEstate implements Listener {
 		if (!isPlayingThis(minigamer)) return;
 		Match match = minigamer.getMatch();
 		switch (material) {
-			case RAILS:
+			case RAIL:
 				playPiano(loc);
 				break;
 			case BOOKSHELF:
 				openFireplace(loc, match);
 				break;
-			case REDSTONE_TORCH_OFF:
-			case REDSTONE_TORCH_ON:
-//				toggleTorch(loc, event.getClickedBlock(), match);
-				break;
-			case WOOD_BUTTON:
+			case OAK_BUTTON:
 				String schematic = findDoor(loc, match);
 				if (schematic != null)
 					toggleDoor(schematic, match);
@@ -259,7 +239,7 @@ public class RavensNestEstate implements Listener {
 
 	private void playPiano(Location location) {
 		float ran = (float) Utils.randomDouble(0.0, 2.0);
-		location.getWorld().playSound(location, Sound.BLOCK_NOTE_PLING, 0.7F, ran);
+		location.getWorld().playSound(location, Sound.BLOCK_NOTE_BLOCK_PLING, 0.7F, ran);
 	}
 
 	private void openFireplace(Location location, Match match) {
@@ -271,7 +251,7 @@ public class RavensNestEstate implements Listener {
 		statusFireplace = true;
 		Location loc = fireplaceTrigger1.clone();
 		World world = loc.getWorld();
-		Sound sound = Sound.BLOCK_NOTE_HARP;
+		Sound sound = Sound.BLOCK_NOTE_BLOCK_HARP;
 
 		int wait = 0;
 
@@ -285,33 +265,13 @@ public class RavensNestEstate implements Listener {
 		match.getTasks().wait(wait += 4, () -> {
 			world.playSound(loc, sound, 2F, 1.4F);
 			toggleDoor(schemFireplace, match);
-			world.playSound(loc, Sound.ENTITY_ENDERDRAGON_GROWL, 2F, 0.1F);
+			world.playSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2F, 0.1F);
 		});
 		match.getTasks().wait(wait += 4, () -> {
 			world.playSound(loc, Sound.ENTITY_MINECART_RIDING, 2F, 0.5F);
 			match.getTasks().wait((long) (2.5 * 20), () ->
 					world.playSound(loc, Sound.ENTITY_VEX_AMBIENT, 2F, 0.1F));
 		});
-	}
-
-	private void toggleTorch(Location location, Block block, Match match) {
-		if (location.getY() > 17) return;
-
-		Material material = block.getType();
-		byte data = block.getData();
-		block.setType(Material.AIR);
-
-		if (material.equals(Material.REDSTONE_TORCH_OFF)) {
-			match.getTasks().wait(1, () -> {
-				block.setType(Material.REDSTONE_TORCH_ON);
-				block.setData(data);
-			});
-		} else {
-			match.getTasks().wait(1, () -> {
-				block.setType(Material.REDSTONE_TORCH_OFF);
-				block.setData(data);
-			});
-		}
 	}
 
 	private String findDoor(Location location, Match match) {

@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -31,7 +32,7 @@ public class Restrictions implements Listener {
 			return;
 
 		Material itemType = event.getItem().getType();
-		if (!(itemType.equals(Material.FLINT_AND_STEEL) || itemType.equals(Material.FIREBALL)))
+		if (!(itemType.equals(Material.FLINT_AND_STEEL) || itemType.equals(Material.FIRE_CHARGE)))
 			return;
 
 		Player player = event.getPlayer();
@@ -121,24 +122,22 @@ public class Restrictions implements Listener {
 		if (Utils.isNullOrAir(event.getItem()))
 			return;
 
-		if (!event.getItem().getType().equals(Material.MONSTER_EGG))
+		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType()))
 			return;
 
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
 			return;
 
-		if (!event.getClickedBlock().getType().equals(Material.MOB_SPAWNER))
+		if (!event.getClickedBlock().getType().equals(Material.SPAWNER))
 			return;
 
 		if (!event.getPlayer().hasPermission("group.seniorstaff"))
 			event.setCancelled(true);
 	}
 
-
 	@EventHandler
 	public void onPlaceBed(BlockPlaceEvent event) {
-		Material material = event.getBlock().getType();
-		if (!material.equals(Material.BED_BLOCK))
+		if (!MaterialTag.BEDS.isTagged(event.getBlock().getType()))
 			return;
 
 		Player player = event.getPlayer();

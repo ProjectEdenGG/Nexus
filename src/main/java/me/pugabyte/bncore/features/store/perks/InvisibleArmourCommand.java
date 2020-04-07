@@ -22,7 +22,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.invisiblearmour.InvisibleArmour;
 import me.pugabyte.bncore.models.invisiblearmour.InvisibleArmourService;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -225,18 +224,18 @@ public class InvisibleArmourCommand extends CustomCommand {
 				if (!Utils.isNullOrAir(invisibleArmour.getItem(slot))) {
 					contents.set(row.get(), 2, ClickableItem.empty(invisibleArmour.getItem(slot)));
 
-					ItemBuilder item = new ItemBuilder(Material.WOOL);
+					ItemBuilder item;
 					if (invisibleArmour.show(slot))
-						item.color(ColorType.LIGHT_GREEN).name("&aShown").lore("&cClick to hide");
+						item = new ItemBuilder(Material.LIME_WOOL).name("&aShown").lore("&cClick to hide");
 					else
-						item.color(ColorType.RED).name("&cHidden").lore("&aClick to show");
+						item = new ItemBuilder(Material.RED_WOOL).name("&cHidden").lore("&aClick to show");
 
 					String lore = "&eThis will allow you to use things like elytras and depth strider while still hiding your armour from other players";
-					ItemBuilder self = new ItemBuilder(Material.WOOL);
+					ItemBuilder self;
 					if (invisibleArmour.showSelf(slot))
-						self.color(ColorType.LIGHT_GREEN).name("&aShow-Self: Enabled").lore("&cClick to disable");
+						self = new ItemBuilder(Material.LIME_WOOL).name("&aShow-Self: Enabled").lore("&cClick to disable");
 					else
-						self.color(ColorType.RED).name("&cShow-Self: Disabled").lore("&aClick to enable");
+						self = new ItemBuilder(Material.RED_WOOL).name("&cShow-Self: Disabled").lore("&aClick to enable");
 
 					contents.set(row.get(), 4, ClickableItem.from(item.build(), e -> {
 						invisibleArmour.toggle(slot);

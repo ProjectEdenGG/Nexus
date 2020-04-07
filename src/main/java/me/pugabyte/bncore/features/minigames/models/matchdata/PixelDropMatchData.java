@@ -156,7 +156,6 @@ public class PixelDropMatchData extends MatchData {
 					Block block = lobbyDesignMap.get(x + "_" + z);
 					Location loc = WGUtils.toLocation(pasteMin.add(x, 0, z));
 					loc.getBlock().setType(block.getType());
-					loc.getBlock().setData(block.getData());
 				}
 			});
 			matchData.setNextFrameTaskId(nextFrameTaskId);

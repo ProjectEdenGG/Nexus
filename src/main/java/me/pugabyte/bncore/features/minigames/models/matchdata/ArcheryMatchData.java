@@ -12,6 +12,7 @@ import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.arenas.ArcheryArena;
+import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -72,7 +73,7 @@ public class ArcheryMatchData extends MatchData {
 
 			List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.convert(colorRegion));
 			blocks.forEach(block -> {
-				if (block.getType().equals(Material.CONCRETE_POWDER)) {
+				if (MaterialTag.CONCRETES.isTagged(block.getType())) {
 					ArrayList<Location> locations = powderLocations.get(colorRegion);
 					locations.add(block.getLocation());
 					powderLocations.put(colorRegion, locations);
@@ -111,9 +112,9 @@ public class ArcheryMatchData extends MatchData {
 		Block south = down.getBlock().getRelative(0, 0, 1);
 
 		// If block in direction is top dark oak wood slab == direction of range
-		if (north.getType().equals(Material.WOOD_STEP) && north.getData() == 13)
+		if (north.getType().equals(Material.DARK_OAK_SLAB))
 			return Direction.NORTH;
-		else if (south.getType().equals(Material.WOOD_STEP) && south.getData() == 13)
+		else if (south.getType().equals(Material.DARK_OAK_SLAB))
 			return Direction.SOUTH;
 
 		return null;

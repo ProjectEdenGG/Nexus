@@ -5,6 +5,7 @@ import lombok.Data;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -43,6 +44,10 @@ public class PublicChannel implements Channel {
 	@Override
 	public String getAssignMessage(Chatter chatter) {
 		return "Now chatting in " + color + name;
+	}
+
+	public String getChatterFormat(Chatter chatter) {
+		return color + "[" + nickname.toUpperCase() + "] " + new Nerd(chatter.getOfflinePlayer()).getChatFormat().trim() + " " + color + ChatColor.BOLD + "> ";
 	}
 
 	public Set<Chatter> getRecipients(Chatter chatter) {

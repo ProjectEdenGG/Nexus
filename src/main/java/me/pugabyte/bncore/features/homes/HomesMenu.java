@@ -17,7 +17,6 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -163,7 +162,7 @@ public class HomesMenu {
 									try {
 										OfflinePlayer offlinePlayer = Utils.getPlayer(input);
 										if (offlinePlayer != null) {
-											itemStack = new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).build();
+											itemStack = new ItemBuilder(Material.PLAYER_HEAD).build();
 											SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
 											meta.setOwningPlayer(offlinePlayer);
 											itemStack.setItemMeta(meta);

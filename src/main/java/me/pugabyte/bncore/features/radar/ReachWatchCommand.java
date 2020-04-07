@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.radar;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -35,7 +34,7 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<player>")
-	void reachWatch(@Arg Player player) {
+	void reachWatch(Player player) {
 		watchMap.putIfAbsent(player, new ArrayList<>());
 		List<Player> watchList = watchMap.get(player);
 

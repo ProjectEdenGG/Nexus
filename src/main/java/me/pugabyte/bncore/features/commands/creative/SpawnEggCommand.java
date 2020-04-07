@@ -5,9 +5,9 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.ItemBuilder;
-import org.bukkit.Material;
+import me.pugabyte.bncore.utils.MaterialUtils;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 @Permission("plots.use")
 public class SpawnEggCommand extends CustomCommand {
@@ -18,10 +18,11 @@ public class SpawnEggCommand extends CustomCommand {
 
 	@Path("<entityType>")
 	void give(EntityType entityType) {
-		if (player().getInventory().getItemInMainHand().getType() != Material.MONSTER_EGG)
-			error("You must be holding a spawn egg");
-
-		player().getInventory().setItemInMainHand(new ItemBuilder(Material.MONSTER_EGG).spawnEgg(entityType).build());
+		try {
+			player().getInventory().setItemInMainHand(new ItemStack(MaterialUtils.getSpawnEgg(entityType)));
+		} catch (Exception ex) {
+			error("Could not convert that entity type to a spawn egg");
+		}
 	}
 
 }

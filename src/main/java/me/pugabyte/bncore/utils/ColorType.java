@@ -5,7 +5,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 
@@ -23,7 +22,7 @@ public enum ColorType {
 			"light gray",
 			Color.SILVER,
 			ChatColor.GRAY,
-			DyeColor.SILVER,
+			DyeColor.LIGHT_GRAY,
 			8
 	),
 	GRAY(
@@ -147,27 +146,143 @@ public enum ColorType {
 	private Integer durability;
 
 	public static ColorType fromString(String name) {
-		return Arrays.stream(values()).filter(colorConfig -> name.equals(colorConfig.getName())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> name.equals(colorType.getName())).findFirst().orElse(null);
 	}
 
 	public static ColorType fromColor(Color color) {
-		return Arrays.stream(values()).filter(colorConfig -> color.equals(colorConfig.getColor())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> color.equals(colorType.getColor())).findFirst().orElse(null);
 	}
 
 	public static ColorType fromChatColor(ChatColor chatColor) {
-		return Arrays.stream(values()).filter(colorConfig -> chatColor.equals(colorConfig.getChatColor())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> chatColor.equals(colorType.getChatColor())).findFirst().orElse(null);
 	}
 
 	public static ColorType fromDyeColor(DyeColor dyeColor) {
-		return Arrays.stream(values()).filter(colorConfig -> dyeColor.equals(colorConfig.getDyeColor())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> dyeColor.equals(colorType.getDyeColor())).findFirst().orElse(null);
+	}
+
+	public static ColorType fromMaterial(Material material) {
+		return fromDyeColor(Arrays.stream(DyeColor.values()).filter(dyeColor -> material.name().startsWith(dyeColor.name())).findFirst().orElse(null));
 	}
 
 	public static ColorType fromDurability(int durability) {
-		return Arrays.stream(values()).filter(colorConfig -> durability == (colorConfig.getDurability())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> durability == (colorType.getDurability())).findFirst().orElse(null);
 	}
 
-	public ItemStack getItemStack(Material material) {
-		return new ItemStack(material, 1, getDurability().shortValue());
+	public Material switchColor(Material material) {
+		return switchColor(material, this);
+	}
+
+	public static Material switchColor(Material material, ColorType colorType) {
+		return Material.valueOf(material.name().replace(fromMaterial(material).getDyeColor().name(), colorType.getDyeColor().name()));
+	}
+
+	private static String generic(Material material) {
+		return material.name().replace("WHITE", "");
+	}
+
+	public Material getWool() {
+		return getWool(this);
+	}
+
+	public static Material getWool(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_WOOL));
+	}
+
+	public Material getDye() {
+		return getDye(this);
+	}
+
+	public static Material getDye(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_DYE));
+	}
+
+	public Material getCarpet() {
+		return getCarpet(this);
+	}
+
+	public static Material getCarpet(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_CARPET));
+	}
+
+	public Material getBed() {
+		return getBed(this);
+	}
+
+	public static Material getBed(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_BED));
+	}
+
+	public Material getBanner() {
+		return getBanner(this);
+	}
+
+	public static Material getBanner(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_BANNER));
+	}
+
+	public Material getWallBanner() {
+		return getWallBanner(this);
+	}
+
+	public static Material getWallBanner(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_WALL_BANNER));
+	}
+
+	public Material getStainedGlass() {
+		return getStainedGlass(this);
+	}
+
+	public static Material getStainedGlass(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_STAINED_GLASS));
+	}
+
+	public Material getStainedGlassPane() {
+		return getStainedGlassPane(this);
+	}
+
+	public static Material getStainedGlassPane(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_STAINED_GLASS_PANE));
+	}
+
+	public Material getTerracotta() {
+		return getTerracotta(this);
+	}
+
+	public static Material getTerracotta(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_TERRACOTTA));
+	}
+
+	public Material getGlazedTerracotta() {
+		return getGlazedTerracotta(this);
+	}
+
+	public static Material getGlazedTerracotta(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_GLAZED_TERRACOTTA));
+	}
+
+	public Material getConcrete() {
+		return getConcrete(this);
+	}
+
+	public static Material getConcrete(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_CONCRETE));
+	}
+
+	public Material getConcretePowder() {
+		return getConcretePowder(this);
+	}
+
+	public static Material getConcretePowder(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_CONCRETE_POWDER));
+	}
+
+	public Material getShulkerBox() {
+		return getShulkerBox(this);
+	}
+
+	public static Material getShulkerBox(ColorType colorType) {
+		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_SHULKER_BOX));
 	}
 
 	public String getDisplayName() {
