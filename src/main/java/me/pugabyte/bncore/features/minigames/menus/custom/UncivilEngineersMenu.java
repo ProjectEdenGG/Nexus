@@ -17,7 +17,6 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -42,12 +41,11 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 	public void init(Player player, InventoryContents contents) {
 		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-		contents.set(1, 4, ClickableItem.from(nameItem(new ItemStack(Material.MONSTER_EGG), "&eMob Points"), e -> openMobPointsMenu(player)));
+		contents.set(1, 4, ClickableItem.from(nameItem(new ItemStack(Material.ZOMBIE_SPAWN_EGG), "&eMob Points"), e -> openMobPointsMenu(player)));
 
 		contents.set(1, 6, ClickableItem.from(nameItem(new ItemStack(Material.COMPASS), "&eOrigins"), e -> openOriginsMenu(player)));
 
-		contents.set(1, 2, ClickableItem.from(nameItem(new ItemStack(Material.WOOD_AXE), "&eSetup Region", "&7You must set all the origins first, and then run this after setting the first region."), e -> UncivilEngineers.setupArena(arena, player)));
-
+		contents.set(1, 2, ClickableItem.from(nameItem(new ItemStack(Material.WOODEN_AXE), "&eSetup Region", "&7You must set all the origins first, and then run this after setting the first region."), e -> UncivilEngineers.setupArena(arena, player)));
 	}
 
 	private void openOriginsMenu(Player player) {
@@ -93,7 +91,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 			for (UncivilEngineers.MobPoint mobPoint : arena.getMobPoints()) {
 				for (MobHead head : MobHead.values()) {
 					if (mobPoint.getType() == head.getType()) {
-						ItemStack skull = new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).skullOwner(head.getMHFName()).build();
+						ItemStack skull = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(head.getMHFName()).build();
 						contents.set(row, column, ClickableItem.from(nameItem(skull, "&3" + head.getTitle(),
 								getLocationLore(mobPoint.getLocation()) +
 										"|| ||&7Click me to remove this Mob"),
@@ -173,8 +171,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 			int row = 1;
 			int column = 0;
 			for (MobHead head : MobHead.values()) {
-				ItemStack skull = new ItemBuilder(Material.SKULL_ITEM).name("&e" + head.getTitle())
-						.skullType(SkullType.PLAYER).skullOwner(head.getMHFName()).build();
+				ItemStack skull = new ItemBuilder(Material.PLAYER_HEAD).name("&e" + head.getTitle()).skullOwner(head.getMHFName()).build();
 				contents.set(row, column, ClickableItem.from(skull, e -> {
 					arena.getMobPoints().add(new UncivilEngineers.MobPoint(player.getLocation(), head.getType()));
 					arena.write();

@@ -2,18 +2,21 @@ package me.pugabyte.bncore.models.shop;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,65 +28,76 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, ItemStackConverter.class})
 public class Shop extends PlayerOwnedObject {
+	@Id
 	@NonNull
 	private UUID uuid;
 	private String description;
-	private List<ShopItem> items;
+	private List<ShopItem> items = new ArrayList<>();
 
 	@Data
 	@NoArgsConstructor
-	public class ShopItem {
-		private int id;
+	@AllArgsConstructor
+	public static class ShopItem {
+		private UUID uuid;
 		private ItemStack item;
 		private int stock;
 		private Exchange exchange;
 
-
-		// Interface
-		public class Exchange {
-			private ExchangeAction action;
-
-			private void process(OfflinePlayer customer) {
-
-
-			}
-
+		public Shop getShop() {
+			return new ShopService().get(uuid);
 		}
 	}
 
-	private enum ExchangeAction { SELL, BUY }
+	@NoArgsConstructor
+	// Morphia doesnt like interfaces >:(
+	public static class Exchange {
 
-	public interface Exchange {
+		public <T> T getPrice() {
+			throw new UnsupportedOperationException();
+		}
 
-		void process(ShopItem item, OfflinePlayer customer);
-
+		public void process(ShopItem item, OfflinePlayer customer) {
+			throw new UnsupportedOperationException();
+		}
 	}
 
-	public class ItemForItemExchange implements Exchange {
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class ItemForItemExchange extends Exchange {
+		@NonNull
+		private ItemStack price;
 
 		@Override
 		public void process(ShopItem item, OfflinePlayer customer) {
-
+			BNCore.log("Processing ItemForItemExchange");
 		}
-
 	}
 
-	public class ItemForMoneyExchange implements Exchange {
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class ItemForMoneyExchange extends Exchange {
+		@NonNull
+		private Integer price;
 
 		@Override
 		public void process(ShopItem item, OfflinePlayer customer) {
-
+			BNCore.log("Processing ItemForMoneyExchange");
 		}
-
 	}
 
-	public class MoneyForItemExchange implements Exchange {
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class MoneyForItemExchange extends Exchange {
+		@NonNull
+		private ItemStack price;
 
 		@Override
 		public void process(ShopItem item, OfflinePlayer customer) {
-
+			BNCore.log("Processing MoneyForItemExchange");
 		}
-
 	}
 
 }

@@ -58,14 +58,14 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 
 	@Getter
 	enum RGB {
-		R(1),
-		G(10),
-		B(4);
+		R(ColorType.RED),
+		G(ColorType.LIGHT_GREEN),
+		B(ColorType.BLUE);
 
-		int data;
+		ColorType colorType;
 
-		RGB(int data) {
-			this.data = data;
+		RGB(ColorType colorType) {
+			this.colorType = colorType;
 		}
 	}
 
@@ -86,7 +86,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 		for (ColorItem colorItem : ColorItem.values()) {
 			String name = colorItem.getColorType().getChatColor() + StringUtils.camelCase(colorItem.name().replace("_", " "));
 			contents.set(colorItem.getColumn(), colorItem.getRow(), ClickableItem.from(
-					new ItemBuilder(Material.INK_SACK).name(name).dyeColor(colorItem.getColorType()).build(),
+					new ItemBuilder(colorItem.getColorType().getDye()).name(name).build(),
 					e -> {
 						owner.getSettings(type).put(setting, colorItem.getColorType().getColor());
 						service.save(owner);
@@ -100,9 +100,10 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 			for (int j = 0; j < 3; j++) {
 				AtomicInteger dye = new AtomicInteger(i);
 				AtomicInteger index = new AtomicInteger(j);
-				contents.set(i + 1, slots[j], ClickableItem.from(nameItem(
-						new ItemStack(Material.INK_SACK, amount[index.get()], (byte) RGB.values()[i].getData()),
-						"+/- " + amount[j]),
+				contents.set(i + 1, slots[j], ClickableItem.from(new ItemBuilder(RGB.values()[i].getColorType().getDye())
+								.amount(amount[index.get()])
+								.name("+/- " + amount[j])
+								.build(),
 						e -> {
 							Color newColor = null;
 							switch (RGB.values()[dye.get()]) {

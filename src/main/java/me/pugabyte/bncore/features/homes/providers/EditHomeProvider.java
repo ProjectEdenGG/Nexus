@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
-import me.pugabyte.bncore.utils.ColorType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -33,7 +32,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> HomesMenu.edit(homeOwner));
 
-		Material material = home.isLocked() ? Material.IRON_FENCE : Material.FENCE_GATE;
+		Material material = home.isLocked() ? Material.IRON_BARS : Material.OAK_FENCE_GATE;
 		String name = home.isLocked() ? "&cLocked" : "&aUnlocked";
 		String lore = "||" + (home.isLocked() ? "&eClick to unlock" : "&eClick to lock");
 
@@ -45,7 +44,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 
 		if (home.isLocked()) {
 			contents.set(0, 7, ClickableItem.from(nameItem(
-					ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE_POWDER),
+					Material.LIME_CONCRETE_POWDER,
 					"&eGive a player access",
 					"&eto this home||&f||&fThey will be able to teleport to this home even if it is locked" + getAccessListNames(home.getAccessList())
 				),
@@ -53,7 +52,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 			));
 
 			contents.set(0, 8, ClickableItem.from(nameItem(
-					ColorType.RED.getItemStack(Material.CONCRETE_POWDER),
+					Material.RED_CONCRETE_POWDER,
 					"&eRemove a player's",
 					"&eaccess to this home||&f||&fThey will only be able to teleport to this home if it is unlocked"
 				),
@@ -72,7 +71,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 		contents.set(2, 2, ClickableItem.from(nameItem(Material.NAME_TAG, "&eRename"), e -> HomesMenu.rename(home, (owner, response) -> refresh())));
 		contents.set(2, 4, ClickableItem.from(nameItem(Material.COMPASS, "&eTeleport"), e -> home.teleport(player)));
 
-		contents.set(2, 6, ClickableItem.from(nameItem(ColorType.CYAN.getItemStack(Material.BED), "&eSet to current location"),
+		contents.set(2, 6, ClickableItem.from(nameItem(Material.CYAN_BED, "&eSet to current location"),
 				e -> ConfirmationMenu.confirmMenu(player, ConfirmationMenu.builder()
 						.onCancel(e2 -> refresh())
 						.onConfirm(e2 -> {

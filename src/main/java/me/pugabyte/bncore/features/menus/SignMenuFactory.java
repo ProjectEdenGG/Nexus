@@ -73,7 +73,7 @@ public final class SignMenuFactory {
 				Tasks.sync(() -> menu.response.accept(player, input));
 
 				Location location = blockPosition.toLocation(player.getWorld());
-				player.sendBlockChange(location, location.getBlock().getType(), location.getBlock().getData());
+				player.sendBlockChange(location, location.getBlock().getType().createBlockData());
 			}
 		});
 	}
@@ -95,7 +95,7 @@ public final class SignMenuFactory {
 			Location location = player.getLocation();
 			BlockPosition blockPosition = new BlockPosition(location.getBlockX(), Math.max(location.getBlockY() - 5, 0), location.getBlockZ());
 
-			player.sendBlockChange(blockPosition.toLocation(location.getWorld()), Material.WALL_SIGN, (byte) 0);
+			player.sendBlockChange(blockPosition.toLocation(location.getWorld()), Material.OAK_WALL_SIGN.createBlockData());
 
 			PacketContainer openSign = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.OPEN_SIGN_EDITOR);
 			PacketContainer signData = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.TILE_ENTITY_DATA);

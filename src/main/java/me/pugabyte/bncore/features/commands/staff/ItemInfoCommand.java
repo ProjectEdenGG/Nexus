@@ -60,7 +60,7 @@ public class ItemInfoCommand extends CustomCommand {
 
 		send("");
 
-		if (!overrideBool && (material.equals(Material.WRITTEN_BOOK) || material.equals(Material.BOOK_AND_QUILL))) {
+		if (!overrideBool && (material.equals(Material.WRITTEN_BOOK) || material.equals(Material.WRITABLE_BOOK))) {
 			if (nbtString != null) {
 				int length = nbtString.length();
 				if (length > 12400) {

@@ -24,10 +24,9 @@ public class FlagsMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-		ColorType whitelist = ColorType.WHITE;
-		if (!arena.isWhitelist()) whitelist = ColorType.BLACK;
-		contents.set(1, 0, ClickableItem.from(nameItem(whitelist.getItemStack(Material.WOOL), "&eUsable Block List",
-				"&7Click me to set the block list||&7that players can use|| ||&3Current Setting: &e" + whitelist), e -> {
+		ColorType color = arena.isWhitelist() ? ColorType.WHITE : ColorType.BLACK;
+		contents.set(1, 0, ClickableItem.from(nameItem(color.getWool(), "&eUsable Block List",
+				"&7Click me to set the block list||&7that players can use|| ||&3Current Setting: &e" + color), e -> {
 			menus.blockListMenu(arena).open(player);
 		}));
 

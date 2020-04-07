@@ -9,9 +9,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.interactioncommand.InteractionCommand;
 import me.pugabyte.bncore.models.interactioncommand.InteractionCommandService;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,8 +20,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -89,13 +87,11 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 //
 //	}
 
-	private final static List<Material> physical = Arrays.asList(Material.GOLD_PLATE, Material.IRON_PLATE, Material.STONE_PLATE, Material.WOOD_PLATE);
-
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		if (event.getClickedBlock() == null) return;
 		if (event.getHand() == EquipmentSlot.OFF_HAND) return;
-		if (event.getAction() != Action.PHYSICAL && physical.contains(event.getClickedBlock().getType())) return;
+		if (event.getAction() != Action.PHYSICAL && MaterialTag.PRESSURE_PLATES.isTagged(event.getClickedBlock().getType())) return;
 		if (event.getAction() == Action.PHYSICAL && Utils.isVanished(event.getPlayer())) return;
 
 		Map<Integer, InteractionCommand> commands = new InteractionCommandService().get(event.getClickedBlock().getLocation());

@@ -9,7 +9,6 @@ import me.pugabyte.bncore.features.homes.HomesMenu;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -78,7 +77,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void format_AllowAndRemoveAll(InventoryContents contents) {
-		contents.set(1, 2, ClickableItem.from(new ItemBuilder(ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE_POWDER))
+		contents.set(1, 2, ClickableItem.from(new ItemBuilder(Material.LIME_CONCRETE_POWDER)
 						.name("&eGrant a player access to all homes")
 						.loreize(false)
 						.lore("&fThey will be able to teleport to||&fyour homes even if they are locked" + getAccessListNames(homeOwner.getFullAccessList())).build(),
@@ -86,7 +85,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		));
 
 		contents.set(1, 3, ClickableItem.from(nameItem(
-				ColorType.RED.getItemStack(Material.CONCRETE_POWDER),
+				Material.RED_CONCRETE_POWDER,
 				"&eRevoke a player's access from all homes",
 				"&fThey will only be able to teleport to your unlocked homes"
 			),
@@ -95,13 +94,13 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void format_LockAndUnlockAll(InventoryContents contents) {
-		contents.set(1, 5, ClickableItem.from(nameItem(Material.IRON_FENCE, "&eLock all homes"), e -> {
+		contents.set(1, 5, ClickableItem.from(nameItem(Material.IRON_BARS, "&eLock all homes"), e -> {
 			homeOwner.getHomes().forEach(home -> home.setLocked(true));
 			service.save(homeOwner);
 			refresh();
 		}));
 
-		contents.set(1, 6, ClickableItem.from(nameItem(Material.FENCE_GATE, "&eUnlock all homes"), e -> {
+		contents.set(1, 6, ClickableItem.from(nameItem(Material.OAK_FENCE_GATE, "&eUnlock all homes"), e -> {
 			homeOwner.getHomes().forEach(home -> home.setLocked(false));
 			service.save(homeOwner);
 			refresh();
@@ -120,9 +119,9 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 			if (home.getItem() != null)
 				item = new ItemBuilder(home.getItem());
 			else if (home.isLocked())
-				item = new ItemBuilder(ColorType.RED.getItemStack(Material.CONCRETE));
+				item = new ItemBuilder(Material.RED_CONCRETE);
 			else
-				item = new ItemBuilder(ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE));
+				item = new ItemBuilder(Material.LIME_CONCRETE);
 
 			if (home.isLocked())
 				item.glow().loreize(false).lore("||&f&cLocked||&f||&eClick to edit" + getAccessListNames(home.getAccessList()));

@@ -1,8 +1,10 @@
 package me.pugabyte.bncore.features.listeners;
 
+import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Slab;
+import org.bukkit.block.data.type.Slab.Type;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -15,8 +17,8 @@ public class SlabBreak implements Listener {
 	public void onSlabBreak(BlockBreakEvent event) {
 		if (event.isCancelled()) return;
 		if (!event.getPlayer().hasPermission("group.staff")) return;
-		if (isDoubleSlab(event.getBlock())) {
-			if (event.getPlayer().getInventory().getItemInMainHand().getType().name().contains("slab")) {
+		if (MaterialTag.SLABS.isTagged(event.getBlock().getType())) {
+			if (MaterialTag.SLABS.isTagged(event.getPlayer().getInventory().getItemInMainHand().getType())) {
 				event.setCancelled(true);
 
 				Vector direction = event.getPlayer().getLocation().getDirection();
@@ -33,39 +35,21 @@ public class SlabBreak implements Listener {
 				if (blockVector != null) {
 					double blockY = blockVector.getY() - ((int) blockVector.getY());
 					if (blockY > .5) {
-						event.getBlock().setTypeIdAndData(event.getBlock().getTypeId() + 1, event.getBlock().getData(), true);
-						if (event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
-							event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(event.getBlock().getType(), 1, event.getBlock().getData()));
-						}
+						((Slab) event.getBlock().getBlockData()).setType(Type.BOTTOM);
+						if (event.getPlayer().getGameMode() == GameMode.SURVIVAL)
+							event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(event.getBlock().getType()));
 					} else {
-						event.getBlock().setTypeIdAndData(event.getBlock().getTypeId() + 1, (byte) (event.getBlock().getData() + 8), true);
-						if (event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
-							event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(event.getBlock().getType(), 1, (byte) (event.getBlock().getData() & 7)));
-						}
+						((Slab) event.getBlock().getBlockData()).setType(Type.TOP);
+						if (event.getPlayer().getGameMode() == GameMode.SURVIVAL)
+							event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(event.getBlock().getType()));
 					}
 				} else {
-					event.getBlock().setTypeIdAndData(event.getBlock().getTypeId() + 1, event.getBlock().getData(), true);
-					if (event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
-						event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(event.getBlock().getType(), 1, event.getBlock().getData()));
-					}
+					((Slab) event.getBlock().getBlockData()).setType(Type.BOTTOM);
+					if (event.getPlayer().getGameMode() == GameMode.SURVIVAL)
+						event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(event.getBlock().getType()));
 				}
 			}
 		}
 	}
-
-	boolean isDoubleSlab(Block block) {
-		if (block == null) {
-			return false;
-		}
-		switch (block.getType()) {
-			case DOUBLE_STEP:
-			case WOOD_DOUBLE_STEP:
-			case PURPUR_DOUBLE_SLAB:
-			case DOUBLE_STONE_SLAB2:
-				return true;
-		}
-		return false;
-	}
-
 
 }

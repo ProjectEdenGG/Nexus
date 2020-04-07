@@ -5,7 +5,6 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
-import me.pugabyte.bncore.utils.ColorType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -25,7 +24,7 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.BANNER, 1, ColorType.BLUE.getDyeColor().getDyeData());
+		return new ItemStack(Material.BLUE_BANNER);
 	}
 
 	@Override

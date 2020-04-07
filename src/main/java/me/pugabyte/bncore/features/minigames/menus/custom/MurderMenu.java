@@ -60,7 +60,7 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 		contents.set(1, 3, ClickableItem.from(nameItem(new ItemStack(Material.IRON_INGOT), "&eScrap Points"),
 				e -> openScrapPointsMenu(arena).open(player)));
 
-		contents.set(1, 5, ClickableItem.from(nameItem(Material.WATCH, "&eSpawn Chance", "&3Current value:||&e" + arena.getSpawnChance()),
+		contents.set(1, 5, ClickableItem.from(nameItem(Material.CLOCK, "&eSpawn Chance", "&3Current value:||&e" + arena.getSpawnChance()),
 				e -> openAnvilMenu(player, arena, arena.getSpawnChance() + "", (Player p, String text) -> {
 					if (!Utils.isInt(text)) {
 						AnvilGUI.Response.close();

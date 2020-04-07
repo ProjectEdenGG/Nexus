@@ -25,9 +25,9 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private ItemStack forward7 = new ItemBuilder(Material.ARROW).amount(7).name("&2Scroll forward 7 days").build();
 
 	private final int MAX_DAY = DailyRewardsFeature.getMaxDays();
-	private ItemStack claimed = new ItemStack(Material.WOOL, 1);
-	private ItemStack unclaimed = new ItemStack(Material.WOOL, 1);
-	private ItemStack locked = new ItemStack(Material.WOOL, 1, (short) 15);
+	private ItemStack claimed = new ItemStack(Material.WHITE_WOOL);
+	private ItemStack unclaimed = new ItemStack(Material.WHITE_WOOL);
+	private ItemStack locked = new ItemStack(Material.BLACK_WOOL);
 
 	DailyRewardsMenu(DailyReward dailyReward) {
 		this.dailyReward = dailyReward;

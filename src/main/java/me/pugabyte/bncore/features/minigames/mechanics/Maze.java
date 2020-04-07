@@ -18,7 +18,7 @@ public class Maze extends CheckpointMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.LEAVES);
+		return new ItemStack(Material.OAK_LEAVES);
 	}
 
 }

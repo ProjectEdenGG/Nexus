@@ -19,23 +19,23 @@ public class Warps {
 
 	@Getter
 	public enum SurvivalWarp {
-		SPAWN(3, 2, new ItemStack(Material.SMOOTH_BRICK, 1, (byte) 3)),
+		SPAWN(3, 2, new ItemStack(Material.CHISELED_STONE_BRICKS)),
 		NORTH(3, 1, Material.BONE_BLOCK),
 		EAST(4, 2, Material.PACKED_ICE),
-		SOUTH(3, 3, new ItemStack(Material.WOOL, 1, (byte) 7)),
-		WEST(2, 2, new ItemStack(Material.LOG, 1, (byte) 1)),
+		SOUTH(3, 3, new ItemStack(Material.GRAY_WOOL)),
+		WEST(2, 2, new ItemStack(Material.SPRUCE_LOG)),
 		NORTHEAST(4, 1, Material.COBBLESTONE_STAIRS),
-		SOUTHEAST(4, 3, new ItemStack(Material.WOOD, 1, (byte) 2)),
+		SOUTHEAST(4, 3, new ItemStack(Material.BIRCH_WOOD)),
 		SOUTHWEST(2, 3, Material.HAY_BLOCK),
-		NORTHWEST(2, 1, new ItemStack(Material.DIRT, 1, (byte) 2)),
-		NORTH_2(3, 0, Material.WOOD),
-		EAST_2(5, 2, Material.LOG),
-		SOUTH_2(3, 4, Material.SMOOTH_BRICK),
-		WEST_2(1, 2, new ItemStack(Material.WOOD, 1, (byte) 4)),
-		NORTHEAST_2(5, 0, new ItemStack(Material.STAINED_CLAY, 1, (byte) 7)),
+		NORTHWEST(2, 1, new ItemStack(Material.PODZOL)),
+		NORTH_2(3, 0, Material.OAK_WOOD),
+		EAST_2(5, 2, Material.OAK_LOG),
+		SOUTH_2(3, 4, Material.STONE_BRICKS),
+		WEST_2(1, 2, new ItemStack(Material.ACACIA_WOOD)),
+		NORTHEAST_2(5, 0, new ItemStack(Material.GRAY_TERRACOTTA)),
 		SOUTHEAST_2(5, 4, Material.SNOW_BLOCK),
 		SOUTHWEST_2(1, 4, Material.SAND),
-		NORTHWEST_2(1, 0, new ItemStack(Material.LOG, 1, (byte) 3)),
+		NORTHWEST_2(1, 0, new ItemStack(Material.JUNGLE_WOOD)),
 		NETHER(0, 4, Material.NETHERRACK);
 
 		private int row;

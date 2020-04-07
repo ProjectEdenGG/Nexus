@@ -336,15 +336,15 @@ public class Utils {
 	}
 
 	public static boolean isWater(Material material) {
-		return material.equals(Material.WATER) || material.equals(Material.STATIONARY_WATER);
+		return material.equals(Material.WATER);
 	}
 
 	public static boolean isLava(Material material) {
-		return material.equals(Material.LAVA) || material.equals(Material.STATIONARY_LAVA);
+		return material.equals(Material.LAVA);
 	}
 
 	public static boolean isSign(Material material) {
-		return material.equals(Material.SIGN) || material.equals(Material.SIGN_POST) || material.equals(Material.WALL_SIGN);
+		return MaterialTag.SIGNS.isTagged(material);
 	}
 
 	public static boolean isNullOrAir(ItemStack itemStack) {

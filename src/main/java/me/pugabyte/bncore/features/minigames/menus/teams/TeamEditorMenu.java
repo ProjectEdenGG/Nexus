@@ -57,7 +57,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 			})));
 
 		contents.set(1, 2, ClickableItem.from(nameItem(
-				Material.SIGN,
+				Material.OAK_SIGN,
 				"&eTeam Objective",
 				"||&3Current Objective:||&e" + team.getObjective()
 			),
@@ -69,7 +69,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 			})));
 
 		contents.set(1, 4, ClickableItem.from(nameItem(
-				ColorType.fromChatColor(team.getColor()).getItemStack(Material.WOOL),
+				ColorType.fromChatColor(team.getColor()).getWool(),
 				"&eTeam Color",
 				"&7Set the color of the team"
 			),
@@ -83,7 +83,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 			e -> teamMenus.openSpawnpointMenu(arena, team).open(player)));
 
 		contents.set(1, 8, ClickableItem.from(nameItem(
-				Material.IRON_PLATE,
+				Material.HEAVY_WEIGHTED_PRESSURE_PLATE,
 				"&eBalance Percentage",
 				"&7Set to -1 to disable||&7team balancing.|| ||&3Current Percentage:||&e" + team.getBalancePercentage()
 			),

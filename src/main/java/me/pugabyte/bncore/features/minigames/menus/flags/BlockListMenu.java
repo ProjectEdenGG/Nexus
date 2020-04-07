@@ -8,7 +8,6 @@ import fr.minuskube.inv.content.SlotIterator;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -51,7 +50,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 
 		if (arena.isWhitelist()) {
 			contents.set(5, 7, ClickableItem.from(nameItem(
-					new ItemStack(Material.INK_SACK, 1, ColorType.WHITE.getDyeColor().getDyeData()),
+					Material.WHITE_DYE,
 					"&eWhitelisted",
 					"&3Click to set the block||&3list mode to &eblacklist."
 				),
@@ -63,7 +62,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 			));
 		} else {
 			contents.set(5, 7, ClickableItem.from(nameItem(
-					new ItemStack(Material.INK_SACK, 1, ColorType.BLACK.getDyeColor().getDyeData()),
+					Material.BLACK_DYE,
 					"&eBlacklisted",
 					"&3Click to set the block||&3list mode to &ewhitelist."
 				),

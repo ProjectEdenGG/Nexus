@@ -95,7 +95,7 @@ public final class GoldRush extends TeamlessMechanic {
 			put(Material.GOLD_ORE, 40.0);
 			put(Material.DIRT, 20.0);
 			put(Material.IRON_ORE, 20.0);
-			put(Material.WOOD, 10.0);
+			put(Material.OAK_WOOD, 10.0);
 		}};
 
 		Vector p1 = worldEditUtils.toVector(locations.get(0).clone().subtract(0, 2, 0));
@@ -155,7 +155,7 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	public void trap(Block block) {
-		Tasks.wait(1, () -> block.getRelative(BlockFace.UP).getLocation().clone().subtract(0, 1, 0).getBlock().setType(Material.WEB));
+		Tasks.wait(1, () -> block.getRelative(BlockFace.UP).getLocation().clone().subtract(0, 1, 0).getBlock().setType(Material.COBWEB));
 		Tasks.wait(2 * 20, () -> block.setType(Material.AIR));
 	}
 

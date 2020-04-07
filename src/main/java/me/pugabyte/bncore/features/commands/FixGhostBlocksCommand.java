@@ -37,7 +37,7 @@ public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 
 	private void fixGhostBlocks(Player player, Location location, int radius) {
 		Utils.getBlocksInRadius(location, radius).forEach(block ->
-				player.sendBlockChange(block.getLocation(), block.getType(), block.getData()));
+				player.sendBlockChange(block.getLocation(), block.getType().createBlockData()));
 	}
 
 	@EventHandler

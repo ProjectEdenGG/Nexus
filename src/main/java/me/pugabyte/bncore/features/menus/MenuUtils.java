@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -128,8 +127,8 @@ public abstract class MenuUtils {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			ItemStack cancelItem = nameItem(ColorType.RED.getItemStack(Material.CONCRETE), cancelText, cancelLore);
-			ItemStack confirmItem = nameItem(ColorType.LIGHT_GREEN.getItemStack(Material.CONCRETE), confirmText, confirmLore);
+			ItemStack cancelItem = nameItem(Material.RED_CONCRETE, cancelText, cancelLore);
+			ItemStack confirmItem = nameItem(Material.LIME_CONCRETE, confirmText, confirmLore);
 
 			contents.set(1, 2, ClickableItem.from(cancelItem, (e) -> {
 				if (onCancel != null)

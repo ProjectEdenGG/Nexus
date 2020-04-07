@@ -58,11 +58,11 @@ public class EasterEggs implements Listener {
 	private void pug(Player player, ItemStack heldItem, Player clicked) {
 		switch (heldItem.getType()) {
 			case BONE:
-			case PORK:
-			case GRILLED_PORK:
-			case RAW_BEEF:
+			case PORKCHOP:
+			case COOKED_PORKCHOP:
+			case BEEF:
 			case COOKED_BEEF:
-			case RAW_CHICKEN:
+			case CHICKEN:
 			case COOKED_CHICKEN:
 			case RABBIT:
 			case COOKED_RABBIT:
@@ -102,7 +102,7 @@ public class EasterEggs implements Listener {
 
 	private void pork(Player player, ItemStack heldItem, Player clicked) {
 		switch (heldItem.getType()) {
-			case CARROT_ITEM:
+			case CARROT:
 			case BEETROOT:
 				heldItem.setAmount(heldItem.getAmount() - 1);
 
@@ -115,7 +115,7 @@ public class EasterEggs implements Listener {
 
 	private void raven(Player player, ItemStack heldItem, Player clicked) {
 		switch (heldItem.getType()) {
-			case SEEDS:
+			case WHEAT_SEEDS:
 			case BEETROOT_SEEDS:
 			case MELON_SEEDS:
 			case PUMPKIN_SEEDS:
@@ -126,7 +126,6 @@ public class EasterEggs implements Listener {
 				Tasks.wait(20, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PARROT_AMBIENT, 0.5F, 1F));
 				break;
 		}
-
 	}
 
 	private void eatSound(Player player, Location location, Sound sound) {

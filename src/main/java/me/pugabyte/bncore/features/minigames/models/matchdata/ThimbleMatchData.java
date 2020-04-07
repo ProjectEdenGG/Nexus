@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
-import com.google.common.primitives.Shorts;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
@@ -10,9 +9,11 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import java.util.Optional;
 @MatchDataFor(Thimble.class)
 public class ThimbleMatchData extends MatchData {
 	private List<Minigamer> turnList = new ArrayList<>();
-	private Map<Player, Short> chosenConcrete = new HashMap<>();
+	private Map<Player, Material> chosenConcrete = new HashMap<>();
 	private int turns;
 	private Minigamer turnPlayer;
 	private int turnWaitTaskId;
@@ -33,18 +34,18 @@ public class ThimbleMatchData extends MatchData {
 		super(match);
 	}
 
-	public boolean concreteIsChosen(Short id) {
+	public boolean concreteIsChosen(Material id) {
 		return chosenConcrete.containsValue(id);
 	}
 
-	public Short getAvailableConcreteId() {
-		final short[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
-		Optional<Short> first = Shorts.asList(CONCRETE_IDS).stream()
+	public Material getAvailableConcreteId() {
+		final Material[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
+		Optional<Material> first = Arrays.asList(CONCRETE_IDS).stream()
 				.filter(id -> !concreteIsChosen(id))
 				.findFirst();
 
 		if (!first.isPresent())
-			throw new InvalidInputException("No available concrete IDs");
+			throw new InvalidInputException("No available concretes");
 
 		return first.get();
 	}

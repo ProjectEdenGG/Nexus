@@ -10,12 +10,10 @@ import me.pugabyte.bncore.models.chat.Channel;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.models.chat.PublicChannel;
-import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,9 +86,7 @@ public class ChatManager {
 			Tasks.wait(1, () -> event.getChatter().send(PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
 
 		JsonBuilder json = new JsonBuilder()
-				.next(event.getChannel().getColor() + "[" + event.getChannel().getNickname().toUpperCase() + "] ")
-				.next(new Nerd(event.getChatter().getOfflinePlayer()).getChatFormat().trim())
-				.next(" " + event.getChannel().getColor() + ChatColor.BOLD + "> ")
+				.next(event.getChannel().getChatterFormat(event.getChatter()))
 				.urlize(event.getChannel().getMessageColor() + event.getMessage());
 
 		event.getRecipients().forEach(recipient -> recipient.send(json));

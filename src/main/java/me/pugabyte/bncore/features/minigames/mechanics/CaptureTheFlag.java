@@ -9,7 +9,6 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent
 import me.pugabyte.bncore.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.Flag;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +29,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.BANNER, 1, DyeColor.RED.getDyeData());
+		return new ItemStack(Material.RED_BANNER);
 	}
 
 	@Override
@@ -48,7 +47,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 			Flag clickedFlag = matchData.getFlag(clickedTeam);
 
 			if (clickedFlag == null) {
-				clickedFlag = new Flag(sign.getLocation(), sign.getType(), /* 1.13 sign.getBlockData(),*/ sign.getLines(), clickedTeam);
+				clickedFlag = new Flag(sign.getLocation(), sign.getType(), sign.getBlockData(), sign.getLines(), clickedTeam);
 				matchData.addFlag(clickedTeam, clickedFlag);
 			}
 

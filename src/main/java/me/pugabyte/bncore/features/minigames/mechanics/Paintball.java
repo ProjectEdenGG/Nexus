@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -31,7 +32,7 @@ public final class Paintball extends BalancedTeamMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.SNOW_BALL);
+		return new ItemStack(Material.SNOWBALL);
 	}
 
 	@Override
@@ -75,41 +76,28 @@ public final class Paintball extends BalancedTeamMechanic {
 	}
 
 	public void changeBlockColor(Minigamer minigamer, Block block) {
-		switch (block.getType()) {
-			case WOOL:
-			case STAINED_CLAY:
-			case CONCRETE:
-			case CONCRETE_POWDER:
-			case STAINED_GLASS:
-			case STAINED_GLASS_PANE:
-			case CARPET:
-				changeColor(minigamer, block);
-				break;
-			case SAND:
-				block.setType(Material.CONCRETE_POWDER);
-				changeColor(minigamer, block);
-				break;
-			case THIN_GLASS:
-				block.setType(Material.STAINED_GLASS_PANE);
-				changeColor(minigamer, block);
-				break;
-			case QUARTZ_BLOCK:
-			case SNOW_BLOCK:
-			case SANDSTONE:
-				block.setType(Material.CONCRETE);
-				changeColor(minigamer, block);
-				break;
-			case HARD_CLAY:
-			case PACKED_ICE:
-			case ICE:
-				block.setType(Material.STAINED_CLAY);
-				changeColor(minigamer, block);
-				break;
-		}
-	}
-
-	public void changeColor(Minigamer minigamer, Block block) {
-		block.setData(ColorType.fromChatColor(minigamer.getTeam().getColor()).getDurability().byteValue());
+		ColorType colorType = ColorType.fromChatColor(minigamer.getTeam().getColor());
+		if (MaterialTag.COLORABLE.isTagged(block.getType()))
+			block.setType(colorType.switchColor(block.getType()));
+		else
+			switch (block.getType()) {
+				case SAND:
+					block.setType(colorType.getConcretePowder());
+					break;
+				case GLASS_PANE:
+					block.setType(colorType.getStainedGlassPane());
+					break;
+				case QUARTZ_BLOCK:
+				case SNOW_BLOCK:
+				case SANDSTONE:
+					block.setType(colorType.getConcrete());
+					break;
+				case TERRACOTTA:
+				case PACKED_ICE:
+				case ICE:
+					block.setType(colorType.getTerracotta());
+					break;
+			}
 	}
 
 	// TODO:

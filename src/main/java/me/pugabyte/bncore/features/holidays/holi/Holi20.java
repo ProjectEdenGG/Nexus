@@ -92,9 +92,9 @@ public class Holi20 implements Listener {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(loc.getWorld());
 		for (ProtectedRegion region : WGUtils.getRegionsAt(eventBlock.getLocation())) {
 			if (region.getId().contains("quest_water")) {
-				event.getPlayer().getInventory().remove(new ItemStack(Material.BUCKET, 1));
+				event.getPlayer().getInventory().remove(new ItemStack(Material.BUCKET));
 //				event.getItemStack().setAmount(event.getItemStack().getAmount() - 1);
-				Utils.giveItem(event.getPlayer(), new ItemStack(Material.WATER_BUCKET, 1));
+				Utils.giveItem(event.getPlayer(), new ItemStack(Material.WATER_BUCKET));
 				event.setCancelled(true);
 			}
 		}

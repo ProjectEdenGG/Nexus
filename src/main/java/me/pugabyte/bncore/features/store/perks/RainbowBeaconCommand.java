@@ -7,7 +7,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -108,15 +107,15 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	private static final List<ColorType> colors = new ArrayList<ColorType>() {{
-		add(ColorType.RED);
-		add(ColorType.ORANGE);
-		add(ColorType.YELLOW);
-		add(ColorType.LIGHT_GREEN);
-		add(ColorType.LIGHT_BLUE);
-		add(ColorType.BLUE);
-		add(ColorType.PURPLE);
-		add(ColorType.MAGENTA);
+	private static final List<Material> colors = new ArrayList<Material>() {{
+		add(Material.RED_STAINED_GLASS_PANE);
+		add(Material.ORANGE_STAINED_GLASS_PANE);
+		add(Material.YELLOW_STAINED_GLASS_PANE);
+		add(Material.LIME_STAINED_GLASS_PANE);
+		add(Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+		add(Material.BLUE_STAINED_GLASS_PANE);
+		add(Material.PURPLE_STAINED_GLASS_PANE);
+		add(Material.MAGENTA_STAINED_GLASS_PANE);
 	}};
 
 	public static int startTask(UUID player) {
@@ -126,8 +125,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		AtomicInteger i = new AtomicInteger(0);
 		return Tasks.repeat(0, Time.SECOND.x(1), () -> {
 			if (!location.getBlock().getChunk().isLoaded()) return;
-			location.getBlock().setType(Material.STAINED_GLASS_PANE);
-			location.getBlock().setData(colors.get(i.getAndIncrement()).getDurability().byteValue());
+			location.getBlock().setType(colors.get(i.getAndIncrement()));
 			if (i.get() == 8)
 				i.set(0);
 		});

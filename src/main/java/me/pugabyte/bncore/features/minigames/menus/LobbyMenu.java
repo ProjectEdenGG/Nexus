@@ -34,7 +34,7 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
 		addBackItem(contents, e -> menus.openArenaMenu(player, arena));
 
 		contents.set(1, 2, ClickableItem.from(nameItem(
-				Material.WOOD_DOOR,
+				Material.OAK_DOOR,
 				"&eLobby Location",
 				"&3Current Lobby Location:" + "||" + getLocationLore(arena.getLobby().getLocation()) + "|| ||&eClick to set to current location"
 			),
@@ -45,7 +45,7 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
 			}));
 
 		contents.set(1, 6, ClickableItem.from(nameItem(
-				Material.WATCH,
+				Material.CLOCK,
 				"&eWait Time",
 				"&3Current Wait Time:||&e" + arena.getLobby().getWaitTime()
 			),

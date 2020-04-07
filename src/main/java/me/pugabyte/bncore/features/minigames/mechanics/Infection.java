@@ -8,10 +8,8 @@ import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
-import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -31,7 +29,7 @@ public class Infection extends UnbalancedTeamMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.ZOMBIE).build();
+		return new ItemStack(Material.ZOMBIE_HEAD);
 	}
 
 	public List<Minigamer> getZombies(Match match) {

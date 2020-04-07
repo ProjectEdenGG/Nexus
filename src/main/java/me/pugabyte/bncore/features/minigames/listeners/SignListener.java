@@ -5,8 +5,8 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +26,7 @@ public class SignListener implements Listener {
 	@EventHandler
 	public void onClickOnSign(PlayerInteractEvent event) {
 		if (!Arrays.asList(Action.LEFT_CLICK_BLOCK, Action.RIGHT_CLICK_BLOCK).contains(event.getAction())) return;
-		if (!Arrays.asList(Material.SIGN_POST, Material.WALL_SIGN).contains(event.getClickedBlock().getType())) return;
+		if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
 		if (!event.getPlayer().getWorld().equals(Minigames.getWorld())) return;
 

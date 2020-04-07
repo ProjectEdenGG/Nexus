@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
@@ -44,22 +43,21 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 				homeOwner.getHome(response[0]).ifPresent(HomesMenu::edit))));
 
 		Map<String, ItemStack> options = new LinkedHashMap<String, ItemStack>() {{
-			put("home", new ItemBuilder(Material.BED)
-					.durability(ColorType.CYAN.getDurability())
+			put("home", new ItemBuilder(Material.CYAN_BED)
 					.loreize(false)
 					.lore("&fThis is your main home. You can teleport to it with &c/h &for &c/home")
 					.build());
 
-			put("spawner", new ItemStack(Material.MOB_SPAWNER));
+			put("spawner", new ItemStack(Material.SPAWNER));
 			put("farm", new ItemStack(Material.WHEAT));
 			put("mine", new ItemBuilder(Material.DIAMOND_PICKAXE).itemFlags(ItemFlag.HIDE_ATTRIBUTES).build());
 			put("storage", new ItemStack(Material.CHEST));
-			put("shop", new ItemStack(Material.SIGN));
+			put("shop", new ItemStack(Material.OAK_SIGN));
 
 			if (player.getWorld().getEnvironment().equals(Environment.NETHER))
 				put("nether", new ItemStack(Material.NETHERRACK));
 			else if (player.getWorld().getEnvironment().equals(Environment.THE_END))
-				put("end", new ItemStack(Material.END_BRICKS));
+				put("end", new ItemStack(Material.END_STONE_BRICKS));
 			else
 				put("explore", new ItemStack(Material.GRASS));
 		}};

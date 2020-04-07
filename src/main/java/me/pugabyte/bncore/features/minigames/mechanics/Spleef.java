@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 
 import me.pugabyte.bncore.features.minigames.mechanics.common.SpleefMechanic;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -22,7 +23,7 @@ public final class Spleef extends SpleefMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.DIAMOND_SPADE);
+		return new ItemStack(Material.DIAMOND_SHOVEL);
 	}
 
 	@Override
@@ -42,8 +43,8 @@ public final class Spleef extends SpleefMechanic {
 		Sound sound = Sound.BLOCK_STONE_BREAK;
 		if (material.equals(Material.SNOW_BLOCK))
 			sound = Sound.BLOCK_SNOW_BREAK;
-		if (material.equals(Material.WOOL))
-			sound = Sound.BLOCK_CLOTH_BREAK;
+		if (MaterialTag.WOOL.isTagged(material))
+			sound = Sound.BLOCK_WOOL_BREAK;
 
 		location.getWorld().playSound(location, sound, 1.0F, 0.75F);
 	}

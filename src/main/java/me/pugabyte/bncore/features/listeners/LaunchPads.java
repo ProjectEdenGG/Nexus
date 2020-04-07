@@ -36,11 +36,11 @@ public class LaunchPads implements Listener {
 		Block block = event.getClickedBlock();
 		if (block == null) return;
 		if (!event.getAction().equals(Action.PHYSICAL)) return;
-		if (!block.getType().equals(Material.GOLD_PLATE)) return;
+		if (!block.getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) return;
 		if (event.getPlayer().isSneaking()) return;
 
 		Block below = block.getRelative(0, -1, 0).getLocation().getBlock();
-		if (!(below.getType().equals(Material.GLOWING_REDSTONE_ORE) || below.getType().equals(Material.REDSTONE_ORE)))
+		if (!(below.getType().equals(Material.REDSTONE_ORE) || below.getType().equals(Material.REDSTONE_ORE)))
 			return;
 
 		event.setCancelled(true);
@@ -89,9 +89,7 @@ public class LaunchPads implements Listener {
 		launchLocation.setPitch((float) -angle);
 		launchLocation.setYaw((float) direction);
 
-		MaterialData PISTON = new MaterialData(Material.PISTON_MOVING_PIECE);
-		// 1.13
-//		MaterialData PISTON = new MaterialData(Material.LEGACY_PISTON_MOVING_PIECE);
+		MaterialData PISTON = new MaterialData(Material.LEGACY_PISTON_MOVING_PIECE);
 
 		FallingBlock fallingBlock = launchLocation.getWorld().spawnFallingBlock(launchLocation, PISTON.getItemType(), PISTON.getData());
 		jumpPadPlayers.put(player, fallingBlock);

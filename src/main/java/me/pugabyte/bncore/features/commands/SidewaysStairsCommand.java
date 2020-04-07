@@ -128,13 +128,14 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		String blockName = block.getType().toString();
 		SidewaysStairsPlayer swsPlayer = playerData.get(player);
 
-		if (swsPlayer != null && swsPlayer.isEnabled())
-			if (swsPlayer.getAction().equals("set_angle"))
-				if (blockName.toLowerCase().endsWith("stairs"))
-					block.setData(swsPlayer.getAngle());
-			else if (swsPlayer.getAction().equals("disable_upsidedown_placement"))
-				if ((int) (block.getData()) > 3)
-					block.setData((byte) (block.getData() - 4));
+		// TODO 1.13ify
+//		if (swsPlayer != null && swsPlayer.isEnabled())
+//			if (swsPlayer.getAction().equals("set_angle"))
+//				if (blockName.toLowerCase().endsWith("stairs"))
+//					block.setData(swsPlayer.getAngle());
+//			else if (swsPlayer.getAction().equals("disable_upsidedown_placement"))
+//				if ((int) (block.getData()) > 3)
+//					block.setData((byte) (block.getData() - 4));
 	}
 
 	public class SidewaysStairsPlayer {

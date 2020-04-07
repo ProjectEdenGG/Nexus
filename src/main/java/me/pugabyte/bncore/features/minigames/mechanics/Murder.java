@@ -18,6 +18,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
@@ -25,7 +26,6 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
@@ -49,6 +49,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -191,7 +192,7 @@ public class Murder extends UnbalancedTeamMechanic {
 		ArmorStand armorStand = minigamer.getMatch().spawn(player.getLocation().add(0, -1.4, 0), ArmorStand.class);
 		armorStand.setGravity(false);
 		armorStand.setVisible(false);
-		armorStand.setHelmet(new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).skullOwner(player).build());
+		armorStand.setHelmet(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).build());
 		// armorStand.setDisableSlots?
 	}
 
@@ -221,14 +222,12 @@ public class Murder extends UnbalancedTeamMechanic {
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 
-		// Checks
-		if (player.getInventory().getItemInMainHand() == null) return;
-
 		List<Action> actions = Arrays.asList(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);
 		if (!actions.contains(event.getAction())) return;
 
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			List<Material> allowedRedstone = Arrays.asList(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
+			List<Material> allowedRedstone = new ArrayList<Material>() {{ add(Material.LEVER); }};
+			allowedRedstone.addAll(MaterialTag.BUTTONS.getValues());
 			if (allowedRedstone.contains(event.getClickedBlock().getType()))
 				return;
 
@@ -247,7 +246,7 @@ public class Murder extends UnbalancedTeamMechanic {
 			case TRIPWIRE_HOOK:
 				retrieveKnife(minigamer);
 				return;
-			case EYE_OF_ENDER:
+			case ENDER_EYE:
 				useBloodlust(minigamer);
 				return;
 			case ENDER_PEARL:
@@ -269,7 +268,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	private void useBloodlust(Minigamer minigamer) {
 		minigamer.tell("You used bloodlust!");
 		minigamer.getMatch().broadcast("The murderer used bloodlust!");
-		minigamer.getPlayer().getInventory().remove(Material.EYE_OF_ENDER);
+		minigamer.getPlayer().getInventory().remove(Material.ENDER_EYE);
 
 		Countdown countdown =Tasks.Countdown.builder()
 				.duration(20 * 14)
@@ -580,7 +579,7 @@ public class Murder extends UnbalancedTeamMechanic {
 			.build();
 
 	@Getter
-	public static ItemStack bloodlust = new ItemBuilder(Material.EYE_OF_ENDER)
+	public static ItemStack bloodlust = new ItemBuilder(Material.ENDER_EYE)
 			.name("&eBloodlust")
 			.lore("&eRight-click &fto highlight all players, for a penalty!")
 			.build();

@@ -28,6 +28,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -56,7 +57,21 @@ import java.util.Map;
 public final class Thimble extends TeamlessMechanic {
 
 	@Getter
-	private final short[] CONCRETE_IDS = {14, 1, 4, 5, 13, 10, 2, 6, 12, 15, 7, 8, 0};
+	private final Material[] CONCRETE_IDS = {
+			Material.RED_CONCRETE,
+			Material.ORANGE_CONCRETE,
+			Material.YELLOW_CONCRETE,
+			Material.LIME_CONCRETE,
+			Material.GREEN_CONCRETE,
+			Material.PURPLE_CONCRETE,
+			Material.MAGENTA_CONCRETE,
+			Material.PINK_CONCRETE,
+			Material.BROWN_CONCRETE,
+			Material.BLACK_CONCRETE,
+			Material.GRAY_CONCRETE,
+			Material.LIGHT_GRAY_CONCRETE,
+			Material.WHITE_CONCRETE
+	};
 	@Getter
 	private final int MAX_TURNS = 49;
 
@@ -94,7 +109,7 @@ public final class Thimble extends TeamlessMechanic {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getPlayer();
-		ItemStack menuItem = new ItemBuilder(Material.CONCRETE).durability(11).name("Choose A Block!").build();
+		ItemStack menuItem = new ItemBuilder(Material.BLUE_CONCRETE).name("Choose A Block!").build();
 		player.getInventory().setItem(0, menuItem);
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
 	}
@@ -274,8 +289,8 @@ public final class Thimble extends TeamlessMechanic {
 
 		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation(), true);
 
-		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
-		tasks.wait(3, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
+		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
+		tasks.wait(3, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
 
 		// wait 10 seconds, if the player's y-value is >=  nextTurnLoc y-value, kill them
 		int taskId = tasks.wait(10 * 20, () -> {
@@ -299,13 +314,13 @@ public final class Thimble extends TeamlessMechanic {
 		ThimbleMatchData matchData = match.getMatchData();
 
 		for (Minigamer minigamer : minigamers) {
-			Short concreteId = matchData.getChosenConcrete().get(minigamer.getPlayer());
-			if (concreteId == null) {
-				Short next = matchData.getAvailableConcreteId();
+			Material concreteType = matchData.getChosenConcrete().get(minigamer.getPlayer());
+			if (concreteType == null) {
+				Material next = matchData.getAvailableConcreteId();
 				matchData.getChosenConcrete().put(minigamer.getPlayer(), next);
-				concreteId = next;
+				concreteType = next;
 			}
-			minigamer.getPlayer().getInventory().setHelmet(new ItemStack(Material.CONCRETE, 1, concreteId));
+			minigamer.getPlayer().getInventory().setHelmet(new ItemStack(concreteType));
 		}
 	}
 
@@ -313,7 +328,7 @@ public final class Thimble extends TeamlessMechanic {
 	@EventHandler
 	public void setPlayerBlock(PlayerInteractEvent event) {
 		if (event.getItem() == null) return;
-		if (!event.getItem().getType().equals(Material.CONCRETE)) return;
+		if (!MaterialTag.CONCRETES.isTagged(event.getItem().getType())) return;
 		if (!(event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)))
 			return;
 
@@ -360,12 +375,11 @@ public final class Thimble extends TeamlessMechanic {
 				blockLocation = locationBelow;
 			}
 
-			short durability = player.getInventory().getHelmet().clone().getDurability();
+			Material concreteType = player.getInventory().getHelmet().getType();
 
-			blockLocation.getBlock().setType(Material.CONCRETE);
-			blockLocation.getBlock().setData(Byte.parseByte(Short.toString(durability)));
+			blockLocation.getBlock().setType(concreteType);
 
-			Color color = ColorType.fromDurability(durability).getColor();
+			Color color = ColorType.fromMaterial(concreteType).getColor();
 			Location fireworkLocation = blockLocation.clone().add(0.0, 2.0, 0.0);
 
 			new FireworkLauncher(fireworkLocation)
@@ -428,7 +442,7 @@ public final class Thimble extends TeamlessMechanic {
 			}
 			arena.setCurrentMap(thimbleMaps.get(ndx));
 
-			WEUtils.fill(arena.getRegion("pool"), Material.STATIONARY_WATER);
+			WEUtils.fill(arena.getRegion("pool"), Material.WATER);
 		}
 
 		// Randomly place blocks in pool
@@ -437,11 +451,8 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleMatchData matchData = match.getMatchData();
 
 			int BLOCKS_TO_CHANGE = 3;
-			List<Block> blocks = WGUtils.getRandomBlocks(arena.getProtectedRegion("pool"), Material.STATIONARY_WATER, BLOCKS_TO_CHANGE);
-			blocks.forEach(block -> {
-				block.setType(Material.PISTON_BASE);
-				block.setData((byte) 0);
-			});
+			List<Block> blocks = WGUtils.getRandomBlocks(arena.getProtectedRegion("pool"), Material.WATER, BLOCKS_TO_CHANGE);
+			blocks.forEach(block -> block.setType(Material.PISTON));
 
 			matchData.setTurns(blocks.size());
 		}
@@ -527,7 +538,7 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleArena arena = match.getArena();
 			super.onInitialize(match);
 
-			WEUtils.fill(arena.getRegion("pool"), Material.PISTON_BASE);
+			WEUtils.fill(arena.getRegion("pool"), Material.PISTON);
 		}
 
 		// Place x water holes randomly in pool
@@ -541,8 +552,8 @@ public final class Thimble extends TeamlessMechanic {
 			int maxPlayers = arena.getMaxPlayers();
 			int BLOCKS_TO_CHANGE = ((playerCount * 2) + (maxPlayers - playerCount));
 
-			List<Block> blocks = WGUtils.getRandomBlocks(arena.getProtectedRegion("pool"), Material.PISTON_BASE, BLOCKS_TO_CHANGE);
-			blocks.forEach(block -> block.setType(Material.STATIONARY_WATER));
+			List<Block> blocks = WGUtils.getRandomBlocks(arena.getProtectedRegion("pool"), Material.PISTON, BLOCKS_TO_CHANGE);
+			blocks.forEach(block -> block.setType(Material.WATER));
 
 			matchData.setTurns(mechanic.getMAX_TURNS() - blocks.size());
 		}
@@ -562,7 +573,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	class ThimbleMenu extends MenuUtils implements InventoryProvider {
-		final short[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
+		final Material[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
@@ -572,10 +583,10 @@ public final class Thimble extends TeamlessMechanic {
 
 			int row = 0;
 			int col = 0;
-			for (short concrete_id : CONCRETE_IDS) {
-				ItemStack concrete = new ItemStack(Material.CONCRETE, 1, concrete_id);
+			for (Material concreteType : CONCRETE_IDS) {
+				ItemStack concrete = new ItemStack(concreteType);
 
-				if (!matchData.concreteIsChosen(concrete.getDurability())) {
+				if (!matchData.concreteIsChosen(concreteType)) {
 					if (col > 8) {
 						++row;
 						col = 0;
@@ -595,7 +606,7 @@ public final class Thimble extends TeamlessMechanic {
 
 			player.getInventory().setHelmet(concrete);
 			player.getInventory().setItem(0, concrete);
-			matchData.getChosenConcrete().put(minigamer.getPlayer(), concrete.getDurability());
+			matchData.getChosenConcrete().put(minigamer.getPlayer(), concrete.getType());
 
 			String chosenColor = ColorType.fromDurability(concrete.getDurability()).getName();
 			minigamer.tell("You chose " + chosenColor + "!");

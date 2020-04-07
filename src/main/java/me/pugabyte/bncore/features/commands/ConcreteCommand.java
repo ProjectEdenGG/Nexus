@@ -31,9 +31,8 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
-		if (!event.getInventory().getName().equals(StringUtils.colorize("&6Concrete Exchange"))) return;
+		if (!event.getView().getTitle().equals(StringUtils.colorize("&6Concrete Exchange"))) return;
 		for (ItemStack stack : event.getInventory().getContents()) {
-			if (stack == null || stack.getType() == null) continue;
 			if (!stack.getType().name().contains("CONCRETE_POWDER")) {
 				event.getPlayer().getInventory().addItem(stack);
 				continue;

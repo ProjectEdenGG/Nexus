@@ -49,7 +49,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.CONCRETE_POWDER, 1, (byte) 9);
+		return new ItemStack(Material.LIGHT_BLUE_CONCRETE);
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class PixelDrop extends TeamlessMechanic {
 			matchData.revealWord(match);
 
 			minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.7F));
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.7F));
 			match.broadcast("&c&lRound Over!&c The word was: " + matchData.getRoundWord());
 		}
 
@@ -115,7 +115,7 @@ public class PixelDrop extends TeamlessMechanic {
 			match.getTasks().wait(3 * 20, () -> {
 				minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
 					Utils.sendActionBar(player, "&c&lGame Over!");
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 1F);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 1F);
 				});
 				match.broadcast("&c&lGame Over!");
 				match.getTasks().wait(3 * 20, match::end);
@@ -135,7 +135,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 							Utils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
 							if (i <= 3)
-								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
+								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 						}))
 						.onComplete(() -> newRound(match))
 						.start();
@@ -204,7 +204,7 @@ public class PixelDrop extends TeamlessMechanic {
 			double blockZ = z + 0.5;
 			Location loc = WGUtils.toLocation(pasteMin.add(blockX, 0, blockZ));
 
-			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType(), block.getData());
+			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
 			fallingBlock.setDropItem(false);
 			fallingBlock.setInvulnerable(true);
 			fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
@@ -233,7 +233,7 @@ public class PixelDrop extends TeamlessMechanic {
 			double blockZ = z + 0.5;
 			Location loc = WGUtils.toLocation(pasteMin.add(blockX, 0, blockZ));
 
-			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType(), block.getData());
+			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
 			fallingBlock.setDropItem(false);
 			fallingBlock.setInvulnerable(true);
 			fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
@@ -283,7 +283,7 @@ public class PixelDrop extends TeamlessMechanic {
 				return;
 			}
 
-			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_NOTE_XYLOPHONE, 10F, 0.5F);
+			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10F, 0.5F);
 			match.broadcast("&a" + minigamer.getName() + " guessed the word!");
 			matchData.getGuessed().add(minigamer);
 			minigamer.scored(Math.max(1, 1 + (4 - matchData.getGuessed().size())));
@@ -312,7 +312,7 @@ public class PixelDrop extends TeamlessMechanic {
 	public void startRoundCountdown(Match match) {
 		List<Minigamer> minigamers = match.getMinigamers();
 		minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F));
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F));
 
 		PixelDropMatchData matchData = match.getMatchData();
 		Tasks.Countdown countdown = Tasks.Countdown.builder()
@@ -324,7 +324,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 //					Utils.sendActionBar(player, "&cRound ends in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
 					if (i <= 3)
-						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_CHIME, 10F, 0.5F);
+						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 				}))
 				.onComplete(() -> endOfRound(match))
 				.start();

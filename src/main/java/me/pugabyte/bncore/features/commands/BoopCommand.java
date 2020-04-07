@@ -49,6 +49,6 @@ public class BoopCommand extends CustomCommand {
 			send(playerArg, player().getName() + " boop'd you");
 		}
 
-		playerArg.playSound(playerArg.getLocation(), Sound.BLOCK_NOTE_XYLOPHONE, 10.0F, 0.1F);
+		playerArg.playSound(playerArg.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10.0F, 0.1F);
 	}
 }

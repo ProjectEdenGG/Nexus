@@ -9,13 +9,11 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.menus.teams.TeamMenus;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -70,7 +68,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				return "";
 			}
 		},
-		CUSTOM_MECHANIC_SETTINGS(1, 6, Material.BOOK_AND_QUILL) {
+		CUSTOM_MECHANIC_SETTINGS(1, 6, Material.WRITABLE_BOOK) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				menus.openCustomSettingsMenu(player, arena);
@@ -81,7 +79,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				return null;
 			}
 		},
-		TEAMS(2, 1, Material.WOOL) {
+		TEAMS(2, 1, Material.WHITE_WOOL) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				new TeamMenus().openTeamsMenu(player, arena);
@@ -92,7 +90,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				return "||&eCurrent Teams: " + arena.getTeams().stream().map(Team::getColoredName).collect(Collectors.joining("&f, "));
 			}
 		},
-		LOBBY(2, 2, Material.WOOD_DOOR) {
+		LOBBY(2, 2, Material.OAK_DOOR) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				menus.openLobbyMenu(player, arena);
@@ -103,7 +101,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				return null;
 			}
 		},
-		FLAGS(2, 3, new ItemStack(Material.BANNER, 1, ColorType.CYAN.getDyeColor().getDyeData())) {
+		FLAGS(2, 3, new ItemStack(Material.CYAN_BANNER, 1)) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				menus.openFlagsMenu(player, arena);
@@ -114,15 +112,15 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				return null;
 			}
 		},
-		LIVES(3, 1, new ItemBuilder(Material.SKULL_ITEM).skullType(SkullType.PLAYER).build()),
-		SECONDS(3, 2, Material.WATCH) {
+		LIVES(3, 1, new ItemBuilder(Material.PLAYER_HEAD).build()),
+		SECONDS(3, 2, Material.CLOCK) {
 			@Override
 			public String getTitle() {
 				return "Game Time (Seconds)";
 			}
 		},
 		WINNING_SCORE(3, 3, Material.GOLD_INGOT),
-		MIN_WINNING_SCORE(3, 4, Material.CLAY_BRICK),
+		MIN_WINNING_SCORE(3, 4, Material.BRICKS),
 		MAX_WINNING_SCORE(3, 5, Material.IRON_INGOT),
 		MIN_PLAYERS(4, 1, Material.LEATHER_CHESTPLATE),
 		MAX_PLAYERS(4, 2, Material.DIAMOND_CHESTPLATE),
@@ -141,7 +139,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 		},
-		RESPAWN_LOCATION(5, 2, Material.BED) {
+		RESPAWN_LOCATION(5, 2, Material.RED_BED) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				arena.setRespawnLocation(player.getLocation());
@@ -155,7 +153,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				return getLocationLore(arena.getRespawnLocation());
 			}
 		},
-		RESPAWN_SECONDS(5, 3, Material.TOTEM),
+		RESPAWN_SECONDS(5, 3, Material.TOTEM_OF_UNDYING),
 		SAVE(5, 9, Material.END_CRYSTAL) {
 			@Override
 			void onClick(Player player, Arena arena) {
