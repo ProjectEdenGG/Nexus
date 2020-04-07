@@ -106,7 +106,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		PlayerInventory playerInv = player.getInventory();
 		int slot = playerInv.getHeldItemSlot();
 
-		if (Utils.isWater(player.getTargetBlock(null, 10).getType())) {
+		if (Utils.isWater(player.getTargetBlockExact(10).getType())) {
 			projectile.remove();
 			Tasks.wait(1, () -> giveWaterBottle(player));
 			return;
@@ -181,9 +181,10 @@ public final class InvertoInferno extends TeamlessMechanic {
 		if (eventItem.getType().equals(Material.GLASS_BOTTLE) || eventItem.getType().equals(Material.POTION))
 			event.setCancelled(true);
 
-		if (event.getClickedBlock() == null || event.getBlockFace() == null) {
-			if (Utils.isWater(player.getTargetBlock(null, 10).getType()))
-				if (player.getLocation().distance(player.getTargetBlock(null, 10).getLocation()) > 4)
+		if (event.getClickedBlock() == null) {
+			Block target = player.getTargetBlockExact(10);
+			if (target != null && Utils.isWater(target.getType()))
+				if (player.getLocation().distance(target.getLocation()) > 4)
 					minigamer.tell("You need to be closer to do that.");
 				else
 					giveWaterBottle(player);

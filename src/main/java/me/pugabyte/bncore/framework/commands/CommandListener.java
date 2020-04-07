@@ -6,6 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import java.util.Map.Entry;
+
 import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 
 @NoArgsConstructor
@@ -13,12 +15,13 @@ public class CommandListener implements Listener {
 
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
-		for (String redirect : Commands.getRedirects().keySet()) {
-			if (!event.getMessage().toLowerCase().startsWith(redirect.toLowerCase())) continue;
+		for (Entry<String, String> redirect : Commands.getRedirects().entrySet()) {
+			if (!event.getMessage().toLowerCase().startsWith(redirect.getKey()))
+				continue;
 
 			event.setCancelled(true);
-			String to = Commands.getRedirects().get(event.getMessage());
-			Utils.runCommand(event.getPlayer(), trimFirst(to));
+			String command = redirect.getValue() + event.getMessage().substring(redirect.getKey().length());
+			Utils.runCommand(event.getPlayer(), trimFirst(command));
 			return;
 		}
 	}
