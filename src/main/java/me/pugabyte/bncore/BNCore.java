@@ -152,8 +152,11 @@ public class BNCore extends JavaPlugin {
 				.map(OfflinePlayer::getPlayer)
 				.forEach(player -> {
 					GeoIP geoIp = new GeoIPService().get(player);
-					player.sendMessage(colorize("&7 " + StringUtils.shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId()))) +
+					if (geoIp != null && geoIp.getTimezone() != null)
+						player.sendMessage(colorize("&7 " + StringUtils.shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId()))) +
 							" &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!"));
+					else
+						player.sendMessage(colorize(" &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!"));
 				});
 	}
 

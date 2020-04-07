@@ -139,7 +139,10 @@ public class ArenaManager {
 		return YamlConfiguration.loadConfiguration(file);
 	}
 
+	@SneakyThrows
 	public static void read() {
+		File file = Paths.get(folder).toFile();
+		if (!file.exists()) file.createNewFile();
 		arenas.clear();
 		try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
 			paths.forEach(filePath -> {

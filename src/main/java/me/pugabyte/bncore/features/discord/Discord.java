@@ -53,6 +53,7 @@ public class Discord {
 	}
 
 	public static Guild getGuild() {
+		if (Bot.KODA.jda() == null) return null;
 		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());
 	}
 

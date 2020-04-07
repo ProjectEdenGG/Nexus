@@ -21,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -76,6 +77,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 		send("Done");
 	}
 
+	@SneakyThrows
 	static void writeFiles() {
 		final Map<String, Integer> hoursMap = new HashMap<>();
 		final Map<String, Integer> playersMap = new HashMap<>();
@@ -105,6 +107,8 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 		Map<String, Integer> hoursSorted = sort(hoursMap);
 		Map<String, Integer> playersSorted = sort(playersMap);
 
+		File folder = Paths.get("plugins/website/").toFile();
+		if (!folder.exists()) folder.createNewFile();
 		writeHtml(Paths.get("plugins/website/geoipdata-hours.html"), hoursSorted, countriesMap);
 		writeHtml(Paths.get("plugins/website/geoipdata-players.html"), playersSorted, countriesMap);
 		writeJs(Paths.get("plugins/website/geoipdata-hours.js"), hoursSorted, "hours");

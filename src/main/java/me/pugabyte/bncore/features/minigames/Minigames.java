@@ -107,9 +107,11 @@ public class Minigames {
 	}
 
 	public static ZonedDateTime getNextMGNFor(OfflinePlayer player) {
+		ZonedDateTime nextMGN = getNextMGN().atZone(ZoneId.systemDefault());
 		GeoIP geoIp = new GeoIPService().get(player);
-		ZoneId zoneId = ZoneId.of(geoIp.getTimezone().getId());
-		return getNextMGN().atZone(ZoneId.systemDefault()).withZoneSameInstant(zoneId);
+		if (geoIp != null && geoIp.getTimezone() != null)
+			return nextMGN.withZoneSameInstant(ZoneId.of(geoIp.getTimezone().getId()));
+		return nextMGN;
 	}
 
 	// Registration

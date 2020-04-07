@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.minigames.commands.PodiumsCommand.Position;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -53,7 +54,9 @@ public class ActionBar {
 		while (matcher.find()) {
 			String group = matcher.group();
 			String position = group.substring("{podiums_".length(), group.length() - 1);
-			message = message.replace(group, ChatColor.DARK_AQUA + PodiumsCommand.getNpc(Position.get(position)).getName());
+			NPC npc = PodiumsCommand.getNpc(Position.get(position));
+			if (npc != null)
+				message = message.replace(group, ChatColor.DARK_AQUA + npc.getName());
 		}
 
 		ZonedDateTime nextMGNFor = Minigames.getNextMGNFor(player);
