@@ -75,7 +75,7 @@ public class ToggleSnowCommand extends CustomCommand {
 	private static void playSnowEffect(Player player) {
 		if (isBelowCeiling(player))
 			return;
-		player.spawnParticle(Particle.FALLING_DUST, player.getLocation(), 1400, 40, 15, 40, .01, Material.SNOW_BLOCK.getNewData((byte) 0));
+		player.spawnParticle(Particle.FALLING_DUST, player.getLocation(), 1400, 40, 15, 40, .01, Bukkit.createBlockData(Material.SNOW_BLOCK));
 		Tasks.wait(20, () -> player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 1400, 40, 15, 40, .01));
 	}
 

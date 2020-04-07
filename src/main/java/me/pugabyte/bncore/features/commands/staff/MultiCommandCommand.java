@@ -33,7 +33,8 @@ public class MultiCommandCommand extends CustomCommand {
 		commands.forEach(command -> {
 			if (command.toLowerCase().matches("^wait \\d+$"))
 				wait.getAndAdd(Integer.parseInt(command.toLowerCase().replace("wait ", "")));
-			Tasks.wait(wait.getAndAdd(3), () -> runCommand(command));
+			else
+				Tasks.wait(wait.getAndAdd(3), () -> runCommand(command));
 		});
 	}
 

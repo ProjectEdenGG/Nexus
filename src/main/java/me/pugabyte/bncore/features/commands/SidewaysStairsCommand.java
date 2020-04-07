@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @author Camaros
  */
 
+@Disabled
 @Aliases("sws")
 @NoArgsConstructor
 public class SidewaysStairsCommand extends CustomCommand implements Listener {

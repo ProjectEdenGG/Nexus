@@ -20,7 +20,7 @@ public class GriefProtectionInfoCommand extends CustomCommand {
 	@Path
 	@Cooldown(id = "staff", value = @Part(value = Time.SECOND, x = 30))
 	void info() {
-		String message = "Grief is not allowed, and staff will repair any grief you find. However, we do have protection stones (/pstoneinfo) for prevention.";
+		String message = "Grief is not allowed, and staff will repair any grief you find.";
 		runCommand("ch qm g " + message);
 	}
 

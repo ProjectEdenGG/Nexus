@@ -30,8 +30,6 @@ public class QuickActionCommand extends CustomCommand {
 				.next("      &3||  &r")
 				.next("&eAllow").command("/allow " + playerName).group()
 				.next("  &3||  &r")
-				.next("&eSPVP Challenge").suggest("/spvp " + playerName).group()
-				.next("  &3||  &r")
 				.next("&eShop").suggest("/shop " + playerName).group()
 				.next("  &3||  &r")
 				.next("&ePay").suggest("/pay " + playerName + " 10").group()

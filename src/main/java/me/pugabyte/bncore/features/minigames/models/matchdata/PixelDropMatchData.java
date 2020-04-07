@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.minigames.models.matchdata;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -176,7 +175,7 @@ public class PixelDropMatchData extends MatchData {
 
 		int area = designsRegion.getArea();
 		EditSession editSession = WEUtils.getEditSession();
-		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(new BaseBlock(BlockTypes.AIR)));
+		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(BlockTypes.AIR.getDefaultState().toBaseBlock()));
 		int blocksCount = area - airCount;
 
 		PixelDropMatchData matchData = match.getMatchData();

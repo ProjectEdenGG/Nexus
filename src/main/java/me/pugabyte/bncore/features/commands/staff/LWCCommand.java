@@ -30,7 +30,7 @@ public class LWCCommand extends CustomCommand {
 				Tasks.wait(10, () -> {
 					runCommand("cadmin purgeregion lwcpurge " + player().getWorld().getName());
 					runCommand("rg remove lwcpurge");
-					runCommand("/sel");
+					runCommand("/desel");
 				});
 			});
 		} else
