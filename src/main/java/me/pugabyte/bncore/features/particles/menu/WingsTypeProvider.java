@@ -24,7 +24,7 @@ public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
         for (WingsEffect.WingStyle style : WingsEffect.WingStyle.values()) {
             ParticleService service = new ParticleService();
             ParticleOwner owner = service.get(player);
-            ItemStack item = nameItem(new ItemStack(Material.ELYTRA).clone(), "&3Style # " + (style.ordinal() + 1));
+            ItemStack item = nameItem(new ItemStack(Material.ELYTRA).clone(), "&3Style #" + (style.ordinal() + 1));
             if (ParticleSetting.WINGS_STYLE.get(owner, ParticleType.WINGS).equals(style))
                 addGlowing(item);
             contents.set(row, column, ClickableItem.from(item,
