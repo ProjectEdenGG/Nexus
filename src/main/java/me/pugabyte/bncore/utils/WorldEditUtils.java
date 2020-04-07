@@ -20,6 +20,8 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockType;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import lombok.NonNull;
@@ -27,7 +29,6 @@ import lombok.SneakyThrows;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -36,11 +37,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class WorldEditUtils {
 	@NonNull
@@ -130,8 +131,7 @@ public class WorldEditUtils {
 		getPlayer(player).setSelection(region);
 		session.getRegionSelector(worldEditWorld).learnChanges();
 		int newSize = region.getArea();
-		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
-		session.getRegionSelector(worldEditWorld).explainRegionAdjust(worldEditPlayer, session);
+		session.getRegionSelector(worldEditWorld).explainRegionAdjust(getPlayer(player), session);
 //		1.12: BBC.SELECTION_EXPAND.send(worldEditPlayer, (newSize - oldSize));
 //		1.15?: actor.printInfo(TranslatableComponent.of("worldedit.expand.expanded.vert", new Component[]{TextComponent.of(changeSize)}));
 	}
@@ -161,9 +161,8 @@ public class WorldEditUtils {
 	private BlockVector3[] getDirections(SelectionChangeDirectionType type, int number) {
 		return Arrays.stream(Direction.values())
 				.filter(direction -> type.getFilter().apply(direction))
-				.map(Direction::toVector)
+				.map(Direction::toBlockVector)
 				.map(vector -> vector.multiply(number))
-				.map(Vector3::toBlockPoint)
 				.toArray(BlockVector3[]::new);
 	}
 
@@ -187,29 +186,19 @@ public class WorldEditUtils {
 		return blockList;
 	}
 
-	public BaseBlock toBaseBlock(Material material) {
-		return toBaseBlock(material, (short) 0);
+	public Set<BaseBlock> toBaseBlocks(Set<BlockType> blockTypes) {
+		return blockTypes.stream().map(blockType -> blockType.getDefaultState().toBaseBlock()).collect(Collectors.toSet());
 	}
 
-	public BaseBlock toBaseBlock(Material material, short data) {
-		return new BaseBlock(material.getId(), data);
-	}
-
-	public Set<BaseBlock> toBaseBlocks(Set<Material> materials) {
-		Set<BaseBlock> baseBlocks = new HashSet<>();
-		materials.forEach(material -> baseBlocks.add(toBaseBlock(material)));
-		return baseBlocks;
-	}
-
-	public RandomPattern toRandomPattern(Set<Material> materials) {
+	public RandomPattern toRandomPattern(Set<BlockType> baseBlocks) {
 		RandomPattern pattern = new RandomPattern();
-		toBaseBlocks(materials).forEach(baseBlock -> pattern.add(baseBlock, (float) 100 / materials.size()));
+		baseBlocks.forEach(baseBlock -> pattern.add(baseBlock, (float) 100 / baseBlocks.size()));
 		return pattern;
 	}
 
-	public RandomPattern toRandomPattern(Map<Material, Double> materials) {
+	public RandomPattern toRandomPattern(Map<BlockType, Double> materials) {
 		RandomPattern pattern = new RandomPattern();
-		materials.forEach((material, chance) -> pattern.add(toBaseBlock(material), chance));
+		materials.forEach(pattern::add);
 		return pattern;
 	}
 
@@ -260,61 +249,41 @@ public class WorldEditUtils {
 		new BlockArrayClipboard(region).save(getSchematicFile(fileName), BuiltInClipboardFormat.MCEDIT_SCHEMATIC);
 	}
 
-	public void fill(String region, Material material) {
-		fill(region, material, 0);
+	public void fill(String region, BlockType blockType) {
+		fill(worldGuardUtils.convert(worldGuardUtils.getProtectedRegion(region)), blockType);
 	}
 
-	public void fill(String region, Material material, int data) {
-		fill(worldGuardUtils.convert(worldGuardUtils.getProtectedRegion(region)), material, data);
-	}
-
-	public void fill(Region region, Material material) {
-		fill(region, material, 0);
-	}
-
-	public void fill(Region region, Material material, int data) {
+	public void fill(Region region, BlockType blockType) {
 		EditSession editSession = getEditSession();
-		editSession.setBlocks(region, new BaseBlock(material.getId(), data));
+		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
 		editSession.flushQueue();
 	}
 
-	public void replace(Region region, Material from, Material to) {
+	public void replace(Region region, BlockType from, BlockType to) {
 		replace(region, Collections.singleton(from), Collections.singleton(to));
 	}
 
-	public void replace(Region region, Set<Material> from, Set<Material> to) {
+	public void replace(Region region, Set<BlockType> from, Set<BlockType> to) {
 		replace(region, from, toRandomPattern(to));
 	}
 
-	public void replace(Region region, Set<Material> from, Map<Material, Double> pattern) {
+	public void replace(Region region, Set<BlockType> from, Map<BlockType, Double> pattern) {
 		replace(region, from, toRandomPattern(pattern));
 	}
 
-	public void replace(Region region, Set<Material> from, Pattern pattern) {
+	public void replace(Region region, Set<BlockType> from, Pattern pattern) {
 		EditSession editSession = getEditSession();
 		editSession.replaceBlocks(region, toBaseBlocks(from), pattern);
 		editSession.flushQueue();
 	}
 
-	@SneakyThrows
 	public Region expandAll(Region region, int amount) {
-		region.expand(Arrays.stream(Direction.values())
-				.filter((direction -> direction.isUpright() || direction.isCardinal()))
-				.map(Direction::toVector)
-				.map(vector -> vector.multiply(amount))
-				.map(Vector3::toBlockPoint)
-				.toArray(BlockVector3[]::new));
+		region.expand(getDirections(SelectionChangeDirectionType.ALL, amount));
 		return region;
 	}
 
-	@SneakyThrows
 	public Region contractAll(Region region, int amount) {
-		region.contract(Arrays.stream(Direction.values())
-				.filter((direction -> direction.isUpright() || direction.isCardinal()))
-				.map(Direction::toVector)
-				.map(vector -> vector.multiply(amount))
-				.map(Vector3::toBlockPoint)
-				.toArray(BlockVector3[]::new));
+		region.contract(getDirections(SelectionChangeDirectionType.ALL, amount));
 		return region;
 	}
 
@@ -322,15 +291,15 @@ public class WorldEditUtils {
 	public void fixFlat(LocalSession session, Region region) {
 		region.expand(Direction.UP.toBlockVector().multiply(500));
 		region.expand(Direction.DOWN.toBlockVector().multiply(500));
-		fill(region, Material.AIR);
+		fill(region, BlockTypes.AIR);
 		region.expand(Direction.DOWN.toBlockVector().multiply(500));
 		region.contract(Direction.DOWN.toBlockVector().multiply(500));
 		session.getRegionSelector(region.getWorld()).learnChanges();
-		fill(region, Material.BEDROCK);
+		fill(region, BlockTypes.BEDROCK);
 		region.expand(Direction.UP.toBlockVector().multiply(3));
 		region.contract(Direction.UP.toBlockVector().multiply(1));
 		session.getRegionSelector(region.getWorld()).learnChanges();
-		fill(region, Material.GRASS);
+		fill(region, BlockTypes.GRASS);
 	}
 
 }

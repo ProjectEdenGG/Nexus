@@ -5,6 +5,8 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.block.BlockType;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -90,18 +92,18 @@ public final class GoldRush extends TeamlessMechanic {
 	public void createMineStacks(int mineStackHeight, List<Location> locations) {
 		WorldEditUtils worldEditUtils = WEUtils;
 
-		Map<Material, Double> pattern = new HashMap<Material, Double>() {{
-			put(Material.COBBLESTONE, 10.0);
-			put(Material.GOLD_ORE, 40.0);
-			put(Material.DIRT, 20.0);
-			put(Material.IRON_ORE, 20.0);
-			put(Material.OAK_WOOD, 10.0);
+		Map<BlockType, Double> pattern = new HashMap<BlockType, Double>() {{
+			put(BlockTypes.COBBLESTONE, 10.0);
+			put(BlockTypes.GOLD_ORE, 40.0);
+			put(BlockTypes.DIRT, 20.0);
+			put(BlockTypes.IRON_ORE, 20.0);
+			put(BlockTypes.OAK_WOOD, 10.0);
 		}};
 
 		BlockVector3 p1 = worldEditUtils.toBlockVector3(locations.get(0).clone().subtract(0, 2, 0));
 		BlockVector3 p2 = worldEditUtils.toBlockVector3(locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
-		worldEditUtils.replace(region, Collections.singleton(Material.AIR), pattern);
+		worldEditUtils.replace(region, Collections.singleton(BlockTypes.AIR), pattern);
 
 		Clipboard schematic = worldEditUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		for (Location location : locations) {
@@ -114,7 +116,7 @@ public final class GoldRush extends TeamlessMechanic {
 		BlockVector3 p1 = worldEditUtils.toBlockVector3(loc.clone().subtract(0, 2, 0));
 		BlockVector3 p2 = worldEditUtils.toBlockVector3(loc.clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
-		worldEditUtils.fill(region, Material.AIR);
+		worldEditUtils.fill(region, BlockTypes.AIR);
 	}
 
 	@EventHandler

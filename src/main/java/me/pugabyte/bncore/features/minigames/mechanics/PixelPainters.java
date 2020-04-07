@@ -532,7 +532,6 @@ public class PixelPainters extends TeamlessMechanic {
 
 		List<Minigamer> minigamers = match.getMinigamers();
 		minigamers.forEach(minigamer -> Utils.giveItems(minigamer.getPlayer(), items));
-
 	}
 
 	public void pasteLogo(Match match) {
@@ -551,7 +550,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> floorRegions = arena.getRegionsLike("floor_[0-9]+");
 		floorRegions.forEach(floorRegion -> {
 			Region region = WGUtils.convert(floorRegion);
-			WEUtils.fill(region, Material.AIR);
+			WEUtils.fill(region, BlockTypes.AIR);
 		});
 	}
 }
