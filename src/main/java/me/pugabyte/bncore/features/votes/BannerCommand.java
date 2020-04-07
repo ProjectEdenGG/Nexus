@@ -1,10 +1,5 @@
 package me.pugabyte.bncore.features.votes;
 
-import de.tr7zw.itemnbtapi.NBTCompound;
-import de.tr7zw.itemnbtapi.NBTItem;
-import de.tr7zw.itemnbtapi.NBTList;
-import de.tr7zw.itemnbtapi.NBTTileEntity;
-import de.tr7zw.itemnbtapi.NBTType;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -18,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 @NoArgsConstructor
 public class BannerCommand extends CustomCommand implements Listener {
@@ -42,7 +36,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		if (!new WorldGuardUtils(event.getPlayer().getLocation().getWorld()).isInRegion(event.getPlayer().getLocation(), "banners")) return;
 		Block banner = event.getClickedBlock().getLocation().add(0, -1, 0).getBlock();
 		if (!MaterialTag.BANNERS.isTagged(banner.getType())) return;
-
+/*
 		NBTTileEntity nbt = new NBTTileEntity(banner.getState());
 		send(event.getPlayer(), "Keys: " + nbt.getKeys());
 		NBTList patterns1 = nbt.getList("Patterns", NBTType.NBTTagCompound);
@@ -54,6 +48,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		send(event.getPlayer(), "Id: " + id.asNBTString());
 		ItemStack itemStack = NBTItem.convertNBTtoItem(patterns);
 		event.getPlayer().getInventory().addItem(itemStack);
+*/
 
 	}
 

@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
-import de.tr7zw.itemnbtapi.NBTEntity;
+import de.tr7zw.nbtapi.NBTEntity;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;

@@ -176,6 +176,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 	}
 
 	private void updateBridgeTopic(String newBridgeTopic) {
+		if (Discord.getGuild() == null) return;
 		bridgeTopic = newBridgeTopic;
 		GuildChannel channel = Discord.getGuild().getGuildChannelById(Channel.BRIDGE.getId());
 		if (channel != null)
@@ -190,6 +191,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 	}
 
 	private void updateStaffBridgeTopic(String newStaffBridgeTopic) {
+		if (Discord.getGuild() == null) return;
 		staffBridgeTopic = newStaffBridgeTopic;
 		GuildChannel channel = Discord.getGuild().getGuildChannelById(Channel.STAFF_BRIDGE.getId());
 		if (channel != null)

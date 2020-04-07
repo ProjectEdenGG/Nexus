@@ -127,7 +127,7 @@
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>codemc-repo</id>
+            <id>itemnbtapi-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
         <repository>
@@ -366,10 +366,9 @@
         </dependency>
         <!-- Item NBT API -->
         <dependency>
-            <groupId>com.github.tr7zw.Item-NBT-API</groupId>
-            <artifactId>item-nbt-api</artifactId>
-            <version>26dcd21</version>
-            <scope>provided</scope>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>2.3.0</version>
         </dependency>
         <!-- NuVotifier -->
         <dependency>
