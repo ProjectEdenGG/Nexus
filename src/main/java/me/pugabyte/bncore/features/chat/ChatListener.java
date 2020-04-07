@@ -25,7 +25,7 @@ public class ChatListener implements Listener {
 		Chatter chatter = new ChatService().get(event.getPlayer());
 		Tasks.sync(() -> {
 			// Prevents "t/command"
-			if (Pattern.compile("^t" + Commands.getCommandPattern() + ".*").matcher(event.getMessage()).matches())
+			if (Pattern.compile("^t" + Commands.getPattern() + ".*").matcher(event.getMessage()).matches())
 				runCommand(event.getPlayer(), right(event.getMessage(), event.getMessage().length() - 2));
 			else
 				chatter.say(event.getMessage());
