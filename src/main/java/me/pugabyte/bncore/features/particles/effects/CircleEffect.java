@@ -59,11 +59,6 @@ public class CircleEffect {
 				disX = 255;
 				disY = 0;
 				disZ = 0;
-			} else {
-				disX /= 255.0;
-				disY /= 255.0;
-				disZ /= 255.0;
-				disX = disX == 0.0 ? 0.001 : disX;
 			}
 		}
 
@@ -80,9 +75,9 @@ public class CircleEffect {
 		boolean finalUpdateLoc = updateLoc;
 		Vector finalUpdateVector = updateVector;
 		final AtomicDouble hue = new AtomicDouble(0);
-		final AtomicDouble red = new AtomicDouble(disX);
-		final AtomicDouble green = new AtomicDouble(disY);
-		final AtomicDouble blue = new AtomicDouble(disZ);
+		final AtomicInteger red = new AtomicInteger((int) disX);
+		final AtomicInteger green = new AtomicInteger((int) disY);
+		final AtomicInteger blue = new AtomicInteger((int) disZ);
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 		AtomicInteger step = new AtomicInteger(0);
 
@@ -95,7 +90,7 @@ public class CircleEffect {
 			for (int j = 0; j < finalLoops; j++) {
 				if (rainbow) {
 					hue.set(ParticleUtils.incHue(hue.get()));
-					double[] rgb = ParticleUtils.incRainbow(hue.get());
+					int[] rgb = ParticleUtils.incRainbow(hue.get());
 					red.set(rgb[0]);
 					green.set(rgb[1]);
 					blue.set(rgb[2]);
@@ -112,7 +107,10 @@ public class CircleEffect {
 					v.setZ(Math.sin(angle) * radius);
 					if (randomRotation)
 						VectorUtils.rotateVector(v, angularVelocityX * step.get(), angularVelocityY * step.get(), angularVelocityZ * step.get());
-					ParticleUtils.display(finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+
+					Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalParticle, red.get(), green.get(), blue.get());
+					ParticleUtils.display(finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+
 					step.getAndIncrement();
 				}
 			}

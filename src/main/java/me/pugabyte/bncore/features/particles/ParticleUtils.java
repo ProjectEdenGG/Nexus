@@ -1,9 +1,11 @@
 package me.pugabyte.bncore.features.particles;
 
+import me.pugabyte.bncore.BNCore;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
 import java.awt.*;
+
 
 public class ParticleUtils {
 
@@ -13,14 +15,13 @@ public class ParticleUtils {
 		return hue;
 	}
 
-	public static double[] incRainbow(double hue) {
+	public static int[] incRainbow(double hue) {
 		int argb = Color.HSBtoRGB((float) (hue / 20.0F), 1.0F, 1.0F);
-		float r = (float) (argb >> 16 & 255) / 255.0F;
-		float g = (float) (argb >> 8 & 255) / 255.0F;
-		float b = (float) (argb & 255) / 255.0F;
-		r = r == 0.0F ? 0.001F : r;
+		int r = argb >> 16 & 255;
+		int g = argb >> 8 & 255;
+		int b = argb & 255;
 
-		double[] rgb = new double[3];
+		int[] rgb = new int[3];
 		rgb[0] = r;
 		rgb[1] = g;
 		rgb[2] = b;
@@ -28,7 +29,24 @@ public class ParticleUtils {
 	}
 
 	public static void display(Particle particle, Location location, int count, double x, double y, double z, double speed) {
-		location.getWorld().spawnParticle(particle, location, count, x, y, z, speed);
+		if (location.getWorld() != null)
+			location.getWorld().spawnParticle(particle, location, count, x, y, z, speed);
+	}
+
+	public static void display(Particle particle, Location location, int count, double x, double y, double z, double speed, Particle.DustOptions dustOptions) {
+		if (!particle.equals(Particle.REDSTONE) && dustOptions != null)
+			BNCore.warn("Tried to use DustOptions with " + particle);
+		else if (location.getWorld() != null)
+			location.getWorld().spawnParticle(particle, location, count, x, y, z, speed, dustOptions);
+	}
+
+	public static Particle.DustOptions newDustOption(Particle particle, int red, int green, int blue) {
+		if (particle.equals(Particle.REDSTONE)) {
+			org.bukkit.Color color = org.bukkit.Color.fromRGB(red, green, blue);
+			return new Particle.DustOptions(color, 1.0F);
+		}
+
+		return null;
 	}
 
 //	Only works with async

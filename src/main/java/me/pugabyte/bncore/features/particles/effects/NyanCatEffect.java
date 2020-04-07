@@ -40,12 +40,13 @@ public class NyanCatEffect {
 			Vector backward = player.getEyeLocation().getDirection().multiply(0.5);
 			loc = loc.subtract(backward);
 			for (int i = 0; i < 15; ++i) {
-				double[] rgb = ParticleUtils.incRainbow(i);
-				double r = rgb[0];
-				double g = rgb[1];
-				double b = rgb[2];
+				int[] rgb = ParticleUtils.incRainbow(i);
+				int r = rgb[0];
+				int g = rgb[1];
+				int b = rgb[2];
 
-				ParticleUtils.display(Particle.REDSTONE, loc, 0, r, g, b, 1);
+				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(Particle.REDSTONE, r, g, b);
+				ParticleUtils.display(Particle.REDSTONE, loc, 0, r, g, b, 1, dustOptions);
 
 				loc = loc.add(0, 0.1, 0);
 			}

@@ -15,7 +15,6 @@ import me.pugabyte.bncore.features.minigames.models.arenas.PixelDropArena;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
@@ -264,6 +263,6 @@ public class PixelDropMatchData extends MatchData {
 	// TODO: Counter clockwise animation
 	public void clearFloor(Match match) {
 		PixelDropArena arena = match.getArena();
-		WEUtils.fill(arena.getBoardRegion(), Material.AIR);
+		WEUtils.fill(arena.getBoardRegion(), BlockTypes.AIR);
 	}
 }

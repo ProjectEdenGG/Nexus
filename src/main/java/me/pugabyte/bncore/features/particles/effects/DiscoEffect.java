@@ -77,11 +77,6 @@ public class DiscoEffect {
 				disX1 = 255;
 				disY1 = 0;
 				disZ1 = 0;
-			} else {
-				disX1 /= 255.0;
-				disY1 /= 255.0;
-				disZ1 /= 255.0;
-				disX1 = disX1 == 0.0 ? 0.001 : disX1;
 			}
 		}
 
@@ -92,11 +87,6 @@ public class DiscoEffect {
 				disX2 = 255;
 				disY2 = 0;
 				disZ2 = 0;
-			} else {
-				disX2 /= 255.0;
-				disY2 /= 255.0;
-				disZ2 /= 255.0;
-				disX2 = disX2 == 0.0 ? 0.001 : disX2;
 			}
 		}
 
@@ -104,9 +94,9 @@ public class DiscoEffect {
 		int finalLineDensity = lineDensity;
 		Particle finalLineParticle = lineParticle;
 		final AtomicDouble lineHue = new AtomicDouble(0);
-		final AtomicDouble lineRed = new AtomicDouble(disX1);
-		final AtomicDouble lineGreen = new AtomicDouble(disY1);
-		final AtomicDouble lineBlue = new AtomicDouble(disZ1);
+		final AtomicInteger lineRed = new AtomicInteger((int) disX1);
+		final AtomicInteger lineGreen = new AtomicInteger((int) disY1);
+		final AtomicInteger lineBlue = new AtomicInteger((int) disZ1);
 		boolean finalLineRainbow = lineRainbow;
 		int finalLineCount = lineCount;
 
@@ -114,9 +104,9 @@ public class DiscoEffect {
 		int finalSphereDensity = sphereDensity;
 		Particle finalSphereParticle = sphereParticle;
 		final AtomicDouble sphereHue = new AtomicDouble(0);
-		final AtomicDouble sphereRed = new AtomicDouble(disX2);
-		final AtomicDouble sphereGreen = new AtomicDouble(disY2);
-		final AtomicDouble sphereBlue = new AtomicDouble(disZ2);
+		final AtomicInteger sphereRed = new AtomicInteger((int) disX2);
+		final AtomicInteger sphereGreen = new AtomicInteger((int) disY2);
+		final AtomicInteger sphereBlue = new AtomicInteger((int) disZ2);
 		boolean finalSphereRainbow = sphereRainbow;
 		int finalSphereCount = sphereCount;
 
@@ -182,7 +172,9 @@ public class DiscoEffect {
 							incSphereRainbow(sphereHue, sphereRed, sphereGreen, sphereBlue);
 					}
 					target.add(v);
-					ParticleUtils.display(finalLineParticle, target, finalLineCount, lineRed.get(), lineGreen.get(), lineBlue.get(), finalLineSpeed);
+
+					Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalLineParticle, lineRed.get(), lineGreen.get(), lineBlue.get());
+					ParticleUtils.display(finalLineParticle, target, finalLineCount, lineRed.get(), lineGreen.get(), lineBlue.get(), finalLineSpeed, dustOptions);
 				}
 			}
 
@@ -190,7 +182,10 @@ public class DiscoEffect {
 			for (int i = 0; i < finalSphereDensity; i++) {
 				Vector vector = RandomUtils.getRandomVector().multiply(sphereRadius);
 				loc.add(vector);
-				ParticleUtils.display(finalSphereParticle, loc, finalSphereCount, sphereRed.get(), sphereGreen.get(), sphereBlue.get(), finalSphereSpeed);
+
+				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalSphereParticle, sphereRed.get(), sphereGreen.get(), sphereBlue.get());
+				ParticleUtils.display(finalSphereParticle, loc, finalSphereCount, sphereRed.get(), sphereGreen.get(), sphereBlue.get(), finalSphereSpeed, dustOptions);
+
 				loc.subtract(vector);
 			}
 
@@ -199,17 +194,17 @@ public class DiscoEffect {
 		});
 	}
 
-	private void incSphereRainbow(AtomicDouble sphereHue, AtomicDouble sphereRed, AtomicDouble sphereGreen, AtomicDouble sphereBlue) {
+	private void incSphereRainbow(AtomicDouble sphereHue, AtomicInteger sphereRed, AtomicInteger sphereGreen, AtomicInteger sphereBlue) {
 		sphereHue.set(ParticleUtils.incHue(sphereHue.get()));
-		double[] rgb = ParticleUtils.incRainbow(sphereHue.get());
+		int[] rgb = ParticleUtils.incRainbow(sphereHue.get());
 		sphereRed.set(rgb[0]);
 		sphereGreen.set(rgb[1]);
 		sphereBlue.set(rgb[2]);
 	}
 
-	private void incLineRainbow(AtomicDouble lineHue, AtomicDouble lineRed, AtomicDouble lineGreen, AtomicDouble lineBlue) {
+	private void incLineRainbow(AtomicDouble lineHue, AtomicInteger lineRed, AtomicInteger lineGreen, AtomicInteger lineBlue) {
 		lineHue.set(ParticleUtils.incHue(lineHue.get()));
-		double[] rgb = ParticleUtils.incRainbow(lineHue.get());
+		int[] rgb = ParticleUtils.incRainbow(lineHue.get());
 		lineRed.set(rgb[0]);
 		lineGreen.set(rgb[1]);
 		lineBlue.set(rgb[2]);
