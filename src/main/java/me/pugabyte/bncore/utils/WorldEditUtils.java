@@ -31,7 +31,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,8 +39,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WorldEditUtils {
 	@NonNull
@@ -98,15 +97,33 @@ public class WorldEditUtils {
 	}
 
 	public enum SelectionChangeDirectionType {
-		HORIZONTAL(Direction::isCardinal),
-		VERTICAL(Direction::isUpright),
-		ALL(direction -> direction.isCardinal() || direction.isUpright());
+		HORIZONTAL {
+			@Override
+			BlockVector3[] getVectors() {
+				return new BlockVector3[]{ BlockVector3.UNIT_Y, BlockVector3.UNIT_MINUS_Y };
+			}
+		},
+		VERTICAL {
+			@Override
+			BlockVector3[] getVectors() {
+				return new BlockVector3[]{ BlockVector3.UNIT_X, BlockVector3.UNIT_MINUS_X, BlockVector3.UNIT_Z, BlockVector3.UNIT_MINUS_Z };
+			}
+		},
+		ALL {
+			@Override
+			BlockVector3[] getVectors() {
+				List<BlockVector3> vectors = new ArrayList<>();
+				Stream.of(HORIZONTAL, VERTICAL).map(value -> Arrays.asList(value.getVectors())).forEach(vectors::addAll);
+				return vectors.toArray(new BlockVector3[0]);
+			}
+		};
 
-		@Getter
-		private Function<Direction, Boolean> filter;
+		abstract BlockVector3[] getVectors();
 
-		SelectionChangeDirectionType(Function<Direction, Boolean> filter) {
-			this.filter = filter;
+		public BlockVector3[] applyChanges(int amount) {
+			return Stream.of(getVectors())
+					.map(vector -> vector.multiply(amount))
+					.toArray(BlockVector3[]::new);
 		}
 	}
 
@@ -121,7 +138,7 @@ public class WorldEditUtils {
 		LocalSession session = plugin.getSession(player);
 		Region region = session.getSelection(worldEditWorld);
 		int oldSize = region.getArea();
-		BlockVector3[] directions = getDirections(directionType, amount);
+		BlockVector3[] directions = directionType.applyChanges(amount);
 
 		if (changeType == SelectionChangeType.EXPAND)
 			region.expand(directions);
@@ -157,15 +174,6 @@ public class WorldEditUtils {
 		session.getRegionSelector(worldEditWorld).explainSecondarySelection(worldEditPlayer, session, region.getMaximumPoint());
 	}
 
-	@NotNull
-	private BlockVector3[] getDirections(SelectionChangeDirectionType type, int number) {
-		return Arrays.stream(Direction.values())
-				.filter(direction -> type.getFilter().apply(direction))
-				.map(Direction::toBlockVector)
-				.map(vector -> vector.multiply(number))
-				.toArray(BlockVector3[]::new);
-	}
-
 	public List<Block> getBlocks(ProtectedRegion region) {
 		return getBlocks((CuboidRegion) worldGuardUtils.convert(region));
 	}
@@ -176,13 +184,10 @@ public class WorldEditUtils {
 
 	public List<Block> getBlocks(CuboidRegion region) {
 		List<Block> blockList = new ArrayList<>();
-		for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++) {
-			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++) {
-				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
+		for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++)
+			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++)
+				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++)
 					blockList.add(world.getBlockAt(x, y, z));
-				}
-			}
-		}
 		return blockList;
 	}
 
@@ -278,12 +283,12 @@ public class WorldEditUtils {
 	}
 
 	public Region expandAll(Region region, int amount) {
-		region.expand(getDirections(SelectionChangeDirectionType.ALL, amount));
+		region.expand(SelectionChangeDirectionType.ALL.applyChanges(amount));
 		return region;
 	}
 
 	public Region contractAll(Region region, int amount) {
-		region.contract(getDirections(SelectionChangeDirectionType.ALL, amount));
+		region.contract(SelectionChangeDirectionType.ALL.applyChanges(amount));
 		return region;
 	}
 
