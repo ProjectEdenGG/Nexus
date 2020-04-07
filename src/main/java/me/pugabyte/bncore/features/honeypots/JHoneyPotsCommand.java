@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.honeypots;
 
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -68,13 +68,13 @@ public class JHoneyPotsCommand extends CustomCommand {
 		honeyPot = honeyPot.toLowerCase();
 		Region selection = WEUtils.getPlayerSelection(player());
 		RegionManager manager = WGUtils.getManager();
-		ProtectedRegion region = new ProtectedCuboidRegion("hp_" + honeyPot, selection.getMinimumPoint().toBlockVector(), selection.getMaximumPoint().toBlockVector());
-		region.setFlag(DefaultFlag.PASSTHROUGH, StateFlag.State.ALLOW);
-		region.setFlag(DefaultFlag.BUILD, StateFlag.State.ALLOW);
+		ProtectedRegion region = new ProtectedCuboidRegion("hp_" + honeyPot, WEUtils.toBlockVector3(selection.getMinimumPoint()), WEUtils.toBlockVector3(selection.getMaximumPoint().toBlockVector()));
+		region.setFlag(Flags.PASSTHROUGH, StateFlag.State.ALLOW);
+		region.setFlag(Flags.BUILD, StateFlag.State.ALLOW);
 		region.setPriority(1);
 		manager.addRegion(region);
 		WEUtils.expandAll(selection, expand);
-		ProtectedRegion schemRegion = new ProtectedCuboidRegion("hpregen_" + honeyPot, selection.getMinimumPoint().toBlockVector(), selection.getMaximumPoint().toBlockVector());
+		ProtectedRegion schemRegion = new ProtectedCuboidRegion("hpregen_" + honeyPot, WEUtils.toBlockVector3(selection.getMinimumPoint().toBlockVector()), WEUtils.toBlockVector3(selection.getMaximumPoint().toBlockVector()));
 		manager.addRegion(schemRegion);
 		WEUtils.save("hp/" + honeyPot, selection);
 		manager.save();

@@ -1,7 +1,8 @@
 name: BNCore
 main: me.pugabyte.bncore.BNCore
 version: ${project.version}
-softdepend: [PermissionsEx, Minigames, Herochat, Skript, PlayerPoints, SmartInvs, Multiverse-Core, FeatherBoard]
+softdepend: [PermissionsEx, SmartInvs, Multiverse-Core, FeatherBoard]
+api-version: 1.15
 commands:
   restoreinventory:
     description: RestoreInventory command

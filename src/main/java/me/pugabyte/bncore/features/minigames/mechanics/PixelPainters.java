@@ -1,11 +1,12 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.boydti.fawe.object.schematic.Schematic;
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -113,32 +114,32 @@ public class PixelPainters extends TeamlessMechanic {
 			matchData.setLobbyDesign(design);
 
 			// Get minimum point from current chosen design
-			Vector designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
+			BlockVector3 designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
 
 			// Get maximum point from: 255 - MinPoint
 			int diff = designsRegion.getMaximumPoint().getBlockY() - designMin.getBlockY();
 
-			Vector designMax = designsRegion.getMaximumPoint().subtract(0, diff, 0);
+			BlockVector3 designMax = designsRegion.getMaximumPoint().subtract(0, diff, 0);
 
-			Vector copySliceMin = designMin.add(0, 0, 8);
-			Vector pasteMin = arena.getLobbyDesignRegion().getMinimumPoint();
+			BlockVector3 copySliceMin = designMin.add(0, 0, 8);
+			BlockVector3 pasteMin = arena.getLobbyDesignRegion().getMinimumPoint();
 
-			Vector copyMinV;
-			Vector copyMaxV;
-			Vector pasteMinV;
+			BlockVector3 copyMinV;
+			BlockVector3 copyMaxV;
+			BlockVector3 pasteMinV;
 
 			for (int i = 0; i < 9; i++) {
 				copyMinV = copySliceMin.subtract(0, 0, i);
 				copyMaxV = designMax.subtract(0, 0, i);
 				pasteMinV = pasteMin.add(0, i, 0);
 				Region copyRg = new CuboidRegion(WGUtils.getWorldEditWorld(), copyMinV, copyMaxV);
-				Schematic schem = WEUtils.copy(copyRg);
+				Clipboard schem = WEUtils.copy(copyRg);
 				WEUtils.paste(schem, pasteMinV);
 			}
 
 			// Paste Design
 			Region pasteRegion = arena.getLobbyAnimationRegion();
-			Schematic schem = WEUtils.copy(arena.getLobbyDesignRegion());
+			Clipboard schem = WEUtils.copy(arena.getLobbyDesignRegion());
 			WEUtils.paste(schem, pasteRegion.getMinimumPoint());
 		});
 		matchData.setAnimateLobbyId(taskId);
@@ -277,7 +278,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 		int area = designsRegion.getArea();
 		EditSession editSession = WEUtils.getEditSession();
-		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(new BaseBlock(Material.AIR.getId())));
+		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(new BaseBlock(BlockTypes.AIR)));
 		int blocksCount = area - airCount;
 
 		PixelPaintersMatchData matchData = match.getMatchData();
@@ -454,12 +455,12 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersMatchData matchData = match.getMatchData();
 		CuboidRegion designRegion = matchData.getDesignRegion();
 
-		Vector floorMax = floorRegion.getMaximumPoint();
-		Vector designMax = designRegion.getMaximumPoint();
+		BlockVector3 floorMax = floorRegion.getMaximumPoint();
+		BlockVector3 designMax = designRegion.getMaximumPoint();
 		for (int z = 0; z < 9; z++) {
 			for (int x = 0; x < 9; x++) {
-				Vector floorV = floorMax.subtract(x, 0, z);
-				Vector designV = designMax.subtract(x, 0, z);
+				BlockVector3 floorV = floorMax.subtract(x, 0, z);
+				BlockVector3 designV = designMax.subtract(x, 0, z);
 
 				Block floorBlock = WEUtils.toLocation(floorV).getBlock();
 				Block designBlock = WEUtils.toLocation(designV).getBlock();
@@ -486,28 +487,28 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.getDesignsPlayed().add(design);
 
 		// Get minimum point from current chosen design
-		Vector designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
+		BlockVector3 designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
 
 		// Get maximum point from: 255 - MinPoint
 		int diff = designsRegion.getMaximumPoint().getBlockY() - designMin.getBlockY();
 
-		Vector designMax = designsRegion.getMaximumPoint().subtract(0, diff, 0);
+		BlockVector3 designMax = designsRegion.getMaximumPoint().subtract(0, diff, 0);
 		CuboidRegion designRegion = new CuboidRegion(designMin, designMax);
 		matchData.setDesignRegion(designRegion);
 
-		Vector copySliceMin = designMin.add(0, 0, 8);
-		Vector pasteMin = arena.getNextDesignRegion().getMinimumPoint();
+		BlockVector3 copySliceMin = designMin.add(0, 0, 8);
+		BlockVector3 pasteMin = arena.getNextDesignRegion().getMinimumPoint();
 
-		Vector copyMinV;
-		Vector copyMaxV;
-		Vector pasteMinV;
+		BlockVector3 copyMinV;
+		BlockVector3 copyMaxV;
+		BlockVector3 pasteMinV;
 
 		for (int i = 0; i < 9; i++) {
 			copyMinV = copySliceMin.subtract(0, 0, i);
 			copyMaxV = designMax.subtract(0, 0, i);
 			pasteMinV = pasteMin.add(0, i, 0);
 			Region copyRg = new CuboidRegion(WGUtils.getWorldEditWorld(), copyMinV, copyMaxV);
-			Schematic schem = WEUtils.copy(copyRg);
+			Clipboard schem = WEUtils.copy(copyRg);
 			WEUtils.paste(schem, pasteMinV);
 		}
 	}
@@ -515,7 +516,7 @@ public class PixelPainters extends TeamlessMechanic {
 	public void pasteNewDesign(Match match) {
 		PixelPaintersArena arena = match.getArena();
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
-		Schematic schem = WEUtils.copy(arena.getNextDesignRegion());
+		Clipboard schem = WEUtils.copy(arena.getNextDesignRegion());
 		wallRegions.forEach(wallRegion -> {
 			Region region = WGUtils.convert(wallRegion);
 			WEUtils.paste(schem, region.getMinimumPoint());
@@ -539,7 +540,7 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersArena arena = match.getArena();
 		// Paste Logo on all island walls
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
-		Schematic schem = WEUtils.copy(arena.getLogoRegion());
+		Clipboard schem = WEUtils.copy(arena.getLogoRegion());
 		wallRegions.forEach(wallRegion -> {
 			Region region = WGUtils.convert(wallRegion);
 			WEUtils.paste(schem, region.getMinimumPoint());

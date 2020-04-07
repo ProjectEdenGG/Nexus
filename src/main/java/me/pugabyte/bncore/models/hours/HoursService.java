@@ -2,6 +2,7 @@ package me.pugabyte.bncore.models.hours;
 
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.MySQLService;
+import me.pugabyte.bncore.utils.Time;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,6 +37,10 @@ public class HoursService extends MySQLService {
 
 	public List<Hours> getPage(HoursType type, int page) {
 		return database.orderBy(type.columnName().replaceAll("_", "") + " desc").limit(10).offset((page - 1) * 10).results(Hours.class);
+	}
+
+	public List<Hours> getActivePlayers() {
+		return database.where("total > ?", Time.DAY.x(10) / 20).results(Hours.class);
 	}
 
 	public int cleanup() {

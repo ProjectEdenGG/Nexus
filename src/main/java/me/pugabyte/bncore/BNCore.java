@@ -37,6 +37,7 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
@@ -206,6 +207,9 @@ public class BNCore extends JavaPlugin {
 
 	@Getter
 	private static Economy econ = null;
+	@Getter
+	private static Permission pex = null;
+
 
 	private void enableFeatures() {
 		// Load this first
@@ -235,6 +239,7 @@ public class BNCore extends JavaPlugin {
 		signMenuFactory = new SignMenuFactory(this);
 		cron.start();
 		econ = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
+		pex = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
 	}
 
 }

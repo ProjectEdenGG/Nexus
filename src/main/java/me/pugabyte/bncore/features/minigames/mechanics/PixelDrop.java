@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import me.pugabyte.bncore.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -171,9 +171,9 @@ public class PixelDrop extends TeamlessMechanic {
 		matchData.startWordTask(match);
 
 		// Get min point from current chosen design
-		Vector designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
+		BlockVector3 designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
 		// Get min point of paste region
-		Vector pasteMin = dropRegion.getMinimumPoint();
+		BlockVector3 pasteMin = dropRegion.getMinimumPoint();
 
 		// Builds the map
 		for (int x = 0; x < 15; x++) {
@@ -202,7 +202,7 @@ public class PixelDrop extends TeamlessMechanic {
 			Block block = matchData.getDesignMap().get(x + "_" + z);
 			double blockX = x + 0.5;
 			double blockZ = z + 0.5;
-			Location loc = WGUtils.toLocation(pasteMin.add(blockX, 0, blockZ));
+			Location loc = WGUtils.toLocation(pasteMin.add(BlockVector3.at(blockX, 0, blockZ)));
 
 			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
 			fallingBlock.setDropItem(false);
@@ -222,7 +222,7 @@ public class PixelDrop extends TeamlessMechanic {
 		PixelDropArena arena = match.getArena();
 		PixelDropMatchData matchData = match.getMatchData();
 
-		Vector pasteMin = arena.getDropRegion().getMinimumPoint();
+		BlockVector3 pasteMin = arena.getDropRegion().getMinimumPoint();
 		for (String key : matchData.getDesignKeys()) {
 			Block block = matchData.getDesignMap().get(key);
 
@@ -231,7 +231,7 @@ public class PixelDrop extends TeamlessMechanic {
 			int z = Integer.parseInt(xz[1]);
 			double blockX = x + 0.5;
 			double blockZ = z + 0.5;
-			Location loc = WGUtils.toLocation(pasteMin.add(blockX, 0, blockZ));
+			Location loc = WGUtils.toLocation(pasteMin.add(BlockVector3.at(blockX, 0, blockZ)));
 
 			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
 			fallingBlock.setDropItem(false);

@@ -5,7 +5,6 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class PushCommand extends CustomCommand {
 	private static String permission = "stoppushing.allow";
@@ -30,13 +29,12 @@ public class PushCommand extends CustomCommand {
 	@SneakyThrows
 	void push(boolean enable) {
 		if (enable) {
-			PermissionsEx.getUser(player()).addPermission(permission);
-			PermissionsEx.getUser(player()).removePermission("-" + permission);
+			BNCore.getPex().playerAdd(player(), permission);
+			BNCore.getPex().playerRemove(player(), "-" + permission);
 			send("&ePushing will be turned &aon&e shortly.");
 		} else {
-			PermissionsEx.getUser(player()).removePermission(permission);
-			PermissionsEx.getUser(player()).addPermission("-" + permission);
-			PermissionsEx.getPermissionManager().reset();
+			BNCore.getPex().playerRemove(player(), permission);
+			BNCore.getPex().playerAdd(player(), "-" + permission);
 			send("&ePushing will be turned &coff&e shortly.");
 		}
 	}

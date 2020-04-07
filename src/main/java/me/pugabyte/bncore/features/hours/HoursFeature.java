@@ -12,7 +12,6 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
@@ -49,8 +48,8 @@ public class HoursFeature {
 					if (Rank.getHighestRank(player) == Rank.GUEST) {
 						if (hours.getTotal() > (60 * 60 * 24)) {
 							Tasks.sync(() -> {
-								PermissionsEx.getUser(player).removeGroup("Guest");
-								PermissionsEx.getUser(player).addGroup("Member");
+								BNCore.getPex().playerRemoveGroup(player, "Guest");
+								BNCore.getPex().playerAddGroup(player, "Member");
 								Koda.say("Congrats on Member rank, " + player.getName() + "!");
 								Jingle.RANKUP.play(player);
 								player.sendMessage("");

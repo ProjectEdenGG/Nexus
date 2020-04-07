@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -10,7 +11,6 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 @Aliases("wgedit")
 @NoArgsConstructor
@@ -37,19 +37,19 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	private void on() {
-		PermissionsEx.getUser(player()).addPermission(permission);
+		BNCore.getPex().playerAdd(player(), permission);
 		send("&eWorldGuard editing &aenabled");
 	}
 
 	private void off() {
-		PermissionsEx.getUser(player()).removePermission(permission);
+		BNCore.getPex().playerRemove(player(), permission);
 		send("&eWorldGuard editing &cdisabled");
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (event.getPlayer().hasPermission(permission))
-			PermissionsEx.getUser(event.getPlayer()).removePermission(permission);
+			BNCore.getPex().playerRemove(player(), permission);
 	}
 
 }

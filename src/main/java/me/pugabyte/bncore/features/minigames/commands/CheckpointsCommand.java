@@ -53,7 +53,7 @@ public class CheckpointsCommand extends CustomCommand {
 	@Path("(set|add|create) <number>")
 	void addCheckpoint(int number) {
 		Region selection = weUtils.getPlayerSelection(player());
-		selection.expand(Direction.UP.toVector().multiply(4));
+		selection.expand(weUtils.toVector(Direction.UP.toVector().multiply(4)));
 		String id = regionBase + number;
 		ProtectedRegion region = wgUtils.convert(id, selection);
 		wgUtils.getManager().addRegion(region);

@@ -1,9 +1,10 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.mechanics.PixelDrop;
@@ -125,9 +126,9 @@ public class PixelDropMatchData extends MatchData {
 			matchData.setLobbyDesign(design);
 
 			// Get min point from current chosen design
-			Vector designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
+			BlockVector3 designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
 			// Get min point of paste region
-			Vector pasteMin = lobbyAnimationRegion.getMinimumPoint();
+			BlockVector3 pasteMin = lobbyAnimationRegion.getMinimumPoint();
 
 			// Builds the map
 			for (int x = 0; x < 15; x++) {
@@ -175,7 +176,7 @@ public class PixelDropMatchData extends MatchData {
 
 		int area = designsRegion.getArea();
 		EditSession editSession = WEUtils.getEditSession();
-		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(new BaseBlock(Material.AIR.getId())));
+		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(new BaseBlock(BlockTypes.AIR)));
 		int blocksCount = area - airCount;
 
 		PixelDropMatchData matchData = match.getMatchData();
@@ -187,7 +188,7 @@ public class PixelDropMatchData extends MatchData {
 		PixelDropArena arena = match.getArena();
 		PixelDropMatchData matchData = match.getMatchData();
 		Region designsRegion = arena.getDesignRegion();
-		Vector minPoint = designsRegion.getMinimumPoint().subtract(1, 0, 0);
+		BlockVector3 minPoint = designsRegion.getMinimumPoint().subtract(1, 0, 0);
 		int designCount = matchData.getDesignCount();
 
 		for (int i = 0; i < designCount; i++) {

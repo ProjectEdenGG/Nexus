@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.managers.storage.StorageException;
@@ -105,7 +106,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		return origin.toVector().add(vector).toLocation(location.getWorld());
 	}
 
-	public static Location getLocationOffFirst(UncivilEngineersArena arena, int originID, com.sk89q.worldedit.Vector location) {
+	public static Location getLocationOffFirst(UncivilEngineersArena arena, int originID, BlockVector3 location) {
 		int x, y, z;
 		x = (int) (location.getX() - arena.getOrigins().get(1).getX());
 		y = (int) (location.getY() - arena.getOrigins().get(1).getY());
@@ -237,7 +238,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 				Location min = getLocationOffFirst(arena, originID, region1.getMinimumPoint());
 				Location max = getLocationOffFirst(arena, originID, region1.getMaximumPoint());
 				String regionName = arena.getRegionBaseName() + "_strip_" + originID;
-				ProtectedRegion region2 = new ProtectedCuboidRegion(regionName, WGUtils.toVector(min).toBlockVector(), WGUtils.toVector(max).toBlockVector());
+				ProtectedRegion region2 = new ProtectedCuboidRegion(regionName, WGUtils.toBlockVector3(min), WGUtils.toBlockVector3(max));
 				regionManager.addRegion(region2);
 			}
 			regionManager.save();

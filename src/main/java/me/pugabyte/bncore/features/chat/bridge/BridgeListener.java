@@ -35,9 +35,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.events.PermissionEntityEvent;
-import ru.tehkode.permissions.events.PermissionEntityEvent.Action;
 
 import java.util.List;
 import java.util.Optional;
@@ -126,15 +123,16 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 		return message;
 	}
 
-	@EventHandler
-	public void onRankChange(PermissionEntityEvent event) {
-		if (event.getAction() != Action.RANK_CHANGED) return;
-
-		if (event.getEntity() instanceof PermissionUser) {
-			OfflinePlayer player = Utils.getPlayer(event.getEntity().getName());
-			RoleManager.update(new DiscordService().get(player));
-		}
-	}
+	// TODO needed
+//	@EventHandler
+//	public void onRankChange(PermissionEntityEvent event) {
+//		if (event.getAction() != Action.RANK_CHANGED) return;
+//
+//		if (event.getEntity() instanceof PermissionUser) {
+//			OfflinePlayer player = Utils.getPlayer(event.getEntity().getName());
+//			RoleManager.update(new DiscordService().get(player));
+//		}
+//	}
 
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {

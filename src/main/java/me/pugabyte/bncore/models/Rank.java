@@ -3,15 +3,16 @@ package me.pugabyte.bncore.models;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -83,9 +84,13 @@ public enum Rank {
 	}
 
 	public List<Nerd> getNerds() {
-		Set<PermissionUser> users = PermissionsEx.getPermissionManager().getGroup(StringUtils.camelCase(name())).getUsers();
+		// Temporary? fix to get players in this group. Using Hours > 10d because this method is only used for staff
+		List<OfflinePlayer> inGroup = new HoursService().getActivePlayers().stream()
+				.map(hours -> Utils.getPlayer(hours.getUuid()))
+				.filter(player -> BNCore.getPex().playerInGroup(null, player, name()))
+				.collect(Collectors.toList());
 		Set<Nerd> nerds = new HashSet<>();
-		users.forEach(user -> nerds.add(new NerdService().get(user.getIdentifier())));
+		inGroup.forEach(player -> nerds.add(new NerdService().get(player)));
 		return new ArrayList<>(nerds);
 	}
 
@@ -126,13 +131,11 @@ public enum Rank {
 	}
 
 	public static Rank getHighestRank(OfflinePlayer player) {
-		PermissionUser user = PermissionsEx.getUser(player.getUniqueId().toString());
-
 		List<Rank> ranks = Arrays.asList(Rank.values());
 		Collections.reverse(ranks);
 
 		for (Rank rank : ranks)
-			if (user.inGroup(rank.name()))
+			if (BNCore.getPex().playerInGroup(null, player, rank.name()))
 				return rank;
 
 		return GUEST;

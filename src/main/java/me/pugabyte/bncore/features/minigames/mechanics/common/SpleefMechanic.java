@@ -48,7 +48,7 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 		WGUtils.getRegionsLike(getName() + "_" + match.getArena().getName() + "_floor_[0-9]+")
 				.forEach(floor -> {
 					String file = (getName() + "/" + floor.getId().replaceFirst(getName().toLowerCase() + "_", "")).toLowerCase();
-					WEUtils.paste(file, floor.getMinimumPoint());
+					WEUtils.paste(file, WEUtils.toVector(floor.getMinimumPoint()));
 				});
 	}
 
