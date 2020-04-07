@@ -17,7 +17,8 @@ public class Discord {
 		for (Bot bot : Bot.values())
 			Tasks.async(() -> {
 				bot.connect();
-				BNCore.log("Successfully connected " + bot.name() + " to Discord");
+				if (bot.jda() != null)
+					BNCore.log("Successfully connected " + bot.name() + " to Discord");
 			});
 	}
 
