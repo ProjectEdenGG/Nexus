@@ -77,7 +77,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		super.onEnd(event);
 		Region region = WGUtils.getRegion("invertoinferno_fire");
 
-		WEUtils.replace(region, Material.FIRE, Material.AIR);
+		WEUtils.replace(region, BlockTypes.FIRE, BlockTypes.AIR);
 	}
 
 	@EventHandler

@@ -63,11 +63,6 @@ public class LineEffect {
 				disX = 255;
 				disY = 0;
 				disZ = 0;
-			} else {
-				disX /= 255.0;
-				disY /= 255.0;
-				disZ /= 255.0;
-				disX = disX == 0.0 ? 0.001 : disX;
 			}
 		}
 
@@ -82,9 +77,9 @@ public class LineEffect {
 
 		int finalCount = count;
 		final AtomicDouble hue = new AtomicDouble(0);
-		final AtomicDouble red = new AtomicDouble(disX);
-		final AtomicDouble green = new AtomicDouble(disY);
-		final AtomicDouble blue = new AtomicDouble(disZ);
+		final AtomicInteger red = new AtomicInteger((int) disX);
+		final AtomicInteger green = new AtomicInteger((int) disY);
+		final AtomicInteger blue = new AtomicInteger((int) disZ);
 		double finalSpeed = speed;
 		Location finalStart = startLoc;
 		Particle finalParticle = particle;
@@ -101,7 +96,7 @@ public class LineEffect {
 
 			if (rainbow) {
 				hue.set(ParticleUtils.incHue(hue.get()));
-				double[] rgb = ParticleUtils.incRainbow(hue.get());
+				int[] rgb = ParticleUtils.incRainbow(hue.get());
 				red.set(rgb[0]);
 				green.set(rgb[1]);
 				blue.set(rgb[2]);
@@ -109,7 +104,10 @@ public class LineEffect {
 
 			for (double covered = 0; covered < finalDiff; startV.get().add(vector)) {
 				Location loc = startV.get().toLocation(world);
-				ParticleUtils.display(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+
+				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalParticle, red.get(), green.get(), blue.get());
+				ParticleUtils.display(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+
 				covered += density;
 				if (finalMaxLength != 0 && covered >= finalMaxLength)
 					break;
