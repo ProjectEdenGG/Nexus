@@ -35,7 +35,7 @@ public class SignLinesCommand extends CustomCommand {
 
 	@Path("[arguments...]")
 	void signLines(String arguments) {
-		Block targetBlock = player().getTargetBlock(null, 5);
+		Block targetBlock = player().getTargetBlockExact(5);
 		Material material = targetBlock.getType();
 		if (Utils.isNullOrAir(material) || !Utils.isSign(material)) {
 			usage();

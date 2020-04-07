@@ -18,7 +18,7 @@ public class FuckCommand extends CustomCommand {
 	@Path
 	void fuck() {
 		if (player().hasPermission("group.staff")) {
-			Block block = player().getTargetBlock(null, 20);
+			Block block = player().getTargetBlockExact(20);
 			if (block == null || block.getType() == Material.AIR)
 				error("No block found");
 

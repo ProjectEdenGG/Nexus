@@ -353,7 +353,7 @@ public class JMinigamesCommand extends CustomCommand {
 	}
 
 	private Sign getTargetSign(Player player) {
-		Block targetBlock = player.getTargetBlock(null, 10);
+		Block targetBlock = player.getTargetBlockExact(10);
 		Material material = targetBlock.getType();
 		if (Utils.isNullOrAir(material) || !Utils.isSign(material))
 			error("Look at a sign!");
