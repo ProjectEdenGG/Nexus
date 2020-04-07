@@ -4,6 +4,7 @@ import com.github.ysl3000.bukkit.pathfinding.PathfinderGoalAPI;
 import com.github.ysl3000.bukkit.pathfinding.entity.Insentient;
 import com.github.ysl3000.bukkit.pathfinding.goals.PathfinderGoalMoveToLocation;
 import com.github.ysl3000.bukkit.pathfinding.pathfinding.PathfinderManager;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -77,7 +78,7 @@ public class MonsterMaze extends TeamlessMechanic {
 			throw new BNException("PathfinderAPI is null?");
 
 		List<Location> goals = new ArrayList<>();
-		for (com.sk89q.worldedit.Vector vector : match.getArena().getRegion("floor")) {
+		for (BlockVector3 vector : match.getArena().getRegion("floor")) {
 			Location location = WGUtils.toLocation(vector);
 			if (location.getBlock().getType() == goalMaterial)
 				goals.add(location.add(0, 1, 0));

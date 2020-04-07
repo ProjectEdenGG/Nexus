@@ -58,7 +58,7 @@ public class AnnotationListener implements Listener {
 
 		Minigames.getWorldGuardUtils().getRegionsLike(regex).forEach(region -> {
 			String file = name + "/" + region.getId().replaceFirst(name + "_", "");
-			Minigames.getWorldEditUtils().paste(file.toLowerCase(), Minigames.getWorldEditUtils().toVector(region.getMinimumPoint()));
+			Minigames.getWorldEditUtils().paste(file.toLowerCase(), region.getMinimumPoint());
 		});
 	}
 

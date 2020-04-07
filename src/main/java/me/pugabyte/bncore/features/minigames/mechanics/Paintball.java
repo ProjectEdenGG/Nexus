@@ -67,10 +67,10 @@ public final class Paintball extends BalancedTeamMechanic {
 		if (hitBlock == null) return;
 		Region region = minigamer.getMatch().getArena().getRegion("regen");
 		if (region == null) return;
-		if (!region.contains(WGUtils.toVector(hitBlock.getLocation()))) return;
+		if (!region.contains(WGUtils.toBlockVector3(hitBlock.getLocation()))) return;
 		for (BlockFace face : BlockFace.values()) {
 			Block relative = hitBlock.getRelative(face);
-			if (!region.contains(WGUtils.toVector(relative.getLocation()))) continue;
+			if (!region.contains(WGUtils.toBlockVector3(relative.getLocation()))) continue;
 			changeBlockColor(minigamer, relative);
 		}
 	}
