@@ -19,7 +19,6 @@ import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -31,7 +30,6 @@ import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -66,15 +64,14 @@ public class BNCoreCommand extends CustomCommand {
 	static {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(30), () -> {
 			TaskService service = new TaskService();
-			service.process("command-test").forEach(task -> {
+			service.process("command-test").forEach(task ->
 				Tasks.wait(Time.MINUTE.x(2), () -> {
 					Map<String, Object> data = task.getJson();
 					OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
-					if (player.isOnline())
+					if (player.isOnline() && player.getPlayer() != null)
 						player.getPlayer().sendMessage((String) data.get("message"));
 					service.complete(task);
-				});
-			});
+				}));
 		});
 	}
 
@@ -106,11 +103,6 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("getPlayer [player]")
 	void getPlayer(@Arg("self") OfflinePlayer player) {
 		send(player.getName());
-	}
-
-	@Path("redtint [fadeTime] [intensity] [player]")
-	void redTint(@Arg("0.5") double fadeTime, @Arg("10") double intensity, @Arg("self") Player player) {
-		SkriptFunctions.redTint(player, fadeTime, intensity);
 	}
 
 	@Permission("group.seniorstaff")

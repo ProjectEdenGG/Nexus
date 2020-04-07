@@ -21,8 +21,6 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -54,7 +52,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 					return;
 				}
 
-				packageType.getPermissions().forEach(permission -> PermissionsEx.getUser(uuid).removePermission(permission));
+				packageType.getPermissions().forEach(permission -> BNCore.getPex().playerRemove(null, Utils.getPlayer(uuid), permission));
 				packageType.getExpirationCommands().stream()
 						.map(StringUtils::trimFirst)
 						.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(uuid).getName()))
@@ -107,7 +105,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 							"Enjoy your " + purchase.getPackageName() + " perk!");
 
 				if (purchase.getPurchaserUuid().length() == 36) {
-					PermissionsEx.getUser(purchase.getPurchaserName()).addPermission("donated");
+					BNCore.getPex().playerAdd(null, Utils.getPlayer(purchase.getPurchaserUuid()), "donated");
 
 					DiscordUser user = new DiscordService().get(purchase.getPurchaserUuid());
 					if (user.getUserId() != null)
@@ -117,8 +115,8 @@ public class HandlePurchaseCommand extends CustomCommand {
 				}
 			}
 
-			PermissionUser pexUser = PermissionsEx.getUser(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
-			packageType.getPermissions().forEach(pexUser::addPermission);
+			OfflinePlayer pexUser = Utils.getPlayer(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
+			packageType.getPermissions().forEach(permssion -> BNCore.getPex().playerAdd(null, pexUser, permssion));
 			packageType.getCommands().stream()
 					.map(StringUtils::trimFirst)
 					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))

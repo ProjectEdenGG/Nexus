@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,9 +61,8 @@ public class HomeOwner extends PlayerOwnedObject {
 
 	@ToString.Include
 	public int getMaxHomes() {
-		PermissionUser user = PermissionsEx.getUser(getUuid().toString());
 		for (int i = maxHomes; i > 0; i--)
-			if (user.has("homes.limit." + i))
+			if (BNCore.getPex().playerHas(null, getOfflinePlayer(), "homes.limit." + i))
 				return i;
 
 		return 0;

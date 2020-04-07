@@ -237,21 +237,6 @@
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Minigames -->
-        <dependency>
-            <groupId>au.com.mineauz</groupId>
-            <artifactId>Minigames</artifactId>
-            <version>1.12.2-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- PermissionsEx -->
-        <dependency>
-            <groupId>ru.tehkode</groupId>
-            <artifactId>PermissionsEx</artifactId>
-            <version>1.23.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/PermissionsEx-1.23.4.jar</systemPath>
-        </dependency>
         <!-- McMMO -->
         <dependency>
             <groupId>com.gmail.nossr50.mcMMO</groupId>
@@ -293,26 +278,19 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- PlayerPoints -->
+        <!-- FaweAPI -->
         <dependency>
-            <groupId>org.black_ixx</groupId>
-            <artifactId>PlayerPoints</artifactId>
-            <version>2.1.4</version>
+            <groupId>com.github.IntellectualSites</groupId>
+            <artifactId>FastAsyncWorldEdit</artifactId>
+            <version>1.15-164</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/PlayerPoints-2.1.4.jar</systemPath>
-        </dependency>
-        <!-- FAWE legacy API -->
-        <dependency>
-            <groupId>com.boydti</groupId>
-            <artifactId>fawe-api</artifactId>
-            <version>latest</version>
-            <scope>provided</scope>
+            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.15-164.jar</systemPath>
         </dependency>
         <!-- WorldGuard -->
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
-            <artifactId>worldguard-legacy</artifactId>
-            <version>6.1.3-SNAPSHOT</version>
+            <artifactId>worldguard-core</artifactId>
+            <version>7.0.3-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -321,18 +299,36 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- WorldGuardRegionAPI -->
         <dependency>
-            <groupId>com.mewin</groupId>
-            <artifactId>WorldGuardRegionAPI</artifactId>
-            <version>1.5.1</version>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+            <version>7.0.3-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- WorldEdit -->
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>6.1.3-SNAPSHOT</version>
+            <version>7.2.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-core</artifactId>
+            <version>7.2.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- WorldGuardRegionAPI -->
+        <dependency>
+            <groupId>com.mewin</groupId>
+            <artifactId>WorldGuardRegionAPI</artifactId>
+            <version>1.5.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- Multiverse Inventories -->
@@ -364,13 +360,9 @@
         </dependency>
         <!-- SmartInvs -->
         <dependency>
-<!--            <groupId>fr.minuskube.inv</groupId>-->
-<!--            <artifactId>smart-invs</artifactId>-->
-<!--            <version>1.2.5</version>-->
-            <groupId>com.github.GitGraf</groupId>
+            <groupId>com.github.MinusKube</groupId>
             <artifactId>SmartInvs</artifactId>
-            <version>smartinv-34-SNAPSHOT</version>
-            <scope>provided</scope>
+            <version>1.3.0-1b22dd13bf-1</version>
         </dependency>
         <!-- Item NBT API -->
         <dependency>

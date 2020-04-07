@@ -3,6 +3,7 @@ package me.pugabyte.bncore.models.nerd;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
@@ -11,8 +12,6 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -83,7 +82,6 @@ public class Nerd {
 	private static final String CHECKMARK = "&a✔";
 
 	public String getChatFormat() {
-		PermissionUser user = PermissionsEx.getUser(uuid);
 		Rank rank = getRank();
 		String prefix = null;
 		Setting checkmarkSetting = new SettingService().get(getOfflinePlayer(), "checkmark");
@@ -98,7 +96,7 @@ public class Nerd {
 		if (!isNullOrEmpty(prefix))
 			prefix = "&8&l[&f" + prefix + "&8&l]";
 
-		if (user.has("donated") && checkmarkSetting != null && checkmarkSetting.getBoolean())
+		if (BNCore.getPex().playerHas(null, getOfflinePlayer(), "donated") && checkmarkSetting != null && checkmarkSetting.getBoolean())
 			prefix = CHECKMARK + " " + prefix;
 		return colorize((prefix.trim() + " " + (rank.getFormat() + getName()).trim())).trim();
 	}

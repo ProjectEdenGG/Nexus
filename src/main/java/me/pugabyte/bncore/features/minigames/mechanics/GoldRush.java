@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.boydti.fawe.object.schematic.Schematic;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import me.pugabyte.bncore.features.minigames.Minigames;
@@ -98,21 +98,21 @@ public final class GoldRush extends TeamlessMechanic {
 			put(Material.OAK_WOOD, 10.0);
 		}};
 
-		Vector p1 = worldEditUtils.toVector(locations.get(0).clone().subtract(0, 2, 0));
-		Vector p2 = worldEditUtils.toVector(locations.get(0).clone().subtract(0, mineStackHeight, 0));
+		BlockVector3 p1 = worldEditUtils.toBlockVector3(locations.get(0).clone().subtract(0, 2, 0));
+		BlockVector3 p2 = worldEditUtils.toBlockVector3(locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
 		worldEditUtils.replace(region, Collections.singleton(Material.AIR), pattern);
 
-		Schematic schematic = worldEditUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
+		Clipboard schematic = worldEditUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		for (Location location : locations) {
-			worldEditUtils.paste(schematic, worldEditUtils.toVector(location.clone().subtract(0, mineStackHeight, 0)));
+			worldEditUtils.paste(schematic, worldEditUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0)));
 		}
 	}
 
 	public void removeMineStacks(int mineStackHeight, Location loc) {
 		WorldEditUtils worldEditUtils = WEUtils;
-		Vector p1 = worldEditUtils.toVector(loc.clone().subtract(0, 2, 0));
-		Vector p2 = worldEditUtils.toVector(loc.clone().subtract(0, mineStackHeight, 0));
+		BlockVector3 p1 = worldEditUtils.toBlockVector3(loc.clone().subtract(0, 2, 0));
+		BlockVector3 p2 = worldEditUtils.toBlockVector3(loc.clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
 		worldEditUtils.fill(region, Material.AIR);
 	}

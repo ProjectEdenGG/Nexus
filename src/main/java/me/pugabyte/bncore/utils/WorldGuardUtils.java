@@ -1,12 +1,12 @@
 package me.pugabyte.bncore.utils;
 
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
-import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -41,7 +41,7 @@ public class WorldGuardUtils {
 		this.world = world;
 		this.bukkitWorld = new BukkitWorld(world);
 		this.worldEditWorld = bukkitWorld;
-		this.manager = WGBukkit.getRegionManager(world);
+		this.manager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld);
 	}
 
 	public ProtectedRegion getProtectedRegion(String name) {
@@ -51,11 +51,19 @@ public class WorldGuardUtils {
 		return region;
 	}
 
-	public Vector toVector(Location location) {
-		return new Vector(location.getX(), location.getY(), location.getZ());
+	public Vector3 toVector3(Location location) {
+		return Vector3.at(location.getX(), location.getY(), location.getZ());
 	}
 
-	public Location toLocation(Vector vector) {
+	public BlockVector3 toBlockVector3(Location location) {
+		return BlockVector3.at(location.getX(), location.getY(), location.getZ());
+	}
+
+	public Location toLocation(Vector3 vector) {
+		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+	}
+
+	public Location toLocation(BlockVector3 vector) {
 		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
 	}
 
@@ -64,15 +72,15 @@ public class WorldGuardUtils {
 	}
 
 	public Region getRegion(Location min, Location max) {
-		return new CuboidRegion(worldEditWorld, toVector(min), toVector(max));
+		return new CuboidRegion(worldEditWorld, toBlockVector3(min), toBlockVector3(max));
 	}
 
 	public Set<ProtectedRegion> getRegionsAt(Location location) {
-		return manager.getApplicableRegions(location).getRegions();
+		return manager.getApplicableRegions(toBlockVector3(location)).getRegions();
 	}
 
 	public Set<String> getRegionNamesAt(Location location) {
-		return manager.getApplicableRegions(location).getRegions().stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
+		return manager.getApplicableRegions(toBlockVector3(location)).getRegions().stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
 	}
 
 	public boolean isInRegion(Location location, String region) {
@@ -80,7 +88,7 @@ public class WorldGuardUtils {
 	}
 
 	public boolean isInRegion(Location location, ProtectedRegion region) {
-		return region.contains(toVector(location));
+		return region.contains(toBlockVector3(location));
 	}
 
 	public Collection<Player> getPlayersInRegion(String region) {
@@ -114,7 +122,7 @@ public class WorldGuardUtils {
 	}
 
 	public ProtectedRegion convert(String id, Region region) {
-		return new ProtectedCuboidRegion(id, new BlockVector(region.getMaximumPoint()), new BlockVector(region.getMinimumPoint()));
+		return new ProtectedCuboidRegion(id, region.getMaximumPoint(), region.getMinimumPoint());
 	}
 
 	public Region convert(ProtectedRegion region) {

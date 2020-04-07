@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.GlobalProtectedRegion;
@@ -144,13 +144,13 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		});
 		Tasks.wait(wait += 3, () -> {
 			GlobalProtectedRegion region = (GlobalProtectedRegion) new WorldGuardUtils(player().getWorld()).getProtectedRegion("__global__");
-			region.setFlag(DefaultFlag.VINE_GROWTH, StateFlag.State.DENY);
-			region.setFlag(DefaultFlag.LEAF_DECAY, StateFlag.State.DENY);
-			region.setFlag(DefaultFlag.GRASS_SPREAD, StateFlag.State.DENY);
-			region.setFlag(DefaultFlag.SNOW_MELT, StateFlag.State.DENY);
-			region.setFlag(DefaultFlag.SNOW_FALL, StateFlag.State.DENY);
-			region.setFlag(DefaultFlag.ICE_MELT, StateFlag.State.DENY);
-			region.setFlag(DefaultFlag.ICE_FORM, StateFlag.State.DENY);
+			region.setFlag(Flags.VINE_GROWTH, StateFlag.State.DENY);
+			region.setFlag(Flags.LEAF_DECAY, StateFlag.State.DENY);
+			region.setFlag(Flags.GRASS_SPREAD, StateFlag.State.DENY);
+			region.setFlag(Flags.SNOW_MELT, StateFlag.State.DENY);
+			region.setFlag(Flags.SNOW_FALL, StateFlag.State.DENY);
+			region.setFlag(Flags.ICE_MELT, StateFlag.State.DENY);
+			region.setFlag(Flags.ICE_FORM, StateFlag.State.DENY);
 			try {
 				BNCore.log("Saving region");
 				new WorldGuardUtils(player().getWorld()).getManager().save();

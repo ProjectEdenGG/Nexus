@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -12,7 +13,6 @@ import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -60,7 +60,7 @@ public class Chatter extends PlayerOwnedObject {
 		if (getOfflinePlayer().isOnline())
 			return getOfflinePlayer().getPlayer().hasPermission(channel.getPermission());
 		else
-			return PermissionsEx.getUser(getOfflinePlayer().getUniqueId().toString()).has(channel.getPermission());
+			return BNCore.getPex().playerHas(null, getOfflinePlayer(), channel.getPermission());
 	}
 
 	public boolean hasJoined(PublicChannel channel) {

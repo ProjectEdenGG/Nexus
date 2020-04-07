@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
-import com.boydti.fawe.object.schematic.Schematic;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -29,7 +29,7 @@ import java.util.Set;
 @Data
 @MatchDataFor(Archery.class)
 public class ArcheryMatchData extends MatchData {
-	private Map<String, Schematic> targetSchematics = new HashMap<>();
+	private Map<String, Clipboard> targetSchematics = new HashMap<>();
 	@ToString.Exclude
 	private Map<ProtectedRegion, ArrayList<Location>> powderLocations = new HashMap<>();
 	private Map<Minigamer, Integer> targetsHit = new HashMap<>();

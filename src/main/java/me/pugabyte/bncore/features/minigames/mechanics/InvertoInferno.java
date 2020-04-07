@@ -1,8 +1,9 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -301,7 +302,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 					stop(taskId);
 
 				EditSession editSession = WEUtils.getEditSession();
-				if (editSession.countBlocks(regionWE, Collections.singleton(new BaseBlock(Material.FIRE.getId()))) <= placedFire) {
+				if (editSession.countBlocks(regionWE, Collections.singleton(new BaseBlock(BlockTypes.FIRE))) <= placedFire) {
 					placedFire = 0;
 					for (int i = 0; i < percent; i++) {
 						Block block = WGUtils.getRandomBlock(regionWG);

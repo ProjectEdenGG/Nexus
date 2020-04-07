@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.boydti.fawe.object.schematic.Schematic;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -155,7 +155,7 @@ public class Archery extends TeamlessMechanic {
 		ArcheryMatchData matchData = match.getMatchData();
 		Map<ProtectedRegion, ArrayList<Location>> powderLocations = matchData.getPowderLocations();
 		saveTargetSchems(match);
-		Map<String, Schematic> targetSchems = matchData.getTargetSchematics();
+		Map<String, Clipboard> targetSchems = matchData.getTargetSchematics();
 
 		match.getTasks().repeat(Time.SECOND.x(5), Time.SECOND.x(7), () -> {
 			AtomicInteger wait = new AtomicInteger(0);
@@ -198,7 +198,7 @@ public class Archery extends TeamlessMechanic {
 
 						if (canPlaceTarget(targetLoc)) {
 							String key = (direction.name() + "_" + color).toLowerCase();
-							Schematic schem = targetSchems.get(key);
+							Clipboard schem = targetSchems.get(key);
 							WEUtils.paste(schem, targetLoc);
 							break;
 						}
@@ -216,7 +216,7 @@ public class Archery extends TeamlessMechanic {
 		Set<ProtectedRegion> targetRegions = arena.getTargetRegions();
 
 		targetRegions.forEach(targetRegion -> {
-			Schematic schem = WEUtils.copy(WGUtils.convert(targetRegion));
+			Clipboard schem = WEUtils.copy(WGUtils.convert(targetRegion));
 			Direction direction = matchData.getTargetDirection(targetRegion);
 			String color = matchData.getTargetColor(targetRegion);
 			String key = (direction.name() + "_" + color).toLowerCase();

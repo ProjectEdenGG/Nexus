@@ -1,24 +1,23 @@
 package me.pugabyte.bncore.utils;
 
-import com.boydti.fawe.config.BBC;
-import com.boydti.fawe.object.FawePlayer;
-import com.boydti.fawe.object.schematic.Schematic;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.ClipboardFormats;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.World;
+import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import lombok.NonNull;
@@ -67,11 +66,19 @@ public class WorldEditUtils {
 		return new File(schematicsDirectory + fileName + ".schematic");
 	}
 
-	public Vector toVector(Location location) {
-		return new Vector(location.getX(), location.getY(), location.getZ());
+	public Vector3 toVector3(Location location) {
+		return Vector3.at(location.getX(), location.getY(), location.getZ());
 	}
 
-	public Location toLocation(Vector vector) {
+	public BlockVector3 toBlockVector3(Location location) {
+		return BlockVector3.at(location.getX(), location.getY(), location.getZ());
+	}
+
+	public Location toLocation(Vector3 vector) {
+		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+	}
+
+	public Location toLocation(BlockVector3 vector) {
 		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
 	}
 
@@ -107,7 +114,7 @@ public class WorldEditUtils {
 		LocalSession session = plugin.getSession(player);
 		Region region = session.getSelection(worldEditWorld);
 		int oldSize = region.getArea();
-		Vector[] directions = getDirections(directionType, amount);
+		BlockVector3[] directions = getDirections(directionType, amount);
 
 		if (changeType == SelectionChangeType.EXPAND)
 			region.expand(directions);
@@ -126,30 +133,31 @@ public class WorldEditUtils {
 		setSelection(player, location, location);
 	}
 
-	public void setSelection(Player player, Vector vector) {
+	public void setSelection(Player player, BlockVector3 vector) {
 		setSelection(player, vector);
 	}
 
 	public void setSelection(Player player, Location min, Location max) {
-		setSelection(player, toVector(min), toVector(min));
+		setSelection(player, toBlockVector3(min), toBlockVector3(min));
 	}
 
-	public void setSelection(Player player, Vector min, Vector max) {
+	public void setSelection(Player player, BlockVector3 min, BlockVector3 max) {
 		LocalSession session = plugin.getSession(player);
 		Region region = new CuboidRegion(min, max);
 		getPlayer(player).setSelection(region);
 		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
-		session.getRegionSelector(worldEditWorld).explainPrimarySelection(worldEditPlayer, session, region.getMinimumPoint());
-		session.getRegionSelector(worldEditWorld).explainSecondarySelection(worldEditPlayer, session, region.getMaximumPoint());
+		session.getRegionSelector(worldEditWorld).explainPrimarySelection(worldEditPlayer, session, toBlockVector3(region.getMinimumPoint()));
+		session.getRegionSelector(worldEditWorld).explainSecondarySelection(worldEditPlayer, session, toBlockVector3(region.getMaximumPoint()));
 	}
 
 	@NotNull
-	private Vector[] getDirections(SelectionChangeDirectionType type, int number) {
+	private BlockVector3[] getDirections(SelectionChangeDirectionType type, int number) {
 		return Arrays.stream(Direction.values())
 				.filter(direction -> type.getFilter().apply(direction))
 				.map(Direction::toVector)
 				.map(vector -> vector.multiply(number))
-				.toArray(Vector[]::new);
+				.map(Vector3::toBlockPoint)
+				.toArray(BlockVector3[]::new);
 	}
 
 	public List<Block> getBlocks(ProtectedRegion region) {
@@ -198,16 +206,16 @@ public class WorldEditUtils {
 		return pattern;
 	}
 
-	public Schematic copy(Location min, Location max) {
-		return copy((CuboidRegion) worldGuardUtils.getRegion(min, max));
+	public Clipboard copy(Location min, Location max) {
+		return copy(worldGuardUtils.getRegion(min, max));
 	}
 
-	public Schematic copy(Region region) {
-		return new Schematic(region);
+	public Clipboard copy(Region region) {
+		return new BlockArrayClipboard(region);
 	}
 
 	@SneakyThrows
-	public Schematic getSchematic(String fileName) {
+	public Clipboard getSchematic(String fileName) {
 		File file = getSchematicFile(fileName);
 		if (!file.exists())
 			throw new InvalidInputException("Schematic " + fileName + " does not exist");
@@ -216,31 +224,23 @@ public class WorldEditUtils {
 	}
 
 	public void paste(String fileName, Location location) {
-		paste(fileName, toVector(location));
+		paste(fileName, toBlockVector3(location));
 	}
 
-	public void paste(String fileName, Vector vector) {
+	public void paste(String fileName, BlockVector3 vector) {
 		paste(getSchematic(fileName), vector);
 	}
 
 	public void paste(Clipboard clipboard, Location location) {
-		paste(new Schematic(clipboard), location);
+		paste(clipboard, toBlockVector3(location));
 	}
 
-	public void paste(Clipboard clipboard, Vector vector) {
-		paste(new Schematic(clipboard), vector);
-	}
-
-	public void paste(Schematic schematic, Location location) {
-		paste(schematic, toVector(location));
-	}
-
-	public void paste(Schematic schematic, Vector vector) {
-		schematic.paste(worldEditWorld, vector);
+	public void paste(Clipboard clipboard, BlockVector3 vector) {
+		clipboard.paste(worldEditWorld, vector);
 	}
 
 	public void save(String fileName, Location min, Location max) {
-		save(fileName, toVector(min), toVector(max));
+		save(fileName, toBlockVector3(min), toBlockVector3(max));
 	}
 
 	public void save(String fileName, Region region) {
@@ -248,9 +248,9 @@ public class WorldEditUtils {
 	}
 
 	@SneakyThrows
-	public void save(String fileName, Vector min, Vector max) {
+	public void save(String fileName, BlockVector3 min, BlockVector3 max) {
 		CuboidRegion region = new CuboidRegion(worldEditWorld, min, max);
-		new Schematic(region).save(getSchematicFile(fileName), ClipboardFormat.SCHEMATIC);
+		new BlockArrayClipboard(region).save(getSchematicFile(fileName), BuiltInClipboardFormat.MCEDIT_SCHEMATIC);
 	}
 
 	public void fill(String region, Material material) {
@@ -295,7 +295,8 @@ public class WorldEditUtils {
 				.filter((direction -> direction.isUpright() || direction.isCardinal()))
 				.map(Direction::toVector)
 				.map(vector -> vector.multiply(amount))
-				.toArray(Vector[]::new));
+				.map(Vector3::toBlockPoint)
+				.toArray(BlockVector3[]::new));
 		return region;
 	}
 
@@ -305,21 +306,22 @@ public class WorldEditUtils {
 				.filter((direction -> direction.isUpright() || direction.isCardinal()))
 				.map(Direction::toVector)
 				.map(vector -> vector.multiply(amount))
-				.toArray(Vector[]::new));
+				.map(Vector3::toBlockPoint)
+				.toArray(BlockVector3[]::new));
 		return region;
 	}
 
 	@SneakyThrows
 	public void fixFlat(LocalSession session, Region region) {
-		region.expand(Direction.UP.toVector().multiply(500));
-		region.expand(Direction.DOWN.toVector().multiply(500));
+		region.expand(Direction.UP.toBlockVector().multiply(500));
+		region.expand(Direction.DOWN.toBlockVector().multiply(500));
 		fill(region, Material.AIR);
-		region.expand(Direction.DOWN.toVector().multiply(500));
-		region.contract(Direction.DOWN.toVector().multiply(500));
+		region.expand(Direction.DOWN.toBlockVector().multiply(500));
+		region.contract(Direction.DOWN.toBlockVector().multiply(500));
 		session.getRegionSelector(region.getWorld()).learnChanges();
 		fill(region, Material.BEDROCK);
-		region.expand(Direction.UP.toVector().multiply(3));
-		region.contract(Direction.UP.toVector().multiply(1));
+		region.expand(Direction.UP.toBlockVector().multiply(3));
+		region.contract(Direction.UP.toBlockVector().multiply(1));
 		session.getRegionSelector(region.getWorld()).learnChanges();
 		fill(region, Material.GRASS);
 	}

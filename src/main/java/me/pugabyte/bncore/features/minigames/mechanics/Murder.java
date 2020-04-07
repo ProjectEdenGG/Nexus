@@ -16,7 +16,6 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
@@ -278,7 +277,7 @@ public class Murder extends UnbalancedTeamMechanic {
 							Player player = _minigamer.getPlayer();
 							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.MASTER, 2F, 0.1F);
 							player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
-							SkriptFunctions.redTint(player, 0.5, 10);
+//							SkriptFunctions.redTint(player, 0.5, 10);
 						});
 				})
 				.start();

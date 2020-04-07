@@ -10,7 +10,6 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PublicChannel;
-import me.pugabyte.bncore.skript.SkriptFunctions;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Time;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -104,7 +103,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 				discordName += "(" + material + ")";
 			if (amount > 1) discordName += " x" + amount;
 
-			SkriptFunctions.showEnchantsOnBridge(player, message, discordName, enchants, durability, channel.getName());
+//			SkriptFunctions.showEnchantsOnBridge(player, message, discordName, enchants, durability, channel.getName());
 		}
 	}
 

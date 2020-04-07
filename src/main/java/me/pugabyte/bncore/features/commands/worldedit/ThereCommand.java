@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.commands.worldedit;
 
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.entity.Player;
+import com.sk89q.worldedit.math.BlockVector3;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.DoubleSlash;
@@ -21,8 +21,8 @@ public class ThereCommand extends CustomCommand {
 	@Path("[amount]")
 	void there(@Arg("0") int amount) {
 		Player worldEditPlayer = WorldEditUtils.getPlugin().wrapPlayer(player());
-		Vector pos1 = worldEditPlayer.getBlockTrace(300);
-		Vector pos2 = worldEditPlayer.getBlockTrace(300);
+		BlockVector3 pos1 = worldEditPlayer.getBlockTrace(300).toBlockPoint();
+		BlockVector3 pos2 = worldEditPlayer.getBlockTrace(300).toBlockPoint();
 		new WorldEditUtils(player().getWorld()).setSelection(player(), pos1, pos2);
 		ExpandAllCommand.expandAll(player(), amount);
 	}
