@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.chat;
 
 import me.pugabyte.bncore.features.chat.events.ChatEvent;
+import me.pugabyte.bncore.framework.commands.Commands;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class Censor {
 
 	public static void dotCommand(ChatEvent event) {
 		String message = event.getMessage();
-		Pattern pattern = Pattern.compile("(\\ |^).\\/(\\/|)[a-zA-Z0-9\\-_]+");
+		Pattern pattern = Pattern.compile("(\\ |^)." + Commands.getCommandPattern());
 		Matcher matcher = pattern.matcher(message);
 		while (matcher.find()) {
 			String group = matcher.group();

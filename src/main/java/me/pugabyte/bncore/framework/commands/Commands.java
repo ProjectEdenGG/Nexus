@@ -36,6 +36,8 @@ public class Commands {
 	private static Map<Class<?>, Method> tabCompleters = new HashMap<>();
 	@Getter
 	private static Map<String, String> redirects = new HashMap<>();
+	@Getter
+	private static final String commandPattern = "\\/(\\/|)[a-zA-Z0-9\\-_]+";
 
 	public Commands(Plugin plugin, String path) {
 		this.plugin = plugin;
