@@ -61,7 +61,7 @@ public class WingsEffect {
 		if (color3 == null)
 			color3 = Color.RED;
 
-		double disX1, disY1, disZ1, disX2, disY2, disZ2, disX3, disY3, disZ3;
+		int disX1, disY1, disZ1, disX2, disY2, disZ2, disX3, disY3, disZ3;
 		disX1 = color1.getRed();
 		disY1 = color1.getGreen();
 		disZ1 = color1.getBlue();
@@ -72,41 +72,20 @@ public class WingsEffect {
 		disY3 = color3.getGreen();
 		disZ3 = color3.getBlue();
 
-		if (!rainbow1) {
-			disX1 /= 255.0;
-			disY1 /= 255.0;
-			disZ1 /= 255.0;
-			disX1 = disX1 == 0.0 ? 0.001 : disX1;
-		}
-
-		if (!rainbow2) {
-			disX2 /= 255.0;
-			disY2 /= 255.0;
-			disZ2 /= 255.0;
-			disX2 = disX2 == 0.0 ? 0.001 : disX2;
-		}
-
-		if (!rainbow3) {
-			disX3 /= 255.0;
-			disY3 /= 255.0;
-			disZ3 /= 255.0;
-			disX3 = disX3 == 0.0 ? 0.001 : disX3;
-		}
-
 		final AtomicDouble hue1 = new AtomicDouble(0);
-		final AtomicDouble red1 = new AtomicDouble(disX1);
-		final AtomicDouble green1 = new AtomicDouble(disY1);
-		final AtomicDouble blue1 = new AtomicDouble(disZ1);
+		final AtomicInteger red1 = new AtomicInteger(disX1);
+		final AtomicInteger green1 = new AtomicInteger(disY1);
+		final AtomicInteger blue1 = new AtomicInteger(disZ1);
 
 		final AtomicDouble hue2 = new AtomicDouble(0);
-		final AtomicDouble red2 = new AtomicDouble(disX2);
-		final AtomicDouble green2 = new AtomicDouble(disY2);
-		final AtomicDouble blue2 = new AtomicDouble(disZ2);
+		final AtomicInteger red2 = new AtomicInteger(disX2);
+		final AtomicInteger green2 = new AtomicInteger(disY2);
+		final AtomicInteger blue2 = new AtomicInteger(disZ2);
 
 		final AtomicDouble hue3 = new AtomicDouble(0);
-		final AtomicDouble red3 = new AtomicDouble(disX3);
-		final AtomicDouble green3 = new AtomicDouble(disY3);
-		final AtomicDouble blue3 = new AtomicDouble(disZ3);
+		final AtomicInteger red3 = new AtomicInteger(disX3);
+		final AtomicInteger green3 = new AtomicInteger(disY3);
+		final AtomicInteger blue3 = new AtomicInteger(disZ3);
 
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 		int finalTicks = ticks;
@@ -133,7 +112,7 @@ public class WingsEffect {
 
 			if (rainbow1) {
 				hue1.set(ParticleUtils.incHue(hue1.get()));
-				double[] rgb = ParticleUtils.incRainbow(hue1.get());
+				int[] rgb = ParticleUtils.incRainbow(hue1.get());
 				red1.set(rgb[0]);
 				green1.set(rgb[1]);
 				blue1.set(rgb[2]);
@@ -141,7 +120,7 @@ public class WingsEffect {
 
 			if (rainbow2) {
 				hue2.set(ParticleUtils.incHue(hue2.get()));
-				double[] rgb = ParticleUtils.incRainbow(hue2.get());
+				int[] rgb = ParticleUtils.incRainbow(hue2.get());
 				red2.set(rgb[0]);
 				green2.set(rgb[1]);
 				blue2.set(rgb[2]);
@@ -149,7 +128,7 @@ public class WingsEffect {
 
 			if (rainbow3) {
 				hue3.set(ParticleUtils.incHue(hue3.get()));
-				double[] rgb = ParticleUtils.incRainbow(hue3.get());
+				int[] rgb = ParticleUtils.incRainbow(hue3.get());
 				red3.set(rgb[0]);
 				green3.set(rgb[1]);
 				blue3.set(rgb[2]);
@@ -169,8 +148,10 @@ public class WingsEffect {
 						vR = (VectorUtils.rotateAroundAxisY(vR, -rightWing));
 						vL = (VectorUtils.rotateAroundAxisY(vL, -leftWing));
 						v2.setY(0).multiply(-0.2D);
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1);
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1);
+
+						Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, red1.get(), green1.get(), blue1.get());
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1, dustOptions);
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1, dustOptions);
 					}
 
 					x += space;
@@ -194,8 +175,10 @@ public class WingsEffect {
 						vR = (VectorUtils.rotateAroundAxisY(vR, -rightWing));
 						vL = (VectorUtils.rotateAroundAxisY(vL, -leftWing));
 						v2.setY(0).multiply(-0.2D);
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1);
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1);
+
+						Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, red2.get(), green2.get(), blue2.get());
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1, dustOptions);
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1, dustOptions);
 					}
 
 					x += space;
@@ -219,8 +202,10 @@ public class WingsEffect {
 						vR = (VectorUtils.rotateAroundAxisY(vR, -rightWing));
 						vL = (VectorUtils.rotateAroundAxisY(vL, -leftWing));
 						v2.setY(0).multiply(-0.2D);
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1);
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1);
+
+						Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, red3.get(), green3.get(), blue3.get());
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1, dustOptions);
+						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1, dustOptions);
 					}
 					x += space;
 				}

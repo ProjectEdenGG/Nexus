@@ -27,9 +27,9 @@ public class StormEffect {
 
 		Particle cloudParticle = Particle.REDSTONE;
 		Color cloudColor = Color.fromRGB(127, 127, 127);
-		double cloudRed = cloudColor.getRed() / 255.0;
-		double cloudGreen = cloudColor.getGreen() / 255.0;
-		double cloudBlue = cloudColor.getBlue() / 255.0;
+		int cloudRed = cloudColor.getRed();
+		int cloudGreen = cloudColor.getGreen();
+		int cloudBlue = cloudColor.getBlue();
 
 		if (player != null && location == null)
 			location = player.getLocation();
@@ -68,7 +68,10 @@ public class StormEffect {
 			for (int i = 0; i < finalDensity; i++) {
 				Vector v = RandomUtils.getRandomCircleVector().multiply(RandomUtils.random.nextDouble() * finalCloudRadius);
 				newLoc.add(v);
-				ParticleUtils.display(cloudParticle, newLoc.clone(), 0, cloudRed, cloudGreen, cloudBlue, 1);
+
+				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(cloudParticle, cloudRed, cloudGreen, cloudBlue);
+				ParticleUtils.display(cloudParticle, newLoc.clone(), 0, cloudRed, cloudGreen, cloudBlue, 1, dustOptions);
+
 				newLoc.subtract(v);
 			}
 
@@ -76,7 +79,10 @@ public class StormEffect {
 			for (int i = 0; i < finalDensity; i++) {
 				Vector v = RandomUtils.getRandomCircleVector().multiply(RandomUtils.random.nextDouble() * (finalCloudRadius - 0.25));
 				l1.add(v);
-				ParticleUtils.display(cloudParticle, l1.clone(), 0, cloudRed, cloudGreen, cloudBlue, 1);
+
+				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(cloudParticle, cloudRed, cloudGreen, cloudBlue);
+				ParticleUtils.display(cloudParticle, l1.clone(), 0, cloudRed, cloudGreen, cloudBlue, 1, dustOptions);
+
 				l1.subtract(v);
 			}
 
@@ -84,7 +90,9 @@ public class StormEffect {
 			for (int i = 0; i < 15; i++) {
 				Vector v = RandomUtils.getRandomCircleVector().multiply(RandomUtils.random.nextDouble() * rainRadius);
 				l2.add(v);
-				ParticleUtils.display(finalRainParticle.getParticle(), l2.clone(), 0, 0, 0, 0, 0.1);
+
+				ParticleUtils.display(finalRainParticle.getParticle(), l2.clone(), 0, 0, 0, 0, 0.1, null);
+
 				l2.subtract(v);
 			}
 
