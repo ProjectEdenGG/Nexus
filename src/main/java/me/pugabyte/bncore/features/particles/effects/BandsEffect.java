@@ -47,11 +47,6 @@ public class BandsEffect {
 				disX = 255;
 				disY = 0;
 				disZ = 0;
-			} else {
-				disX /= 255.0;
-				disY /= 255.0;
-				disZ /= 255.0;
-				disX = disX == 0.0 ? 0.001 : disX;
 			}
 		}
 
@@ -60,9 +55,9 @@ public class BandsEffect {
 		int finalTicks = ticks;
 		Particle finalParticle = particle;
 		final AtomicDouble hue = new AtomicDouble(0);
-		final AtomicDouble red = new AtomicDouble(disX);
-		final AtomicDouble green = new AtomicDouble(disY);
-		final AtomicDouble blue = new AtomicDouble(disZ);
+		final AtomicInteger red = new AtomicInteger((int) disX);
+		final AtomicInteger green = new AtomicInteger((int) disY);
+		final AtomicInteger blue = new AtomicInteger((int) disZ);
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
@@ -76,10 +71,13 @@ public class BandsEffect {
 			loc = loc.subtract(backward);
 			for (int i = 0; i < 15; ++i) {
 				loc = loc.add(0, 0.1, 0);
-				ParticleUtils.display(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed);
+
+				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalParticle, red.get(), green.get(), blue.get());
+				ParticleUtils.display(finalParticle, loc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+
 				if (rainbow) {
 					hue.set(ParticleUtils.incHue(hue.get()));
-					double[] rgb = ParticleUtils.incRainbow(hue.get());
+					int[] rgb = ParticleUtils.incRainbow(hue.get());
 					red.set(rgb[0]);
 					green.set(rgb[1]);
 					blue.set(rgb[2]);
