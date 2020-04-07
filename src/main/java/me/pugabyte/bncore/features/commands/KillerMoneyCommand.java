@@ -22,8 +22,8 @@ import java.util.List;
 
 @NoArgsConstructor
 public class KillerMoneyCommand extends CustomCommand implements Listener {
-
     SettingService service = new SettingService();
+    final double BOOST = 1.0;
 
     public KillerMoneyCommand(CommandEvent event) {
         super(event);
@@ -37,23 +37,14 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
         send(PREFIX + "Notifications have been &e" + ((setting.getBoolean()) ? "muted" : "unmuted"));
     }
 
-
-    final double BOOST = 1.0;
-
     @EventHandler
     public void onEntityKill(EntityDeathEvent event) {
-        BNCore.log("Mob death happened");
         Player player = event.getEntity().getKiller();
         if (player == null) return;
-        BNCore.log(player.getName());
         try {
-            BNCore.log(event.getEntityType().name());
             MobMoney mob = MobMoney.valueOf(event.getEntityType().name());
-            BNCore.log(mob.name());
             if (!mob.getActiveWorlds().contains(WorldGroup.get(player.getWorld()))) return;
-            BNCore.log("World group ==");
-            Double money = mob.getRandomValue() * BOOST;
-            BNCore.log(money + "");
+            double money = mob.getRandomValue() * BOOST;
             BNCore.getEcon().depositPlayer(player, money);
             DecimalFormat formatter = new DecimalFormat("#.##");
             if (!new SettingService().get(player, "killerMoneyMute").getBoolean())

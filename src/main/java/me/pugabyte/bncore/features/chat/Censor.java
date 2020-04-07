@@ -48,7 +48,7 @@ public class Censor {
 
 	public static void dotCommand(ChatEvent event) {
 		String message = event.getMessage();
-		Pattern pattern = Pattern.compile("(\\ |^)." + Commands.getCommandPattern());
+		Pattern pattern = Pattern.compile("(\\ |^)." + Commands.getPattern());
 		Matcher matcher = pattern.matcher(message);
 		while (matcher.find()) {
 			String group = matcher.group();
