@@ -36,7 +36,7 @@ public class HoneyPots implements Listener {
 	public static void fixHP(ProtectedRegion region, World world) {
 		WorldEditUtils WEUtils = new WorldEditUtils(world);
 		String fileName = region.getId().replace("_", "/");
-		WEUtils.paste(fileName, WEUtils.toVector(getSchemRegen(region, world).getMinimumPoint()));
+		WEUtils.paste(fileName, getSchemRegen(region, world).getMinimumPoint());
 	}
 
 	public static ProtectedRegion getSchemRegen(ProtectedRegion region, World world) {

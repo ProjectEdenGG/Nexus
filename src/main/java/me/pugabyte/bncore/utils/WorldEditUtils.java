@@ -76,6 +76,10 @@ public class WorldEditUtils {
 		return BlockVector3.at(location.getX(), location.getY(), location.getZ());
 	}
 
+	public BlockVector3 toBlockVector3(Vector3 vector) {
+		return BlockVector3.at(vector.getX(), vector.getY(), vector.getZ());
+	}
+
 	public Location toLocation(Vector3 vector) {
 		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
 	}

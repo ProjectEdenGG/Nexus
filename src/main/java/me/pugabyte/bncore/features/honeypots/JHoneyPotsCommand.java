@@ -68,13 +68,13 @@ public class JHoneyPotsCommand extends CustomCommand {
 		honeyPot = honeyPot.toLowerCase();
 		Region selection = WEUtils.getPlayerSelection(player());
 		RegionManager manager = WGUtils.getManager();
-		ProtectedRegion region = new ProtectedCuboidRegion("hp_" + honeyPot, WEUtils.toBlockVector3(selection.getMinimumPoint()), WEUtils.toBlockVector3(selection.getMaximumPoint().toBlockVector()));
+		ProtectedRegion region = new ProtectedCuboidRegion("hp_" + honeyPot, selection.getMinimumPoint(), selection.getMaximumPoint());
 		region.setFlag(Flags.PASSTHROUGH, StateFlag.State.ALLOW);
 		region.setFlag(Flags.BUILD, StateFlag.State.ALLOW);
 		region.setPriority(1);
 		manager.addRegion(region);
 		WEUtils.expandAll(selection, expand);
-		ProtectedRegion schemRegion = new ProtectedCuboidRegion("hpregen_" + honeyPot, WEUtils.toBlockVector3(selection.getMinimumPoint().toBlockVector()), WEUtils.toBlockVector3(selection.getMaximumPoint().toBlockVector()));
+		ProtectedRegion schemRegion = new ProtectedCuboidRegion("hpregen_" + honeyPot, selection.getMinimumPoint(), selection.getMaximumPoint());
 		manager.addRegion(schemRegion);
 		WEUtils.save("hp/" + honeyPot, selection);
 		manager.save();
