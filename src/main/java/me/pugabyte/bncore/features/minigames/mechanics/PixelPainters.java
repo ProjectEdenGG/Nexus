@@ -5,7 +5,6 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -278,7 +277,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 		int area = designsRegion.getArea();
 		EditSession editSession = WEUtils.getEditSession();
-		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(new BaseBlock(BlockTypes.AIR)));
+		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(BlockTypes.AIR.getDefaultState().toBaseBlock()));
 		int blocksCount = area - airCount;
 
 		PixelPaintersMatchData matchData = match.getMatchData();

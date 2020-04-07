@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -32,19 +33,21 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
 		if (!event.getView().getTitle().equals(StringUtils.colorize("&6Concrete Exchange"))) return;
-		for (ItemStack stack : event.getInventory().getContents()) {
-			if (!stack.getType().name().contains("CONCRETE_POWDER")) {
-				event.getPlayer().getInventory().addItem(stack);
+		for (ItemStack item : event.getInventory().getContents()) {
+			// Liar
+			if (item == null) continue;
+			if (MaterialTag.CONCRETE_POWDERS.isTagged(item.getType())) {
+				event.getPlayer().getInventory().addItem(item);
 				continue;
 			}
-			stack.setType(Material.valueOf(stack.getType().name().replace("_POWDER", "")));
-			event.getPlayer().getInventory().addItem(stack);
+			item.setType(Material.valueOf(item.getType().name().replace("_POWDER", "")));
+			event.getPlayer().getInventory().addItem(item);
 		}
 	}
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (!event.getBlock().getType().name().contains("CONCRETE_POWDER")) return;
+		if (!MaterialTag.ALL_CONCRETES.isTagged(event.getBlock().getType())) return;
 		SettingService service = new SettingService();
 		Setting setting = service.get(event.getPlayer(), "concreteExchange");
 		if (setting.getBoolean()) return;

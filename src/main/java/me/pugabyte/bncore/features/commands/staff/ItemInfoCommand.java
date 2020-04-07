@@ -71,7 +71,6 @@ public class ItemInfoCommand extends CustomCommand {
 			}
 		}
 
-		send("ID: " + material.getId() + ":" + tool.getDurability());
 		send("Material: " + material);
 		if (nbtString != null) {
 			send("NBT: " + StringUtils.colorize(nbtString));

@@ -22,7 +22,6 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.particles.Particles;
 import me.pugabyte.bncore.features.quests.Quests;
 import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
-import me.pugabyte.bncore.features.showenchants.ShowEnchants;
 import me.pugabyte.bncore.features.store.perks.joinquit.JoinQuit;
 import me.pugabyte.bncore.features.tickets.Tickets;
 import me.pugabyte.bncore.features.votes.Votes;
@@ -196,7 +195,6 @@ public class BNCore extends JavaPlugin {
 	public static Particles particles;
 	public static Quests quests;
 	public static RestoreInventory restoreInventory;
-	public static ShowEnchants showEnchants;
 	public static Tickets tickets;
 	public static Votes votes;
 	public static Wiki wiki;
@@ -234,7 +232,6 @@ public class BNCore extends JavaPlugin {
 		new Timer("  Particles", () -> particles = new Particles());
 		new Timer("  Quests", () -> quests = new Quests());
 		new Timer("  RestoreInventory", () -> restoreInventory = new RestoreInventory());
-		new Timer("  ShowEnchants", () -> showEnchants = new ShowEnchants());
 		new Timer("  Tickets", () -> tickets = new Tickets());
 		new Timer("  Votes", () -> votes = new Votes());
 		new Timer("  Wiki", () -> wiki = new Wiki());

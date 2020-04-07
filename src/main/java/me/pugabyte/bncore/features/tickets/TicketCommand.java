@@ -45,7 +45,7 @@ public class TicketCommand extends CustomCommand {
 		if (Utils.isInt(description))
 			error("Prevented accidental ticket");
 
-		if (StringUtils.right(description, 5).equalsIgnoreCase("close") || player().hasPermission("group.moderator"))
+		if (StringUtils.right(description, 5).equalsIgnoreCase("close"))
 			error("Prevented accidental ticket (close)");
 
 		Ticket ticket = new Ticket(player(), stripColor(description));

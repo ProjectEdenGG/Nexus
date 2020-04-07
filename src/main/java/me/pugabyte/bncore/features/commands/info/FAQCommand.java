@@ -43,9 +43,9 @@ public class FAQCommand extends CustomCommand {
 			case "skyblock":
 				skyblock();
 				break;
-			case "adventure":
-				adventure();
-				break;
+//			case "adventure":
+//				adventure();
+//				break;
 			case "startbuilding":
 				startBuilding();
 				break;
@@ -98,12 +98,12 @@ public class FAQCommand extends CustomCommand {
 	private void chat() {
 		send(json("&eChannels &3organize the chat so that many conversations can take place at once."));
 		line();
-		send(json("&2[G] &3(&eGlobal&3) The main channel, visible to everyone."));
-		send(json("&5[D] &3(&eDiscord&3) Global messages from people on Discord"));
-		send(json("&e[L] &3(&eLocal&3) For nearby players").hover("&e" + Chat.getLocalRadius() + " blocks"));
-		send(json("&3[M] &3(&eMinigames&3) For the Minigame world"));
-		send(json("&5[C] &3(&5Creative&3) For the Creative and Build Contest worlds"));
-		send(json("&6[S] &3(&6Skyblock&3) For the Skyblock world"));
+		send(json("&2[G] &2Global &7- &3The main channel, visible to everyone."));
+		send(json("&5[D] &5Discord &7- &3Global messages from people on Discord"));
+		send(json("&e[L] &eLocal &7- &3For nearby players").hover("&e" + Chat.getLocalRadius() + " blocks"));
+		send(json("&3[M] &3Minigames &7- &3For the Minigame world"));
+		send(json("&b[C] &bCreative &7- &3For the Creative and Build Contest worlds"));
+		send(json("&6[S] &6Skyblock &7- &3For the Skyblock world"));
 		line();
 		send(json("&3[+] &3Use &c/ch <letter> &3to switch channels").hover("&eE.g. &c/ch g&3, &c/ch l"));
 		send(json("&3[+] &eClick here &3to open the &ewiki").url("https://wiki.bnn.gg/wiki/Chat"));
@@ -148,8 +148,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	private void protectLand() {
-		send(json("&3 Since griefing is not allowed, simply &ebuild anywhere &3and that land is yours"));
-		send(json("&3 You may also use &bProtectionStones &3 to protect your builds. &eClick here &3for more info").command("/pstoneinfo"));
+		send(json("&3 Since griefing is not allowed, simply &ebuild anywhere &3and that land is yours. Staff can easily fix any grief that occurs."));
 		line();
 		back("protect");
 	}
@@ -178,12 +177,12 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	private void adventure() {
-		send("&6&lAdventure Maps");
-		line();
-		line();
-		back("whatcanido");
-	}
+//	private void adventure() {
+//		send("&6&lAdventure Maps");
+//		line();
+//		line();
+//		back("whatcanido");
+//	}
 
 	private void skyblock() {
 		send("&6&lSkyblock");
@@ -233,7 +232,7 @@ public class FAQCommand extends CustomCommand {
 		line();
 		send("&3Survive, build, make money, meet friends, and level up. The only limit is your imagination.");
 		line();
-		send(json("&3[+] &eWarps").command("/warps open survival"));
+		send(json("&3[+] &eWarps").command("/warps"));
 		send(json("&3[+] &eEconomy").command("/economy"));
 		send(json("&3[+] &eClick here &3to open the &ewiki &3on &emcMMO").url("https://wiki.bnn.gg/wiki/McMMO"));
 		line();

@@ -31,6 +31,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -369,6 +370,13 @@ public abstract class CustomCommand implements ICustomCommand {
 		if (material == null)
 			throw new InvalidInputException("Material from " + value + " not found");
 		return material;
+	}
+
+	@TabCompleterFor(Material.class)
+	List<String> tabCompleteMaterial(String filter) {
+		if (filter.length() >= 2)
+			return tabCompleteEnum(Material.class, filter);
+		return new ArrayList<>();
 	}
 
 	protected List<String> tabCompleteEnum(Class<? extends Enum> clazz, String filter) {

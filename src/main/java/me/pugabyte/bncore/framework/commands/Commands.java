@@ -2,6 +2,7 @@ package me.pugabyte.bncore.framework.commands;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
@@ -54,7 +55,7 @@ public class Commands {
 	public void registerAll() {
 		for (Class<? extends CustomCommand> command : commandSet)
 			try {
-				if (!Modifier.isAbstract(command.getModifiers()))
+				if (!Modifier.isAbstract(command.getModifiers()) && command.getAnnotation(Disabled.class) == null)
 					register(new ObjenesisStd().newInstance(command));
 			} catch (Exception ex) {
 				BNCore.log("Error while registering command " + command.getSimpleName());

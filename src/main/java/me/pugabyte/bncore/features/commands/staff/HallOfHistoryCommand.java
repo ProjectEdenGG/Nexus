@@ -176,7 +176,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		Tasks.wait(wait += 3, () -> runCommand("/expand -15"));
 		Tasks.wait(wait += 3, () -> runCommand("/contract -15"));
 		Tasks.wait(wait += 3, () -> runCommand("/set stone_slab:8"));
-		Tasks.wait(wait += 3, () -> runCommand("/sel"));
+		Tasks.wait(wait += 3, () -> runCommand("/desel"));
 		send(PREFIX + "Expansion complete! Took &e" + (wait / 20) + " &3seconds");
 	}
 

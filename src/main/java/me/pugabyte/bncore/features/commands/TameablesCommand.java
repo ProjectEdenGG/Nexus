@@ -32,11 +32,6 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
-	void help() {
-		send("Correct usage: &c/tameables <info|untame|transfer [player]>");
-	}
-
 	@Path("(info|view)")
 	void info() {
 		actions.put(player(), new TameablesAction(TameablesActionType.INFO));

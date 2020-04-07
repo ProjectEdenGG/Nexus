@@ -7,19 +7,23 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import org.bukkit.OfflinePlayer;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.StringUtils.stripFormat;
 
 public class PrefixCommand extends CustomCommand {
+	SettingService service = new SettingService();
+	Setting checkmark = null;
+	Setting prefix = null;
 
 	public PrefixCommand(CommandEvent event) {
 		super(event);
+		if (isPlayer()) {
+			checkmark = service.get(player(), "checkmark");
+			prefix = service.get(player(), "prefix");
+		}
 	}
-
-	SettingService service = new SettingService();
-	Setting checkmark = service.get(player(), "checkmark");
-	Setting prefix = service.get(player(), "prefix");
 
 	@Path("checkmark")
 	@Permission("donated")
@@ -32,6 +36,14 @@ public class PrefixCommand extends CustomCommand {
 	@Path("reset")
 	@Permission("set.my.prefix")
 	void reset() {
+		service.delete(prefix);
+		send(PREFIX + "Reset prefix");
+	}
+
+	@Path("expire <player>")
+	void expire(OfflinePlayer player) {
+		console();
+		prefix = service.get(player, "prefix");
 		service.delete(prefix);
 		send(PREFIX + "Reset prefix");
 	}
