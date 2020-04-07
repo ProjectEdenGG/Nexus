@@ -3,6 +3,8 @@ package me.pugabyte.bncore.utils;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
@@ -82,8 +84,8 @@ public class WorldEditUtils {
 		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public FawePlayer<Object> getPlayer(Player player) {
-		return FawePlayer.wrap(player);
+	public BukkitPlayer getPlayer(Player player) {
+		return BukkitAdapter.adapt(player);
 	}
 
 	public Region getPlayerSelection(Player player) {
@@ -126,7 +128,8 @@ public class WorldEditUtils {
 		int newSize = region.getArea();
 		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
 		session.getRegionSelector(worldEditWorld).explainRegionAdjust(worldEditPlayer, session);
-		BBC.SELECTION_EXPAND.send(worldEditPlayer, (newSize - oldSize));
+//		1.12: BBC.SELECTION_EXPAND.send(worldEditPlayer, (newSize - oldSize));
+//		1.15?: actor.printInfo(TranslatableComponent.of("worldedit.expand.expanded.vert", new Component[]{TextComponent.of(changeSize)}));
 	}
 
 	public void setSelection(Player player, Location location) {
@@ -146,8 +149,8 @@ public class WorldEditUtils {
 		Region region = new CuboidRegion(min, max);
 		getPlayer(player).setSelection(region);
 		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
-		session.getRegionSelector(worldEditWorld).explainPrimarySelection(worldEditPlayer, session, toBlockVector3(region.getMinimumPoint()));
-		session.getRegionSelector(worldEditWorld).explainSecondarySelection(worldEditPlayer, session, toBlockVector3(region.getMaximumPoint()));
+		session.getRegionSelector(worldEditWorld).explainPrimarySelection(worldEditPlayer, session, region.getMinimumPoint());
+		session.getRegionSelector(worldEditWorld).explainSecondarySelection(worldEditPlayer, session, region.getMaximumPoint());
 	}
 
 	@NotNull
