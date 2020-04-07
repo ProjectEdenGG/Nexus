@@ -2,8 +2,8 @@ package me.pugabyte.bncore.features.minigames.lobby;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
-import de.tr7zw.itemnbtapi.NBTEntity;
-import de.tr7zw.itemnbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTEntity;
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;

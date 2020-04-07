@@ -49,7 +49,7 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (event.getPlayer().hasPermission(permission))
-			BNCore.getPex().playerRemove(player(), permission);
+			BNCore.getPex().playerRemove(event.getPlayer(), permission);
 	}
 
 }
