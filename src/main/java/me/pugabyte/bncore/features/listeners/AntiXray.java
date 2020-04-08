@@ -87,7 +87,7 @@ public class AntiXray implements Listener {
 				Chat.broadcastIngame(new JsonBuilder
 						("&7&l[&cRadar&7&l] &a" + name + "&f is possibly xraying. ")
 						.next("&e[Click to Teleport]")
-						.command("mcmd premiumvanish:pv on ;; xraywarp " + name)
+						.command("mcmd vanish on ;; xraywarp " + name)
 						.hover("This will automatically vanish you"), "staff");
 				Chat.broadcastDiscord("**[Radar]** " + name + " is possibly xraying. `/xraywarp " + name + "`", "staff");
 

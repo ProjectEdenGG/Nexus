@@ -22,7 +22,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import java.util.Set;
 
 public class HoneyPots implements Listener {
-	//	public static final String PREFIX = StringUtils.colorize("&7&l[&cRadar&7&l]");
 	SettingService service = new SettingService();
 
 	public HoneyPots() {
@@ -78,8 +77,8 @@ public class HoneyPots implements Listener {
 				triggered = 1;
 				Chat.broadcastIngame(new JsonBuilder
 						("&7&l[&cRadar&7&l] &a" + player.getName() + " &fhas triggered a Honey Pot &e(HP: " + getHP(region) + ")")
-						.next("&e[Click to Teleport]")
-						.command("mcmd premiumvanish:pv on ;; tp " + player.getName())
+						.next(" &e[Click to Teleport]")
+						.command("mcmd vanish on ;; tp " + player.getName())
 						.hover("This will automatically vanish you"), "staff");
 				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + getHP(region) + "`", "staff");
 			}
