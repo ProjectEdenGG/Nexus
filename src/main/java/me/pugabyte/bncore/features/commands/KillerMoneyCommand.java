@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,6 +42,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
     public void onEntityKill(EntityDeathEvent event) {
         Player player = event.getEntity().getKiller();
         if (player == null) return;
+        if (!player.getGameMode().equals(GameMode.SURVIVAL)) return;
         try {
             MobMoney mob = MobMoney.valueOf(event.getEntityType().name());
             if (!mob.getActiveWorlds().contains(WorldGroup.get(player.getWorld()))) return;
