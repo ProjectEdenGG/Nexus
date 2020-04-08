@@ -7,5 +7,6 @@ public enum WarpType {
 	GILIHOUSE,
 	NORMAL,
 	STAFF,
-	QUEST
+	QUEST,
+	XRAY
 }

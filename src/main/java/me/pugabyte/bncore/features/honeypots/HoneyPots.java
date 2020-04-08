@@ -5,7 +5,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -22,7 +22,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import java.util.Set;
 
 public class HoneyPots implements Listener {
-	public static final String PREFIX = StringUtils.getPrefix("HoneyPots");
+	//	public static final String PREFIX = StringUtils.colorize("&7&l[&cRadar&7&l]");
 	SettingService service = new SettingService();
 
 	public HoneyPots() {
@@ -46,13 +46,13 @@ public class HoneyPots implements Listener {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		//if (event.getPlayer().hasPermission("honeypot.bypass")) return;
+		if (event.getPlayer().hasPermission("honeypot.bypass")) return;
 		incrementPlayer(event.getPlayer(), event.getBlock().getLocation());
 	}
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		//if (event.getPlayer().hasPermission("honeypot.bypass")) return;
+		if (event.getPlayer().hasPermission("honeypot.bypass")) return;
 		incrementPlayer(event.getPlayer(), event.getBlock().getLocation());
 	}
 
@@ -61,7 +61,7 @@ public class HoneyPots implements Listener {
 		if (!(event.getDamager() instanceof Player)) return;
 		if (!(event.getEntity() instanceof Animals)) return;
 		Player player = (Player) event.getDamager();
-		//if (player.hasPermission("honeypot.bypass")) return;
+		if (player.hasPermission("honeypot.bypass")) return;
 		incrementPlayer(player, event.getEntity().getLocation());
 	}
 
@@ -76,7 +76,12 @@ public class HoneyPots implements Listener {
 				triggered = Integer.parseInt(setting.getValue()) + 1;
 			} catch (NumberFormatException ex) {
 				triggered = 1;
-				Chat.broadcast(PREFIX + "&e" + player.getName() + " &3has triggered a Honey Pot &e(HP: " + getHP(region) + ")", "Staff");
+				Chat.broadcastIngame(new JsonBuilder
+						("&7&l[&cRadar&7&l] &a" + player.getName() + " &fhas triggered a Honey Pot &e(HP: " + getHP(region) + ")")
+						.next("&e[Click to Teleport]")
+						.command("mcmd premiumvanish:pv on ;; tp " + player.getName())
+						.hover("This will automatically vanish you"), "staff");
+				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + getHP(region) + "`", "staff");
 			}
 			if (triggered > 9) {
 				Utils.runConsoleCommand("sudo " + player.getName() + " ticket [HoneyPot] Grief trap triggered! " +

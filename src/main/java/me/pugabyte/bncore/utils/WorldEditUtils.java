@@ -251,7 +251,7 @@ public class WorldEditUtils {
 	@SneakyThrows
 	public void save(String fileName, BlockVector3 min, BlockVector3 max) {
 		CuboidRegion region = new CuboidRegion(worldEditWorld, min, max);
-		new BlockArrayClipboard(region).save(getSchematicFile(fileName), BuiltInClipboardFormat.MCEDIT_SCHEMATIC);
+		new BlockArrayClipboard(region).save(getSchematicFile(fileName), BuiltInClipboardFormat.SPONGE_SCHEMATIC);
 	}
 
 	public void fill(String region, BlockType blockType) {
