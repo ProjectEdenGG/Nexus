@@ -21,7 +21,7 @@ public class AACCommand extends CustomCommand {
 	void notify(Player player, String reason) {
 		String name = player.getName();
 		String worldGroup = WorldGroup.get(player).name();
-		String message = name + " " + reason.replace("{worldgroup}", worldGroup);
+		String message = "&a" + name + " &f" + reason.replace("{worldgroup}", worldGroup);
 		Chat.broadcast(message, "staff");
 	}
 }
