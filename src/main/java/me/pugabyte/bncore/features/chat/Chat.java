@@ -37,7 +37,6 @@ public class Chat {
 		BNCore.registerListener(new BridgeListener());
 		BNCore.registerListener(new AlertsListener());
 		addChannels();
-		updateChannels();
 	}
 
 	static {
