@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redire
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Utils;
 
-@Fallback("vanishnopacket")
+@Fallback("premiumvanish")
 @Redirect(from = {"/fj", "/fakejoin"}, to = "/vanish fj")
 @Redirect(from = {"/fq", "/fakequit"}, to = "/vanish fq")
 public class VanishCommand extends CustomCommand {
