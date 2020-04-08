@@ -2,9 +2,11 @@ package me.pugabyte.bncore.features.listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -118,6 +120,8 @@ public class Misc implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 
+		updateWorldGroupPlaceholder(player);
+
 		switch (WorldGroup.get(player)) {
 			case MINIGAMES:
 				Tasks.wait(5, () -> joinMinigames(player));
@@ -152,9 +156,14 @@ public class Misc implements Listener {
 			Tasks.wait(20, () -> Utils.runCommand(player, "cheats off"));
 	}
 
+	public void updateWorldGroupPlaceholder(Player player) {
+		PlaceholderAPI.setPlaceholders(player, StringUtils.camelCase(WorldGroup.get(player).name()));
+	}
+
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Tasks.wait(5, () -> {
+			updateWorldGroupPlaceholder(event.getPlayer());
 			WorldGroup worldGroup = WorldGroup.get(event.getPlayer());
 			if (worldGroup == WorldGroup.MINIGAMES)
 				joinMinigames(event.getPlayer());
