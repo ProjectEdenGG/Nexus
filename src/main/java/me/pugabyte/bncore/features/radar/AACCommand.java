@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 @Fallback("aac")
 @Permission("group.admin")
 public class AACCommand extends CustomCommand {
+
 	public AACCommand(CommandEvent event) {
 		super(event);
 	}

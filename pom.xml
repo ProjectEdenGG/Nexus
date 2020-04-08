@@ -143,6 +143,10 @@
             <name>jcenter-bintray</name>
             <url>https://jcenter.bintray.com</url>
         </repository>
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
