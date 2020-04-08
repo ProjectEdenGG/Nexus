@@ -48,23 +48,18 @@ public class Shop extends PlayerOwnedObject {
 		}
 	}
 
-	@NoArgsConstructor
-	// Morphia doesnt like interfaces >:(
-	public static class Exchange {
+	public interface Exchange {
 
-		public <T> T getPrice() {
-			throw new UnsupportedOperationException();
-		}
+		<T> T getPrice();
 
-		public void process(ShopItem item, OfflinePlayer customer) {
-			throw new UnsupportedOperationException();
-		}
+		void process(ShopItem item, OfflinePlayer customer);
+
 	}
 
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class ItemForItemExchange extends Exchange {
+	public static class ItemForItemExchange implements Exchange {
 		@NonNull
 		private ItemStack price;
 
@@ -77,7 +72,7 @@ public class Shop extends PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class ItemForMoneyExchange extends Exchange {
+	public static class ItemForMoneyExchange implements Exchange {
 		@NonNull
 		private Integer price;
 
@@ -90,7 +85,7 @@ public class Shop extends PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class MoneyForItemExchange extends Exchange {
+	public static class MoneyForItemExchange implements Exchange {
 		@NonNull
 		private ItemStack price;
 
