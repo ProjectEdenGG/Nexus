@@ -49,7 +49,7 @@ public class WorldEditUtils {
 	private World worldEditWorld;
 	private WorldGuardUtils worldGuardUtils;
 	@Getter
-	private String schematicsDirectory = "plugins/WorldEdit/schematics/";
+	private String schematicsDirectory = "plugins/FastAsyncWorldEdit/schematics/";
 	@Getter
 	static WorldEditPlugin plugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
 

@@ -222,7 +222,7 @@ public class BNCore extends JavaPlugin {
 //		new Timer("  Documentation", () -> documentation = new Documentation());
 		new Timer("  Holidays", () -> holidays = new Holidays());
 		new Timer("  HomesFeature", () -> homesFeature = new HomesFeature());
-//		new Timer("  HoneyPots", () -> honeyPots = new HoneyPots());
+		new Timer("  HoneyPots", () -> honeyPots = new HoneyPots());
 		new Timer("  HoursFeature", () -> hoursFeature = new HoursFeature());
 		new Timer("  JoinQuit", () -> joinQuit = new JoinQuit());
 		new Timer("  Listeners", () -> listeners = new Listeners());
