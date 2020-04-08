@@ -29,6 +29,7 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 
 	public HopperLagCommand(@NonNull CommandEvent event) {
 		super(event);
+		PREFIX = "&7&l[&cRadar&7&l]&f";
 	}
 
 	@Path("[amount]")
