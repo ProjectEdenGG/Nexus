@@ -26,10 +26,11 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 	private DecimalFormat nf = new DecimalFormat("#,###");
 
 	public static Map<Location, Double> hopperLagMap = new HashMap<>();
+	private static String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public HopperLagCommand(@NonNull CommandEvent event) {
 		super(event);
-		PREFIX = "&7&l[&cRadar&7&l]&f";
+		super.PREFIX = PREFIX;
 	}
 
 	@Path("[amount]")
