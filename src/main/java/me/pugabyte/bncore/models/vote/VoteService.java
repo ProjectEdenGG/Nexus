@@ -44,7 +44,8 @@ public class VoteService extends MySQLService {
 	}
 
 	public int getPoints(String uuid) {
-		return database.select("balance").table("vote_point").where("uuid = ?", uuid).first(Integer.class);
+		Integer first = database.select("balance").table("vote_point").where("uuid = ?", uuid).first(Integer.class);
+		return first == null ? 0 : first;
 	}
 
 	public void setPoints(String uuid, int balance) {
