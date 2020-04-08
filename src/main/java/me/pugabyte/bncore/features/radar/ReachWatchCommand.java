@@ -31,6 +31,7 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 
 	public ReachWatchCommand(@NonNull CommandEvent event) {
 		super(event);
+		PREFIX = "&7&l[&cRadar&7&l]&f";
 	}
 
 	@Path("<player>")

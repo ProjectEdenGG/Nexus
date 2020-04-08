@@ -26,6 +26,7 @@ public class CPSWatchCommand extends CustomCommand implements Listener {
 
 	public CPSWatchCommand(@NonNull CommandEvent event) {
 		super(event);
+		PREFIX = "&7&l[&cRadar&7&l]&f";
 	}
 
 	@Path("<player>")
