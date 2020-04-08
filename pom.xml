@@ -143,6 +143,10 @@
             <name>jcenter-bintray</name>
             <url>https://jcenter.bintray.com</url>
         </repository>
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
@@ -404,6 +408,13 @@
             <version>2.3.1</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/MVdWPlaceholderAPI.jar</systemPath>
+        </dependency>
+        <!-- PlaceholderAPI -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.10.5</version>
+            <scope>provided</scope>
         </dependency>
         <!-- GlowAPI -->
         <dependency>

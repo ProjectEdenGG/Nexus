@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 @Fallback("aac")
 @Permission("group.admin")
 public class AACCommand extends CustomCommand {
+
 	public AACCommand(CommandEvent event) {
 		super(event);
 	}
