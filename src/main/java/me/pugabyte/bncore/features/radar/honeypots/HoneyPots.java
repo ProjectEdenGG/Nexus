@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.honeypots;
+package me.pugabyte.bncore.features.radar.honeypots;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;

@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.listeners;
+package me.pugabyte.bncore.features.radar;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 //TODO: Prevent false positives with silktouch/fortune somehow
 public class AntiXray implements Listener {
@@ -29,6 +33,7 @@ public class AntiXray implements Listener {
 		put(Material.IRON_ORE, 50);
 		put(Material.GOLD_ORE, 20);
 		// TODO: 1.16 Nether gold
+		// TODO: 1.16 Gilded Blackstone
 	}};
 	private static Map<UUID, List<XRayLog>> XRayLogs = new HashMap<>();
 	private final static int minuteThreshold = 5;
