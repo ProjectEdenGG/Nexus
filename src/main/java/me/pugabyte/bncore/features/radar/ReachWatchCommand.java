@@ -42,10 +42,10 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 
 		if (watchList.contains(player())) {
 			watchList.remove(player());
-			send(PREFIX + "Reach Watcher &cdisabled &3for " + player.getName());
+			send(PREFIX + "Reach Watcher &cdisabled &ffor " + player.getName());
 		} else {
 			watchList.add(player());
-			send(PREFIX + "Reach Watcher &aenabled &3for " + player.getName());
+			send(PREFIX + "Reach Watcher &aenabled &ffor " + player.getName());
 		}
 	}
 
@@ -64,13 +64,13 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 
 		Entity victim = event.getEntity();
 		String victimName = victim.getType().equals(EntityType.PLAYER) ? victim.getName() : camelCase(victim.getType().toString());
-		double distnace = attacker.getLocation().distance(victim.getLocation());
+		double distance = attacker.getLocation().distance(victim.getLocation());
 
-		if (distnace > 3) {
-			String color = (distnace > 5) ? "&c" : (distnace > 3.7) ? "&6" : "&e";
+		if (distance > 3) {
+			String color = (distance > 5) ? "&c" : (distance > 3.7) ? "&6" : "&e";
 
 			watchMap.get(attacker).forEach(staff ->
-					send(staff, PREFIX + attacker.getName() + " --> " + victimName + " " + color + nf.format(distnace)));
+					send(staff, PREFIX + attacker.getName() + " --> " + victimName + " " + color + nf.format(distance)));
 		}
 	}
 

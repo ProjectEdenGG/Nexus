@@ -37,10 +37,10 @@ public class CPSWatchCommand extends CustomCommand implements Listener {
 
 		if (watchList.contains(player())) {
 			watchList.remove(player());
-			send(PREFIX + "CPS Watcher &cdisabled &3for " + player.getName());
+			send(PREFIX + "CPS Watcher &cdisabled &ffor " + player.getName());
 		} else {
 			watchList.add(player());
-			send(PREFIX + "CPS Watcher &aenabled &3for " + player.getName());
+			send(PREFIX + "CPS Watcher &aenabled &ffor " + player.getName());
 		}
 	}
 
