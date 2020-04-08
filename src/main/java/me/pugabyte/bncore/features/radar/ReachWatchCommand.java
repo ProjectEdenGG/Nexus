@@ -28,10 +28,11 @@ import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 public class ReachWatchCommand extends CustomCommand implements Listener {
 	static Map<Player, List<Player>> watchMap = new HashMap<>();
 	private DecimalFormat nf = new DecimalFormat("#.00");
+	private static String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public ReachWatchCommand(@NonNull CommandEvent event) {
 		super(event);
-		PREFIX = "&7&l[&cRadar&7&l]&f";
+		super.PREFIX = PREFIX;
 	}
 
 	@Path("<player>")

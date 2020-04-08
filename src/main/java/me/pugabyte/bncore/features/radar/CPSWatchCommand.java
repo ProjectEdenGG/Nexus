@@ -23,10 +23,11 @@ import java.util.Map;
 public class CPSWatchCommand extends CustomCommand implements Listener {
 	private static Map<Player, Integer> cpsMap = new HashMap<>();
 	private static Map<Player, List<Player>> watchMap = new HashMap<>();
+	private static String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public CPSWatchCommand(@NonNull CommandEvent event) {
 		super(event);
-		PREFIX = "&7&l[&cRadar&7&l]&f";
+		super.PREFIX = PREFIX;
 	}
 
 	@Path("<player>")
