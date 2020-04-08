@@ -18,19 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-@Getter
-@AllArgsConstructor
-class XRayLog {
-	Material material;
-	LocalDateTime timestamp;
-	Location location;
-}
+import java.util.*;
 
 //TODO: Prevent false positives with silktouch/fortune somehow
 public class AntiXray implements Listener {
@@ -94,6 +82,14 @@ public class AntiXray implements Listener {
 				break;
 			}
 		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	class XRayLog {
+		Material material;
+		LocalDateTime timestamp;
+		Location location;
 	}
 
 

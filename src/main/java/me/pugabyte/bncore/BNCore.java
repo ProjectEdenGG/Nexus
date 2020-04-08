@@ -21,6 +21,7 @@ import me.pugabyte.bncore.features.menus.SignMenuFactory;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.particles.Particles;
 import me.pugabyte.bncore.features.quests.Quests;
+import me.pugabyte.bncore.features.recipes.CustomRecipes;
 import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
 import me.pugabyte.bncore.features.store.perks.joinquit.JoinQuit;
 import me.pugabyte.bncore.features.tickets.Tickets;
@@ -179,7 +180,7 @@ public class BNCore extends JavaPlugin {
 
 	public static AFK afk;
 	public static Chat chat;
-	//TODO: Integrate custom recipes with 1.15
+	public static CustomRecipes recipes;
 	public static DailyRewardsFeature dailyRewards;
 	public static Discord discord;
 	public static Documentation documentation;
@@ -218,11 +219,12 @@ public class BNCore extends JavaPlugin {
 
 		new Timer("  AFK", () -> afk = new AFK());
 		new Timer("  Chat", () -> chat = new Chat());
+		new Timer("  CustomRecipes", () -> recipes = new CustomRecipes());
 		new Timer("  DailyRewardsFeature", () -> dailyRewards = new DailyRewardsFeature());
 //		new Timer("  Documentation", () -> documentation = new Documentation());
 		new Timer("  Holidays", () -> holidays = new Holidays());
 		new Timer("  HomesFeature", () -> homesFeature = new HomesFeature());
-//		new Timer("  HoneyPots", () -> honeyPots = new HoneyPots());
+		new Timer("  HoneyPots", () -> honeyPots = new HoneyPots());
 		new Timer("  HoursFeature", () -> hoursFeature = new HoursFeature());
 		new Timer("  JoinQuit", () -> joinQuit = new JoinQuit());
 		new Timer("  Listeners", () -> listeners = new Listeners());
