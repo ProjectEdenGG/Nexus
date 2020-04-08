@@ -409,13 +409,6 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/MVdWPlaceholderAPI.jar</systemPath>
         </dependency>
-        <!-- PlaceholderAPI -->
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.10.5</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- GlowAPI -->
         <dependency>
             <groupId>org.inventivetalent</groupId>
