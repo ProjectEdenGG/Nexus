@@ -54,7 +54,8 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 			if (sortedMap.keySet().size() < i) break;
 			Location loc = (Location) sortedMap.keySet().toArray()[i - 1];
 			double value = (double) sortedMap.values().toArray()[i - 1];
-			String message = StringUtils.getLocationString(loc) + " &7- " + nf.format(value);
+			final String color = (value > 100000) ? "&c" : (value > 10000) ? "&6" : "&e";
+			String message = StringUtils.getLocationString(loc) + " &7- " + color + nf.format(value);
 			StringUtils.sendJsonLocation("&f" + i + ". " + message, loc, player());
 		}
 
