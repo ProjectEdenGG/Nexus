@@ -8,7 +8,11 @@ import org.bukkit.entity.Player;
 public abstract class _ShopProvider extends MenuUtils implements InventoryProvider {
 	_ShopProvider previousMenu;
 
-	abstract public void open(Player viewer);
+	public void open(Player viewer) {
+		open(viewer, 0);
+	}
+
+	abstract public void open(Player viewer, int page);
 
 	@Override
 	public void init(Player player, InventoryContents contents) {

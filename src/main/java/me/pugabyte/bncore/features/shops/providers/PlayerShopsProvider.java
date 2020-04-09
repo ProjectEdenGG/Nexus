@@ -19,13 +19,13 @@ public class PlayerShopsProvider extends _ShopProvider {
 	}
 
 	@Override
-	public void open(Player viewer) {
+	public void open(Player viewer, int page) {
 		SmartInventory.builder()
 				.provider(this)
 				.title(colorize("&0Player Shops"))
 				.size(6, 9)
 				.build()
-				.open(viewer);
+				.open(viewer, page);
 	}
 
 	@Override
