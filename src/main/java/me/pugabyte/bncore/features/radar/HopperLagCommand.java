@@ -26,9 +26,11 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 	private DecimalFormat nf = new DecimalFormat("#,###");
 
 	public static Map<Location, Double> hopperLagMap = new HashMap<>();
+	private static String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public HopperLagCommand(@NonNull CommandEvent event) {
 		super(event);
+		super.PREFIX = PREFIX;
 	}
 
 	@Path("[amount]")
@@ -52,8 +54,9 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 			if (sortedMap.keySet().size() < i) break;
 			Location loc = (Location) sortedMap.keySet().toArray()[i - 1];
 			double value = (double) sortedMap.values().toArray()[i - 1];
-			String message = StringUtils.getLocationString(loc) + " &7- " + nf.format(value);
-			StringUtils.sendJsonLocation("&3" + i + ". " + message, loc, player());
+			final String color = (value > 100000) ? "&c" : (value > 10000) ? "&6" : "&e";
+			String message = StringUtils.getLocationString(loc) + " &7- " + color + nf.format(value);
+			StringUtils.sendJsonLocation("&f" + i + ". " + message, loc, player());
 		}
 
 		hopperLagMap.clear();
