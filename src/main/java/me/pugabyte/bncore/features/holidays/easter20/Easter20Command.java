@@ -42,7 +42,7 @@ public class Easter20Command extends CustomCommand implements Listener {
         Block targetBlock = player.getTargetBlock(null, 10);
         Material material = targetBlock.getType();
         if (Utils.isNullOrAir(material) || !Utils.isSign(material))
-            error("You must be lookomg at a sign!");
+            error("You must be looking at a sign!");
         return (Sign) targetBlock.getState();
     }
 
