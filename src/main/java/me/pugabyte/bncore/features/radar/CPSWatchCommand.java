@@ -23,9 +23,11 @@ import java.util.Map;
 public class CPSWatchCommand extends CustomCommand implements Listener {
 	private static Map<Player, Integer> cpsMap = new HashMap<>();
 	private static Map<Player, List<Player>> watchMap = new HashMap<>();
+	private static String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public CPSWatchCommand(@NonNull CommandEvent event) {
 		super(event);
+		super.PREFIX = PREFIX;
 	}
 
 	@Path("<player>")
@@ -35,10 +37,10 @@ public class CPSWatchCommand extends CustomCommand implements Listener {
 
 		if (watchList.contains(player())) {
 			watchList.remove(player());
-			send(PREFIX + "CPS Watcher &cdisabled &3for " + player.getName());
+			send(PREFIX + "CPS Watcher &cdisabled &ffor " + player.getName());
 		} else {
 			watchList.add(player());
-			send(PREFIX + "CPS Watcher &aenabled &3for " + player.getName());
+			send(PREFIX + "CPS Watcher &aenabled &ffor " + player.getName());
 		}
 	}
 

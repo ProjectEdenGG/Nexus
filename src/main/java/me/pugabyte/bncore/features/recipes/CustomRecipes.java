@@ -21,6 +21,8 @@ public class CustomRecipes {
         setWoolUndyingRecipe();
         addRecipe(createSingleItemShapelessRecipe(Material.NETHER_WART_BLOCK, 1, Material.NETHER_WART, 9));
         addRecipe(createSingleItemShapelessRecipe(Material.BLUE_ICE, 1, Material.PACKED_ICE, 9));
+        addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_RED_SANDSTONE, 1, Material.RED_SANDSTONE_SLAB, 2));
+        addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_SANDSTONE, 1, Material.SANDSTONE_SLAB, 2));
         BNCore.getInstance().getLogger().info("Registered " + amount + " custom crafting recipes");
     }
 
