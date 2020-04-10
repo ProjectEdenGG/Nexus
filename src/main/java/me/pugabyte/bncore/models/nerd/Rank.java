@@ -1,12 +1,10 @@
-package me.pugabyte.bncore.models;
+package me.pugabyte.bncore.models.nerd;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.hours.HoursService;
-import me.pugabyte.bncore.models.nerd.Nerd;
-import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.EnumUtils;
