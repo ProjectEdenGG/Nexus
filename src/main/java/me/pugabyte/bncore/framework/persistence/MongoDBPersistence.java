@@ -8,6 +8,8 @@ import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +33,8 @@ public class MongoDBPersistence {
 		MongoCredential root = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
 		MongoClient mongoClient = new MongoClient(new ServerAddress(), root, MongoClientOptions.builder().build());
 		Datastore datastore = morphia.createDatastore(mongoClient, config.getPrefix() + dbType.getDatabase());
+		morphia.getMapper().getConverters().addConverter(ItemStackConverter.class);
+		morphia.getMapper().getConverters().addConverter(ItemMetaConverter.class);
 		databases.put(dbType, datastore);
 	}
 

@@ -58,32 +58,27 @@ public class SerializationUtils {
 
 	public static class JSON {
 
-		public static String serializeItem(ItemStack item) {
+		/** ITEM STACK */
+
+		public static String serializeItemStack(ItemStack item) {
 			Gson gson = new Gson();
 			Map<String, Object> serialized = item.serialize();
 
-			serialized.computeIfPresent("meta", ($, itemMeta) -> {
-				Map<String, Object> meta = new HashMap<>(((ItemMeta) itemMeta).serialize());
-				meta.put("==", "ItemMeta");
-				return meta;
-			});
-
+			serialized.computeIfPresent("meta", ($, itemMeta) -> serializeItemMeta(((ItemMeta) itemMeta).serialize()));
 			serialized.computeIfAbsent("amount", $ -> item.getAmount());
 
 			return gson.toJson(gson.toJsonTree(serialized));
 		}
 
-		@NotNull
-		public static ItemStack deserializeItem(String value) {
-			return deserializeItem(new Gson().fromJson(value, Map.class));
+		public static ItemStack deserializeItemStack(String value) {
+			return deserializeItemStack(new Gson().fromJson(value, Map.class));
 		}
 
-		@NotNull
-		public static ItemStack deserializeItem(Map<String, Object> value) {
-			fixItemClasses(value);
-
-			value.computeIfPresent("meta", ($, meta) ->
-					ConfigurationSerialization.deserializeObject((Map<String, Object>) meta));
+		public static ItemStack deserializeItemStack(Map<String, Object> value) {
+			value.computeIfPresent("meta", ($, meta) -> {
+				fixMetaClasses((Map<String, Object>) meta);
+				return deserializeItemMeta((Map<String, Object>) meta);
+			});
 
 			ItemStack deserialize = ItemStack.deserialize(value);
 			if (deserialize.getAmount() == 0)
@@ -91,18 +86,39 @@ public class SerializationUtils {
 			return deserialize;
 		}
 
-		// MongoDB deserializes some properties as the wrong class, do conversion
-		public static void fixItemClasses(Map<String, Object> deserialized) {
-			deserialized.computeIfPresent("meta", ($, meta) -> {
-				Arrays.asList("power", "repair-cost").forEach(key ->
-						((Map<String, Object>) meta).computeIfPresent(key, ($2, metaValue) -> {
-							if (metaValue instanceof Number)
-								return ((Number) metaValue).intValue();
-							return metaValue;
-						}));
-				return meta;
-			});
+		/** ITEM META */
+
+		public static String serializeItemMeta(ItemMeta itemMeta) {
+			Gson gson = new Gson();
+			Map<String, Object> serialized = serializeItemMeta(itemMeta.serialize());
+			return gson.toJson(gson.toJsonTree(serialized));
 		}
+
+		public static Map<String, Object> serializeItemMeta(Map<String, Object> serialized) {
+			serialized = new HashMap<>(serialized);
+			serialized.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, "ItemMeta");
+			return serialized;
+		}
+
+		public static ItemMeta deserializeItemMeta(String value) {
+			return deserializeItemMeta(new Gson().fromJson(value, Map.class));
+		}
+
+		public static ItemMeta deserializeItemMeta(Map<String, Object> meta) {
+			return (ItemMeta) ConfigurationSerialization.deserializeObject(meta);
+		}
+
+		// MongoDB deserializes some properties as the wrong class, do conversion
+		public static void fixMetaClasses(Map<String, Object> deserialized) {
+			Arrays.asList("power", "repair-cost").forEach(key ->
+					deserialized.computeIfPresent(key, ($2, metaValue) -> {
+						if (metaValue instanceof Number)
+							return ((Number) metaValue).intValue();
+						return metaValue;
+					}));
+		}
+
+		/** LOCATION */
 
 		@NotNull
 		public static String serializeLocation(Location location) {

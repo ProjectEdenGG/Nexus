@@ -46,7 +46,7 @@ public class BrowseShopsProvider extends _ShopProvider {
 
 		service.getShops().forEach(shop -> {
 			ItemStack head = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(shop.getOfflinePlayer()).build();
-			items.add(ClickableItem.from(head, e -> new PlayerShopProvider(shop, this).open(player)));
+			items.add(ClickableItem.from(nameItem(head, "&e" + shop.getOfflinePlayer().getName()), e -> new PlayerShopProvider(shop, this).open(player)));
 		});
 
 		addPagination(player, contents, items);

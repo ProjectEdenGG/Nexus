@@ -4,12 +4,12 @@ import com.mongodb.BasicDBObject;
 import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import me.pugabyte.bncore.utils.SerializationUtils.JSON;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-public class ItemStackConverter extends TypeConverter {
+public class ItemMetaConverter extends TypeConverter {
 
-	public ItemStackConverter() {
-		super(ItemStack.class);
+	public ItemMetaConverter() {
+		super(ItemMeta.class);
 	}
 
 	@Override
@@ -17,12 +17,12 @@ public class ItemStackConverter extends TypeConverter {
 		if (value == null)
 			return null;
 
-		return BasicDBObject.parse(JSON.serializeItemStack((ItemStack) value));
+		return BasicDBObject.parse(JSON.serializeItemMeta((ItemMeta) value));
 	}
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
-		return JSON.deserializeItemStack(((BasicDBObject) value).toJson());
+		return JSON.deserializeItemMeta(((BasicDBObject) value).toMap());
 	}
 
 }

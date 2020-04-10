@@ -29,6 +29,18 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPET, BEDS, BANNERS, WALL_BANNERS, STAINED_GLASS,
 			STAINED_GLASS_PANES, TERRACOTTAS, GLAZED_TERRACOTTAS, CONCRETES, CONCRETE_POWDERS, SHULKER_BOXES);
 
+	public static final MaterialTag TOOLS = new MaterialTag("_PICKAXE", MatchMode.SUFFIX)
+			.append("_AXE", MatchMode.SUFFIX).append("_SHOVEL", MatchMode.SUFFIX).append("_HOE", MatchMode.SUFFIX)
+			.append(Material.FISHING_ROD).append(Material.LEAD).append(Material.SHEARS).append(Material.FLINT_AND_STEEL);
+
+	public static final MaterialTag WEAPONS = new MaterialTag("_SWORD", MatchMode.SUFFIX)
+			.append(Material.BOW).append(Material.CROSSBOW).append(Material.TRIDENT).append("ARROW", MatchMode.SUFFIX);
+
+	public static final MaterialTag ARMOR = new MaterialTag("_HELMET", MatchMode.SUFFIX)
+			.append("_CHESTPLATE", MatchMode.SUFFIX).append("_LEGGINGS", MatchMode.SUFFIX).append("_BOOTS", MatchMode.SUFFIX);
+
+	public static final MaterialTag TOOLS_WEAPONS_ARMOR = new MaterialTag(TOOLS, WEAPONS, ARMOR);
+
 	public static final MaterialTag CORAL_WALL_FANS = new MaterialTag("_WALL_FAN", MatchMode.SUFFIX);
 
 	public static final MaterialTag PLANTS = new MaterialTag(Material.GRASS, Material.FERN, Material.DEAD_BUSH,
@@ -43,7 +55,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag SPAWN_EGGS = new MaterialTag("_SPAWN_EGG", MatchMode.SUFFIX);
 	public static final MaterialTag PORTALS = new MaterialTag(Material.END_PORTAL, Material.NETHER_PORTAL);
 	public static final MaterialTag LIQUIDS = new MaterialTag(Material.WATER, Material.LAVA);
-	public static final MaterialTag CONTAINERS = new MaterialTag(Material.FURNACE, Material.DISPENSER, Material.CHEST,
+	public static final MaterialTag CONTAINERS = new MaterialTag(Material.FURNACE, Material.DISPENSER, Material.CHEST, Material.BARREL,
 			Material.ENDER_CHEST, Material.ANVIL, Material.BREWING_STAND, Material.TRAPPED_CHEST, Material.HOPPER, Material.DROPPER)
 			.append("_SHULKER_BOX", MatchMode.SUFFIX);
 	public static final MaterialTag PRESSURE_PLATES = new MaterialTag("_PRESSURE_PLATE", MatchMode.SUFFIX);
@@ -54,7 +66,6 @@ public class MaterialTag implements Tag<Material> {
 	static {
 		for (DyeColor value : DyeColor.values())
 			COLORABLE.append(value + "_", MatchMode.PREFIX);
-
 	}
 
 	public MaterialTag(EnumSet<Material> materials) {
@@ -89,9 +100,8 @@ public class MaterialTag implements Tag<Material> {
 
 	@SafeVarargs
 	public final MaterialTag append(Tag<Material>... materialTags) {
-		for (Tag<Material> materialTag : materialTags) {
+		for (Tag<Material> materialTag : materialTags)
 			this.materials.addAll(materialTag.getValues());
-		}
 
 		return this;
 	}
@@ -123,18 +133,16 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	public MaterialTag exclude(Material... materials) {
-		for (Material m : materials) {
+		for (Material m : materials)
 			this.materials.remove(m);
-		}
 
 		return this;
 	}
 
 	@SafeVarargs
 	public final MaterialTag exclude(Tag<Material>... materialTags) {
-		for (Tag<Material> materialTag : materialTags) {
+		for (Tag<Material> materialTag : materialTags)
 			this.materials.removeAll(materialTag.getValues());
-		}
 
 		return this;
 	}
