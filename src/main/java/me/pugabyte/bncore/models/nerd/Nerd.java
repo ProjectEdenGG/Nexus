@@ -3,7 +3,7 @@ package me.pugabyte.bncore.models.nerd;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -11,8 +11,6 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
