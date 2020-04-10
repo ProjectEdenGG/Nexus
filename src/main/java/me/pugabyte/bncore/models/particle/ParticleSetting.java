@@ -130,7 +130,7 @@ public enum ParticleSetting {
 		}
 	},
 
-	STAR_GROWTH_SPEED(2, 5, new ItemBuilder(Material.INK_SACK).dyeColor(ColorType.WHITE).build(), Double.class, ParticleType.STAR, ParticleType.GROWING_STARS) {
+	STAR_GROWTH_SPEED(2, 5, new ItemBuilder(Material.INK_SACK).dyeColor(ColorType.WHITE).build(), Double.class, ParticleType.GROWING_STARS) {
 		@Override
 		Object getDefault(ParticleType particleType) {
 			return .1;
