@@ -3,6 +3,8 @@ package me.pugabyte.bncore.features.discord.commands;
 import com.google.common.base.Strings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import me.pugabyte.bncore.features.discord.Bot;
+import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.models.discord.DiscordService;
@@ -13,6 +15,7 @@ import me.pugabyte.bncore.utils.Utils;
 import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
+@HandledBy(Bot.RELAY)
 public class BanCommand extends Command {
 
 	public BanCommand() {
