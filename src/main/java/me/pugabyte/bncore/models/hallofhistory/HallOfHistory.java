@@ -10,7 +10,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
-import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.models.nerd.Rank;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
