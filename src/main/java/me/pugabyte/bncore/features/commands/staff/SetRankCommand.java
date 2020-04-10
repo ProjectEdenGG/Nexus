@@ -5,7 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.models.nerd.Rank;
 import org.bukkit.entity.Player;
 
 @Permission("group.seniorstaff")
