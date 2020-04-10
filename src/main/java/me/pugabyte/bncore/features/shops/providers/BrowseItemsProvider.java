@@ -14,11 +14,9 @@ import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
-public class PlayerShopProvider extends _ShopProvider {
-	private Shop shop;
+public class BrowseItemsProvider extends _ShopProvider {
 
-	public PlayerShopProvider(Shop shop, _ShopProvider previousMenu) {
-		this.shop = shop;
+	public BrowseItemsProvider(_ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 
@@ -26,7 +24,7 @@ public class PlayerShopProvider extends _ShopProvider {
 	public void open(Player viewer, int page) {
 		SmartInventory.builder()
 				.provider(this)
-				.title(colorize("&0" + shop.getOfflinePlayer().getName() + "'s shop"))
+				.title(colorize("&0Browse Items"))
 				.size(6, 9)
 				.build()
 				.open(viewer, page);
@@ -35,16 +33,13 @@ public class PlayerShopProvider extends _ShopProvider {
 	@Override
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
-		addItems(player, contents);
-	}
-
-	public void addItems(Player player, InventoryContents contents) {
-		if (shop.getProducts() == null || shop.getProducts().size() == 0) return;
+		List<Shop> shops = service.getShops();
+		if (shops == null || shops.size() == 0) return;
 		List<ClickableItem> items = new ArrayList<>();
 
 		Pagination page = contents.pagination();
 
-		shop.getProducts().forEach(product -> {
+		service.getShops().forEach(shop -> shop.getProducts().forEach(product -> {
 			ItemStack item = new ItemBuilder(product.getItem().clone())
 					.lore(product.getExchange().getLore(product))
 					.build();
@@ -57,12 +52,11 @@ public class PlayerShopProvider extends _ShopProvider {
 					player.sendMessage(colorize(ex.getMessage()));
 				}
 			}));
-		});
+		}));
 
 		addPagination(player, contents, items);
+
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {}
 
 }

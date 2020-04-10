@@ -48,6 +48,8 @@ public class Shop extends PlayerOwnedObject {
 	private List<Product> products = new ArrayList<>();
 	@Embedded
 	private List<ItemStack> holding = new ArrayList<>();
+	// TODO holding for money, maybe? would make withdrawing money more complicated
+	// private double profit;
 
 	@Data
 	@NoArgsConstructor
@@ -100,7 +102,6 @@ public class Shop extends PlayerOwnedObject {
 	@Data
 	@Builder
 	@AllArgsConstructor
-	@Embedded(concreteClass = ItemForItemExchange.class)
 	// Customer buying an item from the shop owner for money
 	public static class ItemForMoneyExchange implements Exchange {
 		@NonNull
@@ -109,15 +110,17 @@ public class Shop extends PlayerOwnedObject {
 		@Override
 		public void process(Product product, Player customer) {
 			BNCore.log("Processing ItemForMoneyExchange");
+			if (customer.getUniqueId() == product.getShop().getUuid())
+				throw new InvalidInputException("You cannot purchase from your own shop");
 			if (product.getStock() == 0)
 				throw new InvalidInputException("This item is out of stock");
 			if (!BNCore.getEcon().has(customer, price))
 				throw new InvalidInputException("You do not have enough money to purchase this item");
 
+			product.setStock(product.getStock() - product.getItem().getAmount());
 			BNCore.getEcon().withdrawPlayer(customer, price);
 			BNCore.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
 			giveItem(customer, product.getItem());
-			product.setStock(product.getStock() - product.getItem().getAmount());
 			new ShopService().save(product.getShop());
 			customer.sendMessage(colorize("You purchased " + product.getItem().getType() + " x" + product.getItem().getAmount() + " for $" + price));
 		}
@@ -126,7 +129,7 @@ public class Shop extends PlayerOwnedObject {
 		public List<String> getLore(Product product) {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
-					"&7Buy &e" + product.getItem().getAmount() + " &7for &a" + pretty(price),
+					"&7Buy &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price),
 					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
 					"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
 			);
@@ -136,7 +139,6 @@ public class Shop extends PlayerOwnedObject {
 	@Data
 	@Builder
 	@AllArgsConstructor
-	@Embedded(concreteClass = ItemForItemExchange.class)
 	// Customer buying an item from the shop owner for other items
 	public static class ItemForItemExchange implements Exchange {
 		@NonNull
@@ -145,6 +147,8 @@ public class Shop extends PlayerOwnedObject {
 		@Override
 		public void process(Product product, Player customer) {
 			BNCore.log("Processing ItemForItemExchange");
+			if (customer.getUniqueId() == product.getShop().getUuid())
+				throw new InvalidInputException("You cannot purchase from your own shop");
 			if (product.getStock() == 0)
 				throw new InvalidInputException("This item is out of stock");
 			if (product.getStock() < product.getItem().getAmount())
@@ -152,10 +156,10 @@ public class Shop extends PlayerOwnedObject {
 			if (!customer.getInventory().containsAtLeast(price, price.getAmount()))
 				throw new InvalidInputException("You do not have enough " + pretty(price) + " to purchase this item");
 
-			customer.getInventory().removeItem(price);
-			giveItem(product.getShop().getOfflinePlayer(), price);
-			giveItem(customer, product.getItem());
 			product.setStock(product.getStock() - product.getItem().getAmount());
+			customer.getInventory().removeItem(price);
+			product.getShop().getHolding().add(price);
+			giveItem(customer, product.getItem());
 			new ShopService().save(product.getShop());
 			customer.sendMessage(colorize("You purchased " + pretty(product.getItem()) + " for " + pretty(price)));
 		}
@@ -174,7 +178,6 @@ public class Shop extends PlayerOwnedObject {
 	@Data
 	@Builder
 	@AllArgsConstructor
-	@Embedded(concreteClass = MoneyForItemExchange.class)
 	// Customer selling an item to the shop owner for money
 	public static class MoneyForItemExchange implements Exchange {
 		@NonNull
@@ -184,6 +187,8 @@ public class Shop extends PlayerOwnedObject {
 		public void process(Product product, Player customer) {
 			BNCore.log("Processing ItemForMoneyExchange");
 			OfflinePlayer shopOwner = product.getShop().getOfflinePlayer();
+			if (customer.getUniqueId() == product.getShop().getUuid())
+				throw new InvalidInputException("You cannot purchase from your own shop");
 			if (product.getStock() == 0)
 				throw new InvalidInputException("This item is out of stock");
 			if (product.getStock() > 0 && product.getStock() < price)
@@ -193,21 +198,20 @@ public class Shop extends PlayerOwnedObject {
 			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
 				throw new InvalidInputException("You do not have enough " + pretty(product.getItem()) + " to sell");
 
+			product.setStock(product.getStock() - price);
 			BNCore.getEcon().withdrawPlayer(shopOwner, price);
 			BNCore.getEcon().depositPlayer(customer, price);
-			giveItem(shopOwner, product.getItem());
 			customer.getInventory().removeItem(product.getItem());
-			product.setStock(product.getStock() - price);
+			product.getShop().getHolding().add(product.getItem());
 			new ShopService().save(product.getShop());
 			customer.sendMessage(colorize("You sold " + product.getItem().getType() + " x" + product.getItem().getAmount() + " for $" + price));
 		}
 
 		@Override
 		public List<String> getLore(Product product) {
-			int stock = (int) product.getStock();
 			return Arrays.asList(
-					"&7Sell &e" + product.getItem().getAmount() + " &7for &a" + pretty(price),
-					"&7Stock: &e" + pretty(product.getStock()),
+					"&7Sell &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price),
+					"&7Stock: &e$" + pretty(product.getStock()),
 					"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
 			);
 		}

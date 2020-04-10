@@ -1,9 +1,13 @@
 package me.pugabyte.bncore.features.shops;
 
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.features.shops.providers.BrowseItemsProvider;
+import me.pugabyte.bncore.features.shops.providers.BrowseMarketProvider;
+import me.pugabyte.bncore.features.shops.providers.BrowseShopsProvider;
 import me.pugabyte.bncore.features.shops.providers.MainMenuProvider;
 import me.pugabyte.bncore.features.shops.providers.PlayerShopProvider;
-import me.pugabyte.bncore.features.shops.providers.PlayerShopsProvider;
+import me.pugabyte.bncore.features.shops.providers.ViewCategoriesProvider;
+import me.pugabyte.bncore.features.shops.providers.YourShopProvider;
 import me.pugabyte.bncore.features.shops.providers._ShopProvider;
 import org.bukkit.entity.Player;
 
@@ -13,7 +17,12 @@ import java.util.List;
 
 public enum ShopMenu {
 	MAIN_MENU(MainMenuProvider.class),
-	PLAYER_SHOPS(PlayerShopsProvider.class),
+	BROWSE_MARKET(BrowseMarketProvider.class),
+	BROWSE_SHOPS(BrowseShopsProvider.class),
+	BROWSE_ITEMS(BrowseItemsProvider.class),
+	VIEW_CATEGORIES(ViewCategoriesProvider.class),
+	YOUR_SHOP(YourShopProvider.class),
+
 	PLAYER_SHOP(PlayerShopProvider.class);
 
 	private Class<? extends _ShopProvider> provider;
