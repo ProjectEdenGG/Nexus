@@ -5,6 +5,9 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.utils.Tasks;
+import org.bukkit.Bukkit;
+
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class Koda {
 	private static String nameFormat = "&5&oKodaBear";
@@ -42,6 +45,10 @@ public class Koda {
 
 	public static void announce(String message) {
 		Discord.send(message, Channel.ANNOUNCEMENTS);
+	}
+
+	public static void console(String message) {
+		Bukkit.getConsoleSender().sendMessage("[KodaBear] " + stripColor(message));
 	}
 
 }
