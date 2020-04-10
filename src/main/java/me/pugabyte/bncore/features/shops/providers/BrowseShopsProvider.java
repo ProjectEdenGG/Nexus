@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,11 +15,9 @@ import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
-public class PlayerShopProvider extends _ShopProvider {
-	private Shop shop;
+public class BrowseShopsProvider extends _ShopProvider {
 
-	public PlayerShopProvider(Shop shop, _ShopProvider previousMenu) {
-		this.shop = shop;
+	public BrowseShopsProvider(_ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 
@@ -26,7 +25,7 @@ public class PlayerShopProvider extends _ShopProvider {
 	public void open(Player viewer, int page) {
 		SmartInventory.builder()
 				.provider(this)
-				.title(colorize("&0" + shop.getOfflinePlayer().getName() + "'s shop"))
+				.title(colorize("&0Browse Shops"))
 				.size(6, 9)
 				.build()
 				.open(viewer, page);
@@ -39,30 +38,18 @@ public class PlayerShopProvider extends _ShopProvider {
 	}
 
 	public void addItems(Player player, InventoryContents contents) {
-		if (shop.getProducts() == null || shop.getProducts().size() == 0) return;
+		List<Shop> shops = service.getShops();
+		if (shops == null || shops.size() == 0) return;
 		List<ClickableItem> items = new ArrayList<>();
 
 		Pagination page = contents.pagination();
 
-		shop.getProducts().forEach(product -> {
-			ItemStack item = new ItemBuilder(product.getItem().clone())
-					.lore(product.getExchange().getLore(product))
-					.build();
-
-			items.add(ClickableItem.from(item, e -> {
-				try {
-					product.getExchange().process(product, player);
-					open(player, page.getPage());
-				} catch (Exception ex) {
-					player.sendMessage(colorize(ex.getMessage()));
-				}
-			}));
+		service.getShops().forEach(shop -> {
+			ItemStack head = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(shop.getOfflinePlayer()).build();
+			items.add(ClickableItem.from(head, e -> new PlayerShopProvider(shop, this).open(player)));
 		});
 
 		addPagination(player, contents, items);
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {}
 
 }

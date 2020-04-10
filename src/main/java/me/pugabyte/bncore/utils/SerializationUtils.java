@@ -68,6 +68,8 @@ public class SerializationUtils {
 				return meta;
 			});
 
+			serialized.computeIfAbsent("amount", $ -> item.getAmount());
+
 			return gson.toJson(gson.toJsonTree(serialized));
 		}
 
@@ -83,7 +85,10 @@ public class SerializationUtils {
 			value.computeIfPresent("meta", ($, meta) ->
 					ConfigurationSerialization.deserializeObject((Map<String, Object>) meta));
 
-			return ItemStack.deserialize(value);
+			ItemStack deserialize = ItemStack.deserialize(value);
+			if (deserialize.getAmount() == 0)
+				deserialize.setAmount(1);
+			return deserialize;
 		}
 
 		// MongoDB deserializes some properties as the wrong class, do conversion

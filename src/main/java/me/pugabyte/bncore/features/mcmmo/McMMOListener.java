@@ -57,7 +57,7 @@ public class McMMOListener implements Listener {
 		Tasks.async(() -> {
 			List<PlayerStat> topThree = mcMMO.getDatabaseManager().readLeaderboard(null, 1, 3);
 			if (topThree.size() != 3)
-				BNCore.log("McMMO leaderboard query did not return 3 results");
+				BNCore.warn("McMMO leaderboard query did not return 3 results");
 			else
 				Tasks.sync(() -> {
 					OfflinePlayer first = Utils.getPlayer(topThree.get(0).name);

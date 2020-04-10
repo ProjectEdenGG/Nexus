@@ -53,6 +53,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -61,6 +62,8 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 public class BNCore extends JavaPlugin {
 	private Commands commands;
 	private static BNCore instance;
+	@Getter
+	private final static UUID UUID0 = new UUID(0, 0);
 
 	public BNCore() {
 		if (instance == null) {

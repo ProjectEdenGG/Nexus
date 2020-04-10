@@ -29,7 +29,13 @@ public class MainMenuProvider extends _ShopProvider {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
-		contents.set(1, 3, ClickableItem.from(nameItem(Material.CHEST, "Player shops"), e -> ShopMenu.PLAYER_SHOPS.open(player, this)));
+		contents.set(1, 2, ClickableItem.from(nameItem(Material.CHEST, "&6&lBrowse Market"), e -> ShopMenu.BROWSE_MARKET.open(player, this)));
+		contents.set(1, 4, ClickableItem.from(nameItem(Material.CHEST, "&6&lBrowse Shops"), e -> ShopMenu.BROWSE_SHOPS.open(player, this)));
+		contents.set(1, 6, ClickableItem.from(nameItem(Material.CHEST, "&6&lBrowse Items"), e -> ShopMenu.BROWSE_ITEMS.open(player, this)));
+
+		contents.set(3, 2, ClickableItem.from(nameItem(Material.COMPASS, "&6&lSearch items"), e -> ShopMenu.BROWSE_ITEMS.open(player, this)));
+		contents.set(3, 4, ClickableItem.empty(nameItem(Material.HOPPER, "&6&lView Categories", "&eComing soon™")));
+		contents.set(3, 6, ClickableItem.from(nameItem(Material.PLAYER_HEAD, "&6&lYour Shop"), e -> ShopMenu.YOUR_SHOP.open(player, this)));
 	}
 
 
