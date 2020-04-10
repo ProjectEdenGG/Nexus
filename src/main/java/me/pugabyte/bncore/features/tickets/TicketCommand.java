@@ -8,7 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.Rank;
+import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;

@@ -4,8 +4,8 @@ import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.Rank;
 import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 

@@ -23,13 +23,13 @@ public class WeeeCommand extends CustomCommand {
 
 	@Path("<player>")
 	void weee(@Arg("self") Player player) {
-		List<Vector> vectors = Arrays.asList(new Vector(1, 1, 0), new Vector(-1, 1, 0), new Vector(0, 1, 1), new Vector(0, 1, -1));
+		List<Vector> vectors = Arrays.asList(new Vector(3, 0, 1), new Vector(-3, 0, 1), new Vector(1, 0, 3), new Vector(1, 0, -3), new Vector(0, 2.5, 0));
 
 		Tasks.Countdown.builder()
 				.duration(Time.SECOND.x(10))
 				.doZero(true)
 				.onTick(i -> {
-					if (i % 10 == 0)
+					if (i % 5 == 0)
 						player.setVelocity(Utils.getRandomElement(vectors));
 				})
 				.start();
