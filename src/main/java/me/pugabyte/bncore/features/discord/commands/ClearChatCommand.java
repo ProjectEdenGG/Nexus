@@ -2,11 +2,14 @@ package me.pugabyte.bncore.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import me.pugabyte.bncore.features.discord.Bot;
+import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
 
 import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
+@HandledBy(Bot.RELAY)
 public class ClearChatCommand extends Command {
 
 	public ClearChatCommand() {
