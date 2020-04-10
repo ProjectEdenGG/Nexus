@@ -2,6 +2,8 @@ package me.pugabyte.bncore.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import me.pugabyte.bncore.features.discord.Bot;
+import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -11,6 +13,7 @@ import org.bukkit.ChatColor;
 import static me.pugabyte.bncore.features.discord.commands.SubscribeCommand.getRole;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
+@HandledBy(Bot.KODA)
 public class UnsubscribeCommand extends Command {
 
 	public UnsubscribeCommand() {
