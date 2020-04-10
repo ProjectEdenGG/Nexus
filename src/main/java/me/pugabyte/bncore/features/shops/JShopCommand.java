@@ -37,6 +37,7 @@ public class JShopCommand extends CustomCommand {
 		shop.getProducts().add(new Product(shop.getUuid(), new ItemBuilder(Material.DIAMOND_SWORD).amount(1).build(), 16, ExchangeType.ITEM_FOR_MONEY, 50D));
 		shop.getProducts().add(new Product(shop.getUuid(), new ItemBuilder(Material.IRON_ORE).amount(10).build(), 100, ExchangeType.ITEM_FOR_ITEM, new ItemStack(Material.GOLD_ORE, 3)));
 		shop.getProducts().add(new Product(shop.getUuid(), new ItemBuilder(Material.DIAMOND).amount(10).build(), 500, ExchangeType.MONEY_FOR_ITEM, 100D));
+		shop.getProducts().add(new Product(shop.getUuid(), new ItemBuilder(Material.PUMPKIN_PIE).amount(2).build(), 32, ExchangeType.ITEM_FOR_MONEY, 30D));
 		service.save(shop);
 	}
 
@@ -48,6 +49,7 @@ public class JShopCommand extends CustomCommand {
 		shop.getProducts().add(new Product(shop.getUuid(), new ItemBuilder(Material.IRON_AXE).amount(1).build(), 16, ExchangeType.ITEM_FOR_MONEY, 30D));
 		shop.getProducts().add(new Product(shop.getUuid(), new ItemBuilder(Material.GOLD_INGOT).amount(10).build(), 100, ExchangeType.ITEM_FOR_ITEM, new ItemStack(Material.GOLDEN_APPLE)));
 		shop.getProducts().add(new Product(shop.getUuid(), new ItemBuilder(Material.DIAMOND).amount(10).build(), -1, ExchangeType.MONEY_FOR_ITEM, 90D));
+		shop.getProducts().add(new Product(shop.getUuid(), new ItemBuilder(Material.APPLE).amount(8).build(), 32, ExchangeType.ITEM_FOR_MONEY, 16D));
 		service.save(shop);
 	}
 

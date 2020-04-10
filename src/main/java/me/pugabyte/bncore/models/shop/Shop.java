@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
@@ -37,7 +38,7 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class, ItemStackConverter.class})
+@Converters({UUIDConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
 // Dumb structure due to morphia refusing to deserialize interfaces properly
 public class Shop extends PlayerOwnedObject {
 	@Id
@@ -54,8 +55,10 @@ public class Shop extends PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Converters({UUIDConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
 	public static class Product {
 		private UUID uuid;
+		@Embedded
 		private ItemStack item;
 		private double stock;
 		private ExchangeType exchangeType;
@@ -63,6 +66,10 @@ public class Shop extends PlayerOwnedObject {
 
 		public Shop getShop() {
 			return new ShopService().get(uuid);
+		}
+
+		public ItemStack getItem() {
+			return item.clone();
 		}
 
 		@SneakyThrows

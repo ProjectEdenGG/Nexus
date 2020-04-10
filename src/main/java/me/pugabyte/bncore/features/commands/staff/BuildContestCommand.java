@@ -210,7 +210,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		ItemBuilder.setName(item, "&6&lBuild Contest");
 		ItemBuilder.addLore(item, "&e&lJoin our latest build contest!");
 		ItemBuilder.addLore(item, "&e&lTheme: &6&l" + theme);
-		bcInfo.put("item", JSON.serializeItem(item));
+		bcInfo.put("item", JSON.serializeItemStack(item));
 		info.setJson(bcInfo);
 		settingService.save(info);
 		send(PREFIX + "Saved the item to the item in your hand");

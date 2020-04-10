@@ -75,7 +75,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				Setting buildContestSetting = settingService.get("buildcontest", "info");
 				Map<String, Object> bcInfo = buildContestSetting.getJson();
 				if (bcInfo != null && bcInfo.get("item") != null && (Boolean.parseBoolean((String) bcInfo.get("active")))) {
-					contents.set(4, 4, ClickableItem.from(JSON.deserializeItem((String) bcInfo.get("item")), e -> {
+					contents.set(4, 4, ClickableItem.from(JSON.deserializeItemStack((String) bcInfo.get("item")), e -> {
 						warp(player, "buildcontest");
 					}));
 				}
