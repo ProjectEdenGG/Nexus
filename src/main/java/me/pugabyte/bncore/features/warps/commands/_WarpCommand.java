@@ -108,7 +108,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	@TabCompleterFor(Warp.class)
 	List<String> tabCompleteWarp(String filter) {
 		return service.getWarpsByType(getWarpType()).stream()
-				.filter(warp -> warp.getName().toLowerCase().startsWith(filter.toLowerCase()))
+				.filter(warp -> filter == null || warp.getName().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(Warp::getName)
 				.collect(Collectors.toList());
 	}
