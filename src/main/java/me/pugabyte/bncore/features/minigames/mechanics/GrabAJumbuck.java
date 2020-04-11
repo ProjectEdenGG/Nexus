@@ -95,7 +95,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		if (block == null)
 			return getRandomSheepSpawnLocation(match);
 		block = Minigames.getWorld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().clone().subtract(0, 1, 0).getBlock();
-		GrabAJumbuckArena arena = (GrabAJumbuckArena) ArenaManager.convert(match.getArena(), GrabAJumbuckArena.class);
+		GrabAJumbuckArena arena = ArenaManager.convert(match.getArena(), GrabAJumbuckArena.class);
 		if (!arena.getSheepSpawnBlocks().contains(block.getType()))
 			return getRandomSheepSpawnLocation(match);
 		return block.getLocation().clone().add(0, 2, 0);

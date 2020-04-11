@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.shops.providers;
 
+import com.google.common.base.Strings;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -8,7 +9,6 @@ import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +45,12 @@ public class BrowseShopsProvider extends _ShopProvider {
 		Pagination page = contents.pagination();
 
 		service.getShops().forEach(shop -> {
-			ItemStack head = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(shop.getOfflinePlayer()).build();
-			items.add(ClickableItem.from(nameItem(head, "&e" + shop.getOfflinePlayer().getName()), e -> new PlayerShopProvider(shop, this).open(player)));
+			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
+					.skullOwner(shop.getOfflinePlayer())
+					.name("&e" + shop.getOfflinePlayer().getName());
+			shop.getDescription().stream().filter(line -> !Strings.isNullOrEmpty(line)).forEach(head::lore);
+
+			items.add(ClickableItem.from(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
 		});
 
 		addPagination(player, contents, items);

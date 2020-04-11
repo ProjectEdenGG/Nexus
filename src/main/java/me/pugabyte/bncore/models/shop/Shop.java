@@ -44,13 +44,18 @@ public class Shop extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private String description;
+	private List<String> description = new ArrayList<>();
 	@Embedded
 	private List<Product> products = new ArrayList<>();
 	@Embedded
 	private List<ItemStack> holding = new ArrayList<>();
 	// TODO holding for money, maybe? would make withdrawing money more complicated
 	// private double profit;
+
+
+	public String[] getDescriptionArray() {
+		return description.isEmpty() ? new String[]{"", "", "", ""} : description.toArray(new String[0]);
+	}
 
 	@Data
 	@NoArgsConstructor

@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.Pagination;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 public class PlayerShopProvider extends _ShopProvider {
 	private Shop shop;
 
-	public PlayerShopProvider(Shop shop, _ShopProvider previousMenu) {
-		this.shop = shop;
+	public PlayerShopProvider(_ShopProvider previousMenu, Shop shop) {
 		this.previousMenu = previousMenu;
+		this.shop = shop;
 	}
 
 	@Override
@@ -47,6 +48,7 @@ public class PlayerShopProvider extends _ShopProvider {
 		shop.getProducts().forEach(product -> {
 			ItemStack item = new ItemBuilder(product.getItem().clone())
 					.lore(product.getExchange().getLore(product))
+					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 					.build();
 
 			items.add(ClickableItem.from(item, e -> {
@@ -61,8 +63,5 @@ public class PlayerShopProvider extends _ShopProvider {
 
 		addPagination(player, contents, items);
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {}
 
 }
