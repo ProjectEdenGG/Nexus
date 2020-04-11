@@ -3,12 +3,14 @@ package me.pugabyte.bncore.features.afk;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.afk.AFKPlayer;
 import me.pugabyte.bncore.models.afk.AFKService;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class AFK {
@@ -64,6 +66,21 @@ public class AFK {
 				if (!get(player).isAfk())
 					++result;
 
+			return result;
+		}
+	}
+
+	public static int getActiveStaff() {
+		if (Bukkit.getOnlinePlayers().size() == 0)
+			return 0;
+		else {
+			int result = 0;
+			Collection<? extends Player> playerList = Bukkit.getOnlinePlayers();
+			for (Player player : playerList) {
+				Nerd nerd = new Nerd(player);
+				if (nerd.getRank().isStaff())
+					++result;
+			}
 			return result;
 		}
 	}
