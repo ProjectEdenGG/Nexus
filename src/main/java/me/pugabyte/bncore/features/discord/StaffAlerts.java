@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.discord;
 
 import lombok.Getter;
 import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.models.afk.events.NotAFKEvent;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.entity.Player;
@@ -29,6 +30,11 @@ public class StaffAlerts implements Listener {
 					tracking.remove(tracked);
 			}
 		});
+	}
+
+	@EventHandler
+	public void notAFK(NotAFKEvent event){
+		readyToStalk(event.getPlayer().getPlayer(), "afk");
 	}
 
 	@EventHandler
