@@ -79,7 +79,8 @@ public class AFK {
 			for (Player player : playerList) {
 				Nerd nerd = new Nerd(player);
 				if (nerd.getRank().isStaff())
-					++result;
+					if (!get(player).isAfk())
+						++result;
 			}
 			return result;
 		}
