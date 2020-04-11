@@ -1,5 +1,9 @@
 package me.pugabyte.bncore.features.listeners;
 
+import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +30,15 @@ public class CommandOverrideListener implements Listener {
 		Consumer<String> send = message -> player.sendMessage(colorize(message));
 
 		switch (args.get(0)) {
+			case "/pex":
+				if (!player.hasPermission("group.seniorstaff")) {
+					event.setCancelled(true);
+					try {
+						new CooldownService().check(player, "pex-lag", Time.MINUTE);
+						Chat.broadcast(player.getName() + " may be trying to lag the server", "Staff");
+					} catch (CooldownException ignore) {}
+				}
+				break;
 			case "/fill":
 				if (!player.hasPermission("minecraft.command.fill")) {
 					event.setCancelled(true);
