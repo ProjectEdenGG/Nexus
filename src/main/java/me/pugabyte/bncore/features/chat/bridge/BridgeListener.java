@@ -72,7 +72,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 			String content = event.getMessage().getContentDisplay().trim();
 			try { content = EmojiParser.parseToAliases(content); } catch (Exception ignore) {}
 			if (content.length() > 0)
-				builder.next(" " + colorize(content.replaceAll("&", "&&f")));
+				builder.urlize(" " + colorize(content.replaceAll("&", "&&f")));
 
 			for (Message.Attachment attachment : event.getMessage().getAttachments())
 				builder.group()
