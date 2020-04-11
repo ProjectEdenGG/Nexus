@@ -34,9 +34,8 @@ public class MainMenuProvider extends _ShopProvider {
 		contents.set(1, 4, ClickableItem.from(nameItem(Material.CHEST, "&6&lBrowse Shops"), e -> ShopMenu.BROWSE_SHOPS.open(player, this)));
 		contents.set(1, 6, ClickableItem.from(nameItem(Material.CHEST, "&6&lBrowse Items"), e -> ShopMenu.BROWSE_ITEMS.open(player, this)));
 
-		contents.set(3, 2, ClickableItem.from(nameItem(Material.COMPASS, "&6&lSearch Items"), e -> ShopMenu.SEARCH_ITEMS.open(player, this)));
-		contents.set(3, 4, ClickableItem.empty(nameItem(Material.HOPPER, "&6&lView Categories", "&eComing soon™")));
-		contents.set(3, 6, ClickableItem.from(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name("&6&lYour Shop").build(), e -> ShopMenu.YOUR_SHOP.open(player, this)));
+		contents.set(3, 3, ClickableItem.from(nameItem(Material.COMPASS, "&6&lSearch Items"), e -> ShopMenu.SEARCH_ITEMS.open(player, this)));
+		contents.set(3, 5, ClickableItem.from(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name("&6&lYour Shop").build(), e -> ShopMenu.YOUR_SHOP.open(player, this)));
 	}
 
 

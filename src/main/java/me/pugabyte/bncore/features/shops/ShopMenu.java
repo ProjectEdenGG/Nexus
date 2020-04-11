@@ -11,7 +11,6 @@ import me.pugabyte.bncore.features.shops.providers.BrowseShopsProvider;
 import me.pugabyte.bncore.features.shops.providers.MainMenuProvider;
 import me.pugabyte.bncore.features.shops.providers.PlayerShopProvider;
 import me.pugabyte.bncore.features.shops.providers.SearchItemsProvider;
-import me.pugabyte.bncore.features.shops.providers.ViewCategoriesProvider;
 import me.pugabyte.bncore.features.shops.providers.YourShopProvider;
 import me.pugabyte.bncore.features.shops.providers._ShopProvider;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -32,7 +31,6 @@ public enum ShopMenu {
 	BROWSE_SHOPS(BrowseShopsProvider.class),
 	BROWSE_ITEMS(BrowseItemsProvider.class),
 	SEARCH_ITEMS(SearchItemsProvider.class),
-	VIEW_CATEGORIES(ViewCategoriesProvider.class),
 	YOUR_SHOP(YourShopProvider.class),
 
 	PLAYER_SHOP(PlayerShopProvider.class);

@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
+	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String alias, @NotNull String[] args) {
 		CommandEvent event = new CommandEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
 		call(event);
 		if (!event.isCancelled())
@@ -37,7 +38,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
+	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String alias, @NotNull String[] args) {
 		TabEvent event = new TabEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
 
 		// Remove any empty args except the last one
