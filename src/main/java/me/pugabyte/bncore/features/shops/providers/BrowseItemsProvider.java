@@ -4,13 +4,12 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
-import me.pugabyte.bncore.features.shops.ShopMenu;
-import me.pugabyte.bncore.features.shops.ShopMenu.Filter;
-import me.pugabyte.bncore.features.shops.ShopMenu.FilterEmptyStock;
-import me.pugabyte.bncore.features.shops.ShopMenu.FilterExchangeType;
-import me.pugabyte.bncore.features.shops.ShopMenu.FilterMarketItems;
-import me.pugabyte.bncore.features.shops.ShopMenu.FilterSearchType;
-import me.pugabyte.bncore.features.shops.ShopMenu.FilterType;
+import me.pugabyte.bncore.features.shops.ShopMenuFunctions.Filter;
+import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterEmptyStock;
+import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterExchangeType;
+import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterMarketItems;
+import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterSearchType;
+import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterType;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -77,7 +76,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 					open(player, page.getPage());
 				}));
 			} else
-				contents.set(0, 2, ClickableItem.from(nameItem(Material.COMPASS, "&6Filter Items"), e -> ShopMenu.SEARCH_ITEMS.open(player, this)));
+				contents.set(0, 2, ClickableItem.from(nameItem(Material.COMPASS, "&6Filter Items"), e -> new SearchItemsProvider(this).open(player)));
 		}
 
 		{

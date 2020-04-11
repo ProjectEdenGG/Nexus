@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.shops;
 
 import lombok.NonNull;
+import me.pugabyte.bncore.features.shops.providers.MainMenuProvider;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -26,7 +27,7 @@ public class JShopCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		ShopMenu.MAIN_MENU.open(player(), null);
+		new MainMenuProvider(null).open(player());
 	}
 
 	@Path("addItems1")
