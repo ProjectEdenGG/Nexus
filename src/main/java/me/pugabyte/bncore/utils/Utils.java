@@ -659,4 +659,26 @@ public class Utils {
 		}
 	}
 
+	public interface IteratableEnum {
+		int ordinal();
+
+		String name();
+
+		default <T extends Enum<?>> T next() {
+			return (T) EnumUtils.next(this.getClass(), ordinal());
+		}
+
+		default <T extends Enum<?>> T previous() {
+			return (T) EnumUtils.previous(this.getClass(), ordinal());
+		}
+
+		default <T extends Enum<?>> T nextWithLoop() {
+			return (T) EnumUtils.nextWithLoop(this.getClass(), ordinal());
+		}
+
+		default <T extends Enum<?>> T previousWithLoop() {
+			return (T) EnumUtils.previousWithLoop(this.getClass(), ordinal());
+		}
+	}
+
 }
