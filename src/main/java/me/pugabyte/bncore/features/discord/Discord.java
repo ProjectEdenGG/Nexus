@@ -82,6 +82,10 @@ public class Discord {
 		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());
 	}
 
+	public static void staffAlerts(String message) {
+		send(message, Channel.STAFF_ALERTS);
+	}
+
 	public static void log(String message) {
 		send(message, Channel.STAFF_BRIDGE, Channel.STAFF_LOG);
 	}
