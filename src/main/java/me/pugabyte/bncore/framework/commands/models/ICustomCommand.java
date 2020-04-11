@@ -157,7 +157,6 @@ public interface ICustomCommand {
 			}
 
 			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !Strings.isNullOrEmpty(value)));
-			BNCore.log("Path arg '" + pathArg + "' required: " + required + " (value = " + value + ")");
 			try {
 				objects[i - 1] = convert(value, contextArg, parameter.getType(), annotation, event, required);
 			} catch (MissingArgumentException ex) {
