@@ -10,8 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
-import java.util.Collections;
-
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class SearchItemsProvider extends _ShopProvider {
@@ -38,9 +36,8 @@ public class SearchItemsProvider extends _ShopProvider {
 				e -> BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").response((_player, response) -> {
 					try {
 						if (response[0].length() > 0)
-							new BrowseItemsProvider(this, Collections.singletonList(FilterSearchType.SEARCH
-									.of(response[0], product -> product.getItem().getType().name().toLowerCase().contains(response[0].toLowerCase()))))
-									.open(player);
+							new BrowseItemsProvider(this, FilterSearchType.SEARCH.of(response[0], product ->
+									product.getItem().getType().name().toLowerCase().contains(response[0].toLowerCase()))).open(player);
 						else
 							open(player);
 					} catch (Exception ex) {
@@ -51,23 +48,23 @@ public class SearchItemsProvider extends _ShopProvider {
 				.open(player)));
 
 		contents.set(1, 3, ClickableItem.from(nameItem(Material.APPLE, "&6Search for food"),
-				e -> new BrowseItemsProvider(this, Collections.singletonList(FilterSearchType.SEARCH
-						.of("Food", product -> product.getItem().getType().isEdible())))
+				e -> new BrowseItemsProvider(this, FilterSearchType.SEARCH
+						.of("Food", product -> product.getItem().getType().isEdible()))
 						.open(player)));
 
 		contents.set(1, 5, ClickableItem.from(nameItem(Material.ENCHANTED_BOOK, "&6Search for enchanted items"),
-				e -> new BrowseItemsProvider(this, Collections.singletonList(FilterSearchType.SEARCH.of("Enchanted items", product -> {
+				e -> new BrowseItemsProvider(this, FilterSearchType.SEARCH.of("Enchanted items", product -> {
 					if (product.getItem().getType().equals(Material.ENCHANTED_BOOK)) {
 						EnchantmentStorageMeta book = (EnchantmentStorageMeta) product.getItem().getItemMeta();
 						return book != null && !book.getStoredEnchants().isEmpty();
 					} else {
 						return !product.getItem().getEnchantments().isEmpty();
 					}
-				}))).open(player)));
+				})).open(player)));
 
 		contents.set(1, 7, ClickableItem.from(nameItem(Material.DIAMOND_SWORD, "&6Search for tools,", "&6weapons and armor"),
-				e -> new BrowseItemsProvider(this, Collections.singletonList(FilterSearchType.SEARCH
-						.of("Tools, weapons and armor", product -> MaterialTag.TOOLS_WEAPONS_ARMOR.isTagged(product.getItem().getType()))))
+				e -> new BrowseItemsProvider(this, FilterSearchType.SEARCH
+						.of("Tools, weapons and armor", product -> MaterialTag.TOOLS_WEAPONS_ARMOR.isTagged(product.getItem().getType())))
 						.open(player)));
 	}
 

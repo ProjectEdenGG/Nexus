@@ -39,7 +39,6 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
-// Dumb structure due to morphia refusing to deserialize interfaces properly
 public class Shop extends PlayerOwnedObject {
 	@Id
 	@NonNull
@@ -83,13 +82,13 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@NotNull
-		@SneakyThrows
 		public Exchange getExchange() {
-			return (Exchange) exchangeType.getClazz().getDeclaredConstructors()[0].newInstance(price);
+			return exchangeType.init(price);
 		}
 
 	}
 
+	// Dumb enum due to morphia refusing to deserialize interfaces properly
 	public enum ExchangeType {
 		ITEM_FOR_ITEM(ItemForItemExchange.class),
 		ITEM_FOR_MONEY(ItemForMoneyExchange.class),
@@ -100,6 +99,11 @@ public class Shop extends PlayerOwnedObject {
 
 		ExchangeType(Class<? extends Exchange> clazz) {
 			this.clazz = clazz;
+		}
+
+		@SneakyThrows
+		public Exchange init(Object price) {
+			return (Exchange) clazz.getDeclaredConstructors()[0].newInstance(price);
 		}
 	}
 

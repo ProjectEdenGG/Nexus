@@ -49,10 +49,10 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 		if (!page.isFirst())
-			contents.set(5, 0, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, Math.max(page.getPage() - 1, 1)),
+			contents.set(5, 0, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, Math.max((page.getPage() + 1) - 1, 1)),
 					"&fPrevious Page"), e -> open(player, page.previous().getPage())));
 		if (!page.isLast())
-			contents.set(5, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, page.getPage() + 1),
+			contents.set(5, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, (page.getPage() + 1) + 1),
 					"&fNext Page"), e -> open(player, page.next().getPage())));
 	}
 
