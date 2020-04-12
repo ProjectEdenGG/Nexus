@@ -117,8 +117,8 @@ public class HandlePurchaseCommand extends CustomCommand {
 
 			OfflinePlayer pexUser = Utils.getPlayer(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
 			packageType.getPermissions().forEach(permssion -> BNCore.getPex().playerAdd(null, pexUser, permssion));
+
 			packageType.getCommands().stream()
-					.map(StringUtils::trimFirst)
 					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))
 					.forEach(Utils::runConsoleCommand);
 
