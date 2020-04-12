@@ -69,7 +69,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		line(4);
 
 		send("&e&lIGN: &3" + nerd.getName());
-		send("&e&lRank: &3" + nerd.getRank());
+		send("&e&lRank: &3" + nerd.getRank().withFormat());
 		if (!isNullOrEmpty(nerd.getPreferredName()))
 			send("&e&lPreferred name: &3" + nerd.getPreferredName());
 		if (nerd.getBirthday() != null)
