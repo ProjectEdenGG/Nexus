@@ -27,7 +27,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 
 @NoArgsConstructor
-@Permission("group.staff")
 public class Easter20Command extends CustomCommand implements Listener {
 
     private static String header = StringUtils.colorize("&1[Easter 2020]");
@@ -46,6 +45,7 @@ public class Easter20Command extends CustomCommand implements Listener {
         return (Sign) targetBlock.getState();
     }
 
+    @Permission("group.staff")
     @Path("set <player>")
     void set(OfflinePlayer player) {
         Sign sign = getTargetSign(player());
@@ -58,7 +58,6 @@ public class Easter20Command extends CustomCommand implements Listener {
     void check(@Arg("self") OfflinePlayer player) {
         send(PREFIX + "&e" + player.getName() + " &3has found &e" + service.get(player, "easter2020").getValue() + "&3 easter eggs");
     }
-
 
     @EventHandler
     public void onSignClick(PlayerInteractEvent event) {
@@ -108,6 +107,5 @@ public class Easter20Command extends CustomCommand implements Listener {
         service.save(found);
 
     }
-
 
 }
