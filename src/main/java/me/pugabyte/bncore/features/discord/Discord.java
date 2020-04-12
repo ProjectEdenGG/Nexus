@@ -121,11 +121,15 @@ public class Discord {
 	}
 
 	public static void addRole(String userId, DiscordId.Role role) {
-		Role roleById = getGuild().getRoleById(role.getId());
-		if (roleById == null)
-			BNCore.log("Role from " + role.name() + " not found");
-		else
-			getGuild().addRoleToMember(userId, roleById).queue();
+		try {
+			Role roleById = getGuild().getRoleById(role.getId());
+			if (roleById == null)
+				BNCore.log("Role from " + role.name() + " not found");
+			else
+				getGuild().addRoleToMember(userId, roleById).queue();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public static void removeRole(String userId, DiscordId.Role role) {

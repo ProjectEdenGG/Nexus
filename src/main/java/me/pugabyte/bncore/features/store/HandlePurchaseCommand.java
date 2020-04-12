@@ -117,10 +117,10 @@ public class HandlePurchaseCommand extends CustomCommand {
 				}
 			}
 
-			PermissionUser pexUser = PermissionsEx.getUser(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
+			PermissionUser pexUser = PermissionsEx.getUser(purchase.getUuid().length() < 32 ? purchase.getPurchaserUuid() : purchase.getUuid());
 			packageType.getPermissions().forEach(pexUser::addPermission);
+
 			packageType.getCommands().stream()
-					.map(StringUtils::trimFirst)
 					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))
 					.forEach(Utils::runConsoleCommand);
 
