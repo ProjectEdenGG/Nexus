@@ -9,7 +9,6 @@ import me.pugabyte.bncore.features.store.annotations.Permissions.Permission;
 import me.pugabyte.bncore.utils.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -364,20 +363,16 @@ public enum Package {
 	}
 
 	public List<String> getPermissions() {
-		if (getField().getAnnotation(Permission.class) != null)
-			return Arrays.stream(getField().getAnnotationsByType(Permission.class))
-					.map(Permission::value)
-					.collect(Collectors.toList());
-		return new ArrayList<>();
+		return Arrays.stream(getField().getAnnotationsByType(Permission.class))
+				.map(Permission::value)
+				.collect(Collectors.toList());
 	}
 
 	public List<String> getCommands() {
-		if (getField().getAnnotation(Command.class) != null)
-			return Arrays.stream(getField().getAnnotationsByType(Command.class))
-					.map(Command::value)
-					.map(StringUtils::trimFirst)
-					.collect(Collectors.toList());
-		return new ArrayList<>();
+		return Arrays.stream(getField().getAnnotationsByType(Command.class))
+				.map(Command::value)
+				.map(StringUtils::trimFirst)
+				.collect(Collectors.toList());
 	}
 
 	public int getExpirationDays() {
@@ -387,12 +382,10 @@ public enum Package {
 	}
 
 	public List<String> getExpirationCommands() {
-		if (getField().getAnnotation(ExpirationCommand.class) != null)
-			return Arrays.stream(getField().getAnnotationsByType(ExpirationCommand.class))
-					.map(ExpirationCommand::value)
-					.map(StringUtils::trimFirst)
-					.collect(Collectors.toList());
-		return new ArrayList<>();
+		return Arrays.stream(getField().getAnnotationsByType(ExpirationCommand.class))
+				.map(ExpirationCommand::value)
+				.map(StringUtils::trimFirst)
+				.collect(Collectors.toList());
 	}
 
 	public static Package getPackage(String id) {
