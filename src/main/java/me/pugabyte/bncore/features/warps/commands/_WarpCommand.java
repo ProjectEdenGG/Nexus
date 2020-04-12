@@ -13,6 +13,7 @@ import me.pugabyte.bncore.utils.JsonBuilder;
 import org.bukkit.Location;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class _WarpCommand extends CustomCommand {
@@ -73,18 +74,18 @@ public abstract class _WarpCommand extends CustomCommand {
 
 	@Path("tp nearest")
 	public void teleportNearest() {
-		teleport(getNearestWarp(player().getLocation()));
+		getNearestWarp(player().getLocation()).ifPresent(this::teleport);
 	}
 
 	@Path("nearest")
 	public void nearest() {
-		Warp warp = getNearestWarp(player().getLocation());
-		if (warp == null)
+		Optional<Warp> warp = getNearestWarp(player().getLocation());
+		if (!warp.isPresent())
 			error("No nearest warp found");
-		send(PREFIX + "Nearest warp is &e" + warp.getName() + " &3(&e" + (int) warp.getLocation().distance(player().getLocation()) + " &3blocks away)");
+		send(PREFIX + "Nearest warp is &e" + warp.get().getName() + " &3(&e" + (int) warp.get().getLocation().distance(player().getLocation()) + " &3blocks away)");
 	}
 
-	public Warp getNearestWarp(Location location) {
+	public Optional<Warp> getNearestWarp(Location location) {
 		Warp nearest = null;
 		double distance = Double.MAX_VALUE;
 		for (Warp warp : new WarpService().getWarpsByType(getWarpType())) {
@@ -95,7 +96,7 @@ public abstract class _WarpCommand extends CustomCommand {
 				nearest = warp;
 			}
 		}
-		return nearest;
+		return Optional.ofNullable(nearest);
 	}
 
 	@ConverterFor(Warp.class)

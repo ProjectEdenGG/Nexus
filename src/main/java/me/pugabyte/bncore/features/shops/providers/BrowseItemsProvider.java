@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
@@ -28,6 +29,10 @@ public class BrowseItemsProvider extends _ShopProvider {
 
 	public BrowseItemsProvider(_ShopProvider previousMenu) {
 		this(previousMenu, new ArrayList<>());
+	}
+
+	public BrowseItemsProvider(_ShopProvider previousMenu, Filter filter) {
+		this(previousMenu, Collections.singletonList(filter));
 	}
 
 	public BrowseItemsProvider(_ShopProvider previousMenu, List<Filter> filters) {

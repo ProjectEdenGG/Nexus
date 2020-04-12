@@ -41,6 +41,15 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag TOOLS_WEAPONS_ARMOR = new MaterialTag(TOOLS, WEAPONS, ARMOR);
 
+	public static final MaterialTag UNOBTAINABLE = new MaterialTag(Material.WATER, Material.LAVA, Material.AIR,
+			Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.JIGSAW, Material.BARRIER, Material.BEDROCK,
+			Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK, Material.REPEATING_COMMAND_BLOCK, Material.COMMAND_BLOCK_MINECART,
+			Material.END_PORTAL, Material.END_PORTAL_FRAME, Material.NETHER_PORTAL, Material.KNOWLEDGE_BOOK,
+			Material.DEBUG_STICK, Material.SPAWNER, Material.CHORUS_PLANT);
+
+	public static final MaterialTag REQUIRES_META = new MaterialTag(Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION,
+			Material.TIPPED_ARROW, Material.WRITTEN_BOOK, Material.ENCHANTED_BOOK);
+
 	public static final MaterialTag CORAL_WALL_FANS = new MaterialTag("_WALL_FAN", MatchMode.SUFFIX);
 
 	public static final MaterialTag PLANTS = new MaterialTag(Material.GRASS, Material.FERN, Material.DEAD_BUSH,

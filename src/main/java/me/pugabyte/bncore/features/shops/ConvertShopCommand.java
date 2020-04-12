@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.shops;
 
 import com.earth2me.essentials.Essentials;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,7 +46,8 @@ public class ConvertShopCommand extends CustomCommand {
 	@Data
 	@Builder
 	@NoArgsConstructor
-	public class SignData {
+	@AllArgsConstructor
+	public static class SignData {
 		private OfflinePlayer player;
 		private ItemStack item;
 		private double price;
@@ -121,7 +123,7 @@ public class ConvertShopCommand extends CustomCommand {
 
 		if (ChatColor.stripColor(lines[0]).equals("[Ench Trade]")) {
 			data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(" \\| ")[0]));
-			data.setItem(new ItemBuilder(Material.ENCHANTED_BOOK).amount(1)
+			data.setItem(new ItemBuilder(Material.ENCHANTED_BOOK)
 					.enchant(getEnchantFromShort(lines[2].split(" ")[0]), Integer.parseInt(lines[2].split(" ")[1])).build());
 			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
 			data.setPlayer(Utils.getPlayer(ChatColor.stripColor(lines[3])));
