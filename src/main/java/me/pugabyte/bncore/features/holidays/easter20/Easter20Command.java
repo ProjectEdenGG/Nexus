@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -38,7 +39,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 	}
 
 	private Sign getTargetSign(Player player) {
-		Block targetBlock = player.getTargetBlock(null, 10);
+		Block targetBlock = player.getTargetBlockExact(10);
 		Material material = targetBlock.getType();
 		if (Utils.isNullOrAir(material) || !Utils.isSign(material))
 			error("You must be looking at a sign!");
@@ -62,7 +63,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 	@EventHandler
 	public void onSignClick(PlayerInteractEvent event) {
 		if (!Arrays.asList(Action.LEFT_CLICK_BLOCK, Action.RIGHT_CLICK_BLOCK).contains(event.getAction())) return;
-		if (!Arrays.asList(Material.SIGN_POST, Material.WALL_SIGN).contains(event.getClickedBlock().getType())) return;
+		if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
