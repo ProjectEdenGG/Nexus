@@ -215,9 +215,9 @@ public class BNCore extends JavaPlugin {
 	@Getter
 	private static Economy econ = null;
 	@Getter
-	private static Permission pex = null;
+	private static Permission perms = null;
 	@Getter
-	private static LuckPerms perms = null;
+	private static LuckPerms luckPerms = null;
 
 	private void enableFeatures() {
 		// Load this first
@@ -247,10 +247,10 @@ public class BNCore extends JavaPlugin {
 		signMenuFactory = new SignMenuFactory(this);
 		cron.start();
 		econ = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
-		pex = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+		perms = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 		if (lpProvider != null)
-			perms = lpProvider.getProvider();
+			luckPerms = lpProvider.getProvider();
 	}
 
 }

@@ -62,7 +62,7 @@ public class HomeOwner extends PlayerOwnedObject {
 	@ToString.Include
 	public int getMaxHomes() {
 		for (int i = maxHomes; i > 0; i--)
-			if (BNCore.getPex().playerHas(null, getOfflinePlayer(), "homes.limit." + i))
+			if (BNCore.getPerms().playerHas(null, getOfflinePlayer(), "homes.limit." + i))
 				return i;
 
 		return 0;

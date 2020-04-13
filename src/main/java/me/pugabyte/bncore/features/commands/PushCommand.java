@@ -29,12 +29,10 @@ public class PushCommand extends CustomCommand {
 	@SneakyThrows
 	void push(boolean enable) {
 		if (enable) {
-			BNCore.getPex().playerAdd(player(), permission);
-			BNCore.getPex().playerRemove(player(), "-" + permission);
+			runCommandAsConsole("lp user " + player().getName() + " permission set " + permission + " true");
 			send("&ePushing will be turned &aon&e shortly.");
 		} else {
-			BNCore.getPex().playerRemove(player(), permission);
-			BNCore.getPex().playerAdd(player(), "-" + permission);
+			runCommandAsConsole("lp user " + player().getName() + " permission set " + permission + " false");
 			send("&ePushing will be turned &coff&e shortly.");
 		}
 	}

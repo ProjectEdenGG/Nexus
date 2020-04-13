@@ -60,7 +60,7 @@ public class Chatter extends PlayerOwnedObject {
 		if (getOfflinePlayer().isOnline())
 			return getOfflinePlayer().getPlayer().hasPermission(channel.getPermission());
 		else
-			return BNCore.getPex().playerHas(null, getOfflinePlayer(), channel.getPermission());
+			return BNCore.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
 	}
 
 	public boolean hasJoined(PublicChannel channel) {

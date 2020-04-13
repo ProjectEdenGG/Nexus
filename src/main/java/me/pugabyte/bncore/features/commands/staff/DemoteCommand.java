@@ -21,7 +21,7 @@ public class DemoteCommand extends CustomCommand {
 		if (rank == previous)
 			error("User is already min rank");
 
-		runCommandAsConsole("pex user " + nerd.getName() + " group set " + previous);
+		runCommandAsConsole("lp user " + nerd.getName() + " parent set " + previous.name());
 		send(PREFIX + "Demoted " + nerd.getName() + " to " + previous.withColor());
 	}
 

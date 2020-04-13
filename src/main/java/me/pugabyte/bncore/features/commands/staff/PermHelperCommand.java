@@ -52,7 +52,7 @@ public class PermHelperCommand extends CustomCommand {
 
 		newLimit = getNewLimit(player, permission, world) + adding;
 
-		BNCore.getPex().playerAdd(null, player, permission + newLimit);
+		BNCore.getPerms().playerAdd(null, player, permission + newLimit);
 		send(PREFIX + "New " + which + " limit for " + player.getName() + ": " + newLimit);
 	}
 
@@ -60,8 +60,8 @@ public class PermHelperCommand extends CustomCommand {
 		List<Integer> ints = new ArrayList<>();
 
 		for (int i = 1; i <= 100; i++)
-			if (BNCore.getPex().playerHas(world, player, permission + i)) {
-				BNCore.getPex().playerRemove(null, player, permission + i);
+			if (BNCore.getPerms().playerHas(world, player, permission + i)) {
+				BNCore.getPerms().playerRemove(null, player, permission + i);
 				ints.add(i);
 			}
 

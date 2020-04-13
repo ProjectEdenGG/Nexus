@@ -95,7 +95,7 @@ public class Nerd {
 		if (!isNullOrEmpty(prefix))
 			prefix = "&8&l[&f" + prefix + "&8&l]";
 
-		if (BNCore.getPex().playerHas(null, getOfflinePlayer(), "donated") && checkmarkSetting != null && checkmarkSetting.getBoolean())
+		if (BNCore.getPerms().playerHas(null, getOfflinePlayer(), "donated") && checkmarkSetting != null && checkmarkSetting.getBoolean())
 			prefix = CHECKMARK + " " + prefix;
 		return colorize((prefix.trim() + " " + (rank.getFormat() + getName()).trim())).trim();
 	}
