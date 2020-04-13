@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -49,11 +50,11 @@ public class StatusCommand extends CustomCommand {
 	}
 
 	public void addUserPerm() {
-		runCommandAsConsole("pex user " + player().getName() + " add " + userPerm);
+		BNCore.getPerms().playerAdd(player(), userPerm);
 	}
 
 	public void removeUserPerm() {
-		runCommandAsConsole("pex user " + player().getName() + " remove " + userPerm);
+		BNCore.getPerms().playerRemove(player(), userPerm);
 	}
 
 }

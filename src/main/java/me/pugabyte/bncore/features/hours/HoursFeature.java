@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
 public class HoursFeature {
 	final int INTERVAL = 5;
@@ -48,8 +49,7 @@ public class HoursFeature {
 					if (Rank.getHighestRank(player) == Rank.GUEST) {
 						if (hours.getTotal() > (60 * 60 * 24)) {
 							Tasks.sync(() -> {
-								BNCore.getPex().playerRemoveGroup(player, "Guest");
-								BNCore.getPex().playerAddGroup(player, "Member");
+								runConsoleCommand("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
 								Koda.say("Congrats on Member rank, " + player.getName() + "!");
 								Jingle.RANKUP.play(player);
 								player.sendMessage("");

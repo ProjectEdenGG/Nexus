@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -132,7 +133,7 @@ public class HorsePickerCommand extends CustomCommand {
 			for (HorseMarking marking : HorseMarking.values()) {
 				contents.set(1, column++, ClickableItem.from(nameItem(marking.getItem(), marking.getName()), e -> {
 					spawnHorse(player, color, Horse.Style.valueOf(marking.name()));
-					runCommandAsConsole("pex user " + player.getName() + " remove horsepicker.pick");
+					BNCore.getPerms().playerRemove(player, "horsepicker.pick");
 				}));
 			}
 		}
