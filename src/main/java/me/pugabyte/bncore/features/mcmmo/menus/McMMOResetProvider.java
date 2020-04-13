@@ -96,7 +96,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 					player.sendMessage(StringUtils.colorize("&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!"));
 				}
 		},
-		WOODCUTTING(4, 2, Material.OAK_WOOD,
+		WOODCUTTING(4, 2, Material.OAK_LOG,
 				"For every log or plank broken this shiny new axe will give you a short burst of haste") {
 				@Override
 				void onClick(Player player) {

@@ -36,6 +36,7 @@ import me.pugabyte.bncore.models.geoip.GeoIPService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
+import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
@@ -44,6 +45,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedWriter;
@@ -214,7 +216,8 @@ public class BNCore extends JavaPlugin {
 	private static Economy econ = null;
 	@Getter
 	private static Permission pex = null;
-
+	@Getter
+	private static LuckPerms perms = null;
 
 	private void enableFeatures() {
 		// Load this first
@@ -245,6 +248,9 @@ public class BNCore extends JavaPlugin {
 		cron.start();
 		econ = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
 		pex = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+		if (lpProvider != null)
+			perms = lpProvider.getProvider();
 	}
 
 }

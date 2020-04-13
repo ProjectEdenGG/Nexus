@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
-import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
@@ -16,8 +15,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 public class ItemSearchProvider extends _ShopProvider {
 	Function<Material, Boolean> filter;
 	Consumer<ItemClickData> onChoose;
@@ -30,12 +27,7 @@ public class ItemSearchProvider extends _ShopProvider {
 
 	@Override
 	public void open(Player viewer, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.title(colorize("&0Search for item"))
-				.size(6, 9)
-				.build()
-				.open(viewer, page);
+		open(viewer, page, this, "&0Search for item");
 	}
 
 	@Override

@@ -378,7 +378,7 @@ public enum VPSMenu {
 								.price(10));
 						put(11, VPSSlot.builder()
 								.name("1 grass")
-								.displayAndGive(Material.GRASS, 1)
+								.displayAndGive(Material.GRASS_BLOCK, 1)
 								.price(5));
 						put(12, VPSSlot.builder()
 								.name("64 cobble")

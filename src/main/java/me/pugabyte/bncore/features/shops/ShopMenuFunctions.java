@@ -51,8 +51,8 @@ public class ShopMenuFunctions {
 
 	public enum FilterExchangeType implements FilterType {
 		BOTH,
-		BUYING(product -> product.getExchangeType() == ExchangeType.ITEM_FOR_ITEM || product.getExchangeType() == ExchangeType.ITEM_FOR_MONEY),
-		SELLING(product -> product.getExchangeType() == ExchangeType.MONEY_FOR_ITEM);
+		BUYING(product -> product.getExchangeType() == ExchangeType.TRADE || product.getExchangeType() == ExchangeType.SELL),
+		SELLING(product -> product.getExchangeType() == ExchangeType.BUY);
 
 		@Getter
 		private Function<Product, Boolean> filter;

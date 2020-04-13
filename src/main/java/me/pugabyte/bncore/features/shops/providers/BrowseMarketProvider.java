@@ -1,10 +1,7 @@
 package me.pugabyte.bncore.features.shops.providers;
 
-import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import org.bukkit.entity.Player;
-
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class BrowseMarketProvider extends _ShopProvider {
 
@@ -14,12 +11,7 @@ public class BrowseMarketProvider extends _ShopProvider {
 
 	@Override
 	public void open(Player viewer, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.title(colorize("&0Browse Market"))
-				.size(6, 9)
-				.build()
-				.open(viewer, page);
+		open(viewer, page, this, "&0Browse Market");
 	}
 
 	@Override
