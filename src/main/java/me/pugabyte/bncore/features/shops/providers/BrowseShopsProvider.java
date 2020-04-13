@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.shops.providers;
 
 import com.google.common.base.Strings;
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import me.pugabyte.bncore.models.shop.Shop;
@@ -13,8 +12,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 public class BrowseShopsProvider extends _ShopProvider {
 
 	public BrowseShopsProvider(_ShopProvider previousMenu) {
@@ -23,12 +20,7 @@ public class BrowseShopsProvider extends _ShopProvider {
 
 	@Override
 	public void open(Player viewer, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.title(colorize("&0Browse Shops"))
-				.size(6, 9)
-				.build()
-				.open(viewer, page);
+		open(viewer, page, this, "&0Browse Shops");
 	}
 
 	@Override

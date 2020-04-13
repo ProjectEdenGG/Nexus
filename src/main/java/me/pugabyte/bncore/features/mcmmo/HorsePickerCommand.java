@@ -37,7 +37,7 @@ public class HorsePickerCommand extends CustomCommand {
 		WHITE(new ItemStack(Material.WHITE_WOOL), "&f"),
 		GRAY(new ItemStack(Material.LIGHT_GRAY_WOOL), "&7", "Dapple Gray"),
 		BLACK(new ItemStack(Material.BLACK_TERRACOTTA), "&8"),
-		CREAMY(new ItemStack(Material.OAK_WOOD), "&e"),
+		CREAMY(new ItemStack(Material.OAK_LOG), "&e"),
 		CHESTNUT(new ItemStack(Material.RED_TERRACOTTA), "&c"),
 		BROWN(new ItemStack(Material.BROWN_WOOL), "&6"),
 		DARK_BROWN(new ItemStack(Material.BROWN_TERRACOTTA), "&6");

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import me.pugabyte.bncore.features.shops.ShopMenuFunctions.Filter;
@@ -51,12 +50,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 
 	@Override
 	public void open(Player viewer, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.title(colorize("&0Browse Items"))
-				.size(6, 9)
-				.build()
-				.open(viewer, page);
+		open(viewer, page, this, "&0Browse Items");
 	}
 
 	@Override
@@ -90,9 +84,9 @@ public class BrowseItemsProvider extends _ShopProvider {
 			FilterExchangeType next = filter.nextWithLoop();
 
 			ItemBuilder item = new ItemBuilder(Material.HOPPER).name("&6Filter by:")
-					.lore("&7" + camelCase(filter.previousWithLoop().name()))
-					.lore("&e" + camelCase(filter.name()))
-					.lore("&7" + camelCase(next.name()));
+					.lore("&7⬇ " + camelCase(filter.previousWithLoop().name()))
+					.lore("&e⬇ " + camelCase(filter.name()))
+					.lore("&7⬇ " + camelCase(next.name()));
 			contents.set(5, 3, ClickableItem.from(item.build(), e -> {
 				formatFilter(exchangeFilter, next);
 				open(player, page.getPage());
@@ -105,8 +99,8 @@ public class BrowseItemsProvider extends _ShopProvider {
 			FilterMarketItems next = filter.nextWithLoop();
 
 			ItemBuilder item = new ItemBuilder(Material.OAK_SIGN).name("&6Market Items:")
-					.lore("&e" + camelCase(filter.name()))
-					.lore("&7" + camelCase(next.name()));
+					.lore("&e⬇ " + camelCase(filter.name()))
+					.lore("&7⬇ " + camelCase(next.name()));
 			contents.set(5, 4, ClickableItem.from(item.build(), e -> {
 				formatFilter(marketFilter, next);
 				open(player, page.getPage());
@@ -119,8 +113,8 @@ public class BrowseItemsProvider extends _ShopProvider {
 			FilterEmptyStock next = filter.nextWithLoop();
 
 			ItemBuilder item = new ItemBuilder(Material.BUCKET).name("&6Empty Stock:")
-					.lore("&e" + camelCase(filter.name()))
-					.lore("&7" + camelCase(next.name()));
+					.lore("&e⬇ " + camelCase(filter.name()))
+					.lore("&7⬇ " + camelCase(next.name()));
 			contents.set(5, 5, ClickableItem.from(item.build(), e -> {
 				formatFilter(stockFilter, next);
 				open(player, page.getPage());

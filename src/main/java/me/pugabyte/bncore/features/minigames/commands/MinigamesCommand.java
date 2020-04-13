@@ -41,12 +41,12 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
-@Aliases({"jmgm", "newmgm", "newminigames"})
+@Aliases({"mgm", "mg"})
 @Permission("minigames")
-public class JMinigamesCommand extends CustomCommand {
-	Minigamer minigamer;
+public class MinigamesCommand extends CustomCommand {
+	private Minigamer minigamer;
 
-	public JMinigamesCommand(CommandEvent event) {
+	public MinigamesCommand(CommandEvent event) {
 		super(event);
 		PREFIX = Minigames.PREFIX;
 		if (sender() instanceof Player)
@@ -54,6 +54,12 @@ public class JMinigamesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Permission("use")
+	void warp() {
+		runCommand("warp minigames");
+	}
+
+	@Path("help")
 	@Permission("use")
 	void help() {
 		send(PREFIX + "Help menu");

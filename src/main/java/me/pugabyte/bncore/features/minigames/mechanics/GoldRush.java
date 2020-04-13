@@ -97,7 +97,7 @@ public final class GoldRush extends TeamlessMechanic {
 			put(BlockTypes.GOLD_ORE, 40.0);
 			put(BlockTypes.DIRT, 20.0);
 			put(BlockTypes.IRON_ORE, 20.0);
-			put(BlockTypes.OAK_WOOD, 10.0);
+			put(BlockTypes.OAK_LOG, 10.0);
 		}};
 
 		BlockVector3 p1 = worldEditUtils.toBlockVector3(locations.get(0).clone().subtract(0, 2, 0));
