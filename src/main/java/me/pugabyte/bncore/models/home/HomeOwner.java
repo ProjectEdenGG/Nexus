@@ -39,6 +39,7 @@ public class HomeOwner extends PlayerOwnedObject {
 	private List<Home> homes = new ArrayList<>();
 	private Set<UUID> fullAccessList = new HashSet<>();
 	private boolean autoLock;
+	private boolean usedDeathHome;
 
 	public List<String> getNames() {
 		return getNames(null);
