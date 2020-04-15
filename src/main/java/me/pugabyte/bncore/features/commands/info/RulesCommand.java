@@ -137,7 +137,7 @@ public class RulesCommand extends CustomCommand {
 		send("&e4. &3No AFK farms that level up mcMMO or anti-AFK mechanisms");
 		send("&e5. &3Be considerate of other and future players when exploring the worlds/raiding generated structures");
 		send("&e6. &3Give nearby players a reasonable amount of space. When in doubt, ask the build owner.");
-		send("&e7. &3No mods/hacks, except OptiFine and Shaders");
+		send(json("&e7. &3No mods/hacks, except OptiFine and Shaders. &eHover for more info").hover("&3Please ask about other mods\n&3you may wish to use."));
 		send("&e8. &3No random 1x1 towers/holes, block spam or obscene structures/skins");
 		send("&e9. &3Bear Nation has the right to use & modify all builds produced on the server");
 		line();
