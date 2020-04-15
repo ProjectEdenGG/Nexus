@@ -6,7 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerd.Rank;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 @Permission("group.seniorstaff")
 public class SetRankCommand extends CustomCommand {
@@ -16,8 +16,8 @@ public class SetRankCommand extends CustomCommand {
 	}
 
 	@Path("<player> <rank>")
-	void set(Player player, Rank rank) {
-		runCommandAsConsole("pex user " + player.getName() + " group set " + rank);
+	void set(OfflinePlayer player, Rank rank) {
+		runCommandAsConsole("lp user " + player.getName() + " parent set " + rank.name());
 		send(PREFIX + "Set " + player.getName() + "'s rank to " + rank.withColor());
 	}
 

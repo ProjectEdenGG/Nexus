@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import me.pugabyte.bncore.models.shop.Shop;
@@ -25,12 +24,7 @@ public class PlayerShopProvider extends _ShopProvider {
 
 	@Override
 	public void open(Player viewer, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.title(colorize("&0" + shop.getOfflinePlayer().getName() + "'s shop"))
-				.size(6, 9)
-				.build()
-				.open(viewer, page);
+		open(viewer, page, this, "&0" + shop.getOfflinePlayer().getName() + "'s shop");
 	}
 
 	@Override

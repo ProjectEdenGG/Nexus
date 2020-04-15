@@ -92,11 +92,11 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"One horse, your favorite color, max stats. Simple, No?") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("pex user " + player.getName() + " add horsepicker.pick");
+					BNCore.getPerms().playerAdd(player, "horsepicker.pick");
 					player.sendMessage(StringUtils.colorize("&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!"));
 				}
 		},
-		WOODCUTTING(4, 2, Material.OAK_WOOD,
+		WOODCUTTING(4, 2, Material.OAK_LOG,
 				"For every log or plank broken this shiny new axe will give you a short burst of haste") {
 				@Override
 				void onClick(Player player) {
@@ -118,7 +118,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				@Override
 				void onClick(Player player) {
 					Utils.runConsoleCommand("ce give " + player.getName() + " hopper potionlauncher");
-					Utils.runConsoleCommand("pex user " + player.getName() + " add combine.use");
+					BNCore.getPerms().playerAdd(player, "combine.use");
 					player.sendMessage(StringUtils.colorize("&eTo shoot potions, first run &c/combine &eto combine all similar potions in your inventory into one stack, " +
 							"then place the stack in the slot to the right of the Potion Launcher. If you place the hopper, hold it and do &c/fixpotionlauncher"));
 				}

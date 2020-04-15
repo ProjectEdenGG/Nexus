@@ -18,6 +18,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConve
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
+import me.pugabyte.bncore.utils.Utils.IteratableEnum;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -50,7 +51,6 @@ public class Shop extends PlayerOwnedObject {
 	private List<ItemStack> holding = new ArrayList<>();
 	// TODO holding for money, maybe? would make withdrawing money more complicated
 	// private double profit;
-
 
 	public String[] getDescriptionArray() {
 		return description.isEmpty() ? new String[]{"", "", "", ""} : description.toArray(new String[0]);
@@ -85,14 +85,13 @@ public class Shop extends PlayerOwnedObject {
 		public Exchange getExchange() {
 			return exchangeType.init(price);
 		}
-
 	}
 
 	// Dumb enum due to morphia refusing to deserialize interfaces properly
-	public enum ExchangeType {
-		ITEM_FOR_ITEM(ItemForItemExchange.class),
-		ITEM_FOR_MONEY(ItemForMoneyExchange.class),
-		MONEY_FOR_ITEM(MoneyForItemExchange.class);
+	public enum ExchangeType implements IteratableEnum {
+		SELL(SellExchange.class),
+		TRADE(TradeExchange.class),
+		BUY(BuyExchange.class);
 
 		@Getter
 		private Class<? extends Exchange> clazz;
@@ -112,6 +111,7 @@ public class Shop extends PlayerOwnedObject {
 		void process(Product product, Player customer);
 
 		List<String> getLore(Product product);
+		List<String> getOwnLore(Product product);
 
 	}
 
@@ -119,7 +119,7 @@ public class Shop extends PlayerOwnedObject {
 	@Builder
 	@AllArgsConstructor
 	// Customer buying an item from the shop owner for money
-	public static class ItemForMoneyExchange implements Exchange {
+	public static class SellExchange implements Exchange {
 		@NonNull
 		private Double price;
 
@@ -150,13 +150,24 @@ public class Shop extends PlayerOwnedObject {
 					"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
 			);
 		}
+
+		@Override
+		public List<String> getOwnLore(Product product) {
+			int stock = (int) product.getStock();
+			return Arrays.asList(
+					"&7Selling &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price),
+					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
+					"",
+					"&7Click to edit"
+			);
+		}
 	}
 
 	@Data
 	@Builder
 	@AllArgsConstructor
 	// Customer buying an item from the shop owner for other items
-	public static class ItemForItemExchange implements Exchange {
+	public static class TradeExchange implements Exchange {
 		@NonNull
 		private ItemStack price;
 
@@ -189,13 +200,24 @@ public class Shop extends PlayerOwnedObject {
 					"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
 			);
 		}
+
+		@Override
+		public List<String> getOwnLore(Product product) {
+			int stock = (int) product.getStock();
+			return Arrays.asList(
+					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + pretty(price),
+					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
+					"",
+					"&7Click to edit"
+			);
+		}
 	}
 
 	@Data
 	@Builder
 	@AllArgsConstructor
 	// Customer selling an item to the shop owner for money
-	public static class MoneyForItemExchange implements Exchange {
+	public static class BuyExchange implements Exchange {
 		@NonNull
 		private Double price;
 
@@ -229,6 +251,16 @@ public class Shop extends PlayerOwnedObject {
 					"&7Sell &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price),
 					"&7Stock: &e$" + pretty(product.getStock()),
 					"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
+			);
+		}
+
+		@Override
+		public List<String> getOwnLore(Product product) {
+			return Arrays.asList(
+					"&7Buying &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price),
+					"&7Stock: &e$" + pretty(product.getStock()),
+					"",
+					"&7Click to edit"
 			);
 		}
 	}

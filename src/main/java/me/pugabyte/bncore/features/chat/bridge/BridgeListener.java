@@ -80,15 +80,18 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 						.url(attachment.getUrl());
 
 			DiscordChatEvent discordChatEvent = new DiscordChatEvent(event.getMember(), channel.get(), content, channel.get().getPermission());
-			Utils.callEvent(discordChatEvent);
-			if (discordChatEvent.isCancelled()) {
-				event.getMessage().delete().queue();
-				return;
-			}
 
-			for (Player player : Bukkit.getOnlinePlayers())
-				if (player.hasPermission(channel.get().getPermission()))
-					builder.send(player);
+			Tasks.sync(() -> {
+				Utils.callEvent(discordChatEvent);
+				if (discordChatEvent.isCancelled()) {
+					Tasks.async(() -> event.getMessage().delete().queue());
+					return;
+				}
+
+				for (Player player : Bukkit.getOnlinePlayers())
+					if (player.hasPermission(channel.get().getPermission()))
+						builder.send(player);
+			});
 		});
 	}
 

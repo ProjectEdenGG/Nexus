@@ -25,17 +25,17 @@ public class Warps {
 		SOUTH(3, 3, new ItemStack(Material.GRAY_WOOL)),
 		WEST(2, 2, new ItemStack(Material.SPRUCE_LOG)),
 		NORTHEAST(4, 1, Material.COBBLESTONE_STAIRS),
-		SOUTHEAST(4, 3, new ItemStack(Material.BIRCH_WOOD)),
+		SOUTHEAST(4, 3, new ItemStack(Material.BIRCH_PLANKS)),
 		SOUTHWEST(2, 3, Material.HAY_BLOCK),
 		NORTHWEST(2, 1, new ItemStack(Material.PODZOL)),
-		NORTH_2(3, 0, Material.OAK_WOOD),
+		NORTH_2(3, 0, Material.OAK_PLANKS),
 		EAST_2(5, 2, Material.OAK_LOG),
 		SOUTH_2(3, 4, Material.STONE_BRICKS),
-		WEST_2(1, 2, new ItemStack(Material.ACACIA_WOOD)),
+		WEST_2(1, 2, new ItemStack(Material.ACACIA_PLANKS)),
 		NORTHEAST_2(5, 0, new ItemStack(Material.GRAY_TERRACOTTA)),
 		SOUTHEAST_2(5, 4, Material.SNOW_BLOCK),
 		SOUTHWEST_2(1, 4, Material.SAND),
-		NORTHWEST_2(1, 0, new ItemStack(Material.JUNGLE_WOOD)),
+		NORTHWEST_2(1, 0, new ItemStack(Material.JUNGLE_PLANKS)),
 		NETHER(0, 4, Material.NETHERRACK);
 
 		private int row;

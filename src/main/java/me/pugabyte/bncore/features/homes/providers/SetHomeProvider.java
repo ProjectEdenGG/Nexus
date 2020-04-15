@@ -59,7 +59,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 			else if (player.getWorld().getEnvironment().equals(Environment.THE_END))
 				put("end", new ItemStack(Material.END_STONE_BRICKS));
 			else
-				put("explore", new ItemStack(Material.GRASS));
+				put("explore", new ItemStack(Material.GRASS_BLOCK));
 		}};
 
 		AtomicInteger column = new AtomicInteger(1);

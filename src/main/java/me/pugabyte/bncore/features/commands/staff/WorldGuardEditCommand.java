@@ -37,19 +37,19 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	private void on() {
-		BNCore.getPex().playerAdd(player(), permission);
+		BNCore.getPerms().playerAdd(player(), permission);
 		send("&eWorldGuard editing &aenabled");
 	}
 
 	private void off() {
-		BNCore.getPex().playerRemove(player(), permission);
+		BNCore.getPerms().playerRemove(player(), permission);
 		send("&eWorldGuard editing &cdisabled");
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (event.getPlayer().hasPermission(permission))
-			BNCore.getPex().playerRemove(event.getPlayer(), permission);
+			BNCore.getPerms().playerRemove(event.getPlayer(), permission);
 	}
 
 }
