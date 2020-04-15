@@ -283,10 +283,6 @@ public class Utils {
 		}
 	}
 
-	public static void updatePrefix(Player player, String prefix) {
-		runConsoleCommand("pex user " + player.getName() + " prefix \"" + prefix + "\"");
-	}
-
 	public static void runCommand(CommandSender sender, String command) {
 //		if (sender instanceof Player)
 //			Utils.callEvent(new PlayerCommandPreprocessEvent((Player) sender, "/" + command));

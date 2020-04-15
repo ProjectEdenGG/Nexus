@@ -1,7 +1,7 @@
 name: BNCore
 main: me.pugabyte.bncore.BNCore
 version: ${project.version}
-softdepend: [PermissionsEx, NBTAPI, SmartInvs, Multiverse-Core, FeatherBoard, WorldGuard, WorldGuardRegionAPI, mcMMO, LiteBans, helper, Citizens, ProtocolLib, Vault, Votifier, PlaceholderAPI]
+softdepend: [PermissionsEx, NBTAPI, SmartInvs, Multiverse-Core, FeatherBoard, WorldGuard, WorldGuardRegionAPI, mcMMO, LiteBans, helper, Citizens, ProtocolLib, Vault, Votifier, PlaceholderAPI, PathfinderAPI]
 api-version: 1.15
 commands:
   restoreinventory:

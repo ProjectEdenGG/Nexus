@@ -39,6 +39,7 @@ public class HomeOwner extends PlayerOwnedObject {
 	private List<Home> homes = new ArrayList<>();
 	private Set<UUID> fullAccessList = new HashSet<>();
 	private boolean autoLock;
+	private boolean usedDeathHome;
 
 	public List<String> getNames() {
 		return getNames(null);
@@ -62,7 +63,7 @@ public class HomeOwner extends PlayerOwnedObject {
 	@ToString.Include
 	public int getMaxHomes() {
 		for (int i = maxHomes; i > 0; i--)
-			if (BNCore.getPex().playerHas(null, getOfflinePlayer(), "homes.limit." + i))
+			if (BNCore.getPerms().playerHas(null, getOfflinePlayer(), "homes.limit." + i))
 				return i;
 
 		return 0;

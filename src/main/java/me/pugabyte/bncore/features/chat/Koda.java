@@ -4,8 +4,10 @@ import lombok.Getter;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
@@ -49,6 +51,10 @@ public class Koda {
 
 	public static void console(String message) {
 		Bukkit.getConsoleSender().sendMessage("[KodaBear] " + stripColor(message));
+	}
+
+	public static void dm(Player player, String message) {
+		player.sendMessage(StringUtils.colorize(dmFormat + message));
 	}
 
 }

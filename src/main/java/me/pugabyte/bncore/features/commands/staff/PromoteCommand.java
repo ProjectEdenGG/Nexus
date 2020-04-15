@@ -17,12 +17,12 @@ public class PromoteCommand extends CustomCommand {
 	@Path("<player>")
 	void promote(Nerd nerd) {
 		Rank rank = nerd.getRank();
-		Rank previous = rank.next();
-		if (rank == previous)
+		Rank next = rank.next();
+		if (rank == next)
 			error("User is already max rank");
 
-		runCommandAsConsole("pex user " + nerd.getName() + " group set " + previous);
-		send(PREFIX + "Promoted " + nerd.getName() + " to " + previous.withColor());
+		runCommandAsConsole("lp user " + nerd.getName() + " parent set " + next.name());
+		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.withColor());
 	}
 
 }

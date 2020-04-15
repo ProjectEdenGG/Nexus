@@ -52,7 +52,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 					return;
 				}
 
-				packageType.getPermissions().forEach(permission -> BNCore.getPex().playerRemove(null, Utils.getPlayer(uuid), permission));
+				packageType.getPermissions().forEach(permission -> BNCore.getPerms().playerRemove(null, Utils.getPlayer(uuid), permission));
 				packageType.getExpirationCommands().stream()
 						.map(StringUtils::trimFirst)
 						.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(uuid).getName()))
@@ -105,7 +105,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 							"Enjoy your " + purchase.getPackageName() + " perk!");
 
 				if (purchase.getPurchaserUuid().length() == 36) {
-					BNCore.getPex().playerAdd(null, Utils.getPlayer(purchase.getPurchaserUuid()), "donated");
+					BNCore.getPerms().playerAdd(null, Utils.getPlayer(purchase.getPurchaserUuid()), "donated");
 
 					DiscordUser user = new DiscordService().get(purchase.getPurchaserUuid());
 					if (user.getUserId() != null)
@@ -115,8 +115,8 @@ public class HandlePurchaseCommand extends CustomCommand {
 				}
 			}
 
-			OfflinePlayer pexUser = Utils.getPlayer(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
-			packageType.getPermissions().forEach(permssion -> BNCore.getPex().playerAdd(null, pexUser, permssion));
+			OfflinePlayer permsUser = Utils.getPlayer(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
+			packageType.getPermissions().forEach(permssion -> BNCore.getPerms().playerAdd(null, permsUser, permssion));
 
 			packageType.getCommands().stream()
 					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))

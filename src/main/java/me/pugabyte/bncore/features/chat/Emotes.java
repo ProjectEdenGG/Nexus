@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.events.ChatEvent;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
@@ -75,8 +74,9 @@ public enum Emotes {
 	}
 
 	public static void process(ChatEvent event) {
+		if (event.getChatter() == null) return;
 		OfflinePlayer player = event.getChatter().getOfflinePlayer();
-		if (!BNCore.getPex().playerHas(WorldGroup.SURVIVAL.getWorlds()[0], player, "emoticons.use"))
+		if (!BNCore.getPerms().playerHas(null, player, "emoticons.use"))
 			return;
 
 		event.setMessage(process(event.getMessage(), event.getChannel().getMessageColor()));
