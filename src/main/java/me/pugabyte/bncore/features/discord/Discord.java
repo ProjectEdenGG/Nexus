@@ -30,7 +30,7 @@ public class Discord {
 		else
 			BNCore.warn("ProxySelector default is null");
 
-		Tasks.repeat(0, Time.MINUTE, this::connect);
+		Tasks.repeatAsync(0, Time.MINUTE, this::connect);
 	}
 
 	public void connect() {
