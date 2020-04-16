@@ -87,9 +87,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 		if (clicked == 19) {
 			event.getPlayer().sendMessage(StringUtils.colorize(PREFIX + "You have found all the eggs! You have won &e$10,000"));
 			BNCore.getEcon().depositPlayer(event.getPlayer(), 10000);
-			return;
-		}
-		if (clicked % 3 == 0) {
+		} else if (clicked % 3 == 0) {
 			ItemStack headPaper = new ItemBuilder(Material.PAPER).name("&3Coupon for 1 HDB head").lore("&eThis coupon is valid for one head from the head database. " +
 					"Claim it with a staff member").build();
 			Utils.giveItem(event.getPlayer(), headPaper);
