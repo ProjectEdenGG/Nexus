@@ -33,9 +33,10 @@ public class RanksCommand extends CustomCommand {
 		line();
 		Arrays.asList(Rank.values()).forEach(rank -> {
 			JsonBuilder builder = new JsonBuilder("&3- " + rank.withFormat());
-			if (Rank.getHighestRank(player()) == rank)
-				builder.next("  &e&o<-- You are here!");
 			builder.command("/" + rank.name().toLowerCase());
+			if (Rank.getHighestRank(player()) == rank) {
+				builder.next("  &e&o<-- You are here!");
+			}
 
 			send(builder);
 		});
