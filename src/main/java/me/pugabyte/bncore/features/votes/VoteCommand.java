@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.votes;
 
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -14,6 +15,7 @@ import me.pugabyte.bncore.models.vote.VoteSite;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
+import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -58,6 +60,39 @@ public class VoteCommand extends CustomCommand {
 				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl()));
 			}
 		}
+	}
+
+	@Path("points [player]")
+	void points(@Arg("self") Player player) {
+		if (player().hasPermission("group.moderator")) {
+			Voter voter = new VoteService().get(player);
+			send("&e" + player.getName() + " &3has &e" + voter.getPoints() + " &3vote points");
+		} else
+			send("&3You have &e" + voter.getPoints() + " &3vote points");
+	}
+
+	@Path("set <player> <number>")
+	@Permission("group.seniorstaff")
+	void setPoints(Player player, int number) {
+		Voter voter = new VoteService().get(player);
+		voter.setPoints(number);
+		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
+	}
+
+	@Path("add <player> <number>")
+	@Permission("group.seniorstaff")
+	void addPoints(Player player, int number) {
+		Voter voter = new VoteService().get(player);
+		voter.addPoints(number);
+		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
+	}
+
+	@Path("take <player> <number>")
+	@Permission("group.seniorstaff")
+	void takePoints(Player player, int number) {
+		Voter voter = new VoteService().get(player);
+		voter.takePoints(number);
+		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
 	}
 
 	@Path("endOfMonth [month]")
