@@ -30,21 +30,19 @@ public class Discord {
 		else
 			BNCore.warn("ProxySelector default is null");
 
-		Tasks.repeat(1, Time.MINUTE, this::connect);
+		Tasks.repeatAsync(1, Time.MINUTE, this::connect);
 	}
 
 	public void connect() {
 		for (Bot bot : Bot.values())
 			if (bot.jda() == null)
-				Tasks.async(() -> {
-					try {
-						bot.connect();
-						BNCore.log("Successfully connected " + bot.name() + " to Discord");
-					} catch (Exception ex) {
-						BNCore.severe("An error occurred while trying to connect to Discord");
-						ex.printStackTrace();
-					}
-				});
+				try {
+					bot.connect();
+					BNCore.log("Successfully connected " + bot.name() + " to Discord");
+				} catch (Exception ex) {
+					BNCore.severe("An error occurred while trying to connect to Discord");
+					ex.printStackTrace();
+				}
 	}
 
 	public static void shutdown() {
