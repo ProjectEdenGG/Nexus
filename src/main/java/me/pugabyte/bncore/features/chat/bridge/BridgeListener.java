@@ -116,7 +116,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 			while (matcher.find()) {
 				String group = matcher.group();
 				try {
-					OfflinePlayer player = Utils.getPlayer(group);
+					OfflinePlayer player = Utils.getPlayer(group.replace("@", ""));
 					DiscordUser mentioned = new DiscordService().get(player);
 					if (mentioned.getUserId() != null)
 						message = message.replace(group, "<@" + mentioned.getUserId() + ">");

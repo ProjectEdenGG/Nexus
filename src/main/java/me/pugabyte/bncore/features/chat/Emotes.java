@@ -74,6 +74,7 @@ public enum Emotes {
 	}
 
 	public static void process(ChatEvent event) {
+		if (event.getChatter() == null) return;
 		OfflinePlayer player = event.getChatter().getOfflinePlayer();
 		if (!PermissionsEx.getUser(player.getName()).has("emoticons.use"))
 			return;
