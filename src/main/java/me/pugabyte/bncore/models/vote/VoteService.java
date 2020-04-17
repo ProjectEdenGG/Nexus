@@ -49,7 +49,7 @@ public class VoteService extends MySQLService {
 	}
 
 	public void setPoints(String uuid, int balance) {
-		database.sql("update vote_point set balance = ? where uuid = ?", balance, uuid).execute();
+		database.sql("insert into vote_point values (?, ?) on duplicate key update balance = values(balance)", uuid, balance).execute();
 	}
 
 	public List<TopVoter> getTopVoters(Month month) {

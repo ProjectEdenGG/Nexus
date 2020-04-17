@@ -71,8 +71,12 @@ public class ChannelCommand extends CustomCommand {
 	@TabCompleterFor({Channel.class, PublicChannel.class})
 	List<String> tabCompleteChannel(String filter) {
 		return ChatManager.getChannels().stream()
-				.filter(channel -> channel.getNickname().toLowerCase().startsWith(filter.toLowerCase()) ||
-						channel.getName().toLowerCase().startsWith(filter.toLowerCase()))
+				.filter(channel -> {
+					if (!((Chatter) new ChatService().get(player())).canJoin(channel))
+						return false;
+					return channel.getNickname().toLowerCase().startsWith(filter.toLowerCase()) ||
+							channel.getName().toLowerCase().startsWith(filter.toLowerCase());
+				})
 				.map(PublicChannel::getNickname)
 				.collect(Collectors.toList());
 	}
