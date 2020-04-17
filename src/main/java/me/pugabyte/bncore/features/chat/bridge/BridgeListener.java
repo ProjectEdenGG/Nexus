@@ -89,9 +89,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 				return;
 			}
 
-			for (Player player : Bukkit.getOnlinePlayers())
-				if (player.hasPermission(channel.get().getPermission()))
-					builder.send(player);
+			channel.get().broadcastIngame(builder);
 		});
 	}
 

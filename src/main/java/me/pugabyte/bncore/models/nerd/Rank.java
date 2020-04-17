@@ -161,7 +161,11 @@ public enum Rank {
 		SENIOR_STAFF,
 		STAFF,
 		BUILDERS,
-		PLAYERS;
+		PLAYERS
+	}
+
+	public boolean includes(Rank rank) {
+		return ordinal() >= rank.ordinal();
 	}
 
 	public Rank next() {
