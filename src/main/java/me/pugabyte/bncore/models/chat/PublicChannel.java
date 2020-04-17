@@ -5,6 +5,7 @@ import lombok.Data;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId;
+import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
@@ -32,6 +33,7 @@ public class PublicChannel implements Channel {
 	private boolean local;
 	private boolean crossWorld;
 	private String permission;
+	private Rank rank;
 
 	public ChatColor getDiscordColor() {
 		return discordColor == null ? color : discordColor;
@@ -61,6 +63,7 @@ public class PublicChannel implements Channel {
 
 		return recipients.stream()
 				.map(player -> (Chatter) new ChatService().get(player))
+				.filter(_chatter -> _chatter.canJoin(this))
 				.filter(_chatter -> _chatter.hasJoined(this))
 				.collect(Collectors.toSet());
 	}

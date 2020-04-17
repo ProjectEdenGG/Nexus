@@ -57,16 +57,23 @@ public class Chatter extends PlayerOwnedObject {
 	}
 
 	public boolean canJoin(PublicChannel channel) {
+		boolean hasPerm = false;
 		if (getOfflinePlayer().isOnline())
-			return getOfflinePlayer().getPlayer().hasPermission(channel.getPermission());
+			hasPerm = getOfflinePlayer().getPlayer().hasPermission(channel.getPermission());
 		else
-			return BNCore.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
+			hasPerm = BNCore.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
+
+		if (channel.getRank() != null)
+			return new Nerd(getOfflinePlayer()).getRank().includes(channel.getRank()) && hasPerm;
+		return hasPerm;
 	}
 
 	public boolean hasJoined(PublicChannel channel) {
-		if (joinedChannels != null)
-			return joinedChannels.contains(channel);
-		return false;
+		if (!canJoin(channel))
+			return false;
+		if (joinedChannels == null)
+			joinedChannels = new HashSet<>();
+		return joinedChannels.contains(channel);
 	}
 
 	public void join(PublicChannel channel) {
