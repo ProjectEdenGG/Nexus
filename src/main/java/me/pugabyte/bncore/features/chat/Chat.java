@@ -9,6 +9,7 @@ import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.models.chat.PublicChannel;
+import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -70,9 +71,9 @@ public class Chat {
 	private void addChannels() {
 		PublicChannel global = PublicChannel.builder().name("Global").nickname("G").discordChannel(Channel.BRIDGE).discordColor(ChatColor.DARK_PURPLE).color(ChatColor.DARK_GREEN).local(false).crossWorld(true).build();
 		PublicChannel local = PublicChannel.builder().name("Local").nickname("L").color(ChatColor.YELLOW).local(true).crossWorld(false).build();
-		PublicChannel staff = PublicChannel.builder().name("Staff").nickname("S").discordChannel(Channel.STAFF_BRIDGE).color(ChatColor.BLACK).local(false).crossWorld(true).build();
-		PublicChannel operator = PublicChannel.builder().name("Operator").nickname("O").discordChannel(Channel.STAFF_OPS_BRIDGE).color(ChatColor.DARK_AQUA).local(false).crossWorld(true).build();
-		PublicChannel admin = PublicChannel.builder().name("Admin").nickname("A").discordChannel(Channel.STAFF_ADMINS).color(ChatColor.BLUE).local(false).crossWorld(true).build();
+		PublicChannel staff = PublicChannel.builder().name("Staff").nickname("S").rank(Rank.BUILDER).discordChannel(Channel.STAFF_BRIDGE).color(ChatColor.BLACK).local(false).crossWorld(true).build();
+		PublicChannel operator = PublicChannel.builder().name("Operator").nickname("O").rank(Rank.OPERATOR).discordChannel(Channel.STAFF_OPS_BRIDGE).color(ChatColor.DARK_AQUA).local(false).crossWorld(true).build();
+		PublicChannel admin = PublicChannel.builder().name("Admin").nickname("A").rank(Rank.ADMIN).discordChannel(Channel.STAFF_ADMINS).color(ChatColor.BLUE).local(false).crossWorld(true).build();
 		PublicChannel minigames = PublicChannel.builder().name("Minigames").nickname("M").color(ChatColor.DARK_AQUA).local(false).crossWorld(false).build();
 		PublicChannel creative = PublicChannel.builder().name("Creative").nickname("C").color(ChatColor.AQUA).local(false).crossWorld(false).build();
 
