@@ -19,36 +19,59 @@ public class Warps {
 
 	@Getter
 	public enum SurvivalWarp {
-		SPAWN(3, 2, new ItemStack(Material.CHISELED_STONE_BRICKS)),
+		SPAWN(3, 2, Material.CHISELED_STONE_BRICKS),
 		NORTH(3, 1, Material.BONE_BLOCK),
 		EAST(4, 2, Material.PACKED_ICE),
-		SOUTH(3, 3, new ItemStack(Material.GRAY_WOOL)),
-		WEST(2, 2, new ItemStack(Material.SPRUCE_LOG)),
+		SOUTH(3, 3, Material.GRAY_WOOL),
+		WEST(2, 2, Material.SPRUCE_LOG);
+
+		private int row;
+		private int column;
+		private ItemStack itemStack;
+
+		SurvivalWarp(int row, int column, Material material) {
+			this.row = row;
+			this.column = column;
+			this.itemStack = new ItemStack(material);
+		}
+
+		public String getDisplayName() {
+			return StringUtils.camelCase(name().replace("_", " #"));
+		}
+
+		public ItemStack getMenuItem() {
+			return ItemStackBuilder.of(itemStack).name("&3" + getDisplayName()).build();
+		}
+
+
+	}
+
+	@Getter
+	public enum LegacySurvivalWarp {
+		SPAWN(3, 2, Material.CHISELED_STONE_BRICKS),
+		NORTH(3, 1, Material.BONE_BLOCK),
+		EAST(4, 2, Material.PACKED_ICE),
+		SOUTH(3, 3, Material.GRAY_WOOL),
+		WEST(2, 2, Material.SPRUCE_LOG),
 		NORTHEAST(4, 1, Material.COBBLESTONE_STAIRS),
-		SOUTHEAST(4, 3, new ItemStack(Material.BIRCH_PLANKS)),
+		SOUTHEAST(4, 3, Material.BIRCH_PLANKS),
 		SOUTHWEST(2, 3, Material.HAY_BLOCK),
-		NORTHWEST(2, 1, new ItemStack(Material.PODZOL)),
+		NORTHWEST(2, 1, Material.PODZOL),
 		NORTH_2(3, 0, Material.OAK_PLANKS),
 		EAST_2(5, 2, Material.OAK_LOG),
 		SOUTH_2(3, 4, Material.STONE_BRICKS),
-		WEST_2(1, 2, new ItemStack(Material.ACACIA_PLANKS)),
-		NORTHEAST_2(5, 0, new ItemStack(Material.GRAY_TERRACOTTA)),
+		WEST_2(1, 2, Material.ACACIA_PLANKS),
+		NORTHEAST_2(5, 0, Material.GRAY_TERRACOTTA),
 		SOUTHEAST_2(5, 4, Material.SNOW_BLOCK),
 		SOUTHWEST_2(1, 4, Material.SAND),
-		NORTHWEST_2(1, 0, new ItemStack(Material.JUNGLE_PLANKS)),
+		NORTHWEST_2(1, 0, Material.JUNGLE_PLANKS),
 		NETHER(0, 4, Material.NETHERRACK);
 
 		private int row;
 		private int column;
 		private ItemStack itemStack;
 
-		SurvivalWarp(int row, int column, ItemStack itemStack) {
-			this.row = row;
-			this.column = column;
-			this.itemStack = itemStack;
-		}
-
-		SurvivalWarp(int row, int column, Material material) {
+		LegacySurvivalWarp(int row, int column, Material material) {
 			this.row = row;
 			this.column = column;
 			this.itemStack = new ItemStack(material);

@@ -71,7 +71,10 @@ public class AnimalTeleportPensCommand extends CustomCommand {
 	void menu() {
 		if (!isInATP())
 			error("You are not in an ATP region.");
-		new ATPMenu().open(player());
+		if (player().getWorld().getName().toLowerCase().contains("legacy_"))
+			new ATPMenu().openLegacy(player());
+		else
+			new ATPMenu().open(player());
 	}
 
 	public boolean isInATP() {

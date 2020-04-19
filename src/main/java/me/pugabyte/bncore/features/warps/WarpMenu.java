@@ -6,6 +6,7 @@ import me.pugabyte.bncore.models.setting.SettingService;
 public enum WarpMenu {
 	MAIN(4),
 	SURVIVAL(5),
+	LEGACY(5),
 	MINIGAMES(5),
 	CREATIVE(),
 	SKYBLOCK(),
