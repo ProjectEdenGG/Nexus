@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.shops.providers.MainMenuProvider;
 import me.pugabyte.bncore.features.warps.WarpMenu;
 import me.pugabyte.bncore.features.warps.Warps;
 import me.pugabyte.bncore.features.warps.WarpsMenu;
@@ -11,6 +12,7 @@ import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
+import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.SerializationUtils.JSON;
 import me.pugabyte.bncore.utils.Utils;
@@ -19,16 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
-
-/*
-	TO UPDATE TO 1.13:
-		CTRL+F '1.12'
-		ALT+ENTER
-		CTRL+X
-		CTRL+X
-		UP ARROW
-		CTRL+/
- */
 
 public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 	private WarpMenu menu;
@@ -44,6 +36,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				contents.set(0, 0, ClickableItem.from(closeItem(), e -> contents.inventory().close(player)));
 				break;
 			case SURVIVAL:
+			case LEGACY:
 			case MINIGAMES:
 //			case CREATIVE:
 //			case SKYBLOCK:
@@ -62,11 +55,16 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 			case MAIN:
 				ItemStack survival = nameItem(Material.GRASS_BLOCK, "&3Survival");
 				ItemStack minigames = nameItem(Material.DIAMOND_SWORD, "&3Minigames");
-				ItemStack creative = nameItem(Material.QUARTZ, "&3Creative");
-				ItemStack skyblock = nameItem(Material.COBBLESTONE, "&3Skyblock");
+				ItemStack creative = nameItem(Material.QUARTZ, "&3Creative", "*eWarp to the creative world");
+				ItemStack skyblock = nameItem(Material.COBBLESTONE, "&3Skyblock", "&cCurrently Disabled");
 				ItemStack other = nameItem(Material.EMERALD, "&3Other");
 
-				contents.set(1, 1, ClickableItem.from(survival, e -> WarpsMenu.open(player, WarpMenu.SURVIVAL)));
+				contents.set(1, 1, ClickableItem.from(survival, e -> {
+					if (player.getWorld().getName().toLowerCase().contains("legacy_"))
+						WarpsMenu.open(player, WarpMenu.LEGACY);
+					else
+						WarpsMenu.open(player, WarpMenu.SURVIVAL);
+				}));
 				contents.set(1, 3, ClickableItem.from(minigames, e -> WarpsMenu.open(player, WarpMenu.MINIGAMES)));
 				contents.set(1, 5, ClickableItem.from(creative, e -> warp(player, "creative")));
 				contents.set(1, 7, ClickableItem.from(skyblock, e -> warp(player, "skyblock")));
@@ -89,18 +87,34 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 					}));
 				}
 
-				ItemStack shub = nameItem(Material.EMERALD, "&3Shops Hub", "&eLearn all about||&eBear Nation's economy");
-				ItemStack market = nameItem(Material.OAK_SIGN, "&3Market", "&eWhere you'll find all||&ethe 'bear' neccessities.");
-				ItemStack shops = new ItemBuilder(Material.PLAYER_HEAD).name("&3Player Shops").lore("&ePlayer owned run shops").build();
+				ItemStack shops = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");
+				ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy World", "&eClick to view the||warps of the legacy world");
 
-				contents.set(1, 7, ClickableItem.from(shub, e -> warp(player, "shub")));
-				contents.set(2, 7, ClickableItem.from(market, e -> warp(player, "market")));
-				contents.set(3, 7, ClickableItem.from(shops, e -> command(player, "shops list")));
+				contents.set(1, 7, ClickableItem.from(shops, e -> new MainMenuProvider(null).open(player)));
+				contents.set(3, 7, ClickableItem.from(legacy, e -> WarpsMenu.open(player, WarpMenu.LEGACY)));
 
 				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
 						"survival world warps.").lore("&eThey are spread out across the entire world.").loreize(false).build()));
 				break;
 
+			case LEGACY:
+				for (Warps.LegacySurvivalWarp warp : Warps.LegacySurvivalWarp.values()) {
+					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
+						Warp warp1 = warpService.get(warp.name().replace("_", ""), WarpType.LEGACY);
+						warp1.teleport(player);
+					}));
+				}
+
+				ItemStack shops2 = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");
+				ItemStack newWorld = nameItem(Material.GRASS, "&3Survival", "&eClick to view the||&enew Survival warps");
+
+				contents.set(1, 7, ClickableItem.from(shops2, e -> new MainMenuProvider(null).open(player)));
+				contents.set(3, 7, ClickableItem.from(newWorld, e -> WarpsMenu.open(player, WarpMenu.SURVIVAL)));
+
+				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
+						"legacy survival world warps.").lore("&eThey are spread out across the entire world.").loreize(false).build()));
+
+				break;
 			case MINIGAMES:
 				ItemStack lobby = nameItem(Material.DIAMOND_SWORD, "&3Minigame Lobby");
 				ItemStack spvp = nameItem(Material.IRON_AXE, "&3Survival PVP Arena");
