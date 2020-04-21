@@ -4,7 +4,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.features.shops.providers.MainMenuProvider;
 import me.pugabyte.bncore.features.warps.WarpMenu;
 import me.pugabyte.bncore.features.warps.Warps;
 import me.pugabyte.bncore.features.warps.WarpsMenu;
@@ -15,6 +14,7 @@ import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.SerializationUtils.JSON;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -55,7 +55,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 			case MAIN:
 				ItemStack survival = nameItem(Material.GRASS_BLOCK, "&3Survival");
 				ItemStack minigames = nameItem(Material.DIAMOND_SWORD, "&3Minigames");
-				ItemStack creative = nameItem(Material.QUARTZ, "&3Creative", "*eWarp to the creative world");
+				ItemStack creative = nameItem(Material.QUARTZ, "&3Creative", "&eWarp to the creative world");
 				ItemStack skyblock = nameItem(Material.COBBLESTONE, "&3Skyblock", "&cCurrently Disabled");
 				ItemStack other = nameItem(Material.EMERALD, "&3Other");
 
@@ -67,7 +67,8 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				}));
 				contents.set(1, 3, ClickableItem.from(minigames, e -> WarpsMenu.open(player, WarpMenu.MINIGAMES)));
 				contents.set(1, 5, ClickableItem.from(creative, e -> warp(player, "creative")));
-				contents.set(1, 7, ClickableItem.from(skyblock, e -> warp(player, "skyblock")));
+				//contents.set(1, 7, ClickableItem.from(skyblock, e -> warp(player, "skyblock")));
+				contents.set(1, 7, ClickableItem.empty(skyblock));
 				contents.set(2, 4, ClickableItem.from(other, e -> WarpsMenu.open(player, WarpMenu.OTHER)));
 
 				Setting buildContestSetting = settingService.get("buildcontest", "info");
@@ -87,10 +88,11 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 					}));
 				}
 
-				ItemStack shops = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");
-				ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy World", "&eClick to view the||warps of the legacy world");
+				ItemStack shops = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu||||&cCurrently Disabled");
+				ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy World", "&eClick to view the||&ewarps of the legacy world");
 
-				contents.set(1, 7, ClickableItem.from(shops, e -> new MainMenuProvider(null).open(player)));
+				//contents.set(1, 7, ClickableItem.from(shops, e -> new MainMenuProvider(null).open(player)));
+				contents.set(1, 7, ClickableItem.empty(shops));
 				contents.set(3, 7, ClickableItem.from(legacy, e -> WarpsMenu.open(player, WarpMenu.LEGACY)));
 
 				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
@@ -101,14 +103,19 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				for (Warps.LegacySurvivalWarp warp : Warps.LegacySurvivalWarp.values()) {
 					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
 						Warp warp1 = warpService.get(warp.name().replace("_", ""), WarpType.LEGACY);
+						if (warp1 == null) {
+							player.sendMessage(StringUtils.colorize(StringUtils.getPrefix("Warps") + "&cThere was an error while trying to teleport you to the warp"));
+							return;
+						}
 						warp1.teleport(player);
 					}));
 				}
 
-				ItemStack shops2 = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");
-				ItemStack newWorld = nameItem(Material.GRASS, "&3Survival", "&eClick to view the||&enew Survival warps");
+				ItemStack shops2 = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu||||&cCurrently Disabled");
+				ItemStack newWorld = nameItem(Material.GRASS_BLOCK, "&3Survival", "&eClick to view the||&enew Survival warps");
 
-				contents.set(1, 7, ClickableItem.from(shops2, e -> new MainMenuProvider(null).open(player)));
+				//contents.set(1, 7, ClickableItem.from(shops2, e -> new MainMenuProvider(null).open(player)));
+				contents.set(1, 7, ClickableItem.empty(shops2));
 				contents.set(3, 7, ClickableItem.from(newWorld, e -> WarpsMenu.open(player, WarpMenu.SURVIVAL)));
 
 				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
