@@ -19,11 +19,12 @@ public class Warps {
 
 	@Getter
 	public enum SurvivalWarp {
-		SPAWN(3, 2, Material.CHISELED_STONE_BRICKS),
-		NORTH(3, 1, Material.BONE_BLOCK),
-		EAST(4, 2, Material.PACKED_ICE),
-		SOUTH(3, 3, Material.GRAY_WOOL),
-		WEST(2, 2, Material.SPRUCE_LOG);
+		SPAWN(3, 2, Material.PRISMARINE),
+		NORTH(3, 1, Material.OAK_BOAT),
+		EAST(4, 2, Material.RED_MUSHROOM_BLOCK),
+		SOUTH(3, 3, Material.CAMPFIRE),
+		WEST(2, 2, Material.STONE_BRICKS),
+		NETHER(0, 4, Material.NETHERRACK);
 
 		private int row;
 		private int column;
