@@ -97,10 +97,7 @@ public class Match {
 		if (BNCore.disableWorldEditPasting()) {
 			List<Class<?>> usesWorldEdit = Arrays.asList(Spleef.class, Splegg.class, HoliSplegg.class, TNTRun.class, Battleship.class, UncivilEngineers.class);
 
-			if (
-					usesWorldEdit.contains(arena.getMechanic().getClass()) ||
-					arena.getName().equals("RavensNestEstate")
-			) {
+			if (usesWorldEdit.contains(arena.getMechanic().getClass()) || arena.getName().equals("RavensNestEstate")) {
 				minigamer.tell("This arena is temporarily disabled while we work out some bugs");
 				return false;
 			}
