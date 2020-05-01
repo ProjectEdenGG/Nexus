@@ -27,6 +27,10 @@ import java.util.stream.Collectors;
 
 public class EndOfMonth {
 
+	static void run() {
+		run(null);
+	}
+
 	static void run(Month month) {
 		if (month == null)
 			month = LocalDateTime.now().getMonth().minus(1);
@@ -37,13 +41,13 @@ public class EndOfMonth {
 				Data data = new Data(finalMonth);
 				BNCore.log(data.toString());
 
-				data.getEco30kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 30000));
-				data.getEco20kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 20000));
-				data.getEco15kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 15000));
-
 				Koda.announce(data.getDiscordMessage());
 				updateNpcs(data);
 				writeHtml(data);
+
+				data.getEco30kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 30000));
+				data.getEco20kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 20000));
+				data.getEco15kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 15000));
 			} catch (BNException ex) {
 				BNCore.warn("[Votes] [End Of Month] " + ex.getMessage());
 			}
@@ -131,7 +135,7 @@ public class EndOfMonth {
 			msg += ":third_place:   **Third place** ($35,000/1 MC): " + getAsString(third) + " (" + third.get(0).getCount() + ")";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
-			msg += "(Note: Rewards are (Store Credit/In-Game Money/## of Mystery Chests) - you can choose only one)";
+			msg += "(Note: Rewards are (Store Credit/In-Game Money/# of Mystery Chests) - you can choose only one)";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 			msg += ":gift:   **Lucky mystery chest winner:** " + getAsString(mysteryChestWinner) + " (" + mysteryChestWinner.getCount() + ")";
@@ -143,11 +147,11 @@ public class EndOfMonth {
 			msg += "Message <@" + User.PUGABYTE.getId() + "> to get your reward if you have won something above! (The below economy rewards are automatically applied)";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
-			msg += ":gem:   $30,000 bonus: " + getAsString(first);
+			msg += ":gem:   $30,000 bonus: " + getAsString(eco30kWinners);
 			msg += System.lineSeparator();
-			msg += ":moneybag:   $20,000 bonus: " + getAsString(second);
+			msg += ":moneybag:   $20,000 bonus: " + getAsString(eco20kWinners);
 			msg += System.lineSeparator();
-			msg += ":dollar:   $15,000 bonus: " + getAsString(third);
+			msg += ":dollar:   $15,000 bonus: " + getAsString(eco15kWinners);
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 

@@ -44,7 +44,7 @@ public class Koda {
 	}
 
 	public static void announce(String message) {
-		Discord.send(message, Channel.ANNOUNCEMENTS);
+		Discord.koda(message, Channel.ANNOUNCEMENTS);
 	}
 
 	public static void console(String message) {
