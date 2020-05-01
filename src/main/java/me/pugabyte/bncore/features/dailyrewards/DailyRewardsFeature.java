@@ -164,14 +164,22 @@ public class DailyRewardsFeature {
 		rewards.add(new Reward("diamond leggings", new ItemStack(Material.DIAMOND_LEGGINGS)));
 		/* 52 */
 		rewards.add(new Reward("4 water breathing potions", new ItemBuilder(Material.POTION).amount(4).effect(PotionEffectType.WATER_BREATHING, 8 * 60).build()));
-		/* 53 */ rewards.add(new Reward("$6,000", 6000));
-		/* 54 */ rewards.add(new Reward("a zombie skull and a creeper skull", new ItemStack(Material.SKULL_ITEM, 1, (short) 2), new ItemStack(Material.SKULL, 1, (short) 4)));
-		/* 55 */ rewards.add(new Reward("a fishing rod with Lure 5, Luck 3, and Unbreaking 4", new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 5).enchant(Enchantment.LUCK, 3).enchant(Enchantment.DURABILITY, 4).build()));
-		/* 56 */ rewards.add(new Reward("2 villager spawn eggs", new ItemStack(Material.MONSTER_EGG, 2, EntityType.VILLAGER.getTypeId())));
-		/* 57 */ rewards.add(new Reward("75 enchanting levels", "exp give %player% 75L"));
-		/* 58 */ rewards.add(new Reward("$6,500", 6500));
-		/* 59 */ rewards.add(new Reward("1 diamond helmet with Respiration 3, Aqua Affinity 1 and Unbreaking 2", new ItemBuilder(Material.DIAMOND_HELMET).enchant(Enchantment.OXYGEN, 3).enchant(Enchantment.WATER_WORKER).enchant(Enchantment.DURABILITY, 2).build()));
-		/* 60 */ rewards.add(new Reward("1 shulker box", new ItemStack(Material.PURPLE_SHULKER_BOX)));
+		/* 53 */
+		rewards.add(new Reward("$6,000", 6000));
+		/* 54 */
+		rewards.add(new Reward("a zombie skull and a creeper skull", new ItemStack(Material.SKULL_ITEM, 1, (short) 2), new ItemStack(Material.SKULL_ITEM, 1, (short) 4)));
+		/* 55 */
+		rewards.add(new Reward("a fishing rod with Lure 5, Luck 3, and Unbreaking 4", new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 5).enchant(Enchantment.LUCK, 3).enchant(Enchantment.DURABILITY, 4).build()));
+		/* 56 */
+		rewards.add(new Reward("2 villager spawn eggs", new ItemStack(Material.MONSTER_EGG, 2, EntityType.VILLAGER.getTypeId())));
+		/* 57 */
+		rewards.add(new Reward("75 enchanting levels", "exp give %player% 75L"));
+		/* 58 */
+		rewards.add(new Reward("$6,500", 6500));
+		/* 59 */
+		rewards.add(new Reward("1 diamond helmet with Respiration 3, Aqua Affinity 1 and Unbreaking 2", new ItemBuilder(Material.DIAMOND_HELMET).enchant(Enchantment.OXYGEN, 3).enchant(Enchantment.WATER_WORKER).enchant(Enchantment.DURABILITY, 2).build()));
+		/* 60 */
+		rewards.add(new Reward("1 shulker box", new ItemStack(Material.PURPLE_SHULKER_BOX)));
 	}
 
 
