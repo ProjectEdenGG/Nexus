@@ -346,7 +346,7 @@ public class MinigamesCommand extends CustomCommand {
 					.next(" &e" + sender + " &3has invited you to &e" + message).group()
 					.newline()
 					.next("&e Click here to &a&laccept")
-					.command("/mgaccept")
+					.command("/newmgm accept")
 					.hover("&eClick &3to accept"));
 		}
 	}
