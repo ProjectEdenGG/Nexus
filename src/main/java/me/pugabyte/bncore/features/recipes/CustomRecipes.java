@@ -4,7 +4,11 @@ import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 
 public class CustomRecipes {
 
@@ -104,8 +108,8 @@ public class CustomRecipes {
     public void concretePowderDying() {
         addRecipe(createColorChangingRecipe(concretePowder, Material.WHITE_DYE, Material.WHITE_CONCRETE_POWDER));
         addRecipe(createColorChangingRecipe(concretePowder, Material.BLACK_DYE, Material.BLACK_CONCRETE_POWDER));
-        addRecipe(createColorChangingRecipe(concretePowder, Material.LAPIS_LAZULI, Material.BLUE_CONCRETE_POWDER));
-        addRecipe(createColorChangingRecipe(concretePowder, Material.COCOA_BEANS, Material.BROWN_CONCRETE_POWDER));
+        addRecipe(createColorChangingRecipe(concretePowder, Material.BLUE_DYE, Material.BLUE_CONCRETE_POWDER));
+        addRecipe(createColorChangingRecipe(concretePowder, Material.BROWN_DYE, Material.BROWN_CONCRETE_POWDER));
         addRecipe(createColorChangingRecipe(concretePowder, Material.CYAN_DYE, Material.CYAN_CONCRETE_POWDER));
         addRecipe(createColorChangingRecipe(concretePowder, Material.GREEN_DYE, Material.GREEN_CONCRETE_POWDER));
         addRecipe(createColorChangingRecipe(concretePowder, Material.GRAY_DYE, Material.GRAY_CONCRETE_POWDER));
@@ -123,8 +127,8 @@ public class CustomRecipes {
     public void stainedGlassDying() {
         addRecipe(createColorChangingRecipe(stainedGlass, Material.WHITE_DYE, Material.WHITE_STAINED_GLASS));
         addRecipe(createColorChangingRecipe(stainedGlass, Material.BLACK_DYE, Material.BLACK_STAINED_GLASS));
-        addRecipe(createColorChangingRecipe(stainedGlass, Material.LAPIS_LAZULI, Material.BLUE_STAINED_GLASS));
-        addRecipe(createColorChangingRecipe(stainedGlass, Material.COCOA_BEANS, Material.BROWN_STAINED_GLASS));
+        addRecipe(createColorChangingRecipe(stainedGlass, Material.BLUE_DYE, Material.BLUE_STAINED_GLASS));
+        addRecipe(createColorChangingRecipe(stainedGlass, Material.BROWN_DYE, Material.BROWN_STAINED_GLASS));
         addRecipe(createColorChangingRecipe(stainedGlass, Material.CYAN_DYE, Material.CYAN_STAINED_GLASS));
         addRecipe(createColorChangingRecipe(stainedGlass, Material.GREEN_DYE, Material.GREEN_STAINED_GLASS));
         addRecipe(createColorChangingRecipe(stainedGlass, Material.GRAY_DYE, Material.GRAY_STAINED_GLASS));
@@ -142,8 +146,8 @@ public class CustomRecipes {
     public void stainedGlassPaneDying() {
         addRecipe(createColorChangingRecipe(stainedGlassPane, Material.WHITE_DYE, Material.WHITE_STAINED_GLASS_PANE));
         addRecipe(createColorChangingRecipe(stainedGlassPane, Material.BLACK_DYE, Material.BLACK_STAINED_GLASS_PANE));
-        addRecipe(createColorChangingRecipe(stainedGlassPane, Material.LAPIS_LAZULI, Material.BLUE_STAINED_GLASS_PANE));
-        addRecipe(createColorChangingRecipe(stainedGlassPane, Material.COCOA_BEANS, Material.BROWN_STAINED_GLASS_PANE));
+        addRecipe(createColorChangingRecipe(stainedGlassPane, Material.BLUE_DYE, Material.BLUE_STAINED_GLASS_PANE));
+        addRecipe(createColorChangingRecipe(stainedGlassPane, Material.BROWN_DYE, Material.BROWN_STAINED_GLASS_PANE));
         addRecipe(createColorChangingRecipe(stainedGlassPane, Material.CYAN_DYE, Material.CYAN_STAINED_GLASS_PANE));
         addRecipe(createColorChangingRecipe(stainedGlassPane, Material.GREEN_DYE, Material.GREEN_STAINED_GLASS_PANE));
         addRecipe(createColorChangingRecipe(stainedGlassPane, Material.GRAY_DYE, Material.GRAY_STAINED_GLASS_PANE));
@@ -161,8 +165,8 @@ public class CustomRecipes {
     public void terracottaDying() {
         addRecipe(createColorChangingRecipe(terracotta, Material.WHITE_DYE, Material.WHITE_TERRACOTTA));
         addRecipe(createColorChangingRecipe(terracotta, Material.BLACK_DYE, Material.BLACK_TERRACOTTA));
-        addRecipe(createColorChangingRecipe(terracotta, Material.LAPIS_LAZULI, Material.BLUE_TERRACOTTA));
-        addRecipe(createColorChangingRecipe(terracotta, Material.COCOA_BEANS, Material.BROWN_TERRACOTTA));
+        addRecipe(createColorChangingRecipe(terracotta, Material.BLUE_DYE, Material.BLUE_TERRACOTTA));
+        addRecipe(createColorChangingRecipe(terracotta, Material.BROWN_DYE, Material.BROWN_TERRACOTTA));
         addRecipe(createColorChangingRecipe(terracotta, Material.CYAN_DYE, Material.CYAN_TERRACOTTA));
         addRecipe(createColorChangingRecipe(terracotta, Material.GREEN_DYE, Material.GREEN_TERRACOTTA));
         addRecipe(createColorChangingRecipe(terracotta, Material.GRAY_DYE, Material.GRAY_TERRACOTTA));
