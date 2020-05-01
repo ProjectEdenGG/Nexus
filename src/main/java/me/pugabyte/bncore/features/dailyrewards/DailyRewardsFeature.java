@@ -89,6 +89,7 @@ public class DailyRewardsFeature {
 		return rewards.get(day - 1);
 	}
 
+	// @formatter:off
 	private void setupDailyRewards() {
 		/*  1 */ rewards.add(new Reward("$100", 100));
 		/*  2 */ rewards.add(new Reward("32 bread", new ItemStack(Material.BREAD, 32)));
@@ -151,7 +152,6 @@ public class DailyRewardsFeature {
 		/* 59 */ rewards.add(new Reward("1 diamond helmet with Respiration 3, Aqua Affinity 1 and Unbreaking 2", new ItemBuilder(Material.DIAMOND_HELMET).enchant(Enchantment.OXYGEN, 3).enchant(Enchantment.WATER_WORKER).enchant(Enchantment.DURABILITY, 2).build()));
 		/* 60 */ rewards.add(new Reward("1 shulker box", new ItemStack(Material.PURPLE_SHULKER_BOX)));
 	}
-
-
+	// @formatter:on
 
 }
