@@ -16,7 +16,6 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -90,8 +89,6 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	public void createMineStacks(int mineStackHeight, List<Location> locations) {
-		WorldEditUtils worldEditUtils = WEUtils;
-
 		Map<BlockType, Double> pattern = new HashMap<BlockType, Double>() {{
 			put(BlockTypes.COBBLESTONE, 10.0);
 			put(BlockTypes.GOLD_ORE, 40.0);
@@ -100,23 +97,22 @@ public final class GoldRush extends TeamlessMechanic {
 			put(BlockTypes.OAK_LOG, 10.0);
 		}};
 
-		BlockVector3 p1 = worldEditUtils.toBlockVector3(locations.get(0).clone().subtract(0, 2, 0));
-		BlockVector3 p2 = worldEditUtils.toBlockVector3(locations.get(0).clone().subtract(0, mineStackHeight, 0));
+		BlockVector3 p1 = WEUtils.toBlockVector3(locations.get(0).clone().subtract(0, 2, 0));
+		BlockVector3 p2 = WEUtils.toBlockVector3(locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
-		worldEditUtils.replace(region, Collections.singleton(BlockTypes.AIR), pattern);
+		WEUtils.replace(region, Collections.singleton(BlockTypes.AIR), pattern);
 
-		Clipboard schematic = worldEditUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
+		Clipboard schematic = WEUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		for (Location location : locations) {
-			worldEditUtils.paste(schematic, worldEditUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0)));
+			WEUtils.paste(schematic, WEUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0)));
 		}
 	}
 
 	public void removeMineStacks(int mineStackHeight, Location loc) {
-		WorldEditUtils worldEditUtils = WEUtils;
-		BlockVector3 p1 = worldEditUtils.toBlockVector3(loc.clone().subtract(0, 2, 0));
-		BlockVector3 p2 = worldEditUtils.toBlockVector3(loc.clone().subtract(0, mineStackHeight, 0));
+		BlockVector3 p1 = WEUtils.toBlockVector3(loc.clone().subtract(0, 2, 0));
+		BlockVector3 p2 = WEUtils.toBlockVector3(loc.clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
-		worldEditUtils.fill(region, BlockTypes.AIR);
+		WEUtils.fill(region, BlockTypes.AIR);
 	}
 
 	@EventHandler
