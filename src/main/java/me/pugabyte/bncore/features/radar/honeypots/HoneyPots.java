@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.radar.honeypots;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -35,7 +36,11 @@ public class HoneyPots implements Listener {
 	public static void fixHP(ProtectedRegion region, World world) {
 		WorldEditUtils WEUtils = new WorldEditUtils(world);
 		String fileName = region.getId().replace("_", "/");
-		WEUtils.paste(fileName, getSchemRegen(region, world).getMinimumPoint());
+		try {
+			WEUtils.paste(fileName, getSchemRegen(region, world).getMinimumPoint());
+		} catch (InvalidInputException ex) {
+			BNCore.log(ex.getMessage());
+		}
 	}
 
 	public static ProtectedRegion getSchemRegen(ProtectedRegion region, World world) {
