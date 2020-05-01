@@ -49,9 +49,8 @@ public class Votes implements Listener {
 		BNCore.registerListener(this);
 		scheduler();
 		BNCore.registerPlaceholder("votepoints", event -> String.valueOf(((Voter) new VoteService().get(event.getPlayer())).getPoints()));
-		new VPS();
 
-//		BNCore.getCron().schedule("00 00 1 * *", () -> EndOfMonth.run(month));
+		BNCore.getCron().schedule("00 00 1 * *", EndOfMonth::run);
 	}
 
 	private void scheduler() {
@@ -131,6 +130,8 @@ public class Votes implements Listener {
 			if (player.isOnline())
 				player.getPlayer().sendMessage(colorize(VPS.PREFIX + "You have received " + points + " point" + (points == 1 ? "" : "s")));
 		}
+
+		Tasks.async(Votes::write);
 	}
 
 	Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
