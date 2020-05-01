@@ -131,7 +131,7 @@ public class DailyRewardsFeature {
 		/* 39 */ rewards.add(new Reward("a totem of undying", new ItemStack(Material.TOTEM_OF_UNDYING)));
 		/* 40 */ rewards.add(new Reward("18 books", new ItemStack(Material.BOOK, 18)));
 		/* 41 */ rewards.add(new Reward("$5,000", 5000));
-		/* 42 */ rewards.add(new Reward("3 notch apples", new ItemStack(Material.GOLDEN_APPLE, 1, (short) 1)));
+		/* 42 */ rewards.add(new Reward("3 notch apples", new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 3)));
 		/* 43 */ rewards.add(new Reward("6 empty maps and 1 book and quill", new ItemStack(Material.MAP, 6), new ItemStack(Material.WRITABLE_BOOK)));
 		/* 44 */ rewards.add(new Reward("32 sea lanterns", new ItemStack(Material.SEA_LANTERN, 32)));
 		/* 45 */ rewards.add(new Reward("a mending book", new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MENDING).build()));
