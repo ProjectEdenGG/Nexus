@@ -122,27 +122,48 @@ public class DailyRewardsFeature {
 		/* 29 */ rewards.add(new Reward("8 emerald blocks", new ItemStack(Material.EMERALD_BLOCK, 8)));
 		/* 30 */ rewards.add(new Reward("diamond boots with Frost Walker, Protection 1 and Unbreaking 2", new ItemBuilder(Material.DIAMOND_BOOTS).enchant(Enchantment.FROST_WALKER).enchant(Enchantment.PROTECTION_ENVIRONMENTAL).enchant(Enchantment.DURABILITY, 2).build()));
 		/* 31 */ rewards.add(new Reward("$4,000", 4000));
-		/* 32 */ rewards.add(new Reward("32 slime balls", new ItemStack(Material.SLIME_BALL, 32)));
-		/* 33 */ rewards.add(new Reward("4 redstone blocks", new ItemStack(Material.REDSTONE_BLOCK, 4)));
-		/* 34 */ rewards.add(new Reward("an enchanting table", new ItemStack(Material.ENCHANTMENT_TABLE)));
-		/* 35 */ rewards.add(new Reward("10 cakes", new ItemStack(Material.CAKE, 10)));
-		/* 36 */ rewards.add(new Reward("1 clock", new ItemStack(Material.WATCH)));
-		/* 37 */ rewards.add(new Reward("diamond horse armor", new ItemStack(Material.DIAMOND_BARDING)));
-		/* 38 */ rewards.add(new Reward("$4,500", 4500));
-		/* 39 */ rewards.add(new Reward("a totem of undying", new ItemStack(Material.TOTEM)));
-		/* 40 */ rewards.add(new Reward("18 books", new ItemStack(Material.BOOK, 18)));
-		/* 41 */ rewards.add(new Reward("$5,000", 5000));
-		/* 42 */ rewards.add(new Reward("3 notch apples", new ItemStack(Material.GOLDEN_APPLE, 1, (short) 1)));
-		/* 43 */ rewards.add(new Reward("6 empty maps and 1 book and quill", new ItemStack(Material.EMPTY_MAP, 6), new ItemStack(Material.BOOK_AND_QUILL)));
-		/* 44 */ rewards.add(new Reward("32 sea lanterns", new ItemStack(Material.SEA_LANTERN, 32)));
-		/* 45 */ rewards.add(new Reward("a mending book", new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MENDING).build()));
-		/* 46 */ rewards.add(new Reward("3 brewing stands", new ItemStack(Material.BREWING_STAND_ITEM, 3)));
-		/* 47 */ rewards.add(new Reward("64 blaze rods", new ItemStack(Material.BLAZE_ROD, 64)));
-		/* 48 */ rewards.add(new Reward("$5,500", 5500));
-		/* 49 */ rewards.add(new Reward("6 armor stands", new ItemStack(Material.ARMOR_STAND, 6)));
-		/* 50 */ rewards.add(new Reward("a full set of chainmail armour", new ItemStack(Material.CHAINMAIL_HELMET), new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.CHAINMAIL_BOOTS)));
-		/* 51 */ rewards.add(new Reward("diamond leggings", new ItemStack(Material.DIAMOND_LEGGINGS)));
-		/* 52 */ rewards.add(new Reward("4 water breathing potions", new ItemBuilder(Material.POTION).amount(4).effect(PotionEffectType.WATER_BREATHING, 8 * 60).build()));
+		/* 32 */
+		rewards.add(new Reward("32 slime balls", new ItemStack(Material.SLIME_BALL, 32)));
+		/* 33 */
+		rewards.add(new Reward("4 redstone blocks", new ItemStack(Material.REDSTONE_BLOCK, 4)));
+		/* 34 */
+		rewards.add(new Reward("an enchanting table", new ItemStack(Material.ENCHANTMENT_TABLE)));
+		/* 35 */
+		rewards.add(new Reward("10 cakes", new ItemStack(Material.CAKE, 10)));
+		/* 36 */
+		rewards.add(new Reward("1 clock", new ItemStack(Material.WATCH)));
+		/* 37 */
+		rewards.add(new Reward("diamond horse armor", new ItemStack(Material.DIAMOND_BARDING)));
+		/* 38 */
+		rewards.add(new Reward("$4,500", 4500));
+		/* 39 */
+		rewards.add(new Reward("a totem of undying", new ItemStack(Material.TOTEM)));
+		/* 40 */
+		rewards.add(new Reward("18 books", new ItemStack(Material.BOOK, 18)));
+		/* 41 */
+		rewards.add(new Reward("$5,000", 5000));
+		/* 42 */
+		rewards.add(new Reward("3 notch apples", new ItemStack(Material.GOLDEN_APPLE, 3, (short) 1)));
+		/* 43 */
+		rewards.add(new Reward("6 empty maps and 1 book and quill", new ItemStack(Material.EMPTY_MAP, 6), new ItemStack(Material.BOOK_AND_QUILL)));
+		/* 44 */
+		rewards.add(new Reward("32 sea lanterns", new ItemStack(Material.SEA_LANTERN, 32)));
+		/* 45 */
+		rewards.add(new Reward("a mending book", new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MENDING).build()));
+		/* 46 */
+		rewards.add(new Reward("3 brewing stands", new ItemStack(Material.BREWING_STAND_ITEM, 3)));
+		/* 47 */
+		rewards.add(new Reward("64 blaze rods", new ItemStack(Material.BLAZE_ROD, 64)));
+		/* 48 */
+		rewards.add(new Reward("$5,500", 5500));
+		/* 49 */
+		rewards.add(new Reward("6 armor stands", new ItemStack(Material.ARMOR_STAND, 6)));
+		/* 50 */
+		rewards.add(new Reward("a full set of chainmail armour", new ItemStack(Material.CHAINMAIL_HELMET), new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.CHAINMAIL_BOOTS)));
+		/* 51 */
+		rewards.add(new Reward("diamond leggings", new ItemStack(Material.DIAMOND_LEGGINGS)));
+		/* 52 */
+		rewards.add(new Reward("4 water breathing potions", new ItemBuilder(Material.POTION).amount(4).effect(PotionEffectType.WATER_BREATHING, 8 * 60).build()));
 		/* 53 */ rewards.add(new Reward("$6,000", 6000));
 		/* 54 */ rewards.add(new Reward("a zombie skull and a creeper skull", new ItemStack(Material.SKULL_ITEM, 1, (short) 2), new ItemStack(Material.SKULL, 1, (short) 4)));
 		/* 55 */ rewards.add(new Reward("a fishing rod with Lure 5, Luck 3, and Unbreaking 4", new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 5).enchant(Enchantment.LUCK, 3).enchant(Enchantment.DURABILITY, 4).build()));
