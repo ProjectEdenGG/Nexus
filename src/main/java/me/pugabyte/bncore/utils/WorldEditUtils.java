@@ -26,6 +26,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -58,6 +59,11 @@ public class WorldEditUtils {
 		bukkitWorld = new BukkitWorld(world);
 		worldEditWorld = bukkitWorld;
 		worldGuardUtils = new WorldGuardUtils(world);
+	}
+
+	public void checkDisabled() {
+		if (BNCore.disableWorldEditPasting())
+			throw new InvalidInputException("WorldEdit API usage is temporarily disabled");
 	}
 
 	public EditSession getEditSession() {
@@ -237,6 +243,7 @@ public class WorldEditUtils {
 	}
 
 	public void paste(Clipboard clipboard, BlockVector3 vector) {
+		checkDisabled();
 		clipboard.paste(worldEditWorld, vector);
 	}
 
