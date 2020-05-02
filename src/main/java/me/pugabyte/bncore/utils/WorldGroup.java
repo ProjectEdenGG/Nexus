@@ -6,7 +6,8 @@ import org.bukkit.entity.Entity;
 import java.util.Arrays;
 
 public enum WorldGroup {
-	SURVIVAL("survival", "survival_nether", "survival_the_end",
+	SURVIVAL("world", "world_nether", "world_the_end",
+			"survival", "survival_nether", "survival_the_end",
 			"legacy", "legacy_nether", "legacy_the_end",
 			"resource", "resource_nether", "resource_the_end",
 			"staff_world", "staff_world_nether", "staff_world_the_end",
