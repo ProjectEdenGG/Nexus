@@ -58,8 +58,11 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 
 	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items) {
 		Pagination page = contents.pagination();
-		page.setItemsPerPage(36);
+		int perPage = 36;
+		page.setItemsPerPage(perPage);
 		page.setItems(items.toArray(new ClickableItem[0]));
+		if (page.getPage() > items.size() / perPage)
+			page.page(items.size() / perPage);
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 		int curPage = page.getPage() + 1;

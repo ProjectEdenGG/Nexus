@@ -34,8 +34,12 @@ public class CustomRecipes {
         for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult())) {
             if (RecipeUtils.areEqual(recipe1, recipe)) return;
         }
-        Bukkit.addRecipe(recipe);
-        amount++;
+        try {
+            Bukkit.addRecipe(recipe);
+            amount++;
+        } catch (IllegalStateException duplicate) {
+            BNCore.log(duplicate.getMessage());
+        }
     }
 
     public ShapelessRecipe createSingleItemShapelessRecipe(Material inputItem, int requiredAmount, Material outputItem, int outputAmount) {
