@@ -63,7 +63,7 @@ public class Commands {
 				BNCore.log("Error while registering command " + command.getSimpleName());
 				ex.printStackTrace();
 			}
-		plugin.getLogger().info("Registered " + commandSet.size() + " commands");
+		plugin.getLogger().info("Registered " + commands.size() + " commands");
 	}
 
 	private void register(CustomCommand customCommand) {
