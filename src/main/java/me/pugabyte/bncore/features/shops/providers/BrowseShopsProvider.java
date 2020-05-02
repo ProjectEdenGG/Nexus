@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.shops.providers;
 import com.google.common.base.Strings;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.Pagination;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -34,9 +34,9 @@ public class BrowseShopsProvider extends _ShopProvider {
 		if (shops == null || shops.size() == 0) return;
 		List<ClickableItem> items = new ArrayList<>();
 
-		Pagination page = contents.pagination();
-
 		service.getShops().forEach(shop -> {
+			if (shop.getUuid().equals(BNCore.getUUID0())) return;
+
 			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
 					.skullOwner(shop.getOfflinePlayer())
 					.name("&e" + shop.getOfflinePlayer().getName());
