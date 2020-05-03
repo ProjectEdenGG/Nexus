@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.shops.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
+import lombok.Getter;
 import me.pugabyte.bncore.features.shops.ShopMenuFunctions.Filter;
 import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterEmptyStock;
 import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterExchangeType;
@@ -10,6 +11,8 @@ import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterMarketItems;
 import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterType;
 import me.pugabyte.bncore.models.shop.Shop;
+import me.pugabyte.bncore.models.shop.Shop.Product;
+import me.pugabyte.bncore.models.shop.Shop.ShopGroup;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,25 +23,37 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static me.pugabyte.bncore.features.shops.Shops.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class BrowseItemsProvider extends _ShopProvider {
-	private List<Filter> filters;
+	@Getter
+	protected List<Filter> filters;
+	protected Shop shop;
 
 	public BrowseItemsProvider(_ShopProvider previousMenu) {
-		this(previousMenu, new ArrayList<>());
+		this(previousMenu, null, new ArrayList<>());
+	}
+
+	public BrowseItemsProvider(_ShopProvider previousMenu, Shop shop) {
+		this(previousMenu, shop, new ArrayList<>());
 	}
 
 	public BrowseItemsProvider(_ShopProvider previousMenu, Filter filter) {
-		this(previousMenu, Collections.singletonList(filter));
+		this(previousMenu, null, Collections.singletonList(filter));
 	}
 
-	public BrowseItemsProvider(_ShopProvider previousMenu, List<Filter> filters) {
+	public BrowseItemsProvider(_ShopProvider previousMenu, Shop shop, Filter filter) {
+		this(previousMenu, shop, Collections.singletonList(filter));
+	}
+
+	public BrowseItemsProvider(_ShopProvider previousMenu, Shop shop, List<Filter> filters) {
 		this.previousMenu = previousMenu;
 		if (previousMenu != null && previousMenu.getPreviousMenu() != null && previousMenu.getPreviousMenu().getPreviousMenu() != null
 				&& previousMenu.getPreviousMenu().getClass() == this.getClass())
 			this.previousMenu = previousMenu.getPreviousMenu().getPreviousMenu();
+		this.shop = shop;
 		this.filters = new ArrayList<>(filters);
 		addDefaultFilters();
 	}
@@ -62,78 +77,78 @@ public class BrowseItemsProvider extends _ShopProvider {
 	}
 
 	public void addFilters(Player player, InventoryContents contents) {
+		addSearchFilter(player, contents);
+		addStockFilter(player, contents);
+		addExchangeFilter(player, contents);
+		addMarketFilter(player, contents);
+	}
 
-		Pagination page = contents.pagination();
-
-		{
-			Filter searchFilter = getFilter(FilterSearchType.class);
-			if (searchFilter != null) {
-				ItemStack search = new ItemBuilder(Material.COMPASS).name("&6Current filter: &e" + searchFilter.getMessage())
-						.lore("").lore("&7Click to remove filter").glow().build();
-				contents.set(0, 2, ClickableItem.from(search, e -> {
-					filters.remove(searchFilter);
-					open(player, page.getPage());
-				}));
-			} else
-				contents.set(0, 2, ClickableItem.from(nameItem(Material.COMPASS, "&6Filter Items"), e -> new SearchItemsProvider(this).open(player)));
-		}
-
-		{
-			Filter exchangeFilter = getFilter(FilterExchangeType.class);
-			FilterExchangeType filter = exchangeFilter != null ? (FilterExchangeType) exchangeFilter.getType() : FilterExchangeType.BOTH;
-			FilterExchangeType next = filter.nextWithLoop();
-
-			ItemBuilder item = new ItemBuilder(Material.HOPPER).name("&6Filter by:")
-					.lore("&7⬇ " + camelCase(filter.previousWithLoop().name()))
-					.lore("&e⬇ " + camelCase(filter.name()))
-					.lore("&7⬇ " + camelCase(next.name()));
-			contents.set(5, 3, ClickableItem.from(item.build(), e -> {
-				formatFilter(exchangeFilter, next);
-				open(player, page.getPage());
+	public void addSearchFilter(Player player, InventoryContents contents) {
+		Filter searchFilter = getFilter(FilterSearchType.class);
+		if (searchFilter != null) {
+			ItemStack search = new ItemBuilder(Material.COMPASS).name("&6Current filter: &e" + searchFilter.getMessage())
+					.lore("").lore("&7Click to remove filter").glow().build();
+			contents.set(0, 4, ClickableItem.from(search, e -> {
+				filters.remove(searchFilter);
+				open(player, contents.pagination().getPage());
 			}));
-		}
+		} else
+			contents.set(0, 4, ClickableItem.from(nameItem(Material.COMPASS, "&6Filter Items"), e -> new SearchItemsProvider(this).open(player)));
+	}
 
-		{
-			Filter marketFilter = getFilter(FilterMarketItems.class);
-			FilterMarketItems filter = marketFilter != null ? (FilterMarketItems) marketFilter.getType() : FilterMarketItems.SHOWN;
-			FilterMarketItems next = filter.nextWithLoop();
+	public void addStockFilter(Player player, InventoryContents contents) {
+		Filter stockFilter = getFilter(FilterEmptyStock.class);
+		FilterEmptyStock filter = stockFilter != null ? (FilterEmptyStock) stockFilter.getType() : FilterEmptyStock.HIDDEN;
+		FilterEmptyStock next = filter.nextWithLoop();
 
-			ItemBuilder item = new ItemBuilder(Material.OAK_SIGN).name("&6Market Items:")
-					.lore("&e⬇ " + camelCase(filter.name()))
-					.lore("&7⬇ " + camelCase(next.name()));
-			contents.set(5, 4, ClickableItem.from(item.build(), e -> {
-				formatFilter(marketFilter, next);
-				open(player, page.getPage());
-			}));
-		}
+		ItemBuilder item = new ItemBuilder(Material.BUCKET).name("&6Empty Stock:")
+				.lore("&e⬇ " + camelCase(filter.name()))
+				.lore("&7⬇ " + camelCase(next.name()));
+		contents.set(5, 3, ClickableItem.from(item.build(), e -> {
+			formatFilter(stockFilter, next);
+			open(player, contents.pagination().getPage());
+		}));
+	}
 
-		{
-			Filter stockFilter = getFilter(FilterEmptyStock.class);
-			FilterEmptyStock filter = stockFilter != null ? (FilterEmptyStock) stockFilter.getType() : FilterEmptyStock.HIDDEN;
-			FilterEmptyStock next = filter.nextWithLoop();
+	public void addExchangeFilter(Player player, InventoryContents contents) {
+		Filter exchangeFilter = getFilter(FilterExchangeType.class);
+		FilterExchangeType filter = exchangeFilter != null ? (FilterExchangeType) exchangeFilter.getType() : FilterExchangeType.BOTH;
+		FilterExchangeType next = filter.nextWithLoop();
 
-			ItemBuilder item = new ItemBuilder(Material.BUCKET).name("&6Empty Stock:")
-					.lore("&e⬇ " + camelCase(filter.name()))
-					.lore("&7⬇ " + camelCase(next.name()));
-			contents.set(5, 5, ClickableItem.from(item.build(), e -> {
-				formatFilter(stockFilter, next);
-				open(player, page.getPage());
-			}));
-		}
+		ItemBuilder item = new ItemBuilder(Material.HOPPER).name("&6Filter by:")
+				.lore("&7⬇ " + camelCase(filter.previousWithLoop().name()))
+				.lore("&e⬇ " + camelCase(filter.name()))
+				.lore("&7⬇ " + camelCase(next.name()));
+		contents.set(5, 4, ClickableItem.from(item.build(), e -> {
+			formatFilter(exchangeFilter, next);
+			open(player, contents.pagination().getPage());
+		}));
+	}
+
+	public void addMarketFilter(Player player, InventoryContents contents) {
+		Filter marketFilter = getFilter(FilterMarketItems.class);
+		FilterMarketItems filter = marketFilter != null ? (FilterMarketItems) marketFilter.getType() : FilterMarketItems.SHOWN;
+		FilterMarketItems next = filter.nextWithLoop();
+
+		ItemBuilder item = new ItemBuilder(Material.OAK_SIGN).name("&6Market Items:")
+				.lore("&e⬇ " + camelCase(filter.name()))
+				.lore("&7⬇ " + camelCase(next.name()));
+		contents.set(5, 5, ClickableItem.from(item.build(), e -> {
+			formatFilter(marketFilter, next);
+			open(player, contents.pagination().getPage());
+		}));
 	}
 
 	public void addItems(Player player, InventoryContents contents) {
-		List<Shop> shops = service.getShops();
+		List<Shop> shops = shop != null ? Collections.singletonList(shop) : service.getShops();
 		if (shops == null || shops.size() == 0) return;
 		List<ClickableItem> items = new ArrayList<>();
 
 		Pagination page = contents.pagination();
 
-		service.getShops().forEach(shop -> shop.getProducts().forEach(product -> {
-			if (filters != null)
-				for (Filter filter : filters)
-					if (filter.getFilter() != null)
-						if (!filter.getFilter().apply(product)) return;
+		shops.forEach(shop -> shop.getProducts(ShopGroup.get(player)).forEach(product -> {
+			if (isFiltered(product))
+				return;
 
 			ItemStack item  = new ItemBuilder(product.getItem())
 					.lore(product.getExchange().getLore(product))
@@ -142,15 +157,24 @@ public class BrowseItemsProvider extends _ShopProvider {
 
 			items.add(ClickableItem.from(item, e -> {
 				try {
-					product.getExchange().process(product, player);
+					product.process(player);
 					open(player, page.getPage());
 				} catch (Exception ex) {
-					player.sendMessage(colorize(ex.getMessage()));
+					player.sendMessage(colorize(PREFIX + ex.getMessage()));
 				}
 			}));
 		}));
 
 		addPagination(player, contents, items);
+	}
+
+	public boolean isFiltered(Product product) {
+		if (filters != null)
+			for (Filter filter : filters)
+				if (filter.getFilter() != null)
+					if (!filter.getFilter().apply(product))
+						return true;
+		return false;
 	}
 
 	private void formatFilter(Filter filter, FilterType next) {
@@ -161,7 +185,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 			filters.add(new Filter(next, next.getFilter(), null));
 	}
 
-	private Filter getFilter(Class<? extends FilterType> type) {
+	public Filter getFilter(Class<? extends FilterType> type) {
 		if (filters != null)
 			for (Filter filter : filters)
 				if (filter.getType().getClass() == type)

@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.holidays.easter20;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -27,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 
+@Disabled
 @NoArgsConstructor
 public class Easter20Command extends CustomCommand implements Listener {
 

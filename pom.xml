@@ -400,14 +400,6 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/MVdWPlaceholderAPI.jar</systemPath>
         </dependency>
-        <!-- wget -->
-        <dependency>
-            <groupId>net.miblue.wget2</groupId>
-            <artifactId>wget</artifactId>
-            <version>2.9</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/wget.jar</systemPath>
-        </dependency>
         <!-- GlowAPI -->
         <dependency>
             <groupId>org.inventivetalent</groupId>
