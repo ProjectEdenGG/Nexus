@@ -52,6 +52,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.BufferedWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
@@ -120,9 +121,33 @@ public class BNCore extends JavaPlugin {
 
 	public static void fileLog(String file, String message) {
 		Tasks.async(() -> {
-			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/BNCore/logs/" + file + ".log"), StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-				writer.append(System.lineSeparator()).append("[").append(StringUtils.shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
-			} catch(Exception ex) {
+			try {
+				Path path = Paths.get("plugins/BNCore/logs/" + file + ".log");
+				if (!path.toFile().exists())
+					path.toFile().createNewFile();
+				try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+					writer.append(System.lineSeparator()).append("[").append(StringUtils.shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+	}
+
+	public static void csvLog(String file, String message) {
+		Tasks.async(() -> {
+			try {
+				Path path = Paths.get("plugins/BNCore/logs/" + file + ".csv");
+				if (!path.toFile().exists())
+					path.toFile().createNewFile();
+				try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+					writer.append(System.lineSeparator()).append(message);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});
