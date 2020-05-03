@@ -89,7 +89,7 @@ public enum Rank {
 		// Temporary? fix to get players in this group. Using Hours > 10d because this method is only used for staff
 		List<OfflinePlayer> inGroup = new HoursService().getActivePlayers().stream()
 				.map(hours -> Utils.getPlayer(hours.getUuid()))
-				.filter(player -> BNCore.getPerms().playerInGroup(null, player, name()))
+				.filter(player -> BNCore.getPerms().playerHas(null, player, "rank." + name().toLowerCase()))
 				.collect(Collectors.toList());
 		Set<Nerd> nerds = new HashSet<>();
 		inGroup.forEach(player -> nerds.add(new NerdService().get(player)));

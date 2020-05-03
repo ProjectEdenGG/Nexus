@@ -5,13 +5,18 @@ import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
+import me.pugabyte.bncore.models.hours.HoursService.HoursType;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.Rank;
+import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
@@ -65,6 +70,19 @@ public class HoursFeature {
 					BNCore.warn("Error in Hours scheduler: " + ex.getMessage());
 				}
 			}
+		});
+
+		Tasks.repeatAsync(10, Time.HOUR, () -> {
+			List<Hours> total = new HoursService().getPage(HoursType.TOTAL, 1);
+			List<Hours> monthly = new HoursService().getPage(HoursType.MONTHLY, 1);
+
+			CitizensUtils.updateNameAndSkin(2709, new Nerd(total.get(0).getUuid()).getRankFormat());
+			CitizensUtils.updateNameAndSkin(2708, new Nerd(total.get(1).getUuid()).getRankFormat());
+			CitizensUtils.updateNameAndSkin(2707, new Nerd(total.get(2).getUuid()).getRankFormat());
+
+			CitizensUtils.updateNameAndSkin(2712, new Nerd(monthly.get(0).getUuid()).getRankFormat());
+			CitizensUtils.updateNameAndSkin(2711, new Nerd(monthly.get(1).getUuid()).getRankFormat());
+			CitizensUtils.updateNameAndSkin(2710, new Nerd(monthly.get(2).getUuid()).getRankFormat());
 		});
 	}
 

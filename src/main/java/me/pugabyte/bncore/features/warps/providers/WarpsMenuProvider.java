@@ -60,10 +60,10 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack other = nameItem(Material.EMERALD, "&3Other");
 
 				contents.set(1, 1, ClickableItem.from(survival, e -> {
-					if (player.getWorld().getName().toLowerCase().contains("legacy_"))
-						WarpsMenu.open(player, WarpMenu.LEGACY);
-					else
+					if (player.getWorld().getName().toLowerCase().contains("survival_"))
 						WarpsMenu.open(player, WarpMenu.SURVIVAL);
+					else
+						WarpsMenu.open(player, WarpMenu.LEGACY);
 				}));
 				contents.set(1, 3, ClickableItem.from(minigames, e -> WarpsMenu.open(player, WarpMenu.MINIGAMES)));
 				contents.set(1, 5, ClickableItem.from(creative, e -> warp(player, "creative")));
@@ -89,7 +89,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				}
 
 				ItemStack shops = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu||||&cCurrently Disabled");
-				ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy World", "&eClick to view the||&ewarps of the legacy world");
+				ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy", "&eClick to view legacy world warps");
 
 				//contents.set(1, 7, ClickableItem.from(shops, e -> new MainMenuProvider(null).open(player)));
 				contents.set(1, 7, ClickableItem.empty(shops));
@@ -102,7 +102,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 			case LEGACY:
 				for (Warps.LegacySurvivalWarp warp : Warps.LegacySurvivalWarp.values()) {
 					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
-						Warp warp1 = warpService.get(warp.name().replace("_", ""), WarpType.NORMAL);
+						Warp warp1 = warpService.get("legacy_" + warp.name().replace("_", ""), WarpType.NORMAL);
 						if (warp1 == null) {
 							player.sendMessage(StringUtils.colorize(StringUtils.getPrefix("Warps") + "&cThere was an error while trying to teleport you to the warp"));
 							return;
@@ -112,7 +112,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				}
 
 				ItemStack shops2 = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu||||&cCurrently Disabled");
-				ItemStack newWorld = nameItem(Material.GRASS_BLOCK, "&3Survival", "&eClick to view the||&enew Survival warps");
+				ItemStack newWorld = nameItem(Material.GRASS_BLOCK, "&3Survival", "&eClick to view the survival world warps");
 
 				//contents.set(1, 7, ClickableItem.from(shops2, e -> new MainMenuProvider(null).open(player)));
 				contents.set(1, 7, ClickableItem.empty(shops2));

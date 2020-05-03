@@ -6,10 +6,11 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.left;
+import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 
 public class ShopUtils {
 
@@ -24,10 +25,10 @@ public class ShopUtils {
 		return item.getAmount() + " " + camelCase(item.getType().name());
 	}
 
-	private static final DecimalFormat moneyFormat = new DecimalFormat("#.00");
+	private static final NumberFormat moneyFormat = NumberFormat.getCurrencyInstance();
 
 	public static String pretty(Number price) {
-		String format = moneyFormat.format(price);
+		String format = trimFirst(moneyFormat.format(price));
 		if (format.endsWith(".00"))
 			format = left(format, format.length() - 3);
 
