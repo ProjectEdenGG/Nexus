@@ -5,10 +5,8 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
 import me.pugabyte.bncore.framework.exceptions.BNException;
-import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.vote.TopVoter;
 import me.pugabyte.bncore.models.vote.VoteService;
-import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -38,11 +36,10 @@ public class EndOfMonth {
 		final Month finalMonth = month;
 		Tasks.async(() -> {
 			try {
-				Data data = new Data(finalMonth);
+				TopVoterData data = new TopVoterData(finalMonth);
 				BNCore.log(data.toString());
 
 				Koda.announce(data.getDiscordMessage());
-				updateNpcs(data);
 				writeHtml(data);
 
 				data.getEco30kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 30000));
@@ -55,7 +52,7 @@ public class EndOfMonth {
 	}
 
 	@lombok.Data
-	private static class Data {
+	protected static class TopVoterData {
 		@NonNull
 		private Month month;
 		@NonNull
@@ -71,7 +68,7 @@ public class EndOfMonth {
 		private List<TopVoter> eco15kWinners;
 		private TopVoter mysteryChestWinner;
 
-		public Data(Month month) {
+		public TopVoterData(Month month) {
 			this.month = month;
 			compute(new VoteService().getTopVoters(month));
 		}
@@ -167,7 +164,7 @@ public class EndOfMonth {
 		}
 	}
 
-	private static void writeHtml(Data data) {
+	private static void writeHtml(TopVoterData data) {
 		Path table = Paths.get("plugins/website/lastmonth_votes_monthly.jhtml");
 
 		try (BufferedWriter writer = Files.newBufferedWriter(table, StandardCharsets.UTF_8)) {
@@ -188,14 +185,5 @@ public class EndOfMonth {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-
-	private static void updateNpcs(Data data) {
-		OfflinePlayer first = Utils.getPlayer(data.getTopVoters().get(0).getUuid());
-		OfflinePlayer second = Utils.getPlayer(data.getTopVoters().get(1).getUuid());
-		OfflinePlayer third = Utils.getPlayer(data.getTopVoters().get(2).getUuid());
-		CitizensUtils.updateNameAndSkin(1043, new Nerd(first).getRank().getChatColor() + first.getName());
-		CitizensUtils.updateNameAndSkin(447, new Nerd(second).getRank().getChatColor() + second.getName());
-		CitizensUtils.updateNameAndSkin(1044, new Nerd(third).getRank().getChatColor() + third.getName());
 	}
 }

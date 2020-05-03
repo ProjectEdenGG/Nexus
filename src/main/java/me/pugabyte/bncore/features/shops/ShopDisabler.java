@@ -73,6 +73,9 @@ public class ShopDisabler implements Listener {
 			if (data.getFacing() == blockFace.getOppositeFace())
 				continue;
 
+			if (!isShopSign(relative))
+				continue;
+
 			event.setCancelled(true);
 			tell(event.getPlayer());
 			return;

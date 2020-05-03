@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.mcmmo.menus;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import fr.minuskube.inv.ClickableItem;
@@ -172,17 +173,17 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		for (ResetSkillType skill : ResetSkillType.values()) {
 			ItemStack item = new ItemBuilder(skill.getMaterial())
 					.name("&c" + StringUtils.camelCase(skill.name()))
-					.lore("&6Level: " + mcmmoPlayer.getSkillLevel(SkillType.valueOf(skill.name())) +
+					.lore("&6Level: " + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) +
 							"|| ||&e&lReward:" +
 							"||&f$10,000" +
 							"||&f" + skill.getRewardDescription())
 					.build();
 
-			if (mcmmoPlayer.getSkillLevel(SkillType.valueOf(skill.name())) >= 100)
+			if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= 100)
 				addGlowing(item);
 
 			contents.set(skill.getRow(), skill.getColumn(), ClickableItem.from(item, (e) -> {
-				if (mcmmoPlayer.getSkillLevel(SkillType.valueOf(skill.name())) < 100)
+				if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) < 100)
 					return;
 
 				MenuUtils.confirmMenu(player, ConfirmationMenu.builder().title("Confirm Prestige?").onConfirm((e2) -> {
@@ -194,7 +195,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void resetAll(McMMOPlayer player) {
-		for (SkillType skillType : SkillType.values()) {
+		for (PrimarySkillType skillType : PrimarySkillType.values()) {
 			player.modifySkill(skillType, 0);
 		}
 		player.getPlayer().sendMessage("&3You successfully reset all of your McMMO skills");
@@ -221,7 +222,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 		skill.onClick(player);
 		BNCore.getEcon().depositPlayer(player, 10000);
-		mcmmoPlayer.modifySkill(SkillType.valueOf(skill.name()), 0);
+		mcmmoPlayer.modifySkill(PrimarySkillType.valueOf(skill.name()), 0);
 
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 		mcMMOPrestige.prestige(skill.name());

@@ -78,6 +78,10 @@ public class Nerd {
 		return Rank.getHighestRank(getOfflinePlayer());
 	}
 
+	public String getRankFormat() {
+		return getRank().getFormat() + getName();
+	}
+
 	private static final String CHECKMARK = "&a✔";
 
 	public String getChatFormat() {
