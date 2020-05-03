@@ -14,7 +14,7 @@ public class CitizensUtils {
 	}
 
 	public static void updateNameAndSkin(NPC npc, String name) {
-		npc.setName(name);
+		Tasks.sync(() -> npc.setName(name));
 		updateSkin(npc, name);
 	}
 
@@ -23,13 +23,15 @@ public class CitizensUtils {
 	}
 
 	public static void updateSkin(NPC npc, String name, boolean useLatest) {
-		npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, stripColor(name));
-		npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, useLatest);
+		Tasks.sync(() -> {
+			npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, stripColor(name));
+			npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, useLatest);
 
-		Entity npcEntity = npc.getEntity();
-		if (npcEntity instanceof SkinnableEntity) {
-			((SkinnableEntity) npcEntity).getSkinTracker().notifySkinChange(npc.data().get(NPC.PLAYER_SKIN_USE_LATEST));
-		}
+			Entity npcEntity = npc.getEntity();
+			if (npcEntity instanceof SkinnableEntity) {
+				((SkinnableEntity) npcEntity).getSkinTracker().notifySkinChange(npc.data().get(NPC.PLAYER_SKIN_USE_LATEST));
+			}
+		});
 	}
 
 }
