@@ -1,10 +1,9 @@
 package me.pugabyte.bncore.features.commands;
 
-import com.sk89q.worldedit.registry.state.DirectionalProperty;
-import com.sk89q.worldedit.util.Direction;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
-import me.pugabyte.bncore.framework.annotations.Disabled;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -21,7 +20,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Camaros
@@ -33,7 +36,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("SidewaysStairs");
 	static Map<Player, SidewaysStairsPlayer> playerData = new HashMap<>();
 
-	private static final List<String> validAngles = (List<String>)Arrays.asList("north",  "east", "south", "west");
+	private static final List<String> validAngles = Arrays.asList("north",  "east", "south", "west");
 
 	private SidewaysStairsPlayer swsPlayer;
 
@@ -67,14 +70,11 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		send(PREFIX + (swsPlayer.isEnabled() ? "Enabled" : "Disabled"));
 	}
 
-	@Path("(set|angle|setangle)") //this method isn't called when no argument is given.
-	void setAngle() {
-		send(PREFIX + "/sws angle <north/south/east/west> -&7 Set the angle to place stair blocks.");
-	}
-
 	@Path("(set|angle|setangle) <north|south|east|west>")
 	void setAngle(String angle) {
-		if(validAngles.contains(angle.toLowerCase())) {
+		if (angle == null)
+			send(PREFIX + "/sws angle <north/south/east/west> -&7 Set the angle to place stair blocks.");
+		else if (validAngles.contains(angle.toLowerCase())) {
 			swsPlayer.setEnabled(true);
 			swsPlayer.setAction(SwsAction.SET_ANGLE);
 			swsPlayer.setDirection(angle.toLowerCase());
@@ -83,17 +83,16 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 			send(PREFIX + "Invalid angle. Angle must be North, South, East, or West");
 	}
 
-	@Path("(setupsidedown)") //this doesn't work either. I'd like this to be called if no argument is provided.
-	void setUpsidedown() {
-		setUpsidedown(swsPlayer.getHalf().equals("top") ? false : true);
-	}
-
-	@Path("(setupsidedown) <true/false>")
+	@Path("(setupsidedown) [true/false]")
 	void setUpsidedown(Boolean value){
-		swsPlayer.setEnabled(true);
-		swsPlayer.setAction(SwsAction.SET_ANGLE);
-		swsPlayer.setHalf(value ? "top" : "bottom");
-		send(PREFIX + String.format("Upsidedown stairs has now been %s.", value ? "enabled" : "disabled"));
+		if (value == null)
+			setUpsidedown(!swsPlayer.getHalf().equals("top"));
+		else {
+			swsPlayer.setEnabled(true);
+			swsPlayer.setAction(SwsAction.SET_ANGLE);
+			swsPlayer.setHalf(value ? "top" : "bottom");
+			send(PREFIX + String.format("Upsidedown stairs has now been %s.", value ? "enabled" : "disabled"));
+		}
 	}
 
 	@Path("copy")
@@ -107,23 +106,23 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 	void rotate() {
 		swsPlayer.setEnabled(true);
 		swsPlayer.setAction(SwsAction.SET_ANGLE);
-		Iterator i = validAngles.iterator();
+		Iterator<String> i = validAngles.iterator();
 		while(i.hasNext())
-			if(((String)i.next()).equals(swsPlayer.direction))
+			if(i.next().equals(swsPlayer.direction))
 				if(i.hasNext())
-					swsPlayer.setDirection((String)i.next());
+					swsPlayer.setDirection(i.next());
 				else
 					swsPlayer.setDirection(validAngles.get(0));
 		send(PREFIX + String.format("Angle changed to %s.", swsPlayer.getDirection()));
 	}
 
-	@Path("upsidedown")
+	@Path("upsideDown")
 	void upsideDown() {
 		swsPlayer.setEnabled(true);
 		upsideDown(swsPlayer.getAction() == SwsAction.DISABLE_UPSIDEDOWN_PLACEMENT);
 	}
 
-	@Path("upsidedown <true|false>")
+	@Path("upsideDown <true|false>")
 	void upsideDown(boolean allow) {
 		swsPlayer.setEnabled(true);
 		swsPlayer.setAction(allow ? SwsAction.NONE : SwsAction.DISABLE_UPSIDEDOWN_PLACEMENT);
@@ -132,8 +131,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onStairInteract(PlayerInteractEvent event) {
-
-		if (event.getAction() == null || event.getHand() == null) return;
+		if (event.getHand() == null) return;
 		if (event.getHand().equals(EquipmentSlot.HAND)) return;
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 
@@ -151,7 +149,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 						swsPlayer.setDirection(direction);
 						swsPlayer.setHalf(half);
 						swsPlayer.setEnabled(true);
-						player.sendMessage(PREFIX + "Angle succesfully copied (" + direction + (!half.equals("bottom") ? "/upsidedown" : "") + ").");
+						player.sendMessage(PREFIX + "Angle succesfully copied (" + direction + (!"bottom".equals(half) ? "/upsidedown" : "") + ").");
 					} else {
 						player.sendMessage(PREFIX + "Can only copy angle of a stair block.");
 					}
@@ -178,56 +176,15 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		NONE, COPY, SET_ANGLE, DISABLE_UPSIDEDOWN_PLACEMENT;
 	}
 
+	@Data
+	@RequiredArgsConstructor
 	public class SidewaysStairsPlayer {
-
+		@NonNull
 		private final Player player;
 		private boolean enabled = false;
 		private SwsAction action = SwsAction.NONE;
 		private String direction = "north";
 		private String half = "bottom";
-
-
-
-		public SidewaysStairsPlayer(Player player) {
-			this.player = player;
-		}
-
-		public Player getPlayer() {
-			return player;
-		}
-
-		public boolean isEnabled() {
-			return enabled;
-		}
-
-		public void setEnabled(boolean enabled) {
-			this.enabled = enabled;
-		}
-
-		public SwsAction getAction() {
-			return action;
-		}
-
-		public void setAction(SwsAction action) {
-			this.action = action;
-		}
-
-		public String getDirection() {
-			return direction;
-		}
-
-		public void setDirection(String direction) {
-			this.direction = direction;
-		}
-
-		public String getHalf() {
-			return half;
-		}
-
-		public void setHalf(String half) {
-			this.half = half;
-		}
-
 	}
 
 }
