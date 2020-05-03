@@ -21,7 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Cooldown(@Part(value = Time.SECOND, x = 30))
+@Cooldown(value = @Part(value = Time.SECOND, x = 30), bypass = "group.admin")
 @Aliases({"randomtp", "wild"})
 public class RTPCommand extends CustomCommand {
 	LWCProtectionService service = new LWCProtectionService();
@@ -35,7 +35,7 @@ public class RTPCommand extends CustomCommand {
 	@Path
 	@Async
 	void rtp() {
-		if (!Arrays.asList("world", "survival", "legacy_survival").contains(player().getWorld().getName()))
+		if (!Arrays.asList("world", "survival", "resource").contains(player().getWorld().getName()))
 			error("You must be in the survival world to run this command");
 
 		if (!running) {
@@ -43,11 +43,20 @@ public class RTPCommand extends CustomCommand {
 			running = true;
 		}
 		count.getAndIncrement();
-		int worldRange = 10000;
+
+		int radius = 0;
+		switch (player().getWorld().getName()) {
+			case "world": radius = 17500; break;
+			case "survival": radius = 10000; break;
+			case "resource": radius = 2500; break;
+			default: error("Could not find world border of current world");
+		}
 		int range = 250;
 		List<Location> locationList = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
-			locationList.add(new Location(player().getWorld(), (Math.random() * (worldRange * 2) - worldRange), 70, (Math.random() * (worldRange * 2) - worldRange)));
+			double angle = Math.random() * Math.PI * 2;
+			double r = Math.sqrt(Math.random());
+			locationList.add(new Location(player().getWorld(), r * Math.cos(angle) * radius, 70, r * Math.sin(angle) * radius));
 		}
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);

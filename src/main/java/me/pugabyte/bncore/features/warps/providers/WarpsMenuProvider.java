@@ -55,7 +55,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 			case MAIN:
 				ItemStack survival = nameItem(Material.GRASS_BLOCK, "&3Survival");
 				ItemStack minigames = nameItem(Material.DIAMOND_SWORD, "&3Minigames");
-				ItemStack creative = nameItem(Material.QUARTZ, "&3Creative", "&eWarp to the creative world");
+				ItemStack creative = nameItem(Material.QUARTZ, "&3Creative");
 				ItemStack skyblock = nameItem(Material.COBBLESTONE, "&3Skyblock", "&cCurrently Disabled");
 				ItemStack other = nameItem(Material.EMERALD, "&3Other");
 
