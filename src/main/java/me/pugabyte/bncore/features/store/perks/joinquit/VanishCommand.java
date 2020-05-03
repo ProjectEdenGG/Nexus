@@ -46,7 +46,7 @@ public class VanishCommand extends CustomCommand {
 			BNCore.getPerms().playerRemove(player(), "pv.breakblocks");
 			BNCore.getPerms().playerRemove(player(), "pv.placeblocks");
 			BNCore.getPerms().playerRemove(player(), "pv.dropitems");
-			send("interaction disabled");
+			send(PREFIX + "Interaction disabled");
 		} else {
 			BNCore.getPerms().playerAdd(player(), "pv.interact");
 			BNCore.getPerms().playerAdd(player(), "pv.useblocks");
@@ -54,7 +54,7 @@ public class VanishCommand extends CustomCommand {
 			BNCore.getPerms().playerAdd(player(), "pv.breakblocks");
 			BNCore.getPerms().playerAdd(player(), "pv.placeblocks");
 			BNCore.getPerms().playerAdd(player(), "pv.dropitems");
-			send("interaction enabled");
+			send(PREFIX + "Interaction enabled");
 		}
 	}
 
@@ -63,10 +63,10 @@ public class VanishCommand extends CustomCommand {
 	void togglePickup() {
 		if (player().hasPermission("pv.toggleitems")) {
 			BNCore.getPerms().playerRemove(player(), "pv.toggleitems");
-			send("pickup enabled");
+			send(PREFIX + "Item pickup enabled");
 		} else {
 			BNCore.getPerms().playerAdd(player(), "pv.toggleitems");
-			send("pickup disabled");
+			send(PREFIX + "Item pickup disabled");
 		}
 	}
 
