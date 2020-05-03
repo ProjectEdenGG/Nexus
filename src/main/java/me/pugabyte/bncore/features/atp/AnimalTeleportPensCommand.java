@@ -44,16 +44,23 @@ public class AnimalTeleportPensCommand extends CustomCommand {
 
 	@Path("(warp|warps) list")
 	void list() {
-		List<Warp> warps = service.getWarpsByType(WarpType.ATP);
+		List<Warp> warps;
+		if (player().getWorld().getName().equalsIgnoreCase("world"))
+			warps = service.getWarpsByType(WarpType.LEGACY_ATP);
+		else
+			warps = service.getWarpsByType(WarpType.ATP);
 		JsonBuilder builder = new JsonBuilder();
 		for (Warp warp : warps) {
 			if (!builder.isInitialized())
 				builder.initialize();
 			else
 				builder.next("&e, ").group();
-			builder.next("&3" + warp.getName())
-					.command("atp warp " + warp.getName())
-					.group();
+			builder.next("&3" + warp.getName());
+			if (player().getWorld().getName().equalsIgnoreCase("world"))
+				builder.command("atp warp " + warp.getName() + " legacy");
+			else
+				builder.command("atp warp " + warp.getName());
+			builder.group();
 		}
 		line();
 		send("&3List of available ATPs &e(Click to teleport)");
@@ -67,11 +74,18 @@ public class AnimalTeleportPensCommand extends CustomCommand {
 		warp.teleport(player());
 	}
 
+	@Path("(warp|warps) <warp> legacy")
+	void warpLegacy(String name) {
+		Warp warp = service.get(name, WarpType.LEGACY_ATP);
+		if (warp == null) error("That warp does not exist");
+		warp.teleport(player());
+	}
+
 	@Path()
 	void menu() {
 		if (!isInATP())
 			error("You are not in an ATP region.");
-		if (player().getWorld().getName().toLowerCase().contains("legacy_"))
+		if (player().getWorld().getName().equalsIgnoreCase("world"))
 			new ATPMenu().openLegacy(player());
 		else
 			new ATPMenu().open(player());
