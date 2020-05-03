@@ -294,6 +294,25 @@ public class StringUtils {
 			return original + "s";
 	}
 
+	public static String distanceMetricFormat(int cm) {
+		int original = cm;
+		int km = cm / 1000 / 100;
+		cm -= km * 1000 * 100;
+		int meters = cm / 100;
+		cm -= meters * 100;
+
+		String result = "";
+		if (km > 0)
+			result += km + "km ";
+		if (meters > 0)
+			result += meters + "m ";
+
+		if (result.length() > 0)
+			return result.trim();
+		else
+			return original + "cm";
+	}
+
 	public static String longDateTimeFormat(LocalDateTime dateTime) {
 		return longDateFormat(dateTime.toLocalDate()) + " " + longTimeFormat(dateTime);
 	}
