@@ -9,7 +9,6 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.warps.WarpType;
 
 @Redirect(from = "/survival", to = "/warp survival")
-@Redirect(from = "/market", to = "/warp market")
 @Redirect(from = "/plaza", to = "/warp plaza")
 @Redirect(from = "/mall", to = "/warp mall")
 @Redirect(from = {"/shub", "/shophub"}, to = "/warp shub")

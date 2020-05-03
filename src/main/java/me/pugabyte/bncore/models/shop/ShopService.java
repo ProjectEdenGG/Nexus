@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.models.shop;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.utils.Tasks;
 
@@ -34,6 +35,10 @@ public class ShopService extends MongoService {
 		});
 
 		return cache.get(uuid);
+	}
+
+	public Shop getMarket() {
+		return get(BNCore.getUUID0());
 	}
 
 }

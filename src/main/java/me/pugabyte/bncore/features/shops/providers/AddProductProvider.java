@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
 import me.pugabyte.bncore.models.shop.Shop.Product;
+import me.pugabyte.bncore.models.shop.Shop.ShopGroup;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -67,7 +68,7 @@ public class AddProductProvider extends _ShopProvider {
 			if (exchangeType == ExchangeType.TRADE) {
 				if (priceItem.get() != null) {
 					confirm.name("&3Trade &e" + pretty(item.get())).lore("&3for &e" + pretty(priceItem.get()));
-					product.set(new Product(player.getUniqueId(), item.get(), 0, exchangeType, priceItem.get()));
+					product.set(new Product(player.getUniqueId(), ShopGroup.get(player), item.get(), 0, exchangeType, priceItem.get()));
 				}
 			} else
 				if (price > 0) {
@@ -75,7 +76,7 @@ public class AddProductProvider extends _ShopProvider {
 						confirm.name("&3Buy &e" + pretty(item.get()) + " &3from").lore("&3customers for &e$" + pretty(price));
 					else if (exchangeType == ExchangeType.SELL)
 						confirm.name("&3Sell &e" + pretty(item.get()) + " &3to").lore("&3customers for &e$" + pretty(price));
-					product.set(new Product(player.getUniqueId(), item.get(), 0, exchangeType, price));
+					product.set(new Product(player.getUniqueId(), ShopGroup.get(player), item.get(), 0, exchangeType, price));
 				}
 
 			if (product.get() != null)

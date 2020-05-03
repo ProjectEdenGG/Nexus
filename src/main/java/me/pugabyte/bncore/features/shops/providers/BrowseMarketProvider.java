@@ -1,12 +1,13 @@
 package me.pugabyte.bncore.features.shops.providers;
 
 import fr.minuskube.inv.content.InventoryContents;
+import me.pugabyte.bncore.models.shop.ShopService;
 import org.bukkit.entity.Player;
 
-public class BrowseMarketProvider extends _ShopProvider {
+public class BrowseMarketProvider extends PlayerShopProvider {
 
 	public BrowseMarketProvider(_ShopProvider previousMenu) {
-		this.previousMenu = previousMenu;
+		super(previousMenu, new ShopService().getMarket());
 	}
 
 	@Override
@@ -15,10 +16,9 @@ public class BrowseMarketProvider extends _ShopProvider {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
-
+	public void addFilters(Player player, InventoryContents contents) {
+		addSearchFilter(player, contents);
+		addExchangeFilter(player, contents);
 	}
-
 
 }

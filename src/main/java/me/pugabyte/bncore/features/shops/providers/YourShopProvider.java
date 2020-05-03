@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.shop.Shop;
+import me.pugabyte.bncore.models.shop.Shop.ShopGroup;
 import me.pugabyte.bncore.models.shop.ShopService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -48,7 +49,7 @@ public class YourShopProvider extends _ShopProvider {
 		if (shop.getProducts() == null || shop.getProducts().size() == 0) return;
 		List<ClickableItem> items = new ArrayList<>();
 
-		shop.getProducts().forEach(product -> {
+		shop.getProducts(ShopGroup.get(player)).forEach(product -> {
 			ItemStack item = new ItemBuilder(product.getItem().clone())
 					.lore(product.getExchange().getOwnLore(product))
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)

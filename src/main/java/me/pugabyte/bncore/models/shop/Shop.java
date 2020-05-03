@@ -19,7 +19,9 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConv
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.Utils.IteratableEnum;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +30,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.shops.ShopUtils.giveItem;
 import static me.pugabyte.bncore.features.shops.ShopUtils.pretty;
+import static me.pugabyte.bncore.features.shops.Shops.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Data
@@ -52,8 +56,38 @@ public class Shop extends PlayerOwnedObject {
 	// TODO holding for money, maybe? would make withdrawing money more complicated
 	// private double profit;
 
+
+	public List<Product> getProducts(ShopGroup shopGroup) {
+		return products.stream().filter(product -> product.getShopGroup().equals(shopGroup)).collect(Collectors.toList());
+	}
+
 	public String[] getDescriptionArray() {
 		return description.isEmpty() ? new String[]{"", "", "", ""} : description.toArray(new String[0]);
+	}
+
+	public enum ShopGroup {
+		SURVIVAL,
+		RESOURCE,
+		SKYBLOCK;
+
+		public static ShopGroup get(org.bukkit.entity.Entity entity) {
+			return get(entity.getWorld());
+		}
+
+		public static ShopGroup get(World world) {
+			return get(world.getName());
+		}
+
+		public static ShopGroup get(String world) {
+			if (world.toLowerCase().startsWith("resource"))
+				return RESOURCE;
+			else if (world.toLowerCase().startsWith("skyblock"))
+				return SKYBLOCK;
+			else if (WorldGroup.get(world) == WorldGroup.SURVIVAL)
+				return SURVIVAL;
+
+			return null;
+		}
 	}
 
 	@Data
@@ -62,6 +96,7 @@ public class Shop extends PlayerOwnedObject {
 	@Converters({UUIDConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
 	public static class Product {
 		private UUID uuid;
+		private ShopGroup shopGroup;
 		@Embedded
 		private ItemStack item;
 		private double stock;
@@ -74,6 +109,12 @@ public class Shop extends PlayerOwnedObject {
 
 		public ItemStack getItem() {
 			return item.clone();
+		}
+
+		public void setStock(double stock) {
+			if (this.stock == -1)
+				return;
+			this.stock = Math.max(stock, 0);
 		}
 
 		@SneakyThrows
@@ -135,20 +176,29 @@ public class Shop extends PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			BNCore.getEcon().withdrawPlayer(customer, price);
-			BNCore.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
+			if (!isMarket(product))
+				BNCore.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
 			giveItem(customer, product.getItem());
 			new ShopService().save(product.getShop());
-			customer.sendMessage(colorize("You purchased " + product.getItem().getType() + " x" + product.getItem().getAmount() + " for $" + price));
+			customer.sendMessage(colorize(PREFIX + "You purchased " + pretty(product.getItem()) + " for $" + pretty(price)));
 		}
 
 		@Override
 		public List<String> getLore(Product product) {
 			int stock = (int) product.getStock();
-			return Arrays.asList(
-					"&7Buy &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price),
-					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-					"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
-			);
+			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price);
+
+			if (product.getUuid().equals(BNCore.getUUID0()))
+				return Arrays.asList(
+						desc,
+						"&7Seller: &6Market"
+				);
+			else
+				return Arrays.asList(
+						desc,
+						"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
+						"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
+				);
 		}
 
 		@Override
@@ -185,20 +235,28 @@ public class Shop extends PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
-			product.getShop().getHolding().add(price);
+			if (!isMarket(product))
+				product.getShop().getHolding().add(price);
 			giveItem(customer, product.getItem());
 			new ShopService().save(product.getShop());
-			customer.sendMessage(colorize("You purchased " + pretty(product.getItem()) + " for " + pretty(price)));
+			customer.sendMessage(colorize(PREFIX + "You purchased " + pretty(product.getItem()) + " for " + pretty(price)));
 		}
 
 		@Override
 		public List<String> getLore(Product product) {
 			int stock = (int) product.getStock();
-			return Arrays.asList(
-					"&7Buy &e" + product.getItem().getAmount() + " &7for &a" + pretty(price),
-					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-					"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
-			);
+			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + pretty(price);
+			if (product.getUuid().equals(BNCore.getUUID0()))
+				return Arrays.asList(
+						desc,
+						"&7Seller: &6Market"
+				);
+			else
+				return Arrays.asList(
+						desc,
+						"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
+						"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
+				);
 		}
 
 		@Override
@@ -231,27 +289,36 @@ public class Shop extends PlayerOwnedObject {
 				throw new InvalidInputException("This item is out of stock");
 			if (product.getStock() > 0 && product.getStock() < price)
 				throw new InvalidInputException("There is not enough stock to fulfill your purchase");
-			if (!BNCore.getEcon().has(shopOwner, price))
+			if (!isMarket(product) && !BNCore.getEcon().has(shopOwner, price))
 				throw new InvalidInputException(shopOwner.getName() + " does not have enough money to purchase this item from you");
 			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
 				throw new InvalidInputException("You do not have enough " + pretty(product.getItem()) + " to sell");
 
 			product.setStock(product.getStock() - price);
-			BNCore.getEcon().withdrawPlayer(shopOwner, price);
+			if (!isMarket(product))
+				BNCore.getEcon().withdrawPlayer(shopOwner, price);
 			BNCore.getEcon().depositPlayer(customer, price);
 			customer.getInventory().removeItem(product.getItem());
-			product.getShop().getHolding().add(product.getItem());
+			if (!isMarket(product))
+				product.getShop().getHolding().add(product.getItem());
 			new ShopService().save(product.getShop());
-			customer.sendMessage(colorize("You sold " + product.getItem().getType() + " x" + product.getItem().getAmount() + " for $" + price));
+			customer.sendMessage(colorize(PREFIX + "You sold " + pretty(product.getItem()) + " for $" + pretty(price)));
 		}
 
 		@Override
 		public List<String> getLore(Product product) {
-			return Arrays.asList(
-					"&7Sell &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price),
-					"&7Stock: &e$" + pretty(product.getStock()),
-					"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
-			);
+			String desc = "&7Sell &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price);
+			if (product.getUuid().equals(BNCore.getUUID0()))
+				return Arrays.asList(
+						desc,
+						"&7Seller: &6Market"
+				);
+			else
+				return Arrays.asList(
+						desc,
+						"&7Stock: &e$" + pretty(product.getStock()),
+						"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
+				);
 		}
 
 		@Override
@@ -263,6 +330,10 @@ public class Shop extends PlayerOwnedObject {
 					"&7Click to edit"
 			);
 		}
+	}
+
+	public static boolean isMarket(Product product) {
+		return product.getUuid().equals(BNCore.getUUID0());
 	}
 
 }
