@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -73,11 +74,13 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 		SettingService service = new SettingService();
 		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock().getWorld());
 		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
-		if (event.getPlayer().hasPermission("ladder.admin")) return;
+
 		if (!Utils.isSign(event.getBlock().getType())) {
-			event.setCancelled(true);
+			if (!player().hasPermission(WorldGuardEditCommand.permission))
+				event.setCancelled(true);
 			return;
 		}
+
 		Setting setting = service.get(event.getPlayer(), "wallsofgrace");
 		Map<String, Object> json = setting.getJson();
 		Location loc1 = null;
@@ -103,14 +106,15 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 		SettingService service = new SettingService();
 		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock().getWorld());
 		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
-		if (event.getPlayer().hasPermission("ladder.admin")) return;
-		if (!Utils.isSign(event.getBlock().getType())) {
-			event.setCancelled(true);
-			return;
-		}
 
-		// Sign must be placed on concrete
-		if (!MaterialTag.CONCRETES.isTagged(event.getBlockAgainst().getType())) {
+		if (Utils.isSign(event.getBlock().getType())) {
+			// Sign must be placed on concrete
+			if (!MaterialTag.CONCRETES.isTagged(event.getBlockAgainst().getType())) {
+				event.setCancelled(true);
+				error("You must place your sign on concrete");
+				return;
+			}
+		} else if (!player().hasPermission(WorldGuardEditCommand.permission)) {
 			event.setCancelled(true);
 			return;
 		}

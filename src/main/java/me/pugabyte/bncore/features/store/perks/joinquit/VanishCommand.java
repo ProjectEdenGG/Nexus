@@ -11,10 +11,10 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Utils;
 
 @Fallback("premiumvanish")
-@Redirect(from = {"/fj", "/fakejoin"}, to = "/vanish fj")
-@Redirect(from = {"/fq", "/fakequit"}, to = "/vanish fq")
-@Redirect(from = {"/ni", "/nointeract"}, to = "/vanish ni")
-@Redirect(from = {"/np", "/nopickup"}, to = "/vanish np")
+@Redirect(from = {"/fj", "/fakejoin"}, to = "/bncore:vanish fj")
+@Redirect(from = {"/fq", "/fakequit"}, to = "/bncore:vanish fq")
+@Redirect(from = {"/ni", "/nointeract"}, to = "/bncore:vanish ni")
+@Redirect(from = {"/np", "/nopickup"}, to = "/bncore:vanish np")
 public class VanishCommand extends CustomCommand {
 
 	public VanishCommand(@NonNull CommandEvent event) {
@@ -37,7 +37,7 @@ public class VanishCommand extends CustomCommand {
 	}
 
 	@Path("(ni|nointeract)")
-	@Permission("vanish.use")
+	@Permission("vanish.vanish")
 	void toggleInteract() {
 		if (player().hasPermission("pv.interact")) {
 			BNCore.getPerms().playerRemove(player(), "pv.interact");
@@ -46,7 +46,7 @@ public class VanishCommand extends CustomCommand {
 			BNCore.getPerms().playerRemove(player(), "pv.breakblocks");
 			BNCore.getPerms().playerRemove(player(), "pv.placeblocks");
 			BNCore.getPerms().playerRemove(player(), "pv.dropitems");
-			send("interaction enabled");
+			send("interaction disabled");
 		} else {
 			BNCore.getPerms().playerAdd(player(), "pv.interact");
 			BNCore.getPerms().playerAdd(player(), "pv.useblocks");
@@ -54,19 +54,19 @@ public class VanishCommand extends CustomCommand {
 			BNCore.getPerms().playerAdd(player(), "pv.breakblocks");
 			BNCore.getPerms().playerAdd(player(), "pv.placeblocks");
 			BNCore.getPerms().playerAdd(player(), "pv.dropitems");
-			send("interaction disabled");
+			send("interaction enabled");
 		}
 	}
 
 	@Path("(np|nopickup)")
-	@Permission("vanish.use")
+	@Permission("vanish.vanish")
 	void togglePickup() {
-		if (player().hasPermission("pv.interact")) {
+		if (player().hasPermission("pv.toggleitems")) {
 			BNCore.getPerms().playerRemove(player(), "pv.toggleitems");
-			send("pickup disabled");
+			send("pickup enabled");
 		} else {
 			BNCore.getPerms().playerAdd(player(), "pv.toggleitems");
-			send("pickup enabled");
+			send("pickup disabled");
 		}
 	}
 

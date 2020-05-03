@@ -26,6 +26,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,6 +122,31 @@ public class Shop extends PlayerOwnedObject {
 		@SneakyThrows
 		public void process(Player customer) {
 			getExchange().process(this, customer);
+			log(customer);
+		}
+
+		public void log(Player customer) {
+			List<String> columns = new ArrayList<>(Arrays.asList(
+					DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
+					getUuid().toString(),
+					getShop().getOfflinePlayer().getName(),
+					customer.getUniqueId().toString(),
+					customer.getName(),
+					getShopGroup().name(),
+					item.getType().name(),
+					String.valueOf(item.getAmount()),
+					exchangeType.name()
+			));
+
+			if (price instanceof ItemStack) {
+				columns.add(((ItemStack) price).getType().name());
+				columns.add(String.valueOf(((ItemStack) price).getAmount()));
+			} else {
+				columns.add(String.valueOf(price));
+				columns.add("");
+			}
+
+			BNCore.csvLog("exchange", String.join(",", columns));
 		}
 
 		@NotNull
@@ -154,6 +181,8 @@ public class Shop extends PlayerOwnedObject {
 		List<String> getLore(Product product);
 		List<String> getOwnLore(Product product);
 
+		default void log(Product product, Player customer) {
+		}
 	}
 
 	@Data

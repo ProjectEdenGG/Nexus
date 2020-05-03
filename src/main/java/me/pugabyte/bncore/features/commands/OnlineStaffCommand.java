@@ -27,7 +27,7 @@ public class OnlineStaffCommand extends CustomCommand {
 
 		long vanished = Bukkit.getOnlinePlayers().stream().filter(Utils::isVanished).count();
 		long online = Rank.getOnlineStaff().size() - vanished;
-		boolean canSeeVanished = player().hasPermission("vanish.see");
+		boolean canSeeVanished = player().hasPermission("pv.see");
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");
 
 		line();

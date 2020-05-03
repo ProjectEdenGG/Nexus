@@ -85,7 +85,7 @@ public class Utils {
 	}
 
 	public static boolean canSee(Player viewer, Player target) {
-		return !isVanished(target) || viewer.hasPermission("vanish.see");
+		return !isVanished(target) || viewer.hasPermission("pv.see");
 	}
 
 	public static boolean isNPC(Entity entity) {
