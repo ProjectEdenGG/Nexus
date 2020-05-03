@@ -6,7 +6,6 @@ public enum WarpType {
 	LEGACY_ATP,
 	BEAR_FAIR,
 	GILIHOUSE,
-	LEGACY,
 	NORMAL,
 	STAFF,
 	QUEST,

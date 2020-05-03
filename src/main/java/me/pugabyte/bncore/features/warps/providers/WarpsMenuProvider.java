@@ -102,7 +102,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 			case LEGACY:
 				for (Warps.LegacySurvivalWarp warp : Warps.LegacySurvivalWarp.values()) {
 					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
-						Warp warp1 = warpService.get(warp.name().replace("_", ""), WarpType.LEGACY);
+						Warp warp1 = warpService.get(warp.name().replace("_", ""), WarpType.NORMAL);
 						if (warp1 == null) {
 							player.sendMessage(StringUtils.colorize(StringUtils.getPrefix("Warps") + "&cThere was an error while trying to teleport you to the warp"));
 							return;
@@ -147,27 +147,25 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 //			case CREATIVE:
 //			case SKYBLOCK:
 			case OTHER:
-				ItemStack podiums = nameItem(Material.QUARTZ_STAIRS, "&3Podiums and Current Staff");
+				ItemStack leaderboards = nameItem(Material.QUARTZ_STAIRS, "&3Leaderboards");
+				ItemStack staffhall = nameItem(Material.LIGHT_BLUE_CONCRETE, "&3Current Staff");
 				ItemStack hoh = nameItem(Material.BEACON, "&3Hall of History");
 				ItemStack wog = nameItem(Material.OAK_SIGN, "&3Walls of Grace");
-				ItemStack ba = nameItem(Material.WOODEN_AXE, "&3BuildAdmin World");
 				ItemStack banners = nameItem(Material.CYAN_BANNER, "&3Banners");
 				ItemStack storetesting = nameItem(Material.GOLD_INGOT, "&3Store Perk Testing Area");
-				ItemStack stranded = nameItem(Material.WRITABLE_BOOK, "&3Stranded", "&eAn adventure map!||&eCan ye survive a seabattle, ||&ea ship wreck, scores of ||&ezombies and find the ||&elegendary treasure... matey?");
 				ItemStack walkthrough = nameItem(Material.NETHER_STAR, "&3Two Year Anniversary", "&e&lHistory Walkthrough||&eCelebrating 2 years||&eof Bear Nation");
 				ItemStack bearfair = nameItem(Material.FIREWORK_ROCKET, "&3Three Year Anniversary", "&e&lBear Fair||&eCelebrating 3 years||&eof Bear Nation");
 				ItemStack buildcontests = nameItem(Material.CHEST, "&3Past Build Contests");
 
-				contents.set(1, 1, ClickableItem.from(podiums, e -> warp(player, "podiumsandstaffhall")));
-				contents.set(1, 3, ClickableItem.from(hoh, e -> command(player, "hallofhistory")));
-				contents.set(1, 5, ClickableItem.from(wog, e -> command(player, "wog")));
-				contents.set(1, 7, ClickableItem.from(ba, e -> warp(player, "buildadmin")));
+				contents.set(1, 1, ClickableItem.from(leaderboards, e -> warp(player, "leaderboards")));
+				contents.set(1, 3, ClickableItem.from(staffhall, e -> warp(player, "staffhall")));
+				contents.set(1, 5, ClickableItem.from(hoh, e -> command(player, "hallofhistory")));
+				contents.set(1, 7, ClickableItem.from(wog, e -> command(player, "wog")));
 				contents.set(2, 2, ClickableItem.from(banners, e -> warp(player, "banners")));
 				contents.set(2, 4, ClickableItem.from(storetesting, e -> warp(player, "donortrial")));
-				contents.set(2, 6, ClickableItem.from(stranded, e -> warp(player, "stranded")));
+				contents.set(2, 6, ClickableItem.from(buildcontests, e -> WarpsMenu.open(player, WarpMenu.BUILD_CONTESTS)));
 				contents.set(3, 3, ClickableItem.from(walkthrough, e -> warp(player, "2y")));
 				contents.set(3, 5, ClickableItem.from(bearfair, e -> warp(player, "bearfair")));
-				contents.set(4, 4, ClickableItem.from(buildcontests, e -> WarpsMenu.open(player, WarpMenu.BUILD_CONTESTS)));
 				break;
 
 			case BUILD_CONTESTS:
