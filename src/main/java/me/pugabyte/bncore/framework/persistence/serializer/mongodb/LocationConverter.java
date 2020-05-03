@@ -18,6 +18,8 @@ public class LocationConverter extends TypeConverter {
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
 		Location location = (Location) value;
+		if (location.getWorld() == null)
+			return null;
 		return new BasicDBObject() {{
 			put("world", location.getWorld().getName());
 			put("x", BigDecimal.valueOf(location.getX()).setScale(3, RoundingMode.HALF_UP).doubleValue());

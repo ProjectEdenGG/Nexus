@@ -1,13 +1,18 @@
 package me.pugabyte.bncore.features.listeners;
 
+import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.warps.WarpService;
+import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.AbstractHorse;
@@ -19,9 +24,16 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
@@ -161,8 +173,22 @@ public class Misc implements Listener {
 		}
 	}
 
+	private static List<UUID> toSpawn = new ArrayList<>();
+
+	@EventHandler
+	@SneakyThrows
+	public void onConnect(AsyncPlayerPreLoginEvent event) {
+		File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + event.getUniqueId().toString() + ".dat").toFile();
+		if (file.exists())
+			if (Bukkit.getWorld(new NBTFile(file).getString("SpawnWorld")) == null)
+				toSpawn.add(event.getUniqueId());
+	}
+
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
+		if (toSpawn.contains(event.getPlayer().getUniqueId()))
+			new WarpService().get("spawn", WarpType.NORMAL).teleport(event.getPlayer());
+
 		Tasks.wait(5, () -> {
 			WorldGroup worldGroup = WorldGroup.get(event.getPlayer());
 			if (worldGroup == WorldGroup.MINIGAMES)
@@ -170,6 +196,17 @@ public class Misc implements Listener {
 			else if (worldGroup == WorldGroup.CREATIVE)
 				joinCreative(event.getPlayer());
 		});
+
+		// Moved home for pork splegg map build
+		SettingService settingService = new SettingService();
+		if (event.getPlayer().getUniqueId().toString().equalsIgnoreCase("5bff3b47-06f3-4766-9468-edfe19266997")) {
+			Setting setting = settingService.get(event.getPlayer(), "s6oobertTP");
+			if (!setting.getBoolean()) {
+				Utils.runCommand(event.getPlayer(), "home");
+				setting.setBoolean(true);
+				settingService.save(setting);
+			}
+		}
 	}
 
 	public void joinMinigames(Player player) {
