@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.lwc.LWCProtection;
 import me.pugabyte.bncore.models.lwc.LWCProtectionService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -47,30 +48,34 @@ public class RTPCommand extends CustomCommand {
 		int radius = 0;
 		switch (player().getWorld().getName()) {
 			case "world": radius = 17500; break;
-			case "survival": radius = 10000; break;
+			case "survival": radius = 7500; break;
 			case "resource": radius = 2500; break;
 			default: error("Could not find world border of current world");
 		}
+
 		int range = 250;
 		List<Location> locationList = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			double angle = Math.random() * Math.PI * 2;
 			double r = Math.sqrt(Math.random());
-			locationList.add(new Location(player().getWorld(), r * Math.cos(angle) * radius, 70, r * Math.sin(angle) * radius));
+			locationList.add(new Location(player().getWorld(), r * Math.cos(angle) * radius, 0, r * Math.sin(angle) * radius));
 		}
+
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);
 		if (service.getProtectionsInRange(best, 50).size() != 0 && count.get() < 5) {
 			rtp();
 			return;
 		}
+
 		Tasks.sync(() -> {
-			Block highestBlock = player().getWorld().getHighestBlockAt((int) best.getX(), (int) best.getZ()).getLocation().subtract(0, 1, 0).getBlock();
+			Block highestBlock = player().getWorld().getHighestBlockAt(best);
 			if (!highestBlock.getType().isSolid() && count.get() < 10) {
 				Tasks.async(this::rtp);
 				return;
 			}
-			player().teleport(highestBlock.getLocation().add(0, 1, 0), TeleportCause.COMMAND);
+
+			player().teleport(Utils.getCenteredLocation(highestBlock.getLocation().add(0, 1, 0)), TeleportCause.COMMAND);
 		});
 	}
 
