@@ -30,7 +30,7 @@ public class MapCommand extends CustomCommand {
 
 		if (new Nerd(player()).getRank().isStaff()) isMapWorld = true;
 
-		send(json("&3Map: &ehttp:://map.bnn.gg").url("http://map.bnn.gg"));
+		send(json("&3Map: &ehttp://map.bnn.gg").url("http://map.bnn.gg"));
 		if (isMapWorld) {
 			String link = "http://map.bnn.gg/" + player().getWorld().getName().toLowerCase() + "/" + (int) player().getLocation().getX() + "/" + (int) player().getLocation().getZ();
 			send(json("&3Current Location: &e" + link).url(link));
