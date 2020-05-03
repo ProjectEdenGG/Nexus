@@ -59,6 +59,14 @@ public class MaterialTag implements Tag<Material> {
 			.append(CORAL_WALL_FANS)
 			.append(Tag.CORALS);
 
+	public static final MaterialTag TREE_LOGS = new MaterialTag(Material.OAK_LOG, Material.SPRUCE_LOG, Material.BIRCH_LOG, Material.JUNGLE_LOG, Material.ACACIA_LOG, Material.DARK_OAK_LOG);
+	public static final MaterialTag STRIPPED_LOGS = new MaterialTag(Material.STRIPPED_OAK_LOG, Material.STRIPPED_SPRUCE_LOG, Material.STRIPPED_BIRCH_LOG, Material.STRIPPED_JUNGLE_LOG, Material.STRIPPED_ACACIA_LOG, Material.STRIPPED_DARK_OAK_LOG);
+	public static final MaterialTag LOGS = new MaterialTag(TREE_LOGS, STRIPPED_LOGS);
+
+	public static final MaterialTag TREE_WOOD = new MaterialTag(Material.OAK_WOOD, Material.SPRUCE_WOOD, Material.BIRCH_WOOD, Material.JUNGLE_WOOD, Material.ACACIA_WOOD, Material.DARK_OAK_WOOD);
+	public static final MaterialTag STRIPPED_WOOD = new MaterialTag(Material.STRIPPED_OAK_WOOD, Material.STRIPPED_SPRUCE_WOOD, Material.STRIPPED_BIRCH_WOOD, Material.STRIPPED_JUNGLE_WOOD, Material.STRIPPED_ACACIA_WOOD, Material.STRIPPED_DARK_OAK_WOOD);
+	public static final MaterialTag WOOD = new MaterialTag(TREE_WOOD, STRIPPED_WOOD);
+
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX);
 	public static final MaterialTag BOATS = new MaterialTag(Tag.ITEMS_BOATS);
 	public static final MaterialTag SPAWN_EGGS = new MaterialTag("_SPAWN_EGG", MatchMode.SUFFIX);

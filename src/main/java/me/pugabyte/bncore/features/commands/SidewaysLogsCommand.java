@@ -1,11 +1,11 @@
 package me.pugabyte.bncore.features.commands;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -16,7 +16,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-@Disabled
 @Aliases("swl")
 @NoArgsConstructor
 public class SidewaysLogsCommand extends CustomCommand implements Listener {
@@ -35,10 +34,10 @@ public class SidewaysLogsCommand extends CustomCommand implements Listener {
 	void toggle(boolean normal) {
 		if (normal) {
 			enabledPlayers.remove(player());
-			send(PREFIX + "Now placing logs normally");
+			send(PREFIX + "Now placing logs normally.");
 		} else {
 			enabledPlayers.add(player());
-			send(PREFIX + "Now placing logs vertically only");
+			send(PREFIX + "Now placing logs vertically only.");
 		}
 	}
 
@@ -50,7 +49,7 @@ public class SidewaysLogsCommand extends CustomCommand implements Listener {
 		if (!MaterialTag.LOGS.isTagged(block.getType())) return;
 		if (!enabledPlayers.contains(player)) return;
 
-		// TODO Test this
-//		((Directional) block.getBlockData()).setFacing(event.getBlockAgainst().getFace(event.getBlock()).getOppositeFace());
+		BlockUtils.updateBlockProperty(block, "axis", "y");
+
 	}
 }
