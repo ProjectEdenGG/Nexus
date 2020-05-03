@@ -65,7 +65,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 			if (user != null && !Strings.isNullOrEmpty(user.getRoleId()))
 				builder.next(new Nerd(user.getUuid()).getChatFormat());
 			else
-				builder.next(Discord.getName(event.getMember(), event.getAuthor()));
+				builder.next("&f" + Discord.getName(event.getMember(), event.getAuthor()));
 
 			builder.next(" " + channel.get().getDiscordColor() + "&l>&f");
 

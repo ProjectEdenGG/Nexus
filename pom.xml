@@ -239,10 +239,9 @@
         </dependency>
         <!-- McMMO -->
         <dependency>
-            <groupId>com.gmail.nossr50.mcMMO</groupId>
+            <groupId>com.github.mcMMO-Dev</groupId>
             <artifactId>mcMMO</artifactId>
-            <version>1.5.01-SNAPSHOT</version>
-            <scope>provided</scope>
+            <version>a3612b6ae3</version>
         </dependency>
         <!-- LuckPerms -->
         <dependency>

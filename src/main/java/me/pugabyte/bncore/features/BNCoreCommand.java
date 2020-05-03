@@ -95,6 +95,11 @@ public class BNCoreCommand extends CustomCommand {
 		send(StringUtils.getLastColor(message) + "Last color");
 	}
 
+	@Path("getRank <player>")
+	void getRank(Nerd player) {
+		send(player.getRank().withFormat());
+	}
+
 	@Path("urlize <message...>")
 	void urlize(String message) {
 		send(json("Urlized: ").urlize(message));
