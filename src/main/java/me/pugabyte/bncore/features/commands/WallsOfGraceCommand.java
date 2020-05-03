@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.SerializationUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
@@ -68,7 +69,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onBlockBread(BlockBreakEvent event) {
+	public void onBlockBreak(BlockBreakEvent event) {
 		SettingService service = new SettingService();
 		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock().getWorld());
 		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
@@ -107,6 +108,13 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+
+		// Sign must be placed on concrete
+		if (!MaterialTag.CONCRETES.isTagged(event.getBlockAgainst().getType())) {
+			event.setCancelled(true);
+			return;
+		}
+
 		Setting setting = service.get(event.getPlayer(), "wallsofgrace");
 		Map<String, Object> json = setting.getJson();
 		Location loc1 = null;
