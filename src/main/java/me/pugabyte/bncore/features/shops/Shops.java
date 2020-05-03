@@ -59,8 +59,8 @@ public class Shops {
 			addSellItem(ShopGroup.SURVIVAL, Material.LAPIS_BLOCK, 1, 100);
 			addSellItem(ShopGroup.SURVIVAL, Material.IRON_BLOCK, 1, 180);
 			addSellItem(ShopGroup.SURVIVAL, Material.GOLD_BLOCK, 1, 200);
-			addSellItem(ShopGroup.SURVIVAL, Material.EMERALD_BLOCK, 1, 750);
-			addSellItem(ShopGroup.SURVIVAL, Material.DIAMOND_BLOCK, 1, 1100);
+			addSellItem(ShopGroup.SURVIVAL, Material.EMERALD_BLOCK, 1, 1575);
+			addSellItem(ShopGroup.SURVIVAL, Material.DIAMOND_BLOCK, 1, 2200);
 			addSellItem(ShopGroup.SURVIVAL, Material.SMOOTH_RED_SANDSTONE, 32, 250);
 			addSellItem(ShopGroup.SURVIVAL, Material.CHISELED_RED_SANDSTONE, 32, 250);
 			addSellItem(ShopGroup.SURVIVAL, Material.RED_SANDSTONE, 32, 200);
@@ -134,11 +134,15 @@ public class Shops {
 			addBuyItem(ShopGroup.SURVIVAL, Material.CHISELED_STONE_BRICKS, 64, 80);
 			addBuyItem(ShopGroup.SURVIVAL, Material.IRON_ORE, 32, 600);
 			addBuyItem(ShopGroup.SURVIVAL, Material.GOLD_ORE, 32, 900);
-			addBuyItem(ShopGroup.SURVIVAL, Material.COAL_BLOCK, 32, 320);
+			addBuyItem(ShopGroup.SURVIVAL, Material.COAL_BLOCK, 32, 120);
 			addBuyItem(ShopGroup.SURVIVAL, Material.QUARTZ_BLOCK, 32, 300);
 			addBuyItem(ShopGroup.SURVIVAL, Material.SEA_LANTERN, 1, 20);
-			addBuyItem(ShopGroup.SURVIVAL, Material.REDSTONE_BLOCK, 32, 640);
+			addBuyItem(ShopGroup.SURVIVAL, Material.REDSTONE_BLOCK, 32, 500);
 			addBuyItem(ShopGroup.SURVIVAL, Material.LAPIS_BLOCK, 32, 800);
+			addBuyItem(ShopGroup.SURVIVAL, Material.IRON_BLOCK, 8, 65);
+			addBuyItem(ShopGroup.SURVIVAL, Material.GOLD_BLOCK, 16, 100);
+			addBuyItem(ShopGroup.SURVIVAL, Material.EMERALD_BLOCK, 16, 144);
+			addBuyItem(ShopGroup.SURVIVAL, Material.DIAMOND_BLOCK, 3, 800);
 			addBuyItem(ShopGroup.SURVIVAL, Material.DARK_OAK_LOG, 32, 40);
 			addBuyItem(ShopGroup.SURVIVAL, Material.ACACIA_LOG, 32, 45);
 			addBuyItem(ShopGroup.SURVIVAL, Material.JUNGLE_LOG, 32, 40);
