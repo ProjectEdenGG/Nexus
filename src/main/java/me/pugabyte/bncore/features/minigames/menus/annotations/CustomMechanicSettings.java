@@ -7,5 +7,5 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CustomMechanicSettings {
-    Class<? extends Mechanic>[] value();
+	Class<? extends Mechanic>[] value();
 }

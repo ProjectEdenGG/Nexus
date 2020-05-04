@@ -15,36 +15,36 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
-    @Override
-    public void init(Player player, InventoryContents contents) {
-        addBackItem(contents, e -> ParticleMenu.openSettingEditor(player, ParticleType.WINGS));
+	@Override
+	public void init(Player player, InventoryContents contents) {
+		addBackItem(contents, e -> ParticleMenu.openSettingEditor(player, ParticleType.WINGS));
 
-        int row = 1;
-        int column = 1;
-        for (WingsEffect.WingStyle style : WingsEffect.WingStyle.values()) {
-            ParticleService service = new ParticleService();
-            ParticleOwner owner = service.get(player);
-            ItemStack item = nameItem(new ItemStack(Material.ELYTRA).clone(), "&3Style #" + (style.ordinal() + 1));
-            if (ParticleSetting.WINGS_STYLE.get(owner, ParticleType.WINGS).equals(style))
-                addGlowing(item);
-            contents.set(row, column, ClickableItem.from(item,
-                    e -> {
-                        owner.getSettings(ParticleType.WINGS).put(ParticleSetting.WINGS_STYLE, style);
-                        service.save(owner);
-                        Tasks.wait(5, () -> ParticleMenu.openWingsStyle(player));
-                    }));
+		int row = 1;
+		int column = 1;
+		for (WingsEffect.WingStyle style : WingsEffect.WingStyle.values()) {
+			ParticleService service = new ParticleService();
+			ParticleOwner owner = service.get(player);
+			ItemStack item = nameItem(new ItemStack(Material.ELYTRA).clone(), "&3Style #" + (style.ordinal() + 1));
+			if (ParticleSetting.WINGS_STYLE.get(owner, ParticleType.WINGS).equals(style))
+				addGlowing(item);
+			contents.set(row, column, ClickableItem.from(item,
+					e -> {
+						owner.getSettings(ParticleType.WINGS).put(ParticleSetting.WINGS_STYLE, style);
+						service.save(owner);
+						Tasks.wait(5, () -> ParticleMenu.openWingsStyle(player));
+					}));
 
-            if (column == 7) {
-                row++;
-                column = 1;
-            } else
-                column++;
-        }
+			if (column == 7) {
+				row++;
+				column = 1;
+			} else
+				column++;
+		}
 
-    }
+	}
 
-    @Override
-    public void update(Player player, InventoryContents inventoryContents) {
+	@Override
+	public void update(Player player, InventoryContents inventoryContents) {
 
-    }
+	}
 }
