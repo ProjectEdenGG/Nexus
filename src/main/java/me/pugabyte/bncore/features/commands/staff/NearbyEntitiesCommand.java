@@ -13,6 +13,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
+import java.util.LinkedHashMap;
+
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.Utils.getNearbyEntities;
 import static me.pugabyte.bncore.utils.Utils.getNearbyEntityTypes;
@@ -28,8 +30,10 @@ public class NearbyEntitiesCommand extends CustomCommand {
 	void run(@Arg("200") int radius) {
 		line();
 		send(PREFIX + "Found:");
-		getNearbyEntityTypes(player().getLocation(), radius).forEach((entityType, count) ->
-				send("&e" + StringUtils.camelCase(entityType.name()) + " &7- " + count));
+		LinkedHashMap<EntityType, Long> nearbyEntities = getNearbyEntityTypes(player().getLocation(), radius);
+		nearbyEntities.forEach((entityType, count) -> send("&e" + StringUtils.camelCase(entityType.name()) + " &7- " + count));
+		send("");
+		send("&3Total: &e" + nearbyEntities.values().stream().mapToLong(i -> i).sum());
 	}
 
 	@Path("find <type> [radius]")

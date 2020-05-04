@@ -116,7 +116,8 @@ public class HandlePurchaseCommand extends CustomCommand {
 			}
 
 			OfflinePlayer permsUser = Utils.getPlayer(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
-			packageType.getPermissions().forEach(permssion -> BNCore.getPerms().playerAdd(null, permsUser, permssion));
+			packageType.getPermissions().forEach(permission ->
+					runCommandAsConsole("lp user " + permsUser.getUniqueId().toString() + " permission set " + permission + " true"));
 
 			packageType.getCommands().stream()
 					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))

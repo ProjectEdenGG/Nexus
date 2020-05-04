@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
@@ -31,7 +32,7 @@ import static me.pugabyte.bncore.features.homes.HomesFeature.maxHomes;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters(UUIDConverter.class)
+@Converters({UUIDConverter.class, LocationConverter.class})
 public class HomeOwner extends PlayerOwnedObject {
 	@Id
 	@NonNull
