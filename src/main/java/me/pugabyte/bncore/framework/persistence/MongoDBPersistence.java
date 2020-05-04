@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
@@ -42,6 +43,7 @@ public class MongoDBPersistence {
 		Datastore datastore = morphia.createDatastore(mongoClient, config.getPrefix() + dbType.getDatabase());
 		morphia.getMapper().getConverters().addConverter(ItemStackConverter.class);
 		morphia.getMapper().getConverters().addConverter(ItemMetaConverter.class);
+		morphia.getMapper().getConverters().addConverter(LocationConverter.class);
 		databases.put(dbType, datastore);
 	}
 
