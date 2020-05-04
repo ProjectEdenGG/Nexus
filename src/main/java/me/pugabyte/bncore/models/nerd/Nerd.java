@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -36,6 +37,10 @@ public class Nerd {
 
 	public Nerd(String name) {
 		this(Utils.getPlayer(name));
+	}
+
+	public Nerd(UUID uuid) {
+		this(Utils.getPlayer(uuid));
 	}
 
 	public Nerd(OfflinePlayer player) {

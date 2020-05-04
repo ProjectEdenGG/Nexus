@@ -4,12 +4,16 @@ import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.models.afk.events.NotAFKEvent;
 import me.pugabyte.bncore.models.afk.events.NowAFKEvent;
 import me.pugabyte.bncore.models.back.Back;
 import me.pugabyte.bncore.models.back.BackService;
+import me.pugabyte.bncore.models.hours.Hours;
+import me.pugabyte.bncore.models.hours.HoursService;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
@@ -17,10 +21,12 @@ import me.pugabyte.bncore.models.shop.Shop.ShopGroup;
 import me.pugabyte.bncore.models.shop.ShopService;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
+import net.ess3.api.events.UserBalanceUpdateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -43,7 +49,10 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -258,6 +267,33 @@ public class Misc implements Listener {
 
 	public void joinCreative(Player player) {
 		Utils.runCommand(player, "ch join c");
+	}
+
+	static {
+		Tasks.repeat(10, Time.HOUR, Misc::updateBalanceTopNPCs);
+	}
+
+	@EventHandler
+	public void onMoneyChange(UserBalanceUpdateEvent event) {
+		if (event.getNewBalance().doubleValue() <= 1000000) return;
+		updateBalanceTopNPCs();
+	}
+
+	public static void updateBalanceTopNPCs() {
+		Tasks.async(() -> {
+			Map<UUID, Double> balances = new HashMap<>();
+			new HoursService().getActivePlayers().stream().map(Hours::getUuid).forEach(uuid ->
+					balances.put(UUID.fromString(uuid), BNCore.getEcon().getBalance(Utils.getPlayer(uuid))));
+
+			List<UUID> sorted = balances.entrySet().stream()
+					.sorted(Entry.<UUID, Double>comparingByValue().reversed())
+					.map(Entry::getKey)
+					.collect(Collectors.toList());
+
+			CitizensUtils.updateNameAndSkin(2703, new Nerd(sorted.get(0)).getRankFormat());
+			CitizensUtils.updateNameAndSkin(2702, new Nerd(sorted.get(1)).getRankFormat());
+			CitizensUtils.updateNameAndSkin(2701, new Nerd(sorted.get(2)).getRankFormat());
+		});
 	}
 
 	// 1.15 WorldBorder Fill
