@@ -42,18 +42,6 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                        <configuration>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.dumptruckman.bukkit.configuration</pattern>
-                                    <shadedPattern>com.onarandombox.multiverseinventories.utils.configuration</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>net.minidev.json</pattern>
-                                    <shadedPattern>com.onarandombox.multiverseinventories.util.json</shadedPattern>
-                                </relocation>
-                            </relocations>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -343,6 +331,7 @@
             <groupId>com.dumptruckman.minecraft</groupId>
             <artifactId>JsonConfiguration</artifactId>
             <version>1.1</version>
+            <scope>provided</scope>
         </dependency>
         <!-- JsonSmart -->
         <dependency>
