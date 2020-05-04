@@ -295,16 +295,20 @@ public class Misc implements Listener {
 		if (AFK.getActivePlayers() == 0) {
 			Utils.runConsoleCommand("wb survival fill 1000");
 			Tasks.wait(3, () -> {
-				Utils.runConsoleCommand("wb fill confirm");
-				wbFillActive = true;
+				if (!wbFillActive) {
+					Utils.runConsoleCommand("wb fill confirm");
+					wbFillActive = true;
+				}
 			});
 		}
 	}
 
 	public static void wbFill_stop() {
 		Tasks.wait(5, () -> {
-			Utils.runConsoleCommand("wb fill cancel");
-			wbFillActive = false;
+			if (wbFillActive) {
+				Utils.runConsoleCommand("wb fill cancel");
+				wbFillActive = false;
+			}
 		});
 	}
 
