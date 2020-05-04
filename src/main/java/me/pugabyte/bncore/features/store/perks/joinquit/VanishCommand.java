@@ -63,10 +63,10 @@ public class VanishCommand extends CustomCommand {
 	void togglePickup() {
 		if (player().hasPermission("pv.toggleitems")) {
 			BNCore.getPerms().playerRemove(player(), "pv.toggleitems");
-			send(PREFIX + "Item pickup enabled");
+			send(PREFIX + "Item pickup disabled");
 		} else {
 			BNCore.getPerms().playerAdd(player(), "pv.toggleitems");
-			send(PREFIX + "Item pickup disabled");
+			send(PREFIX + "Item pickup enabled");
 		}
 	}
 
