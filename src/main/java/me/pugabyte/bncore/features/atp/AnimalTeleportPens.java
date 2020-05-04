@@ -37,6 +37,12 @@ public class AnimalTeleportPens {
 		List<Entity> finalEntities = new ArrayList<>();
 		for (Entity entity : WGUtils.getEntitiesInRegion(world, region.getId())) {
 			switch (entity.getType()) {
+				case BEE:
+				case FOX:
+				case CAT:
+				case PANDA:
+				case TRADER_LLAMA:
+				case TURTLE:
 				case PIG:
 				case COW:
 				case SHEEP:
@@ -67,21 +73,27 @@ public class AnimalTeleportPens {
 				case PARROT:
 				case WOLF:
 				case OCELOT:
+				case CAT:
+				case BEE:
 					price += 50;
 					break;
 				case PIG:
 				case RABBIT:
+				case FOX:
+				case TURTLE:
 					price += 100;
 					break;
 				case COW:
 				case SHEEP:
 				case POLAR_BEAR:
+				case PANDA:
 					price += 150;
 					break;
 				case HORSE:
 				case DONKEY:
 				case MULE:
 				case LLAMA:
+				case TRADER_LLAMA:
 					price += 250;
 				case VILLAGER:
 					price += 500;
