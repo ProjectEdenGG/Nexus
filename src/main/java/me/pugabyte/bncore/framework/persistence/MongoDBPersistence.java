@@ -6,10 +6,13 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
+import dev.morphia.annotations.Entity;
+import dev.morphia.mapping.MapperOptions;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
+import org.reflections.Reflections;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +32,10 @@ public class MongoDBPersistence {
 	@SneakyThrows
 	private static void openConnection(MongoDBDatabase dbType) {
 		DatabaseConfig config = new DatabaseConfig("mongodb");
+
+		// Paper compat
+		morphia.getMapper().setOptions(MapperOptions.builder().classLoader(BNCore.getInstance().getClass().getClassLoader()).build());
+		new Reflections("me.pugabyte.bncore.models").getTypesAnnotatedWith(Entity.class);
 
 		MongoCredential root = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
 		MongoClient mongoClient = new MongoClient(new ServerAddress(), root, MongoClientOptions.builder().build());

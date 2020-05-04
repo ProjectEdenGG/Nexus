@@ -5,10 +5,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Koda;
-import me.pugabyte.bncore.models.afk.events.NotAFKEvent;
-import me.pugabyte.bncore.models.afk.events.NowAFKEvent;
 import me.pugabyte.bncore.models.back.Back;
 import me.pugabyte.bncore.models.back.BackService;
 import me.pugabyte.bncore.models.hours.Hours;
@@ -43,7 +40,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -295,58 +291,5 @@ public class Misc implements Listener {
 			CitizensUtils.updateNameAndSkin(2701, new Nerd(sorted.get(2)).getRankFormat());
 		});
 	}
-
-	// 1.15 WorldBorder Fill
-
-	private static boolean wbFillActive = false;
-
-	static {
-		Tasks.repeat(10, Time.SECOND, () -> {
-			if (wbFillActive && AFK.getActivePlayers() != 0)
-				wbFill_stop();
-		});
-	}
-
-	@EventHandler
-	public void wbFill_onQuit(PlayerQuitEvent event) {
-		wbFill_start();
-	}
-
-	@EventHandler
-	public void wbFill_onAFK(NowAFKEvent event) {
-		wbFill_start();
-	}
-
-	@EventHandler
-	public void wbFill_onJoin(PlayerJoinEvent event) {
-		wbFill_stop();
-	}
-
-	@EventHandler
-	public void wbFill_onNotAFK(NotAFKEvent event) {
-		wbFill_stop();
-	}
-
-	public void wbFill_start() {
-		if (AFK.getActivePlayers() == 0) {
-			Utils.runConsoleCommand("wb survival fill 1000");
-			Tasks.wait(3, () -> {
-				if (!wbFillActive) {
-					Utils.runConsoleCommand("wb fill confirm");
-					wbFillActive = true;
-				}
-			});
-		}
-	}
-
-	public static void wbFill_stop() {
-		Tasks.wait(5, () -> {
-			if (wbFillActive) {
-				Utils.runConsoleCommand("wb fill cancel");
-				wbFillActive = false;
-			}
-		});
-	}
-
 
 }

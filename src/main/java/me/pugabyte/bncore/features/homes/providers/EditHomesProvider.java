@@ -116,7 +116,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		homeOwner.getHomes().forEach(home -> {
 			ItemBuilder item;
 
-			if (home.getItem() != null)
+			if (home.getItem() != null && home.getItem().getItemMeta() != null)
 				item = new ItemBuilder(home.getItem());
 			else if (home.isLocked())
 				item = new ItemBuilder(Material.RED_CONCRETE);
