@@ -221,8 +221,8 @@ public enum VPSMenu {
 								.displayAndGive(new ItemBuilder(Material.DRAGON_HEAD))
 								.price(50));
 						put(39, VPSSlot.builder()
-								.name("1 purple shulker box")
-								.displayAndGive(Material.PURPLE_SHULKER_BOX)
+								.name("1 shulker box")
+								.displayAndGive(Material.SHULKER_BOX)
 								.price(80));
 						put(40, VPSSlot.builder()
 								.name("1 wither skeleton head")
@@ -309,7 +309,7 @@ public enum VPSMenu {
 								.price(15));
 						put(38, VPSSlot.builder()
 								.name("1 Notch Apple")
-								.displayAndGive(new ItemStack(Material.GOLDEN_APPLE, 1, (byte) 1))
+								.displayAndGive(Material.ENCHANTED_GOLDEN_APPLE)
 								.price(30));
 						put(39, VPSSlot.builder()
 								.name("1 Golden Apple")

@@ -60,10 +60,10 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack other = nameItem(Material.EMERALD, "&3Other");
 
 				contents.set(1, 1, ClickableItem.from(survival, e -> {
-					if (player.getWorld().getName().toLowerCase().contains("survival_"))
-						WarpsMenu.open(player, WarpMenu.SURVIVAL);
-					else
+					if (player.getWorld().getName().matches("world(_nether|the_end|)"))
 						WarpsMenu.open(player, WarpMenu.LEGACY);
+					else
+						WarpsMenu.open(player, WarpMenu.SURVIVAL);
 				}));
 				contents.set(1, 3, ClickableItem.from(minigames, e -> WarpsMenu.open(player, WarpMenu.MINIGAMES)));
 				contents.set(1, 5, ClickableItem.from(creative, e -> warp(player, "creative")));
@@ -89,10 +89,12 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				}
 
 				ItemStack shops = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu||||&cCurrently Disabled");
+				ItemStack resource = nameItem(Material.DIAMOND_PICKAXE, "&3Resource", "&eClick to teleport to the resource world");
 				ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy", "&eClick to view legacy world warps");
 
 				//contents.set(1, 7, ClickableItem.from(shops, e -> new MainMenuProvider(null).open(player)));
 				contents.set(1, 7, ClickableItem.empty(shops));
+				contents.set(2, 7, ClickableItem.from(resource, e -> warpService.get("resource", WarpType.NORMAL).teleport(player)));
 				contents.set(3, 7, ClickableItem.from(legacy, e -> WarpsMenu.open(player, WarpMenu.LEGACY)));
 
 				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
