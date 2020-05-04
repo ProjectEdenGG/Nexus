@@ -5,8 +5,13 @@ import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.models.back.Back;
+import me.pugabyte.bncore.models.back.BackService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
+import me.pugabyte.bncore.models.shop.Shop.ShopGroup;
+import me.pugabyte.bncore.models.shop.ShopService;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.Tasks;
@@ -14,6 +19,7 @@ import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.EntityType;
@@ -33,8 +39,11 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Misc implements Listener {
@@ -129,6 +138,35 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
+
+		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
+			List<Material> materials = new ShopService().getMarket().getProducts(ShopGroup.RESOURCE).stream()
+					.filter(product -> product.getExchangeType() == ExchangeType.BUY)
+					.map(product -> product.getItem().getType())
+					.collect(Collectors.toList());
+
+			// Crafting materials
+			materials.add(Material.CLAY_BALL);
+			materials.add(Material.DIRT);
+			materials.add(Material.GRAVEL);
+			materials.add(Material.GLOWSTONE_DUST);
+			materials.add(Material.ICE);
+			materials.add(Material.PACKED_ICE);
+
+			for (Material material : materials) {
+				if (player.getInventory().contains(material)) {
+					player.sendMessage("&cYou can not go to the resource world with &e" + camelCase(material.name()) + "&c. " +
+							"Please remove it from your inventory before continuing.");
+
+					Back back = new BackService().get(player);
+					Optional<Location> backLocation = back.getLocations().stream().filter(location -> !location.getWorld().getName().startsWith("resource")).findFirst();
+					if (backLocation.isPresent())
+						player.teleport(backLocation.get());
+					else
+						new WarpService().get("spawn", WarpType.NORMAL).teleport(player);
+				}
+			}
+		}
 
 		switch (WorldGroup.get(player)) {
 			case MINIGAMES:

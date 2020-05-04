@@ -171,11 +171,11 @@ public class Shops {
 			addSellItem(ShopGroup.RESOURCE, Material.IRON_SHOVEL, 1, 50);
 			addSellItem(ShopGroup.RESOURCE, Material.IRON_PICKAXE, 1, 150);
 			addSellItem(ShopGroup.RESOURCE, Material.IRON_AXE, 1, 100);
+			addSellItem(ShopGroup.RESOURCE, Material.IRON_SWORD, 1, 100);
 			addSellItem(ShopGroup.RESOURCE, Material.IRON_HELMET, 1, 250);
-			addSellItem(ShopGroup.RESOURCE, Material.IRON_BOOTS, 1, 200);
 			addSellItem(ShopGroup.RESOURCE, Material.LEATHER_CHESTPLATE, 1, 150);
 			addSellItem(ShopGroup.RESOURCE, Material.LEATHER_LEGGINGS, 1, 150);
-			addSellItem(ShopGroup.RESOURCE, Material.IRON_SWORD, 1, 100);
+			addSellItem(ShopGroup.RESOURCE, Material.IRON_BOOTS, 1, 200);
 			addSellItem(ShopGroup.RESOURCE, Material.BREAD, 4, 125);
 			addSellItem(ShopGroup.RESOURCE, Material.TORCH, 8, 100);
 
