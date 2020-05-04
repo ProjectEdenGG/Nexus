@@ -16,7 +16,7 @@ public class CommandListener implements Listener {
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		for (Entry<String, String> redirect : Commands.getRedirects().entrySet()) {
-			if (!event.getMessage().toLowerCase().startsWith(redirect.getKey()))
+			if (!(event.getMessage() + " ").toLowerCase().startsWith(redirect.getKey() + " "))
 				continue;
 
 			event.setCancelled(true);
