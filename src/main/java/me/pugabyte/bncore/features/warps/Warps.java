@@ -24,7 +24,8 @@ public class Warps {
 		EAST(4, 2, Material.RED_MUSHROOM_BLOCK),
 		SOUTH(3, 3, Material.CAMPFIRE),
 		WEST(2, 2, Material.STONE_BRICKS),
-		NETHER(0, 4, Material.NETHERRACK);
+//		NETHER(0, 4, Material.NETHERRACK)
+		;
 
 		private int row;
 		private int column;

@@ -144,9 +144,9 @@ public class Votes implements Listener {
 		OfflinePlayer first = Utils.getPlayer(data.getTopVoters().get(0).getUuid());
 		OfflinePlayer second = Utils.getPlayer(data.getTopVoters().get(1).getUuid());
 		OfflinePlayer third = Utils.getPlayer(data.getTopVoters().get(2).getUuid());
-		CitizensUtils.updateNameAndSkin(2700, new Nerd(first).getRank().getChatColor() + first.getName());
-		CitizensUtils.updateNameAndSkin(2699, new Nerd(second).getRank().getChatColor() + second.getName());
-		CitizensUtils.updateNameAndSkin(2698, new Nerd(third).getRank().getChatColor() + third.getName());
+		CitizensUtils.updateNameAndSkin(2700, new Nerd(first).getRankFormat());
+		CitizensUtils.updateNameAndSkin(2699, new Nerd(second).getRankFormat());
+		CitizensUtils.updateNameAndSkin(2698, new Nerd(third).getRankFormat());
 	}
 
 	Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
