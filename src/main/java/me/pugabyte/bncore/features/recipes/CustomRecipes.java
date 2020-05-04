@@ -4,11 +4,7 @@ import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.*;
 
 public class CustomRecipes {
 
@@ -22,6 +18,7 @@ public class CustomRecipes {
 		stainedGlassDying();
 		stainedGlassPaneDying();
 		terracottaDying();
+		bedDying();
 		setWoolUndyingRecipe();
 		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_WART_BLOCK, 1, Material.NETHER_WART, 9));
 		addRecipe(createSingleItemShapelessRecipe(Material.BLUE_ICE, 1, Material.PACKED_ICE, 9));
@@ -48,6 +45,13 @@ public class CustomRecipes {
 		return recipe;
 	}
 
+	public ShapelessRecipe createShapelessRecipe(RecipeChoice.MaterialChoice inputItem, Material dye, Material outputItem) {
+		ShapelessRecipe recipe = new ShapelessRecipe(new NamespacedKey(BNCore.getInstance(), "custom_" + outputItem.name() + "_color"), new ItemStack(outputItem, 1));
+		recipe.addIngredient(inputItem);
+		recipe.addIngredient(dye);
+		return recipe;
+	}
+
 	public ShapedRecipe createColorChangingRecipe(RecipeChoice.MaterialChoice inputItem, Material dye, Material outputItem) {
 		ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(BNCore.getInstance(), "custom_" + outputItem.name() + "_color"), new ItemStack(outputItem, 8));
 		recipe.shape("iii", "idi", "iii");
@@ -57,24 +61,24 @@ public class CustomRecipes {
 	}
 
 	public void slabsToBlocks() {
-		addRecipe(createSingleItemShapelessRecipe(Material.OAK_SLAB, 2, Material.OAK_PLANKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.SPRUCE_SLAB, 2, Material.SPRUCE_PLANKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.BIRCH_SLAB, 2, Material.BIRCH_PLANKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.JUNGLE_SLAB, 2, Material.JUNGLE_PLANKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.ACACIA_SLAB, 2, Material.ACACIA_PLANKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.DARK_OAK_SLAB, 2, Material.DARK_OAK_PLANKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.STONE_SLAB, 2, Material.STONE, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.SANDSTONE_SLAB, 2, Material.SANDSTONE, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.COBBLESTONE_SLAB, 2, Material.COBBLESTONE, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.BRICK_SLAB, 2, Material.BRICKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.STONE_BRICK_SLAB, 2, Material.STONE_BRICKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_BRICK_SLAB, 2, Material.NETHER_BRICKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.QUARTZ_SLAB, 2, Material.QUARTZ_BLOCK, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.RED_SANDSTONE_SLAB, 2, Material.RED_SANDSTONE, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.PURPUR_SLAB, 2, Material.PURPUR_BLOCK, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.PRISMARINE_SLAB, 2, Material.PRISMARINE, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.PRISMARINE_BRICK_SLAB, 2, Material.PRISMARINE_BRICKS, 1));
-		addRecipe(createSingleItemShapelessRecipe(Material.DARK_PRISMARINE_SLAB, 2, Material.DARK_PRISMARINE, 1));
+		addRecipe(createSingleItemShapelessRecipe(Material.OAK_SLAB, 4, Material.OAK_PLANKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.SPRUCE_SLAB, 4, Material.SPRUCE_PLANKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.BIRCH_SLAB, 4, Material.BIRCH_PLANKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.JUNGLE_SLAB, 4, Material.JUNGLE_PLANKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.ACACIA_SLAB, 4, Material.ACACIA_PLANKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.DARK_OAK_SLAB, 4, Material.DARK_OAK_PLANKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.STONE_SLAB, 4, Material.STONE, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.SANDSTONE_SLAB, 4, Material.SANDSTONE, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.COBBLESTONE_SLAB, 4, Material.COBBLESTONE, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.BRICK_SLAB, 4, Material.BRICKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.STONE_BRICK_SLAB, 4, Material.STONE_BRICKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_BRICK_SLAB, 4, Material.NETHER_BRICKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.QUARTZ_SLAB, 4, Material.QUARTZ_BLOCK, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.RED_SANDSTONE_SLAB, 4, Material.RED_SANDSTONE, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.PURPUR_SLAB, 4, Material.PURPUR_BLOCK, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.PRISMARINE_SLAB, 4, Material.PRISMARINE, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.PRISMARINE_BRICK_SLAB, 4, Material.PRISMARINE_BRICKS, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.DARK_PRISMARINE_SLAB, 4, Material.DARK_PRISMARINE, 2));
 	}
 
 	public void quartsUncrafting() {
@@ -108,6 +112,10 @@ public class CustomRecipes {
 	RecipeChoice.MaterialChoice terracotta = new RecipeChoice.MaterialChoice(Material.WHITE_TERRACOTTA, Material.BLACK_TERRACOTTA, Material.BLUE_TERRACOTTA, Material.BROWN_TERRACOTTA,
 			Material.CYAN_TERRACOTTA, Material.GREEN_TERRACOTTA, Material.GRAY_TERRACOTTA, Material.LIGHT_BLUE_TERRACOTTA, Material.LIGHT_GRAY_TERRACOTTA, Material.LIME_TERRACOTTA,
 			Material.MAGENTA_TERRACOTTA, Material.ORANGE_TERRACOTTA, Material.PINK_TERRACOTTA, Material.PURPLE_TERRACOTTA, Material.RED_TERRACOTTA, Material.YELLOW_TERRACOTTA);
+
+	RecipeChoice.MaterialChoice bed = new RecipeChoice.MaterialChoice(Material.WHITE_BED, Material.BLACK_BED, Material.BLUE_BED, Material.BROWN_BED,
+			Material.CYAN_BED, Material.GREEN_BED, Material.GRAY_BED, Material.LIGHT_BLUE_BED, Material.LIGHT_GRAY_BED, Material.LIME_BED,
+			Material.MAGENTA_BED, Material.ORANGE_BED, Material.PINK_BED, Material.PURPLE_BED, Material.RED_BED, Material.YELLOW_BED);
 
 	public void concretePowderDying() {
 		addRecipe(createColorChangingRecipe(concretePowder, Material.WHITE_DYE, Material.WHITE_CONCRETE_POWDER));
@@ -183,6 +191,25 @@ public class CustomRecipes {
 		addRecipe(createColorChangingRecipe(terracotta, Material.PURPLE_DYE, Material.PURPLE_TERRACOTTA));
 		addRecipe(createColorChangingRecipe(terracotta, Material.RED_DYE, Material.RED_TERRACOTTA));
 		addRecipe(createColorChangingRecipe(terracotta, Material.YELLOW_DYE, Material.YELLOW_TERRACOTTA));
+	}
+
+	public void bedDying() {
+		addRecipe(createShapelessRecipe(bed, Material.WHITE_DYE, Material.WHITE_BED));
+		addRecipe(createShapelessRecipe(bed, Material.BLACK_DYE, Material.BLACK_BED));
+		addRecipe(createShapelessRecipe(bed, Material.BLUE_DYE, Material.BLUE_BED));
+		addRecipe(createShapelessRecipe(bed, Material.BROWN_DYE, Material.BROWN_BED));
+		addRecipe(createShapelessRecipe(bed, Material.CYAN_DYE, Material.CYAN_BED));
+		addRecipe(createShapelessRecipe(bed, Material.GREEN_DYE, Material.GREEN_BED));
+		addRecipe(createShapelessRecipe(bed, Material.GRAY_DYE, Material.GRAY_BED));
+		addRecipe(createShapelessRecipe(bed, Material.LIGHT_BLUE_DYE, Material.LIGHT_BLUE_BED));
+		addRecipe(createShapelessRecipe(bed, Material.LIGHT_GRAY_DYE, Material.LIGHT_GRAY_BED));
+		addRecipe(createShapelessRecipe(bed, Material.LIME_DYE, Material.LIME_BED));
+		addRecipe(createShapelessRecipe(bed, Material.MAGENTA_DYE, Material.MAGENTA_BED));
+		addRecipe(createShapelessRecipe(bed, Material.ORANGE_DYE, Material.ORANGE_BED));
+		addRecipe(createShapelessRecipe(bed, Material.PINK_DYE, Material.PINK_BED));
+		addRecipe(createShapelessRecipe(bed, Material.PURPLE_DYE, Material.PURPLE_BED));
+		addRecipe(createShapelessRecipe(bed, Material.RED_DYE, Material.RED_BED));
+		addRecipe(createShapelessRecipe(bed, Material.YELLOW_DYE, Material.YELLOW_BED));
 	}
 
 	public void setWoolUndyingRecipe() {
