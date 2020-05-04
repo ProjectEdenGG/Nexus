@@ -224,9 +224,9 @@ public class Votes implements Listener {
 						} catch (PlayerNotFoundException ignore) {}
 
 						writer.write("  <tr>" + System.lineSeparator());
-						writer.write("    <th>" + index + "</th>" + System.lineSeparator());
-						writer.write("    <th>" + name + "</th>" + System.lineSeparator());
-						writer.write("    <th>" + topVoter.getCount() + "</th>" + System.lineSeparator());
+						writer.write("	<th>" + index + "</th>" + System.lineSeparator());
+						writer.write("	<th>" + name + "</th>" + System.lineSeparator());
+						writer.write("	<th>" + topVoter.getCount() + "</th>" + System.lineSeparator());
 						writer.write("  </tr>" + System.lineSeparator());
 					} else
 						break;
