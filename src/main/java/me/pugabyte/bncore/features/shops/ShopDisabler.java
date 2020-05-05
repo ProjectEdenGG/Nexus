@@ -58,7 +58,7 @@ public class ShopDisabler implements Listener {
 	@EventHandler
 	public void onBreakSignSupport(BlockBreakEvent event) {
 		Block up = event.getBlock().getRelative(BlockFace.UP);
-		if (isShopSign(up)) {
+		if (isShopSign(up) && MaterialTag.STANDING_SIGNS.isTagged(up.getType())) {
 			event.setCancelled(true);
 			tell(event.getPlayer());
 			return;
