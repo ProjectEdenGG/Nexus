@@ -4,14 +4,12 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Bot;
-import me.pugabyte.bncore.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.bncore.features.votes.vps.VPS;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
-import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.vote.TopVoter;
@@ -19,7 +17,6 @@ import me.pugabyte.bncore.models.vote.Vote;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.VoteSite;
 import me.pugabyte.bncore.models.vote.Voter;
-import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -134,19 +131,7 @@ public class Votes implements Listener {
 				player.getPlayer().sendMessage(colorize(VPS.PREFIX + "You have received " + points + " point" + (points == 1 ? "" : "s")));
 		}
 
-		Tasks.async(() -> {
-			write();
-			updateNpcs(new TopVoterData(LocalDateTime.now().getMonth()));
-		});
-	}
-
-	private static void updateNpcs(TopVoterData data) {
-		OfflinePlayer first = Utils.getPlayer(data.getTopVoters().get(0).getUuid());
-		OfflinePlayer second = Utils.getPlayer(data.getTopVoters().get(1).getUuid());
-		OfflinePlayer third = Utils.getPlayer(data.getTopVoters().get(2).getUuid());
-		CitizensUtils.updateNameAndSkin(2700, new Nerd(first).getRankFormat());
-		CitizensUtils.updateNameAndSkin(2699, new Nerd(second).getRankFormat());
-		CitizensUtils.updateNameAndSkin(2698, new Nerd(third).getRankFormat());
+		Tasks.async(Votes::write);
 	}
 
 	Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
