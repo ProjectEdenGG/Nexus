@@ -120,15 +120,26 @@ public class LaunchPads implements Listener {
 			if (fBlock == null || fBlock.isOnGround() || fBlock.isDead() || fBlock.getLocation().getY() < -10.0
 					|| fBlock.getVelocity().length() == 0.0 || endFlight || launchPadPlayers.get(player) == null || player.isOnGround()) {
 
-				if (fBlock != null) {
-					fBlock.remove();
-					launchPadBlockUUIDs.remove(fBlock.getUniqueId());
-				}
+				if (player.isOnGround()) {
+					Tasks.wait(5, () -> {
+						if (player.isOnGround())
+							cancelLaunch(player);
+					});
+				} else {
+					if (fBlock != null) {
+						fBlock.remove();
+						launchPadBlockUUIDs.remove(fBlock.getUniqueId());
+					}
 
-				launchPadPlayers.remove(player);
-				cancelPlayerVelTask(player);
+					cancelLaunch(player);
+				}
 			}
 		}));
+	}
+
+	private void cancelLaunch(Player player) {
+		launchPadPlayers.remove(player);
+		cancelPlayerVelTask(player);
 	}
 
 	private void cancelPlayerVelTask(Player player) {
