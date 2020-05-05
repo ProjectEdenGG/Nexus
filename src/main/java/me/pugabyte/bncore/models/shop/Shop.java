@@ -260,7 +260,7 @@ public class Shop extends PlayerOwnedObject {
 			if (product.getStock() < product.getItem().getAmount())
 				throw new InvalidInputException("There is not enough stock to fulfill your purchase");
 			if (!customer.getInventory().containsAtLeast(price, price.getAmount()))
-				throw new InvalidInputException("You do not have enough " + pretty(price) + " to purchase this item");
+				throw new InvalidInputException("You do not have " + pretty(price) + " to purchase this item");
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
@@ -321,7 +321,7 @@ public class Shop extends PlayerOwnedObject {
 			if (!isMarket(product) && !BNCore.getEcon().has(shopOwner, price))
 				throw new InvalidInputException(shopOwner.getName() + " does not have enough money to purchase this item from you");
 			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
-				throw new InvalidInputException("You do not have enough " + pretty(product.getItem()) + " to sell");
+				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 
 			product.setStock(product.getStock() - price);
 			if (!isMarket(product))
