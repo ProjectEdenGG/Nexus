@@ -5,6 +5,7 @@ import com.gmail.nossr50.mcMMO;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.shops.ShopUtils;
 import me.pugabyte.bncore.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
@@ -78,7 +79,7 @@ public class Leaderboards implements Listener {
 						.limit(3)
 						.collect(Collectors.toMap(
 								entry -> UUID.fromString(entry.getKey()),
-								entry -> String.valueOf(entry.getValue()),
+								entry -> "$" + ShopUtils.pretty(entry.getValue()),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}
@@ -105,7 +106,7 @@ public class Leaderboards implements Listener {
 
 		abstract Map<UUID, String> getTop();
 
-		void update() {
+		public void update() {
 			Tasks.async(() -> {
 				Map<UUID, String> top = getTop();
 				if (top.size() != 3)
