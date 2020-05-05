@@ -26,10 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+// TODO: Fix bug -> player.isOnGround is firing as soon as you launch
 public class LaunchPads implements Listener {
 	private static Map<Player, Integer> taskIDs = new HashMap<>();
-	private static Map<Player, FallingBlock> jumpPadPlayers = new HashMap<>();
-	private static List<UUID> jumpPadBlockUUIDs = new ArrayList<>();
+	private static Map<Player, FallingBlock> launchPadPlayers = new HashMap<>();
+	private static List<UUID> launchPadBlockUUIDs = new ArrayList<>();
 
 	@EventHandler
 	public void onPressurePlatePress(PlayerInteractEvent event) {
@@ -78,7 +79,7 @@ public class LaunchPads implements Listener {
 	}
 
 	public void launchPlayer(Player player, double power, double angle, double direction) {
-		if (jumpPadPlayers.get(player) != null)
+		if (launchPadPlayers.get(player) != null)
 			return;
 
 		if (direction == -1.0)
@@ -92,8 +93,8 @@ public class LaunchPads implements Listener {
 		MaterialData PISTON = new MaterialData(Material.LEGACY_PISTON_MOVING_PIECE);
 
 		FallingBlock fallingBlock = launchLocation.getWorld().spawnFallingBlock(launchLocation, PISTON.getItemType(), PISTON.getData());
-		jumpPadPlayers.put(player, fallingBlock);
-		jumpPadBlockUUIDs.add(fallingBlock.getUniqueId());
+		launchPadPlayers.put(player, fallingBlock);
+		launchPadBlockUUIDs.add(fallingBlock.getUniqueId());
 		fallingBlock.setVelocity(launchLocation.getDirection().normalize().multiply(power / 15.0));
 
 		playerVelTask(player);
@@ -103,7 +104,7 @@ public class LaunchPads implements Listener {
 	private void playerVelTask(Player player) {
 		taskIDs.put(player, Tasks.repeat(0, 1, () -> {
 			boolean endFlight = false;
-			FallingBlock fBlock = jumpPadPlayers.get(player);
+			FallingBlock fBlock = launchPadPlayers.get(player);
 
 			if (fBlock != null) {
 				fBlock.setDropItem(false);
@@ -117,14 +118,14 @@ public class LaunchPads implements Listener {
 			}
 
 			if (fBlock == null || fBlock.isOnGround() || fBlock.isDead() || fBlock.getLocation().getY() < -10.0
-					|| fBlock.getVelocity().length() == 0.0 || endFlight || jumpPadPlayers.get(player) == null || player.isOnGround()) {
+					|| fBlock.getVelocity().length() == 0.0 || endFlight || launchPadPlayers.get(player) == null || player.isOnGround()) {
 
 				if (fBlock != null) {
 					fBlock.remove();
-					jumpPadBlockUUIDs.remove(fBlock.getUniqueId());
+					launchPadBlockUUIDs.remove(fBlock.getUniqueId());
 				}
 
-				jumpPadPlayers.remove(player);
+				launchPadPlayers.remove(player);
 				cancelPlayerVelTask(player);
 			}
 		}));
@@ -138,7 +139,7 @@ public class LaunchPads implements Listener {
 	public void onEntityChangeBlockEvent(final EntityChangeBlockEvent event) {
 		if (event == null) return;
 
-		if (jumpPadBlockUUIDs.contains(event.getEntity().getUniqueId()))
+		if (launchPadBlockUUIDs.contains(event.getEntity().getUniqueId()))
 			event.setCancelled(true);
 
 	}
@@ -148,19 +149,19 @@ public class LaunchPads implements Listener {
 		if (event.getEntity() == null) return;
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
-		if (jumpPadPlayers.get(player) != null)
+		if (launchPadPlayers.get(player) != null)
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onFlightToggle(final PlayerToggleFlightEvent event) {
-		if (jumpPadPlayers.get(event.getPlayer()) != null)
+		if (launchPadPlayers.get(event.getPlayer()) != null)
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onTeleport(final PlayerTeleportEvent event) {
-		if (jumpPadPlayers.get(event.getPlayer()) != null) {
+		if (launchPadPlayers.get(event.getPlayer()) != null) {
 			event.setCancelled(true);
 		}
 	}
