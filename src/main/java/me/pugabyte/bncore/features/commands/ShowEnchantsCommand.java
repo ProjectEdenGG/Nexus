@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.commands;
 
 import lombok.Data;
 import lombok.NonNull;
-import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
@@ -92,7 +91,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 
 			BaseComponent[] component = herochat.append(enchantedItem.create()).append((amount > 1 ? " x" + amount : "")).create();
 
-			Chat.broadcastIngame(new JsonBuilder(component));
+			channel.broadcastIngame(new JsonBuilder(component));
 		}
 
 		// Discord
