@@ -69,14 +69,6 @@ public class AnimalTeleportPens {
 		int price = 0;
 		for (Entity entity : entities) {
 			switch (entity.getType()) {
-				case CHICKEN:
-				case PARROT:
-				case WOLF:
-				case OCELOT:
-				case CAT:
-				case BEE:
-					price += 50;
-					break;
 				case PIG:
 				case RABBIT:
 				case FOX:
@@ -95,8 +87,12 @@ public class AnimalTeleportPens {
 				case LLAMA:
 				case TRADER_LLAMA:
 					price += 250;
+					break;
 				case VILLAGER:
 					price += 500;
+					break;
+				default:
+					price += 50;
 					break;
 			}
 		}
