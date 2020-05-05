@@ -1,10 +1,12 @@
 package me.pugabyte.bncore.features.listeners;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.mcMMO;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.votes.EndOfMonth.TopVoterData;
+import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.hours.HoursService.HoursType;
 import me.pugabyte.bncore.models.nerd.Nerd;
@@ -12,6 +14,7 @@ import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import net.ess3.api.events.UserBalanceUpdateEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +22,7 @@ import org.bukkit.event.Listener;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -66,29 +70,28 @@ public class Leaderboards implements Listener {
 		BALANCE(2703, 2702, 2701) {
 			@Override
 			Map<UUID, String> getTop() {
-				return new LinkedHashMap<>();
-				// TODO
-//				return new HoursService().getActivePlayers().stream()
-//						.collect(Collectors.toMap(Hours::getUuid, hours -> BNCore.getEcon().getBalance(Utils.getPlayer(hours.getUuid()))))
-//						.entrySet()
-//						.stream()
-//						.sorted(Entry.<String, Double>comparingByValue().reversed())
-//						.map(entry -> UUID.fromString(entry.getKey()))
-//						.collect(Collectors.toList())
-//						.subList(0, 3);
+				return new HoursService().getActivePlayers().stream()
+						.collect(Collectors.toMap(Hours::getUuid, hours -> BNCore.getEcon().getBalance(Utils.getPlayer(hours.getUuid()))))
+						.entrySet()
+						.stream()
+						.sorted(Entry.<String, Double>comparingByValue().reversed())
+						.limit(3)
+						.collect(Collectors.toMap(
+								entry -> UUID.fromString(entry.getKey()),
+								entry -> String.valueOf(entry.getValue()),
+								(h1, h2) -> h1, LinkedHashMap::new
+						));
 			}
 		},
 		MCMMO(2706, 2705, 2704) {
 			@Override
 			Map<UUID, String> getTop() {
-				return new LinkedHashMap<>();
-				// TODO
-//				return mcMMO.getDatabaseManager().readLeaderboard(null, 1, 3).subList(0, 3).stream()
-//						.collect(Collectors.toMap(
-//								playerStat -> Utils.getPlayer(playerStat.name).getUniqueId(),
-//								playerStat -> playerStat.statVal),
-//								(p1, p2) -> p2, LinkedHashMap::new
-//						));
+				return mcMMO.getDatabaseManager().readLeaderboard(null, 1, 3).subList(0, 3).stream()
+						.collect(Collectors.toMap(
+								playerStat -> Utils.getPlayer(playerStat.name).getUniqueId(),
+								playerStat -> String.valueOf(playerStat.statVal),
+								(h1, h2) -> h1, LinkedHashMap::new
+						));
 			}
 		};
 
@@ -106,8 +109,7 @@ public class Leaderboards implements Listener {
 			Tasks.async(() -> {
 				Map<UUID, String> top = getTop();
 				if (top.size() != 3)
-					return; // TODO uncomment
-					//BNCore.warn(name() + " leaderboard top query did not return 3 results (" + top.size() + ")");
+					BNCore.warn(name() + " leaderboard top query did not return 3 results (" + top.size() + ")");
 				else
 					Tasks.sync(() -> {
 						AtomicInteger i = new AtomicInteger(0);
