@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.chat.bridge;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
@@ -51,14 +50,10 @@ public class RoleManager {
 						.setMentionable(true)
 						.queue();
 		} else {
-			if (role.getColor() != roleColor) {
-				BNCore.log("Updating color to " + roleColor.getRGB());
+			if (role.getColor() != roleColor)
 				role.getManager().setColor(roleColor).queue();
-			}
-			if (!role.getName().equals(player.getName())) {
-				BNCore.log("Updating role " + role.getName() + " to " + player.getName());
+			if (!role.getName().equals(player.getName()))
 				role.getManager().setName(player.getName()).queue();
-			}
 		}
 	}
 
