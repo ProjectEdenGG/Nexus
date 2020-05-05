@@ -58,7 +58,6 @@ public class Shop extends PlayerOwnedObject {
 	// TODO holding for money, maybe? would make withdrawing money more complicated
 	// private double profit;
 
-
 	public List<Product> getProducts(ShopGroup shopGroup) {
 		return products.stream().filter(product -> product.getShopGroup().equals(shopGroup)).collect(Collectors.toList());
 	}
@@ -181,8 +180,6 @@ public class Shop extends PlayerOwnedObject {
 		List<String> getLore(Product product);
 		List<String> getOwnLore(Product product);
 
-		default void log(Product product, Player customer) {
-		}
 	}
 
 	@Data
