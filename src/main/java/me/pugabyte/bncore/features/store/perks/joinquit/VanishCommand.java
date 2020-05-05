@@ -16,6 +16,7 @@ import me.pugabyte.bncore.utils.Utils;
 @Redirect(from = {"/ni", "/nointeract"}, to = "/bncore:vanish ni")
 @Redirect(from = {"/np", "/nopickup"}, to = "/bncore:vanish np")
 public class VanishCommand extends CustomCommand {
+	private static String pickupPermission = "pv.toggleitems";
 
 	public VanishCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -61,13 +62,6 @@ public class VanishCommand extends CustomCommand {
 	@Path("(np|nopickup)")
 	@Permission("vanish.vanish")
 	void togglePickup() {
-		if (player().hasPermission("pv.toggleitems")) {
-			BNCore.getPerms().playerRemove(player(), "pv.toggleitems");
-			send(PREFIX + "Item pickup disabled");
-		} else {
-			BNCore.getPerms().playerAdd(player(), "pv.toggleitems");
-			send(PREFIX + "Item pickup enabled");
-		}
+		runCommand("premiumvanish:vanish tipu");
 	}
-
 }
