@@ -18,6 +18,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+
 @NoArgsConstructor
 public class ATPMenuProvider extends MenuUtils implements InventoryProvider {
 
@@ -94,6 +96,7 @@ public class ATPMenuProvider extends MenuUtils implements InventoryProvider {
 					item = new ItemBuilder(Material.RED_CONCRETE);
 				else
 					item = new ItemBuilder(Material.LIME_CONCRETE);
+				item.name("&f" + camelCase(home.getName()));
 
 				contents.set(row, column, ClickableItem.from(item.build(), e ->
 						new AnimalTeleportPens(player).confirm(player, home.getLocation())));
