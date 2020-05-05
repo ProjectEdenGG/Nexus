@@ -47,14 +47,15 @@ public class BearFair20 implements Listener {
 	private void startMusicTask(Player player) {
 		int taskId = Tasks.repeat(0, Time.SECOND.x(350), () -> {
 			player.stopSound(Sound.MUSIC_DISC_13);
-			player.playSound(halloweenMusicLoc, Sound.MUSIC_DISC_13, SoundCategory.RECORDS, 3F, 0.1F);
+			player.playSound(halloweenMusicLoc, Sound.MUSIC_DISC_13, SoundCategory.AMBIENT, 5F, 0.1F);
 		});
 
 		musicTaskMap.put(player, taskId);
 	}
 
 	private void stopMusicTask(Player player) {
-		int taskId = musicTaskMap.remove(player);
-		Tasks.cancel(taskId);
+		Integer taskId = musicTaskMap.remove(player);
+		if (taskId != null)
+			Tasks.cancel(taskId);
 	}
 }
