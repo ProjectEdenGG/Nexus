@@ -126,9 +126,8 @@ public class Leaderboards implements Listener {
 	}
 
 	static {
-		Tasks.repeat(10, Time.HOUR, Leaderboard.BALANCE::update);
-		Tasks.repeat(10, Time.HOUR, Leaderboard.PLAYTIME_TOTAL::update);
-		Tasks.repeat(10, Time.HOUR, Leaderboard.PLAYTIME_MONTHLY::update);
+		for (Leaderboard value : Leaderboard.values())
+			Tasks.repeat(10, Time.HOUR, value::update);
 	}
 
 	@EventHandler
