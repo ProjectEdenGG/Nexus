@@ -1,13 +1,9 @@
 package me.pugabyte.bncore.features.mcmmo;
 
-import com.gmail.nossr50.datatypes.database.PlayerStat;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
-import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
-import me.pugabyte.bncore.models.nerd.Nerd;
-import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -16,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.CropState;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Tag;
 import org.bukkit.TreeSpecies;
@@ -53,21 +48,6 @@ public class McMMOListener implements Listener {
 			Koda.say(event.getPlayer().getName() + " reached level 100 in " + camelCase(event.getSkill().name()) + "! Congratulations!");
 		if (UserManager.getOfflinePlayer(event.getPlayer()).getPowerLevel() == 1300)
 			Koda.say(event.getPlayer().getName() + " has mastered all their skills! Congratulations!");
-
-		Tasks.async(() -> {
-			List<PlayerStat> topThree = mcMMO.getDatabaseManager().readLeaderboard(null, 1, 3);
-			if (topThree.size() != 3)
-				BNCore.warn("McMMO leaderboard query did not return 3 results");
-			else
-				Tasks.sync(() -> {
-					OfflinePlayer first = Utils.getPlayer(topThree.get(0).name);
-					OfflinePlayer second = Utils.getPlayer(topThree.get(1).name);
-					OfflinePlayer third = Utils.getPlayer(topThree.get(2).name);
-					CitizensUtils.updateNameAndSkin(2706, new Nerd(first).getRankFormat());
-					CitizensUtils.updateNameAndSkin(2705, new Nerd(second).getRankFormat());
-					CitizensUtils.updateNameAndSkin(2704, new Nerd(third).getRankFormat());
-				});
-		});
 	}
 
 	void scheduler() {

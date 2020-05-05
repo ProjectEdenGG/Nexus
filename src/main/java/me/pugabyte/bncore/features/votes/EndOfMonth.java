@@ -52,7 +52,7 @@ public class EndOfMonth {
 	}
 
 	@lombok.Data
-	protected static class TopVoterData {
+	public static class TopVoterData {
 		@NonNull
 		private Month month;
 		@NonNull

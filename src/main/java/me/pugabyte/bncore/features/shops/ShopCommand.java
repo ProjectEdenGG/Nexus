@@ -6,7 +6,6 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
@@ -19,7 +18,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-@Permission("group.staff")
 @Aliases("shops")
 public class ShopCommand extends CustomCommand {
 	private ShopService service = new ShopService();
@@ -30,7 +28,10 @@ public class ShopCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		new MainMenuProvider(null).open(player());
+		if (player().hasPermission("group.seniorstaff"))
+			new MainMenuProvider(null).open(player());
+		else
+			send("&cComing soon!");
 	}
 
 	@Path("addItems1 [player]")

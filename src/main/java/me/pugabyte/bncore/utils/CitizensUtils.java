@@ -14,8 +14,20 @@ public class CitizensUtils {
 	}
 
 	public static void updateNameAndSkin(NPC npc, String name) {
-		Tasks.sync(() -> npc.setName(name));
+		updateName(npc, name);
 		updateSkin(npc, name);
+	}
+
+	public static void updateName(int id, String name) {
+		updateName(CitizensAPI.getNPCRegistry().getById(id), name);
+	}
+
+	public static void updateName(NPC npc, String name) {
+		Tasks.sync(() -> npc.setName(name));
+	}
+
+	public static void updateSkin(int id, String name) {
+		updateSkin(CitizensAPI.getNPCRegistry().getById(id), name);
 	}
 
 	public static void updateSkin(NPC npc, String name) {
