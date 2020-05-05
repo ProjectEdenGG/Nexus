@@ -6,6 +6,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpType;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.command.BlockCommandSender;
 
 public class BearFairCommand extends _WarpCommand {
 
@@ -57,6 +60,17 @@ public class BearFairCommand extends _WarpCommand {
 	@Path("warps nearest")
 	public void nearest() {
 		super.nearest();
+	}
+
+	@Path("smite")
+	public void smite() {
+		commandBlock();
+		BlockCommandSender sender = (BlockCommandSender) event.getSender();
+		Location loc = sender.getBlock().getLocation();
+		World world = loc.getWorld();
+		if (world != null)
+			world.strikeLightningEffect(loc);
+
 	}
 
 	@Path
