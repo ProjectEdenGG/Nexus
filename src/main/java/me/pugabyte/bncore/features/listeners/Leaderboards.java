@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.shops.ShopUtils;
 import me.pugabyte.bncore.features.votes.EndOfMonth.TopVoterData;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.hours.HoursService.HoursType;
@@ -108,19 +110,22 @@ public class Leaderboards implements Listener {
 
 		public void update() {
 			Tasks.async(() -> {
-				Map<UUID, String> top = getTop();
-				if (top.size() != 3)
-					BNCore.warn(name() + " leaderboard top query did not return 3 results (" + top.size() + ")");
-				else
-					Tasks.sync(() -> {
-						AtomicInteger i = new AtomicInteger(0);
-						top.entrySet().iterator().forEachRemaining(entry -> {
-							Nerd nerd = new Nerd(entry.getKey());
-							CitizensUtils.updateSkin(ids[i.get()], nerd.getName());
-							CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
-							runConsoleCommand("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + nerd.getRankFormat());
+				try {
+					new CooldownService().check("leaderboards", name(), Time.MINUTE.x(5));
+					Map<UUID, String> top = getTop();
+					if (top.size() != 3)
+						BNCore.warn(name() + " leaderboard top query did not return 3 results (" + top.size() + ")");
+					else
+						Tasks.sync(() -> {
+							AtomicInteger i = new AtomicInteger(0);
+							top.entrySet().iterator().forEachRemaining(entry -> {
+								Nerd nerd = new Nerd(entry.getKey());
+								CitizensUtils.updateSkin(ids[i.get()], nerd.getName());
+								CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
+								runConsoleCommand("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + nerd.getRankFormat());
+							});
 						});
-					});
+				} catch (CooldownException ignore) {}
 			});
 		}
 	}

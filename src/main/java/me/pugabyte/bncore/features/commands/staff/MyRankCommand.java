@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerd.Rank;
 
-@Permission("group.seniorstaff")
+@Permission("set.my.rank")
 public class MyRankCommand extends CustomCommand {
 
 	public MyRankCommand(@NonNull CommandEvent event) {
