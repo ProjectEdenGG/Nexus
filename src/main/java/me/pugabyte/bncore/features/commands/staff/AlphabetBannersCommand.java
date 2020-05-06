@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.ColorType;
+import org.bukkit.DyeColor;
 
 @Permission("group.staff")
 public class AlphabetBannersCommand extends CustomCommand {
@@ -42,17 +43,12 @@ public class AlphabetBannersCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<baseColor> <patternColor> [letter]")
-	void all(ColorType baseColor, ColorType patternColor, @Arg("-") String string) {
-		if (baseColor.getDyeColor() == null)
-			error("Base color have a dye color!");
-		if (patternColor.getDyeColor() == null)
-			error("Pattern color have a dye color!");
-
-		String baseBanner = "minecraft:" + baseColor.getName().replace(" ", "_") + "_banner";
-		String patternBanner = "minecraft:" + patternColor.getName().replace(" ", "_") + "_banner";
-		String baseInt = baseColor.getDurability() + "";
-		String patternInt = patternColor.getDurability() + "";
+	@Path("<baseColor> <patternColor> [letters]")
+	void all(DyeColor baseColor, DyeColor patternColor, @Arg("-") String string) {
+		String baseBanner = "minecraft:" + baseColor.name().toLowerCase().replace(" ", "_") + "_banner";
+		String patternBanner = "minecraft:" + patternColor.name().toLowerCase().replace(" ", "_") + "_banner";
+		String baseInt = ColorType.fromDyeColor(baseColor).getDurability() + "";
+		String patternInt = ColorType.fromDyeColor(patternColor).getDurability() + "";
 
 		String give = "minecraft:give " + player().getName();
 		if (string.equalsIgnoreCase("-")) {
@@ -66,15 +62,18 @@ public class AlphabetBannersCommand extends CustomCommand {
 				runCommandAsConsole(give + " " + banner);
 			}
 		} else {
-			char character = string.charAt(0);
-			int ndx = Character.getNumericValue(Character.toUpperCase(character)) - Character.getNumericValue('A');
-			String banner = alphabet[ndx]
-					.replaceAll("<baseBanner>", baseBanner)
-					.replaceAll("<patternBanner>", patternBanner)
-					.replaceAll("<baseInt>", baseInt)
-					.replaceAll("<patternInt>", patternInt);
+			char[] chars = string.toUpperCase().toCharArray();
+			for (int i = 0; i < chars.length; i++) {
+				char character = string.charAt(i);
+				int ndx = Character.getNumericValue(character) - Character.getNumericValue('A');
+				String banner = alphabet[ndx]
+						.replaceAll("<baseBanner>", baseBanner)
+						.replaceAll("<patternBanner>", patternBanner)
+						.replaceAll("<baseInt>", baseInt)
+						.replaceAll("<patternInt>", patternInt);
 
-			runCommandAsConsole(give + " " + banner);
+				runCommandAsConsole(give + " " + banner);
+			}
 		}
 	}
 }
