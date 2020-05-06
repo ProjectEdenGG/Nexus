@@ -56,7 +56,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 		Location loc;
 		try {
 			loc = SerializationUtils.JSON.deserializeLocation((String) json.get(id + ""));
-		} catch (SerializationException exception) {
+		} catch (SerializationException | NullPointerException exception) {
 			error("You have not set that sign.");
 			return;
 		}
@@ -112,8 +112,9 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 				event.getPlayer().sendMessage("&cYou must place your sign on concrete");
 				return;
 			}
-		} else if (!event.getPlayer().hasPermission(WorldGuardEditCommand.permission)) {
-			event.setCancelled(true);
+		} else {
+			if (!event.getPlayer().hasPermission(WorldGuardEditCommand.permission))
+				event.setCancelled(true);
 			return;
 		}
 
