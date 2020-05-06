@@ -144,6 +144,8 @@ class PathParser {
 		@Accessors(fluent = true)
 		private boolean isCompletionIndex = false;
 		private Integer paramIndex;
+
+		private Class<?> type;
 		private Method tabCompleter;
 		private Object contextArg;
 
@@ -201,7 +203,8 @@ class PathParser {
 					return (List<String>) tabCompleter.invoke(tabCompleteCommand, realArg.toLowerCase(), contextArg);
 				else
 					throw new BNException("Unknown converter parameters in " + tabCompleter.getName());
-			}
+			} else if (this.type.isEnum())
+				return command.tabCompleteEnum((Class<? extends Enum<?>>) type, realArg.toLowerCase());
 
 			return new ArrayList<>();
 		}
@@ -211,6 +214,7 @@ class PathParser {
 		}
 
 		void setTabCompleter(Class<?> clazz) {
+			this.type = clazz;
 			if (Commands.getTabCompleters().containsKey(clazz))
 				this.tabCompleter = Commands.getTabCompleters().get(clazz);
 		}

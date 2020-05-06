@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.listLast;
 import static org.reflections.ReflectionUtils.getAllMethods;
@@ -196,6 +197,8 @@ public interface ICustomCommand {
 					return converter.invoke(command, value, context);
 				else
 					throw new BNException("Unknown converter parameters in " + converter.getName());
+			} else if (type.isEnum()) {
+				return convertToEnum((Class<? extends Enum<?>>) type, value);
 			}
 		} catch (InvocationTargetException ex) {
 			if (required)
@@ -315,6 +318,20 @@ public interface ICustomCommand {
 				new CooldownService().check(id, "command:" + commandId, ticks);
 			}
 		}
+	}
+
+	default Enum<?> convertToEnum(Class<? extends Enum<?>> clazz, String filter) {
+		return Arrays.stream(clazz.getEnumConstants())
+				.filter(value -> value.name().toLowerCase().startsWith(filter.toLowerCase()))
+				.findFirst()
+				.orElseThrow(() -> new InvalidInputException(clazz.getSimpleName() + " from " + filter + " not found"));
+	}
+
+	default List<String> tabCompleteEnum(Class<? extends Enum<?>> clazz, String filter) {
+		return Arrays.stream(clazz.getEnumConstants())
+				.map(Enum::name)
+				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
 	}
 
 }

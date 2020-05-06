@@ -8,7 +8,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.vote.Vote;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.VoteSite;
@@ -117,20 +116,6 @@ public class VoteCommand extends CustomCommand {
 	@TabCompleterFor(Voter.class)
 	List<String> tabCompleteVoter(String value) {
 		return tabCompletePlayer(value);
-	}
-
-	@ConverterFor(Month.class)
-	Month convertToMonth(String value) {
-		try {
-			return Month.valueOf(value.toUpperCase());
-		} catch (IllegalArgumentException ignore) {
-			throw new InvalidInputException("Month from " + value + " not found");
-		}
-	}
-
-	@TabCompleterFor(Month.class)
-	List<String> tabCompleteMonth(String value) {
-		return tabCompleteEnum(Month.class, value);
 	}
 
 }

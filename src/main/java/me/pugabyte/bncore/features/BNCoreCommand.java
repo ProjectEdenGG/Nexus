@@ -14,26 +14,22 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
-import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
-import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
-import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -218,68 +214,9 @@ public class BNCoreCommand extends CustomCommand {
 		return tabCompletePlayer(value);
 	}
 
-	@ConverterFor(ColorType.class)
-	ColorType convertToColorType(String value) {
-		try {
-			return ColorType.valueOf(value.toUpperCase());
-		} catch (IllegalArgumentException ignore) {
-			throw new InvalidInputException("ColorType from " + value + " not found");
-		}
-	}
-
-	@TabCompleterFor(ColorType.class)
-	List<String> tabCompleteColorType(String filter) {
-		return tabCompleteEnum(ColorType.class, filter);
-	}
-
-	@ConverterFor(WorldGroup.class)
-	WorldGroup convertToWorldGroup(String value) {
-		try {
-			return WorldGroup.valueOf(value.toUpperCase());
-		} catch (IllegalArgumentException ignore) {
-			throw new InvalidInputException("WorldGroup from " + value + " not found");
-		}
-	}
-
-	@TabCompleterFor(WorldGroup.class)
-	List<String> tabCompleteWorldGroup(String filter) {
-		return Arrays.stream(WorldGroup.values())
-				.filter(worldGroup -> worldGroup.name().toLowerCase().startsWith(filter.toLowerCase()))
-				.map(WorldGroup::toString)
-				.collect(Collectors.toList());
-	}
-
-	@ConverterFor(Rank.class)
-	Rank convertToRank(String value) {
-		try {
-			return Rank.getByString(value);
-		} catch (IllegalArgumentException ignore) {
-			throw new InvalidInputException("Rank from " + value + " not found");
-		}
-	}
-
-	@TabCompleterFor(Rank.class)
-	List<String> tabCompleteRank(String value) {
-		return tabCompleteEnum(Rank.class, value);
-	}
-
 	@ConverterFor(LocalDate.class)
 	LocalDate convertToLocalDate(String value) {
 		try { return parseShortDate(value); } catch (Exception ignore) {}
 		throw new InvalidInputException("Could not parse date");
-	}
-
-	@ConverterFor(Jingle.class)
-	Jingle convertToJingle(String value) {
-		try {
-			return Jingle.valueOf(value.toUpperCase());
-		} catch (IllegalArgumentException ignore) {
-			throw new InvalidInputException("Jingle from " + value + " not found");
-		}
-	}
-
-	@TabCompleterFor(Jingle.class)
-	List<String> tabCompleteJingle(String value) {
-		return tabCompleteEnum(Jingle.class, value);
 	}
 }
