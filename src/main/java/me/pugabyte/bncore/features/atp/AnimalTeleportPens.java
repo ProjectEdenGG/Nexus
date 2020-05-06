@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -36,6 +37,7 @@ public class AnimalTeleportPens {
 	public List<Entity> getEntities(World world, ProtectedRegion region) {
 		List<Entity> finalEntities = new ArrayList<>();
 		for (Entity entity : WGUtils.getEntitiesInRegion(world, region.getId())) {
+			if (CitizensAPI.getNPCRegistry().isNPC(entity)) continue;
 			switch (entity.getType()) {
 				case BEE:
 				case FOX:
