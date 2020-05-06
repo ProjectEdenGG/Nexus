@@ -3,16 +3,12 @@ package me.pugabyte.bncore.features.commands;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.models.warps.Warp;
-import me.pugabyte.bncore.models.warps.WarpService;
-import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.*;
 import org.apache.commons.lang.SerializationException;
 import org.bukkit.Location;
@@ -25,26 +21,24 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import java.util.Map;
 
 @NoArgsConstructor
-@Aliases({"removesign", "wog"})
-@Redirects.Redirect(from = "removesigns", to = "mcmd removesign 1 ;; removesign 2")
-public class WallsOfGraceCommand extends CustomCommand implements Listener {
+@Redirects.Redirect(from = "/removesigns", to = "/removesign all")
+public class RemoveSignCommand extends CustomCommand implements Listener {
 
 	SettingService service = new SettingService();
 
-	public WallsOfGraceCommand(CommandEvent event) {
+	public RemoveSignCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path()
-	void warpNone() {
-		warp();
+	void usage() {
+		error("You must specify a sign number to remove (/removesign #)");
 	}
 
-	@Path("warp")
-	void warp() {
-		Warp warp = new WarpService().get("wallsofgrace", WarpType.NORMAL);
-		warp.teleport(player());
-		send("&3Warping to the &eWalls of Grace");
+	@Path("all")
+	void all() {
+		id(1);
+		id(2);
 	}
 
 	@Path("<id>")
@@ -109,7 +103,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 			// Sign must be placed on concrete
 			if (!MaterialTag.CONCRETES.isTagged(event.getBlockAgainst().getType())) {
 				event.setCancelled(true);
-				event.getPlayer().sendMessage("&cYou must place your sign on concrete");
+				send(event.getPlayer(), "&cYou must place your sign on concrete");
 				return;
 			}
 		} else {
