@@ -108,8 +108,8 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 		Discord.send(user.getBridgeName() + message, discordChannel);
 	}
 
-	public String parseMentions(String message) {
-		if (message.contains("@")) {
+	public static String parseMentions(String message) {
+		if (message != null && message.contains("@")) {
 			Matcher matcher = Pattern.compile("@[A-Za-z0-9_]+").matcher(message);
 			while (matcher.find()) {
 				String group = matcher.group();
