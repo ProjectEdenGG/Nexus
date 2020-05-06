@@ -203,7 +203,7 @@ class PathParser {
 					return (List<String>) tabCompleter.invoke(tabCompleteCommand, realArg.toLowerCase(), contextArg);
 				else
 					throw new BNException("Unknown converter parameters in " + tabCompleter.getName());
-			} else if (this.type.isEnum())
+			} else if (this.type != null && this.type.isEnum())
 				return command.tabCompleteEnum((Class<? extends Enum<?>>) type, realArg.toLowerCase());
 
 			return new ArrayList<>();
