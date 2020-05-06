@@ -17,12 +17,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class StatisticsMenuProvider extends MenuUtils implements InventoryProvider {
@@ -170,10 +165,16 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 
 			if (total > 1) {
 				Material material;
-				if (entity.equals(EntityType.PIG_ZOMBIE))
-					material = Material.ZOMBIE_PIGMAN_SPAWN_EGG;
-				else
-					material = Material.valueOf(entity.name() + "_SPAWN_EGG");
+				switch (entity) {
+					case PIG_ZOMBIE:
+						material = Material.ZOMBIE_PIGMAN_SPAWN_EGG;
+						break;
+					case MUSHROOM_COW:
+						material = Material.MOOSHROOM_SPAWN_EGG;
+						break;
+					default:
+						material = Material.valueOf(entity.name() + "_SPAWN_EGG");
+				}
 				ItemStack item = new ItemBuilder(material)
 						.name("&3" + StringUtils.camelCase(entity.name().replace("_", " ")))
 						.lore("&eKilled: &3" + killed)
