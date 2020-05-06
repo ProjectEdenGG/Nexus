@@ -39,6 +39,7 @@ public class CheatsCommand extends CustomCommand {
 	@Path("off")
 	void off() {
 		player().setGameMode(GameMode.SURVIVAL);
+		player().setFallDistance(0);
 		player().setAllowFlight(false);
 		player().setFlying(false);
 		essentials.getUser(player().getUniqueId()).setGodModeEnabled(false);
