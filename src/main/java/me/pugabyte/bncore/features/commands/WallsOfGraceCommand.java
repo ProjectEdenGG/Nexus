@@ -6,17 +6,14 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Redirects;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
-import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.SerializationUtils;
-import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
+import me.pugabyte.bncore.utils.*;
 import org.apache.commons.lang.SerializationException;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,6 +26,7 @@ import java.util.Map;
 
 @NoArgsConstructor
 @Aliases({"removesign", "wog"})
+@Redirects.Redirect(from = "removesigns", to = "mcmd removesign 1 ;; removesign 2")
 public class WallsOfGraceCommand extends CustomCommand implements Listener {
 
 	SettingService service = new SettingService();
@@ -76,7 +74,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
 
 		if (!Utils.isSign(event.getBlock().getType())) {
-			if (!player().hasPermission(WorldGuardEditCommand.permission))
+			if (!event.getPlayer().hasPermission(WorldGuardEditCommand.permission))
 				event.setCancelled(true);
 			return;
 		}
@@ -111,10 +109,10 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 			// Sign must be placed on concrete
 			if (!MaterialTag.CONCRETES.isTagged(event.getBlockAgainst().getType())) {
 				event.setCancelled(true);
-				error("You must place your sign on concrete");
+				event.getPlayer().sendMessage("&cYou must place your sign on concrete");
 				return;
 			}
-		} else if (!player().hasPermission(WorldGuardEditCommand.permission)) {
+		} else if (!event.getPlayer().hasPermission(WorldGuardEditCommand.permission)) {
 			event.setCancelled(true);
 			return;
 		}
