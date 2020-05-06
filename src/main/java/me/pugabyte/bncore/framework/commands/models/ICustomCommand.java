@@ -320,8 +320,9 @@ public interface ICustomCommand {
 		}
 	}
 
+	@SneakyThrows
 	default Enum<?> convertToEnum(Class<? extends Enum<?>> clazz, String filter) {
-		if (filter == null) return null;
+		if (filter == null) throw new InvocationTargetException(new BNException("Missing argument"));
 		return Arrays.stream(clazz.getEnumConstants())
 				.filter(value -> value.name().toLowerCase().startsWith(filter.toLowerCase()))
 				.findFirst()
