@@ -5,8 +5,8 @@ import lombok.Data;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId;
-import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -97,6 +97,11 @@ public class PublicChannel implements Channel {
 				.map(player -> (Chatter) new ChatService().get(player))
 				.filter(chatter -> chatter.hasJoined(this))
 				.forEach(chatter -> chatter.send(builder));
+	}
+
+	public void broadcastIngame(Chatter chatter, JsonBuilder builder) {
+		Bukkit.getConsoleSender().spigot().sendMessage(builder.build());
+		getRecipients(chatter).forEach(_chatter -> _chatter.send(builder));
 	}
 
 	public void broadcastDiscord(JsonBuilder builder) {
