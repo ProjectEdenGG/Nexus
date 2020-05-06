@@ -146,13 +146,17 @@ public class ArenaManager {
 		arenas.clear();
 		try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
 			paths.forEach(filePath -> {
-				if (!Files.isRegularFile(filePath)) return;
+				try {
+					if (!Files.isRegularFile(filePath)) return;
 
-				String name = filePath.getFileName().toString();
-				if (name.startsWith(".")) return;
-				if (!name.endsWith(".yml")) return;
+					String name = filePath.getFileName().toString();
+					if (name.startsWith(".")) return;
+					if (!name.endsWith(".yml")) return;
 
-				read(name.replace(".yml", ""));
+					read(name.replace(".yml", ""));
+				} catch (Exception ex) {
+					BNCore.severe("An error occurred while trying to read arena configuration file " + filePath.getFileName().toFile() + ": " + ex.getMessage());
+				}
 			});
 		} catch (Exception ex) {
 			BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
@@ -177,7 +181,7 @@ public class ArenaManager {
 			if (!arenas.contains(arena))
 				add(arena);
 		} catch (Exception ex) {
-			BNCore.severe("An error occurred while trying to write arena configuration files: " + ex.getMessage());
+			BNCore.severe("An error occurred while trying to write arena configuration file " + arena.getName() + ": " + ex.getMessage());
 		}
 	}
 
