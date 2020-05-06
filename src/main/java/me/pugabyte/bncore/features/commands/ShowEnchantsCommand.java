@@ -91,7 +91,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 
 			BaseComponent[] component = herochat.append(enchantedItem.create()).append((amount > 1 ? " x" + amount : "")).create();
 
-			channel.broadcastIngame(new JsonBuilder(component));
+			channel.broadcastIngame(chatter, new JsonBuilder(component));
 		}
 
 		// Discord
