@@ -6,9 +6,13 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CustomRecipes {
 
 	public static int amount = 0;
+	public static Map<NamespacedKey, Recipe> recipes = new HashMap<>();
 
 	public CustomRecipes() {
 		slabsToBlocks();
@@ -24,7 +28,8 @@ public class CustomRecipes {
 		addRecipe(createSingleItemShapelessRecipe(Material.BLUE_ICE, 1, Material.PACKED_ICE, 9));
 		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_RED_SANDSTONE, 1, Material.RED_SANDSTONE_SLAB, 2));
 		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_SANDSTONE, 1, Material.SANDSTONE_SLAB, 2));
-		BNCore.getInstance().getLogger().info("Registered " + amount + " custom crafting recipes");
+		BNCore.getInstance().getLogger().info("Registered " + amount + " new custom crafting recipes");
+		BNCore.getInstance().getLogger().info(recipes.size() + " total custom recipes are loaded on the server");
 	}
 
 	public void addRecipe(Recipe recipe) {
@@ -40,23 +45,29 @@ public class CustomRecipes {
 	}
 
 	public ShapelessRecipe createSingleItemShapelessRecipe(Material inputItem, int requiredAmount, Material outputItem, int outputAmount) {
-		ShapelessRecipe recipe = new ShapelessRecipe(new NamespacedKey(BNCore.getInstance(), "custom_" + inputItem.name() + "_" + outputItem.name()), new ItemStack(outputItem, outputAmount));
+		NamespacedKey key = new NamespacedKey(BNCore.getInstance(), "custom_" + inputItem.name() + "_" + outputItem.name());
+		ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(outputItem, outputAmount));
 		recipe.addIngredient(requiredAmount, inputItem);
+		recipes.put(key, recipe);
 		return recipe;
 	}
 
 	public ShapelessRecipe createShapelessRecipe(RecipeChoice.MaterialChoice inputItem, Material dye, Material outputItem) {
-		ShapelessRecipe recipe = new ShapelessRecipe(new NamespacedKey(BNCore.getInstance(), "custom_" + outputItem.name() + "_color"), new ItemStack(outputItem, 1));
+		NamespacedKey key = new NamespacedKey(BNCore.getInstance(), "custom_" + outputItem.name() + "_color");
+		ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(outputItem, 1));
 		recipe.addIngredient(inputItem);
 		recipe.addIngredient(dye);
+		recipes.put(key, recipe);
 		return recipe;
 	}
 
 	public ShapedRecipe createColorChangingRecipe(RecipeChoice.MaterialChoice inputItem, Material dye, Material outputItem) {
-		ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(BNCore.getInstance(), "custom_" + outputItem.name() + "_color"), new ItemStack(outputItem, 8));
+		NamespacedKey key = new NamespacedKey(BNCore.getInstance(), "custom_" + outputItem.name() + "_color");
+		ShapedRecipe recipe = new ShapedRecipe(key, new ItemStack(outputItem, 8));
 		recipe.shape("iii", "idi", "iii");
 		recipe.setIngredient('i', inputItem);
 		recipe.setIngredient('d', dye);
+		recipes.put(key, recipe);
 		return recipe;
 	}
 
