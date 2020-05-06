@@ -321,6 +321,7 @@ public interface ICustomCommand {
 	}
 
 	default Enum<?> convertToEnum(Class<? extends Enum<?>> clazz, String filter) {
+		if (filter == null) return null;
 		return Arrays.stream(clazz.getEnumConstants())
 				.filter(value -> value.name().toLowerCase().startsWith(filter.toLowerCase()))
 				.findFirst()
