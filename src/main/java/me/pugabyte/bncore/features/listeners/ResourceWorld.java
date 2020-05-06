@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.List;
@@ -52,6 +53,17 @@ public class ResourceWorld implements Listener {
 						new WarpService().get("spawn", WarpType.NORMAL).teleport(player);
 				}
 			}
+		}
+	}
+
+	@EventHandler
+	public void onWorldChange(InventoryOpenEvent event) {
+		if (!(event.getPlayer() instanceof Player)) return;
+		Player player = (Player) event.getPlayer();
+
+		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
+			event.setCancelled(true);
+			player.sendMessage(colorize("&cYou can't open your enderchest while in the resource world, due to restrictions in place to keep the /market balanced"));
 		}
 	}
 
