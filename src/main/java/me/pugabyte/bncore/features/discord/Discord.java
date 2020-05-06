@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -72,8 +73,10 @@ public class Discord {
 	}
 
 	public static String discordize(String message) {
-		message = message.replaceAll("_", "\\_");
-		message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
+		if (message != null) {
+			message = message.replaceAll("_", "\\_");
+			message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
+		}
 		return message;
 	}
 
@@ -98,6 +101,8 @@ public class Discord {
 	}
 
 	public static void send(String message, DiscordId.Channel... targets) {
+		if (targets == null || targets.length == 0)
+			 targets = new DiscordId.Channel[]{ Channel.BRIDGE };
 		message = stripColor(message);
 		for (DiscordId.Channel target : targets) {
 			if (target == null || Bot.RELAY.jda() == null)
@@ -108,7 +113,21 @@ public class Discord {
 		}
 	}
 
+	public static void send(MessageBuilder message, DiscordId.Channel... targets) {
+		if (targets == null || targets.length == 0)
+			targets = new DiscordId.Channel[]{ Channel.BRIDGE };
+		for (DiscordId.Channel target : targets) {
+			if (target == null || Bot.RELAY.jda() == null)
+				continue;
+			TextChannel channel = Bot.RELAY.jda().getTextChannelById(target.getId());
+			if (channel != null)
+				channel.sendMessage(message.build()).queue();
+		}
+	}
+
 	public static void koda(String message, DiscordId.Channel... targets) {
+		if (targets == null || targets.length == 0)
+			targets = new DiscordId.Channel[]{ Channel.BRIDGE };
 		message = stripColor(message);
 		for (DiscordId.Channel target : targets) {
 			if (target == null || Bot.KODA.jda() == null)

@@ -2,6 +2,8 @@ package me.pugabyte.bncore.features.commands;
 
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.chat.bridge.BridgeListener;
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
@@ -12,8 +14,12 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PublicChannel;
+import me.pugabyte.bncore.models.discord.DiscordService;
+import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Time;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -30,6 +36,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static me.pugabyte.bncore.features.discord.Discord.discordize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class ShowEnchantsCommand extends CustomCommand {
 
@@ -51,6 +60,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 		Player player = player();
 		ItemStack item = getItem(player, arg(1));
 		ItemData data = new ItemData();
+		if (message == null) message = "";
 
 		String itemId = item.getType().name();
 		if (item.getItemMeta() == null)
@@ -95,7 +105,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 		}
 
 		// Discord
-		{
+		if (channel.getDiscordChannel() != null) {
 			String enchants = getEnchantsDiscord(data);
 
 			String durability = String.valueOf(((int) item.getType().getMaxDurability()) - ((Damageable) item.getItemMeta()).getDamage());
@@ -106,7 +116,21 @@ public class ShowEnchantsCommand extends CustomCommand {
 				discordName += "(" + material + ")";
 			if (amount > 1) discordName += " x" + amount;
 
-//			SkriptFunctions.showEnchantsOnBridge(player, message, discordName, enchants, durability, channel.getName());
+			EmbedBuilder embed = new EmbedBuilder()
+					.setTitle(discordName)
+					.appendDescription(enchants);
+
+			if (!durability.equals("0/0"))
+				embed.setFooter(durability);
+
+			DiscordUser user = new DiscordService().get(player);
+
+			String discordMessage = discordize(message);
+			discordMessage = BridgeListener.parseMentions(discordMessage);
+
+			Discord.send(new MessageBuilder()
+					.setContent(stripColor(user.getBridgeName() + discordMessage))
+					.setEmbed(embed.build()));
 		}
 	}
 
