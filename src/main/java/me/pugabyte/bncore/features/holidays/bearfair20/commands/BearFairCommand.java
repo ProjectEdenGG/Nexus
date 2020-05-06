@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 
+import me.pugabyte.bncore.features.holidays.bearfair20.Fairgrounds;
 import me.pugabyte.bncore.features.warps.commands._WarpCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -71,6 +72,18 @@ public class BearFairCommand extends _WarpCommand {
 		if (world != null)
 			world.strikeLightningEffect(loc);
 
+	}
+
+	@Path("fairgrounds pugadunk on")
+	public void pugadunkOn() {
+		commandBlock();
+		Fairgrounds.setPugaDunkBool(true);
+	}
+
+	@Path("fairgrounds pugadunk off")
+	public void pugadunkOff() {
+		commandBlock();
+		Fairgrounds.setPugaDunkBool(false);
 	}
 
 	@Path

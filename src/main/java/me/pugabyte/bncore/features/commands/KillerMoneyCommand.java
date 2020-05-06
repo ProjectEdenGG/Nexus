@@ -16,13 +16,13 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
@@ -55,32 +55,24 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onEntityKill(EntityDamageByEntityEvent event) {
-		LivingEntity victim;
+	public void onEntityDamage(EntityDamageByEntityEvent event) {
 		if (!(event.getEntity() instanceof LivingEntity)) return;
+		event.getEntity().setMetadata("killermoney-lastDamageCause", new FixedMetadataValue(BNCore.getInstance(), event.getCause().name()));
+	}
 
-		victim = (LivingEntity) event.getEntity();
-		Player player = null;
-
-		if (event.getDamager() instanceof Player) {
-			player = (Player) event.getDamager();
-		} else if (event.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) event.getDamager();
-			if (projectile.getShooter() instanceof Player)
-				player = (Player) projectile.getShooter();
-		}
+	@EventHandler
+	public void onEntityKill(EntityDeathEvent event) {
+		Player player = event.getEntity().getKiller();
 		if (player == null) return;
-
-		if (victim.getHealth() - event.getFinalDamage() > 0)
-			return;
 
 		if (!player.getGameMode().equals(GameMode.SURVIVAL))
 			return;
 
-		if (event.getCause() == DamageCause.SUFFOCATION)
-			return;
-		for (MetadataValue meta : victim.getMetadata("killermoney-spawner"))
+		for (MetadataValue meta : event.getEntity().getMetadata("killermoney-spawner"))
 			if (meta.asBoolean())
+				return;
+		for (MetadataValue meta : event.getEntity().getMetadata("killermoney-lastDamageCause"))
+			if (DamageCause.SUFFOCATION.name().equals(meta.asString()))
 				return;
 
 		MobMoney mob;

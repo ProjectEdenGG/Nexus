@@ -15,6 +15,10 @@ public class BearFair20 implements Listener {
 
 	public BearFair20() {
 		BNCore.registerListener(this);
+		new Fairgrounds();
 		new Halloween();
 	}
+
+
+
 }
