@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.List;
@@ -59,6 +60,7 @@ public class ResourceWorld implements Listener {
 	@EventHandler
 	public void onWorldChange(InventoryOpenEvent event) {
 		if (!(event.getPlayer() instanceof Player)) return;
+		if (event.getInventory().getType() != InventoryType.ENDER_CHEST) return;
 		Player player = (Player) event.getPlayer();
 
 		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
