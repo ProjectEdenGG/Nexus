@@ -167,17 +167,17 @@ public class BNCore extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		cron.stop();
-		Minigames.shutdown();
-		AFK.shutdown();
-		Discord.shutdown();
-		Chat.shutdown();
-		LiteBans.shutdown();
-		ProtocolLibrary.getProtocolManager().removePacketListeners(this);
-		commands.unregisterAll();
-		broadcastReload();
-		MySQLPersistence.shutdown();
-		MongoDBPersistence.shutdown();
+		try { cron.stop();															} catch (Exception ex) { ex.printStackTrace(); }
+		try { Minigames.shutdown();													} catch (Exception ex) { ex.printStackTrace(); }
+		try { AFK.shutdown();														} catch (Exception ex) { ex.printStackTrace(); }
+		try { Discord.shutdown();													} catch (Exception ex) { ex.printStackTrace(); }
+		try { Chat.shutdown();														} catch (Exception ex) { ex.printStackTrace(); }
+		try { LiteBans.shutdown();													} catch (Exception ex) { ex.printStackTrace(); }
+		try { ProtocolLibrary.getProtocolManager().removePacketListeners(this);		} catch (Exception ex) { ex.printStackTrace(); }
+		try { commands.unregisterAll();												} catch (Exception ex) { ex.printStackTrace(); }
+		try { broadcastReload();													} catch (Exception ex) { ex.printStackTrace(); }
+		try { MySQLPersistence.shutdown();											} catch (Exception ex) { ex.printStackTrace(); }
+		try { MongoDBPersistence.shutdown();										} catch (Exception ex) { ex.printStackTrace(); }
 	}
 
 	public void broadcastReload() {

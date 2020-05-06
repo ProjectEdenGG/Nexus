@@ -51,7 +51,7 @@ public class SerializationUtils {
 
 		public static Set<Material> deserializeMaterialSet(List<String> materials) {
 			if (materials == null) return null;
-			return materials.stream().map(block -> Material.valueOf(block.toUpperCase())).collect(Collectors.toSet());
+			return materials.stream().map(block -> Material.matchMaterial(block.toUpperCase())).collect(Collectors.toSet());
 		}
 
 	}
