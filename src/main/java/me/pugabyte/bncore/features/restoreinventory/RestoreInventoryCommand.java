@@ -2,22 +2,18 @@ package me.pugabyte.bncore.features.restoreinventory;
 
 import com.onarandombox.multiverseinventories.share.Sharables;
 import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfiguration;
-import me.pugabyte.bncore.BNCore;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.restoreinventory.models.RestoreInventoryPlayer;
+import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.PreConfiguredException;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
@@ -28,124 +24,101 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
-	private final static String PREFIX = StringUtils.getPrefix("RestoreInventory");
-	private final static String USAGE = ChatColor.RED + "/restoreinv <player> <paste code>";
+@Permission("restoreinventory.use")
+public class RestoreInventoryCommand extends CustomCommand {
+	public static HashMap<Player, RestoreInventoryPlayer> restorers = new HashMap<>();
 
-	public RestoreInventoryCommand() {
-		BNCore.registerCommand("restoreinventory", this);
-		BNCore.registerTabCompleter("restoreinventory", this);
+	public RestoreInventoryCommand(@NonNull CommandEvent event) {
+		super(event);
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		try {
-			if (!(sender instanceof Player))
-				throw new InvalidInputException("You must be in-game to use this command");
-			Player player = (Player) sender;
+	public void add(Player restorer, RestoreInventoryPlayer restoreInventoryPlayer) {
+		restorers.put(restorer, restoreInventoryPlayer);
+	}
 
-			if (!player.hasPermission("restoreinventory.use"))
-				throw new NoPermissionException();
+	public RestoreInventoryPlayer get(Player restorer) {
+		return restorers.get(restorer);
+	}
 
-			if (args[0].equalsIgnoreCase("do")) {
-				RestoreInventoryPlayer restoreInventoryPlayer = RestoreInventory.get(player);
-				if (restoreInventoryPlayer == null)
-					throw new InvalidInputException(ChatColor.RED + "You must run " + USAGE + " first");
+	@Path("<player> <pastecode>")
+	void code(Player owner, String code) {
+		Tasks.async(() -> {
+			try {
+				String data = getPaste(code);
 
-				Player restorer = restoreInventoryPlayer.getRestorer();
-				Player owner = restoreInventoryPlayer.getOwner();
-				JsonConfiguration jsonConfig = restoreInventoryPlayer.getJsonConfig();
-				String code = restoreInventoryPlayer.getCode();
+				JsonConfiguration jsonConfig = new JsonConfiguration();
+				jsonConfig.loadFromString(data);
 
-				if (!(args[1].equalsIgnoreCase("SURVIVAL") || args[1].equalsIgnoreCase("CREATIVE")))
-					throw new InvalidInputException("You can only restore Survival and Creative inventories");
+				add(player(), new RestoreInventoryPlayer(player(), owner, jsonConfig, code));
 
-				ConfigurationSection gamemode = jsonConfig.getConfigurationSection(args[1].toUpperCase());
-
-				owner.setGameMode(GameMode.valueOf(args[1].toUpperCase()));
-
-				Tasks.wait(3, () -> {
-					try {
-						switch (args[2].toLowerCase()) {
-							case "inventory":
-								if (!inventoryIsEmpty(owner.getInventory())) {
-									sendInventoryRestoreNotEmptyMessage(restorer, owner, "inventory");
-									break;
-								}
-
-								owner.getInventory().setContents(getInventory(gamemode));
-								owner.getInventory().setArmorContents(getArmour(gamemode));
-								owner.getInventory().setItemInOffHand(getOffHand(gamemode));
-								sendInventoryRestoreSuccessMessage(restorer, owner, "inventory");
-								break;
-							case "enderchest":
-								if (!inventoryIsEmpty(owner.getEnderChest())) {
-									sendInventoryRestoreNotEmptyMessage(restorer, owner, "ender chest");
-									break;
-								}
-
-								owner.getEnderChest().setContents(getEnderChest(gamemode));
-								sendInventoryRestoreSuccessMessage(restorer, owner, "ender chest");
-								break;
-							case "exp":
-								owner.setTotalExperience((int) (owner.getTotalExperience() + getExp(gamemode)));
-								sendExperienceRestoreSuccessMessage(restorer, owner);
-								break;
-							default:
-								throw new InvalidInputException("You can only restore inventory contents, ender chest contents, and experience");
-						}
-					} catch (InvalidInputException ex) {
-						sender.sendMessage(PREFIX + ex.getMessage());
-					}
-				});
-
-				Discord.log(PREFIX + restorer.getName() + " restored " + owner.getName() + "'s " + args[1].toLowerCase()
-						+ " " + args[2].toLowerCase() + " from <https://paste.bnn.gg/" + code + ".json>");
-			} else {
-				Optional<? extends Player> match = Bukkit.getOnlinePlayers().stream()
-						.filter(_player -> _player.getName().startsWith(args[0]))
-						.findFirst();
-
-				if (!match.isPresent())
-					throw new InvalidInputException("Player not found");
-
-				Player owner = match.get();
-				String code = args[1];
-
-				Tasks.async(() -> {
-					try {
-						String data = getPaste(code);
-
-						JsonConfiguration jsonConfig = new JsonConfiguration();
-						jsonConfig.loadFromString(data);
-
-						RestoreInventory.add(player, new RestoreInventoryPlayer(player, owner, jsonConfig, code));
-
-					} catch (InvalidConfigurationException ex) {
-						sender.sendMessage(PREFIX + "An error occurred while loading the json configuration: " + ex.getMessage());
-					} catch (InvalidInputException ex) {
-						sender.sendMessage(PREFIX + ex.getMessage());
-					}
-				});
-
-				sendRestoreButtons(player, "Survival");
-				sendRestoreButtons(player, "Creative");
+				sendRestoreButtons("Survival");
+				sendRestoreButtons("Creative");
+			} catch (InvalidConfigurationException ex) {
+				error("An error occurred while loading the json configuration: " + ex.getMessage());
 			}
-		} catch (PreConfiguredException | InvalidInputException ex) {
-			sender.sendMessage(PREFIX + ex.getMessage());
-		} catch (ArrayIndexOutOfBoundsException ex) {
-			sender.sendMessage(PREFIX + USAGE);
-		}
-		return true;
+		});
 	}
 
-	private void sendRestoreButtons(Player player, String gamemode) {
+	@Path("do <gamemode> <type>")
+	void restore(GameMode gameMode, String type) {
+		RestoreInventoryPlayer restoreInventoryPlayer = get(player());
+		if (restoreInventoryPlayer == null)
+			error("You must run /restoreinv <player> <pastecode> first");
+
+		Player owner = restoreInventoryPlayer.getOwner();
+		JsonConfiguration jsonConfig = restoreInventoryPlayer.getJsonConfig();
+		String code = restoreInventoryPlayer.getCode();
+
+		if (!Arrays.asList(GameMode.SURVIVAL, GameMode.CREATIVE).contains(gameMode))
+			error("You can only restore Survival and Creative inventories");
+
+		ConfigurationSection gamemode = jsonConfig.getConfigurationSection(gameMode.name());
+		owner.setGameMode(gameMode);
+
+		Tasks.wait(3, () -> {
+			try {
+				switch (type.toLowerCase()) {
+					case "inventory":
+						if (!inventoryIsEmpty(owner.getInventory())) {
+							sendInventoryRestoreNotEmptyMessage(owner, "inventory");
+							break;
+						}
+
+						owner.getInventory().setContents(getInventory(gamemode));
+						owner.getInventory().setArmorContents(getArmour(gamemode));
+						owner.getInventory().setItemInOffHand(getOffHand(gamemode));
+						sendInventoryRestoreSuccessMessage(owner, "inventory");
+						break;
+					case "enderchest":
+						if (!inventoryIsEmpty(owner.getEnderChest())) {
+							sendInventoryRestoreNotEmptyMessage(owner, "ender chest");
+							break;
+						}
+
+						owner.getEnderChest().setContents(getEnderChest(gamemode));
+						sendInventoryRestoreSuccessMessage(owner, "ender chest");
+						break;
+					case "exp":
+						owner.setTotalExperience((int) (owner.getTotalExperience() + getExp(gamemode)));
+						sendExperienceRestoreSuccessMessage(owner);
+						break;
+					default:
+						error("You can only restore inventory contents, ender chest contents, and experience");
+				}
+			} catch (InvalidInputException ex) {
+				send(PREFIX + ex.getMessage());
+			}
+		});
+
+		Discord.log(PREFIX + player().getName() + " restored " + owner.getName() + "'s " + gameMode.name().toLowerCase()
+				+ " " + type + " from <https://paste.bnn.gg/" + code + ".json>");
+	}
+
+	private void sendRestoreButtons(String gamemode) {
 		new JsonBuilder()
 				.newline()
 				.next("&e " + gamemode)
@@ -157,25 +130,25 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 				.next("  &e|&e|  ").group()
 				.next("&3Experience").command("/restoreinv do " + gamemode.toLowerCase() + " exp").group()
 				.next("  &e|&e|")
-				.send(player);
+				.send(player());
 	}
 
-	private void sendInventoryRestoreNotEmptyMessage(Player restorer, Player owner, String type) throws InvalidInputException {
-		owner.sendMessage(PREFIX + ChatColor.RED + restorer.getName() + " is trying to restore your " + type + ", " +
+	private void sendInventoryRestoreNotEmptyMessage(Player owner, String type) throws InvalidInputException {
+		owner.sendMessage(PREFIX + ChatColor.RED + player().getName() + " is trying to restore your " + type + ", " +
 				" your current " + type + " must be " + ChatColor. YELLOW + "empty " + ChatColor.RED + "to avoid lost items!");
 		throw new InvalidInputException(ChatColor.RED + "The player's " + type + " contents must be empty to complete a restore. " +
 				"They have been asked to empty their " + type + ".");
 	}
 
-	private void sendInventoryRestoreSuccessMessage(Player restorer, Player owner, String type) {
-		owner.sendMessage(PREFIX + ChatColor.YELLOW + restorer.getName() + ChatColor.DARK_AQUA + " has successfully restored your " + type + ". " +
+	private void sendInventoryRestoreSuccessMessage(Player owner, String type) {
+		owner.sendMessage(PREFIX + ChatColor.YELLOW + player().getName() + ChatColor.DARK_AQUA + " has successfully restored your " + type + ". " +
 				"Please confirm that all your items are present.");
-		restorer.sendMessage(PREFIX + "Successfully restored " + type + " of " + ChatColor.YELLOW + owner.getName());
+		player().sendMessage(PREFIX + "Successfully restored " + type + " of " + ChatColor.YELLOW + owner.getName());
 	}
 
-	private void sendExperienceRestoreSuccessMessage(Player restorer, Player owner) {
+	private void sendExperienceRestoreSuccessMessage(Player owner) {
 		owner.sendMessage(PREFIX + "Successfully added your lost experience to your current experience");
-		restorer.sendMessage(PREFIX + "Successfully added " + ChatColor.YELLOW + owner.getName() + ChatColor.DARK_AQUA + "'s lost experience to their current experience");
+		player().sendMessage(PREFIX + "Successfully added " + ChatColor.YELLOW + owner.getName() + ChatColor.DARK_AQUA + "'s lost experience to their current experience");
 	}
 
 	private boolean inventoryIsEmpty(Inventory inventory) {
@@ -237,25 +210,6 @@ public class RestoreInventoryCommand implements CommandExecutor, TabCompleter {
 			}
 		}
 		return resultMap;
-	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		List<String> completions = new ArrayList<>();
-		if (args.length == 1) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				completions.add(player.getName());
-			}
-			completions.add("do");
-		} else if (args.length == 2 && args[0].equalsIgnoreCase("do")) {
-			completions.add("survival");
-			completions.add("creative");
-		} else if (args.length == 3 && args[0].equalsIgnoreCase("do")) {
-			completions.add("inventory");
-			completions.add("enderchest");
-			completions.add("xp");
-		}
-		return completions;
 	}
 
 }

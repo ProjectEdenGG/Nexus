@@ -32,7 +32,7 @@ public class DiscordUser {
 
 	public String getBridgeName() {
 		OfflinePlayer player = Utils.getPlayer(uuid);
-		String name = "**" + player.getName() + " >** ";
+		String name = "**" + player.getName().replaceAll("_", "\\_") + " >** ";
 		if (roleId != null)
 			name = "<@&&f" + roleId + "> **>** ";
 		return name;

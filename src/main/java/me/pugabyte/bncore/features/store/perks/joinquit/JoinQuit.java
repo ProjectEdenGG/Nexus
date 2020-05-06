@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static me.pugabyte.bncore.features.discord.Discord.discordize;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
@@ -112,7 +113,7 @@ public class JoinQuit implements Listener {
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
 			Koda.replyIngame("&lWelcome to Bear Nation, " + player.getName() + "!");
-			Koda.replyDiscord("**Welcome to Bear Nation, " + player.getName() + "!**");
+			Koda.replyDiscord("**Welcome to Bear Nation, " + discordize(player.getName()) + "!**");
 		}
 
 		if (!Utils.isVanished(player))
