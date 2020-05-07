@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fox;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
@@ -72,9 +73,12 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		List<Entity> entities = new ArrayList<>();
 		Bukkit.getWorlds().forEach(world ->
 				world.getEntities().forEach(entity -> {
-					if (entity instanceof Tameable && ((Tameable) entity).getOwner() == player())
-						if (entity.getType() == EntityType.valueOf(entityType.name()))
+					if (entity.getType() == EntityType.valueOf(entityType.name()))
+						if (entity instanceof Tameable && ((Tameable) entity).getOwner() == player())
 							entities.add(entity);
+						else if (entity instanceof Fox)
+							if (((Fox) entity).getFirstTrustedPlayer() == player() || ((Fox) entity).getSecondTrustedPlayer() == player())
+								entities.add(entity);
 		}));
 
 		if (entities.size() == 0)
@@ -90,18 +94,20 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	private enum SummonableTameableEntity implements TameableEntityList {
 		WOLF,
 		CAT,
-		PARROT,
+		FOX,
+		PARROT
 	}
 
 	private enum TameableEntity implements TameableEntityList {
 		WOLF,
 		CAT,
+		FOX,
 		PARROT,
 		HORSE,
 		SKELETON_HORSE,
 		DONKEY,
 		MULE,
-		LLAMA,
+		LLAMA
 	}
 
 	@Data
