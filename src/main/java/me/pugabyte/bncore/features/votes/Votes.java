@@ -61,7 +61,6 @@ public class Votes implements Listener {
 				if (!expiration.isBefore(LocalDateTime.now())) return;
 
 				vote.setExpired(true);
-				BNCore.log("Vote expired: " + vote);
 				service.save(vote);
 
 				sendVoteReminder(vote);
