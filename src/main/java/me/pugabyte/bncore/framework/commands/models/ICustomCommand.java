@@ -331,7 +331,7 @@ public interface ICustomCommand {
 
 	default List<String> tabCompleteEnum(Class<? extends Enum<?>> clazz, String filter) {
 		return Arrays.stream(clazz.getEnumConstants())
-				.map(Enum::name)
+				.map(value -> value.name().toLowerCase())
 				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
