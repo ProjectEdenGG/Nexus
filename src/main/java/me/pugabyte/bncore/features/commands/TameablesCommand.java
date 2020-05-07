@@ -58,14 +58,14 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Path("count <entityType>")
 	void count(TameableEntity entityType) {
 		List<Entity> entities = find(entityType);
-		send(PREFIX + "Found " + entities.size() + " " + camelCase(entityType.name()) + " in loaded chunks belonging to you");
+		send(PREFIX + "Found &e" + entities.size() + " " + camelCase(entityType.name()) + " &3in loaded chunks belonging to you");
 	}
 
 	@Path("summon <entityType>")
 	void summon(SummonableTameableEntity entityType) {
 		List<Entity> entities = find(entityType);
 		entities.forEach(entity -> entity.teleport(player()));
-		send(PREFIX + "Summoned &e" + entities.size() + " " + camelCase(entityType.name()) + "s in loaded chunks to your location");
+		send(PREFIX + "Summoned &e" + entities.size() + " " + camelCase(entityType.name()) + "s &3in loaded chunks to your location");
 	}
 
 	private List<Entity> find(TameableEntityList entityType) {
