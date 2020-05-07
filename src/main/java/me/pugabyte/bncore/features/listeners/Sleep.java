@@ -14,9 +14,7 @@ import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
@@ -30,31 +28,23 @@ public class Sleep implements Listener {
 		if (!(world.getTime() >= 12541 && world.getTime() <= 23458))
 			return;
 
-		Collection<? extends Player> players = world.getPlayers();
-		List<Player> sleepers = players.stream().filter(Player::isSleeping).collect(Collectors.toList());
+		List<Player> players = world.getPlayers();
+		long sleeping = players.stream().filter(Player::isSleeping).count();
+		long active = players.stream().filter(player -> !Utils.isVanished(player) && !AFK.get(player).isAfk()).count();
 
-		if (sleepers.size() == 0)
+		if (sleeping == 0)
 			return;
 
-		long sleeping = 0;
-		long visible = players.stream().filter(player -> !Utils.isVanished(player)).count();
-
-		for (Player player : players)
-			if (player.isSleeping() || Utils.isVanished(player) || AFK.get(player).isAfk())
-				++sleeping;
-
-		int needed = (int) Math.ceil((double) visible / 2);
+		int needed = (int) Math.ceil(active / 2);
 
 		if (sleeping != lastCalculatedSleeping || needed != lastCalculatedNeeded)
-			for (Player player : sleepers)
-				player.sendMessage(colorize(PREFIX + "Sleepers needed: &e" + sleeping + "&3/&e" + needed));
+			for (Player player : players)
+				player.sendMessage(colorize(PREFIX + "Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed));
 
 		lastCalculatedSleeping = sleeping;
 		lastCalculatedNeeded = needed;
 
-		int percentage = (int) (((double) sleepers.size() / visible) * 100);
-
-		if (percentage >= 49) {
+		if (sleeping >= needed) {
 			handling = true;
 			Tasks.wait(20, () -> {
 				players.forEach(player -> player.sendMessage(colorize(PREFIX + "The night was skipped because 50% of players slept!")));
