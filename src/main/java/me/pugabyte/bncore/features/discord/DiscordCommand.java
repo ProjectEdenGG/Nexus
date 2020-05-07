@@ -8,6 +8,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
+import me.pugabyte.bncore.utils.Tasks;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 
 public class DiscordCommand extends CustomCommand {
@@ -25,6 +28,20 @@ public class DiscordCommand extends CustomCommand {
 	void run() {
 		send("&3Join our discord to stay up to date with the community");
 		send("&e" + Discord.getUrl());
+	}
+
+	@Path("link update roles")
+	@Permission("group.seniorstaff")
+	void updateRoles() {
+		Tasks.async(() -> {
+			Role verified = Discord.getGuild().getRoleById(DiscordId.Role.VERIFIED.getId());
+			new DiscordService().getAll().stream().filter(discordUser -> !isNullOrEmpty(discordUser.getUserId())).forEach(discordUser -> {
+				Member member = Discord.getGuild().getMemberById(discordUser.getUserId());
+				if (member == null) return;
+				if (!member.getRoles().contains(verified))
+					Discord.addRole(discordUser.getUserId(), DiscordId.Role.VERIFIED);
+			});
+		});
 	}
 
 	@Path("link [code]")
@@ -56,6 +73,7 @@ public class DiscordCommand extends CustomCommand {
 				String discrim = newUser.getDiscrim();
 				Bot.KODA.jda().getUserById(newUser.getUserId()).openPrivateChannel().complete().sendMessage("You have successfully linked your Discord account with the Minecraft account **" + player().getName() + "**").queue();
 				send(PREFIX + "You have successfully linked your Minecraft account with the Discord account &e" + name + "#" + discrim);
+				Discord.addRole(newUser.getUserId(), DiscordId.Role.VERIFIED);
 				user.setUserId(newUser.getUserId());
 				service.save(user);
 				Discord.staffLog("**" + player().getName() + "** has linked their discord account to **" + name + "#" + discrim + "**");
