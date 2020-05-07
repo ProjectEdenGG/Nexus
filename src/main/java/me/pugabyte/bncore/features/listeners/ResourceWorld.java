@@ -6,14 +6,18 @@ import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.ShopService;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,19 +50,41 @@ public class ResourceWorld implements Listener {
 					player.sendMessage(colorize("&cYou can not go to the resource world with &e" + camelCase(material.name()) + "&c. " +
 							"Please remove it from your inventory before continuing."));
 
-					Back back = new BackService().get(player);
-					Optional<Location> backLocation = back.getLocations().stream().filter(location -> !location.getWorld().getName().startsWith("resource")).findFirst();
-					if (backLocation.isPresent())
-						player.teleport(backLocation.get());
-					else
-						new WarpService().get("spawn", WarpType.NORMAL).teleport(player);
+					teleportPlayerBack(player);
 				}
+			}
+
+			ItemStack[] items = player.getInventory().getContents();
+			for (ItemStack item : items) {
+				if (!MaterialTag.SHULKER_BOXES.isTagged(item.getType())) continue;
+				if (!(item.getItemMeta() instanceof BlockStateMeta)) continue;
+
+				ShulkerBox shulkerBox = (ShulkerBox) item;
+				ItemStack[] contents = shulkerBox.getInventory().getContents();
+				for (ItemStack content : contents) {
+					if (materials.contains(content.getType())) {
+						player.sendMessage(colorize("&cYou can not go to the resource world with &e" + camelCase(content.getType().name()) + "&c. " +
+								"Please remove it from your shulkerbox before continuing."));
+
+						teleportPlayerBack(player);
+					}
+				}
+
 			}
 		}
 	}
 
+	private void teleportPlayerBack(Player player) {
+		Back back = new BackService().get(player);
+		Optional<Location> backLocation = back.getLocations().stream().filter(location -> !location.getWorld().getName().startsWith("resource")).findFirst();
+		if (backLocation.isPresent())
+			player.teleport(backLocation.get());
+		else
+			new WarpService().get("spawn", WarpType.NORMAL).teleport(player);
+	}
+
 	@EventHandler
-	public void onWorldChange(InventoryOpenEvent event) {
+	public void onOpenEnderChest(InventoryOpenEvent event) {
 		if (!(event.getPlayer() instanceof Player)) return;
 		if (event.getInventory().getType() != InventoryType.ENDER_CHEST) return;
 		Player player = (Player) event.getPlayer();
