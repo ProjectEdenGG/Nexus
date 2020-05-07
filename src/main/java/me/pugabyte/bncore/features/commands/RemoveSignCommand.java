@@ -5,11 +5,15 @@ import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.Redirects;
+import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.MaterialTag;
+import me.pugabyte.bncore.utils.SerializationUtils;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.apache.commons.lang.SerializationException;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,7 +25,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import java.util.Map;
 
 @NoArgsConstructor
-@Redirects.Redirect(from = "/removesigns", to = "/removesign all")
+@Redirect(from = "/removesigns", to = "/removesign all")
 public class RemoveSignCommand extends CustomCommand implements Listener {
 
 	SettingService service = new SettingService();
