@@ -20,5 +20,3 @@ softdepend:
   - Votifier
   - PlaceholderAPI
   - PathfinderAPI
-loadbefore:
-  - mcMMO
