@@ -20,7 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -55,7 +55,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onEntityDamage(EntityDamageByEntityEvent event) {
+	public void onEntityDamage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof LivingEntity)) return;
 		event.getEntity().setMetadata("killermoney-lastDamageCause", new FixedMetadataValue(BNCore.getInstance(), event.getCause().name()));
 	}
@@ -72,7 +72,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 			if (meta.asBoolean())
 				return;
 		for (MetadataValue meta : event.getEntity().getMetadata("killermoney-lastDamageCause"))
-			if (DamageCause.SUFFOCATION.name().equals(meta.asString()))
+			if (Arrays.asList(DamageCause.CRAMMING.name(), DamageCause.SUFFOCATION.name()).contains(meta.asString()))
 				return;
 
 		MobMoney mob;
