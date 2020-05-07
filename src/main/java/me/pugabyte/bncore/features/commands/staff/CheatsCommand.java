@@ -42,6 +42,8 @@ public class CheatsCommand extends CustomCommand {
 		player().setFallDistance(0);
 		player().setAllowFlight(false);
 		player().setFlying(false);
+		//temp fix for Filid
+		runCommand("fly off");
 		essentials.getUser(player().getUniqueId()).setGodModeEnabled(false);
 		runCommand("vanish off");
 
