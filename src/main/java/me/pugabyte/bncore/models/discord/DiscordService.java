@@ -3,6 +3,7 @@ package me.pugabyte.bncore.models.discord;
 import me.pugabyte.bncore.models.MySQLService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DiscordService extends MySQLService {
@@ -31,6 +32,8 @@ public class DiscordService extends MySQLService {
 		return user;
 	}
 
-
+	public List<DiscordUser> getAll() {
+		return database.results(DiscordUser.class);
+	}
 
 }
