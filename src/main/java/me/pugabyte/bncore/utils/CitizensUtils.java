@@ -9,8 +9,12 @@ import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class CitizensUtils {
 
+	public static NPC getNPC(int id) {
+		return CitizensAPI.getNPCRegistry().getById(id);
+	}
+
 	public static void updateNameAndSkin(int id, String name) {
-		updateNameAndSkin(CitizensAPI.getNPCRegistry().getById(id), name);
+		updateNameAndSkin(getNPC(id), name);
 	}
 
 	public static void updateNameAndSkin(NPC npc, String name) {
@@ -19,7 +23,7 @@ public class CitizensUtils {
 	}
 
 	public static void updateName(int id, String name) {
-		updateName(CitizensAPI.getNPCRegistry().getById(id), name);
+		updateName(getNPC(id), name);
 	}
 
 	public static void updateName(NPC npc, String name) {
@@ -27,7 +31,7 @@ public class CitizensUtils {
 	}
 
 	public static void updateSkin(int id, String name) {
-		updateSkin(CitizensAPI.getNPCRegistry().getById(id), name);
+		updateSkin(getNPC(id), name);
 	}
 
 	public static void updateSkin(NPC npc, String name) {
