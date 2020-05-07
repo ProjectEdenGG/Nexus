@@ -74,17 +74,25 @@ public class BearFairCommand extends _WarpCommand {
 
 	}
 
-	@Path("fairgrounds pugadunk on")
-	public void pugadunkOn() {
+	@Path("fairgrounds pugdunk on")
+	public void pugDunkOn() {
 		commandBlock();
-		Fairgrounds.setPugaDunkBool(true);
+		Fairgrounds.setPugDunkBool(true);
+		Fairgrounds.resetPugDunkNPC();
 	}
 
-	@Path("fairgrounds pugadunk off")
-	public void pugadunkOff() {
+	@Path("fairgrounds pugdunk off")
+	public void pugDunkOff() {
 		commandBlock();
-		Fairgrounds.setPugaDunkBool(false);
+		Fairgrounds.setPugDunkBool(false);
 	}
+
+	@Path("fairgrounds pugdunk reset")
+	public void pugDunkReset() {
+		commandBlock();
+		Fairgrounds.resetPugDunkNPC();
+	}
+
 
 	@Path
 	void bearfair() {
