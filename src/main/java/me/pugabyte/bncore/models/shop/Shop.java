@@ -192,7 +192,6 @@ public class Shop extends PlayerOwnedObject {
 
 		@Override
 		public void process(Product product, Player customer) {
-			BNCore.log("Processing ItemForMoneyExchange");
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");
 			if (product.getStock() == 0)
@@ -249,7 +248,6 @@ public class Shop extends PlayerOwnedObject {
 
 		@Override
 		public void process(Product product, Player customer) {
-			BNCore.log("Processing ItemForItemExchange");
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");
 			if (product.getStock() == 0)
@@ -307,7 +305,6 @@ public class Shop extends PlayerOwnedObject {
 
 		@Override
 		public void process(Product product, Player customer) {
-			BNCore.log("Processing ItemForMoneyExchange");
 			OfflinePlayer shopOwner = product.getShop().getOfflinePlayer();
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");

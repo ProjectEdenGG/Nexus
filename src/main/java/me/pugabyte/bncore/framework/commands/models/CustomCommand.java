@@ -249,8 +249,12 @@ public abstract class CustomCommand implements ICustomCommand {
 
 	protected boolean isIntArg(int i) {
 		if (event.getArgs().size() < i) return false;
+		return isInt(arg(i));
+	}
+
+	protected boolean isInt(String input) {
 		try {
-			Integer.parseInt(arg(i));
+			Integer.parseInt(input);
 			return true;
 		} catch (NumberFormatException ex) {
 			return false;
@@ -266,12 +270,49 @@ public abstract class CustomCommand implements ICustomCommand {
 		}
 	}
 
+	protected boolean isDoubleArg(int i) {
+		if (event.getArgs().size() < i) return false;
+		return isDouble(arg(i));
+	}
+
+	protected boolean isDouble(String input) {
+		try {
+			Double.parseDouble(input);
+			return true;
+		} catch (NumberFormatException ex) {
+			return false;
+		}
+	}
+
 	protected Double doubleArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		try {
 			return Double.parseDouble(arg(i));
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument #" + i + " is not a valid number");
+			throw new InvalidInputException("Argument #" + i + " is not a valid double");
+		}
+	}
+
+	protected boolean isFloatArg(int i) {
+		if (event.getArgs().size() < i) return false;
+		return isFloat(arg(i));
+	}
+
+	protected boolean isFloat(String input) {
+		try {
+			Float.parseFloat(input);
+			return true;
+		} catch (NumberFormatException ex) {
+			return false;
+		}
+	}
+
+	protected Float floatArg(int i) {
+		if (event.getArgs().size() < i) return null;
+		try {
+			return Float.parseFloat(arg(i));
+		} catch (NumberFormatException ex) {
+			throw new InvalidInputException("Argument #" + i + " is not a valid float");
 		}
 	}
 
@@ -282,7 +323,7 @@ public abstract class CustomCommand implements ICustomCommand {
 		return Boolean.parseBoolean(value);
 	}
 
-	protected boolean isPlayerArg(int i) {
+	protected boolean isOfflinePlayerArg(int i) {
 		if (event.getArgs().size() < i) return false;
 		try {
 			Utils.getPlayer(arg(i));
@@ -292,9 +333,26 @@ public abstract class CustomCommand implements ICustomCommand {
 		}
 	}
 
-	protected OfflinePlayer playerArg(int i) {
+	protected OfflinePlayer offlinePlayerArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		return Utils.getPlayer(arg(i));
+	}
+
+	protected boolean isPlayerArg(int i) {
+		if (event.getArgs().size() < i) return false;
+		try {
+			return Utils.getPlayer(arg(i)).isOnline();
+		} catch (PlayerNotFoundException ex) {
+			return false;
+		}
+	}
+
+	protected Player playerArg(int i) {
+		if (event.getArgs().size() < i) return null;
+		OfflinePlayer player = Utils.getPlayer(arg(i));
+		if (!player.isOnline())
+			throw new PlayerNotOnlineException(player);
+		return player.getPlayer();
 	}
 
 	protected void fallback() {
