@@ -23,7 +23,7 @@ public class Discord {
 	@Getter
 	private static final Map<String, DiscordUser> codes = new HashMap<>();
 	@Getter
-	private static final String url = "https://discord.bnn.gg";
+	private static final String url = "https://discord.gg/bearnation";
 
 	public Discord() {
 		if (ProxySelector.getDefault() != null)
