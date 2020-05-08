@@ -3,35 +3,91 @@ package me.pugabyte.bncore.features.holidays.bearfair20;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.utils.CitizensUtils;
-import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Archery;
+import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Frogger;
+import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.PugDunk;
+import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
-import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Fairgrounds implements Listener {
 
-	private static boolean pugDunkBool = false;
-	private static Location pugDunkButton = new Location(BearFair20.world, -960, 139, -1594);
-
 	public Fairgrounds() {
 		BNCore.registerListener(this);
-		pugDunkTask();
+		new PugDunk();
+		new Archery();
+		new Frogger();
+	}
+
+	public static void giveKit(BearFairKit kit, Player player) {
+		if (slotsTaken(player) <= (36 - kit.items.size())) {
+			Utils.giveItems(player, kit.items);
+		}
+	}
+
+	private static int slotsTaken(Player player) {
+		ItemStack[] items = player.getInventory().getContents();
+		int count = 0;
+		for (ItemStack item : items) {
+			if (item == null || Utils.isNullOrAir(item.getType())) continue;
+			count++;
+		}
+		return count;
+	}
+
+	public static void removeKits(Player player) {
+		ItemStack[] items = player.getInventory().getContents();
+		for (ItemStack item : items) {
+			if (item == null) continue;
+			if (!item.hasItemMeta()) continue;
+			ItemMeta meta = item.getItemMeta();
+			if (meta == null) continue;
+			if (!meta.hasLore()) continue;
+			List<String> lore = meta.getLore();
+			if (lore == null) continue;
+
+			for (String str : lore) {
+				if (StringUtils.stripColor(str).contains("BearFair20 Item")) {
+					player.getInventory().remove(item);
+					break;
+				}
+			}
+		}
+	}
+
+	public enum BearFairKit {
+		BOW_AND_ARROW(
+				new ItemBuilder(Material.BOW).enchant(Enchantment.ARROW_INFINITE).lore("&eBearFair20 Item").build(),
+				new ItemBuilder(Material.ARROW).lore("&eBearFair20 Item").build()
+		),
+		MINECART(
+				new ItemBuilder(Material.MINECART).lore("&eBearFair20 Item").build()
+		);
+
+		List<ItemStack> items;
+
+		BearFairKit(ItemStack... items) {
+			this.items = Arrays.asList(items);
+		}
 	}
 
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		String id = event.getRegion().getId();
 		if (id.contains(BearFair20.mainRg + "_bow_"))
-			BearFair20.giveKit(BearFair20.BearFairKit.BOW_AND_ARROW, event.getPlayer());
+			giveKit(BearFairKit.BOW_AND_ARROW, event.getPlayer());
 		if (id.contains(BearFair20.mainRg + "_minecart_"))
-			BearFair20.giveKit(BearFair20.BearFairKit.MINECART, event.getPlayer());
+			giveKit(BearFairKit.MINECART, event.getPlayer());
 	}
 
 	@EventHandler
@@ -40,35 +96,8 @@ public class Fairgrounds implements Listener {
 		String bowRg = BearFair20.mainRg + "_bow_";
 		String minecartRg = BearFair20.mainRg + "_minecart_";
 		if (id.contains(bowRg) || id.contains(minecartRg)) {
-			BearFair20.removeKits(event.getPlayer());
+			removeKits(event.getPlayer());
 		}
-	}
-
-	public static void setPugDunkBool(boolean bool) {
-		if (!bool)
-			pugDunkButton.getBlock().setType(Material.AIR);
-		pugDunkBool = bool;
-	}
-
-	public static void resetPugDunkNPC() {
-		Location loc = new Location(BearFair20.world, -959.5, 141, -1587.5, -90, 0);
-		NPC npc = CitizensUtils.getNPC(2720);
-		npc.teleport(loc, PlayerTeleportEvent.TeleportCause.COMMAND);
-	}
-
-	private void pugDunkTask() {
-		Tasks.repeat(0, 5, () -> {
-			if (pugDunkBool) {
-				if (Utils.chanceOf(25)) {
-					pugDunkButton.getBlock().setType(Material.DARK_OAK_BUTTON);
-					Directional data = (Directional) pugDunkButton.getBlock().getBlockData();
-					data.setFacing(BlockFace.EAST);
-					pugDunkButton.getBlock().setBlockData(data);
-				} else {
-					pugDunkButton.getBlock().setType(Material.AIR);
-				}
-			}
-		});
 	}
 
 
