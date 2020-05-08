@@ -72,10 +72,10 @@ public class BNScoreboard {
 			return players.contains(player);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
 
-		// Cant read subscribers, assume they are subscribed
-		return true;
+			// Cant read subscribers, assume they are subscribed
+			return true;
+		}
 	}
 
 	public void subscribe(Player... players) {

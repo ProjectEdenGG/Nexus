@@ -74,7 +74,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		Bukkit.getWorlds().forEach(world ->
 				world.getEntities().forEach(entity -> {
 					if (entity.getType() == EntityType.valueOf(entityType.name()))
-						if (entity instanceof Tameable && ((Tameable) entity).getOwner() == player())
+						if (entity instanceof Tameable && isOwner(player(), (Tameable) entity))
 							entities.add(entity);
 						else if (entity instanceof Fox)
 							if (((Fox) entity).getFirstTrustedPlayer() == player() || ((Fox) entity).getSecondTrustedPlayer() == player())
@@ -129,12 +129,11 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player)) return;
+		if (!(event.getEntity() instanceof Tameable)) return;
+
 		Player player = (Player) event.getDamager();
-		Entity entity = event.getEntity();
-		EntityType entityType = entity.getType();
-		String entityTypeString = entityType.toString().toLowerCase();
-		if (!isTameable(entityType)) return;
-		Tameable tameable = (Tameable) entity;
+		Tameable tameable = (Tameable) event.getEntity();
+		String entityName = camelCase(tameable.getType().name());
 
 		if (actions.containsKey(player)) {
 			event.setCancelled(true);
@@ -145,32 +144,23 @@ public class TameablesCommand extends CustomCommand implements Listener {
 					if (!isOwner(player, tameable)) return;
 					OfflinePlayer transfer = action.getPlayer();
 					tameable.setOwner(transfer);
-					player.sendMessage(PREFIX + "You have transferred the ownership of your " + entityTypeString + " to " + transfer.getName());
+					player.sendMessage(PREFIX + "You have transferred the ownership of your " + entityName + " to " + transfer.getName());
 					break;
 				case UNTAME:
 					if (!isOwner(player, tameable)) return;
 					tameable.setOwner(null);
-					player.sendMessage(PREFIX + "You have untamed your " + entityTypeString);
+					player.sendMessage(PREFIX + "You have untamed your " + entityName);
 					break;
 				case INFO:
 					if (tameable.isTamed()) {
-						player.sendMessage(PREFIX + tameable.getOwner().getName() + " owns that " + entityTypeString);
+						player.sendMessage(PREFIX + tameable.getOwner().getName() + " owns that " + entityName);
 					} else {
-						player.sendMessage(PREFIX + "That " + entityTypeString + " is not tamed");
+						player.sendMessage(PREFIX + "That " + entityName + " is not tamed");
 					}
 					break;
 			}
 			actions.remove(player);
 		}
-	}
-
-	private boolean isTameable(EntityType entityType) {
-		List<EntityType> tameables = new ArrayList<>();
-		tameables.add(EntityType.OCELOT);
-		tameables.add(EntityType.WOLF);
-		tameables.add(EntityType.PARROT);
-
-		return tameables.contains(entityType);
 	}
 
 	private boolean isOwner(Player player, Tameable tameable) {
