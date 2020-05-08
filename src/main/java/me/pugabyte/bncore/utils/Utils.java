@@ -343,6 +343,10 @@ public class Utils {
 		return MaterialTag.SIGNS.isTagged(material);
 	}
 
+	public static boolean isNullOrAir(Block block) {
+		return block == null || block.getType().equals(Material.AIR);
+	}
+
 	public static boolean isNullOrAir(ItemStack itemStack) {
 		return itemStack == null || itemStack.getType().equals(Material.AIR);
 	}
