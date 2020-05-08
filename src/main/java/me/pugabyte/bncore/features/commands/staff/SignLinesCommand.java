@@ -68,6 +68,11 @@ public class SignLinesCommand extends CustomCommand {
 					editLine = Integer.parseInt(arg) - 1;
 
 				} else {
+					if (editLine == -1)
+						error("No edit line specified. /signlines -<#> <text>");
+					if (editLine < 1 || editLine > 4)
+						error("Edit line invalid, must be between 1 and 4");
+
 					if (newLines[editLine] != null)
 						newLines[editLine] += " " + arg;
 					else
