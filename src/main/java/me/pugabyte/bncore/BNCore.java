@@ -3,6 +3,7 @@ package me.pugabyte.bncore;
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import be.maximvdw.placeholderapi.PlaceholderReplaceEvent;
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import me.pugabyte.bncore.features.afk.AFK;
@@ -238,6 +239,8 @@ public class BNCore extends JavaPlugin {
 
 	@Getter
 	private static SignMenuFactory signMenuFactory;
+	@Getter
+	private static ProtocolManager protocolManager;
 
 	@Getter
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
@@ -277,6 +280,7 @@ public class BNCore extends JavaPlugin {
 		new Timer("  Wiki", () -> wiki = new Wiki());
 
 		signMenuFactory = new SignMenuFactory(this);
+		protocolManager = ProtocolLibrary.getProtocolManager();
 		cron.start();
 		econ = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
 		perms = getServer().getServicesManager().getRegistration(Permission.class).getProvider();

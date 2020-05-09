@@ -31,7 +31,7 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 public enum ScoreboardLine {
 	ONLINE {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			long count = Bukkit.getOnlinePlayers().stream().filter(_player -> Utils.canSee(player, _player)).count();
 			return "&3Online: &e" + count + " &3nerds";
 		}
@@ -40,7 +40,7 @@ public enum ScoreboardLine {
 	@Permission("group.moderator")
 	TICKETS {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			TicketService service = new TicketService();
 			int open = service.getAllOpen().size();
 			int all = service.getAll().size();
@@ -50,7 +50,7 @@ public enum ScoreboardLine {
 
 	TPS {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			double tps1m = Bukkit.getTPS()[0];
 			return "&3TPS: &" + (tps1m > 19 ? "e" : "c") + new DecimalFormat("0.00").format(tps1m);
 		}
@@ -59,7 +59,7 @@ public enum ScoreboardLine {
 	@Permission("group.moderator")
 	RAM {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			long total = Runtime.getRuntime().totalMemory();
 			long used = total - Runtime.getRuntime().freeMemory();
 			double gb = Math.pow(1024, 3);
@@ -70,14 +70,14 @@ public enum ScoreboardLine {
 
 	PING {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			return "&3Ping: &e" + player.spigot().getPing() + "ms";
 		}
 	},
 
 	CHANNEL {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			String line = "&3Channel: &e";
 			Chatter chatter = new ChatService().get(player);
 			if (chatter == null)
@@ -98,21 +98,21 @@ public enum ScoreboardLine {
 	@Permission("group.moderator")
 	VANISHED {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			return "&3Vanished: &e" + isVanished(player);
 		}
 	},
 
 	MCMMO {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			return "&3McMMO Level: &e" + UserManager.getPlayer(player).getPowerLevel();
 		}
 	},
 
 	BALANCE {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			double balance = BNCore.getEcon().getBalance(player);
 
 			String formatted = new DecimalFormat("###,###,###.00").format(balance);
@@ -131,42 +131,42 @@ public enum ScoreboardLine {
 
 	VOTEPOINTS {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			return "&3Vote Points: &e" + ((Voter) new VoteService().get(player)).getPoints();
 		}
 	},
 
 	PUSHING {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			return "&3Pushing: &e" + player.hasPermission(PushCommand.getPerm());
 		}
 	},
 
 	GAMEMODE {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			return "&3Mode: &e" + player.getGameMode().name().toLowerCase();
 		}
 	},
 
 	WORLD {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			return "&3World: &e" + player.getWorld().getName();
 		}
 	},
 
 	COMPASS {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			return "null";
 		}
 	},
 
 	COORDINATES {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			Location location = player.getLocation();
 			return "&e" + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ();
 		}
@@ -174,13 +174,13 @@ public enum ScoreboardLine {
 
 	HOURS {
 		@Override
-		String render(Player player) {
+		public String render(Player player) {
 			Hours hours = new HoursService().get(player);
 			return "&3Hours: &e" + timespanFormat(hours.getTotal(), "None");
 		}
 	};
 
-	abstract String render(Player player);
+	public abstract String render(Player player);
 
 	@Target({ElementType.FIELD})
 	@Retention(RetentionPolicy.RUNTIME)
