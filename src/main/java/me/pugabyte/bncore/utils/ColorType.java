@@ -165,6 +165,7 @@ public enum ColorType {
 		return fromDyeColor(Arrays.stream(DyeColor.values()).filter(dyeColor -> material.name().startsWith(dyeColor.name())).findFirst().orElse(null));
 	}
 
+	@Deprecated
 	public static ColorType fromDurability(int durability) {
 		return Arrays.stream(values()).filter(colorType -> durability == (colorType.getDurability())).findFirst().orElse(null);
 	}

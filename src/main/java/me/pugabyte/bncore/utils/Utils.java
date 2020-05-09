@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -479,6 +480,10 @@ public class Utils {
 
 	public static <T> T getRandomElement(Object... list) {
 		return (T) getRandomElement(Arrays.asList(list));
+	}
+
+	public static <T> T getRandomElement(Set<T> list) {
+		return getRandomElement(new ArrayList<>(list));
 	}
 
 	public static <T> T getRandomElement(List<T> list) {
