@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.utils;
 
-import be.maximvdw.featherboard.api.FeatherBoardAPI;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
 import me.lucko.helper.scoreboard.Scoreboard;
@@ -50,7 +49,7 @@ public class BNScoreboard {
 	}
 
 	public BNScoreboard(String id, String title, Collection<? extends Player> players) {
-		try { scoreboard.removeObjective(id); } catch (Exception ignore) {}
+		try { scoreboard.removeObjective(left(id, 16)); } catch (Exception ignore) {}
 		objective = scoreboard.createObjective(left(id, 16), colorize(title), DisplaySlot.SIDEBAR, false);
 		for (Player player : players)
 			subscribe(player);
@@ -96,7 +95,7 @@ public class BNScoreboard {
 			if (!isSubscribed(player)) return;
 			objective.unsubscribe(player);
 			player.setScoreboard(manager.getMainScoreboard());
-			try { FeatherBoardAPI.initScoreboard(player); } catch (Exception ignore) {}
+//			try { FeatherBoardAPI.initScoreboard(player); } catch (Exception ignore) {}
 		}
 	}
 
@@ -119,6 +118,11 @@ public class BNScoreboard {
 	public void setLines(Map<String, Integer> lines) {
 		clear();
 		objective.applyScores(lines);
+	}
+
+	public void setLines(List<String> lines) {
+		clear();
+		objective.applyLines(lines);
 	}
 
 	public void removeLine(String id) {
