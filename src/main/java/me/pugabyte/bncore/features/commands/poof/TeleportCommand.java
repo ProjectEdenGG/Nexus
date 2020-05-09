@@ -33,9 +33,14 @@ public class TeleportCommand extends CustomCommand {
 		if (isDouble(arg(1).replace("~", "")) && isDouble(arg(2).replace("~", "")) && isDouble(arg(3).replace("~", ""))) {
 			Location location = player().getLocation();
 			Modify modifier = RelativeLocation.modify(location).x(arg(1)).y(arg(2)).z(arg(3));
-			if (isFloat(arg(4).replace("~", "")) && isFloat(arg(5).replace("~", "")))
+			if (arg(4) != null && arg(5) != null && isFloat(arg(4).replace("~", "")) && isFloat(arg(5).replace("~", ""))) {
 				modifier.yaw(arg(4)).pitch(arg(5));
-			else if (!isNullOrEmpty(arg(4)))
+				if (arg(6) != null) {
+					if (Bukkit.getWorld(arg(6)) == null)
+						error("World &e" + arg(6) + " &cnot found");
+					location.setWorld(Bukkit.getWorld(arg(6)));
+				}
+			} else if (!isNullOrEmpty(arg(4)))
 				if (Bukkit.getWorld(arg(4)) == null)
 					error("World &e" + arg(4) + " &cnot found");
 				else

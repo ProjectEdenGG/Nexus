@@ -51,12 +51,21 @@ public class Home extends PlayerOwnedObject {
 		if (getOwner().getHome(name).isPresent())
 			throw new InvalidInputException("&cThat home already exists! Please pick a different name");
 
+		validateName(name);
+	}
+
+	public void validateName(String name) {
 		if (!name.matches("^[a-zA-Z0-9_]*$"))
 			throw new InvalidInputException("Home names can only contain numbers, letters and underscores");
 	}
 
 	public HomeOwner getOwner() {
 		return new HomeService().get(uuid);
+	}
+
+	public void setName(String name) {
+		validateName(name);
+		this.name = name;
 	}
 
 	public void teleport(Player player) {

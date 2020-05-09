@@ -30,6 +30,9 @@ public class HomeCommand extends CustomCommand {
 
 	@Path("[home]")
 	void teleport(@Arg(value = "home", tabCompleter = Home.class) String name) {
+		if (homeOwner.getHomes().size() == 0)
+			error("You do not have any homes. Use /sethome [name] to create them");
+
 		Optional<Home> home = homeOwner.getHome(name);
 		if (!home.isPresent())
 			error("You do not have a home named &e" + name);
