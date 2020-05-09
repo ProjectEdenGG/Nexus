@@ -49,12 +49,12 @@ public class TeleportCommand extends CustomCommand {
 			if (isOfflinePlayerArg(2)) {
 				OfflinePlayer player2 = offlinePlayerArg(2);
 				if (player1.isOnline()) {
-					player1.getPlayer().teleport(getLocation(player2));
+					player1.getPlayer().teleport(getLocation(player2), TeleportCause.COMMAND);
 					send(PREFIX + "Poofing to &e" + player2.getName() + (player2.isOnline() ? "" : " &3(Offline)"));
 				} else
 					throw new PlayerNotOnlineException(player1);
 			} else {
-				player().teleport(location1);
+				player().teleport(location1, TeleportCause.COMMAND);
 				send(PREFIX + "Poofing to &e" + player1.getName() + (player1.isOnline() ? "" : " &3(Offline)"));
 			}
 		} else {
