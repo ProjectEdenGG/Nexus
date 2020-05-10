@@ -39,6 +39,7 @@ public class Home extends PlayerOwnedObject {
 	private boolean locked;
 	private ItemStack item;
 	private Set<UUID> accessList = new HashSet<>();
+	private boolean respawn;
 
 	@Builder
 	public Home(@NonNull UUID uuid, @NonNull String name, @NonNull Location location, ItemStack item) {
@@ -66,6 +67,11 @@ public class Home extends PlayerOwnedObject {
 	public void setName(String name) {
 		validateName(name);
 		this.name = name;
+	}
+
+	public void setRespawn(boolean respawn) {
+		if (respawn) getOwner().getHomes().forEach(home -> home.setRespawn(false));
+		this.respawn = respawn;
 	}
 
 	public void teleport(Player player) {
