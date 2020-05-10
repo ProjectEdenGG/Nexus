@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+//TODO is it possible to use paper's jumpEvent instead of toggle fly?
 @Disabled
 public class DoubleJump implements Listener {
 	static final int COOLDOWN = 10 * 20;
@@ -48,8 +49,8 @@ public class DoubleJump implements Listener {
 			return false;
 		}
 
-		if (player.hasPermission("double.jump"))
-			return true;
+//		if (player.hasPermission("double.jump"))
+//			return true;
 
 		if (new WorldGuardUtils(player.getWorld()).getRegionsLikeAt(player.getLocation(), ".*doublejump.*").size() > 0)
 			return true;
