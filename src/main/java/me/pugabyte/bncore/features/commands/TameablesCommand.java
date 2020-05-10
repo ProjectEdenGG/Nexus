@@ -151,13 +151,13 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			TameablesAction action = actions.get(player);
 			switch (action.getType()) {
 				case TRANSFER:
-					if (!isOwner(player, tameable)) return;
+					checkOwner(player, tameable);
 					OfflinePlayer transfer = action.getPlayer();
 					tameable.setOwner(transfer);
 					player.sendMessage(PREFIX + "You have transferred the ownership of your " + entityName + " to " + transfer.getName());
 					break;
 				case UNTAME:
-					if (!isOwner(player, tameable)) return;
+					checkOwner(player, tameable);
 					tameable.setOwner(null);
 					player.sendMessage(PREFIX + "You have untamed your " + entityName);
 					break;
@@ -173,11 +173,10 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	private boolean isOwner(Player player, Tameable tameable) {
+	private void checkOwner(Player player, Tameable tameable) {
 		AnimalTamer tamer = tameable.getOwner();
 		if (!(tamer != null && tamer.equals(player)))
-			player.sendMessage(PREFIX + "You do not own that animal!");
-		return true;
+			error("You do not own that animal!");
 	}
 
 }
