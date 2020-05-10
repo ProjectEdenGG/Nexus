@@ -12,6 +12,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
@@ -164,10 +165,11 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean isOwner(Player player, Tameable tameable) {
-		boolean owner = tameable.getOwner().equals(player);
+		AnimalTamer tamer = tameable.getOwner();
+		boolean owner = (tamer == null || !tamer.equals(player));
 		if (!owner)
 			player.sendMessage(PREFIX + "You do not own that animal!");
-		return owner;
+		return true;
 	}
 
 }
