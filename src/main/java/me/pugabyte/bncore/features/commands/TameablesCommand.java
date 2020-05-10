@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.commands.TameablesCommand.TameablesAction.Tam
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.AnimalTamer;
@@ -72,15 +73,23 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	private List<Entity> find(TameableEntityList entityType) {
 		List<Entity> entities = new ArrayList<>();
-		Bukkit.getWorlds().forEach(world ->
+		Bukkit.getWorlds().forEach(world -> {
+			if (WorldGroup.get(world) == WorldGroup.get(player()))
 				world.getEntities().forEach(entity -> {
-					if (entity.getType() == EntityType.valueOf(entityType.name()))
-						if (entity instanceof Tameable && isOwner(player(), (Tameable) entity))
-							entities.add(entity);
-						else if (entity instanceof Fox)
-							if (((Fox) entity).getFirstTrustedPlayer() == player() || ((Fox) entity).getSecondTrustedPlayer() == player())
+					if (entity.getType() == EntityType.valueOf(entityType.name())) {
+						if (entity instanceof Tameable) {
+							Tameable tameable = (Tameable) entity;
+							AnimalTamer tamer = tameable.getOwner();
+							if (tamer != null && tameable.getOwner().getUniqueId() == player().getUniqueId())
 								entities.add(entity);
-		}));
+						} else if (entity instanceof Fox) {
+							Fox fox = (Fox) entity;
+							if (fox.getFirstTrustedPlayer() == player() || fox.getSecondTrustedPlayer() == player())
+								entities.add(entity);
+						}
+					}
+			});
+		});
 
 		if (entities.size() == 0)
 			error("Could not find any " + camelCase(entityType.name()) + " in loaded chunks belonging to you");
@@ -166,8 +175,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	private boolean isOwner(Player player, Tameable tameable) {
 		AnimalTamer tamer = tameable.getOwner();
-		boolean owner = (tamer == null || !tamer.equals(player));
-		if (!owner)
+		if (!(tamer != null && tamer.equals(player)))
 			player.sendMessage(PREFIX + "You do not own that animal!");
 		return true;
 	}
