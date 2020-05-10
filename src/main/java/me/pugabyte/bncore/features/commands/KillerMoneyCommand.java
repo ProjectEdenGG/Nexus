@@ -92,7 +92,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		BNCore.getEcon().depositPlayer(player, money);
 		if (!new SettingService().get(player, "killerMoneyMute").getBoolean())
 			player.sendMessage(StringUtils.colorize("&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
-					"&3 and received &e$" + formatter.format(money)));
+					"&3 and received &e" + formatter.format(money)));
 	}
 
 	@Getter
