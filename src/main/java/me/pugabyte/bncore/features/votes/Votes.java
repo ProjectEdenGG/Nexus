@@ -62,6 +62,7 @@ public class Votes implements Listener {
 
 				vote.setExpired(true);
 				service.save(vote);
+				write();
 
 				sendVoteReminder(vote);
 			});
