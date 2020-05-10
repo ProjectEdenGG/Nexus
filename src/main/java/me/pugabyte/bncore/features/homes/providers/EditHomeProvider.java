@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -71,7 +72,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 		contents.set(2, 2, ClickableItem.from(nameItem(Material.NAME_TAG, "&eRename"), e -> HomesMenu.rename(home, (owner, response) -> refresh())));
 		contents.set(2, 4, ClickableItem.from(nameItem(Material.COMPASS, "&eTeleport"), e -> home.teleport(player)));
 
-		contents.set(2, 6, ClickableItem.from(nameItem(Material.CYAN_BED, "&eSet to current location"),
+		contents.set(2, 6, ClickableItem.from(nameItem(Material.FILLED_MAP, "&eSet to current location"),
 				e -> ConfirmationMenu.confirmMenu(player, ConfirmationMenu.builder()
 						.onCancel(e2 -> refresh())
 						.onConfirm(e2 -> {
@@ -81,7 +82,18 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 						})
 						.build())));
 
-		contents.set(2, 7, ClickableItem.from(nameItem(Material.LAVA_BUCKET, "&eDelete"),
+		ItemBuilder respawn;
+		if (home.isRespawn())
+			respawn = new ItemBuilder(Material.ORANGE_BED).name("&eCurrent respawn location").glow();
+		else
+			respawn = new ItemBuilder(Material.CYAN_BED).name("&eSet as respawn location");
+		contents.set(2, 7, ClickableItem.from(respawn.build(), e -> {
+			home.setRespawn(true);
+			service.save(homeOwner);
+			refresh();
+		}));
+
+		contents.set(4, 4, ClickableItem.from(nameItem(Material.LAVA_BUCKET, "&eDelete"),
 				e -> ConfirmationMenu.confirmMenu(player, ConfirmationMenu.builder()
 						.onCancel(e2 -> refresh())
 						.onConfirm(e2 -> {
