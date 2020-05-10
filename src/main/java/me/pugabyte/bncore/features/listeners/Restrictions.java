@@ -16,6 +16,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -85,6 +87,12 @@ public class Restrictions implements Listener {
 			event.setCancelled(true);
 			player.sendMessage(StringUtils.colorize(prefix + "Sorry, but you can't use TNT! You must be Member or above"));
 		}
+	}
+
+	@EventHandler
+	public void onWitherRoseEffect(EntityPotionEffectEvent event) {
+		if (event.getCause() == Cause.WITHER_ROSE)
+			event.setCancelled(true);
 	}
 
 	@EventHandler
