@@ -24,10 +24,7 @@ public class CustomRecipes {
 		terracottaDying();
 		bedDying();
 		setWoolUndyingRecipe();
-		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_WART_BLOCK, 1, Material.NETHER_WART, 9));
-		addRecipe(createSingleItemShapelessRecipe(Material.BLUE_ICE, 1, Material.PACKED_ICE, 9));
-		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_RED_SANDSTONE, 1, Material.RED_SANDSTONE_SLAB, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_SANDSTONE, 1, Material.SANDSTONE_SLAB, 2));
+		misc();
 		BNCore.getInstance().getLogger().info("Registered " + amount + " new custom crafting recipes");
 		BNCore.getInstance().getLogger().info(recipes.size() + " total custom recipes are loaded on the server");
 	}
@@ -69,6 +66,14 @@ public class CustomRecipes {
 		recipe.setIngredient('d', dye);
 		recipes.put(key, recipe);
 		return recipe;
+	}
+
+	public void misc() {
+		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_WART_BLOCK, 1, Material.NETHER_WART, 9));
+		addRecipe(createSingleItemShapelessRecipe(Material.BLUE_ICE, 1, Material.PACKED_ICE, 9));
+		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_RED_SANDSTONE, 1, Material.RED_SANDSTONE_SLAB, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_SANDSTONE, 1, Material.SANDSTONE_SLAB, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.HONEYCOMB_BLOCK, 1, Material.HONEYCOMB, 4));
 	}
 
 	public void slabsToBlocks() {
