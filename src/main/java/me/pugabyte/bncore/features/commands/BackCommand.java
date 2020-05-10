@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -73,18 +74,29 @@ public class BackCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
-		Location from = event.getFrom();
-		Location to = event.getTo();
+		Location location = event.getFrom();
 
 		if (Utils.isNPC(player)) return;
 		if (TeleportCause.COMMAND != event.getCause()) return;
 
 		if (!player.hasPermission("group.staff"))
-			if (from.getWorld().equals(Minigames.getWorld()))
+			if (location.getWorld().equals(Minigames.getWorld()))
 				return;
 
 		Back back = new BackService().get(player);
-		back.add(from);
+		back.add(location);
+		new BackService().save(back);
+	}
+
+	@EventHandler
+	public void onDeath(EntityDeathEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+		Player player = (Player) event.getEntity();
+		if (!player.hasPermission("group.staff")) return;
+		if (Utils.isNPC(player)) return;
+
+		Back back = new BackService().get(player);
+		back.add(player.getLocation());
 		new BackService().save(back);
 	}
 

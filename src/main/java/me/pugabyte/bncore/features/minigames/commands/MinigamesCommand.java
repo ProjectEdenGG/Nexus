@@ -323,10 +323,8 @@ public class MinigamesCommand extends CustomCommand {
 
 			String prefix = "";
 			String line1 = stripColor(sign.getLine(0)).toLowerCase();
-			if (line1.contains("[minigame]"))
+			if (line1.contains("[minigame]") || line1.contains("< minigames >"))
 				prefix = "mgm";
-			else if (line1.contains("< minigames >"))
-				prefix = "newmgm";
 			else
 				error("Cannot parse sign. If you believe this is an error, make a GitHub ticket with information and screenshots.");
 
@@ -346,7 +344,7 @@ public class MinigamesCommand extends CustomCommand {
 					.next(" &e" + sender + " &3has invited you to &e" + message).group()
 					.newline()
 					.next("&e Click here to &a&laccept")
-					.command("/newmgm accept")
+					.command("/mgm accept")
 					.hover("&eClick &3to accept"));
 		}
 	}
