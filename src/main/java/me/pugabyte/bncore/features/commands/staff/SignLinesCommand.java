@@ -70,7 +70,7 @@ public class SignLinesCommand extends CustomCommand {
 				} else {
 					if (editLine == -1)
 						error("No edit line specified. /signlines -<#> <text>");
-					if (editLine < 1 || editLine > 4)
+					if (editLine < 0 || editLine > 3)
 						error("Edit line invalid, must be between 1 and 4");
 
 					if (newLines[editLine] != null)

@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.scoreboard;
 
 import com.gmail.nossr50.util.player.UserManager;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.commands.PushCommand;
 import me.pugabyte.bncore.models.chat.Channel;
@@ -14,6 +15,7 @@ import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.Utils;
+import org.apache.commons.collections4.map.ListOrderedMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -95,11 +97,33 @@ public enum ScoreboardLine {
 		}
 	},
 
-	@Permission("group.moderator")
+	@Permission("pv.use")
 	VANISHED {
 		@Override
 		public String render(Player player) {
 			return "&3Vanished: &e" + isVanished(player);
+		}
+	},
+
+	PUSHING {
+		@Override
+		public String render(Player player) {
+			return "&3Pushing: &e" + player.hasPermission(PushCommand.getPerm());
+		}
+	},
+
+	@Permission("essentials.gamemode")
+	GAMEMODE {
+		@Override
+		public String render(Player player) {
+			return "&3Mode: &e" + player.getGameMode().name().toLowerCase();
+		}
+	},
+
+	WORLD {
+		@Override
+		public String render(Player player) {
+			return "&3World: &e" + player.getWorld().getName();
 		}
 	},
 
@@ -129,31 +153,10 @@ public enum ScoreboardLine {
 		}
 	},
 
-	VOTEPOINTS {
+	VOTE_POINTS {
 		@Override
 		public String render(Player player) {
 			return "&3Vote Points: &e" + ((Voter) new VoteService().get(player)).getPoints();
-		}
-	},
-
-	PUSHING {
-		@Override
-		public String render(Player player) {
-			return "&3Pushing: &e" + player.hasPermission(PushCommand.getPerm());
-		}
-	},
-
-	GAMEMODE {
-		@Override
-		public String render(Player player) {
-			return "&3Mode: &e" + player.getGameMode().name().toLowerCase();
-		}
-	},
-
-	WORLD {
-		@Override
-		public String render(Player player) {
-			return "&3World: &e" + player.getWorld().getName();
 		}
 	},
 
@@ -178,9 +181,46 @@ public enum ScoreboardLine {
 			Hours hours = new HoursService().get(player);
 			return "&3Hours: &e" + timespanFormat(hours.getTotal(), "None");
 		}
+	},
+
+	HELP {
+		@Override
+		public String render(Player player) {
+			return "&c/scoreboard";
+		}
 	};
 
 	public abstract String render(Player player);
+
+	@SneakyThrows
+	public Permission getPermission() {
+		return getClass().getField(name()).getAnnotation(Permission.class);
+	}
+
+	public boolean hasPermission(Player player) {
+		Permission annotation = getPermission();
+		return annotation == null || player.hasPermission(annotation.value());
+	}
+
+	public static ListOrderedMap<ScoreboardLine, Boolean> getDefaultLines(Player player) {
+		return new ListOrderedMap<ScoreboardLine, Boolean>() {{
+			if (ScoreboardLine.ONLINE.hasPermission(player))		put(ScoreboardLine.ONLINE, true);
+			if (ScoreboardLine.TICKETS.hasPermission(player))		put(ScoreboardLine.TICKETS, true);
+			if (ScoreboardLine.TPS.hasPermission(player))			put(ScoreboardLine.TPS, true);
+			if (ScoreboardLine.PING.hasPermission(player))			put(ScoreboardLine.PING, true);
+			if (ScoreboardLine.CHANNEL.hasPermission(player))		put(ScoreboardLine.CHANNEL, true);
+			if (ScoreboardLine.VANISHED.hasPermission(player))		put(ScoreboardLine.VANISHED, true);
+			if (ScoreboardLine.MCMMO.hasPermission(player))			put(ScoreboardLine.MCMMO, !player.hasPermission("group.staff"));
+			if (ScoreboardLine.BALANCE.hasPermission(player))		put(ScoreboardLine.BALANCE, !player.hasPermission("group.staff"));
+			if (ScoreboardLine.VOTE_POINTS.hasPermission(player))	put(ScoreboardLine.VOTE_POINTS, !player.hasPermission("group.staff"));
+			if (ScoreboardLine.GAMEMODE.hasPermission(player))		put(ScoreboardLine.GAMEMODE, true);
+			if (ScoreboardLine.WORLD.hasPermission(player))			put(ScoreboardLine.WORLD, true);
+			if (ScoreboardLine.COMPASS.hasPermission(player))		put(ScoreboardLine.COMPASS, true);
+			if (ScoreboardLine.COORDINATES.hasPermission(player))	put(ScoreboardLine.COORDINATES, true);
+			if (ScoreboardLine.HOURS.hasPermission(player))			put(ScoreboardLine.HOURS, true);
+			if (ScoreboardLine.HELP.hasPermission(player))			put(ScoreboardLine.HELP, !player.hasPermission("group.staff"));
+		}};
+	}
 
 	@Target({ElementType.FIELD})
 	@Retention(RetentionPolicy.RUNTIME)

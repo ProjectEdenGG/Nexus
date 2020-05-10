@@ -35,10 +35,13 @@ public class HomeListener implements Listener {
 			return;
 
 		HomeOwner homeOwner = new HomeService().get(event.getPlayer().getUniqueId());
+		Optional<Home> respawn = homeOwner.getHomes().stream().filter(Home::isRespawn).findFirst();
 		Optional<Home> main = homeOwner.getHome("home");
 		Optional<Home> first = homeOwner.getHomes().stream().findFirst();
 
-		if (main.isPresent())
+		if (respawn.isPresent())
+			event.setRespawnLocation(respawn.get().getLocation());
+		else if (main.isPresent())
 			event.setRespawnLocation(main.get().getLocation());
 		else if (first.isPresent())
 			event.setRespawnLocation(first.get().getLocation());

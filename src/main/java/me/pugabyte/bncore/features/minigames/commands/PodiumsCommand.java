@@ -31,10 +31,6 @@ public class PodiumsCommand extends CustomCommand {
 	static {
 		Arrays.asList(Position.values()).forEach(position ->
 				BNCore.getInstance().addConfigDefault("minigames.podiums." + position.name().toLowerCase(), 0));
-
-		BNCore.registerPlaceholder("podiums_left", event -> getNpc(Position.LEFT).getName());
-		BNCore.registerPlaceholder("podiums_middle", event -> getNpc(Position.MIDDLE).getName());
-		BNCore.registerPlaceholder("podiums_right", event -> getNpc(Position.RIGHT).getName());
 	}
 
 	@Path("help")

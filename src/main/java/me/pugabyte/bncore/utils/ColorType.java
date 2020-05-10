@@ -58,6 +58,7 @@ public enum ColorType {
 			Color.fromRGB(255, 85, 85),
 			ChatColor.RED,
 			null,
+			DyeColor.RED,
 			14
 	),
 	ORANGE(
@@ -132,10 +133,15 @@ public enum ColorType {
 	);
 
 	ColorType(String name, Color color, ChatColor chatColor, DyeColor dyeColor, int durability) {
+		this(name, color, chatColor, dyeColor, dyeColor, durability);
+	}
+
+	ColorType(String name, Color color, ChatColor chatColor, DyeColor dyeColor, DyeColor similarDyeColor, int durability) {
 		this.name = name;
 		this.color = color;
 		this.chatColor = chatColor;
 		this.dyeColor = dyeColor;
+		this.similarDyeColor = similarDyeColor;
 		this.durability = durability;
 	}
 
@@ -143,6 +149,7 @@ public enum ColorType {
 	private Color color;
 	private ChatColor chatColor;
 	private DyeColor dyeColor;
+	private DyeColor similarDyeColor;
 	private Integer durability;
 
 	public static ColorType fromString(String name) {
@@ -187,7 +194,7 @@ public enum ColorType {
 	}
 
 	public static Material getWool(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_WOOL));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_WOOL));
 	}
 
 	public Material getDye() {
@@ -195,7 +202,7 @@ public enum ColorType {
 	}
 
 	public static Material getDye(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_DYE));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_DYE));
 	}
 
 	public Material getCarpet() {
@@ -203,7 +210,7 @@ public enum ColorType {
 	}
 
 	public static Material getCarpet(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_CARPET));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CARPET));
 	}
 
 	public Material getBed() {
@@ -211,7 +218,7 @@ public enum ColorType {
 	}
 
 	public static Material getBed(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_BED));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_BED));
 	}
 
 	public Material getBanner() {
@@ -219,7 +226,7 @@ public enum ColorType {
 	}
 
 	public static Material getBanner(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_BANNER));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_BANNER));
 	}
 
 	public Material getWallBanner() {
@@ -227,7 +234,7 @@ public enum ColorType {
 	}
 
 	public static Material getWallBanner(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_WALL_BANNER));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_WALL_BANNER));
 	}
 
 	public Material getStainedGlass() {
@@ -235,7 +242,7 @@ public enum ColorType {
 	}
 
 	public static Material getStainedGlass(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_STAINED_GLASS));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_STAINED_GLASS));
 	}
 
 	public Material getStainedGlassPane() {
@@ -243,7 +250,7 @@ public enum ColorType {
 	}
 
 	public static Material getStainedGlassPane(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_STAINED_GLASS_PANE));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_STAINED_GLASS_PANE));
 	}
 
 	public Material getTerracotta() {
@@ -251,7 +258,7 @@ public enum ColorType {
 	}
 
 	public static Material getTerracotta(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_TERRACOTTA));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_TERRACOTTA));
 	}
 
 	public Material getGlazedTerracotta() {
@@ -259,7 +266,7 @@ public enum ColorType {
 	}
 
 	public static Material getGlazedTerracotta(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_GLAZED_TERRACOTTA));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_GLAZED_TERRACOTTA));
 	}
 
 	public Material getConcrete() {
@@ -267,7 +274,7 @@ public enum ColorType {
 	}
 
 	public static Material getConcrete(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_CONCRETE));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CONCRETE));
 	}
 
 	public Material getConcretePowder() {
@@ -275,7 +282,7 @@ public enum ColorType {
 	}
 
 	public static Material getConcretePowder(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_CONCRETE_POWDER));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CONCRETE_POWDER));
 	}
 
 	public Material getShulkerBox() {
@@ -283,7 +290,7 @@ public enum ColorType {
 	}
 
 	public static Material getShulkerBox(ColorType colorType) {
-		return Material.valueOf(colorType.getDyeColor() + generic(Material.WHITE_SHULKER_BOX));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_SHULKER_BOX));
 	}
 
 	public String getDisplayName() {
