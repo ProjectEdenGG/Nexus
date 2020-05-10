@@ -280,9 +280,9 @@ public enum VPSMenu {
 
 			add(VPSPage.builder().items(new HashMap<Integer, VPSSlotBuilder>() {{
 				put(10, VPSSlot.builder()
-						.name("32 Packed Ice")
-						.displayAndGive(Material.PACKED_ICE, 32)
-						.price(15));
+						.name("8 Blue Ice")
+						.displayAndGive(Material.BLUE_ICE, 8)
+						.price(36));
 				put(11, VPSSlot.builder()
 						.name("32 Sea Lanterns")
 						.displayAndGive(Material.SEA_LANTERN, 32)
@@ -429,7 +429,7 @@ public enum VPSMenu {
 				put(39, VPSSlot.builder()
 						.name("1 shulker box")
 						.displayAndGive(Material.SHULKER_BOX)
-						.price(80));
+						.price(50));
 				put(43, VPSSlot.builder()
 						.name("1 elytra")
 						.displayAndGive(Material.ELYTRA)
