@@ -301,11 +301,11 @@ public enum VPSMenu {
 						.price(35));
 				put(15, VPSSlot.builder()
 						.name("8 Honeycomb Blocks")
-						.displayAndGive(Material.HONEYCOMB_BLOCK)
+						.displayAndGive(Material.HONEYCOMB_BLOCK, 8)
 						.price(15));
 				put(16, VPSSlot.builder()
 						.name("8 Honey Blocks")
-						.displayAndGive(Material.HONEY_BLOCK)
+						.displayAndGive(Material.HONEY_BLOCK, 8)
 						.price(20));
 
 				put(28, VPSSlot.builder()
