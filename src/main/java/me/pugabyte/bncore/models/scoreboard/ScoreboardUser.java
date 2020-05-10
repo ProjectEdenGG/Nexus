@@ -13,13 +13,14 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Tasks;
+import org.apache.commons.collections4.map.ListOrderedMap;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data
-@Entity("shop")
+@Entity("scoreboard_user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters(UUIDConverter.class)
@@ -27,7 +28,7 @@ public class ScoreboardUser extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private List<ScoreboardLine> lines = new ArrayList<>();
+	private ListOrderedMap<ScoreboardLine, Boolean> lines = new ListOrderedMap<>();
 	private boolean active = false;
 	@Transient
 	private BNScoreboard scoreboard;
@@ -55,9 +56,8 @@ public class ScoreboardUser extends PlayerOwnedObject {
 		if (!active) return;
 		Tasks.async(() -> {
 			List<String> rendered = new ArrayList<>();
-			lines.forEach(line -> rendered.add(line.render(getPlayer())));
+			lines.forEach((line, active) -> { if (active) rendered.add(line.render(getPlayer())); });
 			scoreboard.setLines(rendered);
 		});
 	}
-
 }

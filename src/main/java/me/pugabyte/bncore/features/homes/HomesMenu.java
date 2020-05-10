@@ -51,7 +51,7 @@ public class HomesMenu {
 	public static void edit(Home home) {
 		SmartInventory.builder()
 				.provider(new EditHomeProvider(home))
-				.size(4, 9)
+				.size(6, 9)
 				.title(StringUtils.colorize((home.isLocked() ? "&4" : "&a") + StringUtils.camelCase(home.getName())))
 				.build()
 				.open(home.getOwner().getPlayer());
