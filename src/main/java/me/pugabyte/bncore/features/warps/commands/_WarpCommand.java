@@ -4,6 +4,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.warps.Warp;
@@ -26,6 +27,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	public abstract WarpType getWarpType();
 
 	@Path("list [filter]")
+	@Permission("group.staff")
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		List<String> warps = tabCompleteWarp(filter);
 		JsonBuilder builder = new JsonBuilder();
@@ -45,6 +47,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("set <name>")
+	@Permission("group.staff")
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		Warp warp = service.get(name, getWarpType());
 		if (warp != null)
@@ -56,6 +59,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(rm|remove|delete|del) <name>")
+	@Permission("group.staff")
 	public void delete(Warp warp) {
 		service.delete(warp);
 		send(PREFIX + "Successfully deleted warp &e" + warp.getName());
