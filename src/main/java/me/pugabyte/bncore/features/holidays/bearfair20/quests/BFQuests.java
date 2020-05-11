@@ -4,6 +4,7 @@ import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -60,6 +61,11 @@ public class BFQuests implements Listener {
 			}
 		});
 	}
+//	@EventHandler
+//	public void onBlockBreak2(BlockPhysicsEvent event) {
+//		if (!WGUtils.getRegionsAt(event.getBlock().getLocation()).contains(mainRegion)) return;
+//		BNCore.log("Physics: " + event.getBlock().getType());
+//	}
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
@@ -86,6 +92,11 @@ public class BFQuests implements Listener {
 						player.sendMessage("Can't break the bottom block");
 						event.setCancelled(true);
 						return;
+					}
+					Block up = block.getRelative(0, 1, 0);
+					if (up.getType().equals(Material.SUGAR_CANE)) {
+						up.setType(Material.AIR, false);
+						up.getWorld().dropItemNaturally(up.getLocation(), new ItemBuilder(Material.SUGAR_CANE).lore("BearFair20 Item").build());
 					}
 					break;
 				default:
