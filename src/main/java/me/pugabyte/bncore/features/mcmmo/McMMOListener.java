@@ -6,10 +6,10 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
-import org.bukkit.CropState;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -18,22 +18,22 @@ import org.bukkit.TreeSpecies;
 import org.bukkit.TreeType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.CocoaPlant;
-import org.bukkit.material.Crops;
 import org.bukkit.material.Sapling;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-
-// TODO: Fix beetroot, melons stems, melons, pumpkin stems and pumpkins
 
 public class McMMOListener implements Listener {
 
@@ -51,196 +51,192 @@ public class McMMOListener implements Listener {
 	}
 
 	void scheduler() {
-		Tasks.repeat(0, 10, () -> {
+		Tasks.repeat(0, Time.SECOND.x(1), () -> {
 			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 			players.forEach(player -> {
-				// If player is wearing boots
-				if (Utils.isNullOrAir(player.getInventory().getBoots()))
-					return;
-
-				// If player is wearing gold boots
-				if (!player.getInventory().getBoots().getType().equals(Material.GOLDEN_BOOTS))
-					return;
-
-				// if player is in survival
-				WorldGroup world = WorldGroup.get(player);
-				if (!world.equals(WorldGroup.SURVIVAL))
-					return;
-
-				// if boots has lore
-				ItemStack boots = player.getInventory().getBoots();
-				ItemMeta meta = boots.getItemMeta();
-				List<String> lore = meta.getLore();
-				if (lore == null)
-					return;
-
-				// if lore on boots contains "bonemeal boots"
-				if (!(String.join(",", lore).contains("Bonemeal Boots")))
+				if (!canBootBonemeal(player))
 					return;
 
 				// Loop all blocks in radius x of player
 				Location playerLoc = player.getLocation();
 				int radius = 5;
-				for (int x = -radius; x <= radius; x++) {
-					for (int z = -radius; z <= radius; z++) {
-						for (int y = -radius; y <= radius; y++) {
-							// 33% chance
-							if (Utils.randomInt(1, 3) >= 2)
-								continue;
+				List<Block> blocksNearby = Utils.getBlocksInRadius(playerLoc, radius);
+				for (Block block : blocksNearby) {
+					if (Utils.chanceOf(80))
+						continue;
 
-							Block block = playerLoc.getBlock().getRelative(x, y, z);
-							Material blockType = block.getType();
+					Material blockType = block.getType();
 
-							// If loop block is farmland
-							if (blockType.equals(Material.FARMLAND)) {
-
-								// if block above dirt, is crops
-								Block blockAbove = block.getRelative(0, 1, 0);
-								if (blockAbove.getType().toString().toLowerCase().contains("beetroot"))
-									continue;
-
-								if (!isCrop(blockAbove.getType()))
-									continue;
-
-								Crops crop = (Crops) blockAbove.getState().getData();
-								if (crop.getState() == CropState.RIPE)
-									continue;
-
-								int i = Arrays.asList(CropState.values()).indexOf(crop.getState());
-								CropState newState = Arrays.asList(CropState.values()).get(i + 1);
-								crop.setState(newState);
-
-								showParticle(player, blockAbove.getLocation());
-
-								// if loop block is sapling
-							} else if (MaterialTag.SAPLINGS.isTagged(blockType) || Arrays.asList(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM).contains(blockType)) {
-								TreeType treeType = getTreeType(block.getLocation());
-								if (treeType == null)
-									continue;
-
-								Location treeLoc = block.getLocation();
-								Location megaLoc = getMegaTree(block);
-
-								if (megaLoc != null) {
-									treeType = getMegaVariant(treeType);
-									treeLoc = megaLoc;
-								} else {
-									if (Utils.randomInt(1, 5) == 1)
-										treeType = getVariant(treeType);
-								}
-
-								boolean isSapling = Tag.SAPLINGS.isTagged(blockType);
-								block.setType(Material.AIR);
-								if (block.getWorld().generateTree(treeLoc, treeType))
-									showParticle(player, block.getLocation());
-								else {
-									block.setType(blockType);
-									if (isSapling) {
-										Sapling sapling = (Sapling) block.getState().getData();
-										block.getState().getData().setData(sapling.getSpecies().getData());
-									}
-								}
-
-							} else if (blockType.equals(Material.SUGAR_CANE)) {
-								Block ground = block.getRelative(0, -1, 0);
-								if (ground.getType().equals(Material.SUGAR_CANE)) {
-									ground = block.getRelative(0, -2, 0);
-									if (ground.getType().equals(Material.SUGAR_CANE))
-										ground = block.getRelative(0, -3, 0);
-								}
-								if (ground.getType().equals(Material.SUGAR_CANE))
-									continue;
-
-								Location groundLoc = ground.getLocation();
-
-
-								Block above = block.getRelative(0, 1, 0);
-								if (groundLoc.distance(above.getLocation()) > 3)
-									continue;
-
-								// If the block above the sugarcane is air or sugarcane
-								if ((above.getType().equals(Material.AIR) || above.getType().equals(Material.SUGAR_CANE))) {
-									if (!above.getType().equals(Material.AIR)) {
-										above = above.getRelative(0, 1, 0);
-										if (groundLoc.distance(above.getLocation()) > 3)
-											continue;
-									}
-
-									if (above.getType().equals(Material.AIR)) {
-										above.setType(Material.SUGAR_CANE);
-										showParticle(player, above.getLocation());
-									}
-								}
-							} else if (blockType.equals(Material.CACTUS)) {
-								Block ground = block.getRelative(0, -1, 0);
-								if (ground.getType().equals(Material.CACTUS)) {
-									ground = block.getRelative(0, -2, 0);
-									if (ground.getType().equals(Material.CACTUS))
-										ground = block.getRelative(0, -3, 0);
-								}
-								if (ground.getType().equals(Material.CACTUS))
-									continue;
-
-								Location groundLoc = ground.getLocation();
-
-
-								Block above = block.getRelative(0, 1, 0);
-								if (groundLoc.distance(above.getLocation()) > 3)
-									continue;
-
-								// If the block above the sugarcane is air or sugarcane
-								if ((above.getType().equals(Material.AIR) || above.getType().equals(Material.CACTUS))) {
-									if (!above.getType().equals(Material.AIR)) {
-										above = above.getRelative(0, 1, 0);
-										if (groundLoc.distance(above.getLocation()) > 3)
-											continue;
-									}
-
-									if (above.getType().equals(Material.AIR)) {
-										above.setType(Material.CACTUS);
-										showParticle(player, above.getLocation());
-									}
-								}
-							}
-							else if (blockType.equals(Material.COCOA)) {
-								CocoaPlant cocoaPlant = (CocoaPlant) block.getState().getData();
-								cocoaPlant.setSize(nextCocoaSize(cocoaPlant.getSize()));
-								//  block.setData(cocoaPlant.getData()); TODO: Don't need this on 1.13?
-							}
-						}
+					if (blockType.equals(Material.FARMLAND) || blockType.equals(Material.COCOA)) {
+						Block crop = block.getRelative(0, 1, 0);
+						if (blockType.equals(Material.COCOA))
+							crop = block;
+						if (!growCrop(crop)) continue;
+						showParticle(player, crop.getLocation());
+					} else if (MaterialTag.SAPLINGS.isTagged(blockType)
+							|| Arrays.asList(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM).contains(blockType)) {
+						if (!growTree(block)) continue;
+						showParticle(player, block.getLocation());
+					} else if (blockType.equals(Material.SUGAR_CANE) || blockType.equals(Material.CACTUS)) {
+						if (!growMulti(block)) continue;
+						showParticle(player, block.getRelative(0, 1, 0).getLocation());
 					}
 				}
-
 			});
 		});
 	}
 
-	void showParticle(Player player, Location location) {
-		if (Utils.randomInt(1, 4) <= 2)
-			player.spawnParticle(Particle.VILLAGER_HAPPY, location, 5, 0.5, 0.5, 0.5, 0.01);
+	boolean canBootBonemeal(Player player) {
+		// If player is wearing boots
+		if (Utils.isNullOrAir(player.getInventory().getBoots()))
+			return false;
+
+		// If player is wearing gold boots
+		if (!player.getInventory().getBoots().getType().equals(Material.GOLDEN_BOOTS))
+			return false;
+
+		// if player is in survival
+		WorldGroup world = WorldGroup.get(player);
+		if (!world.equals(WorldGroup.SURVIVAL))
+			return false;
+
+		// if boots has lore
+		ItemStack boots = player.getInventory().getBoots();
+		ItemMeta meta = boots.getItemMeta();
+		List<String> lore = meta.getLore();
+		if (lore == null)
+			return false;
+
+		// if lore on boots contains "bonemeal boots"
+		if (!(String.join(",", lore).contains("Bonemeal Boots")))
+			return false;
+
+		return true;
 	}
 
-	CocoaPlant.CocoaPlantSize nextCocoaSize(CocoaPlant.CocoaPlantSize size) {
-		switch (size) {
-			case SMALL:
-				return CocoaPlant.CocoaPlantSize.MEDIUM;
-			case MEDIUM:
-				return CocoaPlant.CocoaPlantSize.LARGE;
-		}
-		return size;
-	}
+	boolean growCrop(Block block) {
+		BlockData blockData = block.getBlockData();
+		if (!(blockData instanceof Ageable)) return false;
+		Ageable ageable = (Ageable) blockData;
 
-	boolean isCrop(Material material) {
-		switch (material) {
-			case POTATOES:
-			case CARROTS:
-			case BEETROOTS:
-			case WHEAT:
-			case PUMPKIN_STEM:
-			case MELON_STEM:
+		int maxAge = ageable.getMaximumAge();
+		int age = ageable.getAge();
+		if (age == maxAge) {
+			if (block.getType().equals(Material.MELON_STEM) || block.getType().equals(Material.PUMPKIN_STEM)) {
+				List<Material> canPlaceOn = Arrays.asList(Material.DIRT, Material.GRASS_BLOCK, Material.FARMLAND,
+						Material.PODZOL, Material.COARSE_DIRT);
+				List<BlockFace> cardinals = Arrays.asList(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
+
+				Material placeType = Material.PUMPKIN;
+				Material stemType = Material.ATTACHED_PUMPKIN_STEM;
+				if (block.getType().equals(Material.MELON_STEM)) {
+					placeType = Material.MELON;
+					stemType = Material.ATTACHED_MELON_STEM;
+				}
+
+				for (BlockFace cardinal : cardinals) {
+					Material cardinalType = block.getRelative(cardinal).getType();
+					if (cardinalType.equals(placeType))
+						return false;
+				}
+
+				List<BlockFace> possibleFaces = new ArrayList<>();
+				for (BlockFace cardinal : cardinals) {
+					Block cardinalBlock = block.getRelative(cardinal);
+					Material below = cardinalBlock.getRelative(0, -1, 0).getType();
+					if (canPlaceOn.contains(below) && cardinalBlock.getType().equals(Material.AIR))
+						possibleFaces.add(cardinal);
+				}
+
+				if (possibleFaces.size() == 0)
+					return false;
+
+				BlockFace randomFace = Utils.getRandomElement(possibleFaces);
+				block.getRelative(randomFace).setType(placeType);
+				block.setType(stemType);
+				blockData = block.getBlockData();
+				Directional directional = (Directional) blockData;
+				directional.setFacing(randomFace);
+				block.setBlockData(directional);
+
 				return true;
+			} else
+				return false;
 		}
-		return false;
+		++age;
+		ageable.setAge(age);
+		block.setBlockData(ageable);
+
+		return true;
+	}
+
+	boolean growTree(Block block) {
+		Material blockType = block.getType();
+		TreeType treeType = getTreeType(block.getLocation());
+
+		if (treeType == null) return false;
+
+		Location treeLoc = block.getLocation();
+		Location megaLoc = getMegaTree(block);
+
+		if (megaLoc != null) {
+			treeType = getMegaVariant(treeType);
+			treeLoc = megaLoc;
+		} else {
+			if (Utils.chanceOf(20))
+				treeType = getVariant(treeType);
+		}
+
+		boolean isSapling = Tag.SAPLINGS.isTagged(blockType);
+		block.setType(Material.AIR);
+		if (!block.getWorld().generateTree(treeLoc, treeType)) {
+			block.setType(blockType);
+			if (isSapling) {
+				Sapling sapling = (Sapling) block.getState().getData();
+				block.getState().getData().setData(sapling.getSpecies().getData());
+			}
+			return false;
+		}
+		return true;
+	}
+
+	boolean growMulti(Block block) {
+		Material blockType = block.getType();
+
+		// Find the bottom most block
+		Block ground = block.getRelative(0, -1, 0);
+		if (ground.getType().equals(blockType)) {
+			ground = block.getRelative(0, -2, 0);
+			if (ground.getType().equals(blockType))
+				ground = block.getRelative(0, -3, 0);
+		}
+
+		if (ground.getType().equals(blockType)) return false;
+		Location groundLoc = ground.getLocation();
+
+		Block above = block.getRelative(0, 1, 0);
+		if (groundLoc.distance(above.getLocation()) > 3) return false;
+
+		// If the block above is air or same material
+		if ((above.getType().equals(Material.AIR) || above.getType().equals(blockType))) {
+			if (!above.getType().equals(Material.AIR)) {
+				above = above.getRelative(0, 1, 0);
+				if (groundLoc.distance(above.getLocation()) > 3)
+					return false;
+			}
+
+			if (above.getType().equals(Material.AIR)) {
+				above.setType(blockType);
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	void showParticle(Player player, Location location) {
+		if (Utils.chanceOf(50))
+			player.spawnParticle(Particle.VILLAGER_HAPPY, location, 5, 0.5, 0.5, 0.5, 0.01);
 	}
 
 	private TreeType getTreeType(TreeSpecies treeSpecies) {
