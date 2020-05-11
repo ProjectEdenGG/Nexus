@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20;
 
 import com.earth2me.essentials.Essentials;
+import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import me.pugabyte.bncore.BNCore;
@@ -52,6 +53,18 @@ public class BearFair20 implements Listener {
 		ProtectedRegion region = WGUtils.getProtectedRegion(bearfairRg);
 		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onRegionEnter(RegionEnteredEvent event) {
+		Player player = event.getPlayer();
+		Location loc = player.getLocation();
+		ProtectedRegion region = WGUtils.getProtectedRegion(bearfairRg);
+		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+		if (player.hasPermission("worldguard.region.bypass.*")) {
+			Utils.runCommand(player, "wgedit off");
+		}
+
 	}
 
 
