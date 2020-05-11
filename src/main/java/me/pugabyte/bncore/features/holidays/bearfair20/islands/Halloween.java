@@ -25,7 +25,7 @@ import java.util.Map;
 public class Halloween implements Listener {
 	Map<Player, Integer> musicTaskMap = new HashMap<>();
 	World world = BearFair20.world;
-	String halloweenRg = BearFair20.mainRg + "_halloween";
+	String halloweenRg = BearFair20.bearfairRg + "_halloween";
 	Location halloweenMusicLoc = new Location(world, -921, 128, -1920);
 	private Sound[] halloweenSounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,
 			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS,
