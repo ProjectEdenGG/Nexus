@@ -26,13 +26,14 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 
 @Aliases("km")
 @NoArgsConstructor
 public class KillerMoneyCommand extends CustomCommand implements Listener {
+	private static final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 	SettingService service = new SettingService();
 	final double BOOST = 1.0;
 
@@ -89,10 +90,9 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 
 		double money = mob.getRandomValue() * BOOST;
 		BNCore.getEcon().depositPlayer(player, money);
-		DecimalFormat formatter = new DecimalFormat("#.##");
 		if (!new SettingService().get(player, "killerMoneyMute").getBoolean())
 			player.sendMessage(StringUtils.colorize("&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
-					"&3 and received &e$" + formatter.format(money)));
+					"&3 and received &e" + formatter.format(money)));
 	}
 
 	@Getter

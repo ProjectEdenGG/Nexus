@@ -9,7 +9,10 @@ import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Frogger;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.PugDunk;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -24,6 +27,7 @@ import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
+// TODO: Bug - Won't give kit if inventory is near full, but still has space?
 public class Fairgrounds implements Listener {
 
 	public Fairgrounds() {
@@ -123,20 +127,26 @@ public class Fairgrounds implements Listener {
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		String id = event.getRegion().getId();
-		if (id.contains(BearFair20.mainRg + "_bow_"))
+		if (id.contains(BearFair20.bearfairRg + "_bow_"))
 			giveKit(BearFairKit.BOW_AND_ARROW, event.getPlayer());
-		if (id.contains(BearFair20.mainRg + "_minecart_"))
+		if (id.contains(BearFair20.bearfairRg + "_minecart_"))
 			giveKit(BearFairKit.MINECART, event.getPlayer());
 	}
 
 	@EventHandler
 	public void onRegionExit(RegionLeftEvent event) {
 		String id = event.getRegion().getId();
-		String bowRg = BearFair20.mainRg + "_bow_";
-		String minecartRg = BearFair20.mainRg + "_minecart_";
+		String bowRg = BearFair20.bearfairRg + "_bow_";
+		String minecartRg = BearFair20.bearfairRg + "_minecart_";
 		if (id.contains(bowRg) || id.contains(minecartRg)) {
 			removeKits(event.getPlayer());
 		}
+	}
+
+	public static void startMerryGoRound() {
+		Location loc = new Location(BearFair20.world, -936, 136, -1588);
+		loc.getBlock().setType(Material.REDSTONE_BLOCK);
+		Tasks.wait(Time.SECOND.x(20), () -> loc.getBlock().setType(Material.AIR));
 	}
 
 

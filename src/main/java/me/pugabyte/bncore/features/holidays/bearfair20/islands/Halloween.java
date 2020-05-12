@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20.islands;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.utils.Tasks;
@@ -22,10 +23,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+
 public class Halloween implements Listener {
 	Map<Player, Integer> musicTaskMap = new HashMap<>();
 	World world = BearFair20.world;
-	String halloweenRg = BearFair20.mainRg + "_halloween";
+	String halloweenRg = BearFair20.bearfairRg + "_halloween";
 	Location halloweenMusicLoc = new Location(world, -921, 128, -1920);
 	private Sound[] halloweenSounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,
 			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS,
@@ -55,6 +58,11 @@ public class Halloween implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.isCancelled()) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
+
+		ProtectedRegion region = WGUtils.getProtectedRegion(halloweenRg);
+		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+
+		if (event.getClickedBlock() == null) return;
 
 		Material material = event.getClickedBlock().getType();
 		if (!material.equals(Material.RAIL)) return;
