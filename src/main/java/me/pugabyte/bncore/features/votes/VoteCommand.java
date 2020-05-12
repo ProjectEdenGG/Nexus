@@ -14,7 +14,7 @@ import me.pugabyte.bncore.models.vote.VoteSite;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -62,7 +62,7 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Path("points [player]")
-	void points(@Arg("self") Player player) {
+	void points(@Arg("self") OfflinePlayer player) {
 		if (player().hasPermission("group.moderator")) {
 			Voter voter = new VoteService().get(player);
 			send("&e" + player.getName() + " &3has &e" + voter.getPoints() + " &3vote points");
@@ -72,7 +72,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("set <player> <number>")
 	@Permission("group.seniorstaff")
-	void setPoints(Player player, int number) {
+	void setPoints(OfflinePlayer player, int number) {
 		Voter voter = new VoteService().get(player);
 		voter.setPoints(number);
 		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
@@ -80,7 +80,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("add <player> <number>")
 	@Permission("group.seniorstaff")
-	void addPoints(Player player, int number) {
+	void addPoints(OfflinePlayer player, int number) {
 		Voter voter = new VoteService().get(player);
 		voter.addPoints(number);
 		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
@@ -88,7 +88,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("take <player> <number>")
 	@Permission("group.seniorstaff")
-	void takePoints(Player player, int number) {
+	void takePoints(OfflinePlayer player, int number) {
 		Voter voter = new VoteService().get(player);
 		voter.takePoints(number);
 		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
