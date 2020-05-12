@@ -32,7 +32,7 @@ import java.util.Set;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 
 public class BFQuests implements Listener {
-	private ProtectedRegion mainRegion = WGUtils.getProtectedRegion(BearFair20.bearfairRg);
+	private ProtectedRegion mainRegion = WGUtils.getProtectedRegion(BearFair20.mainRg);
 	private List<Material> breakList = Arrays.asList(Material.WHEAT, Material.POTATOES, Material.CARROTS,
 			Material.BEETROOTS, Material.MELON, Material.PUMPKIN, Material.SUGAR_CANE, Material.COCOA);
 	private List<Material> noAge = Collections.singletonList(Material.SUGAR_CANE);
@@ -51,6 +51,7 @@ public class BFQuests implements Listener {
 	public BFQuests() {
 		BNCore.registerListener(this);
 		regenTasks();
+		new Beehive();
 	}
 
 	private void regenTasks() {

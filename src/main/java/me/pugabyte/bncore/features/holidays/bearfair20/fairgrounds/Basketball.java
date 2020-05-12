@@ -37,11 +37,11 @@ public class Basketball implements Listener {
 	private static ItemStack basketballItem = Fairgrounds.BearFairKit.BASKETBALL.getItem();
 	private static Map<UUID, ItemStack> basketballs = new HashMap<>();
 	private static World world = BearFair20.world;
-	private static String basketBallRg = BearFair20.bearfairRg + "_basketball";
-	private static String courtRg = basketBallRg + "_court";
-	private static String stuckRg = basketBallRg + "_stuck_";
-	private static String backboardRg = basketBallRg + "_backboard_";
-	private static String hoopRg = basketBallRg + "_hoop_";
+	private static String gameRg = BearFair20.mainRg + "_basketball";
+	private static String courtRg = gameRg + "_court";
+	private static String stuckRg = gameRg + "_stuck_";
+	private static String backboardRg = gameRg + "_backboard_";
+	private static String hoopRg = gameRg + "_hoop_";
 
 	static {
 		janitor();
@@ -95,7 +95,7 @@ public class Basketball implements Listener {
 	}
 
 	private static Collection<Entity> getRegionEntities() {
-		return WGUtils.getEntitiesInRegion(world, basketBallRg);
+		return WGUtils.getEntitiesInRegion(world, gameRg);
 	}
 
 	private static void cleanupBasketballs() {
