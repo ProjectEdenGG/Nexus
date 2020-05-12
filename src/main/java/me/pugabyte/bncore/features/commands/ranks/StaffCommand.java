@@ -34,4 +34,5 @@ public class StaffCommand extends CustomCommand {
 		send("&3If you need to request a staff member's &ehelp&3, please use &c/ticket &c<message>");
 		line();
 	}
+
 }
