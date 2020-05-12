@@ -31,14 +31,13 @@ import java.util.stream.Collectors;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
-// TODO
 public class Basketball implements Listener {
 
 	@Getter
 	private static ItemStack basketballItem = Fairgrounds.BearFairKit.BASKETBALL.getItem();
 	private static Map<UUID, ItemStack> basketballs = new HashMap<>();
 	private static World world = BearFair20.world;
-	private static String basketBallRg = BearFair20.mainRg + "_basketball";
+	private static String basketBallRg = BearFair20.bearfairRg + "_basketball";
 	private static String courtRg = basketBallRg + "_court";
 	private static String stuckRg = basketBallRg + "_stuck_";
 	private static String backboardRg = basketBallRg + "_backboard_";

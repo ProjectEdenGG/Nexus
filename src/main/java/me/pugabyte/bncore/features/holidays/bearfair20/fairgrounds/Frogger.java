@@ -16,7 +16,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 // TODO - Animation
 public class Frogger implements Listener {
 
-	private static String froggerRg = BearFair20.mainRg + "_frogger";
+	private static String froggerRg = BearFair20.bearfairRg + "_frogger";
 	private static String winRg = froggerRg + "_win";
 	private static String damageRg = froggerRg + "_damage";
 	private static Location respawnLoc = new Location(BearFair20.world, -856.5, 138, -1623.5, -180, 0);

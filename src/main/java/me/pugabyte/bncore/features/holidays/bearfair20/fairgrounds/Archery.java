@@ -34,7 +34,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 
 public class Archery implements Listener {
 	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
-	private static String archeryRg = BearFair20.mainRg + "_archery";
+	private static String archeryRg = BearFair20.bearfairRg + "_archery";
 	private static String targetsRg = archeryRg + "_targets";
 	private static boolean archeryBool = false;
 	private static int currentTargets = 0;
