@@ -16,9 +16,9 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 // TODO - Animation
 public class Frogger implements Listener {
 
-	private static String froggerRg = BearFair20.bearfairRg + "_frogger";
-	private static String winRg = froggerRg + "_win";
-	private static String damageRg = froggerRg + "_damage";
+	private static String gameRg = BearFair20.mainRg + "_frogger";
+	private static String winRg = gameRg + "_win";
+	private static String damageRg = gameRg + "_damage";
 	private static Location respawnLoc = new Location(BearFair20.world, -856.5, 138, -1623.5, -180, 0);
 	private static boolean animateBool = false;
 
@@ -35,7 +35,7 @@ public class Frogger implements Listener {
 	public void onRegionEnter(RegionEnteredEvent event) {
 		String regionId = event.getRegion().getId();
 		Player player = event.getPlayer();
-		if (regionId.equalsIgnoreCase(froggerRg)) {
+		if (regionId.equalsIgnoreCase(gameRg)) {
 			if (animateBool)
 				return;
 			animateBool = true;
@@ -57,8 +57,8 @@ public class Frogger implements Listener {
 	@EventHandler
 	public void onRegionExit(RegionLeftEvent event) {
 		String regionId = event.getRegion().getId();
-		if (regionId.equalsIgnoreCase(froggerRg)) {
-			int size = WGUtils.getPlayersInRegion(froggerRg).size();
+		if (regionId.equalsIgnoreCase(gameRg)) {
+			int size = WGUtils.getPlayersInRegion(gameRg).size();
 			if (size == 0)
 				animateBool = false;
 		}
