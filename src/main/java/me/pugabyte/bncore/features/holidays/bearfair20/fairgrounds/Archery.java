@@ -34,8 +34,8 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 
 public class Archery implements Listener {
 	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
-	private static String archeryRg = BearFair20.bearfairRg + "_archery";
-	private static String targetsRg = archeryRg + "_targets";
+	private static String gameRg = BearFair20.mainRg + "_archery";
+	private static String targetsRg = gameRg + "_targets";
 	private static boolean archeryBool = false;
 	private static int currentTargets = 0;
 
@@ -61,16 +61,16 @@ public class Archery implements Listener {
 
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
-		if (!event.getRegion().getId().equalsIgnoreCase(archeryRg)) return;
+		if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
 		if (archeryBool) return;
 		archeryBool = true;
 	}
 
 	@EventHandler
 	public void onRegionExit(RegionLeftEvent event) {
-		if (!event.getRegion().getId().equalsIgnoreCase(archeryRg)) return;
+		if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
 		if (!archeryBool) return;
-		int size = WGUtils.getPlayersInRegion(archeryRg).size();
+		int size = WGUtils.getPlayersInRegion(gameRg).size();
 		if (size == 0) {
 			archeryBool = false;
 			clearTargets();

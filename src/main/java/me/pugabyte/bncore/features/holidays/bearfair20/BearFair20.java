@@ -22,7 +22,7 @@ import org.bukkit.event.entity.EntityTameEvent;
 public class BearFair20 implements Listener {
 
 	public static World world = Bukkit.getWorld("safepvp");
-	public static String bearfairRg = "bearfair2020";
+	public static String mainRg = "bearfair2020";
 	public static WorldGuardUtils WGUtils = new WorldGuardUtils(world);
 
 	public BearFair20() {
@@ -50,7 +50,7 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onTameEntity(EntityTameEvent event) {
 		Location loc = event.getEntity().getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(bearfairRg);
+		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
 		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
 		event.setCancelled(true);
 	}
@@ -59,13 +59,15 @@ public class BearFair20 implements Listener {
 	public void onRegionEnter(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(bearfairRg);
+		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
 		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
-		if (player.hasPermission("worldguard.region.bypass.*")) {
-			Utils.runCommand(player, "wgedit off");
-		}
+//		if (player.hasPermission("worldguard.region.bypass.*")) {
+//			Utils.runCommand(player, "wgedit off");
+//		}
 
 	}
+
+
 
 
 }

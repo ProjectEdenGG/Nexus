@@ -33,8 +33,8 @@ public class PugDunk implements Listener {
 	private static Location buttonLoc = new Location(BearFair20.world, -960, 139, -1594);
 	private static Location dropBlock = new Location(BearFair20.world, -963, 142, -1588);
 	private static Location delArrowsLoc = new Location(BearFair20.world, -961, 135, -1594);
-	private static String pugDunkRg = BearFair20.bearfairRg + "_pugdunk";
-	private static String targetRg = pugDunkRg + "_target";
+	private static String gameRg = BearFair20.mainRg + "_pugdunk";
+	private static String targetRg = gameRg + "_target";
 
 	public PugDunk() {
 		BNCore.registerListener(this);
@@ -67,7 +67,7 @@ public class PugDunk implements Listener {
 
 	public static void start() {
 		if (!enabled) {
-			if (WGUtils.getPlayersInRegion(pugDunkRg).size() > 0) {
+			if (WGUtils.getPlayersInRegion(gameRg).size() > 0) {
 				enabled = true;
 			} else {
 				enabled = false;
@@ -79,7 +79,7 @@ public class PugDunk implements Listener {
 	private void buttonTask() {
 		Tasks.repeat(0, 5, () -> {
 			if (enabled) {
-				if (WGUtils.getPlayersInRegion(pugDunkRg).size() == 0)
+				if (WGUtils.getPlayersInRegion(gameRg).size() == 0)
 					setPugDunkBool(false);
 				else {
 					if (Utils.chanceOf(25)) {
@@ -115,7 +115,7 @@ public class PugDunk implements Listener {
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		String regionId = event.getRegion().getId();
-		if (regionId.equalsIgnoreCase(pugDunkRg)) {
+		if (regionId.equalsIgnoreCase(gameRg)) {
 			if (enabled)
 				return;
 			setPugDunkBool(true);
@@ -125,8 +125,8 @@ public class PugDunk implements Listener {
 	@EventHandler
 	public void onRegionLeave(RegionLeftEvent event) {
 		String regionId = event.getRegion().getId();
-		if (regionId.equalsIgnoreCase(pugDunkRg)) {
-			int size = WGUtils.getPlayersInRegion(pugDunkRg).size();
+		if (regionId.equalsIgnoreCase(gameRg)) {
+			int size = WGUtils.getPlayersInRegion(gameRg).size();
 			if (size == 0)
 				setPugDunkBool(false);
 		}

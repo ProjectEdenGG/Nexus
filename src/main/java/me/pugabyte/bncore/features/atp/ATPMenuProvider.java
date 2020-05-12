@@ -102,7 +102,7 @@ public class ATPMenuProvider extends MenuUtils implements InventoryProvider {
 						new AnimalTeleportPens(player).confirm(player, home.getLocation())));
 
 				if (column == 8) {
-					column = 1;
+					column = 0;
 					row++;
 				} else {
 					column++;
