@@ -16,10 +16,10 @@ public class SnowLayersCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[layers]")
+	@Path("<layers>")
 	void layers(int layers) {
 		Block block = player().getLocation().getBlock();
-		block.setType(Material.SNOW);
+		block.setType(Material.SNOW, false);
 		Snow snow = (Snow) block.getBlockData();
 		snow.setLayers(layers);
 		block.setBlockData(snow);
