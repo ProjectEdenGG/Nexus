@@ -25,7 +25,7 @@ public class MySQLPersistence {
 
 		DatabaseConfig config = new DatabaseConfig("mysql");
 		Database database = new Database();
-		database.setJdbcUrl("jdbc:mysql://" + config.getHost() + ":" + config.getPort() + "/" + config.getPrefix() + dbType.getDatabase() + "?useSSL=false&relaxAutoCommit=true");
+		database.setJdbcUrl("jdbc:mysql://" + config.getHost() + ":" + config.getPort() + "/" + config.getPrefix() + dbType.getDatabase() + "?useSSL=false&relaxAutoCommit=true&characterEncoding=UTF-8");
 		database.setUser(config.getUsername());
 		database.setPassword(config.getPassword());
 		database.setSqlMaker(new MySqlMaker());
