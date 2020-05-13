@@ -131,6 +131,7 @@ public class BFQuests implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.isCancelled()) return;
+		if (!event.getPlayer().getWorld().equals(BearFair20.world)) return;
 		if (!WGUtils.getRegionsAt(block.getLocation()).contains(mainRegion)) return;
 		if (!breakList.contains(block.getType())) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
@@ -200,6 +201,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onBlockDropItemEvent(BlockDropItemEvent event) {
 		Location loc = event.getBlock().getLocation();
+		if (!event.getBlock().getLocation().getWorld().equals(BearFair20.world)) return;
 		if (!WGUtils.getRegionsAt(loc).contains(mainRegion)) return;
 		event.getItems().forEach(item -> item.getItemStack().setLore(Collections.singletonList(itemLore)));
 	}
