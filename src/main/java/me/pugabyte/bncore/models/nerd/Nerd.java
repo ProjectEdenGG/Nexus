@@ -47,6 +47,12 @@ public class Nerd {
 		fromPlayer(player);
 	}
 
+	public String getName() {
+		if ("6653ab1a-d6b9-4da8-9116-01f5bcd41d98".equals(uuid))
+			return "Fifty_six";
+		return name;
+	}
+
 	public void send(String message) {
 		getPlayer().sendMessage(colorize(message));
 	}
