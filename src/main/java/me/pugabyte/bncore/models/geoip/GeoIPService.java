@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,8 @@ import java.util.UUID;
 public class GeoIPService extends MongoService {
 	private final static Map<UUID, GeoIP> cache = new HashMap<>();
 	private final String KEY = BNCore.getInstance().getConfig().getString("tokens.ipstack");
+	// Raven gives a huge boost to Canada with his VPN
+	private final static List<String> ignore = Arrays.asList("fce1fe67-9514-4117-bcf6-d0c49ca0ba41");
 
 	static {
 		BNCore.getInstance().addConfigDefault("tokens.ipstack", "abcdef");
@@ -63,6 +66,8 @@ public class GeoIPService extends MongoService {
 
 	@SneakyThrows
 	public GeoIP request(OfflinePlayer player, String ip) {
+		if (ignore.contains(player.getUniqueId().toString()))
+			return null;
 		BNCore.log("Requesting GeoIP info for " + player.getName() + " (" + ip + ")");
 
 		Request request = new Request.Builder()
