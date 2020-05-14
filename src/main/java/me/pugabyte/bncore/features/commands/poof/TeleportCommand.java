@@ -23,6 +23,12 @@ public class TeleportCommand extends CustomCommand {
 		super(event);
 	}
 
+	private boolean isCoord(String arg) {
+		if (arg.equals("~")) return true;
+		arg = arg.replace("~", "");
+		return isDouble(arg);
+	}
+
 	@Path("<player> [player]")
 	void run(@Arg(tabCompleter = OfflinePlayer.class) String arg1, @Arg(tabCompleter = OfflinePlayer.class) String arg2) {
 		if (!player().hasPermission("group.staff")) {
@@ -30,24 +36,24 @@ public class TeleportCommand extends CustomCommand {
 			return;
 		}
 
-		if (isDouble(arg(1).replace("~", "")) && isDouble(arg(2).replace("~", "")) && isDouble(arg(3).replace("~", ""))) {
+		if (isCoord(arg(1)) && isCoord(arg(2)) && isCoord(arg(3))) {
 			Location location = player().getLocation();
 			Modify modifier = RelativeLocation.modify(location).x(arg(1)).y(arg(2)).z(arg(3));
-			if (arg(4) != null && arg(5) != null && isFloat(arg(4).replace("~", "")) && isFloat(arg(5).replace("~", ""))) {
+			if (arg(4) != null && arg(5) != null && isCoord(arg(4)) && isCoord(arg(5))) {
 				modifier.yaw(arg(4)).pitch(arg(5));
 				if (arg(6) != null) {
 					if (Bukkit.getWorld(arg(6)) == null)
 						error("World &e" + arg(6) + " &cnot found");
 					location.setWorld(Bukkit.getWorld(arg(6)));
 				}
-			} else if (!isNullOrEmpty(arg(4)))
+			} else if (!isNullOrEmpty(arg(4))) {
 				if (Bukkit.getWorld(arg(4)) == null)
 					error("World &e" + arg(4) + " &cnot found");
 				else
 					location.setWorld(Bukkit.getWorld(arg(4)));
+			}
 
-			modifier.update();
-			player().teleport(location, TeleportCause.COMMAND);
+			player().teleport(modifier.update(), TeleportCause.COMMAND);
 		} else if (isOfflinePlayerArg(1)) {
 			OfflinePlayer player1 = offlinePlayerArg(1);
 			Location location1 = getLocation(player1);

@@ -175,36 +175,6 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 			if (b < 0) b = 0;
 			if (b > 255) b = 255;
 
-//			if (r > 0 && b == 0) {
-//				r -= rate;
-//				if (r < 0)
-//					r = 0;
-//
-//				g += rate;
-//				if (g > 255)
-//					g = 255;
-//			}
-//
-//			if (g > 0 && r == 0) {
-//				g -= rate;
-//				if (g < 0)
-//					g = 0;
-//
-//				b += rate;
-//				if (b > 255)
-//					b = 255;
-//			}
-//
-//			if (b > 0 && g == 0) {
-//				b -= rate;
-//				if (b < 0)
-//					b = 0;
-//
-//				r += rate;
-//				if (r > 255)
-//					r = 255;
-//			}
-
 			PlayerInventory inv = player.getInventory();
 			ItemStack[] armour = inv.getArmorContents();
 			Color color = Color.fromRGB(r, g, b);
