@@ -27,6 +27,7 @@ import me.pugabyte.bncore.features.restoreinventory.RestoreInventory;
 import me.pugabyte.bncore.features.shops.Shops;
 import me.pugabyte.bncore.features.store.perks.joinquit.JoinQuit;
 import me.pugabyte.bncore.features.tickets.Tickets;
+import me.pugabyte.bncore.features.trust.TrustFeature;
 import me.pugabyte.bncore.features.votes.Votes;
 import me.pugabyte.bncore.features.wiki.Wiki;
 import me.pugabyte.bncore.framework.commands.Commands;
@@ -221,9 +222,9 @@ public class BNCore extends JavaPlugin {
 	public static Discord discord;
 	public static Documentation documentation;
 	public static Holidays holidays;
-	public static HomesFeature homesFeature;
+	public static HomesFeature homes;
 	public static HoneyPots honeyPots;
-	public static HoursFeature hoursFeature;
+	public static HoursFeature hours;
 	public static JoinQuit joinQuit;
 	public static Listeners listeners;
 	public static McMMO mcmmo;
@@ -234,6 +235,7 @@ public class BNCore extends JavaPlugin {
 	public static RestoreInventory restoreInventory;
 	public static Shops shops;
 	public static Tickets tickets;
+	public static TrustFeature trust;
 	public static Votes votes;
 	public static Wiki wiki;
 
@@ -260,12 +262,12 @@ public class BNCore extends JavaPlugin {
 		new Timer("  AFK", () -> afk = new AFK());
 		new Timer("  Chat", () -> chat = new Chat());
 		new Timer("  CustomRecipes", () -> recipes = new CustomRecipes());
-		new Timer("  DailyRewardsFeature", () -> dailyRewards = new DailyRewardsFeature());
+		new Timer("  DailyRewards", () -> dailyRewards = new DailyRewardsFeature());
 //		new Timer("  Documentation", () -> documentation = new Documentation());
 		new Timer("  Holidays", () -> holidays = new Holidays());
-		new Timer("  HomesFeature", () -> homesFeature = new HomesFeature());
+		new Timer("  Homes", () -> homes = new HomesFeature());
 		new Timer("  HoneyPots", () -> honeyPots = new HoneyPots());
-		new Timer("  HoursFeature", () -> hoursFeature = new HoursFeature());
+		new Timer("  Hours", () -> hours = new HoursFeature());
 		new Timer("  JoinQuit", () -> joinQuit = new JoinQuit());
 		new Timer("  Listeners", () -> listeners = new Listeners());
 		new Timer("  McMMO", () -> mcmmo = new McMMO());
@@ -276,6 +278,7 @@ public class BNCore extends JavaPlugin {
 		new Timer("  RestoreInventory", () -> restoreInventory = new RestoreInventory());
 		new Timer("  Shops", () -> shops = new Shops());
 		new Timer("  Tickets", () -> tickets = new Tickets());
+//		new Timer("  Trust", () -> trust = new TrustFeature());
 		new Timer("  Votes", () -> votes = new Votes());
 		new Timer("  Wiki", () -> wiki = new Wiki());
 
