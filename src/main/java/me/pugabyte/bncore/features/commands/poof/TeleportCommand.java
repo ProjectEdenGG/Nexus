@@ -24,6 +24,7 @@ public class TeleportCommand extends CustomCommand {
 	}
 
 	private boolean isCoord(String arg) {
+		if (isNullOrEmpty(arg)) return false;
 		if (arg.equals("~")) return true;
 		arg = arg.replace("~", "");
 		return isDouble(arg);

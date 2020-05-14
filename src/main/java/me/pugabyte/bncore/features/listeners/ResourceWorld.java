@@ -28,6 +28,8 @@ public class ResourceWorld implements Listener {
 	public void onWorldChange(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 
+		if (event.getFrom().getWorld().getName().startsWith("resource")) return;
+
 		if (event.getTo().getWorld().getName().startsWith("resource")) {
 			List<Material> materials = new ShopService().getMarket().getProducts(Shop.ShopGroup.RESOURCE).stream()
 					.filter(product -> product.getExchangeType() == Shop.ExchangeType.BUY)
