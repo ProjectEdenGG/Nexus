@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class TrustCommand extends CustomCommand {
+public class JTrustCommand extends CustomCommand {
 	Trust trust;
 	TrustService service = new TrustService();
 
-	public TrustCommand(@NonNull CommandEvent event) {
+	public JTrustCommand(@NonNull CommandEvent event) {
 		super(event);
 		trust = service.get(player());
 	}
