@@ -9,15 +9,19 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.Utils.getNearbyEntities;
 import static me.pugabyte.bncore.utils.Utils.getNearbyEntityTypes;
+import static me.pugabyte.bncore.utils.Utils.sort;
 
 @Permission("group.staff")
 public class NearbyEntitiesCommand extends CustomCommand {
@@ -54,6 +58,13 @@ public class NearbyEntitiesCommand extends CustomCommand {
 				});
 	}
 
-
+	@Path("report [radius]")
+	void report(@Arg("200") int radius) {
+		sort(new HashMap<Player, Integer>() {{
+			for (Player player : Bukkit.getOnlinePlayers())
+				put(player, player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius).size());
+		}}).forEach((player, count) ->
+				send(json("&e" + player.getName() + " &7- " + count).command("/tp " + player.getName())));
+	}
 
 }

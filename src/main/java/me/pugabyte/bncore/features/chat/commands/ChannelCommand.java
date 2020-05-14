@@ -63,6 +63,11 @@ public class ChannelCommand extends CustomCommand {
 		chatter.join(channel);
 	}
 
+	@Path("leave <channel>")
+	void leave(PublicChannel channel) {
+		chatter.leave(channel);
+	}
+
 	@ConverterFor({Channel.class, PublicChannel.class})
 	PublicChannel convertToChannel(String value) {
 		return ChatManager.getChannel(value);

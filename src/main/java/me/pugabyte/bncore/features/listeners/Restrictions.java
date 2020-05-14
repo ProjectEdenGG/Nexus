@@ -23,7 +23,7 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class Restrictions implements Listener {
-	String prefix = Koda.getLocalFormat();
+	private static final String PREFIX = Koda.getLocalFormat();
 
 	@EventHandler
 	public void onInteractWithFire(PlayerInteractEvent event) {
@@ -46,7 +46,7 @@ public class Restrictions implements Listener {
 		if (!(clickedMaterial.equals(Material.OBSIDIAN) || clickedMaterial.equals(Material.NETHERRACK)))
 			if (!player.hasPermission("use.fire")) {
 				event.setCancelled(true);
-				player.sendMessage(StringUtils.colorize(prefix + "Sorry, but you are not a high enough rank to light fire! Please create a &c/ticket &fto ask a staff member to light fire for you"));
+				player.sendMessage(StringUtils.colorize(PREFIX + "Sorry, but you are not a high enough rank to light fire! Please create a &c/ticket &fto ask a staff member to light fire for you"));
 			}
 	}
 
@@ -59,8 +59,8 @@ public class Restrictions implements Listener {
 		Player player = event.getPlayer();
 		if (!player.hasPermission("use.fire")) {
 			event.setCancelled(true);
-			player.sendMessage(StringUtils.colorize(prefix + "Hey " + player.getName() + "! I noticed that you are trying to place lava. Unfortunately lava placing is disabled for Member and below due to grief and safety issues"));
-			Tasks.wait(20, () -> player.sendMessage(StringUtils.colorize(prefix + "However, a staff member will be happy to place it for you. Please create a &c/ticket &fand a staff member will be with your shortly! :)")));
+			player.sendMessage(StringUtils.colorize(PREFIX + "Hey " + player.getName() + "! I noticed that you are trying to place lava. Unfortunately lava placing is disabled for Member and below due to grief and safety issues"));
+			Tasks.wait(20, () -> player.sendMessage(StringUtils.colorize(PREFIX + "However, a staff member will be happy to place it for you. Please create a &c/ticket &fand a staff member will be with your shortly! :)")));
 		}
 	}
 
@@ -73,7 +73,7 @@ public class Restrictions implements Listener {
 		Player player = event.getPlayer();
 		if (!player.hasPermission("use.fire")) {
 			event.setCancelled(true);
-			player.sendMessage(StringUtils.colorize(prefix + "Sorry, but you can't use TNT! You must be Member or above"));
+			player.sendMessage(StringUtils.colorize(PREFIX + "Sorry, but you can't use TNT! You must be Member or above"));
 		}
 	}
 
@@ -85,7 +85,7 @@ public class Restrictions implements Listener {
 		Player player = (Player) event.getWhoClicked();
 		if (!player.hasPermission("use.fire")) {
 			event.setCancelled(true);
-			player.sendMessage(StringUtils.colorize(prefix + "Sorry, but you can't use TNT! You must be Member or above"));
+			player.sendMessage(StringUtils.colorize(PREFIX + "Sorry, but you can't use TNT! You must be Member or above"));
 		}
 	}
 
@@ -104,7 +104,7 @@ public class Restrictions implements Listener {
 
 		if (!Utils.isNullOrAir(event.getItem()) && event.getItem().getType().equals(Material.END_CRYSTAL)) {
 			event.setCancelled(true);
-			player.sendMessage(StringUtils.colorize(prefix + "Sorry, but you can't use Ender Crystals! You must be Member or above"));
+			player.sendMessage(StringUtils.colorize(PREFIX + "Sorry, but you can't use Ender Crystals! You must be Member or above"));
 		}
 	}
 
@@ -120,7 +120,7 @@ public class Restrictions implements Listener {
 
 		if (!damager.hasPermission("use.fire")) {
 			event.setCancelled(true);
-			damager.sendMessage(StringUtils.colorize(prefix + "Sorry, but you can't use Ender Crystals! You must be Member or above"));
+			damager.sendMessage(StringUtils.colorize(PREFIX + "Sorry, but you can't use Ender Crystals! You must be Member or above"));
 		}
 
 	}
@@ -155,7 +155,7 @@ public class Restrictions implements Listener {
 
 		if (!player.hasPermission("group.staff")) {
 			event.setCancelled(true);
-			player.sendMessage(StringUtils.colorize(prefix + "Sorry, but you can't place beds here! They will go boom!"));
+			player.sendMessage(StringUtils.colorize(PREFIX + "Sorry, but you can't place beds here! They will go boom!"));
 		}
 	}
 }

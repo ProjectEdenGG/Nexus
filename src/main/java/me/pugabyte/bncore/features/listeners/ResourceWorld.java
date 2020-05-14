@@ -1,14 +1,9 @@
 package me.pugabyte.bncore.features.listeners;
 
-import me.pugabyte.bncore.models.back.Back;
-import me.pugabyte.bncore.models.back.BackService;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.ShopService;
-import me.pugabyte.bncore.models.warps.WarpService;
-import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -16,13 +11,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
@@ -31,10 +25,10 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 public class ResourceWorld implements Listener {
 
 	@EventHandler
-	public void onWorldChange(PlayerChangedWorldEvent event) {
+	public void onWorldChange(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 
-		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
+		if (event.getTo().getWorld().getName().startsWith("resource")) {
 			List<Material> materials = new ShopService().getMarket().getProducts(Shop.ShopGroup.RESOURCE).stream()
 					.filter(product -> product.getExchangeType() == Shop.ExchangeType.BUY)
 					.map(product -> product.getItem().getType())
@@ -49,12 +43,11 @@ public class ResourceWorld implements Listener {
 
 			ArrayList<Material> rejectedMaterials = new ArrayList<>();
 			boolean appendMessage = false;
-			boolean teleportBack = false;
 
 			for (Material material : materials) {
 				if (player.getInventory().contains(material)) {
 					rejectedMaterials.add(material);
-					teleportBack = true;
+					event.setCancelled(true);
 					appendMessage = true;
 				}
 			}
@@ -81,7 +74,7 @@ public class ResourceWorld implements Listener {
 					if (content == null || Utils.isNullOrAir(content.getType())) continue;
 					if (materials.contains(content.getType())) {
 						rejectedMaterials.add(content.getType());
-						teleportBack = true;
+						event.setCancelled(true);
 					}
 				}
 			}
@@ -99,19 +92,7 @@ public class ResourceWorld implements Listener {
 					}
 				}
 			}
-
-			if (teleportBack)
-				teleportPlayerBack(player);
 		}
-	}
-
-	private void teleportPlayerBack(Player player) {
-		Back back = new BackService().get(player);
-		Optional<Location> backLocation = back.getLocations().stream().filter(location -> !location.getWorld().getName().startsWith("resource")).findFirst();
-		if (backLocation.isPresent())
-			player.teleport(backLocation.get());
-		else
-			new WarpService().get("spawn", WarpType.NORMAL).teleport(player);
 	}
 
 	@EventHandler

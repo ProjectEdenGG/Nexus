@@ -95,7 +95,7 @@
             <url>http://repo.onarandombox.com/content/groups/public/</url>
         </repository>
         <repository>
-            <id>essentials-repo</id>
+            <id>moss-repo</id>
             <url>https://ci.ender.zone/plugin/repository/everything/</url>
         </repository>
         <repository>
@@ -270,6 +270,13 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!-- LWCX -->
+        <dependency>
+            <groupId>com.griefcraft.lwc</groupId>
+            <artifactId>LWCX</artifactId>
+            <version>2.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <!-- FaweAPI -->
         <dependency>

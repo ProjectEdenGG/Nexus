@@ -206,18 +206,19 @@ public class Utils {
 		return new Location(location.getWorld(), x, y, z);
 	}
 
-	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, int radius) {
-		return location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
-				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-				.entrySet().stream().sorted(Entry.comparingByValue())
+	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sort(Map<K, V> map) {
+		return map.entrySet().stream().sorted(Entry.comparingByValue())
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
+	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, int radius) {
+		return sort(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
+	}
+
 	public static LinkedHashMap<EntityType, Long> getNearbyEntityTypes(Location location, int radius) {
-		return location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
-				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting()))
-				.entrySet().stream().sorted(Entry.comparingByValue())
-				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		return sort(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
+				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
 	}
 
 	public static <T extends Entity> T getTargetEntity(final LivingEntity entity) {
@@ -619,12 +620,13 @@ public class Utils {
 				this.location = location;
 			}
 
-			public void update() {
+			public Location update() {
 				location.setX((x.startsWith("~") ? location.getX() + trim(x) : trim(x)));
 				location.setY((y.startsWith("~") ? location.getY() + trim(y) : trim(y)));
 				location.setZ((z.startsWith("~") ? location.getZ() + trim(z) : trim(z)));
 				location.setYaw((float) (x.startsWith("~") ? location.getYaw() + trim(yaw) : trim(yaw)));
 				location.setPitch((float) (x.startsWith("~") ? location.getPitch() + trim(pitch) : trim(pitch)));
+				return location;
 			}
 		}
 
