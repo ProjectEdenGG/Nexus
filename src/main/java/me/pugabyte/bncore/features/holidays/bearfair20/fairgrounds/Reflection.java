@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static org.bukkit.block.BlockFace.*;
@@ -43,7 +44,8 @@ public class Reflection implements Listener {
 	private String gameRg = BearFair20.mainRg + "_reflection";
 	private String powderRg = gameRg + "_powder";
 	private boolean active = false;
-	private int taskId;
+	private int laserTaskId;
+	private int soundTaskId;
 	private Location laserStart;
 	private List<Location> lampLocList = new ArrayList<>();
 	private Location center = new Location(BearFair20.world, -950, 137, -1689);
@@ -141,13 +143,16 @@ public class Reflection implements Listener {
 		active = true;
 		clearLamps();
 		AtomicInteger cooldown = new AtomicInteger(5);
-		AtomicInteger lifespan = new AtomicInteger(500);
+		AtomicInteger lifespan = new AtomicInteger(750);
 		final BlockFace[] blockFace = {NORTH};
 		final Location[] loc = {laserStart.clone()};
+		AtomicReference<Color> laserColor = new AtomicReference<>(Color.RED);
+		BearFair20.world.playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
+		laserSound();
 
-		taskId = Tasks.repeat(0, 1, () -> {
+		laserTaskId = Tasks.repeat(0, 1, () -> {
 			if (active) {
-				DotEffect.builder().player(player).location(loc[0].clone()).speed(0.1).ticks(10).color(Color.RED).start();
+				DotEffect.builder().player(player).location(loc[0].clone()).speed(0.1).ticks(10).color(laserColor.get()).start();
 				Block block = loc[0].getBlock();
 				Material blockType = block.getType();
 
@@ -186,8 +191,16 @@ public class Reflection implements Listener {
 					cooldown.getAndDecrement();
 				}
 
-				if (lifespan.get() <= 0) {
+				int curLifespan = lifespan.get();
+				if (curLifespan <= 0) {
 					endLaser();
+				}
+
+				if (curLifespan <= 300) {
+					if (curLifespan <= 100)
+						laserColor.set(Color.YELLOW);
+					else
+						laserColor.set(Color.ORANGE);
 				}
 			} else {
 				endLaser();
@@ -243,8 +256,23 @@ public class Reflection implements Listener {
 		return laserFace;
 	}
 
+	private void laserSound() {
+		soundTaskId = Tasks.repeat(0, Time.SECOND.x(5), () -> {
+			Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
+			for (Player player : players) {
+				player.playSound(center, Sound.BLOCK_BEACON_AMBIENT, 10F, 1F);
+			}
+		});
+	}
+
 	private void endLaser() {
-		Tasks.cancel(taskId);
+		Tasks.cancel(laserTaskId);
+		Tasks.cancel(soundTaskId);
+		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
+		for (Player player : players) {
+			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
+		}
+		BearFair20.world.playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 10F, 1F);
 		Tasks.wait(Time.SECOND.x(2), () -> active = false);
 	}
 
