@@ -16,9 +16,9 @@ import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
 @HandledBy(Bot.RELAY)
-public class BanCommand extends Command {
+public class BanDiscordCommand extends Command {
 
-	public BanCommand() {
+	public BanDiscordCommand() {
 		this.name = "ban";
 		this.aliases = new String[]{"tempban", "unban", "kick", "warn", "unwarn", "mute", "unmute"};
 		this.requiredRole = Role.STAFF.name();

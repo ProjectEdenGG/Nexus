@@ -29,14 +29,10 @@ public class UnfreezeCommand extends CustomCommand {
 			if (!setting.getBoolean()) error("That player is not frozen");
 			setting.setBoolean(false);
 			service.save(setting);
-			unfreezePlayer(player);
+			if (player.getVehicle() != null)
+				player.getVehicle().remove();
+			send(player, "&cYou have been unfrozen.");
+			Chat.broadcast(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName(), "Staff");
 		}
-	}
-
-	public void unfreezePlayer(Player player) {
-		if (player.getVehicle() != null)
-			player.getVehicle().remove();
-		send(player, "&cYou have been unfrozen.");
-		Chat.broadcast(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName(), "Staff");
 	}
 }

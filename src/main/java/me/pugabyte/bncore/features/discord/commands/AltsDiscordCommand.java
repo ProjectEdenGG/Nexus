@@ -16,9 +16,9 @@ import org.bukkit.OfflinePlayer;
 import java.util.stream.Collectors;
 
 @HandledBy(Bot.RELAY)
-public class AltsCommand extends Command {
+public class AltsDiscordCommand extends Command {
 
-	public AltsCommand() {
+	public AltsDiscordCommand() {
 		this.name = "alts";
 		this.requiredRole = Role.STAFF.name();
 		this.guildOnly = true;

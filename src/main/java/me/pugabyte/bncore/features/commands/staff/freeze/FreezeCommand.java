@@ -82,7 +82,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	public void freezePlayer(Player player) {
+	public static void freezePlayer(Player player) {
 		Location spawnLoc = player.getLocation().clone().subtract(0, 1, 0);
 		ArmorStand armorStand = player.getWorld().spawn(spawnLoc, ArmorStand.class);
 		armorStand.setInvulnerable(true);
@@ -190,6 +190,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 			case "/msg":
 			case "/pm":
 			case "/freeze":
+			case "/unfreeze":
 				return;
 			default:
 				event.setCancelled(true);
