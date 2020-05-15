@@ -34,6 +34,7 @@ public class Frogger implements Listener {
 	private static String gameRg = BearFair20.mainRg + "_frogger";
 	private static String winRg = gameRg + "_win";
 	private static String damageRg = gameRg + "_damage";
+	private static String killRg = gameRg + "_kill";
 	private static String logsRg = gameRg + "_logs";
 	private static String carsRg = gameRg + "_cars";
 	private static String roadRg = gameRg + "_road";
@@ -45,7 +46,7 @@ public class Frogger implements Listener {
 	private static Map<Location, Material> logSpawnMap = new HashMap<>();
 	private static List<Integer> logTasks = new ArrayList<>();
 	private static Material logMaterial = Material.SPRUCE_WOOD;
-	private static Material riverMaterial = Material.LAVA;
+	private static Material riverMaterial = Material.WATER;
 	//
 	private static Map<Location, Material> carSpawnMap = new HashMap<>();
 	private static List<Integer> carTasks = new ArrayList<>();
@@ -87,7 +88,9 @@ public class Frogger implements Listener {
 				int ran = Utils.randomInt(2, 3);
 				// wait = log length + 2-3 + ???
 				// 10 = task update interval
-				int wait = (((20 * lastLogLen) + (Utils.randomInt(2, 4) * 10) + 10) * i);
+				// (PrevLogLength * 10) + 10 + ((2<->4 * 10) * i)
+				int wait = ((lastLogLen * 10) + 30) + (((Utils.randomInt(1, 3)) * 10) * i);
+//				int wait = (((20 * lastLogLen) + (Utils.randomInt(2, 4) * 10) + 10) * i);
 				lastLogLen = ran;
 
 				Tasks.wait(wait * i, () -> logTask(ran, spawnLoc, blockFace));
@@ -186,7 +189,7 @@ public class Frogger implements Listener {
 			// If block at next location is not bedrock, set it to log
 			else {
 				current.set(start.clone().getBlock().getRelative(blockFace, distance.get()).getLocation());
-				buildCar(current.get(), blockFace, carMaterial.get(), currentLength.get());
+				buildCar(current.get().clone(), blockFace, carMaterial.get(), currentLength.get());
 				distance.incrementAndGet();
 				currentLength.incrementAndGet();
 
@@ -293,6 +296,9 @@ public class Frogger implements Listener {
 				player.sendMessage("Don't cheat, turn " + cheatingMsg + " off!");
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}
+		} else if (regionId.equalsIgnoreCase(killRg)) {
+			player.teleport(respawnLoc);
+			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
 		} else if (regionId.equalsIgnoreCase(winRg)) {
 			player.teleport(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
@@ -319,8 +325,8 @@ public class Frogger implements Listener {
 
 		Player player = (Player) event.getEntity();
 		if (!WGUtils.isInRegion(player.getLocation(), damageRg)) return;
-
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) return;
+
 		event.setDamage(0);
 		player.setFireTicks(0);
 		player.teleport(respawnLoc);
