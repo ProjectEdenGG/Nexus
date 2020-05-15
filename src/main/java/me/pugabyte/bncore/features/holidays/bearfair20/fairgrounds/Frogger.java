@@ -5,6 +5,7 @@ import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
@@ -28,25 +29,32 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 
-// TODO - Animation
 public class Frogger implements Listener {
 
-	private static WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
 	private static String gameRg = BearFair20.mainRg + "_frogger";
 	private static String winRg = gameRg + "_win";
 	private static String damageRg = gameRg + "_damage";
 	private static String logsRg = gameRg + "_logs";
-	private static Location respawnLoc = new Location(BearFair20.world, -856.5, 138, -1623.5, -180, 0);
+	private static String carsRg = gameRg + "_cars";
+	private static String roadRg = gameRg + "_road";
+	//
+	private static Location respawnLoc = new Location(BearFair20.world, -856.5, 138.0, -1617.5, -180, 0);
 	private static boolean doAnimation = false;
+	private static WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
+	//
 	private static Map<Location, Material> logSpawnMap = new HashMap<>();
 	private static List<Integer> logTasks = new ArrayList<>();
 	private static Material logMaterial = Material.SPRUCE_WOOD;
 	private static Material riverMaterial = Material.LAVA;
-//	private static List<Integer> carTasks  = new ArrayList<>();
+	//
+	private static Map<Location, Material> carSpawnMap = new HashMap<>();
+	private static List<Integer> carTasks = new ArrayList<>();
+	private static Set<Material> carMaterials = MaterialTag.CONCRETES.exclude(Material.BLACK_CONCRETE, Material.LIGHT_GRAY_CONCRETE).getValues();
 
 	public Frogger() {
 		BNCore.registerListener(this);
 		loadLogSpawns();
+		loadCarSpawns();
 	}
 
 	private void loadLogSpawns() {
@@ -58,26 +66,43 @@ public class Frogger implements Listener {
 		}
 	}
 
+	private void loadCarSpawns() {
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(carsRg));
+		for (Block block : blocks) {
+			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
+				carSpawnMap.put(block.getLocation(), block.getType());
+			}
+		}
+	}
+
 	public void startAnimations() {
+		// Log Animations
 		clearLogs();
-		Set<Location> spawnLocs = logSpawnMap.keySet();
+		Set<Location> spawnLogLocs = logSpawnMap.keySet();
 		int lastLogLen = 3;
-		for (Location spawnLoc : spawnLocs) {
+		for (Location spawnLoc : spawnLogLocs) {
 			BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
-//			int interval = Utils.randomInt(5, 10);
 			for (int i = 0; i < 4; i++) {
 
-				// log length 1-4
 				int ran = Utils.randomInt(2, 3);
-				// wait = log length + 2-3
-				// wait = 80 is a good standard if loglen = 4
+				// wait = log length + 2-3 + ???
+				// 10 = task update interval
 				int wait = (((20 * lastLogLen) + (Utils.randomInt(2, 4) * 10) + 10) * i);
 				lastLogLen = ran;
 
-				Tasks.wait(wait * i, () -> {
-					logTask(ran, spawnLoc, blockFace);
-				});
+				Tasks.wait(wait * i, () -> logTask(ran, spawnLoc, blockFace));
 			}
+		}
+
+		// Car Animations
+		clearCars();
+		Set<Location> spawnCarLocs = carSpawnMap.keySet();
+		for (Location spawnLoc : spawnCarLocs) {
+			Location loc = spawnLoc.getBlock().getRelative(0, 2, 0).getLocation();
+			BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
+
+			Tasks.wait(0, () -> carTask(loc, blockFace));
+			Tasks.wait(28, () -> carTask(loc, blockFace));
 		}
 	}
 
@@ -85,9 +110,9 @@ public class Frogger implements Listener {
 		for (Integer logTask : logTasks) {
 			Tasks.cancel(logTask);
 		}
-//		for (Integer carTask : carTasks) {
-//			Tasks.cancel(carTask);
-//		}
+		for (Integer carTask : carTasks) {
+			Tasks.cancel(carTask);
+		}
 	}
 
 	private void logTask(int maxLength, Location location, BlockFace blockFace) {
@@ -95,20 +120,13 @@ public class Frogger implements Listener {
 		AtomicReference<Location> current = new AtomicReference<>(start.clone());
 		AtomicInteger distance = new AtomicInteger(0);
 		AtomicInteger currentLength = new AtomicInteger(0);
-//		AtomicInteger currentGap = new AtomicInteger(0);
-//		int gap = 3;
 
 		int taskId = Tasks.repeat(0, 10, () -> {
 			if (!doAnimation)
 				stopAnimations();
 
-//			Utils.wakka("Current Len: " + currentLength.get() + " || " + maxLength);
-//			Utils.wakka("Current Loc: " + current.get().getBlockX() + " " + current.get().getBlockY() + " " + current.get().getBlockZ());
-//			Utils.wakka("Distance: " + distance.get());
-
 			// If the next block is bedrock
 			Block next = current.get().clone().getBlock().getRelative(blockFace);
-//			Utils.wakka("Next Block: " + next.getType());
 			if (next.getType().equals(Material.BEDROCK)) {
 				Block behind = current.get().clone().getBlock().getRelative(blockFace.getOppositeFace(), currentLength.get());
 				behind.setType(riverMaterial);
@@ -135,11 +153,112 @@ public class Frogger implements Listener {
 					currentLength.decrementAndGet();
 				}
 			}
-
-//			Utils.wakka("");
 		});
 
 		logTasks.add(taskId);
+	}
+
+	private void carTask(Location location, BlockFace blockFace) {
+		int maxLength = 3;
+		final Location start = location.clone().getBlock().getRelative(blockFace).getLocation();
+		AtomicReference<Material> carMaterial = new AtomicReference<>(Utils.getRandomElement(carMaterials));
+		AtomicReference<Location> current = new AtomicReference<>(start.clone());
+		AtomicInteger distance = new AtomicInteger(0);
+		AtomicInteger currentLength = new AtomicInteger(0);
+		int taskId = Tasks.repeat(0, 2, () -> {
+			if (!doAnimation)
+				stopAnimations();
+
+			// If the next block is black stained glass
+			Block next = current.get().clone().getBlock().getRelative(blockFace);
+			if (next.getType().equals(Material.BLACK_STAINED_GLASS)) {
+				Block behind = current.get().clone().getBlock().getRelative(blockFace.getOppositeFace(), currentLength.get());
+				removeCarSlice(behind.getLocation());
+				currentLength.decrementAndGet();
+
+				// if currentLength < 0, LOOP
+				if (currentLength.get() < 0) {
+					current.set(location.clone());
+					distance.set(0);
+					carMaterial.set(Utils.getRandomElement(carMaterials));
+				}
+			}
+			// If block at next location is not bedrock, set it to log
+			else {
+				current.set(start.clone().getBlock().getRelative(blockFace, distance.get()).getLocation());
+				buildCar(current.get(), blockFace, carMaterial.get(), currentLength.get());
+				distance.incrementAndGet();
+				currentLength.incrementAndGet();
+
+				// if currentLen >= maxLen, set the block maxLen blocks behind currentLoc to AIR
+				if (currentLength.get() > maxLength) {
+					Block block = current.get().clone().getBlock().getRelative(blockFace.getOppositeFace(), currentLength.get());
+					if (!block.getType().equals(Material.BLACK_STAINED_GLASS))
+						removeCarSlice(block.getLocation());
+					currentLength.decrementAndGet();
+				}
+			}
+		});
+
+		carTasks.add(taskId);
+
+	}
+
+	private void buildCar(Location loc, BlockFace blockFace, Material material, int currentLength) {
+		blockFace = blockFace.getOppositeFace();
+		Block front = loc.getBlock();
+		if (currentLength >= 0 && !front.getType().equals(Material.BLACK_STAINED_GLASS)) {
+			// Front
+			front.setType(material);
+			front.getRelative(BlockFace.NORTH).setType(Material.BLACK_CONCRETE);
+			front.getRelative(BlockFace.SOUTH).setType(Material.BLACK_CONCRETE);
+			front.getRelative(BlockFace.UP).setType(Material.WHITE_STAINED_GLASS_PANE);
+			front.getRelative(BlockFace.UP).getRelative(BlockFace.NORTH).setType(Material.WHITE_STAINED_GLASS_PANE);
+			front.getRelative(BlockFace.UP).getRelative(BlockFace.SOUTH).setType(Material.WHITE_STAINED_GLASS_PANE);
+		}
+
+		// Body 1
+		Block bodyOne = front.getRelative(blockFace);
+		if (currentLength >= 1 && !bodyOne.getType().equals(Material.BLACK_STAINED_GLASS)) {
+			bodyOne.setType(material);
+			bodyOne.getRelative(BlockFace.NORTH).setType(material);
+			bodyOne.getRelative(BlockFace.SOUTH).setType(material);
+			bodyOne.getRelative(BlockFace.UP).setType(material);
+			bodyOne.getRelative(BlockFace.UP).getRelative(BlockFace.NORTH).setType(material);
+			bodyOne.getRelative(BlockFace.UP).getRelative(BlockFace.SOUTH).setType(material);
+		}
+
+		// Body 2
+		Block bodyTwo = bodyOne.getRelative(blockFace);
+		if (currentLength >= 2 && !bodyTwo.getType().equals(Material.BLACK_STAINED_GLASS)) {
+			bodyTwo.setType(material);
+			bodyTwo.getRelative(BlockFace.NORTH).setType(material);
+			bodyTwo.getRelative(BlockFace.SOUTH).setType(material);
+			bodyTwo.getRelative(BlockFace.UP).setType(material);
+			bodyTwo.getRelative(BlockFace.UP).getRelative(BlockFace.NORTH).setType(material);
+			bodyTwo.getRelative(BlockFace.UP).getRelative(BlockFace.SOUTH).setType(material);
+		}
+
+		// End
+		Block end = bodyTwo.getRelative(blockFace);
+		if (currentLength >= 3 && !end.getType().equals(Material.BLACK_STAINED_GLASS)) {
+			end.setType(material);
+			end.getRelative(BlockFace.NORTH).setType(Material.BLACK_CONCRETE);
+			end.getRelative(BlockFace.SOUTH).setType(Material.BLACK_CONCRETE);
+			end.getRelative(BlockFace.UP).setType(material);
+			end.getRelative(BlockFace.UP).getRelative(BlockFace.NORTH).setType(Material.AIR);
+			end.getRelative(BlockFace.UP).getRelative(BlockFace.SOUTH).setType(Material.AIR);
+		}
+	}
+
+	private void removeCarSlice(Location loc) {
+		Block start = loc.getBlock();
+		start.setType(Material.AIR);
+		start.getRelative(BlockFace.UP).setType(Material.AIR);
+		start.getRelative(BlockFace.NORTH).setType(Material.AIR);
+		start.getRelative(BlockFace.SOUTH).setType(Material.AIR);
+		start.getRelative(BlockFace.UP).getRelative(BlockFace.NORTH).setType(Material.AIR);
+		start.getRelative(BlockFace.UP).getRelative(BlockFace.SOUTH).setType(Material.AIR);
 	}
 
 	private void clearLogs() {
@@ -147,6 +266,14 @@ public class Frogger implements Listener {
 		for (Block block : blocks) {
 			if (block.getType().equals(logMaterial))
 				block.setType(riverMaterial);
+		}
+	}
+
+	private void clearCars() {
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(roadRg));
+		for (Block block : blocks) {
+			if (!block.getType().equals(Material.AIR))
+				block.setType(Material.AIR);
 		}
 	}
 
