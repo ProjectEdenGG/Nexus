@@ -39,7 +39,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 				Material.NAME_TAG,
 				"&eCustom name",
 				"&fNone of these names fit?||&fNo worries, you can still name it anything you'd like!"
-			), e -> HomesMenu.create(homeOwner, (owner, response) ->
+			), e -> HomesMenu.create(homeOwner, response ->
 				homeOwner.getHome(response[0]).ifPresent(HomesMenu::edit))));
 
 		Map<String, ItemStack> options = new LinkedHashMap<String, ItemStack>() {{
@@ -69,7 +69,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 					try {
 						HomesMenu.edit(addHome(name, item));
 					} catch (Exception ex) {
-						HomesMenu.handleException(homeOwner.getPlayer(), ex);
+						MenuUtils.handleException(homeOwner.getPlayer(), ex);
 					}
 				})));
 	}

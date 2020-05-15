@@ -18,11 +18,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JTrustCommand extends CustomCommand {
+public class JUntrustCommand extends CustomCommand {
 	Trust trust;
 	TrustService service = new TrustService();
 
-	public JTrustCommand(@NonNull CommandEvent event) {
+	public JUntrustCommand(@NonNull CommandEvent event) {
 		super(event);
 		trust = service.get(player());
 	}
@@ -34,14 +34,14 @@ public class JTrustCommand extends CustomCommand {
 
 	@Path("lock <players...>")
 	void lock(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		runCommand("cmodify " + names(players, " "));
+		runCommand("cmodify -" + names(players, " -"));
 	}
 
 	@Path("home <home> <players...>")
 	void home(Home home, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		players.forEach(home::allow);
+		players.forEach(home::remove);
 		new HomeService().save(home.getOwner());
-		send(PREFIX + "Trusted &e" + names(players, "&3, &e") + " &3to home &e" + home.getName());
+		send(PREFIX + "Untrusted &e" + names(players, "&3, &e") + " &3from home &e" + home.getName());
 	}
 
 	@Path("locks <players...>")
@@ -61,10 +61,10 @@ public class JTrustCommand extends CustomCommand {
 
 	private void process(List<OfflinePlayer> players, Trust.Type... types) {
 		for (Type type : types)
-			players.forEach(player -> trust.get(type).add(player.getUniqueId()));
+			players.forEach(player -> trust.get(type).remove(player.getUniqueId()));
 		service.save(trust);
 		String typeNames = Arrays.stream(types).map(Type::camelCase).collect(Collectors.joining("&3, &e"));
-		send(PREFIX + "Trusted &e" + names(players, "&3, &e") + " &3to &e" + typeNames);
+		send(PREFIX + "Untrusted &e" + names(players, "&3, &e") + " &3from &e" + typeNames);
 	}
 
 	@NotNull

@@ -25,16 +25,16 @@ public class SearchItemsProvider extends _ShopProvider {
 		super.init(player, contents);
 
 		contents.set(1, 1, ClickableItem.from(nameItem(Material.NAME_TAG, "&6Search by item name"),
-				e -> BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").response((_player, response) -> {
+				e -> BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").response(lines -> {
 					try {
-						if (response[0].length() > 0) {
-							((BrowseItemsProvider) previousMenu).getFilters().add(FilterSearchType.SEARCH.of(response[0], product ->
-									product.getItem().getType().name().toLowerCase().contains(response[0].toLowerCase())));
+						if (lines[0].length() > 0) {
+							((BrowseItemsProvider) previousMenu).getFilters().add(FilterSearchType.SEARCH.of(lines[0], product ->
+									product.getItem().getType().name().toLowerCase().contains(lines[0].toLowerCase())));
 							previousMenu.open(player);
 						} else
 							open(player);
 					} catch (Exception ex) {
-						_player.sendMessage(ex.getMessage());
+						player.sendMessage(ex.getMessage());
 						open(player);
 					}
 				})

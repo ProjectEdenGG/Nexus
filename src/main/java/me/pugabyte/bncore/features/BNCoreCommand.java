@@ -183,7 +183,7 @@ public class BNCoreCommand extends CustomCommand {
 	void signgui() {
 		BNCore.getSignMenuFactory()
 				.lines("1", "2", "3", "4")
-				.response((player, lines) -> {
+				.response(lines -> {
 					for (String string : lines)
 						send(string);
 				})

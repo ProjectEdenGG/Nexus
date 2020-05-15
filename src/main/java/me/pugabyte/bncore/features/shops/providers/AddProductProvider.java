@@ -98,12 +98,12 @@ public class AddProductProvider extends _ShopProvider {
 			item.name("&e$" + pretty(price));
 
 		contents.set(3, 4, ClickableItem.from(item.build(), e ->
-				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount").response(($, response) -> {
+				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount").response(lines -> {
 					try {
-						if (response[0].length() > 0) {
-							String input = response[0].replaceAll("[^0-9.]+", "");
+						if (lines[0].length() > 0) {
+							String input = lines[0].replaceAll("[^0-9.]+", "");
 							if (!Utils.isDouble(input))
-								throw new InvalidInputException("Could not parse &e" + response[0] + " &cas a dollar amount");
+								throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
 							double price = Double.parseDouble(input);
 							if (price <= 0)
 								throw new InvalidInputException("Dollar amount must be greater than $0");
@@ -137,10 +137,10 @@ public class AddProductProvider extends _ShopProvider {
 				itemStack.set(player.getItemOnCursor().clone());
 				open(player);
 			} else if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem().equals(placeholder)) {
-				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").response(($, response) -> {
+				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").response(lines -> {
 					try {
-						if (response[0].length() > 0) {
-							Function<Material, Boolean> filter = material -> material.name().toLowerCase().contains(response[0].toLowerCase());
+						if (lines[0].length() > 0) {
+							Function<Material, Boolean> filter = material -> material.name().toLowerCase().contains(lines[0].toLowerCase());
 							new ItemSearchProvider(this, filter, onChoose -> {
 								itemStack.set(new ItemStack(onChoose.getItem().getType()));
 								open(player);

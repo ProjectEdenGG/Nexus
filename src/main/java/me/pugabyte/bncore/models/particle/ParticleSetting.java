@@ -363,8 +363,8 @@ public enum ParticleSetting {
 	public void onClick(Player player, ParticleType type) {
 		if (value == Double.class || value == Integer.class)
 			BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter new value for", getTitle())
-					.response((player1, response) -> {
-						setter(player, type, response[0]);
+					.response(lines -> {
+						setter(player, type, lines[0]);
 						ParticleMenu.openSettingEditor(player, type);
 					})
 					.open(player);

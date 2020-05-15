@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -70,7 +70,13 @@ public final class SignMenuFactory {
 
 				event.setCancelled(true);
 
-				Tasks.sync(() -> menu.response.accept(player, input));
+				Tasks.sync(() -> {
+					try {
+						menu.response.accept(input);
+					} catch (Exception ex) {
+						MenuUtils.handleException(player, ex);
+					}
+				});
 
 				Location location = blockPosition.toLocation(player.getWorld());
 				player.sendBlockChange(location, location.getBlock().getType().createBlockData());
@@ -80,13 +86,13 @@ public final class SignMenuFactory {
 
 	public static final class Menu {
 		private final List<String> text;
-		private BiConsumer<Player, String[]> response;
+		private Consumer<String[]> response;
 
 		Menu(List<String> text) {
 			this.text = text;
 		}
 
-		public Menu response(BiConsumer<Player, String[]> response) {
+		public Menu response(Consumer<String[]> response) {
 			this.response = response;
 			return this;
 		}

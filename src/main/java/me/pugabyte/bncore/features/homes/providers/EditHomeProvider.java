@@ -17,12 +17,11 @@ import static me.pugabyte.bncore.features.homes.HomesMenu.getAccessListNames;
 public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 	private Home home;
 	private HomeOwner homeOwner;
-	private HomeService service;
+	private HomeService service = new HomeService();
 
 	public EditHomeProvider(Home home) {
 		this.home = home;
 		this.homeOwner = home.getOwner();
-		this.service = new HomeService();
 	}
 
 	private void refresh() {
@@ -49,7 +48,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 					"&eGive a player access",
 					"&eto this home||&f||&fThey will be able to teleport to this home even if it is locked" + getAccessListNames(home.getAccessList())
 				),
-				e -> HomesMenu.allow(home, (owner, response) -> refresh())
+				e -> HomesMenu.allow(home, response -> refresh())
 			));
 
 			contents.set(0, 8, ClickableItem.from(nameItem(
@@ -57,7 +56,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 					"&eRemove a player's",
 					"&eaccess to this home||&f||&fThey will only be able to teleport to this home if it is unlocked"
 				),
-				e -> HomesMenu.remove(home, (owner, response) -> refresh())
+				e -> HomesMenu.remove(home, response -> refresh())
 			));
 		}
 
@@ -66,10 +65,10 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 				"&eSet display item",
 				"&fWish it was easier to find this home in the menu? Change what item it displays as to distinguish it from the rest!"
 			),
-			e -> HomesMenu.displayItem(home, (owner, response) -> refresh())
+			e -> HomesMenu.displayItem(home, response -> refresh())
 		));
 
-		contents.set(2, 2, ClickableItem.from(nameItem(Material.NAME_TAG, "&eRename"), e -> HomesMenu.rename(home, (owner, response) -> refresh())));
+		contents.set(2, 2, ClickableItem.from(nameItem(Material.NAME_TAG, "&eRename"), e -> HomesMenu.rename(home, response -> refresh())));
 		contents.set(2, 4, ClickableItem.from(nameItem(Material.COMPASS, "&eTeleport"), e -> home.teleport(player)));
 
 		contents.set(2, 6, ClickableItem.from(nameItem(Material.FILLED_MAP, "&eSet to current location"),

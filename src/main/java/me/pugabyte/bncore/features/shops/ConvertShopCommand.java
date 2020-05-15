@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.shops;
 
-import com.earth2me.essentials.Essentials;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -197,11 +196,10 @@ public class ConvertShopCommand extends CustomCommand {
 	}
 
 	public Material essentialsAliases(String name) {
-		Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 		if (name.equalsIgnoreCase("steak"))
 			return Material.COOKED_BEEF;
 		try {
-			ItemStack item = essentials.getItemDb().get(name);
+			ItemStack item = BNCore.getEssentials().getItemDb().get(name);
 			return item.getType();
 		} catch (Exception e) {
 			error("Could not parse item from essentials aliases");

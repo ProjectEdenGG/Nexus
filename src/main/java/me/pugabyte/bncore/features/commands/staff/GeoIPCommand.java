@@ -154,49 +154,4 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
-/*
-	@Async
-	@Path("migrate")
-	void migrate() {
-		GeoIPService service = new GeoIPService();
-		Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-
-		List<OfflinePlayer> existing = new ArrayList<>();
-		List<OfflinePlayer> collected = new ArrayList<>();
-		List<OfflinePlayer> failed = new ArrayList<>();
-		for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-			try {
-				try {
-					service.get(player);
-					existing.add(player);
-				} catch (InvalidInputException ex) {
-					String ip = essentials.getUser(player.getUniqueId()).getLastLoginAddress();
-					if (!isNullOrEmpty(ip)) {
-						GeoIP geoIp = service.request(player, ip);
-						if (geoIp != null && geoIp.getUuid() != null) {
-							service.save(geoIp);
-							collected.add(player);
-						} else
-							failed.add(player);
-					} else
-						failed.add(player);
-				}
-			} catch (Exception ex) {
-				BNCore.warn("Error requesting location of " + player.getName());
-				ex.printStackTrace();
-				failed.add(player);
-			}
-
-			if (failed.size() > 10) {
-				BNCore.log("Aborting due to high failures");
-				break;
-			}
-		}
-
-		BNCore.log("Done");
-		BNCore.log("  Existing: " + existing.size());
-		BNCore.log("  Collected: " + collected.size());
-		BNCore.log("  Failed: " + failed.stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
-	}
-*/
 }
