@@ -14,9 +14,9 @@ import org.bukkit.ChatColor;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 @HandledBy(Bot.KODA)
-public class SubscribeCommand extends Command {
+public class SubscribeDiscordCommand extends Command {
 
-	public SubscribeCommand() {
+	public SubscribeDiscordCommand() {
 		this.name = "subscribe";
 		this.guildOnly = true;
 	}

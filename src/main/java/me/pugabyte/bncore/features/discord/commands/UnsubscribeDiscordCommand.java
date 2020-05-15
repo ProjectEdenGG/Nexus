@@ -10,13 +10,13 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.ChatColor;
 
-import static me.pugabyte.bncore.features.discord.commands.SubscribeCommand.getRole;
+import static me.pugabyte.bncore.features.discord.commands.SubscribeDiscordCommand.getRole;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 @HandledBy(Bot.KODA)
-public class UnsubscribeCommand extends Command {
+public class UnsubscribeDiscordCommand extends Command {
 
-	public UnsubscribeCommand() {
+	public UnsubscribeDiscordCommand() {
 		this.name = "unsubscribe";
 		this.guildOnly = true;
 	}

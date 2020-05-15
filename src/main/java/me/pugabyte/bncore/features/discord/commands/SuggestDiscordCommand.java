@@ -26,9 +26,9 @@ import java.util.Arrays;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 @HandledBy(Bot.RELAY)
-public class SuggestCommand extends Command {
+public class SuggestDiscordCommand extends Command {
 
-	public SuggestCommand() {
+	public SuggestDiscordCommand() {
 		this.name = "suggest";
 		this.requiredRole = Role.STAFF.name();
 		this.guildOnly = true;

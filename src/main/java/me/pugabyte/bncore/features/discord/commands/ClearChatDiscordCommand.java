@@ -10,9 +10,9 @@ import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
 @HandledBy(Bot.RELAY)
-public class ClearChatCommand extends Command {
+public class ClearChatDiscordCommand extends Command {
 
-	public ClearChatCommand() {
+	public ClearChatDiscordCommand() {
 		this.name = "clearchat";
 		this.aliases = new String[]{"cc"};
 		this.requiredRole = Role.STAFF.name();
