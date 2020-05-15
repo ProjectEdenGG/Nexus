@@ -152,7 +152,7 @@ public class BFQuests implements Listener {
 				case MELON:
 				case PUMPKIN:
 					if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
-						player.sendMessage(decor);
+						player.sendMessage(StringUtils.colorize(decor));
 						event.setCancelled(true);
 						return;
 					}
