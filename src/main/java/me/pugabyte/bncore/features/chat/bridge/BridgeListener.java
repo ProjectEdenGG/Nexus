@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.chat.bridge;
 
 import com.google.common.base.Strings;
-import com.vdurmont.emoji.EmojiParser;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.ChatManager;
@@ -70,7 +69,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 			builder.next(" " + channel.get().getDiscordColor() + "&l>&f");
 
 			String content = event.getMessage().getContentDisplay().trim();
-			try { content = EmojiParser.parseToAliases(content); } catch (Exception ignore) {}
+//			try { content = EmojiParser.parseToAliases(content); } catch (Exception ignore) {}
 			if (content.length() > 0)
 				builder.urlize(" " + colorize(content.replaceAll("&", "&&f")));
 
