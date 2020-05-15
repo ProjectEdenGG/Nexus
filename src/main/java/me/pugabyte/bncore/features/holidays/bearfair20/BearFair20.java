@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.holidays.bearfair20;
 
-import com.earth2me.essentials.Essentials;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
@@ -37,8 +36,7 @@ public class BearFair20 implements Listener {
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
 		if (Utils.isVanished(player)) return "vanish";
-		Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-		if (essentials.getUser(player.getUniqueId()).isGodModeEnabled()) return "godmode";
+		if (BNCore.getEssentials().getUser(player.getUniqueId()).isGodModeEnabled()) return "godmode";
 
 		return null;
 	}

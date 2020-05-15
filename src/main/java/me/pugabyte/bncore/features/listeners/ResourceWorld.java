@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.ShopService;
 import me.pugabyte.bncore.utils.MaterialTag;
@@ -9,6 +11,7 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -16,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +29,7 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 public class ResourceWorld implements Listener {
 
 	@EventHandler
-	public void onWorldChange(PlayerTeleportEvent event) {
+	public void onEnterResourceWorld(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 
 		if (event.getFrom().getWorld().getName().startsWith("resource")) return;
@@ -94,7 +98,28 @@ public class ResourceWorld implements Listener {
 					}
 				}
 			}
+
+			if (!event.isCancelled()) {
+				player.sendMessage(colorize(" &4Warning: &cYou are entering the resource world! This world is regenerated on the " +
+						"&c&lfirst of every month, &cso don't leave your stuff here or you will lose it!"));
+			}
 		}
+	}
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		if (!event.getPlayer().getWorld().getName().startsWith("resource")) return;
+
+		List<Material> materials = Arrays.asList(Material.CHEST, Material.TRAPPED_CHEST);
+		if (!materials.contains(event.getBlockPlaced().getType()))
+			return;
+
+		SettingService service = new SettingService();
+		Setting setting = service.get(event.getPlayer(), "tips.resourceworld.placechest");
+
+		if (!setting.getBoolean())
+			if (!Utils.chanceOf(5))
+				return;
 	}
 
 	@EventHandler

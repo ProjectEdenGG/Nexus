@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
@@ -88,6 +90,17 @@ public abstract class MenuUtils {
 
 	protected ItemStack closeItem() {
 		return new ItemBuilder(Material.BARRIER).name("&cClose").build();
+	}
+
+	public static void handleException(Player player, Exception ex) {
+		if (ex.getCause() != null && ex.getCause() instanceof BNException)
+			player.sendMessage(colorize(PREFIX + "&c" + ex.getCause().getMessage()));
+		else if (ex instanceof BNException)
+			player.sendMessage(colorize(PREFIX + "&c" + ex.getMessage()));
+		else {
+			player.sendMessage(colorize(("&cAn internal error occurred while attempting to execute this command")));
+			ex.printStackTrace();
+		}
 	}
 
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {

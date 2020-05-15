@@ -212,10 +212,10 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 						AtomicInteger originID = new AtomicInteger(0);
 						player.closeInventory();
 						BNCore.getSignMenuFactory()
-								.lines("", "^^^^^^^^", "UE Line", "Number")
-								.response((player1, response) -> {
+								.lines("", "^ ^ ^ ^ ^ ^", "UE Line", "Number")
+								.response(lines -> {
 									try {
-										originID.set(Integer.parseInt(response[0]));
+										originID.set(Integer.parseInt(lines[0]));
 										if (originID.get() == 0) {
 											player.sendMessage("&cYou must use an integer greater than 0.");
 											player.closeInventory();

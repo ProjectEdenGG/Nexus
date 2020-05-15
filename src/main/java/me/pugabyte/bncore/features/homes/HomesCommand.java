@@ -50,7 +50,7 @@ public class HomesCommand extends CustomCommand {
 	@Path("allowAll [player]")
 	void allowAll(Player player) {
 		if (player == null)
-			HomesMenu.allowAll(homeOwner, (owner, response) -> {
+			HomesMenu.allowAll(homeOwner, response -> {
 				if (response[0].length() > 0)
 					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3has been granted access to your homes");
 			});
@@ -64,7 +64,7 @@ public class HomesCommand extends CustomCommand {
 	@Path("removeAll [player]")
 	void removeAll(Player player) {
 		if (player == null)
-			HomesMenu.removeAll(homeOwner, (owner, response) -> {
+			HomesMenu.removeAll(homeOwner, response -> {
 				if (response[0].length() > 0)
 					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3no longer has access to your homes");
 			});
@@ -78,7 +78,7 @@ public class HomesCommand extends CustomCommand {
 	@Path("allow <home> [player]")
 	void allow(Home home, Player player) {
 		if (player == null)
-			HomesMenu.allow(home, (owner, response) -> {
+			HomesMenu.allow(home, response -> {
 				if (response[0].length() > 0)
 					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3has been granted access to your home &e" + home.getName());
 			});
@@ -92,7 +92,7 @@ public class HomesCommand extends CustomCommand {
 	@Path("remove <home> [player]")
 	void remove(Home home, Player player) {
 		if (player == null)
-			HomesMenu.remove(home, (owner, response) -> {
+			HomesMenu.remove(home, response -> {
 				if (response[0].length() > 0)
 					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3no longer has access to your home &e" + home.getName());
 			});

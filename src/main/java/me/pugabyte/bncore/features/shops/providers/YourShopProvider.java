@@ -35,8 +35,8 @@ public class YourShopProvider extends _ShopProvider {
 
 		contents.set(0, 1, ClickableItem.from(nameItem(Material.ENDER_EYE, "&6Preview your shop"), e -> new PlayerShopProvider(this, shop).open(player)));
 		contents.set(0, 2, ClickableItem.from(nameItem(Material.OAK_SIGN, "&6Set shop description"), e ->
-				BNCore.getSignMenuFactory().lines(shop.getDescriptionArray()).response((_player, response) -> {
-					shop.setDescription(Arrays.asList(response));
+				BNCore.getSignMenuFactory().lines(shop.getDescriptionArray()).response(lines -> {
+					shop.setDescription(Arrays.asList(lines));
 					service.save(shop);
 					open(player);
 				}).open(player)));

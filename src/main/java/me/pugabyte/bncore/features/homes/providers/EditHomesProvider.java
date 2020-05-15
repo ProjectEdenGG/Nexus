@@ -22,11 +22,10 @@ import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	private HomeOwner homeOwner;
-	private HomeService service;
+	private HomeService service = new HomeService();
 
 	public EditHomesProvider(HomeOwner homeOwner) {
 		this.homeOwner = homeOwner;
-		this.service = new HomeService();
 	}
 
 	private void refresh() {
@@ -81,7 +80,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 						.name("&eGrant a player access to all homes")
 						.loreize(false)
 						.lore("&fThey will be able to teleport to||&fyour homes even if they are locked" + getAccessListNames(homeOwner.getFullAccessList())).build(),
-			e -> HomesMenu.allowAll(homeOwner, (owner, response) -> refresh())
+			e -> HomesMenu.allowAll(homeOwner, response -> refresh())
 		));
 
 		contents.set(1, 3, ClickableItem.from(nameItem(
@@ -89,7 +88,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 				"&eRevoke a player's access from all homes",
 				"&fThey will only be able to teleport to your unlocked homes"
 			),
-			e -> HomesMenu.removeAll(homeOwner, (owner, response) -> refresh())
+			e -> HomesMenu.removeAll(homeOwner, response -> refresh())
 		));
 	}
 
