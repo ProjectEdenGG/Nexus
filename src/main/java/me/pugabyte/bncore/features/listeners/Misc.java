@@ -175,7 +175,7 @@ public class Misc implements Listener {
 				break;
 			case SKYBLOCK:
 			case SURVIVAL:
-				Tasks.wait(10, () -> Utils.runConsoleCommand("ptime reset " + player.getName()));
+				Tasks.wait(10, player::resetPlayerTime);
 				if (WorldGroup.get(event.getFrom()).equals(WorldGroup.CREATIVE) || WorldGroup.get(event.getFrom()).equals(WorldGroup.EVENT)) {
 					if (!player.hasPermission("essentials.speed"))
 						Utils.runCommandAsOp(player, "flyspeed 1");
