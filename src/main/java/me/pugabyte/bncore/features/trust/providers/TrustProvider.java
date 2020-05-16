@@ -21,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -73,8 +72,8 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		trust.getAll().stream()
-				.sorted(Comparator.comparing(UUID::toString))
 				.map(Utils::getPlayer)
+				.sorted(Comparator.comparing(OfflinePlayer::getName))
 				.collect(Collectors.toList())
 				.forEach(_player -> {
 					if (filterType.get() != null)
