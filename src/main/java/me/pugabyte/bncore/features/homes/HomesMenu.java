@@ -66,31 +66,6 @@ public class HomesMenu {
 
 	private static final String[] playerNameLines = {"", "^ ^ ^ ^ ^ ^", "Enter a", "player's name"};
 
-	public static void allowAll(HomeOwner homeOwner, Consumer<String[]> onResponse) {
-		signMenuFactory.lines(playerNameLines)
-				.response(lines -> {
-					if (lines[0].length() > 0) {
-						homeOwner.allowAll(Utils.getPlayer(lines[0]));
-						new HomeService().save(homeOwner);
-					}
-					onResponse.accept(lines);
-				})
-				.open(homeOwner.getPlayer());
-
-	}
-
-	public static void removeAll(HomeOwner homeOwner, Consumer<String[]> onResponse) {
-		signMenuFactory.lines(playerNameLines)
-				.response(lines -> {
-					if (lines[0].length() > 0) {
-						homeOwner.removeAll(Utils.getPlayer(lines[0]));
-						new HomeService().save(homeOwner);
-					}
-					onResponse.accept(lines);
-				})
-				.open(homeOwner.getPlayer());
-	}
-
 	public static void allow(Home home, Consumer<String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
 				.response(lines -> {
