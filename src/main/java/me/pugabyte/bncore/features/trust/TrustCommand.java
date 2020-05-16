@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Aliases("allow")
+@Aliases({"trusts", "allow"})
 public class TrustCommand extends CustomCommand {
 	Trust trust;
 	TrustService service = new TrustService();
