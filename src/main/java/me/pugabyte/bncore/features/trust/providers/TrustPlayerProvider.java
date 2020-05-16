@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class TrustPlayerProvider extends MenuUtils implements InventoryProvider {
-	private Trust trust;
-	private OfflinePlayer trusted;
-	private TrustService service = new TrustService();
+	private final Trust trust;
+	private final OfflinePlayer trusted;
+	private final TrustService service = new TrustService();
 
 	public TrustPlayerProvider(Trust trust, OfflinePlayer trusted) {
 		this.trust = trust;

@@ -172,7 +172,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 		if (filters != null)
 			for (Filter filter : filters)
 				if (filter.getFilter() != null)
-					if (!filter.getFilter().apply(product))
+					if (!filter.getFilter().test(product))
 						return true;
 		return false;
 	}

@@ -8,7 +8,7 @@ import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
 import me.pugabyte.bncore.models.shop.Shop.Product;
 import me.pugabyte.bncore.utils.Utils.IteratableEnum;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class ShopMenuFunctions {
 
@@ -16,7 +16,7 @@ public class ShopMenuFunctions {
 	@AllArgsConstructor
 	public static class Filter {
 		private FilterType type;
-		private Function<Product, Boolean> filter;
+		private Predicate<Product> filter;
 		private String message;
 	}
 
@@ -24,7 +24,7 @@ public class ShopMenuFunctions {
 
 		String name();
 
-		default Function<Product, Boolean> getFilter() {
+		default Predicate<Product> getFilter() {
 			return null;
 		}
 
@@ -36,11 +36,11 @@ public class ShopMenuFunctions {
 			return new Filter(this, getFilter(), message);
 		}
 
-		default Filter of(Function<Product, Boolean> filter) {
+		default Filter of(Predicate<Product> filter) {
 			return new Filter(this, filter, null);
 		}
 
-		default Filter of(String message, Function<Product, Boolean> filter) {
+		default Filter of(String message, Predicate<Product> filter) {
 			return new Filter(this, filter, message);
 		}
 	}
@@ -55,11 +55,11 @@ public class ShopMenuFunctions {
 		SELLING(product -> product.getExchangeType() == ExchangeType.BUY);
 
 		@Getter
-		private Function<Product, Boolean> filter;
+		private Predicate<Product> filter;
 
 		FilterExchangeType() {}
 
-		FilterExchangeType(Function<Product, Boolean> filter) {
+		FilterExchangeType(Predicate<Product> filter) {
 			this.filter = filter;
 		}
 	}
@@ -69,11 +69,11 @@ public class ShopMenuFunctions {
 		HIDDEN(product -> product.getShop().getUuid() != BNCore.getUUID0());
 
 		@Getter
-		private Function<Product, Boolean> filter;
+		private Predicate<Product> filter;
 
 		FilterMarketItems() {}
 
-		FilterMarketItems(Function<Product, Boolean> filter) {
+		FilterMarketItems(Predicate<Product> filter) {
 			this.filter = filter;
 		}
 	}
@@ -83,11 +83,11 @@ public class ShopMenuFunctions {
 		HIDDEN(product -> product.getStock() != 0); // TODO check balance?
 
 		@Getter
-		private Function<Product, Boolean> filter;
+		private Predicate<Product> filter;
 
 		FilterEmptyStock() {}
 
-		FilterEmptyStock(Function<Product, Boolean> filter) {
+		FilterEmptyStock(Predicate<Product> filter) {
 			this.filter = filter;
 		}
 	}

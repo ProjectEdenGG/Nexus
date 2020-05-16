@@ -40,7 +40,7 @@ public class HomesMenu {
 	public static void edit(HomeOwner homeOwner, int page) {
 		SmartInventory.builder()
 				.provider(new EditHomesProvider(homeOwner))
-				.size((int) Math.min(6, Math.ceil(Integer.valueOf(homeOwner.getHomes().size()).doubleValue() / 9) + 3), 9)
+				.size((int) Math.min(6, Math.ceil(Integer.valueOf(homeOwner.getHomes().size()).doubleValue() / 9) + 2), 9)
 				.title(StringUtils.colorize("&3Home Editor"))
 				.build()
 				.open(homeOwner.getPlayer(), page);
