@@ -7,9 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,62 +43,6 @@ public class HomesCommand extends CustomCommand {
 			HomesMenu.edit(homeOwner);
 		else
 			HomesMenu.edit(home);
-	}
-
-	@Path("allowAll [player]")
-	void allowAll(Player player) {
-		if (player == null)
-			HomesMenu.allowAll(homeOwner, response -> {
-				if (response[0].length() > 0)
-					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3has been granted access to your homes");
-			});
-		else {
-			homeOwner.allowAll(player);
-			new HomeService().save(homeOwner);
-			send(PREFIX + "&e" + player.getName() + " &3has been granted access to your homes");
-		}
-	}
-
-	@Path("removeAll [player]")
-	void removeAll(Player player) {
-		if (player == null)
-			HomesMenu.removeAll(homeOwner, response -> {
-				if (response[0].length() > 0)
-					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3no longer has access to your homes");
-			});
-		else {
-			homeOwner.removeAll(player);
-			new HomeService().save(homeOwner);
-			send(PREFIX + "&e" + player.getName() + " &3no longer has access to your homes");
-		}
-	}
-
-	@Path("allow <home> [player]")
-	void allow(Home home, Player player) {
-		if (player == null)
-			HomesMenu.allow(home, response -> {
-				if (response[0].length() > 0)
-					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3has been granted access to your home &e" + home.getName());
-			});
-		else {
-			home.allow(player);
-			new HomeService().save(homeOwner);
-			send(PREFIX + "&e" + player.getName() + " &3has been granted access to your home &e" + home.getName());
-		}
-	}
-
-	@Path("remove <home> [player]")
-	void remove(Home home, Player player) {
-		if (player == null)
-			HomesMenu.remove(home, response -> {
-				if (response[0].length() > 0)
-					send(PREFIX + "&e" + Utils.getPlayer(response[0]).getName() + " &3no longer has access to your home &e" + home.getName());
-			});
-		else {
-			homeOwner.removeAll(player);
-			new HomeService().save(homeOwner);
-			send(PREFIX + "&e" + player.getName() + " &3no longer has access to your home &e" + home.getName());
-		}
 	}
 
 	@Path("limit")

@@ -14,6 +14,9 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
+import me.pugabyte.bncore.models.trust.Trust;
+import me.pugabyte.bncore.models.trust.Trust.Type;
+import me.pugabyte.bncore.models.trust.TrustService;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
@@ -70,17 +73,9 @@ public class HomeOwner extends PlayerOwnedObject {
 		return 0;
 	}
 
-	public void allowAll(OfflinePlayer player) {
-		fullAccessList.add(player.getUniqueId());
-	}
-
-	public void removeAll(OfflinePlayer player) {
-		fullAccessList.remove(player.getUniqueId());
-		homes.forEach(home -> home.remove(player));
-	}
-
 	public boolean hasGivenAccessTo(OfflinePlayer player) {
-		return fullAccessList.contains(player.getUniqueId());
+		Trust trust = new TrustService().get(getOfflinePlayer());
+		return trust.get(Type.HOMES).contains(player.getUniqueId());
 	}
 
 	public void add(Home home) {
