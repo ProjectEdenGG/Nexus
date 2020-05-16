@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import me.pugabyte.bncore.features.homes.HomesMenu;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.trust.providers.TrustProvider;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -38,8 +39,8 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 
 		format_SetNewHome(contents);
 		format_AutoLock(contents);
-		format_AllowAndRemoveAll(contents);
 		format_LockAndUnlockAll(contents);
+		format_Trust(contents);
 		format_Homes(contents);
 	}
 
@@ -51,59 +52,51 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		ItemBuilder item = new ItemBuilder(Material.NAME_TAG);
 
 		if (left > 0)
-			item.name("&eSet a new home").lore("&fYou have set &e" + homes + " &fof your &e" + max + " &fhomes||" +
+			item.name("&eSet a new home").lore("&fYou have set &e" + homes + " &fof your &e" + max + " &fhomes", "",
 					"&fYou can set &e" + left + " &fmore");
 		else
-			item.name("&cYou have used all of").lore("&cyour available homes! &3(" + max + ")||&f||" +
+			item.name("&cYou have used all of").lore("&cyour available homes! &3(" + max + ")", "&f",
 					"&fTo set more homes, you will need to either &erank up &for &c/donate");
 
-		contents.set(0, 3, ClickableItem.from(item.build(), e -> HomesMenu.setHome(homeOwner)));
+		contents.set(0, 1, ClickableItem.from(item.build(), e -> HomesMenu.setHome(homeOwner)));
 	}
 
 	public void format_AutoLock(InventoryContents contents) {
 		ItemBuilder item = new ItemBuilder(Material.REDSTONE);
 
 		if (homeOwner.isAutoLock())
-			item.name("&eAuto Lock &f| &aON").lore("Any new homes you set will be automatically locked").glow();
+			item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked").glow();
 		else
-			item.name("&eAuto Lock &f| &cOFF").lore("Any new homes you set will be unlocked");
+			item.name("&eAuto Lock &f| &cOFF").lore("&fAny new homes you set will be unlocked");
 
-		contents.set(0, 5, ClickableItem.from(item.build(), e -> {
+		contents.set(0, 3, ClickableItem.from(item.build(), e -> {
 			homeOwner.setAutoLock(!homeOwner.isAutoLock());
 			service.save(homeOwner);
 			refresh();
 		}));
 	}
 
-	public void format_AllowAndRemoveAll(InventoryContents contents) {
-		contents.set(1, 2, ClickableItem.from(new ItemBuilder(Material.LIME_CONCRETE_POWDER)
-						.name("&eGrant a player access to all homes")
-						.loreize(false)
-						.lore("&fThey will be able to teleport to||&fyour homes even if they are locked" + getAccessListNames(homeOwner.getFullAccessList())).build(),
-			e -> HomesMenu.allowAll(homeOwner, response -> refresh())
-		));
-
-		contents.set(1, 3, ClickableItem.from(nameItem(
-				Material.RED_CONCRETE_POWDER,
-				"&eRevoke a player's access from all homes",
-				"&fThey will only be able to teleport to your unlocked homes"
-			),
-			e -> HomesMenu.removeAll(homeOwner, response -> refresh())
-		));
-	}
-
 	public void format_LockAndUnlockAll(InventoryContents contents) {
-		contents.set(1, 5, ClickableItem.from(nameItem(Material.IRON_BARS, "&eLock all homes"), e -> {
+		contents.set(0, 5, ClickableItem.from(nameItem(Material.IRON_BARS, "&eLock all homes"), e -> {
 			homeOwner.getHomes().forEach(home -> home.setLocked(true));
 			service.save(homeOwner);
 			refresh();
 		}));
 
-		contents.set(1, 6, ClickableItem.from(nameItem(Material.OAK_FENCE_GATE, "&eUnlock all homes"), e -> {
+		contents.set(0, 6, ClickableItem.from(nameItem(Material.OAK_FENCE_GATE, "&eUnlock all homes"), e -> {
 			homeOwner.getHomes().forEach(home -> home.setLocked(false));
 			service.save(homeOwner);
 			refresh();
 		}));
+	}
+
+	public void format_Trust(InventoryContents contents) {
+		contents.set(0, 8, ClickableItem.from(new ItemBuilder(Material.LEVER)
+						.name("&eEdit Trusts")
+						.loreize(false)
+						.lore("&fManage access to||&fall your homes").build(),
+				e -> TrustProvider.open(homeOwner.getPlayer(), this::refresh)
+		));
 	}
 
 	public void format_Homes(InventoryContents contents) {
@@ -123,9 +116,9 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 				item = new ItemBuilder(Material.LIME_CONCRETE);
 
 			if (home.isLocked())
-				item.glow().loreize(false).lore("||&f&cLocked||&f||&eClick to edit" + getAccessListNames(home.getAccessList()));
+				item.glow().loreize(false).lore("", "&f&cLocked", "&f", "&eClick to edit" + getAccessListNames(home.getAccessList()));
 			else
-				item.lore("||&f&aUnlocked||&f||&eClick to edit");
+				item.lore("", "&f&aUnlocked", "&f", "&eClick to edit");
 
 			item.name("&f" + camelCase(home.getName()));
 
@@ -134,8 +127,8 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 
 		Pagination page = contents.pagination();
 		page.setItems(items.toArray(new ClickableItem[0]));
-		page.setItemsPerPage(27);
-		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 3, 0));
+		page.setItemsPerPage(36);
+		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 		if (!page.isFirst())
 			contents.set(2, 0, ClickableItem.from(nameItem(new ItemStack(Material.PAPER, Math.max(page.getPage() - 1, 1)),

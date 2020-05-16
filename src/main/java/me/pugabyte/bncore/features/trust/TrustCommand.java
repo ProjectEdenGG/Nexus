@@ -1,8 +1,10 @@
 package me.pugabyte.bncore.features.trust;
 
 import lombok.NonNull;
+import me.pugabyte.bncore.features.trust.providers.TrustPlayerProvider;
 import me.pugabyte.bncore.features.trust.providers.TrustProvider;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -18,18 +20,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JTrustCommand extends CustomCommand {
+@Aliases("allow")
+public class TrustCommand extends CustomCommand {
 	Trust trust;
 	TrustService service = new TrustService();
 
-	public JTrustCommand(@NonNull CommandEvent event) {
+	public TrustCommand(@NonNull CommandEvent event) {
 		super(event);
 		trust = service.get(player());
 	}
 
 	@Path
-	void menu() {
+	void run() {
 		TrustProvider.open(player());
+	}
+
+	@Path("edit")
+	void edit() {
+		TrustProvider.open(player());
+	}
+
+	@Path("<player>")
+	void menu(OfflinePlayer player) {
+		TrustPlayerProvider.open(player(), player);
 	}
 
 	@Path("lock <players...>")

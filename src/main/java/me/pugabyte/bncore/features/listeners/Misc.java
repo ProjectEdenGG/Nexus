@@ -61,7 +61,7 @@ public class Misc implements Listener {
 			return;
 
 		String msgFormat = Koda.getDmFormat();
-		player.sendMessage(colorize(msgFormat + "Your chest is protected with LWC! Use /lwcinfo to learn more. Use /cmodify <player> to allow someone else to use it."));
+		player.sendMessage(colorize(msgFormat + "Your chest is protected with LWC! Use /lwcinfo to learn more. Use &c/trust lock <player> &fto allow someone else to use it."));
 
 		setting.setBoolean(true);
 		service.save(setting);
@@ -82,7 +82,7 @@ public class Misc implements Listener {
 			return;
 
 		String msgFormat = Koda.getDmFormat();
-		player.sendMessage(colorize(msgFormat + "Your furnace is protected with LWC! Use /lwcinfo to learn more. Use /cmodify <player> to allow someone else to use it."));
+		player.sendMessage(colorize(msgFormat + "Your furnace is protected with LWC! Use /lwcinfo to learn more. Use &c/trust lock <player> &fto allow someone else to use it."));
 
 		setting.setBoolean(true);
 		service.save(setting);

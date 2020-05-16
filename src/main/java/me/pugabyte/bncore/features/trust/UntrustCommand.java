@@ -18,11 +18,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JUntrustCommand extends CustomCommand {
+public class UntrustCommand extends CustomCommand {
 	Trust trust;
 	TrustService service = new TrustService();
 
-	public JUntrustCommand(@NonNull CommandEvent event) {
+	public UntrustCommand(@NonNull CommandEvent event) {
 		super(event);
 		trust = service.get(player());
 	}

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils.IteratableEnum;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class Trust extends PlayerOwnedObject {
 		}};
 	}
 
-	public enum Type {
+	public enum Type implements IteratableEnum {
 		LOCKS(3, Material.CHEST),
 		HOMES(5, Material.CYAN_BED);
 

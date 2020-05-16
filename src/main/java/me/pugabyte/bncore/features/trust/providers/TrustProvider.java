@@ -9,6 +9,7 @@ import fr.minuskube.inv.content.SlotIterator;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.trust.Trust;
+import me.pugabyte.bncore.models.trust.Trust.Type;
 import me.pugabyte.bncore.models.trust.TrustService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
@@ -21,34 +22,53 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class TrustProvider extends MenuUtils implements InventoryProvider {
-	private Trust trust;
-	private TrustService service = new TrustService();
+	private final Trust trust;
+	private final Runnable back;
+	private final TrustService service = new TrustService();
+	private final AtomicReference<Trust.Type> filterType = new AtomicReference<>();
 
-	public TrustProvider(Trust trust) {
+	public TrustProvider(Trust trust, Runnable back) {
 		this.trust = trust;
+		this.back = back;
 	}
 
 	public static void open(Player player) {
 		open(player, 1);
 	}
 
+	public static void open(Player player, Runnable back) {
+		open(player, 1, back, null);
+	}
+
 	public static void open(Player player, int page) {
+		open(player, page, null, null);
+	}
+
+	public static void open(Player player, int page, Runnable back, InventoryProvider provider) {
 		Trust trust = new TrustService().get(player);
 		int rows = (int) Math.min(6, Math.ceil(trust.getAll().size() / 9) + 3);
 		SmartInventory.builder()
-				.provider(new TrustProvider(trust))
+				.provider(provider == null ? new TrustProvider(trust, back) : provider)
 				.size(rows, 9)
 				.title("Trusts")
 				.build()
 				.open(player, page);
 	}
 
+	public void refresh() {
+		open(trust.getPlayer(), 1, back, this);
+	}
+
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addCloseItem(contents);
+		if (back == null)
+			addCloseItem(contents);
+		else
+			addBackItem(contents, e -> back.run());
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -57,6 +77,10 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 				.map(Utils::getPlayer)
 				.collect(Collectors.toList())
 				.forEach(_player -> {
+					if (filterType.get() != null)
+						if (!trust.get(filterType.get()).contains(_player.getUniqueId()))
+							return;
+
 					ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD)
 							.skullOwner(_player)
 							.name("&e" + _player.getName());
@@ -71,6 +95,8 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 							TrustPlayerProvider.open(player, _player)));
 				});
 
+		addPagination(player, contents, items);
+
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
 		contents.set(0, 8, ClickableItem.from(add.build(), e ->
 				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name")
@@ -83,7 +109,22 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 						})
 						.open(player)));
 
-		addPagination(player, contents, items);
+		Trust.Type previous = filterType.get() == null ? Type.values()[0].previousWithLoop() : filterType.get().previous();
+		Trust.Type current = filterType.get();
+		Trust.Type next = filterType.get() == null ? Type.values()[0] : filterType.get().next();
+		if (current == previous) previous = null;
+		if (current == next) next = null;
+
+		ItemBuilder item = new ItemBuilder(Material.HOPPER).name("&6Filter by:")
+				.lore("&7⬇ " + (previous == null ? "All" : previous.camelCase()))
+				.lore("&e⬇ " + (current == null ? "All" : current.camelCase()))
+				.lore("&7⬇ " + (next == null ? "All" : next.camelCase()));
+
+		Trust.Type finalNext = next;
+		contents.set(contents.inventory().getRows() - 1, 4, ClickableItem.from(item.build(), e -> {
+			filterType.set(finalNext);
+			refresh();
+		}));
 	}
 
 	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items) {

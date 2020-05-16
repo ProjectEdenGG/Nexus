@@ -175,6 +175,7 @@ public class BNCore extends JavaPlugin {
 		try { AFK.shutdown();								} catch (Exception ex) { ex.printStackTrace(); }
 		try { Discord.shutdown();							} catch (Exception ex) { ex.printStackTrace(); }
 		try { LiteBans.shutdown();							} catch (Exception ex) { ex.printStackTrace(); }
+		try { TrustFeature.shutdown();						} catch (Exception ex) { ex.printStackTrace(); }
 		try { protocolManager.removePacketListeners(this);	} catch (Exception ex) { ex.printStackTrace(); }
 		try { commands.unregisterAll();						} catch (Exception ex) { ex.printStackTrace(); }
 		try { broadcastReload();							} catch (Exception ex) { ex.printStackTrace(); }
@@ -281,7 +282,7 @@ public class BNCore extends JavaPlugin {
 		new Timer("  RestoreInventory", () -> restoreInventory = new RestoreInventory());
 		new Timer("  Shops", () -> shops = new Shops());
 		new Timer("  Tickets", () -> tickets = new Tickets());
-//		new Timer("  Trust", () -> trust = new TrustFeature());
+		new Timer("  Trust", () -> trust = new TrustFeature());
 		new Timer("  Votes", () -> votes = new Votes());
 		new Timer("  Wiki", () -> wiki = new Wiki());
 

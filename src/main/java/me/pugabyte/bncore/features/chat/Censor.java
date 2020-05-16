@@ -19,10 +19,18 @@ public class Censor {
 		deUnicode(event);
 		Emotes.process(event);
 		dotCommand(event);
+		deprecated(event);
 		lowercase(event);
 		dots(event);
 
 		// TODO: swear count
+	}
+
+	private static void deprecated(ChatEvent event) {
+		String message = event.getMessage();
+		message = message.replaceAll("/cmodify -", "/untrust lock");
+		message = message.replaceAll("/cmodify", "/trust lock");
+		event.setMessage(message);
 	}
 
 	private static void lowercase(ChatEvent event) {

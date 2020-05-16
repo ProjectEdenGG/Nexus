@@ -13,10 +13,10 @@ public class LWCInfoCommand extends CustomCommand {
 	@Path("(cmd|commands)")
 	void cmd() {
 		line();
-		send(json("&3[+] &c/cmodify <playername>").hover("&eGive a player access to a private protection.").suggest("/cmodify "));
-		send(json("&3[+] &c/cmodifyall <playername>").hover("&eModify all your protections").suggest("/cmodifyall "));
-		send(json("&3[+] &c/cmodifynear <radius> <playername>").hover("&eModify all your protections within a radius.").suggest("/cmodifynear "));
-		send(json("&3[+] &c/cmodify &4-&c<playername>").hover("&eRemove a player's access to a protection.").suggest("/cmodify "));
+		send(json("&3[+] &c/trust lock <playername>").hover("&eGive a player access to a private protection.").suggest("/trust lock "));
+		send(json("&3[+] &c/trust locks <playername>").hover("&eModify all your protections").suggest("/trust locks "));
+//		send(json("&3[+] &c/cmodifynear <radius> <playername>").hover("&eModify all your protections within a radius.").suggest("/cmodifynear "));
+		send(json("&3[+] &c/untrust lock <playername>").hover("&eRemove a player's access to a protection.").suggest("/untrust lock "));
 		send(json("&3[+] &c/ccopy").hover("&eCopy one protection's configuration onto another.").suggest("/ccopy"));
 		send(json("&3[+] &c/hopper").hover("&eEnable hoppers on your protection. " +
 				"\n&3(Disabled by default because &3people can use " +
@@ -26,15 +26,12 @@ public class LWCInfoCommand extends CustomCommand {
 				"\n&ewithout having to type them out again. " +
 				"\n&3Useful when allowing a modifying many " +
 				"\n&3protections in the same way.").suggest("/crepeat"));
-		send(json("&3[+] &c/cunlock &c<password>").hover("&eAccess a password protected protection with the password.").suggest("/cunlock "));
 		send(json("&3[+] &c/cremove").hover("&eRemove a protection completely. " +
 				"\n&3You must first run this command to " +
 				"\n&3make any of the following protections.").suggest("/cremove"));
 		send(" &4Note: &eYou must use &c/cremove &ebefore any of the following");
 		send(json("&3[+] &c/cdonation").hover("&eCreates a donation chest. " +
 				"\n&3Players can put items in, but only you can remove them.").suggest("/cdonation"));
-		send(json("&3[+] &c/cpassword &c<password>").hover("&eCreates a password for the protection. " +
-				"\n&3Anyone who knows the password have access to it.").suggest("/cpassword "));
 		send(json("&3[+] &c/cpublic").hover("&eCreates a public protection. " +
 				"\n&3You still own the chest, so no one else " +
 				"\n&3can lock it, but anyone can access it.").suggest("/cpublic"));
