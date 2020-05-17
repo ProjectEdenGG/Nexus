@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.votes;
 
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -21,6 +22,7 @@ import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
+@Aliases("votes")
 public class VoteCommand extends CustomCommand {
 	Voter voter;
 	String PLUS = "&e[+] &3";
