@@ -234,6 +234,7 @@ public class Votes implements Listener {
 				YamlConfiguration config = new YamlConfiguration();
 				activeVotes.forEach(vote -> {
 					OfflinePlayer player = Utils.getPlayer(vote.getUuid());
+					if (player.getName() == null) return;
 					if (!config.isConfigurationSection(player.getName()))
 						config.createSection(player.getName());
 					config.getConfigurationSection(player.getName()).set(vote.getSite().name().toLowerCase(), true);
