@@ -136,8 +136,8 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("actionBar <duration> <message...>")
-	void actionBar(@Arg(" ") String message, int duration, @Arg("true") boolean fade) {
-		Utils.sendActionBar(player(), message, duration, fade);
+	void actionBar(int duration, String message) {
+		Utils.sendActionBar(player(), message, duration);
 	}
 
 	@Permission("group.seniorstaff")
