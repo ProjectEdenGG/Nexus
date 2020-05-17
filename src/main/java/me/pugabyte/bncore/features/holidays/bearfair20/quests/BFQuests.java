@@ -19,6 +19,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,7 +111,12 @@ public class BFQuests implements Listener {
 			Set<Location> locations = new HashSet<>(multiRegenMap.keySet());
 			for (Location loc : locations) {
 				Block block = loc.getBlock();
-				Material material = blockRegenMap.get(loc);
+				Material material = multiRegenMap.get(loc);
+				if (material == null) {
+					multiRegenMap.remove(loc);
+					continue;
+				}
+
 				if (block.getType().equals(material)) {
 					multiRegenMap.remove(loc);
 					continue;
@@ -213,5 +221,46 @@ public class BFQuests implements Listener {
 		event.setRawXpGained(0F);
 		event.setCancelled(true);
 	}
+
+	@EventHandler
+	public void onCraftItem(PrepareItemCraftEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player)) return;
+		Player player = (Player) event.getView().getPlayer();
+		Location loc = player.getLocation();
+		if (!WGUtils.getRegionsAt(loc).contains(mainRegion)) return;
+
+		ItemStack result = event.getInventory().getResult();
+		if (result == null) return;
+
+		ItemStack[] ingredients = event.getInventory().getMatrix();
+
+		// Each item must be a BF20 item, for it to result in a BF20 item
+		boolean questCrafting = true;
+		for (ItemStack ingredient : ingredients) {
+			if (Utils.isNullOrAir(ingredient))
+				continue;
+			ItemMeta meta = ingredient.getItemMeta();
+			if (!meta.hasLore() || meta.getLore() == null) {
+				questCrafting = false;
+				continue;
+			}
+
+			if (!meta.getLore().contains(itemLore))
+				questCrafting = false;
+		}
+
+		if (!questCrafting)
+			return;
+
+		ItemMeta resultMeta = result.getItemMeta();
+		resultMeta.setLore(Collections.singletonList(itemLore));
+		result.setItemMeta(resultMeta);
+		event.getInventory().setResult(result);
+	}
+
+	//TODO:
+	// - on milk cow --> give BF20 milk bucket
+	// - on shear bee nest, if 2 blocks below nest is a campfire, give BF20 honeycomb
+
 
 }

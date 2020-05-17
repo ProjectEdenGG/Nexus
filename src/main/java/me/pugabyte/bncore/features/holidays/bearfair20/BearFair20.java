@@ -11,11 +11,16 @@ import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTakeLecternBookEvent;
+import org.bukkit.inventory.ItemStack;
 
 @Data
 public class BearFair20 implements Listener {
@@ -65,10 +70,32 @@ public class BearFair20 implements Listener {
 
 	}
 
-//	@EventHandler
-//	public void onEnderPearlThrow(){
-//
-//	}
+	@EventHandler
+	public void onThrowEnderPearl(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Location loc = player.getLocation();
+		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
+		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+
+		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+			ItemStack item = player.getInventory().getItemInMainHand();
+			if (!Utils.isNullOrAir(item)) {
+				if (item.getType().equals(Material.ENDER_PEARL)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onLecternTakeBook(PlayerTakeLecternBookEvent event) {
+		Location loc = event.getLectern().getBlock().getLocation();
+		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
+		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+
+		event.setCancelled(true);
+		event.getPlayer().closeInventory();
+	}
 
 
 }
