@@ -1,9 +1,11 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds;
 
+import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
+import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -33,27 +35,32 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static org.bukkit.block.BlockFace.*;
 
-// TODO: Make an objective, tell players about it
-// TODO: make a sound when the laser stops
-// TODO: make a sound when the laser reflects?
 public class Reflection implements Listener {
 
-	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
+	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
 	private String gameRg = BearFair20.mainRg + "_reflection";
 	private String powderRg = gameRg + "_powder";
 	private boolean active = false;
 	private int laserTaskId;
 	private int soundTaskId;
 	private Location laserStart;
+	private Location laserSoundLoc;
 	private List<Location> lampLocList = new ArrayList<>();
 	private Location center = new Location(BearFair20.world, -950, 137, -1689);
 	private List<BlockFace> directions = Arrays.asList(NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST);
+	private String objMsg = "null";
+	private ColorType objColor;
+	private int objReflections;
+	private String prefix = "&8&l[&eReflections&8&l] &f";
 
 	public Reflection() {
 		BNCore.registerListener(this);
 		setLamps();
+		newObjective();
 	}
 
 	private void setLamps() {
@@ -147,24 +154,32 @@ public class Reflection implements Listener {
 		final BlockFace[] blockFace = {NORTH};
 		final Location[] loc = {laserStart.clone()};
 		AtomicReference<Color> laserColor = new AtomicReference<>(Color.RED);
+		AtomicInteger reflections = new AtomicInteger(0);
 		BearFair20.world.playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
 		laserSound();
 
 		laserTaskId = Tasks.repeat(0, 1, () -> {
 			if (active) {
+				laserSoundLoc = loc[0].clone();
 				DotEffect.builder().player(player).location(loc[0].clone()).speed(0.1).ticks(10).color(laserColor.get()).start();
 				Block block = loc[0].getBlock();
 				Material blockType = block.getType();
 
 				double middle = loc[0].getX() - loc[0].getBlockX();
 				if (middle == 0.5 && !blockType.equals(Material.AIR) && cooldown.get() == 0) {
+					boolean broadcast = true;
 					if (blockType.equals(Material.REDSTONE_LAMP)) {
-						BlockData blockData = block.getBlockData();
-						Lightable lightable = (Lightable) blockData;
-						lightable.setLit(true);
-						block.setBlockData(lightable);
-						win();
+						if (checkObjective(reflections.get(), block.getRelative(0, 1, 0).getType())) {
+							BlockData blockData = block.getBlockData();
+							Lightable lightable = (Lightable) blockData;
+							lightable.setLit(true);
+							block.setBlockData(lightable);
+							win();
+							broadcast = false;
+						}
 					}
+					if (broadcast)
+						broadcastObjective();
 					endLaser();
 					return;
 				}
@@ -180,6 +195,8 @@ public class Reflection implements Listener {
 						endLaser();
 						return;
 					}
+					if (!blockFace[0].equals(newFace))
+						reflections.incrementAndGet();
 					blockFace[0] = newFace;
 					cooldown.set(5);
 				}
@@ -260,7 +277,7 @@ public class Reflection implements Listener {
 		soundTaskId = Tasks.repeat(0, Time.SECOND.x(5), () -> {
 			Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
 			for (Player player : players) {
-				player.playSound(center, Sound.BLOCK_BEACON_AMBIENT, 10F, 1F);
+				player.playSound(laserSoundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
 			}
 		});
 	}
@@ -272,7 +289,7 @@ public class Reflection implements Listener {
 		for (Player player : players) {
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 		}
-		BearFair20.world.playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 10F, 1F);
+		BearFair20.world.playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
 		Tasks.wait(Time.SECOND.x(2), () -> active = false);
 	}
 
@@ -282,6 +299,51 @@ public class Reflection implements Listener {
 		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
 		for (Player player : players) {
 			BearFair20.givePoints(player, 1);
+		}
+
+		newObjective();
+		broadcastObjective();
+	}
+
+	private void newObjective() {
+		List<ColorType> colors = Arrays.asList(ColorType.RED, ColorType.ORANGE, ColorType.YELLOW, ColorType.LIGHT_GREEN, ColorType.LIGHT_BLUE, ColorType.CYAN, ColorType.BLUE, ColorType.PURPLE, ColorType.PINK);
+		List<String> mobs = Arrays.asList("Mooshroom", "Fox", "Bee", "Turtle", "Dolphin", "Guardian", "Squid", "Sheep", "Pig");
+		objColor = Utils.getRandomElement(colors);
+		String mob = mobs.get(colors.indexOf(objColor));
+		String color = objColor.getChatColor() + camelCase(objColor.getName());
+
+		objReflections = 0;
+		if (Utils.chanceOf(25))
+			objReflections = Utils.randomInt(4, 7);
+
+		String reflections = "";
+		if (objReflections > 0)
+			reflections = " in " + objReflections + "+ reflections";
+
+		objMsg = "Hit " + color + " " + mob + "&f" + reflections;
+	}
+
+	private boolean checkObjective(int reflectCount, Material material) {
+		boolean reflectBool = true;
+		if (objReflections != 0) {
+			reflectBool = reflectCount >= objReflections;
+		}
+
+		return reflectBool && objColor.equals(ColorType.fromMaterial(material));
+	}
+
+	private void broadcastObjective() {
+		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
+		for (Player player : players) {
+			player.sendMessage(colorize(prefix + objMsg));
+		}
+	}
+
+	@EventHandler
+	public void onRegionEnter(RegionEnteredEvent event) {
+		String regionId = event.getRegion().getId();
+		if (regionId.equalsIgnoreCase(gameRg)) {
+			event.getPlayer().sendMessage(colorize(prefix + objMsg));
 		}
 	}
 }

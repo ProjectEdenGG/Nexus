@@ -27,7 +27,6 @@ import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.RelativeLocation;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -358,8 +357,7 @@ public class MinigamesCommand extends CustomCommand {
 
 	private Sign getTargetSign(Player player) {
 		Block targetBlock = player.getTargetBlockExact(10);
-		Material material = targetBlock.getType();
-		if (Utils.isNullOrAir(material) || !Utils.isSign(material))
+		if (Utils.isNullOrAir(targetBlock) || !Utils.isSign(targetBlock.getType()))
 			error("Look at a sign!");
 		return (Sign) targetBlock.getState();
 	}
