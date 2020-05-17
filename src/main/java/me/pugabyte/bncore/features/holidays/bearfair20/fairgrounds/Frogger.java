@@ -86,9 +86,7 @@ public class Frogger implements Listener {
 			for (int i = 0; i < 4; i++) {
 
 				int ran = Utils.randomInt(2, 3);
-				// wait = log length + 2-3 + ???
 				// 10 = task update interval
-				// (PrevLogLength * 10) + 10 + ((2<->4 * 10) * i)
 				int wait = ((lastLogLen * 10) + 30) + (((Utils.randomInt(1, 3)) * 10) * i);
 //				int wait = (((20 * lastLogLen) + (Utils.randomInt(2, 4) * 10) + 10) * i);
 				lastLogLen = ran;
@@ -297,9 +295,11 @@ public class Frogger implements Listener {
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}
 		} else if (regionId.equalsIgnoreCase(killRg)) {
+			if (player.hasPermission("worldguard.region.bypass.*")) return;
 			player.teleport(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
 		} else if (regionId.equalsIgnoreCase(winRg)) {
+			if (player.hasPermission("worldguard.region.bypass.*")) return;
 			player.teleport(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
 			BearFair20.givePoints(player, 1);
@@ -328,7 +328,7 @@ public class Frogger implements Listener {
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) return;
 
 		event.setDamage(0);
-		player.setFireTicks(0);
+		event.setCancelled(true);
 		player.teleport(respawnLoc);
 		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
 
