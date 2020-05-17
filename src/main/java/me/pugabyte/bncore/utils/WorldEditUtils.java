@@ -106,13 +106,13 @@ public class WorldEditUtils {
 		HORIZONTAL {
 			@Override
 			BlockVector3[] getVectors() {
-				return new BlockVector3[]{ BlockVector3.UNIT_Y, BlockVector3.UNIT_MINUS_Y };
+				return new BlockVector3[]{ BlockVector3.UNIT_X, BlockVector3.UNIT_MINUS_X, BlockVector3.UNIT_Z, BlockVector3.UNIT_MINUS_Z };
 			}
 		},
 		VERTICAL {
 			@Override
 			BlockVector3[] getVectors() {
-				return new BlockVector3[]{ BlockVector3.UNIT_X, BlockVector3.UNIT_MINUS_X, BlockVector3.UNIT_Z, BlockVector3.UNIT_MINUS_Z };
+				return new BlockVector3[]{ BlockVector3.UNIT_Y, BlockVector3.UNIT_MINUS_Y };
 			}
 		},
 		ALL {
