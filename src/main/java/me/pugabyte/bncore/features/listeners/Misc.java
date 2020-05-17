@@ -1,15 +1,19 @@
 package me.pugabyte.bncore.features.listeners;
 
+import com.destroystokyo.paper.ClientOption;
+import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
@@ -32,6 +36,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -86,6 +91,21 @@ public class Misc implements Listener {
 
 		setting.setBoolean(true);
 		service.save(setting);
+	}
+
+	@EventHandler
+	public void onJoinWithChatDisabled(PlayerJoinEvent event) {
+		Tasks.wait(Time.SECOND.x(2), () -> {
+			Player player = event.getPlayer();
+			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
+			BNCore.log("Setting: " + setting.name());
+			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
+				Utils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get());
+				player.sendMessage("");
+				player.sendMessage(colorize("&4&lWARNING: &4You have chat disabled! Turn it on in your settings"));
+				player.sendMessage("");
+			}
+		});
 	}
 
 	@EventHandler
