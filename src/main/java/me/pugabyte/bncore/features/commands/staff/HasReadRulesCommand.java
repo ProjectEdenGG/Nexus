@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.rule.HasReadRules;
 import me.pugabyte.bncore.models.rule.RuleService;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 @Aliases("hrr")
 @Permission("group.moderator")
@@ -23,7 +23,7 @@ public class HasReadRulesCommand extends CustomCommand {
 	String X = "&c✗ ";
 
 	@Path("<player>")
-	void hrr(Player player) {
+	void hrr(OfflinePlayer player) {
 		hasReadRules = service.get(player);
 
 		line();
