@@ -38,8 +38,11 @@ public class Frogger implements Listener {
 	private static String logsRg = gameRg + "_logs";
 	private static String carsRg = gameRg + "_cars";
 	private static String roadRg = gameRg + "_road";
+	private static String checkpointRg = gameRg + "_checkpoint";
 	//
 	private static Location respawnLoc = new Location(BearFair20.world, -856.5, 138.0, -1617.5, -180, 0);
+	private static Location checkpointLoc = new Location(BearFair20.world, -856.5, 138.0, -1630.5, -180, 0);
+	private static List<Player> checkpointList = new ArrayList<>();
 	private static boolean doAnimation = false;
 	private static WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
 	//
@@ -287,6 +290,12 @@ public class Frogger implements Listener {
 				return;
 			doAnimation = true;
 			startAnimations();
+
+		} else if (regionId.equalsIgnoreCase(checkpointRg)) {
+			if (player.spigot().getPing() >= 200) {
+				checkpointList.add(player);
+			}
+
 		} else if (regionId.equalsIgnoreCase(damageRg)) {
 			String cheatingMsg = BearFair20.isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
@@ -294,16 +303,21 @@ public class Frogger implements Listener {
 				player.sendMessage("Don't cheat, turn " + cheatingMsg + " off!");
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}
+
 		} else if (regionId.equalsIgnoreCase(killRg)) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
-			player.teleport(respawnLoc);
+			if (checkpointList.contains(player))
+				player.teleport(checkpointLoc);
+			else
+				player.teleport(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
+
 		} else if (regionId.equalsIgnoreCase(winRg)) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
 			player.teleport(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
 			BearFair20.givePoints(player, 1);
-
+			checkpointList.remove(player);
 		}
 	}
 
@@ -329,9 +343,11 @@ public class Frogger implements Listener {
 
 		event.setDamage(0);
 		event.setCancelled(true);
-		player.teleport(respawnLoc);
+		if (checkpointList.contains(player))
+			player.teleport(checkpointLoc);
+		else
+			player.teleport(respawnLoc);
 		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
-
 	}
 
 }
