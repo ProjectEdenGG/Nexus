@@ -15,7 +15,6 @@ import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
-import static me.pugabyte.bncore.utils.Utils.isSign;
 
 public class ScavHuntLegacy implements Listener {
 	private static final String SCAVHUNT_PREFIX = StringUtils.getPrefix("Scav Hunt Legacy");
@@ -50,7 +49,7 @@ public class ScavHuntLegacy implements Listener {
 	public void onSignClick(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
 		if (block == null) return;
-		if (!isSign(block.getType())) return;
+		if (!MaterialTag.SIGNS.isTagged(block.getType())) return;
 
 		Sign sign = (Sign) block.getState();
 		if ("[Scav Hunt '16]".equals(stripColor(sign.getLine(0)))) {

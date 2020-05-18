@@ -21,6 +21,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -357,7 +358,7 @@ public class MinigamesCommand extends CustomCommand {
 
 	private Sign getTargetSign(Player player) {
 		Block targetBlock = player.getTargetBlockExact(10);
-		if (Utils.isNullOrAir(targetBlock) || !Utils.isSign(targetBlock.getType()))
+		if (Utils.isNullOrAir(targetBlock) || !MaterialTag.SIGNS.isTagged(targetBlock.getType()))
 			error("Look at a sign!");
 		return (Sign) targetBlock.getState();
 	}

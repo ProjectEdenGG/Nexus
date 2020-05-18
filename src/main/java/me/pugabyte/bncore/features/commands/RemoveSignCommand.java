@@ -12,7 +12,6 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.SerializationUtils;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.apache.commons.lang.SerializationException;
 import org.bukkit.Location;
@@ -71,7 +70,7 @@ public class RemoveSignCommand extends CustomCommand implements Listener {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock().getWorld());
 		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
 
-		if (!Utils.isSign(event.getBlock().getType())) {
+		if (!MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
 			if (!event.getPlayer().hasPermission(WorldGuardEditCommand.permission))
 				event.setCancelled(true);
 			return;
@@ -103,7 +102,7 @@ public class RemoveSignCommand extends CustomCommand implements Listener {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock().getWorld());
 		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
 
-		if (Utils.isSign(event.getBlock().getType())) {
+		if (MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
 			// Sign must be placed on concrete
 			if (!MaterialTag.CONCRETES.isTagged(event.getBlockAgainst().getType())) {
 				event.setCancelled(true);
