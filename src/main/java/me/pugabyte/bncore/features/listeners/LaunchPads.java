@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.listeners;
 
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -50,7 +51,7 @@ public class LaunchPads implements Listener {
 		Block belowBelow = below.getRelative(0, -1, 0).getLocation().getBlock();
 		if (Utils.isNullOrAir(belowBelow.getType())) return;
 
-		if (Utils.isSign(belowBelow.getType())) {
+		if (MaterialTag.SIGNS.isTagged(belowBelow.getType())) {
 			Sign sign = (Sign) belowBelow.getState();
 			String[] lines = sign.getLines();
 
