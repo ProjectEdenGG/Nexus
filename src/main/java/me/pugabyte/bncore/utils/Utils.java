@@ -338,18 +338,6 @@ public class Utils {
 		}
 	}
 
-	public static boolean isWater(Material material) {
-		return material.equals(Material.WATER);
-	}
-
-	public static boolean isLava(Material material) {
-		return material.equals(Material.LAVA);
-	}
-
-	public static boolean isSign(Material material) {
-		return MaterialTag.SIGNS.isTagged(material);
-	}
-
 	public static boolean isNullOrAir(Block block) {
 		return block == null || block.getType().equals(Material.AIR);
 	}
@@ -366,9 +354,9 @@ public class Utils {
 		Location location = player.getLocation();
 		Block block = location.getBlock();
 		Location locationBelow = location.subtract(0.0, 1.0, 0.0);
-		if (isWater(block.getType())) {
+		if (Material.WATER.equals(block.getType())) {
 			return true;
-		} else if (block.getType().equals(Material.AIR) && isWater(locationBelow.getBlock().getType())) {
+		} else if (Material.AIR.equals(block.getType()) && Material.WATER.equals(locationBelow.getBlock().getType())) {
 			return true;
 		}
 		return false;
@@ -378,9 +366,9 @@ public class Utils {
 		Location location = entity.getLocation();
 		Block block = location.getBlock();
 		Location locationBelow = location.subtract(0.0, 1.0, 0.0);
-		if (isWater(block.getType())) {
+		if (Material.WATER.equals(block.getType())) {
 			return true;
-		} else if (block.getType().equals(Material.AIR) && isWater(locationBelow.getBlock().getType())) {
+		} else if (Material.AIR.equals(block.getType()) && Material.WATER.equals(locationBelow.getBlock().getType())) {
 			return true;
 		}
 		return false;
@@ -390,9 +378,9 @@ public class Utils {
 		Location location = player.getLocation();
 		Block block = location.getBlock();
 		Location locationBelow = location.subtract(0.0, 1.0, 0.0);
-		if (isLava(block.getType())) {
+		if (Material.LAVA.equals(block.getType())) {
 			return true;
-		} else if (block.getType().equals(Material.AIR) && isLava(locationBelow.getBlock().getType())) {
+		} else if (Material.AIR.equals(block.getType()) && Material.LAVA.equals(locationBelow.getBlock().getType())) {
 			return true;
 		}
 		return false;

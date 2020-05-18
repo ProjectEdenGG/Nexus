@@ -6,7 +6,6 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -31,7 +30,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBuyBanner(PlayerInteractEvent event) {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-		if (event.getClickedBlock() == null || !Utils.isSign(event.getClickedBlock().getType())) return;
+		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		if (!"safepvp".equals(event.getPlayer().getWorld().getName())) return;
 		if (!new WorldGuardUtils(event.getPlayer().getLocation().getWorld()).isInRegion(event.getPlayer().getLocation(), "banners")) return;
 		Block banner = event.getClickedBlock().getLocation().add(0, -1, 0).getBlock();

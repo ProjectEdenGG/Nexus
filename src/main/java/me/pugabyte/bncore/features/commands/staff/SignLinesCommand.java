@@ -4,6 +4,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.block.Block;
@@ -35,7 +36,7 @@ public class SignLinesCommand extends CustomCommand {
 	@Path("[arguments...]")
 	void signLines(String arguments) {
 		Block targetBlock = player().getTargetBlockExact(5);
-		if (Utils.isNullOrAir(targetBlock) || !Utils.isSign(targetBlock.getType())) {
+		if (Utils.isNullOrAir(targetBlock) || !MaterialTag.SIGNS.isTagged(targetBlock.getType())) {
 			usage();
 			return;
 		}

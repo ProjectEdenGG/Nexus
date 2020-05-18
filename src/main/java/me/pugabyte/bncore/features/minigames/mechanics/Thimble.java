@@ -367,9 +367,9 @@ public final class Thimble extends TeamlessMechanic {
 			if (matchData.getTurnPlayer() == null || !matchData.getTurnPlayer().equals(minigamer)) return;
 
 			Location blockLocation = player.getLocation();
-			if (!Utils.isWater(blockLocation.getBlock().getType())) {
+			if (!Material.WATER.equals(blockLocation.getBlock().getType())) {
 				Location locationBelow = blockLocation.subtract(0.0, 1.0, 0.0);
-				if (!Utils.isWater(locationBelow.getBlock().getType())) {
+				if (!Material.WATER.equals(locationBelow.getBlock().getType())) {
 					kill(minigamer);
 					return;
 				}
@@ -504,13 +504,13 @@ public final class Thimble extends TeamlessMechanic {
 			Block block = blockLocation.getBlock();
 
 			// bonus points for adjacent blocks
-			if (!Utils.isWater(block.getRelative(1, 0, 0).getType()))
+			if (!Material.WATER.equals(block.getRelative(1, 0, 0).getType()))
 				points++;
-			if (!Utils.isWater(block.getRelative(0, 0, 1).getType()))
+			if (!Material.WATER.equals(block.getRelative(0, 0, 1).getType()))
 				points++;
-			if (!Utils.isWater(block.getRelative(-1, 0, 0).getType()))
+			if (!Material.WATER.equals(block.getRelative(-1, 0, 0).getType()))
 				points++;
-			if (!Utils.isWater(block.getRelative(0, 0, -1).getType()))
+			if (!Material.WATER.equals(block.getRelative(0, 0, -1).getType()))
 				points++;
 
 			minigamer.scored(points);
