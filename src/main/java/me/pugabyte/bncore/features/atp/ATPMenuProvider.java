@@ -25,27 +25,33 @@ public class ATPMenuProvider extends MenuUtils implements InventoryProvider {
 
 	WarpService service = new WarpService();
 
-	WarpType type = WarpType.ATP;
+	ATPGroup group;
 
-	public ATPMenuProvider(WarpType type) {
-		this.type = type;
+	public ATPMenuProvider(ATPGroup group) {
+		this.group = group;
+	}
+
+	public enum ATPGroup {
+		SURVIVAL,
+		LEGACY,
+		RESOURCE
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
 		contents.set(0, 0, ClickableItem.from(closeItem(), e -> player.closeInventory()));
 
-		if (type.equals(WarpType.LEGACY_ATP)) {
+		if (group.equals(ATPGroup.LEGACY)) {
 			for (Warps.LegacySurvivalWarp warp : Warps.LegacySurvivalWarp.values()) {
 				if (warp.name().equalsIgnoreCase("nether")) continue;
 				contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(warp.getMenuItem(), e -> {
-					Warp toWarp = service.get(warp.name().replace("_", ""), WarpType.LEGACY_ATP);
+					Warp toWarp = service.get("legacy_" + warp.name().replace("_", ""), WarpType.ATP);
 					new AnimalTeleportPens(player).confirm(player, toWarp.getLocation());
 				}));
 			}
 
 			ItemStack newWorld = nameItem(Material.GRASS, "&3Survival", "&eClick to view the||&enew Survival warps");
-			contents.set(3, 7, ClickableItem.from(newWorld, e -> new ATPMenu().open(player)));
+			contents.set(3, 7, ClickableItem.from(newWorld, e -> new ATPMenu().open(player, ATPGroup.SURVIVAL)));
 
 		} else {
 			for (Warps.SurvivalWarp warp : Warps.SurvivalWarp.values()) {
@@ -56,11 +62,11 @@ public class ATPMenuProvider extends MenuUtils implements InventoryProvider {
 				}));
 			}
 
-			ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy World", "&eClick to view the||warps of the legacy world");
-			contents.set(3, 7, ClickableItem.from(legacy, e -> new ATPMenu().openLegacy(player)));
+			ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy World", "&eClick to view the||&ewarps of the legacy world");
+			contents.set(3, 7, ClickableItem.from(legacy, e -> new ATPMenu().open(player, ATPGroup.LEGACY)));
 		}
 
-		contents.set(1, 7, ClickableItem.from(nameItem(Material.OAK_SIGN, "&3Homes", "&eClick to teleport to||&3one of your homes."), e -> {
+		contents.set(1, 7, ClickableItem.from(nameItem(Material.OAK_SIGN, "&3Homes", "&eClick to teleport to||&eone of your homes."), e -> {
 			SmartInventory INV = SmartInventory.builder()
 					.title("ATP Homes")
 					.size(6, 9)
@@ -84,7 +90,7 @@ public class ATPMenuProvider extends MenuUtils implements InventoryProvider {
 		public void init(Player player, InventoryContents contents) {
 			HomeOwner owner = service.get(player.getUniqueId());
 
-			contents.set(0, 0, ClickableItem.from(backItem(), e -> new ATPMenu().open(player)));
+			contents.set(0, 0, ClickableItem.from(backItem(), e -> new ATPMenu().open(player, group)));
 
 			int row = 1;
 			int column = 0;

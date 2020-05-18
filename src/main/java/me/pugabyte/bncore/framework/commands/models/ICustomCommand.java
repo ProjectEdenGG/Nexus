@@ -36,12 +36,14 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.framework.commands.models.PathParser.getLiteralWords;
+import static me.pugabyte.bncore.framework.commands.models.PathParser.getPathString;
 import static me.pugabyte.bncore.utils.StringUtils.listLast;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
@@ -256,8 +258,20 @@ public interface ICustomCommand {
 		return getCommand(newEvent);
 	}
 
-	default Set<Method> getPathMethods() {
-		return getAllMethods(this.getClass(), withAnnotation(Path.class));
+	default List<Method> getPathMethods() {
+		ArrayList<Method> methods = new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
+
+		methods.sort(
+				Comparator.comparing(method ->
+						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
+								.filter(string -> !Strings.isNullOrEmpty(string))
+								.count())
+				.thenComparing(method ->
+						Arrays.stream(getPathString((Method) method).split(" "))
+								.filter(string -> !Strings.isNullOrEmpty(string))
+								.count()));
+
+		return methods;
 	}
 
 	// TODO: Use same methods as tab complete

@@ -59,12 +59,6 @@ public class MinigamesCommand extends CustomCommand {
 		runCommand("warp minigames");
 	}
 
-	@Path("help")
-	@Permission("use")
-	void help() {
-		send(PREFIX + "Help menu");
-	}
-
 	@Path("list [filter]")
 	@Permission("use")
 	void list(String filter) {

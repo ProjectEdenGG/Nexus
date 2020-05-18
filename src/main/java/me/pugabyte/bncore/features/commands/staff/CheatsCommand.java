@@ -17,32 +17,26 @@ public class CheatsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void help() {
-		send("&c/cheats <on|off>");
-	}
+	@Path("<on|off>")
+	void on(Boolean enabled) {
+		if (enabled) {
+			if (player().hasPermission("essentials.gamemode.creative"))
+				player().setGameMode(GameMode.CREATIVE);
+			player().setAllowFlight(true);
+			player().setFlying(true);
+			BNCore.getEssentials().getUser(player().getUniqueId()).setGodModeEnabled(true);
+			runCommand("vanish on");
 
-	@Path("on")
-	void on() {
-		if (player().hasPermission("essentials.gamemode.creative"))
-			player().setGameMode(GameMode.CREATIVE);
-		player().setAllowFlight(true);
-		player().setFlying(true);
-		BNCore.getEssentials().getUser(player().getUniqueId()).setGodModeEnabled(true);
-		runCommand("vanish on");
+			send(PREFIX + "Enabled");
+		} else {
+			runCommand("vanish off");
+			BNCore.getEssentials().getUser(player().getUniqueId()).setGodModeEnabled(false);
+			player().setGameMode(GameMode.SURVIVAL);
+			player().setFallDistance(0);
+			player().setAllowFlight(false);
+			player().setFlying(false);
 
-		send(PREFIX + "Enabled");
-	}
-
-	@Path("off")
-	void off() {
-		runCommand("vanish off");
-		BNCore.getEssentials().getUser(player().getUniqueId()).setGodModeEnabled(false);
-		player().setGameMode(GameMode.SURVIVAL);
-		player().setFallDistance(0);
-		player().setAllowFlight(false);
-		player().setFlying(false);
-
-		send(PREFIX + "Disabled");
+			send(PREFIX + "Disabled");
+		}
 	}
 }

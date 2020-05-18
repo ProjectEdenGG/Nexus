@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.Fallback;
+import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -34,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -420,6 +425,39 @@ public abstract class CustomCommand implements ICustomCommand {
 		if (filter.length() >= 2)
 			return tabCompleteEnum(Material.class, filter);
 		return new ArrayList<>();
+	}
+
+	@Path("help")
+	void help() {
+		List<JsonBuilder> lines = new ArrayList<>();
+		getPathMethods().stream().filter(method -> hasPermission(sender(), method)).forEach(method -> {
+			Path path = method.getAnnotation(Path.class);
+			Description desc = method.getAnnotation(Description.class);
+			HideFromHelp hide = method.getAnnotation(HideFromHelp.class);
+
+			if (hide != null) return;
+			if ("help".equals(path.value()) || "?".equals(path.value())) return;
+
+			String usage = "/" + getAliasUsed().toLowerCase() + " " + (isNullOrEmpty(path.value()) ? "" : path.value());
+			String description = (desc == null ? "" : " &7- " + desc.value());
+			StringBuilder suggestion = new StringBuilder();
+			for (String word : usage.split(" ")) {
+				if (word.startsWith("[") || word.startsWith("<"))
+					break;
+				if (word.startsWith("("))
+					suggestion.append(trimFirst(word.split("\\|")[0]));
+				else
+					suggestion.append(word).append(" ");
+			}
+
+			lines.add(json("&c" + usage + description).suggest(suggestion.toString()));
+		});
+
+		if (lines.size() == 0)
+			error("No usage available");
+
+		send(PREFIX + "Usage:");
+		lines.forEach(this::send);
 	}
 
 }

@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
@@ -86,6 +87,7 @@ public class BNCoreCommand extends CustomCommand {
 		Koda.say(message);
 	}
 
+	@Description("Get the last color used in a string (including formatting)")
 	@Path("getLastColor <message...>")
 	void getLastColor(String message) {
 		send(StringUtils.getLastColor(message) + "Last color");
@@ -106,6 +108,7 @@ public class BNCoreCommand extends CustomCommand {
 		send(player.getName());
 	}
 
+	@Description("Generate an sample exp bar cooldown")
 	@Permission("group.seniorstaff")
 	@Path("expCooldown <cooldown>")
 	void expCooldown(@Arg("20") int cooldown) {
@@ -190,6 +193,7 @@ public class BNCoreCommand extends CustomCommand {
 				.open(player());
 	}
 
+	@Description("A command with a 5.25s cooldown")
 	@Path("cooldown")
 	@Cooldown({
 			@Part(value = Time.SECOND, x = 5),
