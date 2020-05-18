@@ -5,8 +5,11 @@ import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.features.warps.Warps;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.warps.WarpService;
@@ -21,11 +24,16 @@ import org.bukkit.Material;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -48,6 +56,22 @@ public class Misc implements Listener {
 		if (event.getEntity() instanceof AbstractHorse)
 			if (event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION))
 				event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onDamage(EntityDamageEvent event) {
+		if (event.isCancelled()) return;
+		if (!(event.getEntity() instanceof Player)) return;
+
+		if (event.getCause() == DamageCause.VOID)
+			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
+				Warps.spawn((Player) event.getEntity());
+	}
+
+	@EventHandler
+	public void onPlayerDamageByPlayer(PlayerDamageByPlayerEvent event) {
+		if (event.getVictim().getUniqueId().equals(event.getAttacker().getUniqueId()))
+			event.getOriginalEvent().setCancelled(true);
 	}
 
 	@EventHandler
@@ -233,6 +257,55 @@ public class Misc implements Listener {
 
 	public void joinCreative(Player player) {
 		Utils.runCommand(player, "ch join c");
+	}
+
+	public static class PlayerDamageByPlayerEvent extends Event {
+		@NonNull
+		@Getter
+		final Player victim;
+		@NonNull
+		@Getter
+		final Player attacker;
+		@NonNull
+		@Getter
+		final EntityDamageByEntityEvent originalEvent;
+
+		@SneakyThrows
+		public PlayerDamageByPlayerEvent(Player victim, Player attacker, EntityDamageByEntityEvent event) {
+			this.victim = victim;
+			this.attacker = attacker;
+			this.originalEvent = event;
+		}
+
+		private static final HandlerList handlers = new HandlerList();
+
+		public static HandlerList getHandlerList() {
+			return handlers;
+		}
+
+		@Override
+		public HandlerList getHandlers() {
+			return handlers;
+		}
+	}
+
+	@EventHandler
+	public void onPlayerDamage(EntityDamageByEntityEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+
+		Player attacker = null;
+		if (event.getDamager() instanceof Player) {
+			attacker = (Player) event.getDamager();
+		} else if (event.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) event.getDamager();
+			if (projectile.getShooter() instanceof Player)
+				attacker = (Player) projectile.getShooter();
+		}
+
+		if (attacker == null) return;
+
+		PlayerDamageByPlayerEvent newEvent = new PlayerDamageByPlayerEvent((Player) event.getEntity(), attacker, event);
+		Utils.callEvent(newEvent);
 	}
 
 }

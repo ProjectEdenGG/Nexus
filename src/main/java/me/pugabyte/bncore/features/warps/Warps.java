@@ -14,7 +14,7 @@ public class Warps {
 	@Getter
 	private static Location spawn = new WarpService().get("spawn", WarpType.NORMAL).getLocation();
 
-	public void spawn(Player player) {
+	public static void spawn(Player player) {
 		player.teleport(spawn);
 	}
 

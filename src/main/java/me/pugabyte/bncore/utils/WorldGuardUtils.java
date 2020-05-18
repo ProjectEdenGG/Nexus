@@ -8,11 +8,15 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
+import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,13 +39,33 @@ public class WorldGuardUtils {
 	private BukkitWorld bukkitWorld;
 	private World worldEditWorld;
 	private RegionManager manager;
-	public static WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
+	public static final WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
+	public static final SimpleFlagRegistry registry = (SimpleFlagRegistry) WorldGuard.getInstance().getFlagRegistry();
 
 	public WorldGuardUtils(@NonNull org.bukkit.World world) {
 		this.world = world;
 		this.bukkitWorld = new BukkitWorld(world);
 		this.worldEditWorld = bukkitWorld;
 		this.manager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld);
+	}
+
+	public static void registerFlag(StateFlag flag) {
+		if (plugin == null || registry == null) {
+			BNCore.warn("Could not find WorldGuard, aborting registry of flag " + flag.getName());
+			return;
+		}
+
+		try {
+			try {
+				registry.setInitialized(false);
+				registry.register(flag);
+			} catch (FlagConflictException ignore) {
+			} finally {
+				registry.setInitialized(true);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public ProtectedRegion getProtectedRegion(String name) {
