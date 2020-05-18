@@ -9,7 +9,9 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.Fairgrounds;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -20,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -68,8 +71,55 @@ public class Basketball implements Listener {
 	}
 
 	private static void removeBasketball(Player player) {
-		if (hasBasketball(player))
-			player.getInventory().remove(getBasketball(player));
+		PlayerInventory inv = player.getInventory();
+		removeBasketball(inv.getContents(), player);
+		removeBasketball(inv.getExtraContents(), player);
+		removeBasketball(inv.getArmorContents(), player);
+		removeBasketball(inv.getStorageContents(), player);
+		if (!Utils.isNullOrAir(inv.getHelmet()) && isBasketball(inv.getHelmet()))
+			inv.setHelmet(new ItemStack(Material.AIR));
+		if (!Utils.isNullOrAir(inv.getItemInOffHand()) && isBasketball(inv.getItemInOffHand()))
+			inv.setItemInOffHand(new ItemStack(Material.AIR));
+
+	}
+
+	private static void removeBasketball(ItemStack[] itemStacks, Player player) {
+		for (ItemStack item : itemStacks) {
+			if (Utils.isNullOrAir(item))
+				continue;
+			if (isBasketball(item)) {
+				player.getInventory().remove(item);
+			}
+		}
+	}
+
+	private static void removeBasketballEntity(Player player) {
+		Collection<Entity> entities = WGUtils.getEntitiesInRegion(player.getWorld(), gameRg);
+		for (Entity entity : entities) {
+			if (entity instanceof Item) {
+				Item item = (Item) entity;
+				if (!isBasketball(item.getItemStack()))
+					continue;
+				if (ownsBasketball(player, item.getItemStack()))
+					entity.remove();
+			}
+
+		}
+	}
+
+	private static boolean regionContainsBasketball(Player player) {
+		Collection<Entity> entities = WGUtils.getEntitiesInRegion(player.getWorld(), gameRg);
+		for (Entity entity : entities) {
+			if (entity instanceof Item) {
+				Item item = (Item) entity;
+				if (!isBasketball(item.getItemStack()))
+					continue;
+				if (ownsBasketball(player, item.getItemStack())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private static boolean ownsBasketball(Player player, ItemStack item) {
@@ -91,7 +141,7 @@ public class Basketball implements Listener {
 	}
 
 	private static boolean hasBasketball(Player player) {
-		return player.getInventory().contains(getBasketball(player));
+		return player.getInventory().containsAtLeast(getBasketball(player), 1);
 	}
 
 	private static Collection<Entity> getRegionEntities() {
@@ -211,12 +261,14 @@ public class Basketball implements Listener {
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
-		giveBasketball(event.getPlayer());
+		if (!regionContainsBasketball(event.getPlayer()))
+			giveBasketball(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onRegionLeave(RegionLeftEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
 		removeBasketball(event.getPlayer());
+		removeBasketballEntity(event.getPlayer());
 	}
 }
