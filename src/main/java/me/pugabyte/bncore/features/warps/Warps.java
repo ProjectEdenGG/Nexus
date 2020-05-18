@@ -2,8 +2,9 @@ package me.pugabyte.bncore.features.warps;
 
 import lombok.Getter;
 import me.lucko.helper.item.ItemStackBuilder;
+import me.pugabyte.bncore.models.warps.WarpService;
+import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Warps {
 	@Getter
-	private static Location spawn = new Location(Bukkit.getWorld("world"), -1.5, 156.0, -19.5, 90.0F, 0.0F);
+	private static Location spawn = new WarpService().get("spawn", WarpType.NORMAL).getLocation();
 
 	public void spawn(Player player) {
 		player.teleport(spawn);
