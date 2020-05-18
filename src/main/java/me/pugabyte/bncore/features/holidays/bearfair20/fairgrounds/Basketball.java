@@ -37,8 +37,8 @@ public class Basketball implements Listener {
 	private static ItemStack basketballItem = Fairgrounds.BearFairKit.BASKETBALL.getItem();
 	private static Map<UUID, ItemStack> basketballs = new HashMap<>();
 	private static World world = BearFair20.world;
-	private static String gameRg = BearFair20.mainRg + "_basketball";
-	private static String courtRg = gameRg + "_court";
+	public static String gameRg = BearFair20.mainRg + "_basketball";
+	public static String courtRg = gameRg + "_court";
 	private static String stuckRg = gameRg + "_stuck_";
 	private static String backboardRg = gameRg + "_backboard_";
 	private static String hoopRg = gameRg + "_hoop_";
