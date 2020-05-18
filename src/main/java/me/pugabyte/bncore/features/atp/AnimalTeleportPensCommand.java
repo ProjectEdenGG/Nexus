@@ -85,6 +85,10 @@ public class AnimalTeleportPensCommand extends CustomCommand {
 	void menu() {
 		if (!isInATP())
 			error("You are not in an ATP region.");
+		if (player().getVehicle() != null) {
+			send(PREFIX + "You cannot be riding a mount while using an ATP");
+			player().leaveVehicle();
+		}
 		if (player().getWorld().getName().equalsIgnoreCase("world"))
 			new ATPMenu().openLegacy(player());
 		else
