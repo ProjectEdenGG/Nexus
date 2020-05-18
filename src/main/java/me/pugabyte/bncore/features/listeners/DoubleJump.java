@@ -1,11 +1,13 @@
 package me.pugabyte.bncore.features.listeners;
 
-import me.pugabyte.bncore.framework.annotations.Disabled;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Basketball;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,16 +15,27 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-//TODO is it possible to use paper's jumpEvent instead of toggle fly?
-@Disabled
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+
 public class DoubleJump implements Listener {
-	static final int COOLDOWN = 10 * 20;
+	static final int COOLDOWN = 0;
 	static final double VELOCITY = 1;
 
 	@EventHandler
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
 		Player player = event.getPlayer();
-		if (!canDoubleJump(player)) return;
+
+		if (!canDoubleJump(player)) {
+			// Bear Fair Specific
+			Location loc = player.getLocation();
+			ProtectedRegion region = WGUtils.getProtectedRegion(Basketball.courtRg);
+			if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+			event.setCancelled(true);
+			player.setFlying(false);
+			player.setAllowFlight(false);
+			//
+			return;
+		}
 
 		event.setCancelled(true);
 		player.setAllowFlight(false);
@@ -33,8 +46,19 @@ public class DoubleJump implements Listener {
 		AtomicInteger repeat = new AtomicInteger(-1);
 		repeat.set(Tasks.repeat(10, 2, () -> {
 			if (player.isOnGround()) {
-				player.setAllowFlight(true);
+
+				// Only enable fly if you're still in the double jump region
+				Location loc = player.getLocation();
+				ProtectedRegion region = WGUtils.getProtectedRegion(Basketball.courtRg);
+				if (WGUtils.getRegionsAt(loc).contains(region)) {
+					player.setAllowFlight(true);
+				}
+				//
+
 				Tasks.cancel(repeat.get());
+			} else {
+				player.setAllowFlight(false);
+				player.setFlying(false);
 			}
 		}));
 	}
@@ -48,6 +72,9 @@ public class DoubleJump implements Listener {
 		} catch (CooldownException ex) {
 			return false;
 		}
+
+		if (!player.getAllowFlight())
+			return false;
 
 //		if (player.hasPermission("double.jump"))
 //			return true;
