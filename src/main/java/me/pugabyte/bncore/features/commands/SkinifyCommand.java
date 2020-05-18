@@ -5,7 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 @Aliases("skinifier")
 public class SkinifyCommand extends CustomCommand {
@@ -15,7 +15,7 @@ public class SkinifyCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	void skin(@Arg("self") Player player) {
+	void skin(@Arg("self") OfflinePlayer player) {
 		send(json("&eClick here &3to Bear Nation-ify your skin!").url("http://bnn.gg/skins/?uuid=" + player.getUniqueId()));
 	}
 }
