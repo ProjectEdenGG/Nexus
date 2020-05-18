@@ -33,14 +33,6 @@ public class PodiumsCommand extends CustomCommand {
 				BNCore.getInstance().addConfigDefault("minigames.podiums." + position.name().toLowerCase(), 0));
 	}
 
-	@Path("help")
-	void help() {
-		send("&c/podiums (left|right|middle) <player> <title...>");
-		send("&c/podiums (tp|s) <position>");
-		send("&c/podiums getId[s] [position]");
-		send("&c/podiums setId <position> <id>");
-	}
-
 	@Path("<position> <player> <title...>")
 	void update(Position position, OfflinePlayer player, String title) {
 		CitizensUtils.updateNameAndSkin(getNpc(position), "&l" + player.getName());

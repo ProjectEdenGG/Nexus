@@ -9,34 +9,34 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
 @NoArgsConstructor
 public class AnimalTeleportPens {
+	String PREFIX = StringUtils.getPrefix("ATP");
+	Player player;
+	WorldGuardUtils WGUtils;
 
 	public AnimalTeleportPens(Player player) {
 		this.player = player;
 		WGUtils = new WorldGuardUtils(player.getWorld());
 	}
 
-	String PREFIX = StringUtils.getPrefix("ATP");
-	Player player;
-	WorldGuardUtils WGUtils;
-
-	public boolean multiplePlayers(ProtectedRegion region) {
-		int size = WGUtils.getPlayersInRegion(region.getId()).size();
+	public boolean multiplePlayers() {
+		int size = WGUtils.getPlayersInRegion(getRegion(player).getId()).size();
 		if (size > 1) return true;
 		return false;
 	}
 
-	public List<Entity> getEntities(World world, ProtectedRegion region) {
+	public List<Entity> getEntities() {
 		List<Entity> finalEntities = new ArrayList<>();
-		for (Entity entity : WGUtils.getEntitiesInRegion(world, region.getId())) {
+		for (Entity entity : WGUtils.getEntitiesInRegion(player.getWorld(), getRegion(player).getId())) {
 			if (CitizensAPI.getNPCRegistry().isNPC(entity)) continue;
 			switch (entity.getType()) {
 				case BEE:
@@ -114,30 +114,33 @@ public class AnimalTeleportPens {
 			player.sendMessage(PREFIX + "You are not inside an ATP region");
 			return;
 		}
-		if (multiplePlayers(region)) {
+		if (multiplePlayers()) {
 			player.closeInventory();
-			player.sendMessage(PREFIX + StringUtils.colorize("&cDetected multiple players. Cancelling."));
+			player.sendMessage(PREFIX + colorize("&cDetected multiple players. Cancelling."));
 			return;
 		}
-		List<Entity> entities = getEntities(player.getWorld(), region);
+		List<Entity> entities = getEntities();
+		if (entities.size() == 0) {
+			player.sendMessage(PREFIX + "&cThere are no entities to teleport");
+			return;
+		}
 		int price = getPrice(entities);
 		double balance = BNCore.getEcon().getBalance(player);
 		if (balance < price) {
-			player.sendMessage(PREFIX + "&eYou do not have enough money to use the ATP.");
+			player.sendMessage(PREFIX + "&cYou do not have enough money to use the ATP");
 			return;
 		}
-		MenuUtils.confirmMenu(player, MenuUtils.ConfirmationMenu.builder().title(StringUtils.colorize("&3Teleport &e" +
-				entities.size() + " &3entities for &e$" + price + "&3?")).onConfirm((e2) -> {
-			Tasks.wait(4, () -> teleportAll(player, entities, toLoc, price));
-		}).build());
+		MenuUtils.confirmMenu(player, MenuUtils.ConfirmationMenu.builder().title(
+				colorize("&3Teleport &e" + entities.size() + " &3entities for &e$" + price + "&3?")).onConfirm((e2) ->
+						Tasks.wait(4, () -> teleportAll(entities, toLoc, price))).build());
 	}
 
-	public void teleportAll(Player player, List<Entity> entities, Location toLoc, int price) {
+	public void teleportAll(List<Entity> entities, Location toLoc, int price) {
 		if (entities.size() > 0) {
 			entities.get(0).teleport(toLoc);
 			Tasks.wait(1, () -> {
 				entities.remove(0);
-				teleportAll(player, entities, toLoc, price);
+				teleportAll(entities, toLoc, price);
 			});
 		}
 		Tasks.wait(4, () -> {

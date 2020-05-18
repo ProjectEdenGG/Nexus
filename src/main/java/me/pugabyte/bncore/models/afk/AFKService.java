@@ -4,12 +4,12 @@ import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.models.MySQLService;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class AFKService extends MySQLService {
 
@@ -27,9 +27,11 @@ public class AFKService extends MySQLService {
 			database.table("afk").delete();
 			Map<Player, AFKPlayer> players = new HashMap<>();
 			for (AFKPlayer afkPlayer : results) {
-				Player player = Bukkit.getPlayer(UUID.fromString(afkPlayer.getUuid()));
-				afkPlayer.setPlayer(player);
-				players.put(player, afkPlayer);
+				OfflinePlayer player = Utils.getPlayer(afkPlayer.getUuid());
+				if (player.isOnline()) {
+					afkPlayer.setPlayer(player.getPlayer());
+					players.put(player.getPlayer(), afkPlayer);
+				}
 			}
 			return players;
 		} catch (Exception ex) {

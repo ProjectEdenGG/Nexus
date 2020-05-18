@@ -3,6 +3,7 @@ package me.pugabyte.bncore.framework.commands.models.events;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
@@ -59,9 +60,13 @@ public class CommandEvent extends Event implements Cancellable {
 
 	public void setUsage(Method method) {
 		this.method = method;
-		Path annotation = method.getAnnotation(Path.class);
-		if (annotation != null)
-			this.usage = annotation.value();
+		Path path = method.getAnnotation(Path.class);
+		if (path != null) {
+			this.usage = path.value();
+			Description desc = method.getAnnotation(Description.class);
+			if (desc != null)
+				this.usage += " &7- " + desc.value();
+		}
 	}
 
 	public String getUsageMessage() {

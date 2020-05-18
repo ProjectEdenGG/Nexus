@@ -6,7 +6,6 @@ import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import lombok.SneakyThrows;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
@@ -95,10 +94,9 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onJoinWithChatDisabled(PlayerJoinEvent event) {
-		Tasks.wait(Time.SECOND.x(2), () -> {
+		Tasks.wait(Time.SECOND.x(3), () -> {
 			Player player = event.getPlayer();
 			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
-			BNCore.log("Setting: " + setting.name());
 			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
 				Utils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get());
 				player.sendMessage("");

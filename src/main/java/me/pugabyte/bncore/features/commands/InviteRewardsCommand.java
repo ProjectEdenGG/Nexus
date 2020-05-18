@@ -28,12 +28,7 @@ public class InviteRewardsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void help() {
-		send(PREFIX + "Correct usage: &c/invited <username>");
-	}
-
-	@Path("<invited>")
+	@Path("<username>")
 	void send(Player invited) {
 		Player inviter = player();
 		if (inviter.equals(invited))

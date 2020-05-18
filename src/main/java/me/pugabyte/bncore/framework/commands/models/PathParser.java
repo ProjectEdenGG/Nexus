@@ -22,7 +22,6 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,18 +39,7 @@ class PathParser {
 	public PathParser(@NonNull CommandEvent event) {
 		this.event = event;
 		this.command = event.getCommand();
-		this.methods = new ArrayList<>(command.getPathMethods());
-
-		// Sort by most specific first
-		methods.sort(
-				Comparator.comparing(method ->
-						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
-								.filter(string -> !Strings.isNullOrEmpty(string))
-								.count())
-				.thenComparing(method ->
-						Arrays.stream(getPathString((Method) method).split(" "))
-								.filter(string -> !Strings.isNullOrEmpty(string))
-								.count()));
+		this.methods = command.getPathMethods();
 		Collections.reverse(methods);
 	}
 
@@ -282,11 +270,11 @@ class PathParser {
 		return fallback;
 	}
 
-	private String getPathString(Method method) {
+	protected static String getPathString(Method method) {
 		return method.getAnnotation(Path.class).value().toLowerCase();
 	}
 
-	private String getLiteralWords(String path) {
+	protected static String getLiteralWords(String path) {
 		String[] pathArgs = path.split(" ");
 
 		String literalWords = "";
@@ -304,7 +292,7 @@ class PathParser {
 		return literalWords;
 	}
 
-	private int getRequiredArgs(String path) {
+	protected static int getRequiredArgs(String path) {
 		String[] pathArgs = path.split(" ");
 
 		int requiredArgs = 0;

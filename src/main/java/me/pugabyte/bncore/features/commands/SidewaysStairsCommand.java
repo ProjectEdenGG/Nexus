@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.BlockUtils;
@@ -48,32 +49,24 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		swsPlayer = playerData.get(player());
 	}
 
-	@Path
-	void help() {
-		send(PREFIX + "Commands:");
-		send("&c/sws toggle &7- Turn SWS on or off");
-		send("&c/sws set <north|south|east|west> &7- Set the direction of the stairs to be placed.");
-		send("&c/sws setupsidedown <true|false> &7- Toggle upsidedown stairs in set placement mode.");
-		send("&c/sws rotate &7- Rotate the stair angle.");
-		send("&c/sws copy &7- Copy the angle of an existing stair.");
-		send("&c/sws upsidedown [true|false] &7- Toggle whether stairs can be placed upsidedown or not.");
-	}
-
+	@Description("Toggle SWS")
 	@Path("toggle")
 	void toggle() {
 		toggle(!swsPlayer.isEnabled());
 	}
 
+	@Description("Turn SWS on or off")
 	@Path("<true|false>")
 	void toggle(boolean enable) {
 		swsPlayer.setEnabled(enable);
 		send(PREFIX + (swsPlayer.isEnabled() ? "Enabled" : "Disabled"));
 	}
 
+	@Description("Set the direction of the stairs to be placed")
 	@Path("(set|angle|setangle) <north|south|east|west>")
 	void setAngle(String angle) {
-		if (angle == null)
-			send(PREFIX + "/sws angle <north/south/east/west> -&7 Set the angle to place stair blocks.");
+		if (isNullOrEmpty(angle))
+			showUsage();
 		else if (validAngles.contains(angle.toLowerCase())) {
 			swsPlayer.setEnabled(true);
 			swsPlayer.setAction(SwsAction.SET_ANGLE);
@@ -83,7 +76,16 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 			send(PREFIX + "Invalid angle. Angle must be North, South, East, or West");
 	}
 
-	@Path("(setupsidedown) [true/false]")
+	@Description("Copy the angle of an existing stair")
+	@Path("copy")
+	void copy() {
+		swsPlayer.setEnabled(true);
+		swsPlayer.setAction(SwsAction.COPY);
+		send(PREFIX + "Right click a stair block to copy its angle.");
+	}
+
+	@Description("Toggle upsidedown stairs in set placement mode")
+	@Path("setupsidedown [true/false]")
 	void setUpsidedown(Boolean value){
 		if (value == null)
 			setUpsidedown(!swsPlayer.getHalf().equals("top"));
@@ -95,13 +97,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("copy")
-	void copy() {
-		swsPlayer.setEnabled(true);
-		swsPlayer.setAction(SwsAction.COPY);
-		send(PREFIX + "Right click a stair block to copy its angle.");
-	}
-
+	@Description("Rotate the stair angle")
 	@Path("rotate")
 	void rotate() {
 		swsPlayer.setEnabled(true);
@@ -116,17 +112,14 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		send(PREFIX + String.format("Angle changed to %s.", swsPlayer.getDirection()));
 	}
 
-	@Path("upsideDown")
-	void upsideDown() {
-		swsPlayer.setEnabled(true);
-		upsideDown(swsPlayer.getAction() == SwsAction.DISABLE_UPSIDEDOWN_PLACEMENT);
-	}
-
-	@Path("upsideDown <true|false>")
-	void upsideDown(boolean allow) {
+	@Description("Toggle whether stairs can be placed upsidedown or not")
+	@Path("upsideDown [true|false]")
+	void upsideDown(Boolean allow) {
+		if (allow == null)
+			allow = swsPlayer.getAction() == SwsAction.DISABLE_UPSIDEDOWN_PLACEMENT;
 		swsPlayer.setEnabled(true);
 		swsPlayer.setAction(allow ? SwsAction.NONE : SwsAction.DISABLE_UPSIDEDOWN_PLACEMENT);
-		send(PREFIX + String.format("Upsidedown stair placement  %s.",  allow ? "enabled" : "disabled"));
+		send(PREFIX + "Upsidedown stair placement " + (allow ? "&aenabled" : "&cdisabled"));
 	}
 
 	@EventHandler

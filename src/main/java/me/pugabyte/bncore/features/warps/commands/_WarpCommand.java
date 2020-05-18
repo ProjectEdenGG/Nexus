@@ -26,7 +26,7 @@ public abstract class _WarpCommand extends CustomCommand {
 
 	public abstract WarpType getWarpType();
 
-	@Path("list [filter]")
+	@Path("(list|warps) [filter]")
 	@Permission("group.staff")
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		List<String> warps = tabCompleteWarp(filter);
@@ -65,7 +65,7 @@ public abstract class _WarpCommand extends CustomCommand {
 		send(PREFIX + "Successfully deleted warp &e" + warp.getName());
 	}
 
-	@Path("(teleport|tp) <name>")
+	@Path("(teleport|tp|warp) <name>")
 	public void teleport(Warp warp) {
 		warp.teleport(player());
 		send(PREFIX + "&3Warping to &e" + warp.getName());

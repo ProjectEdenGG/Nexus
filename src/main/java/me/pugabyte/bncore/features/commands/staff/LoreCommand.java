@@ -19,14 +19,6 @@ public class LoreCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void help() {
-		send("&4Correct Usage:");
-		send("&c/lore set <line> <text>");
-		send("&c/lore add <text>");
-		send("&c/lore remove <line>");
-	}
-
 	@Path("set <line> <text...>")
 	void setLore(int line, String text) {
 		ItemStack tool = getTool(player());
