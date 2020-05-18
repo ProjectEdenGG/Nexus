@@ -18,7 +18,6 @@ import java.util.Arrays;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
-import static me.pugabyte.bncore.utils.Utils.isSign;
 
 public class ShopDisabler implements Listener {
 
@@ -28,7 +27,7 @@ public class ShopDisabler implements Listener {
 
 	public boolean isShopSign(Block block) {
 		if (block == null) return false;
-		if (!isSign(block.getType())) return false;
+		if (!MaterialTag.SIGNS.isTagged(block.getType())) return false;
 
 		Sign sign = (Sign) block.getState();
 		return Arrays.asList("[Trade]", "[Arrow Trade]", "[Potion Trade]", "[Ench Trade]").contains(stripColor(sign.getLine(0)));
