@@ -261,6 +261,4 @@ public class BFQuests implements Listener {
 	//TODO:
 	// - on milk cow --> give BF20 milk bucket
 	// - on shear bee nest, if 2 blocks below nest is a campfire, give BF20 honeycomb
-
-
 }
