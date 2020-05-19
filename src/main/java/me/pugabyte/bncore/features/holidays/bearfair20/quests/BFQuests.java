@@ -5,13 +5,13 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,13 +35,14 @@ import java.util.Map;
 import java.util.Set;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class BFQuests implements Listener {
 	private ProtectedRegion mainRegion = WGUtils.getProtectedRegion(BearFair20.mainRg);
 	private List<Material> breakList = Arrays.asList(Material.WHEAT, Material.POTATOES, Material.CARROTS,
 			Material.BEETROOTS, Material.MELON, Material.PUMPKIN, Material.SUGAR_CANE, Material.COCOA);
 	private List<Material> noAge = Collections.singletonList(Material.SUGAR_CANE);
-	private String itemLore = "BearFair20 Item";
+	public static String itemLore = "BearFair20 Item";
 	// Data
 	private Map<Location, Material> multiRegenMap = new HashMap<>();
 	private Map<Location, Material> blockRegenMap = new HashMap<>();
@@ -51,11 +53,13 @@ public class BFQuests implements Listener {
 	private String notFullyGrown = prefix + "&c&lHey! &7That's not fully grown";
 	private String bottomBlock = prefix + "&c&lHey! &7You can't break the bottom block";
 	private String decor = prefix + "&c&lHey! &7This block is just decoration";
+	private String craftItem = prefix + "&c&lHey! &7You can only craft that item with BearFair20 items!";
 
 	public BFQuests() {
 		BNCore.registerListener(this);
 		regenTasks();
 		new Beehive();
+		Recipes.loadRecipes();
 	}
 
 	private void regenTasks() {
@@ -144,7 +148,7 @@ public class BFQuests implements Listener {
 		if (!WGUtils.getRegionsAt(block.getLocation()).contains(mainRegion)) return;
 		if (!breakList.contains(block.getType())) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
-			player.sendMessage(StringUtils.colorize(cantBreak));
+			player.sendMessage(colorize(cantBreak));
 			event.setCancelled(true);
 			return;
 		}
@@ -161,7 +165,7 @@ public class BFQuests implements Listener {
 				case MELON:
 				case PUMPKIN:
 					if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
-						player.sendMessage(StringUtils.colorize(decor));
+						player.sendMessage(colorize(decor));
 						event.setCancelled(true);
 						return;
 					}
@@ -169,7 +173,7 @@ public class BFQuests implements Listener {
 					break;
 				case SUGAR_CANE:
 					if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
-						player.sendMessage(StringUtils.colorize(bottomBlock));
+						player.sendMessage(colorize(bottomBlock));
 						event.setCancelled(true);
 						return;
 					}
@@ -185,7 +189,8 @@ public class BFQuests implements Listener {
 					break;
 				default:
 					if (player.hasPermission("worldguard.region.bypass.*")) return;
-					player.sendMessage(StringUtils.colorize(cantBreak));
+					player.sendMessage(colorize(cantBreak));
+					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 					event.setCancelled(true);
 			}
 			return;
@@ -193,7 +198,7 @@ public class BFQuests implements Listener {
 
 		Ageable ageable = (Ageable) blockData;
 		if (ageable.getAge() != ageable.getMaximumAge()) {
-			player.sendMessage(StringUtils.colorize(notFullyGrown));
+			player.sendMessage(colorize(notFullyGrown));
 			event.setCancelled(true);
 			return;
 		}
@@ -224,16 +229,46 @@ public class BFQuests implements Listener {
 	}
 
 	@EventHandler
-	public void onCraftItem(PrepareItemCraftEvent event) {
+	public void onCraftItem(CraftItemEvent event) {
 		if (!(event.getView().getPlayer() instanceof Player)) return;
 		Player player = (Player) event.getView().getPlayer();
 		Location loc = player.getLocation();
 		if (!WGUtils.getRegionsAt(loc).contains(mainRegion)) return;
 
 		ItemStack result = event.getInventory().getResult();
-		if (result == null) return;
+		ItemStack[] ingredients = event.getInventory().getMatrix();
+
+		boolean questCrafting = true;
+		for (ItemStack ingredient : ingredients) {
+			if (Utils.isNullOrAir(ingredient))
+				continue;
+			ItemMeta meta = ingredient.getItemMeta();
+			if (!meta.hasLore() || meta.getLore() == null) {
+				questCrafting = false;
+				continue;
+			}
+
+			if (!meta.getLore().contains(itemLore))
+				questCrafting = false;
+		}
+
+		if (!questCrafting) {
+			if (result != null && result.getItemMeta().getLore() != null && result.getItemMeta().getLore().contains(itemLore)) {
+				event.getInventory().setResult(new ItemStack(Material.AIR));
+				player.sendMessage(colorize(craftItem));
+			}
+		}
+	}
+
+	@EventHandler
+	public void onPrepareCraftItem(PrepareItemCraftEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player)) return;
+		Player player = (Player) event.getView().getPlayer();
+		Location loc = player.getLocation();
+		if (!WGUtils.getRegionsAt(loc).contains(mainRegion)) return;
 
 		ItemStack[] ingredients = event.getInventory().getMatrix();
+		ItemStack result = event.getInventory().getResult();
 
 		// Each item must be a BF20 item, for it to result in a BF20 item
 		boolean questCrafting = true;
@@ -253,6 +288,12 @@ public class BFQuests implements Listener {
 		if (!questCrafting)
 			return;
 
+		if (result == null) {
+			result = Recipes.getRecipe(Arrays.asList(ingredients));
+			if (result == null)
+				return;
+		}
+
 		ItemMeta resultMeta = result.getItemMeta();
 		resultMeta.setLore(Collections.singletonList(itemLore));
 		result.setItemMeta(resultMeta);
@@ -269,6 +310,6 @@ public class BFQuests implements Listener {
 	}
 
 	//TODO:
-	// - on milk cow --> give BF20 milk bucket
+	// - on milk cow --> give BF20 milk bucket, ignore if bucket is bf20 or not
 	// - on shear bee nest, if 2 blocks below nest is a campfire, give BF20 honeycomb
 }

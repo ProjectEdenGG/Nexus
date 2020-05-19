@@ -80,6 +80,12 @@ public class Merchants {
 				return new ArrayList<>();
 			}
 		},
+		MINER(2743) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
+			}
+		},
 		PASTRY_CHEF(2654) {
 			@Override
 			List<TradeBuilder> getTrades() {
