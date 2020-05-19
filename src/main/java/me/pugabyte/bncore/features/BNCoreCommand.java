@@ -221,6 +221,6 @@ public class BNCoreCommand extends CustomCommand {
 	@ConverterFor(LocalDate.class)
 	LocalDate convertToLocalDate(String value) {
 		try { return parseShortDate(value); } catch (Exception ignore) {}
-		throw new InvalidInputException("Could not parse date");
+		throw new InvalidInputException("Could not parse date, correct format is MM/DD/YYYY");
 	}
 }
