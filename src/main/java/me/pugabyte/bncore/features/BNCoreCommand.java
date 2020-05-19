@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
 
 @Permission("group.seniorstaff")
@@ -73,7 +74,6 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("taskTest <message...>")
-	@Permission("group.seniorstaff")
 	void taskTest(String message) {
 		new TaskService().save(new Task("command-test", new HashMap<String, Object>() {{
 			put("uuid", player().getUniqueId().toString());
@@ -82,7 +82,6 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("koda <message...>")
-	@Permission("group.seniorstaff")
 	void koda(String message) {
 		Koda.say(message);
 	}
@@ -109,7 +108,6 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Description("Generate an sample exp bar cooldown")
-	@Permission("group.seniorstaff")
 	@Path("expCooldown <cooldown>")
 	void expCooldown(@Arg("20") int cooldown) {
 		Tasks.Countdown.builder()
@@ -120,19 +118,16 @@ public class BNCoreCommand extends CustomCommand {
 				.start();
 	}
 
-	@Permission("group.seniorstaff")
 	@Path("setExp <number>")
 	void setExp(float exp) {
 		player().setExp(exp);
 	}
 
-	@Permission("group.seniorstaff")
 	@Path("setTotalExperience <number>")
 	void setTotalExperience(int exp) {
 		player().setTotalExperience(exp);
 	}
 
-	@Permission("group.seniorstaff")
 	@Path("setLevel <number>")
 	void setLevel(int exp) {
 		player().setLevel(exp);
@@ -143,7 +138,6 @@ public class BNCoreCommand extends CustomCommand {
 		Utils.sendActionBar(player(), message, duration);
 	}
 
-	@Permission("group.seniorstaff")
 	@Path("setting <type> [value]")
 	void setting(String type, String value) {
 		if (!isNullOrEmpty(value))
@@ -160,14 +154,18 @@ public class BNCoreCommand extends CustomCommand {
 			send(block.getType().name());
 	}
 
-	@Permission("group.seniorstaff")
 	@Path("getOnlineNerdsWith <permission>")
 	void getOnlineNerdsWith(String permission) {
 		send(new NerdService().getOnlineNerdsWith(permission).stream().map(Nerd::getName).collect(Collectors.joining(", ")));
 	}
 
+	@Path("setTabListName <text...>")
+	void setTabListName(String text) {
+		player().setPlayerListName(colorize(text));
+		send("Updated");
+	}
+
 	@Path("schem save <name>")
-	@Permission("group.seniorstaff")
 	void schemSave(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
 		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
@@ -175,7 +173,6 @@ public class BNCoreCommand extends CustomCommand {
 	}
 
 	@Path("schem paste <name>")
-	@Permission("group.seniorstaff")
 	void schemPaste(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
 		worldEditUtils.paste(name, player().getLocation());

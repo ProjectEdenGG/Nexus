@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.chat.bridge;
 
-import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.ChatManager;
@@ -41,6 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.bncore.features.discord.Discord.discordize;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
@@ -61,7 +61,7 @@ public class BridgeListener extends ListenerAdapter implements Listener {
 
 			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
 
-			if (user != null && !Strings.isNullOrEmpty(user.getRoleId()))
+			if (user != null && !isNullOrEmpty(user.getUuid()))
 				builder.next(new Nerd(user.getUuid()).getChatFormat());
 			else
 				builder.next("&f" + Discord.getName(event.getMember(), event.getAuthor()));
