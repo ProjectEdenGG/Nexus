@@ -40,7 +40,9 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static org.bukkit.block.BlockFace.*;
 
 // TODO: Weighted reflections
-// TODO: Make person who starts laser, get the points
+// TODO: Make person who starts laser, only get the points
+// TODO: Make sure the new objective doesn't repeat mobs
+// TODO: display number of reflections when u win -- Pink Pig hit in 6 reflections!
 public class Reflection implements Listener {
 
 	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
