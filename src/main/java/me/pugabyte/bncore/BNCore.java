@@ -26,6 +26,7 @@ import me.pugabyte.bncore.features.radar.honeypots.HoneyPots;
 import me.pugabyte.bncore.features.recipes.CustomRecipes;
 import me.pugabyte.bncore.features.shops.Shops;
 import me.pugabyte.bncore.features.store.perks.joinquit.JoinQuit;
+import me.pugabyte.bncore.features.tab.Tab;
 import me.pugabyte.bncore.features.tickets.Tickets;
 import me.pugabyte.bncore.features.trust.TrustFeature;
 import me.pugabyte.bncore.features.votes.Votes;
@@ -234,6 +235,7 @@ public class BNCore extends JavaPlugin {
 	public static Particles particles;
 	public static Quests quests;
 	public static Shops shops;
+	public static Tab tab;
 	public static Tickets tickets;
 	public static TrustFeature trust;
 	public static Votes votes;
@@ -278,6 +280,7 @@ public class BNCore extends JavaPlugin {
 		new Timer("  Particles", () -> particles = new Particles());
 		new Timer("  Quests", () -> quests = new Quests());
 		new Timer("  Shops", () -> shops = new Shops());
+		new Timer("  Tab", () -> tab = new Tab());
 		new Timer("  Tickets", () -> tickets = new Tickets());
 		new Timer("  Trust", () -> trust = new TrustFeature());
 		new Timer("  Votes", () -> votes = new Votes());
