@@ -81,7 +81,7 @@ public class NearestBlockCommand extends CustomCommand {
 							.start();
 
 				} else
-					error(StringUtils.camelCase(material.toString()) + " not found");
+					error(player(), StringUtils.camelCase(material.toString()) + " not found");
 			});
 		});
 	}

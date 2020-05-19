@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.Fairgrounds;
-import me.pugabyte.bncore.features.holidays.bearfair20.quests.TradeRecipes;
+import me.pugabyte.bncore.features.holidays.bearfair20.quests.Merchants;
 import me.pugabyte.bncore.features.warps.commands._WarpCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -97,7 +97,7 @@ public class BearFairCommand extends _WarpCommand {
 		Location loc = player().getLocation();
 		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.mainRg);
 		if (player().getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region))
-			TradeRecipes.openMerchant(player());
+			Merchants.openMerchant(player());
 		else
 			error("Must be at Bear Fair!");
 	}

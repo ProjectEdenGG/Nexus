@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
@@ -41,6 +42,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@Description("Toggle KillerMoney's chat notification")
 	@Path("toggle")
 	void mute() {
 		Setting setting = service.get(player(), "killerMoneyMute");

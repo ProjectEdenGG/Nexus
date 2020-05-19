@@ -15,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
+
 @NoArgsConstructor
 @Aliases({"clean", "clear", "ci", "clearinvent", "eclean", "eclear", "eci", "eclearinvent", "eclearinventory"})
 public class ClearInventoryCommand extends CustomCommand implements Listener {
@@ -75,7 +77,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 			String PREFIX = StringUtils.getPrefix("ClearInventory");
 			if (cache.containsKey(getKey())) {
 				for (ItemStack itemStack : player.getInventory().getContents()) {
-					if (itemStack != null) {
+					if (!isNullOrAir(itemStack)) {
 						player.sendMessage(PREFIX + "Your inventory must be empty to restore an undo");
 						return;
 					}

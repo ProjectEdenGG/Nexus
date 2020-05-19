@@ -10,7 +10,6 @@ import me.pugabyte.bncore.models.nerd.NerdService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -47,24 +46,11 @@ public class BirthdaysCommand extends CustomCommand {
 	}
 
 	@Path("set <birthday>")
-	void set(String input) {
-		if (isNullOrEmpty(input))
-			format();
-
+	void set(LocalDate birthday) {
 		Nerd nerd = service.get(player());
-		try {
-			LocalDate birthday = LocalDate.parse(input, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-			nerd.setBirthday(birthday);
-			service.save(nerd);
-			send(PREFIX + "Your birthday has been set to &e" + birthday.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + birthday.getDayOfMonth() + ", " + birthday.getYear());
-		} catch (DateTimeParseException e) {
-			format();
-		}
-	}
-
-	@Path("format")
-	void format() {
-		error("Correct birthday format: MM/DD/YYYY");
+		nerd.setBirthday(birthday);
+		service.save(nerd);
+		send(PREFIX + "Your birthday has been set to &e" + birthday.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + birthday.getDayOfMonth() + ", " + birthday.getYear());
 	}
 
 	public LocalDate getNextBirthday(Nerd nerd) {
