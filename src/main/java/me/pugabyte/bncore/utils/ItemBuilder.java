@@ -13,8 +13,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,6 +113,17 @@ public class ItemBuilder {
 
 	public ItemBuilder effect(PotionEffectType potionEffectType, int seconds, int amplifier) {
 		return effect(new PotionEffect(potionEffectType, seconds * 20, amplifier - 1));
+	}
+
+	public ItemBuilder potion(PotionType potionType) {
+		return potion(potionType, false, false);
+	}
+
+	public ItemBuilder potion(PotionType potionType, boolean extended, boolean upgraded) {
+		PotionMeta potionMeta = (PotionMeta) itemMeta;
+		potionMeta.setBasePotionData(new PotionData(potionType, extended, upgraded));
+		itemMeta = potionMeta;
+		return this;
 	}
 
 	public ItemBuilder effect(PotionEffect potionEffect) {

@@ -39,6 +39,8 @@ import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static org.bukkit.block.BlockFace.*;
 
+// TODO: Weighted reflections
+// TODO: Make person who starts laser, get the points
 public class Reflection implements Listener {
 
 	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
@@ -313,8 +315,8 @@ public class Reflection implements Listener {
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
 
 		objReflections = 0;
-		if (Utils.chanceOf(25))
-			objReflections = Utils.randomInt(4, 7);
+		if (Utils.chanceOf(50))
+			objReflections = Utils.randomInt(4, 10);
 
 		String reflections = "";
 		if (objReflections > 0)
