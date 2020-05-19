@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class Frogger implements Listener {
 	//
 	private static Location respawnLoc = new Location(BearFair20.world, -856.5, 138.0, -1617.5, -180, 0);
 	private static Location checkpointLoc = new Location(BearFair20.world, -856.5, 138.0, -1630.5, -180, 0);
-	private static List<Player> checkpointList = new ArrayList<>();
+	private static Set<Player> checkpointList = new HashSet<>();
 	private static boolean doAnimation = false;
 	private static WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
 	//

@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import lombok.Getter;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MerchantBuilder;
 import me.pugabyte.bncore.utils.MerchantBuilder.TradeBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
@@ -16,22 +16,30 @@ public class Merchants {
 
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
-		new MerchantBuilder(bfMerchant.name()).trades(bfMerchant.getTrades()).open(player);
+		if (bfMerchant == null)
+			return;
+		new MerchantBuilder(StringUtils.camelCase(bfMerchant.name())).trades(bfMerchant.getTrades()).open(player);
 	}
 
 	private enum BFMerchant {
-		BLACKSMITH(1234) {
+		ARTIST(2657) {
 			@Override
 			List<TradeBuilder> getTrades() {
-				return null;
+				return new ArrayList<>();
 			}
 		},
-		BARTENDER(12345) {
+		BAKER(6667) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
+			}
+		},
+		BARTENDER(2655) {
 			@Override
 			List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potion(PotionType.POISON))
+							.result(new ItemBuilder(Material.POTION).potion(PotionType.POISON, true, false))
 							.ingredient(Material.STICK));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potion(PotionType.WEAKNESS))
@@ -42,10 +50,46 @@ public class Merchants {
 				}};
 			}
 		},
-		BAKER(123456) {
+		BLACKSMITH(2656) {
 			@Override
 			List<TradeBuilder> getTrades() {
-				return null;
+				return new ArrayList<>();
+			}
+		},
+		BOTANIST(2661) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
+			}
+		},
+		BREWER(2662) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
+			}
+		},
+		FISHERMAN(2653) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
+			}
+		},
+		INVENTOR(2660) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
+			}
+		},
+		PASTRY_CHEF(2654) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
+			}
+		},
+		SORCERER(2658) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
 			}
 		};
 
@@ -62,7 +106,7 @@ public class Merchants {
 					return merchant;
 			}
 
-			throw new InvalidInputException("Bear Fair merchant not found from NPC Id " + id);
+			return null;
 		}
 
 		abstract List<TradeBuilder> getTrades();

@@ -1,9 +1,6 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.Fairgrounds;
-import me.pugabyte.bncore.features.holidays.bearfair20.quests.Merchants;
 import me.pugabyte.bncore.features.warps.commands._WarpCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -14,8 +11,6 @@ import me.pugabyte.bncore.models.warps.WarpType;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
-
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 
 public class BearFairCommand extends _WarpCommand {
 
@@ -90,16 +85,6 @@ public class BearFairCommand extends _WarpCommand {
 	public void merryGoRound() {
 		commandBlock();
 		Fairgrounds.startMerryGoRound();
-	}
-
-	@Path("trade")
-	public void trade() {
-		Location loc = player().getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.mainRg);
-		if (player().getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region))
-			Merchants.openMerchant(player());
-		else
-			error("Must be at Bear Fair!");
 	}
 
 	@Path

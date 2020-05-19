@@ -9,6 +9,7 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -256,6 +257,15 @@ public class BFQuests implements Listener {
 		resultMeta.setLore(Collections.singletonList(itemLore));
 		result.setItemMeta(resultMeta);
 		event.getInventory().setResult(result);
+	}
+
+	@EventHandler
+	public void onRightClickNPC(NPCRightClickEvent event) {
+		Player player = event.getClicker();
+		Location loc = event.getClicker().getLocation();
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.mainRg);
+		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region))
+			Merchants.openMerchant(player, event.getNPC().getId());
 	}
 
 	//TODO:
