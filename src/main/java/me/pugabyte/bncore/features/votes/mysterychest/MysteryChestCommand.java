@@ -7,9 +7,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
 @Permission("mysterychest.use")
-public class MysterChestCommand extends CustomCommand {
+public class MysteryChestCommand extends CustomCommand {
 
-	public MysterChestCommand(CommandEvent event) {
+	public MysteryChestCommand(CommandEvent event) {
 		super(event);
 	}
 
