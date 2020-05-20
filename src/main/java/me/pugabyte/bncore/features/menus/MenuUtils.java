@@ -105,12 +105,16 @@ public abstract class MenuUtils {
 	}
 
 	public static void centerItems(ClickableItem[] items, InventoryContents contents, int row) {
+		centerItems(items, contents, row, true);
+	}
+
+	public static void centerItems(ClickableItem[] items, InventoryContents contents, int row, boolean space) {
 		if (items.length > 9)
 			throw new InvalidInputException("Cannot center more than 9 items on one row");
 		int[] even = {3, 5, 1, 7};
 		int[] odd = {4, 2, 6, 0, 8};
-		int[] max = {4, 3, 5, 2, 6, 1, 7, 0, 8};
-		if (items.length < 5)
+		int[] noSpace = {4, 3, 5, 2, 6, 1, 7, 0, 8};
+		if (items.length < 5 || !space)
 			if (items.length % 2 == 0)
 				for (int i = 0; i < items.length; i++)
 					contents.set(row, even[i], items[i]);
@@ -119,7 +123,7 @@ public abstract class MenuUtils {
 					contents.set(row, odd[i], items[i]);
 		else
 			for (int i = 0; i < items.length; i++)
-				contents.set(row, max[i], items[i]);
+				contents.set(row, noSpace[i], items[i]);
 	}
 
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {
