@@ -4,6 +4,8 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.*;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -62,7 +64,10 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 							"You have received the &e" + MysteryChestLoot.values()[lootIndex + 1].getName() + "&3 reward"
 			));
 			Utils.giveItems(player, Arrays.asList(MysteryChestLoot.values()[lootIndex + 1].getLoot()));
-			//remove permission
+			SettingService service = new SettingService();
+			Setting setting = service.get(player, "mysteryChest");
+			setting.setValue("" + (Integer.parseInt(setting.getValue()) - 1));
+			service.save(setting);
 		}
 	}
 }
