@@ -16,6 +16,7 @@ public class MysteryChestCommand extends CustomCommand {
 	@Path()
 	void use() {
 		MysteryChestProvider.time = 0;
+		MysteryChestProvider.speed = 4;
 		SmartInventory.builder()
 				.size(3, 9)
 				.title("Mystery Chest")
