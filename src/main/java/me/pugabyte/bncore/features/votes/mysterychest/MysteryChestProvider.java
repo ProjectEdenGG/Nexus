@@ -33,9 +33,12 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 						Material.valueOf(colors[index] + "_STAINED_GLASS_PANE")).name("").build()));
 				contents.fillRow(2, ClickableItem.empty(new ItemBuilder(
 						Material.valueOf(colors[index] + "_STAINED_GLASS_PANE")).name("").build()));
+				contents.fillRow(1, ClickableItem.NONE);
 				MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, index).getLoot(), contents, 1);
 				index++;
 			}
+		} else {
+			time = 0;
 		}
 
 	}
