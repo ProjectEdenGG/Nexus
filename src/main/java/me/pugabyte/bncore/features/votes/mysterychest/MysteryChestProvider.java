@@ -53,7 +53,6 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 			contents.fillRow(1, ClickableItem.NONE);
 			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getMenuLoot(),
 					contents, 1, true);
-			Utils.giveItems(player, Arrays.asList(MysteryChestLoot.values()[lootIndex + 1].getLoot()));
 			Tasks.wait(10, () -> SoundUtils.Jingle.RANKUP.play(player));
 		}
 		if (time == 450) {
@@ -62,6 +61,8 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 					StringUtils.getPrefix("MysteryChest") +
 							"You have received the &e" + MysteryChestLoot.values()[lootIndex + 1].getName() + "&3 reward"
 			));
+			Utils.giveItems(player, Arrays.asList(MysteryChestLoot.values()[lootIndex + 1].getLoot()));
+			//remove permission
 		}
 	}
 }
