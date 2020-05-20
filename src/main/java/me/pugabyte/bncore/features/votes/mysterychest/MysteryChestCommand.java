@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 
 @Permission("mysterychest.use")
@@ -20,6 +21,7 @@ public class MysteryChestCommand extends CustomCommand {
 			error("You must be in the survival world to run this command.");
 		MysteryChestProvider.time = 0;
 		MysteryChestProvider.speed = 4;
+		MysteryChestProvider.lootIndex = Utils.randomInt(0, MysteryChestLoot.values().length - 1);
 		SmartInventory.builder()
 				.size(3, 9)
 				.title("Mystery Chest")
