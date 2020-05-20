@@ -75,7 +75,7 @@ public enum MysteryChestLoot {
 	TWELVE(new ItemStack(Material.BEACON),
 			new ItemStack(Material.IRON_BLOCK, 34)),
 	THIRTEEN(new ItemBuilder(Material.DIAMOND_CHESTPLATE)
-			.name("&5Nokie 3310 Chestplate")
+			.name("&5Nokia 3310 Chestplate")
 			.enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 5)
 			.enchant(Enchantment.PROTECTION_PROJECTILE, 5)
 			.enchant(Enchantment.PROTECTION_FIRE, 5)
