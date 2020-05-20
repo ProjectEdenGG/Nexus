@@ -114,7 +114,7 @@ public abstract class MenuUtils {
 		int[] even = {3, 5, 1, 7};
 		int[] odd = {4, 2, 6, 0, 8};
 		int[] noSpace = {4, 3, 5, 2, 6, 1, 7, 0, 8};
-		if (items.length < 5 || !space)
+		if (items.length < 5 && space)
 			if (items.length % 2 == 0)
 				for (int i = 0; i < items.length; i++)
 					contents.set(row, even[i], items[i]);

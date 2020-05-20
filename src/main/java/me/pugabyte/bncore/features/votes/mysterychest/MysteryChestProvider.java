@@ -14,7 +14,7 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.fillRect(0, 0, 2, 8, ClickableItem.empty(new ItemBuilder(
+		contents.fill(ClickableItem.empty(new ItemBuilder(
 				Material.BLACK_STAINED_GLASS_PANE).name(" ").build()));
 	}
 
@@ -26,10 +26,10 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 	@Override
 	public void update(Player player, InventoryContents contents) {
 		time++;
-		if (time < 20) return;
+		if (time < 10) return;
 		String[] colors = {"LIME", "LIGHT_BLUE", "RED", "MAGENTA", "PINK", "YELLOW", "ORANGE"};
 		if (colorIndex == colors.length) colorIndex = 0;
-		if (time % speed == 0 && time < 275) {
+		if (time % speed == 0 && time < 400) {
 			SoundUtils.Jingle.PING.play(player);
 			contents.fillRow(0, ClickableItem.empty(new ItemBuilder(
 					Material.valueOf(colors[colorIndex] + "_STAINED_GLASS_PANE")).name(" ").build()));
@@ -42,11 +42,11 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 					contents, 1, false);
 			lootIndex++;
 		}
-		if (time == 200)
-			speed = 8;
-		if (speed == 250)
-			speed = 12;
-		if (time == 275) {
+		if (time == 250)
+			speed = 10;
+		if (speed == 300)
+			speed = 15;
+		if (time == 400) {
 			if (lootIndex == MysteryChestLoot.values().length) lootIndex = 0;
 			contents.fillRect(0, 0, 2, 8, ClickableItem.empty(new ItemBuilder(
 					Material.LIME_STAINED_GLASS_PANE).name(" ").build()));
@@ -55,7 +55,7 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 					contents, 1, false);
 			SoundUtils.Jingle.RANKUP.play(player);
 		}
-		if (time == 325)
+		if (time == 500)
 			player.closeInventory();
 	}
 }
