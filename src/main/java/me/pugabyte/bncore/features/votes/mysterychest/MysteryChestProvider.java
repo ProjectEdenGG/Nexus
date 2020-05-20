@@ -39,7 +39,7 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 			if (lootIndex == MysteryChestLoot.values().length) lootIndex = 0;
 			contents.fillRow(1, ClickableItem.NONE);
 			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getMenuLoot(),
-					contents, 1, false);
+					contents, 1, true);
 			lootIndex++;
 		}
 		if (time == 250)
