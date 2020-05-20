@@ -46,7 +46,7 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 			speed = 8;
 		if (speed == 250)
 			speed = 12;
-		else if (time == 275) {
+		if (time == 275) {
 			if (lootIndex == MysteryChestLoot.values().length) lootIndex = 0;
 			contents.fillRect(0, 0, 2, 8, ClickableItem.empty(new ItemBuilder(
 					Material.LIME_STAINED_GLASS_PANE).name(" ").build()));
@@ -54,7 +54,8 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getLoot(),
 					contents, 1, false);
 			SoundUtils.Jingle.RANKUP.play(player);
-		} else if (time == 325)
+		}
+		if (time == 325)
 			player.closeInventory();
 	}
 }
