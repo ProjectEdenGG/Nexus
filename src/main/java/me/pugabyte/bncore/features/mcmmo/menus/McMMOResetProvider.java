@@ -36,6 +36,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"Any helmet of your choice that gives you night vision for deep mining expeditions") {
 				@Override
 				void onClick(Player player) {
+					Utils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for Glowing Enchant").build());
 					player.sendMessage(StringUtils.colorize("&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own."));
 				}
 		},
@@ -79,6 +80,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 						"a chance to add that enchantment to one item of your choice!") {
 				@Override
 				void onClick(Player player) {
+					Utils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for AutoRepair").build());
 					player.sendMessage(StringUtils.colorize("&ePut in a &c/ticket &eto have a staff member add auto repair to one item you own."));
 				}
 		},
