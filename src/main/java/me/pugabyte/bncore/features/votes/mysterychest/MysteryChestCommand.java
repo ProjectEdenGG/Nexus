@@ -15,6 +15,13 @@ public class MysteryChestCommand extends CustomCommand {
 		super(event);
 	}
 
+	public static SmartInventory INV = SmartInventory.builder()
+			.size(3, 9)
+			.title("Mystery Chest")
+			.provider(new MysteryChestProvider())
+			.closeable(false)
+			.build();
+
 	@Path()
 	void use() {
 		if (!WorldGroup.get(player()).equals(WorldGroup.SURVIVAL))
@@ -22,13 +29,7 @@ public class MysteryChestCommand extends CustomCommand {
 		MysteryChestProvider.time = 0;
 		MysteryChestProvider.speed = 4;
 		MysteryChestProvider.lootIndex = Utils.randomInt(0, MysteryChestLoot.values().length - 1);
-		SmartInventory.builder()
-				.size(3, 9)
-				.title("Mystery Chest")
-				.provider(new MysteryChestProvider())
-				.closeable(false)
-				.build()
-				.open(player());
+		INV.open(player());
 	}
 
 }
