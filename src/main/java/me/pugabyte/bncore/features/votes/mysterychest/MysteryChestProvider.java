@@ -58,7 +58,7 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 			Tasks.wait(10, () -> SoundUtils.Jingle.RANKUP.play(player));
 		}
 		if (time == 450) {
-			MysteryChestCommand.INV.close(player);
+			MysteryChest.INV.close(player);
 			player.sendMessage(StringUtils.colorize(
 					StringUtils.getPrefix("MysteryChest") +
 							"You have received the &e" + MysteryChestLoot.values()[lootIndex + 1].getName() + "&3 reward"

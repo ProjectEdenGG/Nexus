@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.votes.mysterychest;
 
-import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -20,13 +19,6 @@ public class MysteryChestCommand extends CustomCommand {
 		super(event);
 	}
 
-	public static SmartInventory INV = SmartInventory.builder()
-			.size(3, 9)
-			.title("Mystery Chest")
-			.provider(new MysteryChestProvider())
-			.closeable(false)
-			.build();
-
 	@Path()
 	void use() {
 		Setting setting = service.get(player(), "mysteryChest");
@@ -42,22 +34,15 @@ public class MysteryChestCommand extends CustomCommand {
 		MysteryChestProvider.time = 0;
 		MysteryChestProvider.speed = 4;
 		MysteryChestProvider.lootIndex = Utils.randomInt(0, MysteryChestLoot.values().length - 1);
-		INV.open(player());
+		MysteryChest.INV.open(player());
 	}
 
 	@Path("give <player> [amount]")
 	@Permission("group.admin")
 	void give(OfflinePlayer player, @Arg("1") int amount) {
+		new MysteryChest(player, amount);
 		Setting setting = service.get(player, "mysteryChest");
-		int chests = 0;
-		try {
-			chests = Integer.parseInt(setting.getValue());
-		} catch (Exception ignore) {
-		}
-		chests += amount;
-		setting.setValue("" + chests);
-		service.save(setting);
-		send(PREFIX + "&e" + player.getName() + " &3now has &e" + chests + "&3 Mystery Chests");
+		send(PREFIX + "&e" + player.getName() + " &3now has &e" + setting.getValue() + "&3 Mystery Chests");
 	}
 
 	@Path("test")
