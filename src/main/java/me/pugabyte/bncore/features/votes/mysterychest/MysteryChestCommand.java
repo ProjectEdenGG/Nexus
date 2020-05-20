@@ -26,6 +26,7 @@ public class MysteryChestCommand extends CustomCommand {
 				.size(3, 9)
 				.title("Mystery Chest")
 				.provider(new MysteryChestProvider())
+				.closeable(false)
 				.build()
 				.open(player());
 	}
