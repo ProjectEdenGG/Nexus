@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.BNException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -101,6 +102,24 @@ public abstract class MenuUtils {
 			player.sendMessage(colorize(("&cAn internal error occurred while attempting to execute this command")));
 			ex.printStackTrace();
 		}
+	}
+
+	public static void centerItems(ClickableItem[] items, InventoryContents contents, int row) {
+		if (items.length > 9)
+			throw new InvalidInputException("Cannot center more than 9 items on one row");
+		int[] even = {3, 5, 1, 7};
+		int[] odd = {4, 2, 6, 0, 8};
+		int[] max = {4, 3, 5, 2, 6, 1, 7, 0, 8};
+		if (items.length < 5)
+			if (items.length % 2 == 0)
+				for (int i = 0; i < items.length; i++)
+					contents.set(row, even[i], items[i]);
+			else
+				for (int i = 0; i < items.length; i++)
+					contents.set(row, odd[i], items[i]);
+		else
+			for (int i = 0; i < items.length; i++)
+				contents.set(row, max[i], items[i]);
 	}
 
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {

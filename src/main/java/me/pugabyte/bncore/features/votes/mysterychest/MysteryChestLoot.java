@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.votes.mysterychest;
 
+import fr.minuskube.inv.ClickableItem;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -89,8 +90,11 @@ public enum MysteryChestLoot {
 		this.loot = items;
 	}
 
-	public ItemStack[] getLoot() {
-		return loot;
+	public ClickableItem[] getLoot() {
+		ClickableItem[] items = new ClickableItem[loot.length];
+		for (int i = 0; i < loot.length; i++)
+			items[i] = ClickableItem.empty(loot[i]);
+		return items;
 	}
 
 }
