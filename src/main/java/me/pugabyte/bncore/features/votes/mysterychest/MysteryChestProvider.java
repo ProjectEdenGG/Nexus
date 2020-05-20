@@ -6,9 +6,12 @@ import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.SoundUtils;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
 
 public class MysteryChestProvider extends MenuUtils implements InventoryProvider {
 
@@ -38,7 +41,7 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 			colorIndex++;
 			if (lootIndex == MysteryChestLoot.values().length) lootIndex = 0;
 			contents.fillRow(1, ClickableItem.NONE);
-			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getLoot(),
+			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getMenuLoot(),
 					contents, 1, false);
 			lootIndex++;
 		}
@@ -51,11 +54,17 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 			contents.fillRect(0, 0, 2, 8, ClickableItem.empty(new ItemBuilder(
 					Material.LIME_STAINED_GLASS_PANE).name(" ").build()));
 			contents.fillRow(1, ClickableItem.NONE);
-			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getLoot(),
+			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getMenuLoot(),
 					contents, 1, true);
 			SoundUtils.Jingle.RANKUP.play(player);
 		}
-		if (time == 450)
+		if (time == 450) {
 			player.closeInventory();
+			player.sendMessage(StringUtils.colorize(
+					StringUtils.getPrefix("MysteryChest") +
+							"You have received the &e" + MysteryChestLoot.values()[lootIndex + 1].getName() + "&3 reward"
+			));
+			Utils.giveItems(player, Arrays.asList(MysteryChestLoot.values()[lootIndex + 1].getLoot()));
+		}
 	}
 }
