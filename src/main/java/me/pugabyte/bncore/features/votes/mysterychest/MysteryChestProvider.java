@@ -4,10 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.SoundUtils;
-import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.*;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -32,7 +29,7 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 		if (time < 10) return;
 		String[] colors = {"LIME", "LIGHT_BLUE", "RED", "MAGENTA", "PINK", "YELLOW", "ORANGE"};
 		if (colorIndex == colors.length) colorIndex = 0;
-		if (time % speed == 0 && time < 400) {
+		if (time % speed == 0 && time < 350) {
 			SoundUtils.Jingle.PING.play(player);
 			contents.fillRow(0, ClickableItem.empty(new ItemBuilder(
 					Material.valueOf(colors[colorIndex] + "_STAINED_GLASS_PANE")).name(" ").build()));
@@ -56,7 +53,7 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 			contents.fillRow(1, ClickableItem.NONE);
 			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getMenuLoot(),
 					contents, 1, true);
-			SoundUtils.Jingle.RANKUP.play(player);
+			Tasks.wait(10, () -> SoundUtils.Jingle.RANKUP.play(player));
 		}
 		if (time == 450) {
 			player.closeInventory();
