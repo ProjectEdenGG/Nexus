@@ -10,7 +10,10 @@ public enum MysteryChestLoot {
 
 	ONE(new ItemStack(Material.GOLDEN_APPLE, 3),
 			new ItemStack(Material.END_CRYSTAL, 4)),
-	TWO(),
+	TWO(new ItemBuilder(Material.CHEST)
+			.name("&eFlower Power Box")
+			.build()
+	),
 	THREE(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 2),
 			new ItemBuilder(Material.DIAMOND_AXE)
 					.enchant(Enchantment.FIRE_ASPECT, 1)
@@ -29,12 +32,16 @@ public enum MysteryChestLoot {
 			.name("&eCoupon for 1 Wing Effect")
 			.lore("&3Redeem this with an admin")
 			.lore("&3to receive your wings")
+			.lore("")
+			.lore("&5Mystery Chest Loot")
 			.build()
 	),
 	SIX(new ItemBuilder(Material.PAPER)
 			.name("&eCoupon for 1 Powder Song")
 			.lore("&3Redeem this with an admin")
 			.lore("&3to receive your song")
+			.lore("")
+			.lore("&5Mystery Chest Loot")
 			.build()
 	),
 	SEVEN(new ItemBuilder(Material.DIAMOND_CHESTPLATE)
@@ -59,12 +66,16 @@ public enum MysteryChestLoot {
 					.name("&eCoupon for 75 XP Levels")
 					.lore("&3Claim this with an admin")
 					.lore("&3to receive your levels")
+					.lore("")
+					.lore("&5Mystery Chest Loot")
 					.build()
 	),
 	TEN(new ItemBuilder(Material.PAPER)
 			.name("&eCoupon for 10 McMMO Levels")
 			.lore("&3Redeem this with an admin")
 			.lore("&3to receive your levels")
+			.lore("")
+			.lore("&5Mystery Chest Loot")
 			.build()
 	),
 	ELEVEN(new ItemBuilder(Material.BOW)
