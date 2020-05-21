@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.discord;
 
 import lombok.Getter;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.models.afk.events.NotAFKEvent;
 import me.pugabyte.bncore.utils.Tasks;
@@ -16,11 +17,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+// Unused
+
 public class StaffAlerts implements Listener {
 	@Getter
 	static Map<Player, LocalDateTime> tracking = new HashMap<>();
 
 	public StaffAlerts() {
+		BNCore.registerListener(this);
+
 		Tasks.repeat(0, Time.SECOND.x(30), () -> {
 			Set<Player> trackedPlayers = tracking.keySet();
 			for (Player tracked : trackedPlayers) {

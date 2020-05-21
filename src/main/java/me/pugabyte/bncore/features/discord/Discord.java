@@ -84,12 +84,17 @@ public class Discord {
 		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());
 	}
 
+	@Deprecated
 	public static void staffAlerts(String message) {
-		send(message, Channel.STAFF_ALERTS);
+		// send(message, Channel.STAFF_ALERTS);
 	}
 
 	public static void log(String message) {
 		send(message, Channel.STAFF_BRIDGE, Channel.STAFF_LOG);
+	}
+
+	public static void staffBridge(String message) {
+		send(message, Channel.STAFF_BRIDGE);
 	}
 
 	public static void staffLog(String message) {
