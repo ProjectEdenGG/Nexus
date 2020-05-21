@@ -81,7 +81,7 @@ public class MysteryChest {
 		patterns1.add(new Pattern(DyeColor.BROWN, PatternType.CIRCLE_MIDDLE));
 		patterns1.add(new Pattern(DyeColor.WHITE, PatternType.CROSS));
 		patterns1.add(new Pattern(DyeColor.BROWN, PatternType.SKULL));
-		patterns1.add(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_BOTTOM));
+		patterns1.add(new Pattern(DyeColor.WHITE, PatternType.TRIANGLE_BOTTOM));
 		patterns1.add(new Pattern(DyeColor.GREEN, PatternType.TRIANGLE_TOP));
 		patterns1.add(new Pattern(DyeColor.GREEN, PatternType.TRIANGLE_TOP));
 		patterns1.add(new Pattern(DyeColor.GREEN, PatternType.STRIPE_TOP));
@@ -89,6 +89,44 @@ public class MysteryChest {
 		banner1.setItemMeta(meta1);
 		box.getInventory().addItem(banner1);
 
+		ItemStack banner2 = new ItemStack(Material.LIGHT_BLUE_BANNER, 2);
+		BannerMeta meta2 = (BannerMeta) banner2.getItemMeta();
+		List<Pattern> patterns2 = new ArrayList<>();
+		patterns2.add(new Pattern(DyeColor.WHITE, PatternType.BRICKS));
+		patterns2.add(new Pattern(DyeColor.BROWN, PatternType.STRIPE_BOTTOM));
+		patterns2.add(new Pattern(DyeColor.LIGHT_BLUE, PatternType.BORDER));
+		patterns2.add(new Pattern(DyeColor.BROWN, PatternType.TRIANGLE_BOTTOM));
+		patterns2.add(new Pattern(DyeColor.PINK, PatternType.RHOMBUS_MIDDLE));
+		patterns2.add(new Pattern(DyeColor.BLACK, PatternType.FLOWER));
+		patterns2.add(new Pattern(DyeColor.BLACK, PatternType.CREEPER));
+		patterns2.add(new Pattern(DyeColor.BROWN, PatternType.SKULL));
+		patterns2.add(new Pattern(DyeColor.LIGHT_BLUE, PatternType.TRIANGLE_TOP));
+		patterns2.add(new Pattern(DyeColor.LIGHT_BLUE, PatternType.STRIPE_TOP));
+		patterns2.add(new Pattern(DyeColor.BROWN, PatternType.CIRCLE_MIDDLE));
+		patterns2.add(new Pattern(DyeColor.BROWN, PatternType.CIRCLE_MIDDLE));
+		meta2.setPatterns(patterns2);
+		banner2.setItemMeta(meta2);
+		box.getInventory().addItem(banner2);
+
+		ItemStack banner3 = new ItemStack(Material.YELLOW_BANNER, 2);
+		BannerMeta meta3 = (BannerMeta) banner3.getItemMeta();
+		List<Pattern> patterns3 = new ArrayList<>();
+		patterns3.add(new Pattern(DyeColor.CYAN, PatternType.STRIPE_LEFT));
+		patterns3.add(new Pattern(DyeColor.CYAN, PatternType.STRIPE_RIGHT));
+		patterns3.add(new Pattern(DyeColor.WHITE, PatternType.FLOWER));
+		meta3.setPatterns(patterns3);
+		banner3.setItemMeta(meta3);
+		box.getInventory().addItem(banner3);
+
+		ItemStack banner4 = new ItemStack(Material.CYAN_BANNER, 2);
+		BannerMeta meta4 = (BannerMeta) banner4.getItemMeta();
+		List<Pattern> patterns4 = new ArrayList<>();
+		patterns4.add(new Pattern(DyeColor.YELLOW, PatternType.STRIPE_LEFT));
+		patterns4.add(new Pattern(DyeColor.YELLOW, PatternType.STRIPE_RIGHT));
+		patterns4.add(new Pattern(DyeColor.WHITE, PatternType.FLOWER));
+		meta4.setPatterns(patterns3);
+		banner4.setItemMeta(meta3);
+		box.getInventory().addItem(banner4);
 
 		meta.setBlockState(box);
 		item.setItemMeta(meta);
