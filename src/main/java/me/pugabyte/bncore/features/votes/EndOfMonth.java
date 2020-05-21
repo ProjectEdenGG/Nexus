@@ -43,7 +43,7 @@ public class EndOfMonth {
 				Koda.announce(data.getDiscordMessage());
 				writeHtml(data);
 
-				new MysteryChest(Utils.getPlayer(data.getMysteryChestWinner().getUuid()), 1);
+				new MysteryChest(Utils.getPlayer(data.getMysteryChestWinner().getUuid()));
 
 				data.getEco30kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 30000));
 				data.getEco20kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 20000));
