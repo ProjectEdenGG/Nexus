@@ -4,7 +4,11 @@ import me.pugabyte.bncore.BNCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +33,7 @@ public class CustomRecipes {
 		BNCore.getInstance().getLogger().info(recipes.size() + " total custom recipes are loaded on the server");
 	}
 
-	public void addRecipe(Recipe recipe) {
+	public static void addRecipe(Recipe recipe) {
 		for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult())) {
 			if (RecipeUtils.areEqual(recipe1, recipe)) return;
 		}

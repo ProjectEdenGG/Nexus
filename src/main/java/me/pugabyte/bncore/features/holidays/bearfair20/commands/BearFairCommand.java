@@ -91,4 +91,10 @@ public class BearFairCommand extends _WarpCommand {
 	void bearfair() {
 		send(PREFIX + "Coming soon!");
 	}
+
+	@Path("recipes")
+	void recipes() {
+		runCommandAsConsole("minecraft:recipe take " + player().getName() + " bncore:custom_bearfair_anzac_biscuit");
+		runCommandAsConsole("minecraft:recipe give " + player().getName() + " bncore:custom_bearfair_anzac_biscuit");
+	}
 }
