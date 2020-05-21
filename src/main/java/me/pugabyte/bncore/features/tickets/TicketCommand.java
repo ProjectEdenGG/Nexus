@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.models.ticket.TicketService;
@@ -17,6 +18,7 @@ import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
@@ -54,10 +56,11 @@ public class TicketCommand extends CustomCommand {
 		send(PREFIX + "You have submitted a ticket. Staff have been alerted, please wait patiently for a response. &eThank you!");
 		send(" &eYour ticket (&c#" + ticket.getId() + "&e): &3" + ticket.getDescription());
 
-		// TODO: #staff-alerts if no staff are on
-		Discord.log("[Tickets] " + player().getName() + " (" + ticket.getId() + "): " + ticket.getDescription());
+		List<Nerd> onlineMods = Rank.getOnlineMods();
+		Discord.staffLog("[Tickets] " + player().getName() + " (" + ticket.getId() + "): " + ticket.getDescription());
+		Discord.staffBridge("[Tickets] " + player().getName() + " (" + ticket.getId() + "): " + ticket.getDescription() + (onlineMods.size() == 0 ? " [ @here ]" : ""));
 
-		Rank.getOnlineMods().forEach(mod -> Jingle.PING.play(mod.getPlayer()));
+		onlineMods.forEach(mod -> Jingle.PING.play(mod.getPlayer()));
 		Chat.broadcastIngame("", "Staff");
 		Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription(), "Staff");
 		Chat.broadcastIngame(Tickets.getTicketButtons(ticket), "Staff");
