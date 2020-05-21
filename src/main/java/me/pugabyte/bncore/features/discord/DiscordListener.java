@@ -38,7 +38,7 @@ public class DiscordListener extends ListenerAdapter {
 			String channel = event.getChannel().getName();
 			String message = event.getMessage().getContentRaw();
 
-			if (Arrays.asList(Channel.STAFF_ALERTS.getId(), Channel.STAFF_BRIDGE.getId(), Channel.BRIDGE.getId()).contains(event.getChannel().getId()))
+			if (Arrays.asList(Channel.STAFF_BRIDGE.getId(), Channel.BRIDGE.getId()).contains(event.getChannel().getId()))
 				if (event.getMember().getUser().getId().equals(User.RELAY.getId()))
 					return;
 
