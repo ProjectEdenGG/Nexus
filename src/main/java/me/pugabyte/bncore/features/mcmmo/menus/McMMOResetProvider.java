@@ -29,7 +29,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A frozen sword that slows your enemies and may trap them in ice") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_sword damage_all:2 looting:2 mending:1 iceaspect:3 knockback:1 durability:2");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.DIAMOND_SWORD.name() + " sharpness:2 looting:2 mending:1 iceaspect:3 knockback:1 unbreaking:2");
 				}
 		},
 		MINING(1, 5, Material.DIAMOND_PICKAXE,
@@ -44,14 +44,14 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A shovel that hastens the user after every block broken") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_shovel efficiency:5 unbreaking:3 silk_touch:1 mending:1 energizing:2");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.DIAMOND_SHOVEL.name() + " efficiency:5 unbreaking:3 silk_touch:1 mending:1 energizing:2");
 				}
 		},
 		AXES(2, 4, Material.DIAMOND_AXE,
 				"The power of Thor is imbued in this axe, giving you a chance of smiting your target with lightning") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_axe thunderingblow:2 damage_all:3 mending:1 durability:3");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.DIAMOND_AXE.name() + " thunderingblow:2 sharpness:3 mending:1 unbreaking:3");
 				}
 		},
 		HERBALISM(2, 6, Material.DIAMOND_HOE,
@@ -65,14 +65,14 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A godly rod that increases your catch") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " fishing_rod lure:4 luck:5 durability:3 mending:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.FISHING_ROD.name() + " lure:4 luck:5 unbreaking:3 mending:1");
 				}
 		},
 		ACROBATICS(3, 3, Material.DIAMOND_BOOTS,
 				"Jump higher and run faster with these boots") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_boots protection:2 gears:3 springs:2 feather_falling:3 mending:1 durability:2");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.DIAMOND_BOOTS.name() + " protection:2 gears:3 springs:2 feather_falling:3 mending:1 unbreaking:2");
 				}
 		},
 		REPAIR(3, 5, Material.ANVIL,
@@ -88,7 +88,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"Now you can be the wither- enemies take wither damage for a short period from every successful hit") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " bow power:2 wither:2 infinity:1 mending:1 durability:2 knockback:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.BOW.name() + " power:2 wither:2 infinity:1 mending:1 unbreaking:2 knockback:1");
 				}
 		},
 		TAMING(4, 0, Material.BONE,
@@ -103,16 +103,16 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"For every log or plank broken this shiny new axe will give you a short burst of haste") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " diamond_axe energizing:3 mending:1");
-					Utils.runConsoleCommand("ce give " + player.getName() + " leather_helmet implants:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.DIAMOND_AXE.name() + " energizing:3 mending:1");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.LEATHER_HELMET.name() + " implants:1");
 				}
 		},
 		UNARMED(4, 6, Material.ROTTEN_FLESH,
 				"Punching your enemies to death can be dangerous work, this bandage and stick will help with that.") {
 			@Override
 			void onClick(Player player) {
-				Utils.runConsoleCommand("ce give " + player.getName() + " paper bandage");
-				Utils.runConsoleCommand("ce give " + player.getName() + " stick Quarterstaff disarming:1");
+				Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.PAPER.name() + " bandage");
+				Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.STICK.name() + " Quarterstaff disarming:1");
 			}
 		},
 		ALCHEMY(4, 8, Material.SPLASH_POTION,
@@ -120,7 +120,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 						"Watch your potions soar like they were shot from a bow to hit friend and foe alike from afar!") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " hopper potionlauncher");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.HOPPER.name() + " potionlauncher");
 					BNCore.getPerms().playerAdd(player, "combine.use");
 					player.sendMessage(StringUtils.colorize("&eTo shoot potions, first run &c/combine &eto combine all similar potions in your inventory into one stack, " +
 							"then place the stack in the slot to the right of the Potion Launcher. If you place the hopper, hold it and do &c/fixpotionlauncher"));
