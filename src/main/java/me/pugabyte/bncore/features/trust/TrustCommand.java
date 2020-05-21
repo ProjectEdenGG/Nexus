@@ -6,6 +6,8 @@ import me.pugabyte.bncore.features.trust.providers.TrustProvider;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
+import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.home.Home;
@@ -30,26 +32,31 @@ public class TrustCommand extends CustomCommand {
 		trust = service.get(player());
 	}
 
+	@Description("Open the trust menu")
 	@Path
 	void run() {
 		TrustProvider.open(player());
 	}
 
+	@HideFromHelp
 	@Path("edit")
 	void edit() {
 		TrustProvider.open(player());
 	}
 
+	@Description("Open the trust menu for the specified player")
 	@Path("<player>")
 	void menu(OfflinePlayer player) {
 		TrustPlayerProvider.open(player(), player);
 	}
 
+	@Description("Allow specified player(s) to a specific lock")
 	@Path("lock <players...>")
 	void lock(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		runCommand("cmodify " + names(players, " "));
 	}
 
+	@Description("Allow specified player(s) to a specific home")
 	@Path("home <home> <players...>")
 	void home(Home home, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		players.forEach(home::allow);
@@ -57,16 +64,19 @@ public class TrustCommand extends CustomCommand {
 		send(PREFIX + "Trusted &e" + names(players, "&3, &e") + " &3to home &e" + home.getName());
 	}
 
+	@Description("Allow specified player(s) to all locks")
 	@Path("locks <players...>")
 	void locks(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.LOCKS);
 	}
 
+	@Description("Allow specified player(s) to all homes")
 	@Path("homes <players...>")
 	void homes(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.HOMES);
 	}
 
+	@Description("Allow specified player(s) to everything")
 	@Path("all <players...>")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.values());
