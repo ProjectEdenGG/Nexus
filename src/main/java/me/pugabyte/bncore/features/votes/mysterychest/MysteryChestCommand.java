@@ -48,9 +48,7 @@ public class MysteryChestCommand extends CustomCommand {
 	@Path("test")
 	@Permission("group.admin")
 	void test() {
-		Setting setting = service.get(player(), "mysteryChest");
-		setting.setValue("1");
-		service.save(setting);
+		new MysteryChest(player());
 		use();
 	}
 

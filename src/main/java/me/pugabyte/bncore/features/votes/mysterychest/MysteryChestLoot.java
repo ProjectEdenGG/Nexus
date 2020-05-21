@@ -10,10 +10,7 @@ public enum MysteryChestLoot {
 
 	ONE("Dragon Fighter", new ItemStack(Material.GOLDEN_APPLE, 3),
 			new ItemStack(Material.END_CRYSTAL, 4)),
-	TWO("Flower Power", new ItemBuilder(Material.CHEST)
-			.name("&eFlower Power Box")
-			.build()
-	),
+	TWO("Flower Power", MysteryChest.getSecondLootBox()),
 	THREE("Lumberjack", new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 2),
 			new ItemBuilder(Material.DIAMOND_AXE)
 					.enchant(Enchantment.FIRE_ASPECT, 1)
@@ -117,5 +114,6 @@ public enum MysteryChestLoot {
 	public String getName() {
 		return name;
 	}
+
 
 }
