@@ -11,6 +11,8 @@ import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 
+import java.util.Arrays;
+
 public class MysteryChestCommand extends CustomCommand {
 
 	SettingService service = new SettingService();
@@ -50,6 +52,12 @@ public class MysteryChestCommand extends CustomCommand {
 	void test() {
 		new MysteryChest(player());
 		use();
+	}
+
+	@Path("2")
+	@Permission("group.admin")
+	void two() {
+		Utils.giveItems(player(), Arrays.asList(MysteryChestLoot.TWO.getLoot()));
 	}
 
 }

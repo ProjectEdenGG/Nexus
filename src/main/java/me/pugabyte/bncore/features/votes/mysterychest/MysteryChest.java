@@ -49,7 +49,7 @@ public class MysteryChest {
 	}
 
 	public static ItemStack getSecondLootBox() {
-		ItemStack item = new ItemBuilder(Material.CYAN_SHULKER_BOX).amount(2).name("Flower Power Box").build();
+		ItemStack item = new ItemBuilder(Material.CYAN_SHULKER_BOX).name("Flower Power Box").build();
 		BlockStateMeta meta = (BlockStateMeta) item.getItemMeta();
 		ShulkerBox box = (ShulkerBox) meta.getBlockState();
 		box.getInventory().addItem(
@@ -70,7 +70,7 @@ public class MysteryChest {
 				new ItemStack(Material.DANDELION, 2)
 		);
 
-		ItemStack banner1 = new ItemStack(Material.LIGHT_BLUE_BANNER);
+		ItemStack banner1 = new ItemStack(Material.LIGHT_BLUE_BANNER, 2);
 		BannerMeta meta1 = (BannerMeta) banner1.getItemMeta();
 		List<Pattern> patterns1 = new ArrayList<>();
 		patterns1.add(new Pattern(DyeColor.LIGHT_GRAY, PatternType.BASE));
