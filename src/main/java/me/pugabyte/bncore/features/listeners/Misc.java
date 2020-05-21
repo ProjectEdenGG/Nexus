@@ -62,10 +62,13 @@ public class Misc implements Listener {
 	public void onDamage(EntityDamageEvent event) {
 		if (event.isCancelled()) return;
 		if (!(event.getEntity() instanceof Player)) return;
+		Player player = (Player) event.getEntity();
 
 		if (event.getCause() == DamageCause.VOID)
-			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
-				Warps.spawn((Player) event.getEntity());
+			if (WorldGroup.get(player) == WorldGroup.SURVIVAL) {
+				if (!player.getWorld().getName().contains("the_end"))
+					Warps.spawn((Player) event.getEntity());
+			}
 	}
 
 	@EventHandler
