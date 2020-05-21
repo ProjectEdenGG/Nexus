@@ -14,6 +14,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Aliases("checkpoint")
 @Permission("minigames.manage")
@@ -69,6 +70,11 @@ public class CheckpointsCommand extends CustomCommand {
 		wgUtils.getManager().removeRegion(regionBase + number);
 		arena.removeCheckpoint(number);
 		send(PREFIX + "Removed checkpoint &e#" + number + " &3in &e" + arena.getDisplayName());
+	}
+
+	@Path("tp <number>")
+	void tp(int number) {
+		player().teleport(arena.getCheckpoint(number), TeleportCause.COMMAND);
 	}
 
 }
