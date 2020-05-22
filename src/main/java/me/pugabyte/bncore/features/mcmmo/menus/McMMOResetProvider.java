@@ -44,7 +44,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A shovel that hastens the user after every block broken") {
 				@Override
 				void onClick(Player player) {
-					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.DIAMOND_SHOVEL.name() + " efficiency:5 unbreaking:3 silk_touch:1 mending:1 energizing:2");
+					Utils.runConsoleCommand("ce give " + player.getName() + " " + Material.DIAMOND_SHOVEL.name() + " efficiency:5 unbreaking:3 silk_touch:1 mending:1");
 				}
 		},
 		AXES(2, 4, Material.DIAMOND_AXE,
