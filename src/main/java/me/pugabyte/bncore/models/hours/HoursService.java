@@ -107,7 +107,7 @@ public class HoursService extends MySQLService {
 		YESTERDAY;
 
 		public String columnName() {
-			return camelCase(name());
+			return camelCase(name()).replaceAll(" ", "");
 		}
 
 		public static String valuesString() {
