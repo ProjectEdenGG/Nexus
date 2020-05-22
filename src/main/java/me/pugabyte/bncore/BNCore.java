@@ -37,6 +37,8 @@ import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.ModelListeners;
 import me.pugabyte.bncore.models.geoip.GeoIP;
 import me.pugabyte.bncore.models.geoip.GeoIPService;
+import me.pugabyte.bncore.models.home.HomeService;
+import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
@@ -119,7 +121,7 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public static void registerPlaceholder(String id, Function<PlaceholderReplaceEvent, String> function) {
-		PlaceholderAPI.registerPlaceholder(getInstance(), id, function::apply);
+		Tasks.async(() -> PlaceholderAPI.registerPlaceholder(getInstance(), id, function::apply));
 	}
 
 	public static void fileLog(String file, String message) {
@@ -261,6 +263,8 @@ public class BNCore extends JavaPlugin {
 
 	private void enableFeatures() {
 		// Load this first
+		new Timer("  MySQL", NerdService::new);
+		new Timer("  MongoDB", HomeService::new);
 		new Timer("  Discord", () -> discord = new Discord());
 
 		new Timer("  AFK", () -> afk = new AFK());

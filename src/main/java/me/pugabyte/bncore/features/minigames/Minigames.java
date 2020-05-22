@@ -62,7 +62,7 @@ public class Minigames {
 
 	public Minigames() {
 		registerSerializables();
-		ArenaManager.read();
+		Tasks.async(ArenaManager::read);
 		registerListeners();
 		Tasks.repeat(Time.SECOND.x(5), 10, MatchManager::janitor);
 
