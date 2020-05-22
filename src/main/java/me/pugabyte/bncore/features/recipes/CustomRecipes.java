@@ -37,11 +37,11 @@ public class CustomRecipes {
 	}
 
 	public static void addRecipe(Recipe recipe) {
-		for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult())) {
+		for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
 			if (RecipeUtils.areEqual(recipe1, recipe)) return;
-		}
+
 		try {
-			Bukkit.addRecipe(recipe);
+			Tasks.sync(() -> Bukkit.addRecipe(recipe));
 			amount++;
 		} catch (IllegalStateException duplicate) {
 			BNCore.log(duplicate.getMessage());
