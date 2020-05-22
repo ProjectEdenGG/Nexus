@@ -6,6 +6,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -35,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.mainRg;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static org.bukkit.block.BlockFace.*;
@@ -43,6 +45,7 @@ import static org.bukkit.block.BlockFace.*;
 // TODO: Make person who starts laser, only get the points
 // TODO: Make sure the new objective doesn't repeat mobs
 // TODO: display number of reflections when u win -- Pink Pig hit in 6 reflections!
+// TODO: Allow multiple lasers to be shot
 public class Reflection implements Listener {
 
 	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
@@ -115,7 +118,7 @@ public class Reflection implements Listener {
 
 		Block block = event.getClickedBlock();
 		Location loc = block.getLocation();
-		if (!WGUtils.getRegionNamesAt(loc).contains(gameRg)) return;
+		if (!WGUtils.getRegionNamesAt(loc).contains(mainRg)) return;
 
 		BlockData blockData = block.getBlockData();
 		Directional directional = (Directional) blockData;
@@ -131,7 +134,12 @@ public class Reflection implements Listener {
 				Location start = Utils.getCenteredLocation(powder.getRelative(0, 3, 0).getLocation());
 				start.setY(start.getY() + 0.25);
 				laserStart = start;
-				startLaser(event.getPlayer());
+
+				BlockData blockDataDir = start.getBlock().getBlockData();
+				if (!(blockDataDir instanceof Rotatable)) return;
+				Rotatable skullDir = (Rotatable) blockDataDir;
+				BlockFace skullFace = skullDir.getRotation().getOppositeFace();
+				startLaser(event.getPlayer(), skullFace);
 			}
 		}
 	}
@@ -150,16 +158,16 @@ public class Reflection implements Listener {
 		return directions.get(ndx);
 	}
 
-	private void startLaser(Player player) {
+	private void startLaser(Player player, BlockFace startFace) {
 		active = true;
 		clearLamps();
 		AtomicInteger cooldown = new AtomicInteger(5);
 		AtomicInteger lifespan = new AtomicInteger(750);
-		final BlockFace[] blockFace = {NORTH};
+		final BlockFace[] blockFace = {startFace};
 		final Location[] loc = {laserStart.clone()};
 		AtomicReference<Color> laserColor = new AtomicReference<>(Color.RED);
 		AtomicInteger reflections = new AtomicInteger(0);
-		BearFair20.world.playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
+		BearFair20.world.playSound(laserStart, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
 		laserSound();
 
 		laserTaskId = Tasks.repeat(0, 1, () -> {
@@ -181,6 +189,10 @@ public class Reflection implements Listener {
 							win();
 							broadcast = false;
 						}
+					} else if (blockType.equals(Material.FLETCHING_TABLE)) {
+						FireworkLauncher.random(block.getLocation()).detonateAfter(20).launch();
+						endLaser();
+						return;
 					}
 					if (broadcast)
 						broadcastObjective();

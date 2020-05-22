@@ -3,12 +3,19 @@ package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.Collections;
+
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Beehive implements Listener {
 	private String enterRg = "bearfair2020_beehive_enter";
@@ -30,15 +37,26 @@ public class Beehive implements Listener {
 
 		if (id.equalsIgnoreCase(enterRg)) {
 			if (player.getInventory().contains(key)) {
-				player.teleport(enterLoc);
-				player.sendMessage(allowedMsg);
+				allowed(player);
 			} else {
-				player.sendMessage(deniedMsg);
-				player.playSound(enterLoc, Sound.ENTITY_BEE_LOOP_AGGRESSIVE, 1, 1);
+				denied(player);
 			}
 		} else if (id.equalsIgnoreCase(exitRg)) {
 			player.teleport(exitLoc);
 		}
+	}
+
+	private void allowed(Player player) {
+		player.teleport(enterLoc);
+		player.sendMessage(allowedMsg);
+	}
+
+	private void denied(Player player) {
+		player.addPotionEffects(Collections.singletonList
+				(new PotionEffect(PotionEffectType.BLINDNESS, 40, 250, false, false, false)));
+		player.teleport(exitLoc);
+		player.playSound(enterLoc, Sound.ENTITY_BEE_LOOP_AGGRESSIVE, 0.5F, 1F);
+		Tasks.wait(5, () -> player.sendMessage(colorize(deniedMsg)));
 
 	}
 }

@@ -6,14 +6,15 @@ import lombok.Data;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Halloween;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,7 +22,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
+
+import static me.pugabyte.bncore.utils.Utils.*;
 
 @Data
 public class BearFair20 implements Listener {
@@ -41,14 +45,14 @@ public class BearFair20 implements Listener {
 		if (player.hasPermission("worldguard.region.bypass.*")) return "wgedit";
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
-		if (Utils.isVanished(player)) return "vanish";
+		if (isVanished(player)) return "vanish";
 		if (BNCore.getEssentials().getUser(player.getUniqueId()).isGodModeEnabled()) return "godmode";
 
 		return null;
 	}
 
 	public static void givePoints(Player player, int points) {
-		player.sendMessage("TODO: given " + points + " points");
+		sendActionBar(player, "TODO: given " + points + " points");
 	}
 
 	@EventHandler
@@ -80,7 +84,7 @@ public class BearFair20 implements Listener {
 
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			ItemStack item = player.getInventory().getItemInMainHand();
-			if (!Utils.isNullOrAir(item)) {
+			if (!isNullOrAir(item)) {
 				if (item.getType().equals(Material.ENDER_PEARL)) {
 					event.setCancelled(true);
 				}
@@ -98,5 +102,20 @@ public class BearFair20 implements Listener {
 		event.getPlayer().closeInventory();
 	}
 
+	@EventHandler
+	public void onExitMinecart(VehicleExitEvent event) {
+		if (!(event.getExited() instanceof Player)) return;
+		if (!(event.getVehicle() instanceof Minecart)) return;
+
+		Player player = (Player) event.getExited();
+		Location loc = player.getLocation();
+		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
+		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+
+		Tasks.wait(1, () -> {
+			event.getVehicle().remove();
+			Fairgrounds.giveKit(Fairgrounds.BearFairKit.MINECART, player);
+		});
+	}
 
 }
