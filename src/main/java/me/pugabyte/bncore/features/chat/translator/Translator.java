@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.chat.translator;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -16,12 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+@NoArgsConstructor
 public class Translator implements Listener {
-
-	public Translator() {
-		BNCore.registerListener(this);
-		BNCore.getInstance().addConfigDefault("tokens.yandex", "abcdef");
-	}
 
 	@Getter
 	private static HashMap<UUID, ArrayList<UUID>> map = new HashMap<>();

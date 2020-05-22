@@ -7,6 +7,7 @@ import me.pugabyte.bncore.models.shop.Shop.Product;
 import me.pugabyte.bncore.models.shop.Shop.ShopGroup;
 import me.pugabyte.bncore.models.shop.ShopService;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,7 +22,7 @@ public class Shops {
 	private class Market {
 
 		public Market() {
-			setup();
+			Tasks.async(this::setup);
 		}
 
 		private void setup() {

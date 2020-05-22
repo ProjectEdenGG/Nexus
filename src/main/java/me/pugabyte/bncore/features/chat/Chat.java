@@ -32,8 +32,7 @@ public class Chat {
 	public static final String PREFIX = StringUtils.getPrefix("Chat");
 
 	public Chat() {
-		BNCore.getInstance().addConfigDefault("localRadius", 500);
-		new Translator();
+		BNCore.registerListener(new Translator());
 		BNCore.registerListener(new ChatListener());
 		BNCore.registerListener(new BridgeListener());
 		BNCore.registerListener(new AlertsListener());
