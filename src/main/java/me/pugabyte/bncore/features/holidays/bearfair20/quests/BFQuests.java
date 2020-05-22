@@ -323,4 +323,5 @@ public class BFQuests implements Listener {
 	//TODO:
 	// - on milk cow --> give BF20 milk bucket, ignore if bucket is bf20 or not
 	// - on shear bee nest, if 2 blocks below nest is a campfire, give BF20 honeycomb
+	// - Prevent enchanting BF20 Items
 }
