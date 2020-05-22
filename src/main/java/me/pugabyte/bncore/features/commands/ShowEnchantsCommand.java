@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.commands;
 
 import lombok.Data;
 import lombok.NonNull;
-import me.pugabyte.bncore.features.chat.bridge.BridgeListener;
+import me.pugabyte.bncore.features.chat.bridge.IngameBridgeListener;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
@@ -126,7 +126,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 			DiscordUser user = new DiscordService().get(player);
 
 			String discordMessage = discordize(message);
-			discordMessage = BridgeListener.parseMentions(discordMessage);
+			discordMessage = IngameBridgeListener.parseMentions(discordMessage);
 
 			Discord.send(new MessageBuilder()
 					.setContent(stripColor(user.getBridgeName() + discordMessage))
