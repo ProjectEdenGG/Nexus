@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
+import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -8,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class RecipeObject {
 	@NonNull
 	private ItemStack result;
@@ -54,18 +56,6 @@ public class RecipeObject {
 	public RecipeObject ingredients(List<ItemStack> ingredients) {
 		this.ingredients.addAll(ingredients);
 		return this;
-	}
-
-	public List<ItemStack> getIngredients() {
-		return ingredients;
-	}
-
-	public ItemStack getResult() {
-		return result;
-	}
-
-	public String getKey() {
-		return key;
 	}
 }
 

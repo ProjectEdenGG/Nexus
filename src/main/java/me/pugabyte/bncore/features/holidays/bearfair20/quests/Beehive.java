@@ -5,6 +5,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,6 +34,7 @@ public class Beehive implements Listener {
 				player.sendMessage(allowedMsg);
 			} else {
 				player.sendMessage(deniedMsg);
+				player.playSound(enterLoc, Sound.ENTITY_BEE_LOOP_AGGRESSIVE, 1, 1);
 			}
 		} else if (id.equalsIgnoreCase(exitRg)) {
 			player.teleport(exitLoc);

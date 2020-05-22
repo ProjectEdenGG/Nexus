@@ -12,6 +12,8 @@ import org.bukkit.potion.PotionType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
+
 public class Merchants {
 
 	public static void openMerchant(Player player, int id) {
@@ -28,7 +30,7 @@ public class Merchants {
 				return new ArrayList<>();
 			}
 		},
-		BAKER(6667) {
+		BAKER(2659) {
 			@Override
 			List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
@@ -39,14 +41,14 @@ public class Merchants {
 			List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potion(PotionType.POISON, true, false))
-							.ingredient(Material.STICK));
+							.result(new ItemBuilder(Material.POTION).potion(PotionType.POISON, true, false).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.STICK).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potion(PotionType.WEAKNESS))
-							.ingredient(Material.STICK));
+							.result(new ItemBuilder(Material.POTION).potion(PotionType.WEAKNESS).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.STICK).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potion(PotionType.SLOWNESS))
-							.ingredient(Material.STICK));
+							.result(new ItemBuilder(Material.POTION).potion(PotionType.SLOWNESS).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.STICK).lore(itemLore)));
 				}};
 			}
 		},
@@ -59,7 +61,26 @@ public class Merchants {
 		BOTANIST(2661) {
 			@Override
 			List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.MELON).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(4).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(9).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.POTATO).amount(16).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.BEETROOT).amount(16).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.CARROT).amount(16).lore(itemLore)));
+				}};
 			}
 		},
 		BREWER(2662) {
@@ -68,10 +89,32 @@ public class Merchants {
 				return new ArrayList<>();
 			}
 		},
-		FISHERMAN(2653) {
+		COLLECTOR(2750) {
 			@Override
 			List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
+			}
+		},
+		FISHERMAN(2653) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.FISHING_ROD).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.STICK).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.COD).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.SALMON).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.TROPICAL_FISH).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.PUFFERFISH).lore(itemLore)));
+				}};
 			}
 		},
 		INVENTOR(2660) {
@@ -83,13 +126,24 @@ public class Merchants {
 		MINER(2743) {
 			@Override
 			List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.SMOOTH_QUARTZ).name("Purified Marble").lore(itemLore)));
+				}};
 			}
 		},
 		PASTRY_CHEF(2654) {
 			@Override
 			List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.CAKE).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.COOKIE).lore(itemLore)));
+				}};
 			}
 		},
 		SORCERER(2658) {
