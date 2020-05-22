@@ -29,7 +29,6 @@ import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
-// TODO: Bug - Won't give kit if inventory is near full, but still has space?
 public class Fairgrounds implements Listener {
 
 	public Fairgrounds() {
