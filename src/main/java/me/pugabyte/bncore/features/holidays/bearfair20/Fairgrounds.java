@@ -12,6 +12,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,11 +34,11 @@ public class Fairgrounds implements Listener {
 
 	public Fairgrounds() {
 		BNCore.registerListener(this);
-		new PugDunk();
-		new Archery();
-		new Frogger();
-		new Basketball();
-		new Reflection();
+		new Timer("      PugDunk", PugDunk::new);
+		new Timer("      Archery", Archery::new);
+		new Timer("      Frogger", Frogger::new);
+		new Timer("      Basketball", Basketball::new);
+		new Timer("      Reflection", Reflection::new);
 	}
 
 	public static void giveKit(BearFairKit kit, Player player) {

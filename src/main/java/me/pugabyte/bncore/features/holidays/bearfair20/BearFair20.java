@@ -6,6 +6,7 @@ import lombok.Data;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Halloween;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
+import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -31,9 +32,9 @@ public class BearFair20 implements Listener {
 
 	public BearFair20() {
 		BNCore.registerListener(this);
-		new Fairgrounds();
-		new Halloween();
-		new BFQuests();
+		new Timer("    Fairgrounds", Fairgrounds::new);
+		new Timer("    Halloween", Halloween::new);
+		new Timer("    BFQuests", BFQuests::new);
 	}
 
 	public static String isCheatingMsg(Player player) {
