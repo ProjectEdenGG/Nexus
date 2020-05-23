@@ -14,6 +14,7 @@ import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 
+// TODO: Trades & Economy
 public class Merchants {
 
 	public static void openMerchant(Player player, int id) {
