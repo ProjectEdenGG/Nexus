@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-// TODO: Fix bug -> player.isOnGround is firing as soon as you launch
 public class LaunchPads implements Listener {
 	private static Map<Player, Integer> taskIDs = new HashMap<>();
 	private static Map<Player, FallingBlock> launchPadPlayers = new HashMap<>();

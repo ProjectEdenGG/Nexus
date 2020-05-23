@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.chat;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.alerts.AlertsListener;
-import me.pugabyte.bncore.features.chat.bridge.BridgeListener;
+import me.pugabyte.bncore.features.chat.bridge.IngameBridgeListener;
 import me.pugabyte.bncore.features.chat.translator.Translator;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.models.chat.ChatService;
@@ -12,6 +12,7 @@ import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Time.Timer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -32,12 +33,11 @@ public class Chat {
 	public static final String PREFIX = StringUtils.getPrefix("Chat");
 
 	public Chat() {
-		BNCore.getInstance().addConfigDefault("localRadius", 500);
-		new Translator();
-		BNCore.registerListener(new ChatListener());
-		BNCore.registerListener(new BridgeListener());
-		BNCore.registerListener(new AlertsListener());
-		addChannels();
+		new Timer("    Translator", () -> BNCore.registerListener(new Translator()));
+		new Timer("    ChatListener", () -> BNCore.registerListener(new ChatListener()));
+		new Timer("    IngameBridgeListener", () -> BNCore.registerListener(new IngameBridgeListener()));
+		new Timer("    AlertsListener", () -> BNCore.registerListener(new AlertsListener()));
+		new Timer("    addChannels", this::addChannels);
 	}
 
 	static {

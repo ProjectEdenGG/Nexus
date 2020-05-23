@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.holidays.bearfair20.quests;
+package me.pugabyte.bncore.features.holidays.bearfair20.models;
 
 import lombok.NonNull;
 import org.bukkit.Material;

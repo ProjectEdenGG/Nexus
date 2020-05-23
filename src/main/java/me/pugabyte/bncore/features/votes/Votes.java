@@ -19,6 +19,7 @@ import me.pugabyte.bncore.models.vote.VoteSite;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -50,7 +51,7 @@ public class Votes implements Listener {
 		scheduler();
 		BNCore.registerPlaceholder("votepoints", event -> String.valueOf(((Voter) new VoteService().get(event.getPlayer())).getPoints()));
 
-		BNCore.getCron().schedule("00 00 1 * *", EndOfMonth::run);
+		new Timer("    EndOfMonth", () -> BNCore.getCron().schedule("00 00 1 * *", EndOfMonth::run));
 	}
 
 	private void scheduler() {

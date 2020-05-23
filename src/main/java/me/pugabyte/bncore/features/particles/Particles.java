@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.particles;
 
 import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 public class Particles {
 
 	public Particles() {
-		startup();
+		Tasks.async(this::startup);
 	}
 
 	private void startup() {

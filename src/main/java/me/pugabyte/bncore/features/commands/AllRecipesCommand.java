@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
-import me.pugabyte.bncore.features.holidays.bearfair20.quests.RecipeObject;
+import me.pugabyte.bncore.features.holidays.bearfair20.models.RecipeObject;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.Recipes;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;

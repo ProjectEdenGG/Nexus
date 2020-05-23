@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.chat.alerts;
 
-import me.pugabyte.bncore.BNCore;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.chat.events.DiscordChatEvent;
 import me.pugabyte.bncore.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.bncore.models.alerts.AlertsService;
@@ -14,11 +14,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 public class AlertsListener implements Listener {
-
-	public AlertsListener() {
-		BNCore.registerListener(this);
-	}
 
 	@NotNull
 	public Set<Chatter> getEveryoneElse(Chatter origin, Set<Chatter> recipients) {

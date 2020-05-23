@@ -4,6 +4,7 @@ import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.holidays.bearfair20.models.Laser;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.MaterialTag;
@@ -14,6 +15,7 @@ import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -35,13 +37,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.mainRg;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static org.bukkit.block.BlockFace.*;
 
 // TODO: Weighted reflections
 // TODO: Make person who starts laser, only get the points
-// TODO: Make sure the new objective doesn't repeat mobs
+// TODO: Make sure the new objective doesn't repeat
 // TODO: display number of reflections when u win -- Pink Pig hit in 6 reflections!
 public class Reflection implements Listener {
 
@@ -49,6 +52,7 @@ public class Reflection implements Listener {
 	private String gameRg = BearFair20.mainRg + "_reflection";
 	private String powderRg = gameRg + "_powder";
 	private boolean active = false;
+	private boolean prototypeActive = false;
 	private int laserTaskId;
 	private int soundTaskId;
 	private Location laserStart;
@@ -113,26 +117,47 @@ public class Reflection implements Listener {
 		if (event.getHand().equals(EquipmentSlot.OFF_HAND)) return;
 		if (!event.getClickedBlock().getType().equals(Material.STONE_BUTTON)) return;
 
-		Block block = event.getClickedBlock();
-		Location loc = block.getLocation();
-		if (!WGUtils.getRegionNamesAt(loc).contains(gameRg)) return;
+		Block button = event.getClickedBlock();
+		Location loc = button.getLocation();
+		if (!WGUtils.getRegionNamesAt(loc).contains(mainRg)) return;
 
-		BlockData blockData = block.getBlockData();
+		BlockData blockData = button.getBlockData();
 		Directional directional = (Directional) blockData;
-		Block powder = block.getRelative(0, -1, 0).getRelative(directional.getFacing().getOppositeFace());
+		Block powder = button.getRelative(0, -1, 0).getRelative(directional.getFacing().getOppositeFace());
 		Material powderType = powder.getType();
 		if (!MaterialTag.CONCRETE_POWDERS.isTagged(powderType)) return;
 
-		if (!powderType.equals(Material.WHITE_CONCRETE_POWDER)) {
+		if (powderType.equals(Material.CYAN_CONCRETE_POWDER)) {
 			Block banner = powder.getRelative(0, 2, 0);
 			rotateBanner(banner);
-		} else {
+		} else if (powderType.equals(Material.WHITE_CONCRETE_POWDER) || powderType.equals(Material.BLACK_CONCRETE_POWDER)) {
 			if (!active) {
-				Location start = Utils.getCenteredLocation(powder.getRelative(0, 3, 0).getLocation());
-				start.setY(start.getY() + 0.25);
-				laserStart = start;
-				startLaser(event.getPlayer());
+				Location skullLoc = Utils.getCenteredLocation(powder.getRelative(0, 3, 0).getLocation());
+				skullLoc.setY(skullLoc.getY() + 0.25);
+				laserStart = skullLoc;
+
+				BlockData blockDataDir = skullLoc.getBlock().getBlockData();
+				if (!(blockDataDir instanceof Rotatable)) return;
+				Rotatable skullDir = (Rotatable) blockDataDir;
+				BlockFace skullFace = skullDir.getRotation().getOppositeFace();
+
+				if (powderType.equals(Material.BLACK_CONCRETE_POWDER)) {
+					if (prototypeActive) return;
+					prototypeActive = true;
+					new Laser(event.getPlayer(), skullLoc, skullFace, Color.BLUE, Material.FLETCHING_TABLE);
+					Tasks.wait(Time.SECOND.x(2), () -> prototypeActive = false);
+
+				} else {
+					startLaser(event.getPlayer(), skullFace);
+				}
 			}
+		} else if (powderType.equals(Material.RED_CONCRETE_POWDER)) {
+			Location skullLoc = Utils.getCenteredLocation(powder.getRelative(0, 3, 0).getLocation());
+			skullLoc.setY(skullLoc.getY() + 0.25);
+			skullLoc.getWorld().spawnParticle(Particle.LAVA, skullLoc, 5, 0, 0, 0);
+			skullLoc.getWorld().playSound(skullLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F);
+			Tasks.wait(5, () -> skullLoc.getWorld().spawnParticle(Particle.LAVA, skullLoc, 5, 0, 0, 0));
+			Tasks.wait(10, () -> skullLoc.getWorld().spawnParticle(Particle.LAVA, skullLoc, 5, 0, 0, 0));
 		}
 	}
 
@@ -150,16 +175,16 @@ public class Reflection implements Listener {
 		return directions.get(ndx);
 	}
 
-	private void startLaser(Player player) {
+	private void startLaser(Player player, BlockFace startFace) {
 		active = true;
 		clearLamps();
 		AtomicInteger cooldown = new AtomicInteger(5);
 		AtomicInteger lifespan = new AtomicInteger(750);
-		final BlockFace[] blockFace = {NORTH};
+		final BlockFace[] blockFace = {startFace};
 		final Location[] loc = {laserStart.clone()};
 		AtomicReference<Color> laserColor = new AtomicReference<>(Color.RED);
 		AtomicInteger reflections = new AtomicInteger(0);
-		BearFair20.world.playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
+		BearFair20.world.playSound(laserStart, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
 		laserSound();
 
 		laserTaskId = Tasks.repeat(0, 1, () -> {
@@ -194,7 +219,7 @@ public class Reflection implements Listener {
 					loc[0] = Utils.getCenteredLocation(loc[0]);
 					loc[0].setY(loc[0].getY() + 0.25);
 					Rotatable rotatable = (Rotatable) below.getBlockData();
-					BlockFace newFace = getReflection(rotatable.getRotation(), blockFace[0]);
+					BlockFace newFace = Laser.getReflection(blockFace[0], rotatable.getRotation());
 					if (newFace == null) {
 						endLaser();
 						return;
@@ -227,54 +252,6 @@ public class Reflection implements Listener {
 				endLaser();
 			}
 		});
-	}
-
-	private BlockFace getReflection(BlockFace bannerFace, BlockFace laserFace) {
-		if (bannerFace.name().toLowerCase().contains(laserFace.name().toLowerCase())) {
-			return null;
-		}
-
-		if (laserFace.getOppositeFace().equals(bannerFace))
-			return laserFace.getOppositeFace();
-
-		if (laserFace.equals(NORTH)) {
-			if (bannerFace.equals(WEST) || bannerFace.equals(EAST))
-				return laserFace;
-
-			if (bannerFace.equals(SOUTH_WEST))
-				return WEST;
-			else
-				return EAST;
-
-		} else if (laserFace.equals(SOUTH)) {
-			if (bannerFace.equals(WEST) || bannerFace.equals(EAST))
-				return laserFace;
-
-			if (bannerFace.equals(NORTH_WEST))
-				return WEST;
-			else
-				return EAST;
-
-		} else if (laserFace.equals(EAST)) {
-			if (bannerFace.equals(SOUTH) || bannerFace.equals(NORTH))
-				return laserFace;
-
-			if (bannerFace.equals(SOUTH_WEST))
-				return SOUTH;
-			else
-				return NORTH;
-
-		} else if (laserFace.equals(WEST)) {
-			if (bannerFace.equals(SOUTH) || bannerFace.equals(NORTH))
-				return laserFace;
-
-			if (bannerFace.equals(NORTH_EAST))
-				return NORTH;
-			else
-				return SOUTH;
-		}
-
-		return laserFace;
 	}
 
 	private void laserSound() {
