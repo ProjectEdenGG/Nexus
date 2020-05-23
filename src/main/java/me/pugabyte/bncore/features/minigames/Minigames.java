@@ -61,9 +61,11 @@ public class Minigames {
 	public static PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 
 	public Minigames() {
-		registerSerializables();
-		ArenaManager.read();
-		registerListeners();
+		Tasks.async(() -> {
+			registerSerializables();
+			ArenaManager.read();
+			registerListeners();
+		});
 		Tasks.repeat(Time.SECOND.x(5), 10, MatchManager::janitor);
 
 		new ActionBar();

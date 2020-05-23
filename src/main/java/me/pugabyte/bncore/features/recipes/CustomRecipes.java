@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.recipes;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -19,26 +20,28 @@ public class CustomRecipes {
 	public static Map<NamespacedKey, Recipe> recipes = new HashMap<>();
 
 	public CustomRecipes() {
-		slabsToBlocks();
-		quartsUncrafting();
-		stoneBricksUncrafting();
-		concretePowderDying();
-		stainedGlassDying();
-		stainedGlassPaneDying();
-		terracottaDying();
-		bedDying();
-		setWoolUndyingRecipe();
-		misc();
-		BNCore.getInstance().getLogger().info("Registered " + amount + " new custom crafting recipes");
-		BNCore.getInstance().getLogger().info(recipes.size() + " total custom recipes are loaded on the server");
+		Tasks.async(() -> {
+			slabsToBlocks();
+			quartsUncrafting();
+			stoneBricksUncrafting();
+			concretePowderDying();
+			stainedGlassDying();
+			stainedGlassPaneDying();
+			terracottaDying();
+			bedDying();
+			setWoolUndyingRecipe();
+			misc();
+			BNCore.getInstance().getLogger().info("Registered " + amount + " new custom crafting recipes");
+			BNCore.getInstance().getLogger().info(recipes.size() + " total custom recipes are loaded on the server");
+		});
 	}
 
 	public static void addRecipe(Recipe recipe) {
-		for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult())) {
+		for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
 			if (RecipeUtils.areEqual(recipe1, recipe)) return;
-		}
+
 		try {
-			Bukkit.addRecipe(recipe);
+			Tasks.sync(() -> Bukkit.addRecipe(recipe));
 			amount++;
 		} catch (IllegalStateException duplicate) {
 			BNCore.log(duplicate.getMessage());

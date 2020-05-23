@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.scoreboard;
 
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -32,17 +33,26 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		user.start();
 	}
 
-	@Path("render")
-	void render() {
+	@Description("Turn the scoreboard on or off")
+	@Path("[boolean]")
+	void toggle(Boolean enable) {
+		if (enable == null) enable = !user.isActive();
+		user.setActive(enable);
+		if (!user.isActive())
+			user.getScoreboard().delete();
+		service.save(user);
+	}
+
+	@Description("Reset settings to default")
+	@Path("reset")
+	void reset() {
+		user.setActive(true);
+		user.setLines(ScoreboardLine.getDefaultLines(player()));
+		service.save(user);
 		user.render();
 	}
 
-	@Path("delete")
-	void delete() {
-		service.delete(user);
-	}
-
-	// Need to re-think the ordering approach
+	@Description("Control which lines you want to see")
 	@Path("edit")
 	void book() {
 		BookBuilder builder = new BookBuilder();
@@ -55,12 +65,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 					.command("/scoreboard edit toggle " + line.name())
 					.hover("&eClick to toggle")
 					.next(" ").group();
-//			json.next("&7⬆").command("/scoreboard edit up " + line.name() + " " + index)
-//					.hover("&eClick to move up")
-//					.next(" ").group();
-//			json.next("&7⬇").command("/scoreboard edit down " + line.name() + " " + index)
-//					.hover("&eClick to move down")
-//					.next(" ").group();
 			json.next("&3" + camelCase(line.name()))
 					.hover(line.render(player()));
 			json.newline();
@@ -74,28 +78,16 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		builder.addPage(json).open(player());
 	}
 
-	@Path("edit toggle <type>")
-	void toggle(ScoreboardLine line) {
-		if (user.getLines().containsKey(line))
-			user.getLines().replace(line, !user.getLines().get(line));
-		else
-			user.getLines().put(line, true);
-		book();
+	@Path("renderTest")
+	void renderTest() {
+		send(ScoreboardLine.COMPASS.render(player()));
 	}
 
-	@Path("edit up <line> <index>")
-	void up(ScoreboardLine line, int index) {
-		boolean active = user.getLines().containsKey(line) && user.getLines().get(line);
-		user.getLines().remove(line);
-		user.getLines().put(index - 1, line, active);
-		book();
-	}
-
-	@Path("edit down <line> <index>")
-	void down(ScoreboardLine line, int index) {
-		boolean active = user.getLines().containsKey(line) && user.getLines().get(line);
-		user.getLines().remove(line);
-		user.getLines().put(index + 1, line, active);
+	@Path("edit toggle <type> [enable]")
+	void toggle(ScoreboardLine line, Boolean enable) {
+		if (enable == null) enable = !user.getLines().get(line);
+		user.getLines().put(line, enable);
+		user.render();
 		book();
 	}
 

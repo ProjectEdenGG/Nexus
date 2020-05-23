@@ -38,28 +38,30 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class BFQuests implements Listener {
-	private ProtectedRegion mainRegion = WGUtils.getProtectedRegion(BearFair20.mainRg);
+	public static ProtectedRegion mainRegion = WGUtils.getProtectedRegion(BearFair20.mainRg);
 	private List<Material> breakList = Arrays.asList(Material.WHEAT, Material.POTATOES, Material.CARROTS,
-			Material.BEETROOTS, Material.MELON, Material.PUMPKIN, Material.SUGAR_CANE, Material.COCOA);
-	private List<Material> noAge = Collections.singletonList(Material.SUGAR_CANE);
+			Material.BEETROOTS, Material.MELON, Material.PUMPKIN, Material.SUGAR_CANE, Material.COCOA, Material.BAMBOO);
+	private List<Material> noAge = Arrays.asList(Material.SUGAR_CANE, Material.BAMBOO);
 	public static String itemLore = "BearFair20 Item";
 	// Data
 	private Map<Location, Material> multiRegenMap = new HashMap<>();
 	private Map<Location, Material> blockRegenMap = new HashMap<>();
 	private List<Location> cropRegenList = new ArrayList<>();
 	// Error Messages
-	private String prefix = "&8&l[&eBFQuests&8&l] ";
-	private String cantBreak = prefix + "&c&lHey! &7That's not a block you can break";
-	private String notFullyGrown = prefix + "&c&lHey! &7That's not fully grown";
-	private String bottomBlock = prefix + "&c&lHey! &7You can't break the bottom block";
-	private String decor = prefix + "&c&lHey! &7This block is just decoration";
-	private String craftItem = prefix + "&c&lHey! &7You can only craft that item with BearFair20 items!";
+	private static String prefix = "&8&l[&eBFQuests&8&l] ";
+	public static String cantBreakError = prefix + "&c&lHey! &7That's not a block you can break";
+	public static String notFullyGrownError = prefix + "&c&lHey! &7That's not fully grown";
+	public static String bottomBlockError = prefix + "&c&lHey! &7You can't break the bottom block";
+	public static String decorOnlyError = prefix + "&c&lHey! &7This block is just decoration";
+	public static String craftItemError = prefix + "&c&lHey! &7You can only craft that item with BearFair20 items!";
+	public static String fishingError = prefix + "&c&lHey! &7You may only fish here using a BearFair20 Fishing Rod";
 
 	public BFQuests() {
 		BNCore.registerListener(this);
 		regenTasks();
 		new Beehive();
 		Recipes.loadRecipes();
+		new Fishing();
 	}
 
 	private void regenTasks() {
@@ -112,7 +114,7 @@ public class BFQuests implements Listener {
 		});
 
 		// MULTIBLOCK
-		Tasks.repeat(0, Time.SECOND.x(10), () -> {
+		Tasks.repeat(0, Time.SECOND.x(1), () -> {
 			Set<Location> locations = new HashSet<>(multiRegenMap.keySet());
 			for (Location loc : locations) {
 				Block block = loc.getBlock();
@@ -127,7 +129,7 @@ public class BFQuests implements Listener {
 					continue;
 				}
 
-				if (Utils.chanceOf(20)) {
+				if (Utils.chanceOf(100)) {
 					Block down = block.getRelative(0, -1, 0);
 					if (down.getType().equals(material)) {
 						block.setType(material);
@@ -148,7 +150,7 @@ public class BFQuests implements Listener {
 		if (!WGUtils.getRegionsAt(block.getLocation()).contains(mainRegion)) return;
 		if (!breakList.contains(block.getType())) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
-			player.sendMessage(colorize(cantBreak));
+			player.sendMessage(colorize(cantBreakError));
 			event.setCancelled(true);
 			return;
 		}
@@ -165,31 +167,40 @@ public class BFQuests implements Listener {
 				case MELON:
 				case PUMPKIN:
 					if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
-						player.sendMessage(colorize(decor));
+						player.sendMessage(colorize(decorOnlyError));
 						event.setCancelled(true);
 						return;
 					}
 					Tasks.wait(20, () -> blockRegenMap.put(block.getLocation(), material));
 					break;
 				case SUGAR_CANE:
+				case BAMBOO:
 					if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
-						player.sendMessage(colorize(bottomBlock));
+						player.sendMessage(colorize(bottomBlockError));
 						event.setCancelled(true);
 						return;
 					}
 					multiRegenMap.put(block.getLocation(), material);
 
-					Block up = block.getRelative(0, 1, 0);
-					if (up.getType().equals(material)) {
-						up.setType(Material.AIR, false);
-						up.getWorld().dropItemNaturally(up.getLocation(), new ItemBuilder(material).lore(itemLore).build());
-						multiRegenMap.put(up.getLocation(), material);
+					Block above = block.getRelative(0, 1, 0);
+					if (above.getType().equals(material)) {
+						int yvalue = above.getLocation().getBlockY();
+						for (int i = yvalue; i < 255; i++) {
+							if (above.getType().equals(material)) {
+								Location aboveLoc = above.getLocation();
+								above.setType(Material.AIR, false);
+								above.getWorld().dropItemNaturally(aboveLoc, new ItemBuilder(material).lore(itemLore).build());
+								multiRegenMap.put(aboveLoc, material);
+							} else {
+								break;
+							}
+							above = above.getRelative(0, 1, 0);
+						}
 					}
-
 					break;
 				default:
 					if (player.hasPermission("worldguard.region.bypass.*")) return;
-					player.sendMessage(colorize(cantBreak));
+					player.sendMessage(colorize(cantBreakError));
 					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 					event.setCancelled(true);
 			}
@@ -198,7 +209,7 @@ public class BFQuests implements Listener {
 
 		Ageable ageable = (Ageable) blockData;
 		if (ageable.getAge() != ageable.getMaximumAge()) {
-			player.sendMessage(colorize(notFullyGrown));
+			player.sendMessage(colorize(notFullyGrownError));
 			event.setCancelled(true);
 			return;
 		}
@@ -255,7 +266,7 @@ public class BFQuests implements Listener {
 		if (!questCrafting) {
 			if (result != null && result.getItemMeta().getLore() != null && result.getItemMeta().getLore().contains(itemLore)) {
 				event.getInventory().setResult(new ItemStack(Material.AIR));
-				player.sendMessage(colorize(craftItem));
+				player.sendMessage(colorize(craftItemError));
 			}
 		}
 	}
@@ -312,4 +323,5 @@ public class BFQuests implements Listener {
 	//TODO:
 	// - on milk cow --> give BF20 milk bucket, ignore if bucket is bf20 or not
 	// - on shear bee nest, if 2 blocks below nest is a campfire, give BF20 honeycomb
+	// - Prevent enchanting BF20 Items
 }

@@ -56,6 +56,7 @@ public class BNScoreboard {
 	}
 
 	public void delete() {
+		clear();
 		scoreboard.removeObjective(objective.getId());
 	}
 

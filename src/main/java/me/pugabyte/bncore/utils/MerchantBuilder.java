@@ -43,7 +43,7 @@ public class MerchantBuilder {
 		private ItemStack result;
 		@NonNull
 		private final List<ItemStack> ingredients = new ArrayList<>();
-		private int maxUses = 1;
+		private int maxUses = 3000;
 
 		public TradeBuilder result(Material result) {
 			this.result = new ItemStack(result);

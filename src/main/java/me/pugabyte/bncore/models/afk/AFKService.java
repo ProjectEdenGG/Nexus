@@ -2,6 +2,7 @@ package me.pugabyte.bncore.models.afk;
 
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.models.MySQLService;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -24,7 +25,7 @@ public class AFKService extends MySQLService {
 	public Map<Player, AFKPlayer> getAll() {
 		try {
 			List<AFKPlayer> results = database.where("uuid in (" + asList(Utils.getOnlineUuids()) + ")").results(AFKPlayer.class);
-			database.table("afk").delete();
+			Tasks.async(() -> database.table("afk").delete());
 			Map<Player, AFKPlayer> players = new HashMap<>();
 			for (AFKPlayer afkPlayer : results) {
 				OfflinePlayer player = Utils.getPlayer(afkPlayer.getUuid());

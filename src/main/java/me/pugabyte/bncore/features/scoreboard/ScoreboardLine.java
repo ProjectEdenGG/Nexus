@@ -15,7 +15,6 @@ import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.Utils;
-import org.apache.commons.collections4.map.ListOrderedMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -25,7 +24,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.left;
 import static me.pugabyte.bncore.utils.StringUtils.timespanFormat;
 import static me.pugabyte.bncore.utils.Utils.isVanished;
@@ -116,7 +118,7 @@ public enum ScoreboardLine {
 	GAMEMODE {
 		@Override
 		public String render(Player player) {
-			return "&3Mode: &e" + player.getGameMode().name().toLowerCase();
+			return "&3Mode: &e" + camelCase(player.getGameMode().name());
 		}
 	},
 
@@ -161,9 +163,29 @@ public enum ScoreboardLine {
 	},
 
 	COMPASS {
+		private static final String compass = "[S] ---- SW ---- [W] ---- NW ---- [N] ---- NE ---- [E] ---- SE ---- ";
+		private static final int extra = 8;
 		@Override
 		public String render(Player player) {
-			return "null";
+			float yaw = Location.normalizeYaw(player.getLocation().getYaw());
+			if (yaw < 0) yaw = 360 + yaw;
+			int center = Math.round(yaw / (360 / (compass.length()))) + 1;
+			BNCore.log("Yaw: " + yaw);
+			BNCore.log("Center: " + center);
+			BNCore.log("Compass length: " + compass.length());
+
+			String instance;
+			if (center - extra < 0) {
+				center += compass.length();
+				instance = (compass + compass).substring(center - extra, center + extra);
+			} else if (center + extra > compass.length())
+				instance = (compass + compass).substring(center - extra, center + extra);
+			else
+				instance = compass.substring(center - extra, center + extra);
+
+			instance = instance.replaceAll("\\[", "&2[&f");
+			instance = instance.replaceAll("]", "&2]&f");
+			return instance;
 		}
 	},
 
@@ -202,8 +224,8 @@ public enum ScoreboardLine {
 		return annotation == null || player.hasPermission(annotation.value());
 	}
 
-	public static ListOrderedMap<ScoreboardLine, Boolean> getDefaultLines(Player player) {
-		return new ListOrderedMap<ScoreboardLine, Boolean>() {{
+	public static Map<ScoreboardLine, Boolean> getDefaultLines(Player player) {
+		return new HashMap<ScoreboardLine, Boolean>() {{
 			if (ScoreboardLine.ONLINE.hasPermission(player))		put(ScoreboardLine.ONLINE, true);
 			if (ScoreboardLine.TICKETS.hasPermission(player))		put(ScoreboardLine.TICKETS, true);
 			if (ScoreboardLine.TPS.hasPermission(player))			put(ScoreboardLine.TPS, true);
