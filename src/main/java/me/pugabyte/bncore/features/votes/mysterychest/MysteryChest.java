@@ -124,8 +124,8 @@ public class MysteryChest {
 		patterns4.add(new Pattern(DyeColor.YELLOW, PatternType.STRIPE_LEFT));
 		patterns4.add(new Pattern(DyeColor.YELLOW, PatternType.STRIPE_RIGHT));
 		patterns4.add(new Pattern(DyeColor.WHITE, PatternType.FLOWER));
-		meta4.setPatterns(patterns3);
-		banner4.setItemMeta(meta3);
+		meta4.setPatterns(patterns4);
+		banner4.setItemMeta(meta4);
 		box.getInventory().addItem(banner4);
 
 		meta.setBlockState(box);
