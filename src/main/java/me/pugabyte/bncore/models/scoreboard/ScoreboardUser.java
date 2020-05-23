@@ -61,7 +61,6 @@ public class ScoreboardUser extends PlayerOwnedObject {
 			scoreboard.subscribe(getPlayer());
 		active = true;
 		headerTaskId = Tasks.repeatAsync(0, (ScoreboardLine.getHeaderFrames().size() + 1) * HEADER_UPDATE_INTERVAL, new Header(getPlayer()));
-//		init();
 		startTasks();
 	}
 
@@ -100,25 +99,6 @@ public class ScoreboardUser extends PlayerOwnedObject {
 				renderedOrder.add(toRender);
 		return renderedOrder.size() - renderedOrder.indexOf(line);
 	}
-
-//	public void init() {
-//		if (!active || scoreboard == null) return;
-//		Tasks.async(() -> {
-//			ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
-//			Arrays.asList(ScoreboardLine.values()).forEach(line -> {
-//				if (lines.containsKey(line) && lines.get(line)) {
-//					String render = line.render(getPlayer());
-//					if (!isNullOrEmpty(render))
-//						rendered.put(line, render);
-//				}
-//			});
-//
-//			if (scoreboard != null) {
-//				this.rendered = rendered;
-//				scoreboard.setLines(rendered.valueList());
-//			}
-//		});
-//	}
 
 	public void startTasks() {
 		cancelTasks();
