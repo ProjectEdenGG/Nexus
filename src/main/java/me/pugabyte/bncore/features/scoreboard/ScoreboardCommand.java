@@ -98,6 +98,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		if (!enable)
 			user.remove(line);
 		user.startTasks();
+		service.save(user);
 		book();
 	}
 
