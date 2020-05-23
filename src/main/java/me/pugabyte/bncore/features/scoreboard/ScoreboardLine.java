@@ -1,9 +1,11 @@
 package me.pugabyte.bncore.features.scoreboard;
 
 import com.gmail.nossr50.util.player.UserManager;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.commands.PushCommand;
+import me.pugabyte.bncore.models.afk.AFKPlayer;
 import me.pugabyte.bncore.models.chat.Channel;
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
@@ -11,6 +13,7 @@ import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
+import me.pugabyte.bncore.models.scoreboard.ScoreboardUser;
 import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
@@ -19,16 +22,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.left;
+import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
 import static me.pugabyte.bncore.utils.StringUtils.timespanFormat;
 import static me.pugabyte.bncore.utils.Utils.isVanished;
 
@@ -67,7 +74,7 @@ public enum ScoreboardLine {
 			long total = Runtime.getRuntime().totalMemory();
 			long used = total - Runtime.getRuntime().freeMemory();
 			double gb = Math.pow(1024, 3);
-			return "&3RAM: &e" + new DecimalFormat("#.##").format(used / gb)
+			return "&3RAM: &e" + new DecimalFormat("0.00").format(used / gb)
 					+ "&3/" + new DecimalFormat("#.##").format(total / gb) + "gb";
 		}
 	},
@@ -125,7 +132,10 @@ public enum ScoreboardLine {
 	WORLD {
 		@Override
 		public String render(Player player) {
-			return "&3World: &e" + player.getWorld().getName();
+			String world = player.getWorld().getName();
+			if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
+				world = world.replace("world", "legacy");
+			return "&3World: &e" + world;
 		}
 	},
 
@@ -162,6 +172,7 @@ public enum ScoreboardLine {
 		}
 	},
 
+	@Interval(2)
 	COMPASS {
 		private static final String compass = "[S] ---- SW ---- [W] ---- NW ---- [N] ---- NE ---- [E] ---- SE ---- ";
 		private static final int extra = 8;
@@ -169,10 +180,8 @@ public enum ScoreboardLine {
 		public String render(Player player) {
 			float yaw = Location.normalizeYaw(player.getLocation().getYaw());
 			if (yaw < 0) yaw = 360 + yaw;
-			int center = Math.round(yaw / (360 / (compass.length()))) + 1;
-			BNCore.log("Yaw: " + yaw);
-			BNCore.log("Center: " + center);
-			BNCore.log("Compass length: " + compass.length());
+
+			int center = (int) (Math.round(yaw / (360D / compass.length())) + 1);
 
 			String instance;
 			if (center - extra < 0) {
@@ -189,6 +198,7 @@ public enum ScoreboardLine {
 		}
 	},
 
+	@Interval(3)
 	COORDINATES {
 		@Override
 		public String render(Player player) {
@@ -197,6 +207,7 @@ public enum ScoreboardLine {
 		}
 	},
 
+	@Interval(20)
 	HOURS {
 		@Override
 		public String render(Player player) {
@@ -210,13 +221,38 @@ public enum ScoreboardLine {
 		public String render(Player player) {
 			return "&c/scoreboard";
 		}
+	},
+
+	@Interval(20)
+	@NotOptional
+	AFK {
+		@Override
+		public String render(Player player) {
+			AFKPlayer afkPlayer = me.pugabyte.bncore.features.afk.AFK.get(player);
+			if (afkPlayer.isAfk())
+				return "&3AFK for: &e" + timespanDiff(afkPlayer.getTime());
+			return null;
+		}
 	};
 
 	public abstract String render(Player player);
 
 	@SneakyThrows
+	public <T extends Annotation> T getAnnotation(Class<? extends Annotation> clazz) {
+		return (T) getClass().getField(name()).getAnnotation(clazz);
+	}
+
 	public Permission getPermission() {
-		return getClass().getField(name()).getAnnotation(Permission.class);
+		return getAnnotation(Permission.class);
+	}
+
+	public boolean isOptional() {
+		return getAnnotation(NotOptional.class) == null;
+	}
+
+	public int getInterval() {
+		Interval annotation = getAnnotation(Interval.class);
+		return annotation == null ? ScoreboardUser.UPDATE_INTERVAL : annotation.value();
 	}
 
 	public boolean hasPermission(Player player) {
@@ -249,4 +285,64 @@ public enum ScoreboardLine {
 	protected @interface Permission {
 		String value();
 	}
+
+	@Target({ElementType.FIELD})
+	@Retention(RetentionPolicy.RUNTIME)
+	protected @interface NotOptional {
+	}
+
+	@Target({ElementType.FIELD})
+	@Retention(RetentionPolicy.RUNTIME)
+	protected @interface Interval {
+		int value();
+	}
+
+	@Getter
+	private static final List<String> headerFrames = Arrays.asList(
+			"&e< &3Bear Nation &e>",
+			"&e< &3Bear Nation &e>",
+			"&e< &3Bear Nation &e>",
+			"&e< &bBear Nation &e>",
+			"&e< &3Bear Nation &e>",
+			"&e< &bBear Nation &e>",
+			"&e< &3Bear Nation &e>",
+			"&e< &3Bear Nation &e>",
+			"&e< &3Bear Nation &e>",
+			"&e< &bB&3ear Nation&3 &e>",
+			"&e< &3B&be&3ar Nation &e>",
+			"&e< &3Be&ba&3r Nation &e>",
+			"&e< &3Bea&br&3 Nation &e>",
+			"&e< &3Bear&b N&3ation &e>",
+			"&e< &3Bear N&ba&3tion &e>",
+			"&e< &3Bear Na&bt&3ion &e>",
+			"&e< &3Bear Nat&bi&3on &e>",
+			"&e< &3Bear Nati&bo&3n &e>",
+			"&e< &3Bear Natio&bn&3 &e>",
+			"&e< &3Bear Nati&bo&3n &e>",
+			"&e< &3Bear Nat&bi&3on &e>",
+			"&e< &3Bear Na&bt&3ion &e>",
+			"&e< &3Bear N&ba&3tion &e>",
+			"&e< &3Bear&b N&3ation &e>",
+			"&e< &3Bea&br&3 Nation &e>",
+			"&e< &3Be&ba&3r Nation &e>",
+			"&e< &3B&be&3ar Nation &e>",
+			"&e< &bB&3ear Nation&3 &e>",
+			"&e< &3B&be&3ar Nation &e>",
+			"&e< &3Be&ba&3r Nation &e>",
+			"&e< &3Bea&br&3 Nation &e>",
+			"&e< &3Bear&b N&3ation &e>",
+			"&e< &3Bear N&ba&3tion &e>",
+			"&e< &3Bear Na&bt&3ion &e>",
+			"&e< &3Bear Nat&bi&3on &e>",
+			"&e< &3Bear Nati&bo&3n &e>",
+			"&e< &3Bear Natio&bn&3 &e>",
+			"&e< &3Bear Nati&bo&3n &e>",
+			"&e< &3Bear Nat&bi&3on &e>",
+			"&e< &3Bear Na&bt&3ion &e>",
+			"&e< &3Bear N&ba&3tion &e>",
+			"&e< &3Bear&b N&3ation &e>",
+			"&e< &3Bea&br&3 Nation &e>",
+			"&e< &3Be&ba&3r Nation &e>",
+			"&e< &3B&be&3ar Nation &e>"
+	);
 }

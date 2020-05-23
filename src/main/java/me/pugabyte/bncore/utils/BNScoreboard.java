@@ -25,8 +25,8 @@ import static me.pugabyte.bncore.utils.StringUtils.left;
 public class BNScoreboard {
 	private static final ScoreboardManager manager = BNCore.getInstance().getServer().getScoreboardManager();
 	private static final Scoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
-	private ScoreboardObjective objective;
-	private Map<String, Integer> lines = new HashMap<>();
+	private final ScoreboardObjective objective;
+	private final Map<String, Integer> lines = new HashMap<>();
 
 	public BNScoreboard(String title) {
 		this(title, title, Collections.emptyList());

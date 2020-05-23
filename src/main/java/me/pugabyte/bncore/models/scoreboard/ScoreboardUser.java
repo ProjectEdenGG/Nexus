@@ -13,6 +13,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.BNScoreboard;
 import me.pugabyte.bncore.utils.Tasks;
+import org.apache.commons.collections4.map.ListOrderedMap;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Data
 @Entity("scoreboard_user")
@@ -34,54 +37,133 @@ public class ScoreboardUser extends PlayerOwnedObject {
 	private UUID uuid;
 	private Map<ScoreboardLine, Boolean> lines = new HashMap<>();
 	private boolean active = false;
+
 	@Transient
 	private BNScoreboard scoreboard;
 	@Transient
+	ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
+	@Transient
 	private int headerTaskId;
 	@Transient
-	private int renderTaskId;
+	private Map<ScoreboardLine, Integer> taskIds = new HashMap<>();
 
-	private static final int UPDATE_INTERVAL = 2;
+	public static final int HEADER_UPDATE_INTERVAL = 2;
+	public static final int UPDATE_INTERVAL = 40;
 
 	public ScoreboardUser(UUID uuid) {
 		this.uuid = uuid;
 	}
 
-	public void start() {
+	public void on() {
 		if (scoreboard == null)
 			scoreboard = new BNScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Bear Nation &e<", getPlayer());
 		else
 			scoreboard.subscribe(getPlayer());
 		active = true;
-		headerTaskId = Tasks.repeatAsync(0, (headers.size() + 1) * UPDATE_INTERVAL, new Header(getPlayer()));
-		renderTaskId = Tasks.repeatAsync(0, UPDATE_INTERVAL, this::render);
+		headerTaskId = Tasks.repeatAsync(0, (ScoreboardLine.getHeaderFrames().size() + 1) * HEADER_UPDATE_INTERVAL, new Header(getPlayer()));
+//		init();
+		startTasks();
 	}
 
-	public void stop() {
+	public void off() {
 		active = false;
-		scoreboard.unsubscribe(getPlayer());
-		scoreboard.delete();
-		Tasks.cancel(headerTaskId);
-		Tasks.cancel(renderTaskId);
-		headerTaskId = -1;
-		renderTaskId = -1;
+		pause();
 	}
 
-	public void render() {
-		if (!active) return;
-		Tasks.async(() -> {
-			List<String> rendered = new ArrayList<>();
-			Arrays.asList(ScoreboardLine.values()).forEach(line -> {
-				if (lines.containsKey(line) && lines.get(line))
-					rendered.add(line.render(getPlayer()));
-			});
-			scoreboard.setLines(rendered);
+	public void pause() {
+		if (scoreboard != null) {
+			scoreboard.unsubscribe(getPlayer());
+			scoreboard.delete();
+			scoreboard = null;
+		}
+		rendered = new ListOrderedMap<>();
+		Tasks.cancel(headerTaskId);
+		headerTaskId = -1;
+		cancelTasks();
+	}
+
+	public void cancelTasks() {
+		new HashMap<>(taskIds).forEach((line, taskId) -> {
+			Tasks.cancel(taskId);
+			taskIds.remove(line);
 		});
+	}
+
+	private String getRenderedText(ScoreboardLine line) {
+		return rendered.getOrDefault(line, null);
+	}
+
+	private int getScore(ScoreboardLine line) {
+		List<ScoreboardLine> renderedOrder = new ArrayList<>();
+		for (ScoreboardLine toRender : ScoreboardLine.values())
+			if (lines.containsKey(toRender) && lines.get(toRender))
+				renderedOrder.add(toRender);
+		return renderedOrder.size() - renderedOrder.indexOf(line);
+	}
+
+//	public void init() {
+//		if (!active || scoreboard == null) return;
+//		Tasks.async(() -> {
+//			ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
+//			Arrays.asList(ScoreboardLine.values()).forEach(line -> {
+//				if (lines.containsKey(line) && lines.get(line)) {
+//					String render = line.render(getPlayer());
+//					if (!isNullOrEmpty(render))
+//						rendered.put(line, render);
+//				}
+//			});
+//
+//			if (scoreboard != null) {
+//				this.rendered = rendered;
+//				scoreboard.setLines(rendered.valueList());
+//			}
+//		});
+//	}
+
+	public void startTasks() {
+		cancelTasks();
+		Arrays.asList(ScoreboardLine.values()).forEach(line -> {
+			if (lines.containsKey(line) && lines.get(line))
+				taskIds.put(line, Tasks.repeatAsync(5, line.getInterval(), () -> render(line)));
+		});
+	}
+
+	public void remove(ScoreboardLine line) {
+		removeLine(getRenderedText(line));
+		rendered.remove(line);
+		if (taskIds.containsKey(line))
+			Tasks.cancel(taskIds.get(line));
+	}
+
+	public void render(ScoreboardLine line) {
+		String oldText = getRenderedText(line);
+		if (lines.containsKey(line) && lines.get(line)) {
+			String newText = line.render(getPlayer());
+
+			if (!isNullOrEmpty(newText)) {
+				if (newText.equals(oldText))
+					if (scoreboard.getLines().containsKey(oldText) && scoreboard.getLines().get(oldText) == getScore(line))
+						return;
+
+				removeLine(oldText);
+				rendered.put(line, newText);
+				scoreboard.setLine(newText, getScore(line));
+			} else {
+				removeLine(oldText);
+			}
+		} else {
+			removeLine(oldText);
+		}
+	}
+
+	private void removeLine(String oldText) {
+		try {
+			scoreboard.removeLine(oldText);
+		} catch (NullPointerException ignore) {}
 	}
 
 	public static class Header implements Runnable {
 		private final ScoreboardUser user;
-		private final List<String> headers = new ArrayList<>(ScoreboardUser.headers);
 
 		public Header(Player player) {
 			user = new ScoreboardService().get(player);
@@ -90,59 +172,11 @@ public class ScoreboardUser extends PlayerOwnedObject {
 		@Override
 		public void run() {
 			AtomicInteger wait = new AtomicInteger(0);
-			headers.iterator().forEachRemaining(header ->
-					Tasks.waitAsync(wait.getAndAdd(UPDATE_INTERVAL), () -> {
-						if (user.isActive())
+			ScoreboardLine.getHeaderFrames().iterator().forEachRemaining(header ->
+					Tasks.waitAsync(wait.getAndAdd(HEADER_UPDATE_INTERVAL), () -> {
+						if (user.isActive() && user.getScoreboard() != null)
 							user.getScoreboard().setTitle(header);
 					}));
 		}
 	}
-
-	private static List<String> headers = Arrays.asList(
-			"&e< &3Bear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &bBear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &bBear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &bB&3ear Nation&3 &e>",
-			"&e< &3B&be&3ar Nation &e>",
-			"&e< &3Be&ba&3r Nation &e>",
-			"&e< &3Bea&br&3 Nation &e>",
-			"&e< &3Bear&b N&3ation &e>",
-			"&e< &3Bear N&ba&3tion &e>",
-			"&e< &3Bear Na&bt&3ion &e>",
-			"&e< &3Bear Nat&bi&3on &e>",
-			"&e< &3Bear Nati&bo&3n &e>",
-			"&e< &3Bear Natio&bn&3 &e>",
-			"&e< &3Bear Nati&bo&3n &e>",
-			"&e< &3Bear Nat&bi&3on &e>",
-			"&e< &3Bear Na&bt&3ion &e>",
-			"&e< &3Bear N&ba&3tion &e>",
-			"&e< &3Bear&b N&3ation &e>",
-			"&e< &3Bea&br&3 Nation &e>",
-			"&e< &3Be&ba&3r Nation &e>",
-			"&e< &3B&be&3ar Nation &e>",
-			"&e< &bB&3ear Nation&3 &e>",
-			"&e< &3B&be&3ar Nation &e>",
-			"&e< &3Be&ba&3r Nation &e>",
-			"&e< &3Bea&br&3 Nation &e>",
-			"&e< &3Bear&b N&3ation &e>",
-			"&e< &3Bear N&ba&3tion &e>",
-			"&e< &3Bear Na&bt&3ion &e>",
-			"&e< &3Bear Nat&bi&3on &e>",
-			"&e< &3Bear Nati&bo&3n &e>",
-			"&e< &3Bear Natio&bn&3 &e>",
-			"&e< &3Bear Nati&bo&3n &e>",
-			"&e< &3Bear Nat&bi&3on &e>",
-			"&e< &3Bear Na&bt&3ion &e>",
-			"&e< &3Bear N&ba&3tion &e>",
-			"&e< &3Bear&b N&3ation &e>",
-			"&e< &3Bea&br&3 Nation &e>",
-			"&e< &3Be&ba&3r Nation &e>",
-			"&e< &3B&be&3ar Nation &e>"
-	);
 }
