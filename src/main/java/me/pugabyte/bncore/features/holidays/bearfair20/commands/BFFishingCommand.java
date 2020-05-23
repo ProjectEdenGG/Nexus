@@ -29,11 +29,11 @@ import java.util.Set;
 import java.util.UUID;
 
 @Permission("group.staff")
-public class FishingCommand extends CustomCommand {
+public class BFFishingCommand extends CustomCommand {
 	static Map<UUID, LocalDateTime> timestamps = new HashMap<>();
 	ItemStack fishingRod = new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(BFQuests.itemLore).build();
 
-	public FishingCommand(CommandEvent event) {
+	public BFFishingCommand(CommandEvent event) {
 		super(event);
 	}
 
