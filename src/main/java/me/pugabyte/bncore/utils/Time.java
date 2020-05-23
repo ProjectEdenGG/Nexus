@@ -27,7 +27,7 @@ public enum Time {
 	}
 
 	public static class Timer {
-		private static final int IGNORE = 30;
+		private static final int IGNORE = 5;
 
 		public Timer(String id, Runnable runnable) {
 			long startTime = System.currentTimeMillis();

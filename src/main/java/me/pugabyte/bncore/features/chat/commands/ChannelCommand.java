@@ -49,7 +49,8 @@ public class ChannelCommand extends CustomCommand {
 				return;
 
 			if (chatter.canJoin(channel))
-				send(channel.getColor() + "[" + channel.getNickname().toUpperCase() + "] " + channel.getName() + (chatter.hasJoined(channel) ? " &7(Joined)" : ""));
+				send(channel.getColor() + "[" + channel.getNickname().toUpperCase() + "] " + channel.getName() +
+						(chatter.hasJoined(channel) ? chatter.getActiveChannel().equals(channel) ? " &a(Active)" : " &7(Joined)" : ""));
 		});
 	}
 
@@ -61,11 +62,13 @@ public class ChannelCommand extends CustomCommand {
 	@Path("join <channel>")
 	void join(PublicChannel channel) {
 		chatter.join(channel);
+		send(PREFIX + "Joined " + channel.getColor() + channel.getName());
 	}
 
 	@Path("leave <channel>")
 	void leave(PublicChannel channel) {
 		chatter.leave(channel);
+		send(PREFIX + "Left " + channel.getColor() + channel.getName());
 	}
 
 	@ConverterFor({Channel.class, PublicChannel.class})

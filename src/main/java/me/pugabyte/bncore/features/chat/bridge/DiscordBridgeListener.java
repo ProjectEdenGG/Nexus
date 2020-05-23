@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.chat.bridge;
 
+import com.vdurmont.emoji.EmojiParser;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.chat.ChatManager;
 import me.pugabyte.bncore.features.chat.events.DiscordChatEvent;
@@ -47,26 +48,33 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			builder.next(" " + channel.get().getDiscordColor() + "&l>&f");
 
 			String content = event.getMessage().getContentDisplay().trim();
-//			try { content = EmojiParser.parseToAliases(content); } catch (Exception ignore) {}
-			if (content.length() > 0)
-				builder.urlize(" " + colorize(content.replaceAll("&", "&&f")));
 
-			for (Message.Attachment attachment : event.getMessage().getAttachments())
-				builder.group()
-						.next(" &f&l[View Attachment]")
-						.url(attachment.getUrl());
+			// This was failing even in a try/catch, needs finally to complete
+			try {
+				content = EmojiParser.parseToAliases(content);
+			} catch (Exception ignore) {
+			} finally {
+				if (content.length() > 0)
+					builder.urlize(" " + colorize(content.replaceAll("&", "&&f")));
 
-			DiscordChatEvent discordChatEvent = new DiscordChatEvent(event.getMember(), channel.get(), content, channel.get().getPermission());
+				for (Message.Attachment attachment : event.getMessage().getAttachments())
+					builder.group()
+							.next(" &f&l[View Attachment]")
+							.url(attachment.getUrl());
 
-			Tasks.sync(() -> {
-				Utils.callEvent(discordChatEvent);
-				if (discordChatEvent.isCancelled()) {
-					Tasks.async(() -> event.getMessage().delete().queue());
-					return;
-				}
+				DiscordChatEvent discordChatEvent = new DiscordChatEvent(event.getMember(), channel.get(), content, channel.get().getPermission());
 
-				channel.get().broadcastIngame(builder);
-			});
+				Tasks.sync(() -> {
+					Utils.callEvent(discordChatEvent);
+					if (discordChatEvent.isCancelled()) {
+						Tasks.async(() -> event.getMessage().delete().queue());
+						return;
+					}
+
+					channel.get().broadcastIngame(builder);
+				});
+			}
+
 		});
 	}
 
