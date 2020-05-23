@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.holidays.bearfair20.models.WeightedLoot;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.Fishing;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -85,7 +86,7 @@ public class FishingCommand extends CustomCommand {
 	}
 
 	private List<ItemStack> getLoot(ItemStack[] contents) {
-		Set<Fishing.WeightedLoot> weightedList = Fishing.weightedList;
+		Set<WeightedLoot> weightedList = Fishing.weightedList;
 		Set<ItemStack> itemStacks = new HashSet<>();
 		List<ItemStack> loot = new ArrayList<>();
 
@@ -116,10 +117,10 @@ public class FishingCommand extends CustomCommand {
 	}
 
 	private int countDefault(List<ItemStack> contents) {
-		Set<Fishing.WeightedLoot> weightedList = Fishing.weightedList;
+		Set<WeightedLoot> weightedList = Fishing.weightedList;
 		Set<ItemStack> filterList = new HashSet<>();
 
-		for (Fishing.WeightedLoot weightedLoot : weightedList) {
+		for (WeightedLoot weightedLoot : weightedList) {
 			int weight = weightedLoot.getWeight();
 			if (weight >= 14 && weight <= 25)
 				filterList.add(weightedLoot.getItemStack());
@@ -134,10 +135,10 @@ public class FishingCommand extends CustomCommand {
 	}
 
 	private int countTrash(List<ItemStack> contents) {
-		Set<Fishing.WeightedLoot> weightedList = Fishing.weightedList;
+		Set<WeightedLoot> weightedList = Fishing.weightedList;
 		Set<ItemStack> filterList = new HashSet<>();
 
-		for (Fishing.WeightedLoot weightedLoot : weightedList) {
+		for (WeightedLoot weightedLoot : weightedList) {
 			int weight = weightedLoot.getWeight();
 			if (weight == 10)
 				filterList.add(weightedLoot.getItemStack());
@@ -152,10 +153,10 @@ public class FishingCommand extends CustomCommand {
 	}
 
 	private int countTreasure(List<ItemStack> contents) {
-		Set<Fishing.WeightedLoot> weightedList = Fishing.weightedList;
+		Set<WeightedLoot> weightedList = Fishing.weightedList;
 		Set<ItemStack> filterList = new HashSet<>();
 
-		for (Fishing.WeightedLoot weightedLoot : weightedList) {
+		for (WeightedLoot weightedLoot : weightedList) {
 			Material material = weightedLoot.getItemStack().getType();
 			if (isTreasure(material))
 				filterList.add(weightedLoot.getItemStack());
@@ -170,10 +171,10 @@ public class FishingCommand extends CustomCommand {
 	}
 
 	private int countRare(List<ItemStack> contents) {
-		Set<Fishing.WeightedLoot> weightedList = Fishing.weightedList;
+		Set<WeightedLoot> weightedList = Fishing.weightedList;
 		Set<ItemStack> filterList = new HashSet<>();
 
-		for (Fishing.WeightedLoot weightedLoot : weightedList) {
+		for (WeightedLoot weightedLoot : weightedList) {
 			int weight = weightedLoot.getWeight();
 			if (weight == 2 && !(isTreasure(weightedLoot.getItemStack().getType())))
 				filterList.add(weightedLoot.getItemStack());
@@ -188,10 +189,10 @@ public class FishingCommand extends CustomCommand {
 	}
 
 	private int countIsland(List<ItemStack> contents) {
-		Set<Fishing.WeightedLoot> weightedList = Fishing.weightedList;
+		Set<WeightedLoot> weightedList = Fishing.weightedList;
 		Set<ItemStack> filterList = new HashSet<>();
 
-		for (Fishing.WeightedLoot weightedLoot : weightedList) {
+		for (WeightedLoot weightedLoot : weightedList) {
 			int weight = weightedLoot.getWeight();
 			if (weight == 1 && !(isTreasure(weightedLoot.getItemStack().getType())))
 				filterList.add(weightedLoot.getItemStack());

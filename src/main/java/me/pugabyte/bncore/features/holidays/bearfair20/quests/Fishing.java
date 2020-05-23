@@ -2,10 +2,9 @@ package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import com.gmail.nossr50.events.skills.fishing.McMMOPlayerFishingEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import lombok.Getter;
-import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.holidays.bearfair20.models.WeightedLoot;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -48,6 +47,7 @@ public class Fishing implements Listener {
 		translateWeight();
 	}
 
+	// @formatter:off
 	private void addWeightedItems() {
 		String mainIsland = mainRg + "_main";
 		String mgnIsland = mainRg + "_gamelobby";
@@ -56,42 +56,42 @@ public class Fishing implements Listener {
 		String sduIsland = mainRg + "_summerdownunder";
 
 		// Default Fish (Global)
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COD).lore(itemLore).build(), 25));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).lore(itemLore).build(), 18));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.TROPICAL_FISH).lore(itemLore).build(), 16));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.PUFFERFISH).lore(itemLore).build(), 14));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COD).lore(itemLore).build(),									 25));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).lore(itemLore).build(),								 18));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.TROPICAL_FISH).lore(itemLore).build(),						 16));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.PUFFERFISH).lore(itemLore).build(),							 14));
 		// Island Specific
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COOKED_SALMON).name("Tiger Trout").lore(itemLore).build(), 1, mgnIsland));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SEA_PICKLE).name("Sea Cucumber").lore(itemLore).build(), 1, mgnIsland));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COD).name("Glacierfish").lore(itemLore).build(), 1, pugmasIsland));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).name("Crimsonfish").lore(itemLore).build(), 1, halloweenIsland));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COOKED_SALMON).name("Flathead").lore(itemLore).build(), 1, sduIsland));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.TROPICAL_FISH).name("Midnight Carp").lore(itemLore).build(), 1, mainIsland, false));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.TROPICAL_FISH).name("Sunfish").lore(itemLore).build(), 1, mainIsland, true));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COOKED_SALMON).name("Tiger Trout").lore(itemLore).build(),	 1, mgnIsland));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SEA_PICKLE).name("Sea Cucumber").lore(itemLore).build(),		 1, mgnIsland));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COD).name("Glacierfish").lore(itemLore).build(),				 1, pugmasIsland));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).name("Crimsonfish").lore(itemLore).build(),			 1, halloweenIsland));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COOKED_SALMON).name("Flathead").lore(itemLore).build(),		 1, sduIsland));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.TROPICAL_FISH).name("Midnight Carp").lore(itemLore).build(),	 1, mainIsland, false));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.TROPICAL_FISH).name("Sunfish").lore(itemLore).build(),		 1, mainIsland, true));
 		// Other Fish
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COOKED_SALMON).name("Bullhead").lore(itemLore).build(), 2));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COD).name("Sturgeon").lore(itemLore).build(), 2));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COD).name("Woodskip").lore(itemLore).build(), 2));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).name("Void Salmon").lore(itemLore).build(), 2));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).name("Red Snapper").lore(itemLore).build(), 2));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).name("Red Mullet").lore(itemLore).build(), 2));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COOKED_SALMON).name("Bullhead").lore(itemLore).build(),		 2));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COD).name("Sturgeon").lore(itemLore).build(),				 2));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COD).name("Woodskip").lore(itemLore).build(),				 2));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).name("Void Salmon").lore(itemLore).build(),			 2));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).name("Red Snapper").lore(itemLore).build(),			 2));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.SALMON).name("Red Mullet").lore(itemLore).build(),			 2));
 		// Treasures
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.BRAIN_CORAL).lore(itemLore).build(), 5));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.HORN_CORAL).lore(itemLore).build(), 5));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.TUBE_CORAL).lore(itemLore).build(), 5));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.FIRE_CORAL).lore(itemLore).build(), 5));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.BUBBLE_CORAL).lore(itemLore).build(), 5));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.PHANTOM_MEMBRANE).name("Scales").lore(itemLore).build(), 2));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.HEART_OF_THE_SEA).lore(itemLore).build(), 1));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.NAUTILUS_SHELL).lore(itemLore).build(), 1));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.BRAIN_CORAL).lore(itemLore).build(),							 5));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.HORN_CORAL).lore(itemLore).build(),							 5));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.TUBE_CORAL).lore(itemLore).build(),							 5));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.FIRE_CORAL).lore(itemLore).build(),							 5));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.BUBBLE_CORAL).lore(itemLore).build(),						 5));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.PHANTOM_MEMBRANE).name("Scales").lore(itemLore).build(),		 2));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.HEART_OF_THE_SEA).lore(itemLore).build(),					 1));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.NAUTILUS_SHELL).lore(itemLore).build(),						 1));
 		// Trash
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.LEATHER_BOOTS).name("Old Boots").lore(itemLore).build(), 10));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.BOOK).name("Lost Book").lore(itemLore).build(), 10));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.WOODEN_SHOVEL).name("Rusty Spoon").lore(itemLore).build(), 10));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.MUSIC_DISC_11).name("Broken CD").lore(itemLore).build(), 10));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.PAPER).name("Soggy Newspaper").lore(itemLore).build(), 10));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.STICK).name("Driftwood").lore(itemLore).build(), 10));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.KELP).name("Seaweed").lore(itemLore).build(), 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.LEATHER_BOOTS).name("Old Boots").lore(itemLore).build(),		 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.BOOK).name("Lost Book").lore(itemLore).build(),				 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.WOODEN_SHOVEL).name("Rusty Spoon").lore(itemLore).build(),	 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.MUSIC_DISC_11).name("Broken CD").lore(itemLore).build(),		 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.PAPER).name("Soggy Newspaper").lore(itemLore).build(),		 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.STICK).name("Driftwood").lore(itemLore).build(),				 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.KELP).name("Seaweed").lore(itemLore).build(),				 10));
 	}
 
 	private void translateWeight() {
@@ -203,45 +203,5 @@ public class Fishing implements Listener {
 		if (!WGUtils.getRegionsAt(player.getLocation()).contains(mainRegion)) return;
 
 		event.setCancelled(true);
-	}
-
-	@Getter
-	public static class WeightedLoot {
-		@NonNull
-		ItemStack itemStack;
-		@NonNull
-		int weight;
-		String regionCheck;
-		// True = Day, False = Night, Null = Ignored
-		Boolean dayTimeCheck;
-
-		WeightedLoot(ItemStack itemStack, int weight, String regionCheck, Boolean dayTimeCheck) {
-			this.itemStack = itemStack;
-			this.weight = weight;
-			this.regionCheck = regionCheck;
-			this.dayTimeCheck = dayTimeCheck;
-		}
-
-		WeightedLoot(ItemStack itemStack, int weight) {
-			this.itemStack = itemStack;
-			this.weight = weight;
-			this.regionCheck = null;
-			this.dayTimeCheck = null;
-		}
-
-		WeightedLoot(ItemStack itemStack, int weight, String regionCheck) {
-			this.itemStack = itemStack;
-			this.weight = weight;
-			this.regionCheck = regionCheck;
-			this.dayTimeCheck = null;
-		}
-
-		WeightedLoot(ItemStack itemStack, int weight, Boolean dayTimeCheck) {
-			this.itemStack = itemStack;
-			this.weight = weight;
-			this.regionCheck = null;
-			this.dayTimeCheck = dayTimeCheck;
-		}
-
 	}
 }
