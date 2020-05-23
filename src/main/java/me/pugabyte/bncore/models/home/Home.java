@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Data
 @NoArgsConstructor
@@ -75,9 +76,12 @@ public class Home extends PlayerOwnedObject {
 	}
 
 	public void teleport(Player player) {
-		if (hasAccess(player))
-			player.teleport(location.clone().add(0, .5, 0), TeleportCause.COMMAND);
-		else
+		if (hasAccess(player)) {
+			Location location = this.location.clone();
+			if (isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
+				location.add(0, .5, 0);
+			player.teleport(location, TeleportCause.COMMAND);
+		} else
 			player.sendMessage(PREFIX + colorize("&cYou don't have access to that home"));
 	}
 
