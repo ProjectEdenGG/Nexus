@@ -15,6 +15,7 @@ import java.util.List;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 
 // TODO: Trades & Economy
+// TODO: make Collector move to random locations
 public class Merchants {
 
 	public static void openMerchant(Player player, int id) {
