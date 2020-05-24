@@ -12,7 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,10 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.world;
 
 public class Halloween implements Listener {
 	Map<Player, Integer> musicTaskMap = new HashMap<>();
-	World world = BearFair20.world;
 	String halloweenRg = BearFair20.mainRg + "_halloween";
 	Location halloweenMusicLoc = new Location(world, -921, 128, -1920);
 	private Sound[] halloweenSounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,

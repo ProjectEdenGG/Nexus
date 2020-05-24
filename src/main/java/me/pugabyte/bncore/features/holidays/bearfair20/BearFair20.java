@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Halloween;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNight;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
@@ -38,6 +39,7 @@ public class BearFair20 implements Listener {
 		BNCore.registerListener(this);
 		new Timer("    Fairgrounds", Fairgrounds::new);
 		new Timer("    Halloween", Halloween::new);
+		new Timer("    MinigameNight", MinigameNight::new);
 		new Timer("    BFQuests", BFQuests::new);
 	}
 
