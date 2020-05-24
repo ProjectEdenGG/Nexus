@@ -43,12 +43,12 @@ public class Tab implements Listener {
 
 	public static String getFormat(Player player) {
 		Nerd nerd = new Nerd(player);
-		String name = "";
+		String name = nerd.getRank().getChatColor() + nerd.getName();
 		if (AFK.get(player).isAfk())
-			name += "&7&o[AFK] ";
+			name += " &7&o[AFK]";
 		if (nerd.isVanished())
-			name += "&7&o[V] ";
-		return name + nerd.getRank().getChatColor() + nerd.getName();
+			name += " &7&o[V]";
+		return name.trim();
 	}
 
 	@EventHandler

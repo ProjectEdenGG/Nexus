@@ -5,6 +5,7 @@ import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfi
 import lombok.NonNull;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -28,7 +29,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@Permission("restoreinventory.use")
+@Aliases("restoreinv")
+@Permission("group.moderator")
 public class RestoreInventoryCommand extends CustomCommand {
 	public static HashMap<Player, RestoreInventoryPlayer> restorers = new HashMap<>();
 
