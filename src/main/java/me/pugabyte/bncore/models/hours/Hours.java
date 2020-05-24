@@ -57,4 +57,30 @@ public class Hours {
 		return 0;
 	}
 
+	public void set(HoursService.HoursType type, int amount) {
+		switch (type) {
+			case TOTAL:
+				total = amount;
+				break;
+			case MONTHLY:
+				monthly = amount;
+				break;
+			case WEEKLY:
+				weekly = amount;
+				break;
+			case DAILY:
+				daily = amount;
+				break;
+			case LAST_MONTH:
+				lastMonth = amount;
+				break;
+			case LAST_WEEK:
+				lastWeek = amount;
+				break;
+			case YESTERDAY:
+				yesterday = amount;
+				break;
+		}
+	}
+
 }

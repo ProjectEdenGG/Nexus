@@ -36,14 +36,14 @@ public class ScoreboardUser extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<ScoreboardLine, Boolean> lines = new HashMap<>();
-	private boolean active = false;
+	private boolean active = true;
 
 	@Transient
 	private BNScoreboard scoreboard;
 	@Transient
 	ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
 	@Transient
-	private int headerTaskId;
+	private int headerTaskId = -1;
 	@Transient
 	private Map<ScoreboardLine, Integer> taskIds = new HashMap<>();
 
@@ -52,14 +52,18 @@ public class ScoreboardUser extends PlayerOwnedObject {
 
 	public ScoreboardUser(UUID uuid) {
 		this.uuid = uuid;
+		if (lines.isEmpty())
+			lines = ScoreboardLine.getDefaultLines(getPlayer());
 	}
 
 	public void on() {
+		off();
 		if (scoreboard == null)
 			scoreboard = new BNScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Bear Nation &e<", getPlayer());
 		else
 			scoreboard.subscribe(getPlayer());
 		active = true;
+		Tasks.cancel(headerTaskId);
 		headerTaskId = Tasks.repeatAsync(0, (ScoreboardLine.getHeaderFrames().size() + 1) * HEADER_UPDATE_INTERVAL, new Header(getPlayer()));
 		startTasks();
 	}
@@ -97,7 +101,7 @@ public class ScoreboardUser extends PlayerOwnedObject {
 		for (ScoreboardLine toRender : ScoreboardLine.values())
 			if (lines.containsKey(toRender) && lines.get(toRender))
 				renderedOrder.add(toRender);
-		return renderedOrder.size() - renderedOrder.indexOf(line);
+		return renderedOrder.size() - renderedOrder.indexOf(line) - 1;
 	}
 
 	public void startTasks() {

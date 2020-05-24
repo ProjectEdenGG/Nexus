@@ -9,11 +9,14 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
+import me.pugabyte.bncore.models.hours.HoursService.HoursType;
 import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
+
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 @Aliases({"playtime", "days", "minutes", "seconds"})
 public class HoursCommand extends CustomCommand {
@@ -49,6 +52,15 @@ public class HoursCommand extends CustomCommand {
 	@Permission("group.admin")
 	void cleanup() {
 		send("Cleaned up " + service.cleanup() + " records");
+	}
+
+	@Path("set <player> <type> <seconds>")
+	@Permission("group.admin")
+	void set(OfflinePlayer player, HoursType type, int seconds) {
+		Hours hours = service.get(player);
+		hours.set(type, seconds);
+		service.save(hours);
+		send(PREFIX + "Set " + player.getName() + "'s " + camelCase(type.name()) + " to " + hours.get(type));
 	}
 
 	@Path("endOfDay")

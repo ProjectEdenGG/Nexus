@@ -11,6 +11,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Egg;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -30,6 +31,7 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 	private static boolean spamming = false;
 	private static Map<Material, Integer> taskIds = new HashMap<>();
 	private static Map<Material, Class<? extends Projectile>> projectiles = new HashMap<Material, Class<? extends Projectile>>() {{
+		put(Material.EGG, Egg.class);
 		put(Material.ARROW, Arrow.class);
 		put(Material.SNOWBALL, Snowball.class);
 		put(Material.FIRE_CHARGE, Fireball.class);
@@ -78,7 +80,7 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 			Tasks.cancel(taskIds.get(material));
 			taskIds.remove(material);
 		} else {
-			int taskId = Tasks.repeat(0, 1, () -> player().launchProjectile(projectiles.get(material), player().getLocation().getDirection().multiply(5)));
+			int taskId = Tasks.repeat(0, 1, () -> event.getPlayer().launchProjectile(projectiles.get(material), event.getPlayer().getLocation().getDirection().multiply(5)));
 			taskIds.put(material, taskId);
 		}
 	}

@@ -5,32 +5,41 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.scoreboard.ScoreboardService;
 import me.pugabyte.bncore.models.scoreboard.ScoreboardUser;
 import me.pugabyte.bncore.utils.BookBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.stream.Collectors;
+
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
+@Aliases({"status", "sidebar", "sb", "featherboard"})
 public class ScoreboardCommand extends CustomCommand implements Listener {
 	private final ScoreboardService service = new ScoreboardService();
 	private ScoreboardUser user;
 
 	static {
 		Bukkit.getOnlinePlayers().forEach(player -> {
+			Utils.pug("Checking scoreboard for " + player.getName());
 			ScoreboardUser user = new ScoreboardService().get(player);
-			if (user.isActive())
+			if (user.isActive()) {
+				Utils.pug("Activating " + user.getPlayer().getName());
 				user.on();
+			}
 		});
 	}
 
@@ -102,6 +111,17 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		book();
 	}
 
+	@Permission("group.staff")
+	@Path("list")
+	void list() {
+		String collect = Bukkit.getOnlinePlayers().stream()
+				.map(player -> (ScoreboardUser) new ScoreboardService().get(player))
+				.filter(ScoreboardUser::isActive)
+				.map(user -> user.getPlayer().getName())
+				.collect(Collectors.joining("&3, &e"));
+		send(PREFIX + "Active scoreboards: ");
+		send("&e" + collect);
+	}
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		ScoreboardService service = new ScoreboardService();
@@ -121,7 +141,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	public void onMatchQuit(MatchQuitEvent event) {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getMinigamer().getPlayer());
-		if (user.isActive())
+		if (user.isActive() && user.getOfflinePlayer().isOnline())
 			user.on();
 	}
 
