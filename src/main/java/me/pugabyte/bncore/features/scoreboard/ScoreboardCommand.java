@@ -16,6 +16,7 @@ import me.pugabyte.bncore.models.scoreboard.ScoreboardUser;
 import me.pugabyte.bncore.utils.BookBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -118,6 +119,13 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Active scoreboards: ");
 		send("&e" + collect);
 	}
+
+	@Permission("group.staff")
+	@Path("view <player>")
+	void view(OfflinePlayer player) {
+		send(service.get(player).toString());
+	}
+
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		ScoreboardService service = new ScoreboardService();

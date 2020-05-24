@@ -85,6 +85,10 @@ public class ItemBuilder {
 		return enchant(enchantment, level, true);
 	}
 
+	public ItemBuilder enchantMax(Enchantment enchantment) {
+		return enchant(enchantment, enchantment.getMaxLevel(), true);
+	}
+
 	public ItemBuilder enchant(Enchantment enchantment, int level, boolean ignoreLevelRestriction) {
 		if (itemStack.getType() == Material.ENCHANTED_BOOK) {
 			EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) itemMeta;
