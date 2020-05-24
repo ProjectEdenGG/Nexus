@@ -15,7 +15,6 @@ import me.pugabyte.bncore.models.scoreboard.ScoreboardService;
 import me.pugabyte.bncore.models.scoreboard.ScoreboardUser;
 import me.pugabyte.bncore.utils.BookBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,12 +33,9 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 
 	static {
 		Bukkit.getOnlinePlayers().forEach(player -> {
-			Utils.pug("Checking scoreboard for " + player.getName());
 			ScoreboardUser user = new ScoreboardService().get(player);
-			if (user.isActive()) {
-				Utils.pug("Activating " + user.getPlayer().getName());
+			if (user.isActive())
 				user.on();
-			}
 		});
 	}
 
