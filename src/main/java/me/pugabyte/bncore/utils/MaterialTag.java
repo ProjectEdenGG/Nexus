@@ -41,6 +41,18 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag TOOLS_WEAPONS_ARMOR = new MaterialTag(TOOLS, WEAPONS, ARMOR);
 
+	public static final MaterialTag ARMOR_DIAMOND = new MaterialTag("DIAMOND_", MatchMode.PREFIX, MaterialTag.ARMOR);
+	public static final MaterialTag ARMOR_IRON = new MaterialTag("IRON_", MatchMode.PREFIX, MaterialTag.ARMOR);
+	public static final MaterialTag ARMOR_GOLD = new MaterialTag("GOLDEN_", MatchMode.PREFIX, MaterialTag.ARMOR);
+	public static final MaterialTag ARMOR_CHAINMAIL = new MaterialTag("CHAINMAIL_", MatchMode.PREFIX, MaterialTag.ARMOR);
+	public static final MaterialTag ARMOR_LEATHER = new MaterialTag("LEATHER_", MatchMode.PREFIX, MaterialTag.ARMOR);
+
+	public static final MaterialTag TOOLS_DIAMOND = new MaterialTag("DIAMOND_", MatchMode.PREFIX, MaterialTag.TOOLS);
+	public static final MaterialTag TOOLS_IRON = new MaterialTag("IRON_", MatchMode.PREFIX, MaterialTag.TOOLS);
+	public static final MaterialTag TOOLS_GOLD = new MaterialTag("GOLDEN_", MatchMode.PREFIX, MaterialTag.TOOLS);
+	public static final MaterialTag TOOLS_CHAINMAIL = new MaterialTag("CHAINMAIL_", MatchMode.PREFIX, MaterialTag.TOOLS);
+	public static final MaterialTag TOOLS_LEATHER = new MaterialTag("LEATHER_", MatchMode.PREFIX, MaterialTag.TOOLS);
+
 	public static final MaterialTag UNOBTAINABLE = new MaterialTag(Material.WATER, Material.LAVA, Material.AIR,
 			Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.JIGSAW, Material.BARRIER, Material.BEDROCK,
 			Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK, Material.REPEATING_COMMAND_BLOCK, Material.COMMAND_BLOCK_MINECART,
@@ -59,6 +71,10 @@ public class MaterialTag implements Tag<Material> {
 			.append(CORAL_WALL_FANS)
 			.append(Tag.CORALS);
 
+	public static final MaterialTag VILLAGER_WORKBLOCKS = new MaterialTag(Material.BLAST_FURNACE, Material.SMOKER,
+			Material.CARTOGRAPHY_TABLE, Material.BREWING_STAND, Material.COMPOSTER, Material.BARREL, Material.FLETCHING_TABLE,
+			Material.CAULDRON, Material.LECTERN, Material.STONECUTTER, Material.LOOM, Material.SMITHING_TABLE, Material.GRINDSTONE);
+
 	public static final MaterialTag TREE_LOGS = new MaterialTag(Material.OAK_LOG, Material.SPRUCE_LOG, Material.BIRCH_LOG, Material.JUNGLE_LOG, Material.ACACIA_LOG, Material.DARK_OAK_LOG);
 	public static final MaterialTag STRIPPED_LOGS = new MaterialTag(Material.STRIPPED_OAK_LOG, Material.STRIPPED_SPRUCE_LOG, Material.STRIPPED_BIRCH_LOG, Material.STRIPPED_JUNGLE_LOG, Material.STRIPPED_ACACIA_LOG, Material.STRIPPED_DARK_OAK_LOG);
 	public static final MaterialTag LOGS = new MaterialTag(TREE_LOGS, STRIPPED_LOGS);
@@ -69,6 +85,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX);
 	public static final MaterialTag BOATS = new MaterialTag(Tag.ITEMS_BOATS);
+	public static final MaterialTag SAPLINGS = new MaterialTag(Tag.SAPLINGS);
 	public static final MaterialTag SPAWN_EGGS = new MaterialTag("_SPAWN_EGG", MatchMode.SUFFIX);
 	public static final MaterialTag PORTALS = new MaterialTag(Material.END_PORTAL, Material.NETHER_PORTAL);
 	public static final MaterialTag LIQUIDS = new MaterialTag(Material.WATER, Material.LAVA);
@@ -105,6 +122,11 @@ public class MaterialTag implements Tag<Material> {
 		append(segment, mode);
 	}
 
+	public MaterialTag(String segment, MatchMode mode, MaterialTag materials) {
+		this.materials = EnumSet.noneOf(Material.class);
+		append(segment, mode, materials.getValues().toArray(new Material[0]));
+	}
+
 	@Override
 	public NamespacedKey getKey() {
 		return key;
@@ -124,25 +146,30 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	public MaterialTag append(String segment, MatchMode mode) {
+		append(segment, mode, Material.values());
+		return this;
+	}
+
+	public MaterialTag append(String segment, MatchMode mode, Material[] materials) {
 		segment = segment.toUpperCase();
 
 		switch (mode) {
 			case PREFIX:
-				for (Material m : Material.values())
+				for (Material m : materials)
 					if (m.name().startsWith(segment))
-						materials.add(m);
+						this.materials.add(m);
 				break;
 
 			case SUFFIX:
-				for (Material m : Material.values())
+				for (Material m : materials)
 					if (m.name().endsWith(segment))
-						materials.add(m);
+						this.materials.add(m);
 				break;
 
 			case CONTAINS:
-				for (Material m : Material.values())
+				for (Material m : materials)
 					if (m.name().contains(segment))
-						materials.add(m);
+						this.materials.add(m);
 				break;
 		}
 
@@ -165,26 +192,30 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	public MaterialTag exclude(String segment, MatchMode mode) {
+		exclude(segment, mode, Material.values());
+		return this;
+	}
 
+	public MaterialTag exclude(String segment, MatchMode mode, Material[] materials) {
 		segment = segment.toUpperCase();
 
 		switch (mode) {
 			case PREFIX:
-				for (Material m : Material.values())
+				for (Material m : materials)
 					if (m.name().startsWith(segment))
-						materials.remove(m);
+						this.materials.remove(m);
 				break;
 
 			case SUFFIX:
-				for (Material m : Material.values())
+				for (Material m : materials)
 					if (m.name().endsWith(segment))
-						materials.remove(m);
+						this.materials.remove(m);
 				break;
 
 			case CONTAINS:
-				for (Material m : Material.values())
+				for (Material m : materials)
 					if (m.name().contains(segment))
-						materials.remove(m);
+						this.materials.remove(m);
 				break;
 		}
 

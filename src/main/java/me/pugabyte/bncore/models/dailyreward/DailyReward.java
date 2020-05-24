@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.IntegerListSerializer;
+import me.pugabyte.bncore.models.vote.VoteService;
+import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
@@ -84,6 +86,8 @@ public class DailyReward {
 		Reward reward = DailyRewardsFeature.getReward(day);
 		List<ItemStack> items = reward.getItems();
 		Integer money = reward.getMoney();
+		Integer levels = reward.getLevels();
+		Integer votePoints = reward.getMoney();
 		String command = reward.getCommand();
 
 		if (items != null)
@@ -91,6 +95,14 @@ public class DailyReward {
 
 		if (money != null)
 			BNCore.getEcon().depositPlayer(player, money);
+
+		if (levels != null)
+			Utils.runConsoleCommand("exp give " + player.getName() + " " + levels);
+
+		if (votePoints != null) {
+			Voter voter = new VoteService().get(player);
+			voter.addPoints(votePoints);
+		}
 
 		if (!Strings.isNullOrEmpty(command))
 			Utils.runConsoleCommand(command.replaceAll("%player%", player.getName()));

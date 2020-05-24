@@ -12,6 +12,8 @@ public class Reward {
 	private String description;
 	private List<ItemStack> items;
 	private Integer money;
+	private Integer levels;
+	private Integer votePoints;
 	private String command;
 
 	public Reward(String description, ItemStack item) {
