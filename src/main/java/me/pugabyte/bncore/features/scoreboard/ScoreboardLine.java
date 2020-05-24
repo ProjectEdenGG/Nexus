@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.scoreboard;
 
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -97,7 +98,7 @@ public enum ScoreboardLine {
 			if (activeChannel == null)
 				return line + "&eNone";
 			if (activeChannel instanceof PrivateChannel)
-				return line + "&bDM / " + String.join(",", ((PrivateChannel) activeChannel).getOthersNames(chatter));
+				return line + "&b" + String.join(",", ((PrivateChannel) activeChannel).getOthersNames(chatter));
 			if (activeChannel instanceof PublicChannel) {
 				PublicChannel channel = (PublicChannel) activeChannel;
 				return line + channel.getColor() + channel.getName();
@@ -135,14 +136,15 @@ public enum ScoreboardLine {
 			String world = player.getWorld().getName();
 			if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
 				world = world.replace("world", "legacy");
-			return "&3World: &e" + world;
+			return "&3World: &e" + camelCase(world);
 		}
 	},
 
 	MCMMO {
 		@Override
 		public String render(Player player) {
-			return "&3McMMO Level: &e" + UserManager.getPlayer(player).getPowerLevel();
+			McMMOPlayer mcmmo = UserManager.getPlayer(player);
+			return "&3McMMO Level: &e" + (mcmmo == null ? "0" : mcmmo.getPowerLevel());
 		}
 	},
 
@@ -181,16 +183,16 @@ public enum ScoreboardLine {
 			float yaw = Location.normalizeYaw(player.getLocation().getYaw());
 			if (yaw < 0) yaw = 360 + yaw;
 
-			int center = (int) (Math.round(yaw / (360D / compass.length())) + 1);
+			int center = (int) Math.round(yaw / (360D / compass.length())) + 1;
 
 			String instance;
 			if (center - extra < 0) {
 				center += compass.length();
-				instance = (compass + compass).substring(center - extra, center + extra);
-			} else if (center + extra > compass.length())
-				instance = (compass + compass).substring(center - extra, center + extra);
+				instance = (compass + compass).substring(center - extra, center + extra + 1);
+			} else if (center + extra + 1 > compass.length())
+				instance = (compass + compass).substring(center - extra, center + extra + 1);
 			else
-				instance = compass.substring(center - extra, center + extra);
+				instance = compass.substring(center - extra, center + extra + 1);
 
 			instance = instance.replaceAll("\\[", "&2[&f");
 			instance = instance.replaceAll("]", "&2]&f");
@@ -219,12 +221,12 @@ public enum ScoreboardLine {
 	HELP {
 		@Override
 		public String render(Player player) {
-			return "&c/scoreboard";
+			return "&c/sb help";
 		}
 	},
 
 	@Interval(20)
-	@NotOptional
+	@Required
 	AFK {
 		@Override
 		public String render(Player player) {
@@ -247,7 +249,7 @@ public enum ScoreboardLine {
 	}
 
 	public boolean isOptional() {
-		return getAnnotation(NotOptional.class) == null;
+		return getAnnotation(Required.class) == null;
 	}
 
 	public int getInterval() {
@@ -277,6 +279,7 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.COORDINATES.hasPermission(player))	put(ScoreboardLine.COORDINATES, true);
 			if (ScoreboardLine.HOURS.hasPermission(player))			put(ScoreboardLine.HOURS, true);
 			if (ScoreboardLine.HELP.hasPermission(player))			put(ScoreboardLine.HELP, !player.hasPermission("group.staff"));
+			if (ScoreboardLine.AFK.hasPermission(player))			put(ScoreboardLine.AFK, true);
 		}};
 	}
 
@@ -288,7 +291,7 @@ public enum ScoreboardLine {
 
 	@Target({ElementType.FIELD})
 	@Retention(RetentionPolicy.RUNTIME)
-	protected @interface NotOptional {
+	protected @interface Required {
 	}
 
 	@Target({ElementType.FIELD})
