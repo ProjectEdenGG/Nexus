@@ -4,10 +4,9 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.*;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -66,13 +65,14 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 			process(contents);
 			boolean complete = true;
 			for (int i = 0; i < openSlots.length; i++) {
-				if (!contents.get(openSlots[i]).get().getItem().getType().equals(correct[i]))
+				if (!contents.get(openSlots[i]).get().getItem().getType().equals(correct[i]) ||
+						contents.get(openSlots[i]).get().getItem().getLore() == null ||
+						!contents.get(openSlots[i]).get().getItem().getLore().contains(BFQuests.itemLore))
 					complete = false;
 			}
 			if (!complete)
 				player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 0.1f);
 			else {
-				close(player, items);
 				complete(player);
 			}
 		}));
@@ -111,6 +111,8 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 	}
 
 	public void complete(Player player) {
+		player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
+		Tasks.wait(Time.SECOND.x(5), () -> close(player, items));
 		player.sendMessage("TODO Complete");
 	}
 
@@ -132,7 +134,9 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 			for (int j : wireGroups[i]) {
 				if (contents.get(openSlots[i]).get().getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE))
 					contents.set(j, ClickableItem.empty(new ItemBuilder(Material.GLASS_PANE).name(" ").build()));
-				else if (contents.get(openSlots[i]).get().getItem().getType().equals(correct[i]))
+				else if (contents.get(openSlots[i]).get().getItem().getType().equals(correct[i]) &&
+						contents.get(openSlots[i]).get().getItem().getLore() != null &&
+						contents.get(openSlots[i]).get().getItem().getLore().contains(BFQuests.itemLore))
 					contents.set(j, ClickableItem.empty(new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE).name(" ").build()));
 				else
 					contents.set(j, ClickableItem.empty(new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name(" ").build()));
