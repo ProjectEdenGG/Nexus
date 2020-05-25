@@ -374,8 +374,8 @@ public class BFQuests implements Listener {
 		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.mainRg);
 		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region)) {
 			int id = event.getNPC().getId();
-			if (!Talkers.startScript(player, id))
-				Merchants.openMerchant(player, id);
+			Talkers.startScript(player, id);
+			Merchants.openMerchant(player, id);
 		}
 	}
 
