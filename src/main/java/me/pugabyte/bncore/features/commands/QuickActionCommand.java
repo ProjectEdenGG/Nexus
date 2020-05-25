@@ -25,10 +25,10 @@ public class QuickActionCommand extends CustomCommand {
 				.next("  &3||"));
 
 		send(json()
-				.next("   &3||  &3")
+				.next("  &3||  &3")
 				.next(" &eMessage").suggest("/msg " + playerName + " ").group()
 				.next("&3  ||  &3")
-				.next("&eAllow").command("/allow " + playerName).group()
+				.next("&eTrust").command("/trust " + playerName).group()
 				.next("  &3||  &3")
 				.next("&eShop").suggest("/shop " + playerName).group()
 				.next("  &3||  &3")
