@@ -4,24 +4,32 @@ import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -47,6 +55,8 @@ public class BFQuests implements Listener {
 	private Map<Location, Material> multiRegenMap = new HashMap<>();
 	private Map<Location, Material> blockRegenMap = new HashMap<>();
 	private List<Location> cropRegenList = new ArrayList<>();
+	private static List<Location> collectorLocs = new ArrayList<>();
+	private static List<Location> prevCollectorLocs = new ArrayList<>();
 	// Error Messages
 	private static String prefix = "&8&l[&eBFQuests&8&l] ";
 	public static String cantBreakError = prefix + "&c&lHey! &7That's not a block you can break";
@@ -59,9 +69,55 @@ public class BFQuests implements Listener {
 	public BFQuests() {
 		BNCore.registerListener(this);
 		regenTasks();
+		setupCollector();
 		new Beehive();
-		Recipes.loadRecipes();
 		new Fishing();
+		Recipes.loadRecipes();
+	}
+
+	private void setupCollector() {
+		World world = BearFair20.world;
+		Location observatory = new Location(world, -1097, 157, -1550);
+		Location town = new Location(world, -1095, 139, -1666);
+		Location forest = new Location(world, -1031, 140, -1556);
+		Location flag = new Location(world, -984, 144, -1615);
+		Location campsite = new Location(world, -1020, 153, -1760);
+		Location ruins = new Location(world, -919, 137, -1711);
+		Location carnival = new Location(world, -888, 136, -1659);
+		collectorLocs = Arrays.asList(observatory, town, forest, flag, campsite, ruins, carnival);
+	}
+
+	public static void moveCollector() {
+		if (prevCollectorLocs.size() == collectorLocs.size())
+			prevCollectorLocs.clear();
+
+		Location newLoc = Utils.getRandomElement(collectorLocs);
+		if (newLoc == null) return;
+
+		for (int i = 0; i < 10; i++) {
+			if (!prevCollectorLocs.contains(newLoc)) {
+				prevCollectorLocs.add(newLoc);
+				break;
+			}
+			newLoc = Utils.getRandomElement(collectorLocs);
+		}
+
+		if (newLoc == null) return;
+		newLoc = Utils.getCenteredLocation(newLoc);
+
+		NPC npc = CitizensUtils.getNPC(2750);
+		Location oldLoc = npc.getEntity().getLocation();
+		World world = BearFair20.world;
+
+		world.playSound(oldLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
+		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, oldLoc, 500, 0.5, 1, 0.5, 0);
+		world.spawnParticle(Particle.FLASH, oldLoc, 10, 0, 0, 0);
+		npc.despawn();
+
+		world.playSound(newLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
+		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, newLoc, 500, 0.5, 1, 0.5, 0);
+		world.spawnParticle(Particle.FLASH, newLoc, 10, 0, 0, 0);
+		npc.spawn(newLoc);
 	}
 
 	private void regenTasks() {
@@ -314,10 +370,28 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onRightClickNPC(NPCRightClickEvent event) {
 		Player player = event.getClicker();
-		Location loc = event.getClicker().getLocation();
+		Location loc = player.getLocation();
 		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.mainRg);
-		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region))
-			Merchants.openMerchant(player, event.getNPC().getId());
+		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region)) {
+			int id = event.getNPC().getId();
+			if (!Talkers.startScript(player, id))
+				Merchants.openMerchant(player, id);
+		}
+	}
+
+	@EventHandler
+	public void onInteractWithVillager(PlayerInteractEntityEvent event) {
+		Entity entity = event.getRightClicked();
+		if (!(entity instanceof Villager)) return;
+		if (CitizensAPI.getNPCRegistry().isNPC(entity)) return;
+
+		Player player = event.getPlayer();
+		Location loc = player.getLocation();
+
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.mainRg);
+		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region)) {
+			event.setCancelled(true);
+		}
 	}
 
 	//TODO:
