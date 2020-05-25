@@ -6,7 +6,11 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -65,9 +69,10 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 			process(contents);
 			boolean complete = true;
 			for (int i = 0; i < openSlots.length; i++) {
-				if (!contents.get(openSlots[i]).get().getItem().getType().equals(correct[i]) ||
-						contents.get(openSlots[i]).get().getItem().getLore() == null ||
-						!contents.get(openSlots[i]).get().getItem().getLore().contains(BFQuests.itemLore))
+				if (!contents.get(openSlots[i]).get().getItem().getType().equals(correct[i]))
+					complete = false;
+				else if (contents.get(openSlots[i]).get().getItem().getLore() != null
+						&& !contents.get(openSlots[i]).get().getItem().getLore().contains(BFQuests.itemLore))
 					complete = false;
 			}
 			if (!complete)

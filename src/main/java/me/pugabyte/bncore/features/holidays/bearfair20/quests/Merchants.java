@@ -18,11 +18,13 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.it
 // TODO: make Collector move to random locations
 public class Merchants {
 
-	public static void openMerchant(Player player, int id) {
+	public static boolean openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
 		if (bfMerchant == null)
-			return;
+			return false;
+
 		new MerchantBuilder(StringUtils.camelCase(bfMerchant.name())).trades(bfMerchant.getTrades()).open(player);
+		return true;
 	}
 
 	private enum BFMerchant {

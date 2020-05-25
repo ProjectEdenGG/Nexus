@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 
 import me.pugabyte.bncore.features.holidays.bearfair20.Fairgrounds;
+import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.warps.commands._WarpCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -85,6 +86,11 @@ public class BearFairCommand extends _WarpCommand {
 	public void merryGoRound() {
 		commandBlock();
 		Fairgrounds.startMerryGoRound();
+	}
+
+	@Path("moveCollector")
+	public void moveCollector() {
+		BFQuests.moveCollector();
 	}
 
 	@Path

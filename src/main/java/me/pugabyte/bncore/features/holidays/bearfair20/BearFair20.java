@@ -28,6 +28,13 @@ import org.bukkit.inventory.ItemStack;
 
 import static me.pugabyte.bncore.utils.Utils.*;
 
+/*
+	Easter Egg Spots:
+		-939 137 -1624
+		-1155 141 -1777
+		-902 133 -1637
+ */
+
 @Data
 public class BearFair20 implements Listener {
 
