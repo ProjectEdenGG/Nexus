@@ -4,12 +4,9 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.models.poof.Poof;
 import me.pugabyte.bncore.models.poof.PoofService;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Aliases("tpahere")
 public class PoofHereCommand extends CustomCommand {
@@ -24,18 +21,18 @@ public class PoofHereCommand extends CustomCommand {
 		if (target == player().getPlayer())
 			error("You cannot poof to yourself");
 
-		Poof request = new Poof(player(), target);
+		Poof request = new Poof(player(), target, Poof.PoofType.POOF_HERE);
 		service.save(request);
 		send(json("&ePoof-here &3request sent to " + target.getName() + ". ").next("&eClick to cancel").command("poof cancel"));
 		send(target, "  &e" + player().getName() + " &3is asking you to poof &eto them&3.");
 		send(target, json("&3  Click one  ||  &a&lAccept")
-				.command("poofhere accept")
+				.command("poof accept")
 				.hover("&eClick &3to accept")
 				.group()
 				.next("  &3||  &3")
 				.group()
 				.next("&c&lDeny")
-				.command("poofhere deny")
+				.command("poof deny")
 				.hover("&eClick &3to deny.")
 				.group()
 				.next("&3  ||"));
@@ -44,58 +41,17 @@ public class PoofHereCommand extends CustomCommand {
 
 	@Path("accept")
 	void accept() {
-		Poof request = service.getByReceiver(player().getPlayer());
-		if (request == null || request.isExpired())
-			error("You do not have any pending Poof-here requests");
-
-		request.setExpired(true);
-		service.save(request);
-
-		OfflinePlayer receiver = request.getReceiverPlayer();
-		OfflinePlayer sender = request.getSenderPlayer();
-		if (!sender.isOnline())
-			throw new PlayerNotOnlineException(sender);
-
-		receiver.getPlayer().teleport(request.getSenderLocation(), TeleportCause.COMMAND);
-		send("&3You accepted &e" + sender.getName() + "'s &3poof-here request");
-		send(sender.getPlayer(), "&e" + receiver.getName() + " &3accepted your poof-here request");
-		service.save(request);
+		new PoofCommand().accept(player());
 	}
 
 	@Path("deny")
 	void deny() {
-		Poof request = service.getByReceiver(player().getPlayer());
-		if (request == null || request.isExpired())
-			error("You do not have any pending Poof-here requests");
-
-		request.setExpired(true);
-		service.save(request);
-
-		OfflinePlayer receiver = request.getReceiverPlayer();
-		OfflinePlayer sender = request.getSenderPlayer();
-		if (!sender.isOnline())
-			throw new PlayerNotOnlineException(sender);
-
-		send("&3You denied &e" + sender.getName() + "'s &3poof-here request");
-		send(sender.getPlayer(), "&e" + receiver.getName() + " &3denied your poof-here request");
+		new PoofCommand().deny(player());
 	}
 
 	@Path("cancel")
 	void cancel() {
-		Poof request = service.getBySender(player().getPlayer());
-		if (request == null || request.isExpired())
-			error("You do not have any pending Poof-here requests");
-
-		request.setExpired(true);
-		service.save(request);
-
-		OfflinePlayer receiver = request.getReceiverPlayer();
-		OfflinePlayer sender = request.getSenderPlayer();
-		if (!receiver.isOnline())
-			throw new PlayerNotOnlineException(receiver);
-
-		send(receiver.getPlayer(), "&e" + sender.getName() + " &3canceled their poof-here request");
-		send("&3You canceled your poof-here request to &e" + receiver.getName());
+		new PoofCommand().cancel(player());
 	}
 
 }

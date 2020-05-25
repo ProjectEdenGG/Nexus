@@ -62,8 +62,10 @@ public class MinigameNight implements Listener {
 	}
 
 	private static void playSmokeEffects(Player player) {
-		for (int i = 0; i < 5; i++) {
-			Tasks.wait(i * 20, () -> {
+		int amount = Utils.randomInt(3, 10);
+		for (int i = 0; i < amount; i++) {
+			int wait = Utils.randomInt(10, 20);
+			Tasks.wait(i * wait, () -> {
 				player.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, arcadeSmokeLoc1, 0, 0, 0.05, 0, 1);
 				player.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, arcadeSmokeLoc2, 0, 0, 0.05, 0, 1);
 			});
