@@ -85,10 +85,16 @@ public class Fishing implements Listener {
 		weightedList.add(new WeightedLoot(new ItemBuilder(Material.HEART_OF_THE_SEA).lore(itemLore).build(),					 1));
 		weightedList.add(new WeightedLoot(new ItemBuilder(Material.NAUTILUS_SHELL).lore(itemLore).build(),						 1));
 		// Trash
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.LEATHER_BOOTS).name("Old Boots").lore(itemLore).build(),		 10));
+//		weightedList.add(new WeightedLoot(new ItemBuilder(Material.LEATHER_BOOTS).name("Old Boots").lore(itemLore).build(),		 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.STICK).name("Old Boots (Temp Item)").lore(itemLore).build(),		 10));
+
+//		weightedList.add(new WeightedLoot(new ItemBuilder(Material.WOODEN_SHOVEL).name("Rusty Spoon").lore(itemLore).build(),	 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.STICK).name("Rusty Spoon (Temp Item)").lore(itemLore).build(),	 10));
+
+//		weightedList.add(new WeightedLoot(new ItemBuilder(Material.MUSIC_DISC_11).name("Broken CD").lore(itemLore).build(),		 10));
+		weightedList.add(new WeightedLoot(new ItemBuilder(Material.STICK).name("Broken CD (Temp Item)").lore(itemLore).build(),		 10));
+
 		weightedList.add(new WeightedLoot(new ItemBuilder(Material.BOOK).name("Lost Book").lore(itemLore).build(),				 10));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.WOODEN_SHOVEL).name("Rusty Spoon").lore(itemLore).build(),	 10));
-		weightedList.add(new WeightedLoot(new ItemBuilder(Material.MUSIC_DISC_11).name("Broken CD").lore(itemLore).build(),		 10));
 		weightedList.add(new WeightedLoot(new ItemBuilder(Material.PAPER).name("Soggy Newspaper").lore(itemLore).build(),		 10));
 		weightedList.add(new WeightedLoot(new ItemBuilder(Material.STICK).name("Driftwood").lore(itemLore).build(),				 10));
 		weightedList.add(new WeightedLoot(new ItemBuilder(Material.KELP).name("Seaweed").lore(itemLore).build(),				 10));
