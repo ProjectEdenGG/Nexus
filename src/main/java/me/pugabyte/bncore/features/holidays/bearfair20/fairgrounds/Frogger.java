@@ -32,7 +32,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 
 public class Frogger implements Listener {
 
-	private static String gameRg = BearFair20.mainRg + "_frogger";
+	private static String gameRg = BearFair20.BFRg + "_frogger";
 	private static String winRg = gameRg + "_win";
 	private static String damageRg = gameRg + "_damage";
 	private static String killRg = gameRg + "_kill";

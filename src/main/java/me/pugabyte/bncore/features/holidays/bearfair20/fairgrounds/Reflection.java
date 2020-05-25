@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFRg;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.mainRg;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static org.bukkit.block.BlockFace.*;
@@ -49,7 +49,7 @@ import static org.bukkit.block.BlockFace.*;
 public class Reflection implements Listener {
 
 	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
-	private String gameRg = BearFair20.mainRg + "_reflection";
+	private String gameRg = BearFair20.BFRg + "_reflection";
 	private String powderRg = gameRg + "_powder";
 	private boolean active = false;
 	private boolean prototypeActive = false;
@@ -119,7 +119,7 @@ public class Reflection implements Listener {
 
 		Block button = event.getClickedBlock();
 		Location loc = button.getLocation();
-		if (!WGUtils.getRegionNamesAt(loc).contains(mainRg)) return;
+		if (!WGUtils.getRegionNamesAt(loc).contains(BFRg)) return;
 
 		BlockData blockData = button.getBlockData();
 		Directional directional = (Directional) blockData;

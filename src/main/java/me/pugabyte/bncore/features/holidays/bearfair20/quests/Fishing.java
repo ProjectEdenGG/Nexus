@@ -25,10 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.mainRg;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.mainRegion;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Fishing implements Listener {
@@ -49,11 +47,11 @@ public class Fishing implements Listener {
 
 	// @formatter:off
 	private void addWeightedItems() {
-		String mainIsland = mainRg + "_main";
-		String mgnIsland = mainRg + "_gamelobby";
-		String halloweenIsland = mainRg + "_halloween";
-		String pugmasIsland = mainRg + "_pugmas";
-		String sduIsland = mainRg + "_summerdownunder";
+		String mainIsland = BFRg + "_main";
+		String mgnIsland = BFRg + "_gamelobby";
+		String halloweenIsland = BFRg + "_halloween";
+		String pugmasIsland = BFRg + "_pugmas";
+		String sduIsland = BFRg + "_summerdownunder";
 
 		// Default Fish (Global)
 		weightedList.add(new WeightedLoot(new ItemBuilder(Material.COD).lore(itemLore).build(),									 25));
@@ -159,8 +157,14 @@ public class Fishing implements Listener {
 	public void onFishCatch(PlayerFishEvent event) {
 		Player player = event.getPlayer();
 
-		if (!event.getPlayer().getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(mainRegion)) return;
+		if (!event.getPlayer().getWorld().equals(BearFair20.world)){
+//			Utils.wakka("Not in world");
+			return;
+		}
+		if (!WGUtils.getRegionsAt(player.getLocation()).contains(BFProtectedRg)){
+//			Utils.wakka("Not in region");
+			return;
+		}
 
 		ItemStack rod = player.getInventory().getItemInMainHand();
 		ItemStack offHand = player.getInventory().getItemInOffHand();
@@ -198,7 +202,6 @@ public class Fishing implements Listener {
 
 		itemStack.setType(lootItemStack.getType());
 		itemStack.setItemMeta(lootItemStack.getItemMeta());
-//		itemStack.setLore(Collections.singletonList(itemLore));
 	}
 
 	@EventHandler
@@ -206,7 +209,7 @@ public class Fishing implements Listener {
 		Player player = event.getPlayer();
 
 		if (!event.getPlayer().getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(mainRegion)) return;
+		if (!WGUtils.getRegionsAt(player.getLocation()).contains(BFProtectedRg)) return;
 
 		event.setCancelled(true);
 	}
