@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.WeightedLoot;
-import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.Fishing;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -29,12 +28,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.Fishing.weightedList;
 
 @Permission("group.staff")
 public class BFFishingCommand extends CustomCommand {
 	static Map<UUID, LocalDateTime> timestamps = new HashMap<>();
-	ItemStack fishingRod = new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(BFQuests.itemLore).build();
+	ItemStack fishingRod = new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(itemLore).build();
 
 	public BFFishingCommand(CommandEvent event) {
 		super(event);
@@ -132,9 +132,16 @@ public class BFFishingCommand extends CustomCommand {
 	}
 
 	private void removeItems(Player player, List<ItemStack> loot) {
+		// Remove loot
 		for (ItemStack itemStack : loot)
 			player.getInventory().remove(itemStack);
-		player.getInventory().remove(unbreakable(fishingRod));
+
+		// Remove fishing rod
+		for (ItemStack content : player.getInventory().getContents()) {
+			if (!content.getType().equals(Material.FISHING_ROD)) continue;
+			if (content.getItemMeta().getLore() != null && content.getItemMeta().getLore().contains(itemLore))
+				player.getInventory().remove(content);
+		}
 	}
 
 	private int countDefault(List<ItemStack> contents) {
