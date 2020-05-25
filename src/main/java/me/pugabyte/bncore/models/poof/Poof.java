@@ -23,19 +23,22 @@ public class Poof {
 	String receiver;
 	@NonNull
 	@DbSerializer(LocationSerializer.class)
-	Location senderLocation;
+	Location teleportLocation;
 	@NonNull
-	@DbSerializer(LocationSerializer.class)
-	Location receiverLocation;
+	PoofType type;
 	@NonNull
 	LocalDateTime timeSent = LocalDateTime.now();
 	boolean expired = false;
 
-	public Poof(@NonNull Player sender, @NonNull Player receiver) {
+
+	public Poof(@NonNull Player sender, @NonNull Player receiver, PoofType type) {
 		this.sender = sender.getUniqueId().toString();
 		this.receiver = receiver.getUniqueId().toString();
-		this.senderLocation = sender.getLocation();
-		this.receiverLocation = receiver.getLocation();
+		if (type == PoofType.POOF)
+			this.teleportLocation = receiver.getLocation();
+		else
+			this.teleportLocation = sender.getLocation();
+		this.type = type;
 	}
 
 	public OfflinePlayer getSenderPlayer() {
@@ -44,6 +47,11 @@ public class Poof {
 
 	public OfflinePlayer getReceiverPlayer() {
 		return Utils.getPlayer(receiver);
+	}
+
+	public enum PoofType {
+		POOF,
+		POOF_HERE
 	}
 
 }
