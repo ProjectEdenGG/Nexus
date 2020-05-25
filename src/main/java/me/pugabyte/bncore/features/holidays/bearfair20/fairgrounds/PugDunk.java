@@ -33,7 +33,7 @@ public class PugDunk implements Listener {
 	private static Location buttonLoc = new Location(BearFair20.world, -960, 139, -1594);
 	private static Location dropBlock = new Location(BearFair20.world, -963, 142, -1588);
 	private static Location delArrowsLoc = new Location(BearFair20.world, -961, 135, -1594);
-	private static String gameRg = BearFair20.mainRg + "_pugdunk";
+	private static String gameRg = BearFair20.BFRg + "_pugdunk";
 	private static String targetRg = gameRg + "_target";
 
 	public PugDunk() {

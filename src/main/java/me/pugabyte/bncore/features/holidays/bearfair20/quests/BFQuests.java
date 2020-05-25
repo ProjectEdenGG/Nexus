@@ -42,11 +42,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class BFQuests implements Listener {
-	public static ProtectedRegion mainRegion = WGUtils.getProtectedRegion(BearFair20.mainRg);
 	private List<Material> breakList = Arrays.asList(Material.WHEAT, Material.POTATOES, Material.CARROTS,
 			Material.BEETROOTS, Material.MELON, Material.PUMPKIN, Material.SUGAR_CANE, Material.COCOA, Material.BAMBOO);
 	private List<Material> noAge = Arrays.asList(Material.SUGAR_CANE, Material.BAMBOO);
@@ -104,6 +104,7 @@ public class BFQuests implements Listener {
 
 		if (newLoc == null) return;
 		newLoc = Utils.getCenteredLocation(newLoc);
+		Location finalNewLoc = newLoc;
 
 		NPC npc = CitizensUtils.getNPC(2750);
 		Location oldLoc = npc.getEntity().getLocation();
@@ -114,10 +115,10 @@ public class BFQuests implements Listener {
 		world.spawnParticle(Particle.FLASH, oldLoc, 10, 0, 0, 0);
 		npc.despawn();
 
-		world.playSound(newLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
-		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, newLoc, 500, 0.5, 1, 0.5, 0);
-		world.spawnParticle(Particle.FLASH, newLoc, 10, 0, 0, 0);
-		npc.spawn(newLoc);
+		world.playSound(finalNewLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
+		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, finalNewLoc, 500, 0.5, 1, 0.5, 0);
+		world.spawnParticle(Particle.FLASH, finalNewLoc, 10, 0, 0, 0);
+		npc.spawn(finalNewLoc);
 	}
 
 	private void regenTasks() {
@@ -203,7 +204,7 @@ public class BFQuests implements Listener {
 
 		if (event.isCancelled()) return;
 		if (!event.getPlayer().getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(block.getLocation()).contains(mainRegion)) return;
+		if (!WGUtils.getRegionsAt(block.getLocation()).contains(BFProtectedRg)) return;
 		if (!breakList.contains(block.getType())) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
 			player.sendMessage(colorize(cantBreakError));
@@ -283,14 +284,14 @@ public class BFQuests implements Listener {
 	public void onBlockDropItemEvent(BlockDropItemEvent event) {
 		Location loc = event.getBlock().getLocation();
 		if (!event.getBlock().getLocation().getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(loc).contains(mainRegion)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 		event.getItems().forEach(item -> item.getItemStack().setLore(Collections.singletonList(itemLore)));
 	}
 
 	@EventHandler
 	public void onMcMMOXpGainEvent(McMMOPlayerXpGainEvent event) {
 		Location loc = event.getPlayer().getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(mainRegion)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 		event.setRawXpGained(0F);
 		event.setCancelled(true);
 	}
@@ -300,7 +301,7 @@ public class BFQuests implements Listener {
 		if (!(event.getView().getPlayer() instanceof Player)) return;
 		Player player = (Player) event.getView().getPlayer();
 		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(mainRegion)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 
 		ItemStack result = event.getInventory().getResult();
 		ItemStack[] ingredients = event.getInventory().getMatrix();
@@ -332,7 +333,7 @@ public class BFQuests implements Listener {
 		if (!(event.getView().getPlayer() instanceof Player)) return;
 		Player player = (Player) event.getView().getPlayer();
 		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(mainRegion)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 
 		ItemStack[] ingredients = event.getInventory().getMatrix();
 		ItemStack result = event.getInventory().getResult();
@@ -371,7 +372,7 @@ public class BFQuests implements Listener {
 	public void onRightClickNPC(NPCRightClickEvent event) {
 		Player player = event.getClicker();
 		Location loc = player.getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.mainRg);
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.BFRg);
 		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region)) {
 			int id = event.getNPC().getId();
 			Talkers.startScript(player, id);
@@ -388,7 +389,7 @@ public class BFQuests implements Listener {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.mainRg);
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.BFRg);
 		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region)) {
 			event.setCancelled(true);
 		}

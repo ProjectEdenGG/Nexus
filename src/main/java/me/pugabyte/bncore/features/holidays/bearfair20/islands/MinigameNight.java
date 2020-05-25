@@ -19,7 +19,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 public class MinigameNight implements Listener {
 
 	final static String questProgress = "bf_mgn_questProgress";
-	private static String mgnRg = BearFair20.mainRg + "_gamelobby";
+	private static String mgnRg = BearFair20.BFRg + "_gamelobby";
 	private static Location arcadeSoundLoc = new Location(BearFair20.world, -1170, 141, -1716);
 	private static Location arcadeSmokeLoc1 = Utils.getCenteredLocation(new Location(BearFair20.world, -1170, 140, -1715));
 	private static Location arcadeSmokeLoc2 = Utils.getCenteredLocation(new Location(BearFair20.world, -1169, 148, -1715));

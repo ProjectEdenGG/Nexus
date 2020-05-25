@@ -123,7 +123,7 @@ public class BFFishingCommand extends CustomCommand {
 	private String getIslandRegion(Location location) {
 		Set<ProtectedRegion> protectedRegions = BearFair20.WGUtils.getRegionsAt(location);
 		for (ProtectedRegion protectedRegion : protectedRegions) {
-			if (protectedRegion.getId().contains(BearFair20.mainRg + "_")) {
+			if (protectedRegion.getId().contains(BearFair20.BFRg + "_")) {
 				String id = protectedRegion.getId();
 				return id.substring(id.indexOf("_") + 1);
 			}
@@ -138,6 +138,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		// Remove fishing rod
 		for (ItemStack content : player.getInventory().getContents()) {
+			if (Utils.isNullOrAir(content)) continue;
 			if (!content.getType().equals(Material.FISHING_ROD)) continue;
 			if (content.getItemMeta().getLore() != null && content.getItemMeta().getLore().contains(itemLore))
 				player.getInventory().remove(content);

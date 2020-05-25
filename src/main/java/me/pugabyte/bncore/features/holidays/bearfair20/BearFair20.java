@@ -39,8 +39,9 @@ import static me.pugabyte.bncore.utils.Utils.*;
 public class BearFair20 implements Listener {
 
 	public static World world = Bukkit.getWorld("safepvp");
-	public static String mainRg = "bearfair2020";
 	public static WorldGuardUtils WGUtils = new WorldGuardUtils(world);
+	public static String BFRg = "bearfair2020";
+	public static ProtectedRegion BFProtectedRg = WGUtils.getProtectedRegion(BearFair20.BFRg);
 
 	public BearFair20() {
 		BNCore.registerListener(this);
@@ -67,7 +68,7 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onTameEntity(EntityTameEvent event) {
 		Location loc = event.getEntity().getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
+		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
 		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
 		event.setCancelled(true);
 	}
@@ -76,7 +77,7 @@ public class BearFair20 implements Listener {
 	public void onRegionEnter(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
+		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
 		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
 //		if (player.hasPermission("worldguard.region.bypass.*")) {
 //			Utils.runCommand(player, "wgedit off");
@@ -88,7 +89,7 @@ public class BearFair20 implements Listener {
 	public void onThrowEnderPearl(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
+		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
 		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
 
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
@@ -104,7 +105,7 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onLecternTakeBook(PlayerTakeLecternBookEvent event) {
 		Location loc = event.getLectern().getBlock().getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
+		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
 		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
 
 		event.setCancelled(true);
@@ -118,7 +119,7 @@ public class BearFair20 implements Listener {
 
 		Player player = (Player) event.getExited();
 		Location loc = player.getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(mainRg);
+		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
 		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
 
 		Tasks.wait(1, () -> {
