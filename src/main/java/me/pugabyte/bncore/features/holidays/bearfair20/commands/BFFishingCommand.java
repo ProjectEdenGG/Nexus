@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.Fishing.weightedList;
+
 @Permission("group.staff")
 public class BFFishingCommand extends CustomCommand {
 	static Map<UUID, LocalDateTime> timestamps = new HashMap<>();
@@ -37,13 +40,27 @@ public class BFFishingCommand extends CustomCommand {
 		super(event);
 	}
 
+	private ItemStack unbreakable(ItemStack itemStack) {
+		ItemMeta meta = itemStack.getItemMeta();
+		meta.setUnbreakable(true);
+		itemStack.setItemMeta(meta);
+		return itemStack;
+	}
+
+	@Path("giveAll")
+	@Permission("group.admin")
+	public void giveAll() {
+		giveAllLoot(player());
+	}
+
 	@Path("start")
 	public void startFishing() {
 		UUID uuid = player().getUniqueId();
 		if (timestamps.containsKey(uuid))
 			error("You're already fishing!");
 		timestamps.put(uuid, LocalDateTime.now());
-		Utils.giveItem(player(), fishingRod);
+
+		Utils.giveItem(player(), unbreakable(fishingRod));
 		send("Start fishing!");
 	}
 
@@ -92,6 +109,10 @@ public class BFFishingCommand extends CustomCommand {
 
 		weightedList.forEach(weightedLoot -> itemStacks.add(weightedLoot.getItemStack()));
 		for (ItemStack content : contents) {
+			if (Utils.isNullOrAir(content))
+				continue;
+			if (content.getAmount() > 1)
+				content.setAmount(1);
 			if (itemStacks.contains(content))
 				loot.add(content);
 		}
@@ -113,7 +134,7 @@ public class BFFishingCommand extends CustomCommand {
 	private void removeItems(Player player, List<ItemStack> loot) {
 		for (ItemStack itemStack : loot)
 			player.getInventory().remove(itemStack);
-		player.getInventory().remove(fishingRod);
+		player.getInventory().remove(unbreakable(fishingRod));
 	}
 
 	private int countDefault(List<ItemStack> contents) {
@@ -211,6 +232,13 @@ public class BFFishingCommand extends CustomCommand {
 				|| material.equals(Material.PHANTOM_MEMBRANE)
 				|| material.equals(Material.HEART_OF_THE_SEA)
 				|| material.equals(Material.NAUTILUS_SHELL));
+	}
+
+
+	private void giveAllLoot(Player player) {
+		List<ItemStack> items = new ArrayList<>();
+		weightedList.forEach(weightedLoot -> items.add(weightedLoot.getItemStack()));
+		Utils.giveItems(player, items);
 	}
 
 }
