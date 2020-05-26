@@ -3,6 +3,8 @@ package me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointSource;
+import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointsUser;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -33,6 +35,7 @@ public class PugDunk implements Listener {
 	private static Location buttonLoc = new Location(BearFair20.world, -960, 139, -1594);
 	private static Location dropBlock = new Location(BearFair20.world, -963, 142, -1588);
 	private static Location delArrowsLoc = new Location(BearFair20.world, -961, 135, -1594);
+	private BFPointSource SOURCE = BFPointSource.PUGDUNK;
 	private static String gameRg = BearFair20.BFRg + "_pugdunk";
 	private static String targetRg = gameRg + "_target";
 
@@ -103,7 +106,7 @@ public class PugDunk implements Listener {
 		buttonLoc.getBlock().setType(Material.AIR);
 
 		BearFair20.world.playSound(buttonLoc, Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
-		BearFair20.givePoints(player, 1);
+		BFPointsUser.giveDailyPoints(player, 1, SOURCE);
 		dropNPC();
 
 		Tasks.wait(Time.SECOND.x(4), () -> {
