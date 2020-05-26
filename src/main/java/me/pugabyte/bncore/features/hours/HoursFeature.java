@@ -7,7 +7,6 @@ import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Bukkit;
@@ -20,19 +19,11 @@ public class HoursFeature {
 	final int INTERVAL = 5;
 
 	public HoursFeature() {
-		registerPlaceholder();
 		scheduler();
 
 		BNCore.getCron().schedule("00 00 * * *", () -> new HoursService().endOfDay());
 		BNCore.getCron().schedule("00 00 * * 1", () -> new HoursService().endOfWeek());
 		BNCore.getCron().schedule("00 00 1 * *", () -> new HoursService().endOfMonth());
-	}
-
-	private void registerPlaceholder() {
-		BNCore.registerPlaceholder("hours", event -> {
-			Hours hours = new HoursService().get(event.getPlayer());
-			return StringUtils.timespanFormat(hours.getTotal());
-		});
 	}
 
 	private void scheduler() {

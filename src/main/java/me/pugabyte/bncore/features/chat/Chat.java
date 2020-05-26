@@ -7,7 +7,6 @@ import me.pugabyte.bncore.features.chat.translator.Translator;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
-import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -38,24 +37,6 @@ public class Chat {
 		new Timer("    IngameBridgeListener", () -> BNCore.registerListener(new IngameBridgeListener()));
 		new Timer("    AlertsListener", () -> BNCore.registerListener(new AlertsListener()));
 		new Timer("    addChannels", this::addChannels);
-	}
-
-	static {
-		BNCore.registerPlaceholder("currentchannel", event -> {
-			Chatter chatter = new ChatService().get(event.getOfflinePlayer());
-			if (chatter == null)
-				return "&eNone";
-			me.pugabyte.bncore.models.chat.Channel activeChannel = chatter.getActiveChannel();
-			if (activeChannel == null)
-				return "&eNone";
-			if (activeChannel instanceof PrivateChannel)
-				return "&bDM / " + ((PrivateChannel) activeChannel).getOthersNames(chatter);
-			if (activeChannel instanceof PublicChannel) {
-				PublicChannel channel = (PublicChannel) activeChannel;
-				return channel.getColor() + channel.getName();
-			}
-			return "&eUnknown";
-		});
 	}
 
 	public static void shutdown() {

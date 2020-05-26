@@ -1,7 +1,5 @@
 package me.pugabyte.bncore;
 
-import be.maximvdw.placeholderapi.PlaceholderAPI;
-import be.maximvdw.placeholderapi.PlaceholderReplaceEvent;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.earth2me.essentials.Essentials;
@@ -63,7 +61,6 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -118,10 +115,6 @@ public class BNCore extends JavaPlugin {
 
 	public static void registerTabCompleter(String command, TabCompleter tabCompleter) {
 		getInstance().getCommand(command).setTabCompleter(tabCompleter);
-	}
-
-	public static void registerPlaceholder(String id, Function<PlaceholderReplaceEvent, String> function) {
-		Tasks.async(() -> PlaceholderAPI.registerPlaceholder(getInstance(), id, function::apply));
 	}
 
 	public static void fileLog(String file, String message) {

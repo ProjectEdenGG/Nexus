@@ -49,7 +49,6 @@ public class Votes implements Listener {
 	public Votes() {
 		BNCore.registerListener(this);
 		scheduler();
-		BNCore.registerPlaceholder("votepoints", event -> String.valueOf(((Voter) new VoteService().get(event.getPlayer())).getPoints()));
 
 		new Timer("    EndOfMonth", () -> BNCore.getCron().schedule("00 00 1 * *", EndOfMonth::run));
 	}
