@@ -60,11 +60,13 @@ public class BFPointsUser extends PlayerOwnedObject {
 		if (dailyMap != null)
 			sourcePoints = dailyMap.get(LocalDate.now());
 
-		// Only shows the message once, would repeat if >=
-		if ((sourcePoints + points) == DAILY_SOURCE_MAX) {
-			player.sendMessage(colorize("Max daily points reached for " + StringUtils.camelCase(source.name())));
+		if (sourcePoints == DAILY_SOURCE_MAX)
 			return;
-		}
+
+		// Only shows the message once, would repeat if >=
+		if ((sourcePoints + points) == DAILY_SOURCE_MAX)
+			player.sendMessage(colorize("Max daily points reached for " + StringUtils.camelCase(source.name())));
+
 		sourcePoints += points;
 		int finalSourcePoints = sourcePoints;
 
