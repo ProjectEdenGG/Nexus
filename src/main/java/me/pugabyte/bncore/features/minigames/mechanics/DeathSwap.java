@@ -1,13 +1,12 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
-import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
-import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.bncore.framework.annotations.Disabled;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,8 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-@Disabled
-@Regenerating("map")
 public final class DeathSwap extends TeamlessMechanic {
 	@Override
 	public String getName() {
@@ -39,107 +36,67 @@ public final class DeathSwap extends TeamlessMechanic {
 		return GameMode.SURVIVAL;
 	}
 
+	public int gameRadius = 1000;
+	public String world = "deathswap";
+
 	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 
-		Match match = event.getMatch();
-		randomTeleport(match.getMinigamers());
+		event.getMatch().getTasks().wait(Time.SECOND.x(1), () -> event.getMatch().getMinigamers());
 
-		for (Minigamer minigamer : match.getMinigamers()) {
-			for (Minigamer toHide : match.getMinigamers()) {
-				if (minigamer != toHide) {
-					minigamer.getPlayer().hidePlayer(BNCore.getInstance(), toHide.getPlayer());
-				}
-			}
-		}
-		match.getTasks().wait(60 * 20, () -> delay(match));
+		event.getMatch().getTasks().wait(Time.SECOND.x(10), () -> delay(event.getMatch()));
 	}
 
-	private void randomTeleport(List<Minigamer> minigamers) {
-		if (minigamers.get(0).getTeam().getSpawnpoints().size() < 2) {
-			minigamers.get(0).getMatch().broadcast("&cArena not properly setup. There must be two spawnpoints.");
-			minigamers.get(0).getMatch().end();
-			return;
-		}
-		Location one = minigamers.get(0).getTeam().getSpawnpoints().get(0);
-		Location two = minigamers.get(0).getTeam().getSpawnpoints().get(1);
+	private void spreadPlayers(List<Minigamer> minigamers) {
 		for (Minigamer minigamer : minigamers) {
-			minigamer.teleport((minigamer.getPlayer().getWorld().getHighestBlockAt(
-					randomInt(one.getBlockX(), two.getBlockX()),
-					randomInt(two.getBlockZ(), two.getBlockZ())
-			)).getLocation().add(0, 2, 0));
-		}
-	}
-
-	@Override
-	public void onDeath(MinigamerDeathEvent event) {
-		Minigamer minigamer = event.getMinigamer();
-		event.setDeathMessage("&c" + minigamer.getPlayer().getDisplayName() + " has died! ("
-				+ (minigamer.getMatch().getMinigamers().size() - 1)
-				+ minigamer.getMatch().getArena().getMaxPlayers() + ")");
-
-		for (Minigamer player : minigamer.getMatch().getMinigamers()) {
-			player.getPlayer().showPlayer(minigamer.getPlayer());
-			minigamer.getPlayer().showPlayer(player.getPlayer());
-		}
-
-		if (minigamer.getMatch().getMinigamers().size() > 2) {
-			minigamer.quit();
-			return;
-		}
-
-		for (Minigamer player : minigamer.getMatch().getMinigamers()) {
-			if (player != minigamer) {
-				player.scored();
-				return;
+			Location loc = Bukkit.getWorld(world).getHighestBlockAt(Utils.randomInt(-gameRadius / 2, gameRadius / 2),
+					Utils.randomInt(-gameRadius / 2, gameRadius / 2)).getLocation();
+			for (Minigamer _minigamer : minigamer.getMatch().getMinigamers()) {
+				if (_minigamer.getPlayer().getLocation().distance(loc) < 50)
+					spreadPlayers(minigamers);
 			}
+			minigamer.teleport(loc.add(0, 2, 0));
+			minigamers.remove(minigamer);
 		}
-
-		super.onDeath(event);
 	}
 
 	public void swap(Match match) {
-		match.broadcast("&aSwapping!");
+		match.getMinigamers().forEach(player -> Utils.sendActionBar(player.getPlayer(), "&3SWAPPING"));
 		ArrayList<Minigamer> swappingList = new ArrayList<>(match.getMinigamers());
 		if (match.getMinigamers().size() % 2 != 0) {
-			Location one = swappingList.get(0).getPlayer().getLocation();
-			Location two = swappingList.get(1).getPlayer().getLocation();
-			Location three = swappingList.get(2).getPlayer().getLocation();
-			swappingList.get(0).teleport(three);
-			swappingList.get(1).teleport(one);
-			swappingList.get(2).teleport(two);
-			swappingList.remove(0);
-			swappingList.remove(0);
-			swappingList.remove(0);
+			Minigamer playerOne = Utils.getRandomElement(swappingList);
+			swappingList.remove(playerOne);
+			Minigamer playerTwo = Utils.getRandomElement(swappingList);
+			swappingList.remove(playerTwo);
+			Minigamer playerThree = Utils.getRandomElement(swappingList);
+			swappingList.remove(playerThree);
+			Location one = playerOne.getPlayer().getLocation();
+			Location two = playerTwo.getPlayer().getLocation();
+			Location three = playerThree.getPlayer().getLocation();
+			playerOne.teleport(three);
+			playerTwo.teleport(one);
+			playerThree.teleport(two);
 		}
 		while (swappingList.size() > 0) {
-			Location one = swappingList.get(0).getPlayer().getLocation();
-			Location two = swappingList.get(1).getPlayer().getLocation();
-			swappingList.get(0).teleport(two);
-			swappingList.get(1).teleport(one);
-			swappingList.remove(0);
-			swappingList.remove(0);
+			Minigamer playerOne = Utils.getRandomElement(swappingList);
+			swappingList.remove(playerOne);
+			Minigamer playerTwo = Utils.getRandomElement(swappingList);
+			swappingList.remove(playerTwo);
+			Location one = playerOne.getPlayer().getLocation();
+			Location two = playerTwo.getPlayer().getLocation();
+			playerOne.teleport(two);
+			playerTwo.teleport(one);
 		}
 		delay(match);
 	}
 
 	public void delay(Match match) {
-		if (!(match.getMinigamers().size() > 1)) {
+		if (match.getMinigamers().size() <= 1) {
 			match.end();
 			return;
 		}
-		int delayTime = randomInt(0, 120);
-		match.getTasks().wait(delayTime, () -> swap(match));
-	}
-
-	public int randomInt(int min, int max) {
-		if (min >= max) {
-			int temp = max;
-			max = min;
-			min = temp;
-		}
-		return (int) ((Math.random() * ((max - min) + 1)) + min) * 20;
+		match.getTasks().wait(Time.SECOND.x(Utils.randomInt(5, 10)), () -> swap(match));
 	}
 
 }
