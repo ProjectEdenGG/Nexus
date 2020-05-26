@@ -3,7 +3,6 @@ package me.pugabyte.bncore.models.scoreboard;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,14 +37,10 @@ public class ScoreboardUser extends PlayerOwnedObject {
 	private Map<ScoreboardLine, Boolean> lines = new HashMap<>();
 	private boolean active = true;
 
-	@Transient
-	private BNScoreboard scoreboard;
-	@Transient
-	ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
-	@Transient
-	private int headerTaskId = -1;
-	@Transient
-	private Map<ScoreboardLine, Integer> taskIds = new HashMap<>();
+	private transient BNScoreboard scoreboard;
+	private transient ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
+	private transient int headerTaskId = -1;
+	private transient Map<ScoreboardLine, Integer> taskIds = new HashMap<>();
 
 	public static final int HEADER_UPDATE_INTERVAL = 2;
 	public static final int UPDATE_INTERVAL = 40;
