@@ -1,9 +1,7 @@
 package me.pugabyte.bncore.features.tickets;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.models.ticket.Ticket;
-import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -13,13 +11,6 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Tickets {
 	public static final String PREFIX = StringUtils.getPrefix("Tickets");
-
-	static {
-		BNCore.registerPlaceholder("tickets_open", event ->
-				String.valueOf(new TicketService().getAllOpen().size()));
-		BNCore.registerPlaceholder("tickets_total", event ->
-				String.valueOf(new TicketService().getAll().size()));
-	}
 
 	static void showTicket(Player player, Ticket ticket) {
 		new JsonBuilder()

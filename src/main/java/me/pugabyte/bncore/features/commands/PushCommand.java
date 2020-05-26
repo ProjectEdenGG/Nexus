@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.commands;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -10,11 +9,6 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 public class PushCommand extends CustomCommand {
 	@Getter
 	private static String perm = "stoppushing.allow";
-
-	static {
-		BNCore.registerPlaceholder("pushing", event ->
-				String.valueOf(event.getPlayer().hasPermission(perm)));
-	}
 
 	public PushCommand(CommandEvent event) {
 		super(event);
