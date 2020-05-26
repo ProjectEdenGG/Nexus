@@ -26,13 +26,15 @@ import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import static me.pugabyte.bncore.utils.Utils.*;
+import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
+import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 /*
 	Easter Egg Spots:
 		-939 137 -1624
 		-1155 141 -1777
 		-902 133 -1637
+		-991 135 -1621
  */
 
 @Data
@@ -59,10 +61,6 @@ public class BearFair20 implements Listener {
 		if (BNCore.getEssentials().getUser(player.getUniqueId()).isGodModeEnabled()) return "godmode";
 
 		return null;
-	}
-
-	public static void givePoints(Player player, int points) {
-		sendActionBar(player, "TODO: given " + points + " points");
 	}
 
 	@EventHandler

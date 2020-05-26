@@ -4,6 +4,8 @@ import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointSource;
+import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointsUser;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
@@ -38,6 +40,7 @@ public class Archery implements Listener {
 	private static String targetsRg = gameRg + "_targets";
 	private static boolean archeryBool = false;
 	private static int currentTargets = 0;
+	private BFPointSource SOURCE = BFPointSource.ARCHERY;
 
 	public Archery() {
 		BNCore.registerListener(this);
@@ -92,7 +95,7 @@ public class Archery implements Listener {
 		--currentTargets;
 		removeTarget(hitBlock);
 		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
-		BearFair20.givePoints(player, 1);
+		BFPointsUser.giveDailyPoints(player, 1, SOURCE);
 	}
 
 	private List<Location> getTargetLocs() {
