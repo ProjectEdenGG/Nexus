@@ -3,6 +3,8 @@ package me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointSource;
+import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointsUser;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.Laser;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
@@ -64,6 +66,7 @@ public class Reflection implements Listener {
 	private ColorType objColor;
 	private int objReflections;
 	private String prefix = "&8&l[&eReflections&8&l] &f";
+	private BFPointSource SOURCE = BFPointSource.REFLECTION;
 
 	public Reflection() {
 		BNCore.registerListener(this);
@@ -279,7 +282,7 @@ public class Reflection implements Listener {
 		BearFair20.world.playSound(center, Sound.BLOCK_NOTE_BLOCK_BELL, 1F, 1F);
 		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
 		for (Player player : players) {
-			BearFair20.givePoints(player, 1);
+			BFPointsUser.giveDailyPoints(player, 1, SOURCE);
 		}
 
 		newObjective();

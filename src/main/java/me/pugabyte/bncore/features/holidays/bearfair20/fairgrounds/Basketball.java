@@ -6,6 +6,8 @@ import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointSource;
+import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointsUser;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.Fairgrounds;
 import me.pugabyte.bncore.utils.Tasks;
@@ -45,6 +47,7 @@ public class Basketball implements Listener {
 	private static String stuckRg = gameRg + "_stuck_";
 	private static String backboardRg = gameRg + "_backboard_";
 	private static String hoopRg = gameRg + "_hoop_";
+	private BFPointSource SOURCE = BFPointSource.BASKETBALL;
 
 	static {
 		janitor();
@@ -209,7 +212,7 @@ public class Basketball implements Listener {
 					entity.remove();
 					giveBasketball(player);
 					player.sendMessage(colorize("&eTouchdown!!"));
-					BearFair20.givePoints(player, 1);
+					BFPointsUser.giveDailyPoints(player, 1, SOURCE);
 					WGUtils.getPlayersInRegion(courtRg).forEach(loopPlayer ->
 							loopPlayer.spawnParticle(Particle.LAVA, entity.getLocation(), 50, 2, 2, 2, .01));
 					stop();
