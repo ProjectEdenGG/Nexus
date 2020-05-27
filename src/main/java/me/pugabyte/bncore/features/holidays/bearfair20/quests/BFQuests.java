@@ -6,7 +6,6 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -297,7 +296,6 @@ public class BFQuests implements Listener {
 		if (!event.getEntity().getLocation().getWorld().equals(BearFair20.world)) return;
 		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 		event.getItemDrop().getItemStack().setLore(Collections.singletonList(itemLore));
-		Utils.wakka(event.getItemDrop().getItemStack().getType() + " dropped at " + StringUtils.getLocationString(event.getItemDrop().getLocation()));
 	}
 
 	@EventHandler
