@@ -32,7 +32,7 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 	private static Map<Material, Integer> taskIds = new HashMap<>();
 	private static Map<Material, Class<? extends Projectile>> projectiles = new HashMap<Material, Class<? extends Projectile>>() {{
 		put(Material.EGG, Egg.class);
-		put(Material.ARROW, Arrow.class);
+		put(Material.STICK, Arrow.class);
 		put(Material.SNOWBALL, Snowball.class);
 		put(Material.FIRE_CHARGE, Fireball.class);
 	}};
@@ -64,13 +64,14 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 		if (!spamming)
 			return;
 
-		if (!isPug(event.getPlayer()))
+		Player player = event.getPlayer();
+		if (!isPug(player))
 			return;
 
 		if (!Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.RIGHT_CLICK_AIR).contains(event.getAction()))
 			return;
 
-		Material material = player().getInventory().getItemInMainHand().getType();
+		Material material = player.getInventory().getItemInMainHand().getType();
 		if (!projectiles.containsKey(material))
 			return;
 
@@ -80,7 +81,7 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 			Tasks.cancel(taskIds.get(material));
 			taskIds.remove(material);
 		} else {
-			int taskId = Tasks.repeat(0, 1, () -> event.getPlayer().launchProjectile(projectiles.get(material), event.getPlayer().getLocation().getDirection().multiply(5)));
+			int taskId = Tasks.repeat(0, 1, () -> player.launchProjectile(projectiles.get(material), player.getLocation().getDirection().multiply(100)));
 			taskIds.put(material, taskId);
 		}
 	}
