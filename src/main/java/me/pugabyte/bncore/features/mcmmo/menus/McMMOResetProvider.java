@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.mcmmo.menus;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
-import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
@@ -210,7 +209,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		Utils.runConsoleCommand("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
 		BNCore.getEcon().depositPlayer(player, 20000);
 
-		for (SkillType skillType : SkillType.values()) {
+		for (PrimarySkillType skillType : PrimarySkillType.values()) {
 			if (skillType.isChildSkill()) continue;
 			prestige(player, ResetSkillType.valueOf(skillType.name()), false);
 		}
