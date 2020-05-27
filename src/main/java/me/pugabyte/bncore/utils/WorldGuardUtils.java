@@ -42,6 +42,18 @@ public class WorldGuardUtils {
 	public static final WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 	public static final SimpleFlagRegistry registry = (SimpleFlagRegistry) WorldGuard.getInstance().getFlagRegistry();
 
+	public WorldGuardUtils(@NonNull org.bukkit.entity.Entity entity) {
+		this(entity.getWorld());
+	}
+
+	public WorldGuardUtils(@NonNull org.bukkit.Location location) {
+		this(location.getWorld());
+	}
+
+	public WorldGuardUtils(@NonNull org.bukkit.block.Block location) {
+		this(location.getWorld());
+	}
+
 	public WorldGuardUtils(@NonNull org.bukkit.World world) {
 		this.world = world;
 		this.bukkitWorld = new BukkitWorld(world);

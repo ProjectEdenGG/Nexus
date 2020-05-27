@@ -14,6 +14,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -75,9 +76,9 @@ public final class InvertoInferno extends TeamlessMechanic {
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
-		Region region = WGUtils.getRegion("invertoinferno_fire");
+		Region region = event.getMatch().getWGUtils().getRegion("invertoinferno_fire");
 
-		WEUtils.replace(region, BlockTypes.FIRE, BlockTypes.AIR);
+		event.getMatch().getWEUtils().replace(region, BlockTypes.FIRE, BlockTypes.AIR);
 	}
 
 	@EventHandler
@@ -244,7 +245,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 		Block eventBlock = event.getBlock();
 
-		for (ProtectedRegion region : WGUtils.getRegionsAt(eventBlock.getLocation())) {
+		for (ProtectedRegion region : new WorldGuardUtils(eventBlock).getRegionsAt(eventBlock.getLocation())) {
 			if (region.getId().equalsIgnoreCase("invertoinferno") && !eventBlock.getType().equals(Material.FIRE)) {
 				event.setCancelled(true);
 				break;
@@ -258,7 +259,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 		Location location = event.getBlock().getLocation();
 
-		for (ProtectedRegion region : WGUtils.getRegionsAt(location)) {
+		for (ProtectedRegion region : new WorldGuardUtils(location).getRegionsAt(location)) {
 			if (region.getId().equalsIgnoreCase("invertoinferno_fire")) {
 				if (event.getSource().getType().equals(Material.FIRE)) {
 					int chance = Utils.randomInt(1, 3);
@@ -275,7 +276,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 		Location location = event.getBlock().getLocation();
 
-		for (ProtectedRegion region : WGUtils.getRegionsAt(location)) {
+		for (ProtectedRegion region : new WorldGuardUtils(location).getRegionsAt(location)) {
 			if (region.getId().equalsIgnoreCase("invertoinferno_fire")) {
 				event.setCancelled(true);
 				break;
@@ -284,28 +285,33 @@ public final class InvertoInferno extends TeamlessMechanic {
 	}
 
 	public class FireTask {
-		private Match match;
-		private int taskId;
-		private ProtectedRegion regionWG = WGUtils.getProtectedRegion("invertoinferno_fire");
-		private Region regionWE = WGUtils.convert(regionWG);
-		private int percent = regionWG.volume() / 25;
+		private final Match match;
+		private final int taskId;
+		private final ProtectedRegion regionWG;
+		private final Region regionWE;
+		private final int percent;
 		private int placedFire = 0;
 
 		FireTask(Match match) {
 			this.match = match;
-			start();
+			regionWG = match.getWGUtils().getProtectedRegion("invertoinferno_fire");
+			regionWE = match.getWGUtils().convert(regionWG);
+			percent = regionWG.volume() / 25;
+			taskId = start();
 		}
 
-		void start() {
-			taskId = match.getTasks().repeat(0, Time.SECOND.x(5), () -> {
-				if (match.isEnded())
-					stop(taskId);
+		int start() {
+			return match.getTasks().repeat(0, Time.SECOND.x(5), () -> {
+				if (match.isEnded()) {
+					stop();
+					return;
+				}
 
-				EditSession editSession = WEUtils.getEditSession();
+				EditSession editSession = match.getWEUtils().getEditSession();
 				if (editSession.countBlocks(regionWE, Collections.singleton(BlockTypes.FIRE.getDefaultState().toBaseBlock())) <= placedFire) {
 					placedFire = 0;
 					for (int i = 0; i < percent; i++) {
-						Block block = WGUtils.getRandomBlock(regionWG);
+						Block block = match.getWGUtils().getRandomBlock(regionWG);
 						if (block.getType().isBurnable()) {
 							Block above = block.getRelative(BlockFace.UP, 1);
 							if (above.getType().equals(Material.AIR)) {
@@ -319,7 +325,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 			});
 		}
 
-		void stop(int taskId) {
+		void stop() {
 			Tasks.cancel(taskId);
 		}
 	}

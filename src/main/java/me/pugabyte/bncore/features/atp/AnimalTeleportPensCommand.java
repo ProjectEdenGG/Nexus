@@ -40,7 +40,7 @@ public class AnimalTeleportPensCommand extends _WarpCommand {
 	}
 
 	public boolean isInATP() {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player().getWorld());
+		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
 		for (ProtectedRegion region : WGUtils.getRegionsAt(player().getLocation())) {
 			if (region.getId().contains("atp"))
 				return true;

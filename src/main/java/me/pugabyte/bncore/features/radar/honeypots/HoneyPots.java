@@ -70,7 +70,7 @@ public class HoneyPots implements Listener {
 	}
 
 	public void incrementPlayer(Player player, Location location) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(location.getWorld());
+		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
 		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
 		for (ProtectedRegion region : regions) {
 			if (!region.getId().contains("hp_")) continue;

@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -25,7 +26,6 @@ import me.pugabyte.bncore.models.invisiblearmour.InvisibleArmourService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -163,7 +163,7 @@ public class InvisibleArmourCommand extends CustomCommand {
 			InvisibleArmourService service = new InvisibleArmourService();
 			InvisibleArmour invisibleArmour = service.get(player);
 
-			if (WorldGroup.get(player) == WorldGroup.MINIGAMES) {
+			if (Minigames.isMinigameWorld(player.getWorld())) {
 				invisibleArmour.setEnabled(false);
 				service.save(invisibleArmour);
 				return;

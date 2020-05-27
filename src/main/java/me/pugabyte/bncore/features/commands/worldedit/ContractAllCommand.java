@@ -23,7 +23,7 @@ public class ContractAllCommand extends CustomCommand {
 	}
 
 	static void contractAll(Player player, int amount) {
-		new WorldEditUtils(player.getWorld()).changeSelection(
+		new WorldEditUtils(player).changeSelection(
 				player,
 				WorldEditUtils.SelectionChangeType.CONTRACT,
 				WorldEditUtils.SelectionChangeDirectionType.ALL,

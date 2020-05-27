@@ -56,7 +56,7 @@ public class MatchListener implements Listener {
 			if (minigamer.isPlaying())
 				minigamer.quit();
 			else {
-				WorldGuardUtils worldGuardUtils = new WorldGuardUtils(player.getWorld());
+				WorldGuardUtils worldGuardUtils = new WorldGuardUtils(player);
 				if (worldGuardUtils.getRegionsLikeAt(player.getLocation(), "mobarena_.*").size() > 0)
 					runCommand(player, "ma leave");
 				else
@@ -314,7 +314,7 @@ public class MatchListener implements Listener {
 
 	@EventHandler
 	public void onItemPickup(EntityPickupItemEvent event) {
-		if (!event.getEntity().getWorld().equals(Minigames.getWorld())) return;
+		if (!Minigames.isMinigameWorld(event.getEntity().getWorld())) return;
 		// TODO: Entity pickups?
 		if (!(event.getEntity() instanceof Player)) return;
 

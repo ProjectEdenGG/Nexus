@@ -35,8 +35,10 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -93,6 +95,18 @@ public class Match {
 
 	public <T extends MatchData> T getMatchData() {
 		return (T) matchData;
+	}
+
+	public World getWorld() {
+		return arena.getLobby().getLocation().getWorld();
+	}
+
+	public WorldGuardUtils getWGUtils() {
+		return arena.getWGUtils();
+	}
+
+	public WorldEditUtils getWEUtils() {
+		return arena.getWEUtils();
 	}
 
 	public boolean join(Minigamer minigamer) {
@@ -250,7 +264,7 @@ public class Match {
 	private void clearEntities() {
 		WorldEditUtils worldEditUtils = Minigames.getWorldEditUtils();
 		entities.forEach(Entity::remove);
-		Minigames.getWorld().getEntities().forEach(entity -> {
+		getWorld().getEntities().forEach(entity -> {
 			if (getArena().getRegion().contains(worldEditUtils.toBlockVector3(entity.getLocation())))
 				if (deletableTypes.contains(entity.getType()))
 					entity.remove();

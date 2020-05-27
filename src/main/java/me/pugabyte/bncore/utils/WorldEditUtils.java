@@ -54,7 +54,19 @@ public class WorldEditUtils {
 	@Getter
 	static WorldEditPlugin plugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
 
-	public WorldEditUtils(org.bukkit.World world) {
+	public WorldEditUtils(@NonNull org.bukkit.entity.Entity entity) {
+		this(entity.getWorld());
+	}
+
+	public WorldEditUtils(@NonNull org.bukkit.Location location) {
+		this(location.getWorld());
+	}
+
+	public WorldEditUtils(@NonNull org.bukkit.block.Block location) {
+		this(location.getWorld());
+	}
+
+	public WorldEditUtils(@NonNull org.bukkit.World world) {
 		this.world = world;
 		bukkitWorld = new BukkitWorld(world);
 		worldEditWorld = bukkitWorld;

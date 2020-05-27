@@ -52,7 +52,7 @@ public class BlockCenterCommand extends CustomCommand {
 		Location loc = Utils.getCenteredLocation(player().getLocation());
 		World world = loc.getWorld();
 		String worldString = "Bukkit.getWorld(\"" + world.getName() + "\")";
-		if (world.equals(Minigames.getWorld())) worldString = "Minigames.getGameworld()";
+		if (world.equals(Minigames.getWorld())) worldString = "Minigames.getWorld()";
 
 		String locationString = "new Location(" + worldString + ", " + loc.getX() + ", " + loc.getY() + ", " +
 				loc.getZ() + ", " + loc.getYaw() + "F, " + loc.getPitch() + "F)";

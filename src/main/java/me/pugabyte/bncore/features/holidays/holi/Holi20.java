@@ -89,7 +89,7 @@ public class Holi20 implements Listener {
 	public void onBucketFill(PlayerBucketFillEvent event) {
 		Block eventBlock = event.getBlockClicked();
 		Location loc = eventBlock.getLocation();
-		WorldGuardUtils WGUtils = new WorldGuardUtils(loc.getWorld());
+		WorldGuardUtils WGUtils = new WorldGuardUtils(loc);
 		for (ProtectedRegion region : WGUtils.getRegionsAt(eventBlock.getLocation())) {
 			if (region.getId().contains("quest_water")) {
 				event.getPlayer().getInventory().remove(new ItemStack(Material.BUCKET));

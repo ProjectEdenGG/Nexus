@@ -22,6 +22,7 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -199,7 +200,7 @@ public class Archery extends TeamlessMechanic {
 						if (canPlaceTarget(targetLoc)) {
 							String key = (direction.name() + "_" + color).toLowerCase();
 							Clipboard schem = targetSchems.get(key);
-							WEUtils.paste(schem, targetLoc);
+							match.getWEUtils().paste(schem, targetLoc);
 							break;
 						}
 					}
@@ -216,7 +217,7 @@ public class Archery extends TeamlessMechanic {
 		Set<ProtectedRegion> targetRegions = arena.getTargetRegions();
 
 		targetRegions.forEach(targetRegion -> {
-			Clipboard schem = WEUtils.copy(WGUtils.convert(targetRegion));
+			Clipboard schem = match.getWEUtils().copy(match.getWGUtils().convert(targetRegion));
 			Direction direction = matchData.getTargetDirection(targetRegion);
 			String color = matchData.getTargetColor(targetRegion);
 			String key = (direction.name() + "_" + color).toLowerCase();
@@ -238,8 +239,8 @@ public class Archery extends TeamlessMechanic {
 		for (int i = 1; i <= 10; i++) {
 			Set<ProtectedRegion> rangeRegions = arena.getRegionsLike("range_[0-9]+_.*");
 			rangeRegions.forEach(region -> {
-				CuboidRegion expandedRegion = (CuboidRegion) WEUtils.expandAll(WGUtils.convert(region), 2);
-				List<Block> blocks = WEUtils.getBlocks(expandedRegion);
+				CuboidRegion expandedRegion = (CuboidRegion) match.getWEUtils().expandAll(match.getWGUtils().convert(region), 2);
+				List<Block> blocks = match.getWEUtils().getBlocks(expandedRegion);
 				blocks.forEach(block -> {
 					if (block.getType().equals(Material.WHITE_CONCRETE))
 						removeTarget(block);
@@ -269,7 +270,7 @@ public class Archery extends TeamlessMechanic {
 		if (!(projectile instanceof Arrow))
 			return;
 
-		if (!WGUtils.getRegionNamesAt(projectile.getLocation()).contains("archery"))
+		if (!new WorldGuardUtils(projectile).getRegionNamesAt(projectile.getLocation()).contains("archery"))
 			return;
 
 		Block hitBlock = event.getHitBlock();

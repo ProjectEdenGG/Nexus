@@ -158,14 +158,14 @@ public class BNCoreCommand extends CustomCommand {
 
 	@Path("schem save <name>")
 	void schemSave(String name) {
-		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
 		send("Saved schematic " + name);
 	}
 
 	@Path("schem paste <name>")
 	void schemPaste(String name) {
-		WorldEditUtils worldEditUtils = new WorldEditUtils(player().getWorld());
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 		worldEditUtils.paste(name, player().getLocation());
 		send("Pasted schematic " + name);
 	}

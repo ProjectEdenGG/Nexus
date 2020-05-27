@@ -25,7 +25,7 @@ public class FixFlatCommand extends CustomCommand {
 		World world = new BukkitWorld(player().getWorld());
 		WorldEditPlugin worldEditPlugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
 		LocalSession session = worldEditPlugin.getSession(player());
-		new WorldEditUtils(player().getWorld()).fixFlat(session, session.getSelection(world));
+		new WorldEditUtils(player()).fixFlat(session, session.getSelection(world));
 	}
 }
 

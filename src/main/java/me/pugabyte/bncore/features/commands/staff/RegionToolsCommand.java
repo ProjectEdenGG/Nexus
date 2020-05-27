@@ -13,7 +13,7 @@ public class RegionToolsCommand extends CustomCommand {
 
 	public RegionToolsCommand(@NonNull CommandEvent event) {
 		super(event);
-		wgUtils = new WorldGuardUtils(player().getWorld());
+		wgUtils = new WorldGuardUtils(player());
 	}
 
 	@Path("getRegionsLikeAt <filter>")

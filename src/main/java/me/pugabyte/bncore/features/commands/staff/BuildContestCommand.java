@@ -143,7 +143,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 			runCommand("rg flag __global__ pvp deny");
 		});
 		Tasks.wait(wait += 3, () -> {
-			GlobalProtectedRegion region = (GlobalProtectedRegion) new WorldGuardUtils(player().getWorld()).getProtectedRegion("__global__");
+			GlobalProtectedRegion region = (GlobalProtectedRegion) new WorldGuardUtils(player()).getProtectedRegion("__global__");
 			region.setFlag(Flags.VINE_GROWTH, StateFlag.State.DENY);
 			region.setFlag(Flags.LEAF_DECAY, StateFlag.State.DENY);
 			region.setFlag(Flags.GRASS_SPREAD, StateFlag.State.DENY);
@@ -153,7 +153,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 			region.setFlag(Flags.ICE_FORM, StateFlag.State.DENY);
 			try {
 				BNCore.log("Saving region");
-				new WorldGuardUtils(player().getWorld()).getManager().save();
+				new WorldGuardUtils(player()).getManager().save();
 			} catch (StorageException e) {
 				e.printStackTrace();
 			}

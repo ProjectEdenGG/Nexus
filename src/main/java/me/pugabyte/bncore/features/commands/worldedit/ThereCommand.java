@@ -23,7 +23,7 @@ public class ThereCommand extends CustomCommand {
 		Player worldEditPlayer = WorldEditUtils.getPlugin().wrapPlayer(player());
 		BlockVector3 pos1 = worldEditPlayer.getBlockTrace(300).toBlockPoint();
 		BlockVector3 pos2 = worldEditPlayer.getBlockTrace(300).toBlockPoint();
-		new WorldEditUtils(player().getWorld()).setSelection(player(), pos1, pos2);
+		new WorldEditUtils(player()).setSelection(player(), pos1, pos2);
 		ExpandAllCommand.expandAll(player(), amount);
 	}
 }

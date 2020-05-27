@@ -25,7 +25,7 @@ public class AnimalTeleportPens {
 
 	public AnimalTeleportPens(Player player) {
 		this.player = player;
-		WGUtils = new WorldGuardUtils(player.getWorld());
+		WGUtils = new WorldGuardUtils(player);
 	}
 
 	public boolean multiplePlayers() {

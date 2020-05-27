@@ -20,6 +20,7 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -77,8 +78,12 @@ public class Minigames {
 		ArenaManager.write();
 	}
 
+	public static boolean isMinigameWorld(World world) {
+		return WorldGroup.get(world) == WorldGroup.MINIGAMES;
+	}
+
 	public static List<Player> getPlayers() {
-		return Bukkit.getOnlinePlayers().stream().filter(player -> player.getWorld() == world).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream().filter(player -> isMinigameWorld(player.getWorld())).collect(Collectors.toList());
 	}
 
 	public static List<Minigamer> getMinigamers() {
@@ -90,9 +95,7 @@ public class Minigames {
 	}
 
 	public static void broadcast(String announcement) {
-		Bukkit.getOnlinePlayers().stream()
-				.filter(player -> player.getWorld().equals(getWorld()))
-				.forEach(player -> player.sendMessage(Minigames.PREFIX + colorize(announcement)));
+		getPlayers().forEach(player -> player.sendMessage(Minigames.PREFIX + colorize(announcement)));
 
 		// TODO: If arena is public, announce to discord and whole server
 	}

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -16,8 +15,6 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldEditUtils;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -35,8 +32,6 @@ import java.util.Map;
 import static me.pugabyte.bncore.utils.StringUtils.left;
 
 public abstract class Mechanic implements Listener {
-	protected WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
-	protected WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
 
 	public Mechanic() {
 		BNCore.registerListener(this);

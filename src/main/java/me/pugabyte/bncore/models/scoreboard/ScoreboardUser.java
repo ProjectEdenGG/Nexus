@@ -115,6 +115,11 @@ public class ScoreboardUser extends PlayerOwnedObject {
 	}
 
 	public void render(ScoreboardLine line) {
+		if (!getOfflinePlayer().isOnline()) {
+			pause();
+			return;
+		}
+
 		String oldText = getRenderedText(line);
 		if (lines.containsKey(line) && lines.get(line)) {
 			String newText = line.render(getPlayer());

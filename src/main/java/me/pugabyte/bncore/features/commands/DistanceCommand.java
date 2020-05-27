@@ -16,7 +16,7 @@ public class DistanceCommand extends CustomCommand {
 
 	@Path("<player>")
 	void distance(Player target) {
-		if (player().getWorld().equals(Minigames.getWorld()))
+		if (Minigames.isMinigameWorld(player().getWorld()))
 			error("You can't use that here, that's cheating!");
 
 		if (!player().getWorld().equals(target.getWorld()))

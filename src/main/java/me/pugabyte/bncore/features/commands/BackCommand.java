@@ -80,7 +80,7 @@ public class BackCommand extends CustomCommand implements Listener {
 		if (TeleportCause.COMMAND != event.getCause()) return;
 
 		if (!player.hasPermission("group.staff"))
-			if (location.getWorld().equals(Minigames.getWorld()))
+			if (Minigames.isMinigameWorld(player.getWorld()))
 				return;
 
 		Back back = new BackService().get(player);
