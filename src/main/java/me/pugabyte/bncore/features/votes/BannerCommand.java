@@ -32,7 +32,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		if (!"safepvp".equals(event.getPlayer().getWorld().getName())) return;
-		if (!new WorldGuardUtils(event.getPlayer().getLocation().getWorld()).isInRegion(event.getPlayer().getLocation(), "banners")) return;
+		if (!new WorldGuardUtils(event.getPlayer()).isInRegion(event.getPlayer().getLocation(), "banners")) return;
 		Block banner = event.getClickedBlock().getLocation().add(0, -1, 0).getBlock();
 		if (!MaterialTag.BANNERS.isTagged(banner.getType())) return;
 /*

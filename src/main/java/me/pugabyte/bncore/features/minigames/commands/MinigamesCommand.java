@@ -294,7 +294,7 @@ public class MinigamesCommand extends CustomCommand {
 		if (!canUse)
 			error("You do not have permission to use this command!");
 
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player().getWorld());
+		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
 		if (!WGUtils.isInRegion(player().getLocation(), "minigamelobby"))
 			error("You must be in the Minigame Lobby to use this command");
 

@@ -18,7 +18,7 @@ public class ContractHCommand extends CustomCommand {
 
 	@Path("[amount]")
 	void contractH(@Arg("1") int amount) {
-		new WorldEditUtils(player().getWorld()).changeSelection(
+		new WorldEditUtils(player()).changeSelection(
 				player(),
 				WorldEditUtils.SelectionChangeType.CONTRACT,
 				WorldEditUtils.SelectionChangeDirectionType.HORIZONTAL,

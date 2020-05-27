@@ -18,7 +18,7 @@ public class ExpandVCommand extends CustomCommand {
 
 	@Path("[amount]")
 	void expandV(@Arg("1") int amount) {
-		new WorldEditUtils(player().getWorld()).changeSelection(
+		new WorldEditUtils(player()).changeSelection(
 				player(),
 				WorldEditUtils.SelectionChangeType.EXPAND,
 				WorldEditUtils.SelectionChangeDirectionType.VERTICAL,

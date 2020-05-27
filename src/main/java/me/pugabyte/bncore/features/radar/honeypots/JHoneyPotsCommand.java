@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Permission("group.staff")
 public class JHoneyPotsCommand extends CustomCommand {
 	SettingService service = new SettingService();
-	WorldGuardUtils WGUtils = new WorldGuardUtils(player().getWorld());
-	WorldEditUtils WEUtils = new WorldEditUtils(player().getWorld());
+	WorldGuardUtils WGUtils = new WorldGuardUtils(player());
+	WorldEditUtils WEUtils = new WorldEditUtils(player());
 
 	public JHoneyPotsCommand(CommandEvent event) {
 		super(event);

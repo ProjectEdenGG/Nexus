@@ -67,7 +67,7 @@ public class RemoveSignCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		SettingService service = new SettingService();
-		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock().getWorld());
+		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
 		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
 
 		if (!MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
@@ -99,7 +99,7 @@ public class RemoveSignCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		SettingService service = new SettingService();
-		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock().getWorld());
+		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
 		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
 
 		if (MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {

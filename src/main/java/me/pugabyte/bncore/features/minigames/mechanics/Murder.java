@@ -22,6 +22,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -436,7 +437,7 @@ public class Murder extends UnbalancedTeamMechanic {
 
 	@EventHandler
 	public void onItemMerge(ItemMergeEvent event) {
-		if (WGUtils.getRegionsLikeAt(event.getTarget().getLocation(), "murder_.*").size() > 0)
+		if (new WorldGuardUtils(event.getEntity()).getRegionsLikeAt(event.getTarget().getLocation(), "murder_.*").size() > 0)
 			event.setCancelled(true);
 	}
 

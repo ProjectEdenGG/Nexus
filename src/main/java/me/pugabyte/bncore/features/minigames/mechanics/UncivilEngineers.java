@@ -83,10 +83,10 @@ public class UncivilEngineers extends TeamlessMechanic {
 
 	private void resetStrips(Match match) {
 		String name = getName().replace(" ", "");
-		WGUtils.getRegionsLike(name + "_" + match.getArena().getName() + "_strip_[0-9]+")
+		match.getWGUtils().getRegionsLike(name + "_" + match.getArena().getName() + "_strip_[0-9]+")
 				.forEach(region -> {
 					String file = (name + "/" + match.getArena().getName() + "_strip").toLowerCase();
-					WEUtils.paste(file, region.getMinimumPoint());
+					match.getWEUtils().paste(file, region.getMinimumPoint());
 				});
 	}
 
@@ -229,7 +229,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	public static void setupArena(UncivilEngineersArena arena, Player player) {
-		WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
+		WorldGuardUtils WGUtils = arena.getWGUtils();
 		try {
 			Minigames.getWorldEditUtils().save("uncivilengineers/" + arena.getName() + "_strip", arena.getRegion("strip_1"));
 			RegionManager regionManager = WGUtils.getManager();

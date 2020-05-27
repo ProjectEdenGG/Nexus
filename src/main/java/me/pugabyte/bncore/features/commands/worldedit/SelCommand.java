@@ -18,7 +18,7 @@ public class SelCommand extends CustomCommand {
 
 	public SelCommand(CommandEvent event) {
 		super(event);
-		worldEditUtils = new WorldEditUtils(player().getWorld());
+		worldEditUtils = new WorldEditUtils(player());
 	}
 
 	@Path("(tp|teleport)")

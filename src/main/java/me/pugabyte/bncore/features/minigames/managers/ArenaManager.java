@@ -5,9 +5,9 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -54,7 +54,7 @@ public class ArenaManager {
 	}
 
 	public static Arena getFromLocation(Location location) {
-		Set<ProtectedRegion> regionsAt = Minigames.getWorldGuardUtils().getRegionsAt(location);
+		Set<ProtectedRegion> regionsAt = new WorldGuardUtils(location).getRegionsAt(location);
 		for (ProtectedRegion region : regionsAt) {
 			Arena fromRegion = getFromRegion(region.getId());
 			if (fromRegion != null)

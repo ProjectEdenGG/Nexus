@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -82,7 +83,7 @@ public class AnvilDrop extends TeamlessMechanic {
 
 	public void dropAnvils(Match match) {
 		AnvilDropArena arena = match.getArena();
-		List<Location> dropLocs = getLocations(WEUtils.getBlocks(arena.getRegion("dropzone")));
+		List<Location> dropLocs = getLocations(match.getWEUtils().getBlocks(arena.getRegion("dropzone")));
 		match.getTasks().repeat(Time.SECOND.x(3), 5, () -> Utils.getRandomElement(dropLocs).getBlock().setType(Material.ANVIL));
 	}
 
@@ -92,7 +93,7 @@ public class AnvilDrop extends TeamlessMechanic {
 
 		Entity entity = event.getEntity();
 
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(entity.getLocation());
+		Set<ProtectedRegion> regions = new WorldGuardUtils(entity).getRegionsAt(entity.getLocation());
 		regions.forEach(region -> {
 			if (region.getId().contains("anvildrop")) {
 				event.setCancelled(true);

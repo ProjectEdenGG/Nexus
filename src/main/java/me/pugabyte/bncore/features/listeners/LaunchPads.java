@@ -1,9 +1,9 @@
 package me.pugabyte.bncore.features.listeners;
 
+import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -66,7 +66,7 @@ public class LaunchPads implements Listener {
 			}
 
 			launchPlayer(event.getPlayer(), power, angle);
-		} else if (WorldGroup.get(block.getLocation().getWorld()).equals(WorldGroup.MINIGAMES))
+		} else if (Minigames.isMinigameWorld(event.getPlayer().getWorld()))
 			launchPlayer(event.getPlayer());
 	}
 

@@ -15,6 +15,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -129,7 +130,7 @@ public class Minigamer {
 	}
 
 	public boolean isInMatchRegion(String type) {
-		return Minigames.getWorldGuardUtils().getRegionsAt(getPlayer().getLocation()).stream()
+		return new WorldGuardUtils(getPlayer()).getRegionsAt(getPlayer().getLocation()).stream()
 				.anyMatch(region -> {
 					if (!Strings.isNullOrEmpty(type))
 						return match.getArena().ownsRegion(region.getId(), type);
@@ -139,7 +140,7 @@ public class Minigamer {
 	}
 
 	public boolean isInRegion(String type) {
-		return Minigames.getWorldGuardUtils().getRegionsAt(getPlayer().getLocation()).stream()
+		return new WorldGuardUtils(getPlayer()).getRegionsAt(getPlayer().getLocation()).stream()
 				.anyMatch(region -> match.getArena().ownsRegion(region.getId(), type));
 	}
 

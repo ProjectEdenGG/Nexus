@@ -23,7 +23,7 @@ public class ExpandAllCommand extends CustomCommand {
 	}
 
 	static void expandAll(Player player, int amount) {
-		new WorldEditUtils(player.getWorld()).changeSelection(
+		new WorldEditUtils(player).changeSelection(
 				player,
 				WorldEditUtils.SelectionChangeType.EXPAND,
 				WorldEditUtils.SelectionChangeDirectionType.ALL,

@@ -45,15 +45,15 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 	}
 
 	private void resetFloors(Match match) {
-		WGUtils.getRegionsLike(getName() + "_" + match.getArena().getName() + "_floor_[0-9]+")
+		match.getWGUtils().getRegionsLike(getName() + "_" + match.getArena().getName() + "_floor_[0-9]+")
 				.forEach(floor -> {
 					String file = (getName() + "/" + floor.getId().replaceFirst(getName().toLowerCase() + "_", "")).toLowerCase();
-					WEUtils.paste(file, floor.getMinimumPoint());
+					match.getWEUtils().paste(file, floor.getMinimumPoint());
 				});
 	}
 
 	public boolean breakBlock(Match match, Location location) {
-		for (ProtectedRegion region : WGUtils.getRegionsAt(location.clone().add(0, .1, 0))) {
+		for (ProtectedRegion region : match.getWGUtils().getRegionsAt(location.clone().add(0, .1, 0))) {
 			if (!match.getArena().ownsRegion(region.getId(), "floor")) continue;
 
 			Material type = location.getBlock().getType();

@@ -198,7 +198,7 @@ public final class Thimble extends TeamlessMechanic {
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		ThimbleArena arena = event.getMatch().getArena();
-		WEUtils.fill(arena.getRegion("pool"), BlockTypes.WATER);
+		event.getMatch().getWEUtils().fill(arena.getRegion("pool"), BlockTypes.WATER);
 		super.onEnd(event);
 	}
 

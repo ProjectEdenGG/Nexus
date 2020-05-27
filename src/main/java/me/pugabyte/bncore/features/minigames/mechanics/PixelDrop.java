@@ -178,7 +178,7 @@ public class PixelDrop extends TeamlessMechanic {
 		// Builds the map
 		for (int x = 0; x < 15; x++) {
 			for (int z = 0; z < 15; z++) {
-				Block block = WGUtils.toLocation(designMin.add(x, 0, z)).getBlock();
+				Block block = match.getWGUtils().toLocation(designMin.add(x, 0, z)).getBlock();
 				if (block.getType().equals(Material.BARRIER)) continue;
 				String key = x + "_" + z;
 				matchData.getDesignMap().put(key, block);
@@ -202,7 +202,7 @@ public class PixelDrop extends TeamlessMechanic {
 			Block block = matchData.getDesignMap().get(x + "_" + z);
 			double blockX = x + 0.5;
 			double blockZ = z + 0.5;
-			Location loc = WGUtils.toLocation(pasteMin.add(BlockVector3.at(blockX, 0, blockZ)));
+			Location loc = match.getWGUtils().toLocation(pasteMin.add(BlockVector3.at(blockX, 0, blockZ)));
 
 			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
 			fallingBlock.setDropItem(false);
@@ -231,7 +231,7 @@ public class PixelDrop extends TeamlessMechanic {
 			int z = Integer.parseInt(xz[1]);
 			double blockX = x + 0.5;
 			double blockZ = z + 0.5;
-			Location loc = WGUtils.toLocation(pasteMin.add(BlockVector3.at(blockX, 0, blockZ)));
+			Location loc = match.getWGUtils().toLocation(pasteMin.add(BlockVector3.at(blockX, 0, blockZ)));
 
 			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
 			fallingBlock.setDropItem(false);

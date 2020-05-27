@@ -38,8 +38,8 @@ public class CheckpointsCommand extends CustomCommand {
 
 		regionBase = arena.getMechanicType().name() + "_" + arena.getName() + "_checkpoint_";
 
-		weUtils = new WorldEditUtils(player().getWorld());
-		wgUtils = new WorldGuardUtils(player().getWorld());
+		weUtils = new WorldEditUtils(player());
+		wgUtils = new WorldGuardUtils(player());
 	}
 
 	@Path

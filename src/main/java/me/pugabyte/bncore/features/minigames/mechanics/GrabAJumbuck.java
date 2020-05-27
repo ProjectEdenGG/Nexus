@@ -17,6 +17,7 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.GrabAJumbuckMatchD
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -81,7 +82,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	public void spawnSheep(Match match, int sheepAmount) {
 		GrabAJumbuckMatchData matchData = match.getMatchData();
 		while (sheepAmount != 0) {
-			Sheep sheep = Minigames.getWorld().spawn(getRandomSheepSpawnLocation(match), Sheep.class);
+			Sheep sheep = match.getWorld().spawn(getRandomSheepSpawnLocation(match), Sheep.class);
 			sheep.setInvulnerable(true);
 			DyeColor color = ColorType.values()[Utils.randomInt(1, ColorType.values().length - 1)].getDyeColor();
 			if (Utils.randomInt(0, 100) > 80) sheep.setColor(color);
@@ -91,7 +92,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	public Location getRandomSheepSpawnLocation(Match match) {
-		Block block = WGUtils.getRandomBlock(match.getArena().getProtectedRegion("sheep"));
+		Block block = match.getWGUtils().getRandomBlock(match.getArena().getProtectedRegion("sheep"));
 		if (block == null)
 			return getRandomSheepSpawnLocation(match);
 		block = Minigames.getWorld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().clone().subtract(0, 1, 0).getBlock();
@@ -174,7 +175,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(event.getDamager().getLocation());
+		Set<ProtectedRegion> regions = new WorldGuardUtils(event.getDamager()).getRegionsAt(event.getDamager().getLocation());
 		for (ProtectedRegion region : regions) {
 			Arena arena = ArenaManager.getFromRegion(region.getId());
 			if (arena != null && arena.ownsRegion(region.getId(), "capture")) {

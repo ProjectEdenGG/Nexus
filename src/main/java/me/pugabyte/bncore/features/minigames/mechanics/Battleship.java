@@ -19,6 +19,7 @@ import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -139,7 +140,7 @@ public class Battleship extends BalancedTeamMechanic {
 	}
 
 	private Team getTeam(Arena arena, Location location) {
-		for (ProtectedRegion region : WGUtils.getRegionsAt(location))
+		for (ProtectedRegion region : arena.getWGUtils().getRegionsAt(location))
 			if (arena.ownsRegion(region.getId(), "team"))
 				for (Team team : arena.getTeams())
 					if (region.getId().split("_")[3].equalsIgnoreCase(team.getName().replaceAll(" ", "").toLowerCase()))
@@ -295,7 +296,7 @@ public class Battleship extends BalancedTeamMechanic {
 	private void pasteShip(ShipType shipType, Location location) {
 		BlockFace direction = getKitDirection(location);
 		deleteKit(location);
-		WEUtils.paste("battleship/" + shipType.name().toLowerCase() + "/" + direction.name().toLowerCase(), location);
+		new WorldEditUtils(location).paste("battleship/" + shipType.name().toLowerCase() + "/" + direction.name().toLowerCase(), location);
 	}
 
 	public BlockFace getKitDirection(Location location) {

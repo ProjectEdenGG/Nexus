@@ -16,6 +16,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -97,6 +98,8 @@ public final class GoldRush extends TeamlessMechanic {
 			put(BlockTypes.OAK_LOG, 10.0);
 		}};
 
+		WorldEditUtils WEUtils = new WorldEditUtils(locations.get(0));
+
 		BlockVector3 p1 = WEUtils.toBlockVector3(locations.get(0).clone().subtract(0, 2, 0));
 		BlockVector3 p2 = WEUtils.toBlockVector3(locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
@@ -109,6 +112,7 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	public void removeMineStacks(int mineStackHeight, Location loc) {
+		WorldEditUtils WEUtils = new WorldEditUtils(loc);
 		BlockVector3 p1 = WEUtils.toBlockVector3(loc.clone().subtract(0, 2, 0));
 		BlockVector3 p2 = WEUtils.toBlockVector3(loc.clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);

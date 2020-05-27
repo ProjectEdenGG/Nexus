@@ -14,8 +14,11 @@ import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.utils.SerializationUtils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -119,6 +122,18 @@ public class Arena implements ConfigurationSerializable {
 		}};
 	}
 
+	public World getWorld() {
+		return lobby.getLocation().getWorld();
+	}
+
+	public WorldGuardUtils getWGUtils() {
+		return new WorldGuardUtils(lobby.getLocation());
+	}
+
+	public WorldEditUtils getWEUtils() {
+		return new WorldEditUtils(lobby.getLocation());
+	}
+
 	public String getRegionBaseName() {
 		return (getMechanic().getClass().getSimpleName() + "_" + getName()).toLowerCase();
 	}
@@ -132,11 +147,11 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public Region getRegion() {
-		return Minigames.getWorldGuardUtils().getRegion(getRegionBaseName());
+		return getWGUtils().getRegion(getRegionBaseName());
 	}
 
 	public Region getRegion(String type) {
-		return Minigames.getWorldGuardUtils().getRegion(getRegionBaseName() + "_" + type);
+		return getWGUtils().getRegion(getRegionBaseName() + "_" + type);
 	}
 
 	public int getRegionTypeId(String type) {
@@ -148,15 +163,15 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public Set<ProtectedRegion> getRegionsLike(String regex) {
-		return Minigames.getWorldGuardUtils().getRegionsLike(getRegionBaseName() + "_" + regex);
+		return getWGUtils().getRegionsLike(getRegionBaseName() + "_" + regex);
 	}
 
 	public ProtectedRegion getProtectedRegion(String type) {
-		return Minigames.getWorldGuardUtils().getProtectedRegion(getRegionBaseName() + "_" + type);
+		return getWGUtils().getProtectedRegion(getRegionBaseName() + "_" + type);
 	}
 
 	public boolean isInRegion(Location location, String type) {
-		return Minigames.getWorldGuardUtils().getRegionsLikeAt(location, getRegionTypeRegex(type)).size() == 1;
+		return getWGUtils().getRegionsLikeAt(location, getRegionTypeRegex(type)).size() == 1;
 	}
 
 	public boolean canUseBlock(Material type) {

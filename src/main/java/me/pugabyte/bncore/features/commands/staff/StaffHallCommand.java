@@ -101,7 +101,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	public void onNpcRightClick(NPCRightClickEvent event) {
 		NPC npc = event.getNPC();
 		Location location = event.getClicker().getLocation();
-		WorldGuardUtils wgUtils = new WorldGuardUtils(location.getWorld());
+		WorldGuardUtils wgUtils = new WorldGuardUtils(location);
 
 		if (wgUtils.getRegionsLikeAt(location, "staffhall").size() > 0)
 			runCommand(event.getClicker(), "staffhall view " + stripColor(npc.getName()));

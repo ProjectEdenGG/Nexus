@@ -65,7 +65,7 @@ public class ToggleSnowCommand extends CustomCommand {
 
 			Bukkit.getOnlinePlayers().stream()
 					.filter(player -> {
-						WorldGuardUtils worldGuardUtils = new WorldGuardUtils(player.getWorld());
+						WorldGuardUtils worldGuardUtils = new WorldGuardUtils(player);
 						return worldGuardUtils.getRegionsLikeAt(player.getLocation(), ".*_snowEffect").size() > 0;
 					})
 					.forEach(ToggleSnowCommand::playSnowEffect);
