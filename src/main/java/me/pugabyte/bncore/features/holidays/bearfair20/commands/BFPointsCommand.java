@@ -95,7 +95,7 @@ public class BFPointsCommand extends CustomCommand {
 			error("&cNo results on page " + page);
 
 		send("");
-		send(PREFIX + (page > 1 ? "&e  |  &3Page " + page : ""));
+		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
 		int i = (page - 1) * 10 + 1;
 		for (BFPointsUser user : results)
 			send("&3" + i++ + " &e" + user.getPlayer().getName() + " &7- " + user.getTotalPoints());
