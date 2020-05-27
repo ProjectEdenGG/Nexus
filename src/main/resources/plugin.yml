@@ -3,12 +3,10 @@ main: me.pugabyte.bncore.BNCore
 version: ${project.version}
 api-version: "1.15"
 softdepend:
-  - PermissionsEx
   - NBTAPI
   - SmartInvs
   - Multiverse-Core
   - Multiverse-Inventories
-  - FeatherBoard
   - WorldGuard
   - WorldGuardRegionAPI
   - mcMMO
@@ -18,5 +16,4 @@ softdepend:
   - ProtocolLib
   - Vault
   - Votifier
-  - PlaceholderAPI
   - PathfinderAPI
