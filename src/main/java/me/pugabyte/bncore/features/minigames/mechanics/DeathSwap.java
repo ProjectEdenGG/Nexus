@@ -10,10 +10,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class DeathSwap extends TeamlessMechanic {
 	@Override
@@ -36,6 +42,11 @@ public final class DeathSwap extends TeamlessMechanic {
 		return GameMode.SURVIVAL;
 	}
 
+	@Override
+	public boolean canOpenInventoryBlocks() {
+		return true;
+	}
+
 	public int gameRadius = 1000;
 	public String world = "deathswap";
 
@@ -43,27 +54,35 @@ public final class DeathSwap extends TeamlessMechanic {
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 
-		event.getMatch().getTasks().wait(Time.SECOND.x(1), () -> event.getMatch().getMinigamers());
+		event.getMatch().getMinigamers().forEach(minigamer -> minigamer.setScore(20));
+		event.getMatch().getTasks().wait(Time.SECOND.x(1), () -> spreadPlayers(new ArrayList(event.getMatch().getMinigamers())));
 
-		event.getMatch().getTasks().wait(Time.SECOND.x(10), () -> delay(event.getMatch()));
+		event.getMatch().getTasks().wait(Time.SECOND.x(30), () -> delay(event.getMatch()));
+	}
+
+	@Override
+	public Map<String, Integer> getScoreboardLines(Match match) {
+		Map<String, Integer> map = new HashMap<>();
+		for (Minigamer minigamer : match.getMinigamers()) {
+			map.put(minigamer.getColoredName(), (int) minigamer.getPlayer().getHealth());
+		}
+		return map;
 	}
 
 	private void spreadPlayers(List<Minigamer> minigamers) {
 		for (Minigamer minigamer : minigamers) {
 			Location loc = Bukkit.getWorld(world).getHighestBlockAt(Utils.randomInt(-gameRadius / 2, gameRadius / 2),
 					Utils.randomInt(-gameRadius / 2, gameRadius / 2)).getLocation();
-			for (Minigamer _minigamer : minigamer.getMatch().getMinigamers()) {
-				if (_minigamer.getPlayer().getLocation().distance(loc) < 50)
-					spreadPlayers(minigamers);
-			}
 			minigamer.teleport(loc.add(0, 2, 0));
-			minigamers.remove(minigamer);
 		}
 	}
 
 	public void swap(Match match) {
-		match.getMinigamers().forEach(player -> Utils.sendActionBar(player.getPlayer(), "&3SWAPPING"));
-		ArrayList<Minigamer> swappingList = new ArrayList<>(match.getMinigamers());
+		match.getMinigamers().forEach(player -> {
+			player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 1));
+			Utils.sendActionBar(player.getPlayer(), "&3SWAPPING");
+		});
+		List<Minigamer> swappingList = new ArrayList(match.getMinigamers());
 		if (match.getMinigamers().size() % 2 != 0) {
 			Minigamer playerOne = Utils.getRandomElement(swappingList);
 			swappingList.remove(playerOne);
@@ -88,7 +107,19 @@ public final class DeathSwap extends TeamlessMechanic {
 			playerOne.teleport(two);
 			playerTwo.teleport(one);
 		}
+		aggroMobs(match);
 		delay(match);
+	}
+
+	public void aggroMobs(Match match) {
+		match.getMinigamers().forEach(player -> {
+			Utils.getNearbyEntities(player.getPlayer().getLocation(), 10).keySet().forEach(entity -> {
+				if (!(entity instanceof Mob)) return;
+				Mob mob = (Mob) entity;
+				if (mob.getTarget() instanceof Player)
+					((Mob) entity).setTarget(player.getPlayer());
+			});
+		});
 	}
 
 	public void delay(Match match) {
@@ -96,7 +127,7 @@ public final class DeathSwap extends TeamlessMechanic {
 			match.end();
 			return;
 		}
-		match.getTasks().wait(Time.SECOND.x(Utils.randomInt(5, 10)), () -> swap(match));
+		match.getTasks().wait(Time.SECOND.x(Utils.randomInt(30, 120)), () -> swap(match));
 	}
 
 }
