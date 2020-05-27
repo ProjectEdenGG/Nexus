@@ -140,7 +140,7 @@ public class Fairgrounds implements Listener {
 		String id = event.getRegion().getId();
 		String bowRg = BearFair20.BFRg + "_bow_";
 		String minecartRg = BearFair20.BFRg + "_minecart_";
-		if (id.contains(bowRg) || id.contains(minecartRg)) {
+		if (id.contains(bowRg) || id.contains(minecartRg) || id.contains(BearFair20.BFRg)) {
 			removeKits(event.getPlayer());
 		}
 	}

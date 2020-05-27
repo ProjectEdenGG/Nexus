@@ -69,6 +69,7 @@ public class BFPointsUser extends PlayerOwnedObject {
 
 		sourcePoints += points;
 		int finalSourcePoints = sourcePoints;
+		user.givePoints(user, points);
 
 		user.getPointsReceivedToday().put(source, new HashMap<LocalDate, Integer>() {{
 			put(LocalDate.now(), finalSourcePoints);

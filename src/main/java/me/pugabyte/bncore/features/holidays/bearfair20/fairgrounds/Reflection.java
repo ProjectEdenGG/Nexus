@@ -44,29 +44,30 @@ import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static org.bukkit.block.BlockFace.*;
 
-// TODO: Weighted reflections
-// TODO: Make person who starts laser, only get the points
-// TODO: Make sure the new objective doesn't repeat
-// TODO: display number of reflections when u win -- Pink Pig hit in 6 reflections!
 public class Reflection implements Listener {
 
 	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
 	private String gameRg = BearFair20.BFRg + "_reflection";
 	private String powderRg = gameRg + "_powder";
+	private BFPointSource SOURCE = BFPointSource.REFLECTION;
+	//
 	private boolean active = false;
 	private boolean prototypeActive = false;
 	private int laserTaskId;
 	private int soundTaskId;
 	private Location laserStart;
 	private Location laserSoundLoc;
+	private Player buttonPresser;
+	//
 	private List<Location> lampLocList = new ArrayList<>();
 	private Location center = new Location(BearFair20.world, -950, 137, -1689);
 	private List<BlockFace> directions = Arrays.asList(NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST);
+	private String prefix = "&8&l[&eReflection&8&l] &f";
+	//
 	private String objMsg = "null";
 	private ColorType objColor;
 	private int objReflections;
-	private String prefix = "&8&l[&eReflections&8&l] &f";
-	private BFPointSource SOURCE = BFPointSource.REFLECTION;
+	private String objMob;
 
 	public Reflection() {
 		BNCore.registerListener(this);
@@ -107,7 +108,10 @@ public class Reflection implements Listener {
 			Rotatable rotatable = (Rotatable) blockData;
 
 			if (block.getType().equals(Material.CYAN_CONCRETE_POWDER)) {
-				rotatable.setRotation(Utils.getRandomElement(directions));
+				BlockFace newFace = Utils.getRandomElement(directions);
+				if (newFace == null) continue;
+
+				rotatable.setRotation(newFace);
 				banner.setBlockData(rotatable);
 			}
 		}
@@ -152,6 +156,7 @@ public class Reflection implements Listener {
 
 				} else {
 					startLaser(event.getPlayer(), skullFace);
+					buttonPresser = event.getPlayer();
 				}
 			}
 		} else if (powderType.equals(Material.RED_CONCRETE_POWDER)) {
@@ -206,7 +211,7 @@ public class Reflection implements Listener {
 							Lightable lightable = (Lightable) blockData;
 							lightable.setLit(true);
 							block.setBlockData(lightable);
-							win();
+							win(reflections.get());
 							broadcast = false;
 						}
 					}
@@ -277,23 +282,44 @@ public class Reflection implements Listener {
 		Tasks.wait(Time.SECOND.x(2), () -> active = false);
 	}
 
-	private void win() {
-		randomizeBanners();
+	private void win(int reflections) {
 		BearFair20.world.playSound(center, Sound.BLOCK_NOTE_BLOCK_BELL, 1F, 1F);
+
+		String color = objColor.getChatColor() + camelCase(objColor.getName());
 		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
 		for (Player player : players) {
-			BFPointsUser.giveDailyPoints(player, 1, SOURCE);
+			player.sendMessage(colorize(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!"));
 		}
 
-		newObjective();
-		broadcastObjective();
+		BFPointsUser.giveDailyPoints(buttonPresser, 1, SOURCE);
+
+		Tasks.wait(Time.SECOND.x(3), () -> {
+			randomizeBanners();
+			newObjective();
+			broadcastObjective();
+		});
 	}
 
 	private void newObjective() {
 		List<ColorType> colors = Arrays.asList(ColorType.RED, ColorType.ORANGE, ColorType.YELLOW, ColorType.LIGHT_GREEN, ColorType.LIGHT_BLUE, ColorType.CYAN, ColorType.BLUE, ColorType.PURPLE, ColorType.PINK);
 		List<String> mobs = Arrays.asList("Mooshroom", "Fox", "Bee", "Turtle", "Dolphin", "Guardian", "Squid", "Sheep", "Pig");
-		objColor = Utils.getRandomElement(colors);
-		String mob = mobs.get(colors.indexOf(objColor));
+
+		if (objColor == null) {
+			objColor = Utils.getRandomElement(colors);
+		} else {
+			ColorType newColor = Utils.getRandomElement(colors);
+			for (int i = 0; i < 10; i++) {
+				if (objColor.equals(newColor))
+					newColor = Utils.getRandomElement(colors);
+				else
+					break;
+			}
+			objColor = newColor;
+		}
+
+		objMob = mobs.get(colors.indexOf(objColor));
+
+
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
 
 		objReflections = 0;
@@ -304,14 +330,13 @@ public class Reflection implements Listener {
 		if (objReflections > 0)
 			reflections = " in " + objReflections + "+ reflections";
 
-		objMsg = "Hit " + color + " " + mob + "&f" + reflections;
+		objMsg = "Hit " + color + " " + objMob + "&f" + reflections;
 	}
 
 	private boolean checkObjective(int reflectCount, Material material) {
 		boolean reflectBool = true;
-		if (objReflections != 0) {
+		if (objReflections != 0)
 			reflectBool = reflectCount >= objReflections;
-		}
 
 		return reflectBool && objColor.equals(ColorType.fromMaterial(material));
 	}
