@@ -1,8 +1,10 @@
-package me.pugabyte.bncore.features.holidays.bearfair20.BFPoints;
+package me.pugabyte.bncore.models.bearfair;
 
+import dev.morphia.query.Sort;
 import me.pugabyte.bncore.models.MongoService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,6 +25,14 @@ public class BFPointsService extends MongoService {
 		});
 
 		return cache.get(uuid);
+	}
+
+	public List<BFPointsUser> getTop(int page) {
+		return database.createQuery(BFPointsUser.class)
+				.order(Sort.descending("totalPoints"))
+				.limit(10)
+				.offset((page - 1) * 10)
+				.find().toList();
 	}
 
 }

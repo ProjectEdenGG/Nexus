@@ -91,7 +91,7 @@ public class HoursCommand extends CustomCommand {
 
 		List<Hours> results = service.getPage(hoursType, page);
 		if (results.size() == 0)
-			error(PREFIX + "&cNo results on page " + page);
+			error("&cNo results on page " + page);
 
 		send("");
 		send(PREFIX + "Total: " + StringUtils.timespanFormat(service.total(hoursType)) + (page > 1 ? "&e  |  &3Page " + page : ""));
