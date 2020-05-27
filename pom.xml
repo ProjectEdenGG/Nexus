@@ -87,10 +87,6 @@
             <url>http://maven.bnn.gg/repo/</url>
         </repository>
         <repository>
-            <id>bensku-repo</id>
-            <url>https://raw.githubusercontent.com/bensku/mvn-repo/master</url>
-        </repository>
-        <repository>
             <id>multiverse-repo</id>
             <url>http://repo.onarandombox.com/content/groups/public/</url>
         </repository>
@@ -250,14 +246,6 @@
             <version>5.0</version>
             <scope>provided</scope>
         </dependency>
-        <!-- skDragon -->
-        <dependency>
-            <groupId>skript.sashie</groupId>
-            <artifactId>skDragon</artifactId>
-            <version>1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/skDragon.jar</systemPath>
-        </dependency>
         <!-- EssentialsX -->
         <dependency>
             <groupId>net.ess3</groupId>
@@ -331,17 +319,17 @@
             <version>1.5.1</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Multiverse Inventories -->
-        <dependency>
-            <groupId>com.onarandombox.multiverseinventories</groupId>
-            <artifactId>Multiverse-Inventories</artifactId>
-            <version>3.0.0</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- Multiverse Core -->
         <dependency>
             <groupId>com.onarandombox.multiversecore</groupId>
             <artifactId>Multiverse-Core</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Multiverse Inventories -->
+        <dependency>
+            <groupId>com.onarandombox.multiverseinventories</groupId>
+            <artifactId>Multiverse-Inventories</artifactId>
             <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
@@ -445,20 +433,6 @@
             <groupId>com.github.yannicklamprecht</groupId>
             <artifactId>PathfindergoalAPI</artifactId>
             <version>1.152.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- ProtocolLib -->
-        <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>4.5.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- McMMO -->
-        <dependency>
-            <groupId>com.gmail.nossr50.mcMMO</groupId>
-            <artifactId>mcMMO</artifactId>
-            <version>1.5.01-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- LiteBans API -->
