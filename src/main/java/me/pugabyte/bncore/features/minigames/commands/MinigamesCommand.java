@@ -158,7 +158,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	void copy(Arena arena, String name) {
 		if (ArenaManager.exists(name))
-			error(PREFIX + "&e" + name + " already exists");
+			error("&e" + name + " already exists");
 
 		Arena copy = ArenaManager.convert(arena, arena.getClass());
 		copy.setId(ArenaManager.getNextId());

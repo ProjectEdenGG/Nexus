@@ -3,11 +3,12 @@ package me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointSource;
-import me.pugabyte.bncore.features.holidays.bearfair20.BFPoints.BFPointsUser;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.Laser;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
+import me.pugabyte.bncore.models.bearfair.BFPointsService;
+import me.pugabyte.bncore.models.bearfair.BFPointsUser;
+import me.pugabyte.bncore.models.bearfair.BFPointsUser.BFPointSource;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
@@ -42,7 +43,14 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFRg;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static org.bukkit.block.BlockFace.*;
+import static org.bukkit.block.BlockFace.EAST;
+import static org.bukkit.block.BlockFace.NORTH;
+import static org.bukkit.block.BlockFace.NORTH_EAST;
+import static org.bukkit.block.BlockFace.NORTH_WEST;
+import static org.bukkit.block.BlockFace.SOUTH;
+import static org.bukkit.block.BlockFace.SOUTH_EAST;
+import static org.bukkit.block.BlockFace.SOUTH_WEST;
+import static org.bukkit.block.BlockFace.WEST;
 
 public class Reflection implements Listener {
 
@@ -265,9 +273,8 @@ public class Reflection implements Listener {
 	private void laserSound() {
 		soundTaskId = Tasks.repeat(0, Time.SECOND.x(5), () -> {
 			Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
-			for (Player player : players) {
+			for (Player player : players)
 				player.playSound(laserSoundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
-			}
 		});
 	}
 
@@ -275,9 +282,8 @@ public class Reflection implements Listener {
 		Tasks.cancel(laserTaskId);
 		Tasks.cancel(soundTaskId);
 		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
-		for (Player player : players) {
+		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
-		}
 		BearFair20.world.playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
 		Tasks.wait(Time.SECOND.x(2), () -> active = false);
 	}
@@ -287,11 +293,12 @@ public class Reflection implements Listener {
 
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
 		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
-		for (Player player : players) {
+		for (Player player : players)
 			player.sendMessage(colorize(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!"));
-		}
 
-		BFPointsUser.giveDailyPoints(buttonPresser, 1, SOURCE);
+		BFPointsUser user = new BFPointsService().get(buttonPresser);
+		user.giveDailyPoints(1, SOURCE);
+		new BFPointsService().save(user);
 
 		Tasks.wait(Time.SECOND.x(3), () -> {
 			randomizeBanners();
