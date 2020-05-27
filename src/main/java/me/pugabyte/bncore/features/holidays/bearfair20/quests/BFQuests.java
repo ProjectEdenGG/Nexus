@@ -6,6 +6,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -27,6 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -280,6 +282,7 @@ public class BFQuests implements Listener {
 		});
 	}
 
+	// Add Lore to items
 	@EventHandler
 	public void onBlockDropItemEvent(BlockDropItemEvent event) {
 		Location loc = event.getBlock().getLocation();
@@ -289,11 +292,12 @@ public class BFQuests implements Listener {
 	}
 
 	@EventHandler
-	public void onMcMMOXpGainEvent(McMMOPlayerXpGainEvent event) {
-		Location loc = event.getPlayer().getLocation();
+	public void onEntityDropItem(EntityDropItemEvent event) {
+		Location loc = event.getEntity().getLocation();
+		if (!event.getEntity().getLocation().getWorld().equals(BearFair20.world)) return;
 		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
-		event.setRawXpGained(0F);
-		event.setCancelled(true);
+		event.getItemDrop().getItemStack().setLore(Collections.singletonList(itemLore));
+		Utils.wakka(event.getItemDrop().getItemStack().getType() + " dropped at " + StringUtils.getLocationString(event.getItemDrop().getLocation()));
 	}
 
 	@EventHandler
@@ -368,6 +372,7 @@ public class BFQuests implements Listener {
 		event.getInventory().setResult(result);
 	}
 
+	// NPC Stuff
 	@EventHandler
 	public void onRightClickNPC(NPCRightClickEvent event) {
 		Player player = event.getClicker();
@@ -380,6 +385,7 @@ public class BFQuests implements Listener {
 		}
 	}
 
+	// Preventers
 	@EventHandler
 	public void onInteractWithVillager(PlayerInteractEntityEvent event) {
 		Entity entity = event.getRightClicked();
@@ -394,6 +400,15 @@ public class BFQuests implements Listener {
 			event.setCancelled(true);
 		}
 	}
+
+	@EventHandler
+	public void onMcMMOXpGainEvent(McMMOPlayerXpGainEvent event) {
+		Location loc = event.getPlayer().getLocation();
+		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
+		event.setRawXpGained(0F);
+		event.setCancelled(true);
+	}
+	//
 
 	//TODO:
 	// - on milk cow --> give BF20 milk bucket, ignore if bucket is bf20 or not
