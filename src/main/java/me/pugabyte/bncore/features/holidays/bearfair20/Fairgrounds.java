@@ -9,7 +9,6 @@ import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Frogger;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.PugDunk;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Reflection;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Time.Timer;
@@ -27,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Fairgrounds implements Listener {
@@ -62,16 +62,12 @@ public class Fairgrounds implements Listener {
 			if (item == null) continue;
 			if (!item.hasItemMeta()) continue;
 			ItemMeta meta = item.getItemMeta();
-			if (meta == null) continue;
-			if (!meta.hasLore()) continue;
-			List<String> lore = meta.getLore();
-			if (lore == null) continue;
+			if (meta.getLore() == null) continue;
+			if (!meta.getLore().contains(itemLore)) continue;
 
-			for (String str : lore) {
-				if (StringUtils.stripColor(str).contains("BearFair20")) {
+			for (BearFairKit kit : BearFairKit.values()) {
+				if (kit.getItems().contains(item))
 					player.getInventory().remove(item);
-					break;
-				}
 			}
 		}
 	}
@@ -80,15 +76,15 @@ public class Fairgrounds implements Listener {
 		BOW_AND_ARROW(
 				new ItemBuilder(Material.BOW)
 						.enchant(Enchantment.ARROW_INFINITE)
-						.lore("&eBearFair20 Bow")
+						.lore(itemLore)
 						.build(),
 				new ItemBuilder(Material.ARROW)
-						.lore("&eBearFair20 Arrow")
+						.lore(itemLore)
 						.build()
 		),
 		MINECART(
 				new ItemBuilder(Material.MINECART)
-						.lore("&eBearFair20 Minecart")
+						.lore(itemLore)
 						.build()
 		),
 		BASKETBALL(
