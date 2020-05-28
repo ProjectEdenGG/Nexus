@@ -87,7 +87,7 @@ public class DailyReward {
 		List<ItemStack> items = reward.getItems();
 		Integer money = reward.getMoney();
 		Integer levels = reward.getLevels();
-		Integer votePoints = reward.getMoney();
+		Integer votePoints = reward.getVotePoints();
 		String command = reward.getCommand();
 
 		if (items != null)
