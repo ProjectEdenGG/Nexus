@@ -9,7 +9,10 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 
@@ -17,6 +20,11 @@ public class BearFairCommand extends _WarpCommand {
 
 	public BearFairCommand(CommandEvent event) {
 		super(event);
+	}
+
+	@Path
+	void bearfair() {
+		send(PREFIX + "Coming soon!");
 	}
 
 	@Override
@@ -35,6 +43,7 @@ public class BearFairCommand extends _WarpCommand {
 	@Path("warps set <name>")
 	@Permission("group.moderator")
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
+		player();
 		super.set(name);
 	}
 
@@ -49,6 +58,7 @@ public class BearFairCommand extends _WarpCommand {
 	@Path("warps (teleport|tp) <name>")
 	@Permission("group.moderator")
 	public void teleport(Warp warp) {
+		player();
 		super.teleport(warp);
 	}
 
@@ -56,11 +66,13 @@ public class BearFairCommand extends _WarpCommand {
 	@Path("warps <name>")
 	@Permission("group.moderator")
 	public void tp(Warp warp) {
+		player();
 		super.tp(warp);
 	}
 
 	@Path("warps tp nearest")
 	public void teleportNearest() {
+		player();
 		getNearestWarp(player().getLocation()).ifPresent(warp -> warp.teleport(player()));
 	}
 
@@ -82,6 +94,17 @@ public class BearFairCommand extends _WarpCommand {
 
 	}
 
+	@Path("yachtHorn")
+	public void yachtHorn() {
+		commandBlock();
+		BlockCommandSender sender = (BlockCommandSender) event.getSender();
+		Location loc = sender.getBlock().getLocation();
+		World world = loc.getWorld();
+		if (world == null) return;
+		world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F);
+		Tasks.wait(Time.SECOND.x(2), () -> world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F));
+	}
+
 	@Path("merrygoround")
 	public void merryGoRound() {
 		commandBlock();
@@ -90,12 +113,8 @@ public class BearFairCommand extends _WarpCommand {
 
 	@Path("moveCollector")
 	public void moveCollector() {
+		commandBlock();
 		BFQuests.moveCollector();
-	}
-
-	@Path
-	void bearfair() {
-		send(PREFIX + "Coming soon!");
 	}
 
 	@Path("recipes")
