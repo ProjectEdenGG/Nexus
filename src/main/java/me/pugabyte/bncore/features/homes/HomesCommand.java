@@ -18,12 +18,15 @@ public class HomesCommand extends CustomCommand {
 
 	public HomesCommand(CommandEvent event) {
 		super(event);
-		homeOwner = service.get(player());
+		if (isPlayer())
+			homeOwner = service.get(player());
 	}
 
 	@Path
 	void list() {
-		List<Home> filtered = homeOwner.getHomes().stream().filter(home -> home.hasAccess(player())).collect(Collectors.toList());
+		List<Home> filtered = homeOwner.getHomes();
+		if (isPlayer())
+			filtered = filtered.stream().filter(home -> home.hasAccess(player())).collect(Collectors.toList());
 		if (filtered.size() == 0)
 			error(homeOwner.getOfflinePlayer().getName() + " has no available homes");
 
