@@ -37,6 +37,10 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 		-991 135 -1621
 		-1095 155 -1559
 		-1101 137 -1651
+		-944 119 -1895
+		-1050 129 -1913
+	On find all:
+	/playsound minecraft:ui.toast.challenge_complete master @p ~ ~ ~ 2 1
  */
 
 @Data

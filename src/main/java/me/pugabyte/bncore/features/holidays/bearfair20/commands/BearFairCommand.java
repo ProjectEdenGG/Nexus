@@ -122,4 +122,10 @@ public class BearFairCommand extends _WarpCommand {
 		runCommandAsConsole("minecraft:recipe take " + player().getName() + " bncore:custom_bearfair_anzac_biscuit");
 		runCommandAsConsole("minecraft:recipe give " + player().getName() + " bncore:custom_bearfair_anzac_biscuit");
 	}
+
+	//TODO:
+	@Path("quests reset")
+	void questReset() {
+
+	}
 }

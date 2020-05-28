@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.holidays.bearfair20.quests;
+package me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs;
 
 import lombok.Getter;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -15,16 +15,14 @@ import java.util.List;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 
 // TODO: Trades & Economy
-// TODO: make Collector move to random locations
 public class Merchants {
 
-	public static boolean openMerchant(Player player, int id) {
+	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
 		if (bfMerchant == null)
-			return false;
+			return;
 
 		new MerchantBuilder(StringUtils.camelCase(bfMerchant.name())).trades(bfMerchant.getTrades()).open(player);
-		return true;
 	}
 
 	private enum BFMerchant {

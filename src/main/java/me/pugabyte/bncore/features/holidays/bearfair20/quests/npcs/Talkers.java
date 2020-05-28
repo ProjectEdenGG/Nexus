@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.holidays.bearfair20.quests;
+package me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs;
 
 import lombok.Getter;
 import me.pugabyte.bncore.utils.Tasks;
