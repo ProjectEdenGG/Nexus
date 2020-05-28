@@ -270,7 +270,7 @@
         <dependency>
             <groupId>com.github.IntellectualSites</groupId>
             <artifactId>FastAsyncWorldEdit</artifactId>
-            <version>1.15-164</version>
+            <version>1.15-255</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.15-255.jar</systemPath>
         </dependency>
