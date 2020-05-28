@@ -8,27 +8,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class BFPointsService extends MongoService {
-	private final static Map<UUID, BFPointsUser> cache = new HashMap<>();
+public class BearFairService extends MongoService {
+	private final static Map<UUID, BearFairUser> cache = new HashMap<>();
 
 	public void clearCache() {
 		cache.clear();
 	}
 
 	@Override
-	public BFPointsUser get(UUID uuid) {
+	public BearFairUser get(UUID uuid) {
 		cache.computeIfAbsent(uuid, $ -> {
-			BFPointsUser user = database.createQuery(BFPointsUser.class).field(_id).equal(uuid).first();
+			BearFairUser user = database.createQuery(BearFairUser.class).field(_id).equal(uuid).first();
 			if (user == null)
-				user = new BFPointsUser(uuid);
+				user = new BearFairUser(uuid);
 			return user;
 		});
 
 		return cache.get(uuid);
 	}
 
-	public List<BFPointsUser> getTop(int page) {
-		return database.createQuery(BFPointsUser.class)
+	public List<BearFairUser> getTopPoints(int page) {
+		return database.createQuery(BearFairUser.class)
 				.order(Sort.descending("totalPoints"))
 				.limit(10)
 				.offset((page - 1) * 10)

@@ -3,6 +3,7 @@ package me.pugabyte.bncore.models.bearfair;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Property;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,9 +11,12 @@ import lombok.NonNull;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.StringUtils;
+import org.bukkit.Location;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,20 +24,23 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.Utils.sendActionBar;
 
 @Data
-@Entity("bfpoints_user")
+@Entity("bearfair_user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters(UUIDConverter.class)
-public class BFPointsUser extends PlayerOwnedObject {
+public class BearFairUser extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+
+	public transient static final int DAILY_SOURCE_MAX = 5;
 	private Map<BFPointSource, Map<LocalDate, Integer>> pointsReceivedToday = new HashMap<>();
 	private int totalPoints;
 
-	public transient static final int DAILY_SOURCE_MAX = 5;
+	@Property(concreteClass = Location.class)
+	private List<Location> easterEggsLocs = new ArrayList<>();
 
-	public BFPointsUser(UUID uuid) {
+	public BearFairUser(UUID uuid) {
 		this.uuid = uuid;
 	}
 

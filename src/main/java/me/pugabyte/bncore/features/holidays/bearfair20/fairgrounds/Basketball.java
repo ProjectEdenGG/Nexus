@@ -8,9 +8,9 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.Fairgrounds;
-import me.pugabyte.bncore.models.bearfair.BFPointsService;
-import me.pugabyte.bncore.models.bearfair.BFPointsUser;
-import me.pugabyte.bncore.models.bearfair.BFPointsUser.BFPointSource;
+import me.pugabyte.bncore.models.bearfair.BearFairService;
+import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -213,9 +213,9 @@ public class Basketball implements Listener {
 					entity.remove();
 					giveBasketball(player);
 					player.sendMessage(colorize("&eTouchdown!!"));
-					BFPointsUser user = new BFPointsService().get(player);
+					BearFairUser user = new BearFairService().get(player);
 					user.giveDailyPoints(1, SOURCE);
-					new BFPointsService().save(user);
+					new BearFairService().save(user);
 					WGUtils.getPlayersInRegion(courtRg).forEach(loopPlayer ->
 							loopPlayer.spawnParticle(Particle.LAVA, entity.getLocation(), 50, 2, 2, 2, .01));
 					stop();

@@ -6,9 +6,9 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.Laser;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
-import me.pugabyte.bncore.models.bearfair.BFPointsService;
-import me.pugabyte.bncore.models.bearfair.BFPointsUser;
-import me.pugabyte.bncore.models.bearfair.BFPointsUser.BFPointSource;
+import me.pugabyte.bncore.models.bearfair.BearFairService;
+import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
@@ -296,9 +296,9 @@ public class Reflection implements Listener {
 		for (Player player : players)
 			player.sendMessage(colorize(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!"));
 
-		BFPointsUser user = new BFPointsService().get(buttonPresser);
+		BearFairUser user = new BearFairService().get(buttonPresser);
 		user.giveDailyPoints(1, SOURCE);
-		new BFPointsService().save(user);
+		new BearFairService().save(user);
 
 		Tasks.wait(Time.SECOND.x(3), () -> {
 			randomizeBanners();
