@@ -77,6 +77,7 @@ public class DiscordCommand extends CustomCommand {
 				user.setUserId(newUser.getUserId());
 				service.save(user);
 				Discord.staffLog("**" + player().getName() + "** has linked their discord account to **" + name + "#" + discrim + "**");
+				Discord.getCodes().remove(code);
 			} else
 				error("Invalid confirmation code");
 		}
