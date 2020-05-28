@@ -272,7 +272,7 @@
             <artifactId>FastAsyncWorldEdit</artifactId>
             <version>1.15-164</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.15-164.jar</systemPath>
+            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.15-255.jar</systemPath>
         </dependency>
         <!-- WorldGuard -->
         <dependency>
