@@ -47,19 +47,21 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 public class Minigames {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	@Getter
-	private static World world = Bukkit.getWorld("gameworld");
+	private static final World world = Bukkit.getWorld("gameworld");
 	@Getter
-	private static Location lobby = new Location(world, 1861.5, 38.1, 247.5, 0, 0);
+	private static final Location lobby = new Location(world, 1861.5, 38.1, 247.5, 0, 0);
 	@Getter
-	private static WorldGuardUtils worldGuardUtils = new WorldGuardUtils(world);
+	@Deprecated // Use match#getWGUtils or arena#getWGUtils
+	private static final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(world);
 	@Getter
-	private static WorldEditUtils worldEditUtils = new WorldEditUtils(world);
+	@Deprecated // Use match#getWEUtils or arena#getWEUtils
+	private static final WorldEditUtils worldEditUtils = new WorldEditUtils(world);
 	@Getter
-	private static ProtectedRegion lobbyRegion = worldGuardUtils.getProtectedRegion("minigamelobby");
+	private static final ProtectedRegion lobbyRegion = worldGuardUtils.getProtectedRegion("minigamelobby");
 	@Getter
-	public static MinigamesMenus menus = new MinigamesMenus();
+	public static final MinigamesMenus menus = new MinigamesMenus();
 	@Getter
-	public static PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
+	public static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 
 	public Minigames() {
 		Tasks.async(() -> {
