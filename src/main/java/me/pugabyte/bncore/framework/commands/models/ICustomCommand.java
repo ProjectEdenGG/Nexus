@@ -316,16 +316,17 @@ public interface ICustomCommand {
 		if (cooldown != null) {
 			boolean bypass = false;
 			if (cooldown.bypass().length() > 0)
-				if (command.getEvent().getSender() instanceof Player)
-					if (command.getEvent().getPlayer().hasPermission(cooldown.bypass()))
-						bypass = true;
+				if (!(command.getEvent().getSender() instanceof Player))
+					bypass = true;
+				else if (command.getEvent().getPlayer().hasPermission(cooldown.bypass()))
+					bypass = true;
 
 			if (!bypass) {
 				int ticks = 0;
 				for (Part part : cooldown.value())
 					ticks += part.value().get() * part.x();
 
-				String id = command.player().getUniqueId().toString();
+				String id = ((Player) command.getEvent().getSender()).getUniqueId().toString();
 				if (cooldown.id().length() > 0)
 					id = cooldown.id();
 

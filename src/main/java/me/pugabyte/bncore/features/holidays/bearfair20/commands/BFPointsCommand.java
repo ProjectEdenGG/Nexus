@@ -8,9 +8,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.bearfair.BFPointsService;
-import me.pugabyte.bncore.models.bearfair.BFPointsUser;
-import me.pugabyte.bncore.models.bearfair.BFPointsUser.BFPointSource;
+import me.pugabyte.bncore.models.bearfair.BearFairService;
+import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.utils.StringUtils;
 
 import java.time.LocalDate;
@@ -19,14 +19,14 @@ import java.util.Map;
 
 @Aliases("bfp")
 public class BFPointsCommand extends CustomCommand {
-	BFPointsService service = new BFPointsService();
+	BearFairService service = new BearFairService();
 
 	public BFPointsCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("[player]")
-	public void checkTotal(@Arg("self") BFPointsUser user) {
+	public void checkTotal(@Arg("self") BearFairUser user) {
 		if (player().equals(user.getPlayer()))
 			send(PREFIX + "&3Total: &e" + user.getTotalPoints());
 		else
@@ -34,7 +34,7 @@ public class BFPointsCommand extends CustomCommand {
 	}
 
 	@Path("daily [player]")
-	public void checkDaily(@Arg("self") BFPointsUser user) {
+	public void checkDaily(@Arg("self") BearFairUser user) {
 		if (player().equals(user.getPlayer()))
 			send(PREFIX + "&3Daily Points:");
 		else
@@ -46,7 +46,7 @@ public class BFPointsCommand extends CustomCommand {
 			if (dailyMap != null)
 				points = dailyMap.get(LocalDate.now());
 
-			int dailyMax = BFPointsUser.DAILY_SOURCE_MAX;
+			int dailyMax = BearFairUser.DAILY_SOURCE_MAX;
 			String sourceColor = points == dailyMax ? "&a" : "&3";
 			String sourceName = StringUtils.camelCase(pointSource.name());
 			send(" " + sourceColor + sourceName + " &7- &e" + points + "&3/&e" + dailyMax);
@@ -55,7 +55,7 @@ public class BFPointsCommand extends CustomCommand {
 
 	@Path("give <player> <points>")
 	@Permission("group.admin")
-	public void givePoints(BFPointsUser user, int points) {
+	public void givePoints(BearFairUser user, int points) {
 		user.givePoints(points);
 		service.save(user);
 		String plural = points == 1 ? " point" : " points";
@@ -64,7 +64,7 @@ public class BFPointsCommand extends CustomCommand {
 
 	@Path("take <player> <points>")
 	@Permission("group.admin")
-	public void takePoints(BFPointsUser user, int points) {
+	public void takePoints(BearFairUser user, int points) {
 		user.takePoints(points);
 		service.save(user);
 		String plural = points == 1 ? " point" : " points";
@@ -73,7 +73,7 @@ public class BFPointsCommand extends CustomCommand {
 
 	@Path("set <player> <points>")
 	@Permission("group.admin")
-	public void setPoints(BFPointsUser user, int points) {
+	public void setPoints(BearFairUser user, int points) {
 		user.setTotalPoints(points);
 		service.save(user);
 		String plural = points == 1 ? " point" : " points";
@@ -82,7 +82,7 @@ public class BFPointsCommand extends CustomCommand {
 
 	@Path("reset <player>")
 	@Permission("group.admin")
-	public void reset(BFPointsUser user) {
+	public void reset(BearFairUser user) {
 		user.setTotalPoints(0);
 		user.getPointsReceivedToday().clear();
 		service.save(user);
@@ -90,23 +90,23 @@ public class BFPointsCommand extends CustomCommand {
 
 	@Path("top [page]")
 	public void top(@Arg("1") int page) {
-		List<BFPointsUser> results = service.getTop(page);
+		List<BearFairUser> results = service.getTopPoints(page);
 		if (results.size() == 0)
 			error("&cNo results on page " + page);
 
 		send("");
 		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
 		int i = (page - 1) * 10 + 1;
-		for (BFPointsUser user : results)
+		for (BearFairUser user : results)
 			send("&3" + i++ + " &e" + user.getPlayer().getName() + " &7- " + user.getTotalPoints());
 	}
 
-	@ConverterFor(BFPointsUser.class)
-	BFPointsUser convertToBFPointsUser(String value) {
-		return new BFPointsService().get(convertToOfflinePlayer(value));
+	@ConverterFor(BearFairUser.class)
+	BearFairUser convertToBFPointsUser(String value) {
+		return new BearFairService().get(convertToOfflinePlayer(value));
 	}
 
-	@TabCompleterFor(BFPointsUser.class)
+	@TabCompleterFor(BearFairUser.class)
 	List<String> tabCompleteBFPointsUser(String value) {
 		return tabCompletePlayer(value);
 	}

@@ -186,11 +186,11 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected boolean isSelf(OfflinePlayer player) {
-		return player.equals(player());
+		return isPlayer() && player.getUniqueId().equals(player().getUniqueId());
 	}
 
 	protected boolean isSelf(Player player) {
-		return player.equals(player());
+		return isPlayer() && player.getUniqueId().equals(player().getUniqueId());
 	}
 
 	protected boolean isNullOrEmpty(String string) {
