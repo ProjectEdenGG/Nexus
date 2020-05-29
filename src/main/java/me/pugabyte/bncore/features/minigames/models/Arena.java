@@ -14,7 +14,6 @@ import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.utils.SerializationUtils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -30,6 +29,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static me.pugabyte.bncore.utils.SerializationUtils.YML.deserializeMaterialSet;
+import static me.pugabyte.bncore.utils.SerializationUtils.YML.serializeMaterialSet;
 
 @Data
 @Builder
@@ -93,7 +95,7 @@ public class Arena implements ConfigurationSerializable {
 		this.minWinningScore = (Integer) map.getOrDefault("minWinningScore", minWinningScore);
 		this.maxWinningScore = (Integer) map.getOrDefault("maxWinningScore", maxWinningScore);
 		this.lives = (Integer) map.getOrDefault("lives", lives);
-		this.blockList = SerializationUtils.YML.deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
+		this.blockList = deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 	}
@@ -117,7 +119,7 @@ public class Arena implements ConfigurationSerializable {
 			put("minWinningScore", getMinWinningScore());
 			put("maxWinningScore", getMaxWinningScore());
 			put("lives", getLives());
-			put("blockList", SerializationUtils.YML.serializeMaterialSet(getBlockList()));
+			put("blockList", serializeMaterialSet(getBlockList()));
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 		}};
@@ -126,7 +128,7 @@ public class Arena implements ConfigurationSerializable {
 	public World getWorld() {
 		Location location = getTeleportLocation();
 		if (location == null)
-			throw new InvalidInputException("No location found for arnea, could not initialize match");
+			throw new InvalidInputException("No location found for arena, could not initialize match");
 		return location.getWorld();
 	}
 
