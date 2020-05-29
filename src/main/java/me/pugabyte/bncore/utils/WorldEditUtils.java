@@ -10,7 +10,6 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -45,14 +44,14 @@ import java.util.stream.Stream;
 
 public class WorldEditUtils {
 	@NonNull
-	private org.bukkit.World world;
-	private BukkitWorld bukkitWorld;
-	private World worldEditWorld;
-	private WorldGuardUtils worldGuardUtils;
+	private final org.bukkit.World world;
+	private final BukkitWorld bukkitWorld;
+	private final World worldEditWorld;
+	private final WorldGuardUtils worldGuardUtils;
 	@Getter
-	private String schematicsDirectory = "plugins/FastAsyncWorldEdit/schematics/";
+	private static final String schematicsDirectory = "plugins/FastAsyncWorldEdit/schematics/";
 	@Getter
-	static WorldEditPlugin plugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+	private static final WorldEditPlugin plugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
 
 	public WorldEditUtils(@NonNull org.bukkit.entity.Entity entity) {
 		this(entity.getWorld());
@@ -62,15 +61,15 @@ public class WorldEditUtils {
 		this(location.getWorld());
 	}
 
-	public WorldEditUtils(@NonNull org.bukkit.block.Block location) {
-		this(location.getWorld());
+	public WorldEditUtils(@NonNull org.bukkit.block.Block block) {
+		this(block.getWorld());
 	}
 
 	public WorldEditUtils(@NonNull org.bukkit.World world) {
 		this.world = world;
-		bukkitWorld = new BukkitWorld(world);
-		worldEditWorld = bukkitWorld;
-		worldGuardUtils = new WorldGuardUtils(world);
+		this.bukkitWorld = new BukkitWorld(world);
+		this.worldEditWorld = bukkitWorld;
+		this.worldGuardUtils = new WorldGuardUtils(world);
 	}
 
 	public void checkDisabled() {
@@ -83,7 +82,7 @@ public class WorldEditUtils {
 	}
 
 	private File getSchematicFile(String fileName) {
-		return new File(schematicsDirectory + fileName + ".schematic");
+		return new File(schematicsDirectory + fileName + "." + BuiltInClipboardFormat.SPONGE_SCHEMATIC.getPrimaryFileExtension());
 	}
 
 	public Vector3 toVector3(Location location) {
@@ -239,7 +238,7 @@ public class WorldEditUtils {
 		if (!file.exists())
 			throw new InvalidInputException("Schematic " + fileName + " does not exist");
 
-		return ClipboardFormats.findByFile(file).load(file);
+		return BuiltInClipboardFormat.SPONGE_SCHEMATIC.load(file);
 	}
 
 	public void paste(String fileName, Location location) {

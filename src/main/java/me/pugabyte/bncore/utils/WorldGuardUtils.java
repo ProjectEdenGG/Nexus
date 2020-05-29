@@ -35,10 +35,10 @@ import java.util.stream.Collectors;
 @Data
 public class WorldGuardUtils {
 	@NonNull
-	private org.bukkit.World world;
-	private BukkitWorld bukkitWorld;
-	private World worldEditWorld;
-	private RegionManager manager;
+	private final org.bukkit.World world;
+	private final BukkitWorld bukkitWorld;
+	private final World worldEditWorld;
+	private final RegionManager manager;
 	public static final WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 	public static final SimpleFlagRegistry registry = (SimpleFlagRegistry) WorldGuard.getInstance().getFlagRegistry();
 
@@ -50,8 +50,8 @@ public class WorldGuardUtils {
 		this(location.getWorld());
 	}
 
-	public WorldGuardUtils(@NonNull org.bukkit.block.Block location) {
-		this(location.getWorld());
+	public WorldGuardUtils(@NonNull org.bukkit.block.Block block) {
+		this(block.getWorld());
 	}
 
 	public WorldGuardUtils(@NonNull org.bukkit.World world) {

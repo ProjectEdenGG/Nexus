@@ -37,7 +37,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("SidewaysStairs");
 	static Map<Player, SidewaysStairsPlayer> playerData = new HashMap<>();
 
-	private static final List<String> validAngles = Arrays.asList("north",  "east", "south", "west");
+	private static final List<String> validAngles = Arrays.asList("north", "east", "south", "west");
 
 	private SidewaysStairsPlayer swsPlayer;
 
@@ -86,7 +86,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 
 	@Description("Toggle upsidedown stairs in set placement mode")
 	@Path("setupsidedown [true/false]")
-	void setUpsidedown(Boolean value){
+	void setUpsidedown(Boolean value) {
 		if (value == null)
 			setUpsidedown(!swsPlayer.getHalf().equals("top"));
 		else {
@@ -103,9 +103,9 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		swsPlayer.setEnabled(true);
 		swsPlayer.setAction(SwsAction.SET_ANGLE);
 		Iterator<String> i = validAngles.iterator();
-		while(i.hasNext())
-			if(i.next().equals(swsPlayer.direction))
-				if(i.hasNext())
+		while (i.hasNext())
+			if (i.next().equals(swsPlayer.direction))
+				if (i.hasNext())
 					swsPlayer.setDirection(i.next());
 				else
 					swsPlayer.setDirection(validAngles.get(0));
@@ -165,7 +165,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 				}
 	}
 
-	enum SwsAction{
+	enum SwsAction {
 		NONE, COPY, SET_ANGLE, DISABLE_UPSIDEDOWN_PLACEMENT;
 	}
 
@@ -178,6 +178,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		private SwsAction action = SwsAction.NONE;
 		private String direction = "north";
 		private String half = "bottom";
+
 	}
 
 }
