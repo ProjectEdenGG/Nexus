@@ -30,6 +30,9 @@ import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 /*
+	NPC BEEs: 2730, 2731
+
+	ba3b7698-589c-3326-90ff-4862853a5c24
 	Easter Egg Spots:
 		-939 137 -1624
 		-1155 141 -1777
@@ -37,6 +40,11 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 		-991 135 -1621
 		-1095 155 -1559
 		-1101 137 -1651
+		-944 119 -1895
+		-1050 129 -1913
+		-1020 139 -1702
+	On find all:
+	/playsound minecraft:ui.toast.challenge_complete master @p ~ ~ ~ 2 1
  */
 
 @Data
