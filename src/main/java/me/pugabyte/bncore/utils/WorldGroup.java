@@ -19,9 +19,11 @@ public enum WorldGroup {
 	EVENT("2y"),
 	UNKNOWN;
 
-	private String[] worlds;
+	private final String[] worlds;
 
-	WorldGroup() {}
+	WorldGroup() {
+		this(new String[0]);
+	}
 
 	WorldGroup(String... worlds) {
 		this.worlds = worlds;

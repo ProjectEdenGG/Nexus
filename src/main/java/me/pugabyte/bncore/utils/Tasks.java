@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class Tasks {
-	private static BukkitScheduler scheduler = BNCore.getInstance().getServer().getScheduler();
-	private static BNCore instance = BNCore.getInstance();
+	private static final BukkitScheduler scheduler = BNCore.getInstance().getServer().getScheduler();
+	private static final BNCore instance = BNCore.getInstance();
 
 	public static int wait(Time delay, Runnable runnable) {
 		return wait(delay.get(), runnable);

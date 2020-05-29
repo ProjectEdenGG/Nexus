@@ -63,7 +63,7 @@ public class FireworkLauncher {
 			if (Utils.chanceOf(40))
 				colorList.add(colorType.getColor());
 		if (colorList.size() == 0)
-			colorList.add(((ColorType) Utils.getRandomElement(Arrays.asList(colorTypes))).getColor());
+			colorList.add(Utils.getRandomElement(Arrays.asList(colorTypes)).getColor());
 
 		// Get Random Fade Colors
 		List<Color> fadeColorList = new ArrayList<>();

@@ -145,12 +145,12 @@ public enum ColorType {
 		this.durability = durability;
 	}
 
-	private String name;
-	private Color color;
-	private ChatColor chatColor;
-	private DyeColor dyeColor;
-	private DyeColor similarDyeColor;
-	private Integer durability;
+	private final String name;
+	private final Color color;
+	private final ChatColor chatColor;
+	private final DyeColor dyeColor;
+	private final DyeColor similarDyeColor;
+	private final Integer durability;
 
 	public static ColorType fromString(String name) {
 		return Arrays.stream(values()).filter(colorType -> name.equals(colorType.getName())).findFirst().orElse(null);

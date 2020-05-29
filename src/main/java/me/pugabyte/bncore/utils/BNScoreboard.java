@@ -96,7 +96,6 @@ public class BNScoreboard {
 			if (!isSubscribed(player)) return;
 			objective.unsubscribe(player);
 			player.setScoreboard(manager.getMainScoreboard());
-//			try { FeatherBoardAPI.initScoreboard(player); } catch (Exception ignore) {}
 		}
 	}
 

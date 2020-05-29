@@ -17,7 +17,7 @@ import static me.pugabyte.bncore.utils.StringUtils.getLastColor;
 import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public class JsonBuilder {
-	private ComponentBuilder result = new ComponentBuilder("");
+	private final ComponentBuilder result = new ComponentBuilder("");
 	private ComponentBuilder builder = new ComponentBuilder("");
 	// Helper boolean for loops and stuff
 	private boolean initialized;

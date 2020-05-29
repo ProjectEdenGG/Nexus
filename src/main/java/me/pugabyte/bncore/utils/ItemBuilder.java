@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class ItemBuilder {
-	private ItemStack itemStack;
+	private final ItemStack itemStack;
 	private ItemMeta itemMeta;
 	private List<String> lore = new ArrayList<>();
 	private boolean doLoreize = true;
