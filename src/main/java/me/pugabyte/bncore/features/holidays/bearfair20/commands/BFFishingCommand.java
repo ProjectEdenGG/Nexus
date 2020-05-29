@@ -78,11 +78,11 @@ public class BFFishingCommand extends CustomCommand {
 
 		ItemStack[] contents = player().getInventory().getContents();
 		List<ItemStack> loot = getLoot(contents);
-		int defaultFish = countDefault(loot);
 		int trash = countTrash(loot);
 		int treasure = countTreasure(loot);
 		int rare = countRare(loot);
 		int island = countIsland(loot);
+		int defaultFish = countDefault(loot);
 
 		removeItems(player(), loot);
 
@@ -111,10 +111,16 @@ public class BFFishingCommand extends CustomCommand {
 		for (ItemStack content : contents) {
 			if (Utils.isNullOrAir(content))
 				continue;
-			if (content.getAmount() > 1)
+
+			int amount = content.getAmount();
+			if (amount > 1) {
 				content.setAmount(1);
-			if (itemStacks.contains(content))
+			}
+
+			if (itemStacks.contains(content)) {
+				content.setAmount(amount);
 				loot.add(content);
+			}
 		}
 
 		return loot;
@@ -157,8 +163,12 @@ public class BFFishingCommand extends CustomCommand {
 
 		int count = 0;
 		for (ItemStack content : contents) {
-			if (filterList.contains(content))
-				count++;
+			int amount = content.getAmount();
+			content.setAmount(1);
+			if (filterList.contains(content)) {
+				count += amount;
+			}
+			content.setAmount(amount);
 		}
 		return count;
 	}
@@ -175,8 +185,12 @@ public class BFFishingCommand extends CustomCommand {
 
 		int count = 0;
 		for (ItemStack content : contents) {
-			if (filterList.contains(content))
-				count++;
+			int amount = content.getAmount();
+			content.setAmount(1);
+			if (filterList.contains(content)) {
+				count += amount;
+			}
+			content.setAmount(amount);
 		}
 		return count;
 	}
@@ -193,8 +207,12 @@ public class BFFishingCommand extends CustomCommand {
 
 		int count = 0;
 		for (ItemStack content : contents) {
-			if (filterList.contains(content))
-				count++;
+			int amount = content.getAmount();
+			content.setAmount(1);
+			if (filterList.contains(content)) {
+				count += amount;
+			}
+			content.setAmount(amount);
 		}
 		return count;
 	}
@@ -211,8 +229,12 @@ public class BFFishingCommand extends CustomCommand {
 
 		int count = 0;
 		for (ItemStack content : contents) {
-			if (filterList.contains(content))
-				count++;
+			int amount = content.getAmount();
+			content.setAmount(1);
+			if (filterList.contains(content)) {
+				count += amount;
+			}
+			content.setAmount(amount);
 		}
 		return count;
 	}
@@ -229,8 +251,12 @@ public class BFFishingCommand extends CustomCommand {
 
 		int count = 0;
 		for (ItemStack content : contents) {
-			if (filterList.contains(content))
-				count++;
+			int amount = content.getAmount();
+			content.setAmount(1);
+			if (filterList.contains(content)) {
+				count += amount;
+			}
+			content.setAmount(amount);
 		}
 		return count;
 	}
