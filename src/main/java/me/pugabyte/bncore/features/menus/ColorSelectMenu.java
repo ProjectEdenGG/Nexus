@@ -14,10 +14,10 @@ import java.util.function.Consumer;
 
 public class ColorSelectMenu extends MenuUtils implements InventoryProvider {
 
-	public String type;
+	public Material type;
 	Consumer<ItemClickData> onClick;
 
-	public ColorSelectMenu(String type, Consumer<ItemClickData> onClick) {
+	public ColorSelectMenu(Material type, Consumer<ItemClickData> onClick) {
 		this.type = type;
 		this.onClick = onClick;
 	}
@@ -32,8 +32,7 @@ public class ColorSelectMenu extends MenuUtils implements InventoryProvider {
 
 		for (ColorType color : ColorType.values()) {
 			if (color == ColorType.LIGHT_RED) continue;
-			ItemStack item = nameItem(Material.valueOf(color.getName().replace(" ", "_").toUpperCase() + "_" +
-					type.toUpperCase()), "&e" + StringUtils.camelCase(color.getName()));
+			ItemStack item = nameItem(color.switchColor(type), "&e" + StringUtils.camelCase(color.getName()));
 			contents.set(row, column, ClickableItem.from(item, e -> onClick.accept(e)));
 			if (column == 8) {
 				column = 0;
