@@ -18,8 +18,6 @@ import java.util.Collections;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Beehive implements Listener {
-	private String enterRg = "bearfair2020_beehive_enter";
-	private String exitRg = "bearfair2020_beehive_exit";
 	private String allowedMsg = "TODO: Allowed message here";
 	private String deniedMsg = "TODO: Denied message here";
 	private Location enterLoc = new Location(BearFair20.world, -1084, 135, -1548, 228, 20);
@@ -35,6 +33,8 @@ public class Beehive implements Listener {
 		String id = event.getRegion().getId();
 		Player player = event.getPlayer();
 
+		String enterRg = "bearfair2020_beehive_enter";
+		String exitRg = "bearfair2020_beehive_exit";
 		if (id.equalsIgnoreCase(enterRg)) {
 			if (player.getInventory().contains(key)) {
 				allowed(player);
