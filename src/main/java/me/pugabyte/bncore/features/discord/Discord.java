@@ -4,18 +4,25 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.models.discord.DiscordUser;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.net.ProxySelector;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
@@ -33,6 +40,7 @@ public class Discord {
 
 		Tasks.repeatAsync(0, Time.MINUTE, this::connect);
 		Tasks.waitAsync(Time.SECOND.x(2), this::connect);
+		BNCore.getCron().schedule("*/5 * * * *", Discord::updateTopics);
 	}
 
 	public void connect() {
@@ -162,6 +170,47 @@ public class Discord {
 			BNCore.log("Role from " + role.name() + " not found");
 		else
 			getGuild().removeRoleFromMember(userId, roleById).queue();
+	}
+
+	private static String bridgeTopic = "";
+	private static String staffBridgeTopic = "";
+
+	private static void updateTopics() {
+		String newBridgeTopic = getBridgeTopic();
+		String newStaffBridgeTopic = getStaffBridgeTopic();
+
+		if (!bridgeTopic.equals(newBridgeTopic))
+			updateBridgeTopic(newBridgeTopic);
+		if (!staffBridgeTopic.equals(newStaffBridgeTopic))
+			updateStaffBridgeTopic(newStaffBridgeTopic);
+	}
+
+	private static String getBridgeTopic() {
+		List<Player> players = Bukkit.getOnlinePlayers().stream()
+				.filter(player -> !Utils.isVanished(player))
+				.collect(Collectors.toList());
+		return "Online nerds (" + players.size() + "): " + players.stream().map(Player::getName).collect(Collectors.joining(", "));
+	}
+
+	private static void updateBridgeTopic(String newBridgeTopic) {
+		bridgeTopic = newBridgeTopic;
+		GuildChannel channel = Discord.getGuild().getGuildChannelById(Channel.BRIDGE.getId());
+		if (channel != null)
+			channel.getManager().setTopic(bridgeTopic).queue();
+	}
+
+	private static String getStaffBridgeTopic() {
+		List<Player> players = Bukkit.getOnlinePlayers().stream()
+				.filter(player -> new Nerd(player).getRank().isStaff())
+				.collect(Collectors.toList());
+		return "Online staff (" + players.size() + "): " + players.stream().map(Player::getName).collect(Collectors.joining(", "));
+	}
+
+	private static void updateStaffBridgeTopic(String newStaffBridgeTopic) {
+		staffBridgeTopic = newStaffBridgeTopic;
+		GuildChannel channel = Discord.getGuild().getGuildChannelById(Channel.STAFF_BRIDGE.getId());
+		if (channel != null)
+			channel.getManager().setTopic(staffBridgeTopic).queue();
 	}
 
 }
