@@ -75,6 +75,7 @@ public class BFQuests implements Listener {
 		setupCollector();
 		new Beehive();
 		new Fishing();
+		new EasterEggs();
 		Recipes.loadRecipes();
 	}
 

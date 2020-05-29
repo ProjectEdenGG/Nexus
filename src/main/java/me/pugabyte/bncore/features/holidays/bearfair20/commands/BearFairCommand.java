@@ -7,6 +7,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.bearfair.BearFairService;
+import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.Tasks;
@@ -126,6 +128,11 @@ public class BearFairCommand extends _WarpCommand {
 	//TODO:
 	@Path("quests reset")
 	void questReset() {
-
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player());
+		//
+		user.getEasterEggsLocs().clear();
+		//
+		service.save(user);
 	}
 }

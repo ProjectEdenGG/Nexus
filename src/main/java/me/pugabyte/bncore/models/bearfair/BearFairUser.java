@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -27,18 +28,19 @@ import static me.pugabyte.bncore.utils.Utils.sendActionBar;
 @Entity("bearfair_user")
 @NoArgsConstructor
 @AllArgsConstructor
-@Converters(UUIDConverter.class)
+@Converters({UUIDConverter.class, LocationConverter.class})
 public class BearFairUser extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-
+	// Points
 	public transient static final int DAILY_SOURCE_MAX = 5;
 	private Map<BFPointSource, Map<LocalDate, Integer>> pointsReceivedToday = new HashMap<>();
 	private int totalPoints;
-
+	// Easter Eggs
 	@Property(concreteClass = Location.class)
 	private List<Location> easterEggsLocs = new ArrayList<>();
+	//
 
 	public BearFairUser(UUID uuid) {
 		this.uuid = uuid;
@@ -62,7 +64,6 @@ public class BearFairUser extends PlayerOwnedObject {
 		if (sourcePoints == DAILY_SOURCE_MAX)
 			return;
 
-		// Only shows the message once, would repeat if >=
 		if ((sourcePoints + points) == DAILY_SOURCE_MAX)
 			getPlayer().sendMessage(colorize("Max daily points reached for " + StringUtils.camelCase(source.name())));
 
@@ -80,5 +81,6 @@ public class BearFairUser extends PlayerOwnedObject {
 		PUGDUNK,
 		REFLECTION
 	}
+
 
 }
