@@ -144,7 +144,7 @@ public abstract class MenuUtils {
 		inv.open(player);
 	}
 
-	public static void colorSelectMenu(Player player, String type, Consumer<ItemClickData> onClick) {
+	public static void colorSelectMenu(Player player, Material type, Consumer<ItemClickData> onClick) {
 		SmartInventory.builder()
 				.size(3, 9)
 				.title("Select Color")
