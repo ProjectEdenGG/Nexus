@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.models.chat;
 
-import lombok.Getter;
 import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.utils.Tasks;
 
@@ -9,11 +8,10 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ChatService extends MongoService {
-	@Getter
 	private final static Map<UUID, Chatter> cache = new HashMap<>();
 
-	public void clearCache() {
-		cache.clear();
+	public Map<UUID, Chatter> getCache() {
+		return cache;
 	}
 
 	@Override
