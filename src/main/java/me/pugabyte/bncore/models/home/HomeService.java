@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.models.home;
 
+import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 
 import java.util.Comparator;
@@ -7,24 +8,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@PlayerClass(HomeOwner.class)
 public class HomeService extends MongoService {
 	private final static Map<UUID, HomeOwner> cache = new HashMap<>();
 
-	public void clearCache() {
-		cache.clear();
+	public Map<UUID, HomeOwner> getCache() {
+		return cache;
 	}
 
 	@Override
 	public HomeOwner get(UUID uuid) {
-		cache.computeIfAbsent(uuid, $ -> {
-			HomeOwner homeOwner = database.createQuery(HomeOwner.class).field(_id).equal(uuid).first();
-			if (homeOwner == null)
-				homeOwner = new HomeOwner(uuid);
-			homeOwner.getHomes().sort(Comparator.comparing(home -> home.getName().toLowerCase()));
-			return homeOwner;
-		});
-
-		return cache.get(uuid);
+		HomeOwner homeOwner = super.get(uuid);
+		homeOwner.getHomes().sort(Comparator.comparing(home -> home.getName().toLowerCase()));
+		return homeOwner;
 	}
 
 	@Override
