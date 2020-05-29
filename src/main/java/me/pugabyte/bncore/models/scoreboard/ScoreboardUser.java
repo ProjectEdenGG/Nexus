@@ -70,7 +70,8 @@ public class ScoreboardUser extends PlayerOwnedObject {
 
 	public void pause() {
 		if (scoreboard != null) {
-			scoreboard.unsubscribe(getPlayer());
+			if (getOfflinePlayer().isOnline())
+				scoreboard.unsubscribe(getPlayer());
 			scoreboard.delete();
 			scoreboard = null;
 		}
