@@ -206,6 +206,14 @@ public class Utils {
 		return new Location(location.getWorld(), x, y, z);
 	}
 
+	public static EntityType getSpawnEggType(Material type) {
+		return EntityType.valueOf(type.toString().split("_SPAWN_EGG")[0]);
+	}
+
+	public static Material getSpawnEgg(EntityType type) {
+		return Material.valueOf(type.toString() + "_SPAWN_EGG");
+	}
+
 	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sort(Map<K, V> map) {
 		return map.entrySet().stream().sorted(Entry.comparingByValue())
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
@@ -477,25 +485,25 @@ public class Utils {
 
 	public static <T> T getRandomElement(List<T> list) {
 		if (list.size() == 0) return null;
-		return (T) list.get(new Random().nextInt(list.size()));
+		return list.get(new Random().nextInt(list.size()));
 	}
 
 	public static boolean isInt(String text) {
 		try {
 			Integer.parseInt(text);
+			return true;
 		} catch (Exception e) {
 			return false;
 		}
-		return true;
 	}
 
 	public static boolean isDouble(String text) {
 		try {
 			Double.parseDouble(text);
+			return true;
 		} catch (Exception e) {
 			return false;
 		}
-		return true;
 	}
 
 	public static BlockFace getBlockFaceBetween(BlockFace face1, BlockFace face2) {
@@ -654,7 +662,7 @@ public class Utils {
 		public static <T> T valueOf(Class<? extends T> clazz, String value) {
 			T[] values = clazz.getEnumConstants();
 			for (T enumValue : values)
-				if (((Enum) enumValue).name().equalsIgnoreCase(value))
+				if (((Enum<?>) enumValue).name().equalsIgnoreCase(value))
 					return enumValue;
 			throw new IllegalArgumentException();
 		}

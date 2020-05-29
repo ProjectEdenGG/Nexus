@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag WOOL = new MaterialTag("_WOOL", MatchMode.SUFFIX);
 	public static final MaterialTag DYES = new MaterialTag("_DYE", MatchMode.SUFFIX);

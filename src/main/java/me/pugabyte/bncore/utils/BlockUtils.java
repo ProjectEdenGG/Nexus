@@ -15,8 +15,7 @@ public class BlockUtils {
 	}
 
 	public static String getBlockProperty(Block block, String key) {
-		HashMap<String, String> properties = getBlockProperties(block);
-		return properties.getOrDefault(key, null);
+		return getBlockProperties(block).getOrDefault(key, null);
 	}
 
 	public static boolean containsBlockProperty(Block block, String key) {
@@ -57,7 +56,6 @@ public class BlockUtils {
 		} else {
 			return Bukkit.createBlockData(material);
 		}
-
 	}
 
 	public static String generateBlockDataString(Material material, HashMap<String, String> values) {
