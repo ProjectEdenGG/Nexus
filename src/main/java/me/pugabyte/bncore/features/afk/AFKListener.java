@@ -28,6 +28,7 @@ public class AFKListener implements Listener {
 
 		if (event.getChannel() instanceof PrivateChannel) {
 			for (Chatter recipient : event.getRecipients()) {
+				if (!recipient.getOfflinePlayer().isOnline()) continue;
 				AFKPlayer to = AFK.get(recipient.getPlayer());
 				if (AFK.get(to.getPlayer()).isAfk()) {
 					Tasks.wait(3, () -> {
