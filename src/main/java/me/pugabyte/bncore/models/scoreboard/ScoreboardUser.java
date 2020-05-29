@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class ScoreboardUser extends PlayerOwnedObject {
 	}
 
 	public void cancelTasks() {
-		new HashMap<>(taskIds).forEach((line, taskId) -> {
+		Collections.unmodifiableMap(taskIds).forEach((line, taskId) -> {
 			Tasks.cancel(taskId);
 			taskIds.remove(line);
 		});
