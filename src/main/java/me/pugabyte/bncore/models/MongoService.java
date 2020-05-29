@@ -97,4 +97,8 @@ public abstract class MongoService {
 	public <T> void delete(T object) {
 		database.delete(object);
 	}
+
+	public void deleteAll() {
+		Tasks.async(() -> database.getDatabase().drop());
+	}
 }
