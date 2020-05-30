@@ -9,6 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeService;
@@ -79,6 +80,30 @@ public class TrustCommand extends CustomCommand {
 	@Description("Allow specified player(s) to everything")
 	@Path("all <players...>")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		process(players, Type.values());
+	}
+
+	@Permission("group.staff")
+	@Path("admin locks <owner> <players...>")
+	void locks(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		trust = service.get(owner);
+		send(PREFIX + "Modifying trusts of &e" + owner.getName());
+		process(players, Type.LOCKS);
+	}
+
+	@Permission("group.staff")
+	@Path("admin homes <owner> <players...>")
+	void homes(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		trust = service.get(owner);
+		send(PREFIX + "Modifying trusts of &e" + owner.getName());
+		process(players, Type.HOMES);
+	}
+
+	@Permission("group.staff")
+	@Path("admin all <owner> <players...>")
+	void all(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		trust = service.get(owner);
+		send(PREFIX + "Modifying trusts of &e" + owner.getName());
 		process(players, Type.values());
 	}
 
