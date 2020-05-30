@@ -37,6 +37,9 @@ public class AssetCompetitionCommand extends CustomCommand {
 	@Permission("group.staff")
 	void list() {
 		List<AssetCompetition> all = service.getAll();
+		if (all.size() == 0)
+			error("There are no available submissions");
+
 		JsonBuilder builder = new JsonBuilder();
 		for (AssetCompetition assetCompetition : all) {
 			if (!builder.isInitialized())
