@@ -99,6 +99,6 @@ public abstract class MongoService {
 	}
 
 	public void deleteAll() {
-		// Tasks.async(() -> database.getDatabase().drop());
+		 Tasks.async(() -> database.getCollection(getPlayerClass()).drop());
 	}
 }
