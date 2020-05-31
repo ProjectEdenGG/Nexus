@@ -56,7 +56,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 	private void clearScreen(InventoryContents contents) {
 		for (SlotPos slotPos : contents.slots()) {
-			contents.set(slotPos, ClickableItem.from(new ItemStack(Material.AIR), null));
+			contents.set(slotPos, ClickableItem.empty(new ItemStack(Material.AIR)));
 		}
 	}
 
@@ -81,9 +81,8 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 				} else {
 					ItemStack item = nameItem(unclaimed.clone(), "&eDay " + day, "&6&lUnclaimed||" + "&3Click to select reward.", day);
 					final int currentDay = day;
-					contents.set(new SlotPos(1, column), ClickableItem.from(item, e -> {
-						selectItem(contents, currentDay, initialDay);
-					}));
+					contents.set(new SlotPos(1, column), ClickableItem.from(item, e ->
+							selectItem(contents, currentDay, initialDay)));
 				}
 			} else {
 				ItemStack item = nameItem(locked.clone(), "&eDay " + day, "&cLocked" + "", day);
@@ -95,9 +94,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		}
 	}
 
-
 	private void selectItem(InventoryContents contents, int currentDay, int initialDay) {
-
 		clearScreen(contents);
 		contents.set(new SlotPos(0, 0), ClickableItem.from(backItem(), e -> scroll(contents, 0, initialDay)));
 
@@ -180,9 +177,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 				Utils.runConsoleCommand(command.replaceAll("%player%", player.getName()));
 
 			saveAndReturn(contents, day, initialDay);
-
 		}
-
 	}
 
 }

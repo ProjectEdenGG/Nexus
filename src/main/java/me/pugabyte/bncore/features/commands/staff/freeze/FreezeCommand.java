@@ -18,12 +18,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
@@ -97,7 +97,8 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	public void onQuit(PlayerQuitEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
 		Player player = event.getPlayer();
-		player.getVehicle().remove();
+		if (player.getVehicle() != null)
+			player.getVehicle().remove();
 		Chat.broadcast(PREFIX + "&e" + player.getName() + " &3has logged out while frozen.", "Staff");
 	}
 
@@ -152,32 +153,30 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onPickUp(PlayerPickupItemEvent event) {
-		if (!isFrozen(event.getPlayer())) return;
+	public void onPickUp(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+		if (!isFrozen((Player) event.getEntity())) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onDamage(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player)) return;
-		Player player = (Player) event.getDamager();
-		if (!isFrozen(player)) return;
+		if (!isFrozen((Player) event.getDamager())) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onTakeDamage(EntityDamageByEntityEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
-		if (!isFrozen(player)) return;
+		if (!isFrozen((Player) event.getEntity())) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onTarget(EntityTargetEvent event) {
 		if (!(event.getTarget() instanceof Player)) return;
-		Player player = (Player) event.getTarget();
-		if (!isFrozen(player)) return;
+		if (!isFrozen((Player) event.getTarget())) return;
 		event.setCancelled(true);
 	}
 
