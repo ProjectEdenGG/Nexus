@@ -22,18 +22,18 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
-	private DailyRewardService service = new DailyRewardService();
-	private DailyReward dailyReward;
+	private final DailyRewardService service = new DailyRewardService();
+	private final DailyReward dailyReward;
 
-	private ItemStack back = new ItemBuilder(Material.BARRIER).name("&cScroll back 1 day").build();
-	private ItemStack back7 = new ItemBuilder(Material.BARRIER).amount(7).name("&cScroll back 7 days").build();
-	private ItemStack forward = new ItemBuilder(Material.ARROW).name("&2Scroll forward 1 day").build();
-	private ItemStack forward7 = new ItemBuilder(Material.ARROW).amount(7).name("&2Scroll forward 7 days").build();
+	private final ItemStack back = new ItemBuilder(Material.BARRIER).name("&cScroll back 1 day").build();
+	private final ItemStack back7 = new ItemBuilder(Material.BARRIER).amount(7).name("&cScroll back 7 days").build();
+	private final ItemStack forward = new ItemBuilder(Material.ARROW).name("&2Scroll forward 1 day").build();
+	private final ItemStack forward7 = new ItemBuilder(Material.ARROW).amount(7).name("&2Scroll forward 7 days").build();
 
 	private final int MAX_DAY = DailyRewardsFeature.getMaxDays();
-	private ItemStack claimed = new ItemStack(Material.WHITE_WOOL);
-	private ItemStack unclaimed = new ItemStack(Material.WHITE_WOOL);
-	private ItemStack locked = new ItemStack(Material.BLACK_WOOL);
+	private final ItemStack claimed = new ItemStack(Material.WHITE_WOOL);
+	private final ItemStack unclaimed = new ItemStack(Material.WHITE_WOOL);
+	private final ItemStack locked = new ItemStack(Material.BLACK_WOOL);
 
 	DailyRewardsMenu(DailyReward dailyReward) {
 		this.dailyReward = dailyReward;

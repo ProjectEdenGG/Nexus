@@ -24,12 +24,10 @@ public class MysteryChestCommand extends CustomCommand {
 	@Path()
 	void use() {
 		Setting setting = service.get(player(), "mysteryChest");
-		int chests = 0;
-		try {
-			chests = Integer.parseInt(setting.getValue());
-		} catch (Exception ignore) {
-		}
-		if (chests > 0)
+		if (isNullOrEmpty(setting.getValue()) || !isInt(setting.getValue()))
+			error("You do not have any mystery chest to open");
+		int chests = Integer.parseInt(setting.getValue());
+		if (chests <= 0)
 			error("You do not have any mystery chest to open");
 		if (!WorldGroup.get(player()).equals(WorldGroup.SURVIVAL))
 			error("You must be in the survival world to run this command.");

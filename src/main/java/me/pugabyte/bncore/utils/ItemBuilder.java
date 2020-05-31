@@ -1,12 +1,16 @@
 package me.pugabyte.bncore.utils;
 
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -32,6 +36,10 @@ public class ItemBuilder {
 
 	public ItemBuilder(Material material) {
 		this(new ItemStack(material));
+	}
+
+	public ItemBuilder(Material material, int amount) {
+		this(new ItemStack(material, amount));
 	}
 
 	public ItemBuilder(ItemStack itemStack) {
@@ -164,6 +172,16 @@ public class ItemBuilder {
 
 	public ItemBuilder skullOwner(OfflinePlayer offlinePlayer) {
 		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer);
+		return this;
+	}
+
+	public ItemBuilder pattern(DyeColor color, PatternType pattern) {
+		return pattern(new Pattern(color, pattern));
+	}
+
+	public ItemBuilder pattern(Pattern pattern) {
+		BannerMeta bannerMeta = (BannerMeta) itemMeta;
+		bannerMeta.addPattern(pattern);
 		return this;
 	}
 
