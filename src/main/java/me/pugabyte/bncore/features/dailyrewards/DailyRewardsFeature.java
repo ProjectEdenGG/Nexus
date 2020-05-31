@@ -4,8 +4,8 @@ import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.dailyreward.DailyReward;
 import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
-import me.pugabyte.bncore.models.dailyreward.Reward;
 import me.pugabyte.bncore.models.dailyreward.OldReward;
+import me.pugabyte.bncore.models.dailyreward.Reward;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
@@ -82,7 +81,7 @@ public class DailyRewardsFeature {
 	}
 
 	public static int getMaxDays() {
-		return rewards.size();
+		return rewards1.size();
 	}
 
 	public static void menu(Player player, DailyReward dailyReward) {
@@ -203,28 +202,50 @@ public class DailyRewardsFeature {
 			/*   5 */ add(new Reward("2 Golden Apples")						.item(GOLDEN_APPLE, 2));
 			/*   6 */ add(new Reward("Set of iron tools")					.item(MaterialTag.TOOLS_IRON));
 			/*   7 */ add(new Reward("16 books")							.item(BOOK, 16));
-			/*   8 */ add(new Reward("carrot on a stick")					.item(CARROT_ON_A_STICK));
-			/*   9 */ add(new Reward("12 fire charges")						.item(FIRE_CHARGE, 12));
-			/*  10 */ add(new Reward("$1,000")								.money(1000));
-			/*  11 */ add(new Reward("5 Cooked Chicken")					.item(COOKED_CHICKEN, 5));
-			/*  12 */ add(new Reward("5 Steak")								.item(COOKED_BEEF, 5));
-			/*  13 */ add(new Reward("10 Leather")							.item(LEATHER, 10));
-			/*  14 */ add(new Reward("10 Bread")							.item(BREAD, 10));
-			/*  15 */ add(new Reward("3 Golden Apples")						.item(GOLDEN_APPLE, 3));
-			/*  16 */ add(new Reward("1 Diamond pickaxe")					.item(DIAMOND_PICKAXE, 1));
-			/*  17 */ add(new Reward("2 lava, water, milk, empty buckets")	.item(LAVA_BUCKET, 2).item(WATER_BUCKET, 2).item(MILK_BUCKET, 2).item(BUCKET, 2));
-			/*  18 */ add(new Reward("4 regen II pot")						.item(regenPotion));
-			/*  19 */ add(new Reward("4 health II pots")					.item(healthPotion));
-			/*  20 */ add(new Reward("$2,000")								.money(2000));
-			/*  21 */ add(new Reward("10 Cooked Chicken")					.item(COOKED_CHICKEN, 10));
-			/*  22 */ add(new Reward("10 Steak")							.item(COOKED_BEEF, 10));
-			/*  23 */ add(new Reward("20 Leather")							.item(LEATHER, 20));
-			/*  24 */ add(new Reward("20 Bread")							.item(BREAD, 20));
-			/*  25 */ add(new Reward("2 Golden Apple")						.item(GOLDEN_APPLE, 2));
-			/*  26 */ add(new Reward("Diamond sword and shield")			.item(DIAMOND_SWORD).item(SHIELD));
-			/*  27 */ add(new Reward("5 of each Sapling")					.item(MaterialTag.SAPLINGS, 5));
-			/*  28 */ add(new Reward("32 Apples")							.item(APPLE, 32));
-			/*  29 */ add(new Reward("1 Saddle")							.item(SADDLE, 1));
+			/*   8 */
+			add(new Reward("carrot on a stick").item(CARROT_ON_A_STICK));
+			/*   9 */
+			add(new Reward("12 fire charges").item(FIRE_CHARGE, 12));
+			/*  10 */
+			add(new Reward("$1,000").money(1000));
+			/*  11 */
+			add(new Reward("5 Cooked Chicken").item(COOKED_CHICKEN, 5));
+			/*  12 */
+			add(new Reward("5 Steak").item(COOKED_BEEF, 5));
+			/*  13 */
+			add(new Reward("10 Leather").item(LEATHER, 10));
+			/*  14 */
+			add(new Reward("10 Bread").item(BREAD, 10));
+			/*  15 */
+			add(new Reward("3 Golden Apples").item(GOLDEN_APPLE, 3));
+			/*  16 */
+			add(new Reward("1 Diamond pickaxe").item(DIAMOND_PICKAXE, 1));
+			/*  17 */
+			add(new Reward("2 lava, water, milk, empty buckets").item(LAVA_BUCKET, 2).item(WATER_BUCKET, 2).item(MILK_BUCKET, 2).item(BUCKET, 2));
+			/*  18 */
+			add(new Reward("4 Regen 2 potions").item(regenPotion));
+			/*  19 */
+			add(new Reward("4 Health 2 potions").item(healthPotion));
+			/*  20 */
+			add(new Reward("$2,000").money(2000));
+			/*  21 */
+			add(new Reward("10 Cooked Chicken").item(COOKED_CHICKEN, 10));
+			/*  22 */
+			add(new Reward("10 Steak").item(COOKED_BEEF, 10));
+			/*  23 */
+			add(new Reward("20 Leather").item(LEATHER, 20));
+			/*  24 */
+			add(new Reward("20 Bread").item(BREAD, 20));
+			/*  25 */
+			add(new Reward("2 Golden Apple").item(GOLDEN_APPLE, 2));
+			/*  26 */
+			add(new Reward("Diamond sword and shield").item(DIAMOND_SWORD).item(SHIELD));
+			/*  27 */
+			add(new Reward("5 of each Sapling").item(MaterialTag.SAPLINGS, 5));
+			/*  28 */
+			add(new Reward("32 Apples").item(APPLE, 32));
+			/*  29 */
+			add(new Reward("1 Saddle").item(SADDLE, 1));
 			/*  30 */ add(new Reward("$4,000")								.money(4000));
 			/*  31 */ add(new Reward("10 Cooked Chicken")					.item(COOKED_CHICKEN, 10));
 			/*  32 */ add(new Reward("10 Steak")							.item(COOKED_BEEF, 10));
@@ -355,48 +376,88 @@ public class DailyRewardsFeature {
 			/*  54 */ add(new Reward("3 Lapis Block")						.item(LAPIS_BLOCK, 3));
 			/*  55 */ add(new Reward("3 Gold Block")						.item(GOLD_BLOCK, 3));
 			/*  56 */ add(new Reward("15 Glowstone")						.item(GLOWSTONE, 15));
-			/*  57 */ add(new Reward("15 Obsidian")							.item(OBSIDIAN, 15));
-			/*  58 */ add(new Reward("15 Quartz Blocks")					.item(QUARTZ_BLOCK, 15));
-			/*  59 */ add(new Reward("3 Emerald Block")						.item(EMERALD_BLOCK, 3));
-			/*  60 */ add(new Reward("3 Diamond Block")						.item(DIAMOND_BLOCK, 3));
-			/*  61 */ add(new Reward("4 Coal Block")						.item(COAL_BLOCK, 4));
-			/*  62 */ add(new Reward("5 Redstone Block")					.item(REDSTONE_BLOCK, 5));
-			/*  63 */ add(new Reward("4 Iron Block")						.item(IRON_BLOCK, 4));
-			/*  64 */ add(new Reward("4 Lapis Block")						.item(LAPIS_BLOCK, 4));
-			/*  65 */ add(new Reward("4 Gold Block")						.item(GOLD_BLOCK, 4));
+			/*  57 */
+			add(new Reward("15 Obsidian").item(OBSIDIAN, 15));
+			/*  58 */
+			add(new Reward("15 Quartz Blocks").item(QUARTZ_BLOCK, 15));
+			/*  59 */
+			add(new Reward("3 Emerald Block").item(EMERALD_BLOCK, 3));
+			/*  60 */
+			add(new Reward("3 Diamond Block").item(DIAMOND_BLOCK, 3));
+			/*  61 */
+			add(new Reward("4 Coal Block").item(COAL_BLOCK, 4));
+			/*  62 */
+			add(new Reward("5 Redstone Block").item(REDSTONE_BLOCK, 5));
+			/*  63 */
+			add(new Reward("4 Iron Block").item(IRON_BLOCK, 4));
+			/*  64 */
+			add(new Reward("4 Lapis Block").item(LAPIS_BLOCK, 4));
+			/*  65 */
+			add(new Reward("4 Gold Block").item(GOLD_BLOCK, 4));
 			///*  66 */ add(new Reward("20 Shroomlight")						.item(SHROOMLIGHT, 20));
-			/*  66 */ add(new Reward("20 Shroomlight")						.item(GLOWSTONE, 20));
-			/*  67 */ add(new Reward("20 Obsidian")							.item(OBSIDIAN, 20));
-			/*  68 */ add(new Reward("20 Quartz Blocks")					.item(QUARTZ_BLOCK, 20));
-			/*  69 */ add(new Reward("4 Emerald Block")						.item(EMERALD_BLOCK, 4));
-			/*  70 */ add(new Reward("4 Diamond Block")						.item(DIAMOND_BLOCK, 4));
-			/*  71 */ add(new Reward("5 Coal Block")						.item(COAL_BLOCK, 5));
-			/*  72 */ add(new Reward("7 Redstone Block")					.item(REDSTONE_BLOCK, 7));
-			/*  73 */ add(new Reward("5 Iron Block")						.item(IRON_BLOCK, 5));
-			/*  74 */ add(new Reward("5 Lapis Block")						.item(LAPIS_BLOCK, 5));
-			/*  75 */ add(new Reward("5 Gold Block")						.item(GOLD_BLOCK, 5));
-			/*  76 */ add(new Reward("25 Glowstone")						.item(GLOWSTONE, 25));
-			/*  77 */ add(new Reward("25 Obsidian")							.item(OBSIDIAN, 25));
-			/*  78 */ add(new Reward("25 Quartz Blocks")					.item(QUARTZ_BLOCK, 25));
-			/*  79 */ add(new Reward("5 Emerald Block")						.item(EMERALD_BLOCK, 5));
-			/*  80 */ add(new Reward("5 Diamond Block")						.item(DIAMOND_BLOCK, 5));
-			/*  81 */ add(new Reward("7 Coal Block")						.item(COAL_BLOCK, 7));
-			/*  82 */ add(new Reward("10 Redstone Block")					.item(REDSTONE_BLOCK, 10));
-			/*  83 */ add(new Reward("7 Iron Block")						.item(IRON_BLOCK, 7));
-			/*  84 */ add(new Reward("7 Lapis Block")						.item(LAPIS_BLOCK, 7));
-			/*  85 */ add(new Reward("7 Gold Block")						.item(GOLD_BLOCK, 7));
+			/*  66 */
+			add(new Reward("20 Glowstone").item(GLOWSTONE, 20));
+			/*  67 */
+			add(new Reward("20 Obsidian").item(OBSIDIAN, 20));
+			/*  68 */
+			add(new Reward("20 Quartz Blocks").item(QUARTZ_BLOCK, 20));
+			/*  69 */
+			add(new Reward("4 Emerald Block").item(EMERALD_BLOCK, 4));
+			/*  70 */
+			add(new Reward("4 Diamond Block").item(DIAMOND_BLOCK, 4));
+			/*  71 */
+			add(new Reward("5 Coal Block").item(COAL_BLOCK, 5));
+			/*  72 */
+			add(new Reward("7 Redstone Block").item(REDSTONE_BLOCK, 7));
+			/*  73 */
+			add(new Reward("5 Iron Block").item(IRON_BLOCK, 5));
+			/*  74 */
+			add(new Reward("5 Lapis Block").item(LAPIS_BLOCK, 5));
+			/*  75 */
+			add(new Reward("5 Gold Block").item(GOLD_BLOCK, 5));
+			/*  76 */
+			add(new Reward("25 Glowstone").item(GLOWSTONE, 25));
+			/*  77 */
+			add(new Reward("25 Obsidian").item(OBSIDIAN, 25));
+			/*  78 */
+			add(new Reward("25 Quartz Blocks").item(QUARTZ_BLOCK, 25));
+			/*  79 */
+			add(new Reward("5 Emerald Block").item(EMERALD_BLOCK, 5));
+			/*  80 */
+			add(new Reward("5 Diamond Block").item(DIAMOND_BLOCK, 5));
+			/*  81 */
+			add(new Reward("7 Coal Block").item(COAL_BLOCK, 7));
+			/*  82 */
+			add(new Reward("10 Redstone Block").item(REDSTONE_BLOCK, 10));
+			/*  83 */
+			add(new Reward("7 Iron Block").item(IRON_BLOCK, 7));
+			/*  84 */
+			add(new Reward("7 Lapis Block").item(LAPIS_BLOCK, 7));
+			/*  85 */
+			add(new Reward("7 Gold Block").item(GOLD_BLOCK, 7));
 			///*  86 */ add(new Reward("35 Shroomlight")						.item(SHROOMLIGHT, 35));
-			/*  86 */ add(new Reward("35 Shroomlight")						.item(GLOWSTONE, 35));
-			/*  87 */ add(new Reward("35 Obsidian")							.item(OBSIDIAN, 35));
-			/*  88 */ add(new Reward("35 Quartz Blocks")					.item(QUARTZ_BLOCK, 35));
-			/*  89 */ add(new Reward("7 Emerald Block")						.item(EMERALD_BLOCK, 7));
-			/*  90 */ add(new Reward("7 Diamond Block")						.item(DIAMOND_BLOCK, 7));
-			/*  91 */ add(new Reward("10 Coal Block")						.item(COAL_BLOCK, 10));
-			/*  92 */ add(new Reward("10 Restone Blocks")					.item(REDSTONE_BLOCK, 10));
-			/*  93 */ add(new Reward("10 Iron Block")						.item(IRON_BLOCK, 10));
-			/*  94 */ add(new Reward("10 Lapis Block")						.item(LAPIS_BLOCK, 10));
-			/*  95 */ add(new Reward("10 Gold Blocks")						.item(GOLD_BLOCK, 10));
-			/*  96 */ add(new Reward("100 Glowstone")						.item(GLOWSTONE, 100));
+			/*  86 */
+			add(new Reward("35 Glowstone").item(GLOWSTONE, 35));
+			/*  87 */
+			add(new Reward("35 Obsidian").item(OBSIDIAN, 35));
+			/*  88 */
+			add(new Reward("35 Quartz Blocks").item(QUARTZ_BLOCK, 35));
+			/*  89 */
+			add(new Reward("7 Emerald Block").item(EMERALD_BLOCK, 7));
+			/*  90 */
+			add(new Reward("7 Diamond Block").item(DIAMOND_BLOCK, 7));
+			/*  91 */
+			add(new Reward("10 Coal Block").item(COAL_BLOCK, 10));
+			/*  92 */
+			add(new Reward("10 Restone Blocks").item(REDSTONE_BLOCK, 10));
+			/*  93 */
+			add(new Reward("10 Iron Block").item(IRON_BLOCK, 10));
+			/*  94 */
+			add(new Reward("10 Lapis Block").item(LAPIS_BLOCK, 10));
+			/*  95 */
+			add(new Reward("10 Gold Blocks").item(GOLD_BLOCK, 10));
+			/*  96 */
+			add(new Reward("100 Glowstone").item(GLOWSTONE, 100));
 			/*  97 */ add(new Reward("100 Obsidian")						.item(OBSIDIAN, 100));
 			/*  98 */ add(new Reward("100 Quartz Blocks")					.item(QUARTZ_BLOCK, 100));
 			/*  99 */ add(new Reward("10 Emerald Blocks")					.item(EMERALD_BLOCK, 10));
@@ -453,61 +514,112 @@ public class DailyRewardsFeature {
 			/*  47 */ add(new Reward("32 Sea lanterns")						.item(SEA_LANTERN, 32));
 			/*  48 */ add(new Reward("12 note blocks")						.item(NOTE_BLOCK, 12));
 			/*  49 */ add(new Reward("50 Enchanting levels")				.levels(50));
-			/*  50 */ add(new Reward("32 end rods")							.item(END_ROD, 32));
-			/*  51 */ add(new Reward("15 Workbenches")						.item(CRAFTING_TABLE, 15));
-			/*  52 */ add(new Reward("15 Chests")							.item(CHEST, 15));
-			/*  53 */ add(new Reward("15 Furnaces")							.item(FURNACE, 15));
-			/*  54 */ add(new Reward("15 Hoppers")							.item(HOPPER, 15));
-			/*  55 */ add(new Reward("15 Beds")								.item(WHITE_BED, 15));
-			/*  56 */ add(new Reward("32 Bookshelves")						.item(BOOKSHELF, 32));
-			/*  57 */ add(new Reward("32 Coarse Dirt")						.item(COARSE_DIRT, 32));
-			/*  58 */ add(new Reward("75 enchanting levels")				.levels(75));
-			/*  59 */ add(new Reward("32 Brewing stands")					.item(BREWING_STAND, 32));
-			/*  60 */ add(new Reward("2 parrot spawn eggs")					.item(PARROT_SPAWN_EGG, 2));
-			/*  61 */ add(new Reward("20 Bookshelves")						.item(BOOKSHELF, 20));
-			/*  62 */ add(new Reward("20 Chests")							.item(CHEST, 20));
+			/*  50 */
+			add(new Reward("32 end rods").item(END_ROD, 32));
+			/*  51 */
+			add(new Reward("15 Workbenches").item(CRAFTING_TABLE, 15));
+			/*  52 */
+			add(new Reward("15 Chests").item(CHEST, 15));
+			/*  53 */
+			add(new Reward("15 Furnaces").item(FURNACE, 15));
+			/*  54 */
+			add(new Reward("15 Hoppers").item(HOPPER, 15));
+			/*  55 */
+			add(new Reward("15 Beds").item(WHITE_BED, 15));
+			/*  56 */
+			add(new Reward("32 Bookshelves").item(BOOKSHELF, 32));
+			/*  57 */
+			add(new Reward("32 Coarse Dirt").item(COARSE_DIRT, 32));
+			/*  58 */
+			add(new Reward("75 enchanting levels").levels(75));
+			/*  59 */
+			add(new Reward("32 Brewing stands").item(BREWING_STAND, 32));
+			/*  60 */
+			add(new Reward("2 Parrot Spawn Eggs").item(PARROT_SPAWN_EGG, 2));
+			/*  61 */
+			add(new Reward("20 Bookshelves").item(BOOKSHELF, 20));
+			/*  62 */
+			add(new Reward("20 Chests").item(CHEST, 20));
 			///*  63 */ add(new Reward("20 soul lanterns")					.item(SOUL_LANTERN, 20));
-			/*  63 */ add(new Reward("20 soul lanterns")					.item(LANTERN, 20));
-			/*  64 */ add(new Reward("20 Hoppers")							.item(HOPPER, 20));
-			/*  65 */ add(new Reward("20 Noteblocks")						.item(NOTE_BLOCK, 20));
-			/*  66 */ add(new Reward("4 ender chests")						.item(ENDER_CHEST, 4));
-			/*  67 */ add(new Reward("64 Lily Pads")						.item(LILY_PAD, 64));
-			/*  68 */ add(new Reward("64 Magma blocks")						.item(MAGMA_BLOCK, 64));
-			/*  69 */ add(new Reward("3 anvils")							.item(ANVIL, 3));
-			/*  70 */ add(new Reward("64 Slime blocks")						.item(SLIME_BLOCK, 64));
-			/*  71 */ add(new Reward("25 Bookshelves")						.item(BOOKSHELF, 25));
-			/*  72 */ add(new Reward("25 Chests")							.item(CHEST, 25));
-			/*  73 */ add(new Reward("25 vote points")						.votePoints(25));
-			/*  74 */ add(new Reward("25 Hoppers")							.item(HOPPER, 25));
-			/*  75 */ add(new Reward("25 Noteblocks")						.item(NOTE_BLOCK, 25));
-			/*  76 */ add(new Reward("64 Vines")							.item(VINE, 64));
-			/*  77 */ add(new Reward("64 Paintings")						.item(PAINTING, 64));
-			/*  78 */ add(new Reward("64 cocoa beans")						.item(COCOA_BEANS, 64));
-			/*  79 */ add(new Reward("64 Mycelium")							.item(MYCELIUM, 64));
-			/*  80 */ add(new Reward("5 Sponges")							.item(SPONGE, 5));
-			/*  81 */ add(new Reward("35 Bookshelves")						.item(BOOKSHELF, 35));
-			/*  82 */ add(new Reward("35 Chests")							.item(CHEST, 35));
+			/*  63 */
+			add(new Reward("20 Lanterns").item(LANTERN, 20));
+			/*  64 */
+			add(new Reward("20 Hoppers").item(HOPPER, 20));
+			/*  65 */
+			add(new Reward("20 Noteblocks").item(NOTE_BLOCK, 20));
+			/*  66 */
+			add(new Reward("4 Ender Chests").item(ENDER_CHEST, 4));
+			/*  67 */
+			add(new Reward("64 Lily Pads").item(LILY_PAD, 64));
+			/*  68 */
+			add(new Reward("64 Magma blocks").item(MAGMA_BLOCK, 64));
+			/*  69 */
+			add(new Reward("3 Anvils").item(ANVIL, 3));
+			/*  70 */
+			add(new Reward("64 Slime blocks").item(SLIME_BLOCK, 64));
+			/*  71 */
+			add(new Reward("25 Bookshelves").item(BOOKSHELF, 25));
+			/*  72 */
+			add(new Reward("25 Chests").item(CHEST, 25));
+			/*  73 */
+			add(new Reward("25 vote points").votePoints(25));
+			/*  74 */
+			add(new Reward("25 Hoppers").item(HOPPER, 25));
+			/*  75 */
+			add(new Reward("25 Noteblocks").item(NOTE_BLOCK, 25));
+			/*  76 */
+			add(new Reward("64 Vines").item(VINE, 64));
+			/*  77 */
+			add(new Reward("64 Paintings").item(PAINTING, 64));
+			/*  78 */
+			add(new Reward("64 Cocoa Beans").item(COCOA_BEANS, 64));
+			/*  79 */
+			add(new Reward("64 Mycelium").item(MYCELIUM, 64));
+			/*  80 */
+			add(new Reward("5 Sponges").item(SPONGE, 5));
+			/*  81 */
+			add(new Reward("35 Bookshelves").item(BOOKSHELF, 35));
+			/*  82 */
+			add(new Reward("35 Chests").item(CHEST, 35));
 			///*  83 */ add(new Reward("2 Netherite Ingots")					.item(NETHERITE_INGOT, 2));
-			/*  83 */ add(new Reward("2 Netherite Ingots")					.item(DIAMOND, 2));
-			/*  84 */ add(new Reward("35 Hoppers")							.item(HOPPER, 35));
-			/*  85 */ add(new Reward("35 Noteblocks")						.item(NOTE_BLOCK, 35));
-			/*  86 */ add(new Reward("12 white banners")					.item(WHITE_BANNER, 12));
-			/*  87 */ add(new Reward("100 enchanting levels")				.levels(100));
-			/*  88 */ add(new Reward("2 ocelot spawn eggs")					.item(OCELOT_SPAWN_EGG, 2));
-			/*  89 */ add(new Reward("16 Dragon's Breath")					.item(DRAGON_BREATH, 16));
-			/*  90 */ add(new Reward("<player head>")						.item(PLAYER_HEAD, 1));
-			/*  91 */ add(new Reward("50 Bookshelves")						.item(BOOKSHELF, 50));
-			/*  92 */ add(new Reward("50 Chests")							.item(CHEST, 50));
+			/*  83 */
+			add(new Reward("2 Netherite Ingots").item(DIAMOND, 2));
+			/*  84 */
+			add(new Reward("35 Hoppers").item(HOPPER, 35));
+			/*  85 */
+			add(new Reward("35 Noteblocks").item(NOTE_BLOCK, 35));
+			/*  86 */
+			add(new Reward("12 White Banners").item(WHITE_BANNER, 12));
+			/*  87 */
+			add(new Reward("100 Enchanting Levels").levels(100));
+			/*  88 */
+			add(new Reward("2 Ocelot Spawn Eggs").item(OCELOT_SPAWN_EGG, 2));
+			/*  89 */
+			add(new Reward("16 Dragon's Breath").item(DRAGON_BREATH, 16));
+			/*  90 */
+			add(new Reward("Custom Player Head").item(PLAYER_HEAD, 1));
+			/*  91 */
+			add(new Reward("50 Bookshelves").item(BOOKSHELF, 50));
+			/*  92 */
+			add(new Reward("50 Chests").item(CHEST, 50));
 			///*  93 */ add(new Reward("5 Netherite Ingots")					.item(NETHERITE_INGOT, 5));
-			/*  93 */ add(new Reward("5 Netherite Ingots")					.item(DIAMOND, 5));
-			/*  94 */ add(new Reward("Maxed Bow")							.item(new ItemBuilder(BOW).enchantMax(ARROW_DAMAGE).enchantMax(ARROW_KNOCKBACK).enchantMax(ARROW_INFINITE).enchant(MENDING)));
+			/*  93 */
+			add(new Reward("5 Diamonds").item(DIAMOND, 5));
+			/*  94 */
+			add(new Reward("Maxed Bow").item(new ItemBuilder(BOW).enchantMax(ARROW_DAMAGE).enchantMax(ARROW_KNOCKBACK).enchantMax(ARROW_INFINITE).enchant(MENDING)));
 			///*  95 */ add(new Reward("5 crying obsidian")					.item(CRYING_OBSIDIAN, 5));
-			/*  95 */ add(new Reward("5 crying obsidian")					.item(OBSIDIAN, 5));
-			/*  96 */ add(new Reward("16 of each color wool")				.item(MaterialTag.WOOL, 16));
-			/*  97 */ add(new Reward("150 Enchanting Levels")				.levels(150));
-			/*  98 */ add(new Reward("64 podzol")							.item(PODZOL, 64));
-			/*  99 */ add(new Reward("1 Shulker Box")						.item(SHULKER_BOX, 1));
-			/* 100 */ add(new Reward("64 sea lanterns")						.item(SEA_LANTERN, 64));
+			/*  95 */
+			add(new Reward("5 Obsidian").item(OBSIDIAN, 5));
+			/*  96 */
+			add(new Reward("16 of each color wool").item(MaterialTag.WOOL, 16));
+			/*  97 */
+			add(new Reward("150 Enchanting Levels").levels(150));
+			/*  98 */
+			add(new Reward("64 Podzol").item(PODZOL, 64));
+			/*  99 */
+			add(new Reward("1 Shulker Box").item(CYAN_SHULKER_BOX, 1));
+			/* 100 */
+			add(new Reward("64 Sea Lanterns").item(SEA_LANTERN, 64));
 		}};
 
 	}

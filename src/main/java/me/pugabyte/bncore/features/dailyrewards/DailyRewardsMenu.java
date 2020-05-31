@@ -13,14 +13,13 @@ import me.pugabyte.bncore.models.dailyreward.Reward;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-
-import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private DailyRewardService service = new DailyRewardService();
@@ -76,7 +75,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 					ItemStack item = nameItem(claimed.clone(), "&eDay " + day, "&3Claimed" + "", day);
 					contents.set(new SlotPos(1, column), ClickableItem.empty(addGlowing(item)));
 				} else {
-					ItemStack item = nameItem(unclaimed.clone(), "&eDay " + day, "&6&lUnclaimed" + "Click to select reward.", day);
+					ItemStack item = nameItem(unclaimed.clone(), "&eDay " + day, "&6&lUnclaimed||" + "&3Click to select reward.", day);
 					final int currentDay = day;
 					contents.set(new SlotPos(1, column), ClickableItem.from(item, e -> {
 						selectItem(contents, currentDay, initialDay);
@@ -96,36 +95,41 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private void selectItem(InventoryContents contents, int currentDay, int initialDay) {
 
 		clearScreen(contents);
-		contents.set(new SlotPos(0,0), ClickableItem.from(backItem(), e -> scroll(contents, 0, initialDay)));
+		contents.set(new SlotPos(0, 0), ClickableItem.from(backItem(), e -> scroll(contents, 0, initialDay)));
 
 		Reward[] reward = new Reward[3];
 		reward[0] = DailyRewardsFeature.getReward1(currentDay);
 		reward[1] = DailyRewardsFeature.getReward2(currentDay);
 		reward[2] = DailyRewardsFeature.getReward3(currentDay);
 
-		for(int i = 0; i < i; i++){
+		for (int i = 0; i < 3; i++) {
 
 			Reward currentReward = reward[i];
 			int option = i;
 			String rewardDescription = "&e" + currentReward.getDescription();
-			ItemStack item = nameItem(currentReward != null ? currentReward.getItems().get(0) : addGlowing(new ItemStack(Material.PAPER)), rewardDescription, "&3Click to claim", currentDay);
+			ItemStack item = nameItem(currentReward.getItems() != null ? currentReward.getItems().get(0).clone() : addGlowing(new ItemStack(Material.PAPER)), StringUtils.camelCase(rewardDescription), "&3Click to claim");
 
-			contents.set(new SlotPos(0, (2+i*2)), ClickableItem.from(item, e-> {
-
-				applyReward(currentDay, option);
-
+			contents.set(1, (2 + i * 2), ClickableItem.from(item, e -> {
+				applyReward(currentDay, option, contents, initialDay);
 			}));
 
 		}
 
 
 	}
+
 	@Override
-	public void update(Player player, InventoryContents inventoryContents) {}
+	public void update(Player player, InventoryContents inventoryContents) {
+	}
 
 
+	public void saveAndReturn(InventoryContents contents, int day, int initialDay) {
+		dailyReward.claim(day);
+		service.save(dailyReward);
+		scroll(contents, 0, initialDay);
+	}
 
-	private void applyReward(int day, int option) {
+	private void applyReward(int day, int option, InventoryContents contents, int initialDay) {
 		Player player = (Player) dailyReward.getPlayer();
 
 		Reward reward = DailyRewardsFeature.getReward(day, option);
@@ -135,45 +139,49 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		Integer votePoints = reward.getVotePoints();
 		String command = reward.getCommand();
 
-		if (items != null){
-			for (ItemStack item:items) {
-				if(Reward.RequiredSubmenu.COLOR.contains(item.getType())){
+		if (dailyReward.hasClaimed(day)) return;
+
+		if (items != null) {
+			for (ItemStack item : items) {
+				if (Reward.RequiredSubmenu.COLOR.contains(item.getType())) {
 					MenuUtils.colorSelectMenu(player, item.getType(), itemClickData -> {
-						Utils.giveItem(player, new ItemStack(itemClickData.getItem().getType()));
-						dailyReward.claim(day);
-						service.save(dailyReward);
+						Utils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), item.getAmount()));
+						saveAndReturn(contents, day, initialDay);
+						player.closeInventory();
 					});
-				} else if (Reward.RequiredSubmenu.NAME.contains(item.getType())){
-					BNCore.getSignMenuFactory().lines(" ", "^^^^^^^^^", "Please enter a", "Player name").response(lines -> {
-						Utils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).build());
-						dailyReward.claim(day);
-						service.save(dailyReward);
-					});
+				} else if (Reward.RequiredSubmenu.NAME.contains(item.getType())) {
+					BNCore.getSignMenuFactory().lines("", "^^^^^^^^", "Please enter a", "Player name").response(lines -> {
+						Utils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
+						saveAndReturn(contents, day, initialDay);
+					}).open(player);
 				} else {
 					Utils.giveItem(player, item);
-					dailyReward.claim(day);
-					service.save(dailyReward);
+					saveAndReturn(contents, day, initialDay);
 				}
 			}
 
 		} else {
 
-			if (money != null)
+			if (money != null) {
 				BNCore.getEcon().depositPlayer(player, money);
+				player.sendMessage(StringUtils.getPrefix("DailyRewards") + StringUtils.colorize("&e" + money + " &3has been added to your balance"));
+			}
 
-			if (levels != null)
-				Utils.runConsoleCommand("exp give " + player.getName() + " " + levels);
+			if (levels != null) {
+				player.giveExpLevels(levels);
+				player.sendMessage(StringUtils.getPrefix("DailyRewards") + StringUtils.colorize("You have been given &e" + levels + " XP Levels"));
+			}
 
 			if (votePoints != null) {
 				Voter voter = new VoteService().get(player);
 				voter.addPoints(votePoints);
+				player.sendMessage(StringUtils.getPrefix("DailyRewards") + StringUtils.colorize("&e" + votePoints + " &3vote points has been added to your balance"));
 			}
 
 			if (!Strings.isNullOrEmpty(command))
 				Utils.runConsoleCommand(command.replaceAll("%player%", player.getName()));
 
-			dailyReward.claim(day);
-			service.save(dailyReward);
+			saveAndReturn(contents, day, initialDay);
 
 		}
 
