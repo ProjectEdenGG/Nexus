@@ -82,18 +82,18 @@ public class Reward {
 	}
 
 	public enum RequiredSubmenu {
-		NONE(), COLOR(Material.WHITE_BED, Material.CYAN_SHULKER_BOX), NAME(Material.PLAYER_HEAD);
+		NONE,
+		COLOR(Material.WHITE_BED, Material.CYAN_SHULKER_BOX),
+		NAME(Material.PLAYER_HEAD);
 
-		List materials;
+		private final List<Material> materials = new ArrayList<>();
 
 		RequiredSubmenu(Material... materials) {
-			this.materials = Arrays.asList(materials);
+			this.materials.addAll(Arrays.asList(materials));
 		}
 
 		public boolean contains(Material material) {
-			if (materials != null && materials.contains(material))
-				return true;
-			return false;
+			return materials.contains(material);
 		}
 
 	}
