@@ -11,7 +11,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
-import me.pugabyte.bncore.models.hours.HoursService.HoursType;
+import me.pugabyte.bncore.models.hours.HoursService.PageResult;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -40,25 +40,25 @@ public class Leaderboards implements Listener {
 		PLAYTIME_TOTAL(2709, 2708, 2707) {
 			@Override
 			Map<UUID, String> getTop() {
-				return new HoursService().getPage(HoursType.TOTAL, 1).subList(0, 3).stream()
+				return new HoursService().getPage(1).subList(0, 3).stream()
 						.collect(Collectors.toMap(
-								hours -> UUID.fromString(hours.getUuid()),
+								PageResult::getUuid,
 								hours -> StringUtils.timespanFormat(hours.getTotal()),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}
 		},
-		PLAYTIME_MONTHLY(2712, 2711, 2710) {
-			@Override
-			Map<UUID, String> getTop() {
-				return new HoursService().getPage(HoursType.MONTHLY, 1).subList(0, 3).stream()
-						.collect(Collectors.toMap(
-								hours -> UUID.fromString(hours.getUuid()),
-								hours -> StringUtils.timespanFormat(hours.getMonthly()),
-								(h1, h2) -> h1, LinkedHashMap::new
-						));
-			}
-		},
+//		PLAYTIME_MONTHLY(2712, 2711, 2710) {
+//			@Override
+//			Map<UUID, String> getTop() {
+//				return new HoursService().getPage(1).subList(0, 3).stream()
+//						.collect(Collectors.toMap(
+//								hours -> UUID.fromString(hours.getUuid()),
+//								hours -> StringUtils.timespanFormat(hours.getMonthly()),
+//								(h1, h2) -> h1, LinkedHashMap::new
+//						));
+//			}
+//		},
 		VOTES(2700, 2699, 2698) {
 			@Override
 			Map<UUID, String> getTop() {
@@ -77,10 +77,10 @@ public class Leaderboards implements Listener {
 						.collect(Collectors.toMap(Hours::getUuid, hours -> BNCore.getEcon().getBalance(Utils.getPlayer(hours.getUuid()))))
 						.entrySet()
 						.stream()
-						.sorted(Entry.<String, Double>comparingByValue().reversed())
+						.sorted(Entry.<UUID, Double>comparingByValue().reversed())
 						.limit(3)
 						.collect(Collectors.toMap(
-								entry -> UUID.fromString(entry.getKey()),
+								Entry::getKey,
 								entry -> "$" + ShopUtils.pretty(entry.getValue()),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
