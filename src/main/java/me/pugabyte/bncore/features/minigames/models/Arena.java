@@ -133,11 +133,11 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public WorldGuardUtils getWGUtils() {
-		return new WorldGuardUtils(lobby.getLocation());
+		return new WorldGuardUtils(getWorld());
 	}
 
 	public WorldEditUtils getWEUtils() {
-		return new WorldEditUtils(lobby.getLocation());
+		return new WorldEditUtils(getWorld());
 	}
 
 	public String getRegionBaseName() {

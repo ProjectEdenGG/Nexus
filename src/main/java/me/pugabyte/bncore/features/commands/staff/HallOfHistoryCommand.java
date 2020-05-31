@@ -4,6 +4,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static me.pugabyte.bncore.utils.StringUtils.dateFormat;
 import static me.pugabyte.bncore.utils.StringUtils.shortDateFormat;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
@@ -45,6 +47,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		send(PREFIX + "Successfully cleared cache");
 	}
 
+	@Async
 	@Path("view <player>")
 	void view(OfflinePlayer target) {
 		line(4);
@@ -81,6 +84,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		Tasks.wait(5, () -> runCommand("npc create " + player));
 	}
 
+	@Async
 	@Permission("hoh.edit")
 	@Path("addRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
 	void addRank(OfflinePlayer target, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
@@ -95,6 +99,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		send(PREFIX + "Successfully saved rank data for &e" + target.getName());
 	}
 
+	@Async
 	@Permission("hoh.edit")
 	@Path("removeRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
 	void removeRankConfirm(OfflinePlayer player, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
@@ -121,9 +126,9 @@ public class HallOfHistoryCommand extends CustomCommand {
 	private String getRankCommandArgs(RankHistory rankHistory) {
 		String command = (rankHistory.isCurrent() ? "Current" : "Former") + " " + rankHistory.getRank() + " ";
 		if (rankHistory.getPromotionDate() != null)
-			command += shortDateFormat(rankHistory.getPromotionDate()) + " ";
+			command += dateFormat(rankHistory.getPromotionDate()) + " ";
 		if (rankHistory.getResignationDate() != null)
-			command += shortDateFormat(rankHistory.getResignationDate());
+			command += dateFormat(rankHistory.getResignationDate());
 		return command.trim();
 	}
 

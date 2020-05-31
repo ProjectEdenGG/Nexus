@@ -43,6 +43,10 @@ public class HoursService extends MySQLService {
 		return database.where("total > ?", Time.DAY.x(10) / 20).results(Hours.class);
 	}
 
+	public List<Hours> getAll() {
+		return database.results(Hours.class);
+	}
+
 	public int cleanup() {
 		clearCache();
 		return database

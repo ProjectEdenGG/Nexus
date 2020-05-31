@@ -1,16 +1,18 @@
 package me.pugabyte.bncore.framework.persistence.serializer.mongodb;
 
 import com.mongodb.BasicDBObject;
+import dev.morphia.converters.SimpleValueConverter;
 import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
+import dev.morphia.mapping.Mapper;
 import org.bukkit.Color;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ColorConverter extends TypeConverter {
+public class ColorConverter extends TypeConverter implements SimpleValueConverter {
 
-	public ColorConverter() {
+	public ColorConverter(Mapper mapper) {
 		super(Color.class);
 	}
 

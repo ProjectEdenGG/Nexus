@@ -66,4 +66,5 @@ public abstract class MySQLService {
 			return input;
 		throw new InvalidInputException("Unsafe argument");
 	}
+
 }

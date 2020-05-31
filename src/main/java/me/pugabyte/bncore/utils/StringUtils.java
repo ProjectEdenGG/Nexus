@@ -325,7 +325,11 @@ public class StringUtils {
 	}
 
 	public static String shortDateFormat(LocalDate date) {
-		return date.format(DateTimeFormatter.ofPattern("M/d/YY"));
+		return date.format(DateTimeFormatter.ofPattern("M/d/yy"));
+	}
+
+	public static String dateFormat(LocalDate date) {
+		return date.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
 	}
 
 	public static String longTimeFormat(LocalDateTime time) {

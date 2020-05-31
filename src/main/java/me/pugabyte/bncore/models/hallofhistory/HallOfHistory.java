@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocalDateConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.models.nerd.Rank;
@@ -32,6 +33,7 @@ public class HallOfHistory extends PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Converters(LocalDateConverter.class)
 	public static class RankHistory {
 		@NonNull
 		private Rank rank;
