@@ -40,9 +40,9 @@ public class MysteryChestCommand extends CustomCommand {
 	@Path("give <player> [amount]")
 	@Permission("group.admin")
 	void give(OfflinePlayer player, @Arg("1") int amount) {
-		new MysteryChest(player, amount);
 		Setting setting = service.get(player, "mysteryChest");
-		send(PREFIX + "&e" + player.getName() + " &3now has &e" + setting.getValue() + "&3 Mystery Chests");
+		new MysteryChest(player, amount);
+		send(PREFIX + "&e" + player.getName() + " &3now has &e" + (setting.getValue() + amount) + "&3 Mystery Chests");
 	}
 
 	@Path("test")
