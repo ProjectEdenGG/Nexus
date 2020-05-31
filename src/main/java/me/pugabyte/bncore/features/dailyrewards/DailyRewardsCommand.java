@@ -21,11 +21,6 @@ import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
-
-/*
-	todo: Test dailyrewards potions and submenus
- */
-
 @Aliases({"dr", "dailyreward"})
 @Permission("daily.rewards")
 public class DailyRewardsCommand extends CustomCommand {

@@ -24,6 +24,7 @@ public class Reward {
 	}
 
 	public Reward item(ItemStack... items) {
+		if (this.items == null) this.items = new ArrayList();
 		this.items.addAll(Arrays.asList(items));
 		return this;
 	}
@@ -33,6 +34,7 @@ public class Reward {
 	}
 
 	public Reward item(Material material, int amount) {
+		if (items == null) items = new ArrayList<>();
 		this.items.add(new ItemStack(material, amount));
 		return this;
 	}
@@ -42,16 +44,19 @@ public class Reward {
 	}
 
 	public Reward item(MaterialTag materialTag, int amount) {
+		if (items == null) items = new ArrayList<>();
 		materialTag.getValues().forEach(material -> this.items.add(new ItemStack(material, amount)));
 		return this;
 	}
 
 	public Reward item(ItemBuilder builder) {
+		if (this.items == null) this.items = new ArrayList();
 		this.items.add(builder.build());
 		return this;
 	}
 
-	public Reward item(ItemStack item){
+	public Reward item(ItemStack item) {
+		if (this.items == null) this.items = new ArrayList();
 		this.items.add(item);
 		return this;
 	}
@@ -77,16 +82,16 @@ public class Reward {
 	}
 
 	public enum RequiredSubmenu {
-		NONE(), COLOR(Material.WHITE_BED, Material.WHITE_SHULKER_BOX), NAME(Material.PLAYER_HEAD);
+		NONE(), COLOR(Material.WHITE_BED, Material.CYAN_SHULKER_BOX), NAME(Material.PLAYER_HEAD);
 
 		List materials;
 
-		RequiredSubmenu(Material... materials){
+		RequiredSubmenu(Material... materials) {
 			this.materials = Arrays.asList(materials);
 		}
 
-		public boolean contains(Material material){
-			if(materials!=null&&materials.contains(material))
+		public boolean contains(Material material) {
+			if (materials != null && materials.contains(material))
 				return true;
 			return false;
 		}
