@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands.ranks;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerd.Rank;
@@ -23,6 +24,7 @@ public class ArchitectCommand extends CustomCommand {
 		RanksCommand.ranksReturn(player());
 	}
 
+	@Async
 	@Path("list")
 	void list() {
 		line();
