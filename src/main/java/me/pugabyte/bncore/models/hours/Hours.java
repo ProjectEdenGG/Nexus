@@ -1,86 +1,87 @@
 package me.pugabyte.bncore.models.hours;
 
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.OfflinePlayer;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocalDateConverter;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
+import me.pugabyte.bncore.models.PlayerOwnedObject;
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 @Data
+@Entity("hours")
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class Hours {
+@Converters({UUIDConverter.class, LocalDateConverter.class})
+public class Hours extends PlayerOwnedObject {
+	@Id
 	@NonNull
-	private String uuid;
-	private int total = 0;
-	private int monthly = 0;
-	private int weekly = 0;
-	private int daily = 0;
-	private int lastMonth = 0;
-	private int lastWeek = 0;
-	private int yesterday = 0;
-
-	public OfflinePlayer getPlayer() {
-		return Utils.getPlayer(uuid);
-	}
+	private UUID uuid;
+	private Map<LocalDate, Integer> times = new HashMap<>();
 
 	public void increment() {
 		increment(1);
 	}
 
 	public void increment(int amount) {
-		total += amount;
-		daily += amount;
-		weekly += amount;
-		monthly += amount;
+		times.put(LocalDate.now(), times.getOrDefault(LocalDate.now(), 0) + amount);
 	}
 
-	public int get(HoursService.HoursType type) {
-		switch (type) {
-			case TOTAL:
-				return getTotal();
-			case MONTHLY:
-				return getMonthly();
-			case WEEKLY:
-				return getWeekly();
-			case DAILY:
-				return getDaily();
-			case LAST_MONTH:
-				return getLastMonth();
-			case LAST_WEEK:
-				return getLastWeek();
-			case YESTERDAY:
-				return getYesterday();
-		}
-
-		return 0;
+	public int getTotal() {
+		return times.values().stream().reduce(0, Integer::sum);
 	}
 
-	public void set(HoursService.HoursType type, int amount) {
-		switch (type) {
-			case TOTAL:
-				total = amount;
-				break;
-			case MONTHLY:
-				monthly = amount;
-				break;
-			case WEEKLY:
-				weekly = amount;
-				break;
-			case DAILY:
-				daily = amount;
-				break;
-			case LAST_MONTH:
-				lastMonth = amount;
-				break;
-			case LAST_WEEK:
-				lastWeek = amount;
-				break;
-			case YESTERDAY:
-				yesterday = amount;
-				break;
-		}
+	public int getYearly() {
+		return getYearly(Year.now());
+	}
+
+	public int getYearly(Year year) {
+		return times.entrySet().stream()
+				.filter(entry -> entry.getKey().getYear() == year.getValue())
+				.mapToInt(Entry::getValue)
+				.sum();
+	}
+
+	public int getMonthly() {
+		LocalDate now = LocalDate.now();
+		return getMonthly(Year.now(), now.getMonth());
+	}
+
+	public int getMonthly(Year year, Month month) {
+		return times.entrySet().stream()
+				.filter(entry -> entry.getKey().getYear() == year.getValue() && entry.getKey().getMonth() == month)
+				.mapToInt(Entry::getValue)
+				.sum();
+	}
+
+//	public int getWeekly(Year year, Month month) {
+//		return times.entrySet().stream()
+//				.filter(entry -> entry.getKey().getYear() == year.getValue() && entry.getKey().getMonth() == month)
+//				.mapToInt(Entry::getValue)
+//				.sum();
+//	}
+
+	public int getDaily() {
+		return getDaily(LocalDate.now());
+	}
+
+	public int getDaily(@NotNull LocalDate date) {
+		return times.entrySet().stream()
+				.filter(entry -> entry.getKey().equals(date))
+				.mapToInt(Entry::getValue)
+				.sum();
 	}
 
 }

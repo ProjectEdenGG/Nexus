@@ -1,20 +1,20 @@
 package me.pugabyte.bncore.features.hours;
 
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
-import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 
 import java.text.DecimalFormat;
-import java.util.List;
 
+@Disabled // TODO
 public class StarTrekMoviesCommand extends CustomCommand {
-	private HoursService service = new HoursService();
-	private DecimalFormat nf = new DecimalFormat("#.00");
+	private final HoursService service = new HoursService();
+	private final DecimalFormat nf = new DecimalFormat("#.00");
 	private final double divisor = 60 * 116.53;
 
 	public StarTrekMoviesCommand(CommandEvent event) {
@@ -30,10 +30,10 @@ public class StarTrekMoviesCommand extends CustomCommand {
 		send(PREFIX + (isSelf ? "Your" : "&e" + player.getName() + "&3's") + " playtime in &eStar Trek Movies &3(116.53 minutes)");
 		send("&3Total: &e" + nf.format(hours.getTotal() / divisor) + " movies");
 		send("&7- &3Today: &e" + nf.format(hours.getDaily() / divisor) + " movies");
-		send("&7- &3This week: &e" + nf.format(hours.getWeekly() / divisor) + " movies");
 		send("&7- &3This month: &e" + nf.format(hours.getMonthly() / divisor) + " movies");
 	}
 
+	/*
 	@Path("top")
 	void top() {
 		Tasks.async(() -> {
@@ -59,6 +59,6 @@ public class StarTrekMoviesCommand extends CustomCommand {
 			}
 		});
 	}
-
+	 */
 
 }

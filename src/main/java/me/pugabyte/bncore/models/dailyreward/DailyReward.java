@@ -1,26 +1,15 @@
 package me.pugabyte.bncore.models.dailyreward;
 
 import com.dieselpoint.norm.serialize.DbSerializer;
-import com.google.common.base.Strings;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
-import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.IntegerListSerializer;
-import me.pugabyte.bncore.models.vote.VoteService;
-import me.pugabyte.bncore.models.vote.Voter;
-import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.mozilla.javascript.commonjs.module.Require;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

@@ -1,31 +1,40 @@
 package me.pugabyte.bncore.features.hours;
 
+import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
-import me.pugabyte.bncore.models.hours.HoursService.HoursType;
+import me.pugabyte.bncore.models.hours.HoursService.PageResult;
 import me.pugabyte.bncore.models.nerd.Rank;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
 @Aliases({"playtime", "days", "minutes", "seconds"})
 public class HoursCommand extends CustomCommand {
-	private HoursService service = new HoursService();
+	private final HoursService service = new HoursService();
 
 	public HoursCommand(CommandEvent event) {
 		super(event);
 	}
 
+	@Async
 	@Path("[player]")
 	void player(@Arg("self") OfflinePlayer player) {
 		boolean isSelf = isSelf(player);
@@ -35,11 +44,10 @@ public class HoursCommand extends CustomCommand {
 		send(PREFIX + (isSelf ? "Your" : "&e" + player.getName() + "&3's") + " playtime");
 		send("&3Total: &e" + StringUtils.timespanFormat(hours.getTotal(), "None"));
 		send("&7- &3Today: &e" + StringUtils.timespanFormat(hours.getDaily(), "None"));
-		send("&7- &3This week: &e" + StringUtils.timespanFormat(hours.getWeekly(), "None"));
 		send("&7- &3This month: &e" + StringUtils.timespanFormat(hours.getMonthly(), "None"));
 
 		if (Rank.getHighestRank(player) == Rank.GUEST) {
-			int day = 60 * 60 * 24;
+			int day = Time.DAY.get() / 20;
 			String who = (isSelf ? "You need" : player.getName() + " needs") + " ";
 			String left = StringUtils.timespanFormat(day - hours.getTotal());
 
@@ -47,57 +55,76 @@ public class HoursCommand extends CustomCommand {
 			send("&3" + who + "&e" + left + " more in-game play time &3to achieve &fMember&3.");
 		}
 	}
-
-	@Path("cleanup")
-	@Permission("group.admin")
-	void cleanup() {
-		send("Cleaned up " + service.cleanup() + " records");
+	@Async
+	@Path("migrate")
+	void migrate() {
+		service.migrate();
 	}
 
-	@Path("set <player> <type> <seconds>")
-	@Permission("group.admin")
-	void set(OfflinePlayer player, HoursType type, int seconds) {
-		Hours hours = service.get(player);
-		hours.set(type, seconds);
-		service.save(hours);
-		send(PREFIX + "Set " + player.getName() + "'s " + camelCase(type.name()) + " to " + hours.get(type));
-	}
-
-	@Path("endOfDay")
-	void endOfDay() {
-		console();
-		service.endOfDay();
-	}
-
-	@Path("endOfWeek")
-	void endOfWeek() {
-		console();
-		service.endOfWeek();
-	}
-
-	@Path("endOfMonth")
-	void endOfMonth() {
-		console();
-		service.endOfMonth();
-	}
+	/*
+	/hours top month:march20
+	/hours top month:august19 30
+	/hours top year:2020
+	/hours top monthly
+	/hours top daily 5
+	/hours top
+	 */
 
 	@Async
-	@Path("top")
-	void top() {
-		String type = isIntArg(2) ? "total" : arg(2);
-		int page = isIntArg(2) ? intArg(2) : isIntArg(3) ? intArg(3) : 1;
+	@Path("top [page]")
+	void top(@Arg("1") int page) {
+//		String type = isIntArg(2) ? "total" : arg(2);
+//		int page = isIntArg(2) ? intArg(2) : isIntArg(3) ? intArg(3) : 1;
 
-		final HoursService.HoursType hoursType = service.getType(type);
+//		final HoursType hoursType = service.getType(type);
 
-		List<Hours> results = service.getPage(hoursType, page);
+//		List<Hours> results = service.getPage(hoursType, page);
+
+		List<PageResult> results = service.getPage(page);
 		if (results.size() == 0)
 			error("&cNo results on page " + page);
 
 		send("");
-		send(PREFIX + "Total: " + StringUtils.timespanFormat(service.total(hoursType)) + (page > 1 ? "&e  |  &3Page " + page : ""));
+//		send(PREFIX + "Total: " + StringUtils.timespanFormat(service.total(hoursType)) + (page > 1 ? "&e  |  &3Page " + page : ""));
+		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
 		int i = (page - 1) * 10 + 1;
-		for (Hours hours : results)
-			send("&3" + i++ + " &e" + hours.getPlayer().getName() + " &7- " + StringUtils.timespanFormat(hours.get(hoursType)));
+		for (PageResult result : results)
+			send("&3" + i++ + " &e" + result.getOfflinePlayer().getName() + " &7- " + StringUtils.timespanFormat(result.getTotal()));
+	}
+
+	private static final int INTERVAL = 5;
+
+	static {
+		Tasks.repeatAsync(10, Time.SECOND.x(INTERVAL), () -> {
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				try {
+					if (AFK.get(player).isAfk()) continue;
+
+					HoursService service = new HoursService();
+					Hours hours = service.get(player);
+					hours.increment(INTERVAL);
+					service.update(hours);
+
+					if (Rank.getHighestRank(player) == Rank.GUEST) {
+						if (hours.getTotal() > (60 * 60 * 24)) {
+							Tasks.sync(() -> {
+								runConsoleCommand("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
+								Koda.say("Congrats on Member rank, " + player.getName() + "!");
+								Jingle.RANKUP.play(player);
+								player.sendMessage("");
+								player.sendMessage("");
+								player.sendMessage(colorize("&e&lCongratulations! &3You have been promoted to &fMember&3 for " +
+										"playing for &e24 hours &3in-game. You are now eligible for &c/trusted&3."));
+								player.sendMessage("");
+								player.sendMessage(colorize("&6&lThank you for flying Bear Nation!"));
+							});
+						}
+					}
+				} catch (Exception ex) {
+					BNCore.warn("Error in Hours scheduler: " + ex.getMessage());
+				}
+			}
+		});
 	}
 }
 
