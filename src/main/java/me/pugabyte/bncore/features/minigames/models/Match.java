@@ -98,7 +98,7 @@ public class Match {
 	}
 
 	public World getWorld() {
-		return arena.getLobby().getLocation().getWorld();
+		return arena.getWorld();
 	}
 
 	public WorldGuardUtils getWGUtils() {

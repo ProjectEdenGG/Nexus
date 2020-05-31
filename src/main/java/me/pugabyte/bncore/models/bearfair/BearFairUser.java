@@ -46,6 +46,11 @@ public class BearFairUser extends PlayerOwnedObject {
 		this.uuid = uuid;
 	}
 
+	public void givePoints(int points, boolean actionBar) {
+		sendActionBar(getPlayer(), "+" + points + " point" + (points == 1 ? "" : "s"));
+		givePoints(points);
+	}
+
 	public void givePoints(int points) {
 		totalPoints += points;
 	}

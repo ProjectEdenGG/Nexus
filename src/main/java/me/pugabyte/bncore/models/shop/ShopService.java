@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.models.shop;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.utils.Tasks;
 
@@ -10,11 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@PlayerClass(Shop.class)
 public class ShopService extends MongoService {
 	private final static Map<UUID, Shop> cache = new HashMap<>();
 
-	public void clearCache() {
-		cache.clear();
+	public Map<UUID, Shop> getCache() {
+		return cache;
 	}
 
 	static {
@@ -23,18 +25,6 @@ public class ShopService extends MongoService {
 
 	public List<Shop> getShops() {
 		return new ArrayList<>(cache.values());
-	}
-
-	@Override
-	public Shop get(UUID uuid) {
-		cache.computeIfAbsent(uuid, $ -> {
-			Shop shop = database.createQuery(Shop.class).field(_id).equal(uuid).first();
-			if (shop == null)
-				shop = new Shop(uuid);
-			return shop;
-		});
-
-		return cache.get(uuid);
 	}
 
 	public Shop getMarket() {
