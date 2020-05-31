@@ -82,10 +82,8 @@ public class ScoreboardUser extends PlayerOwnedObject {
 	}
 
 	public void cancelTasks() {
-		new HashMap<>(taskIds).forEach((line, taskId) -> {
-			Tasks.cancel(taskId);
-			taskIds.remove(line);
-		});
+		taskIds.values().forEach(Tasks::cancel);
+		taskIds.clear();
 	}
 
 	private String getRenderedText(ScoreboardLine line) {

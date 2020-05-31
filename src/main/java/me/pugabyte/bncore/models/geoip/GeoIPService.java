@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -18,18 +19,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@PlayerClass(GeoIP.class)
 public class GeoIPService extends MongoService {
 	private final static Map<UUID, GeoIP> cache = new HashMap<>();
+
+	public Map<UUID, GeoIP> getCache() {
+		return cache;
+	}
+
 	private final String KEY = BNCore.getInstance().getConfig().getString("tokens.ipstack");
 	// Raven gives a huge boost to Canada with his VPN
 	private final static List<String> ignore = Arrays.asList("fce1fe67-9514-4117-bcf6-d0c49ca0ba41");
 
 	static {
 		BNCore.getInstance().addConfigDefault("tokens.ipstack", "abcdef");
-	}
-
-	public void clearCache() {
-		cache.clear();
 	}
 
 	@Override

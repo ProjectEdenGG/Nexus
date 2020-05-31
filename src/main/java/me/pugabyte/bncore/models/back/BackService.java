@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.models.back;
 
+import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 import org.bukkit.Location;
 
@@ -9,25 +10,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@PlayerClass(Back.class)
 public class BackService extends MongoService {
-	private final static int MAX_LOCATIONS = 10;
 	private final static Map<UUID, Back> cache = new HashMap<>();
 
-	public void clearCache() {
-		cache.clear();
+	public Map<UUID, Back> getCache() {
+		return cache;
 	}
 
-	@Override
-	public Back get(UUID uuid) {
-		cache.computeIfAbsent(uuid, $ -> {
-			Back back = database.createQuery(Back.class).field(_id).equal(uuid).first();
-			if (back == null)
-				back = new Back(uuid);
-			return back;
-		});
-
-		return cache.get(uuid);
-	}
+	private final static int MAX_LOCATIONS = 10;
 
 	public void save(Back back) {
 		List<Location> locations = back.getLocations();

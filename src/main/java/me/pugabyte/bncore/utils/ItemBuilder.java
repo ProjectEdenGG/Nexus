@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.utils;
 
 import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -12,7 +12,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -53,6 +52,7 @@ public class ItemBuilder {
 		return durability(Integer.valueOf(durability).shortValue());
 	}
 
+	@Deprecated
 	public ItemBuilder durability(short durability) {
 		itemStack.setDurability(durability);
 		return this;
@@ -151,13 +151,14 @@ public class ItemBuilder {
 		return this;
 	}
 
-	public ItemBuilder itemFlags(ItemFlag... flags) {
-		itemMeta.addItemFlags(flags);
+	public ItemBuilder fireworkEffect(FireworkEffect... effect) {
+		FireworkMeta fireworkMeta = (FireworkMeta) itemMeta;
+		fireworkMeta.addEffects(effect);
 		return this;
 	}
 
-	public ItemBuilder spawnEgg(EntityType entityType) {
-		((SpawnEggMeta) itemMeta).setSpawnedType(entityType);
+	public ItemBuilder itemFlags(ItemFlag... flags) {
+		itemMeta.addItemFlags(flags);
 		return this;
 	}
 
@@ -166,6 +167,7 @@ public class ItemBuilder {
 		return this;
 	}
 
+	@Deprecated
 	public ItemBuilder skullOwner(String name) {
 		((SkullMeta) itemMeta).setOwner(name);
 		return this;

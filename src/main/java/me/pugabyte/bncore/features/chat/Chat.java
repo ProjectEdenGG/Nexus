@@ -40,7 +40,7 @@ public class Chat {
 	}
 
 	public static void shutdown() {
-		new HashMap<>(ChatService.getCache()).forEach((uuid, chatter) -> new ChatService().saveSync(chatter));
+		new HashMap<>(new ChatService().getCache()).forEach((uuid, chatter) -> new ChatService().saveSync(chatter));
 	}
 
 	private void updateChannels() {

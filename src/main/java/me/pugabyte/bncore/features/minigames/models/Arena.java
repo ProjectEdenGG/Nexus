@@ -13,7 +13,7 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
-import me.pugabyte.bncore.utils.SerializationUtils;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -29,6 +29,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static me.pugabyte.bncore.utils.SerializationUtils.YML.deserializeMaterialSet;
+import static me.pugabyte.bncore.utils.SerializationUtils.YML.serializeMaterialSet;
 
 @Data
 @Builder
@@ -92,7 +95,7 @@ public class Arena implements ConfigurationSerializable {
 		this.minWinningScore = (Integer) map.getOrDefault("minWinningScore", minWinningScore);
 		this.maxWinningScore = (Integer) map.getOrDefault("maxWinningScore", maxWinningScore);
 		this.lives = (Integer) map.getOrDefault("lives", lives);
-		this.blockList = SerializationUtils.YML.deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
+		this.blockList = deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 	}
@@ -116,14 +119,17 @@ public class Arena implements ConfigurationSerializable {
 			put("minWinningScore", getMinWinningScore());
 			put("maxWinningScore", getMaxWinningScore());
 			put("lives", getLives());
-			put("blockList", SerializationUtils.YML.serializeMaterialSet(getBlockList()));
+			put("blockList", serializeMaterialSet(getBlockList()));
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 		}};
 	}
 
 	public World getWorld() {
-		return lobby.getLocation().getWorld();
+		Location location = getTeleportLocation();
+		if (location == null)
+			throw new InvalidInputException("No location found for arena, could not initialize match");
+		return location.getWorld();
 	}
 
 	public WorldGuardUtils getWGUtils() {
@@ -192,17 +198,24 @@ public class Arena implements ConfigurationSerializable {
 		ArenaManager.delete(this);
 	}
 
-	public void teleport(Minigamer minigamer) {
+	public Location getTeleportLocation() {
 		if (respawnLocation != null)
-			minigamer.teleport(respawnLocation);
+			return respawnLocation;
 		else if (spectateLocation != null)
-			minigamer.teleport(spectateLocation);
+			return spectateLocation;
 		else if (lobby != null && lobby.getLocation() != null && !lobby.getLocation().equals(Minigames.getLobby()))
-			minigamer.teleport(lobby.getLocation());
+			return lobby.getLocation();
 		else if (teams != null && teams.size() > 0 && teams.get(0).getSpawnpoints() != null && teams.get(0).getSpawnpoints().size() > 0)
-			minigamer.teleport(teams.get(0).getSpawnpoints().get(0));
-		else
+			return teams.get(0).getSpawnpoints().get(0);
+		return null;
+	}
+
+	public void teleport(Minigamer minigamer) {
+		Location location = getTeleportLocation();
+		if (location == null)
 			minigamer.tell("No teleport location found");
+		else
+			minigamer.teleport(location);
 	}
 
 	public int getCalculatedWinningScore(Match match) {

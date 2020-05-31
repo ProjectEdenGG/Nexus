@@ -65,23 +65,23 @@ public class Merchants {
 			List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.MELON).lore(itemLore)));
+							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.MELON).amount(16).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(4).lore(itemLore)));
+							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(16).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(9).lore(itemLore)));
+							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(16).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.POTATO).amount(16).lore(itemLore)));
+							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.POTATO).amount(64).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.BEETROOT).amount(16).lore(itemLore)));
+							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.CARROT).amount(64).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.CARROT).amount(16).lore(itemLore)));
+							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.BEETROOT).amount(32).lore(itemLore)));
 				}};
 			}
 		},
@@ -149,6 +149,12 @@ public class Merchants {
 			}
 		},
 		SORCERER(2658) {
+			@Override
+			List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
+			}
+		},
+		TRADER(2763) {
 			@Override
 			List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
