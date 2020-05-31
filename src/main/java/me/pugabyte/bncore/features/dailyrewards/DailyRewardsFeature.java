@@ -4,7 +4,6 @@ import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.dailyreward.DailyReward;
 import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
-import me.pugabyte.bncore.models.dailyreward.OldReward;
 import me.pugabyte.bncore.models.dailyreward.Reward;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
@@ -24,7 +23,6 @@ import static org.bukkit.Material.*;
 import static org.bukkit.enchantments.Enchantment.*;
 
 public class DailyRewardsFeature {
-	private static List<OldReward> rewards = new ArrayList<>();
 	private static List<Reward> rewards1 = new ArrayList<>();
 	private static List<Reward> rewards2 = new ArrayList<>();
 	private static List<Reward> rewards3 = new ArrayList<>();

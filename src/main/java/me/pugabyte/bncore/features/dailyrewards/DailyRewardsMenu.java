@@ -21,6 +21,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
 public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private final DailyRewardService service = new DailyRewardService();
 	private final DailyReward dailyReward;
@@ -34,6 +36,8 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private final ItemStack claimed = new ItemStack(Material.WHITE_WOOL);
 	private final ItemStack unclaimed = new ItemStack(Material.WHITE_WOOL);
 	private final ItemStack locked = new ItemStack(Material.BLACK_WOOL);
+
+	private static final String PREFIX = StringUtils.getPrefix("DailyRewards");
 
 	DailyRewardsMenu(DailyReward dailyReward) {
 		this.dailyReward = dailyReward;
@@ -50,8 +54,8 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		return itemStack;
 	}
 
-	private void clearScreen(InventoryContents contents){
-		for(SlotPos slotPos:contents.slots()){
+	private void clearScreen(InventoryContents contents) {
+		for (SlotPos slotPos : contents.slots()) {
 			contents.set(slotPos, ClickableItem.from(new ItemStack(Material.AIR), null));
 		}
 	}
@@ -70,8 +74,8 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		int column = 1;
 		for (int i = 0; i < 7; ++i) {
 
-			if (this.dailyReward.getStreak() >= day) {
-				if (this.dailyReward.hasClaimed(day)) {
+			if (dailyReward.getStreak() >= day) {
+				if (dailyReward.hasClaimed(day)) {
 					ItemStack item = nameItem(claimed.clone(), "&eDay " + day, "&3Claimed" + "", day);
 					contents.set(new SlotPos(1, column), ClickableItem.empty(addGlowing(item)));
 				} else {
@@ -103,25 +107,19 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		reward[2] = DailyRewardsFeature.getReward3(currentDay);
 
 		for (int i = 0; i < 3; i++) {
-
 			Reward currentReward = reward[i];
 			int option = i;
 			String rewardDescription = "&e" + currentReward.getDescription();
 			ItemStack item = nameItem(currentReward.getItems() != null ? currentReward.getItems().get(0).clone() : addGlowing(new ItemStack(Material.PAPER)), StringUtils.camelCase(rewardDescription), "&3Click to claim");
 
-			contents.set(1, (2 + i * 2), ClickableItem.from(item, e -> {
-				applyReward(currentDay, option, contents, initialDay);
-			}));
-
+			contents.set(1, (2 + i * 2), ClickableItem.from(item, e ->
+					applyReward(currentDay, option, contents, initialDay)));
 		}
-
-
 	}
 
 	@Override
 	public void update(Player player, InventoryContents inventoryContents) {
 	}
-
 
 	public void saveAndReturn(InventoryContents contents, int day, int initialDay) {
 		dailyReward.claim(day);
@@ -150,7 +148,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 						player.closeInventory();
 					});
 				} else if (Reward.RequiredSubmenu.NAME.contains(item.getType())) {
-					BNCore.getSignMenuFactory().lines("", "^^^^^^^^", "Please enter a", "Player name").response(lines -> {
+					BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name").response(lines -> {
 						Utils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
 						saveAndReturn(contents, day, initialDay);
 					}).open(player);
@@ -164,18 +162,18 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 			if (money != null) {
 				BNCore.getEcon().depositPlayer(player, money);
-				player.sendMessage(StringUtils.getPrefix("DailyRewards") + StringUtils.colorize("&e" + money + " &3has been added to your balance"));
+				player.sendMessage(PREFIX + colorize("&e" + money + " &3has been added to your balance"));
 			}
 
 			if (levels != null) {
 				player.giveExpLevels(levels);
-				player.sendMessage(StringUtils.getPrefix("DailyRewards") + StringUtils.colorize("You have been given &e" + levels + " XP Levels"));
+				player.sendMessage(PREFIX + colorize("You have been given &e" + levels + " XP Levels"));
 			}
 
 			if (votePoints != null) {
 				Voter voter = new VoteService().get(player);
 				voter.addPoints(votePoints);
-				player.sendMessage(StringUtils.getPrefix("DailyRewards") + StringUtils.colorize("&e" + votePoints + " &3vote points has been added to your balance"));
+				player.sendMessage(PREFIX + colorize("&e" + votePoints + " &3vote points has been added to your balance"));
 			}
 
 			if (!Strings.isNullOrEmpty(command))
