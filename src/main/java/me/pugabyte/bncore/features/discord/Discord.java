@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.entities.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.net.ProxySelector;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,11 +32,6 @@ public class Discord {
 	private static final String url = "https://discord.gg/bearnation";
 
 	public Discord() {
-		if (ProxySelector.getDefault() != null)
-			ProxySelector.setDefault(ProxySelector.getDefault());
-		else
-			BNCore.warn("ProxySelector default is null");
-
 		Tasks.repeatAsync(0, Time.MINUTE, this::connect);
 		Tasks.waitAsync(Time.SECOND.x(2), this::connect);
 		BNCore.getCron().schedule("*/5 * * * *", Discord::updateTopics);

@@ -5,22 +5,25 @@ import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-public class UUIDConverter extends TypeConverter implements SimpleValueConverter {
+public class LocalDateConverter extends TypeConverter implements SimpleValueConverter {
 
-	public UUIDConverter(Mapper mapper) {
-		super(UUID.class);
+	public LocalDateConverter(Mapper mapper) {
+		super(LocalDate.class);
 	}
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
-		return value.toString();
+		if (value == null) return null;
+		return ((LocalDate) value).format(DateTimeFormatter.ISO_DATE);
 	}
 
 	@Override
 	public Object decode(Class<?> aClass, Object object, MappedField mappedField) {
-		return UUID.fromString((String) object);
+		if (object == null) return null;
+		return LocalDate.parse((String) object);
 	}
 
 }
