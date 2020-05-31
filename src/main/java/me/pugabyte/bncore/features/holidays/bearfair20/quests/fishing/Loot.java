@@ -48,16 +48,17 @@ public class Loot {
 	public static ItemStack soggyNewsPaper = new ItemBuilder(Material.PAPER).name("Soggy Newspaper").lore(itemLore).build();
 	public static ItemStack driftwood = new ItemBuilder(Material.STICK).name("Driftwood").lore(itemLore).build();
 	public static ItemStack seaweed = new ItemBuilder(Material.KELP).name("Seaweed").lore(itemLore).build();
+
 	// Lists
 	public static List<ItemStack> defaultFish = Arrays.asList(cod, salmon, tropicalFish, pufferfish);
 	public static List<ItemStack> islandFish = Arrays.asList(tigerTrout, glacierfish, crimsonfish, flathead, midnightCarp, sunfish, seaCucumber);
 	public static List<ItemStack> genericFish = Arrays.asList(bullhead, sturgeon, woodskip, voidSalmon, redSnapper, redMullet);
-	public static List<ItemStack> treasure = Arrays.asList(brainCoral, hornCoral, tubeCoral, fireCoral, bubbleCoral, scales, heartOfTheSea, nautilusShell);
-	public static List<ItemStack> trash = Arrays.asList(oldBoots, rustySpoon, brokenCD, lostBook, soggyNewsPaper, driftwood, seaweed);
-	// Categories
+	//
 	public static List<ItemStack> fish = new ArrayList<>();
 	public static List<ItemStack> loot = new ArrayList<>();
-	// Sub Categories
+	public static List<ItemStack> treasure = Arrays.asList(brainCoral, hornCoral, tubeCoral, fireCoral, bubbleCoral, scales, heartOfTheSea, nautilusShell);
+	public static List<ItemStack> trash = Arrays.asList(oldBoots, rustySpoon, brokenCD, lostBook, soggyNewsPaper, driftwood, seaweed);
+	//
 	public static List<ItemStack> coral = Arrays.asList(brainCoral, hornCoral, tubeCoral, fireCoral);
 
 
