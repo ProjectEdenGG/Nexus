@@ -10,23 +10,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
-import me.pugabyte.bncore.models.hoursold.HoursOld;
-import me.pugabyte.bncore.models.hoursold.HoursOldService;
-import me.pugabyte.bncore.models.nerd.Nerd;
-import me.pugabyte.bncore.models.nerd.NerdService;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,51 +61,9 @@ public class HoursService extends MongoService {
 		);
 	}
 
-	public void migrate() {
-		int count = 0;
-		for (HoursOld hoursOld : new HoursOldService().getAll()) {
-			OfflinePlayer player = hoursOld.getPlayer();
-			Nerd nerd = new NerdService().get(player);
-			Hours hours = new Hours(player.getUniqueId());
-
-			if (nerd.getLastQuit() == null || nerd.getFirstJoin().isAfter(nerd.getLastQuit())) continue;
-
-			LocalDate start = nerd.getFirstJoin().toLocalDate().withDayOfMonth(1);
-			LocalDate end = nerd.getLastQuit().toLocalDate().withDayOfMonth(1);
-
-			int months = (int) ChronoUnit.MONTHS.between(start, end);
-			int spread = (hoursOld.getTotal() / Math.max(months, 1)) / 5 * 5;
-
-			if (start.equals(end))
-				hours.getTimes().put(start, spread);
-			else
-				while (start.isBefore(end)) {
-					hours.getTimes().put(start, spread);
-					start = start.plusMonths(1);
-				}
-
-			cache.put(player.getUniqueId(), hours);
-			save(hours);
-
-			++count;
-			if (count % 100 == 0)
-				BNCore.log("Migrated " + count + " records");
-		}
-	}
-
 //	public int total(HoursType type) {
 //		return database.select("sum(" + type.columnName() + ")").table("hours").first(Double.class).intValue();
 //	}
-
-	/*
-
-		db.hours.aggregate([
-			{ $project : { _id : "$_id", times : { $objectToArray: "$times" } } },
-			{ $project : { _id : "$_id", total : { $sum : "$times.v" } } },
-			{ $sort : { 'total': -1 } }
-		]);
-
-	 */
 
 	@Data
 	@NoArgsConstructor
@@ -131,12 +82,6 @@ public class HoursService extends MongoService {
 		arguments.add(limit(10));
 
 		return getPageResults(collection.aggregate(arguments));
-
-//		return database.createAggregation(Hours2.class)
-//				.project(Projection.projection(_id, "_id"), Projection.projection("times", Projection.projection("$objectToArray", "$times")))
-//				.project(Projection.projection(_id, "_id"), Projection.projection("total", Projection.projection("$sum", "$times.v")))
-//				.sort(Sort.descending("total"))
-//				.aggregate(PageResult.class);
 	}
 
 	@NotNull
@@ -162,6 +107,12 @@ public class HoursService extends MongoService {
 				sort(Sorts.descending("total"))
 		));
 	}
+
+//		return database.createAggregation(Hours2.class)
+//				.project(Projection.projection(_id, "_id"), Projection.projection("times", Projection.projection("$objectToArray", "$times")))
+//				.project(Projection.projection(_id, "_id"), Projection.projection("total", Projection.projection("$sum", "$times.v")))
+//				.sort(Sort.descending("total"))
+//				.aggregate(PageResult.class);
 
 	// TODO
 	public List<Hours> getActivePlayers() {

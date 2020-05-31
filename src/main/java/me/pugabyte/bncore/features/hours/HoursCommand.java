@@ -55,11 +55,6 @@ public class HoursCommand extends CustomCommand {
 			send("&3" + who + "&e" + left + " more in-game play time &3to achieve &fMember&3.");
 		}
 	}
-	@Async
-	@Path("migrate")
-	void migrate() {
-		service.migrate();
-	}
 
 	/*
 	/hours top month:march20
