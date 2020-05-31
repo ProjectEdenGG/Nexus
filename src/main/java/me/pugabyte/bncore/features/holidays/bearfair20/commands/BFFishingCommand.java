@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.WeightedLoot;
-import me.pugabyte.bncore.features.holidays.bearfair20.quests.Fishing;
+import me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.Fishing.weightedList;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Fishing.weightedList;
 
 @Permission("group.staff")
 public class BFFishingCommand extends CustomCommand {
