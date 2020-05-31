@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocalDateConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
@@ -39,10 +40,12 @@ public class Hours extends PlayerOwnedObject {
 		times.put(LocalDate.now(), times.getOrDefault(LocalDate.now(), 0) + amount);
 	}
 
+	@ToString.Include
 	public int getTotal() {
 		return times.values().stream().reduce(0, Integer::sum);
 	}
 
+	@ToString.Include
 	public int getYearly() {
 		return getYearly(Year.now());
 	}
@@ -54,6 +57,7 @@ public class Hours extends PlayerOwnedObject {
 				.sum();
 	}
 
+	@ToString.Include
 	public int getMonthly() {
 		LocalDate now = LocalDate.now();
 		return getMonthly(Year.now(), now.getMonth());
@@ -73,6 +77,7 @@ public class Hours extends PlayerOwnedObject {
 //				.sum();
 //	}
 
+	@ToString.Include
 	public int getDaily() {
 		return getDaily(LocalDate.now());
 	}

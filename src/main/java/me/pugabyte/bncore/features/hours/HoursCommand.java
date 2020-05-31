@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
@@ -34,6 +35,8 @@ public class HoursCommand extends CustomCommand {
 		super(event);
 	}
 
+	private static final int DAY = Time.DAY.get() / 20;
+
 	@Async
 	@Path("[player]")
 	void player(@Arg("self") OfflinePlayer player) {
@@ -47,13 +50,19 @@ public class HoursCommand extends CustomCommand {
 		send("&7- &3This month: &e" + StringUtils.timespanFormat(hours.getMonthly(), "None"));
 
 		if (Rank.getHighestRank(player) == Rank.GUEST) {
-			int day = Time.DAY.get() / 20;
+
 			String who = (isSelf ? "You need" : player.getName() + " needs") + " ";
-			String left = StringUtils.timespanFormat(day - hours.getTotal());
+			String left = StringUtils.timespanFormat(DAY - hours.getTotal());
 
 			line();
 			send("&3" + who + "&e" + left + " more in-game play time &3to achieve &fMember&3.");
 		}
+	}
+
+	@Permission("group.seniorstaff")
+	@Path("debug [player]")
+	void debug(@Arg("self") OfflinePlayer player) {
+		send(service.get(player).toString());
 	}
 
 	/*
@@ -101,7 +110,7 @@ public class HoursCommand extends CustomCommand {
 					service.update(hours);
 
 					if (Rank.getHighestRank(player) == Rank.GUEST) {
-						if (hours.getTotal() > (60 * 60 * 24)) {
+						if (hours.getTotal() > DAY) {
 							Tasks.sync(() -> {
 								runConsoleCommand("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
 								Koda.say("Congrats on Member rank, " + player.getName() + "!");
