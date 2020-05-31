@@ -8,15 +8,19 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
+import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.IntegerListSerializer;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.mozilla.javascript.commonjs.module.Require;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -58,12 +62,7 @@ public class DailyReward {
 		return claimed != null && claimed.contains(day);
 	}
 
-	public void claim(int day) {
-		claim(day, true);
-	}
-
-	public void claim(int day, boolean applyReward) {
-		if (applyReward) applyReward(day);
+	public void claim(int day){
 		if (claimed == null)
 			claimed = new ArrayList<>();
 		claimed.add(day);
@@ -80,32 +79,6 @@ public class DailyReward {
 		earnedToday = true;
 	}
 
-	private void applyReward(int day) {
-		Player player = (Player) getPlayer();
 
-		Reward reward = DailyRewardsFeature.getReward(day);
-		List<ItemStack> items = reward.getItems();
-		Integer money = reward.getMoney();
-		Integer levels = reward.getLevels();
-		Integer votePoints = reward.getVotePoints();
-		String command = reward.getCommand();
-
-		if (items != null)
-			Utils.giveItems(player, items);
-
-		if (money != null)
-			BNCore.getEcon().depositPlayer(player, money);
-
-		if (levels != null)
-			Utils.runConsoleCommand("exp give " + player.getName() + " " + levels);
-
-		if (votePoints != null) {
-			Voter voter = new VoteService().get(player);
-			voter.addPoints(votePoints);
-		}
-
-		if (!Strings.isNullOrEmpty(command))
-			Utils.runConsoleCommand(command.replaceAll("%player%", player.getName()));
-	}
 
 }
