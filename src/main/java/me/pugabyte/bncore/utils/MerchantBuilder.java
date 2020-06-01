@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.utils;
 
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -40,8 +41,10 @@ public class MerchantBuilder {
 
 	public static class TradeBuilder {
 		@NonNull
+		@Getter
 		private ItemStack result;
 		@NonNull
+		@Getter
 		private final List<ItemStack> ingredients = new ArrayList<>();
 		private int maxUses = 3000;
 

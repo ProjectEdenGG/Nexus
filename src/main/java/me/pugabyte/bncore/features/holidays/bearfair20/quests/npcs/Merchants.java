@@ -29,22 +29,22 @@ public class Merchants {
 		new MerchantBuilder(StringUtils.camelCase(bfMerchant.name())).trades(bfMerchant.getTrades()).open(player);
 	}
 
-	private enum BFMerchant {
+	public enum BFMerchant {
 		ARTIST(2657) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		BAKER(2659) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		BARTENDER(2655) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potion(PotionType.POISON, true, false).lore(itemLore))
@@ -60,13 +60,13 @@ public class Merchants {
 		},
 		BLACKSMITH(2656) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		BOTANIST(2661) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(goldNugget)
@@ -91,41 +91,24 @@ public class Merchants {
 		},
 		BREWER(2662) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		COLLECTOR(2750) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		FISHERMAN(2653) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.FISHING_ROD).lore(itemLore))
 							.ingredient(moneyUnit));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(midnightCarp));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(sunfish));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(tigerTrout));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(glacierfish));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(crimsonfish));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(flathead));
+					// Default
 					add(new TradeBuilder()
 							.result(moneyUnit)
 							.ingredient(cod));
@@ -138,6 +121,7 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(moneyUnit)
 							.ingredient(pufferfish));
+					// Generic
 					add(new TradeBuilder()
 							.result(moneyUnit)
 							.ingredient(bullhead));
@@ -159,18 +143,38 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(moneyUnit)
 							.ingredient(seaCucumber));
+					// Island
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(midnightCarp));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(sunfish));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(tigerTrout));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(glacierfish));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(crimsonfish));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(flathead));
+					//
 				}};
 			}
 		},
 		INVENTOR(2660) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		MINER(2743) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore))
@@ -180,7 +184,7 @@ public class Merchants {
 		},
 		PASTRY_CHEF(2654) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(moneyUnit)
@@ -193,13 +197,13 @@ public class Merchants {
 		},
 		SORCERER(2658) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		TRADER(2763) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		};
@@ -220,6 +224,6 @@ public class Merchants {
 			return null;
 		}
 
-		abstract List<TradeBuilder> getTrades();
+		public abstract List<TradeBuilder> getTrades();
 	}
 }
