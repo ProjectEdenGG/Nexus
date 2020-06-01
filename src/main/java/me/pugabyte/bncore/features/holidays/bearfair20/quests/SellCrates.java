@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loot;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Merchants;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.MerchantBuilder;
@@ -114,14 +113,8 @@ public class SellCrates implements Listener {
 				continue;
 			}
 
-			int amount = item.getAmount();
-			item.setAmount(1);
-			if (!Loot.loot.contains(item)) {
-				item.setAmount(amount);
-				event.getPlayer().getInventory().addItem(item);
-				continue;
-			}
-
+			boolean foundTrade = false;
+			boolean leftovers = false;
 			for (MerchantBuilder.TradeBuilder tradeBuilder : tradeBuilders) {
 				ItemStack result = tradeBuilder.getResult();
 				List<ItemStack> ingredients = tradeBuilder.getIngredients();
@@ -130,12 +123,33 @@ public class SellCrates implements Listener {
 				if (Utils.isNullOrAir(ingredient)) continue;
 				if (Utils.isNullOrAir(result)) continue;
 
-				if (item.equals(ingredient)) {
-					for (int i = 0; i < amount; i++) {
-						profit.add(result);
+				if (item.getType().equals(ingredient.getType())) {
+					if (item.getAmount() >= ingredient.getAmount()) {
+						double loops = Math.ceil((item.getAmount() + 0D) / ingredient.getAmount());
+						for (double i = 0; i < loops; i++) {
+							int itemAmount = item.getAmount();
+							int ingredientAmount = ingredient.getAmount();
+							if (itemAmount < ingredientAmount) {
+								leftovers = true;
+								break;
+							}
+
+							item.setAmount(ingredientAmount);
+							if (item.equals(ingredient)) {
+								foundTrade = true;
+								itemAmount -= ingredientAmount;
+								item.setAmount(itemAmount);
+								profit.add(result);
+							}
+						}
 					}
 				}
 			}
+
+			// If trade was not found for itemstack, give item back
+			// If there were leftovers, give the edited item back
+			if (!foundTrade || leftovers)
+				event.getPlayer().getInventory().addItem(item);
 		}
 
 		if (profit.size() == 0) return;

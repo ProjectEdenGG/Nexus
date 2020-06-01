@@ -72,22 +72,25 @@ public class Merchants {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(goldNugget)
-							.ingredient(new ItemBuilder(Material.MELON).amount(16).lore(itemLore)));
+							.ingredient(new ItemBuilder(Material.MELON).amount(8).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(goldNugget)
+							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(12).lore(itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget)
 							.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(16).lore(itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget)
-							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(16).lore(itemLore)));
+							.ingredient(new ItemBuilder(Material.SUGAR_CANE).amount(48).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(goldNugget)
+							.ingredient(new ItemBuilder(Material.BEETROOT).amount(32).lore(itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget)
 							.ingredient(new ItemBuilder(Material.POTATO).amount(64).lore(itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget)
 							.ingredient(new ItemBuilder(Material.CARROT).amount(64).lore(itemLore)));
-					add(new TradeBuilder()
-							.result(goldNugget)
-							.ingredient(new ItemBuilder(Material.BEETROOT).amount(32).lore(itemLore)));
 				}};
 			}
 		},
