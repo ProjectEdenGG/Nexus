@@ -164,7 +164,6 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(moneyUnit)
 							.ingredient(flathead));
-					//
 				}};
 			}
 		},
