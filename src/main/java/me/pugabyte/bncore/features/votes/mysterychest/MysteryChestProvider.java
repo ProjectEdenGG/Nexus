@@ -4,8 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -15,6 +14,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+
+import static me.pugabyte.bncore.utils.ColorType.LIGHT_BLUE;
+import static me.pugabyte.bncore.utils.ColorType.LIGHT_GREEN;
+import static me.pugabyte.bncore.utils.ColorType.MAGENTA;
+import static me.pugabyte.bncore.utils.ColorType.ORANGE;
+import static me.pugabyte.bncore.utils.ColorType.PINK;
+import static me.pugabyte.bncore.utils.ColorType.RED;
+import static me.pugabyte.bncore.utils.ColorType.YELLOW;
 
 public class MysteryChestProvider extends MenuUtils implements InventoryProvider {
 
@@ -33,45 +40,41 @@ public class MysteryChestProvider extends MenuUtils implements InventoryProvider
 	public void update(Player player, InventoryContents contents) {
 		time++;
 		if (time < 10) return;
-		String[] colors = {"LIME", "LIGHT_BLUE", "RED", "MAGENTA", "PINK", "YELLOW", "ORANGE"};
+		ColorType[] colors = {LIGHT_GREEN, LIGHT_BLUE, RED, MAGENTA, PINK, YELLOW, ORANGE};
 		if (colorIndex == colors.length) colorIndex = 0;
+
 		if (time % speed == 0 && time < 350) {
 			SoundUtils.Jingle.PING.play(player);
-			contents.fillRow(0, ClickableItem.empty(new ItemBuilder(
-					Material.valueOf(colors[colorIndex] + "_STAINED_GLASS_PANE")).name(" ").build()));
-			contents.fillRow(2, ClickableItem.empty(new ItemBuilder(
-					Material.valueOf(colors[colorIndex] + "_STAINED_GLASS_PANE")).name(" ").build()));
+			contents.fillRow(0, ClickableItem.empty(new ItemBuilder(colors[colorIndex].getStainedGlassPane()).name(" ").build()));
+			contents.fillRow(2, ClickableItem.empty(new ItemBuilder(colors[colorIndex].getStainedGlassPane()).name(" ").build()));
 			colorIndex++;
 			if (lootIndex == MysteryChestLoot.values().length) lootIndex = 0;
 			contents.fillRow(1, ClickableItem.NONE);
-			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getMenuLoot(),
-					contents, 1, true);
+			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getMenuLoot(), contents, 1, true);
 			lootIndex++;
 		}
+
 		if (time == 250)
 			speed = 10;
+
 		if (speed == 300)
 			speed = 15;
+
 		if (time == 350) {
 			if (lootIndex == MysteryChestLoot.values().length) lootIndex = 0;
-			contents.fillRect(0, 0, 2, 8, ClickableItem.empty(new ItemBuilder(
-					Material.LIME_STAINED_GLASS_PANE).name(" ").build()));
+			contents.fillRect(0, 0, 2, 8, ClickableItem.empty(new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name(" ").build()));
 			contents.fillRow(1, ClickableItem.NONE);
-			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getMenuLoot(),
-					contents, 1, true);
+			MenuUtils.centerItems(Utils.EnumUtils.nextWithLoop(MysteryChestLoot.class, lootIndex).getMenuLoot(), contents, 1, true);
 			Tasks.wait(10, () -> SoundUtils.Jingle.RANKUP.play(player));
 		}
+
 		if (time == 450) {
 			MysteryChest.INV.close(player);
-			player.sendMessage(StringUtils.colorize(
-					StringUtils.getPrefix("MysteryChest") +
-							"You have received the &e" + MysteryChestLoot.values()[lootIndex + 1].getName() + "&3 reward"
-			));
+			player.sendMessage(StringUtils.colorize(StringUtils.getPrefix("MysteryChest") + "You have received the &e" +
+					MysteryChestLoot.values()[lootIndex + 1].getName() + "&3 reward"));
 			Utils.giveItems(player, Arrays.asList(MysteryChestLoot.values()[lootIndex + 1].getLoot()));
-			SettingService service = new SettingService();
-			Setting setting = service.get(player, "mysteryChest");
-			setting.setValue("" + (Integer.parseInt(setting.getValue()) - 1));
-			service.save(setting);
+
+			new MysteryChest(player).take(1);
 		}
 	}
 }

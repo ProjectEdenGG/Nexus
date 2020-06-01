@@ -16,10 +16,8 @@ public class PushCommand extends CustomCommand {
 
 	@Path("[enable]")
 	void toggle(Boolean enable) {
-		if (enable == null)
-			push(!player().hasPermission(perm));
-		else
-			push(enable);
+		if (enable == null) enable = !player().hasPermission(perm);
+		push(enable);
 	}
 
 	@SneakyThrows

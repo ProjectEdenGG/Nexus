@@ -24,16 +24,12 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 
 	@Path("[enable]")
 	void toggle(Boolean enable) {
-		if (enable == null)
-			if (player().hasPermission(permission))
-				off();
-			else
-				on();
+		if (enable == null) enable = !player().hasPermission(permission);
+
+		if (enable)
+			on();
 		else
-			if (enable)
-				on();
-			else
-				off();
+			off();
 	}
 
 	private void on() {

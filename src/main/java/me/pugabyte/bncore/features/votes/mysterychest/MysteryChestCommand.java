@@ -5,7 +5,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -23,14 +22,12 @@ public class MysteryChestCommand extends CustomCommand {
 
 	@Path()
 	void use() {
-		Setting setting = service.get(player(), "mysteryChest");
-		if (isNullOrEmpty(setting.getValue()) || !isInt(setting.getValue()))
-			error("You do not have any mystery chest to open");
-		int chests = Integer.parseInt(setting.getValue());
+		int chests = service.get(player(), "mysteryChest").getInt();
 		if (chests <= 0)
 			error("You do not have any mystery chest to open");
 		if (!WorldGroup.get(player()).equals(WorldGroup.SURVIVAL))
 			error("You must be in the survival world to run this command.");
+
 		MysteryChestProvider.time = 0;
 		MysteryChestProvider.speed = 4;
 		MysteryChestProvider.lootIndex = Utils.randomInt(0, MysteryChestLoot.values().length - 1);
@@ -40,19 +37,23 @@ public class MysteryChestCommand extends CustomCommand {
 	@Path("give <player> [amount]")
 	@Permission("group.admin")
 	void give(OfflinePlayer player, @Arg("1") int amount) {
-		Setting setting = service.get(player, "mysteryChest");
-		new MysteryChest(player, amount);
-		send(PREFIX + "&e" + player.getName() + " &3now has &e" + (setting.getValue() + amount) + "&3 Mystery Chests");
+		send(PREFIX + "&e" + player.getName() + " &3now has &e" + new MysteryChest(player).give(amount) + "&3 Mystery Chests");
+	}
+
+	@Path("take <player> [amount]")
+	@Permission("group.admin")
+	void take(OfflinePlayer player, @Arg("1") int amount) {
+		send(PREFIX + "&e" + player.getName() + " &3now has &e" + new MysteryChest(player).take(amount) + "&3 Mystery Chests");
 	}
 
 	@Path("test")
 	@Permission("group.admin")
 	void test() {
-		new MysteryChest(player());
+		new MysteryChest(player()).give(1);
 		use();
 	}
 
-	@Path("2")
+	@Path("lootbox2")
 	@Permission("group.admin")
 	void two() {
 		Utils.giveItems(player(), Arrays.asList(MysteryChestLoot.TWO.getLoot()));

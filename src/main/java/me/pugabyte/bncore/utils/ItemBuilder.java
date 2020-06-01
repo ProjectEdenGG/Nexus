@@ -5,12 +5,14 @@ import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -175,6 +177,12 @@ public class ItemBuilder {
 		return this;
 	}
 
+	@Deprecated
+	public ItemBuilder skullOwner(String name) {
+		((SkullMeta) itemMeta).setOwner(name);
+		return this;
+	}
+
 	public ItemBuilder pattern(DyeColor color, PatternType pattern) {
 		return pattern(new Pattern(color, pattern));
 	}
@@ -185,9 +193,18 @@ public class ItemBuilder {
 		return this;
 	}
 
-	@Deprecated
-	public ItemBuilder skullOwner(String name) {
-		((SkullMeta) itemMeta).setOwner(name);
+	public ItemBuilder shulkerBox(ItemBuilder... builders) {
+		for (ItemBuilder builder : builders)
+			shulkerBox(builder.build());
+		return this;
+	}
+
+	public ItemBuilder shulkerBox(ItemStack... items) {
+		BlockStateMeta blockStateMeta = (BlockStateMeta) itemMeta;
+		ShulkerBox box = (ShulkerBox) blockStateMeta.getBlockState();
+		for (ItemStack item : items)
+			box.getInventory().addItem(item);
+		blockStateMeta.setBlockState(box);
 		return this;
 	}
 
