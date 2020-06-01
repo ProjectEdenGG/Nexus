@@ -19,6 +19,8 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loo
 public class Merchants {
 
 	private static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1);
+	private static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1);
+	private static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1);
 	private static ItemBuilder moneyUnit = new ItemBuilder(Material.STICK).name("placeholder").lore(itemLore).amount(1);
 
 	public static void openMerchant(Player player, int id) {
@@ -107,7 +109,7 @@ public class Merchants {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.FISHING_ROD).lore(itemLore))
-							.ingredient(moneyUnit));
+							.ingredient(goldIngot.amount(2)));
 					// Default
 					add(new TradeBuilder()
 							.result(moneyUnit)

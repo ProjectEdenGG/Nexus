@@ -83,7 +83,7 @@ public class SellCrates implements Listener {
 	}
 
 	private void openSellCrate(Player player, String type) {
-		Inventory inv = Bukkit.createInventory(null, 27, colorize("&aSell Crate - " + type));
+		Inventory inv = Bukkit.createInventory(null, 27, colorize("&3Sell Crate - " + type));
 		player.openInventory(inv);
 	}
 

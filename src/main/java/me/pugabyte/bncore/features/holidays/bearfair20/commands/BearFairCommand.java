@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 
-import me.pugabyte.bncore.features.holidays.bearfair20.Fairgrounds;
+import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.warps.commands._WarpCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -107,12 +107,6 @@ public class BearFairCommand extends _WarpCommand {
 		Tasks.wait(Time.SECOND.x(2), () -> world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F));
 	}
 
-	@Path("merrygoround")
-	public void merryGoRound() {
-		commandBlock();
-		Fairgrounds.startMerryGoRound();
-	}
-
 	@Path("moveCollector")
 	public void moveCollector() {
 		commandBlock();
@@ -123,6 +117,12 @@ public class BearFairCommand extends _WarpCommand {
 	void recipes() {
 		runCommandAsConsole("minecraft:recipe take " + player().getName() + " bncore:custom_bearfair_anzac_biscuit");
 		runCommandAsConsole("minecraft:recipe give " + player().getName() + " bncore:custom_bearfair_anzac_biscuit");
+	}
+
+	@Path("strengthTest")
+	void strengthTest() {
+		commandBlock();
+		Interactables.strengthTest();
 	}
 
 	//TODO:

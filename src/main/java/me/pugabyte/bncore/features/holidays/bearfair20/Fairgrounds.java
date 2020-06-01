@@ -6,14 +6,12 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Archery;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Basketball;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Frogger;
+import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.PugDunk;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Reflection;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -38,6 +36,7 @@ public class Fairgrounds implements Listener {
 		new Timer("      Frogger", Frogger::new);
 		new Timer("      Basketball", Basketball::new);
 		new Timer("      Reflection", Reflection::new);
+		new Timer("      Interactables", Interactables::new);
 	}
 
 	public static void giveKit(BearFairKit kit, Player player) {
@@ -140,12 +139,5 @@ public class Fairgrounds implements Listener {
 			removeKits(event.getPlayer());
 		}
 	}
-
-	public static void startMerryGoRound() {
-		Location loc = new Location(BearFair20.world, -936, 136, -1588);
-		loc.getBlock().setType(Material.REDSTONE_BLOCK);
-		Tasks.wait(Time.SECOND.x(20), () -> loc.getBlock().setType(Material.AIR));
-	}
-
 
 }
