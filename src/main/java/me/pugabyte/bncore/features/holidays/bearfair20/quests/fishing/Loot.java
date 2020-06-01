@@ -24,12 +24,12 @@ public class Loot {
 	public static ItemStack redSnapper = new ItemBuilder(Material.SALMON).name("Red Snapper").lore(itemLore).build();
 	public static ItemStack redMullet = new ItemBuilder(Material.SALMON).name("Red Mullet").lore(itemLore).build();
 	// Island Fish
-	public static ItemStack tigerTrout = new ItemBuilder(Material.COOKED_SALMON).name("Tiger Trout").lore(itemLore).build();
-	public static ItemStack glacierfish = new ItemBuilder(Material.COD).name("Glacierfish").lore(itemLore).build();
-	public static ItemStack crimsonfish = new ItemBuilder(Material.SALMON).name("Crimsonfish").lore(itemLore).build();
-	public static ItemStack flathead = new ItemBuilder(Material.COOKED_SALMON).name("Flathead").lore(itemLore).build();
-	public static ItemStack midnightCarp = new ItemBuilder(Material.TROPICAL_FISH).name("Midnight Carp").lore(itemLore).build();
-	public static ItemStack sunfish = new ItemBuilder(Material.TROPICAL_FISH).name("Sunfish").lore(itemLore).build();
+	public static ItemStack tigerTrout = new ItemBuilder(Material.COOKED_SALMON).name("Tiger Trout").lore(itemLore).glow().build();
+	public static ItemStack glacierfish = new ItemBuilder(Material.COD).name("Glacierfish").lore(itemLore).glow().build();
+	public static ItemStack crimsonfish = new ItemBuilder(Material.SALMON).name("Crimsonfish").lore(itemLore).glow().build();
+	public static ItemStack flathead = new ItemBuilder(Material.COOKED_SALMON).name("Flathead").lore(itemLore).glow().build();
+	public static ItemStack midnightCarp = new ItemBuilder(Material.TROPICAL_FISH).name("Midnight Carp").glow().lore(itemLore).build();
+	public static ItemStack sunfish = new ItemBuilder(Material.TROPICAL_FISH).name("Sunfish").glow().lore(itemLore).build();
 	public static ItemStack seaCucumber = new ItemBuilder(Material.SEA_PICKLE).name("Sea Cucumber").lore(itemLore).build();
 	// Treasure
 	public static ItemStack brainCoral = new ItemBuilder(Material.BRAIN_CORAL).lore(itemLore).build();
@@ -59,8 +59,7 @@ public class Loot {
 	public static List<ItemStack> treasure = Arrays.asList(brainCoral, hornCoral, tubeCoral, fireCoral, bubbleCoral, scales, heartOfTheSea, nautilusShell);
 	public static List<ItemStack> trash = Arrays.asList(oldBoots, rustySpoon, brokenCD, lostBook, soggyNewsPaper, driftwood, seaweed);
 	//
-	public static List<ItemStack> coral = Arrays.asList(brainCoral, hornCoral, tubeCoral, fireCoral);
-
+	public static List<ItemStack> coral = Arrays.asList(brainCoral, hornCoral, tubeCoral, fireCoral, bubbleCoral);
 
 	public Loot() {
 		fish.addAll(defaultFish);
