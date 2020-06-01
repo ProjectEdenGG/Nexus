@@ -13,8 +13,7 @@ import org.bukkit.OfflinePlayer;
 import java.util.Arrays;
 
 public class MysteryChestCommand extends CustomCommand {
-
-	SettingService service = new SettingService();
+	private final SettingService service = new SettingService();
 
 	public MysteryChestCommand(CommandEvent event) {
 		super(event);

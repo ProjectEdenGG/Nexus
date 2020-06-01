@@ -99,7 +99,7 @@ public class EndOfMonth {
 		}
 
 		public List<TopVoter> getVotersWith(int count) {
-			return topVoters.stream().filter(topVoter -> topVoter.getCount() > count).collect(Collectors.toList());
+			return topVoters.stream().filter(topVoter -> topVoter.getCount() >= count).collect(Collectors.toList());
 		}
 
 		public List<TopVoter> getVotersBetween(int min, int max) {
