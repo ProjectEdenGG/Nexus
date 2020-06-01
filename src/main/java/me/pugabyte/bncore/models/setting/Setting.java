@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.persistence.serializer.mysql.LocationSerializer;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -41,6 +42,16 @@ public class Setting {
 
 	public void setLocation(Location location) {
 		this.value = new LocationSerializer().serialize(location);
+	}
+
+	public int getInt() {
+		if (Utils.isInt(value))
+			return Integer.parseInt(value);
+		return 0;
+	}
+
+	public void setInt(int value) {
+		this.value = String.valueOf(value);
 	}
 
 	public Map<String, Object> getJson() {

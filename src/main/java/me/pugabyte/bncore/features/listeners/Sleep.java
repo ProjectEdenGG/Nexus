@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.store.perks.joinquit.VanishEvent;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +27,10 @@ public class Sleep implements Listener {
 
 	public void calculate(World world) {
 		if (!(world.getTime() >= 12541 && world.getTime() <= 23458))
+			return;
+
+		Boolean gameRuleValue = world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE);
+		if (gameRuleValue != null && !gameRuleValue)
 			return;
 
 		List<Player> players = world.getPlayers();
