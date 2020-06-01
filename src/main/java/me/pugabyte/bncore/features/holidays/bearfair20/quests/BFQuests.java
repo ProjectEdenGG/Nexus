@@ -1,9 +1,9 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Merchants;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.bncore.utils.CitizensUtils;
@@ -59,6 +59,7 @@ public class BFQuests implements Listener {
 		new Beehive();
 		new Fishing();
 		new EasterEggs();
+		new SellCrates();
 		Recipes.loadRecipes();
 	}
 
@@ -210,8 +211,7 @@ public class BFQuests implements Listener {
 	public void onRightClickNPC(NPCRightClickEvent event) {
 		Player player = event.getClicker();
 		Location loc = player.getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.BFRg);
-		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region)) {
+		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) {
 			int id = event.getNPC().getId();
 			Talkers.startScript(player, id);
 			Merchants.openMerchant(player, id);
@@ -228,8 +228,7 @@ public class BFQuests implements Listener {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.BFRg);
-		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(region)) {
+		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) {
 			event.setCancelled(true);
 		}
 	}

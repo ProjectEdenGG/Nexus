@@ -13,9 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loot.*;
 
 // TODO: Trades & Economy
 public class Merchants {
+
+	private static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1);
+	private static ItemBuilder moneyUnit = new ItemBuilder(Material.STICK).name("placeholder").lore(itemLore).amount(1);
 
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
@@ -25,109 +29,152 @@ public class Merchants {
 		new MerchantBuilder(StringUtils.camelCase(bfMerchant.name())).trades(bfMerchant.getTrades()).open(player);
 	}
 
-	private enum BFMerchant {
+	public enum BFMerchant {
 		ARTIST(2657) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		BAKER(2659) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		BARTENDER(2655) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potion(PotionType.POISON, true, false).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.STICK).lore(itemLore)));
+							.ingredient(moneyUnit));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potion(PotionType.WEAKNESS).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.STICK).lore(itemLore)));
+							.ingredient(moneyUnit));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potion(PotionType.SLOWNESS).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.STICK).lore(itemLore)));
+							.ingredient(moneyUnit));
 				}};
 			}
 		},
 		BLACKSMITH(2656) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		BOTANIST(2661) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.result(goldNugget)
 							.ingredient(new ItemBuilder(Material.MELON).amount(16).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.result(goldNugget)
 							.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(16).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.result(goldNugget)
 							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(16).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.result(goldNugget)
 							.ingredient(new ItemBuilder(Material.POTATO).amount(64).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.result(goldNugget)
 							.ingredient(new ItemBuilder(Material.CARROT).amount(64).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore))
+							.result(goldNugget)
 							.ingredient(new ItemBuilder(Material.BEETROOT).amount(32).lore(itemLore)));
 				}};
 			}
 		},
 		BREWER(2662) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		COLLECTOR(2750) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		FISHERMAN(2653) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.FISHING_ROD).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.STICK).lore(itemLore)));
+							.ingredient(moneyUnit));
+					// Default
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.COD).lore(itemLore)));
+							.result(moneyUnit)
+							.ingredient(cod));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.SALMON).lore(itemLore)));
+							.result(moneyUnit)
+							.ingredient(salmon));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.TROPICAL_FISH).lore(itemLore)));
+							.result(moneyUnit)
+							.ingredient(tropicalFish));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.PUFFERFISH).lore(itemLore)));
+							.result(moneyUnit)
+							.ingredient(pufferfish));
+					// Generic
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(bullhead));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(sturgeon));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(woodskip));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(voidSalmon));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(redSnapper));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(redMullet));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(seaCucumber));
+					// Island
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(midnightCarp));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(sunfish));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(tigerTrout));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(glacierfish));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(crimsonfish));
+					add(new TradeBuilder()
+							.result(moneyUnit)
+							.ingredient(flathead));
+					//
 				}};
 			}
 		},
 		INVENTOR(2660) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		MINER(2743) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore))
@@ -137,26 +184,26 @@ public class Merchants {
 		},
 		PASTRY_CHEF(2654) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.result(moneyUnit)
 							.ingredient(new ItemBuilder(Material.CAKE).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STICK).lore(itemLore))
+							.result(moneyUnit)
 							.ingredient(new ItemBuilder(Material.COOKIE).lore(itemLore)));
 				}};
 			}
 		},
 		SORCERER(2658) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		},
 		TRADER(2763) {
 			@Override
-			List<TradeBuilder> getTrades() {
+			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>();
 			}
 		};
@@ -177,6 +224,6 @@ public class Merchants {
 			return null;
 		}
 
-		abstract List<TradeBuilder> getTrades();
+		public abstract List<TradeBuilder> getTrades();
 	}
 }

@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.holidays.bearfair20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import me.pugabyte.bncore.BNCore;
@@ -39,7 +38,7 @@ public class BearFair20 implements Listener {
 	public static World world = Bukkit.getWorld("safepvp");
 	public static WorldGuardUtils WGUtils = new WorldGuardUtils(world);
 	public static String BFRg = "bearfair2020";
-	public static ProtectedRegion BFProtectedRg = WGUtils.getProtectedRegion(BearFair20.BFRg);
+	public static ProtectedRegion BFProtectedRg = WGUtils.getProtectedRegion(BFRg);
 
 	public BearFair20() {
 		BNCore.registerListener(this);
@@ -62,29 +61,26 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onTameEntity(EntityTameEvent event) {
 		Location loc = event.getEntity().getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
-		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 		event.setCancelled(true);
 	}
 
-	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
-		Player player = event.getPlayer();
-		Location loc = player.getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
-		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+//	@EventHandler
+//	public void onRegionEnter(RegionEnteredEvent event) {
+//		Player player = event.getPlayer();
+//		Location loc = player.getLocation();
+//		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 //		if (player.hasPermission("worldguard.region.bypass.*")) {
 //			Utils.runCommand(player, "wgedit off");
 //		}
-
-	}
+//
+//	}
 
 	@EventHandler
 	public void onThrowEnderPearl(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
-		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			ItemStack item = player.getInventory().getItemInMainHand();
@@ -99,8 +95,7 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onLecternTakeBook(PlayerTakeLecternBookEvent event) {
 		Location loc = event.getLectern().getBlock().getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
-		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 
 		event.setCancelled(true);
 		event.getPlayer().closeInventory();
@@ -113,8 +108,7 @@ public class BearFair20 implements Listener {
 
 		Player player = (Player) event.getExited();
 		Location loc = player.getLocation();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BFRg);
-		if (!WGUtils.getRegionsAt(loc).contains(region)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
 
 		Tasks.wait(1, () -> {
 			event.getVehicle().remove();
