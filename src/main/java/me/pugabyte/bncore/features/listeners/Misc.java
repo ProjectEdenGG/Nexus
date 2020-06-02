@@ -176,7 +176,6 @@ public class Misc implements Listener {
 	private static final List<UUID> toSpawn = new ArrayList<>();
 
 	@EventHandler
-	@SneakyThrows
 	public void onConnect(AsyncPlayerPreLoginEvent event) {
 		Nerd nerd = new Nerd(event.getUniqueId());
 		World world = nerd.getSpawnWorld();

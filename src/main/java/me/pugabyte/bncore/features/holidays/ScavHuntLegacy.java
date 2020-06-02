@@ -9,6 +9,7 @@ import org.bukkit.block.Skull;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Arrays;
 import java.util.List;
@@ -63,6 +64,8 @@ public class ScavHuntLegacy implements Listener {
 
 	@EventHandler
 	public void onHeadClick(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND) return;
+
 		Block block = event.getClickedBlock();
 		if (block == null) return;
 		if (!MaterialTag.SKULLS.isTagged(block.getType())) return;
