@@ -56,7 +56,7 @@ public abstract class MySQLService extends DatabaseService {
 	}
 
 	@Override
-	public <T> void deleteAllSync() {
+	public void deleteAllSync() {
 		database.table(getTable()).delete();
 	}
 

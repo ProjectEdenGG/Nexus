@@ -39,7 +39,7 @@ public class Censor {
 		if (characters.length() == 0)
 			return;
 		int upper = countUpperCase(message);
-		int pct = upper / characters.length() * 100;
+		int pct = (int) ((double) upper / characters.length() * 100);
 
 		if (upper > 7 && pct > 40)
 			message = message.toLowerCase();
