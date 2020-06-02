@@ -6,14 +6,17 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Halloween;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNight;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,6 +28,7 @@ import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 import static me.pugabyte.bncore.utils.Utils.isVanished;
 
@@ -41,7 +45,7 @@ public class BearFair20 implements Listener {
 	public static String BFRg = "bearfair2020";
 	public static ProtectedRegion BFProtectedRg = WGUtils.getProtectedRegion(BFRg);
 	// TODO: Enable this.
-	public static boolean giveDailyPoints = false;
+	public static boolean givePoints = false;
 
 	public BearFair20() {
 		BNCore.registerListener(this);
@@ -117,6 +121,51 @@ public class BearFair20 implements Listener {
 			event.getVehicle().remove();
 			Fairgrounds.giveKit(Fairgrounds.BearFairKit.MINECART, player);
 		});
+	}
+
+	public static boolean isAtBearFair(Block block) {
+		return isAtBearFair(block.getLocation());
+	}
+
+	public static boolean isAtBearFair(Player player) {
+		return isAtBearFair(player.getLocation());
+	}
+
+	public static boolean isAtBearFair(Location location) {
+		return isInRegion(location, BFRg);
+	}
+
+	public static boolean isInRegion(Block block, String region) {
+		return isInRegion(block.getLocation(), region);
+	}
+
+	public static boolean isInRegion(Player player, String region) {
+		return isInRegion(player.getLocation(), region);
+	}
+
+	public static boolean isInRegion(Location location, String region) {
+		return location.getWorld().equals(BearFair20.world) && WGUtils.isInRegion(location, region);
+	}
+
+	public static ItemStack getTool(Player player) {
+		ItemStack mainHand = player.getInventory().getItemInMainHand();
+		ItemStack offHand = player.getInventory().getItemInOffHand();
+		if (Utils.isNullOrAir(mainHand)) {
+			if (Utils.isNullOrAir(offHand)) {
+				return null;
+			} else {
+				return offHand;
+			}
+		}
+		return mainHand;
+	}
+
+	public static boolean isBFItem(ItemStack item) {
+		return item != null && item.getLore() != null && item.getLore().contains(itemLore);
+	}
+
+	public static void send(String message, Player to) {
+		to.sendMessage(StringUtils.colorize(message));
 	}
 
 }

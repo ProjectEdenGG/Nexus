@@ -5,7 +5,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.WeightedLoot;
-import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -26,12 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFRg;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.fishingError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loot.*;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Fishing implements Listener {
 	private List<ItemStack> lootList = new ArrayList<>();
@@ -145,28 +142,12 @@ public class Fishing implements Listener {
 	public void onFishCatch(PlayerFishEvent event) {
 		Player player = event.getPlayer();
 
-		if (!event.getPlayer().getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(BFProtectedRg)) return;
+		if(!isAtBearFair(player)) return;
 
-		ItemStack rod = player.getInventory().getItemInMainHand();
-		ItemStack offHand = player.getInventory().getItemInOffHand();
-		if (!rod.getType().equals(Material.FISHING_ROD)) {
-			if (!offHand.getType().equals(Material.FISHING_ROD)) {
-				return;
-			} else {
-				rod = offHand;
-			}
-		}
-
-		if (rod.getLore() == null) {
-			player.sendMessage(colorize(BFQuests.fishingError));
-			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
-			event.setCancelled(true);
-			return;
-		}
-
-		if (!rod.getLore().contains(itemLore)) {
-			player.sendMessage(colorize(BFQuests.fishingError));
+		ItemStack rod = BearFair20.getTool(player);
+		if(rod == null) return;
+		if(!isBFItem(rod)) {
+			send(fishingError, player);
 			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			event.setCancelled(true);
 			return;
@@ -189,10 +170,7 @@ public class Fishing implements Listener {
 	@EventHandler
 	public void onMcMMOFishing(McMMOPlayerFishingEvent event) {
 		Player player = event.getPlayer();
-
-		if (!event.getPlayer().getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(BFProtectedRg)) return;
-
+		if(!isAtBearFair(player)) return;
 		event.setCancelled(true);
 	}
 }

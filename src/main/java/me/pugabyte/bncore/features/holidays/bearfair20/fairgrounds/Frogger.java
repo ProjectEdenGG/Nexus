@@ -31,8 +31,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 
 public class Frogger implements Listener {
 
@@ -306,7 +305,7 @@ public class Frogger implements Listener {
 			String cheatingMsg = BearFair20.isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
 				player.teleport(respawnLoc);
-				player.sendMessage("Don't cheat, turn " + cheatingMsg + " off!");
+				send("Don't cheat, turn " + cheatingMsg + " off!", player);
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}
 
@@ -323,7 +322,7 @@ public class Frogger implements Listener {
 			player.teleport(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
 
-			if (giveDailyPoints) {
+			if (givePoints) {
 				BearFairUser user = new BearFairService().get(player);
 				user.giveDailyPoints(1, SOURCE);
 				new BearFairService().save(user);
@@ -350,7 +349,7 @@ public class Frogger implements Listener {
 		if (!(event.getEntity() instanceof Player)) return;
 
 		Player player = (Player) event.getEntity();
-		if (!WGUtils.isInRegion(player.getLocation(), damageRg)) return;
+		if (!isInRegion(player, damageRg)) return;
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) return;
 
 		event.setDamage(0);

@@ -66,7 +66,7 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.LEATHER))
+							.result(new ItemBuilder(Material.LEATHER).lore(itemLore))
 							.ingredient(TBD));
 					add(new TradeBuilder()
 							.result(TBD)
@@ -185,10 +185,10 @@ public class Merchants {
 							.result(goldNugget.amount(3))
 							.ingredient(seaCucumber));
 					add(new TradeBuilder()
-							.result(goldIngot.amount(1))
+							.result(goldBlock.amount(1))
 							.ingredient(midnightCarp));
 					add(new TradeBuilder()
-							.result(goldIngot.amount(1))
+							.result(goldBlock.amount(1))
 							.ingredient(sunfish));
 				}};
 			}
@@ -217,7 +217,7 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.GLOBE_BANNER_PATTERN).name("Recipe for: Honey Stroop Wafel").lore("TODO", "", itemLore))
+							.result(new ItemBuilder(Material.PAPER).name("Recipe for: Honey Stroop Wafel").lore("Left click while holding to learn recipe", itemLore))
 							.ingredient(new ItemBuilder(Material.CAKE).lore(itemLore))
 							.ingredient(new ItemBuilder(Material.COOKIE).lore(itemLore)));
 					add(new TradeBuilder()

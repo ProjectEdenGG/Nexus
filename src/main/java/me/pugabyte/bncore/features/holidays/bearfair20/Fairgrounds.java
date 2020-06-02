@@ -58,11 +58,7 @@ public class Fairgrounds implements Listener {
 	public static void removeKits(Player player) {
 		ItemStack[] items = player.getInventory().getContents();
 		for (ItemStack item : items) {
-			if (item == null) continue;
-			if (!item.hasItemMeta()) continue;
-			ItemMeta meta = item.getItemMeta();
-			if (meta.getLore() == null) continue;
-			if (!meta.getLore().contains(itemLore)) continue;
+			if (!BearFair20.isBFItem(item)) continue;
 
 			for (BearFairKit kit : BearFairKit.values()) {
 				if (kit.getItems().contains(item))

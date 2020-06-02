@@ -146,7 +146,7 @@ public class BFFishingCommand extends CustomCommand {
 		for (ItemStack content : player.getInventory().getContents()) {
 			if (Utils.isNullOrAir(content)) continue;
 			if (!content.getType().equals(Material.FISHING_ROD)) continue;
-			if (content.getItemMeta().getLore() != null && content.getItemMeta().getLore().contains(itemLore))
+			if (BearFair20.isBFItem(content))
 				player.getInventory().remove(content);
 		}
 	}

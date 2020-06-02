@@ -34,9 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 
 public class BFQuests implements Listener {
 	public static String itemLore = "BearFair20 Item";
@@ -51,12 +49,14 @@ public class BFQuests implements Listener {
 	public static String decorOnlyError = prefix + "&c&lHey! &7This block is just decoration";
 	public static String craftItemError = prefix + "&c&lHey! &7You can only craft that item with BearFair20 items!";
 	public static String fishingError = prefix + "&c&lHey! &7You may only fish here using a BearFair20 Fishing Rod";
+	public static String miningError = prefix + "&c&lHey! &7You can't mine here";
 
 	public BFQuests() {
 		BNCore.registerListener(this);
-		new RegenCrops();
 		setupCollector();
+		new RegenCrops();
 		new Beehive();
+		new Quarry();
 		new Fishing();
 		new EasterEggs();
 		new SellCrates();
@@ -113,8 +113,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onBlockDropItemEvent(BlockDropItemEvent event) {
 		Location loc = event.getBlock().getLocation();
-		if (!event.getBlock().getLocation().getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
+		if (!isAtBearFair(loc)) return;
 		event.getItems().forEach(item -> {
 			Material type = item.getItemStack().getType();
 			if (type.equals(Material.WHEAT_SEEDS) || type.equals(Material.BEETROOT_SEEDS)) {
@@ -129,8 +128,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onEntityDropItem(EntityDropItemEvent event) {
 		Location loc = event.getEntity().getLocation();
-		if (!event.getEntity().getLocation().getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
+		if (!isAtBearFair(loc)) return;
 		event.getItemDrop().getItemStack().setLore(Collections.singletonList(itemLore));
 	}
 
@@ -148,20 +146,15 @@ public class BFQuests implements Listener {
 		for (ItemStack ingredient : ingredients) {
 			if (Utils.isNullOrAir(ingredient))
 				continue;
-			ItemMeta meta = ingredient.getItemMeta();
-			if (!meta.hasLore() || meta.getLore() == null) {
+			if (!isBFItem(ingredient))
 				questCrafting = false;
-				continue;
-			}
 
-			if (!meta.getLore().contains(itemLore))
-				questCrafting = false;
 		}
 
 		if (!questCrafting) {
-			if (result != null && result.getItemMeta().getLore() != null && result.getItemMeta().getLore().contains(itemLore)) {
+			if (isBFItem(result)) {
 				event.getInventory().setResult(new ItemStack(Material.AIR));
-				player.sendMessage(colorize(craftItemError));
+				send(craftItemError, player);
 			}
 		}
 	}
@@ -181,13 +174,7 @@ public class BFQuests implements Listener {
 		for (ItemStack ingredient : ingredients) {
 			if (Utils.isNullOrAir(ingredient))
 				continue;
-			ItemMeta meta = ingredient.getItemMeta();
-			if (!meta.hasLore() || meta.getLore() == null) {
-				questCrafting = false;
-				continue;
-			}
-
-			if (!meta.getLore().contains(itemLore))
+			if (!isBFItem(result))
 				questCrafting = false;
 		}
 
@@ -211,7 +198,7 @@ public class BFQuests implements Listener {
 	public void onRightClickNPC(NPCRightClickEvent event) {
 		Player player = event.getClicker();
 		Location loc = player.getLocation();
-		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) {
+		if (isAtBearFair(player)) {
 			int id = event.getNPC().getId();
 			Talkers.startScript(player, id);
 			Merchants.openMerchant(player, id);
@@ -228,7 +215,7 @@ public class BFQuests implements Listener {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
 
-		if (player.getWorld().equals(BearFair20.world) && WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) {
+		if (isAtBearFair(player)) {
 			event.setCancelled(true);
 		}
 	}

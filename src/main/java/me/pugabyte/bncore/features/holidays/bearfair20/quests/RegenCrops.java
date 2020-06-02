@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -26,14 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.bottomBlockError;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.cantBreakError;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.decorOnlyError;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.notFullyGrownError;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.*;
 
 public class RegenCrops implements Listener {
 
@@ -132,11 +126,10 @@ public class RegenCrops implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.isCancelled()) return;
-		if (!event.getPlayer().getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(block.getLocation()).contains(BFProtectedRg)) return;
+		if (!isAtBearFair(block)) return;
 		if (!breakList.contains(block.getType())) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
-			player.sendMessage(colorize(cantBreakError));
+			send(cantBreakError, player);
 			event.setCancelled(true);
 			return;
 		}
@@ -153,7 +146,7 @@ public class RegenCrops implements Listener {
 				case MELON:
 				case PUMPKIN:
 					if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
-						player.sendMessage(colorize(decorOnlyError));
+						send(decorOnlyError, player);
 						event.setCancelled(true);
 						return;
 					}
@@ -161,7 +154,7 @@ public class RegenCrops implements Listener {
 					break;
 				case SUGAR_CANE:
 					if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
-						player.sendMessage(colorize(bottomBlockError));
+						send(bottomBlockError, player);
 						event.setCancelled(true);
 						return;
 					}
@@ -185,7 +178,7 @@ public class RegenCrops implements Listener {
 					break;
 				default:
 					if (player.hasPermission("worldguard.region.bypass.*")) return;
-					player.sendMessage(colorize(cantBreakError));
+					send(cantBreakError, player);
 					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 					event.setCancelled(true);
 			}
@@ -194,7 +187,7 @@ public class RegenCrops implements Listener {
 
 		Ageable ageable = (Ageable) blockData;
 		if (ageable.getAge() != ageable.getMaximumAge()) {
-			player.sendMessage(colorize(notFullyGrownError));
+			send(notFullyGrownError, player);
 			event.setCancelled(true);
 			return;
 		}
