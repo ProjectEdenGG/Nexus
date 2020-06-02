@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public class AFK {
-	static Map<Player, AFKPlayer> players = new AFKService().getAll();
+	static Map<Player, AFKPlayer> players = new AFKService().getMap();
 
 	public AFK() {
 		new AFKListener();
