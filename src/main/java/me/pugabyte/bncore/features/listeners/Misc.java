@@ -2,14 +2,16 @@ package me.pugabyte.bncore.features.listeners;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
-import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.warps.Warps;
+import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.warps.WarpService;
@@ -18,9 +20,9 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -40,8 +42,8 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -171,23 +173,37 @@ public class Misc implements Listener {
 		}
 	}
 
-	private static List<UUID> toSpawn = new ArrayList<>();
+	private static final List<UUID> toSpawn = new ArrayList<>();
 
 	@EventHandler
 	@SneakyThrows
 	public void onConnect(AsyncPlayerPreLoginEvent event) {
-		File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + event.getUniqueId().toString() + ".dat").toFile();
-		if (file.exists())
-			if (Bukkit.getWorld(new NBTFile(file).getString("SpawnWorld")) == null)
+		Nerd nerd = new Nerd(event.getUniqueId());
+		World world = nerd.getSpawnWorld();
+		if (world == null)
+			toSpawn.add(event.getUniqueId());
+		else if (world.getName().startsWith("resource")) {
+			nerd = new NerdService().get(event.getUniqueId());
+			if (nerd.getLastQuit().isBefore(ChronoLocalDateTime.from(LocalDate.now().withDayOfMonth(1))))
 				toSpawn.add(event.getUniqueId());
+		}
 	}
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		if (toSpawn.contains(event.getPlayer().getUniqueId()))
+		if (toSpawn.contains(event.getPlayer().getUniqueId())) {
 			new WarpService().get("spawn", WarpType.NORMAL).teleport(event.getPlayer());
+			BNCore.log("Teleporting resource world player " + event.getPlayer().getName() + " to spawn");
+			toSpawn.remove(event.getPlayer().getUniqueId());
+		}
 
 		Tasks.wait(5, () -> {
+			if (toSpawn.contains(event.getPlayer().getUniqueId())) {
+				new WarpService().get("spawn", WarpType.NORMAL).teleport(event.getPlayer());
+				BNCore.log("Teleporting resource world player " + event.getPlayer().getName() + " to spawn [2]");
+				toSpawn.remove(event.getPlayer().getUniqueId());
+			}
+
 			WorldGroup worldGroup = WorldGroup.get(event.getPlayer());
 			if (worldGroup == WorldGroup.MINIGAMES)
 				joinMinigames(event.getPlayer());

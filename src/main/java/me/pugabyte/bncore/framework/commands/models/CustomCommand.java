@@ -59,15 +59,11 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void send(CommandSender sender, String message) {
-		if (isConsole(sender) || isPlayer(sender))
-			sender.sendMessage(StringUtils.colorize(message));
-		else if (isOfflinePlayer(sender))
-			if (((OfflinePlayer) sender).isOnline())
-				((OfflinePlayer) sender).getPlayer().sendMessage(StringUtils.colorize(message));
+		send(sender, json(message));
 	}
 
-	protected void send(Player player, int delay, String message) {
-		Tasks.wait(delay, () -> player.sendMessage(StringUtils.colorize(message)));
+	protected void send(CommandSender sender, int delay, String message) {
+		Tasks.wait(delay, () -> send(sender, message));
 	}
 
 	protected void send() {
@@ -75,15 +71,15 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void send(String message) {
-		event.reply(message);
+		send(json(message));
 	}
 
 	protected void send(JsonBuilder builder) {
-		sender().spigot().sendMessage(builder.build());
+		send(sender(), builder);
 	}
 
-	protected void send(Player player, JsonBuilder builder) {
-		builder.send(player);
+	protected void send(CommandSender sender, JsonBuilder builder) {
+		builder.send(sender);
 	}
 
 	protected void send(int delay, String message) {

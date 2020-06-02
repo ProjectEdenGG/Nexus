@@ -7,6 +7,8 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.regex.Matcher;
@@ -156,8 +158,15 @@ public class JsonBuilder {
 		this.initialized = true;
 	}
 
-	public void send(Player player) {
-		player.spigot().sendMessage(build());
+	public void send(CommandSender sender) {
+		if (sender instanceof Player)
+			sender.spigot().sendMessage(build());
+		else if (sender instanceof OfflinePlayer) {
+			OfflinePlayer player = (OfflinePlayer) sender;
+			if (player.isOnline() && player.getPlayer() != null)
+				player.getPlayer().spigot().sendMessage(build());
+		} else
+			sender.sendMessage(toString());
 	}
 
 	public BaseComponent[] build() {

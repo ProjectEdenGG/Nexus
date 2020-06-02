@@ -1,17 +1,22 @@
 package me.pugabyte.bncore.models.nerd;
 
+import de.tr7zw.nbtapi.NBTFile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -117,6 +122,15 @@ public class Nerd {
 
 	public boolean isVanished() {
 		return Utils.isVanished(getPlayer());
+	}
+
+	@SneakyThrows
+	public NBTFile getDataFile() {
+		return new NBTFile(Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + getUuid() + ".dat").toFile());
+	}
+
+	public World getSpawnWorld() {
+		return Bukkit.getWorld(getDataFile().getString("SpawnWorld"));
 	}
 
 }
