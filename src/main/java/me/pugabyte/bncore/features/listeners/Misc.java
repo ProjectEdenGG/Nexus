@@ -42,8 +42,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -183,7 +182,7 @@ public class Misc implements Listener {
 			toSpawn.add(event.getUniqueId());
 		else if (world.getName().startsWith("resource")) {
 			nerd = new NerdService().get(event.getUniqueId());
-			if (nerd.getLastQuit().isBefore(ChronoLocalDateTime.from(LocalDate.now().withDayOfMonth(1))))
+			if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
 				toSpawn.add(event.getUniqueId());
 		}
 	}
