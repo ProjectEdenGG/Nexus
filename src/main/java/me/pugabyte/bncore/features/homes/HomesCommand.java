@@ -1,14 +1,20 @@
 package me.pugabyte.bncore.features.homes;
 
+import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.home.Home;
 import me.pugabyte.bncore.models.home.HomeOwner;
 import me.pugabyte.bncore.models.home.HomeService;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,6 +70,48 @@ public class HomesCommand extends CustomCommand {
 	@Permission("group.seniorstaff")
 	void reload() {
 		service.clearCache();
+	}
+
+	private static final List<Home> deleted = new ArrayList<>();
+
+	@Permission("group.admin")
+	@Path("deleteFromWorld <world>")
+	void deleteFromWorld(World world) {
+		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder()
+				.onConfirm(e -> Tasks.async(() -> {
+					deleted.clear();
+					List<HomeOwner> all = service.getAll();
+					all.forEach(homeOwner -> {
+						new ArrayList<>(homeOwner.getHomes()).forEach(home -> {
+							if (home.getLocation() == null || home.getLocation().getWorld() == null || home.getLocation().getWorld().equals(world)) {
+								deleted.add(home);
+								homeOwner.delete(home);
+							}
+						});
+						service.save(homeOwner);
+					});
+
+					send(json(PREFIX + "Deleted &e" + deleted.size() + " &3homes from world &e" + world.getName() + "&3.")
+							.next("&eClick here &3to restore them").command("/homes restoreDeleted"));
+				}))
+				.build());
+	}
+
+	@Async
+	@Permission("group.admin")
+	@Path("restoreDeleted")
+	void restoreDeleted() {
+		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder()
+				.onConfirm(e -> {
+					deleted.forEach(home -> {
+						home.getOwner().add(home);
+						service.save(home.getOwner());
+					});
+
+					send(PREFIX + "Restored &e" + deleted.size() + " &3homes");
+					deleted.clear();
+				})
+				.build());
 	}
 
 }

@@ -17,7 +17,6 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -96,11 +95,11 @@ public class ConvertShopCommand extends CustomCommand {
 		SignData data = new SignData();
 		String[] lines = sign.getLines();
 
-		if (ChatColor.stripColor(lines[0]).equals("[Trade]")) {
+		if (StringUtils.stripColor(lines[0]).equals("[Trade]")) {
 			data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(":")[0]));
 			data.setMoneyInSign(Double.parseDouble(lines[1].split(":")[1]));
 			data.setStock(Integer.parseInt(lines[2].split(" ")[1].split(":")[1]));
-			data.setPlayer(Utils.getPlayer(ChatColor.stripColor(lines[3])));
+			data.setPlayer(Utils.getPlayer(StringUtils.stripColor(lines[3])));
 
 			String idForSale = lines[2].split(" ")[1].split(":")[0];
 
@@ -120,19 +119,19 @@ public class ConvertShopCommand extends CustomCommand {
 			return data;
 		}
 
-		if (ChatColor.stripColor(lines[0]).equals("[Ench Trade]")) {
+		if (StringUtils.stripColor(lines[0]).equals("[Ench Trade]")) {
 			data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(" \\| ")[0]));
 			data.setItem(new ItemBuilder(Material.ENCHANTED_BOOK)
 					.enchant(getEnchantFromShort(lines[2].split(" ")[0]), Integer.parseInt(lines[2].split(" ")[1])).build());
 			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
-			data.setPlayer(Utils.getPlayer(ChatColor.stripColor(lines[3])));
+			data.setPlayer(Utils.getPlayer(StringUtils.stripColor(lines[3])));
 			return data;
 		}
 
-		if (ChatColor.stripColor(lines[0]).equals("[Potion Trade]")) {
+		if (StringUtils.stripColor(lines[0]).equals("[Potion Trade]")) {
 			data.setPrice(Integer.parseInt(lines[1].replace("$", "").split(" \\| ")[0]));
 			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
-			data.setPlayer(Utils.getPlayer(ChatColor.stripColor(lines[3])));
+			data.setPlayer(Utils.getPlayer(StringUtils.stripColor(lines[3])));
 
 			boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
 			boolean isMultiplied = isMultiplied(lines[2]);
@@ -156,10 +155,10 @@ public class ConvertShopCommand extends CustomCommand {
 			return data;
 		}
 
-		if (ChatColor.stripColor(lines[0]).equals("[Arrow Trade]")) {
+		if (StringUtils.stripColor(lines[0]).equals("[Arrow Trade]")) {
 			data.setPrice(Integer.parseInt(lines[1].replace("$", "").split(" \\| ")[0]));
 			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
-			data.setPlayer(Utils.getPlayer(ChatColor.stripColor(lines[3])));
+			data.setPlayer(Utils.getPlayer(StringUtils.stripColor(lines[3])));
 
 			boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
 			boolean isMultiplied = isMultiplied(lines[2]);

@@ -58,7 +58,7 @@ public class StatItem {
 			lore.stream()
 					.filter(line -> line.contains(": "))
 					.forEach((line) -> {
-						String[] split = ChatColor.stripColor(line).split(": ");
+						String[] split = StringUtils.stripColor(line).split(": ");
 						Stat stat = Stat.valueOf(split[0].replace(" ", "_").toUpperCase());
 						int value = Integer.parseInt(split[1]);
 						newStats.put(stat, value);

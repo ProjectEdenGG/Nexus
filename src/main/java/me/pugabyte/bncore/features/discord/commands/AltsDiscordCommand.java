@@ -10,10 +10,11 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.models.litebans.LiteBansService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.RELAY)
 public class AltsDiscordCommand extends Command {
@@ -49,7 +50,7 @@ public class AltsDiscordCommand extends Command {
 				event.reply("Alts of `" + player.getName() + "` [_Online_ Offline **Banned**]:" + System.lineSeparator() + alts);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				event.reply(ChatColor.stripColor(ex.getMessage()));
+				event.reply(stripColor(ex.getMessage()));
 			}
 		});
 	}

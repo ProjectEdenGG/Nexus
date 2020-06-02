@@ -5,9 +5,10 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class HungerCommand extends CustomCommand {
 
@@ -18,11 +19,11 @@ public class HungerCommand extends CustomCommand {
 	@Path("[player] [number]")
 	void hunger(@Arg("self") Player player, Integer hunger) {
 		if (hunger == null)
-			send(PREFIX + ChatColor.stripColor(player.getName()) + "'s hunger is " + player.getFoodLevel());
+			send(PREFIX + stripColor(player.getName()) + "'s hunger is " + player.getFoodLevel());
 		else {
 			checkPermission("hunger.set");
 			player.setFoodLevel(hunger);
-			send(PREFIX + ChatColor.stripColor(player.getName()) + "'s hunger set to " + player.getFoodLevel());
+			send(PREFIX + stripColor(player.getName()) + "'s hunger set to " + player.getFoodLevel());
 		}
 	}
 
