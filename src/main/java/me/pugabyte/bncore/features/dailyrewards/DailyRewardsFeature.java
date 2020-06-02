@@ -131,8 +131,8 @@ public class DailyRewardsFeature {
 			/*  15 */ add(new Reward("3 Golden Apples")							.item(GOLDEN_APPLE, 3));
 			/*  16 */ add(new Reward("1 Diamond Pickaxe")						.item(DIAMOND_PICKAXE, 1));
 			/*  17 */ add(new Reward("2 Lava, Water, Milk, Empty buckets")		.item(LAVA_BUCKET, 2).item(WATER_BUCKET, 2).item(MILK_BUCKET, 2).item(BUCKET, 2));
-			/*  18 */ add(new Reward("4 Regen 2 Potions")						.item(new ItemBuilder(POTION).amount(4).potion(PotionType.REGEN, false, true)));
-			/*  19 */ add(new Reward("4 Health 2 Potions")						.item(new ItemBuilder(POTION).amount(4).potion(PotionType.INSTANT_HEAL, false, true)));
+			/*  18 */ add(new Reward("4 Regen 2 Potions")						.item(new ItemBuilder(POTION).amount(4).potionType(PotionType.REGEN, false, true)));
+			/*  19 */ add(new Reward("4 Health 2 Potions")						.item(new ItemBuilder(POTION).amount(4).potionType(PotionType.INSTANT_HEAL, false, true)));
 			/*  20 */ add(new Reward("$2,000")									.money(2000));
 			/*  21 */ add(new Reward("10 Cooked Chicken")						.item(COOKED_CHICKEN, 10));
 			/*  22 */ add(new Reward("10 Steak")								.item(COOKED_BEEF, 10));

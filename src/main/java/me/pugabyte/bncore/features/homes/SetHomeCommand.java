@@ -53,8 +53,6 @@ public class SetHomeCommand extends CustomCommand {
 	@Path("<player> <name>")
 	void setHome(OfflinePlayer player, String homeName) {
 		homeOwner = service.get(player);
-		int homes = homeOwner.getHomes().size();
-		int max = homeOwner.getMaxHomes();
 
 		Optional<Home> home = homeOwner.getHome(homeName);
 		String message;

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.Utils.getNearestPlayer;
 
 @Data
@@ -63,7 +64,7 @@ public class Team implements ConfigurationSerializable {
 	@Override
 	public Map<String, Object> serialize() {
 		return new LinkedHashMap<String, Object>() {{
-			put("name", ChatColor.stripColor(getName()));
+			put("name", stripColor(getName()));
 			put("color", getColor().name());
 			put("objective", getObjective());
 			put("loadout", getLoadout());

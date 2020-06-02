@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.Utils.getBlockHit;
 
 @Railgun
@@ -448,7 +449,7 @@ public class Murder extends UnbalancedTeamMechanic {
 		public Retriever(Player player) {
 			this.player = player;
 			String[] name = player.getInventory().getItem(1).getItemMeta().getDisplayName().split(" in ");
-			this.time = Integer.parseInt(ChatColor.stripColor(name[1]));
+			this.time = Integer.parseInt(stripColor(name[1]));
 		}
 
 		@Override

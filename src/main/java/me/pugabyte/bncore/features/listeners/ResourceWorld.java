@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.Utils.chanceOf;
 
 public class ResourceWorld implements Listener {
 
@@ -110,16 +111,22 @@ public class ResourceWorld implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (!event.getPlayer().getWorld().getName().startsWith("resource")) return;
 
-		List<Material> materials = Arrays.asList(Material.CHEST, Material.TRAPPED_CHEST);
+		List<Material> materials = new ArrayList<>(Arrays.asList(Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.BARREL));
+		materials.addAll(MaterialTag.WOODEN_DOORS.getValues());
 		if (!materials.contains(event.getBlockPlaced().getType()))
 			return;
 
 		SettingService service = new SettingService();
-		Setting setting = service.get(event.getPlayer(), "tips.resourceworld.placechest");
+		Setting setting = service.get(event.getPlayer(), "tips.resourceworld.storage");
 
-		if (!setting.getBoolean())
-			if (!Utils.chanceOf(5))
-				return;
+		if (!setting.getBoolean()) {
+			setting.setBoolean(true);
+			service.save(setting);
+		} else if (!chanceOf(15))
+			return;
+
+		event.getPlayer().sendMessage(colorize(" &4Warning: &cYou are currently building in the resource world! " +
+				"This world is regenerated on the &c&lfirst of every month, &cso don't leave your stuff here or you will lose it!"));
 	}
 
 	@EventHandler
@@ -133,5 +140,39 @@ public class ResourceWorld implements Listener {
 			player.sendMessage(colorize("&cYou can't open your enderchest while in the resource world, due to restrictions in place to keep the /market balanced"));
 		}
 	}
+
+	/* Find protections from people being dumb
+
+	select
+		nerd.name,
+		lwc_blocks.name,
+		CONCAT("/tppos ", x, " ", y, " ", z, " ", world)
+	from bearnation_smp_lwc.lwc_protections
+	inner join bearnation_smp_lwc.lwc_blocks
+		on lwc_blocks.id = lwc_protections.blockId
+	inner join bearnation.nerd
+		on lwc_protections.owner = nerd.uuid
+	where world in ('resource', 'resource_nether', 'resource_the_end')
+		and lwc_blocks.name not like "%DOOR%"
+		and lwc_blocks.name not like "%GATE%";
+
+	 */
+
+	// TODO Automation
+	/*
+	- unload all 3 worlds
+	- move the directories to old_<world>
+	- remove uuid.dat
+	- delete homes
+	- create new worlds
+	- paste spawn (y = 150)
+	- mv setspawn
+	- clean light
+	- create npc for filid
+	- set world border
+	- fill chunks
+	- dynamap purge
+	- delete from bearnation_smp_lwc.lwc_protections where world in ('resource', 'resource_nether', 'resource_the_end');
+	 */
 
 }
