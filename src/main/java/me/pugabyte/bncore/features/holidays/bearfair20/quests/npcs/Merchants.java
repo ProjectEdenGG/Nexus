@@ -19,9 +19,9 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loo
 // TODO: Trades & Economy
 public class Merchants {
 
-	private static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1);
-	private static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT).lore(itemLore).amount(1);
-	private static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK).lore(itemLore).amount(1);
+	private static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore);
+	private static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT).lore(itemLore);
+	private static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK).lore(itemLore);
 	private static ItemBuilder TBD = new ItemBuilder(Material.STICK).name("To Be Determined").lore(itemLore).amount(1);
 
 	public static void openMerchant(Player player, int id) {
@@ -79,25 +79,25 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(new ItemBuilder(Material.MELON).amount(8).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(12).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(16).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(new ItemBuilder(Material.SUGAR_CANE).amount(48).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(new ItemBuilder(Material.BEETROOT).amount(32).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(new ItemBuilder(Material.POTATO).amount(64).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(new ItemBuilder(Material.CARROT).amount(64).lore(itemLore)));
 				}};
 			}
@@ -127,16 +127,16 @@ public class Merchants {
 							.result(new ItemBuilder(Material.BLUE_ORCHID).name("Rare Flower").lore(itemLore))
 							.ingredient(new ItemBuilder(Material.STONE_PICKAXE).name("Ancient Pickaxe").lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldBlock)
+							.result(goldBlock.amount(1))
 							.ingredient(tigerTrout));
 					add(new TradeBuilder()
-							.result(goldBlock)
+							.result(goldBlock.amount(1))
 							.ingredient(glacierfish));
 					add(new TradeBuilder()
-							.result(goldBlock)
+							.result(goldBlock.amount(1))
 							.ingredient(crimsonfish));
 					add(new TradeBuilder()
-							.result(goldBlock)
+							.result(goldBlock.amount(1))
 							.ingredient(flathead));
 				}};
 			}
@@ -150,13 +150,13 @@ public class Merchants {
 							.ingredient(goldIngot.amount(2)));
 					// Default
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(cod));
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(salmon));
 					add(new TradeBuilder()
-							.result(goldNugget)
+							.result(goldNugget.amount(1))
 							.ingredient(tropicalFish));
 					add(new TradeBuilder()
 							.result(goldNugget.amount(2))
@@ -185,10 +185,10 @@ public class Merchants {
 							.result(goldNugget.amount(3))
 							.ingredient(seaCucumber));
 					add(new TradeBuilder()
-							.result(goldIngot)
+							.result(goldIngot.amount(1))
 							.ingredient(midnightCarp));
 					add(new TradeBuilder()
-							.result(goldIngot)
+							.result(goldIngot.amount(1))
 							.ingredient(sunfish));
 				}};
 			}
@@ -205,7 +205,7 @@ public class Merchants {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.IRON_PICKAXE).lore(itemLore))
-							.ingredient(goldIngot));
+							.ingredient(goldIngot.amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore))
 							.ingredient(new ItemBuilder(Material.SMOOTH_QUARTZ).name("Purified Marble").lore(itemLore)));
@@ -247,7 +247,7 @@ public class Merchants {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(TBD)
-							.ingredient(goldBlock));
+							.ingredient(goldBlock.amount(1)));
 				}};
 			}
 		};
