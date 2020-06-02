@@ -28,7 +28,7 @@ public class Censor {
 
 	private static void deprecated(ChatEvent event) {
 		String message = event.getMessage();
-		message = message.replaceAll("/cmodify -", "/untrust lock");
+		message = message.replaceAll("/cmodify -", "/untrust lock ");
 		message = message.replaceAll("/cmodify", "/trust lock");
 		event.setMessage(message);
 	}
