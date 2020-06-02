@@ -9,9 +9,9 @@ import me.pugabyte.bncore.features.discord.DiscordId;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
-import org.bukkit.ChatColor;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.KODA)
 public class SubscribeDiscordCommand extends Command {
@@ -36,7 +36,7 @@ public class SubscribeDiscordCommand extends Command {
 				event.reply(event.getAuthor().getAsMention() + " You have subscribed to " + camelCase(role.name()));
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				event.reply(ChatColor.stripColor(ex.getMessage()));
+				event.reply(stripColor(ex.getMessage()));
 			}
 		});
 	}

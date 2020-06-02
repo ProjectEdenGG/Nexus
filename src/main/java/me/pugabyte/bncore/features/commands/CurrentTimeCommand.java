@@ -34,12 +34,12 @@ public class CurrentTimeCommand extends CustomCommand {
 					.line()
 					.next(" &eClick &3 the time format you prefer:  ")
 					.next("&e12 hour")
-					.command("currenttime format 12")
+					.command("/currenttime format 12")
 					.hover("&eClick &3to set the display format to &e12 hour")
 					.group()
 					.next("  &3||  &3")
 					.next("&e24 hour")
-					.command("currenttime format 24")
+					.command("/currenttime format 24")
 					.hover("&eClick &3to set the display format to &e24 hour")
 					.group());
 		else {

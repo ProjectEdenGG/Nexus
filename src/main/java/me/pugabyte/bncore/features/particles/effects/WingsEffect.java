@@ -21,8 +21,8 @@ public class WingsEffect {
 
 	@Getter
 	int taskId;
-	private static boolean o = false;
-	private static boolean x = true;
+	private static final boolean o = false;
+	private static final boolean x = true;
 
 	@Builder(buildMethodName = "start")
 	public WingsEffect(Player player, boolean flapMode, WingStyle wingStyle, int ticks, int flapSpeed,

@@ -8,13 +8,14 @@ import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.Flag;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 import java.util.Optional;
+
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	@Override
@@ -39,7 +40,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Arena arena = match.getArena();
 
 		Optional<Team> optionalTeam = arena.getTeams().stream()
-				.filter(team -> team.getName().equalsIgnoreCase(ChatColor.stripColor(sign.getLine(2))))
+				.filter(team -> team.getName().equalsIgnoreCase(stripColor(sign.getLine(2))))
 				.findFirst();
 
 		if (optionalTeam.isPresent()) {

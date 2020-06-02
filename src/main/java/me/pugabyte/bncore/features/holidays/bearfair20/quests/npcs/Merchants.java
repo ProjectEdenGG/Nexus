@@ -50,13 +50,13 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potion(PotionType.POISON, true, false).lore(itemLore))
+							.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false).lore(itemLore))
 							.ingredient(TBD));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potion(PotionType.WEAKNESS).lore(itemLore))
+							.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS).lore(itemLore))
 							.ingredient(TBD));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potion(PotionType.SLOWNESS).lore(itemLore))
+							.result(new ItemBuilder(Material.POTION).potionType(PotionType.SLOWNESS).lore(itemLore))
 							.ingredient(TBD));
 				}};
 			}

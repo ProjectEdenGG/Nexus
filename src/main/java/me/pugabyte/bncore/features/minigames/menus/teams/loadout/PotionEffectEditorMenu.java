@@ -98,8 +98,8 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 
 			ItemStack potionItem = new ItemBuilder(Material.POTION)
 					.name("&e" + StringUtils.camelCase(effect.getName().replace("_", " ")))
-					.effect(new PotionEffect(effect, 5 ,0))
-					.effectColor(effect.getColor())
+					.potionEffect(new PotionEffect(effect, 5 ,0))
+					.potionEffectColor(effect.getColor())
 					.build();
 
 			if(effect == potionEffect.getType()) potionItem.setType(Material.SPLASH_POTION);

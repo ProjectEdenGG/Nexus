@@ -52,10 +52,10 @@ public class MysteryChestCommand extends CustomCommand {
 		use();
 	}
 
-	@Path("lootbox2")
+	@Path("items <index>")
 	@Permission("group.admin")
-	void two() {
-		Utils.giveItems(player(), Arrays.asList(MysteryChestLoot.TWO.getLoot()));
+	void two(int index) {
+		Utils.giveItems(player(), Arrays.asList(MysteryChestLoot.values()[index - 1].getLoot()));
 	}
 
 }

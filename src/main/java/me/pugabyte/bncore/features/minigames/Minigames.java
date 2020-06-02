@@ -51,10 +51,10 @@ public class Minigames {
 	@Getter
 	private static final Location lobby = new Location(world, 1861.5, 38.1, 247.5, 0, 0);
 	@Getter
-	@Deprecated // Use match#getWGUtils or arena#getWGUtils
+	@Deprecated // Use Match#getWGUtils or Arena#getWGUtils
 	private static final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(world);
 	@Getter
-	@Deprecated // Use match#getWEUtils or arena#getWEUtils
+	@Deprecated // Use Match#getWEUtils or Arena#getWEUtils
 	private static final WorldEditUtils worldEditUtils = new WorldEditUtils(world);
 	@Getter
 	private static final ProtectedRegion lobbyRegion = worldGuardUtils.getProtectedRegion("minigamelobby");
@@ -64,11 +64,9 @@ public class Minigames {
 	public static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 
 	public Minigames() {
-		Tasks.async(() -> {
-			registerSerializables();
-			ArenaManager.read();
-			registerListeners();
-		});
+		registerSerializables();
+		ArenaManager.read();
+		registerListeners();
 		Tasks.repeat(Time.SECOND.x(5), 10, MatchManager::janitor);
 
 		new ActionBar();

@@ -18,12 +18,12 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
-import org.bukkit.ChatColor;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.RELAY)
 public class SuggestDiscordCommand extends Command {
@@ -73,7 +73,7 @@ public class SuggestDiscordCommand extends Command {
 						.build());
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				event.reply(ChatColor.stripColor(ex.getMessage()));
+				event.reply(stripColor(ex.getMessage()));
 			}
 		});
 	}

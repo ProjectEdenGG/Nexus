@@ -9,7 +9,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,7 +34,7 @@ public class ItemInfoCommand extends CustomCommand {
 		NBTItem nbtItem = new NBTItem(tool);
 		if (nbtItem.hasNBTData()) {
 			nbtString = nbtItem.asNBTString();
-			nbtString = ChatColor.stripColor(nbtString);
+			nbtString = StringUtils.stripColor(nbtString);
 		}
 
 		String spawnCommand = "/i " + material.name() + " " + amount + (nbtString == null ? "" : " " + nbtString);

@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
@@ -32,7 +33,7 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class ItemBuilder {
 	private final ItemStack itemStack;
-	private ItemMeta itemMeta;
+	private final ItemMeta itemMeta;
 	private List<String> lore = new ArrayList<>();
 	private boolean doLoreize = true;
 
@@ -55,9 +56,11 @@ public class ItemBuilder {
 	}
 
 	public ItemBuilder color(ColorType colorType) {
-		return durability(colorType.getDurability().shortValue());
+		itemStack.setType(colorType.switchColor(itemStack.getType()));
+		return this;
 	}
 
+	@Deprecated
 	public ItemBuilder durability(int durability) {
 		return durability(Integer.valueOf(durability).shortValue());
 	}
@@ -101,9 +104,7 @@ public class ItemBuilder {
 
 	public ItemBuilder enchant(Enchantment enchantment, int level, boolean ignoreLevelRestriction) {
 		if (itemStack.getType() == Material.ENCHANTED_BOOK) {
-			EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) itemMeta;
-			bookMeta.addStoredEnchant(enchantment, level, ignoreLevelRestriction);
-			itemMeta = bookMeta;
+			((EnchantmentStorageMeta) itemMeta).addStoredEnchant(enchantment, level, ignoreLevelRestriction);
 		} else {
 			itemMeta.addEnchant(enchantment, level, ignoreLevelRestriction);
 		}
@@ -117,60 +118,64 @@ public class ItemBuilder {
 		return this;
 	}
 
-	public ItemBuilder effect(PotionEffectType potionEffectType) {
-		return effect(potionEffectType, 1, 1);
-	}
-
-	public ItemBuilder effect(PotionEffectType potionEffectType, int seconds) {
-		return effect(potionEffectType, seconds, 1);
-	}
-
-	public ItemBuilder effect(PotionEffectType potionEffectType, int seconds, int amplifier) {
-		return effect(new PotionEffect(potionEffectType, seconds * 20, amplifier - 1));
-	}
-
-	public ItemBuilder potion(PotionType potionType) {
-		return potion(potionType, false, false);
-	}
-
-	public ItemBuilder potion(PotionType potionType, boolean extended, boolean upgraded) {
-		PotionMeta potionMeta = (PotionMeta) itemMeta;
-		potionMeta.setBasePotionData(new PotionData(potionType, extended, upgraded));
-		itemMeta = potionMeta;
-		return this;
-	}
-
-	public ItemBuilder effect(PotionEffect potionEffect) {
-		PotionMeta potionMeta = (PotionMeta) itemMeta;
-		potionMeta.addCustomEffect(potionEffect, true);
-		itemMeta = potionMeta;
-		return this;
-	}
-
-	public ItemBuilder effectColor(Color color) {
-		PotionMeta potionMeta = (PotionMeta) itemMeta;
-		potionMeta.setColor(color);
-		itemMeta = potionMeta;
-		return this;
-	}
-
-	public ItemBuilder power(int power) {
-		FireworkMeta fireworkMeta = (FireworkMeta) itemMeta;
-		fireworkMeta.setPower(power);
-		itemMeta = fireworkMeta;
-		return this;
-	}
-
-	public ItemBuilder fireworkEffect(FireworkEffect... effect) {
-		FireworkMeta fireworkMeta = (FireworkMeta) itemMeta;
-		fireworkMeta.addEffects(effect);
-		return this;
-	}
-
 	public ItemBuilder itemFlags(ItemFlag... flags) {
 		itemMeta.addItemFlags(flags);
 		return this;
 	}
+
+	/** Custom meta types */
+
+	public ItemBuilder armorColor(Color color) {
+		((LeatherArmorMeta) itemMeta).setColor(color);
+		return this;
+	}
+
+	// Potions
+
+	public ItemBuilder potionType(PotionType potionType) {
+		return potionType(potionType, false, false);
+	}
+
+	public ItemBuilder potionType(PotionType potionType, boolean extended, boolean upgraded) {
+		((PotionMeta) itemMeta).setBasePotionData(new PotionData(potionType, extended, upgraded));
+		return this;
+	}
+
+	public ItemBuilder potionEffect(PotionEffectType potionEffectType) {
+		return potionEffect(potionEffectType, 1, 1);
+	}
+
+	public ItemBuilder potionEffect(PotionEffectType potionEffectType, int seconds) {
+		return potionEffect(potionEffectType, seconds, 1);
+	}
+
+	public ItemBuilder potionEffect(PotionEffectType potionEffectType, int seconds, int amplifier) {
+		return potionEffect(new PotionEffect(potionEffectType, seconds * 20, amplifier - 1));
+	}
+
+	public ItemBuilder potionEffect(PotionEffect potionEffect) {
+		((PotionMeta) itemMeta).addCustomEffect(potionEffect, true);
+		return this;
+	}
+
+	public ItemBuilder potionEffectColor(Color color) {
+		((PotionMeta) itemMeta).setColor(color);
+		return this;
+	}
+
+	// Fireworks
+
+	public ItemBuilder fireworkPower(int power) {
+		((FireworkMeta) itemMeta).setPower(power);
+		return this;
+	}
+
+	public ItemBuilder fireworkEffect(FireworkEffect... effect) {
+		((FireworkMeta) itemMeta).addEffects(effect);
+		return this;
+	}
+
+	// Skulls
 
 	public ItemBuilder skullOwner(OfflinePlayer offlinePlayer) {
 		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer);
@@ -183,6 +188,8 @@ public class ItemBuilder {
 		return this;
 	}
 
+	// Banners
+
 	public ItemBuilder pattern(DyeColor color, PatternType pattern) {
 		return pattern(new Pattern(color, pattern));
 	}
@@ -192,6 +199,8 @@ public class ItemBuilder {
 		bannerMeta.addPattern(pattern);
 		return this;
 	}
+
+	// Shulker Boxes
 
 	public ItemBuilder shulkerBox(ItemBuilder... builders) {
 		for (ItemBuilder builder : builders)
@@ -208,11 +217,13 @@ public class ItemBuilder {
 		return this;
 	}
 
+	/** Building */
+
 	public ItemStack build() {
-		ItemStack clonedStack = itemStack.clone();
+		ItemStack result = itemStack.clone();
 		buildLore();
-		clonedStack.setItemMeta(itemMeta.clone());
-		return clonedStack;
+		result.setItemMeta(itemMeta.clone());
+		return result;
 	}
 
 	public void buildLore() {
@@ -224,6 +235,8 @@ public class ItemBuilder {
 				colorized.addAll(Arrays.asList(colorize(line).split("\\|\\|")));
 		itemMeta.setLore(colorized);
 	}
+
+	/** Static helpers */
 
 	public static ItemStack setName(ItemStack item, String name) {
 		ItemMeta itemMeta = item.getItemMeta();

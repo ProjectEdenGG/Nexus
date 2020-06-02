@@ -20,7 +20,6 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -61,7 +60,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 	private void debug(String message) {
 		if (false)
-			BNCore.log(ChatColor.stripColor(PREFIX + message));
+			BNCore.log(StringUtils.stripColor(PREFIX + message));
 	}
 
 	@Override
