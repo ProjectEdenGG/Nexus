@@ -53,13 +53,13 @@ public abstract class DatabaseService {
 
 	abstract public <T> void deleteSync(T object);
 
-	public <T> void deleteAll() {
+	public void deleteAll() {
 		if (Bukkit.getServer().isPrimaryThread())
-			Tasks.async(() -> deleteAllSync());
+			Tasks.async(this::deleteAllSync);
 		else
 			deleteAllSync();
 	}
 
-	abstract public <T> void deleteAllSync();
+	abstract public void deleteAllSync();
 
 }
