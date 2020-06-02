@@ -35,6 +35,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Basketball implements Listener {
@@ -213,9 +214,13 @@ public class Basketball implements Listener {
 					entity.remove();
 					giveBasketball(player);
 					player.sendMessage(colorize("&eTouchdown!!"));
-					BearFairUser user = new BearFairService().get(player);
-					user.giveDailyPoints(1, SOURCE);
-					new BearFairService().save(user);
+
+					if (giveDailyPoints) {
+						BearFairUser user = new BearFairService().get(player);
+						user.giveDailyPoints(1, SOURCE);
+						new BearFairService().save(user);
+					}
+
 					WGUtils.getPlayersInRegion(courtRg).forEach(loopPlayer ->
 							loopPlayer.spawnParticle(Particle.LAVA, entity.getLocation(), 50, 2, 2, 2, .01));
 					stop();

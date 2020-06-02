@@ -73,7 +73,7 @@ public class Fishing implements Listener {
 
 		// Treasures
 		for (ItemStack coralItem : coral)
-			weightedList.add(new WeightedLoot(coralItem, 	5));
+			weightedList.add(new WeightedLoot(coralItem, 	3));
 		weightedList.add(new WeightedLoot(scales,			2));
 		weightedList.add(new WeightedLoot(heartOfTheSea,	1));
 		weightedList.add(new WeightedLoot(nautilusShell,	1));

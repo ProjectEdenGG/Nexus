@@ -39,8 +39,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static org.bukkit.block.BlockFace.*;
@@ -289,9 +288,11 @@ public class Reflection implements Listener {
 		for (Player player : players)
 			player.sendMessage(colorize(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!"));
 
-		BearFairUser user = new BearFairService().get(buttonPresser);
-		user.giveDailyPoints(1, SOURCE);
-		new BearFairService().save(user);
+		if (giveDailyPoints) {
+			BearFairUser user = new BearFairService().get(buttonPresser);
+			user.giveDailyPoints(1, SOURCE);
+			new BearFairService().save(user);
+		}
 
 		Tasks.wait(Time.SECOND.x(3), () -> {
 			randomizeBanners();

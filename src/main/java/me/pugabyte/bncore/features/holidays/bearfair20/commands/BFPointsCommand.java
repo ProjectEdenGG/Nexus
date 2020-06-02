@@ -27,18 +27,18 @@ public class BFPointsCommand extends CustomCommand {
 
 	@Path("[player]")
 	public void checkTotal(@Arg("self") BearFairUser user) {
-		if (player().equals(user.getPlayer()))
+		if (player().equals(user.getOfflinePlayer()))
 			send(PREFIX + "&3Total: &e" + user.getTotalPoints());
 		else
-			send(PREFIX + "&3" + user.getPlayer().getName() + "'s Total: &e" + user.getTotalPoints());
+			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Total: &e" + user.getTotalPoints());
 	}
 
 	@Path("daily [player]")
 	public void checkDaily(@Arg("self") BearFairUser user) {
-		if (player().equals(user.getPlayer()))
+		if (player().equals(user.getOfflinePlayer()))
 			send(PREFIX + "&3Daily Points:");
 		else
-			send(PREFIX + "&3" + user.getPlayer().getName() + "'s Daily Points:");
+			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Daily Points:");
 
 		for (BFPointSource pointSource : BFPointSource.values()) {
 			Map<LocalDate, Integer> dailyMap = user.getPointsReceivedToday().get(pointSource);
@@ -59,7 +59,7 @@ public class BFPointsCommand extends CustomCommand {
 		user.givePoints(points);
 		service.save(user);
 		String plural = points == 1 ? " point" : " points";
-		send(PREFIX + "&e" + points + plural + " &3given to &e" + user.getPlayer().getName());
+		send(PREFIX + "&e" + points + plural + " &3given to &e" + user.getOfflinePlayer().getName());
 	}
 
 	@Path("take <player> <points>")
@@ -68,7 +68,7 @@ public class BFPointsCommand extends CustomCommand {
 		user.takePoints(points);
 		service.save(user);
 		String plural = points == 1 ? " point" : " points";
-		send(PREFIX + "&e" + points + plural + " &3taken from &e" + user.getPlayer().getName());
+		send(PREFIX + "&e" + points + plural + " &3taken from &e" + user.getOfflinePlayer().getName());
 	}
 
 	@Path("set <player> <points>")
@@ -77,7 +77,7 @@ public class BFPointsCommand extends CustomCommand {
 		user.setTotalPoints(points);
 		service.save(user);
 		String plural = points == 1 ? " point" : " points";
-		send(PREFIX + "&3set &e" + user.getPlayer().getName() + "&3 to &e" + points + plural);
+		send(PREFIX + "&3set &e" + user.getOfflinePlayer().getName() + "&3 to &e" + points + plural);
 	}
 
 	@Path("reset <player>")
@@ -98,7 +98,7 @@ public class BFPointsCommand extends CustomCommand {
 		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
 		int i = (page - 1) * 10 + 1;
 		for (BearFairUser user : results)
-			send("&3" + i++ + " &e" + user.getPlayer().getName() + " &7- " + user.getTotalPoints());
+			send("&3" + i++ + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTotalPoints());
 	}
 
 	@ConverterFor(BearFairUser.class)
