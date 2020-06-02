@@ -28,6 +28,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
 
 public class PugDunk implements Listener {
 
@@ -107,9 +108,13 @@ public class PugDunk implements Listener {
 		buttonLoc.getBlock().setType(Material.AIR);
 
 		BearFair20.world.playSound(buttonLoc, Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
-		BearFairUser user = new BearFairService().get(player);
-		user.giveDailyPoints(1, SOURCE);
-		new BearFairService().save(user);
+
+		if (giveDailyPoints) {
+			BearFairUser user = new BearFairService().get(player);
+			user.giveDailyPoints(1, SOURCE);
+			new BearFairService().save(user);
+		}
+
 		dropNPC();
 
 		Tasks.wait(Time.SECOND.x(4), () -> {

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
 
 public class Archery implements Listener {
 	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
@@ -97,9 +98,11 @@ public class Archery implements Listener {
 		removeTarget(hitBlock);
 		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
-		BearFairUser user = new BearFairService().get(player);
-		user.giveDailyPoints(1, SOURCE);
-		new BearFairService().save(user);
+		if (giveDailyPoints) {
+			BearFairUser user = new BearFairService().get(player);
+			user.giveDailyPoints(1, SOURCE);
+			new BearFairService().save(user);
+		}
 	}
 
 	private List<Location> getTargetLocs() {

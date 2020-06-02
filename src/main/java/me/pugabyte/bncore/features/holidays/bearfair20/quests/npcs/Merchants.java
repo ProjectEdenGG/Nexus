@@ -6,6 +6,7 @@ import me.pugabyte.bncore.utils.MerchantBuilder;
 import me.pugabyte.bncore.utils.MerchantBuilder.TradeBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
 
@@ -19,9 +20,9 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loo
 public class Merchants {
 
 	private static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1);
-	private static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1);
-	private static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1);
-	private static ItemBuilder moneyUnit = new ItemBuilder(Material.STICK).name("placeholder").lore(itemLore).amount(1);
+	private static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT).lore(itemLore).amount(1);
+	private static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK).lore(itemLore).amount(1);
+	private static ItemBuilder TBD = new ItemBuilder(Material.STICK).name("To Be Determined").lore(itemLore).amount(1);
 
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
@@ -50,20 +51,27 @@ public class Merchants {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potion(PotionType.POISON, true, false).lore(itemLore))
-							.ingredient(moneyUnit));
+							.ingredient(TBD));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potion(PotionType.WEAKNESS).lore(itemLore))
-							.ingredient(moneyUnit));
+							.ingredient(TBD));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potion(PotionType.SLOWNESS).lore(itemLore))
-							.ingredient(moneyUnit));
+							.ingredient(TBD));
 				}};
 			}
 		},
 		BLACKSMITH(2656) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.LEATHER))
+							.ingredient(TBD));
+					add(new TradeBuilder()
+							.result(TBD)
+							.ingredient(new ItemBuilder(Material.ANVIL).lore(itemLore)));
+				}};
 			}
 		},
 		BOTANIST(2661) {
@@ -97,13 +105,40 @@ public class Merchants {
 		BREWER(2662) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(goldNugget.amount(4))
+							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(TBD)
+							.ingredient(new ItemBuilder(Material.HONEYCOMB).amount(9).lore(itemLore)));
+				}};
 			}
 		},
 		COLLECTOR(2750) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(TBD)
+							.ingredient(new ItemBuilder(Material.GLISTERING_MELON_SLICE).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.GOLDEN_CARROT).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.BLUE_ORCHID).name("Rare Flower").lore(itemLore))
+							.ingredient(new ItemBuilder(Material.STONE_PICKAXE).name("Ancient Pickaxe").lore(itemLore)));
+					add(new TradeBuilder()
+							.result(goldBlock)
+							.ingredient(tigerTrout));
+					add(new TradeBuilder()
+							.result(goldBlock)
+							.ingredient(glacierfish));
+					add(new TradeBuilder()
+							.result(goldBlock)
+							.ingredient(crimsonfish));
+					add(new TradeBuilder()
+							.result(goldBlock)
+							.ingredient(flathead));
+				}};
 			}
 		},
 		FISHERMAN(2653) {
@@ -111,62 +146,50 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.FISHING_ROD).lore(itemLore))
+							.result(new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(itemLore))
 							.ingredient(goldIngot.amount(2)));
 					// Default
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget)
 							.ingredient(cod));
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget)
 							.ingredient(salmon));
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget)
 							.ingredient(tropicalFish));
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget.amount(2))
 							.ingredient(pufferfish));
 					// Generic
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget.amount(2))
 							.ingredient(bullhead));
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget.amount(2))
 							.ingredient(sturgeon));
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget.amount(2))
 							.ingredient(woodskip));
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget.amount(2))
 							.ingredient(voidSalmon));
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget.amount(2))
 							.ingredient(redSnapper));
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget.amount(2))
 							.ingredient(redMullet));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(seaCucumber));
 					// Island
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldNugget.amount(3))
+							.ingredient(seaCucumber));
+					add(new TradeBuilder()
+							.result(goldIngot)
 							.ingredient(midnightCarp));
 					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(goldIngot)
 							.ingredient(sunfish));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(tigerTrout));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(glacierfish));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(crimsonfish));
-					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(flathead));
 				}};
 			}
 		},
@@ -181,6 +204,9 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.IRON_PICKAXE).lore(itemLore))
+							.ingredient(goldIngot));
+					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore))
 							.ingredient(new ItemBuilder(Material.SMOOTH_QUARTZ).name("Purified Marble").lore(itemLore)));
 				}};
@@ -191,24 +217,38 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(moneyUnit)
-							.ingredient(new ItemBuilder(Material.CAKE).lore(itemLore)));
-					add(new TradeBuilder()
-							.result(moneyUnit)
+							.result(new ItemBuilder(Material.GLOBE_BANNER_PATTERN).name("Recipe for: Honey Stroop Wafel").lore("TODO", "", itemLore))
+							.ingredient(new ItemBuilder(Material.CAKE).lore(itemLore))
 							.ingredient(new ItemBuilder(Material.COOKIE).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.EGG).lore(itemLore))
+							.ingredient(TBD));
 				}};
 			}
 		},
 		SORCERER(2658) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					// TODO: Determine enchant on book, if at all
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.ENCHANTED_BOOK).lore(itemLore))
+							.ingredient(new ItemBuilder(Material.BOOK).lore(itemLore))
+							.ingredient(TBD));
+					add(new TradeBuilder()
+							.result(TBD)
+							.ingredient(new ItemBuilder(Material.CAULDRON).lore(itemLore)));
+				}};
 			}
 		},
 		TRADER(2763) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(TBD)
+							.ingredient(goldBlock));
+				}};
 			}
 		};
 

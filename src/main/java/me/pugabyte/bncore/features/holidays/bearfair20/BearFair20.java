@@ -30,6 +30,7 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 /*
 	NPC BEEs: 2730, 2731
+
  */
 
 @Data
@@ -39,6 +40,8 @@ public class BearFair20 implements Listener {
 	public static WorldGuardUtils WGUtils = new WorldGuardUtils(world);
 	public static String BFRg = "bearfair2020";
 	public static ProtectedRegion BFProtectedRg = WGUtils.getProtectedRegion(BFRg);
+	// TODO: Enable this.
+	public static boolean giveDailyPoints = false;
 
 	public BearFair20() {
 		BNCore.registerListener(this);

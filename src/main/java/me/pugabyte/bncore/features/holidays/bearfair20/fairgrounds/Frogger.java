@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
 
 public class Frogger implements Listener {
 
@@ -321,9 +322,13 @@ public class Frogger implements Listener {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
 			player.teleport(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
-			BearFairUser user = new BearFairService().get(player);
-			user.giveDailyPoints(1, SOURCE);
-			new BearFairService().save(user);
+
+			if (giveDailyPoints) {
+				BearFairUser user = new BearFairService().get(player);
+				user.giveDailyPoints(1, SOURCE);
+				new BearFairService().save(user);
+			}
+
 			checkpointList.remove(player);
 		}
 	}
