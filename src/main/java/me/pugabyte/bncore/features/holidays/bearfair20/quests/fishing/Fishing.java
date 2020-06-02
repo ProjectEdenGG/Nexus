@@ -26,8 +26,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.fishingError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.toolError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loot.*;
 
 public class Fishing implements Listener {
@@ -147,7 +147,7 @@ public class Fishing implements Listener {
 		ItemStack rod = BearFair20.getTool(player);
 		if(rod == null) return;
 		if(!isBFItem(rod)) {
-			send(fishingError, player);
+			send(toolError, player);
 			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			event.setCancelled(true);
 			return;
