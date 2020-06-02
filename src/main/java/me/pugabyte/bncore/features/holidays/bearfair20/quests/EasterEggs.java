@@ -1,11 +1,9 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -18,8 +16,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 
 public class EasterEggs implements Listener {
 	BearFairService service = new BearFairService();
@@ -55,8 +52,7 @@ public class EasterEggs implements Listener {
 		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
 
 		Player player = event.getPlayer();
-		if (!player.getWorld().equals(BearFair20.world)) return;
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(BFProtectedRg)) return;
+		if (!isAtBearFair(player)) return;
 
 		Skull skull = (Skull) block.getState();
 		if (skull.getOwningPlayer() == null) return;
@@ -67,20 +63,22 @@ public class EasterEggs implements Listener {
 		BearFairUser bfUser = service.get(player);
 		List<Location> foundLocs = bfUser.getEasterEggsLocs();
 		if (foundLocs.contains(blockLoc)) {
-			player.sendMessage(StringUtils.colorize(duplicate));
+			send(duplicate, player);
 			player.playSound(playerLoc, Sound.ENTITY_VILLAGER_NO, 2F, 1F);
 			return;
 		}
 
 		foundLocs.add(blockLoc);
-		bfUser.givePoints(1, true); // TODO: Determine amount of points, random?
-		service.save(bfUser);
+		if (givePoints) {
+			bfUser.givePoints(1, true); // TODO: Determine amount of points, random?
+			service.save(bfUser);
+		}
 
 		if (foundLocs.size() == total) {
-			player.sendMessage(StringUtils.colorize(foundAll));
+			send(foundAll, player);
 			player.playSound(playerLoc, Sound.UI_TOAST_CHALLENGE_COMPLETE, 2F, 1F);
 		} else {
-			player.sendMessage(StringUtils.colorize(foundOne));
+			send(foundOne, player);
 			player.playSound(playerLoc, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 2F, 2F);
 			player.playSound(playerLoc, Sound.BLOCK_BEACON_POWER_SELECT, 2F, 2F);
 		}

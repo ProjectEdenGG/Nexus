@@ -39,19 +39,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static org.bukkit.block.BlockFace.EAST;
-import static org.bukkit.block.BlockFace.NORTH;
-import static org.bukkit.block.BlockFace.NORTH_EAST;
-import static org.bukkit.block.BlockFace.NORTH_WEST;
-import static org.bukkit.block.BlockFace.SOUTH;
-import static org.bukkit.block.BlockFace.SOUTH_EAST;
-import static org.bukkit.block.BlockFace.SOUTH_WEST;
-import static org.bukkit.block.BlockFace.WEST;
+import static org.bukkit.block.BlockFace.*;
 
 public class Reflection implements Listener {
 
@@ -134,8 +125,7 @@ public class Reflection implements Listener {
 		if (!event.getClickedBlock().getType().equals(Material.STONE_BUTTON)) return;
 
 		Block button = event.getClickedBlock();
-		Location loc = button.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
+		if (!isAtBearFair(button)) return;
 
 		BlockData blockData = button.getBlockData();
 		Directional directional = (Directional) blockData;
@@ -295,9 +285,9 @@ public class Reflection implements Listener {
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
 		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
 		for (Player player : players)
-			player.sendMessage(colorize(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!"));
+			send(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!", player);
 
-		if (giveDailyPoints) {
+		if (givePoints) {
 			BearFairUser user = new BearFairService().get(buttonPresser);
 			user.giveDailyPoints(1, SOURCE);
 			new BearFairService().save(user);
@@ -354,7 +344,7 @@ public class Reflection implements Listener {
 	private void broadcastObjective() {
 		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
 		for (Player player : players) {
-			player.sendMessage(colorize(prefix + objMsg));
+			send(prefix + objMsg, player);
 		}
 	}
 

@@ -11,7 +11,6 @@ import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,8 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 
 public class PugDunk implements Listener {
 
@@ -109,7 +107,7 @@ public class PugDunk implements Listener {
 
 		BearFair20.world.playSound(buttonLoc, Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
-		if (giveDailyPoints) {
+		if (givePoints) {
 			BearFairUser user = new BearFairService().get(player);
 			user.giveDailyPoints(1, SOURCE);
 			new BearFairService().save(user);
@@ -152,8 +150,7 @@ public class PugDunk implements Listener {
 		if (hitBlock == null) return;
 		if (!hitBlock.getType().equals(Material.WHITE_CONCRETE)) return;
 
-		WorldGuardUtils WGUtils = new WorldGuardUtils(BearFair20.world);
-		if (!WGUtils.getRegionNamesAt(hitBlock.getLocation()).contains(targetRg)) return;
+		if (!isInRegion(hitBlock, targetRg)) return;
 		if (!(projectile.getShooter() instanceof Player)) return;
 
 		projectile.remove();

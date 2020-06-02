@@ -17,6 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+
 public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, Listener {
 
 	public SmartInventory getInv(ItemStack[] items) {
@@ -118,7 +120,7 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 	public void complete(Player player) {
 		player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
 		Tasks.wait(Time.SECOND.x(5), () -> close(player, items));
-		player.sendMessage("TODO Complete");
+		send("TODO Complete", player);
 	}
 
 

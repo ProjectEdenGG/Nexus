@@ -15,7 +15,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.Collections;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 
 public class Beehive implements Listener {
 	private String allowedMsg = "TODO: Allowed message here";
@@ -48,7 +48,7 @@ public class Beehive implements Listener {
 
 	private void allowed(Player player) {
 		player.teleport(enterLoc);
-		player.sendMessage(allowedMsg);
+		send(allowedMsg, player);
 	}
 
 	private void denied(Player player) {
@@ -56,7 +56,7 @@ public class Beehive implements Listener {
 				(new PotionEffect(PotionEffectType.BLINDNESS, 40, 250, false, false, false)));
 		player.teleport(exitLoc);
 		player.playSound(enterLoc, Sound.ENTITY_BEE_LOOP_AGGRESSIVE, 0.5F, 1F);
-		Tasks.wait(5, () -> player.sendMessage(colorize(deniedMsg)));
+		Tasks.wait(5, () -> send(deniedMsg, player));
 
 	}
 }

@@ -34,10 +34,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 
+// TODO: Make the double jump less
 public class Basketball implements Listener {
 
 	@Getter
@@ -213,9 +212,9 @@ public class Basketball implements Listener {
 						|| WGUtils.isInRegion(entity.getLocation(), hoopRg + "2")) {
 					entity.remove();
 					giveBasketball(player);
-					player.sendMessage(colorize("&eTouchdown!!"));
+					send("&eTouchdown!!", player);
 
-					if (giveDailyPoints) {
+					if (givePoints) {
 						BearFairUser user = new BearFairService().get(player);
 						user.giveDailyPoints(1, SOURCE);
 						new BearFairService().save(user);
@@ -228,7 +227,7 @@ public class Basketball implements Listener {
 						|| WGUtils.isInRegion(entity.getLocation(), backboardRg + "2")) {
 					entity.remove();
 					giveBasketball(player);
-					player.sendMessage(colorize("&eSo close..."));
+					send("&eSo close...", player);
 					stop();
 				}
 
@@ -255,7 +254,7 @@ public class Basketball implements Listener {
 		if (player.getWorld() != world) return;
 		if (!isBasketball(event.getItem().getItemStack())) return;
 
-		if (!WGUtils.isInRegion(player.getLocation(), courtRg))
+		if (!isInRegion(player, courtRg))
 			event.setCancelled(true);
 		else if (!ownsBasketball(player, event.getItem().getItemStack()))
 			event.setCancelled(true);

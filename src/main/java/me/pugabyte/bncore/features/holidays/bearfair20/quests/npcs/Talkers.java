@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 
 public class Talkers {
 
@@ -69,7 +69,7 @@ public class Talkers {
 				line = line.replaceAll("<player>", player.getName());
 				String finalLine = line;
 				Tasks.wait(wait.get(), () -> {
-					player.sendMessage(colorize(finalLine));
+					send(finalLine, player);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 				});
 			}
