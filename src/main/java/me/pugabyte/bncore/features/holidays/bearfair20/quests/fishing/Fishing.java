@@ -26,7 +26,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFRg;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loot.*;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;

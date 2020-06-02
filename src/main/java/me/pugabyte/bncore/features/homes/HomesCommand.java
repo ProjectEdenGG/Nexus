@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.homes;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -82,27 +81,31 @@ public class HomesCommand extends CustomCommand {
 					deleted.clear();
 					List<HomeOwner> all = service.getAll();
 					all.forEach(homeOwner -> {
-						new ArrayList<>(homeOwner.getHomes()).forEach(home -> {
-							if (home.getLocation() == null || home.getLocation().getWorld() == null || home.getLocation().getWorld().equals(world)) {
-								deleted.add(home);
-								homeOwner.delete(home);
-							}
+						homeOwner.getHomes().stream().filter(home ->
+							home.getLocation() == null || home.getLocation().getWorld() == null || home.getLocation().getWorld().equals(world)
+						).forEach(home -> {
+							deleted.add(home);
+							send(homeOwner.getOfflinePlayer().getName() + " / " + home.getName());
 						});
-						service.save(homeOwner);
+
+						deleted.forEach(homeOwner::delete);
+						// MongoDB no longer recognizes the homes after serialization so it can't merge the deletions
+						// Easy workaround is to delete the entire homeowner and re-save it
+						service.deleteSync(homeOwner);
+						service.saveSync(homeOwner);
 					});
 
-					send(json(PREFIX + "Deleted &e" + deleted.size() + " &3homes from world &e" + world.getName() + "&3.")
+					send(json(PREFIX + "Deleted &e" + deleted.size() + " &3homes from null worlds or world &e" + world.getName() + "&3. ")
 							.next("&eClick here &3to restore them").command("/homes restoreDeleted"));
 				}))
 				.build());
 	}
 
-	@Async
 	@Permission("group.admin")
 	@Path("restoreDeleted")
 	void restoreDeleted() {
 		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder()
-				.onConfirm(e -> {
+				.onConfirm(e -> Tasks.async(() -> {
 					deleted.forEach(home -> {
 						home.getOwner().add(home);
 						service.save(home.getOwner());
@@ -110,7 +113,7 @@ public class HomesCommand extends CustomCommand {
 
 					send(PREFIX + "Restored &e" + deleted.size() + " &3homes");
 					deleted.clear();
-				})
+				}))
 				.build());
 	}
 

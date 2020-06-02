@@ -22,7 +22,7 @@ public class AFKService extends MySQLService {
 		}
 	}
 
-	public Map<Player, AFKPlayer> getAll() {
+	public Map<Player, AFKPlayer> getMap() {
 		try {
 			List<AFKPlayer> results = database.where("uuid in (" + asList(Utils.getOnlineUuids()) + ")").results(AFKPlayer.class);
 			Tasks.async(() -> database.table("afk").delete());
