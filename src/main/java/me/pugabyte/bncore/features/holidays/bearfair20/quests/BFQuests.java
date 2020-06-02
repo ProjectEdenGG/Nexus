@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Merchants;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.bncore.utils.CitizensUtils;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -48,8 +49,8 @@ public class BFQuests implements Listener {
 	public static String bottomBlockError = prefix + "&c&lHey! &7You can't break the bottom block";
 	public static String decorOnlyError = prefix + "&c&lHey! &7This block is just decoration";
 	public static String craftItemError = prefix + "&c&lHey! &7You can only craft that item with BearFair20 items!";
-	public static String fishingError = prefix + "&c&lHey! &7You may only fish here using a BearFair20 Fishing Rod";
-	public static String miningError = prefix + "&c&lHey! &7You can't mine here";
+	public static String toolError = prefix + "&c&lHey! &7You may only use BearFair20 tools!";
+	public static String miningError = prefix + "&c&lHey! &7You can't mine here!";
 
 	public BFQuests() {
 		BNCore.registerListener(this);
@@ -119,6 +120,11 @@ public class BFQuests implements Listener {
 			if (type.equals(Material.WHEAT_SEEDS) || type.equals(Material.BEETROOT_SEEDS)) {
 				item.remove();
 				return;
+			}
+
+			if (type.equals(Material.DIORITE_SLAB) || type.equals(Material.DIORITE_STAIRS) || type.equals(Material.DIORITE_WALL)) {
+				ItemStack diorite = new ItemBuilder(Material.DIORITE).amount(1).build();
+				item.setItemStack(diorite);
 			}
 
 			item.getItemStack().setLore(Collections.singletonList(itemLore));

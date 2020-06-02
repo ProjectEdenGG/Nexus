@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.*;
 
 public class RegenCrops implements Listener {
@@ -127,6 +126,7 @@ public class RegenCrops implements Listener {
 
 		if (event.isCancelled()) return;
 		if (!isAtBearFair(block)) return;
+		if (isInRegion(block, Quarry.quarryRg)) return;
 		if (!breakList.contains(block.getType())) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
 			send(cantBreakError, player);
