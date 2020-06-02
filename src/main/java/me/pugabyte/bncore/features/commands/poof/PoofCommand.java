@@ -50,13 +50,13 @@ public class PoofCommand extends CustomCommand {
 		send(json("&ePoof &3request sent to " + target.getName() + ". ").next("&eClick to cancel").command("poof cancel"));
 		send(target, "  &e" + player().getName() + " &3is asking to poof &eto you&3.");
 		send(target, json("&3  Click one  ||  &a&lAccept")
-				.command("poof accept")
+				.command("/poof accept")
 				.hover("&eClick &3to accept")
 				.group()
 				.next("  &3||  &3")
 				.group()
 				.next("&c&lDeny")
-				.command("poof deny")
+				.command("/poof deny")
 				.hover("&eClick &3to deny.")
 				.group()
 				.next("&3  ||"));

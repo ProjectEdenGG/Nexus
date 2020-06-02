@@ -8,7 +8,6 @@ import me.pugabyte.bncore.models.afk.events.NotAFKEvent;
 import me.pugabyte.bncore.models.afk.events.NowAFKEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -18,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @Data
 @NoArgsConstructor
@@ -42,7 +42,7 @@ public class AFKPlayer {
 	private Player player;
 
 	public void setMessage(String message) {
-		this.message = ChatColor.stripColor(message);
+		this.message = stripColor(message);
 	}
 
 	public void setTime() {

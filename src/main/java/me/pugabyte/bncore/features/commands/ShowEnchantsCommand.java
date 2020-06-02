@@ -23,7 +23,6 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -111,7 +110,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 			String durability = String.valueOf(((int) item.getType().getMaxDurability()) - ((Damageable) item.getItemMeta()).getDamage());
 			durability += "/" + item.getType().getMaxDurability();
 
-			String discordName = ChatColor.stripColor(itemName) + " ";
+			String discordName = stripColor(itemName) + " ";
 			if (itemName.equalsIgnoreCase(item.getItemMeta().getDisplayName()))
 				discordName += "(" + material + ")";
 			if (amount > 1) discordName += " x" + amount;
@@ -167,7 +166,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 			string.append(getEnchantNameAndLevel(enchant, level)).append(System.lineSeparator());
 		}
 		string.append(getCustomEnchantsDiscord(data));
-		return ChatColor.stripColor(string.toString());
+		return stripColor(string.toString());
 	}
 
 	private void getCustomEnchants(ItemStack item, ItemData data) {
@@ -176,7 +175,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 			List<String> lore = item.getItemMeta().getLore();
 			for (String line : lore) {
 				// if the lore is colored, its a custom enchantment, so add it to the list
-				if (line.length() != ChatColor.stripColor(line).length()) {
+				if (line.length() != stripColor(line).length()) {
 					data.getCustomEnchantsList().add(line);
 				} else {
 					// else, it's just lore

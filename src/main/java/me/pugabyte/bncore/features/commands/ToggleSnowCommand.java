@@ -57,11 +57,12 @@ public class ToggleSnowCommand extends CustomCommand {
 
 	private static void snowEffectTask() {
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
-			new SettingService().getFromType(SETTING_TYPE).stream()
+			Tasks.async(() ->
+					new SettingService().getFromType(SETTING_TYPE).stream()
 					.map(setting -> UUID.fromString(setting.getId()))
 					.filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline())
 					.map(Bukkit::getPlayer)
-					.forEach(ToggleSnowCommand::playSnowEffect);
+					.forEach(ToggleSnowCommand::playSnowEffect));
 
 			Bukkit.getOnlinePlayers().stream()
 					.filter(player -> {
@@ -73,10 +74,12 @@ public class ToggleSnowCommand extends CustomCommand {
 	}
 
 	private static void playSnowEffect(Player player) {
-		if (isBelowCeiling(player))
-			return;
-		player.spawnParticle(Particle.FALLING_DUST, player.getLocation(), 1400, 40, 15, 40, .01, Bukkit.createBlockData(Material.SNOW_BLOCK));
-		Tasks.wait(20, () -> player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 1400, 40, 15, 40, .01));
+		Tasks.sync(() -> {
+			if (isBelowCeiling(player))
+				return;
+			player.spawnParticle(Particle.FALLING_DUST, player.getLocation(), 1400, 40, 15, 40, .01, Bukkit.createBlockData(Material.SNOW_BLOCK));
+			Tasks.wait(20, () -> player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 1400, 40, 15, 40, .01));
+		});
 	}
 
 	private static boolean isBelowCeiling(Player player) {

@@ -14,13 +14,14 @@ import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
-@HandledBy(Bot.KODA)
-public class DiscordCommand extends Command {
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
-	public DiscordCommand() {
+@HandledBy(Bot.KODA)
+public class DiscordDiscordCommand extends Command {
+
+	public DiscordDiscordCommand() {
 		this.name = "discord";
 		this.guildOnly = false;
 	}
@@ -64,7 +65,7 @@ public class DiscordCommand extends Command {
 				if (event.getMessage().getChannel().getType().isGuild())
 					event.reply(event.getAuthor().getAsMention() + " Check your direct messages with " + Bot.KODA.jda().getSelfUser().getAsMention() + " for a confirmation code! (top left of the screen)");
 			} catch (Exception ex) {
-				event.reply(ChatColor.stripColor(ex.getMessage()));
+				event.reply(stripColor(ex.getMessage()));
 			}
 		});
 

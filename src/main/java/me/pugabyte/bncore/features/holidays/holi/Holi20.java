@@ -8,7 +8,6 @@ import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,7 +43,7 @@ public class Holi20 implements Listener {
 		if (!event.getAction().name().contains("RIGHT_CLICK")) return;
 		if (!event.getMaterial().equals(Material.MAGMA_CREAM)) return;
 
-		String itemName = ChatColor.stripColor(event.getItem().getItemMeta().getDisplayName());
+		String itemName = StringUtils.stripColor(event.getItem().getItemMeta().getDisplayName());
 		if (!"Dye Bomb".equalsIgnoreCase(itemName)) return;
 		if (!event.getItem().getItemMeta().getLore().contains(StringUtils.colorize("&bHoli20 Event Item"))) return;
 

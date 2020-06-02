@@ -18,10 +18,10 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.RELAY)
 public class UnfreezeDiscordCommand extends Command {
@@ -64,7 +64,7 @@ public class UnfreezeDiscordCommand extends Command {
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				event.reply(ChatColor.stripColor(ex.getMessage()));
+				event.reply(stripColor(ex.getMessage()));
 			}
 		});
 	}
