@@ -16,6 +16,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -126,11 +127,15 @@ public class Nerd {
 
 	@SneakyThrows
 	public NBTFile getDataFile() {
-		return new NBTFile(Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + getUuid() + ".dat").toFile());
+		File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + getUuid() + ".dat").toFile();
+		if (file.exists())
+			return new NBTFile(file);
+		return null;
 	}
 
 	public World getSpawnWorld() {
-		return Bukkit.getWorld(getDataFile().getString("SpawnWorld"));
+		NBTFile dataFile = getDataFile();
+		return dataFile == null ? null : Bukkit.getWorld(dataFile.getString("SpawnWorld"));
 	}
 
 }

@@ -64,7 +64,7 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			double tps1m = Bukkit.getTPS()[0];
-			return "&3TPS: &" + (tps1m > 19 ? "e" : tps1m > 16 ? "6" : "c") + new DecimalFormat("0.00").format(tps1m);
+			return "&3TPS: &" + (tps1m >= 19 ? "e" : tps1m >= 16 ? "6" : "c") + new DecimalFormat("0.00").format(tps1m);
 		}
 	},
 
