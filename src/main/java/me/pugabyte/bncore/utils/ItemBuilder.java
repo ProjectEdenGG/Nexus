@@ -118,6 +118,11 @@ public class ItemBuilder {
 		return this;
 	}
 
+	public ItemBuilder unbreakable() {
+		itemMeta.setUnbreakable(true);
+		return this;
+	}
+
 	public ItemBuilder itemFlags(ItemFlag... flags) {
 		itemMeta.addItemFlags(flags);
 		return this;
