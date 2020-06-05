@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.features.votes.mysterychest;
 
+import fr.minuskube.inv.SmartInventory;
+import me.pugabyte.bncore.features.menus.rewardchests.RewardChest;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -15,6 +17,10 @@ import java.util.Arrays;
 public class MysteryChestCommand extends CustomCommand {
 	private final SettingService service = new SettingService();
 
+	static {
+		new RewardChest();
+	}
+
 	public MysteryChestCommand(CommandEvent event) {
 		super(event);
 	}
@@ -27,10 +33,8 @@ public class MysteryChestCommand extends CustomCommand {
 		if (!WorldGroup.get(player()).equals(WorldGroup.SURVIVAL))
 			error("You must be in the survival world to run this command.");
 
-		MysteryChestProvider.time = 0;
-		MysteryChestProvider.speed = 4;
-		MysteryChestProvider.lootIndex = Utils.randomInt(0, MysteryChestLoot.values().length - 1);
-		MysteryChest.INV.open(player());
+		RewardChest.getInv(MysteryChestLootEnum.getAllLoot()).open(player());
+		new MysteryChest(player()).take(1);
 	}
 
 	@Path("give <player> [amount]")
@@ -45,6 +49,16 @@ public class MysteryChestCommand extends CustomCommand {
 		send(PREFIX + "&e" + player.getName() + " &3now has &e" + new MysteryChest(player).take(amount) + "&3 Mystery Chests");
 	}
 
+	@Path("edit")
+	@Permission("group.staff")
+	void edit() {
+		SmartInventory.builder()
+				.title("Mystery Chest Rewards")
+				.provider(new MysteryChestEditProvider(null))
+				.size(6, 9)
+				.build().open(player());
+	}
+
 	@Path("test")
 	@Permission("group.admin")
 	void test() {
@@ -55,7 +69,7 @@ public class MysteryChestCommand extends CustomCommand {
 	@Path("items <index>")
 	@Permission("group.admin")
 	void two(int index) {
-		Utils.giveItems(player(), Arrays.asList(MysteryChestLoot.values()[index - 1].getLoot()));
+		Utils.giveItems(player(), Arrays.asList(MysteryChestLootEnum.values()[index - 1].getLoot().getItems()));
 	}
 
 }
