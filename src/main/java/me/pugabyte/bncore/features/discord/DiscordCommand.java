@@ -8,6 +8,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -104,6 +106,17 @@ public class DiscordCommand extends CustomCommand {
 	@Permission("group.staff")
 	void connect() {
 		BNCore.discord.connect();
+	}
+
+	@Path("lockdown")
+	@Permission("group.staff")
+	void lockdown() {
+		SettingService service = new SettingService();
+		Setting setting = service.get("discord", "lockdown");
+		setting.setBoolean(!setting.getBoolean());
+		service.save(setting);
+
+		send(PREFIX + "Lockdown " + (setting.getBoolean() ? "enabled, new members will be automatically kicked" : "disabled"));
 	}
 
 }

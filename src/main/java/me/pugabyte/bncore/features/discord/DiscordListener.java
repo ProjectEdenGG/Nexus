@@ -8,6 +8,8 @@ import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -51,11 +53,20 @@ public class DiscordListener extends ListenerAdapter {
 
 	@Override
 	public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
-		Tasks.waitAsync(5, () -> {
-			Discord.addRole(event.getUser().getId(), Role.NERD);
-			DiscordUser user = new DiscordService().getFromUserId(event.getUser().getId());
-			if (!Strings.isNullOrEmpty(user.getUserId()))
-				Discord.addRole(event.getUser().getId(), Role.VERIFIED);
+		Tasks.async(() -> {
+			SettingService service = new SettingService();
+			Setting setting = service.get("discord", "lockdown");
+
+			if (setting.getBoolean()) {
+				event.getMember().kick("This discord is currently on lockdown mode").queue();
+			} else {
+				Tasks.waitAsync(5, () -> {
+					Discord.addRole(event.getUser().getId(), Role.NERD);
+					DiscordUser user = new DiscordService().getFromUserId(event.getUser().getId());
+					if (!Strings.isNullOrEmpty(user.getUserId()))
+						Discord.addRole(event.getUser().getId(), Role.VERIFIED);
+				});
+			}
 		});
 	}
 
