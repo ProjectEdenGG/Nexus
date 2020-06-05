@@ -27,27 +27,25 @@ public enum Bot {
 	KODA {
 		@Override
 		@SneakyThrows
-		void connect() {
-			if (super.jda == null && !isNullOrEmpty(getToken()))
-				super.jda = new JDABuilder(AccountType.BOT)
-						.setToken(getToken())
-						.addEventListeners(getCommands().build())
-						.build()
-						.awaitReady();
+		JDA build() {
+			return new JDABuilder(AccountType.BOT)
+					.setToken(getToken())
+					.addEventListeners(getCommands().build())
+					.build()
+					.awaitReady();
 		}
 	},
 
 	RELAY {
 		@Override
 		@SneakyThrows
-		void connect() {
-			if (super.jda == null && !isNullOrEmpty(getToken()))
-				super.jda = new JDABuilder(AccountType.BOT)
-						.setToken(getToken())
-						.addEventListeners(new DiscordBridgeListener(), new DiscordListener())
-						.addEventListeners(getCommands().setStatus(OnlineStatus.INVISIBLE).build())
-						.build()
-						.awaitReady();
+		JDA build() {
+			return new JDABuilder(AccountType.BOT)
+					.setToken(getToken())
+					.addEventListeners(new DiscordBridgeListener(), new DiscordListener())
+					.addEventListeners(getCommands().setStatus(OnlineStatus.INVISIBLE).build())
+					.build()
+					.awaitReady();
 		}
 	};
 
@@ -55,7 +53,15 @@ public enum Bot {
 	@Accessors(fluent = true)
 	private JDA jda;
 
-	abstract void connect();
+	abstract JDA build();
+
+	void connect() {
+		if (this.jda == null && !isNullOrEmpty(getToken())) {
+			JDA jda = build();
+			if (this.jda == null)
+				this.jda = jda;
+		}
+	}
 
 	void shutdown() {
 		if (jda != null) {
