@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.discord;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -102,6 +103,7 @@ public class DiscordCommand extends CustomCommand {
 		Discord.staffLog("**" + player().getName() + "** has unlinked their account from **" + name + "#" + discrim + "**");
 	}
 
+	@Async
 	@Path("connect")
 	@Permission("group.staff")
 	void connect() {

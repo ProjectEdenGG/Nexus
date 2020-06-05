@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.bridge.DiscordBridgeListener;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
+import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -57,9 +58,11 @@ public enum Bot {
 
 	void connect() {
 		if (this.jda == null && !isNullOrEmpty(getToken())) {
-			JDA jda = build();
-			if (this.jda == null)
-				this.jda = jda;
+			final JDA jda = build();
+			Tasks.sync(() -> {
+				if (this.jda == null)
+					this.jda = jda;
+			});
 		}
 	}
 
