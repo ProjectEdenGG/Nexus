@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 
-@Aliases("tpa")
+@Aliases({"tpa", "tpask"})
 @NoArgsConstructor
 @Redirect(from = "/tpcancel", to = "/poof cancel")
 @Redirect(from = {"/tpno", "/tpdeny"}, to = "/poof deny")
