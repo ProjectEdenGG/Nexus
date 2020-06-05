@@ -18,17 +18,17 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class Poof {
 	@NonNull
-	String sender;
+	private String sender;
 	@NonNull
-	String receiver;
+	private String receiver;
 	@NonNull
 	@DbSerializer(LocationSerializer.class)
-	Location teleportLocation;
+	private Location teleportLocation;
 	@NonNull
-	PoofType type;
+	private PoofType type;
 	@NonNull
-	LocalDateTime timeSent = LocalDateTime.now();
-	boolean expired = false;
+	private LocalDateTime timeSent = LocalDateTime.now();
+	private boolean expired = false;
 
 
 	public Poof(@NonNull Player sender, @NonNull Player receiver, PoofType type) {
