@@ -86,6 +86,7 @@ public class BearFairCommand extends _WarpCommand {
 	}
 
 	@Path("smite")
+	@Permission("group.admin")
 	public void smite() {
 		commandBlock();
 		BlockCommandSender sender = (BlockCommandSender) event.getSender();
@@ -97,6 +98,7 @@ public class BearFairCommand extends _WarpCommand {
 	}
 
 	@Path("yachtHorn")
+	@Permission("group.admin")
 	public void yachtHorn() {
 		commandBlock();
 		BlockCommandSender sender = (BlockCommandSender) event.getSender();
@@ -108,18 +110,21 @@ public class BearFairCommand extends _WarpCommand {
 	}
 
 	@Path("moveCollector")
+	@Permission("group.admin")
 	public void moveCollector() {
 		commandBlock();
 		BFQuests.moveCollector();
 	}
 
 	@Path("recipes")
+	@Permission("group.admin")
 	void recipes() {
 		runCommandAsConsole("minecraft:recipe take " + player().getName() + " bncore:custom_bearfair_anzac_biscuit");
 		runCommandAsConsole("minecraft:recipe give " + player().getName() + " bncore:custom_bearfair_anzac_biscuit");
 	}
 
 	@Path("strengthTest")
+	@Permission("group.admin")
 	void strengthTest() {
 		commandBlock();
 		Interactables.strengthTest();
@@ -127,6 +132,7 @@ public class BearFairCommand extends _WarpCommand {
 
 	//TODO:
 	@Path("quests reset")
+	@Permission("group.admin")
 	void questReset() {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player());
