@@ -262,7 +262,7 @@ public class Misc implements Listener {
 		if (player.getWorld().getName().equals("survival_nether")) {
 			Tasks.wait(5, () -> {
 				player.sendMessage("");
-				player.sendMessage(colorize("&4Warning: &cThis nether world will be re-set in 1.16 " +
+				player.sendMessage(colorize("&4Warning: &cThis nether world will be reset in 1.16 " +
 						"due to the nether update, so don't build anything you don't want to lose!"));
 				player.sendMessage("");
 			});
