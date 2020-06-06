@@ -19,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,9 +41,7 @@ public class JoinQuit implements Listener {
 
 	@SneakyThrows
 	public static void reloadConfig() {
-		File file = new File("plugins/BNCore/jq.yml");
-		if (!file.exists()) file.createNewFile();
-		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+		YamlConfiguration config = BNCore.getConfig("jq.yml");
 		if (config.isConfigurationSection("messages")) {
 			joinMessages = config.getConfigurationSection("messages").getStringList("join");
 			quitMessages = config.getConfigurationSection("messages").getStringList("quit");

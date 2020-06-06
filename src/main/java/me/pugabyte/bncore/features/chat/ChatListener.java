@@ -7,6 +7,7 @@ import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -33,7 +34,7 @@ public class ChatListener implements Listener {
 		event.setCancelled(true);
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onChat(ChatEvent event) {
 		Censor.process(event);
 	}

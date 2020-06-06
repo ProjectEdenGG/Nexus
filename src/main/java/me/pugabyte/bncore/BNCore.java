@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.earth2me.essentials.Essentials;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
@@ -47,11 +48,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,6 +66,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class BNCore extends JavaPlugin {
 	private Commands commands;
@@ -90,15 +94,15 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public static void log(String message) {
-		getInstance().getLogger().info(message);
+		getInstance().getLogger().info(stripColor(message));
 	}
 
 	public static void warn(String message) {
-		getInstance().getLogger().warning(message);
+		getInstance().getLogger().warning(stripColor(message));
 	}
 
 	public static void severe(String message) {
-		getInstance().getLogger().severe(message);
+		getInstance().getLogger().severe(stripColor(message));
 	}
 
 	public static void registerListener(Listener listener) {
@@ -148,6 +152,13 @@ public class BNCore extends JavaPlugin {
 				ex.printStackTrace();
 			}
 		});
+	}
+
+	@SneakyThrows
+	public static YamlConfiguration getConfig(String path) {
+		File file = Paths.get("plugins/BNCore/" + path).toFile();
+		if (!file.exists()) file.createNewFile();
+		return YamlConfiguration.loadConfiguration(file);
 	}
 
 	@Override
