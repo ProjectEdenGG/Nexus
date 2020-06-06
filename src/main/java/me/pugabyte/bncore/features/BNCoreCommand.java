@@ -13,7 +13,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.models.nerd.Nerd.StaffMember;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
@@ -204,6 +206,21 @@ public class BNCoreCommand extends CustomCommand {
 	@TabCompleterFor(Nerd.class)
 	List<String> tabCompleteNerd(String value) {
 		return tabCompletePlayer(value);
+	}
+
+	@ConverterFor(StaffMember.class)
+	StaffMember convertToStaffMember(String value) {
+		OfflinePlayer player = convertToOfflinePlayer(value);
+		if (!new Nerd(player).getRank().isStaff())
+			error(player.getName() + " is not staff");
+		return new StaffMember(player.getUniqueId());
+	}
+
+	@TabCompleterFor(StaffMember.class)
+	List<String> tabCompleteStaffMember(String filter) {
+		return new HoursService().getActivePlayers().stream()
+				.filter(player -> new Nerd(player).getRank().isStaff())
+				.map(OfflinePlayer::getName).collect(Collectors.toList());
 	}
 
 	@ConverterFor(LocalDate.class)

@@ -4,8 +4,10 @@ import de.tr7zw.nbtapi.NBTFile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -136,6 +138,12 @@ public class Nerd {
 	public World getSpawnWorld() {
 		NBTFile dataFile = getDataFile();
 		return dataFile == null ? null : Bukkit.getWorld(dataFile.getString("SpawnWorld"));
+	}
+
+	@Data
+	public static class StaffMember extends PlayerOwnedObject {
+		@NonNull
+		private UUID uuid;
 	}
 
 }
