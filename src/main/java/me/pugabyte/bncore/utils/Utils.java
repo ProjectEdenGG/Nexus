@@ -484,7 +484,7 @@ public class Utils {
 	}
 
 	public static <T> T getRandomElement(List<T> list) {
-		if (list.size() == 0) return null;
+		if (list == null || list.isEmpty()) return null;
 		return list.get(new Random().nextInt(list.size()));
 	}
 

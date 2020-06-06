@@ -62,6 +62,10 @@ public enum Bot {
 			Tasks.sync(() -> {
 				if (this.jda == null)
 					this.jda = jda;
+				else {
+					BNCore.log("Discarding extra Discord connection");
+					jda.shutdown();
+				}
 			});
 		}
 	}

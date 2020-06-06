@@ -29,6 +29,8 @@ public class PublicChannel implements Channel {
 	private ChatColor messageColor;
 	private DiscordId.Channel discordChannel;
 	private ChatColor discordColor;
+	@Builder.Default
+	private boolean censor = true;
 	private boolean isPrivate;
 	private boolean local;
 	private boolean crossWorld;

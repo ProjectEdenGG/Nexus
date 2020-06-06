@@ -1,8 +1,17 @@
 package me.pugabyte.bncore.features.chat;
 
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.events.ChatEvent;
 import me.pugabyte.bncore.framework.commands.Commands;
+import me.pugabyte.bncore.models.chat.PublicChannel;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,23 +22,95 @@ import java.util.regex.Pattern;
 import static me.pugabyte.bncore.utils.StringUtils.countUpperCase;
 
 public class Censor {
+	@Getter
+	private static final String PREFIX = StringUtils.getPrefix("Censor");
+	@Getter
+	private static final List<CensorItem> censorItems = new ArrayList<>();
 
-	public static void process(ChatEvent event) {
-		dynmapLinkShorten(event);
-		deUnicode(event);
-		Emotes.process(event);
-		dotCommand(event);
-		deprecated(event);
-		lowercase(event);
-		dots(event);
-
-		// TODO: swear count
+	static {
+		reloadConfig();
 	}
 
-	private static void deprecated(ChatEvent event) {
+	public static void reloadConfig() {
+		YamlConfiguration config = BNCore.getConfig("censor.yml");
+		ConfigurationSection censor = config.getConfigurationSection("censor");
+		if (censor != null) {
+			for (String key : censor.getKeys(false)) {
+				ConfigurationSection section = censor.getConfigurationSection(key);
+				if (!censor.isConfigurationSection(key) || section == null)
+					BNCore.warn(PREFIX + "Configuration section " + key + " misconfigured");
+				else
+					censorItems.add(CensorItem.builder()
+							.name(key)
+							.find(section.getStringList("find"))
+							.replace(section.getStringList("replace"))
+							.bad(section.getBoolean("bad"))
+							.whole(section.getBoolean("whole"))
+							.cancel(section.getBoolean("cancel"))
+							.build());
+			}
+		}
+	}
+
+	@Data
+	@Builder
+	private static class CensorItem {
+		private final String name;
+		private final List<String> find;
+		private final List<String> replace;
+		private boolean whole;
+		private boolean bad;
+		private boolean cancel;
+	}
+
+	public static void process(ChatEvent event) {
+		deUnicode(event);
+		lowercase(event);
+		censor(event);
+		dynmapLinkShorten(event);
+		dotCommand(event);
+		dots(event);
+		Emotes.process(event);
+	}
+
+	public static void censor(ChatEvent event) {
 		String message = event.getMessage();
-		message = message.replaceAll("/cmodify -", "/untrust lock ");
-		message = message.replaceAll("/cmodify", "/trust lock");
+
+		if (event.getChannel() instanceof PublicChannel && !((PublicChannel) event.getChannel()).isCensor())
+			return;
+
+		int bad = 0;
+		for (CensorItem censorItem : censorItems) {
+			for (String regex : censorItem.getFind()) {
+				boolean matches;
+				if (censorItem.isWhole())
+					matches = (" " + message + " ").matches("(?i).* " + regex + " .*");
+				else
+					matches = message.matches("(?i).*" + regex + ".*");
+
+				if (matches) {
+					if (!censorItem.getReplace().isEmpty())
+						message = message.replaceAll("(?i)" + regex, Utils.getRandomElement(censorItem.getReplace()));
+
+					if (censorItem.isBad())
+						++bad;
+
+					if (censorItem.isCancel())
+						event.setCancelled(true);
+				}
+			}
+		}
+
+		if (bad >= 1) {
+			BNCore.fileLog("swears", event.getChatter().getOfflinePlayer().getName() + ": " + event.getMessage());
+
+			if (bad >= 3) {
+				event.getChatter().send("&cPlease watch your language!");
+				Chat.broadcast(PREFIX + "&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage(), "Staff");
+				event.setCancelled(true);
+			}
+		}
+
 		event.setMessage(message);
 	}
 

@@ -25,7 +25,7 @@ public class MysteryChestCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path()
+	@Path
 	void use() {
 		int chests = service.get(player(), "mysteryChest").getInt();
 		if (chests <= 0)
