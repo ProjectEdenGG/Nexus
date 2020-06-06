@@ -72,6 +72,7 @@ public class Fairgrounds implements Listener {
 				new ItemBuilder(Material.BOW)
 						.enchant(Enchantment.ARROW_INFINITE)
 						.lore(itemLore)
+						.unbreakable()
 						.build(),
 				new ItemBuilder(Material.ARROW)
 						.lore(itemLore)
