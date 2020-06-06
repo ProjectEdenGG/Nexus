@@ -14,8 +14,10 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
+import me.pugabyte.bncore.utils.Utils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -115,12 +117,12 @@ public class HoursService extends MongoService {
 //				.aggregate(PageResult.class);
 
 	// TODO
-	public List<Hours> getActivePlayers() {
+	public List<OfflinePlayer> getActivePlayers() {
 		List<Bson> arguments = getTopArguments();
 		arguments.add(limit(100));
 
 		return getPageResults(collection.aggregate(arguments)).stream()
-				.map(pageResult -> (Hours) get(pageResult.getUuid()))
+				.map(pageResult -> Utils.getPlayer(pageResult.getUuid()))
 				.collect(Collectors.toList());
 	}
 

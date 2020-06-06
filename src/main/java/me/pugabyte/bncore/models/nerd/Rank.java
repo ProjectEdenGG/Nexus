@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -88,7 +87,6 @@ public enum Rank {
 	public List<Nerd> getNerds() {
 		// Temporary? fix to get players in this group. Using Hours > 10d because this method is only used for staff
 		List<OfflinePlayer> inGroup = new HoursService().getActivePlayers().stream()
-				.map(hours -> Utils.getPlayer(hours.getUuid()))
 				.filter(player -> BNCore.getPerms().playerHas(null, player, "rank." + name().toLowerCase()))
 				.collect(Collectors.toList());
 		Set<Nerd> nerds = new HashSet<>();

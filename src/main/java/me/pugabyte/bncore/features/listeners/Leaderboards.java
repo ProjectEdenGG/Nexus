@@ -9,7 +9,6 @@ import me.pugabyte.bncore.features.shops.ShopUtils;
 import me.pugabyte.bncore.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
-import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.hours.HoursService.PageResult;
 import me.pugabyte.bncore.models.nerd.Nerd;
@@ -19,6 +18,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import net.ess3.api.events.UserBalanceUpdateEvent;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -74,7 +74,7 @@ public class Leaderboards implements Listener {
 			@Override
 			Map<UUID, String> getTop() {
 				return new HoursService().getActivePlayers().stream()
-						.collect(Collectors.toMap(Hours::getUuid, hours -> BNCore.getEcon().getBalance(Utils.getPlayer(hours.getUuid()))))
+						.collect(Collectors.toMap(OfflinePlayer::getUniqueId, player -> BNCore.getEcon().getBalance(Utils.getPlayer(player.getUniqueId()))))
 						.entrySet()
 						.stream()
 						.sorted(Entry.<UUID, Double>comparingByValue().reversed())
