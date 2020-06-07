@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.DiscordId;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
+import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
@@ -72,8 +73,9 @@ public class SuggestDiscordCommand extends Command {
 						.setEmbed(embed.build())
 						.build());
 			} catch (Exception ex) {
-				ex.printStackTrace();
 				event.reply(stripColor(ex.getMessage()));
+				if (!(ex instanceof BNException))
+					ex.printStackTrace();
 			}
 		});
 	}

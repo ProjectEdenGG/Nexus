@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
+import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
 
@@ -35,8 +36,9 @@ public class SubscribeDiscordCommand extends Command {
 				Discord.addRole(event.getAuthor().getId(), role);
 				event.reply(event.getAuthor().getAsMention() + " You have subscribed to " + camelCase(role.name()));
 			} catch (Exception ex) {
-				ex.printStackTrace();
 				event.reply(stripColor(ex.getMessage()));
+				if (!(ex instanceof BNException))
+					ex.printStackTrace();
 			}
 		});
 	}

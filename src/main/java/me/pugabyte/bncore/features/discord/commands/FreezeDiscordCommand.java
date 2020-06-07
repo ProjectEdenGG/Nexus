@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
+import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
@@ -76,8 +77,9 @@ public class FreezeDiscordCommand extends Command {
 					service.save(setting);
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace();
 				event.reply(stripColor(ex.getMessage()));
+				if (!(ex instanceof BNException))
+					ex.printStackTrace();
 			}
 		});
 	}

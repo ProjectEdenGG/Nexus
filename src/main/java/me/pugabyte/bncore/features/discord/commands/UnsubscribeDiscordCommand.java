@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
+import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
 
@@ -36,8 +37,9 @@ public class UnsubscribeDiscordCommand extends Command {
 				event.reply(event.getAuthor().getAsMention() + " You have unsubscribed from " + camelCase(role.name()));
 
 			} catch (Exception ex) {
-				ex.printStackTrace();
 				event.reply(stripColor(ex.getMessage()));
+				if (!(ex instanceof BNException))
+					ex.printStackTrace();
 			}
 		});
 	}
