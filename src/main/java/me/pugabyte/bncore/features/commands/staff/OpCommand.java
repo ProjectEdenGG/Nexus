@@ -44,8 +44,8 @@ public class OpCommand extends CustomCommand {
 		if (ops.isEmpty())
 			error("There are no server operators");
 
-		send(PREFIX + "Ops:");
+		send(PREFIX + "Operators:");
 		for (OfflinePlayer operator : ops)
-			send("&7- &3" + operator.getName());
+			send(" &7- &3" + operator.getName());
 	}
 }

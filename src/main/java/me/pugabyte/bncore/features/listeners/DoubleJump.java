@@ -19,7 +19,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 
 public class DoubleJump implements Listener {
 	static final int COOLDOWN = 0;
-	static final double VELOCITY = 1;
+	static final double VELOCITY = 0.5;
 
 	@EventHandler
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {

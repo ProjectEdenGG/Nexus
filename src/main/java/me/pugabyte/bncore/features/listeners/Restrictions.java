@@ -21,9 +21,16 @@ import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 
 public class Restrictions implements Listener {
 	private static final String PREFIX = Koda.getLocalFormat();
+
+	@EventHandler
+	public void onPortalEvent(PlayerPortalEvent event) {
+		if (WorldGroup.get(event.getPlayer()).equals(WorldGroup.CREATIVE))
+			event.setCancelled(true);
+	}
 
 	@EventHandler
 	public void onInteractWithFire(PlayerInteractEvent event) {

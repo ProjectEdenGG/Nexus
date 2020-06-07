@@ -21,12 +21,12 @@ import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class SignListener implements Listener {
-	public static String header = colorize("&l< &1Minigames &0&l>");
+	public static String header = colorize("&0&l< &1Minigames &0&l>");
 
 	@EventHandler
 	public void onClickOnSign(PlayerInteractEvent event) {
 		if (!Arrays.asList(Action.LEFT_CLICK_BLOCK, Action.RIGHT_CLICK_BLOCK).contains(event.getAction())) return;
-		if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
+		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
 		if (!Minigames.isMinigameWorld(event.getPlayer().getWorld())) return;
 
