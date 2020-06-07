@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
+import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.models.discord.DiscordService;
@@ -88,6 +89,8 @@ public class DiscordDiscordCommand extends Command {
 				}
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
+				if (!(ex instanceof BNException))
+					ex.printStackTrace();
 			}
 		});
 

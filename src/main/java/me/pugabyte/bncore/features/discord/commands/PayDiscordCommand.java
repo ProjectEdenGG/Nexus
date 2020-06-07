@@ -43,6 +43,12 @@ public class PayDiscordCommand extends Command {
 				OfflinePlayer target = Utils.getPlayer(args[0]);
 				double amount = Double.parseDouble(args[1]);
 
+				if (player.getUniqueId().equals(target.getUniqueId()))
+					throw new InvalidInputException("You cannot pay yourself");
+
+				if (amount < 0)
+					throw new InvalidInputException("Amount must be greater than $0");
+
 				EconomyResponse withdrawal = BNCore.getEcon().withdrawPlayer(player, amount);
 				if (!withdrawal.transactionSuccess())
 					throw new InvalidInputException("You do not have enough money to complete this transaction ("

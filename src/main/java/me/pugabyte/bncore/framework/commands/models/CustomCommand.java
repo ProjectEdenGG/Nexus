@@ -382,7 +382,7 @@ public abstract class CustomCommand implements ICustomCommand {
 		return offlinePlayer.getPlayer();
 	}
 
-	@TabCompleterFor({Player.class, OfflinePlayer.class})
+	@TabCompleterFor(Player.class)
 	public List<String> tabCompletePlayer(String filter) {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Utils.canSee(player(), player))
