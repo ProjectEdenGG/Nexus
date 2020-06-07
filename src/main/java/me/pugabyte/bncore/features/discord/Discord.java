@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.discord;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.nerd.Nerd;
@@ -185,7 +186,15 @@ public class Discord {
 		List<Player> players = Bukkit.getOnlinePlayers().stream()
 				.filter(player -> !Utils.isVanished(player))
 				.collect(Collectors.toList());
-		return "Online nerds (" + players.size() + "): " + players.stream().map(Player::getName).collect(Collectors.joining(", "));
+
+		return "Online nerds (" + players.size() + "): " + players.stream()
+				.map(player -> {
+					String name = player.getName();
+					if (AFK.get(player).isAfk())
+						name = "_[AFK]_ " + name;
+					return name;
+				})
+				.collect(Collectors.joining(", "));
 	}
 
 	private static void updateBridgeTopic(String newBridgeTopic) {
@@ -199,7 +208,17 @@ public class Discord {
 		List<Player> players = Bukkit.getOnlinePlayers().stream()
 				.filter(player -> new Nerd(player).getRank().isStaff())
 				.collect(Collectors.toList());
-		return "Online staff (" + players.size() + "): " + players.stream().map(Player::getName).collect(Collectors.joining(", "));
+
+		return "Online staff (" + players.size() + "): " + players.stream()
+				.map(player -> {
+					String name = player.getName();
+					if (Utils.isVanished(player))
+						name = "_[V]_ " + name;
+					if (AFK.get(player).isAfk())
+						name = "_[AFK]_ " + name;
+					return name;
+				})
+				.collect(Collectors.joining(", "));
 	}
 
 	private static void updateStaffBridgeTopic(String newStaffBridgeTopic) {
