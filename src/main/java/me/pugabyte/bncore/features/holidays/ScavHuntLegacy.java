@@ -71,6 +71,7 @@ public class ScavHuntLegacy implements Listener {
 		if (!MaterialTag.SKULLS.isTagged(block.getType())) return;
 
 		Skull skull = (Skull) block.getState();
+		if (skull.getOwningPlayer() == null) return;
 		if (easter17.contains(skull.getOwningPlayer().getUniqueId().toString())) {
 			event.getPlayer().sendMessage(colorize(SCAVHUNT_PREFIX + "You've found an easter egg from the &e2017 Easter egg Hunt!"));
 		} else if (easter19.contains(skull.getOwningPlayer().getUniqueId().toString())) {

@@ -72,7 +72,7 @@ public class VoteCommand extends CustomCommand {
 			send("&3You have &e" + voter.getPoints() + " &3vote points");
 	}
 
-	@Path("set <player> <number>")
+	@Path("points set <player> <number>")
 	@Permission("group.seniorstaff")
 	void setPoints(OfflinePlayer player, int number) {
 		Voter voter = new VoteService().get(player);
@@ -80,7 +80,7 @@ public class VoteCommand extends CustomCommand {
 		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
 	}
 
-	@Path("add <player> <number>")
+	@Path("points add <player> <number>")
 	@Permission("group.seniorstaff")
 	void addPoints(OfflinePlayer player, int number) {
 		Voter voter = new VoteService().get(player);
@@ -88,7 +88,7 @@ public class VoteCommand extends CustomCommand {
 		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
 	}
 
-	@Path("take <player> <number>")
+	@Path("points take <player> <number>")
 	@Permission("group.seniorstaff")
 	void takePoints(OfflinePlayer player, int number) {
 		Voter voter = new VoteService().get(player);

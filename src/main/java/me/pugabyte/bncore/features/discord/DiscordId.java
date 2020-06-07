@@ -88,5 +88,9 @@ public class DiscordId {
 		Role(String id) {
 			this.id = id;
 		}
+
+		public net.dv8tion.jda.api.entities.Role get() {
+			return Discord.getGuild().getRoleById(id);
+		}
 	}
 }

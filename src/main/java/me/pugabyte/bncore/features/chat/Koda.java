@@ -132,9 +132,8 @@ public class Koda {
 				routine(event, trigger.getRoutine());
 
 			String response = trigger.getResponse();
-			if (!isNullOrEmpty(response)) {
+			if (!isNullOrEmpty(response))
 				respond(event, response);
-			}
 
 			break;
 		}
