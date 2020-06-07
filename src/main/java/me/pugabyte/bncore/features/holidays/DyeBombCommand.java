@@ -38,8 +38,7 @@ import java.util.List;
 
 @NoArgsConstructor
 public class DyeBombCommand extends CustomCommand implements Listener {
-
-	private static ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").build();
+	private static final ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").build();
 
 	public DyeBombCommand(CommandEvent event) {
 		super(event);

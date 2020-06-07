@@ -69,7 +69,7 @@ public class Votes implements Listener {
 		});
 	}
 
-	private static MessageEmbed voteLinksEmbed;
+	private static final MessageEmbed voteLinksEmbed;
 
 	static {
 		EmbedBuilder builder = new EmbedBuilder().setTitle("https://bnn.gg/vote").setDescription("");
