@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
+import lombok.Data;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -32,34 +33,45 @@ public class AgeCommand extends CustomCommand {
 
 	}
 
+	@Data
+	public static class ServerAge {
+		private final double dogYears, years, months, weeks, days, hours, minutes, seconds;
+
+		public ServerAge() {
+			LocalDateTime bn = LocalDateTime.now().withMonth(6).withDayOfMonth(29).withYear(2015).withHour(12).withMinute(52);
+			Duration age = Duration.between(bn, LocalDateTime.now());
+			seconds = age.getSeconds();
+			minutes = seconds / 60.0;
+			hours = minutes / 60;
+			days = hours / 24;
+			weeks = days / 7;
+			months = days / 30.42;
+			years = days / 365;
+			dogYears = years * 7;
+		}
+
+		private static final DecimalFormat format = new DecimalFormat("###,###,##0.00");
+		static { format.setRoundingMode(RoundingMode.UP); }
+
+		public static String format(double value) {
+			return format.format(value);
+		}
+	}
+
 	@Path()
 	void bn() {
-		LocalDateTime bn = LocalDateTime.now().withMonth(6).withDayOfMonth(29).withYear(2015).withHour(12).withMinute(52);
-		Duration age = Duration.between(bn, LocalDateTime.now());
+		ServerAge serverAge = new ServerAge();
+
 		send("&3Bear Nation was born on &eJune 29th, 2015&3, at &e12:52 PM ET");
 		send("&3That makes it...");
 		line();
-
-		double dogYears, years, months, weeks, days, hours, minutes, seconds;
-		DecimalFormat format = new DecimalFormat("###,###,##0.00");
-		format.setRoundingMode(RoundingMode.UP);
-
-		seconds = age.getSeconds();
-		minutes = seconds / 60.0;
-		hours = minutes / 60;
-		days = hours / 24;
-		weeks = days / 7;
-		months = days / 30.42;
-		years = days / 365;
-		dogYears = years * 7;
-
-		send("&e" + format.format(dogYears) + " &3dog years old");
-		send("&e" + format.format(years) + " &3years old");
-		send("&e" + format.format(months) + " &3months old");
-		send("&e" + format.format(weeks) + " &3weeks old");
-		send("&e" + format.format(days) + " &3days old");
-		send("&e" + format.format(hours) + " &3hours old");
-		send("&e" + format.format(minutes) + " &3minutes old");
-		send("&e" + format.format(seconds) + " &3seconds old");
+		send("&e" + ServerAge.format(serverAge.getDogYears()) + " &3dog years old");
+		send("&e" + ServerAge.format(serverAge.getYears()) + " &3years old");
+		send("&e" + ServerAge.format(serverAge.getMonths()) + " &3months old");
+		send("&e" + ServerAge.format(serverAge.getWeeks()) + " &3weeks old");
+		send("&e" + ServerAge.format(serverAge.getDays()) + " &3days old");
+		send("&e" + ServerAge.format(serverAge.getHours()) + " &3hours old");
+		send("&e" + ServerAge.format(serverAge.getMinutes()) + " &3minutes old");
+		send("&e" + ServerAge.format(serverAge.getSeconds()) + " &3seconds old");
 	}
 }

@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.scoreboard.ScoreboardService;
 import me.pugabyte.bncore.models.scoreboard.ScoreboardUser;
@@ -96,6 +97,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	}
 
 	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("edit toggle <type> [enable]")
 	void toggle(ScoreboardLine line, Boolean enable) {
 		if (enable == null)

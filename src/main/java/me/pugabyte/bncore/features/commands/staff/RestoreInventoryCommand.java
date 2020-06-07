@@ -9,6 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -66,6 +67,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 	}
 
 	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("do <gamemode> <type>")
 	void restore(GameMode gameMode, String type) {
 		RestoreInventoryPlayer restoreInventoryPlayer = get(player());

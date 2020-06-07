@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.lobby;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.commands.PodiumsCommand;
 import me.pugabyte.bncore.features.minigames.commands.PodiumsCommand.Position;
+import me.pugabyte.bncore.features.minigames.utils.MinigameNight.NextMGN;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -10,8 +11,6 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,9 +58,9 @@ public class ActionBar {
 				message = message.replace(group, ChatColor.DARK_AQUA + npc.getName());
 		}
 
-		ZonedDateTime nextMGNFor = Minigames.getNextMGNFor(player);
-		message = message.replace("{local_mgn_time}", nextMGNFor.format(DateTimeFormatter.ofPattern("h:mm a z")));
-		message = message.replace("{local_mgn_day}", camelCase(nextMGNFor.getDayOfWeek().name()));
+		NextMGN mgn = new NextMGN(player);
+		message = message.replace("{local_mgn_time}", mgn.getTimeFormatted());
+		message = message.replace("{local_mgn_day}", camelCase(mgn.getNext().getDayOfWeek().name()));
 		return message;
 	}
 

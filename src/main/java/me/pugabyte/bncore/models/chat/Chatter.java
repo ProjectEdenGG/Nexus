@@ -58,7 +58,7 @@ public class Chatter extends PlayerOwnedObject {
 
 	public boolean canJoin(PublicChannel channel) {
 		boolean hasPerm = false;
-		if (getOfflinePlayer().isOnline())
+		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
 			hasPerm = getOfflinePlayer().getPlayer().hasPermission(channel.getPermission());
 		else
 			hasPerm = BNCore.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
@@ -93,17 +93,17 @@ public class Chatter extends PlayerOwnedObject {
 	}
 
 	public void send(String message) {
-		if (getOfflinePlayer().isOnline())
+		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
 			getOfflinePlayer().getPlayer().sendMessage(colorize(message));
 	}
 
 	public void send(JsonBuilder message) {
-		if (getOfflinePlayer().isOnline())
+		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
 			getOfflinePlayer().getPlayer().spigot().sendMessage(message.build());
 	}
 
 	public void updateChannels() {
-		if (getOfflinePlayer().isOnline())
+		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
 			ChatManager.getChannels().forEach(channel -> {
 				if (canJoin(channel)) {
 					if (!hasJoined(channel))

@@ -232,7 +232,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		// TODO Koda Broadcast
 		if (broadcast)
 			Koda.say(player.getName() + " has reset their " + skill.name().toLowerCase() + " skill for the " +
-					StringUtils.getNumberSuffix(mcMMOPrestige.getPrestige(skill.name())) + " time!");
+					StringUtils.getNumberWithSuffix(mcMMOPrestige.getPrestige(skill.name())) + " time!");
 	}
 
 	@Override

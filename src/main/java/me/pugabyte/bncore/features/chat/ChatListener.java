@@ -2,6 +2,8 @@ package me.pugabyte.bncore.features.chat;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.chat.events.ChatEvent;
+import me.pugabyte.bncore.features.chat.events.DiscordChatEvent;
+import me.pugabyte.bncore.features.chat.events.PublicChatEvent;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
@@ -37,6 +39,16 @@ public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onChat(ChatEvent event) {
 		Censor.process(event);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPublicChat(PublicChatEvent event) {
+		Koda.process(event);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onDiscordChat(DiscordChatEvent event) {
+		Koda.process(event);
 	}
 
 	@EventHandler

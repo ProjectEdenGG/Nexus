@@ -32,6 +32,10 @@ public abstract class ChatEvent extends Event implements Cancellable {
 		return getRecipients().contains(chatter);
 	}
 
+	public void respond(String response) {
+		getRecipients().forEach(chatter -> chatter.send(response));
+	}
+
 	//<editor-fold desc="Boilerplate Bukkit">
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled = false;
