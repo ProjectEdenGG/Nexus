@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
@@ -51,6 +52,7 @@ public class InviteRewardsCommand extends CustomCommand {
 	}
 
 	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("confirm <inviter>")
 	void confirm(Player inviter) {
 		Player invited = player();
@@ -72,6 +74,7 @@ public class InviteRewardsCommand extends CustomCommand {
 	}
 
 	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("deny <inviter>")
 	void deny(Player inviter) {
 		Player invited = player();

@@ -72,7 +72,7 @@ public class LiteBans implements Listener {
 	public void onLiteBansBroadcast(BroadcastEvent event) {
 		if (Arrays.asList("broadcast", "banned_join", "mute").contains(event.getType()))
 			if (!event.getMessage().contains("Server restarting."))
-				Discord.log("[LiteBans] " + event.getMessage());
+				Discord.log("**[LiteBans]** " + event.getMessage());
 	}
 
 	private static final Events.Listener entryAdded;

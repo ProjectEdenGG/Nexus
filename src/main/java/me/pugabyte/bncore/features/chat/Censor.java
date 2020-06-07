@@ -11,7 +11,6 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,12 +31,12 @@ public class Censor {
 	}
 
 	public static void reloadConfig() {
-		YamlConfiguration config = BNCore.getConfig("censor.yml");
-		ConfigurationSection censor = config.getConfigurationSection("censor");
-		if (censor != null) {
-			for (String key : censor.getKeys(false)) {
-				ConfigurationSection section = censor.getConfigurationSection(key);
-				if (!censor.isConfigurationSection(key) || section == null)
+		censorItems.clear();
+		ConfigurationSection config = BNCore.getConfig("censor.yml").getConfigurationSection("censor");
+		if (config != null) {
+			for (String key : config.getKeys(false)) {
+				ConfigurationSection section = config.getConfigurationSection(key);
+				if (!config.isConfigurationSection(key) || section == null)
 					BNCore.warn(PREFIX + "Configuration section " + key + " misconfigured");
 				else
 					censorItems.add(CensorItem.builder()
@@ -61,6 +60,10 @@ public class Censor {
 		private boolean whole;
 		private boolean bad;
 		private boolean cancel;
+
+		String getCensored() {
+			return Utils.getRandomElement(replace);
+		}
 	}
 
 	public static void process(ChatEvent event) {
@@ -90,7 +93,7 @@ public class Censor {
 
 				if (matches) {
 					if (!censorItem.getReplace().isEmpty())
-						message = message.replaceAll("(?i)" + regex, Utils.getRandomElement(censorItem.getReplace()));
+						message = message.replaceAll("(?i)" + regex, censorItem.getCensored());
 
 					if (censorItem.isBad())
 						++bad;

@@ -3,9 +3,9 @@ package me.pugabyte.bncore.features.chat.events;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import me.pugabyte.bncore.features.discord.Discord;
-import me.pugabyte.bncore.models.chat.Channel;
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
+import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.Utils;
@@ -21,7 +21,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @AllArgsConstructor
 public class DiscordChatEvent extends ChatEvent {
 	private Member member;
-	private Channel channel;
+	private PublicChannel channel;
 	private String message;
 	private String permission;
 

@@ -321,7 +321,7 @@ public class StringUtils {
 	}
 
 	public static String longDateFormat(LocalDate date) {
-		return camelCase(date.getMonth().name()) + " " + getNumberSuffix(date.getDayOfMonth()) + ", " + date.getYear();
+		return camelCase(date.getMonth().name()) + " " + getNumberWithSuffix(date.getDayOfMonth()) + ", " + date.getYear();
 	}
 
 	public static String shortDateFormat(LocalDate date) {
@@ -344,7 +344,7 @@ public class StringUtils {
 		return LocalDate.from(DateTimeFormatter.ofPattern("M/d/yyyy").parse(input));
 	}
 
-	public static String getNumberSuffix(int number) {
+	public static String getNumberWithSuffix(int number) {
 		String text = String.valueOf(number);
 		if (text.endsWith("1"))
 			if (text.endsWith("11"))

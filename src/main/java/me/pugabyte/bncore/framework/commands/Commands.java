@@ -25,17 +25,17 @@ import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
 public class Commands {
-	private Plugin plugin;
+	private final Plugin plugin;
 	private final String path;
-	private CommandMapUtils mapUtils;
-	private Set<Class<? extends CustomCommand>> commandSet;
-	private static Map<String, CustomCommand> commands = new HashMap<>();
+	private final CommandMapUtils mapUtils;
+	private final Set<Class<? extends CustomCommand>> commandSet;
+	private static final Map<String, CustomCommand> commands = new HashMap<>();
 	@Getter
-	private static Map<Class<?>, Method> converters = new HashMap<>();
+	private static final Map<Class<?>, Method> converters = new HashMap<>();
 	@Getter
-	private static Map<Class<?>, Method> tabCompleters = new HashMap<>();
+	private static final Map<Class<?>, Method> tabCompleters = new HashMap<>();
 	@Getter
-	private static Map<String, String> redirects = new HashMap<>();
+	private static final Map<String, String> redirects = new HashMap<>();
 	@Getter
 	private static final String pattern = "\\/(\\/|)[a-zA-Z0-9\\-_]+";
 

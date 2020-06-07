@@ -83,8 +83,7 @@ class CommandMapUtils {
 
 	void unregister(String name) throws IllegalAccessException {
 		CommandMap map = getCommandMap();
-		Map<String, Command> knownCommands = (Map<String, Command>) KNOWN_COMMANDS_FIELD.get(map);
-		Iterator<Command> iterator = knownCommands.values().iterator();
+		Iterator<Command> iterator = getKnownCommandMap().values().iterator();
 
 		while (iterator.hasNext()) {
 			Command command = iterator.next();

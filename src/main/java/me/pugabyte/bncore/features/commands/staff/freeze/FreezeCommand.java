@@ -75,7 +75,8 @@ public class FreezeCommand extends CustomCommand implements Listener {
 			}
 
 			freezePlayer(player);
-			Chat.broadcast(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName(), "Staff");
+			Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName(), "Staff");
+			Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has frozen " + player.getName(), "Staff");
 			send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 			setting.setBoolean(true);
 			service.save(setting);
@@ -183,7 +184,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
-		switch (event.getMessage()) {
+		switch (event.getMessage().split(" ")[0]) {
 			case "/rules":
 			case "/ch":
 			case "/msg":

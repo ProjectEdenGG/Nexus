@@ -23,4 +23,10 @@ public class PublicChatEvent extends MinecraftChatEvent {
 				Utils.canSee(chatter.getOfflinePlayer(), recipient.getOfflinePlayer()));
 	}
 
+	@Override
+	public void respond(String response) {
+		super.respond(response);
+		channel.broadcastDiscord(response);
+	}
+
 }

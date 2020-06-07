@@ -104,6 +104,9 @@ public class Nerd {
 	private static final String CHECKMARK = "&a✔";
 
 	public String getChatFormat() {
+		if ("KodaBear".equals(name))
+			return "&5&oKodaBear";
+
 		Rank rank = getRank();
 		String prefix = null;
 		Setting checkmarkSetting = new SettingService().get(getOfflinePlayer(), "checkmark");

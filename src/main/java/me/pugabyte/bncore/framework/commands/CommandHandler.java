@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
-	private CustomCommand customCommand;
+	private final CustomCommand customCommand;
 
 	CommandHandler(CustomCommand customCommand) {
 		this.customCommand = customCommand;
