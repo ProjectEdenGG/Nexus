@@ -192,7 +192,7 @@ public class Votes implements Listener {
 							break;
 					}
 				}
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				ex.printStackTrace();
 			}
 
@@ -223,7 +223,7 @@ public class Votes implements Listener {
 			int sum = topVoters.stream().mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 			try {
 				Files.write(Paths.get("plugins/website/votes_monthly_total.html"), String.valueOf(sum).getBytes());
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				ex.printStackTrace();
 			}
 
@@ -241,7 +241,7 @@ public class Votes implements Listener {
 				});
 				config.save(file);
 			} catch (PlayerNotFoundException ignore) {
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				ex.printStackTrace();
 			}
 		});

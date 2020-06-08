@@ -141,7 +141,7 @@ public class Match {
 		try {
 			arena.getMechanic().processJoin(minigamer);
 			arena.getMechanic().onJoin(event);
-		} catch (Exception ex) { ex.printStackTrace(); }
+		} catch (Throwable ex) { ex.printStackTrace(); }
 
 		if (scoreboard != null) scoreboard.handleJoin(minigamer);
 		if (scoreboardTeams != null) scoreboardTeams.handleJoin(minigamer);
@@ -157,7 +157,7 @@ public class Match {
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
-		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
+		try { arena.getMechanic().onQuit(event); } catch (Throwable ex) { ex.printStackTrace(); }
 		minigamer.clearState();
 		minigamer.toGamelobby();
 		minigamer.unhideAll();
@@ -244,7 +244,7 @@ public class Match {
 							break matchDataTypes;
 						}
 
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			BNCore.log("Error initializing match data for " + arena.getMechanic().getName());
 			ex.printStackTrace();
 		}

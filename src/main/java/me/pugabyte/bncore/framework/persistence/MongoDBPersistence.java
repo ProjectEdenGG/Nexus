@@ -58,7 +58,7 @@ public class MongoDBPersistence {
 			if (databases.get(bndb) == null)
 				openConnection(bndb);
 			return databases.get(bndb);
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			BNCore.severe("Could not establish connection to the MongoDB \"" + bndb.getDatabase() + "\" database: " + ex.getMessage());
 			return null;
 		}
@@ -68,7 +68,7 @@ public class MongoDBPersistence {
 		databases.values().forEach(datastore -> {
 			try {
 				datastore.getMongo().close();
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				ex.printStackTrace();
 			}
 		});

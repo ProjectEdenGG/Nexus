@@ -132,8 +132,8 @@ public class InviteRewardsCommand extends CustomCommand {
 
 		try {
 			BNCore.getInstance().saveConfig();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable ex) {
+			ex.printStackTrace();
 		}
 	}
 

@@ -87,7 +87,7 @@ public class DiscordDiscordCommand extends Command {
 							event.reply(event.getAuthor().getAsMention() + " Check your direct messages with " + Bot.KODA.jda().getSelfUser().getAsMention() + " for a confirmation code! (top left of the screen)");
 						break;
 				}
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof BNException))
 					ex.printStackTrace();

@@ -68,11 +68,11 @@ public abstract class MongoService extends DatabaseService {
 		} catch (UpdateException doesntExistYet) {
 			try {
 				database.save(object);
-			} catch (Exception ex2) {
+			} catch (Throwable ex2) {
 				BNCore.log("Error saving " + object.getClass().getSimpleName() + ": " + object.toString());
 				ex2.printStackTrace();
 			}
-		} catch (Exception ex3) {
+		} catch (Throwable ex3) {
 			BNCore.log("Error updating " + object.getClass().getSimpleName() + ": " + object.toString());
 			ex3.printStackTrace();
 		}

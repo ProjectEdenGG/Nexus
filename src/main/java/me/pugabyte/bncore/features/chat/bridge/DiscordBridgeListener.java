@@ -52,7 +52,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			// This was failing even in a try/catch, needs finally to complete
 			try {
 				content = EmojiParser.parseToAliases(content);
-			} catch (Exception ignore) {
+			} catch (Throwable ignore) {
 			} finally {
 				if (content.length() > 0)
 					builder.urlize(" " + colorize(content.replaceAll("&", "&&f")));

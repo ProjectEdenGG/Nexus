@@ -49,7 +49,7 @@ public class BNScoreboard {
 	}
 
 	public BNScoreboard(String id, String title, Collection<? extends Player> players) {
-		try { scoreboard.removeObjective(left(id, 16)); } catch (Exception ignore) {}
+		try { scoreboard.removeObjective(left(id, 16)); } catch (Throwable ignore) {}
 		objective = scoreboard.createObjective(left(id, 16), colorize(title), DisplaySlot.SIDEBAR, false);
 		for (Player player : players)
 			subscribe(player);
@@ -70,7 +70,7 @@ public class BNScoreboard {
 			subscribed.setAccessible(true);
 			Set<Player> players = (Set<Player>) subscribed.get(objective);
 			return players.contains(player);
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			ex.printStackTrace();
 
 			// Cant read subscribers, assume they are subscribed

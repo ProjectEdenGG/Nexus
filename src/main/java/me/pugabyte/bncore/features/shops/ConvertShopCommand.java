@@ -63,7 +63,7 @@ public class ConvertShopCommand extends CustomCommand {
 
 		List<Block> signs = new ArrayList<>();
 		List<SignData> conversions = new ArrayList<>();
-		List<Exception> exceptions = new ArrayList<>();
+		List<Throwable> exceptions = new ArrayList<>();
 		Utils.getBlocksInRadius(player().getLocation(), radius).forEach(block -> {
 			if (!MaterialTag.SIGNS.isTagged(block.getType())) return;
 
@@ -75,7 +75,7 @@ public class ConvertShopCommand extends CustomCommand {
 
 			try {
 				conversions.add(readSign(sign));
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				ex.printStackTrace();
 				exceptions.add(ex);
 			}
@@ -200,7 +200,7 @@ public class ConvertShopCommand extends CustomCommand {
 		try {
 			ItemStack item = BNCore.getEssentials().getItemDb().get(name);
 			return item.getType();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			error("Could not parse item from essentials aliases");
 			BNCore.warn("Could not convert the shop from player " + player().getName());
 		}

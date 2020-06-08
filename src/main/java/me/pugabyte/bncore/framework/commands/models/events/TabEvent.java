@@ -12,7 +12,7 @@ public class TabEvent extends CommandEvent {
 	}
 
 	@Override
-	public void handleException(Exception ex) {
+	public void handleException(Throwable ex) {
 		ex.printStackTrace();
 	}
 

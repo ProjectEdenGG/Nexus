@@ -134,7 +134,7 @@ public class Tasks {
 					if (onComplete != null)
 						try {
 							onComplete.run();
-						} catch (Exception ex) {
+						} catch (Throwable ex) {
 							ex.printStackTrace();
 						}
 					stop();

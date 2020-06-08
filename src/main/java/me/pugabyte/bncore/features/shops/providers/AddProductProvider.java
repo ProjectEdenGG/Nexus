@@ -110,7 +110,7 @@ public class AddProductProvider extends _ShopProvider {
 							this.price = price;
 						}
 						open(player);
-					} catch (Exception ex) {
+					} catch (Throwable ex) {
 						player.sendMessage(ex.getMessage());
 						open(player);
 					}
@@ -147,7 +147,7 @@ public class AddProductProvider extends _ShopProvider {
 							}).open(player);
 						} else
 							open(player);
-					} catch (Exception ex) {
+					} catch (Throwable ex) {
 						player.sendMessage(ex.getMessage());
 						open(player);
 					}

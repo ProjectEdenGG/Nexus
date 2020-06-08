@@ -36,7 +36,7 @@ public class UnsubscribeDiscordCommand extends Command {
 				Discord.removeRole(event.getAuthor().getId(), role);
 				event.reply(event.getAuthor().getAsMention() + " You have unsubscribed from " + camelCase(role.name()));
 
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof BNException))
 					ex.printStackTrace();

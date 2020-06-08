@@ -54,7 +54,7 @@ public class StarTrekMoviesCommand extends CustomCommand {
 				int i = (page - 1) * 10 + 1;
 				for (Hours hours : results)
 					send("&3" + i++ + " &e" + hours.getPlayer().getName() + " &7- " + nf.format(hours.getTotal() / divisor) + " movies");
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				ex.printStackTrace();
 			}
 		});

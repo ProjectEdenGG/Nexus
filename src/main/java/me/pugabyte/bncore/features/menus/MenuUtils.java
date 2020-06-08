@@ -93,7 +93,7 @@ public abstract class MenuUtils {
 		return new ItemBuilder(Material.BARRIER).name("&cClose").build();
 	}
 
-	public static void handleException(Player player, Exception ex) {
+	public static void handleException(Player player, Throwable ex) {
 		if (ex.getCause() != null && ex.getCause() instanceof BNException)
 			player.sendMessage(colorize(PREFIX + "&c" + ex.getCause().getMessage()));
 		else if (ex instanceof BNException)
