@@ -282,8 +282,9 @@ public interface ICustomCommand {
 			Fallback fallback = event.getCommand().getClass().getAnnotation(Fallback.class);
 			if (fallback != null)
 				Utils.runCommand(event.getSender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
+			else if (!event.getArgsString().equalsIgnoreCase("help"))
+				Utils.runCommand(event.getSender(), event.getAliasUsed() + " help");
 			else
-				// TODO No default path, what do?
 				throw new InvalidInputException("No matching path");
 		}
 
