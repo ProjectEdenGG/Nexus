@@ -78,6 +78,7 @@ public class CustomRecipes {
 	public void misc() {
 		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_WART_BLOCK, 1, Material.NETHER_WART, 9, CraftingMenuType.MISC));
 		addRecipe(createSingleItemShapelessRecipe(Material.BLUE_ICE, 1, Material.PACKED_ICE, 9, CraftingMenuType.MISC));
+		addRecipe(createSingleItemShapelessRecipe(Material.PACKED_ICE, 1, Material.ICE, 9, CraftingMenuType.MISC));
 		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_RED_SANDSTONE, 1, Material.RED_SANDSTONE_SLAB, 2, CraftingMenuType.MISC));
 		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_SANDSTONE, 1, Material.SANDSTONE_SLAB, 2, CraftingMenuType.MISC));
 		addRecipe(createSingleItemShapelessRecipe(Material.HONEYCOMB_BLOCK, 1, Material.HONEYCOMB, 4, CraftingMenuType.MISC));
