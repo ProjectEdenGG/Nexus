@@ -57,6 +57,8 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 					Utils.runConsoleCommand(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getCommand() != null && item.getCommand().length() > 0)
 					Utils.runCommand(player, item.getCommand().replaceAll("\\[player]", player.getName()));
+				if (item.getOnPurchase() != null)
+					item.getOnPurchase().accept(player, item);
 				if (item.getItems() != null && item.getItems().size() > 0)
 					Utils.giveItems(player, item.getItems());
 
