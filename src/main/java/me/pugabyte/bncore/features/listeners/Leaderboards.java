@@ -6,12 +6,14 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.shops.ShopUtils;
+import me.pugabyte.bncore.features.store.Package;
 import me.pugabyte.bncore.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.hours.HoursService.PageResult;
 import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.models.purchase.PurchaseService;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -22,6 +24,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,6 +33,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
@@ -93,6 +97,27 @@ public class Leaderboards implements Listener {
 						.collect(Collectors.toMap(
 								playerStat -> Utils.getPlayer(playerStat.name).getUniqueId(),
 								playerStat -> String.valueOf(playerStat.statVal),
+								(h1, h2) -> h1, LinkedHashMap::new
+						));
+			}
+		},
+		RECENT_DONATOR(2772, 2773, 2774) {
+			@Override
+			Map<UUID, String> getTop() {
+				return new PurchaseService().getRecent(3).stream()
+						.collect(Collectors.toMap(
+								purchase -> Utils.getPlayer(purchase.getUuid()).getUniqueId(),
+								purchase -> {
+									String name = "";
+									Package purchasedPackage = Package.getPackage(purchase.getPackageId());
+									if (purchasedPackage != null) {
+										String category = purchasedPackage.getCategory();
+										if (!isNullOrEmpty(category))
+											name += category + " - ";
+									}
+									name += purchase.getPackageName().split("\\[")[0].trim();
+									return name + " (" + NumberFormat.getCurrencyInstance().format(purchase.getPrice()) + ")";
+								},
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}

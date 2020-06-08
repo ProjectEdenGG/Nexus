@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.store;
 
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.features.store.annotations.Category;
 import me.pugabyte.bncore.features.store.annotations.Commands.Command;
 import me.pugabyte.bncore.features.store.annotations.ExpirationCommands.ExpirationCommand;
 import me.pugabyte.bncore.features.store.annotations.ExpirationDays;
@@ -147,6 +148,7 @@ public enum Package {
 	RAINBOW_BEACON,
 
 	@Id("2495867")
+	@Category("Pets")
 	@Permission("pet.type.chicken")
 	@Permission("pet.type.chicken.hat")
 	@Permission("pet.type.chicken.data.*")
@@ -171,6 +173,7 @@ public enum Package {
 	PETS_FARM,
 
 	@Id("2495869")
+	@Category("Pets")
 	@Permission("pet.type.fox")
 	@Permission("pet.type.fox.hat")
 	@Permission("pet.type.fox.data.*")
@@ -195,6 +198,7 @@ public enum Package {
 	PETS_CUTIES,
 
 	@Id("2495876")
+	@Category("Pets")
 	@Permission("pet.type.wanderingtrader")
 	@Permission("pet.type.wanderingtrader.hat")
 	@Permission("pet.type.wanderingtrader.data.*")
@@ -225,6 +229,7 @@ public enum Package {
 	PETS_NATIVES,
 
 	@Id("3919092")
+	@Category("Pets")
 	@Permission("pet.type.dolphin")
 	@Permission("pet.type.dolphin.hat")
 	@Permission("pet.type.dolphin.data.*")
@@ -255,6 +260,7 @@ public enum Package {
 	PETS_AQUATIC,
 
 	@Id("2495873")
+	@Category("Pets")
 	@Permission("pet.type.witherskeleton")
 	@Permission("pet.type.witherskeleton.hat")
 	@Permission("pet.type.witherskeleton.data.*")
@@ -285,6 +291,7 @@ public enum Package {
 	PETS_NETHER,
 
 	@Id("2495872")
+	@Category("Pets")
 	@Permission("pet.type.cavespider")
 	@Permission("pet.type.cavespider.hat")
 	@Permission("pet.type.cavespider.data.*")
@@ -312,6 +319,7 @@ public enum Package {
 	PETS_MONSTERS,
 
 	@Id("2495871")
+	@Category("Pets")
 	@Permission("pet.type.horse")
 	@Permission("pet.type.horse.mount")
 	@Permission("pet.type.horse.hat")
@@ -343,6 +351,7 @@ public enum Package {
 	PETS_MOUNTS,
 
 	@Id("2495870")
+	@Category("Pets")
 	@Permission("pet.type.enderman")
 	@Permission("pet.type.enderman.hat")
 	@Permission("pet.type.enderman.data.*")
@@ -370,6 +379,7 @@ public enum Package {
 	PETS_OTHER,
 
 	@Id("2496219")
+	@Category("Pets")
 	@Permission("miniaturepets.pet.BB8")
 	@Permission("miniaturepets.pet.Bee")
 	@Permission("miniaturepets.pet.Boxer")
@@ -442,6 +452,7 @@ public enum Package {
 	MINIATURE_PETS,
 
 	@Id("2495938")
+	@Category("Disguises")
 	@Permission("libsdisguises.disguise.cow.setBaby.setBurning.setArrowsSticking.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.chicken.setArrowsSticking.setBurning.setBaby.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.pig.setSaddled.setArrowsSticking.setBurning.setBaby.setViewSelfDisguise")
@@ -450,6 +461,7 @@ public enum Package {
 	DISGUISES_FARM_ANIMALS,
 
 	@Id("2495940")
+	@Category("Disguises")
 	@Permission("libsdisguises.disguise.ocelot.setArrowsSticking.setBurning.setBaby.setType.setSitting.setTamed.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.rabbit.setBaby.setType.setArrowsSticking.setBurning.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.wolf.setBaby.setSneaking.setTamed.setAngry.setBegging.setCollarColor.setArrowsSticking.setBurning.setSitting.setViewSelfDisguise")
@@ -457,6 +469,7 @@ public enum Package {
 	DISGUISES_DOMESTIC_ANIMALS,
 
 	@Id("2495941")
+	@Category("Disguises")
 	@Permission("libsdisguises.disguise.villager.setArrowsSticking.setBurning.setBaby.setProfession.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.iron_golem.setArrowsSticking.setBurning.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.snowman.setArrowsSticking.setBurning.setHat.setViewSelfDisguise")
@@ -464,6 +477,7 @@ public enum Package {
 	DISGUISES_LEFTOVERS,
 
 	@Id("2495942")
+	@Category("Disguises")
 	@Permission("libsdisguises.disguise.mule.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.horse.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.donkey.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setViewSelfDisguise")
@@ -471,6 +485,7 @@ public enum Package {
 	DISGUISES_RIDABLE_ANIMALS,
 
 	@Id("2495944")
+	@Category("Disguises")
 	@Permission("libsdisguises.disguise.zombie.setArrowsSticking.setBurning.setArmor.setItemInMainHand.setItemInOffHand.setAggressive.setBaby.setProfession.setShaking.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.skeleton.setArrowsSticking.setBurning.setArmor.setItemInMainHand.setItemInOffHand.setSwingArms.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.cave_spider.setArrowsSticking.setBurning.setClimbing.setViewSelfDisguise")
@@ -479,6 +494,7 @@ public enum Package {
 	DISGUISES_MONSTERS,
 
 	@Id("2495945")
+	@Category("Disguises")
 	@Permission("libsdisguises.disguise.blaze.setArrowsSticking.setBurning.setBlazing.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.pigman.setArrowsSticking.setBurning.setItemInMainHand.setItemInOffHand.setAggressive.setBaby.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.ghast.setArrowsSticking.setBurning.setAggressive.setViewSelfDisguise")
@@ -487,6 +503,7 @@ public enum Package {
 	DISGUISES_NETHER,
 
 	@Id("2495946")
+	@Category("Disguises")
 	@Permission("libsdisguises.disguise.enderman.setArrowsSticking.setBurning.setAggressive.setItemInMainHand.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.endermite.setArrowsSticking.setBurning.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.shulker.setArrowsSticking.setBurning.setFacingDirection.setShieldHeight.setViewSelfDisguise")
@@ -494,6 +511,7 @@ public enum Package {
 	DISGUISES_END_CREATURES,
 
 	@Id("2495947")
+	@Category("Disguises")
 	@Permission("libsdisguises.disguise.bat.setArrowsSticking.setBurning.setHanging.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.witch.setArrowsSticking.setBurning.setAggressive.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.slime.setArrowsSticking.setBurning.setSize.setViewSelfDisguise")
@@ -502,6 +520,7 @@ public enum Package {
 	DISGUISES_SPOOKIES,
 
 	@Id("2495948")
+	@Category("Disguises")
 	@Permission("libsdisguises.disguise.evoker.setArrowsSticking.setBurning.setSpellTicks.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.vex.setArrowsSticking.setBurning.setAngry.setViewSelfDisguise")
 	@Permission("libsdisguises.disguise.vindicator.setArrowsSticking.setBurning.setJohnny.setViewSelfDisguise")
@@ -515,6 +534,11 @@ public enum Package {
 
 	public String getId() {
 		return getField().getAnnotation(Id.class).value();
+	}
+
+	public String getCategory() {
+		Category annotation = getField().getAnnotation(Category.class);
+		return annotation == null ? null : annotation.value();
 	}
 
 	public List<String> getPermissions() {

@@ -2,8 +2,10 @@ package me.pugabyte.bncore.models.purchase;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.utils.StringUtils;
 
 import java.lang.reflect.Modifier;
@@ -12,6 +14,8 @@ import java.util.Arrays;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Purchase {
 	private String name;
 	private String uuid;
