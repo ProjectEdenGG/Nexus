@@ -89,10 +89,10 @@ public class DiscordListener extends ListenerAdapter {
 			if (setting.getBoolean()) {
 				event.getMember().kick("This discord is currently on lockdown mode").queue();
 			} else {
-				Tasks.waitAsync(5, () -> {
-					Discord.addRole(event.getUser().getId(), Role.NERD);
+				Tasks.waitAsync(1, () -> {
+//					Discord.addRole(event.getUser().getId(), Role.NERD);
 					DiscordUser user = new DiscordService().getFromUserId(event.getUser().getId());
-					if (!Strings.isNullOrEmpty(user.getUserId()))
+					if (user != null && !Strings.isNullOrEmpty(user.getUserId()))
 						Discord.addRole(event.getUser().getId(), Role.VERIFIED);
 				});
 			}

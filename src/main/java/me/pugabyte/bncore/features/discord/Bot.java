@@ -31,6 +31,7 @@ public enum Bot {
 		JDA build() {
 			return new JDABuilder(AccountType.BOT)
 					.setToken(getToken())
+					.addEventListeners(new DiscordListener())
 					.addEventListeners(getCommands().build())
 					.build()
 					.awaitReady();
@@ -43,7 +44,7 @@ public enum Bot {
 		JDA build() {
 			return new JDABuilder(AccountType.BOT)
 					.setToken(getToken())
-					.addEventListeners(new DiscordBridgeListener(), new DiscordListener())
+					.addEventListeners(new DiscordBridgeListener())
 					.addEventListeners(getCommands().setStatus(OnlineStatus.INVISIBLE).build())
 					.build()
 					.awaitReady();
