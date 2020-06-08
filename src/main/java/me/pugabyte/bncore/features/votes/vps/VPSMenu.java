@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuil
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public enum VPSMenu {
@@ -50,8 +52,10 @@ public enum VPSMenu {
 						.name("x3 KillerMoney boost for 2 days")
 						.display(Material.DIAMOND_SWORD, 3)
 						.price(30)
-						.consoleCommand("kmboost [player]")
 						.takePoints(false)
+						.onPurchase((player, item) -> {
+							// Do stuff
+						})
 						.close(true));
 				put(34, VPSSlot.builder()
 						.name("Uncraftable Banners")
@@ -587,6 +591,7 @@ public enum VPSMenu {
 			private List<ItemStack> items;
 			private String command;
 			private String consoleCommand;
+			private BiConsumer<Player, VPSSlot> onPurchase;
 
 			public String getName() {
 				return display.getItemMeta().getDisplayName();
@@ -701,10 +706,15 @@ public enum VPSMenu {
 					return this;
 				}
 
+				public VPSSlotBuilder onPurchase(BiConsumer<Player, VPSSlot> onPurchase) {
+					this.onPurchase = onPurchase;
+					return this;
+				}
+
 				public VPSSlot build() {
 					ItemBuilder.setName(this.display, "&3&l" + this.name);
 					ItemBuilder.addItemFlags(this.display, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
-					return new VPSSlot(this.display, this.price, this.takePoints, this.close, this.money, this.items, this.command, this.consoleCommand);
+					return new VPSSlot(this.display, this.price, this.takePoints, this.close, this.money, this.items, this.command, this.consoleCommand, this.onPurchase);
 				}
 			}
 		}
