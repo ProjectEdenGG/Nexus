@@ -38,7 +38,7 @@ public class SetHomeCommand extends CustomCommand {
 			message = "Updated location of home \"&e" + homeName + "&3\"";
 		} else {
 			homeOwner.add(Home.builder()
-					.uuid(player().getUniqueId())
+					.uuid(homeOwner.getUuid())
 					.name(homeName)
 					.location(player().getLocation())
 					.build());
