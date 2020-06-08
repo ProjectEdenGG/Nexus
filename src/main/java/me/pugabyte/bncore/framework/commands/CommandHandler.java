@@ -30,8 +30,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String alias, @NotNull String[] args) {
 		CommandEvent event = new CommandEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
-		call(event);
-		if (!event.isCancelled())
+		if (event.callEvent())
 			customCommand.execute(event);
 
 		return true;
@@ -39,6 +38,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String alias, @NotNull String[] args) {
+//		if (sender.getName().equals("Pugabyte"))
+//			return null;
+
 		TabEvent event = new TabEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
 
 		// Remove any empty args except the last one
@@ -47,8 +49,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 		if (lastIndexIsEmpty)
 			event.getArgs().add("");
 
-		call(event);
-		if (!event.isCancelled())
+		if (event.callEvent())
 			return customCommand.tabComplete(event);
 
 		return new ArrayList<>();

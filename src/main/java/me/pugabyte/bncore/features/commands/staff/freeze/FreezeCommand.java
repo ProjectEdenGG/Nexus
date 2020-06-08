@@ -100,14 +100,16 @@ public class FreezeCommand extends CustomCommand implements Listener {
 		Player player = event.getPlayer();
 		if (player.getVehicle() != null)
 			player.getVehicle().remove();
-		Chat.broadcast(PREFIX + "&e" + player.getName() + " &3has logged out while frozen.", "Staff");
+		Chat.broadcastIngame(PREFIX + "&e" + player.getName() + " &3has logged out while frozen.", "Staff");
+		Chat.broadcastDiscord("**[Freeze]** " + player.getName() + " &3has logged out while frozen.", "Staff");
 	}
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
 		Tasks.wait(5, () -> freezePlayer(event.getPlayer()));
-		Chat.broadcast(PREFIX + "&e" + event.getPlayer().getName() + " &3has logged in while frozen.", "Staff");
+		Chat.broadcastIngame(PREFIX + "&e" + event.getPlayer().getName() + " &3has logged in while frozen.", "Staff");
+		Chat.broadcastDiscord("**[Freeze]** " + event.getPlayer().getName() + " has logged in while frozen.", "Staff");
 	}
 
 	@EventHandler

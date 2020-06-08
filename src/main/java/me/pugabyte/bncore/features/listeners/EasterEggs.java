@@ -51,6 +51,9 @@ public class EasterEggs implements Listener {
 			case "chaioty":
 				raven(clicker, heldItem, clicked);
 				break;
+			case "warrior_tark":
+				tark(clicker, heldItem, clicked);
+				break;
 		}
 
 	}
@@ -125,6 +128,16 @@ public class EasterEggs implements Listener {
 				addFoodLevel(clicked);
 				Tasks.wait(20, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PARROT_AMBIENT, 0.5F, 1F));
 				break;
+		}
+	}
+
+	private void tark(Player player, ItemStack heldItem, Player clicked) {
+		if (heldItem.getType().equals(Material.STONE)) {
+			heldItem.setAmount(heldItem.getAmount() - 1);
+
+			eatSound(player, clicked.getLocation(), Sound.ENTITY_PARROT_EAT);
+			addFoodLevel(clicked);
+			Tasks.wait(20, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_RAVAGER_CELEBRATE, 0.5F, 0.1F));
 		}
 	}
 
