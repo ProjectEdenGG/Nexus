@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
+import me.pugabyte.bncore.features.commands.KillerMoneyCommand;
 import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
 import me.pugabyte.bncore.models.killermoney.KillerMoney;
@@ -18,7 +19,11 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -59,7 +64,7 @@ public enum VPSMenu {
 							KillerMoney km = service.get(player);
 							km.setBoost(3);
 							service.save(km);
-							new TaskService().save(new Task("killermoney-boost-expire", new HashMap<String, Object>() {{
+							new TaskService().save(new Task(KillerMoneyCommand.getExpireTaskId(), new HashMap<String, Object>() {{
 								put("uuid", player.getUniqueId().toString());
 							}}, LocalDateTime.now().plusDays(3)));
 						})
