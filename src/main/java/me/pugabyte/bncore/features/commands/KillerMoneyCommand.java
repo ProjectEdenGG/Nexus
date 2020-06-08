@@ -7,13 +7,16 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.killermoney.KillerMoney;
+import me.pugabyte.bncore.models.killermoney.KillerMoneyService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGroup;
+import me.pugabyte.bncore.models.task.TaskService;
+import me.pugabyte.bncore.utils.*;
 import org.bukkit.GameMode;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -30,25 +33,84 @@ import org.bukkit.metadata.MetadataValue;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Aliases("km")
 @NoArgsConstructor
 public class KillerMoneyCommand extends CustomCommand implements Listener {
 	private static final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 	SettingService service = new SettingService();
-	final double BOOST = 1.0;
+	KillerMoneyService kmService = new KillerMoneyService();
+	static double BOOST = 1;
+
+	static {
+		SettingService service = new SettingService();
+		if (service.get("killerMoney", "globalBoost").getValue() != null) {
+			try {
+				double temp = Double.parseDouble(service.get("killerMoney", "globalBoost").getValue());
+				if (temp <= 1) BOOST = 1;
+				else BOOST = temp;
+			} catch (Exception ex) {
+				BNCore.warn("The KM Boost in the database in invalid");
+			}
+		}
+
+		final String taskId = "killermoney-boost-expire";
+
+		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(30), () -> {
+			TaskService taskService = new TaskService();
+			taskService.process(taskId).forEach(task -> {
+				Map<String, Object> data = task.getJson();
+				OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
+				if (player.isOnline() && player.getPlayer() != null)
+					player.getPlayer().sendMessage(colorize(StringUtils.getPrefix("KillerMoney") + "Your boost has expired"));
+				KillerMoneyService kmService = new KillerMoneyService();
+				KillerMoney km = kmService.get(player);
+				km.setBoost(1);
+				kmService.save(km);
+				taskService.complete(task);
+			});
+		});
+	}
 
 	public KillerMoneyCommand(CommandEvent event) {
 		super(event);
 	}
 
+	@Permission("group.staff")
+	@Path("boost <player> <amount>")
+	void boostPlayer(OfflinePlayer player, double amount) {
+		if (amount < 1)
+			error("The boost amount cannot be less than 1");
+		KillerMoney km = kmService.get(player);
+		km.setBoost(amount);
+		kmService.save(km);
+		send(PREFIX + "&e" + player.getName() + "'s &3boost is now &e" + amount);
+		if (player.isOnline() && player != player().getPlayer())
+			send(player.getPlayer(), PREFIX + "Your boost is now set to &e" + amount);
+	}
+
+	@Permission("group.staff")
+	@Path("boost global <amount>")
+	void boostGlobal(double amount) {
+		if (amount < 1)
+			error("The boost amount cannot be less than 1");
+		Setting setting = service.get("killerMoney", "globalBoost");
+		setting.setValue(amount + "");
+		service.save(setting);
+		BOOST = amount;
+		send(PREFIX + "The global boost is now &e" + amount);
+	}
+
 	@Description("Toggle KillerMoney's chat notification")
 	@Path("toggle")
 	void mute() {
-		Setting setting = service.get(player(), "killerMoneyMute");
-		setting.setBoolean(!setting.getBoolean());
-		service.save(setting);
-		send(PREFIX + "Notifications have been &e" + ((setting.getBoolean()) ? "muted" : "unmuted"));
+		KillerMoney km = kmService.get(player());
+		km.setMuted(true);
+		kmService.save(km);
+		send(PREFIX + "Notifications have been &e" + ((km.isMuted()) ? "muted" : "unmuted"));
 	}
 
 	@EventHandler
@@ -65,8 +127,11 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onEntityKill(EntityDeathEvent event) {
+		KillerMoneyService kmService = new KillerMoneyService();
 		Player player = event.getEntity().getKiller();
 		if (player == null) return;
+
+		KillerMoney km = kmService.get(player);
 
 		if (!player.getGameMode().equals(GameMode.SURVIVAL))
 			return;
@@ -90,10 +155,14 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		// TODO make this enum config driven
 		if (event.getEntityType() == EntityType.ENDERMAN && player.getWorld().getName().contains("the_end")) return;
 
-		double money = mob.getRandomValue() * BOOST;
+		double playerBoost = 1;
+		if (km.getBoost() > 1)
+			playerBoost = km.getBoost();
+
+		double money = mob.getRandomValue() * BOOST * playerBoost;
 		BNCore.getEcon().depositPlayer(player, money);
-		if (!new SettingService().get(player, "killerMoneyMute").getBoolean())
-			player.sendMessage(StringUtils.colorize("&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
+		if (!km.isMuted())
+			player.sendMessage(colorize("&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
 					"&3 and received &e" + formatter.format(money)));
 	}
 

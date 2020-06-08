@@ -6,6 +6,10 @@ import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
+import me.pugabyte.bncore.models.killermoney.KillerMoney;
+import me.pugabyte.bncore.models.killermoney.KillerMoneyService;
+import me.pugabyte.bncore.models.task.Task;
+import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -13,11 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -49,12 +50,18 @@ public enum VPSMenu {
 						.money(10000));
 
 				put(16, VPSSlot.builder()
-						.name("x3 KillerMoney boost for 2 days")
+						.name("x3 KillerMoney boost for 3 days")
 						.display(Material.DIAMOND_SWORD, 3)
 						.price(30)
 						.takePoints(false)
 						.onPurchase((player, item) -> {
-							// Do stuff
+							KillerMoneyService service = new KillerMoneyService();
+							KillerMoney km = service.get(player);
+							km.setBoost(3);
+							service.save(km);
+							new TaskService().save(new Task("killermoney-boost-expire", new HashMap<String, Object>() {{
+								put("uuid", player.getUniqueId().toString());
+							}}, LocalDateTime.now().plusDays(3)));
 						})
 						.close(true));
 				put(34, VPSSlot.builder()
