@@ -47,7 +47,7 @@ public class DailyRewardsFeature {
 						dailyReward.increaseStreak();
 						service.save(dailyReward);
 					});
-				} catch (Throwable ex) {
+				} catch (Exception ex) {
 					BNCore.warn("Error in DailyRewards scheduler: " + ex.getMessage());
 				}
 			}

@@ -124,7 +124,7 @@ public class HoursCommand extends CustomCommand {
 							});
 						}
 					}
-				} catch (Throwable ex) {
+				} catch (Exception ex) {
 					BNCore.warn("Error in Hours scheduler: " + ex.getMessage());
 				}
 			}

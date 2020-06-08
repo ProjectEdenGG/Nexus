@@ -76,7 +76,7 @@ public class FreezeDiscordCommand extends Command {
 					setting.setBoolean(true);
 					service.save(setting);
 				}
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof BNException))
 					ex.printStackTrace();

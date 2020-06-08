@@ -492,7 +492,7 @@ public class Utils {
 		try {
 			Integer.parseInt(text);
 			return true;
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			return false;
 		}
 	}
@@ -501,7 +501,7 @@ public class Utils {
 		try {
 			Double.parseDouble(text);
 			return true;
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			return false;
 		}
 	}
@@ -653,7 +653,7 @@ public class Utils {
 				throw new InvalidInputException("Player is not in a valid world (" + world + ")");
 
 			return new Location(Bukkit.getWorld(world), pos.get(0), pos.get(1), pos.get(2), rotation.get(0), rotation.get(1));
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			throw new InvalidInputException("Could not get location of offline player: " + ex.getMessage());
 		}
 	}

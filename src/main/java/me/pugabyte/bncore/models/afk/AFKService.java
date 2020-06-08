@@ -35,7 +35,7 @@ public class AFKService extends MySQLService {
 				}
 			}
 			return players;
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return new HashMap<>();
 		}

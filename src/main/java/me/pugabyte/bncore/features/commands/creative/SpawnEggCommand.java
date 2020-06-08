@@ -21,7 +21,7 @@ public class SpawnEggCommand extends CustomCommand {
 	void give(EntityType entityType) {
 		try {
 			player().getInventory().setItemInMainHand(new ItemStack(getSpawnEgg(entityType)));
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			error("Could not convert that entity type to a spawn egg");
 		}
 	}

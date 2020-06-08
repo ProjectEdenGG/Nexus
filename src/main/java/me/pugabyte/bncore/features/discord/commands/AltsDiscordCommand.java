@@ -49,7 +49,7 @@ public class AltsDiscordCommand extends Command {
 						}).distinct().collect(Collectors.joining(", "));
 
 				event.reply("Alts of `" + player.getName() + "` [_Online_ Offline **Banned**]:" + System.lineSeparator() + alts);
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof BNException))
 					ex.printStackTrace();

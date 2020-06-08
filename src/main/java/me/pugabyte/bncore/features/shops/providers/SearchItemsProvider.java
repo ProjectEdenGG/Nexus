@@ -33,7 +33,7 @@ public class SearchItemsProvider extends _ShopProvider {
 							previousMenu.open(player);
 						} else
 							open(player);
-					} catch (Throwable ex) {
+					} catch (Exception ex) {
 						player.sendMessage(ex.getMessage());
 						open(player);
 					}

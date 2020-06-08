@@ -75,7 +75,7 @@ public class ConvertShopCommand extends CustomCommand {
 
 			try {
 				conversions.add(readSign(sign));
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 				exceptions.add(ex);
 			}
@@ -200,7 +200,7 @@ public class ConvertShopCommand extends CustomCommand {
 		try {
 			ItemStack item = BNCore.getEssentials().getItemDb().get(name);
 			return item.getType();
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			error("Could not parse item from essentials aliases");
 			BNCore.warn("Could not convert the shop from player " + player().getName());
 		}

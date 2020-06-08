@@ -38,7 +38,7 @@ public class SignListener implements Listener {
 					try {
 						Arena arena = ArenaManager.find(sign.getLine(2));
 						PlayerManager.get(event.getPlayer()).join(arena);
-					} catch (Throwable ex) {
+					} catch (Exception ex) {
 						event.getPlayer().sendMessage(colorize(Minigames.PREFIX + ex.getMessage()));
 					}
 					break;

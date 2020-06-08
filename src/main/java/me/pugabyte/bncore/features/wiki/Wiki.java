@@ -127,7 +127,7 @@ public class Wiki {
 							} else {
 								sender.sendMessage(prefix + "No results found.");
 							}
-						} catch (Throwable ex) {
+						} catch (Exception ex) {
 							ex.printStackTrace();
 						}
 					});

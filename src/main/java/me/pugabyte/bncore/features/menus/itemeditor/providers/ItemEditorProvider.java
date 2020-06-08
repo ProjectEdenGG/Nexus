@@ -39,7 +39,7 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 				item = new ItemStack(item.getType());
 				item.addEnchantment(enchantment, 1);
 				applicable.add(enchantment); // if it gets here it hasnt errored, so its valid
-			} catch (Throwable ex) { /* Not applicable, do nothing */ }
+			} catch (Exception ex) { /* Not applicable, do nothing */ }
 		}
 		return applicable;
 	}

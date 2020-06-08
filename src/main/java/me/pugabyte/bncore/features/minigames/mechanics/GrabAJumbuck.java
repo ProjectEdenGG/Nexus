@@ -68,7 +68,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		try {
 			matchData.getSheeps().forEach(Entity::remove);
 			matchData.getItems().forEach(Entity::remove);
-		} catch (Throwable ignore) {}
+		} catch (Exception ignore) {}
 		match.getMinigamers().forEach(Minigamer::toGamelobby);
 		super.onEnd(event);
 	}

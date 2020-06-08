@@ -66,7 +66,7 @@ public class PayDiscordCommand extends Command {
 					target.getPlayer().sendMessage(colorize("&a" + formatted + " has been received from " + player.getName()));
 
 				event.reply("Successfully sent " + formatted + " to " + target.getName());
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof BNException))
 					ex.printStackTrace();

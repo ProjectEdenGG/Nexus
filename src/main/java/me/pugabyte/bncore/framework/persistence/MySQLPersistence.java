@@ -38,7 +38,7 @@ public class MySQLPersistence {
 			if (databases.get(dbType) == null)
 				openConnection(dbType);
 			return databases.get(dbType);
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			BNCore.severe("Could not establish connection to the MySQL \"" + dbType.getDatabase() + "\" database: " + ex.getMessage());
 			return null;
 		}
@@ -48,7 +48,7 @@ public class MySQLPersistence {
 		databases.values().forEach(database -> {
 			try {
 				database.close();
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});

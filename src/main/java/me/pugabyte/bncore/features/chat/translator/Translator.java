@@ -51,7 +51,7 @@ public class Translator implements Listener {
 							.hover(language.getName())
 							.send(translating));
 				}
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 				for (UUID uuid : map.get(sender.getUniqueId())) {
 					Player translating = Utils.getPlayer(uuid).getPlayer();

@@ -159,7 +159,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 				try {
 					product.process(player);
 					open(player, page.getPage());
-				} catch (Throwable ex) {
+				} catch (Exception ex) {
 					player.sendMessage(colorize(PREFIX + ex.getMessage()));
 				}
 			}));

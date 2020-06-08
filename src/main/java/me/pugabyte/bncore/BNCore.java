@@ -128,10 +128,10 @@ public class BNCore extends JavaPlugin {
 					path.toFile().createNewFile();
 				try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
 					writer.append(System.lineSeparator()).append("[").append(StringUtils.shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
-				} catch (Throwable ex) {
+				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});
@@ -145,10 +145,10 @@ public class BNCore extends JavaPlugin {
 					path.toFile().createNewFile();
 				try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
 					writer.append(System.lineSeparator()).append(message);
-				} catch (Throwable ex) {
+				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});

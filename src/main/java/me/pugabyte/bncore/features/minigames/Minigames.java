@@ -102,7 +102,7 @@ public class Minigames {
 		for (Class<? extends Listener> clazz : new Reflections(getPath() + ".listeners").getSubTypesOf(Listener.class)) {
 			try {
 				BNCore.registerListener(clazz.newInstance());
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}

@@ -23,7 +23,7 @@ public class TaskService extends MySQLService {
 				database.transaction(trans).upsert(task);
 			});
 			trans.commit();
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			trans.rollback();
 		}
@@ -41,7 +41,7 @@ public class TaskService extends MySQLService {
 
 			database.transaction(trans).upsert(task);
 			trans.commit();
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			trans.rollback();
 		}
