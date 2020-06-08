@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.homes;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -15,6 +16,7 @@ import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Permission("homes.use")
@@ -116,6 +118,30 @@ public class HomesCommand extends CustomCommand {
 					deleted.clear();
 				}))
 				.build());
+	}
+
+	@Async
+	@Permission("group.admin")
+	@Path("fixHomeOwner")
+	void fixHomeOwner() {
+		AtomicInteger fixed = new AtomicInteger(0);
+		List<HomeOwner> all = service.getAll();
+		all.forEach(homeOwner -> {
+			List<Home> collect = homeOwner.getHomes().stream().filter(home ->
+					!homeOwner.getUuid().equals(home.getUuid())
+			).collect(Collectors.toList());
+
+			if (collect.isEmpty()) return;
+
+			fixed.getAndAdd(collect.size());
+
+			send(PREFIX + "Fixing " + collect.size() + " homes for " + homeOwner.getOfflinePlayer().getName());
+
+			collect.forEach(home -> home.setUuid(homeOwner.getUuid()));
+			service.saveSync(homeOwner);
+		});
+
+		send(PREFIX + "Fixed " + fixed.get() + " homes");
 	}
 
 }
