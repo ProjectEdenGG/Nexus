@@ -5,14 +5,17 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class CraftingRecipeProvider extends MenuUtils implements InventoryProvider {
 
-	CraftingRecipeMenu menu;
+	CraftingMenuType menu;
+	int[] inputSlots = {2, 3, 4, 11, 12, 13, 20, 21, 22};
 
-	public CraftingRecipeProvider(CraftingRecipeMenu menu) {
+	public CraftingRecipeProvider(CraftingMenuType menu) {
 		this.menu = menu;
 	}
 
@@ -21,23 +24,55 @@ public class CraftingRecipeProvider extends MenuUtils implements InventoryProvid
 		switch (menu) {
 			case MAIN:
 				addCloseItem(contents);
+				int row = 1;
+				int column = 1;
+				for (CraftingMenuType type : CraftingMenuType.values()) {
+					if (type == CraftingMenuType.MAIN) continue;
+					contents.set(row, column, ClickableItem.from(type.getItem(), e -> CraftingRecipeMenu.open(type, player)));
+					if (column == 8) {
+						column = 1;
+						row++;
+					} else column++;
+				}
 				break;
 			default:
-				contents.fillRect(0, 0, 2, 1, ClickableItem.empty(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).name("").build()));
-				contents.fillRect(0, 5, 2, 8, ClickableItem.empty(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).name("").build()));
-				contents.set(1, 6, ClickableItem.NONE);
-				addBackItem(contents, e -> CustomRecipesCommand.openMenu(CraftingRecipeMenu.MAIN, player));
+				contents.fill(ClickableItem.empty(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).name(" ").build()));
+				for (int i : inputSlots)
+					contents.set(i, ClickableItem.NONE);
+				addBackItem(contents, e -> CraftingRecipeMenu.open(CraftingMenuType.MAIN, player));
 		}
 	}
 
-	public static int ticks = 1;
-	public static int index = 0;
+	public int ticks = 0;
+	public int index = 0;
 
 	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-		if (menu == CraftingRecipeMenu.MAIN) return;
-		if (ticks == 20) {
-
+	public void update(Player player, InventoryContents contents) {
+		if (menu == CraftingMenuType.MAIN) return;
+		ticks++;
+		if (ticks == 20) ticks = 0;
+		if (ticks != 1) return;
+		index++;
+		if (index >= menu.getList().size()) index = 0;
+		CraftingRecipeMenu.CraftingRecipe recipe = menu.getList().get(index);
+		for (int i : inputSlots)
+			contents.set(i, ClickableItem.NONE);
+		if (recipe.getChoice() != null && menu != CraftingMenuType.BEDS) {
+			ItemStack item = new ItemStack(Utils.getRandomElement(recipe.getChoice().getChoices()));
+			contents.fillRect(0, 2, 2, 4, ClickableItem.empty(item));
+			contents.set(1, 3, ClickableItem.empty(new ItemStack(recipe.getIngredient())));
+			contents.set(1, 6, ClickableItem.empty(new ItemStack(recipe.getOutput(), recipe.getOutputAmount())));
+		} else if (menu == CraftingMenuType.BEDS) {
+			contents.set(inputSlots[0], ClickableItem.empty(new ItemStack(Utils.getRandomElement(recipe.getChoice().getChoices()))));
+			contents.set(inputSlots[1], ClickableItem.empty(new ItemStack(recipe.getIngredient())));
+			contents.set(1, 6, ClickableItem.empty(new ItemStack(recipe.getOutput(), recipe.getOutputAmount())));
+		} else {
+			for (int i = 0; i < recipe.getIngredientAmount(); i++) {
+				contents.set(inputSlots[i], ClickableItem.empty(new ItemStack(recipe.getIngredient())));
+				contents.set(1, 6, ClickableItem.empty(new ItemStack(recipe.getOutput(), recipe.getOutputAmount())));
+			}
 		}
+
+
 	}
 }
