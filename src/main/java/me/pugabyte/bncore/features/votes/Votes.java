@@ -125,21 +125,30 @@ public class Votes implements Listener {
 
 		if (player != null && player.hasPlayedBefore()) {
 			Voter voter = new VoteService().get(player);
-			int points = vote.getExtra() + 1;
+			int points = vote.getExtra() + baseExtra;
 			voter.addPoints(points);
-			if (player.isOnline())
+			if (player.isOnline() && player.getPlayer() != null)
 				player.getPlayer().sendMessage(colorize(VPS.PREFIX + "You have received " + points + " point" + (points == 1 ? "" : "s")));
 		}
 
 		Tasks.async(Votes::write);
 	}
 
-	Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
+	private static final int baseExtra = 1;
+	private static final Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
 		put(1500, 50);
 		put(500, 25);
 		put(200, 15);
 		put(100, 10);
 		put(50, 5);
+
+	/*
+		put(1500, 50);
+		put(500, 25);
+		put(200, 15);
+		put(100, 10);
+		put(50, 5);
+	*/
 	}};
 
 	private int extraVotePoints() {
@@ -192,7 +201,7 @@ public class Votes implements Listener {
 							break;
 					}
 				}
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 
@@ -223,7 +232,7 @@ public class Votes implements Listener {
 			int sum = topVoters.stream().mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 			try {
 				Files.write(Paths.get("plugins/website/votes_monthly_total.html"), String.valueOf(sum).getBytes());
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 
@@ -241,7 +250,7 @@ public class Votes implements Listener {
 				});
 				config.save(file);
 			} catch (PlayerNotFoundException ignore) {
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});
