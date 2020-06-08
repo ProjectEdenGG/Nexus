@@ -68,7 +68,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 				e -> {
 					try {
 						HomesMenu.edit(addHome(name, item));
-					} catch (Throwable ex) {
+					} catch (Exception ex) {
 						MenuUtils.handleException(homeOwner.getPlayer(), ex);
 					}
 				})));

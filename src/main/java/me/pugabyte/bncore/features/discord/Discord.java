@@ -47,7 +47,7 @@ public class Discord {
 						BNCore.log("Successfully connected " + bot.name() + " to Discord");
 					else
 						BNCore.log("Could not connect " + bot.name() + " to Discord");
-				} catch (Throwable ex) {
+				} catch (Exception ex) {
 					BNCore.severe("An error occurred while trying to connect to Discord");
 					ex.printStackTrace();
 				}
@@ -57,7 +57,7 @@ public class Discord {
 		try {
 			for (Bot bot : Bot.values())
 				bot.shutdown();
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -156,7 +156,7 @@ public class Discord {
 				BNCore.log("Role from " + role.name() + " not found");
 			else
 				getGuild().addRoleToMember(userId, roleById).queue();
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -191,10 +191,10 @@ public class Discord {
 				.map(player -> {
 					String name = player.getName();
 					if (AFK.get(player).isAfk())
-						name = "_[AFK]_ " + name;
-					return name;
+						name += " _[AFK]_";
+					return name.trim();
 				})
-				.collect(Collectors.joining(", "));
+				.collect(Collectors.joining(", " + System.lineSeparator()));
 	}
 
 	private static void updateBridgeTopic(String newBridgeTopic) {
@@ -213,12 +213,12 @@ public class Discord {
 				.map(player -> {
 					String name = player.getName();
 					if (Utils.isVanished(player))
-						name = "_[V]_ " + name;
+						name += " _[V]_";
 					if (AFK.get(player).isAfk())
-						name = "_[AFK]_ " + name;
-					return name;
+						name += " _[AFK]_";
+					return name.trim();
 				})
-				.collect(Collectors.joining(", "));
+				.collect(Collectors.joining(", " + System.lineSeparator()));
 	}
 
 	private static void updateStaffBridgeTopic(String newStaffBridgeTopic) {

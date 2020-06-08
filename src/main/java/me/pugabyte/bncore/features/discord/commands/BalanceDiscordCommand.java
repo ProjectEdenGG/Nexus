@@ -43,7 +43,7 @@ public class BalanceDiscordCommand extends Command {
 				String formatted = NumberFormat.getCurrencyInstance().format(BNCore.getEcon().getBalance(player));
 				boolean isSelf = user.getUuid().equals(player.getUniqueId().toString());
 				event.reply("Balance" + (isSelf ? "" : " of " + player.getName()) + ": " + formatted);
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof BNException))
 					ex.printStackTrace();

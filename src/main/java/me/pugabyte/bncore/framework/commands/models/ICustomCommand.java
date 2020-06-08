@@ -62,7 +62,7 @@ public interface ICustomCommand {
 				throw new NoPermissionException();
 			checkCooldown(command);
 			command.invoke(method, event);
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			event.handleException(ex);
 		}
 	}
@@ -71,7 +71,7 @@ public interface ICustomCommand {
 		try {
 			getCommand(event);
 			return new PathParser(event).tabComplete(event);
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			event.handleException(ex);
 		}
 		return new ArrayList<>();
@@ -118,7 +118,7 @@ public interface ICustomCommand {
 				Object[] objects = getMethodParameters(method, event, true);
 				method.setAccessible(true);
 				method.invoke(this, objects);
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				event.handleException(ex);
 			}
 		};

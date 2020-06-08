@@ -35,7 +35,7 @@ public class AFK {
 						player.update();
 				else if (!player.isAfk() && player.isTimeAfk())
 					player.afk();
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				BNCore.warn("Error in AFK scheduler: " + ex.getMessage());
 			}
 		}));

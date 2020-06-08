@@ -403,7 +403,7 @@ public enum ParticleSetting {
 			Map<ParticleSetting, Object> settings = owner.getSettings(type);
 			settings.put(this, this.validate(type, value));
 			service.save(owner);
-		} catch (Throwable ignore) {
+		} catch (Exception ignore) {
 		}
 	}
 

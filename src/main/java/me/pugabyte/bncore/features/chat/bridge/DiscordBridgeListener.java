@@ -49,7 +49,6 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 			String content = event.getMessage().getContentDisplay().trim();
 
-			// This was failing even in a try/catch, needs finally to complete
 			try {
 				content = EmojiParser.parseToAliases(content);
 			} catch (Throwable ignore) {

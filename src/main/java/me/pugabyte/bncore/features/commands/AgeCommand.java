@@ -27,7 +27,7 @@ public class AgeCommand extends CustomCommand {
 		try {
 			int year = nerd.getBirthday().until(LocalDate.now()).getYears();
 			send(PREFIX + nerd.getName() + " is &e" + year + "&3 years old.");
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			send(PREFIX + "That player does not have a set birthday");
 		}
 

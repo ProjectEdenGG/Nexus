@@ -72,7 +72,7 @@ public class SuggestDiscordCommand extends Command {
 						.setContent(event.getAuthor().getAsMention() + " is suggesting **" + nerd.getName() + "** for **" + camelCase(next.plain()) + "**")
 						.setEmbed(embed.build())
 						.build());
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof BNException))
 					ex.printStackTrace();

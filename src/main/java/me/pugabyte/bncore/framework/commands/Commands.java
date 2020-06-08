@@ -76,7 +76,7 @@ public class Commands {
 					if (customCommand.getClass().getAnnotation(DoubleSlash.class) != null) alias = "/" + alias;
 					commands.put(alias.toLowerCase(), customCommand);
 				}
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 
@@ -86,7 +86,7 @@ public class Commands {
 						BNCore.warn("Cannot register listener on command " + customCommand.getClass().getSimpleName() + ", needs @NoArgsConstructor");
 					else
 						BNCore.registerListener((Listener) customCommand.getClass().newInstance());
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});
@@ -97,7 +97,7 @@ public class Commands {
 			try {
 				if (!Modifier.isAbstract(command.getModifiers()))
 					unregister(new ObjenesisStd().newInstance(command));
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				BNCore.log("Error while unregistering command " + command.getSimpleName());
 				ex.printStackTrace();
 			}
@@ -109,7 +109,7 @@ public class Commands {
 				mapUtils.unregister(customCommand.getName());
 				commands.remove(alias);
 			}
-		} catch (Throwable ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}

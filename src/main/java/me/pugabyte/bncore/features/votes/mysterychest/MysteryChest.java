@@ -66,7 +66,7 @@ public class MysteryChest {
 			try {
 				int savedId = Integer.parseInt(section);
 				if (savedId > id) id = savedId + 1;
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				BNCore.warn("An error occured while trying to save a Mystery Chest to file");
 				ex.printStackTrace();
 			}

@@ -13,7 +13,7 @@ public class Listeners {
 			try {
 				if (listener.getAnnotation(Disabled.class) == null)
 					BNCore.registerListener(new ObjenesisStd().newInstance(listener));
-			} catch (Throwable ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});

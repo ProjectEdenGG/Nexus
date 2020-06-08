@@ -73,7 +73,7 @@ public final class SignMenuFactory {
 				Tasks.sync(() -> {
 					try {
 						menu.response.accept(input);
-					} catch (Throwable ex) {
+					} catch (Exception ex) {
 						MenuUtils.handleException(player, ex);
 					}
 				});

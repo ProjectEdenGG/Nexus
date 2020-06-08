@@ -28,7 +28,7 @@ public class CheckpointsCommand extends CustomCommand {
 		super(event);
 		try {
 			arena = (CheckpointArena) ArenaManager.getFromLocation(player().getLocation());
-		} catch (Throwable ignore) {
+		} catch (Exception ignore) {
 		}
 
 		if (arena == null) {
