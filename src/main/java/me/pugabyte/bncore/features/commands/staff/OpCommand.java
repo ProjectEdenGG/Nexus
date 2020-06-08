@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -22,19 +23,21 @@ public class OpCommand extends CustomCommand {
 	public void op(StaffMember staffMember) {
 		OfflinePlayer player = staffMember.getOfflinePlayer();
 		Nerd nerd = new Nerd(player);
-		String name = nerd.getName();
+
+		String oper = player().getName();
+		String opee = nerd.getName();
 
 		if (!nerd.getRank().isStaff())
-			error(name + " is not staff");
+			error(opee + " is not staff");
 
 		if (player.isOp())
-			error(name + " is already a server operator");
+			error(opee + " is already op");
 
 		player.setOp(true);
-		send(PREFIX + name + " is now a server operator");
+		Chat.broadcast(PREFIX + oper + " opped " + opee, "admin");
 
 		if (player.isOnline() && !player.equals(player()))
-			send(player.getPlayer(), PREFIX + "You are now a server operator");
+			send(player.getPlayer(), PREFIX + "You are now op");
 	}
 
 	@Path("list")
@@ -44,7 +47,7 @@ public class OpCommand extends CustomCommand {
 		if (ops.isEmpty())
 			error("There are no server operators");
 
-		send(PREFIX + "Operators:");
+		send(PREFIX + "Ops:");
 		for (OfflinePlayer operator : ops)
 			send(" &7- &3" + operator.getName());
 	}

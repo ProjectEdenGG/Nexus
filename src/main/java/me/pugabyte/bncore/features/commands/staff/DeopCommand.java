@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
+import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -23,15 +24,17 @@ public class DeopCommand extends CustomCommand {
 	@Permission("group.admin")
 	public void deop(ServerOperator op) {
 		OfflinePlayer player = (OfflinePlayer) op;
-		String name = player.getName();
+
+		String oper = player().getName();
+		String opee = player.getName();
 		if (!player.isOp())
-			error(name + " is not a server operator");
+			error(opee + " is not op");
 
 		player.setOp(false);
-		send(PREFIX + name + " is no longer a server operator");
+		Chat.broadcast(PREFIX + oper + " deopped " + opee, "admin");
 
 		if (player.isOnline() && !player.equals(player()))
-			send(player.getPlayer(), PREFIX + "You are no longer a server operator");
+			send(player.getPlayer(), PREFIX + "You are no longer op");
 	}
 
 	@ConverterFor(ServerOperator.class)
