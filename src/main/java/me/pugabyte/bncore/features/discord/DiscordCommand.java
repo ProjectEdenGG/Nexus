@@ -30,7 +30,7 @@ public class DiscordCommand extends CustomCommand {
 	@Path
 	void run() {
 		send("&3Join our discord to stay up to date with the community");
-		send("&e" + Discord.getUrl());
+		send(json().urlize("&e" + Discord.getUrl()));
 	}
 
 	@Path("link update roles")

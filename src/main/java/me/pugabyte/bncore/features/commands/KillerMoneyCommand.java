@@ -14,7 +14,11 @@ import me.pugabyte.bncore.models.killermoney.KillerMoneyService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.task.TaskService;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
@@ -29,6 +33,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -41,31 +46,33 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 @NoArgsConstructor
 public class KillerMoneyCommand extends CustomCommand implements Listener {
 	private static final NumberFormat formatter = NumberFormat.getCurrencyInstance();
-	SettingService service = new SettingService();
-	KillerMoneyService kmService = new KillerMoneyService();
+	SettingService settingService = new SettingService();
+	KillerMoneyService service = new KillerMoneyService();
+	KillerMoney km;
 	static double BOOST = 1;
 
+	@Getter
+	private static final String expireTaskId = "killermoney-boost-expire";
+
 	static {
-		SettingService service = new SettingService();
-		if (service.get("killerMoney", "globalBoost").getValue() != null) {
+		Setting globalBoost = getSetting();
+		if (globalBoost.getValue() != null) {
 			try {
-				double temp = Double.parseDouble(service.get("killerMoney", "globalBoost").getValue());
-				if (temp <= 1) BOOST = 1;
-				else BOOST = temp;
+				if (globalBoost.getDouble() > 1)
+					BOOST = globalBoost.getDouble();
 			} catch (Exception ex) {
-				BNCore.warn("The KM Boost in the database in invalid");
+				BNCore.warn("The KillerMoney Boost in the database in invalid");
 			}
 		}
 
-		final String taskId = "killermoney-boost-expire";
-
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(30), () -> {
+		Tasks.repeatAsync(Time.SECOND, Time.MINUTE, () -> {
 			TaskService taskService = new TaskService();
-			taskService.process(taskId).forEach(task -> {
+			taskService.process(expireTaskId).forEach(task -> {
 				Map<String, Object> data = task.getJson();
 				OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
 				if (player.isOnline() && player.getPlayer() != null)
 					player.getPlayer().sendMessage(colorize(StringUtils.getPrefix("KillerMoney") + "Your boost has expired"));
+
 				KillerMoneyService kmService = new KillerMoneyService();
 				KillerMoney km = kmService.get(player);
 				km.setBoost(1);
@@ -75,8 +82,14 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	public KillerMoneyCommand(CommandEvent event) {
+	public KillerMoneyCommand(@NotNull CommandEvent event) {
 		super(event);
+		if (isPlayer())
+			km = service.get(player());
+	}
+
+	private static Setting getSetting() {
+		return new SettingService().get("killerMoney", "globalBoost");
 	}
 
 	@Permission("group.staff")
@@ -84,11 +97,13 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 	void boostPlayer(OfflinePlayer player, double amount) {
 		if (amount < 1)
 			error("The boost amount cannot be less than 1");
-		KillerMoney km = kmService.get(player);
+
+		km = service.get(player);
 		km.setBoost(amount);
-		kmService.save(km);
+		service.save(km);
+
 		send(PREFIX + "&e" + player.getName() + "'s &3boost is now &e" + amount);
-		if (player.isOnline() && player != player().getPlayer())
+		if (player.isOnline() && !isSelf(player))
 			send(player.getPlayer(), PREFIX + "Your boost is now set to &e" + amount);
 	}
 
@@ -97,19 +112,20 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 	void boostGlobal(double amount) {
 		if (amount < 1)
 			error("The boost amount cannot be less than 1");
-		Setting setting = service.get("killerMoney", "globalBoost");
-		setting.setValue(amount + "");
-		service.save(setting);
+
+		Setting setting = getSetting();
+		setting.setDouble(amount);
+		settingService.save(setting);
 		BOOST = amount;
+
 		send(PREFIX + "The global boost is now &e" + amount);
 	}
 
 	@Description("Toggle KillerMoney's chat notification")
 	@Path("toggle")
 	void mute() {
-		KillerMoney km = kmService.get(player());
 		km.setMuted(true);
-		kmService.save(km);
+		service.save(km);
 		send(PREFIX + "Notifications have been &e" + ((km.isMuted()) ? "muted" : "unmuted"));
 	}
 
