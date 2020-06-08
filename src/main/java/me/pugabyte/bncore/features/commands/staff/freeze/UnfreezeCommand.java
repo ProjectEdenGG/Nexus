@@ -32,8 +32,8 @@ public class UnfreezeCommand extends CustomCommand {
 			if (player.getVehicle() != null)
 				player.getVehicle().remove();
 			send(player, "&cYou have been unfrozen.");
-			Chat.broadcast(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName(), "Staff");
-			Chat.broadcast("**[Freeze]** " + player().getName() + " has unfrozen " + player.getName(), "Staff");
+			Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName(), "Staff");
+			Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has unfrozen " + player.getName(), "Staff");
 		}
 	}
 }

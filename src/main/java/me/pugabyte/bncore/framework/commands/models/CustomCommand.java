@@ -391,6 +391,18 @@ public abstract class CustomCommand implements ICustomCommand {
 				.collect(Collectors.toList());
 	}
 
+//	@TabCompleterFor(OfflinePlayer.class)
+	public List<String> tabCompleteOfflinePlayer(String filter) {
+		List<String> online = tabCompletePlayer(filter);
+		if (!online.isEmpty() || filter.length() < 3)
+			return online;
+
+		return Arrays.stream(Bukkit.getOfflinePlayers())
+				.filter(player -> player.getName() != null && player.getName().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(OfflinePlayer::getName)
+				.collect(Collectors.toList());
+	}
+
 	@ConverterFor(World.class)
 	World convertToWorld(String value) {
 		if ("current".equalsIgnoreCase(value))

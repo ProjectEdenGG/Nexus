@@ -129,6 +129,7 @@ public class Utils {
 
 		if (partialName.length() == 36)
 			return getPlayer(UUID.fromString(partialName));
+
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;

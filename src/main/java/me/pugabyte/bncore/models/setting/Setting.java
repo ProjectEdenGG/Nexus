@@ -54,6 +54,16 @@ public class Setting {
 		this.value = String.valueOf(value);
 	}
 
+	public double getDouble() {
+		if (Utils.isDouble(value))
+			return Double.parseDouble(value);
+		return 0;
+	}
+
+	public void setDouble(double value) {
+		this.value = String.valueOf(value);
+	}
+
 	public Map<String, Object> getJson() {
 		Map<String, Object> map = new Gson().fromJson(value, Map.class);
 		if (map == null)
