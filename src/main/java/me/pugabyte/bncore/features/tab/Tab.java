@@ -44,6 +44,7 @@ public class Tab implements Listener {
 	public static String getFormat(Player player) {
 		Nerd nerd = new Nerd(player);
 		String name = nerd.getRank().getChatColor() + nerd.getName();
+		if ("KodaBear".equals(nerd.getName())) name = "&5KodaBear";
 		if (AFK.get(player).isAfk())
 			name += " &7&o[AFK]";
 		if (nerd.isVanished())
