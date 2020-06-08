@@ -22,12 +22,6 @@ public class Chat {
 	// TODO:
 	//   Discord queue
 	//   /bridge command
-	//   Censor
-	//   Koda stuff
-	//   All other discord stuff (/discord link)
-	//   Staff alerts
-	//   ShowEnchants on bridge
-	//   Honeypot announcement
 
 	public static final String PREFIX = StringUtils.getPrefix("Chat");
 

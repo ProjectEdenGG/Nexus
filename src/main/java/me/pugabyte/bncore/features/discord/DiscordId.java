@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.discord;
 
 import lombok.Getter;
+import net.dv8tion.jda.api.entities.Member;
 
 public class DiscordId {
 
@@ -48,6 +49,7 @@ public class DiscordId {
 
 	public enum User {
 		PUGABYTE("115552359458799616"),
+		POOGATEST("719574999673077912"),
 		RELAY("352231755551473664"),
 		KODA("223794142583455744"),
 		UBER("85614143951892480");
@@ -57,6 +59,15 @@ public class DiscordId {
 
 		User(String id) {
 			this.id = id;
+		}
+
+		public net.dv8tion.jda.api.entities.User get() {
+			Member member = getMember();
+			return member == null ? null : member.getUser();
+		}
+
+		public net.dv8tion.jda.api.entities.Member getMember() {
+			return Discord.getGuild().getMemberById(id);
 		}
 	}
 
