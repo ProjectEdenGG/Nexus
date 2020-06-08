@@ -196,7 +196,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		EntityType type;
 		try {
 			type = EntityType.valueOf(getMobFromRegion(minigamer.getMatch(), event.getRegion().getId()));
-		} catch (Exception ignore) {
+		} catch (Throwable ignore) {
 			return;
 		}
 		if (matchData.getPlayerEntities().containsKey(minigamer.getPlayer().getUniqueId())) {

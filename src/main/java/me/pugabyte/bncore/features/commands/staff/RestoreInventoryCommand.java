@@ -199,7 +199,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 			}
 			connection.disconnect();
 			return response.toString();
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			throw new InvalidInputException("An error occurred while retrieving the paste data: " + ex.getMessage());
 		}
 	}

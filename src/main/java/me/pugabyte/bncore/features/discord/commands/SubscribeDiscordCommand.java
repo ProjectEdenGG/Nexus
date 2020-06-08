@@ -35,7 +35,7 @@ public class SubscribeDiscordCommand extends Command {
 
 				Discord.addRole(event.getAuthor().getId(), role);
 				event.reply(event.getAuthor().getAsMention() + " You have subscribed to " + camelCase(role.name()));
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof BNException))
 					ex.printStackTrace();

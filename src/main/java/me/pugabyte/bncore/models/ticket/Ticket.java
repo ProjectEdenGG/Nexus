@@ -40,7 +40,7 @@ public class Ticket {
 	public <T extends Conversable> T getOwner() {
 		try {
 			return (T) Bukkit.getOfflinePlayer(UUID.fromString(uuid));
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			return (T) Bukkit.getConsoleSender();
 		}
 	}
@@ -48,7 +48,7 @@ public class Ticket {
 	public String getOwnerName() {
 		try {
 			return Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			return Bukkit.getConsoleSender().getName();
 		}
 	}

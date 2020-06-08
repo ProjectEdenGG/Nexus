@@ -206,7 +206,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			try {
 				PropertyDescriptor propertyDescriptor = getPropertyDescriptor();
 				return String.valueOf(propertyDescriptor.getReadMethod().invoke(arena));
-			} catch (Exception ignore) {}
+			} catch (Throwable ignore) {}
 			return "";
 		}
 
@@ -217,7 +217,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				if (propertyDescriptor.getPropertyType() == Integer.TYPE)
 					value = Integer.valueOf(text);
 				propertyDescriptor.getWriteMethod().invoke(arena, value);
-			} catch (Exception ignore) {}
+			} catch (Throwable ignore) {}
 
 			arena.write();
 		}

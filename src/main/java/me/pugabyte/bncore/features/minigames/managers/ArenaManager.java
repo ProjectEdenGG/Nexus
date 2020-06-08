@@ -154,11 +154,11 @@ public class ArenaManager {
 					if (!name.endsWith(".yml")) return;
 
 					read(name.replace(".yml", ""));
-				} catch (Exception ex) {
+				} catch (Throwable ex) {
 					BNCore.severe("An error occurred while trying to read arena configuration file " + filePath.getFileName().toFile() + ": " + ex.getMessage());
 				}
 			});
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
 		}
 		BNCore.log("Loaded " + arenas.size() + " arenas");
@@ -180,7 +180,7 @@ public class ArenaManager {
 			arenaConfig.save(getFile(arena.getName()));
 			if (!arenas.contains(arena))
 				add(arena);
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			BNCore.severe("An error occurred while trying to write arena configuration file " + arena.getName() + ": " + ex.getMessage());
 		}
 	}

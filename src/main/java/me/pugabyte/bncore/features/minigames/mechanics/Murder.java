@@ -380,7 +380,7 @@ public class Murder extends UnbalancedTeamMechanic {
 			int amount = 0;
 			try {
 				amount = player.getInventory().getItem(8).getAmount();
-			} catch (Exception ignore) {}
+			} catch (Throwable ignore) {}
 
 			if (amount == 0) {
 				// First scrap

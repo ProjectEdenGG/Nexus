@@ -53,7 +53,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 					html += "<span style=\"font-weight: bold;\">About me:</span> " + staff.getAbout();
 
 				Files.write(Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html"), html.getBytes());
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				ex.printStackTrace();
 			}
 		})));

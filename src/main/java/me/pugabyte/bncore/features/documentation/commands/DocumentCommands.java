@@ -39,8 +39,8 @@ public class DocumentCommands {
 			Method m = clz.getDeclaredMethod(method, parameterTypes);
 			m.setAccessible(true);
 			return (T) m.invoke(instance, parameters);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable ex) {
+			ex.printStackTrace();
 		}
 		return null;
 	}

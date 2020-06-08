@@ -22,7 +22,7 @@ public class Particles {
 		try {
 			ParticleOwner particleOwner = new ParticleService().get(player);
 			new ArrayList<>(particleOwner.getActiveParticles()).forEach(particleType -> particleType.run(player));
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			ex.printStackTrace();
 		}
 	}

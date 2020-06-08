@@ -22,7 +22,7 @@ public class McMMO {
 			field.setAccessible(true);
 			HashSet<String> ironTools = (HashSet<String>) field.get(materialMapStore);
 			ironTools.add("crossbow");
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			BNCore.log("Could not add crossbow to iron tools");
 			ex.printStackTrace();
 		}

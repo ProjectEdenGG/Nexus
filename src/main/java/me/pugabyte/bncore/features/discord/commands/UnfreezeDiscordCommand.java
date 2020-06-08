@@ -63,7 +63,7 @@ public class UnfreezeDiscordCommand extends Command {
 					player.getPlayer().sendMessage(colorize("&cYou have been unfrozen."));
 					Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), "Staff");
 				}
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof BNException))
 					ex.printStackTrace();

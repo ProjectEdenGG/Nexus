@@ -22,7 +22,7 @@ public class RegenRegions implements Listener {
 		int result;
 		try {
 			result = Integer.parseInt(string);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			result = -1;
 		}
 		return result;

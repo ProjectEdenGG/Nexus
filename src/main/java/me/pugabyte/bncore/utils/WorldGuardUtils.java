@@ -75,7 +75,7 @@ public class WorldGuardUtils {
 			} finally {
 				registry.setInitialized(true);
 			}
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			ex.printStackTrace();
 		}
 	}

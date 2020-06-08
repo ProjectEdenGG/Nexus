@@ -47,7 +47,7 @@ public class Discord {
 						BNCore.log("Successfully connected " + bot.name() + " to Discord");
 					else
 						BNCore.log("Could not connect " + bot.name() + " to Discord");
-				} catch (Exception ex) {
+				} catch (Throwable ex) {
 					BNCore.severe("An error occurred while trying to connect to Discord");
 					ex.printStackTrace();
 				}
@@ -57,7 +57,7 @@ public class Discord {
 		try {
 			for (Bot bot : Bot.values())
 				bot.shutdown();
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -156,7 +156,7 @@ public class Discord {
 				BNCore.log("Role from " + role.name() + " not found");
 			else
 				getGuild().addRoleToMember(userId, roleById).queue();
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			ex.printStackTrace();
 		}
 	}

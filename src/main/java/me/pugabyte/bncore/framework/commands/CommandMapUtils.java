@@ -43,16 +43,16 @@ class CommandMapUtils {
 	private CommandMap getCommandMap() {
 		try {
 			return (CommandMap) COMMAND_MAP_FIELD.get(Bukkit.getServer().getPluginManager());
-		} catch (Exception e) {
-			throw new RuntimeException("Could not get CommandMap", e);
+		} catch (Throwable ex) {
+			throw new RuntimeException("Could not get CommandMap", ex);
 		}
 	}
 
 	private Map<String, Command> getKnownCommandMap() {
 		try {
 			return (Map<String, Command>) KNOWN_COMMANDS_FIELD.get(getCommandMap());
-		} catch (Exception e) {
-			throw new RuntimeException("Could not get known commands map", e);
+		} catch (Throwable ex) {
+			throw new RuntimeException("Could not get known commands map", ex);
 		}
 	}
 
