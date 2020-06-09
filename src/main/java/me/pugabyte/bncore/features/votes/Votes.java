@@ -134,13 +134,13 @@ public class Votes implements Listener {
 		Tasks.async(Votes::write);
 	}
 
-	private static final int baseExtra = 1;
+	private static final int baseExtra = 2;
 	private static final Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
-		put(1500, 50);
-		put(500, 25);
-		put(200, 15);
-		put(100, 10);
-		put(50, 5);
+		put(1250, 50);
+		put(400, 25);
+		put(175, 15);
+		put(50, 10);
+		put(15, 5);
 
 	/*
 		put(1500, 50);
