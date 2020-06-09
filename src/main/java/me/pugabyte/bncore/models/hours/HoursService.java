@@ -117,13 +117,21 @@ public class HoursService extends MongoService {
 //				.aggregate(PageResult.class);
 
 	// TODO
-	public List<OfflinePlayer> getActivePlayers() {
-		List<Bson> arguments = getTopArguments();
-		arguments.add(limit(100));
+	private static final List<OfflinePlayer> activePlayers = new ArrayList<>();
 
-		return getPageResults(collection.aggregate(arguments)).stream()
-				.map(pageResult -> Utils.getPlayer(pageResult.getUuid()))
-				.collect(Collectors.toList());
+	public List<OfflinePlayer> getActivePlayers() {
+		if (activePlayers.isEmpty()) {
+			List<Bson> arguments = getTopArguments();
+			arguments.add(limit(100));
+
+			activePlayers.addAll(
+					getPageResults(collection.aggregate(arguments)).stream()
+							.map(pageResult -> Utils.getPlayer(pageResult.getUuid()))
+							.collect(Collectors.toList())
+			);
+		}
+
+		return activePlayers;
 	}
 
 	public HoursType getType(String type) {

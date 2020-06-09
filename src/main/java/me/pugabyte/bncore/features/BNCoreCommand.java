@@ -220,7 +220,9 @@ public class BNCoreCommand extends CustomCommand {
 	List<String> tabCompleteStaffMember(String filter) {
 		return new HoursService().getActivePlayers().stream()
 				.filter(player -> new Nerd(player).getRank().isStaff())
-				.map(OfflinePlayer::getName).collect(Collectors.toList());
+				.map(OfflinePlayer::getName)
+				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
 	}
 
 	@ConverterFor(LocalDate.class)

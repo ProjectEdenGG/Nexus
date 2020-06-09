@@ -15,4 +15,10 @@ public class ParticleService extends MongoService {
 		return cache;
 	}
 
+	@Override
+	public <T> void saveSync(T object) {
+		database.delete(object);
+		database.save(object);
+	}
+
 }

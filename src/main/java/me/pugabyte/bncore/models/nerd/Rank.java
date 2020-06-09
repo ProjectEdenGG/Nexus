@@ -85,7 +85,7 @@ public enum Rank {
 	}
 
 	public List<Nerd> getNerds() {
-		// Temporary? fix to get players in this group. Using Hours > 10d because this method is only used for staff
+		// Temporary? fix to get players in this group. Using Hours Top limit 100 because this method is only used for staff
 		List<OfflinePlayer> inGroup = new HoursService().getActivePlayers().stream()
 				.filter(player -> BNCore.getPerms().playerHas(null, player, "rank." + name().toLowerCase()))
 				.collect(Collectors.toList());
