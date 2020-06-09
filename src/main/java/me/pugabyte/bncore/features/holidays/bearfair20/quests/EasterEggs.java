@@ -38,6 +38,7 @@ public class EasterEggs implements Listener {
 			-1050 129 -1913
 			-1020 139 -1702
 			-1050 127 -1660
+			-852 113 -1755
 	 */
 
 	public EasterEggs() {
