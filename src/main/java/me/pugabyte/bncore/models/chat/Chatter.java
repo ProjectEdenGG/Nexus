@@ -13,6 +13,7 @@ import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
+import me.pugabyte.bncore.utils.Utils;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 
 @Data
 @NoArgsConstructor
@@ -38,7 +40,10 @@ public class Chatter extends PlayerOwnedObject {
 	}
 
 	public void say(String message) {
-		say(getActiveChannel(), message);
+		if (message.startsWith("/"))
+			Utils.runCommand(getPlayer(), trimFirst(message));
+		else
+			say(getActiveChannel(), message);
 	}
 
 	public void say(Channel channel, String message) {

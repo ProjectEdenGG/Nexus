@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.commands.info;
 
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -12,81 +11,28 @@ public class FAQCommand extends CustomCommand {
 
 	public FAQCommand(CommandEvent event) {
 		super(event);
+		line(3);
 	}
 
 	String PLUS = "&3[+] &e";
 
 	public void back(String string) {
 		send(json("&f &3&m<  &e Back").command("/faq " + string));
+		line();
 	}
 
 	public void back() {
 		send(json("&f &3&m<  &e Back").command("/faq"));
-	}
-
-	@Path("[string]")
-	void faq(@Arg("main") String category) {
-		line(3);
-		switch (category) {
-			case "whatcanido":
-				whatCanIDo();
-				break;
-			case "survival":
-				survival();
-				break;
-			case "creative":
-				creative();
-				break;
-			case "minigames":
-				minigames();
-				break;
-			case "skyblock":
-				skyblock();
-				break;
-//			case "adventure":
-//				adventure();
-//				break;
-			case "startbuilding":
-				startBuilding();
-				break;
-			case "protect":
-				protect();
-				break;
-			case "protect_land":
-				protectLand();
-				break;
-			case "protect_lwc":
-				protectLWC();
-				break;
-			case "protect_homes":
-				protectHomes();
-				break;
-			case "mcmmo":
-				mcMMO();
-				break;
-			case "allow":
-				allow();
-				break;
-			case "rank":
-			case "ranks":
-				rank();
-				break;
-			case "chat":
-			case "channel":
-				chat();
-				break;
-			default:
-				main();
-		}
 		line();
 	}
 
-	private void main() {
+	@Path
+	void main() {
 		send("&6&lFrequently Asked Questions");
 		line();
 		send(json(PLUS + "What can I do on this server?").command("/faq whatcanido"));
 		send(json(PLUS + "How can I start building?").command("/faq startbuilding"));
-		send(json(PLUS + "How can I rank up?").command("/faq ranks"));
+		send(json(PLUS + "How can I rank up?").command("/faq rankup"));
 		send(json(PLUS + "How does the chat work?").command("/faq chat"));
 		send(json(PLUS + "Is mcMMO nerfed?").command("/faq mcmmo"));
 		send(json(PLUS + "How do I claim/protect my stuff?").command("/faq protect"));
@@ -95,7 +41,8 @@ public class FAQCommand extends CustomCommand {
 		send(json("&3Simply &e&lclick &3on the question you want answered."));
 	}
 
-	private void chat() {
+	@Path("chat")
+	void chat() {
 		send(json("&eChannels &3organize the chat so that many conversations can take place at once."));
 		line();
 		send(json("&2[G] &2Global &7- &3The main channel, visible to everyone."));
@@ -111,7 +58,8 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	private void rank() {
+	@Path("rankup")
+	void rank() {
 		send(json("&3Here's a simple guide on how to &eprogress &3through the ranks:"));
 		send(json("&e[+] &3You start out as a &7Guest&3."));
 		send(json("&e[+] &3Play for 24 hours to become &fMember&3.").command("/hours").hover("&eClick here &3to view how long you've played"));
@@ -121,12 +69,14 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	private void allow() {
+	@Path("allow")
+	void allow() {
 		line(2);
 		runCommand("allow");
 	}
 
-	private void mcMMO() {
+	@Path("mcMMO")
+	void mcMMO() {
 		send(json("&eYes&3, McMMO has been &eheavily nerfed&3, as we are a survival server."));
 		send(json("&3There are still benefits for higher levels, &ehowever &3they will not entirely change the survival gameplay."));
 		line();
@@ -135,25 +85,29 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	private void protectHomes() {
+	@Path("protectHomes")
+	void protectHomes() {
 		send(json("&3 Prevent people from teleporting to your &c/homes &3without your permission. &eClick here &3to view the Homes editor.").command("/homes edit"));
 		line();
 		back("protect");
 	}
 
-	private void protectLWC() {
+	@Path("protectLWC")
+	void protectLWC() {
 		send(json("&3 A plugin called &6LWC &3locks any blocks with an inventory, as well as any doors. &eClick here &3for more info").command("/lwcinfo"));
 		line();
 		back("protect");
 	}
 
-	private void protectLand() {
+	@Path("protectLand")
+	void protectLand() {
 		send(json("&3 Since griefing is not allowed, simply &ebuild anywhere &3and that land is yours. Staff can easily fix any grief that occurs."));
 		line();
 		back("protect");
 	}
 
-	private void protect() {
+	@Path("protect")
+	void protect() {
 		send("&6&lProtecting your stuff");
 		line();
 		send("&3There are three different types of protection. &eClick one &3for more information");
@@ -165,7 +119,8 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	private void startBuilding() {
+	@Path("startBuilding")
+	void startBuilding() {
 		send("&3To begin &6Survival&3:");
 		send("&3 - Pick a &c/warp");
 		send("&3 - &eTravel away &3from the warp");
@@ -177,15 +132,11 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-//	private void adventure() {
-//		send("&6&lAdventure Maps");
-//		line();
-//		line();
-//		back("whatcanido");
-//	}
-
-	private void skyblock() {
+	@Path("skyblock")
+	void skyblock() {
 		send("&6&lSkyblock");
+		line();
+		send("&cCurrently disabled for rework");
 		line();
 		send("&3Build an your empire up from a couple dozen blocks in the sky");
 		line();
@@ -195,7 +146,8 @@ public class FAQCommand extends CustomCommand {
 		back("whatcanido");
 	}
 
-	private void minigames() {
+	@Path("minigames")
+	void minigames() {
 		send("&6&lMinigames");
 		line();
 		send("&eFun&3, &erelaxed &3games with your friends");
@@ -214,7 +166,8 @@ public class FAQCommand extends CustomCommand {
 		back("whatcanido");
 	}
 
-	private void creative() {
+	@Path("creative")
+	void creative() {
 		send("&6&lCreative");
 		line();
 		send("&3Build to your hearts desire");
@@ -227,7 +180,8 @@ public class FAQCommand extends CustomCommand {
 		back("whatcanido");
 	}
 
-	private void survival() {
+	@Path("survival")
+	void survival() {
 		send("&6&lSurvival");
 		line();
 		send("&3Survive, build, make money, meet friends, and level up. The only limit is your imagination.");
@@ -239,7 +193,8 @@ public class FAQCommand extends CustomCommand {
 		back("whatcanido");
 	}
 
-	private void whatCanIDo() {
+	@Path("whatCanIDo")
+	void whatCanIDo() {
 		send("&3Bear Nation has 5 gamemodes:");
 		send(json("&3[+] &eSurvival").command("/faq survival"));
 		send(json("&3[+] &eCreative").command("/faq creative"));
