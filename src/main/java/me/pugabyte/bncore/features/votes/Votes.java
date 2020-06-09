@@ -114,8 +114,8 @@ public class Votes implements Listener {
 
 		try {
 			new CooldownService().check(uuid, "vote-announcement", Time.HOUR);
-			Chat.broadcastIngame("&a[✔] &3" + name + " &bvoted &3for the server and received &b1 &3vote point per site!");
-			Chat.broadcastDiscord(":white_check_mark: **" + name + " voted** for the server and received **1 vote point** per site!");
+			Chat.broadcastIngame("&a[✔] &3" + name + " &bvoted &3for the server and received &b" + basePoints + " &3vote point" + (basePoints == 1 ? "" : "s") + " per site!");
+			Chat.broadcastDiscord(":white_check_mark: **" + name + " voted** for the server and received **" + basePoints + " vote point" + (basePoints == 1 ? "" : "s") + "** per site!");
 		} catch (CooldownException ignore) {}
 
 		if (vote.getExtra() > 0) {
@@ -125,7 +125,7 @@ public class Votes implements Listener {
 
 		if (player != null && player.hasPlayedBefore()) {
 			Voter voter = new VoteService().get(player);
-			int points = vote.getExtra() + baseExtra;
+			int points = vote.getExtra() + basePoints;
 			voter.addPoints(points);
 			if (player.isOnline() && player.getPlayer() != null)
 				player.getPlayer().sendMessage(colorize(VPS.PREFIX + "You have received " + points + " point" + (points == 1 ? "" : "s")));
@@ -134,7 +134,7 @@ public class Votes implements Listener {
 		Tasks.async(Votes::write);
 	}
 
-	private static final int baseExtra = 2;
+	private static final int basePoints = 2;
 	private static final Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
 		put(1250, 50);
 		put(400, 25);
