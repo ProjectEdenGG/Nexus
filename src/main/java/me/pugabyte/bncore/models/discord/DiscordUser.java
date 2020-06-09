@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.utils.Utils;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
 
 import javax.persistence.Id;
@@ -39,9 +37,7 @@ public class DiscordUser {
 	}
 
 	public String getName() {
-		User user = Bot.RELAY.jda().getUserById(userId);
-		Member member = Discord.getGuild().getMember(user);
-		return Discord.getName(member, user);
+		return Discord.getName(userId);
 	}
 
 	public String getDiscrim() {

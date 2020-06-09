@@ -77,7 +77,7 @@ public class DiscordDiscordCommand extends Command {
 
 						String code = RandomStringUtils.randomAlphabetic(6);
 						Discord.getCodes().put(code, new DiscordUser(player.getUniqueId().toString(), event.getAuthor().getId()));
-						String name = Discord.getName(event.getMember(), event.getAuthor());
+						String name = Discord.getName(event.getMember().getId());
 						Koda.console("Generated key " + code + " for " + name);
 
 						event.getAuthor().openPrivateChannel().complete().sendMessage("Hey there " + name + "! I've successfully found that minecraft account. " +

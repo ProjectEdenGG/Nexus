@@ -14,6 +14,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ColorConverte
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocalDateConverter;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import org.reflections.Reflections;
@@ -48,6 +49,7 @@ public class MongoDBPersistence {
 		morphia.getMapper().getConverters().addConverter(new ItemMetaConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new ItemStackConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new LocalDateConverter(morphia.getMapper()));
+		morphia.getMapper().getConverters().addConverter(new LocalDateTimeConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new LocationConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new UUIDConverter(morphia.getMapper()));
 		databases.put(dbType, datastore);

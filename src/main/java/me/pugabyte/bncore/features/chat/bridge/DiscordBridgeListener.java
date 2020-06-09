@@ -43,7 +43,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			if (user != null && !isNullOrEmpty(user.getUuid()))
 				builder.next(new Nerd(user.getUuid()).getChatFormat());
 			else
-				builder.next("&f" + Discord.getName(event.getMember(), event.getAuthor()));
+				builder.next("&f" + Discord.getName(event.getMember().getId()));
 
 			builder.next(" " + channel.get().getDiscordColor() + "&l>&f");
 
