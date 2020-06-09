@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.holidays.pride20;
 
+import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.features.holidays.DyeBombCommand;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
@@ -18,7 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class PrideNPCListener implements Listener {
+public class Pride20Listener implements Listener {
 
 	@EventHandler
 	public void onBalloonNPCClick(NPCRightClickEvent event) {
@@ -68,6 +69,15 @@ public class PrideNPCListener implements Listener {
 		setting.setBoolean(true);
 		service.save(setting);
 		player.sendMessage(StringUtils.colorize("&eHow did you even get here? I mean.... meow"));
+	}
+
+
+	@EventHandler
+	public void onRegionEnter(RegionEnteredEvent event) {
+		if (!event.getRegion().getId().equalsIgnoreCase("pride20_parade")) return;
+		event.getPlayer().sendMessage(StringUtils.colorize("&eWelcome to the Pride Parade!" +
+				" Have a look at all the colorful floats and roam around the city. If you'd like to join the parade, " +
+				"type &c/pride20 parade join &3while standing where you want to be in the parade. &eEnjoy and happy pride!"));
 	}
 
 }
