@@ -47,6 +47,10 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	@Path("give <amount> [player]")
 	@Permission("group.moderator")
 	public void give(@Arg int amount, @Arg("self") Player player) {
+		giveDyeBomb(player, amount);
+	}
+
+	public static void giveDyeBomb(Player player, int amount) {
 		ItemStack item = dyeBomb.clone();
 		item.setAmount(amount);
 		Utils.giveItem(player, item);
