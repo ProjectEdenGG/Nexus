@@ -75,8 +75,14 @@ public class Pride20Listener implements Listener {
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase("pride20")) return;
+		CooldownService cooldownService = new CooldownService();
+		try {
+			cooldownService.check(event.getPlayer(), "pride20enter", Time.MINUTE.x(5));
+		} catch (CooldownException ex) {
+			return;
+		}
 		event.getPlayer().sendMessage(StringUtils.colorize("&eWelcome to the Pride Parade!" +
-				" Have a look at all the colorful floats and roam around the city. If you'd like to join the parade, " +
+				" &3Have a look at all the colorful floats and roam around the city. If you'd like to join the parade, " +
 				"type &c/pride20 parade join &3while standing where you want to be in the parade. &eEnjoy and happy pride!"));
 	}
 
