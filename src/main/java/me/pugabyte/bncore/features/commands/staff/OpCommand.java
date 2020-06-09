@@ -34,7 +34,7 @@ public class OpCommand extends CustomCommand {
 			error(opee + " is already op");
 
 		player.setOp(true);
-		Chat.broadcast(PREFIX + oper + " opped " + opee, "admin");
+		Chat.broadcastIngame(PREFIX + oper + " opped " + opee, "admin");
 
 		if (player.isOnline() && !player.equals(player()))
 			send(player.getPlayer(), PREFIX + "You are now op");

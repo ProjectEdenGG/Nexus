@@ -22,8 +22,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	public void back() {
-		send(json("&f &3&m<  &e Back").command("/faq"));
-		line();
+		back("");
 	}
 
 	@Path
