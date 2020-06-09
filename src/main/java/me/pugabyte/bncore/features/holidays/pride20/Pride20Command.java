@@ -31,7 +31,7 @@ public class Pride20Command extends CustomCommand {
 	}
 
 	static {
-		BNCore.registerListener(new PrideNPCListener());
+		BNCore.registerListener(new Pride20Listener());
 	}
 
 	@Path("parade join [player]")
