@@ -3,7 +3,6 @@ package me.pugabyte.bncore.models.particle;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Transient;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,8 +60,7 @@ public class ParticleOwner extends PlayerOwnedObject {
 		return map;
 	}
 
-	@Transient
-	private Set<ParticleTask> tasks = new HashSet<>();
+	private transient Set<ParticleTask> tasks = new HashSet<>();
 
 	public List<ParticleTask> getTasks(ParticleType particleType) {
 		return tasks.stream().filter(task -> task.getParticleType() == particleType).collect(Collectors.toList());

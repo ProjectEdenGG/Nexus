@@ -33,6 +33,7 @@ public class CustomRecipes {
 	}
 
 	public static void addRecipe(Recipe recipe) {
+		if (recipe == null) return;
 		for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
 			if (RecipeUtils.areEqual(recipe1, recipe)) return;
 
@@ -44,19 +45,21 @@ public class CustomRecipes {
 		}
 	}
 
-	public ShapelessRecipe createSingleItemShapelessRecipe(Material inputItem, int requiredAmount, Material outputItem, int outputAmount) {
+	public ShapelessRecipe createSingleItemShapelessRecipe(Material inputItem, int requiredAmount, Material outputItem, int outputAmount, CraftingMenuType type) {
 		NamespacedKey key = new NamespacedKey(BNCore.getInstance(), "custom_" + inputItem.name() + "_" + outputItem.name());
 		ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(outputItem, outputAmount));
 		recipe.addIngredient(requiredAmount, inputItem);
+		type.getList().add(new CraftingRecipeMenu.CraftingRecipe(inputItem, requiredAmount, outputItem, outputAmount));
 		recipes.put(key, recipe);
 		return recipe;
 	}
 
-	public ShapelessRecipe createShapelessRecipe(RecipeChoice.MaterialChoice inputItem, Material dye, Material outputItem) {
+	public ShapelessRecipe createShapelessRecipe(RecipeChoice.MaterialChoice inputItem, Material dye, Material outputItem, CraftingMenuType type) {
 		NamespacedKey key = new NamespacedKey(BNCore.getInstance(), "custom_" + outputItem.name() + "_color");
 		ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(outputItem, 1));
 		recipe.addIngredient(inputItem);
 		recipe.addIngredient(dye);
+		type.getList().add(new CraftingRecipeMenu.CraftingRecipe(inputItem, dye, 1, outputItem, 1));
 		recipes.put(key, recipe);
 		return recipe;
 	}
@@ -67,50 +70,52 @@ public class CustomRecipes {
 		recipe.shape("iii", "idi", "iii");
 		recipe.setIngredient('i', inputItem);
 		recipe.setIngredient('d', dye);
+		CraftingMenuType.DYES.getList().add(new CraftingRecipeMenu.CraftingRecipe(inputItem, dye, 1, outputItem, 1));
 		recipes.put(key, recipe);
 		return recipe;
 	}
 
 	public void misc() {
-		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_WART_BLOCK, 1, Material.NETHER_WART, 9));
-		addRecipe(createSingleItemShapelessRecipe(Material.BLUE_ICE, 1, Material.PACKED_ICE, 9));
-		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_RED_SANDSTONE, 1, Material.RED_SANDSTONE_SLAB, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_SANDSTONE, 1, Material.SANDSTONE_SLAB, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.HONEYCOMB_BLOCK, 1, Material.HONEYCOMB, 4));
+		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_WART_BLOCK, 1, Material.NETHER_WART, 9, CraftingMenuType.MISC));
+		addRecipe(createSingleItemShapelessRecipe(Material.BLUE_ICE, 1, Material.PACKED_ICE, 9, CraftingMenuType.MISC));
+		addRecipe(createSingleItemShapelessRecipe(Material.PACKED_ICE, 1, Material.ICE, 9, CraftingMenuType.MISC));
+		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_RED_SANDSTONE, 1, Material.RED_SANDSTONE_SLAB, 2, CraftingMenuType.MISC));
+		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_SANDSTONE, 1, Material.SANDSTONE_SLAB, 2, CraftingMenuType.MISC));
+		addRecipe(createSingleItemShapelessRecipe(Material.HONEYCOMB_BLOCK, 1, Material.HONEYCOMB, 4, CraftingMenuType.MISC));
 
 	}
 
 	public void slabsToBlocks() {
-		addRecipe(createSingleItemShapelessRecipe(Material.OAK_SLAB, 4, Material.OAK_PLANKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.SPRUCE_SLAB, 4, Material.SPRUCE_PLANKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.BIRCH_SLAB, 4, Material.BIRCH_PLANKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.JUNGLE_SLAB, 4, Material.JUNGLE_PLANKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.ACACIA_SLAB, 4, Material.ACACIA_PLANKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.DARK_OAK_SLAB, 4, Material.DARK_OAK_PLANKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.STONE_SLAB, 4, Material.STONE, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.SANDSTONE_SLAB, 4, Material.SANDSTONE, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.COBBLESTONE_SLAB, 4, Material.COBBLESTONE, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.BRICK_SLAB, 4, Material.BRICKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.STONE_BRICK_SLAB, 4, Material.STONE_BRICKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_BRICK_SLAB, 4, Material.NETHER_BRICKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.QUARTZ_SLAB, 4, Material.QUARTZ_BLOCK, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.RED_SANDSTONE_SLAB, 4, Material.RED_SANDSTONE, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.PURPUR_SLAB, 4, Material.PURPUR_BLOCK, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.PRISMARINE_SLAB, 4, Material.PRISMARINE, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.PRISMARINE_BRICK_SLAB, 4, Material.PRISMARINE_BRICKS, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.DARK_PRISMARINE_SLAB, 4, Material.DARK_PRISMARINE, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.OAK_SLAB, 4, Material.OAK_PLANKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.SPRUCE_SLAB, 4, Material.SPRUCE_PLANKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.BIRCH_SLAB, 4, Material.BIRCH_PLANKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.JUNGLE_SLAB, 4, Material.JUNGLE_PLANKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.ACACIA_SLAB, 4, Material.ACACIA_PLANKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.DARK_OAK_SLAB, 4, Material.DARK_OAK_PLANKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.STONE_SLAB, 4, Material.STONE, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.SANDSTONE_SLAB, 4, Material.SANDSTONE, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.COBBLESTONE_SLAB, 4, Material.COBBLESTONE, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.BRICK_SLAB, 4, Material.BRICKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.STONE_BRICK_SLAB, 4, Material.STONE_BRICKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.NETHER_BRICK_SLAB, 4, Material.NETHER_BRICKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.QUARTZ_SLAB, 4, Material.QUARTZ_BLOCK, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.RED_SANDSTONE_SLAB, 4, Material.RED_SANDSTONE, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.PURPUR_SLAB, 4, Material.PURPUR_BLOCK, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.PRISMARINE_SLAB, 4, Material.PRISMARINE, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.PRISMARINE_BRICK_SLAB, 4, Material.PRISMARINE_BRICKS, 2, CraftingMenuType.SLABS));
+		addRecipe(createSingleItemShapelessRecipe(Material.DARK_PRISMARINE_SLAB, 4, Material.DARK_PRISMARINE, 2, CraftingMenuType.SLABS));
 	}
 
 	public void quartsUncrafting() {
-		addRecipe(createSingleItemShapelessRecipe(Material.QUARTZ_BLOCK, 1, Material.QUARTZ, 4));
-		addRecipe(createSingleItemShapelessRecipe(Material.QUARTZ_PILLAR, 1, Material.QUARTZ_BLOCK, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_QUARTZ_BLOCK, 1, Material.QUARTZ_SLAB, 2));
+		addRecipe(createSingleItemShapelessRecipe(Material.QUARTZ_BLOCK, 1, Material.QUARTZ, 4, CraftingMenuType.QUARTZ));
+		addRecipe(createSingleItemShapelessRecipe(Material.QUARTZ_PILLAR, 1, Material.QUARTZ_BLOCK, 2, CraftingMenuType.QUARTZ));
+		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_QUARTZ_BLOCK, 1, Material.QUARTZ_SLAB, 2, CraftingMenuType.QUARTZ));
 	}
 
 	public void stoneBricksUncrafting() {
-		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_STONE_BRICKS, 1, Material.STONE_BRICK_SLAB, 2));
-		addRecipe(createSingleItemShapelessRecipe(Material.STONE_BRICKS, 4, Material.STONE, 4));
-		addRecipe(createSingleItemShapelessRecipe(Material.MOSSY_STONE_BRICKS, 1, Material.STONE_BRICKS, 1));
+		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_STONE_BRICKS, 1, Material.STONE_BRICK_SLAB, 2, CraftingMenuType.STONE_BRICK));
+		addRecipe(createSingleItemShapelessRecipe(Material.STONE_BRICKS, 4, Material.STONE, 4, CraftingMenuType.STONE_BRICK));
+		addRecipe(createSingleItemShapelessRecipe(Material.MOSSY_STONE_BRICKS, 1, Material.STONE_BRICKS, 1, CraftingMenuType.STONE_BRICK));
 	}
 
 	RecipeChoice.MaterialChoice wool = new RecipeChoice.MaterialChoice(Material.WHITE_WOOL, Material.BLACK_WOOL, Material.BLUE_WOOL, Material.BROWN_WOOL,
@@ -214,22 +219,22 @@ public class CustomRecipes {
 	}
 
 	public void bedDying() {
-		addRecipe(createShapelessRecipe(bed, Material.WHITE_DYE, Material.WHITE_BED));
-		addRecipe(createShapelessRecipe(bed, Material.BLACK_DYE, Material.BLACK_BED));
-		addRecipe(createShapelessRecipe(bed, Material.BLUE_DYE, Material.BLUE_BED));
-		addRecipe(createShapelessRecipe(bed, Material.BROWN_DYE, Material.BROWN_BED));
-		addRecipe(createShapelessRecipe(bed, Material.CYAN_DYE, Material.CYAN_BED));
-		addRecipe(createShapelessRecipe(bed, Material.GREEN_DYE, Material.GREEN_BED));
-		addRecipe(createShapelessRecipe(bed, Material.GRAY_DYE, Material.GRAY_BED));
-		addRecipe(createShapelessRecipe(bed, Material.LIGHT_BLUE_DYE, Material.LIGHT_BLUE_BED));
-		addRecipe(createShapelessRecipe(bed, Material.LIGHT_GRAY_DYE, Material.LIGHT_GRAY_BED));
-		addRecipe(createShapelessRecipe(bed, Material.LIME_DYE, Material.LIME_BED));
-		addRecipe(createShapelessRecipe(bed, Material.MAGENTA_DYE, Material.MAGENTA_BED));
-		addRecipe(createShapelessRecipe(bed, Material.ORANGE_DYE, Material.ORANGE_BED));
-		addRecipe(createShapelessRecipe(bed, Material.PINK_DYE, Material.PINK_BED));
-		addRecipe(createShapelessRecipe(bed, Material.PURPLE_DYE, Material.PURPLE_BED));
-		addRecipe(createShapelessRecipe(bed, Material.RED_DYE, Material.RED_BED));
-		addRecipe(createShapelessRecipe(bed, Material.YELLOW_DYE, Material.YELLOW_BED));
+		addRecipe(createShapelessRecipe(bed, Material.WHITE_DYE, Material.WHITE_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.BLACK_DYE, Material.BLACK_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.BLUE_DYE, Material.BLUE_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.BROWN_DYE, Material.BROWN_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.CYAN_DYE, Material.CYAN_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.GREEN_DYE, Material.GREEN_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.GRAY_DYE, Material.GRAY_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.LIGHT_BLUE_DYE, Material.LIGHT_BLUE_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.LIGHT_GRAY_DYE, Material.LIGHT_GRAY_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.LIME_DYE, Material.LIME_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.MAGENTA_DYE, Material.MAGENTA_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.ORANGE_DYE, Material.ORANGE_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.PINK_DYE, Material.PINK_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.PURPLE_DYE, Material.PURPLE_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.RED_DYE, Material.RED_BED, CraftingMenuType.BEDS));
+		addRecipe(createShapelessRecipe(bed, Material.YELLOW_DYE, Material.YELLOW_BED, CraftingMenuType.BEDS));
 	}
 
 	public void setWoolUndyingRecipe() {
@@ -240,6 +245,7 @@ public class CustomRecipes {
 		addRecipe(woolUndyingRecipe);
 		recipes.put(new NamespacedKey(BNCore.getInstance(), "custom_whiteWool"), woolUndyingRecipe);
 		amount++;
+		CraftingMenuType.WOOL.getList().add(new CraftingRecipeMenu.CraftingRecipe(wool, Material.WATER_BUCKET, 1, Material.WHITE_WOOL, 8));
 	}
 
 }

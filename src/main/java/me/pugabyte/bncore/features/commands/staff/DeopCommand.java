@@ -44,6 +44,9 @@ public class DeopCommand extends CustomCommand {
 
 	@TabCompleterFor(ServerOperator.class)
 	List<String> tabCompleteServerOperator(String filter) {
-		return Bukkit.getOperators().stream().map(OfflinePlayer::getName).collect(Collectors.toList());
+		return Bukkit.getOperators().stream()
+				.map(OfflinePlayer::getName)
+				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
 	}
 }
