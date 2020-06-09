@@ -7,17 +7,19 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.discord.DiscordCaptcha;
+import me.pugabyte.bncore.models.discord.DiscordCaptchaService;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 
 public class DiscordCommand extends CustomCommand {
-
 	DiscordService service = new DiscordService();
 	DiscordUser user;
 
@@ -119,6 +121,74 @@ public class DiscordCommand extends CustomCommand {
 		service.save(setting);
 
 		send(PREFIX + "Lockdown " + (setting.getBoolean() ? "enabled, new members will be automatically kicked" : "disabled"));
+	}
+
+	@Path("dms send")
+	@Permission("group.admin")
+	void dmsSend() {
+		DiscordId.User.POOGATEST.get().openPrivateChannel().complete().sendMessage("Test").queue();
+	}
+
+	@Async
+	@Path("dms view")
+	@Permission("group.admin")
+	void dmsView() {
+		DiscordId.User.POOGATEST.get().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
+				send(message.getContentRaw()));
+	}
+
+	@Async
+	@Path("dms delete")
+	@Permission("group.admin")
+	void dmsDelete() {
+		DiscordId.User.POOGATEST.get().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
+				message.delete().queue());
+	}
+
+	static {
+		new DiscordCaptchaService().get();
+	}
+
+	@Path("captcha debug")
+	@Permission("group.staff")
+	void debug() {
+		send(new DiscordCaptchaService().get().toString());
+	}
+
+	@Path("captcha unconfirm <id>")
+	@Permission("group.staff")
+	void unconfirm(String id) {
+		DiscordCaptchaService captchaService = new DiscordCaptchaService();
+		DiscordCaptcha captcha = captchaService.get();
+
+		User user = Bot.KODA.jda().getUserById(id);
+		Member member = Discord.getGuild().getMemberById(id);
+
+		if (user == null)
+			send(PREFIX + "&cWarning: &3User is null");
+		if (member == null)
+			send(PREFIX + "&cWarning: &3Member is null");
+
+		String name = Discord.getName(id);
+
+		if (!captcha.getConfirmed().containsKey(id))
+			error(name + " is not confirmed");
+
+		captcha.getConfirmed().remove(id);
+		captchaService.save(captcha);
+		send(PREFIX + "Unconfirmed " + name);
+	}
+
+	// TODO Restrospective confirmation checks
+	@Path("captcha info")
+	@Permission("group.staff")
+	void info() {
+		DiscordCaptcha captcha = new DiscordCaptchaService().get();
+
+		captcha.getUnconfirmed().forEach((id, date) -> {
+			String name = Discord.getName(id);
+			send("ID: " + name + " / Date: " + StringUtils.shortDateTimeFormat(date));
+		});
 	}
 
 }

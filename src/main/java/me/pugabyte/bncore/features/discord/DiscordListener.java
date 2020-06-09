@@ -9,15 +9,19 @@ import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
 import me.pugabyte.bncore.framework.exceptions.BNException;
+import me.pugabyte.bncore.models.discord.DiscordCaptcha;
+import me.pugabyte.bncore.models.discord.DiscordCaptcha.CaptchaResult;
+import me.pugabyte.bncore.models.discord.DiscordCaptchaService;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.Tasks;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.react.PrivateMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -50,7 +54,7 @@ public class DiscordListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
 		Tasks.async(() -> {
-			String name = Discord.getName(event.getMember(), event.getAuthor());
+			String name = Discord.getName(event.getMember());
 			String channel = event.getChannel().getName();
 			String message = event.getMessage().getContentRaw();
 
@@ -83,18 +87,58 @@ public class DiscordListener extends ListenerAdapter {
 	@Override
 	public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
 		Tasks.async(() -> {
-			SettingService service = new SettingService();
-			Setting setting = service.get("discord", "lockdown");
+			final String id = event.getUser().getId();
 
-			if (setting.getBoolean()) {
-				event.getMember().kick("This discord is currently on lockdown mode").queue();
-			} else {
+			DiscordCaptchaService captchaService = new DiscordCaptchaService();
+			DiscordCaptcha captcha = captchaService.get();
+			CaptchaResult result = captcha.check(id);
+
+			if (result == CaptchaResult.CONFIRMED) {
 				Tasks.waitAsync(1, () -> {
-//					Discord.addRole(event.getUser().getId(), Role.NERD);
-					DiscordUser user = new DiscordService().getFromUserId(event.getUser().getId());
-					if (user != null && !Strings.isNullOrEmpty(user.getUserId()))
-						Discord.addRole(event.getUser().getId(), Role.VERIFIED);
+					Discord.addRole(id, Role.NERD);
+					DiscordUser user = new DiscordService().getFromUserId(id);
+					if (user != null && !Strings.isNullOrEmpty(user.getUuid()))
+						Discord.addRole(id, Role.VERIFIED);
 				});
+
+				return;
+			}
+
+			Discord.staffLog("**[Captcha]** " + Discord.getName(event.getMember()) + " - Requiring verification");
+			captcha.require(id);
+			captchaService.save(id);
+		});
+	}
+
+	@Override
+	public void onPrivateMessageReactionAdd(@Nonnull PrivateMessageReactionAddEvent event) {
+		Tasks.async(() -> {
+			if (event.getUser() == null) {
+				BNCore.log("[Captcha] Received reaction from null user");
+				return;
+			}
+
+			final String id = event.getUser().getId();
+			DiscordCaptchaService captchaService = new DiscordCaptchaService();
+			DiscordCaptcha captcha = captchaService.get();
+
+			CaptchaResult result = captcha.check(id);
+			if (result == CaptchaResult.UNCONFIRMED) {
+				captcha.confirm(id);
+
+				Member member = Discord.getGuild().getMemberById(id);
+				PrivateChannel complete = event.getUser().openPrivateChannel().complete();
+
+				if (member == null) {
+					Message message = complete.getHistory().getMessageById(event.getMessageId());
+					if (message == null)
+						BNCore.warn("[Captcha] Could not find original message");
+					else
+						message.editMessage("Account confirmed. You may now join the server again: discord.gg/bearnation").queue();
+				} else
+					complete.sendMessage("Account confirmed, thank you!").queue();
+
+				captchaService.save(captcha);
 			}
 		});
 	}

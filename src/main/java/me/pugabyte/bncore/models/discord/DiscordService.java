@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DiscordService extends MySQLService {
-	private final static Map<String, DiscordUser> cache = new HashMap<>();
+	private static final Map<String, DiscordUser> cache = new HashMap<>();
 
 	public static void clearCache() {
 		cache.clear();

@@ -32,7 +32,8 @@ public class BanDiscordCommand extends Command {
 		Tasks.async(() -> {
 			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
 			if (!Strings.isNullOrEmpty(user.getUserId()))
-				runConsoleCommand(trimFirst(event.getMessage().getContentRaw() + " --sender=" + Utils.getPlayer(user.getUuid()).getName()));
+				Tasks.sync(() ->
+						runConsoleCommand(trimFirst(event.getMessage().getContentRaw() + " --sender=" + Utils.getPlayer(user.getUuid()).getName())));
 		});
 	}
 

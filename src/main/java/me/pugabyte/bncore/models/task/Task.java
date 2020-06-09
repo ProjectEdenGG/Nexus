@@ -22,12 +22,15 @@ public class Task {
 	@NonNull
 	private String data;
 	@NonNull
+	private LocalDateTime created;
+	@NonNull
 	private LocalDateTime timestamp;
 	private Status status = Status.PENDING;
 
 	public Task(@NonNull String type, @NonNull Map<String, Object> data, @NonNull LocalDateTime timestamp) {
 		this.type = type;
 		this.data = new Gson().toJson(new HashMap<>(data));
+		this.created = LocalDateTime.now();
 		this.timestamp = timestamp;
 	}
 

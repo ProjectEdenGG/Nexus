@@ -35,7 +35,7 @@ public class Discord {
 	public Discord() {
 		Tasks.repeatAsync(0, Time.MINUTE, this::connect);
 		Tasks.waitAsync(Time.SECOND.x(2), this::connect);
-		BNCore.getCron().schedule("*/5 * * * *", Discord::updateTopics);
+		BNCore.getCron().schedule("*/6 * * * *", Discord::updateTopics);
 	}
 
 	public void connect() {
@@ -62,6 +62,12 @@ public class Discord {
 		}
 	}
 
+	public static String getName(String id) {
+		String name = getName(Discord.getGuild().getMemberById(id));
+		if (name == null) name = id;
+		return name;
+	}
+
 	public static String getName(Member member) {
 		User user = null;
 		if (member != null)
@@ -70,12 +76,14 @@ public class Discord {
 	}
 
 	public static String getName(Member member, User user) {
-		if (member == null || member.getNickname() == null)
-			if (user == null)
-				return "NULL";
-			else
-				return user.getName();
-		return member.getNickname();
+		if (member != null)
+			if (member.getNickname() != null)
+				return member.getNickname();
+
+		if (user != null)
+			return user.getName();
+
+		return null;
 	}
 
 	public static String discordize(String message) {
@@ -187,7 +195,7 @@ public class Discord {
 				.filter(player -> !Utils.isVanished(player))
 				.collect(Collectors.toList());
 
-		return "Online nerds (" + players.size() + "): " + players.stream()
+		return "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
 					String name = player.getName();
 					if (AFK.get(player).isAfk())
@@ -209,7 +217,7 @@ public class Discord {
 				.filter(player -> new Nerd(player).getRank().isStaff())
 				.collect(Collectors.toList());
 
-		return "Online staff (" + players.size() + "): " + players.stream()
+		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
 					String name = player.getName();
 					if (Utils.isVanished(player))
