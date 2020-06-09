@@ -106,7 +106,7 @@ public class DiscordListener extends ListenerAdapter {
 
 			Discord.staffLog("**[Captcha]** " + Discord.getName(event.getMember()) + " - Requiring verification");
 			captcha.require(id);
-			captchaService.save(id);
+			captchaService.save(captcha);
 		});
 	}
 
