@@ -21,7 +21,7 @@ import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class SignListener implements Listener {
-	public static String header = colorize("&0&l< &1Minigames &0&l>");
+	public static final String HEADER = "< Minigames >";
 
 	@EventHandler
 	public void onClickOnSign(PlayerInteractEvent event) {
@@ -32,7 +32,7 @@ public class SignListener implements Listener {
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
 
-		if (header.equals(sign.getLine(0))) {
+		if (HEADER.equals(stripColor(sign.getLine(0)))) {
 			switch (stripColor(sign.getLine(1).toLowerCase())) {
 				case "join":
 					try {
