@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.votes.mysterychest;
 
-import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChest;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -52,11 +51,7 @@ public class MysteryChestCommand extends CustomCommand {
 	@Path("edit")
 	@Permission("group.staff")
 	void edit() {
-		SmartInventory.builder()
-				.title("Mystery Chest Rewards")
-				.provider(new MysteryChestEditProvider(null))
-				.size(6, 9)
-				.build().open(player());
+		MysteryChest.getInv(null).open(player(), 0);
 	}
 
 	@Path("test")

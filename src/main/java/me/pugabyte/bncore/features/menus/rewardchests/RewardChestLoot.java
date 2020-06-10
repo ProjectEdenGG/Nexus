@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.menus.rewardchests;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.utils.SerializationUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -10,10 +11,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
+@NoArgsConstructor
 @SerializableAs("RewardChestLoot")
 public class RewardChestLoot implements ConfigurationSerializable {
 
-	public String title;
+	public int id;
+	public String title = "Reward Chest Loot";
 	public ItemStack[] items = new ItemStack[1];
 	public boolean active = true;
 

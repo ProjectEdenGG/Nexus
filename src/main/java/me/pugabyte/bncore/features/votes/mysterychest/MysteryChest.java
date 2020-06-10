@@ -1,16 +1,15 @@
 package me.pugabyte.bncore.features.votes.mysterychest;
 
+import fr.minuskube.inv.SmartInventory;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChestLoot;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 
 public class MysteryChest {
@@ -21,6 +20,15 @@ public class MysteryChest {
 
 	public MysteryChest(OfflinePlayer player) {
 		this.player = player;
+	}
+
+
+	public static SmartInventory getInv(Integer id) {
+		return SmartInventory.builder()
+				.title("Mystery Chest Rewards")
+				.provider(new MysteryChestEditProvider(id))
+				.size(6, 9)
+				.build();
 	}
 
 	public int give(int amount) {
@@ -42,16 +50,12 @@ public class MysteryChest {
 	}
 
 	public static FileConfiguration getConfig() {
-		File file = new File(getFile());
-		if (!file.exists()) {
-			try {
-				if (!file.createNewFile())
-					BNCore.warn("File " + file.getName() + " already exists");
-			} catch (IOException ex) {
-				BNCore.severe("An error occurred while trying to create a configuration file: " + ex.getMessage());
-			}
-		}
-		return YamlConfiguration.loadConfiguration(file);
+		return BNCore.getConfig("mysteryChestLoot.yml");
+	}
+
+	@SneakyThrows
+	public static void saveFile() {
+		getConfig().save("plugins/BNCore/mysteryChestLoot.yml");
 	}
 
 	public static Set<String> getConfigSections() {
@@ -67,17 +71,25 @@ public class MysteryChest {
 				int savedId = Integer.parseInt(section);
 				if (savedId > id) id = savedId + 1;
 			} catch (Exception ex) {
-				BNCore.warn("An error occured while trying to save a Mystery Chest to file");
+				BNCore.warn("An error occurred while trying to save a Mystery Chest to file");
 				ex.printStackTrace();
 			}
 		}
 		return id;
 	}
 
+	public static RewardChestLoot getRewardChestLoot(int id) {
+		return (RewardChestLoot) getConfig().get(id + "");
+	}
+
 	public static RewardChestLoot[] getAllRewards() {
 		RewardChestLoot[] loot = new RewardChestLoot[getConfigSections().size()];
-		for (int i = 0; i < getConfigSections().size(); i++) {
-			loot[i] = (RewardChestLoot) getConfig().get((String) getConfigSections().toArray()[i]);
+		int i = 0;
+		for (String section : getConfigSections()) {
+			RewardChestLoot reward = (RewardChestLoot) getConfig().get(section);
+			reward.setId(Integer.parseInt(section));
+			loot[i] = reward;
+			i++;
 		}
 		return loot;
 	}
