@@ -128,7 +128,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 			discordMessage = IngameBridgeListener.parseMentions(discordMessage);
 
 			Discord.send(new MessageBuilder()
-					.setContent(stripColor(user.getBridgeName() + discordMessage))
+					.setContent(stripColor(user.getBridgeName() + " **>** " + discordMessage))
 					.setEmbed(embed.build()));
 		}
 	}

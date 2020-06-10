@@ -4,10 +4,13 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.features.chat.bridge.RoleManager;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.models.discord.DiscordService;
+import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -26,7 +29,6 @@ import java.util.Set;
 
 import static me.pugabyte.bncore.features.discord.Discord.discordize;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class JoinQuit implements Listener {
 	@Getter
@@ -56,9 +58,10 @@ public class JoinQuit implements Listener {
 		if (player.hasPermission("jq.custom") && joinMessages.size() > 0)
 			message = Utils.getRandomElement(joinMessages);
 
+		final String finalMessage = message;
+
 		if (player.isOnline()) {
-			message = message.replaceAll("\\[player]", "&a" + player.getName() + "&5");
-			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + message;
+			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + player.getName() + "&5");
 
 			// TODO: mutemenu
 			Bukkit.getOnlinePlayers().forEach(_player -> {
@@ -70,8 +73,13 @@ public class JoinQuit implements Listener {
 					Jingle.JOIN.playAll();
 			});
 
-			message = message.replaceAll("_", "\\_");
-			Discord.send(":arrow_right: " + stripColor(message), Channel.BRIDGE);
+			Tasks.async(() -> {
+				DiscordUser user = new DiscordService().get(player);
+				RoleManager.update(user);
+
+				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + player.getName() + "**"));
+				Discord.send(":arrow_right: " + discord, Channel.BRIDGE);
+			});
 		}
 	}
 
@@ -83,8 +91,9 @@ public class JoinQuit implements Listener {
 		if (player.hasPermission("jq.custom") && quitMessages.size() > 0)
 			message = Utils.getRandomElement(quitMessages);
 
-		message = message.replaceAll("\\[player]", "&c" + player.getName() + "&5");
-		final String ingame = "&4 <&4&m &4&m &4&m &5 " + message;
+		final String finalMessage = message;
+
+		final String ingame = "&4 <&4&m &4&m &4&m &5 " + finalMessage.replaceAll("\\[player]", "&c" + player.getName() + "&5");
 
 		// TODO: mutemenu
 		Bukkit.getOnlinePlayers().forEach(_player -> {
@@ -92,8 +101,13 @@ public class JoinQuit implements Listener {
 			Jingle.QUIT.playAll();
 		});
 
-		message = message.replaceAll("_", "\\_");
-		Discord.send("<:red_arrow_left:331808021267218432> " + stripColor(message), Channel.BRIDGE);
+		Tasks.async(() -> {
+			DiscordUser user = new DiscordService().get(player);
+			RoleManager.update(user);
+
+			final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + player.getName() + "**"));
+			Discord.send("<:red_arrow_left:331808021267218432> " + discord, Channel.BRIDGE);
+		});
 	}
 
 	public static boolean isDuplicate(Player player, String type) {
