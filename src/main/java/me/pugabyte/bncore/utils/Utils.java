@@ -12,8 +12,6 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -60,19 +58,20 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Utils {
 
 	public static void pug(String message) {
-		Bukkit.getPlayer("Pugabyte").sendMessage(StringUtils.colorize(message));
+		Bukkit.getPlayer("Pugabyte").sendMessage(colorize(message));
 	}
 
 	public static void wakka(String message) {
-		Bukkit.getPlayer("WakkaFlocka").sendMessage(StringUtils.colorize(message));
+		Bukkit.getPlayer("WakkaFlocka").sendMessage(colorize(message));
 	}
 
 	public static void blast(String message) {
-		Bukkit.getPlayer("Blast").sendMessage(StringUtils.colorize(message));
+		Bukkit.getPlayer("Blast").sendMessage(colorize(message));
 	}
 
 	public static void callEvent(Event event) {
@@ -447,7 +446,7 @@ public class Utils {
 	}
 
 	public static void sendActionBar(final Player player, final String message) {
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(StringUtils.colorize(message)));
+		player.sendActionBar(colorize(message));
 	}
 
 	public static void sendActionBar(final Player player, final String message, int duration) {
