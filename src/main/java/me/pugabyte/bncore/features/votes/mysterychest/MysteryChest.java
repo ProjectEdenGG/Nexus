@@ -8,7 +8,7 @@ import me.pugabyte.bncore.features.menus.rewardchests.RewardChestLoot;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.Set;
 
@@ -16,12 +16,17 @@ public class MysteryChest {
 	private final SettingService service = new SettingService();
 	private final OfflinePlayer player;
 	@Getter
-	private static String file = "plugins/BNCore/mysteryChestLoot.yml";
+	private static final String fileName = "mysteryChestLoot.yml";
+	@Getter
+	private static YamlConfiguration config;
+
+	static {
+		reloadConfig();
+	}
 
 	public MysteryChest(OfflinePlayer player) {
 		this.player = player;
 	}
-
 
 	public static SmartInventory getInv(Integer id) {
 		return SmartInventory.builder()
@@ -49,17 +54,17 @@ public class MysteryChest {
 		return service.get(player, "mysteryChest");
 	}
 
-	public static FileConfiguration getConfig() {
-		return BNCore.getConfig("mysteryChestLoot.yml");
+	public static void reloadConfig() {
+		config = BNCore.getConfig(fileName);
 	}
 
 	@SneakyThrows
-	public static void saveFile() {
-		getConfig().save("plugins/BNCore/mysteryChestLoot.yml");
+	public static void saveConfig() {
+		config.save(BNCore.getFile(fileName));
 	}
 
 	public static Set<String> getConfigSections() {
-		return getConfig().getConfigurationSection("").getKeys(false);
+		return getConfig().getKeys(false);
 	}
 
 	public static int getNextId() {
