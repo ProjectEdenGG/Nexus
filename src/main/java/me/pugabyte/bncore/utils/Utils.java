@@ -347,6 +347,16 @@ public class Utils {
 		}
 	}
 
+	public static ItemStack getTool(Player player) {
+		ItemStack mainHand = player.getInventory().getItemInMainHand();
+		ItemStack offHand = player.getInventory().getItemInOffHand();
+		if (!Utils.isNullOrAir(mainHand))
+			return mainHand;
+		else if (!Utils.isNullOrAir(offHand))
+			return offHand;
+		return null;
+	}
+
 	public static boolean isNullOrAir(Block block) {
 		return block == null || block.getType().equals(Material.AIR);
 	}

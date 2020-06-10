@@ -70,7 +70,7 @@ public class ItemInfoCommand extends CustomCommand {
 			}
 		}
 
-		send("Material: " + material);
+		send("Material: " + material + " (" + material.ordinal() + ")");
 		if (nbtString != null) {
 			send("NBT: " + StringUtils.colorize(nbtString));
 			send(json("&e&l[Click to Copy]").suggest(spawnCommand));
