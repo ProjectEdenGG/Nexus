@@ -3,14 +3,16 @@ package me.pugabyte.bncore.features.commands.staff;
 import de.tr7zw.nbtapi.NBTItem;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import static me.pugabyte.bncore.utils.StringUtils.*;
 
 @Aliases("nbt")
 @Permission("group.staff")
@@ -20,14 +22,16 @@ public class ItemInfoCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[override]")
-	void itemInfo(@Arg("false") String override) {
-		boolean overrideBool = override.equalsIgnoreCase("override");
-
+	@Path("[material]")
+	void itemInfo(Material material) {
 		ItemStack tool = player().getInventory().getItemInMainHand();
-		if (Utils.isNullOrAir(tool)) error("Must be holding an item");
 
-		Material material = tool.getType();
+		if (material != null)
+			tool = new ItemStack(material);
+		else if (Utils.isNullOrAir(tool))
+			error("Must be holding an item");
+
+		material = tool.getType();
 		int amount = tool.getAmount();
 		String nbtString = null;
 
@@ -58,22 +62,20 @@ public class ItemInfoCommand extends CustomCommand {
 		}
 
 		send("");
-
-		if (!overrideBool && (material.equals(Material.WRITTEN_BOOK) || material.equals(Material.WRITABLE_BOOK))) {
-			if (nbtString != null) {
-				int length = nbtString.length();
-				if (length > 12400) {
-					send("String very big, length: " + length);
-					send(json("&e&l[Click to Try]").suggest("/iteminfo override").hover("&cCaution: May crash you"));
-					return;
-				}
-			}
-		}
-
 		send("Material: " + material + " (" + material.ordinal() + ")");
 		if (nbtString != null) {
-			send("NBT: " + StringUtils.colorize(nbtString));
-			send(json("&e&l[Click to Copy]").suggest(spawnCommand));
+			int length = nbtString.length();
+			if (length > 256) {
+				String finalNbtString = nbtString;
+				Tasks.async(() -> {
+					String url = paste(stripColor(finalNbtString));
+					send(json("&eNBT: &l[Click to Open]").url(url).hover(url));
+				});
+			} else {
+				send("NBT: " + colorize(nbtString));
+				send(json("&e&l[Click to Copy]").suggest(spawnCommand));
+			}
 		}
 	}
+
 }
