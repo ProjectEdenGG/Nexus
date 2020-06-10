@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -81,7 +82,10 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 			Tasks.cancel(taskIds.get(material));
 			taskIds.remove(material);
 		} else {
-			int taskId = Tasks.repeat(0, 1, () -> player.launchProjectile(projectiles.get(material), player.getLocation().getDirection().multiply(100)));
+			Vector vector = player.getLocation().getDirection();
+			Class<? extends Projectile> projectile = projectiles.get(material);
+			if (projectile == Arrow.class) vector.multiply(100);
+			int taskId = Tasks.repeat(0, 1, () -> player.launchProjectile(projectile, vector));
 			taskIds.put(material, taskId);
 		}
 	}

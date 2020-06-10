@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-
 @Aliases("gm")
 @Permission("essentials.gamemode")
 @Redirect(from = { "/gms", "/gm0" }, to = "/gm s")
@@ -39,7 +37,7 @@ public class GamemodeCommand extends CustomCommand {
 
 		checkPermission("essentials.gamemode." + gameMode.name().toLowerCase());
 		player.setGameMode(gameMode);
-		send(PREFIX + "Switched to " + camelCase(gameMode.name()));
+		send(PREFIX + "Switched to " + camelCase(gameMode));
 	}
 
 	@ConverterFor(GameMode.class)
