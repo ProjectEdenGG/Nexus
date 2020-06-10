@@ -155,10 +155,15 @@ public class BNCore extends JavaPlugin {
 	}
 
 	@SneakyThrows
-	public static YamlConfiguration getConfig(String path) {
+	public static File getFile(String path) {
 		File file = Paths.get("plugins/BNCore/" + path).toFile();
 		if (!file.exists()) file.createNewFile();
-		return YamlConfiguration.loadConfiguration(file);
+		return file;
+	}
+
+	@SneakyThrows
+	public static YamlConfiguration getConfig(String path) {
+		return YamlConfiguration.loadConfiguration(getFile(path));
 	}
 
 	@Override
