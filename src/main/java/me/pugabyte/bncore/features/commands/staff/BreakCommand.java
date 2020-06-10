@@ -2,16 +2,19 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
 
-public class FuckCommand extends CustomCommand {
+@Aliases("fuck")
+public class BreakCommand extends CustomCommand {
 
-	public FuckCommand(@NonNull CommandEvent event) {
+	public BreakCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -29,7 +32,10 @@ public class FuckCommand extends CustomCommand {
 
 			block.setType(Material.AIR);
 		} else
-			send("&4rude.");
+			if ("fuck".equalsIgnoreCase(getAliasUsed()))
+				send("&4rude.");
+			else
+				throw new NoPermissionException();
 	}
 
 }
