@@ -9,7 +9,6 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -145,19 +144,6 @@ public class BearFair20 implements Listener {
 
 	public static boolean isInRegion(Location location, String region) {
 		return location.getWorld().equals(BearFair20.world) && WGUtils.isInRegion(location, region);
-	}
-
-	public static ItemStack getTool(Player player) {
-		ItemStack mainHand = player.getInventory().getItemInMainHand();
-		ItemStack offHand = player.getInventory().getItemInOffHand();
-		if (Utils.isNullOrAir(mainHand)) {
-			if (Utils.isNullOrAir(offHand)) {
-				return null;
-			} else {
-				return offHand;
-			}
-		}
-		return mainHand;
 	}
 
 	public static boolean isBFItem(ItemStack item) {

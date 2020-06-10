@@ -6,15 +6,13 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import static me.pugabyte.bncore.utils.Utils.getTool;
 
 @Permission("group.seniorstaff")
-public class FixCommand extends CustomCommand {
+public class MoreCommand extends CustomCommand {
 
-	public FixCommand(@NonNull CommandEvent event) {
+	public MoreCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -24,18 +22,7 @@ public class FixCommand extends CustomCommand {
 		if (item == null)
 			error("You are not holding anything");
 
-		if (!(item.getItemMeta() instanceof Damageable))
-			error(item.getType().name() + " is not damageable");
-
-		Damageable damage = (Damageable) item.getItemMeta();
-
-		if (!damage.hasDamage())
-			error(item.getType().name() + " is not damaged");
-
-		ItemMeta meta = item.getItemMeta();
-		((Damageable) meta).setDamage(0);
-		item.setItemMeta(meta);
-		send(PREFIX + "Item repaired");
+		item.setAmount(64);
 	}
 
 }
