@@ -120,7 +120,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 		},
 		WINNING_SCORE(3, 3, Material.GOLD_INGOT),
-		MIN_WINNING_SCORE(3, 4, Material.BRICKS),
+		MIN_WINNING_SCORE(3, 4, Material.BRICK),
 		MAX_WINNING_SCORE(3, 5, Material.IRON_INGOT),
 		MIN_PLAYERS(4, 1, Material.LEATHER_CHESTPLATE),
 		MAX_PLAYERS(4, 2, Material.DIAMOND_CHESTPLATE),
