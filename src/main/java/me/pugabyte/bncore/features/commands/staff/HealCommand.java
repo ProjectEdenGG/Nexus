@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands;
+package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -7,20 +7,22 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 
 @Permission("group.staff")
-public class FeedCommand extends CustomCommand {
+public class HealCommand extends CustomCommand {
 
-	public FeedCommand(@NonNull CommandEvent event) {
+	public HealCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
 	@Path("[player]")
 	void run(@Arg("self") Player player) {
+		player.setHealth(20);
 		player.setFoodLevel(20);
-		player.setSaturation(10);
-		player.setExhaustion(0);
-		send(PREFIX + "Fed " + player.getName());
+		player.setFireTicks(0);
+		for (PotionEffect effect : player.getActivePotionEffects())
+			player.removePotionEffect(effect.getType());
 	}
 
 }
