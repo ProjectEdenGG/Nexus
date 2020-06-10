@@ -147,7 +147,7 @@ public class BearFair20 implements Listener {
 	}
 
 	public static boolean isBFItem(ItemStack item) {
-		return item != null && item.getLore() != null && item.getLore().contains(itemLore);
+		return item != null && item.getLore() != null && item.getLore().get(0).contains(itemLore);
 	}
 
 	public static void send(String message, Player to) {
