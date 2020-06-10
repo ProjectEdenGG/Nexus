@@ -431,9 +431,7 @@ public abstract class CustomCommand implements ICustomCommand {
 
 	@TabCompleterFor(Material.class)
 	List<String> tabCompleteMaterial(String filter) {
-		if (filter.length() >= 2)
-			return tabCompleteEnum(Material.class, filter);
-		return new ArrayList<>();
+		return tabCompleteEnum(Material.class, filter);
 	}
 
 	@Path("help")

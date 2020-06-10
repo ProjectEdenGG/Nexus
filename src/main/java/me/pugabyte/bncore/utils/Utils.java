@@ -286,6 +286,23 @@ public class Utils {
 		return (float) Math.toDegrees(angle);
 	}
 
+	public static void giveItem(Player player, Material material) {
+		giveItem(player, material, 1);
+	}
+
+	public static void giveItem(Player player, Material material, int amount) {
+		if (material == Material.AIR)
+			throw new InvalidInputException("Cannot spawn air");
+
+		if (amount > 64) {
+			for (int i = 0; i < (amount / 64); i++)
+				giveItem(player, new ItemStack(material, 64));
+			giveItem(player, new ItemStack(material, amount % 64));
+		} else {
+			giveItem(player, new ItemStack(material, amount));
+		}
+	}
+
 	public static void giveItem(Player player, ItemStack item) {
 		giveItems(player, Collections.singletonList(item));
 	}
@@ -293,9 +310,8 @@ public class Utils {
 	public static void giveItems(Player player, List<ItemStack> items) {
 		for (ItemStack item : items) {
 			Map<Integer, ItemStack> excess = player.getInventory().addItem(item);
-			if (!excess.isEmpty()) {
+			if (!excess.isEmpty())
 				excess.values().forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
-			}
 		}
 	}
 
