@@ -11,8 +11,6 @@ import org.bukkit.WeatherType;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-
 @Aliases({"rain", "snow", "pweather"})
 @Redirect(from = { "/rainoff", "/snowoff" }, to = "/rain off")
 public class PlayerWeatherCommand extends CustomCommand {
@@ -24,7 +22,7 @@ public class PlayerWeatherCommand extends CustomCommand {
 	@Path("<weather>")
 	void run(WeatherType type) {
 		player().setPlayerWeather(type);
-		send(PREFIX + "Weather set to " + camelCase(type.name()));
+		send(PREFIX + "Weather set to " + camelCase(type));
 	}
 
 	@Path("off")

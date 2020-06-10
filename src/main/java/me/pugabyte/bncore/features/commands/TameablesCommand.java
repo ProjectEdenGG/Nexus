@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
 	private static Map<Player, TameablesAction> actions = new HashMap<>();
@@ -61,14 +59,14 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Path("count <entityType>")
 	void count(TameableEntity entityType) {
 		List<Entity> entities = find(entityType);
-		send(PREFIX + "Found &e" + entities.size() + " " + camelCase(entityType.name()) + " &3in loaded chunks belonging to you");
+		send(PREFIX + "Found &e" + entities.size() + " " + camelCase(entityType) + " &3in loaded chunks belonging to you");
 	}
 
 	@Path("summon <entityType>")
 	void summon(SummonableTameableEntity entityType) {
 		List<Entity> entities = find(entityType);
 		entities.forEach(entity -> entity.teleport(player()));
-		send(PREFIX + "Summoned &e" + entities.size() + " " + camelCase(entityType.name()) + "s &3in loaded chunks to your location");
+		send(PREFIX + "Summoned &e" + entities.size() + " " + camelCase(entityType) + "s &3in loaded chunks to your location");
 	}
 
 	private List<Entity> find(TameableEntityList entityType) {
@@ -143,7 +141,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 		Player player = (Player) event.getDamager();
 		Tameable tameable = (Tameable) event.getEntity();
-		String entityName = camelCase(tameable.getType().name());
+		String entityName = camelCase(tameable.getType());
 
 		if (actions.containsKey(player)) {
 			event.setCancelled(true);

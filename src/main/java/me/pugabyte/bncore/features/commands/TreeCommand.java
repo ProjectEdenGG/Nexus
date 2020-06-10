@@ -8,8 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.TreeType;
 import org.bukkit.block.Block;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-
 public class TreeCommand extends CustomCommand {
 
 	public TreeCommand(@NonNull CommandEvent event) {
@@ -24,10 +22,10 @@ public class TreeCommand extends CustomCommand {
 
 		Location location = target.getLocation().add(0, 1, 0);
 		if (!location.getBlock().isPassable())
-			error("Could not generate tree on " + camelCase(target.getType().name()));
+			error("Could not generate tree on " + camelCase(target.getType()));
 
 		player().getWorld().generateTree(target.getLocation(), treeType);
-		send(PREFIX + "Generated " + camelCase(treeType.name()));
+		send(PREFIX + "Generated " + camelCase(treeType));
 	}
 
 }

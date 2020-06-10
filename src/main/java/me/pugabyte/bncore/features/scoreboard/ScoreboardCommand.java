@@ -25,8 +25,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-
 @NoArgsConstructor
 @Aliases({"status", "sidebar", "sb", "featherboard"})
 public class ScoreboardCommand extends CustomCommand implements Listener {
@@ -83,7 +81,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 					.command("/scoreboard edit toggle " + line.name().toLowerCase())
 					.hover("&eClick to toggle")
 					.next(" ").group();
-			json.next("&3" + camelCase(line.name()))
+			json.next("&3" + camelCase(line))
 					.hover(line.render(player()));
 			json.newline();
 

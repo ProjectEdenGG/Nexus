@@ -60,6 +60,14 @@ public abstract class CustomCommand implements ICustomCommand {
 		return event.getAliasUsed();
 	}
 
+	protected String camelCase(Enum<?> _enum) {
+		return camelCase(_enum.name());
+	}
+
+	protected String camelCase(String string) {
+		return StringUtils.camelCase(string);
+	}
+
 	protected void send(CommandSender sender, String message) {
 		send(sender, json(message));
 	}

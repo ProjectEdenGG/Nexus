@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -25,6 +26,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+@Aliases("god")
 @NoArgsConstructor
 @Permission("group.staff")
 public class GodmodeCommand extends CustomCommand implements Listener {
@@ -113,14 +115,13 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onPotionSplashEvent(final PotionSplashEvent event) {
-		for (LivingEntity entity : event.getAffectedEntities()) {
+		for (LivingEntity entity : event.getAffectedEntities())
 			if (entity instanceof Player) {
-				Godmode godmode = new GodmodeService().get((Player) event.getEntity());
-				if (godmode.isEnabled() || player().getGameMode() == GameMode.CREATIVE)
+				Godmode godmode = new GodmodeService().get((Player) entity);
+				if (godmode.isEnabled() || ((Player) event.getEntity()).getGameMode() == GameMode.CREATIVE)
 					event.setIntensity(entity, 0f);
 					event.setCancelled(true);
 			}
-		}
 	}
 
 }

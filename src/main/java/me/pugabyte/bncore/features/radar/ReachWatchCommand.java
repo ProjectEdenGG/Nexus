@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-
 @NoArgsConstructor
 @Permission("group.moderator")
 public class ReachWatchCommand extends CustomCommand implements Listener {
@@ -63,7 +61,7 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 			return;
 
 		Entity victim = event.getEntity();
-		String victimName = victim.getType().equals(EntityType.PLAYER) ? victim.getName() : camelCase(victim.getType().toString());
+		String victimName = victim.getType().equals(EntityType.PLAYER) ? victim.getName() : camelCase(victim.getType());
 		double distance = attacker.getLocation().distance(victim.getLocation());
 
 		if (distance > 3) {

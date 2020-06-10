@@ -26,23 +26,22 @@ import org.bukkit.entity.Player;
 import java.text.NumberFormat;
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.getLocationString;
 import static me.pugabyte.bncore.utils.StringUtils.shortDateTimeFormat;
 import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
 import static me.pugabyte.bncore.utils.Utils.getLocation;
 
-@Aliases("whotf")
+@Aliases({"whotf", "whothefuck"})
 @Permission("group.staff")
-public class WhoTheFuckCommand extends CustomCommand {
+public class WhoIsCommand extends CustomCommand {
 
-	public WhoTheFuckCommand(@NonNull CommandEvent event) {
+	public WhoIsCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
 	@Async
 	@Path("<player>")
-	void whotf(Nerd nerd) {
+	void run(Nerd nerd) {
 		line();
 		line();
 		send("&3Who the fuck is &6&l" + nerd.getName() + "&3?");
@@ -112,7 +111,7 @@ public class WhoTheFuckCommand extends CustomCommand {
 		json.newline().next("&3Balance: &e" + NumberFormat.getCurrencyInstance().format(BNCore.getEcon().getBalance(offlinePlayer)));
 
 		if (offlinePlayer.isOnline() && player != null) {
-			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode().name()));
+			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode()));
 
 			json.newline().next("&3God mode: &e" + godmode.isEnabledRaw());
 
