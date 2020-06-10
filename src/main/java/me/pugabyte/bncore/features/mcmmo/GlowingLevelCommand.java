@@ -1,5 +1,6 @@
-package me.pugabyte.bncore.features.mcmmo.menus;
+package me.pugabyte.bncore.features.mcmmo;
 
+import me.pugabyte.bncore.features.mcmmo.menus.McMMOResetProvider;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
