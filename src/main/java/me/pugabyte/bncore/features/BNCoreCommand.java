@@ -28,11 +28,14 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +135,16 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("setLevel <number>")
 	void setLevel(int exp) {
 		player().setLevel(exp);
+	}
+
+	@Path("giveExpLevels <number>")
+	void giveExpLevels(int exp) {
+		player().giveExpLevels(exp);
+	}
+
+	@Path("updateCommands")
+	void updateCommands() {
+		player().updateCommands();
 	}
 
 	@Path("actionBar <duration> <message...>")
@@ -237,5 +250,18 @@ public class BNCoreCommand extends CustomCommand {
 	LocalDate convertToLocalDate(String value) {
 		try { return parseShortDate(value); } catch (Exception ignore) {}
 		throw new InvalidInputException("Could not parse date, correct format is MM/DD/YYYY");
+	}
+
+	@ConverterFor(Enchantment.class)
+	Enchantment convertToEnchantment(String value) {
+		return Enchantment.getByKey(NamespacedKey.minecraft(value));
+	}
+
+	@TabCompleterFor(Enchantment.class)
+	List<String> tabCompleteEnchantment(String filter) {
+		return Arrays.stream(Enchantment.values())
+				.filter(enchantment -> enchantment.getKey().getKey().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(enchantment -> enchantment.getKey().getKey())
+				.collect(Collectors.toList());
 	}
 }
