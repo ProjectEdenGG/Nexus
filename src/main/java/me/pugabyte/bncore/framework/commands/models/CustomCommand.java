@@ -20,6 +20,8 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeCommandBlockE
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -397,9 +399,9 @@ public abstract class CustomCommand implements ICustomCommand {
 		if (!online.isEmpty() || filter.length() < 3)
 			return online;
 
-		return Arrays.stream(Bukkit.getOfflinePlayers())
-				.filter(player -> player.getName() != null && player.getName().toLowerCase().startsWith(filter.toLowerCase()))
-				.map(OfflinePlayer::getName)
+		return new NerdService().find(filter).stream()
+				.filter(nerd -> nerd.getName().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(Nerd::getName)
 				.collect(Collectors.toList());
 	}
 
