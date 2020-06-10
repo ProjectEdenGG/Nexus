@@ -1,7 +1,16 @@
 package me.pugabyte.bncore.utils;
 
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import lombok.Data;
 import lombok.Getter;
+import lombok.SneakyThrows;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Request.Builder;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -379,6 +388,22 @@ public class StringUtils {
 		String world = location.getWorld().getName();
 
 		new JsonBuilder().next(message).command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + world).send(player);
+	}
+
+	private static final String HASTEBIN = "https://paste.bnn.gg/";
+
+	@Data
+	private static class PasteResult {
+		private String key;
+	}
+
+	@SneakyThrows
+	public static String paste(String content) {
+		Request request = new Builder().url(HASTEBIN + "documents").post(RequestBody.create(MediaType.get("text/plain"), content)).build();
+		try (Response response = new OkHttpClient().newCall(request).execute()) {
+			PasteResult result = new Gson().fromJson(response.body().string(), PasteResult.class);
+			return HASTEBIN + result.getKey();
+		}
 	}
 
 }

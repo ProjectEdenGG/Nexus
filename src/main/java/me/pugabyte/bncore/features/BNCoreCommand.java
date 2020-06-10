@@ -4,6 +4,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
+import static me.pugabyte.bncore.utils.StringUtils.paste;
 
 @Permission("group.seniorstaff")
 public class BNCoreCommand extends CustomCommand {
@@ -72,6 +74,12 @@ public class BNCoreCommand extends CustomCommand {
 			put("uuid", player().getUniqueId().toString());
 			put("message", message);
 		}}, LocalDateTime.now().plusMinutes(1)));
+	}
+
+	@Async
+	@Path("getDataFile [player]")
+	void getDataFile(@Arg("self") Nerd nerd) {
+		send(json().urlize(paste(nerd.getDataFile().asNBTString())));
 	}
 
 	@Path("koda <message...>")
