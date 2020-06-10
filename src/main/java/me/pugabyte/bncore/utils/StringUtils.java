@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -374,9 +375,11 @@ public class StringUtils {
 			return number + "th";
 	}
 
+	private static final DecimalFormat nf = new DecimalFormat("#.00");
+
 	public static String getLocationString(Location loc) {
-		return "&3World: &e" + loc.getWorld().getName() + " &3x: &e" + loc.getX() + " &3y: &e" +
-				loc.getY() + " &3z: &e" + loc.getZ();
+		return "&3World: &e" + loc.getWorld().getName() + " &3x: &e" + nf.format(loc.getX()) + " &3y: &e" +
+				nf.format(loc.getY()) + " &3z: &e" +  nf.format(loc.getZ());
 	}
 
 	public static void sendJsonLocation(String message, Location location, Player player) {
