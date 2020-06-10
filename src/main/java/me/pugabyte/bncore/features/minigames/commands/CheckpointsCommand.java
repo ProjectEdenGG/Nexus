@@ -6,12 +6,14 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.CheckpointArena;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -26,15 +28,22 @@ public class CheckpointsCommand extends CustomCommand {
 
 	public CheckpointsCommand(CommandEvent event) {
 		super(event);
+		Arena found = null;
 		try {
-			arena = (CheckpointArena) ArenaManager.getFromLocation(player().getLocation());
-		} catch (Exception ignore) {
-		}
+			found = ArenaManager.getFromLocation(player().getLocation());
+		} catch (InvalidInputException ignore) {}
 
-		if (arena == null) {
+		if (found == null) {
 			send(Minigames.PREFIX + "&cNo arena found at your location; did you create the main region and set the mechanic?");
 			return;
 		}
+
+		if (!(found instanceof CheckpointArena)) {
+			send(Minigames.PREFIX + "&cArena is not instance of CheckpointArena. Set mechanic and open custom mechanic settings menu.");
+			return;
+		}
+
+		this.arena = (CheckpointArena) found;
 
 		regionBase = arena.getMechanicType().name() + "_" + arena.getName() + "_checkpoint_";
 

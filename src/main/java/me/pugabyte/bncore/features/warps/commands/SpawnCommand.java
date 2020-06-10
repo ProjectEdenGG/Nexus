@@ -2,11 +2,13 @@ package me.pugabyte.bncore.features.warps.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.WorldGroup;
+import org.bukkit.entity.Player;
 
 public class SpawnCommand extends CustomCommand {
 
@@ -18,16 +20,22 @@ public class SpawnCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		Warp warp;
+		String warpName = "spawn";
 		if (WorldGroup.get(player()) == WorldGroup.SKYBLOCK)
-			warp = service.get("skyblock", WarpType.NORMAL);
+			warpName = "skyblock";
 		else if (WorldGroup.get(player()) == WorldGroup.CREATIVE)
-			warp = service.get("creative", WarpType.NORMAL);
-		else
-			warp = service.get("spawn", WarpType.NORMAL);
+			warpName = "creative";
+
+		Warp warp = service.get(warpName, WarpType.NORMAL);
 		if (!warp.getName().equalsIgnoreCase("spawn"))
 			send(json("&3If you want to go to the survival spawn, &eclick here.").suggest("/warp spawn"));
 		warp.teleport(player());
+	}
+
+	@Path("[player]")
+	@Permission("group.staff")
+	void sudo(Player player) {
+		runCommand(player, "spawn");
 	}
 
 }
