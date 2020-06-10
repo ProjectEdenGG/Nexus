@@ -28,7 +28,7 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 					new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(), e -> {
 						int id = MysteryChest.getNextId();
 						MysteryChest.getConfig().set(id + "", new RewardChestLoot());
-						MysteryChest.saveFile();
+						MysteryChest.saveConfig();
 						MysteryChest.getInv(id).open(player);
 					}
 			));
