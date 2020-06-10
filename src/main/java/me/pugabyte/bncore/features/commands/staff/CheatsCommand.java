@@ -1,11 +1,12 @@
 package me.pugabyte.bncore.features.commands.staff;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.godmode.Godmode;
+import me.pugabyte.bncore.models.godmode.GodmodeService;
 import org.bukkit.GameMode;
 
 @Permission("group.staff")
@@ -24,19 +25,19 @@ public class CheatsCommand extends CustomCommand {
 				player().setGameMode(GameMode.CREATIVE);
 			player().setAllowFlight(true);
 			player().setFlying(true);
-			BNCore.getEssentials().getUser(player().getUniqueId()).setGodModeEnabled(true);
+			((Godmode) new GodmodeService().get(player())).setEnabled(true);
 			runCommand("vanish on");
 
-			send(PREFIX + "Enabled");
+			send(PREFIX + "&aEnabled");
 		} else {
 			runCommand("vanish off");
-			BNCore.getEssentials().getUser(player().getUniqueId()).setGodModeEnabled(false);
+			((Godmode) new GodmodeService().get(player())).setEnabled(false);
 			player().setGameMode(GameMode.SURVIVAL);
 			player().setFallDistance(0);
 			player().setAllowFlight(false);
 			player().setFlying(false);
 
-			send(PREFIX + "Disabled");
+			send(PREFIX + "&cDisabled");
 		}
 	}
 }

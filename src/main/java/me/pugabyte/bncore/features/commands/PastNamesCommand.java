@@ -18,7 +18,7 @@ public class PastNamesCommand extends CustomCommand {
 	@Path("<target>")
 	void run(@Arg("self") OfflinePlayer target) {
 		List<String> pastNames = new NerdService().getPastNames(target.getUniqueId());
-		if (pastNames.size() < 2)
+		if (pastNames.size() <= 1)
 			error("No known past names for " + target.getName());
 
 		send(PREFIX + "&e" + target.getName() + " &3previous known names:");

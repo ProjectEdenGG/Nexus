@@ -28,7 +28,7 @@ public class FlyCommand extends CustomCommand {
 
 		send(player, PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 		if (!isSelf(player))
-			send(sender(), PREFIX + "Fly " + (enable ? "&aenabled" : "&cdisabled") + " &3for &e" + player.getName());
+			send(PREFIX + "Fly " + (enable ? "&aenabled" : "&cdisabled") + " &3for &e" + player.getName());
 	}
 
 }
