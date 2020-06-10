@@ -429,11 +429,6 @@ public abstract class CustomCommand implements ICustomCommand {
 		return material;
 	}
 
-	@TabCompleterFor(Material.class)
-	List<String> tabCompleteMaterial(String filter) {
-		return tabCompleteEnum(Material.class, filter);
-	}
-
 	@Path("help")
 	void help() {
 		List<JsonBuilder> lines = new ArrayList<>();

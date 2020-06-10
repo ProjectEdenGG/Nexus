@@ -123,8 +123,6 @@ public class McMMOListener implements Listener {
 		int age = ageable.getAge();
 		if (age == maxAge) {
 			if (block.getType().equals(Material.MELON_STEM) || block.getType().equals(Material.PUMPKIN_STEM)) {
-				List<Material> canPlaceOn = Arrays.asList(Material.DIRT, Material.GRASS_BLOCK, Material.FARMLAND,
-						Material.PODZOL, Material.COARSE_DIRT);
 				List<BlockFace> cardinals = Arrays.asList(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 
 				Material placeType = Material.PUMPKIN;
@@ -144,7 +142,7 @@ public class McMMOListener implements Listener {
 				for (BlockFace cardinal : cardinals) {
 					Block cardinalBlock = block.getRelative(cardinal);
 					Material below = cardinalBlock.getRelative(0, -1, 0).getType();
-					if (canPlaceOn.contains(below) && cardinalBlock.getType().equals(Material.AIR))
+					if (MaterialTag.DIRTS.isTagged(below) && cardinalBlock.getType().equals(Material.AIR))
 						possibleFaces.add(cardinal);
 				}
 

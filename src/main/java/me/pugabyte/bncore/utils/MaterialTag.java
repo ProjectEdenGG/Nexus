@@ -74,6 +74,8 @@ public class MaterialTag implements Tag<Material> {
 			.append(CORAL_WALL_FANS)
 			.append(Tag.CORALS);
 
+	public static final MaterialTag DIRTS = new MaterialTag(DIRT, GRASS_BLOCK, FARMLAND, PODZOL, COARSE_DIRT);
+
 	public static final MaterialTag VILLAGER_WORKBLOCKS = new MaterialTag(BLAST_FURNACE, SMOKER,
 			CARTOGRAPHY_TABLE, BREWING_STAND, COMPOSTER, BARREL, FLETCHING_TABLE,
 			CAULDRON, LECTERN, STONECUTTER, LOOM, SMITHING_TABLE, GRINDSTONE);
