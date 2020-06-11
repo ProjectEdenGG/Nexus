@@ -83,10 +83,7 @@ public class Hours extends PlayerOwnedObject {
 	}
 
 	public int getDaily(@NotNull LocalDate date) {
-		return times.entrySet().stream()
-				.filter(entry -> entry.getKey().equals(date))
-				.mapToInt(Entry::getValue)
-				.sum();
+		return times.get(date);
 	}
 
 }

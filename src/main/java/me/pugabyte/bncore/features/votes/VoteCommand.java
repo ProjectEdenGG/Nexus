@@ -4,6 +4,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -22,6 +23,9 @@ import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
+import static me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle.NONE;
+import static me.pugabyte.bncore.utils.StringUtils.progressBar;
+
 @Aliases("votes")
 public class VoteCommand extends CustomCommand {
 	Voter voter;
@@ -33,6 +37,7 @@ public class VoteCommand extends CustomCommand {
 			voter = new VoteService().get(player());
 	}
 
+	@Async
 	@Path
 	void run() {
 		line(3);
@@ -42,6 +47,10 @@ public class VoteCommand extends CustomCommand {
 		for (VoteSite site : VoteSite.values())
 			builder.next("&e" + site.name()).url(site.getUrl()).next(" &3|| ");
 		send(builder);
+		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
+				.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
+		line();
+		send(json("&3Server goal: " + progressBar(sum, 2000, NONE, 75) + " &e" + sum + "&3/&e2000").hover("&eReach the goal together for a monthly reward!"));
 		line();
 		send(PLUS + "You have &e" + voter.getPoints() + " &3vote points");
 		line();
