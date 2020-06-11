@@ -7,8 +7,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.freeze.Freeze;
+import me.pugabyte.bncore.models.freeze.FreezeService;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -35,14 +35,14 @@ import java.util.List;
 @NoArgsConstructor
 @Permission("group.staff")
 public class FreezeCommand extends CustomCommand implements Listener {
-	SettingService service = new SettingService();
+	private final FreezeService service = new FreezeService();
 
 	public FreezeCommand(CommandEvent event) {
 		super(event);
 	}
 
 	public boolean isFrozen(Player player) {
-		return new SettingService().get(player, "frozen").getBoolean();
+		return ((Freeze) new FreezeService().get(player)).isFrozen();
 	}
 
 	@Path("cleanup")
@@ -65,21 +65,26 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	@Path("<players...>")
 	void freeze(@Arg(type = Player.class) List<Player> players) {
 		for (Player player : players) {
-			Setting setting = service.get(player, "frozen");
-			if (setting.getBoolean()) {
-				if (player.getVehicle() != null)
-					runCommand("unfreeze " + player.getName());
-				else
-					freezePlayer(player);
-				continue;
-			}
+			try {
+				Freeze freeze = new FreezeService().get(player);
+				if (freeze.isFrozen()) {
+					if (player.getVehicle() != null)
+						runCommand("unfreeze " + player.getName());
+					else
+						freezePlayer(player);
+					continue;
+				}
 
-			freezePlayer(player);
-			Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName(), "Staff");
-			Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has frozen " + player.getName(), "Staff");
-			send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
-			setting.setBoolean(true);
-			service.save(setting);
+				freeze.setFrozen(true);
+				service.save(freeze);
+				freezePlayer(player);
+
+				Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName(), "Staff");
+				Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has frozen " + player.getName(), "Staff");
+				send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
+			} catch (Exception ex) {
+				event.handleException(ex);
+			}
 		}
 	}
 
@@ -184,6 +189,12 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
+	public void onSwapHands(PlayerSwapHandItemsEvent event) {
+		if (!isFrozen(event.getPlayer())) return;
+		event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
 		switch (event.getMessage().split(" ")[0]) {
@@ -197,12 +208,6 @@ public class FreezeCommand extends CustomCommand implements Listener {
 			default:
 				event.setCancelled(true);
 		}
-	}
-
-	@EventHandler
-	public void onSwapHands(PlayerSwapHandItemsEvent event) {
-		if (!isFrozen(event.getPlayer())) return;
-		event.setCancelled(true);
 	}
 
 }
