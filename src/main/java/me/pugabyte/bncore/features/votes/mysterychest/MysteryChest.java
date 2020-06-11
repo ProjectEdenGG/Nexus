@@ -10,7 +10,9 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MysteryChest {
 	private final SettingService service = new SettingService();
@@ -32,7 +34,7 @@ public class MysteryChest {
 		return SmartInventory.builder()
 				.title("Mystery Chest Rewards")
 				.provider(new MysteryChestEditProvider(id))
-				.size(6, 9)
+				.size(id == null ? 6 : 3, 9)
 				.build();
 	}
 
@@ -74,13 +76,17 @@ public class MysteryChest {
 		for (String section : sections) {
 			try {
 				int savedId = Integer.parseInt(section);
-				if (savedId > id) id = savedId + 1;
+				if (savedId >= id) id = savedId + 1;
 			} catch (Exception ex) {
 				BNCore.warn("An error occurred while trying to save a Mystery Chest to file");
 				ex.printStackTrace();
 			}
 		}
 		return id;
+	}
+
+	public static RewardChestLoot[] getActiveRewards() {
+		return Arrays.stream(getAllRewards()).filter(RewardChestLoot::isActive).collect(Collectors.toList()).toArray(new RewardChestLoot[0]);
 	}
 
 	public static RewardChestLoot getRewardChestLoot(int id) {
