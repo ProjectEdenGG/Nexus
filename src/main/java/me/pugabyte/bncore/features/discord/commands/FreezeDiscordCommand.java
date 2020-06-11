@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.features.commands.staff.freeze.FreezeCommand;
 import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.discord.Bot.HandledBy;
@@ -65,7 +66,7 @@ public class FreezeDiscordCommand extends Command {
 								if (player.getPlayer().getVehicle() != null)
 									player.getPlayer().getVehicle().remove();
 								player.getPlayer().sendMessage(colorize("&cYou have been unfrozen."));
-								Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), "Staff");
+								Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
 							} else
 								FreezeCommand.freezePlayer(player.getPlayer());
 							continue;
@@ -75,7 +76,7 @@ public class FreezeDiscordCommand extends Command {
 						freeze.setFrozen(true);
 						service.save(freeze);
 
-						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has frozen &e" + player.getName(), "Staff");
+						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has frozen &e" + player.getName(), StaticChannel.STAFF);
 						player.getPlayer().sendMessage(colorize("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat"));
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));

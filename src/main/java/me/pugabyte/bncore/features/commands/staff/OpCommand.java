@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -35,9 +36,9 @@ public class OpCommand extends CustomCommand {
 
 		player.setOp(true);
 		if (player.equals(player()))
-			Chat.broadcastIngame(PREFIX + oper + " opped themselves", "admin");
+			Chat.broadcastIngame(PREFIX + oper + " opped themselves", StaticChannel.ADMIN);
 		else
-			Chat.broadcastIngame(PREFIX + oper + " opped " + opee, "admin");
+			Chat.broadcastIngame(PREFIX + oper + " opped " + opee, StaticChannel.ADMIN);
 
 		if (player.isOnline() && !player.equals(player()))
 			send(player.getPlayer(), PREFIX + "You are now op");

@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.tickets;
 
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -61,9 +62,9 @@ public class TicketCommand extends CustomCommand {
 		Discord.staffBridge("**[Tickets]** " + player().getName() + " (" + ticket.getId() + "): " + ticket.getDescription() + (onlineMods.size() == 0 ? " [ @here ]" : ""));
 
 		onlineMods.forEach(mod -> Jingle.PING.play(mod.getPlayer()));
-		Chat.broadcastIngame("", "Staff");
-		Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription(), "Staff");
-		Chat.broadcastIngame(Tickets.getTicketButtons(ticket), "Staff");
+		Chat.broadcastIngame("", StaticChannel.STAFF);
+		Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription(), StaticChannel.STAFF);
+		Chat.broadcastIngame(Tickets.getTicketButtons(ticket), StaticChannel.STAFF);
 	}
 
 }

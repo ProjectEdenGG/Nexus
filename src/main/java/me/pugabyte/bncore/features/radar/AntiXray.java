@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.radar;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
@@ -81,8 +82,8 @@ public class AntiXray implements Listener {
 						("&7&l[&cRadar&7&l] &a" + name + "&f is possibly xraying. ")
 						.next("&e[Click to Teleport]")
 						.command("mcmd vanish on ;; xraywarp " + name)
-						.hover("This will automatically vanish you"), "staff");
-				Chat.broadcastDiscord("**[Radar]** " + name + " is possibly xraying. `/xraywarp " + name + "`", "staff");
+						.hover("This will automatically vanish you"), StaticChannel.STAFF);
+				Chat.broadcastDiscord("**[Radar]** " + name + " is possibly xraying. `/xraywarp " + name + "`", StaticChannel.STAFF);
 
 				break;
 			}

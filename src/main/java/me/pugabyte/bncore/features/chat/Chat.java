@@ -73,6 +73,10 @@ public class Chat {
 		broadcast(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcast(String message, StaticChannel channel) {
+		broadcast(message, ChatManager.getChannel(channel.name()));
+	}
+
 	public static void broadcast(String message, String channel) {
 		broadcast(message, ChatManager.getChannel(channel));
 	}
@@ -83,6 +87,10 @@ public class Chat {
 
 	public static void broadcast(JsonBuilder message) {
 		broadcast(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcast(JsonBuilder message, StaticChannel channel) {
+		broadcast(message, ChatManager.getChannel(channel.name()));
 	}
 
 	public static void broadcast(JsonBuilder message, String channel) {
@@ -97,6 +105,10 @@ public class Chat {
 		broadcastIngame(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcastIngame(String message, StaticChannel channel) {
+		broadcastIngame(message, ChatManager.getChannel(channel.name()));
+	}
+
 	public static void broadcastIngame(String message, String channel) {
 		broadcastIngame(message, ChatManager.getChannel(channel));
 	}
@@ -107,6 +119,10 @@ public class Chat {
 
 	public static void broadcastIngame(JsonBuilder message) {
 		broadcastIngame(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastIngame(JsonBuilder message, StaticChannel channel) {
+		broadcastIngame(message, ChatManager.getChannel(channel.name()));
 	}
 
 	public static void broadcastIngame(JsonBuilder message, String channel) {
@@ -121,6 +137,10 @@ public class Chat {
 		broadcastDiscord(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcastDiscord(String message, StaticChannel channel) {
+		broadcastDiscord(message, ChatManager.getChannel(channel.name()));
+	}
+
 	public static void broadcastDiscord(String message, String channel) {
 		broadcastDiscord(message, ChatManager.getChannel(channel));
 	}
@@ -133,12 +153,26 @@ public class Chat {
 		broadcastDiscord(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcastDiscord(JsonBuilder message, StaticChannel channel) {
+		broadcastDiscord(message, ChatManager.getChannel(channel.name()));
+	}
+
 	public static void broadcastDiscord(JsonBuilder message, String channel) {
 		broadcastDiscord(message, ChatManager.getChannel(channel));
 	}
 
 	public static void broadcastDiscord(JsonBuilder message, PublicChannel channel) {
 		channel.broadcastDiscord(message);
+	}
+
+	public enum StaticChannel {
+		GLOBAL,
+		LOCAL,
+		STAFF,
+		OPERATOR,
+		ADMIN,
+		MINIGAMES,
+		CREATIVE
 	}
 
 }

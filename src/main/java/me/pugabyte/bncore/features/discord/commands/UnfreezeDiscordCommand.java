@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
@@ -67,7 +68,7 @@ public class UnfreezeDiscordCommand extends Command {
 							player.getPlayer().getVehicle().remove();
 
 						player.getPlayer().sendMessage(colorize("&cYou have been unfrozen."));
-						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), "Staff");
+						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));
 						if (!(ex instanceof BNException))
