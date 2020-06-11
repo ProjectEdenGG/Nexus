@@ -14,6 +14,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import java.util.Arrays;
 import java.util.List;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class CommandSigns implements Listener {
@@ -28,7 +29,7 @@ public class CommandSigns implements Listener {
 		int ndx = commandIndex(event.getLines(), command);
 		if (ndx == -1) return;
 
-		event.setLine(ndx, "&1" + command);
+		event.setLine(ndx, colorize("&1" + command));
 	}
 
 	private String findCommand(String[] lines) {
@@ -79,7 +80,7 @@ public class CommandSigns implements Listener {
 	}
 
 	private void disposal(Player player, Sign sign) {
-		sign.setLine(0, "&1[Trash]");
+		sign.setLine(0, colorize("&1[Trash]"));
 		sign.update();
 		trash(player);
 	}
