@@ -32,7 +32,7 @@ public class MysteryChestCommand extends CustomCommand {
 		if (!WorldGroup.get(player()).equals(WorldGroup.SURVIVAL))
 			error("You must be in the survival world to run this command.");
 
-		RewardChest.getInv(MysteryChestLootEnum.getAllLoot()).open(player());
+		RewardChest.getInv(MysteryChest.getActiveRewards()).open(player());
 		new MysteryChest(player()).take(1);
 	}
 
@@ -65,6 +65,14 @@ public class MysteryChestCommand extends CustomCommand {
 	@Permission("group.admin")
 	void two(int index) {
 		Utils.giveItems(player(), Arrays.asList(MysteryChestLootEnum.values()[index - 1].getLoot().getItems()));
+	}
+
+	@Path("convert")
+	@Permission("group.admin")
+	void convert() {
+		for (MysteryChestLootEnum value : MysteryChestLootEnum.values()) {
+			MysteryChest.getConfig().set(MysteryChest.getNextId() + "", value.getLoot());
+		}
 	}
 
 }
