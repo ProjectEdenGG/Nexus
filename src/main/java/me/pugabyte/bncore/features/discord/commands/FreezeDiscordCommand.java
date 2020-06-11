@@ -15,8 +15,8 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineExc
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.freeze.Freeze;
+import me.pugabyte.bncore.models.freeze.FreezeService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -48,33 +48,40 @@ public class FreezeDiscordCommand extends Command {
 				if (user.getUuid() == null)
 					throw new NoPermissionException();
 
+				FreezeService service = new FreezeService();
 				OfflinePlayer executor = Utils.getPlayer(user.getUuid());
 
-				SettingService service = new SettingService();
 				for (String arg : event.getArgs().split(" ")) {
-					OfflinePlayer player = Utils.getPlayer(arg);
-					if (!player.isOnline() || player.getPlayer() == null)
-						throw new PlayerNotOnlineException(player);
+					try {
+						OfflinePlayer player = Utils.getPlayer(arg);
+						if (!player.isOnline() || player.getPlayer() == null)
+							throw new PlayerNotOnlineException(player);
 
-					Setting setting = service.get(player, "frozen");
-					if (setting.getBoolean()) {
-						if (player.getPlayer().getVehicle() != null) {
-							setting.setBoolean(false);
-							service.save(setting);
-							if (player.getPlayer().getVehicle() != null)
-								player.getPlayer().getVehicle().remove();
-							player.getPlayer().sendMessage(colorize("&cYou have been unfrozen."));
-							Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), "Staff");
-						} else
-							FreezeCommand.freezePlayer(player.getPlayer());
-						continue;
+						Freeze freeze = service.get(player);
+						if (freeze.isFrozen()) {
+							if (player.getPlayer().getVehicle() != null) {
+								freeze.setFrozen(false);
+								service.save(freeze);
+								if (player.getPlayer().getVehicle() != null)
+									player.getPlayer().getVehicle().remove();
+								player.getPlayer().sendMessage(colorize("&cYou have been unfrozen."));
+								Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), "Staff");
+							} else
+								FreezeCommand.freezePlayer(player.getPlayer());
+							continue;
+						}
+
+						FreezeCommand.freezePlayer(player.getPlayer());
+						freeze.setFrozen(true);
+						service.save(freeze);
+
+						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has frozen &e" + player.getName(), "Staff");
+						player.getPlayer().sendMessage(colorize("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat"));
+					} catch (Exception ex) {
+						event.reply(stripColor(ex.getMessage()));
+						if (!(ex instanceof BNException))
+							ex.printStackTrace();
 					}
-
-					FreezeCommand.freezePlayer(player.getPlayer());
-					Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has frozen &e" + player.getName(), "Staff");
-					player.getPlayer().sendMessage(colorize("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat"));
-					setting.setBoolean(true);
-					service.save(setting);
 				}
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
