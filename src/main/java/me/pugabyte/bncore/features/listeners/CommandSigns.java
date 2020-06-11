@@ -80,7 +80,7 @@ public class CommandSigns implements Listener {
 	}
 
 	private void disposal(Player player, Sign sign) {
-		sign.setLine(0, colorize("&1[Trash]"));
+		sign.setLine(commandIndex(sign.getLines(), "[Disposal]"), colorize("&1[Trash]"));
 		sign.update();
 		trash(player);
 	}
