@@ -105,6 +105,9 @@ public abstract class _WarpCommand extends CustomCommand {
 
 	@ConverterFor(Warp.class)
 	Warp convertToWarp(String value) {
+		if ("skyblock".equalsIgnoreCase(value))
+			error("&cSkyblock is currently disabled while we update it");
+
 		Warp warp = service.get(value, getWarpType());
 		if (warp == null) error("That warp is not set");
 		return warp;
