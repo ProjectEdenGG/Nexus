@@ -115,11 +115,16 @@ public class BNCoreCommand extends CustomCommand {
 	@Description("Generate an sample exp bar cooldown")
 	@Path("expCooldown <cooldown>")
 	void expCooldown(@Arg("20") int cooldown) {
+		final int level = player().getLevel();
+		final float exp = player().getExp();
 		Tasks.Countdown.builder()
 				.duration(cooldown)
 				.onStart(() -> player().setLevel(0))
 				.onTick(ticks -> player().setExp((float) ticks / cooldown))
-				.onComplete(() -> player().setExp(0))
+				.onComplete(() -> {
+					player().setLevel(level);
+					player().setExp(exp);
+				})
 				.start();
 	}
 

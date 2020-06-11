@@ -20,18 +20,22 @@ public class CheatsCommand extends CustomCommand {
 
 	@Path("<on|off>")
 	void on(Boolean enabled) {
+		GodmodeService godmodeService = new GodmodeService();
+		Godmode godmode = godmodeService.get(player());
 		if (enabled) {
 			if (player().hasPermission("essentials.gamemode.creative"))
 				player().setGameMode(GameMode.CREATIVE);
 			player().setAllowFlight(true);
 			player().setFlying(true);
-			((Godmode) new GodmodeService().get(player())).setEnabled(true);
+			godmode.setEnabled(true);
+			godmodeService.save(godmode);
 			runCommand("vanish on");
 
 			send(PREFIX + "&aEnabled");
 		} else {
 			runCommand("vanish off");
-			((Godmode) new GodmodeService().get(player())).setEnabled(false);
+			godmode.setEnabled(false);
+			godmodeService.save(godmode);
 			player().setGameMode(GameMode.SURVIVAL);
 			player().setFallDistance(0);
 			player().setAllowFlight(false);

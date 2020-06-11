@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.chat;
 
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.alerts.AlertsListener;
 import me.pugabyte.bncore.features.chat.bridge.IngameBridgeListener;
@@ -44,23 +45,27 @@ public class Chat {
 	}
 
 	private void addChannels() {
-		PublicChannel global = PublicChannel.builder().name("Global").nickname("G").discordChannel(Channel.BRIDGE).discordColor(ChatColor.DARK_PURPLE).color(ChatColor.DARK_GREEN).local(false).crossWorld(true).build();
-		PublicChannel local = PublicChannel.builder().name("Local").nickname("L").color(ChatColor.YELLOW).local(true).crossWorld(false).build();
-		PublicChannel staff = PublicChannel.builder().name("Staff").nickname("S").rank(Rank.BUILDER).discordChannel(Channel.STAFF_BRIDGE).color(ChatColor.BLACK).censor(false).local(false).crossWorld(true).build();
-		PublicChannel operator = PublicChannel.builder().name("Operator").nickname("O").rank(Rank.OPERATOR).discordChannel(Channel.STAFF_OPS_BRIDGE).color(ChatColor.DARK_AQUA).censor(false).local(false).crossWorld(true).build();
-		PublicChannel admin = PublicChannel.builder().name("Admin").nickname("A").rank(Rank.ADMIN).discordChannel(Channel.STAFF_ADMINS).color(ChatColor.BLUE).censor(false).local(false).crossWorld(true).build();
-		PublicChannel minigames = PublicChannel.builder().name("Minigames").nickname("M").color(ChatColor.DARK_AQUA).local(false).crossWorld(false).build();
-		PublicChannel creative = PublicChannel.builder().name("Creative").nickname("C").color(ChatColor.AQUA).local(false).crossWorld(false).build();
+		for (StaticChannel channel : StaticChannel.values())
+			ChatManager.addChannel(channel.getChannel());
 
-		ChatManager.addChannel(global);
-		ChatManager.addChannel(local);
-		ChatManager.addChannel(staff);
-		ChatManager.addChannel(operator);
-		ChatManager.addChannel(admin);
-		ChatManager.addChannel(minigames);
-		ChatManager.addChannel(creative);
+		ChatManager.setMainChannel(StaticChannel.GLOBAL.getChannel());
+	}
 
-		ChatManager.setMainChannel(global);
+	public enum StaticChannel {
+		GLOBAL(PublicChannel.builder().name("Global").nickname("G").discordChannel(Channel.BRIDGE).discordColor(ChatColor.DARK_PURPLE).color(ChatColor.DARK_GREEN).local(false).crossWorld(true).build()),
+		LOCAL(PublicChannel.builder().name("Local").nickname("L").color(ChatColor.YELLOW).local(true).crossWorld(false).build()),
+		STAFF(PublicChannel.builder().name("Staff").nickname("S").rank(Rank.BUILDER).discordChannel(Channel.STAFF_BRIDGE).color(ChatColor.BLACK).censor(false).local(false).crossWorld(true).build()),
+		OPERATOR(PublicChannel.builder().name("Operator").nickname("O").rank(Rank.OPERATOR).discordChannel(Channel.STAFF_OPS_BRIDGE).color(ChatColor.DARK_AQUA).censor(false).local(false).crossWorld(true).build()),
+		ADMIN(PublicChannel.builder().name("Admin").nickname("A").rank(Rank.ADMIN).discordChannel(Channel.STAFF_ADMINS).color(ChatColor.BLUE).censor(false).local(false).crossWorld(true).build()),
+		MINIGAMES(PublicChannel.builder().name("Minigames").nickname("M").color(ChatColor.DARK_AQUA).local(false).crossWorld(false).build()),
+		CREATIVE(PublicChannel.builder().name("Creative").nickname("C").color(ChatColor.AQUA).local(false).crossWorld(false).build());
+
+		@Getter
+		private final PublicChannel channel;
+
+		StaticChannel(PublicChannel channel) {
+			this.channel = channel;
+		}
 	}
 
 	public static int getLocalRadius() {
@@ -163,16 +168,6 @@ public class Chat {
 
 	public static void broadcastDiscord(JsonBuilder message, PublicChannel channel) {
 		channel.broadcastDiscord(message);
-	}
-
-	public enum StaticChannel {
-		GLOBAL,
-		LOCAL,
-		STAFF,
-		OPERATOR,
-		ADMIN,
-		MINIGAMES,
-		CREATIVE
 	}
 
 }
