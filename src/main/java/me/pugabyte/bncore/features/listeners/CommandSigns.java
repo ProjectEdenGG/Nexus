@@ -42,9 +42,11 @@ public class CommandSigns implements Listener {
 	}
 
 	private int commandIndex(String[] lines, String command) {
+		command = stripColor(command);
 		int ndx = -1;
 		int count = 0;
 		for (String line : lines) {
+			line = stripColor(line);
 			if (line.equalsIgnoreCase(command)) {
 				ndx = count;
 				break;
@@ -80,7 +82,8 @@ public class CommandSigns implements Listener {
 	}
 
 	private void disposal(Player player, Sign sign) {
-		sign.setLine(commandIndex(sign.getLines(), "[Disposal]"), colorize("&1[Trash]"));
+		int ndx = commandIndex(sign.getLines(), "[Disposal]");
+		sign.setLine(ndx, colorize("&1[Trash]"));
 		sign.update();
 		trash(player);
 	}
