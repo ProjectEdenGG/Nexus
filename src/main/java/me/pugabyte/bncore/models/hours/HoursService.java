@@ -7,9 +7,7 @@ import com.mongodb.client.model.Sorts;
 import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
@@ -57,9 +55,10 @@ public class HoursService extends MongoService {
 	}
 
 	public void update(Hours hours) {
+		LocalDate now = LocalDate.now();
 		database.update(
 				database.createQuery(Hours.class).field(_id).equal(hours.getUuid()),
-				database.createUpdateOperations(Hours.class).set("times." + DateTimeFormatter.ISO_DATE.format(LocalDate.now()), hours.getDaily())
+				database.createUpdateOperations(Hours.class).set("times." + DateTimeFormatter.ISO_DATE.format(now), hours.getDaily(now))
 		);
 	}
 
@@ -68,9 +67,7 @@ public class HoursService extends MongoService {
 //	}
 
 	@Data
-	@NoArgsConstructor
 	@AllArgsConstructor
-	@RequiredArgsConstructor
 	public static class PageResult extends PlayerOwnedObject {
 		@Id
 		@NonNull

@@ -24,6 +24,7 @@ import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -150,6 +151,11 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("actionBar <duration> <message...>")
 	void actionBar(int duration, String message) {
 		Utils.sendActionBar(player(), message, duration);
+	}
+
+	@Path("progressBar <progres> <goal> [style] [length]")
+	void progressBar(int progress, int goal, @Arg("NONE") ProgressBarStyle style, @Arg("25") int length) {
+		send(StringUtils.progressBar(progress, goal, style, length));
 	}
 
 	@Path("setting <type> [value]")

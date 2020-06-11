@@ -227,7 +227,7 @@ public class StringUtils {
 	}
 
 	public static String progressBar(int progress, int goal, ProgressBarStyle style, int length) {
-		double percent = Math.min(progress / goal, 1);
+		double percent = Math.min((double) progress / goal, 1);
 		ChatColor color = ChatColor.RED;
 		if (percent == 1)
 			color = ChatColor.GREEN;
