@@ -11,10 +11,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Aliases("c4")
-@Permission("connect4.admin")
+@Permission("group.admin")
 public class Connect4 extends CustomCommand {
 	public final static String PREFIX = colorize("&f[&cConnect&94&f] ");
 	static Connect4Game game = new Connect4Game();
@@ -39,8 +41,18 @@ public class Connect4 extends CustomCommand {
 		place(Connect4Team.valueOf(team.toUpperCase()), validate(column));
 	}
 
+	@Path("debug")
+	void debug() {
+		send();
+		int[][] board = game.getBoard();
+		for (int[] row : board) {
+			send(Arrays.toString(row));
+		}
+		send();
+	}
+
 	private int validate(int column) {
-		if(column >= 0 && column <= 7)
+		if (column >= 0 && column <= 7)
 			return column;
 		throw new InvalidInputException("Incorrect arguments");
 	}
