@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands.staff.freeze;
 
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -39,8 +40,8 @@ public class UnfreezeCommand extends CustomCommand {
 					player.getVehicle().remove();
 
 				send(player, "&cYou have been unfrozen.");
-				Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName(), "Staff");
-				Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has unfrozen " + player.getName(), "Staff");
+				Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
+				Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has unfrozen " + player.getName(), StaticChannel.STAFF);
 			} catch (Exception ex) {
 				event.handleException(ex);
 			}

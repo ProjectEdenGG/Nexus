@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.radar.honeypots;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
@@ -85,7 +86,7 @@ public class HoneyPots implements Listener {
 						.next(" &e[Click to Teleport]")
 						.command("mcmd vanish on ;; tp " + player.getName())
 						.hover("This will automatically vanish you"), "staff");
-				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + getHP(region) + "`", "staff");
+				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + getHP(region) + "`", StaticChannel.STAFF);
 			}
 			if (triggered > 9) {
 				Utils.runConsoleCommand("sudo " + player.getName() + " ticket [HoneyPot] Grief trap triggered! " +

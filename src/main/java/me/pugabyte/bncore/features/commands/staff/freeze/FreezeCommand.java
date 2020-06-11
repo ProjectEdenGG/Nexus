@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands.staff.freeze;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -79,8 +80,8 @@ public class FreezeCommand extends CustomCommand implements Listener {
 				service.save(freeze);
 				freezePlayer(player);
 
-				Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName(), "Staff");
-				Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has frozen " + player.getName(), "Staff");
+				Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName(), StaticChannel.STAFF);
+				Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has frozen " + player.getName(), StaticChannel.STAFF);
 				send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 			} catch (Exception ex) {
 				event.handleException(ex);
@@ -105,16 +106,16 @@ public class FreezeCommand extends CustomCommand implements Listener {
 		Player player = event.getPlayer();
 		if (player.getVehicle() != null)
 			player.getVehicle().remove();
-		Chat.broadcastIngame(PREFIX + "&e" + player.getName() + " &3has logged out while frozen.", "Staff");
-		Chat.broadcastDiscord("**[Freeze]** " + player.getName() + " &3has logged out while frozen.", "Staff");
+		Chat.broadcastIngame(PREFIX + "&e" + player.getName() + " &3has logged out while frozen.", StaticChannel.STAFF);
+		Chat.broadcastDiscord("**[Freeze]** " + player.getName() + " &3has logged out while frozen.", StaticChannel.STAFF);
 	}
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
 		Tasks.wait(5, () -> freezePlayer(event.getPlayer()));
-		Chat.broadcastIngame(PREFIX + "&e" + event.getPlayer().getName() + " &3has logged in while frozen.", "Staff");
-		Chat.broadcastDiscord("**[Freeze]** " + event.getPlayer().getName() + " has logged in while frozen.", "Staff");
+		Chat.broadcastIngame(PREFIX + "&e" + event.getPlayer().getName() + " &3has logged in while frozen.", StaticChannel.STAFF);
+		Chat.broadcastDiscord("**[Freeze]** " + event.getPlayer().getName() + " has logged in while frozen.", StaticChannel.STAFF);
 	}
 
 	@EventHandler

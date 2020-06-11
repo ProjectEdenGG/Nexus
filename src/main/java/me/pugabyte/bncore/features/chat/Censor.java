@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.features.chat.events.ChatEvent;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.models.chat.PublicChannel;
@@ -109,7 +110,7 @@ public class Censor {
 
 			if (bad >= 3) {
 				event.getChatter().send("&cPlease watch your language!");
-				Chat.broadcast(PREFIX + "&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage(), "Staff");
+				Chat.broadcast(PREFIX + "&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage(), StaticChannel.STAFF);
 				event.setCancelled(true);
 			}
 		}
@@ -133,7 +134,7 @@ public class Censor {
 
 	public static void dots(ChatEvent event) {
 		if (event.getMessage().toLowerCase().matches("(\\(|<|\\{|\\[)dot(]|}|>|\\))")) {
-			Chat.broadcast(PREFIX + "Prevented a possible advertisement attempt by " + event.getOrigin() + ": " + event.getMessage(), "Staff");
+			Chat.broadcast(PREFIX + "Prevented a possible advertisement attempt by " + event.getOrigin() + ": " + event.getMessage(), StaticChannel.STAFF);
 			event.setCancelled(true);
 		}
 	}

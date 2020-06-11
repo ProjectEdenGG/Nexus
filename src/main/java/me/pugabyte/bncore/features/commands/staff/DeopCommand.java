@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -32,9 +33,9 @@ public class DeopCommand extends CustomCommand {
 
 		player.setOp(false);
 		if (player.equals(player()))
-			Chat.broadcastIngame(PREFIX + oper + " deopped themselves", "admin");
+			Chat.broadcastIngame(PREFIX + oper + " deopped themselves", StaticChannel.ADMIN);
 		else
-			Chat.broadcastIngame(PREFIX + oper + " deopped " + opee, "admin");
+			Chat.broadcastIngame(PREFIX + oper + " deopped " + opee, StaticChannel.ADMIN);
 
 		if (player.isOnline() && !player.equals(player()))
 			send(player.getPlayer(), PREFIX + "You are no longer op");

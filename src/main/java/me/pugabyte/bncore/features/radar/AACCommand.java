@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.radar;
 
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Fallback;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -26,8 +27,8 @@ public class AACCommand extends CustomCommand {
 			String name = player.getName();
 			String worldGroup = WorldGroup.get(player) + "";
 			String message = "&a" + name + " &f" + reason.replace("{worldgroup}", worldGroup);
-			Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, "staff");
-			Chat.broadcastDiscord("**[Radar]** " + message, "staff");
+			Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, StaticChannel.STAFF);
+			Chat.broadcastDiscord("**[Radar]** " + message, StaticChannel.STAFF);
 		}
 	}
 }

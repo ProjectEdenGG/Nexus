@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
+import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -48,10 +49,10 @@ public class WelcomeCommand extends CustomCommand {
 					!AFK.get(player).isAfk()).count() < 4) return;
 			try {
 				new CooldownService().check("staff", "bumpReminder", Time.DAY);
-				Chat.broadcastIngame("", "Staff");
-				Chat.broadcastIngame("&eHi Staff. &3It looks like there's a few of you online. Could you consider &ebumping the server?", "Staff");
-				Chat.broadcastIngame("&3Instructions: &ehttps://bnn.gg/mod", "Staff");
-				Chat.broadcastIngame("", "Staff");
+				Chat.broadcastIngame("", StaticChannel.STAFF);
+				Chat.broadcastIngame("&eHi Staff. &3It looks like there's a few of you online. Could you consider &ebumping the server?", StaticChannel.STAFF);
+				Chat.broadcastIngame("&3Instructions: &ehttps://bnn.gg/mod", StaticChannel.STAFF);
+				Chat.broadcastIngame("", StaticChannel.STAFF);
 			} catch (CooldownException ignore) {
 			}
 		});
