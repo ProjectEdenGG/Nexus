@@ -92,7 +92,7 @@ public class Commands {
 						BNCore.registerListener((Listener) customCommand.getClass().newInstance());
 				} else
 					if (new ArrayList<>(getAllMethods(customCommand.getClass(), withAnnotation(EventHandler.class))).size() > 0)
-						BNCore.warn("Found @EventHandlers in " + customCommand.getClass().getSimpleName() + " which does not implement listener"
+						BNCore.warn("Found @EventHandlers in " + customCommand.getClass().getSimpleName() + " which does not implement Listener"
 								+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
 			} catch (Exception ex) {
 				ex.printStackTrace();
