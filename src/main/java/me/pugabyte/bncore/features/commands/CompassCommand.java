@@ -7,12 +7,12 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.compass.Compass;
 import me.pugabyte.bncore.models.compass.CompassService;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,8 +50,11 @@ public class CompassCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		List<Compass> compasses = new CompassService().getAll();
-		compasses.forEach(Compass::start);
+		CompassService service = new CompassService();
+		Bukkit.getOnlinePlayers().forEach(player -> {
+			Compass compass = service.get(player);
+			compass.start();
+		});
 	}
 
 	@EventHandler
