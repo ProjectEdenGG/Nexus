@@ -97,7 +97,7 @@ public class Commands {
 			try {
 				if (!Modifier.isAbstract(command.getModifiers()))
 					unregister(new ObjenesisStd().newInstance(command));
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				BNCore.log("Error while unregistering command " + command.getSimpleName());
 				ex.printStackTrace();
 			}
@@ -109,6 +109,11 @@ public class Commands {
 				mapUtils.unregister(customCommand.getName());
 				commands.remove(alias);
 			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		try {
+			customCommand._shutdown();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

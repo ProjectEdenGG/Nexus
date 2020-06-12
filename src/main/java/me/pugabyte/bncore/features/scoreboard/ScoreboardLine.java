@@ -18,6 +18,7 @@ import me.pugabyte.bncore.models.scoreboard.ScoreboardUser;
 import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -184,27 +185,9 @@ public enum ScoreboardLine {
 
 	@Interval(2)
 	COMPASS {
-		private static final String compass = "[S] ---- SW ---- [W] ---- NW ---- [N] ---- NE ---- [E] ---- SE ---- ";
-		private static final int extra = 8;
 		@Override
 		public String render(Player player) {
-			float yaw = Location.normalizeYaw(player.getLocation().getYaw());
-			if (yaw < 0) yaw = 360 + yaw;
-
-			int center = (int) Math.round(yaw / (360D / compass.length())) + 1;
-
-			String instance;
-			if (center - extra < 0) {
-				center += compass.length();
-				instance = (compass + compass).substring(center - extra, center + extra + 1);
-			} else if (center + extra + 1 > compass.length())
-				instance = (compass + compass).substring(center - extra, center + extra + 1);
-			else
-				instance = compass.substring(center - extra, center + extra + 1);
-
-			instance = instance.replaceAll("\\[", "&2[&f");
-			instance = instance.replaceAll("]", "&2]&f");
-			return instance;
+			return StringUtils.compass(player, 8);
 		}
 	},
 
@@ -222,7 +205,7 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			Hours hours = new HoursService().get(player);
-			return "&3Hours: &e" + timespanFormat(hours.getTotal(), "None");
+			return "&3Hours: &e" + timespanFormat(hours == null ? 0 : hours.getTotal(), "None");
 		}
 	},
 

@@ -252,6 +252,40 @@ public class StringUtils {
 		return result;
 	}
 
+	private static final String[] compassParts = {"[S]","SW","[W]","NW","[N]","NE","[E]","SE"};
+
+	public static String compass(Player player) {
+		return compass(player, 8);
+	}
+
+	public static String compass(Player player, int extra) {
+		return compass(player, extra, 4);
+	}
+
+	public static String compass(Player player, int extra, int separators) {
+		String compass = "";
+		for (String compassPart : compassParts)
+			compass += compassPart + " " + String.join("", Collections.nCopies(separators, "-")) + " ";
+
+		float yaw = Location.normalizeYaw(player.getLocation().getYaw());
+		if (yaw < 0) yaw = 360 + yaw;
+
+		int center = (int) Math.round(yaw / (360D / compass.length())) + 1;
+
+		String instance;
+		if (center - extra < 0) {
+			center += compass.length();
+			instance = (compass + compass).substring(center - extra, center + extra + 1);
+		} else if (center + extra + 1 > compass.length())
+			instance = (compass + compass).substring(center - extra, center + extra + 1);
+		else
+			instance = compass.substring(center - extra, center + extra + 1);
+
+		instance = instance.replaceAll("\\[", "&2[&f");
+		instance = instance.replaceAll("]", "&2]&f");
+		return colorize(instance);
+	}
+
 	public static String timespanDiff(LocalDateTime from) {
 		LocalDateTime now = LocalDateTime.now();
 		if (from.isBefore(now))
