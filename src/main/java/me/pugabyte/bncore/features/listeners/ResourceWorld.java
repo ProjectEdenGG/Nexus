@@ -144,14 +144,16 @@ public class ResourceWorld implements Listener {
 
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
-		switch (event.getMessage().split(" ")[0].replace("playervaults:", "")) {
-			case "/pv":
-			case "/vc":
-			case "/chest":
-			case "/vault":
-			case "/playervaults":
-				event.setCancelled(true);
-				event.getPlayer().sendMessage(colorize("&cYou cannot use vaults while in the resource world"));
+		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
+			switch (event.getMessage().split(" ")[0].replace("playervaults:", "")) {
+				case "/pv":
+				case "/vc":
+				case "/chest":
+				case "/vault":
+				case "/playervaults":
+					event.setCancelled(true);
+					event.getPlayer().sendMessage(colorize("&cYou cannot use vaults while in the resource world"));
+			}
 		}
 	}
 
