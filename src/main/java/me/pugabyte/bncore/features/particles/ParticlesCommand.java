@@ -26,11 +26,11 @@ import static me.pugabyte.bncore.features.particles.Particles.startParticles;
 import static me.pugabyte.bncore.features.particles.Particles.stopParticles;
 
 @NoArgsConstructor
-public class JParticlesCommand extends CustomCommand implements Listener {
+public class ParticlesCommand extends CustomCommand implements Listener {
 	ParticleService service = new ParticleService();
 	ParticleOwner particleOwner;
 
-	public JParticlesCommand(@NonNull CommandEvent event) {
+	public ParticlesCommand(@NonNull CommandEvent event) {
 		super(event);
 		particleOwner = service.get(player());
 	}
