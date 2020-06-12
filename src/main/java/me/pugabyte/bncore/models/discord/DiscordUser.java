@@ -12,6 +12,8 @@ import org.bukkit.OfflinePlayer;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import static me.pugabyte.bncore.features.discord.Discord.discordize;
+
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class DiscordUser {
 
 	public String getBridgeName() {
 		OfflinePlayer player = Utils.getPlayer(uuid);
-		String name = "**" + player.getName().replaceAll("_", "\\_") + "**";
+		String name = "**" + discordize(player.getName()) + "**";
 		if (roleId != null)
 			name = "<@&&f" + roleId + ">";
 		return name;

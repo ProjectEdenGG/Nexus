@@ -26,6 +26,8 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import static me.pugabyte.bncore.utils.Utils.isVanished;
+
 @Aliases("god")
 @NoArgsConstructor
 @Permission("group.staff")
@@ -117,9 +119,10 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 	public void onPotionSplashEvent(final PotionSplashEvent event) {
 		for (LivingEntity entity : event.getAffectedEntities())
 			if (entity instanceof Player) {
-				Godmode godmode = new GodmodeService().get((Player) entity);
-				if (godmode.isEnabled() || ((Player) event.getEntity()).getGameMode() == GameMode.CREATIVE)
-					event.setIntensity(entity, 0f);
+				Player player = (Player) entity;
+				Godmode godmode = new GodmodeService().get(player);
+				if (godmode.isEnabled() || player.getGameMode() == GameMode.CREATIVE || isVanished(player))
+					event.setIntensity(player, 0f);
 					event.setCancelled(true);
 			}
 	}
