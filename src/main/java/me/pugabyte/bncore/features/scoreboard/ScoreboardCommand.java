@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.scoreboard;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.features.menus.BookBuilder;
+import me.pugabyte.bncore.features.menus.BookBuilder.WrittenBookMenu;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -70,7 +70,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Description("Control which lines you want to see")
 	@Path("edit")
 	void book() {
-		BookBuilder builder = new BookBuilder();
+		WrittenBookMenu builder = new WrittenBookMenu();
 
 		int index = 0;
 		JsonBuilder json = new JsonBuilder();

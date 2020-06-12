@@ -32,18 +32,18 @@ public abstract class MongoService extends DatabaseService {
 	@Override
 	public <T> T get(UUID uuid) {
 //		if (isEnableCache())
-			return getCache(uuid);
+			return (T) getCache(uuid);
 //		else
 //			return getNoCache(uuid);
 	}
 
-	protected <T> T getCache(UUID uuid) {
+	protected <T extends PlayerOwnedObject> T getCache(UUID uuid) {
 		Validate.notNull(getPlayerClass(), "You must provide a player owned class or override get(UUID)");
 		getCache().computeIfAbsent(uuid, $ -> getNoCache(uuid));
 		return (T) getCache().get(uuid);
 	}
 
-	protected <T> T getNoCache(UUID uuid) {
+	protected <T extends PlayerOwnedObject> T getNoCache(UUID uuid) {
 		Object object = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
 		if (object == null)
 			try {
