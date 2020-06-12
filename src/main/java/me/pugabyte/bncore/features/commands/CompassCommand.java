@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @NoArgsConstructor
 public class CompassCommand extends CustomCommand implements Listener {
@@ -43,8 +45,8 @@ public class CompassCommand extends CustomCommand implements Listener {
 
 	@Override
 	public void _shutdown() {
-		List<Compass> compasses = new CompassService().getAll();
-		compasses.forEach(Compass::stop);
+		Map<UUID, Compass> cache = new CompassService().getCache();
+		cache.values().forEach(Compass::stop);
 	}
 
 	static {
