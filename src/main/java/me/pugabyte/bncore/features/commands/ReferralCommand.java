@@ -10,6 +10,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.models.referral.Referral;
@@ -99,10 +101,14 @@ public class ReferralCommand extends CustomCommand implements Listener {
 						if (!event.getPlayer().isOnline())
 							return;
 
-						send(event.getPlayer(), json().newline()
-								.next("&e&lHey there! &3Could you quickly tell us where you found this server? &eClick here!")
-								.command("/referral")
-								.newline());
+						try {
+							new CooldownService().check(player(), "referralAsk", Time.MINUTE.x(5));
+
+							send(event.getPlayer(), json().newline()
+									.next("&e&lHey there! &3Could you quickly tell us where you found this server? &eClick here!")
+									.command("/referral")
+									.newline());
+						} catch (CooldownException ignore) {}
 					});
 				}
 			}
