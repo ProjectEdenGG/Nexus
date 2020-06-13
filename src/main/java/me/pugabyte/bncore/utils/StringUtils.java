@@ -14,8 +14,10 @@ import okhttp3.Response;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -210,6 +212,20 @@ public class StringUtils {
 
 	private static String uuidUnformat(String uuid) {
 		return uuid.replaceAll("-", "");
+	}
+
+	public static String pretty(ItemStack item) {
+		return item.getAmount() + " " + camelCase(item.getType().name());
+	}
+
+	private static final NumberFormat moneyFormat = NumberFormat.getCurrencyInstance();
+
+	public static String pretty(Number price) {
+		String format = trimFirst(moneyFormat.format(price));
+		if (format.endsWith(".00"))
+			format = left(format, format.length() - 3);
+
+		return format;
 	}
 
 	public enum ProgressBarStyle {

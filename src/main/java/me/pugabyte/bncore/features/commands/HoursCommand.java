@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.hours;
+package me.pugabyte.bncore.features.commands;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;

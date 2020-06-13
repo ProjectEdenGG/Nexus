@@ -17,8 +17,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.features.shops.ShopUtils.pretty;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.pretty;
 
 public abstract class _ShopProvider extends MenuUtils implements InventoryProvider {
 	protected ShopService service = new ShopService();

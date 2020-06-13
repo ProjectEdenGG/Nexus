@@ -35,9 +35,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.shops.ShopUtils.giveItem;
-import static me.pugabyte.bncore.features.shops.ShopUtils.pretty;
 import static me.pugabyte.bncore.features.shops.Shops.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.pretty;
 
 @Data
 @Builder

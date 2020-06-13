@@ -20,12 +20,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static me.pugabyte.bncore.features.shops.ShopUtils.pretty;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.pretty;
 
 public class AddProductProvider extends _ShopProvider {
-	private AtomicReference<ItemStack> item = new AtomicReference<>();
-	private AtomicReference<ItemStack> priceItem = new AtomicReference<>();
+	private final AtomicReference<ItemStack> item = new AtomicReference<>();
+	private final AtomicReference<ItemStack> priceItem = new AtomicReference<>();
 	private double price = 0;
 
 	private ExchangeType exchangeType = ExchangeType.SELL;
