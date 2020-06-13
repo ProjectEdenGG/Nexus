@@ -5,7 +5,6 @@ import com.gmail.nossr50.mcMMO;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.shops.ShopUtils;
 import me.pugabyte.bncore.features.store.Package;
 import me.pugabyte.bncore.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.pretty;
 import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
 @NoArgsConstructor
@@ -85,7 +85,7 @@ public class Leaderboards implements Listener {
 						.limit(3)
 						.collect(Collectors.toMap(
 								Entry::getKey,
-								entry -> "$" + ShopUtils.pretty(entry.getValue()),
+								entry -> "$" + pretty(entry.getValue()),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}

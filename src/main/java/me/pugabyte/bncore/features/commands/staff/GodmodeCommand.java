@@ -54,7 +54,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 		send(player, PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 		if (!isSelf(player))
-			send("Godmode " + (enable ? "&aenabled" : "&cdisabled") + " &3for &e" + player.getName());
+			send(PREFIX + "Godmode " + (enable ? "&aenabled" : "&cdisabled") + " &3for &e" + player.getName());
 	}
 
 	@EventHandler

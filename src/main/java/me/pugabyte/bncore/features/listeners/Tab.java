@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.tab;
+package me.pugabyte.bncore.features.listeners;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;

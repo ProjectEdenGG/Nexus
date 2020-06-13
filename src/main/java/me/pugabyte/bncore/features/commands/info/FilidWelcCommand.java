@@ -30,7 +30,7 @@ public class FilidWelcCommand extends CustomCommand {
 		send(json("&3[+] &eWebsite").url("https://bnn.gg/").hover("&eThe homepage for the server"));
 		send(json("&3[+] &eVoting").command("/vote").hover("&eVote for our server to support us!"));
 		line();
-		runCommand("curiositycake");
+		runCommandAsConsole("curiosity cake " + player().getName());
 
 	}
 
