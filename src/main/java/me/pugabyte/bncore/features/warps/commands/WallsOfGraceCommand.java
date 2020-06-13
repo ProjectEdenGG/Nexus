@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.wallsofgrace.WallsOfGrace;
@@ -20,6 +21,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
+@Aliases("wog")
 @NoArgsConstructor
 public class WallsOfGraceCommand extends CustomCommand implements Listener {
 	private final WallsOfGraceService service = new WallsOfGraceService();

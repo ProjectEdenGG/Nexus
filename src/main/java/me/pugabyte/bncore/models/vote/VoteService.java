@@ -2,6 +2,7 @@ package me.pugabyte.bncore.models.vote;
 
 import com.dieselpoint.norm.Query;
 import lombok.Data;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.MySQLService;
 
 import java.time.LocalDateTime;
@@ -46,6 +47,17 @@ public class VoteService extends MySQLService {
 	public int getPoints(String uuid) {
 		Integer first = database.select("balance").table("vote_point").where("uuid = ?", uuid).first(Integer.class);
 		return first == null ? 0 : first;
+	}
+
+	public void givePoints(String uuid, int amount) {
+		int balance = getPoints(uuid) + amount;
+		if (balance < 0)
+			throw new InvalidInputException("You do not have enough vote points");
+		setPoints(uuid, balance);
+	}
+
+	public void takePoints(String uuid, int amount) {
+		givePoints(uuid, -amount);
 	}
 
 	public void setPoints(String uuid, int balance) {
