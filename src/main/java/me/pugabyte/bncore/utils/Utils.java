@@ -45,6 +45,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -306,7 +307,7 @@ public class Utils {
 		giveItems(player, Collections.singletonList(item));
 	}
 
-	public static void giveItems(Player player, List<ItemStack> items) {
+	public static void giveItems(Player player, Collection<ItemStack> items) {
 		for (ItemStack item : items) {
 			Map<Integer, ItemStack> excess = player.getInventory().addItem(item);
 			if (!excess.isEmpty())
