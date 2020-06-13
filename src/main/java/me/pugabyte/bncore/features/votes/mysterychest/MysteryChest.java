@@ -66,7 +66,7 @@ public class MysteryChest {
 	}
 
 	public static Set<String> getConfigSections() {
-		return getConfig().getKeys(false);
+		return config.getKeys(false);
 	}
 
 	public static int getNextId() {
@@ -90,14 +90,14 @@ public class MysteryChest {
 	}
 
 	public static RewardChestLoot getRewardChestLoot(int id) {
-		return (RewardChestLoot) getConfig().get(id + "");
+		return (RewardChestLoot) config.get(id + "");
 	}
 
 	public static RewardChestLoot[] getAllRewards() {
 		RewardChestLoot[] loot = new RewardChestLoot[getConfigSections().size()];
 		int i = 0;
 		for (String section : getConfigSections()) {
-			RewardChestLoot reward = (RewardChestLoot) getConfig().get(section);
+			RewardChestLoot reward = (RewardChestLoot) config.get(section);
 			reward.setId(Integer.parseInt(section));
 			loot[i] = reward;
 			i++;
