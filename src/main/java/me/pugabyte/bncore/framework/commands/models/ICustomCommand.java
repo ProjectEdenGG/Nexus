@@ -106,7 +106,7 @@ public interface ICustomCommand {
 		return aliases;
 	}
 
-	default String getPermission() {
+	default String _getPermission() {
 		if (this.getClass().getAnnotation(Permission.class) != null)
 			return this.getClass().getAnnotation(Permission.class).value();
 		return null;
@@ -292,7 +292,7 @@ public interface ICustomCommand {
 	}
 
 	default boolean hasPermission(CommandSender sender, Method method) {
-		String permission = getPermission();
+		String permission = _getPermission();
 		if (permission != null && !sender.hasPermission(permission))
 			return false;
 

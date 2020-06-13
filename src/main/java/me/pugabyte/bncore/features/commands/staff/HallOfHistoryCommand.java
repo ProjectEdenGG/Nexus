@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.commands.staff;
 
-import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -106,7 +105,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		boolean current = "current".equalsIgnoreCase(when);
 
 		HallOfHistory history = service.get(player.getUniqueId());
-		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder()
+		ConfirmationMenu.builder()
 				.title("Remove rank from " + player.getName() + "?")
 				.onConfirm((item) -> {
 					for (RankHistory rankHistory : new ArrayList<>(history.getRankHistory())) {
@@ -120,7 +119,8 @@ public class HallOfHistoryCommand extends CustomCommand {
 						return;
 					}
 					send(PREFIX + "Could not find the rank to delete");
-				}).build());
+				})
+				.open(player());
 	}
 
 	private String getRankCommandArgs(RankHistory rankHistory) {

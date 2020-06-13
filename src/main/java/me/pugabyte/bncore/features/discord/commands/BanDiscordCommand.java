@@ -13,7 +13,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 
 import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
-import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
+import static me.pugabyte.bncore.utils.Utils.runCommandAsConsole;
 
 @HandledBy(Bot.RELAY)
 public class BanDiscordCommand extends Command {
@@ -33,7 +33,7 @@ public class BanDiscordCommand extends Command {
 			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
 			if (!Strings.isNullOrEmpty(user.getUserId()))
 				Tasks.sync(() ->
-						runConsoleCommand(trimFirst(event.getMessage().getContentRaw() + " --sender=" + Utils.getPlayer(user.getUuid()).getName())));
+						runCommandAsConsole(trimFirst(event.getMessage().getContentRaw() + " --sender=" + Utils.getPlayer(user.getUuid()).getName())));
 		});
 	}
 

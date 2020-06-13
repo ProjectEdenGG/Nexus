@@ -1,13 +1,29 @@
 package me.pugabyte.bncore.features.warps.commands;
 
+import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
+import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.warps.Warp;
-import me.pugabyte.bncore.models.warps.WarpService;
-import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.models.wallsofgrace.WallsOfGrace;
+import me.pugabyte.bncore.models.wallsofgrace.WallsOfGraceService;
+import me.pugabyte.bncore.utils.MaterialTag;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
-public class WallsOfGraceCommand extends CustomCommand {
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
+@NoArgsConstructor
+public class WallsOfGraceCommand extends CustomCommand implements Listener {
+	private final WallsOfGraceService service = new WallsOfGraceService();
+	private static final String PREFIX = StringUtils.getPrefix("WallsOfGrace");
 
 	public WallsOfGraceCommand(CommandEvent event) {
 		super(event);
@@ -15,10 +31,114 @@ public class WallsOfGraceCommand extends CustomCommand {
 
 	@Path
 	void wog() {
-		Warp wog = new WarpService().get("wallsofgrace", WarpType.NORMAL);
-		wog.teleport(player());
-		send("&3Warping to the &eWalls of Grace");
+		runCommand("warp wallsofgrace");
 	}
 
+	@Path("removesigns")
+	void removeSigns() {
+		WallsOfGrace wallsOfGrace = service.get(event.getPlayer());
+		if (wallsOfGrace.get(1) == null && wallsOfGrace.get(2) == null)
+			error("You have not created any signs");
+
+		ConfirmationMenu.builder()
+				.onConfirm(e -> {
+					wallsOfGrace.get(1).getBlock().setType(Material.AIR);
+					wallsOfGrace.get(2).getBlock().setType(Material.AIR);
+					wallsOfGrace.set(1, null);
+					wallsOfGrace.set(2, null);
+					service.save(wallsOfGrace);
+					send(PREFIX + "Removed signs");
+				})
+				.open(player());
+	}
+
+	@Path("removesign <id>")
+	void removeSign(int id) {
+		WallsOfGrace wallsOfGrace = service.get(event.getPlayer());
+		Location location = wallsOfGrace.get(id);
+		if (location == null)
+			error("You have not created that sign");
+
+		ConfirmationMenu.builder()
+				.onConfirm(e -> {
+					location.getBlock().setType(Material.AIR);
+					wallsOfGrace.set(id, null);
+					service.save(wallsOfGrace);
+					send(PREFIX + "Removed sign #" + id);
+				})
+				.open(player());
+	}
+
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
+		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
+
+		if (!MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
+			if (!event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
+				event.setCancelled(true);
+			return;
+		}
+
+		final WallsOfGraceService service = new WallsOfGraceService();
+		WallsOfGrace wallsOfGrace = service.get(event.getPlayer());
+		Location loc1 = wallsOfGrace.get(1);
+		Location loc2 = wallsOfGrace.get(2);
+
+		if (loc1 != null && loc1.equals(event.getBlock().getLocation())) {
+			wallsOfGrace.set(1, null);
+			send(event.getPlayer(), PREFIX + "Removed sign #1");
+		} else if (loc2 != null && loc2.equals(event.getBlock().getLocation())) {
+			wallsOfGrace.set(2, null);
+			send(event.getPlayer(), PREFIX + "Removed sign #2");
+		} else {
+			event.setCancelled(true);
+			return;
+		}
+
+		service.save(wallsOfGrace);
+	}
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
+		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
+
+		if (MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
+			// Sign must be placed on concrete
+			if (!MaterialTag.CONCRETES.isTagged(event.getBlockAgainst().getType())) {
+				event.setCancelled(true);
+				send(event.getPlayer(), "&cYou must place your sign on concrete");
+				return;
+			}
+		} else {
+			if (!event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
+				event.setCancelled(true);
+			return;
+		}
+
+		final WallsOfGraceService service = new WallsOfGraceService();
+		WallsOfGrace wallsOfGrace = service.get(event.getPlayer());
+		Location loc1 = wallsOfGrace.get(1);
+		Location loc2 = wallsOfGrace.get(2);
+
+		if (loc1 != null && loc2 != null) {
+			event.getPlayer().closeInventory();
+			event.setCancelled(true);
+			event.getPlayer().sendMessage(PREFIX + colorize("You can only place 2 signs. " +
+					"Remove your previous signs with &c/wallsofgrace removesign <id>"));
+			return;
+		}
+
+		if (loc1 == null) {
+			wallsOfGrace.set(1, event.getBlock().getLocation());
+			send(event.getPlayer(), PREFIX + "Placed sign #1");
+		} else {
+			wallsOfGrace.set(2, event.getBlock().getLocation());
+			send(event.getPlayer(), PREFIX + "Placed sign #2");
+		}
+
+		service.save(wallsOfGrace);
+	}
 
 }

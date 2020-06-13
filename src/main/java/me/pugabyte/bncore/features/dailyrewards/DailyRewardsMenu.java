@@ -174,7 +174,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			if (!Strings.isNullOrEmpty(command))
-				Utils.runConsoleCommand(command.replaceAll("%player%", player.getName()));
+				Utils.runCommandAsConsole(command.replaceAll("%player%", player.getName()));
 
 			saveAndReturn(contents, day, initialDay);
 		}

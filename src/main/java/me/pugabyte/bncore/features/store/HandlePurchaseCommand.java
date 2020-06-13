@@ -56,7 +56,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 				packageType.getExpirationCommands().stream()
 						.map(StringUtils::trimFirst)
 						.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(uuid).getName()))
-						.forEach(Utils::runConsoleCommand);
+						.forEach(Utils::runCommandAsConsole);
 
 				service.complete(task);
 			});
@@ -121,7 +121,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 
 			packageType.getCommands().stream()
 					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))
-					.forEach(Utils::runConsoleCommand);
+					.forEach(Utils::runCommandAsConsole);
 
 			if (packageType.getExpirationDays() > 0)
 				new TaskService().save(new Task("package-expire", new HashMap<String, Object>() {{

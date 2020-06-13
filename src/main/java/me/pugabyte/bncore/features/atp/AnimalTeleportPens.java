@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.atp;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -130,9 +130,11 @@ public class AnimalTeleportPens {
 			player.sendMessage(PREFIX + "&cYou do not have enough money to use the ATP");
 			return;
 		}
-		MenuUtils.confirmMenu(player, MenuUtils.ConfirmationMenu.builder().title(
-				colorize("&3Teleport &e" + entities.size() + " &3entities for &e$" + price + "&3?")).onConfirm((e2) ->
-						Tasks.wait(4, () -> teleportAll(entities, toLoc, price))).build());
+
+		ConfirmationMenu.builder()
+				.title(colorize("&3Teleport &e" + entities.size() + " &3entities for &e$" + price + "&3?"))
+				.onConfirm((e2) -> Tasks.wait(4, () -> teleportAll(entities, toLoc, price)))
+				.open(player);
 	}
 
 	public void teleportAll(List<Entity> entities, Location toLoc, int price) {
