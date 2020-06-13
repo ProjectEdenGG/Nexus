@@ -328,7 +328,7 @@ public class Utils {
 			sender.setOp(false);
 	}
 
-	public static void runConsoleCommand(String command) {
+	public static void runCommandAsConsole(String command) {
 		runCommand(Bukkit.getConsoleSender(), command);
 	}
 

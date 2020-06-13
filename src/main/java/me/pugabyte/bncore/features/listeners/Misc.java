@@ -247,12 +247,12 @@ public class Misc implements Listener {
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
 			Tasks.wait(20, () -> {
 				player.sendMessage("Removing pets, disguises and ptime changes");
-				Utils.runConsoleCommand("undisguiseplayer " + player.getName());
-				Utils.runConsoleCommand("petadmin remove " + player.getName());
-				Utils.runConsoleCommand("mpet remove " + player.getName());
+				Utils.runCommandAsConsole("undisguiseplayer " + player.getName());
+				Utils.runCommandAsConsole("petadmin remove " + player.getName());
+				Utils.runCommandAsConsole("mpet remove " + player.getName());
 				Utils.runCommandAsOp(player, "jparticles stopall");
 				Utils.runCommandAsOp(player, "powder cancel");
-				Utils.runConsoleCommand("speed walk 1 " + player.getName());
+				Utils.runCommandAsConsole("speed walk 1 " + player.getName());
 				player.resetPlayerTime();
 			});
 

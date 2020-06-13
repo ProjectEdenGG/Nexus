@@ -72,14 +72,14 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 		contents.set(2, 4, ClickableItem.from(nameItem(Material.COMPASS, "&eTeleport"), e -> home.teleport(player)));
 
 		contents.set(2, 6, ClickableItem.from(nameItem(Material.FILLED_MAP, "&eSet to current location"),
-				e -> ConfirmationMenu.confirmMenu(player, ConfirmationMenu.builder()
+				e -> ConfirmationMenu.builder()
 						.onCancel(e2 -> refresh())
 						.onConfirm(e2 -> {
 							home.setLocation(player.getLocation());
 							service.save(homeOwner);
 							refresh();
 						})
-						.build())));
+						.open(player)));
 
 		ItemBuilder respawn;
 		if (home.isRespawn())
@@ -93,14 +93,14 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 		}));
 
 		contents.set(4, 4, ClickableItem.from(nameItem(Material.LAVA_BUCKET, "&eDelete"),
-				e -> ConfirmationMenu.confirmMenu(player, ConfirmationMenu.builder()
+				e -> ConfirmationMenu.builder()
 						.onCancel(e2 -> refresh())
 						.onConfirm(e2 -> {
 							homeOwner.delete(home);
 							service.save(homeOwner);
 							HomesMenu.edit(homeOwner);
 						})
-						.build())));
+						.open(player)));
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.commands;
 
 import lombok.NonNull;
-import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -70,12 +69,12 @@ public class AssetCompetitionCommand extends CustomCommand {
 	@Path("clear")
 	@Permission("group.seniorstaff")
 	void clear() {
-		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder()
+		ConfirmationMenu.builder()
 				.onConfirm(e -> {
 					service.deleteAll();
 					send(PREFIX + "All submissions cleared");
 				})
-				.build());
+				.open(player());
 	}
 
 }

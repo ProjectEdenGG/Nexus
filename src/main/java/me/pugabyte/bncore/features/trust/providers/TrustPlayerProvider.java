@@ -66,15 +66,16 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 		}
 
 		contents.set(0, 8, ClickableItem.from(new ItemBuilder(Material.TNT).name("&cUntrust from all").build(), e ->
-				MenuUtils.confirmMenu(player, ConfirmationMenu.builder()
+				ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
 							for (Type type : Type.values()) {
 								trust.get(type).remove(trusted.getUniqueId());
 								service.save(trust);
 								TrustProvider.open(player);
 							}
-						}).onCancel(e2 -> refresh())
-						.build())));
+						})
+						.onCancel(e2 -> refresh())
+						.open(player)));
 	}
 
 	@Override

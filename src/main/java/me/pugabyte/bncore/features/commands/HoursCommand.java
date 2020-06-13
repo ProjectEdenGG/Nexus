@@ -17,6 +17,7 @@ import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -25,7 +26,6 @@ import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.timespanFormat;
-import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
 @Aliases({"playtime", "days", "minutes", "seconds"})
 public class HoursCommand extends CustomCommand {
@@ -112,7 +112,7 @@ public class HoursCommand extends CustomCommand {
 					if (Rank.getHighestRank(player) == Rank.GUEST) {
 						if (hours.getTotal() > DAY) {
 							Tasks.sync(() -> {
-								runConsoleCommand("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
+								Utils.runCommandAsConsole("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
 								Koda.say("Congrats on Member rank, " + player.getName() + "!");
 								Jingle.RANKUP.play(player);
 								player.sendMessage("");

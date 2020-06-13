@@ -7,7 +7,7 @@ import me.pugabyte.bncore.features.discord.Bot.HandledBy;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.features.discord.DiscordId.Role;
 
-import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
+import static me.pugabyte.bncore.utils.Utils.runCommandAsConsole;
 
 @HandledBy(Bot.RELAY)
 public class ClearChatDiscordCommand extends Command {
@@ -23,7 +23,7 @@ public class ClearChatDiscordCommand extends Command {
 		if (!event.getChannel().getId().equals(Channel.STAFF_BRIDGE.getId()))
 			return;
 
-		runConsoleCommand("clearchat");
+		runCommandAsConsole("clearchat");
 	}
 
 

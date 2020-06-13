@@ -222,7 +222,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void runCommandAsConsole(String command) {
-		Utils.runConsoleCommand(command);
+		Utils.runCommandAsConsole(command);
 	}
 
 	protected void checkPermission(String permission) {
