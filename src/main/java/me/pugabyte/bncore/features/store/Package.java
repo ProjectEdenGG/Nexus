@@ -55,15 +55,6 @@ public enum Package {
 	@ExpirationDays(30)
 	CUSTOM_JOIN_QUIT_MESSAGES_ONE_MONTH,
 
-	@Id("2982264")
-	@Permission("durabilitywarning.use")
-	DURABILITY_WARNING_LIFETIME,
-
-	@Id("2982265")
-	@Permission("durabilitywarning.use")
-	@ExpirationDays(30)
-	DURABILITY_WARNING_ONE_MONTH,
-
 	@Id("3239567")
 	@Permission("emoticons.use")
 	EMOTES,
