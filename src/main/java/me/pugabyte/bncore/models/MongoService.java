@@ -3,6 +3,7 @@ package me.pugabyte.bncore.models;
 import dev.morphia.Datastore;
 import dev.morphia.query.UpdateException;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.persistence.MongoDBDatabase;
 import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
 import org.apache.commons.lang.Validate;
@@ -46,14 +47,18 @@ public abstract class MongoService extends DatabaseService {
 	protected <T extends PlayerOwnedObject> T getNoCache(UUID uuid) {
 		Object object = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
 		if (object == null)
-			try {
-				Constructor<? extends PlayerOwnedObject> constructor = getPlayerClass().getDeclaredConstructor(UUID.class);
-				constructor.setAccessible(true);
-				object = constructor.newInstance(uuid);
-			} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException ex) {
-				BNCore.log("Service not implemented correctly");
-			}
+			object = createPlayerObject(uuid);
 		return (T) object;
+	}
+
+	protected Object createPlayerObject(UUID uuid) {
+		try {
+			Constructor<? extends PlayerOwnedObject> constructor = getPlayerClass().getDeclaredConstructor(UUID.class);
+			constructor.setAccessible(true);
+			return constructor.newInstance(uuid);
+		} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException ex) {
+			throw new BNException(this.getClass().getSimpleName() + " not implemented correctly");
+		}
 	}
 
 	@Override
