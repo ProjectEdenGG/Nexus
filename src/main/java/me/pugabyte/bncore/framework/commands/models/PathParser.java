@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -49,6 +50,7 @@ class PathParser {
 		private List<String> pathArgs;
 		private List<String> realArgs;
 		private List<TabCompleteArg> args = new ArrayList<>();
+		private Class<?> finalType;
 		private Method finalTabCompleter;
 		private Object finalContextArg;
 
@@ -74,6 +76,7 @@ class PathParser {
 					arg.setParamIndex(paramIndex++);
 					Parameter parameter = method.getParameters()[arg.getParamIndex()];
 					arg.setTabCompleter(parameter.getType());
+					arg.setList(Collection.class.isAssignableFrom(parameter.getType()));
 					Arg annotation = parameter.getAnnotation(Arg.class);
 					if (annotation != null) {
 						if (List.class.isAssignableFrom(parameter.getType()) && annotation.type() != void.class)
@@ -86,16 +89,19 @@ class PathParser {
 
 					if (finalTabCompleter == null) {
 						if (arg.getPathArg() != null && arg.getPathArg().contains("...")) {
+							finalType = arg.getType();
 							finalTabCompleter = arg.getTabCompleter();
 							finalContextArg = arg.getContextArg();
 						}
 					}
 				}
 
-				if (finalTabCompleter != null) {
+				if (finalType != null)
+					arg.setType(finalType);
+				if (finalTabCompleter != null)
 					arg.setTabCompleter(finalTabCompleter);
+				if (finalContextArg != null)
 					arg.setContextArg(finalContextArg);
-				}
 
 				args.add(arg);
 				++index;
@@ -135,6 +141,7 @@ class PathParser {
 		private Integer paramIndex;
 
 		private Class<?> type;
+		private boolean isList;
 		private Method tabCompleter;
 		private Object contextArg;
 
@@ -181,21 +188,49 @@ class PathParser {
 		List<String> tabComplete() {
 			if (isLiteral())
 				return getSplitPathArg(realArg);
-			else if (tabCompleter != null) {
+
+			String realArg = this.realArg;
+			List<String> results = new ArrayList<>();
+
+			String splitter = (realArg.contains(",") ? "," : " ");
+			if (isList) {
+				if (realArg.lastIndexOf(splitter) == realArg.length() - 1)
+					realArg = "";
+				else {
+					String[] split = realArg.split(splitter);
+					realArg = split[split.length - 1];
+				}
+			}
+
+			if (tabCompleter != null) {
 				CustomCommand tabCompleteCommand = command;
 				if (!(tabCompleter.getDeclaringClass().equals(command.getClass()) || Modifier.isAbstract(tabCompleter.getDeclaringClass().getModifiers())))
 					tabCompleteCommand = command.getNewCommand(command.getEvent(), tabCompleter.getDeclaringClass());
 
-				if (tabCompleter.getParameterCount() == 1)
-					return (List<String>) tabCompleter.invoke(tabCompleteCommand, realArg.toLowerCase());
-				else if (tabCompleter.getParameterCount() == 2)
-					return (List<String>) tabCompleter.invoke(tabCompleteCommand, realArg.toLowerCase(), contextArg);
+				if (tabCompleter.getParameterCount() == 1) {
+					results.addAll((List<String>) tabCompleter.invoke(tabCompleteCommand, realArg.toLowerCase()));
+				} else if (tabCompleter.getParameterCount() == 2)
+					results.addAll((List<String>) tabCompleter.invoke(tabCompleteCommand, realArg.toLowerCase(), contextArg));
 				else
 					throw new BNException("Unknown converter parameters in " + tabCompleter.getName());
-			} else if (this.type != null && this.type.isEnum())
-				return command.tabCompleteEnum((Class<? extends Enum<?>>) type, realArg.toLowerCase());
+			} else if (type != null && type.isEnum())
+				results.addAll(command.tabCompleteEnum((Class<? extends Enum<?>>) type, realArg.toLowerCase()));
 
-			return new ArrayList<>();
+			if (isList) {
+				List<String> realArgs = new ArrayList<>(Arrays.asList(this.realArg.split(splitter)));
+				if (!this.realArg.endsWith(splitter))
+					realArgs.remove(realArgs.size() - 1);
+				String realArgBeginning = String.join(splitter, realArgs);
+				if (realArgs.size() > 0)
+					realArgBeginning += splitter;
+
+				ArrayList<String> strings = new ArrayList<>(results);
+				results.clear();
+				for (String result : strings)
+					results.add(realArgBeginning + result);
+			}
+
+			return results;
 		}
 
 		void setTabCompleter(Method tabCompleter) {
