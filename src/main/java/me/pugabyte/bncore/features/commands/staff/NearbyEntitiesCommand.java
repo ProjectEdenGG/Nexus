@@ -67,4 +67,14 @@ public class NearbyEntitiesCommand extends CustomCommand {
 				send(json("&e" + player.getName() + " &7- " + count).command("/tp " + player.getName())));
 	}
 
+	@Path("villagers")
+	void report() {
+		sort(new HashMap<Player, Integer>() {{
+			for (Player player : Bukkit.getOnlinePlayers())
+				put(player, (int) player.getWorld().getNearbyEntities(player.getLocation(), 200, 200, 200).stream()
+						.filter(entity -> entity.getType() == EntityType.VILLAGER).count());
+		}}).forEach((player, count) ->
+				send(json("&e" + player.getName() + " &7- " + count).command("/tp " + player.getName())));
+	}
+
 }
