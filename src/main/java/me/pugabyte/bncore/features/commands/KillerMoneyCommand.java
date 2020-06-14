@@ -122,10 +122,14 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 	}
 
 	@Description("Toggle KillerMoney's chat notification")
-	@Path("toggle")
-	void mute() {
-		km.setMuted(true);
+	@Path("[enable]")
+	void mute(Boolean enable) {
+		if (enable == null)
+			enable = !km.isMuted();
+
+		km.setMuted(enable);
 		service.save(km);
+
 		send(PREFIX + "Notifications have been &e" + ((km.isMuted()) ? "muted" : "unmuted"));
 	}
 
