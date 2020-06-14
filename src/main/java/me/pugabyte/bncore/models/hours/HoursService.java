@@ -46,6 +46,15 @@ public class HoursService extends MongoService {
 		return cache;
 	}
 
+	protected <T extends PlayerOwnedObject> T getNoCache(UUID uuid) {
+		Object object = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
+		if (object == null) {
+			object = createPlayerObject(uuid);
+			save(object);
+		}
+		return (T) object;
+	}
+
 	private static final MongoCollection<Document> collection = database.getDatabase().getCollection("hours");
 
 	@Override
