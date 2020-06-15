@@ -186,7 +186,7 @@ public class JsonBuilder {
 	}
 
 	public String toString() {
-		return BaseComponent.toPlainText(new ComponentBuilder(result).create());
+		return BaseComponent.toPlainText(new ComponentBuilder(new ComponentBuilder(result).append(builder.create(), FormatRetention.NONE)).create());
 	}
 
 }

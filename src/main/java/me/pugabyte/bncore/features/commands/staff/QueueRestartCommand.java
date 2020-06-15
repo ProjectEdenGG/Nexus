@@ -25,7 +25,7 @@ public class QueueRestartCommand extends CustomCommand {
 				BNCore.log("Restart is queued");
 				Tasks.wait(30 * 20, () -> {
 					if (restart && AFK.getActivePlayers() == 0)
-						Utils.runConsoleCommand("inject plugins/wget/restart.sh");
+						Utils.runCommandAsConsole("inject plugins/wget/restart.sh");
 				});
 			}
 		});

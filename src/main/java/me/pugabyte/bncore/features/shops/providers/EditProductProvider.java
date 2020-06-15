@@ -28,7 +28,7 @@ public class EditProductProvider extends _ShopProvider {
 		contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.CHEST).name("&6Edit Stock").build(), e ->
 				new StockProvider(this, product).open(player)));
 		contents.set(0, 6, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->
-				confirmMenu(player, ConfirmationMenu.builder()
+				ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
 							Shop shop = service.get(player);
 							shop.getProducts().remove(product);
@@ -36,7 +36,7 @@ public class EditProductProvider extends _ShopProvider {
 							previousMenu.open(player);
 						})
 						.onCancel(e2 -> open(player))
-						.build())));
+						.open(player)));
 
 	}
 

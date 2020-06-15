@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.staff;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
@@ -16,6 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 @NoArgsConstructor
 @Permission("group.staff")
 public class WorldGuardEditCommand extends CustomCommand implements Listener {
+	@Getter
 	public static String permission = "worldguard.region.bypass.*";
 
 	public WorldGuardEditCommand(@NonNull CommandEvent event) {

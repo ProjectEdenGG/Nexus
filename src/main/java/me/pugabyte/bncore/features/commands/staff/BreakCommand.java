@@ -21,7 +21,7 @@ public class BreakCommand extends CustomCommand {
 	@Path
 	void fuck() {
 		if (player().hasPermission("group.staff")) {
-			Block block = player().getTargetBlockExact(20);
+			Block block = player().getTargetBlockExact(500);
 			if (block == null || block.getType() == Material.AIR)
 				error("No block found");
 

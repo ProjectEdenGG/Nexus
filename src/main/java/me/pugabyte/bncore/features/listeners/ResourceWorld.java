@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
@@ -138,6 +139,21 @@ public class ResourceWorld implements Listener {
 		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
 			event.setCancelled(true);
 			player.sendMessage(colorize("&cYou can't open your enderchest while in the resource world, due to restrictions in place to keep the /market balanced"));
+		}
+	}
+
+	@EventHandler
+	public void onCommand(PlayerCommandPreprocessEvent event) {
+		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
+			switch (event.getMessage().split(" ")[0].replace("playervaults:", "")) {
+				case "/pv":
+				case "/vc":
+				case "/chest":
+				case "/vault":
+				case "/playervaults":
+					event.setCancelled(true);
+					event.getPlayer().sendMessage(colorize("&cYou cannot use vaults while in the resource world"));
+			}
 		}
 	}
 

@@ -135,15 +135,6 @@ public abstract class MenuUtils {
 				.open(player);
 	}
 
-	public static void confirmMenu(Player player, ConfirmationMenu provider) {
-		SmartInventory inv = SmartInventory.builder()
-				.title(colorize(provider.getTitle()))
-				.provider(provider)
-				.size(3, 9)
-				.build();
-		inv.open(player);
-	}
-
 	public static void colorSelectMenu(Player player, Material type, Consumer<ItemClickData> onClick) {
 		SmartInventory.builder()
 				.size(3, 9)
@@ -152,7 +143,7 @@ public abstract class MenuUtils {
 				.build().open(player);
 	}
 
-	@Builder
+	@Builder(buildMethodName = "_build")
 	@AllArgsConstructor
 	public static class ConfirmationMenu extends MenuUtils implements InventoryProvider {
 		@Getter
@@ -168,6 +159,25 @@ public abstract class MenuUtils {
 		private Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
 		@NonNull
 		private Consumer<ItemClickData> onConfirm;
+
+		public static class ConfirmationMenuBuilder {
+
+			public void open(Player player) {
+				ConfirmationMenu build = _build();
+				SmartInventory.builder()
+						.title(colorize(build.getTitle()))
+						.provider(build)
+						.size(3, 9)
+						.build()
+						.open(player);
+			}
+
+			@Deprecated
+			public ConfirmationMenu build() {
+				throw new UnsupportedOperationException("Use open(player)");
+			}
+
+		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {

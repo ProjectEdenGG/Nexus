@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.DoubleSlash;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.utils.Time.Timer;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.objenesis.ObjenesisStd;
@@ -15,12 +16,14 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static me.pugabyte.bncore.utils.StringUtils.listLast;
+import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -81,11 +84,16 @@ public class Commands {
 			}
 
 			try {
-				if (customCommand instanceof Listener)
-					if (Stream.of(customCommand.getClass().getConstructors()).noneMatch((c) -> c.getParameterCount() == 0))
+				boolean hasNoArgsConstructor = Stream.of(customCommand.getClass().getConstructors()).anyMatch((c) -> c.getParameterCount() == 0);
+				if (customCommand instanceof Listener) {
+					if (!hasNoArgsConstructor)
 						BNCore.warn("Cannot register listener on command " + customCommand.getClass().getSimpleName() + ", needs @NoArgsConstructor");
 					else
 						BNCore.registerListener((Listener) customCommand.getClass().newInstance());
+				} else
+					if (new ArrayList<>(getAllMethods(customCommand.getClass(), withAnnotation(EventHandler.class))).size() > 0)
+						BNCore.warn("Found @EventHandlers in " + customCommand.getClass().getSimpleName() + " which does not implement Listener"
+								+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -97,7 +105,7 @@ public class Commands {
 			try {
 				if (!Modifier.isAbstract(command.getModifiers()))
 					unregister(new ObjenesisStd().newInstance(command));
-			} catch (Exception ex) {
+			} catch (Throwable ex) {
 				BNCore.log("Error while unregistering command " + command.getSimpleName());
 				ex.printStackTrace();
 			}
@@ -109,6 +117,11 @@ public class Commands {
 				mapUtils.unregister(customCommand.getName());
 				commands.remove(alias);
 			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		try {
+			customCommand._shutdown();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
