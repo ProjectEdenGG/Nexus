@@ -24,6 +24,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 @NoArgsConstructor
 @Permission("automaticinventory.autotrash")
@@ -43,7 +44,10 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 	@Path
 	void run() {
 		Inventory inventory = Bukkit.createInventory(null, 6 * 9, TITLE);
-		inventory.setContents(autoTrash.getMaterials().stream().map(ItemStack::new).toArray(ItemStack[]::new));
+		inventory.setContents(autoTrash.getMaterials().stream()
+				.map(ItemStack::new)
+				.sorted(Comparator.comparing(ItemStack::getType))
+				.toArray(ItemStack[]::new));
 		player().openInventory(inventory);
 	}
 
