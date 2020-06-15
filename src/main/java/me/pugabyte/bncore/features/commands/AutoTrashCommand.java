@@ -7,9 +7,11 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.autotrash.AutoTrash;
+import me.pugabyte.bncore.models.autotrash.AutoTrash.Behavior;
 import me.pugabyte.bncore.models.autotrash.AutoTrashService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,6 +27,7 @@ import java.util.Arrays;
 @Permission("automaticinventory.autotrash")
 public class AutoTrashCommand extends CustomCommand implements Listener {
 	private static final String PERMISSION = "automaticinventory.autotrash";
+	private static final String TITLE = StringUtils.colorize("&eAuto Trash");
 
 	private final AutoTrashService service = new AutoTrashService();
 	private AutoTrash autoTrash;
@@ -37,7 +40,7 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 
 	@Path
 	void run() {
-		Inventory inventory = Bukkit.createInventory(null, 6 * 9, StringUtils.colorize("&eAuto Trash"));
+		Inventory inventory = Bukkit.createInventory(null, 6 * 9, TITLE);
 		inventory.setContents(autoTrash.getMaterials().stream().map(ItemStack::new).toArray(ItemStack[]::new));
 		player().openInventory(inventory);
 	}
@@ -49,10 +52,22 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 		send(PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
+	@Path("behavior [behavior]")
+	void toggle(Behavior behavior) {
+		if (behavior == null) {
+			send("Current behavior is " + camelCase(autoTrash.getBehavior()));
+			return;
+		}
+
+		autoTrash.setBehavior(behavior);
+		service.save(autoTrash);
+		send(PREFIX + "Behavior set to " + camelCase(behavior));
+	}
+
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
 		if (event.getInventory().getHolder() != null) return;
-		if (!event.getView().getTitle().equals(StringUtils.colorize("&eAuto Trash"))) return;
+		if (!event.getView().getTitle().equals(TITLE)) return;
 
 		Player player = (Player) event.getPlayer();
 		if (!player.hasPermission(PERMISSION)) return;
@@ -76,14 +91,18 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
 		if (!player.hasPermission(PERMISSION)) return;
+		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player))) return;
 
 		AutoTrashService service = new AutoTrashService();
 		AutoTrash autoTrash = service.get(player);
 
 		if (!autoTrash.isEnabled()) return;
 
-		if (autoTrash.getMaterials().contains(event.getItem().getItemStack().getType()))
+		if (autoTrash.getMaterials().contains(event.getItem().getItemStack().getType())) {
 			event.setCancelled(true);
+			if (autoTrash.getBehavior() == Behavior.TRASH)
+				event.getItem().remove();
+		}
 	}
 
 }

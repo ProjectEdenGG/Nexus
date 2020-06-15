@@ -37,6 +37,11 @@ public abstract class BookBuilder<T extends BookBuilder<?>> {
 		return self();
 	}
 
+	public ItemStack getBook() {
+		book.setItemMeta(meta);
+		return book;
+	}
+
 	public void open(Player player) {
 		book.setItemMeta(meta);
 		player.openBook(book);
