@@ -12,9 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.paste;
-import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+import static me.pugabyte.bncore.utils.StringUtils.*;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Aliases({"nbt", "itemdb"})
@@ -85,6 +83,14 @@ public class ItemInfoCommand extends CustomCommand {
 			nbtString = nbtString.replaceAll("\\\\", "");
 		}
 		return nbtString;
+	}
+
+	@Path("notItems")
+	void notItems() {
+		for (Material material : Material.values()) {
+			if (!material.isLegacy() && !material.isItem())
+				send(material.name());
+		}
 	}
 
 }
