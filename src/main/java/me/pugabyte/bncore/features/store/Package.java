@@ -35,6 +35,7 @@ public enum Package {
 	@Permission("automaticinventory.quickdeposit")
 	@Permission("automaticinventory.depositall")
 	@Permission("automaticinventory.autocraft")
+	@Permission("automaticinventory.autotrash")
 	AUTO_SORT_LIFETIME,
 
 	@Id("2729981")
@@ -43,6 +44,7 @@ public enum Package {
 	@Permission("automaticinventory.quickdeposit")
 	@Permission("automaticinventory.depositall")
 	@Permission("automaticinventory.autocraft")
+	@Permission("automaticinventory.autotrash")
 	@ExpirationDays(30)
 	AUTO_SORT_ONE_MONTH,
 
