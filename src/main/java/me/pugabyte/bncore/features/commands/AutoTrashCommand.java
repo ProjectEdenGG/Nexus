@@ -9,6 +9,8 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.autotrash.AutoTrash;
 import me.pugabyte.bncore.models.autotrash.AutoTrash.Behavior;
 import me.pugabyte.bncore.models.autotrash.AutoTrashService;
+import me.pugabyte.bncore.models.dumpster.Dumpster;
+import me.pugabyte.bncore.models.dumpster.DumpsterService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -100,8 +102,15 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 
 		if (autoTrash.getMaterials().contains(event.getItem().getItemStack().getType())) {
 			event.setCancelled(true);
-			if (autoTrash.getBehavior() == Behavior.TRASH)
+			if (autoTrash.getBehavior() == Behavior.TRASH) {
+				DumpsterService dumpsterService = new DumpsterService();
+				Dumpster dumpster = dumpsterService.get();
+
+				dumpster.add(event.getItem().getItemStack());
+				dumpsterService.save(dumpster);
+
 				event.getItem().remove();
+			}
 		}
 	}
 
