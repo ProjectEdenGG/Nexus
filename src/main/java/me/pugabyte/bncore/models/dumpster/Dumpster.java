@@ -43,6 +43,7 @@ public class Dumpster extends PlayerOwnedObject {
 	}
 
 	public void add(Collection<? extends ItemStack> itemStacks) {
+		if (true) return;
 		itemStacks.stream()
 				.filter(itemStack -> !MaterialTag.UNOBTAINABLE.isTagged(itemStack.getType()))
 				.forEach(newItemStack -> {

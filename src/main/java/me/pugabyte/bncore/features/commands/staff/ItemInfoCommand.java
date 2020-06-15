@@ -8,13 +8,16 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
-import static me.pugabyte.bncore.utils.StringUtils.*;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.paste;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
-@Aliases("nbt")
+@Aliases({"nbt", "itemdb"})
 @Permission("group.staff")
 public class ItemInfoCommand extends CustomCommand {
 
@@ -28,28 +31,43 @@ public class ItemInfoCommand extends CustomCommand {
 
 		if (material != null)
 			tool = new ItemStack(material);
-		else if (Utils.isNullOrAir(tool))
+		else if (isNullOrAir(tool))
 			error("Must be holding an item");
 
 		material = tool.getType();
-		int amount = tool.getAmount();
+
+		send("");
+		send("Material: " + material + " (" + material.ordinal() + ")");
+
+		if (!isNullOrAir(tool)) {
+			final String nbtString = getNBTString(tool);
+
+			if (nbtString != null && !"{}".equals(nbtString)) {
+				int length = nbtString.length();
+				if (length > 256) {
+					Tasks.async(() -> {
+						String url = paste(stripColor(nbtString));
+						send(json("&eNBT: &l[Click to Open]").url(url).hover(url));
+					});
+				} else {
+					send("NBT: " + colorize(nbtString));
+					send(json("&e&l[Click to Copy]").suggest(nbtString));
+				}
+			}
+		}
+	}
+
+	@Nullable
+	private String getNBTString(ItemStack itemStack) {
+		NBTItem nbtItem = new NBTItem(itemStack);
 		String nbtString = null;
 
-		NBTItem nbtItem = new NBTItem(tool);
 		if (nbtItem.hasNBTData()) {
 			nbtString = nbtItem.asNBTString();
 			nbtString = StringUtils.stripColor(nbtString);
 		}
 
-		String spawnCommand = "/i " + material.name() + " " + amount + (nbtString == null ? "" : " " + nbtString);
-
 		if (nbtString != null) {
-			// clean up of garbage
-			nbtString = nbtString.replaceAll("\"\"", "");
-			nbtString = nbtString.replaceAll("\\{\"\"text\"\":\"\"\\n\"\"},", "");
-			nbtString = nbtString.replaceAll("\\n", "");
-			nbtString = nbtString.replaceAll("\\\\", "");
-
 			// highlight keywords
 			nbtString = nbtString.replaceAll("run_command", "&crun_command&f");
 			nbtString = nbtString.replaceAll("suggest_command", "&csuggest_command&f");
@@ -59,23 +77,14 @@ public class ItemInfoCommand extends CustomCommand {
 
 			nbtString = nbtString.replaceAll("clickEvent", "&cclickEvent&f");
 			nbtString = nbtString.replaceAll("hoverEvent", "&choverEvent&f");
-		}
 
-		send("");
-		send("Material: " + material + " (" + material.ordinal() + ")");
-		if (nbtString != null) {
-			int length = nbtString.length();
-			if (length > 256) {
-				String finalNbtString = nbtString;
-				Tasks.async(() -> {
-					String url = paste(stripColor(finalNbtString));
-					send(json("&eNBT: &l[Click to Open]").url(url).hover(url));
-				});
-			} else {
-				send("NBT: " + colorize(nbtString));
-				send(json("&e&l[Click to Copy]").suggest(spawnCommand));
-			}
+			// clean up of garbage
+			nbtString = nbtString.replaceAll("\"\"", "");
+			nbtString = nbtString.replaceAll("\\{\"\"text\"\":\"\"\\n\"\"},", "");
+			nbtString = nbtString.replaceAll("\\n", "");
+			nbtString = nbtString.replaceAll("\\\\", "");
 		}
+		return nbtString;
 	}
 
 }
