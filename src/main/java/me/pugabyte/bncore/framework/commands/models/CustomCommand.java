@@ -435,6 +435,9 @@ public abstract class CustomCommand implements ICustomCommand {
 
 	@ConverterFor(Material.class)
 	Material convertToMaterial(String value) {
+		if (isInt(value))
+			return Material.values()[Integer.parseInt(value)];
+
 		Material material = Material.matchMaterial(value);
 		if (material == null)
 			throw new InvalidInputException("Material from " + value + " not found");
