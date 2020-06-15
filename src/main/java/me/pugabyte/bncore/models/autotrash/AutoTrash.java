@@ -29,6 +29,12 @@ public class AutoTrash extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled = true;
+	private Behavior behavior = Behavior.TRASH;
 	private Set<Material> materials = new HashSet<>();
+
+	public enum Behavior {
+		NO_PICKUP,
+		TRASH
+	}
 
 }

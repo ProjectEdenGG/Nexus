@@ -63,7 +63,7 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Utils {
 
-	public static void pug(String message) {
+	public static void puga(String message) {
 		Bukkit.getPlayer("Pugabyte").sendMessage(colorize(message));
 	}
 
@@ -73,6 +73,18 @@ public class Utils {
 
 	public static void blast(String message) {
 		Bukkit.getPlayer("Blast").sendMessage(colorize(message));
+	}
+
+	public static Player puga() {
+		return Bukkit.getPlayer("Pugabyte");
+	}
+
+	public static Player wakka() {
+		return Bukkit.getPlayer("WakkaFlocka");
+	}
+
+	public static Player blast() {
+		return Bukkit.getPlayer("Blast");
 	}
 
 	public static void callEvent(Event event) {
