@@ -89,12 +89,12 @@ public class HoneyPots implements Listener {
 				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + getHP(region) + "`", StaticChannel.STAFF);
 			}
 			if (triggered > 9) {
-				Utils.runConsoleCommand("sudo " + player.getName() + " ticket [HoneyPot] Grief trap triggered! " +
+				Utils.runCommandAsConsole("sudo " + player.getName() + " ticket [HoneyPot] Grief trap triggered! " +
 						"Please make sure the area has been fully repaired, and take the blocks from their inventory. " +
 						"(HP: " + getHP(region) + ")");
 				fixHP(region, player.getWorld());
 				triggered = 0;
-				Utils.runConsoleCommand("ban " + player.getName() + " 10h You have been automatically banend " +
+				Utils.runCommandAsConsole("ban " + player.getName() + " 10h You have been automatically banend " +
 						"by a grief trap. Griefing is not allowed! (HP: " + getHP(region) + ")");
 			}
 			setting.setValue(triggered + "");

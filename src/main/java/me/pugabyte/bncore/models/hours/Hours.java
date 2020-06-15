@@ -83,7 +83,7 @@ public class Hours extends PlayerOwnedObject {
 	}
 
 	public int getDaily(@NotNull LocalDate date) {
-		return times.get(date);
+		return times.getOrDefault(date, 0);
 	}
 
 }

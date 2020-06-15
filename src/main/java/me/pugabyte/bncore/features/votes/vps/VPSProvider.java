@@ -54,7 +54,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 				if (item.getMoney() > 0)
 					BNCore.getEcon().depositPlayer(player, item.getMoney());
 				if (item.getConsoleCommand() != null && item.getConsoleCommand().length() > 0)
-					Utils.runConsoleCommand(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
+					Utils.runCommandAsConsole(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getCommand() != null && item.getCommand().length() > 0)
 					Utils.runCommand(player, item.getCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getOnPurchase() != null)

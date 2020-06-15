@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.utils;
 
+import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
 import lombok.Data;
@@ -45,6 +46,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,7 +59,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Utils {
@@ -306,7 +307,7 @@ public class Utils {
 		giveItems(player, Collections.singletonList(item));
 	}
 
-	public static void giveItems(Player player, List<ItemStack> items) {
+	public static void giveItems(Player player, Collection<ItemStack> items) {
 		for (ItemStack item : items) {
 			Map<Integer, ItemStack> excess = player.getInventory().addItem(item);
 			if (!excess.isEmpty())
@@ -328,7 +329,7 @@ public class Utils {
 			sender.setOp(false);
 	}
 
-	public static void runConsoleCommand(String command) {
+	public static void runCommandAsConsole(String command) {
 		runCommand(Bukkit.getConsoleSender(), command);
 	}
 
@@ -360,6 +361,10 @@ public class Utils {
 				}
 			}
 		}
+	}
+
+	public static boolean isNullOrEmpty(Collection<?> collection) {
+		return collection == null || collection.isEmpty();
 	}
 
 	public static ItemStack getTool(Player player) {
@@ -653,10 +658,10 @@ public class Utils {
 		}
 
 		private static double trim(String string) {
-			if (isNullOrEmpty(string)) return 0;
+			if (Strings.isNullOrEmpty(string)) return 0;
 			if (Utils.isDouble(string)) return Double.parseDouble(string);
 			string = StringUtils.right(string, string.length() - 1);
-			if (isNullOrEmpty(string)) return 0;
+			if (Strings.isNullOrEmpty(string)) return 0;
 			return Double.parseDouble(string);
 		}
 	}
@@ -675,7 +680,7 @@ public class Utils {
 			NBTList<Double> pos = nbt.getDoubleList("Pos");
 			NBTList<Float> rotation = nbt.getFloatList("Rotation");
 
-			if (isNullOrEmpty(world) || Bukkit.getWorld(world) == null)
+			if (Strings.isNullOrEmpty(world) || Bukkit.getWorld(world) == null)
 				throw new InvalidInputException("Player is not in a valid world (" + world + ")");
 
 			return new Location(Bukkit.getWorld(world), pos.get(0), pos.get(1), pos.get(2), rotation.get(0), rotation.get(1));

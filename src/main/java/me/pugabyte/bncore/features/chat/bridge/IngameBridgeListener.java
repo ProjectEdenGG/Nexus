@@ -5,11 +5,10 @@ import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.events.PublicChatEvent;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,12 +45,12 @@ public class IngameBridgeListener implements Listener {
 			Matcher matcher = Pattern.compile("@[A-Za-z0-9_]+").matcher(message);
 			while (matcher.find()) {
 				String group = matcher.group();
-				try {
-					OfflinePlayer player = Utils.getPlayer(group.replace("@", ""));
+				OfflinePlayer player = Bukkit.getOfflinePlayer(group.replace("@", ""));
+				if (player.hasPlayedBefore()) {
 					DiscordUser mentioned = new DiscordService().get(player);
 					if (mentioned.getUserId() != null)
 						message = message.replace(group, "<@" + mentioned.getUserId() + ">");
-				} catch (PlayerNotFoundException ignore) {}
+				}
 			}
 		}
 		return message;

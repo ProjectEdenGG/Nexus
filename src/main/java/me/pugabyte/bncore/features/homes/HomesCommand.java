@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.homes;
 
-import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
@@ -79,7 +78,7 @@ public class HomesCommand extends CustomCommand {
 	@Permission("group.admin")
 	@Path("deleteFromWorld <world>")
 	void deleteFromWorld(World world) {
-		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder()
+		ConfirmationMenu.builder()
 				.onConfirm(e -> Tasks.async(() -> {
 					deleted.clear();
 					List<HomeOwner> all = service.getAll();
@@ -101,13 +100,13 @@ public class HomesCommand extends CustomCommand {
 					send(json(PREFIX + "Deleted &e" + deleted.size() + " &3homes from null worlds or world &e" + world.getName() + "&3. ")
 							.next("&eClick here &3to restore them").command("/homes restoreDeleted"));
 				}))
-				.build());
+				.open(player());
 	}
 
 	@Permission("group.admin")
 	@Path("restoreDeleted")
 	void restoreDeleted() {
-		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder()
+		ConfirmationMenu.builder()
 				.onConfirm(e -> Tasks.async(() -> {
 					deleted.forEach(home -> {
 						home.getOwner().add(home);
@@ -117,7 +116,7 @@ public class HomesCommand extends CustomCommand {
 					send(PREFIX + "Restored &e" + deleted.size() + " &3homes");
 					deleted.clear();
 				}))
-				.build());
+				.open(player());
 	}
 
 	@Async

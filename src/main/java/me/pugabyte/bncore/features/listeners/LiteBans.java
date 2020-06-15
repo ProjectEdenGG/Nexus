@@ -36,8 +36,8 @@ public class LiteBans implements Listener {
 
 			OfflinePlayer pug = Utils.getPlayer("Pugabyte");
 			if (player.equals(pug) && !executor.equals(pug) && executor.isOnline()) {
-				Utils.runConsoleCommand("unban Pugabyte");
-				Utils.runConsoleCommand("ban " + executor.getName() + " No.");
+				Utils.runCommandAsConsole("unban Pugabyte");
+				Utils.runCommandAsConsole("ban " + executor.getName() + " No.");
 			}
 
 			if (player.getUniqueId().version() != 4) {

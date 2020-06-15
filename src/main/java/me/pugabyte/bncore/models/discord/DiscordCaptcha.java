@@ -90,7 +90,6 @@ public class DiscordCaptcha extends PlayerOwnedObject {
 	}
 
 	static {
-		BNCore.log("Starting kick scheduler");
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(15), () -> {
 			TaskService service = new TaskService();
 			service.process(taskId).forEach(task -> {

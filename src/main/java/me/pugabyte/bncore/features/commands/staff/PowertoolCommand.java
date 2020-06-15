@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -106,7 +105,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerDamage(final EntityDamageByEntityEvent event) {
+	public void onEntityDamage(final EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player)) return;
 		if (!DamageCause.ENTITY_ATTACK.equals(event.getCause())) return;
 
@@ -118,7 +117,6 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 
 		PowertoolUser user = new PowertoolService().get(player);
 		if (user.getPowertools().containsKey(item.getType())) {
-			BNCore.log("Using on damage");
 			user.use(item.getType());
 			event.setCancelled(true);
 		}

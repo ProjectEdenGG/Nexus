@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -106,7 +107,7 @@ public interface ICustomCommand {
 		return aliases;
 	}
 
-	default String getPermission() {
+	default String _getPermission() {
 		if (this.getClass().getAnnotation(Permission.class) != null)
 			return this.getClass().getAnnotation(Permission.class).value();
 		return null;
@@ -180,8 +181,9 @@ public interface ICustomCommand {
 	default Object convert(String value, Object context, Class<?> type, Arg annotation, CommandEvent event, boolean required) {
 		if (Collection.class.isAssignableFrom(type)) {
 			List<Object> values = new ArrayList<>();
-			for (String index : value.split(" "))
+			for (String index : value.split("[, ]"))
 				values.add(convert(index, context, annotation.type(), annotation, event, required));
+			values.removeIf(Objects::isNull);
 			return values;
 		}
 
@@ -292,7 +294,7 @@ public interface ICustomCommand {
 	}
 
 	default boolean hasPermission(CommandSender sender, Method method) {
-		String permission = getPermission();
+		String permission = _getPermission();
 		if (permission != null && !sender.hasPermission(permission))
 			return false;
 

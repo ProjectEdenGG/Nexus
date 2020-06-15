@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.dailyrewards;
 
-import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -93,7 +93,7 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path("reset")
 	void reset() {
-		MenuUtils.ConfirmationMenu confirm = MenuUtils.ConfirmationMenu.builder().onConfirm((e) -> {
+		ConfirmationMenu.builder().onConfirm((e) -> {
 			try {
 				new CooldownService().check(player(), "dailyRewards-reset", Time.DAY);
 				dailyReward.setActive(false);
@@ -103,9 +103,8 @@ public class DailyRewardsCommand extends CustomCommand {
 			} catch (CooldownException ex) {
 				e.getPlayer().sendMessage(colorize(ex.getMessage()));
 			}
-		}).build();
-
-		MenuUtils.confirmMenu(player(), confirm);
+		})
+		.open(player());
 	}
 
 	@Path("top [page]")

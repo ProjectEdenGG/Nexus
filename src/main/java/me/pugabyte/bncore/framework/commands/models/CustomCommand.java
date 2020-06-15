@@ -60,6 +60,8 @@ public abstract class CustomCommand implements ICustomCommand {
 		return event.getAliasUsed();
 	}
 
+	public void _shutdown() {}
+
 	protected String camelCase(Enum<?> _enum) {
 		return camelCase(_enum.name());
 	}
@@ -220,7 +222,7 @@ public abstract class CustomCommand implements ICustomCommand {
 	}
 
 	protected void runCommandAsConsole(String command) {
-		Utils.runConsoleCommand(command);
+		Utils.runCommandAsConsole(command);
 	}
 
 	protected void checkPermission(String permission) {

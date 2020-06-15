@@ -35,6 +35,7 @@ public enum Package {
 	@Permission("automaticinventory.quickdeposit")
 	@Permission("automaticinventory.depositall")
 	@Permission("automaticinventory.autocraft")
+	@Permission("automaticinventory.autotrash")
 	AUTO_SORT_LIFETIME,
 
 	@Id("2729981")
@@ -43,6 +44,7 @@ public enum Package {
 	@Permission("automaticinventory.quickdeposit")
 	@Permission("automaticinventory.depositall")
 	@Permission("automaticinventory.autocraft")
+	@Permission("automaticinventory.autotrash")
 	@ExpirationDays(30)
 	AUTO_SORT_ONE_MONTH,
 
@@ -54,15 +56,6 @@ public enum Package {
 	@Permission("jq.custom")
 	@ExpirationDays(30)
 	CUSTOM_JOIN_QUIT_MESSAGES_ONE_MONTH,
-
-	@Id("2982264")
-	@Permission("durabilitywarning.use")
-	DURABILITY_WARNING_LIFETIME,
-
-	@Id("2982265")
-	@Permission("durabilitywarning.use")
-	@ExpirationDays(30)
-	DURABILITY_WARNING_ONE_MONTH,
 
 	@Id("3239567")
 	@Permission("emoticons.use")

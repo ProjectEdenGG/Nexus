@@ -14,8 +14,8 @@ import javax.persistence.Table;
 
 import static me.pugabyte.bncore.utils.StringUtils.right;
 import static me.pugabyte.bncore.utils.Utils.runCommand;
+import static me.pugabyte.bncore.utils.Utils.runCommandAsConsole;
 import static me.pugabyte.bncore.utils.Utils.runCommandAsOp;
-import static me.pugabyte.bncore.utils.Utils.runConsoleCommand;
 
 @Data
 @NoArgsConstructor
@@ -57,7 +57,7 @@ public class InteractionCommand {
 		if (isOp())
 			runCommandAsOp(event.getPlayer(), command);
 		else if (isConsole())
-			runConsoleCommand(command);
+			runCommandAsConsole(command);
 		else if (isNormal())
 			runCommand(event.getPlayer(), command);
 		else

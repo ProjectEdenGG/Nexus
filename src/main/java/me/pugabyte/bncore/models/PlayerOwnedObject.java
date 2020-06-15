@@ -21,4 +21,8 @@ public abstract class PlayerOwnedObject {
 		return getOfflinePlayer().getPlayer();
 	}
 
+	public boolean isOnline() {
+		return getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null;
+	}
+
 }

@@ -4,7 +4,7 @@ import me.pugabyte.bncore.models.MySQLService;
 
 import java.util.List;
 
-public class  WarpService extends MySQLService {
+public class WarpService extends MySQLService {
 
 	public Warp get(String name, WarpType type) {
 		Warp warp = database.where("type = ? AND name = ?", type.name(), name).first(Warp.class);

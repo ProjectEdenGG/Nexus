@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.tickets;
 
-import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -82,12 +81,14 @@ public class TicketsCommand extends CustomCommand {
 
 	@Path("confirmclose <id>")
 	void confirmClose(Ticket ticket) {
-		MenuUtils.confirmMenu(player(), ConfirmationMenu.builder().onConfirm((e) -> {
-			if (service.get(ticket.getId()).isOpen())
-				close(ticket);
-			else
-				send(e.getPlayer(), PREFIX + "&cTicket already closed");
-		}).build());
+		ConfirmationMenu.builder()
+				.onConfirm((e) -> {
+					if (service.get(ticket.getId()).isOpen())
+						close(ticket);
+					else
+						send(e.getPlayer(), PREFIX + "&cTicket already closed");
+				})
+				.open(player());
 	}
 
 	@Path("close <id>")

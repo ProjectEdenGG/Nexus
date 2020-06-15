@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
@@ -29,10 +30,15 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,6 +57,15 @@ public class BNCoreCommand extends CustomCommand {
 
 	public BNCoreCommand(CommandEvent event) {
 		super(event);
+	}
+
+	@Path("reload")
+	void reload() {
+		long count = MatchManager.getAll().stream().filter(match -> match.isStarted() && !match.isEnded()).count();
+		if (count > 0)
+			error("There are active matches, cannot reload");
+
+		runCommand("plugman reload BNCore");
 	}
 
 	@Path("listTest <player...>")
@@ -126,6 +141,36 @@ public class BNCoreCommand extends CustomCommand {
 					player().setExp(exp);
 				})
 				.start();
+	}
+
+	@Override
+	public void _shutdown() {
+		bossBars.forEach((player, bossBar) -> {
+			bossBar.setVisible(false);
+			bossBar.removeAll();
+		});
+	}
+
+	private static Map<Player, BossBar> bossBars = new HashMap<>();
+
+	@Path("bossBar add <color> <style> <title...>")
+	void bossBarAdd(BarColor color, BarStyle barStyle, String title) {
+		if (bossBars.containsKey(player()))
+			error("You already have a boss bar");
+
+		BossBar bossBar = Bukkit.createBossBar(title, color, barStyle);
+		bossBar.addPlayer(player());
+		bossBars.put(player(), bossBar);
+	}
+
+	@Path("bossBar remove")
+	void bossBarRemove() {
+		if (!bossBars.containsKey(player()))
+			error("You do not have a boss bar");
+
+		BossBar bossBar = bossBars.remove(player());
+		bossBar.setVisible(false);
+		bossBar.removeAll();
 	}
 
 	@Path("setExp <number>")

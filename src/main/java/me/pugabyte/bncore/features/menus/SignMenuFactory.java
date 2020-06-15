@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,13 +43,19 @@ public final class SignMenuFactory {
 		this.listen();
 	}
 
+	public Menu blank() {
+		return new Menu(Arrays.asList("", "", "", ""));
+	}
+
 	public Menu lines(String... linesArray) {
-		if (linesArray == null) linesArray = new String[4];
+		if (linesArray == null)
+			return blank();
 		return new Menu(Arrays.asList(linesArray));
 	}
 
 	public Menu lines(List<String> lines) {
-		if (lines == null) lines = new ArrayList<>();
+		if (lines == null)
+			return blank();
 		return new Menu(lines);
 	}
 

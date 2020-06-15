@@ -1,7 +1,11 @@
 package me.pugabyte.bncore.features.votes.mysterychest;
 
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.*;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.Pagination;
+import fr.minuskube.inv.content.SlotIterator;
+import fr.minuskube.inv.content.SlotPos;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChestLoot;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -50,13 +54,14 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 						e -> {
 							InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
 							if (event.isShiftClick() && event.isRightClick()) {
-								MenuUtils.confirmMenu(player, ConfirmationMenu.builder().onCancel(itemClickData -> {
-									MysteryChest.getInv(null).open(player, 0);
-								}).onConfirm(itemClickData -> {
-									MysteryChest.getConfig().set(loots[j].getId() + "", null);
-									MysteryChest.saveConfig();
-									Tasks.wait(1, () -> MysteryChest.getInv(null).open(player, 0));
-								}).build());
+								ConfirmationMenu.builder()
+										.onCancel(itemClickData -> MysteryChest.getInv(null).open(player, 0))
+										.onConfirm(itemClickData -> {
+											MysteryChest.getConfig().set(loots[j].getId() + "", null);
+											MysteryChest.saveConfig();
+											Tasks.wait(1, () -> MysteryChest.getInv(null).open(player, 0));
+										})
+										.open(player);
 							} else {
 								MysteryChest.getInv(loots[j].getId()).open(player);
 							}
