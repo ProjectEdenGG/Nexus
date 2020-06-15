@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -44,7 +45,28 @@ public class Dumpster extends PlayerOwnedObject {
 	public void add(Collection<? extends ItemStack> itemStacks) {
 		itemStacks.stream()
 				.filter(itemStack -> !MaterialTag.UNOBTAINABLE.isTagged(itemStack.getType()))
-				.forEach(itemStack -> items.add(new ItemStack(itemStack)));
+				.forEach(newItemStack -> {
+					combine(newItemStack);
+
+					if (newItemStack.getAmount() > 0)
+						items.add(new ItemStack(newItemStack));
+				});
+	}
+
+	public void combine(ItemStack newItemStack) {
+		Optional<ItemStack> matching = items.stream()
+				.filter(existing -> existing.isSimilar(newItemStack) && existing.getAmount() < existing.getType().getMaxStackSize())
+				.findFirst();
+
+		if (matching.isPresent()) {
+			ItemStack match = matching.get();
+			items.remove(match);
+			int amountICanAdd = Math.min(newItemStack.getAmount(), match.getType().getMaxStackSize() - match.getAmount());
+			match.setAmount(match.getAmount() + amountICanAdd);
+			items.add(new ItemStack(match));
+
+			newItemStack.setAmount(newItemStack.getAmount() - amountICanAdd);
+		}
 	}
 
 }
