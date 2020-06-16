@@ -15,6 +15,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 import me.pugabyte.bncore.framework.exceptions.BNException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.CommandCooldownException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -40,6 +41,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -50,9 +52,9 @@ import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
-public interface ICustomCommand {
+public abstract class ICustomCommand {
 
-	default void execute(CommandEvent event) {
+	public void execute(CommandEvent event) {
 		try {
 			CustomCommand command = getCommand(event);
 			Method method = getMethod(event);
@@ -68,7 +70,7 @@ public interface ICustomCommand {
 		}
 	}
 
-	default List<String> tabComplete(TabEvent event) {
+	public List<String> tabComplete(TabEvent event) {
 		try {
 			getCommand(event);
 			return new PathParser(event).tabComplete(event);
@@ -78,11 +80,11 @@ public interface ICustomCommand {
 		return new ArrayList<>();
 	}
 
-	default String getName() {
+	public String getName() {
 		return listLast(this.getClass().toString(), ".").replaceAll("Command$", "");
 	}
 
-	default List<String> getAliases() {
+	public List<String> getAliases() {
 		List<String> aliases = new ArrayList<>();
 
 		for (Annotation annotation : this.getClass().getAnnotations()) {
@@ -101,19 +103,19 @@ public interface ICustomCommand {
 		return aliases;
 	}
 
-	default List<String> getAllAliases() {
+	public List<String> getAllAliases() {
 		List<String> aliases = getAliases();
 		aliases.add(getName());
 		return aliases;
 	}
 
-	default String _getPermission() {
+	private String _getPermission() {
 		if (this.getClass().getAnnotation(Permission.class) != null)
 			return this.getClass().getAnnotation(Permission.class).value();
 		return null;
 	}
 
-	default void invoke(Method method, CommandEvent event) throws Exception {
+	protected void invoke(Method method, CommandEvent event) {
 		Runnable run = () -> {
 			try {
 				Object[] objects = getMethodParameters(method, event, true);
@@ -130,7 +132,7 @@ public interface ICustomCommand {
 			run.run();
 	}
 
-	default public Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
+	Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
 		List<String> args = event.getArgs();
 		List<Parameter> parameters = Arrays.asList(method.getParameters());
 		String pathValue = method.getAnnotation(Path.class).value();
@@ -178,7 +180,7 @@ public interface ICustomCommand {
 	);
 
 	@SneakyThrows
-	default Object convert(String value, Object context, Class<?> type, Arg annotation, CommandEvent event, boolean required) {
+	private Object convert(String value, Object context, Class<?> type, Arg annotation, CommandEvent event, boolean required) {
 		if (Collection.class.isAssignableFrom(type)) {
 			List<Object> values = new ArrayList<>();
 			for (String index : value.split("[, ]"))
@@ -240,12 +242,12 @@ public interface ICustomCommand {
 		return value;
 	}
 
-	default boolean isPrimitiveNumber(Class<?> type) {
+	private boolean isPrimitiveNumber(Class<?> type) {
 		return Arrays.asList(Integer.TYPE, Double.TYPE, Float.TYPE, Short.TYPE, Long.TYPE, Byte.TYPE).contains(type);
 	}
 
 	@SneakyThrows
-	default CustomCommand getCommand(CommandEvent event) {
+	private CustomCommand getCommand(CommandEvent event) {
 		Constructor<? extends CustomCommand> constructor = event.getCommand().getClass().getDeclaredConstructor(CommandEvent.class);
 		constructor.setAccessible(true);
 		CustomCommand command = constructor.newInstance(event);
@@ -254,13 +256,13 @@ public interface ICustomCommand {
 	}
 
 	@SneakyThrows
-	default CustomCommand getNewCommand(CommandEvent originalEvent, Class<?> clazz) {
+	CustomCommand getNewCommand(CommandEvent originalEvent, Class<?> clazz) {
 		CustomCommand customCommand = new ObjenesisStd().newInstance((Class<? extends CustomCommand>) clazz);
 		CommandEvent newEvent = new CommandEvent(originalEvent.getSender(), customCommand, customCommand.getName(), new ArrayList<>());
 		return getCommand(newEvent);
 	}
 
-	default List<Method> getPathMethods() {
+	List<Method> getPathMethods() {
 		ArrayList<Method> methods = new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
 
 		methods.sort(
@@ -277,7 +279,7 @@ public interface ICustomCommand {
 	}
 
 	// TODO: Use same methods as tab complete
-	default Method getMethod(CommandEvent event) {
+	private Method getMethod(CommandEvent event) {
 		Method method = new PathParser(event).match(event.getArgs());
 
 		if (method == null) {
@@ -293,7 +295,7 @@ public interface ICustomCommand {
 		return method;
 	}
 
-	default boolean hasPermission(CommandSender sender, Method method) {
+	boolean hasPermission(CommandSender sender, Method method) {
 		String permission = _getPermission();
 		if (permission != null && !sender.hasPermission(permission))
 			return false;
@@ -310,36 +312,36 @@ public interface ICustomCommand {
 		return true;
 	}
 
-	default void checkCooldown(CustomCommand command) {
+	private void checkCooldown(CustomCommand command) {
 		checkCooldown(command, command.getClass().getAnnotation(Cooldown.class), command.getName());
 		checkCooldown(command, command.getEvent().getMethod().getAnnotation(Cooldown.class), command.getName() + "#" + command.getEvent().getMethod().getName());
 	}
 
-	default void checkCooldown(CustomCommand command, Cooldown cooldown, String commandId) {
+	private void checkCooldown(CustomCommand command, Cooldown cooldown, String commandId) {
 		if (cooldown != null) {
 			boolean bypass = false;
-			if (cooldown.bypass().length() > 0)
-				if (!(command.getEvent().getSender() instanceof Player))
-					bypass = true;
-				else if (command.getEvent().getPlayer().hasPermission(cooldown.bypass()))
-					bypass = true;
+			if (!(command.getEvent().getSender() instanceof Player))
+				bypass = true;
+			else if (cooldown.bypass().length() > 0 && command.getEvent().getPlayer().hasPermission(cooldown.bypass()))
+				bypass = true;
 
 			if (!bypass) {
 				int ticks = 0;
 				for (Part part : cooldown.value())
 					ticks += part.value().get() * part.x();
 
-				String id = ((Player) command.getEvent().getSender()).getUniqueId().toString();
-				if (cooldown.id().length() > 0)
-					id = cooldown.id();
+				CooldownService service = new CooldownService();
+				UUID uuid = cooldown.global() ? BNCore.getUUID0() : ((Player) command.getEvent().getSender()).getUniqueId();
+				String type = "command:" + commandId;
 
-				new CooldownService().check(id, "command:" + commandId, ticks);
+				if (!service.check(uuid, type, ticks))
+					throw new CommandCooldownException(uuid, type);
 			}
 		}
 	}
 
 	@SneakyThrows
-	default Enum<?> convertToEnum(Class<? extends Enum<?>> clazz, String filter) {
+	protected Enum<?> convertToEnum(Class<? extends Enum<?>> clazz, String filter) {
 		if (filter == null) throw new InvocationTargetException(new BNException("Missing argument"));
 		return Arrays.stream(clazz.getEnumConstants())
 				.filter(value -> value.name().toLowerCase().startsWith(filter.toLowerCase()))
@@ -347,7 +349,7 @@ public interface ICustomCommand {
 				.orElseThrow(() -> new InvalidInputException(clazz.getSimpleName() + " from " + filter + " not found"));
 	}
 
-	default List<String> tabCompleteEnum(Class<? extends Enum<?>> clazz, String filter) {
+	List<String> tabCompleteEnum(Class<? extends Enum<?>> clazz, String filter) {
 		return Arrays.stream(clazz.getEnumConstants())
 				.map(value -> value.name().toLowerCase())
 				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))

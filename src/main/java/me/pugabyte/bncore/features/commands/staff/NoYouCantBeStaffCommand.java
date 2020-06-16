@@ -18,7 +18,7 @@ public class NoYouCantBeStaffCommand extends CustomCommand {
 	}
 
 	@Path
-	@Cooldown(id = "staff", value = @Part(value = Time.SECOND, x = 30))
+	@Cooldown(global = true, value = @Part(value = Time.SECOND, x = 30))
 	void nycbs() {
 		runCommand("ch qm g One of the most basic duties of staff members is to help players. How do you expect to do that if you know *absolutely nothing* about the server?");
 	}

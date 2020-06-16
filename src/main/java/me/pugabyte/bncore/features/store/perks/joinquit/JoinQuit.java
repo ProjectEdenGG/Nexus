@@ -7,7 +7,6 @@ import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.chat.bridge.RoleManager;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
@@ -111,12 +110,7 @@ public class JoinQuit implements Listener {
 	}
 
 	public static boolean isDuplicate(Player player, String type) {
-		try {
-			new CooldownService().check(player, type, 2);
-			return false;
-		} catch (CooldownException ex) {
-			return true;
-		}
+		return !new CooldownService().check(player, type, 2);
 	}
 
 	@EventHandler

@@ -46,7 +46,7 @@ import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess", "UnusedReturnValue"})
-public abstract class CustomCommand implements ICustomCommand {
+public abstract class CustomCommand extends ICustomCommand {
 	@NonNull
 	@Getter
 	protected CommandEvent event;

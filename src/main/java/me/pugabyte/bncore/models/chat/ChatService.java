@@ -2,6 +2,7 @@ package me.pugabyte.bncore.models.chat;
 
 import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.utils.Tasks;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ public class ChatService extends MongoService {
 	}
 
 	@Override
+	@NotNull
 	public Chatter get(UUID uuid) {
 		cache.computeIfAbsent(uuid, $ -> {
 			DatabaseChatter chatter = database.createQuery(DatabaseChatter.class).field(_id).equal(uuid).first();

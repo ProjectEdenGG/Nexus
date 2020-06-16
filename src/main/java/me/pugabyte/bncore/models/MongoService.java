@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.persistence.MongoDBDatabase;
 import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
 import org.apache.commons.lang.Validate;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -31,6 +32,7 @@ public abstract class MongoService extends DatabaseService {
 	}
 
 	@Override
+	@NotNull
 	public <T> T get(UUID uuid) {
 //		if (isEnableCache())
 			return (T) getCache(uuid);

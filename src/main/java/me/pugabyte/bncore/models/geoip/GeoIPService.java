@@ -12,6 +12,7 @@ import okhttp3.Response;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ public class GeoIPService extends MongoService {
 	}
 
 	@Override
+	@NotNull
 	public GeoIP get(UUID uuid) {
 		cache.computeIfAbsent(uuid, $ -> {
 			GeoIP geoIp = database.createQuery(GeoIP.class).field(_id).equal(uuid).first();

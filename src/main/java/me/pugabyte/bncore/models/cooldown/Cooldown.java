@@ -1,46 +1,54 @@
 package me.pugabyte.bncore.models.cooldown;
 
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.models.PlayerOwnedObject;
 
-import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Data
 @Builder
+@Entity("cooldown")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cooldown {
+public class Cooldown extends PlayerOwnedObject {
 	@Id
 	@NonNull
-	private String id;
+	private UUID uuid;
 	@NonNull
-	private String type;
-	@NonNull
-	private double ticks;
-	@NonNull
-	private LocalDateTime time;
+	private Map<String, LocalDateTime> cooldowns = new HashMap<>();
 
-	public Cooldown(String id, String type, double ticks) {
-		this.id = id;
-		this.type = type;
-		this.ticks = ticks;
-		update();
+	public Cooldown(UUID uuid) {
+		this.uuid = uuid;
 	}
 
-	public long getSeconds() {
-		return (long) ticks / 20;
+	public boolean exists(String type) {
+		return cooldowns.containsKey(type);
 	}
 
-	public LocalDateTime getExpiration() {
-		return time.plusSeconds(getSeconds());
+	public LocalDateTime get(String type) {
+		return cooldowns.getOrDefault(type, null);
 	}
 
-	public void update() {
-		this.time = LocalDateTime.now();
+	public boolean check(String type) {
+		return !exists(type) || cooldowns.get(type).isBefore(LocalDateTime.now());
+	}
+
+	public Cooldown create(String type, double ticks) {
+		cooldowns.put(type, LocalDateTime.now().plusSeconds((long) ticks / 20));
+		return this;
+	}
+
+	public void clear(String type) {
+		cooldowns.remove(type);
 	}
 
 }

@@ -4,6 +4,7 @@ import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.models.geoip.GeoIP;
 import me.pugabyte.bncore.utils.Utils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class DiscordCaptchaService extends MongoService {
 	}
 
 	@Override
+	@NotNull
 	@Deprecated // Use get()
 	public <T> T get(UUID uuid) {
 		throw new UnsupportedOperationException("Use get()");
