@@ -6,7 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
@@ -14,7 +14,6 @@ import org.bukkit.OfflinePlayer;
 import java.util.Arrays;
 
 public class MysteryChestCommand extends CustomCommand {
-	private final SettingService service = new SettingService();
 
 	static {
 		new RewardChest();
@@ -26,7 +25,7 @@ public class MysteryChestCommand extends CustomCommand {
 
 	@Path
 	void use() {
-		int chests = service.get(player(), "mysteryChest").getInt();
+		int chests = ((me.pugabyte.bncore.models.mysterychest.MysteryChest) new MysteryChestService().get(player())).getAmount();
 		if (chests <= 0)
 			error("You do not have any mystery chest to open");
 		if (!WorldGroup.get(player()).equals(WorldGroup.SURVIVAL))
@@ -49,7 +48,7 @@ public class MysteryChestCommand extends CustomCommand {
 	}
 
 	@Path("edit")
-	@Permission("group.staff")
+	@Permission("group.admin")
 	void edit() {
 		MysteryChest.getInv(null).open(player(), 0);
 	}
@@ -57,8 +56,7 @@ public class MysteryChestCommand extends CustomCommand {
 	@Path("test")
 	@Permission("group.admin")
 	void test() {
-		new MysteryChest(player()).give(1);
-		use();
+		RewardChest.getInv(MysteryChest.getActiveRewards()).open(player());
 	}
 
 	@Path("items <index>")
