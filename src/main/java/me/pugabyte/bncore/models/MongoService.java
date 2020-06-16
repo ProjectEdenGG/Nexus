@@ -31,6 +31,10 @@ public abstract class MongoService extends DatabaseService {
 		getCache().clear();
 	}
 
+	public <T extends PlayerOwnedObject> void cache(T object) {
+		getCache().put(object.getUuid(), object);
+	}
+
 	@Override
 	@NotNull
 	public <T> T get(UUID uuid) {

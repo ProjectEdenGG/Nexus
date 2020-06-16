@@ -14,8 +14,12 @@ import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.tip.Tip;
+import me.pugabyte.bncore.models.tip.Tip.TipType;
+import me.pugabyte.bncore.models.tip.TipService;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -80,44 +84,24 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlaceChest(BlockPlaceEvent event) {
-		Player player = event.getPlayer();
-		if (!player.hasPermission("rank.guest"))
-			return;
-
 		if (!event.getBlockPlaced().getType().equals(Material.CHEST))
 			return;
 
-		SettingService service = new SettingService();
-		Setting setting = service.get(player, "tips.lwc.chest");
-		if (setting.getBoolean())
-			return;
-
-		String msgFormat = Koda.getDmFormat();
-		player.sendMessage(colorize(msgFormat + "Your chest is protected with LWC! Use /lwcinfo to learn more. Use &c/trust lock <player> &fto allow someone else to use it."));
-
-		setting.setBoolean(true);
-		service.save(setting);
+		Tip tip = new TipService().get(event.getPlayer());
+		if (tip.show(TipType.LWC_FURNACE))
+			event.getPlayer().sendMessage(colorize(Koda.getDmFormat() + "Your chest is protected with LWC! Use /lwcinfo to learn more. " +
+					"Use &c/trust lock <player> &fto allow someone else to use it."));
 	}
 
 	@EventHandler
 	public void onPlaceFurnace(BlockPlaceEvent event) {
-		Player player = event.getPlayer();
-		if (!player.hasPermission("rank.guest"))
-			return;
-
 		if (!event.getBlockPlaced().getType().equals(Material.FURNACE))
 			return;
 
-		SettingService service = new SettingService();
-		Setting setting = service.get(player, "tips.lwc.furnace");
-		if (setting.getBoolean())
-			return;
-
-		String msgFormat = Koda.getDmFormat();
-		player.sendMessage(colorize(msgFormat + "Your furnace is protected with LWC! Use /lwcinfo to learn more. Use &c/trust lock <player> &fto allow someone else to use it."));
-
-		setting.setBoolean(true);
-		service.save(setting);
+		Tip tip = new TipService().get(event.getPlayer());
+		if (tip.show(TipType.LWC_FURNACE))
+			event.getPlayer().sendMessage(colorize(Koda.getDmFormat() + "Your furnace is protected with LWC! Use /lwcinfo to learn more. " +
+					"Use &c/trust lock <player> &fto allow someone else to use it."));
 	}
 
 	@EventHandler
@@ -158,8 +142,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onBreakEmptyShulkerBox(BlockBreakEvent event) {
-		//TODO: 1.13+ Switch to material tag
-		if (!event.getBlock().getType().toString().toLowerCase().contains("shulker_box"))
+		if (!MaterialTag.SHULKER_BOXES.isTagged(event.getBlock().getType()))
 			return;
 
 		if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE))
