@@ -6,6 +6,7 @@ import me.pugabyte.bncore.models.afk.AFKPlayer;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -29,6 +30,7 @@ public class AFKListener implements Listener {
 		if (event.getChannel() instanceof PrivateChannel) {
 			for (Chatter recipient : event.getRecipients()) {
 				if (!recipient.getOfflinePlayer().isOnline()) continue;
+				if (!Utils.canSee(player.getPlayer(), recipient.getPlayer())) return;
 				AFKPlayer to = AFK.get(recipient.getPlayer());
 				if (AFK.get(to.getPlayer()).isAfk()) {
 					Tasks.wait(3, () -> {
