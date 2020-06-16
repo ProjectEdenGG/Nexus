@@ -67,7 +67,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
 		for (RainbowBeacon rainbowBeacon : service.getCache().values()) {
-			if (rainbowBeacon.getLocation().equals(event.getBlock().getLocation())) {
+			if (event.getBlock().getLocation().equals(rainbowBeacon.getLocation())) {
 				event.setCancelled(true);
 				break;
 			}

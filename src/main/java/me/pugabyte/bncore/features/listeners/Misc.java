@@ -90,7 +90,7 @@ public class Misc implements Listener {
 		Tip tip = new TipService().get(event.getPlayer());
 		if (tip.show(TipType.LWC_FURNACE))
 			event.getPlayer().sendMessage(colorize(Koda.getDmFormat() + "Your chest is protected with LWC! Use /lwcinfo to learn more. " +
-					"Use &c/trust lock <player> &fto allow someone else to use it."));
+					"Use &c/trust lock <player> &eto allow someone else to use it."));
 	}
 
 	@EventHandler
@@ -101,7 +101,7 @@ public class Misc implements Listener {
 		Tip tip = new TipService().get(event.getPlayer());
 		if (tip.show(TipType.LWC_FURNACE))
 			event.getPlayer().sendMessage(colorize(Koda.getDmFormat() + "Your furnace is protected with LWC! Use /lwcinfo to learn more. " +
-					"Use &c/trust lock <player> &fto allow someone else to use it."));
+					"Use &c/trust lock <player> &eto allow someone else to use it."));
 	}
 
 	@EventHandler
