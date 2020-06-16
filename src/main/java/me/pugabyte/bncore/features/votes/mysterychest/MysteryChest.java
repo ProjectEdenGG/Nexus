@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChestLoot;
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -15,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MysteryChest {
-	private final SettingService service = new SettingService();
+	private final MysteryChestService service = new MysteryChestService();
 	private final OfflinePlayer player;
 	@Getter
 	private static final String fileName = "mysteryChestLoot.yml";
@@ -39,21 +38,21 @@ public class MysteryChest {
 	}
 
 	public int give(int amount) {
-		Setting setting = getSetting();
-		setting.setInt(setting.getInt() + amount);
-		service.save(setting);
-		return setting.getInt();
+		me.pugabyte.bncore.models.mysterychest.MysteryChest mysteryChest = getMysteryChest();
+		mysteryChest.setAmount(mysteryChest.getAmount() + amount);
+		service.save(mysteryChest);
+		return mysteryChest.getAmount();
 	}
 
 	public int take(int amount) {
-		Setting setting = getSetting();
-		setting.setInt(setting.getInt() - amount);
-		service.save(setting);
-		return setting.getInt();
+		me.pugabyte.bncore.models.mysterychest.MysteryChest mysteryChest = getMysteryChest();
+		mysteryChest.setAmount(mysteryChest.getAmount() - amount);
+		service.save(mysteryChest);
+		return mysteryChest.getAmount();
 	}
 
-	public Setting getSetting() {
-		return service.get(player, "mysteryChest");
+	public me.pugabyte.bncore.models.mysterychest.MysteryChest getMysteryChest() {
+		return service.get(player);
 	}
 
 	public static void reloadConfig() {
