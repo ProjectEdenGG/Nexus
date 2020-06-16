@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands;
 
 import com.google.common.base.Strings;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.BookBuilder.WrittenBookMenu;
@@ -10,7 +11,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@NoArgsConstructor
 public class ReferralCommand extends CustomCommand implements Listener {
 	private final ReferralService service = new ReferralService();
 	private Referral referral;
@@ -101,14 +102,12 @@ public class ReferralCommand extends CustomCommand implements Listener {
 						if (!event.getPlayer().isOnline())
 							return;
 
-						try {
-							new CooldownService().check(player(), "referralAsk", Time.MINUTE.x(5));
-
+						if (new CooldownService().check(player(), "referralAsk", Time.MINUTE.x(5))) {
 							send(event.getPlayer(), json().newline()
 									.next("&e&lHey there! &3Could you quickly tell us where you found this server? &eClick here!")
 									.command("/referral")
 									.newline());
-						} catch (CooldownException ignore) {}
+						}
 					});
 				}
 			}

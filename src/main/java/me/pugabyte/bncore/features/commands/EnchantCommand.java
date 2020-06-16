@@ -9,7 +9,6 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.Utils.getTool;
 
 @Aliases("ench")
@@ -26,12 +25,16 @@ public class EnchantCommand extends CustomCommand {
 
 	@Path("<enchantment> [level]")
 	void run(Enchantment enchantment, int level) {
-		item.addUnsafeEnchantment(enchantment, level);
-		send(PREFIX + "Added enchant " + camelCase(enchantment.getKey().getKey()) + " " + level);
+		if (level == 0)
+			remove(enchantment);
+		else {
+			item.addUnsafeEnchantment(enchantment, level);
+			send(PREFIX + "Added enchant " + camelCase(enchantment.getKey().getKey()) + " " + level);
+		}
 	}
 
 	@Path("remove <enchantment>")
-	void run(Enchantment enchantment) {
+	void remove(Enchantment enchantment) {
 		item.removeEnchantment(enchantment);
 		send(PREFIX + "Removed enchant " + camelCase(enchantment.getKey().getKey()));
 	}

@@ -20,13 +20,18 @@ public class AACCommand extends CustomCommand {
 
 	@Path("notify <player> <message...>")
 	void notify(Player player, String reason) {
+		String name = player.getName();
+		WorldGroup worldGroup = WorldGroup.get(player);
+
+		if (worldGroup == WorldGroup.SURVIVAL)
+			if (reason.contains("interacting suspiciously") || reason.contains("attacking out of their line of sight"))
+				return;
+
 		String[] numbers = reason.substring(reason.indexOf("{worldgroup}")).replaceAll("[()VL:msTPS]", "").split(",");
 		double ping = Double.parseDouble(numbers[1].trim());
 		double tps = Double.parseDouble(numbers[2].trim());
 		if (ping < 200 && tps >= 18) {
-			String name = player.getName();
-			String worldGroup = WorldGroup.get(player) + "";
-			String message = "&a" + name + " &f" + reason.replace("{worldgroup}", worldGroup);
+			String message = "&a" + name + " &f" + reason.replace("{worldgroup}", worldGroup.name());
 			Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, StaticChannel.STAFF);
 			Chat.broadcastDiscord("**[Radar]** " + message, StaticChannel.STAFF);
 		}
