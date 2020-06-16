@@ -1,9 +1,10 @@
 package me.pugabyte.bncore.features.listeners;
 
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.ShopService;
+import me.pugabyte.bncore.models.tip.Tip;
+import me.pugabyte.bncore.models.tip.Tip.TipType;
+import me.pugabyte.bncore.models.tip.TipService;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -26,7 +27,6 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.Utils.chanceOf;
 
 public class ResourceWorld implements Listener {
 
@@ -117,16 +117,9 @@ public class ResourceWorld implements Listener {
 		if (!materials.contains(event.getBlockPlaced().getType()))
 			return;
 
-		SettingService service = new SettingService();
-		Setting setting = service.get(event.getPlayer(), "tips.resourceworld.storage");
-
-		if (!setting.getBoolean()) {
-			setting.setBoolean(true);
-			service.save(setting);
-		} else if (!chanceOf(15))
-			return;
-
-		event.getPlayer().sendMessage(colorize(" &4Warning: &cYou are currently building in the resource world! " +
+		Tip tip = new TipService().get(event.getPlayer());
+		if (tip.show(TipType.RESOURCE_WORLD_STORAGE))
+			event.getPlayer().sendMessage(colorize(" &4Warning: &cYou are currently building in the resource world! " +
 				"This world is regenerated on the &c&lfirst of every month, &cso don't leave your stuff here or you will lose it!"));
 	}
 

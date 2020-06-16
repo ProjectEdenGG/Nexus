@@ -5,9 +5,8 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.nerd.Nerd;
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.lava.InfiniteLava;
+import me.pugabyte.bncore.models.lava.InfiniteLavaService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Material;
@@ -21,33 +20,33 @@ import org.bukkit.inventory.PlayerInventory;
 @NoArgsConstructor
 @Permission("group.staff")
 public class LavaCommand extends CustomCommand implements Listener {
+	private final InfiniteLavaService service = new InfiniteLavaService();
+	private InfiniteLava infiniteLava;
 
 	public LavaCommand(CommandEvent event) {
 		super(event);
+		infiniteLava = service.get(player());
 	}
 
-	@Path
-	void lava() {
+	@Path("[on|off]")
+	void lava(Boolean enable) {
 		WorldGroup world = WorldGroup.get(player());
 		if (world.equals(WorldGroup.SKYBLOCK))
 			error("Not allowed in " + world);
 
-		Setting setting = new SettingService().get(player(), "lava");
+		if (enable == null)
+			enable = !infiniteLava.isEnabled();
 
-		if (setting.getBoolean()) {
-			new SettingService().delete(player(), "lava");
-			send("&3Unlimited lava turned &eoff&3.");
-		} else {
-			setting.setBoolean(true);
-			new SettingService().save(setting);
-			send("&3Unlimited lava turned &eon&3.");
-		}
+		infiniteLava.setEnabled(enable);
+		service.save(infiniteLava);
+
+		send(PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
 	@EventHandler
 	public void onPlaceLava(PlayerBucketEmptyEvent event) {
 		Player player = event.getPlayer();
-		if (!new Nerd(player).getRank().isStaff())
+		if (!player.hasPermission("group.staff"))
 			return;
 
 		Material material = event.getBucket();
@@ -58,12 +57,11 @@ public class LavaCommand extends CustomCommand implements Listener {
 		if (world.equals(WorldGroup.SKYBLOCK))
 			return;
 
-		Setting setting = new SettingService().get(player, "lava");
-		if (!setting.getBoolean())
+		InfiniteLava infiniteLava = new InfiniteLavaService().get(player);
+		if (!infiniteLava.isEnabled())
 			return;
 
 		PlayerInventory playerInv = player.getInventory();
 		Tasks.wait(1, () -> playerInv.setItemInMainHand(new ItemStack(material)));
-
 	}
 }

@@ -1,10 +1,11 @@
 package me.pugabyte.bncore.features.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.snoweffect.SnowEffect;
+import me.pugabyte.bncore.models.snoweffect.SnowEffectService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -13,63 +14,44 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
+import java.util.List;
 
-public class ToggleSnowCommand extends CustomCommand {
+@Aliases("togglesnow")
+public class SnowEffectCommand extends CustomCommand {
+	private final SnowEffectService service = new SnowEffectService();
+	private SnowEffect snowEffect;
 
-	final static String SETTING_TYPE = "snowEffect";
-
-	public ToggleSnowCommand(CommandEvent event) {
+	public SnowEffectCommand(CommandEvent event) {
 		super(event);
+		snowEffect = service.get(player());
+	}
+
+	@Path("[on|off]")
+	void lava(Boolean enable) {
+		if (enable == null)
+			enable = !snowEffect.isEnabled();
+
+		snowEffect.setEnabled(enable);
+		service.save(snowEffect);
+
+		send(PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
 	static {
-		snowEffectTask();
-	}
-
-	@Path
-	void toggleSnow() {
-		Setting setting = new SettingService().get(player(), SETTING_TYPE);
-		if (setting.getBoolean())
-			toggleOff();
-		else
-			toggleOn();
-	}
-
-	@Path("[boolean]")
-	void toggleSnow(boolean setting) {
-		if (setting)
-			toggleOn();
-		else
-			toggleOff();
-	}
-
-	void toggleOff() {
-		new SettingService().delete(player(), SETTING_TYPE);
-		send(PREFIX + "Snow toggled &coff");
-	}
-
-	void toggleOn() {
-		Setting setting = new Setting(player(), SETTING_TYPE, "true");
-		new SettingService().save(setting);
-		send(PREFIX + "Snow toggled &aon");
-	}
-
-	private static void snowEffectTask() {
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
-			Tasks.async(() ->
-					new SettingService().getFromType(SETTING_TYPE).stream()
-					.map(setting -> UUID.fromString(setting.getId()))
-					.filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline())
-					.map(Bukkit::getPlayer)
-					.forEach(ToggleSnowCommand::playSnowEffect));
+			Tasks.async(() -> {
+				List<SnowEffect> all = new SnowEffectService().getAll();
+				all.stream()
+						.filter(snowEffect -> snowEffect.isOnline() && snowEffect.isEnabled())
+						.forEach(snowEffect -> playSnowEffect(snowEffect.getPlayer()));
+			});
 
 			Bukkit.getOnlinePlayers().stream()
 					.filter(player -> {
 						WorldGuardUtils worldGuardUtils = new WorldGuardUtils(player);
 						return worldGuardUtils.getRegionsLikeAt(player.getLocation(), ".*_snowEffect").size() > 0;
 					})
-					.forEach(ToggleSnowCommand::playSnowEffect);
+					.forEach(SnowEffectCommand::playSnowEffect);
 		});
 	}
 

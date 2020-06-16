@@ -4,8 +4,9 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.setting.Setting;
-import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.models.tip.Tip;
+import me.pugabyte.bncore.models.tip.Tip.TipType;
+import me.pugabyte.bncore.models.tip.TipService;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
@@ -47,13 +48,10 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (!MaterialTag.ALL_CONCRETES.isTagged(event.getBlock().getType())) return;
-		SettingService service = new SettingService();
-		Setting setting = service.get(event.getPlayer(), "concreteExchange");
-		if (setting.getBoolean()) return;
-		event.getPlayer().sendMessage(StringUtils.colorize("&3Did you know? &e- &3You can use &c/concrete &3to convert concrete powder into hardened concrete."));
-		setting.setBoolean(true);
-		service.save(setting);
+		TipService tipService = new TipService();
+		Tip tip = tipService.get(event.getPlayer());
+		if (tip.show(TipType.CONCRETE))
+			send(event.getPlayer(), "&3Did you know? &e- &3You can use &c/concrete &3to easily convert concrete powder into hardened concrete.");
 	}
 
 
