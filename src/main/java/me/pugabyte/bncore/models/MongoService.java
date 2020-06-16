@@ -88,10 +88,12 @@ public abstract class MongoService extends DatabaseService {
 	@Override
 	public <T> void deleteSync(T object) {
 		database.delete(object);
+		getCache().remove(((PlayerOwnedObject) object).getUuid());
 	}
 
 	@Override
 	public void deleteAllSync() {
 		database.getCollection(getPlayerClass()).drop();
+		clearCache();
 	}
 }
