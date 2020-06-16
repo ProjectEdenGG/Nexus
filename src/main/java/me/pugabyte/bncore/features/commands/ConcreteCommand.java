@@ -10,6 +10,7 @@ import me.pugabyte.bncore.models.tip.TipService;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -48,6 +49,12 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
+		if (WorldGroup.get(event.getPlayer()) != WorldGroup.SURVIVAL)
+			return;
+
+		if (!MaterialTag.ALL_CONCRETES.isTagged(event.getBlock().getType()))
+			return;
+
 		TipService tipService = new TipService();
 		Tip tip = tipService.get(event.getPlayer());
 		if (tip.show(TipType.CONCRETE))

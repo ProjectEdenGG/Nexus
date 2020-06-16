@@ -88,7 +88,8 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		for (RainbowBeacon rainbowBeacon : service.getCache().values())
-			rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
+			if (rainbowBeacon.getLocation() != null)
+				rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
 	}
 
 	private static final List<Material> colors = new ArrayList<Material>() {{
