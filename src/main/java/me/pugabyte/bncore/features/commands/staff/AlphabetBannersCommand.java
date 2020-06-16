@@ -43,15 +43,15 @@ public class AlphabetBannersCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<baseColor> <patternColor> [letters]")
-	void all(DyeColor baseColor, DyeColor patternColor, @Arg("-") String string) {
+	@Path("<baseColor> <patternColor> [letters...]")
+	void all(DyeColor baseColor, DyeColor patternColor, @Arg("-") String letters) {
 		String baseBanner = "minecraft:" + baseColor.name().toLowerCase().replace(" ", "_") + "_banner";
 		String patternBanner = "minecraft:" + patternColor.name().toLowerCase().replace(" ", "_") + "_banner";
 		String baseInt = ColorType.fromDyeColor(baseColor).getDurability() + "";
 		String patternInt = ColorType.fromDyeColor(patternColor).getDurability() + "";
 
 		String give = "minecraft:give " + player().getName();
-		if (string.equalsIgnoreCase("-")) {
+		if (letters.equalsIgnoreCase("-")) {
 			for (String letter : alphabet) {
 				String banner = letter
 						.replaceAll("<baseBanner>", baseBanner)
@@ -62,9 +62,9 @@ public class AlphabetBannersCommand extends CustomCommand {
 				runCommandAsConsole(give + " " + banner);
 			}
 		} else {
-			char[] chars = string.toUpperCase().toCharArray();
+			char[] chars = letters.toUpperCase().replaceAll(" ", "").toCharArray();
 			for (int i = 0; i < chars.length; i++) {
-				char character = string.charAt(i);
+				char character = letters.charAt(i);
 				int ndx = Character.getNumericValue(character) - Character.getNumericValue('A');
 				String banner = alphabet[ndx]
 						.replaceAll("<baseBanner>", baseBanner)

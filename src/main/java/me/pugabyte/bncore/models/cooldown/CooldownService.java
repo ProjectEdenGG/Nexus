@@ -1,56 +1,57 @@
 package me.pugabyte.bncore.models.cooldown;
 
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
-import me.pugabyte.bncore.models.MySQLService;
-import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
+import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public class CooldownService extends MySQLService {
+import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
 
-	static {
-		Tasks.repeatAsync(10, Time.SECOND.x(5), () -> database.table("cooldown").where("time <= DATE_ADD(NOW(), INTERVAL -(ticks / 20) SECOND)").delete());
+@PlayerClass(Cooldown.class)
+public class CooldownService extends MongoService {
+	private final static Map<UUID, Cooldown> cache = new HashMap<>();
+
+	public Map<UUID, Cooldown> getCache() {
+		return cache;
 	}
 
 	public boolean check(OfflinePlayer player, String type, Time time) {
-		return check(player.getUniqueId().toString(), type, time);
+		return check(player.getUniqueId(), type, time);
 	}
 
-	public boolean check(String id, String type, Time time) {
-		return check(id, type, time.get());
+	public boolean check(UUID uuid, String type, Time time) {
+		return check(uuid, type, time.get());
 	}
 
 	public boolean check(OfflinePlayer player, String type, double ticks) {
-		return check(player.getUniqueId().toString(), type, ticks);
+		return check(player.getUniqueId(), type, ticks);
 	}
 
-	public boolean check(String id, String type, double ticks) {
-		Cooldown cooldown = database.where("id = ?").and("type = ?").args(id, type).first(Cooldown.class);
-		boolean canRun = true;
-		if (cooldown.getTime() != null) {
-			long ticksElapsed = cooldown.getTime().until(LocalDateTime.now(), ChronoUnit.SECONDS) * 20;
-			canRun = ticksElapsed >= ticks;
-		} else
-			cooldown = new Cooldown(id, type, ticks);
+	public boolean check(UUID uuid, String type, double ticks) {
+		Cooldown cooldown = get(uuid);
+		if (!cooldown.check(type))
+			return false;
 
-	/*
-		if (!canRun && id.length() == 36) {
-			OfflinePlayer player = Utils.getPlayer(UUID.fromString(id));
-			if (player.isOnline() && player.getPlayer().hasPermission("cooldown.bypass." + type))
-				canRun = true;
-		}
-	*/
+		cooldown = cooldown.create(type, ticks);
+		save(cooldown);
+		return true;
+	}
 
-		if (canRun) {
-			cooldown.update();
-			save(cooldown);
-		} else
-			throw new CooldownException(cooldown);
+	public String getDiff(OfflinePlayer player, String type) {
+		return getDiff(player.getUniqueId(), type);
+	}
 
-		return canRun;
+	public String getDiff(UUID uuid, String type) {
+		Cooldown cooldown = get(uuid);
+		if (cooldown.exists(type))
+			return timespanDiff(LocalDateTime.now(), cooldown.get(type));
+
+		return ".0s";
 	}
 
 }

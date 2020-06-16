@@ -5,7 +5,6 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.votes.vps.VPS;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.discord.DiscordService;
@@ -39,6 +38,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.Utils.epochSecond;
@@ -87,15 +87,15 @@ public class Votes implements Listener {
 		if (reminders.getValue() != null && reminders.getBoolean())
 			return;
 
-		try {
-			new CooldownService().check(vote.getUuid(), "vote-reminder", Time.MINUTE.x(10));
-			User user = Bot.KODA.jda().getUserById(discordUser.getUserId());
-			if (user != null && user.getMutualGuilds().size() > 0) {
-				BNCore.log("[Votes] Sending vote reminder to " + Utils.getPlayer(vote.getUuid()).getName());
-				MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(voteLinksEmbed);
-				user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
-			}
-		} catch (CooldownException ignore) {}
+		if (!new CooldownService().check(UUID.fromString(vote.getUuid()), "vote-reminder", Time.MINUTE.x(10)))
+			return;
+
+		User user = Bot.KODA.jda().getUserById(discordUser.getUserId());
+		if (user != null && user.getMutualGuilds().size() > 0) {
+			BNCore.log("[Votes] Sending vote reminder to " + Utils.getPlayer(vote.getUuid()).getName());
+			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(voteLinksEmbed);
+			user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
+		}
 	}
 
 	@EventHandler
@@ -112,11 +112,10 @@ public class Votes implements Listener {
 		Vote vote = new Vote(uuid, site, extraVotePoints(), epochSecond(event.getVote().getTimeStamp()));
 		new VoteService().save(vote);
 
-		try {
-			new CooldownService().check(uuid, "vote-announcement", Time.HOUR);
+		if (new CooldownService().check(UUID.fromString(uuid), "vote-announcement", Time.HOUR)) {
 			Chat.broadcastIngame("&a[✔] &3" + name + " &bvoted &3for the server and received &b" + basePoints + " &3vote point" + (basePoints == 1 ? "" : "s") + " per site!");
 			Chat.broadcastDiscord(":white_check_mark: **" + name + " voted** for the server and received **" + basePoints + " vote point" + (basePoints == 1 ? "" : "s") + "** per site!");
-		} catch (CooldownException ignore) {}
+		}
 
 		if (vote.getExtra() > 0) {
 			Chat.broadcastIngame("&3[✦] &e" + name + " &3received &e" + vote.getExtra() + " extra &3vote points!");

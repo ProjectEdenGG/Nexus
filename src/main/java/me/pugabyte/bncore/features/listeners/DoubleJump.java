@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.listeners;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Basketball;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -67,11 +66,8 @@ public class DoubleJump implements Listener {
 		if (player.getGameMode() == GameMode.CREATIVE)
 			return false;
 
-		try {
-			new CooldownService().check(player, "doublejump", COOLDOWN);
-		} catch (CooldownException ex) {
+		if (!new CooldownService().check(player, "doublejump", COOLDOWN))
 			return false;
-		}
 
 		if (!player.getAllowFlight())
 			return false;

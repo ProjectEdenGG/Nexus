@@ -2,6 +2,7 @@ package me.pugabyte.bncore.models.home;
 
 import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class HomeService extends MongoService {
 	}
 
 	@Override
+	@NotNull
 	public HomeOwner get(UUID uuid) {
 		HomeOwner homeOwner = super.get(uuid);
 		homeOwner.getHomes().sort(Comparator.comparing(home -> home.getName().toLowerCase()));

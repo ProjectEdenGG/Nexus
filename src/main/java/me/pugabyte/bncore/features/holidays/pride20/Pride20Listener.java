@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.holidays.pride20;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.features.holidays.DyeBombCommand;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
@@ -27,11 +26,8 @@ public class Pride20Listener implements Listener {
 		Player player = event.getClicker();
 
 		CooldownService cooldownService = new CooldownService();
-		try {
-			cooldownService.check(player, "prideDyeBomb", Time.MINUTE.x(1));
-		} catch (CooldownException ex) {
+		if (!cooldownService.check(player, "prideDyeBomb", Time.MINUTE.x(1)))
 			return;
-		}
 
 		player.sendMessage(StringUtils.colorize("&3Vendor > &eSadly all my balloons have uh... floated away, but I can give you this to play with"));
 		DyeBombCommand.giveDyeBomb(player, 5);
@@ -47,11 +43,8 @@ public class Pride20Listener implements Listener {
 		if (setting.getBoolean()) {
 
 			CooldownService cooldownService = new CooldownService();
-			try {
-				cooldownService.check(player, "pride20Cat", Time.SECOND.x(10));
-			} catch (CooldownException ex) {
+			if (!cooldownService.check(player, "pride20Cat", Time.SECOND.x(10)))
 				return;
-			}
 
 			player.playSound(player.getLocation(), Sound.ENTITY_CAT_PURREOW, 5f, .08f);
 			return;
@@ -76,11 +69,8 @@ public class Pride20Listener implements Listener {
 	public void onRegionEnter(RegionEnteredEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase("pride20")) return;
 		CooldownService cooldownService = new CooldownService();
-		try {
-			cooldownService.check(event.getPlayer(), "pride20enter", Time.MINUTE.x(5));
-		} catch (CooldownException ex) {
+		if (!cooldownService.check(event.getPlayer(), "pride20enter", Time.MINUTE.x(5)))
 			return;
-		}
 		event.getPlayer().sendMessage(StringUtils.colorize("&eWelcome to the Pride Parade!" +
 				" &3Have a look at all the colorful floats and roam around the city. If you'd like to join the parade, " +
 				"type &c/pride20 parade join &3while standing where you want to be in the parade. &eEnjoy and happy pride!"));

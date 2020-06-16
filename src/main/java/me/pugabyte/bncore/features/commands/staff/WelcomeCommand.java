@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands.staff;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
@@ -10,7 +11,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
@@ -46,15 +46,16 @@ public class WelcomeCommand extends CustomCommand {
 			if (Bukkit.getOnlinePlayers().stream().filter(player ->
 					player.hasPermission("group.moderator") &&
 					!player.getName().equals("KodaBear") &&
-					!AFK.get(player).isAfk()).count() < 4) return;
-			try {
-				new CooldownService().check("staff", "bumpReminder", Time.DAY);
-				Chat.broadcastIngame("", StaticChannel.STAFF);
-				Chat.broadcastIngame("&eHi Staff. &3It looks like there's a few of you online. Could you consider &ebumping the server?", StaticChannel.STAFF);
-				Chat.broadcastIngame("&3Instructions: &ehttps://bnn.gg/mod", StaticChannel.STAFF);
-				Chat.broadcastIngame("", StaticChannel.STAFF);
-			} catch (CooldownException ignore) {
-			}
+					!AFK.get(player).isAfk()).count() < 4)
+				return;
+
+			if (!new CooldownService().check(BNCore.getUUID0(), "bumpReminder", Time.DAY))
+				return;
+
+			Chat.broadcastIngame("", StaticChannel.STAFF);
+			Chat.broadcastIngame("&eHi Staff. &3It looks like there's a few of you online. Could you consider &ebumping the server?", StaticChannel.STAFF);
+			Chat.broadcastIngame("&3Instructions: &ehttps://bnn.gg/mod", StaticChannel.STAFF);
+			Chat.broadcastIngame("", StaticChannel.STAFF);
 		});
 	}
 
@@ -67,9 +68,7 @@ public class WelcomeCommand extends CustomCommand {
 				error("Prevented accidental welcome");
 		}
 
-		try {
-			new CooldownService().check("staff", "welc", Time.SECOND.x(20));
-
+		if (new CooldownService().check(BNCore.getUUID0(), "welc", Time.SECOND.x(20))) {
 			String message = getMessage();
 			if (player == null)
 				message = message.replaceAll(" \\[player]", "");
@@ -77,7 +76,7 @@ public class WelcomeCommand extends CustomCommand {
 				message = message.replaceAll("\\[player]", player.getName());
 
 			runCommand("ch qm g " + message);
-		} catch (CooldownException ex) {
+		} else {
 			if (player == null)
 				runCommand("ch qm g Welcome to the server!");
 			else

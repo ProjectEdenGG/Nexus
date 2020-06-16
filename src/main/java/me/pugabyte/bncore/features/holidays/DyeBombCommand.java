@@ -6,7 +6,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
@@ -75,11 +74,8 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 
 		Player player = event.getPlayer();
 		CooldownService cooldownService = new CooldownService();
-		try {
-			cooldownService.check(player, "throwDyeBomb", 2 * 20);
-		} catch (CooldownException e) {
+		if (!cooldownService.check(player, "throwDyeBomb", 2 * 20))
 			return;
-		}
 
 		int amount = event.getItem().getAmount();
 		event.getItem().setAmount(amount - 1);

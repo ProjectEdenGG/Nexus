@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.postconfigured.CooldownException;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.CommandCooldownException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.dailyreward.DailyReward;
 import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
@@ -91,16 +91,20 @@ public class DailyRewardsCommand extends CustomCommand {
 		send(PREFIX + "Streak set to " + dailyReward.getStreak() + " for player " + player.getName());
 	}
 
+	private static final String resetCooldownType = "dailyRewards-reset";
+
 	@Path("reset")
 	void reset() {
 		ConfirmationMenu.builder().onConfirm((e) -> {
 			try {
-				new CooldownService().check(player(), "dailyRewards-reset", Time.DAY);
+				if (!new CooldownService().check(player(), resetCooldownType, Time.DAY))
+					throw new CommandCooldownException(player(), resetCooldownType);
+
 				dailyReward.setActive(false);
 				service.save(dailyReward);
 				e.getPlayer().sendMessage(PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
 				e.getPlayer().closeInventory();
-			} catch (CooldownException ex) {
+			} catch (CommandCooldownException ex) {
 				e.getPlayer().sendMessage(colorize(ex.getMessage()));
 			}
 		})
