@@ -260,11 +260,11 @@ public class BNCoreCommand extends CustomCommand {
 				.open(player());
 	}
 
-	@Description("A command with a 5.25s cooldown")
+	@Description("A command with a 5.75s cooldown")
 	@Path("cooldown")
 	@Cooldown({
 			@Part(value = Time.SECOND, x = 5),
-			@Part(value = Time.TICK, x = 5)
+			@Part(value = Time.TICK, x = 15)
 	})
 	void cooldown() {
 		send("Hello!");

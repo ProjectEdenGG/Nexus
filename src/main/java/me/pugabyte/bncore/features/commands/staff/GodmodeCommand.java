@@ -123,7 +123,6 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 				Godmode godmode = new GodmodeService().get(player);
 				if (godmode.isEnabled() || player.getGameMode() == GameMode.CREATIVE || isVanished(player))
 					event.setIntensity(player, 0f);
-					event.setCancelled(true);
 			}
 	}
 
