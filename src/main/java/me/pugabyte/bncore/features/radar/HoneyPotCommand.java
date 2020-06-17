@@ -43,12 +43,15 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	private final HoneyPotGrieferService service = new HoneyPotGrieferService();
 	private HoneyPotGriefer griefer;
 
-	private final WorldGuardUtils WGUtils = new WorldGuardUtils(player());
-	private final WorldEditUtils WEUtils = new WorldEditUtils(player());
-	private final RegionManager regionManager = WGUtils.getManager();
+	private WorldGuardUtils WGUtils;
+	private WorldEditUtils WEUtils;
+	private RegionManager regionManager;
 
 	public HoneyPotCommand(CommandEvent event) {
 		super(event);
+		WGUtils = new WorldGuardUtils(player());
+		WEUtils = new WorldEditUtils(player());
+		regionManager = WGUtils.getManager();
 	}
 
 	@Path("check <player>")
