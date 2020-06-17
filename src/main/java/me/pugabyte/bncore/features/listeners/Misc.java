@@ -84,6 +84,9 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlaceChest(BlockPlaceEvent event) {
+		if (WorldGroup.get(event.getPlayer()) != WorldGroup.SURVIVAL)
+			return;
+
 		if (!event.getBlockPlaced().getType().equals(Material.CHEST))
 			return;
 
@@ -95,6 +98,9 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlaceFurnace(BlockPlaceEvent event) {
+		if (WorldGroup.get(event.getPlayer()) != WorldGroup.SURVIVAL)
+			return;
+
 		if (!event.getBlockPlaced().getType().equals(Material.FURNACE))
 			return;
 

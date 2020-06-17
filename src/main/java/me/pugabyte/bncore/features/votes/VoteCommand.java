@@ -41,7 +41,8 @@ public class VoteCommand extends CustomCommand {
 	@Path
 	void run() {
 		line(3);
-		send(json("&3Support the server by voting daily! Each vote gives you &e1 Vote point &3to spend in the &eVote Point Store, &3and the top voters of each month receive a special reward!"));
+		send(json("&3Support the server by voting daily! Each vote gives you &e1 Vote point &3to spend in the " +
+				"&eVote Point Store, &3and the top voters of each month receive a special reward!"));
 		line();
 		JsonBuilder builder = json("&3 Links &3|| &e");
 		for (VoteSite site : VoteSite.values())
@@ -50,7 +51,8 @@ public class VoteCommand extends CustomCommand {
 		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
 				.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 		line();
-		send(json("&3Server goal: " + progressBar(sum, 2000, NONE, 75) + " &e" + sum + "&3/&e2000").hover("&eReach the goal together for a monthly reward!"));
+		send(json("&3Server goal: " + progressBar(sum, 2000, NONE, 75) + " &e" + sum + "&3/&e2000")
+				.hover("&eReach the goal together for a monthly reward!"));
 		line();
 		send(PLUS + "You have &e" + voter.getPoints() + " &3vote points");
 		line();
@@ -65,7 +67,7 @@ public class VoteCommand extends CustomCommand {
 			Optional<Vote> first = voter.getActiveVotes().stream().filter(_vote -> _vote.getSite() == site).findFirst();
 			if (first.isPresent()) {
 				LocalDateTime expirationTime = first.get().getTimestamp().plusHours(site.getExpirationHours());
-				send("&e" + site.name() + " &7- &3You can vote in " + StringUtils.timespanDiff(expirationTime));
+				send("&e" + site.name() + " &7- &3You can vote in &e" + StringUtils.timespanDiff(expirationTime));
 			} else {
 				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl()));
 			}
