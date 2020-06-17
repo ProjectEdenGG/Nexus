@@ -23,7 +23,6 @@ public class MinigameNight implements Listener {
 	private String region = BearFair20.BFRg + "_gamelobby";
 
 	final static String questProgress = "bf_mgn_questProgress";
-	private static String mgnRg = BearFair20.BFRg + "_gamelobby";
 	private static Location arcadeSoundLoc = new Location(BearFair20.world, -1170, 141, -1716);
 	private static Location arcadeSmokeLoc1 = Utils.getCenteredLocation(new Location(BearFair20.world, -1170, 140, -1715));
 	private static Location arcadeSmokeLoc2 = Utils.getCenteredLocation(new Location(BearFair20.world, -1169, 148, -1715));
@@ -36,7 +35,7 @@ public class MinigameNight implements Listener {
 	private void soundTasks() {
 		Tasks.repeat(0, Time.SECOND.x(5), () -> {
 			Bukkit.getOnlinePlayers().stream()
-					.filter(player -> WGUtils.getRegionsLikeAt(player.getLocation(), mgnRg).size() > 0)
+					.filter(player -> WGUtils.getRegionsLikeAt(player.getLocation(), region).size() > 0)
 					.forEach(MinigameNight::playArcadeEffects);
 		});
 	}

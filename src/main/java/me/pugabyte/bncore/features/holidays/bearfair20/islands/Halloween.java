@@ -28,7 +28,6 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.world;
 public class Halloween implements Listener {
 	private String region = BearFair20.BFRg + "_halloween";
 	Map<Player, Integer> musicTaskMap = new HashMap<>();
-	String halloweenRg = BearFair20.BFRg + "_halloween";
 	Location halloweenMusicLoc = new Location(world, -921, 128, -1920);
 	private Sound[] halloweenSounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,
 			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS,
@@ -59,8 +58,8 @@ public class Halloween implements Listener {
 		if (event.isCancelled()) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(halloweenRg);
-		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion protectedRegion = WGUtils.getProtectedRegion(region);
+		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(protectedRegion)) return;
 
 		if (event.getClickedBlock() == null) return;
 
@@ -74,13 +73,13 @@ public class Halloween implements Listener {
 
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
-		if (!event.getRegion().getId().equalsIgnoreCase(halloweenRg)) return;
+		if (!event.getRegion().getId().equalsIgnoreCase(region)) return;
 		startSoundsTask(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onRegionExit(RegionLeftEvent event) {
-		if (!event.getRegion().getId().equalsIgnoreCase(halloweenRg)) return;
+		if (!event.getRegion().getId().equalsIgnoreCase(region)) return;
 		stopSoundsTask(event.getPlayer());
 	}
 
