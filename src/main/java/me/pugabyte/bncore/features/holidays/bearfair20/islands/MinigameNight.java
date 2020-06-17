@@ -20,6 +20,7 @@ import java.util.List;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 
 public class MinigameNight implements Listener {
+	private String region = BearFair20.BFRg + "_gamelobby";
 
 	final static String questProgress = "bf_mgn_questProgress";
 	private static String mgnRg = BearFair20.BFRg + "_gamelobby";

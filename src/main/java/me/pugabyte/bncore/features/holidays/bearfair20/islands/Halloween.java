@@ -26,6 +26,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.world;
 
 public class Halloween implements Listener {
+	private String region = BearFair20.BFRg + "_halloween";
 	Map<Player, Integer> musicTaskMap = new HashMap<>();
 	String halloweenRg = BearFair20.BFRg + "_halloween";
 	Location halloweenMusicLoc = new Location(world, -921, 128, -1920);
