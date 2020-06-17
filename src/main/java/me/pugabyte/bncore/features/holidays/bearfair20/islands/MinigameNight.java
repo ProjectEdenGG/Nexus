@@ -14,6 +14,9 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import java.util.Collections;
+import java.util.List;
+
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 
 public class MinigameNight implements Listener {
@@ -71,5 +74,9 @@ public class MinigameNight implements Listener {
 			});
 		}
 	}
+
+	static public List<String> SCRIPT_AXEL_BEFORE = Collections.singletonList("Before Quest Text");
+	static public List<String> SCRIPT_AXEL_DURING = Collections.singletonList("During Quest Text");
+	static public List<String> SCRIPT_AXEL_AFTER = Collections.singletonList("After Quest Text");
 
 }
