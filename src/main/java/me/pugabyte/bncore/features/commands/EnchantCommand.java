@@ -19,12 +19,13 @@ public class EnchantCommand extends CustomCommand {
 	public EnchantCommand(@NonNull CommandEvent event) {
 		super(event);
 		item = getTool(player());
-		if (item == null)
-			error("You are not holding anything");
 	}
 
 	@Path("<enchantment> [level]")
 	void run(Enchantment enchantment, int level) {
+		if (item == null)
+			error("You are not holding anything");
+
 		if (level == 0)
 			remove(enchantment);
 		else {
@@ -35,6 +36,9 @@ public class EnchantCommand extends CustomCommand {
 
 	@Path("remove <enchantment>")
 	void remove(Enchantment enchantment) {
+		if (item == null)
+			error("You are not holding anything");
+
 		item.removeEnchantment(enchantment);
 		send(PREFIX + "Removed enchant " + camelCase(enchantment.getKey().getKey()));
 	}

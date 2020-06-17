@@ -40,6 +40,8 @@ public class PlayerWeatherCommand extends CustomCommand {
 	WeatherType convertToWeatherType(String value) {
 		if (Arrays.asList("storm", "rain").contains(value))
 			value = WeatherType.DOWNFALL.name();
+		if (Arrays.asList("sun", "none").contains(value))
+			value = WeatherType.CLEAR.name();
 		return (WeatherType) convertToEnum(WeatherType.class, value);
 	}
 
