@@ -5,6 +5,7 @@ import lombok.Data;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Halloween;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNight;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.Pugmas;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnder;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -50,9 +51,10 @@ public class BearFair20 implements Listener {
 	public BearFair20() {
 		BNCore.registerListener(this);
 		new Timer("    Fairgrounds", Fairgrounds::new);
-		new Timer("    Halloween", Halloween::new);
-		new Timer("    MinigameNight", MinigameNight::new);
-		new Timer("    SummerDownUnder", SummerDownUnder::new);
+		new Timer("    Halloween Island", Halloween::new);
+		new Timer("    MinigameNight Island", MinigameNight::new);
+		new Timer("    SummerDownUnder Island", SummerDownUnder::new);
+		new Timer("    Pugmas Island", Pugmas::new);
 		new Timer("    BFQuests", BFQuests::new);
 	}
 

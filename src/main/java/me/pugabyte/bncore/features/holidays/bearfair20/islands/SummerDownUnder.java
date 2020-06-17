@@ -1,12 +1,14 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.islands;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import org.bukkit.event.Listener;
 
 import java.util.Collections;
 import java.util.List;
 
 public class SummerDownUnder implements Listener {
+	private String region = BearFair20.BFRg + "_summerdownunder";
 
 	public SummerDownUnder() {
 		BNCore.registerListener(this);
