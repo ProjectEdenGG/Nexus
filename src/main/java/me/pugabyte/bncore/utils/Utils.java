@@ -75,6 +75,10 @@ public class Utils {
 		Bukkit.getPlayer("Blast").sendMessage(colorize(message));
 	}
 
+	public static void zani(String message) {
+		Bukkit.getPlayer("Zanitaeni").sendMessage(colorize(message));
+	}
+
 	public static Player puga() {
 		return Bukkit.getPlayer("Pugabyte");
 	}
@@ -85,6 +89,10 @@ public class Utils {
 
 	public static Player blast() {
 		return Bukkit.getPlayer("Blast");
+	}
+
+	public static Player zani() {
+		return Bukkit.getPlayer("Zanitaeni");
 	}
 
 	public static void callEvent(Event event) {
