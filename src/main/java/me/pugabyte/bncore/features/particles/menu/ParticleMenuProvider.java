@@ -7,7 +7,6 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
 import me.pugabyte.bncore.models.particle.ParticleType;
-import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,8 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ParticleMenuProvider extends MenuUtils implements InventoryProvider {
-
-	SettingService service = new SettingService();
 	ParticleService particleService = new ParticleService();
 
 	@Override
