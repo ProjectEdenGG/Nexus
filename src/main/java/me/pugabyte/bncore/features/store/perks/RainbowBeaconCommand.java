@@ -87,6 +87,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 
 	@Override
 	public void _shutdown() {
+		if (service.getCache().values().isEmpty()) return;
 		for (RainbowBeacon rainbowBeacon : service.getCache().values())
 			if (rainbowBeacon.getLocation() != null)
 				rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
