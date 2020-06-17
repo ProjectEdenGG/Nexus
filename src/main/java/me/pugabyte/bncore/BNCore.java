@@ -21,7 +21,6 @@ import me.pugabyte.bncore.features.menus.SignMenuFactory;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.particles.Particles;
 import me.pugabyte.bncore.features.quests.Quests;
-import me.pugabyte.bncore.features.radar.honeypots.HoneyPots;
 import me.pugabyte.bncore.features.recipes.CustomRecipes;
 import me.pugabyte.bncore.features.shops.Shops;
 import me.pugabyte.bncore.features.store.perks.joinquit.JoinQuit;
@@ -235,7 +234,6 @@ public class BNCore extends JavaPlugin {
 	public static Documentation documentation;
 	public static Holidays holidays;
 	public static HomesFeature homes;
-	public static HoneyPots honeyPots;
 	public static JoinQuit joinQuit;
 	public static Listeners listeners;
 	public static McMMO mcmmo;
@@ -281,7 +279,6 @@ public class BNCore extends JavaPlugin {
 //		new Timer("  Documentation", () -> documentation = new Documentation());
 		new Timer("  Holidays", () -> holidays = new Holidays());
 		new Timer("  Homes", () -> homes = new HomesFeature());
-		new Timer("  HoneyPots", () -> honeyPots = new HoneyPots());
 		new Timer("  JoinQuit", () -> joinQuit = new JoinQuit());
 		new Timer("  Listeners", () -> listeners = new Listeners());
 		new Timer("  McMMO", () -> mcmmo = new McMMO());
