@@ -112,7 +112,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected void line(CommandSender player, int count) {
 		for (int i = 0; i < count; i++)
-			send("");
+			send(player, "");
 	}
 
 	protected JsonBuilder json() {

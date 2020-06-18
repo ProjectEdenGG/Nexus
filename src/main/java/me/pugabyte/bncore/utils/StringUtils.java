@@ -43,6 +43,7 @@ public class StringUtils {
 		return ChatColor.translateAlternateColorCodes('&', input);
 	}
 
+	@Deprecated
 	public static String decolorize(String input) {
 		return input.replaceAll(getColorChar(), "&");
 	}

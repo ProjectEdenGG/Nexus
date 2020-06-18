@@ -79,7 +79,7 @@ public enum Bot {
 	}
 
 	protected String getToken() {
-		return BNCore.getInstance().getConfig().getString("tokens.discord." + name().toLowerCase());
+		return BNCore.getInstance().getConfig().getString("tokens.discord." + name().toLowerCase(), "");
 	}
 
 	@SneakyThrows

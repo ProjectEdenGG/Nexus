@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.discord;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.BNCore.Env;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
 import me.pugabyte.bncore.models.discord.DiscordUser;
@@ -33,6 +34,8 @@ public class Discord {
 	private static final String url = "https://discord.gg/bearnation";
 
 	public Discord() {
+		if (BNCore.getEnv() != Env.PROD)
+			return;
 		Tasks.repeatAsync(0, Time.MINUTE, this::connect);
 		Tasks.waitAsync(Time.SECOND.x(2), this::connect);
 		BNCore.getCron().schedule("*/6 * * * *", Discord::updateTopics);
@@ -40,7 +43,7 @@ public class Discord {
 
 	public void connect() {
 		for (Bot bot : Bot.values())
-			if (bot.jda() == null)
+			if (bot.jda() == null && bot.getToken().length() > 0)
 				try {
 					bot.connect();
 					if (bot.jda() != null)
@@ -95,6 +98,7 @@ public class Discord {
 	}
 
 	public static Guild getGuild() {
+		if (Bot.KODA.jda() == null) return null;
 		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());
 	}
 
@@ -206,6 +210,7 @@ public class Discord {
 	}
 
 	private static void updateBridgeTopic(String newBridgeTopic) {
+		if (Discord.getGuild() == null) return;
 		bridgeTopic = newBridgeTopic;
 		GuildChannel channel = Discord.getGuild().getGuildChannelById(Channel.BRIDGE.getId());
 		if (channel != null)
@@ -230,6 +235,7 @@ public class Discord {
 	}
 
 	private static void updateStaffBridgeTopic(String newStaffBridgeTopic) {
+		if (Discord.getGuild() == null) return;
 		staffBridgeTopic = newStaffBridgeTopic;
 		GuildChannel channel = Discord.getGuild().getGuildChannelById(Channel.STAFF_BRIDGE.getId());
 		if (channel != null)

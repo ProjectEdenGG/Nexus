@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.BNCore.Env;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -738,6 +739,10 @@ public class Utils {
 			T[] values = clazz.getEnumConstants();
 			int previous = ordinal - 1 % values.length;
 			return previous < 0 ? values[values.length - 1] : values[previous];
+		}
+
+		public static <T> List<String> valueNameList(Class<? extends T> clazz) {
+			return Arrays.stream(Env.values()).map(Env::name).collect(Collectors.toList());
 		}
 	}
 

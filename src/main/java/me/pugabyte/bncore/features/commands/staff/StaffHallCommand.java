@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 
 import static me.pugabyte.bncore.utils.StringUtils.shortDateFormat;
@@ -52,7 +53,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 				if (!Strings.isNullOrEmpty(staff.getAbout()))
 					html += "<span style=\"font-weight: bold;\">About me:</span> " + staff.getAbout();
 
-				Files.write(Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html"), html.getBytes());
+				Files.write(Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html"), html.getBytes(), StandardOpenOption.CREATE);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

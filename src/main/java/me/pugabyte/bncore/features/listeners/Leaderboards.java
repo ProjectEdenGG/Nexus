@@ -5,6 +5,7 @@ import com.gmail.nossr50.mcMMO;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.BNCore.Env;
 import me.pugabyte.bncore.features.store.Package;
 import me.pugabyte.bncore.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
@@ -157,8 +158,9 @@ public class Leaderboards implements Listener {
 	}
 
 	static {
-		for (Leaderboard value : Leaderboard.values())
-			Tasks.repeat(10, Time.HOUR, value::update);
+		if (BNCore.getEnv() == Env.PROD)
+			for (Leaderboard value : Leaderboard.values())
+				Tasks.repeat(10, Time.HOUR, value::update);
 	}
 
 	@EventHandler
