@@ -4,6 +4,7 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Bot;
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.votes.vps.VPS;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
@@ -55,6 +56,10 @@ public class Votes implements Listener {
 
 	private void scheduler() {
 		Tasks.repeatAsync(Time.SECOND.x(5), Time.SECOND.x(10), () -> {
+			// Don't try to process votes if discord is offline, reminders will break
+			if (Discord.getGuild() == null)
+				return;
+
 			VoteService service = new VoteService();
 			service.getActiveVotes().forEach(vote -> {
 				LocalDateTime expiration = vote.getTimestamp().plusHours(vote.getSite().getExpirationHours());

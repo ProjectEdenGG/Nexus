@@ -8,7 +8,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Method;
 
 public interface Island {
 	default String getRegion() {
@@ -18,9 +17,9 @@ public interface Island {
 	@SneakyThrows
 	default TalkingNPC getNPC(int id) {
 		Class<? extends Enum<? extends TalkingNPC>> npcGroup = getNpcGroup();
-		if (npcGroup != null) {
-			Method getFromId = npcGroup.getDeclaredMethod("getFromId", Integer.class);
-			return (TalkingNPC) getFromId.invoke(null, id);
+		for (Enum<? extends TalkingNPC> enumConstant : npcGroup.getEnumConstants()) {
+			if (((TalkingNPC) enumConstant).getNpcId() == id)
+				return (TalkingNPC) enumConstant;
 		}
 
 		return null;
