@@ -46,6 +46,8 @@ public abstract class MongoService extends DatabaseService {
 
 	protected <T extends PlayerOwnedObject> T getCache(UUID uuid) {
 		Validate.notNull(getPlayerClass(), "You must provide a player owned class or override get(UUID)");
+		if (getCache().containsKey(uuid) && getCache().get(uuid) == null)
+			getCache().remove(uuid);
 		getCache().computeIfAbsent(uuid, $ -> getNoCache(uuid));
 		return (T) getCache().get(uuid);
 	}

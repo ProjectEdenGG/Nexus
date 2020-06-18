@@ -42,7 +42,7 @@ public class Koda {
 	@Getter
 	private static final String discordFormat = "<@&&f" + Role.KODA.getId() + "> **>** ";
 	@Getter
-	private static final OfflinePlayer player = Utils.getPlayer("KodaBear");
+	private static final OfflinePlayer player = Bukkit.getOfflinePlayer("KodaBear");
 	@Getter
 	private static final Chatter chatter = new ChatService().get(player);
 

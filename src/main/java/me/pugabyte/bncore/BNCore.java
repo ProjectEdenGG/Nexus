@@ -39,6 +39,7 @@ import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
+import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -86,6 +87,22 @@ public class BNCore extends JavaPlugin {
 			Bukkit.getServer().getLogger().info("BNCore could not be initialized");
 		}
 		return instance;
+	}
+
+	public enum Env {
+		DEV,
+		PROD
+	}
+
+	public static Env getEnv() {
+		String env = getInstance().getConfig().getString("env", Env.DEV.name());
+		try {
+			return Env.valueOf(getInstance().getConfig().getString("env", Env.DEV.name()));
+		} catch (IllegalArgumentException ex) {
+			BNCore.severe("Could not parse environment variable " + env + ", options are: " + String.join(", ", EnumUtils.valueNameList(Env.class)));
+			BNCore.severe("Defaulting to " + Env.DEV.name() + " environment");
+			return Env.DEV;
+		}
 	}
 
 	public static boolean disableWorldEditPasting() {
@@ -213,6 +230,8 @@ public class BNCore extends JavaPlugin {
 			BNCore.getInstance().getDataFolder().mkdir();
 
 		FileConfiguration config = getInstance().getConfig();
+
+		addConfigDefault("env", "dev");
 
 		config.options().copyDefaults(true);
 		saveConfig();

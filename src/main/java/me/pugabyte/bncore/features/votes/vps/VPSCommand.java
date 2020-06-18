@@ -24,7 +24,7 @@ public class VPSCommand extends CustomCommand {
 		VPS.open(player(), page);
 	}
 
-	@Path("buy head [player]")
+	@Path("buy head <player>")
 	void buyHead(Nerd nerd) {
 		if (WorldGroup.get(player()) != WorldGroup.CREATIVE)
 			error("You must be in Creative to buy heads");
