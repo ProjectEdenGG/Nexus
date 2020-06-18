@@ -31,11 +31,14 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 
 public class Frogger implements Listener {
 
-	private static String gameRg = BearFair20.BFRg + "_frogger";
+	private static String gameRg = BearFair20.getRegion() + "_frogger";
 	private static String winRg = gameRg + "_win";
 	private static String damageRg = gameRg + "_damage";
 	private static String killRg = gameRg + "_kill";
@@ -44,11 +47,11 @@ public class Frogger implements Listener {
 	private static String roadRg = gameRg + "_road";
 	private static String checkpointRg = gameRg + "_checkpoint";
 	//
-	private static Location respawnLoc = new Location(BearFair20.world, -856.5, 138.0, -1617.5, -180, 0);
-	private static Location checkpointLoc = new Location(BearFair20.world, -856.5, 138.0, -1630.5, -180, 0);
+	private static Location respawnLoc = new Location(BearFair20.getWorld(), -856.5, 138.0, -1617.5, -180, 0);
+	private static Location checkpointLoc = new Location(BearFair20.getWorld(), -856.5, 138.0, -1630.5, -180, 0);
 	private static Set<Player> checkpointList = new HashSet<>();
 	private static boolean doAnimation = false;
-	private static WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
+	private static WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
 	private BFPointSource SOURCE = BFPointSource.FROGGER;
 	//
 	private static Map<Location, Material> logSpawnMap = new HashMap<>();

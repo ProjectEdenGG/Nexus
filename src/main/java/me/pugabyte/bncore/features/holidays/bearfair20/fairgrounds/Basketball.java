@@ -34,7 +34,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 
 // TODO: Make the double jump less
 public class Basketball implements Listener {
@@ -42,8 +45,8 @@ public class Basketball implements Listener {
 	@Getter
 	private static ItemStack basketballItem = Fairgrounds.BearFairKit.BASKETBALL.getItem();
 	private static Map<UUID, ItemStack> basketballs = new HashMap<>();
-	private static World world = BearFair20.world;
-	public static String gameRg = BearFair20.BFRg + "_basketball";
+	private static World world = BearFair20.getWorld();
+	public static String gameRg = BearFair20.getRegion() + "_basketball";
 	public static String courtRg = gameRg + "_court";
 	private static String stuckRg = gameRg + "_stuck_";
 	private static String backboardRg = gameRg + "_backboard_";

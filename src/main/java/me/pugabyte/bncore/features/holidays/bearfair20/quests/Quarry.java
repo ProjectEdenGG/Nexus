@@ -44,7 +44,7 @@ public class Quarry implements Listener {
 		BlockData blockData;
 	}
 
-	public static String quarryRg = BearFair20.BFRg + "_main_quarry";
+	public static String quarryRg = BearFair20.getRegion() + "_main_quarry";
 	private static List<Material> diorite = Arrays.asList(Material.DIORITE, Material.DIORITE_SLAB, Material.DIORITE_STAIRS, Material.DIORITE_WALL);
 	private Map<Location, Diorite> dioriteRegenMap = new HashMap<>();
 

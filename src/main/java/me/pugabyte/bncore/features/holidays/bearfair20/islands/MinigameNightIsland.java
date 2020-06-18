@@ -1,7 +1,12 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.islands;
 
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.NPCClass;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.Region;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland.MinigameNightNPCs;
+import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.Tasks;
@@ -14,29 +19,59 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+@Region("gamelobby")
+@NPCClass(MinigameNightNPCs.class)
+public class MinigameNightIsland implements Listener, Island {
+	private static final String questProgress = "bf_mgn_questProgress";
+	private static final Location arcadeSoundLoc = new Location(BearFair20.getWorld(), -1170, 141, -1716);
+	private static final Location arcadeSmokeLoc1 = Utils.getCenteredLocation(new Location(BearFair20.getWorld(), -1170, 140, -1715));
+	private static final Location arcadeSmokeLoc2 = Utils.getCenteredLocation(new Location(BearFair20.getWorld(), -1169, 148, -1715));
 
-public class MinigameNight implements Listener {
-	private String region = BearFair20.BFRg + "_gamelobby";
-
-	final static String questProgress = "bf_mgn_questProgress";
-	private static Location arcadeSoundLoc = new Location(BearFair20.world, -1170, 141, -1716);
-	private static Location arcadeSmokeLoc1 = Utils.getCenteredLocation(new Location(BearFair20.world, -1170, 140, -1715));
-	private static Location arcadeSmokeLoc2 = Utils.getCenteredLocation(new Location(BearFair20.world, -1169, 148, -1715));
-
-	public MinigameNight() {
+	public MinigameNightIsland() {
 		BNCore.registerListener(this);
 		soundTasks();
+	}
+
+	public enum MinigameNightNPCs implements TalkingNPC {
+		AXEL(2755) {
+			@Override
+			public List<String> getScript(Player player) {
+				switch (Utils.randomInt(1, 3)) {
+					case 1:
+						return Collections.singletonList("Before Quest Text");
+					case 2:
+						return Collections.singletonList("During Quest Text");
+					default:
+						return Collections.singletonList("After Quest Text");
+				}
+			}
+		};
+
+		@Getter
+		private final int npcId;
+		@Getter
+		private final List<String> script;
+
+		MinigameNightNPCs(int npcId) {
+			this.npcId = npcId;
+			this.script = new ArrayList<>();
+		}
+
+		MinigameNightNPCs(int npcId, List<String> script) {
+			this.npcId = npcId;
+			this.script = script;
+		}
 	}
 
 	private void soundTasks() {
 		Tasks.repeat(0, Time.SECOND.x(5), () -> {
 			Bukkit.getOnlinePlayers().stream()
-					.filter(player -> WGUtils.getRegionsLikeAt(player.getLocation(), region).size() > 0)
-					.forEach(MinigameNight::playArcadeEffects);
+					.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(player.getLocation(), getRegion()).size() > 0)
+					.forEach(MinigameNightIsland::playArcadeEffects);
 		});
 	}
 
@@ -74,9 +109,5 @@ public class MinigameNight implements Listener {
 			});
 		}
 	}
-
-	static public List<String> SCRIPT_AXEL_BEFORE = Collections.singletonList("Before Quest Text");
-	static public List<String> SCRIPT_AXEL_DURING = Collections.singletonList("During Quest Text");
-	static public List<String> SCRIPT_AXEL_AFTER = Collections.singletonList("After Quest Text");
 
 }

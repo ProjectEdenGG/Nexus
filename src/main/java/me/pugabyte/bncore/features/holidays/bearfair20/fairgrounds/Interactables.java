@@ -23,13 +23,13 @@ public class Interactables {
 	public static void strengthTest() {
 		if (strengthTest_active) return;
 		strengthTest_active = true;
-		Location one = new Location(BearFair20.world, -924, 136, -1578);
-		Location two = new Location(BearFair20.world, -923, 136, -1578);
-		Location three = new Location(BearFair20.world, -921, 138, -1578);
-		Location four = new Location(BearFair20.world, -921, 139, -1578);
-		Location five = new Location(BearFair20.world, -921, 140, -1578);
-		Location six = new Location(BearFair20.world, -921, 141, -1578);
-		Location seven = new Location(BearFair20.world, -921, 142, -1578);
+		Location one = new Location(BearFair20.getWorld(), -924, 136, -1578);
+		Location two = new Location(BearFair20.getWorld(), -923, 136, -1578);
+		Location three = new Location(BearFair20.getWorld(), -921, 138, -1578);
+		Location four = new Location(BearFair20.getWorld(), -921, 139, -1578);
+		Location five = new Location(BearFair20.getWorld(), -921, 140, -1578);
+		Location six = new Location(BearFair20.getWorld(), -921, 141, -1578);
+		Location seven = new Location(BearFair20.getWorld(), -921, 142, -1578);
 		List<Location> lights = Arrays.asList(one, two, three, four, five, six, seven);
 
 		int max = 7;

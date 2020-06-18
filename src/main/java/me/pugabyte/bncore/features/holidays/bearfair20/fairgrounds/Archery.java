@@ -33,11 +33,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
 
 public class Archery implements Listener {
-	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
-	private static String gameRg = BearFair20.BFRg + "_archery";
+	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
+	private static String gameRg = BearFair20.getRegion() + "_archery";
 	private static String targetsRg = gameRg + "_targets";
 	private static boolean archeryBool = false;
 	private static int currentTargets = 0;

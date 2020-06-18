@@ -26,17 +26,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
 
 public class PugDunk implements Listener {
 
 	private static boolean enabled = false;
 	private static boolean canWin = false;
-	private static Location buttonLoc = new Location(BearFair20.world, -960, 139, -1594);
-	private static Location dropBlock = new Location(BearFair20.world, -963, 142, -1588);
-	private static Location delArrowsLoc = new Location(BearFair20.world, -961, 135, -1594);
+	private static Location buttonLoc = new Location(BearFair20.getWorld(), -960, 139, -1594);
+	private static Location dropBlock = new Location(BearFair20.getWorld(), -963, 142, -1588);
+	private static Location delArrowsLoc = new Location(BearFair20.getWorld(), -961, 135, -1594);
 	private BFPointSource SOURCE = BFPointSource.PUGDUNK;
-	private static String gameRg = BearFair20.BFRg + "_pugdunk";
+	private static String gameRg = BearFair20.getRegion() + "_pugdunk";
 	private static String targetRg = gameRg + "_target";
 
 	public PugDunk() {
@@ -62,7 +64,7 @@ public class PugDunk implements Listener {
 		dropBlock.getBlock().setType(Material.AIR);
 		delArrowsLoc.getBlock().setType(Material.AIR);
 		Tasks.wait(10, () -> {
-			Location loc = new Location(BearFair20.world, -959.5, 141, -1587.5, -90, 0);
+			Location loc = new Location(BearFair20.getWorld(), -959.5, 141, -1587.5, -90, 0);
 			NPC npc = CitizensUtils.getNPC(2720);
 			npc.teleport(loc, PlayerTeleportEvent.TeleportCause.COMMAND);
 		});
@@ -105,7 +107,7 @@ public class PugDunk implements Listener {
 		canWin = false;
 		buttonLoc.getBlock().setType(Material.AIR);
 
-		BearFair20.world.playSound(buttonLoc, Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
+		BearFair20.getWorld().playSound(buttonLoc, Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
 		if (givePoints) {
 			BearFairUser user = new BearFairService().get(player);

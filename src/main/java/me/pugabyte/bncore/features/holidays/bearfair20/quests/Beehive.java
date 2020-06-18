@@ -20,8 +20,8 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 public class Beehive implements Listener {
 	private String allowedMsg = "TODO: Allowed message here";
 	private String deniedMsg = "TODO: Denied message here";
-	private Location enterLoc = new Location(BearFair20.world, -1084, 135, -1548, 228, 20);
-	private Location exitLoc = new Location(BearFair20.world, -1088, 136, -1548, 40, 0);
+	private Location enterLoc = new Location(BearFair20.getWorld(), -1084, 135, -1548, 228, 20);
+	private Location exitLoc = new Location(BearFair20.getWorld(), -1088, 136, -1548, 40, 0);
 	private Material key = Material.HONEY_BOTTLE;
 
 	public Beehive() {

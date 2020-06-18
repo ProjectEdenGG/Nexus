@@ -3,8 +3,13 @@ package me.pugabyte.bncore.features.holidays.bearfair20.islands;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.HalloweenNPCs;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.NPCClass;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.Region;
+import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -18,24 +23,46 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.world;
 
-public class Halloween implements Listener {
-	private String region = BearFair20.BFRg + "_halloween";
-	Map<Player, Integer> musicTaskMap = new HashMap<>();
-	Location halloweenMusicLoc = new Location(world, -921, 128, -1920);
+@Region("halloween")
+@NPCClass(HalloweenNPCs.class)
+public class HalloweenIsland implements Listener, Island {
+	private final Map<Player, Integer> musicTaskMap = new HashMap<>();
+	private final Location halloweenMusicLoc = new Location(BearFair20.getWorld(), -921, 128, -1920);
 	private Sound[] halloweenSounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,
 			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS,
 			Sound.ENTITY_ILLUSIONER_CAST_SPELL, Sound.ENTITY_ELDER_GUARDIAN_AMBIENT, Sound.ENTITY_SHULKER_AMBIENT};
 
-	public Halloween() {
+	public HalloweenIsland() {
 		BNCore.registerListener(this);
 		soundTasks();
+	}
+
+	public enum HalloweenNPCs implements TalkingNPC {
+		NPC1(9999, Collections.singletonList("Something here"));
+
+		@Getter
+		private final int npcId;
+		@Getter
+		private final List<String> script;
+
+		HalloweenNPCs(int npcId) {
+			this.npcId = npcId;
+			this.script = new ArrayList<>();
+		}
+
+		HalloweenNPCs(int npcId, List<String> script) {
+			this.npcId = npcId;
+			this.script = script;
+		}
 	}
 
 	private void soundTasks() {
@@ -58,8 +85,8 @@ public class Halloween implements Listener {
 		if (event.isCancelled()) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion protectedRegion = WGUtils.getProtectedRegion(region);
-		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(protectedRegion)) return;
+		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
+		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (event.getClickedBlock() == null) return;
 
@@ -68,18 +95,18 @@ public class Halloween implements Listener {
 
 		Location loc = event.getClickedBlock().getLocation();
 		float ran = (float) Utils.randomDouble(0.0, 2.0);
-		world.playSound(loc, Sound.BLOCK_NOTE_BLOCK_PLING, 0.7F, ran);
+		BearFair20.getWorld().playSound(loc, Sound.BLOCK_NOTE_BLOCK_PLING, 0.7F, ran);
 	}
 
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
-		if (!event.getRegion().getId().equalsIgnoreCase(region)) return;
+		if (!event.getRegion().getId().equalsIgnoreCase(getRegion())) return;
 		startSoundsTask(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onRegionExit(RegionLeftEvent event) {
-		if (!event.getRegion().getId().equalsIgnoreCase(region)) return;
+		if (!event.getRegion().getId().equalsIgnoreCase(getRegion())) return;
 		stopSoundsTask(event.getPlayer());
 	}
 

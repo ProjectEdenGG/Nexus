@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Merchants;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.MerchantBuilder;
@@ -24,9 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.utils.StringUtils.*;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.decolorize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class SellCrates implements Listener {
 	public SellCrates() {
@@ -39,7 +41,7 @@ public class SellCrates implements Listener {
 
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg))
+		if (!WGUtils.getRegionsAt(loc).contains(BearFair20.getProtectedRegion()))
 			return;
 
 		Block block = event.getClickedBlock();

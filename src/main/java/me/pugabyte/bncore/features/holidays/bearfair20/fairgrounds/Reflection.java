@@ -39,15 +39,25 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static org.bukkit.block.BlockFace.*;
+import static org.bukkit.block.BlockFace.EAST;
+import static org.bukkit.block.BlockFace.NORTH;
+import static org.bukkit.block.BlockFace.NORTH_EAST;
+import static org.bukkit.block.BlockFace.NORTH_WEST;
+import static org.bukkit.block.BlockFace.SOUTH;
+import static org.bukkit.block.BlockFace.SOUTH_EAST;
+import static org.bukkit.block.BlockFace.SOUTH_WEST;
+import static org.bukkit.block.BlockFace.WEST;
 
 public class Reflection implements Listener {
 
-	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.world);
-	private String gameRg = BearFair20.BFRg + "_reflection";
+	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
+	private String gameRg = BearFair20.getRegion() + "_reflection";
 	private String powderRg = gameRg + "_powder";
 	private BFPointSource SOURCE = BFPointSource.REFLECTION;
 	//
@@ -60,7 +70,7 @@ public class Reflection implements Listener {
 	private Player buttonPresser;
 	//
 	private List<Location> lampLocList = new ArrayList<>();
-	private Location center = new Location(BearFair20.world, -950, 137, -1689);
+	private Location center = new Location(BearFair20.getWorld(), -950, 137, -1689);
 	private List<BlockFace> directions = Arrays.asList(NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST);
 	private String prefix = "&8&l[&eReflection&8&l] &f";
 	//
@@ -191,7 +201,7 @@ public class Reflection implements Listener {
 		final Location[] loc = {laserStart.clone()};
 		AtomicReference<Color> laserColor = new AtomicReference<>(Color.RED);
 		AtomicInteger reflections = new AtomicInteger(0);
-		BearFair20.world.playSound(laserStart, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
+		BearFair20.getWorld().playSound(laserStart, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
 		laserSound();
 
 		laserTaskId = Tasks.repeat(0, 1, () -> {
@@ -275,12 +285,12 @@ public class Reflection implements Listener {
 		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
 		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
-		BearFair20.world.playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
+		BearFair20.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
 		Tasks.wait(Time.SECOND.x(2), () -> active = false);
 	}
 
 	private void win(int reflections) {
-		BearFair20.world.playSound(center, Sound.BLOCK_NOTE_BLOCK_BELL, 1F, 1F);
+		BearFair20.getWorld().playSound(center, Sound.BLOCK_NOTE_BLOCK_BELL, 1F, 1F);
 
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
 		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
