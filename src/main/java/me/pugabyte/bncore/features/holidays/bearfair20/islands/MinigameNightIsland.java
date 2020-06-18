@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Region("gamelobby")
+@Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
 public class MinigameNightIsland implements Listener, Island {
 	private static final String questProgress = "bf_mgn_questProgress";
