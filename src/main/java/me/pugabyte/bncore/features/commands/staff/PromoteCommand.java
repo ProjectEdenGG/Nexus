@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.Rank;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 
 @Permission("group.seniorstaff")
 public class PromoteCommand extends CustomCommand {
@@ -23,6 +24,9 @@ public class PromoteCommand extends CustomCommand {
 
 		runCommandAsConsole("lp user " + nerd.getName() + " parent set " + next.name());
 		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.withColor());
+
+		if (nerd.getOfflinePlayer().isOnline())
+			Jingle.RANKUP.play(nerd.getPlayer());
 	}
 
 }
