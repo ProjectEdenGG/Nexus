@@ -6,7 +6,6 @@ import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,15 +28,18 @@ public class Talkers {
 	}
 
 	public interface TalkingNPC {
-		int getNpcId();
-		List<String> script = new ArrayList<>();
-
 		String name();
+
+		int getNpcId();
 
 		List<String> getScript();
 
 		default List<String> getScript(Player player) {
 			return getScript();
+		}
+
+		static TalkingNPC[] values() {
+			return null;
 		}
 	}
 

@@ -21,6 +21,9 @@ public class RoleManager {
 			"KodaBear");
 
 	public static void update(DiscordUser user) {
+		if (Discord.getGuild() == null)
+			return;
+
 		DiscordService service = new DiscordService();
 		OfflinePlayer player = Utils.getPlayer(user.getUuid());
 
