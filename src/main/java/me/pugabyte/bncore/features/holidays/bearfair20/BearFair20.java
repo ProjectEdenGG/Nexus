@@ -2,11 +2,10 @@ package me.pugabyte.bncore.features.holidays.bearfair20;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.bearfair20.islands.Halloween;
-import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNight;
-import me.pugabyte.bncore.features.holidays.bearfair20.islands.Pugmas;
-import me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnder;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.IslandType;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -28,6 +27,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.reflections.Reflections;
+
+import java.util.Set;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
@@ -40,21 +42,19 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 @Data
 public class BearFair20 implements Listener {
+	@Getter private static final World world = Bukkit.getWorld("safepvp");
+	@Getter private static final String region = "bearfair2020";
+	@Getter public static final WorldGuardUtils WGUtils = new WorldGuardUtils(world);
+	@Getter private static final ProtectedRegion protectedRegion = WGUtils.getProtectedRegion(region);
+	@Getter private static final Set<Class<? extends Island>> islands = new Reflections("me.pugabyte.bncore.features.holidays.bearfair20.islands").getSubTypesOf(Island.class);
 
-	public static World world = Bukkit.getWorld("safepvp");
-	public static WorldGuardUtils WGUtils = new WorldGuardUtils(world);
-	public static String BFRg = "bearfair2020";
-	public static ProtectedRegion BFProtectedRg = WGUtils.getProtectedRegion(BFRg);
 	// TODO: Enable this.
 	public static boolean givePoints = false;
 
 	public BearFair20() {
 		BNCore.registerListener(this);
 		new Timer("    Fairgrounds", Fairgrounds::new);
-		new Timer("    Halloween Island", Halloween::new);
-		new Timer("    MinigameNight Island", MinigameNight::new);
-		new Timer("    SummerDownUnder Island", SummerDownUnder::new);
-		new Timer("    Pugmas Island", Pugmas::new);
+		new Timer("    Islands", IslandType::values);
 		new Timer("    BFQuests", BFQuests::new);
 	}
 
@@ -71,7 +71,7 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onTameEntity(EntityTameEvent event) {
 		Location loc = event.getEntity().getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
 		event.setCancelled(true);
 	}
 
@@ -90,7 +90,7 @@ public class BearFair20 implements Listener {
 	public void onThrowEnderPearl(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
 
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			ItemStack item = player.getInventory().getItemInMainHand();
@@ -105,7 +105,7 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onLecternTakeBook(PlayerTakeLecternBookEvent event) {
 		Location loc = event.getLectern().getBlock().getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
 
 		event.setCancelled(true);
 		event.getPlayer().closeInventory();
@@ -118,7 +118,7 @@ public class BearFair20 implements Listener {
 
 		Player player = (Player) event.getExited();
 		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
+		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
 
 		Tasks.wait(1, () -> {
 			event.getVehicle().remove();
@@ -135,7 +135,7 @@ public class BearFair20 implements Listener {
 	}
 
 	public static boolean isAtBearFair(Location location) {
-		return isInRegion(location, BFRg);
+		return isInRegion(location, region);
 	}
 
 	public static boolean isInRegion(Block block, String region) {
@@ -147,7 +147,7 @@ public class BearFair20 implements Listener {
 	}
 
 	public static boolean isInRegion(Location location, String region) {
-		return location.getWorld().equals(BearFair20.world) && WGUtils.isInRegion(location, region);
+		return location.getWorld().equals(BearFair20.getWorld()) && WGUtils.isInRegion(location, region);
 	}
 
 	public static boolean isBFItem(ItemStack item) {

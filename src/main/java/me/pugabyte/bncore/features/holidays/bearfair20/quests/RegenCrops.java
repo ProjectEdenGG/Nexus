@@ -25,8 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.bottomBlockError;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.cantBreakError;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.decorOnlyError;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.notFullyGrownError;
 
 public class RegenCrops implements Listener {
 

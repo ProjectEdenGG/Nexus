@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing;
 import com.gmail.nossr50.events.skills.fishing.McMMOPlayerFishingEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.WeightedLoot;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFRg;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
@@ -49,11 +49,11 @@ public class Fishing implements Listener {
 
 	// @formatter:off
 	private void addWeightedItems() {
-		String mainIsland = BFRg + "_main";
-		String mgnIsland = BFRg + "_gamelobby";
-		String halloweenIsland = BFRg + "_halloween";
-		String pugmasIsland = BFRg + "_pugmas";
-		String sduIsland = BFRg + "_summerdownunder";
+		String mainIsland = BearFair20.getRegion() + "_main";
+		String mgnIsland = BearFair20.getRegion() + "_gamelobby";
+		String halloweenIsland = BearFair20.getRegion() + "_halloween";
+		String pugmasIsland = BearFair20.getRegion() + "_pugmas";
+		String sduIsland = BearFair20.getRegion() + "_summerdownunder";
 
 		// Default Fish (Global)
 		weightedList.add(new WeightedLoot(cod,				25));

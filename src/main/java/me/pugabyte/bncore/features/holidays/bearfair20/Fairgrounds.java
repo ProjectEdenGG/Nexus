@@ -121,18 +121,18 @@ public class Fairgrounds implements Listener {
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		String id = event.getRegion().getId();
-		if (id.contains(BearFair20.BFRg + "_bow_"))
+		if (id.contains(BearFair20.getRegion() + "_bow_"))
 			giveKit(BearFairKit.BOW_AND_ARROW, event.getPlayer());
-		if (id.contains(BearFair20.BFRg + "_minecart_"))
+		if (id.contains(BearFair20.getRegion() + "_minecart_"))
 			giveKit(BearFairKit.MINECART, event.getPlayer());
 	}
 
 	@EventHandler
 	public void onRegionExit(RegionLeftEvent event) {
 		String id = event.getRegion().getId();
-		String bowRg = BearFair20.BFRg + "_bow_";
-		String minecartRg = BearFair20.BFRg + "_minecart_";
-		if (id.contains(bowRg) || id.contains(minecartRg) || id.contains(BearFair20.BFRg)) {
+		String bowRg = BearFair20.getRegion() + "_bow_";
+		String minecartRg = BearFair20.getRegion() + "_minecart_";
+		if (id.contains(bowRg) || id.contains(minecartRg) || id.contains(BearFair20.getRegion())) {
 			removeKits(event.getPlayer());
 		}
 	}
