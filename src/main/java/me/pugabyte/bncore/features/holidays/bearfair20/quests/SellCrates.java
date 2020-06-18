@@ -26,8 +26,7 @@ import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.BFProtectedRg;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.decolorize;
+import static me.pugabyte.bncore.utils.StringUtils.*;
 
 public class SellCrates implements Listener {
 	public SellCrates() {
@@ -46,16 +45,10 @@ public class SellCrates implements Listener {
 		Block block = event.getClickedBlock();
 		if (Utils.isNullOrAir(block)) return;
 
-
 		Material type = block.getType();
 		String crateType = "null";
 		if (MaterialTag.SIGNS.isTagged(type)) {
-			Sign sign = (Sign) block.getState();
-			String line1 = sign.getLine(0);
-			String line2 = sign.getLine(1);
-			if (line1.equalsIgnoreCase("[sell crate]") && line2.contains("Items")) {
-				crateType = line2;
-			}
+			crateType = getCrateType(block);
 		} else {
 			Block north = block.getRelative(BlockFace.NORTH);
 			Block east = block.getRelative(BlockFace.EAST);
@@ -64,32 +57,39 @@ public class SellCrates implements Listener {
 			List<Block> relatives = Arrays.asList(north, east, south, west);
 			for (Block relativeBlock : relatives) {
 				if (MaterialTag.SIGNS.isTagged(relativeBlock.getType())) {
-					Sign sign = (Sign) relativeBlock.getState();
-					String line1 = sign.getLine(0);
-					String line2 = sign.getLine(1);
-					if (line1.equalsIgnoreCase("[sell crate]") && line2.contains("Items")) {
-						crateType = line2;
+					crateType = getCrateType(relativeBlock);
+					if (!crateType.equals("null"))
 						break;
-					}
 				}
 			}
 		}
 
-		if (crateType.equalsIgnoreCase("null")) return;
+		if (crateType.equals("null")) {
+			return;
+		}
 
 		event.setCancelled(true);
 		openSellCrate(event.getPlayer(), crateType);
 	}
 
+	private String getCrateType(Block block) {
+		Sign sign = (Sign) block.getState();
+		String line1 = sign.getLine(0);
+		String line2 = sign.getLine(1);
+		if (stripColor(line1).equals("[Sell Crate]") && stripColor(line2).contains("Items"))
+			return line2;
+		return "null";
+	}
+
 	private void openSellCrate(Player player, String type) {
-		Inventory inv = Bukkit.createInventory(null, 27, colorize("&3Sell Crate - " + type));
+		Inventory inv = Bukkit.createInventory(null, 27, colorize("&eSell Crate - " + type));
 		player.openInventory(inv);
 	}
 
 	@EventHandler
 	public void onSellCrateClose(InventoryCloseEvent event) {
-		String title = decolorize(event.getView().getTitle());
-		if (!title.contains(colorize("Sell Crate - "))) return;
+		String title = stripColor(event.getView().getTitle());
+		if (!title.contains(stripColor("Sell Crate - "))) return;
 
 		String[] split = decolorize(title).toLowerCase().split(" - ");
 		String crateType = split[1];
