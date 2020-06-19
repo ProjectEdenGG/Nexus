@@ -44,6 +44,7 @@ public abstract class MongoService extends DatabaseService {
 //			return getNoCache(uuid);
 	}
 
+	@NotNull
 	protected <T extends PlayerOwnedObject> T getCache(UUID uuid) {
 		Validate.notNull(getPlayerClass(), "You must provide a player owned class or override get(UUID)");
 		if (getCache().containsKey(uuid) && getCache().get(uuid) == null)
@@ -56,6 +57,8 @@ public abstract class MongoService extends DatabaseService {
 		Object object = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
 		if (object == null)
 			object = createPlayerObject(uuid);
+		if (object == null)
+			BNCore.log("New instance of " + getPlayerClass().getSimpleName() + " is null");
 		return (T) object;
 	}
 

@@ -95,9 +95,9 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public static Env getEnv() {
-		String env = getInstance().getConfig().getString("env", Env.DEV.name());
+		String env = getInstance().getConfig().getString("env", Env.DEV.name()).toUpperCase();
 		try {
-			return Env.valueOf(getInstance().getConfig().getString("env", Env.DEV.name()));
+			return Env.valueOf(env);
 		} catch (IllegalArgumentException ex) {
 			BNCore.severe("Could not parse environment variable " + env + ", options are: " + String.join(", ", EnumUtils.valueNameList(Env.class)));
 			BNCore.severe("Defaulting to " + Env.DEV.name() + " environment");

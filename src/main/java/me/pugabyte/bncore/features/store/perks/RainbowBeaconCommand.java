@@ -36,10 +36,13 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		if (rainbowBeacon.getTaskId() != null)
 			error("Your rainbow beacon is already activated");
 
-		if (!player().getLocation().clone().subtract(0, 1, 0).getBlock().getType().equals(Material.BEACON))
-			error("You must be standing on a beacon");
+		if (rainbowBeacon.getLocation() == null)
+			if (player().getLocation().clone().subtract(0, 1, 0).getBlock().getType().equals(Material.BEACON)) {
+				rainbowBeacon.setLocation(player().getLocation().getBlock().getLocation());
+				service.save(rainbowBeacon);
+			} else
+				error("You must be standing on a beacon");
 
-		rainbowBeacon.setLocation(player().getLocation().getBlock().getLocation());
 		startTask(rainbowBeacon);
 		send(PREFIX + "Activated your rainbow beacon");
 	}
@@ -57,8 +60,10 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	void delete() {
 		if (rainbowBeacon.getLocation() == null)
 			error("You do not have a rainbow beacon set");
+
 		if (rainbowBeacon.getTaskId() != null)
 			Tasks.cancel(rainbowBeacon.getTaskId());
+
 		rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
 		service.delete(rainbowBeacon);
 		send(PREFIX + "Successfully deleted your rainbow beacon");
@@ -87,7 +92,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 
 	@Override
 	public void _shutdown() {
-		if (service.getCache().values().isEmpty()) return;
+		final RainbowBeaconService service = new RainbowBeaconService();
 		for (RainbowBeacon rainbowBeacon : service.getCache().values())
 			if (rainbowBeacon.getLocation() != null)
 				rainbowBeacon.getLocation().getBlock().setType(Material.AIR);

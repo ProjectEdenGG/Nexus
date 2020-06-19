@@ -447,7 +447,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@Path("help")
 	void help() {
 		List<JsonBuilder> lines = new ArrayList<>();
-		getPathMethods().stream().filter(method -> hasPermission(sender(), method)).forEach(method -> {
+		getPathMethods(event).forEach(method -> {
 			Path path = method.getAnnotation(Path.class);
 			Description desc = method.getAnnotation(Description.class);
 			HideFromHelp hide = method.getAnnotation(HideFromHelp.class);

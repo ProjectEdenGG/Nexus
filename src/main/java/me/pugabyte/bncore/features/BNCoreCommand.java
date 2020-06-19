@@ -95,6 +95,11 @@ public class BNCoreCommand extends CustomCommand {
 		}}, LocalDateTime.now().plusMinutes(1)));
 	}
 
+	@Path("getEnv")
+	void getEnv() {
+		send(BNCore.getEnv().name());
+	}
+
 	@Async
 	@Path("getDataFile [player]")
 	void getDataFile(@Arg("self") Nerd nerd) {

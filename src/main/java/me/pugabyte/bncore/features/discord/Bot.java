@@ -60,10 +60,16 @@ public enum Bot {
 	void connect() {
 		if (this.jda == null && !isNullOrEmpty(getToken())) {
 			final JDA jda = build();
+			if (jda == null) {
+				BNCore.log("Could not connect " + name() + " to Discord");
+				return;
+			}
+
 			Tasks.sync(() -> {
-				if (this.jda == null)
+				if (this.jda == null) {
 					this.jda = jda;
-				else {
+					BNCore.log("Successfully connected " + name() + " to Discord");
+				} else {
 					BNCore.log("Discarding extra Discord connection");
 					jda.shutdown();
 				}
