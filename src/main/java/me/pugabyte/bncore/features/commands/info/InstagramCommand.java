@@ -1,20 +1,21 @@
 package me.pugabyte.bncore.features.commands.info;
 
+import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-@Aliases("yt")
-public class YouTubeCommand extends CustomCommand {
+@Aliases("insta")
+public class InstagramCommand extends CustomCommand {
 
-	public YouTubeCommand(CommandEvent event) {
+	public InstagramCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
 	@Path
-	void youtube() {
-		send(json().urlize("&ehttps://yt.bnn.gg"));
+	void run() {
+		send(json().urlize("&ehttps://insta.bnn.gg"));
 	}
 
 }
