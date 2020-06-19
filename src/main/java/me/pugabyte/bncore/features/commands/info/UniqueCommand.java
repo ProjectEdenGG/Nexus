@@ -14,7 +14,7 @@ public class UniqueCommand extends CustomCommand {
 	}
 
 	@Path
-	void unique() {
+	void run() {
 		int players = Bukkit.getServer().getOfflinePlayers().length;
 		send(NumberFormat.getIntegerInstance().format(players) + " unique players have joined the server");
 	}

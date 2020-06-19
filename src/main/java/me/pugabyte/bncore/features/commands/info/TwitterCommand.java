@@ -11,7 +11,7 @@ public class TwitterCommand extends CustomCommand {
 	}
 
 	@Path
-	void youtube() {
+	void run() {
 		send(json().urlize("&ehttps://twitter.bnn.gg"));
 	}
 
