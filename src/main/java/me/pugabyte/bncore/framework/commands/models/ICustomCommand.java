@@ -275,7 +275,11 @@ public abstract class ICustomCommand {
 								.filter(path -> !Strings.isNullOrEmpty(path))
 								.count()));
 
-		return methods.stream().filter(method -> hasPermission(event.getSender(), method)).collect(Collectors.toList());
+		List<Method> filtered = methods.stream().filter(method -> hasPermission(event.getSender(), method)).collect(Collectors.toList());
+		if (methods.size() > 0 && filtered.size() == 0)
+			throw new NoPermissionException();
+
+		return filtered;
 	}
 
 	// TODO: Use same methods as tab complete
