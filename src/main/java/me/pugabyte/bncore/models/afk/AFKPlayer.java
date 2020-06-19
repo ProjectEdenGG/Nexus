@@ -12,9 +12,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
@@ -32,14 +32,17 @@ public class AFKPlayer {
 	private boolean forceAfk;
 
 	public AFKPlayer(Player player) {
-		this.uuid = player.getUniqueId().toString();
-		this.player = player;
-		this.time = LocalDateTime.now();
-		this.location = player.getLocation();
+		this(player.getUniqueId());
 	}
 
-	@Transient
-	private Player player;
+	public AFKPlayer(UUID uuid) {
+		this.uuid = uuid.toString();
+		update();
+	}
+
+	public Player getPlayer() {
+		return Bukkit.getPlayer(UUID.fromString(uuid));
+	}
 
 	public void setMessage(String message) {
 		this.message = stripColor(message);
@@ -54,7 +57,9 @@ public class AFKPlayer {
 	}
 
 	public void setLocation() {
-		this.location = player.getLocation().clone();
+		Player player = getPlayer();
+		if (player != null)
+			this.location = player.getLocation().clone();
 	}
 
 	public void update() {
@@ -70,8 +75,8 @@ public class AFKPlayer {
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			if (!Utils.canSee(_player, getPlayer())) return;
 
-			String broadcast = "&7* &e" + player.getName() + " &7is now AFK";
-			if (_player.getUniqueId() == player.getUniqueId()) {
+			String broadcast = "&7* &e" + getPlayer().getName() + " &7is now AFK";
+			if (_player.getUniqueId() == getPlayer().getUniqueId()) {
 				broadcast = "&7* You are now AFK";
 				if (message != null)
 					broadcast += ". Your auto-reply message is set to:\n &e" + message;
@@ -91,10 +96,10 @@ public class AFKPlayer {
 		Utils.callEvent(new NotAFKEvent(this));
 
 		Bukkit.getOnlinePlayers().forEach(_player -> {
-			if (!Utils.canSee(_player, player)) return;
+			if (!Utils.canSee(_player, getPlayer())) return;
 
-			String broadcast = "&7* &e" + player.getName() + " &7is no longer AFK";
-			if (_player.getUniqueId() == player.getUniqueId())
+			String broadcast = "&7* &e" + getPlayer().getName() + " &7is no longer AFK";
+			if (_player.getUniqueId() == getPlayer().getUniqueId())
 				broadcast = "&7* You are no longer AFK";
 
 			// TODO: Mute menu
