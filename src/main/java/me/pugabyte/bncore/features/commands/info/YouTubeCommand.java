@@ -13,7 +13,7 @@ public class YouTubeCommand extends CustomCommand {
 	}
 
 	@Path
-	void youtube() {
+	void run() {
 		send(json().urlize("&ehttps://yt.bnn.gg"));
 	}
 
