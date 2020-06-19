@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class AFKService extends MySQLService {
 
@@ -22,17 +23,15 @@ public class AFKService extends MySQLService {
 		}
 	}
 
-	public Map<Player, AFKPlayer> getMap() {
+	public Map<UUID, AFKPlayer> getMap() {
 		try {
 			List<AFKPlayer> results = database.where("uuid in (" + asList(Utils.getOnlineUuids()) + ")").results(AFKPlayer.class);
 			Tasks.async(() -> database.table("afk").delete());
-			Map<Player, AFKPlayer> players = new HashMap<>();
+			Map<UUID, AFKPlayer> players = new HashMap<>();
 			for (AFKPlayer afkPlayer : results) {
 				OfflinePlayer player = Utils.getPlayer(afkPlayer.getUuid());
-				if (player.isOnline()) {
-					afkPlayer.setPlayer(player.getPlayer());
-					players.put(player.getPlayer(), afkPlayer);
-				}
+				if (player.isOnline())
+					players.put(player.getUniqueId(), afkPlayer);
 			}
 			return players;
 		} catch (Exception ex) {
