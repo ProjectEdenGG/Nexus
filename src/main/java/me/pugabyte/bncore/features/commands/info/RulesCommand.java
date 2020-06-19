@@ -99,7 +99,7 @@ public class RulesCommand extends CustomCommand {
 			case 2:
 				send("&e6. &3Do not do a staff member's job if they are available to do it themselves");
 				send("&e7. &3No inappropriate content");
-				send("&e8. &3No ban evading (that includes using Discord). Appeal at https://bnn.gg/appeal");
+				send(json().urlize("&e8. &3No ban evading (that includes using Discord). Appeal at &chttps://bnn.gg/appeal"));
 				send("&e9. &3Keep heavily opinionated and political arguments out of public chats");
 				send(json("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)").command("/rules streaming"));
 				line();

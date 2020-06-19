@@ -16,7 +16,7 @@ public class ApplyCommand extends CustomCommand {
 		send("&3Ready to apply for &b&oModerator&3?");
 		send("&3How does your name look in blue, &b&o" + player().getName() + "&3? :)");
 		send("&3If you think you are ready for this position, you can fill out an application here:");
-		send("&ehttps://bnn.gg/apply/mod");
+		send(json().urlize("&ehttps://bnn.gg/apply/mod"));
 	}
 
 }

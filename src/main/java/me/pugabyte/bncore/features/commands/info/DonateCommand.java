@@ -19,7 +19,7 @@ public class DonateCommand extends CustomCommand {
 		send("&3Enjoying the server? &3Share the love by &edonating&3! We are always extremely grateful for donations, " +
 				"and they come with some cool &erewards&3!");
 		line();
-		send("&3Visit our store: &ehttps://store.bnn.gg");
+		send(json().urlize("&3Visit our store: &ehttps://store.bnn.gg"));
 		line();
 		send(json(PLUS + "Terms and Conditions").hover(PLUS + "Click here before you donate for anything.").command("/donate tac"));
 	}

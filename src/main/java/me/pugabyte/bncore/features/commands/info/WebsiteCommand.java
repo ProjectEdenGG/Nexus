@@ -14,7 +14,7 @@ public class WebsiteCommand extends CustomCommand {
 
 	@Path
 	void website() {
-		send("&ehttps://bnn.gg");
+		send(json().urlize("&ehttps://bnn.gg"));
 	}
 
 }
