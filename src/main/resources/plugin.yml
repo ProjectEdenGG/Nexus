@@ -3,18 +3,20 @@ main: me.pugabyte.bncore.BNCore
 version: ${project.version}
 api-version: "1.15"
 softdepend:
-  - NBTAPI
-  - SmartInvs
+  - Citizens
+  - Essentials
+  - helper
+  - LiteBans
+  - LWC
+  - mcMMO
   - Multiverse-Core
   - Multiverse-Inventories
-  - WorldGuard
-  - WorldGuardRegionAPI
-  - mcMMO
-  - LiteBans
-  - helper
-  - Citizens
+  - NBTAPI
+  - NoteBlockAPI
+  - PathfinderAPI
   - ProtocolLib
+  - SmartInvs
   - Vault
   - Votifier
-  - PathfinderAPI
-  - NoteBlockAPI
+  - WorldGuard
+  - WorldGuardRegionAPI

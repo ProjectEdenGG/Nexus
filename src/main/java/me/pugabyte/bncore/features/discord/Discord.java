@@ -46,10 +46,6 @@ public class Discord {
 			if (bot.jda() == null && bot.getToken().length() > 0)
 				try {
 					bot.connect();
-					if (bot.jda() != null)
-						BNCore.log("Successfully connected " + bot.name() + " to Discord");
-					else
-						BNCore.log("Could not connect " + bot.name() + " to Discord");
 				} catch (Exception ex) {
 					BNCore.severe("An error occurred while trying to connect to Discord");
 					ex.printStackTrace();
