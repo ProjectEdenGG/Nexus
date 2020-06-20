@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.With;
 import me.pugabyte.bncore.features.commands.TameablesCommand.PendingTameblesAction.PendingTameablesActionType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -35,7 +37,9 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
 	private static final Map<UUID, PendingTameblesAction> actions = new HashMap<>();
+	private static final Map<UUID, Entity> moveQueue = new HashMap<>();
 	private static final String PREFIX = StringUtils.getPrefix("Tameables");
+
 
 	TameablesCommand(CommandEvent event) {
 		super(event);
@@ -51,6 +55,23 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void untame() {
 		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.UNTAME));
 		send(PREFIX + "Punch the animal you wish to remove ownership of");
+	}
+
+	@Path("move")
+	void move() {
+		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.MOVE));
+		send(PREFIX + "Punch the animal you wish to move");
+	}
+
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Path("move here")
+	void moveHere() {
+		if (!moveQueue.containsKey(uuid()))
+			error("You do not have any animal pending teleport");
+		Entity entity = moveQueue.remove(uuid());
+		entity.teleport(player());
+		send(PREFIX + "Summoned your " + camelCase(entity.getType()));
 	}
 
 	@Path("transfer <player>")
@@ -177,6 +198,11 @@ public class TameablesCommand extends CustomCommand implements Listener {
 					checkOwner(player, entity);
 					updateOwner(entity, player, null);
 					player.sendMessage(colorize(PREFIX + "You have untamed your " + entityName));
+					break;
+				case MOVE:
+					checkOwner(player, entity);
+					moveQueue.put(player.getUniqueId(), event.getEntity());
+					player.sendMessage(json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here").build());
 					break;
 				case INFO:
 					String owner = getOwner(entity);
