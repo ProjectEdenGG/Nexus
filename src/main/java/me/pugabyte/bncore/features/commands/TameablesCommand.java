@@ -40,7 +40,6 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	private static final Map<UUID, Entity> moveQueue = new HashMap<>();
 	private static final String PREFIX = StringUtils.getPrefix("Tameables");
 
-
 	TameablesCommand(CommandEvent event) {
 		super(event);
 	}
