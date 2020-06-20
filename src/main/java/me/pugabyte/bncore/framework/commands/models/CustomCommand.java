@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
@@ -450,6 +451,39 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (material == null)
 			throw new InvalidInputException("Material from " + value + " not found");
 		return material;
+	}
+
+	protected <T> void paginate(List<T> values, Function<T, JsonBuilder> formatter, String command, int page) {
+		paginate(values, formatter, command, page, 10);
+	}
+
+	protected <T> void paginate(List<T> values, Function<T, JsonBuilder> formatter, String command, int page, int amount) {
+		int start = (page - 1) * amount;
+		if (values.size() < start)
+			error("No results on page " + page);
+
+		int end = Math.min(values.size(), start + amount);
+
+		line();
+		values.subList(start, end).forEach(t -> send(formatter.apply(t)));
+
+		boolean first = page == 1;
+		boolean last = end == values.size();
+
+		JsonBuilder buttons = json();
+		if (first)
+			buttons.next("&7 « Previous  ");
+		else
+			buttons.next("&e « Previous  ").command(command + " " + (page - 1));
+
+		buttons.group().next("&3|&3|").group();
+
+		if (last)
+			buttons.next("  &7Next »");
+		else
+			buttons.next("  &eNext »").command(command + " " + (page + 1));
+
+		send(buttons.group());
 	}
 
 	@Path("help")
