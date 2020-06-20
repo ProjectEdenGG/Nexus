@@ -47,30 +47,30 @@ public enum Emotes {
 	FISH("&b<º))))><", "<><"),
 	EYES("&b◔&e‿ &b◔", ":eyes:"),
 	HEART("&4❤", ":heart:"),
-	HEART_COLORED("❤", "<3", Arrays.asList(
+	HEART_COLORED("❤", "<3",
 			ChatColor.RED,
 			ChatColor.LIGHT_PURPLE,
 			ChatColor.DARK_PURPLE,
 			ChatColor.BLACK,
 			ChatColor.AQUA,
-			ChatColor.GREEN));
+			ChatColor.GREEN);
 
 	@Getter
-	private String emote;
+	private final String emote;
 	@Getter
-	private String key;
+	private final String key;
 	@Getter
-	private List<ChatColor> colors = new ArrayList<>();
+	private final List<ChatColor> colors = new ArrayList<>();
 
 	Emotes(String emote, String key) {
 		this.emote = emote;
 		this.key = key;
 	}
 
-	Emotes(String emote, String key, List<ChatColor> colors) {
+	Emotes(String emote, String key, ChatColor... colors) {
 		this.emote = emote;
 		this.key = key;
-		this.colors = colors;
+		this.colors.addAll(Arrays.asList(colors));
 	}
 
 	public static void process(ChatEvent event) {
