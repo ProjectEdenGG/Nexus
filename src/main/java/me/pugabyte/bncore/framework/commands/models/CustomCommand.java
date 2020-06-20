@@ -458,6 +458,9 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected <T> void paginate(List<T> values, Function<T, JsonBuilder> formatter, String command, int page, int amount) {
+		if (page < 1)
+			error("Page number must be 1 or more");
+
 		int start = (page - 1) * amount;
 		if (values.size() < start)
 			error("No results on page " + page);
