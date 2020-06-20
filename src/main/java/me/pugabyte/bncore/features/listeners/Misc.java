@@ -70,7 +70,7 @@ public class Misc implements Listener {
 		Player player = (Player) event.getEntity();
 
 		if (event.getCause() == DamageCause.VOID)
-			if (WorldGroup.get(player) == WorldGroup.SURVIVAL) {
+			if (!WorldGroup.get(player).equals(WorldGroup.SKYBLOCK)) {
 				if (!player.getWorld().getName().contains("the_end"))
 					Warps.spawn((Player) event.getEntity());
 			}
