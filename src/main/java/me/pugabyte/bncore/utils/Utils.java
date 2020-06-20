@@ -60,6 +60,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Utils {
@@ -743,6 +744,52 @@ public class Utils {
 
 		public static <T> List<String> valueNameList(Class<? extends T> clazz) {
 			return Arrays.stream(Env.values()).map(Env::name).collect(Collectors.toList());
+		}
+
+		public static String prettyName(String name) {
+			if (!name.contains("_"))
+				return camelCase(name);
+
+			List<String> words = new ArrayList<>(Arrays.asList(name.split("_")));
+
+			String first = words.get(0);
+			String last = words.get(words.size() - 1);
+			words.remove(0);
+			words.remove(words.size() - 1);
+
+			StringBuilder result = new StringBuilder(camelCase(first));
+			for (String word : words) {
+				String character = interpolate(word);
+				if (character != null)
+					result.append(character);
+				else if (word.toLowerCase().matches("and|for|the|a|or|of|from|in|as"))
+					result.append(" ").append(word.toLowerCase());
+				else
+					result.append(" ").append(camelCase(word));
+			}
+
+			String character = interpolate(last);
+			if (character != null)
+				result.append(character);
+			else
+				result.append(" ").append(last.charAt(0)).append(last.substring(1).toLowerCase());
+			return result.toString().trim();
+		}
+
+		private static String interpolate(String word) {
+			String character = null;
+			switch (word.toLowerCase()) {
+				case "period":
+					character = ".";
+					break;
+				case "excl":
+					character = "!";
+					break;
+				case "comma":
+					character = ",";
+					break;
+			}
+			return character;
 		}
 	}
 

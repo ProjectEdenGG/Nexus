@@ -6,6 +6,7 @@ import com.earth2me.essentials.Essentials;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.features.achievements.Achievements;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.dailyrewards.DailyRewardsFeature;
@@ -245,6 +246,7 @@ public class BNCore extends JavaPlugin {
 		saveConfig();
 	}
 
+	public static Achievements achievements;
 	public static AFK afk;
 	public static Chat chat;
 	public static CustomRecipes recipes;
@@ -291,6 +293,7 @@ public class BNCore extends JavaPlugin {
 		new Timer("  MongoDB", HomeService::new);
 		new Timer("  Discord", () -> discord = new Discord());
 
+//		new Timer("  Achievements", () -> achievements = new Achievements());
 		new Timer("  AFK", () -> afk = new AFK());
 		new Timer("  Chat", () -> chat = new Chat());
 		new Timer("  CustomRecipes", () -> recipes = new CustomRecipes());
