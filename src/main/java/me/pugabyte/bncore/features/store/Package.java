@@ -447,81 +447,105 @@ public enum Package {
 	@Permission("miniaturepets.Squirrel")
 	MINIATURE_PETS,
 
+	// Defaults:
+	// setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning
+
 	@Id("2495938")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.cow.setBaby.setBurning.setArrowsSticking.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.chicken.setArrowsSticking.setBurning.setBaby.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.pig.setSaddled.setArrowsSticking.setBurning.setBaby.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.sheep.setBaby.setColor.setSheared.setArrowsSticking.setBurning.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.mushroom_cow.setArrowsSticking.setBurning.setBaby.setViewSelfDisguise")
-	DISGUISES_FARM_ANIMALS,
+	@Permission("libsdisguises.disguise.bee.setBeeAnger.setFlipped.setHasNectar.setHasStung.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.chicken.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.cow.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.mushroom_cow.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.pig.setSaddled.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.rabbit.setType.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.sheep.setColor.setSheared.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	DISGUISES_FARM,
 
 	@Id("2495940")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.ocelot.setArrowsSticking.setBurning.setBaby.setType.setSitting.setTamed.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.rabbit.setBaby.setType.setArrowsSticking.setBurning.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.wolf.setBaby.setSneaking.setTamed.setAngry.setBegging.setCollarColor.setArrowsSticking.setBurning.setSitting.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.parrot.setArrowsSticking.setBurning.setViewSelfDisguise.setBaby.setSitting.setTamed.setVariant")
-	DISGUISES_DOMESTIC_ANIMALS,
-
-	@Id("2495941")
-	@Category("Disguises")
-	@Permission("libsdisguises.disguise.villager.setArrowsSticking.setBurning.setBaby.setProfession.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.iron_golem.setArrowsSticking.setBurning.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.snowman.setArrowsSticking.setBurning.setHat.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.squid.setArrowsSticking.setBurning.setViewSelfDisguise")
-	DISGUISES_LEFTOVERS,
-
-	@Id("2495942")
-	@Category("Disguises")
-	@Permission("libsdisguises.disguise.mule.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.horse.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.donkey.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.llama.setArrowsSticking.setBurning.setBaby.setCarryingChest.setColor.setGrazing.setCarpet.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setViewSelfDisguise")
-	DISGUISES_RIDABLE_ANIMALS,
-
-	@Id("2495944")
-	@Category("Disguises")
-	@Permission("libsdisguises.disguise.zombie.setArrowsSticking.setBurning.setArmor.setItemInMainHand.setItemInOffHand.setAggressive.setBaby.setProfession.setShaking.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.skeleton.setArrowsSticking.setBurning.setArmor.setItemInMainHand.setItemInOffHand.setSwingArms.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.cave_spider.setArrowsSticking.setBurning.setClimbing.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.spider.setArrowsSticking.setBurning.setClimbing.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.creeper.setIgnited.setPowered.setBurning.setArrowsSticking.setBurning.setViewSelfDisguise")
-	DISGUISES_MONSTERS,
-
-	@Id("2495945")
-	@Category("Disguises")
-	@Permission("libsdisguises.disguise.blaze.setArrowsSticking.setBurning.setBlazing.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.pigman.setArrowsSticking.setBurning.setItemInMainHand.setItemInOffHand.setAggressive.setBaby.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.ghast.setArrowsSticking.setBurning.setAggressive.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.magma_cube.setArrowsSticking.setBurning.setSize.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.wither_skeleton.setArrowsSticking.setBurning.setSwingArms.setItemInMainHand.setItemInOffHand.setArmor.setViewSelfDisguise")
-	DISGUISES_NETHER,
-
-	@Id("2495946")
-	@Category("Disguises")
-	@Permission("libsdisguises.disguise.enderman.setArrowsSticking.setBurning.setAggressive.setItemInMainHand.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.endermite.setArrowsSticking.setBurning.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.shulker.setArrowsSticking.setBurning.setFacingDirection.setShieldHeight.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.silverfish.setArrowsSticking.setBurning.setViewSelfDisguise")
-	DISGUISES_END_CREATURES,
-
-	@Id("2495947")
-	@Category("Disguises")
-	@Permission("libsdisguises.disguise.bat.setArrowsSticking.setBurning.setHanging.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.witch.setArrowsSticking.setBurning.setAggressive.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.slime.setArrowsSticking.setBurning.setSize.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.stray.setArrowsSticking.setBurning.setSwingArms.setArmor.setItemInMainHand.setItemInOffHand.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.husk.setArrowsSticking.setBurning.setBaby.setProfession.setShaking.setAggressive.setArmor.setViewSelfDisguise")
-	DISGUISES_SPOOKIES,
+	@Permission("libsdisguises.disguise.bat.setHanging.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.cat.setCollarColor.setLookingUp.setLyingDown.setTamed.setType.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.fox.setCrouching.setHeadTilted.setSpringing.setType.setTipToeing.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.ocelot.setType.setSitting.setTamed.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.panda.setHeadShaking.setHiddenGene.setMainGene.setSneeze.setTumble.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.parrot.setSitting.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.wolf.setSneaking.setTamed.setAngry.setBegging.setCollarColor.setSitting.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	DISGUISES_CUTIES,
 
 	@Id("2495948")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.evoker.setArrowsSticking.setBurning.setSpellTicks.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.vex.setArrowsSticking.setBurning.setAngry.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.vindicator.setArrowsSticking.setBurning.setJohnny.setViewSelfDisguise")
-	@Permission("libsdisguises.disguise.illusioner.setArrowsSticking.setBurning.setSpellTicks.setViewSelfDisguise")
-	DISGUISES_NEW_GENERATION_MONSTERS;
+	@Permission("libsdisguises.disguise.evoker.setSpellTicks.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.illusioner.setSpellTicks.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.pillager.setAimingBow.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.ravager.setCastingSpell.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.vex.setAngry.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.villager.setBiome.setProfession.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.vindicator.setJohnny.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.wandering_trader.setAngry.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.zombie_villager.setBiome.setArmor.setItemInMainHand.setItemInOffHand.setAggressive.setProfession.setShaking.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	DISGUISES_NATIVES,
+
+	@Id("3919103")
+	@Category("Disguises")
+	@Permission("libsdisguises.disguise.cod.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.dolphin.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.drowned.setConverting.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.guardian.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.polar_bear.setStanding.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.pufferfish.setPuffState.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.salmon.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.squid.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.turtle.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	DISGUISES_AQUATIC,
+
+	@Id("2495945")
+	@Category("Disguises")
+	@Permission("libsdisguises.disguise.hoglin.todo")
+	@Permission("libsdisguises.disguise.piglin.todo")
+	@Permission("libsdisguises.disguise.zombified_piglin.todo")
+	@Permission("libsdisguises.disguise.zoglin.todo")
+	@Permission("libsdisguises.disguise.strider.todo")
+	@Permission("libsdisguises.disguise.blaze.setBlazing.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.ghast.setAggressive.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.magma_cube.setSize.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.pigman.setItemInMainHand.setItemInOffHand.setAggressive.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.wither_skeleton.setSwingArms.setItemInMainHand.setItemInOffHand.setArmor.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	DISGUISES_NETHER,
+
+	@Id("2495944")
+	@Category("Disguises")
+	@Permission("libsdisguises.disguise.cave_spider.setClimbing.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.creeper.setIgnited.setPowered.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.husk.setProfession.setShaking.setAggressive.setArmor.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.skeleton.setArmor.setItemInMainHand.setItemInOffHand.setSwingArms.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.spider.setClimbing.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.stray.setSwingArms.setArmor.setItemInMainHand.setItemInOffHand.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.witch.setAggressive.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.zombie.setArmor.setItemInMainHand.setItemInOffHand.setAggressive.setProfession.setShaking.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	DISGUISES_MONSTERS,
+
+	@Id("2495942")
+	@Category("Disguises")
+	@Permission("libsdisguises.disguise.skeleton_horse.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.zombie_horse.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.donkey.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.horse.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.llama.setCarryingChest.setColor.setGrazing.setEating.setCarpet.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.mule.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.trader_llama.setCarpet.setCarryingChest.setColor.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	DISGUISES_MOUNTS,
+
+	@Id("2495941")
+	@Category("Disguises")
+	@Permission("libsdisguises.disguise.enderman.setAggressive.setItemInMainHand.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.endermite.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.iron_golem.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.phantom.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.shulker.setFacingDirection.setShieldHeight.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.silverfish.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.slime.setSize.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	@Permission("libsdisguises.disguise.snowman.setHat.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning")
+	DISGUISES_OTHER;
 
 	@SneakyThrows
 	public Field getField() {

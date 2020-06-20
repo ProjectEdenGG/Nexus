@@ -12,20 +12,16 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 public class AFK {
-	static Map<Player, AFKPlayer> players = new AFKService().getMap();
-
-	public AFK() {
-		new AFKListener();
-		scheduler();
-	}
+	static Map<UUID, AFKPlayer> players = new AFKService().getMap();
 
 	public static void shutdown() {
 		new AFKService().saveAll();
 	}
 
-	private void scheduler() {
+	static {
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream().map(AFK::get).forEach(player -> {
 			try {
 				if (!isSameLocation(player.getLocation(), player.getPlayer().getLocation()))
@@ -37,11 +33,12 @@ public class AFK {
 					player.afk();
 			} catch (Exception ex) {
 				BNCore.warn("Error in AFK scheduler: " + ex.getMessage());
+				ex.printStackTrace();
 			}
 		}));
 	}
 
-	private boolean isSameLocation(Location from, Location to) {
+	private static boolean isSameLocation(Location from, Location to) {
 		if (!from.getWorld().equals(to.getWorld()))
 			return false;
 
@@ -51,10 +48,18 @@ public class AFK {
 	}
 
 	public static AFKPlayer get(Player player) {
-		if (!players.containsKey(player))
-			players.put(player, new AFKPlayer(player));
+		return get(player.getUniqueId());
+	}
 
-		return players.get(player);
+	public static AFKPlayer get(UUID uuid) {
+		if (!players.containsKey(uuid))
+			players.put(uuid, new AFKPlayer(uuid));
+
+		return players.get(uuid);
+	}
+
+	public static void remove(Player player) {
+		players.remove(player.getUniqueId());
 	}
 
 	public static int getActivePlayers() {

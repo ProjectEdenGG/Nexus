@@ -40,7 +40,7 @@ class PathParser {
 	public PathParser(@NonNull CommandEvent event) {
 		this.event = event;
 		this.command = event.getCommand();
-		this.methods = command.getPathMethods();
+		this.methods = command.getPathMethods(event);
 		Collections.reverse(methods);
 	}
 

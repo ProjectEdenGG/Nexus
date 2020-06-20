@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.models.cooldown;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.utils.Time;
@@ -34,6 +35,11 @@ public class CooldownService extends MongoService {
 
 	public boolean check(UUID uuid, String type, double ticks) {
 		Cooldown cooldown = get(uuid);
+		if (cooldown == null) {
+			BNCore.warn("Cooldown object is null? " + uuid.toString() + " / " + type + " / " + ticks);
+			return false;
+		}
+
 		if (!cooldown.check(type))
 			return false;
 

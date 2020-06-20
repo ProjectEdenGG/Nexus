@@ -68,6 +68,8 @@ public class InvisibleArmourCommand extends CustomCommand {
 
 	@Path("[on|off]")
 	void run(Boolean enable) {
+		error("Temporarily disabled");
+
 		if (enable == null)
 			invisibleArmour.setEnabled(!invisibleArmour.isEnabled());
 		else
@@ -85,6 +87,8 @@ public class InvisibleArmourCommand extends CustomCommand {
 
 	@Path("menu")
 	void menu() {
+		error("Temporarily disabled");
+
 		SmartInventory.builder()
 				.provider(new InvisibleArmourProvider(invisibleArmour))
 				.size(6, 9)

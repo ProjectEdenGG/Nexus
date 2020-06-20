@@ -102,7 +102,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 						if (!event.getPlayer().isOnline())
 							return;
 
-						if (new CooldownService().check(player(), "referralAsk", Time.MINUTE.x(5))) {
+						if (new CooldownService().check(event.getPlayer(), "referralAsk", Time.MINUTE.x(5))) {
 							send(event.getPlayer(), json().newline()
 									.next("&e&lHey there! &3Could you quickly tell us where you found this server? &eClick here!")
 									.command("/referral")
