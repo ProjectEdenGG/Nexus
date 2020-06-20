@@ -6,10 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
-import me.pugabyte.bncore.features.commands.TameablesCommand.TameablesAction.TameablesActionType;
+import me.pugabyte.bncore.features.commands.TameablesCommand.PendingTameblesAction.PendingTameablesActionType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -27,10 +30,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
-	private static Map<Player, TameablesAction> actions = new HashMap<>();
+	private static final Map<UUID, PendingTameblesAction> actions = new HashMap<>();
+	private static final Map<UUID, Entity> moveQueue = new HashMap<>();
+	private static final String PREFIX = StringUtils.getPrefix("Tameables");
 
 	TameablesCommand(CommandEvent event) {
 		super(event);
@@ -38,21 +46,38 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	@Path("(info|view)")
 	void info() {
-		actions.put(player(), new TameablesAction(TameablesActionType.INFO));
+		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.INFO));
 		send(PREFIX + "Punch the animal you wish to view information on");
 	}
 
 	@Path("untame")
 	void untame() {
-		actions.put(player(), new TameablesAction(TameablesActionType.UNTAME));
+		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.UNTAME));
 		send(PREFIX + "Punch the animal you wish to remove ownership of");
+	}
+
+	@Path("move")
+	void move() {
+		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.MOVE));
+		send(PREFIX + "Punch the animal you wish to move");
+	}
+
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Path("move here")
+	void moveHere() {
+		if (!moveQueue.containsKey(uuid()))
+			error("You do not have any animal pending teleport");
+		Entity entity = moveQueue.remove(uuid());
+		entity.teleport(player());
+		send(PREFIX + "Summoned your " + camelCase(entity.getType()));
 	}
 
 	@Path("transfer <player>")
 	void transfer(OfflinePlayer transfer) {
 		if (player().equals(transfer))
 			error("You can't transfer an animal to yourself");
-		actions.put(player(), new TameablesAction(TameablesActionType.TRANSFER, transfer));
+		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.TRANSFER, transfer));
 		send(PREFIX + "Punch the animal you wish to transfer to " + transfer.getName());
 	}
 
@@ -74,22 +99,12 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		Bukkit.getWorlds().forEach(world -> {
 			if (WorldGroup.get(world) == WorldGroup.get(player()))
 				world.getEntities().forEach(entity -> {
-					if (entity.getType() == EntityType.valueOf(entityType.name())) {
-						if (entity instanceof Tameable) {
-							Tameable tameable = (Tameable) entity;
-							AnimalTamer tamer = tameable.getOwner();
-							if (tamer != null && tameable.getOwner().getUniqueId() == player().getUniqueId())
-								entities.add(entity);
-						} else if (entity instanceof Fox) {
-							Fox fox = (Fox) entity;
-							if (fox.getFirstTrustedPlayer() == player() || fox.getSecondTrustedPlayer() == player())
-								entities.add(entity);
-						}
-					}
+					if (TameableEntity.isTameable(entity.getType()) && isOwner(player(), entity))
+						entities.add(entity);
 			});
 		});
 
-		if (entities.size() == 0)
+		if (entities.isEmpty())
 			error("Could not find any " + camelCase(entityType.name()) + " in loaded chunks belonging to you");
 
 		return entities;
@@ -103,7 +118,16 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		WOLF,
 		CAT,
 		FOX,
-		PARROT
+		PARROT;
+
+		public static boolean isSummonable(EntityType entityType) {
+			try {
+				valueOf(entityType.name());
+				return true;
+			} catch (IllegalArgumentException ex) {
+				return false;
+			}
+		}
 	}
 
 	private enum TameableEntity implements TameableEntityList {
@@ -115,21 +139,31 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		SKELETON_HORSE,
 		DONKEY,
 		MULE,
-		LLAMA
+		LLAMA;
+
+		public static boolean isTameable(EntityType entityType) {
+			try {
+				valueOf(entityType.name());
+				return true;
+			} catch (IllegalArgumentException ex) {
+				return false;
+			}
+		}
 	}
 
 	@Data
 	@AllArgsConstructor
 	@RequiredArgsConstructor
-	public static class TameablesAction {
+	public static class PendingTameblesAction {
 		@NonNull
-		private TameablesActionType type;
+		private PendingTameablesActionType type;
 		@With
 		private OfflinePlayer player;
 
-		public enum TameablesActionType {
+		public enum PendingTameablesActionType {
 			TRANSFER,
 			UNTAME,
+			MOVE,
 			INFO
 		}
 	}
@@ -137,44 +171,95 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player)) return;
-		if (!(event.getEntity() instanceof Tameable)) return;
 
 		Player player = (Player) event.getDamager();
-		Tameable tameable = (Tameable) event.getEntity();
-		String entityName = camelCase(tameable.getType());
+		UUID uuid = player.getUniqueId();
+		Entity entity = event.getEntity();
+		String entityName = camelCase(entity.getType());
 
-		if (actions.containsKey(player)) {
+		if (actions.containsKey(uuid)) {
 			event.setCancelled(true);
+			if (!TameableEntity.isTameable(event.getEntityType())) {
+				player.sendMessage(colorize(PREFIX + "&cThat animal is not tameable"));
+				actions.remove(uuid);
+				return;
+			}
 
-			TameablesAction action = actions.get(player);
+			PendingTameblesAction action = actions.get(uuid);
 			switch (action.getType()) {
 				case TRANSFER:
-					checkOwner(player, tameable);
+					checkOwner(player, entity);
 					OfflinePlayer transfer = action.getPlayer();
-					tameable.setOwner(transfer);
-					player.sendMessage(PREFIX + "You have transferred the ownership of your " + entityName + " to " + transfer.getName());
+					updateOwner(entity, player, transfer);
+					player.sendMessage(colorize(PREFIX + "You have transferred the ownership of your " + entityName + " to " + transfer.getName()));
 					break;
 				case UNTAME:
-					checkOwner(player, tameable);
-					tameable.setOwner(null);
-					player.sendMessage(PREFIX + "You have untamed your " + entityName);
+					checkOwner(player, entity);
+					updateOwner(entity, player, null);
+					player.sendMessage(colorize(PREFIX + "You have untamed your " + entityName));
+					break;
+				case MOVE:
+					checkOwner(player, entity);
+					moveQueue.put(player.getUniqueId(), event.getEntity());
+					player.sendMessage(json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here").build());
 					break;
 				case INFO:
-					if (tameable.isTamed()) {
-						player.sendMessage(PREFIX + tameable.getOwner().getName() + " owns that " + entityName);
-					} else {
-						player.sendMessage(PREFIX + "That " + entityName + " is not tamed");
-					}
+					String owner = getOwner(entity);
+					if (!isNullOrEmpty(owner))
+						player.sendMessage(colorize(PREFIX + "That " + entityName + " is owned by &e" + owner));
+					else
+						player.sendMessage(colorize(PREFIX + "That " + entityName + " is not tamed"));
 					break;
 			}
-			actions.remove(player);
+			actions.remove(uuid);
 		}
 	}
 
-	private void checkOwner(Player player, Tameable tameable) {
-		AnimalTamer tamer = tameable.getOwner();
-		if (!(tamer != null && tamer.equals(player)))
+	private void updateOwner(Entity entity, Player player, OfflinePlayer newOwner) {
+		if (entity instanceof Tameable) {
+			((Tameable) entity).setOwner(newOwner);
+		} else if (entity instanceof Fox) {
+			Fox fox = (Fox) entity;
+			if (fox.getFirstTrustedPlayer() != null && fox.getFirstTrustedPlayer().getUniqueId().equals(player.getUniqueId()))
+				fox.setFirstTrustedPlayer(newOwner);
+			else if (fox.getSecondTrustedPlayer() != null && fox.getSecondTrustedPlayer().getUniqueId().equals(player.getUniqueId())) {
+				fox.setSecondTrustedPlayer(newOwner);
+			}
+		}
+	}
+
+	private void checkOwner(Player player, Entity tameable) {
+		if (!isOwner(player, tameable))
 			error("You do not own that animal!");
+	}
+
+	private boolean isOwner(Player player, Entity entity) {
+		if (entity instanceof Tameable) {
+			AnimalTamer tamer = ((Tameable) entity).getOwner();
+			return tamer != null && tamer.equals(player);
+		} else if (entity instanceof Fox) {
+			Fox fox = (Fox) entity;
+			return fox.getFirstTrustedPlayer() == player() || fox.getSecondTrustedPlayer() == player();
+		}
+		return false;
+	}
+
+	private String getOwner(Entity entity) {
+		if (entity instanceof Tameable) {
+			AnimalTamer tamer = ((Tameable) entity).getOwner();
+			if (tamer != null)
+				return tamer.getName();
+		} else if (entity instanceof Fox) {
+			Fox fox = (Fox) entity;
+			List<String> names = new ArrayList<>();
+			if (fox.getFirstTrustedPlayer() != null)
+				names.add(fox.getFirstTrustedPlayer().getName());
+			if (fox.getSecondTrustedPlayer() != null)
+				names.add(fox.getSecondTrustedPlayer().getName());
+			if (!names.isEmpty())
+				return String.join(" and ", names);
+		}
+		return null;
 	}
 
 }

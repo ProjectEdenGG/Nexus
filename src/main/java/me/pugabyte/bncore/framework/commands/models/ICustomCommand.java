@@ -262,20 +262,24 @@ public abstract class ICustomCommand {
 		return getCommand(newEvent);
 	}
 
-	List<Method> getPathMethods() {
+	List<Method> getPathMethods(CommandEvent event) {
 		ArrayList<Method> methods = new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
 
 		methods.sort(
 				Comparator.comparing(method ->
 						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
-								.filter(string -> !Strings.isNullOrEmpty(string))
+								.filter(path -> !Strings.isNullOrEmpty(path))
 								.count())
 				.thenComparing(method ->
 						Arrays.stream(getPathString((Method) method).split(" "))
-								.filter(string -> !Strings.isNullOrEmpty(string))
+								.filter(path -> !Strings.isNullOrEmpty(path))
 								.count()));
 
-		return methods;
+		List<Method> filtered = methods.stream().filter(method -> hasPermission(event.getSender(), method)).collect(Collectors.toList());
+		if (methods.size() > 0 && filtered.size() == 0)
+			throw new NoPermissionException();
+
+		return filtered;
 	}
 
 	// TODO: Use same methods as tab complete
