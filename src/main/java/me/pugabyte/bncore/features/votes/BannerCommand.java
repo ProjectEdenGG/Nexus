@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.votes;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @NoArgsConstructor
+@Aliases("banners")
 public class BannerCommand extends CustomCommand implements Listener {
 
 	public BannerCommand(@NonNull CommandEvent event) {
