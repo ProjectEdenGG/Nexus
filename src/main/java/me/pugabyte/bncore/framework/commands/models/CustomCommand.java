@@ -38,6 +38,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
@@ -145,6 +146,13 @@ public abstract class CustomCommand extends ICustomCommand {
 			throw new MustBeIngameException();
 
 		return (Player) event.getSender();
+	}
+
+	protected UUID uuid() {
+		if (!isPlayer())
+			throw new MustBeIngameException();
+
+		return ((Player) event.getSender()).getUniqueId();
 	}
 
 	protected ConsoleCommandSender console() {
