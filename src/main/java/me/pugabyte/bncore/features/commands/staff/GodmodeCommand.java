@@ -59,6 +59,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerJoinEvent event) {
+		if (!event.getPlayer().hasPermission("group.staff")) return;
 		User user = BNCore.getEssentials().getUser(event.getPlayer().getUniqueId());
 		boolean enabled = user.isGodModeEnabledRaw();
 		if (enabled) {

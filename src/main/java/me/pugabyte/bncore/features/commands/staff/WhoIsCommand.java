@@ -74,7 +74,7 @@ public class WhoIsCommand extends CustomCommand {
 		int history = liteBansService.getHistory(nerd.getUuid());
 		List<String> alts = liteBansService.getAlts(nerd.getUuid());
 		List<String> pastNames = new NerdService().getPastNames(offlinePlayer.getUniqueId());
-		Godmode godmode = new GodmodeService().get(player());
+		Godmode godmode = new GodmodeService().get(nerd);
 
 		JsonBuilder json = json()
 				.newline().next("&3Rank: &e" + rank)
