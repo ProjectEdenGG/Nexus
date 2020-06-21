@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.warps.Warps;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
@@ -70,8 +71,8 @@ public class Misc implements Listener {
 		Player player = (Player) event.getEntity();
 
 		if (event.getCause() == DamageCause.VOID)
-			if (!WorldGroup.get(player).equals(WorldGroup.SKYBLOCK)) {
-				if (!player.getWorld().getName().contains("the_end"))
+			if (!WorldGroup.get(player).equals(WorldGroup.SKYBLOCK) && (!player.getWorld().getName().contains("the_end"))) {
+				if (PlayerManager.get(player).getMatch() != null)
 					Warps.spawn((Player) event.getEntity());
 			}
 	}
