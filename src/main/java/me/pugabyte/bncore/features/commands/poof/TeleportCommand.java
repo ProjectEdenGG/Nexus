@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.poof;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -12,12 +13,21 @@ import me.pugabyte.bncore.utils.Utils.RelativeLocation.Modify;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.Utils.getLocation;
 
+@NoArgsConstructor
 @Aliases({"tp", "tppos"})
-public class TeleportCommand extends CustomCommand {
+public class TeleportCommand extends CustomCommand implements Listener {
 
 	public TeleportCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -28,6 +38,13 @@ public class TeleportCommand extends CustomCommand {
 		if (arg.equals("~")) return true;
 		arg = arg.replace("~", "");
 		return isDouble(arg);
+	}
+
+	@Path("getCoords")
+	void getCoords() {
+		Location location = player().getLocation();
+		String message = "/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ() + " " + location.getWorld().getName();
+		send(json(message).suggest(message));
 	}
 
 	@Path("<player> [player]")
@@ -73,6 +90,29 @@ public class TeleportCommand extends CustomCommand {
 			send("&c/" + getAliasUsed() + " <player> [player]");
 			send("&c/" + getAliasUsed() + " <x> <y> <z> [yaw] [pitch] [world]");
 		}
+	}
+
+	private static final Set<UUID> lockTeleports = new HashSet<>();
+
+	@Path("lock <player> [enable]")
+	void lock(Player player, Boolean enable) {
+		UUID uuid = player.getUniqueId();
+		if (enable == null)
+			enable = !lockTeleports.contains(uuid);
+
+		if (enable) {
+			lockTeleports.add(uuid);
+			send(PREFIX + "&cPreventing &3teleports from &e" + player.getName());
+		} else {
+			lockTeleports.remove(uuid);
+			send(PREFIX + "&aAllowing &3teleports from &e" + player.getName());
+		}
+	}
+
+	@EventHandler
+	public void onTeleport(PlayerTeleportEvent event) {
+		if (lockTeleports.contains(event.getPlayer().getUniqueId()))
+			event.setCancelled(true);
 	}
 
 }

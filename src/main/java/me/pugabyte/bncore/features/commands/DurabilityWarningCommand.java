@@ -68,7 +68,12 @@ public class DurabilityWarningCommand extends CustomCommand implements Listener 
 						item.getItemMeta().getDisplayName() :
 						item.getType().name().replaceAll("_", " ").toLowerCase();
 
-				player.sendMessage(StringUtils.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + colors[i] + "'s durability "
+				if (!itemName.endsWith("s"))
+					itemName = itemName + colors[i] + "'s";
+				else
+					itemName = itemName + colors[i] + "'";
+
+				player.sendMessage(StringUtils.getPrefix("DurabilityWarning") + colors[i] + "Your " + itemName + " durability "
 						+ "has dropped below " + (int) (checkPoints[i] * 100) + "% (" + newDurability + " uses left)");
 			}
 	}

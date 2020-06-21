@@ -212,17 +212,18 @@ public class BNCore extends JavaPlugin {
 	}
 
 	public void broadcastReload() {
-		Stream.of("Pugabyte", "WakkaFlocka", "Blast", "lexikiq")
+		Stream.of("Pugabyte", "WakkaFlocka", "Blast", "Camaros", "Zanitaeni", "lexikiq")
 				.map(Bukkit::getOfflinePlayer)
 				.filter(OfflinePlayer::isOnline)
 				.map(OfflinePlayer::getPlayer)
 				.forEach(player -> {
 					GeoIP geoIp = new GeoIPService().get(player);
-					if (geoIp != null && geoIp.getTimezone() != null)
-						player.sendMessage(colorize("&7 " + StringUtils.shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId()))) +
-							" &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!"));
-					else
-						player.sendMessage(colorize(" &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!"));
+					String message = " &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!";
+					if (geoIp != null && geoIp.getTimezone() != null) {
+						String timestamp = StringUtils.shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId())));
+						player.sendMessage(colorize("&7 " + timestamp + message));
+					} else
+						player.sendMessage(colorize(message));
 				});
 	}
 
