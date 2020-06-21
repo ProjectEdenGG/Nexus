@@ -112,8 +112,8 @@ public class ArenaManager {
 	}
 
 	public static void add(Arena arena) {
-		try { arenas.remove(get(arena.getId()));   } catch (InvalidInputException ignore) {}
-		try { arenas.remove(get(arena.getName())); } catch (InvalidInputException ignore) {}
+		try { arenas.remove(get(arena.getId()));   } catch (NullPointerException | InvalidInputException ignore) {}
+		try { arenas.remove(get(arena.getName())); } catch (NullPointerException | InvalidInputException ignore) {}
 		arenas.add(arena);
 	}
 
