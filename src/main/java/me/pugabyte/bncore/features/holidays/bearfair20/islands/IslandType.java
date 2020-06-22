@@ -7,10 +7,10 @@ import java.util.Set;
 
 public enum IslandType {
 	MAIN(new MainIsland()),
-	HALLOWEEN(new MinigameNightIsland()),
+	HALLOWEEN(new HalloweenIsland()),
 	MINIGAME_NIGHT(new MinigameNightIsland()),
 	SUMMER_DOWN_UNDER(new SummerDownUnderIsland()),
-	PUGMAS(new MinigameNightIsland());
+	PUGMAS(new PugmasIsland());
 
 	private final Island island;
 

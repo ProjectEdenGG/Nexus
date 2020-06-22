@@ -82,7 +82,6 @@ public class HalloweenIsland implements Listener, Island {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (event.isCancelled()) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
