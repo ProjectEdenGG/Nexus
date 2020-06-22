@@ -106,10 +106,6 @@ public class BNCore extends JavaPlugin {
 		}
 	}
 
-	public static boolean disableWorldEditPasting() {
-		return true;
-	}
-
 	public static void log(String message) {
 		getInstance().getLogger().info(stripColor(message));
 	}
