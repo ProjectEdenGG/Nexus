@@ -5,7 +5,6 @@ import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.discord.Discord;
-import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -23,7 +22,6 @@ import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -314,10 +312,6 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 								MapRotation mapRotation = MapRotation.getRotation(itemFrame.getRotation());
 								if (order.get(index) == mapId && rotation.get(index) == mapRotation)
 									++correct;
-								else {
-									Location loc = Utils.getCenteredLocation(entity.getLocation());
-									DotEffect.builder().player(player()).location(loc).ticks(10 * 20).color(Color.RED).start();
-								}
 							}
 					}
 
