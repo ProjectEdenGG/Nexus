@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static me.pugabyte.bncore.features.minigames.Minigames.menus;
 
@@ -65,14 +66,17 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 					Material.BLACK_DYE,
 					"&eBlacklisted",
 					"&3Click to set the block||&3list mode to &ewhitelist."
-				),
-				e -> {
-					arena.isWhitelist(true);
-					arena.write();
-					menus.blockListMenu(arena).open(player, page.getPage());
-				}
+					),
+					e -> {
+						arena.isWhitelist(true);
+						arena.write();
+						menus.blockListMenu(arena).open(player, page.getPage());
+					}
 			));
 		}
+
+		arena.getBlockList().removeIf(Objects::isNull);
+		arena.write();
 
 		List<Material> sortedList = new ArrayList<>(arena.getBlockList());
 		Collections.sort(sortedList);
