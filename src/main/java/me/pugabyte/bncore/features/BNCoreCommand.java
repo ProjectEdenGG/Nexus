@@ -31,6 +31,8 @@ import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -243,8 +245,19 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("schem save <name>")
 	void schemSave(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
-		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
-		send("Saved schematic " + name);
+//		TODO when API saving works again
+//		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
+//		send("Saved schematic " + name);
+		GameMode originalGameMode = player().getGameMode();
+		Location originalLocation = player().getLocation().clone();
+		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
+		player().setGameMode(GameMode.SPECTATOR);
+		player().teleport(location);
+		runCommand("mcmd /copy ;; /schem save " + name + " -f");
+		Tasks.wait(10, () -> {
+			player().teleport(originalLocation);
+			player().setGameMode(originalGameMode);
+		});
 	}
 
 	@Path("schem paste <name>")

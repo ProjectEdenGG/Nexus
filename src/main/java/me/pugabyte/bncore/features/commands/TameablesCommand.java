@@ -99,8 +99,9 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		Bukkit.getWorlds().forEach(world -> {
 			if (WorldGroup.get(world) == WorldGroup.get(player()))
 				world.getEntities().forEach(entity -> {
-					if (TameableEntity.isTameable(entity.getType()) && isOwner(player(), entity))
-						entities.add(entity);
+					if (entityType.name().equals(entity.getType().name()))
+						if (TameableEntity.isTameable(entity.getType()) && isOwner(player(), entity))
+							entities.add(entity);
 			});
 		});
 

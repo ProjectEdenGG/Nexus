@@ -10,6 +10,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -25,7 +26,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -72,17 +72,24 @@ public class WorldEditUtils {
 		this.worldGuardUtils = new WorldGuardUtils(world);
 	}
 
-	public void checkDisabled() {
-		if (BNCore.disableWorldEditPasting())
-			throw new InvalidInputException("WorldEdit API usage is temporarily disabled");
-	}
-
 	public EditSession getEditSession() {
 		return new EditSessionBuilder(worldEditWorld).fastmode(true).build();
 	}
 
-	private File getSchematicFile(String fileName) {
-		return new File(schematicsDirectory + fileName + "." + BuiltInClipboardFormat.SPONGE_SCHEMATIC.getPrimaryFileExtension());
+	private File getSchematicFile(String fileName, boolean lookForExisting) {
+		File file = new File(schematicsDirectory + fileName + "." + BuiltInClipboardFormat.SPONGE_SCHEMATIC.getPrimaryFileExtension());
+		if (!file.exists() && lookForExisting)
+			file = new File(schematicsDirectory + fileName + "." + BuiltInClipboardFormat.MCEDIT_SCHEMATIC.getPrimaryFileExtension());
+		return file;
+	}
+
+	@SneakyThrows
+	public Clipboard getSchematic(String fileName) {
+		File file = getSchematicFile(fileName, true);
+		if (!file.exists())
+			throw new InvalidInputException("Schematic " + fileName + " does not exist");
+
+		return ClipboardFormats.findByFile(file).load(file);
 	}
 
 	public Vector3 toVector3(Location location) {
@@ -183,8 +190,11 @@ public class WorldEditUtils {
 	}
 
 	public void setSelection(Player player, BlockVector3 min, BlockVector3 max) {
+		setSelection(player, new CuboidRegion(min, max));
+	}
+
+	public void setSelection(Player player, Region region) {
 		LocalSession session = plugin.getSession(player);
-		Region region = new CuboidRegion(min, max);
 		getPlayer(player).setSelection(region);
 		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
 		session.getRegionSelector(worldEditWorld).explainPrimarySelection(worldEditPlayer, session, region.getMinimumPoint());
@@ -232,15 +242,6 @@ public class WorldEditUtils {
 		return new BlockArrayClipboard(region);
 	}
 
-	@SneakyThrows
-	public Clipboard getSchematic(String fileName) {
-		File file = getSchematicFile(fileName);
-		if (!file.exists())
-			throw new InvalidInputException("Schematic " + fileName + " does not exist");
-
-		return BuiltInClipboardFormat.SPONGE_SCHEMATIC.load(file);
-	}
-
 	public void paste(String fileName, Location location) {
 		paste(fileName, toBlockVector3(location));
 	}
@@ -254,7 +255,6 @@ public class WorldEditUtils {
 	}
 
 	public void paste(Clipboard clipboard, BlockVector3 vector) {
-		checkDisabled();
 		clipboard.paste(worldEditWorld, vector);
 	}
 
@@ -269,7 +269,7 @@ public class WorldEditUtils {
 	@SneakyThrows
 	public void save(String fileName, BlockVector3 min, BlockVector3 max) {
 		CuboidRegion region = new CuboidRegion(worldEditWorld, min, max);
-		new BlockArrayClipboard(region).save(getSchematicFile(fileName), BuiltInClipboardFormat.SPONGE_SCHEMATIC);
+		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), BuiltInClipboardFormat.SPONGE_SCHEMATIC);
 	}
 
 	public void fill(String region, BlockType blockType) {
