@@ -10,14 +10,6 @@ import lombok.ToString;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
-import me.pugabyte.bncore.features.minigames.mechanics.Battleship;
-import me.pugabyte.bncore.features.minigames.mechanics.HoliSplegg;
-import me.pugabyte.bncore.features.minigames.mechanics.PixelPainters;
-import me.pugabyte.bncore.features.minigames.mechanics.Spleef;
-import me.pugabyte.bncore.features.minigames.mechanics.Splegg;
-import me.pugabyte.bncore.features.minigames.mechanics.TNTRun;
-import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
-import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
@@ -110,15 +102,6 @@ public class Match {
 	}
 
 	public boolean join(Minigamer minigamer) {
-		if (BNCore.disableWorldEditPasting()) {
-			List<Class<?>> usesWorldEdit = Arrays.asList(Spleef.class, Splegg.class, HoliSplegg.class, TNTRun.class,
-					Battleship.class, UncivilEngineers.class, Thimble.class, PixelPainters.class);
-
-			if (usesWorldEdit.contains(arena.getMechanic().getClass()) || arena.getName().equals("RavensNestEstate")) {
-				minigamer.tell("This arena is temporarily disabled while we work out some bugs");
-				return false;
-			}
-		}
 
 		initialize();
 

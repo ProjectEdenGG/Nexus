@@ -94,7 +94,11 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		WEUtils.expandAll(selection, expand);
 		ProtectedRegion schemRegion = new ProtectedCuboidRegion("hpregen_" + honeyPot, selection.getMinimumPoint(), selection.getMaximumPoint());
 		regionManager.addRegion(schemRegion);
-		WEUtils.save("hp/" + honeyPot, selection);
+
+//		TODO when API saving works again
+//		WEUtils.save("hp/" + honeyPot, selection);
+		runCommand("bncore schem save " + honeyPot);
+
 		regionManager.save();
 		send(PREFIX + "Successfully created the honey pot: &e" + honeyPot);
 	}
