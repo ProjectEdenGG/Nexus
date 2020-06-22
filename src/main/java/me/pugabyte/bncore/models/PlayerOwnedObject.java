@@ -1,11 +1,14 @@
 package me.pugabyte.bncore.models;
 
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
+
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public abstract class PlayerOwnedObject {
 
@@ -23,6 +26,16 @@ public abstract class PlayerOwnedObject {
 
 	public boolean isOnline() {
 		return getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null;
+	}
+
+	public void send(String message) {
+		if (isOnline())
+			getPlayer().sendMessage(colorize(message));
+	}
+
+	public void send(JsonBuilder message) {
+		if (isOnline())
+			getPlayer().sendMessage(message.build());
 	}
 
 }
