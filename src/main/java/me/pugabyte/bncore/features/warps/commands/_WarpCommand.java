@@ -53,8 +53,14 @@ public abstract class _WarpCommand extends CustomCommand {
 		if (warp != null)
 			error("That warp is already set.");
 
-		Warp newWarp = new Warp(name, player().getLocation(), getWarpType().name());
-		service.save(newWarp);
+		service.save(new Warp(name, player().getLocation(), getWarpType().name()));
+		send(PREFIX + "&e" + name + " &3set to your current location");
+	}
+
+	@Path("reset <name>")
+	@Permission("group.staff")
+	public void reset(@Arg(tabCompleter = Warp.class) String name) {
+		service.save(new Warp(name, player().getLocation(), getWarpType().name()));
 		send(PREFIX + "&e" + name + " &3set to your current location");
 	}
 

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
 import com.sk89q.worldedit.regions.Region;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
@@ -77,9 +76,6 @@ public final class Paintball extends BalancedTeamMechanic {
 	}
 
 	public void changeBlockColor(Minigamer minigamer, Block block) {
-		if (BNCore.disableWorldEditPasting())
-			return;
-
 		ColorType colorType = ColorType.fromChatColor(minigamer.getTeam().getColor());
 		if (MaterialTag.COLORABLE.isTagged(block.getType()))
 			block.setType(colorType.switchColor(block.getType()));

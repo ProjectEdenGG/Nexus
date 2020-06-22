@@ -198,11 +198,17 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
+		if (event.getPlayer().hasPermission("group.staff")) return;
 		switch (event.getMessage().split(" ")[0]) {
 			case "/rules":
 			case "/ch":
+			case "/chat":
+			case "/channel":
+			case "/r":
+			case "/reply":
 			case "/msg":
 			case "/pm":
+			case "/tell":
 			case "/freeze":
 			case "/unfreeze":
 				return;

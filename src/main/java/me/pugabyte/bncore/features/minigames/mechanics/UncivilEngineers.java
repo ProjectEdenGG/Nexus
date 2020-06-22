@@ -17,6 +17,8 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.UncivilEngineersMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -230,8 +232,12 @@ public class UncivilEngineers extends TeamlessMechanic {
 
 	public static void setupArena(UncivilEngineersArena arena, Player player) {
 		WorldGuardUtils WGUtils = arena.getWGUtils();
+		WorldEditUtils WEUtils = arena.getWEUtils();
 		try {
-			Minigames.getWorldEditUtils().save("uncivilengineers/" + arena.getName() + "_strip", arena.getRegion("strip_1"));
+//			TODO when API saving works again
+//			WEUtils.save("uncivilengineers/" + arena.getName() + "_strip", arena.getRegion("strip_1"));
+			WEUtils.setSelection(player, arena.getRegion("strip_1"));
+			Utils.runCommand(player, "bncore schem save " + arena.getName() + "_strip");
 			RegionManager regionManager = WGUtils.getManager();
 			Region region1 = arena.getRegion("strip_1");
 			for (int originID : arena.getOrigins().keySet()) {
