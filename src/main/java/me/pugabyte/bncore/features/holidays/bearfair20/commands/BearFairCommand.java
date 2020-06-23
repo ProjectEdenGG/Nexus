@@ -139,6 +139,23 @@ public class BearFairCommand extends _WarpCommand {
 		//
 		user.getEasterEggsLocs().clear();
 		//
+		user.setQuest_Main_Step(0);
+		user.setQuest_Main_Start(false);
+		user.setQuest_Main_Finish(false);
+
+		user.setQuest_SDU_Step(0);
+		user.setQuest_SDU_Start(false);
+		user.setQuest_SDU_Finish(false);
+		//
+		service.save(user);
+	}
+
+	@Path("quests start main")
+	@Permission("group.admin")
+	void startMainQuest() {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player());
+		user.setQuest_Main_Start(true);
 		service.save(user);
 	}
 }

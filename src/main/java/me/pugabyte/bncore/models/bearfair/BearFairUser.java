@@ -40,6 +40,15 @@ public class BearFairUser extends PlayerOwnedObject {
 	// Easter Eggs
 	@Property(concreteClass = Location.class)
 	private List<Location> easterEggsLocs = new ArrayList<>();
+	// Quests
+	//
+	private boolean Quest_Main_Start = false;
+	private boolean Quest_Main_Finish = false;
+	private int Quest_Main_Step = 0;
+	//
+	private boolean Quest_SDU_Start = false;
+	private boolean Quest_SDU_Finish = false;
+	private int Quest_SDU_Step = 0;
 	//
 
 	public BearFairUser(UUID uuid) {
