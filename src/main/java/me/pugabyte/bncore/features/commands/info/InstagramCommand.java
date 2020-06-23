@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands.info;
 
 import lombok.NonNull;
+import me.pugabyte.bncore.features.commands.info.SocialMediaCommand.SocialMedia;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -15,7 +16,7 @@ public class InstagramCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().urlize("&ehttps://insta.bnn.gg"));
+		send(json().urlize("&e" + SocialMedia.INSTAGRAM.getUrl()));
 	}
 
 }

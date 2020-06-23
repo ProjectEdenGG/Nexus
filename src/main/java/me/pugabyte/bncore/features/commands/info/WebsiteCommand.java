@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.info;
 
+import me.pugabyte.bncore.features.commands.info.SocialMediaCommand.SocialMedia;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -14,7 +15,7 @@ public class WebsiteCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().urlize("&ehttps://bnn.gg"));
+		send(json().urlize("&e" + SocialMedia.WEBSITE.getUrl()));
 	}
 
 }
