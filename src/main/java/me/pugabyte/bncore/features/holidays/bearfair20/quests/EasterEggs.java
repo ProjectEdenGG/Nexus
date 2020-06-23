@@ -16,9 +16,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 
 public class EasterEggs implements Listener {
 	BearFairService service = new BearFairService();
@@ -41,6 +39,7 @@ public class EasterEggs implements Listener {
 			-1020 139 -1702
 			-1050 127 -1660
 			-852 113 -1755
+			-828 161 -1797
 	 */
 
 	public EasterEggs() {

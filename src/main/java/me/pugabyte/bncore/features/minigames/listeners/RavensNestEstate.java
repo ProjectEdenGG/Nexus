@@ -26,7 +26,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.material.MaterialData;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -190,7 +189,7 @@ public class RavensNestEstate implements Listener {
 		match.getTasks().repeat(delay, 3 * 20, () -> {
 			World world = freezerSound.getWorld();
 			world.playSound(freezerSound, Sound.ENTITY_MINECART_RIDING, 0.7F, 0.1F);
-			world.spawnParticle(Particle.FALLING_DUST, freezerSound, 100, 2.5, 1.5, 2.5, 0.000001, new MaterialData(Material.SNOW_BLOCK));
+			world.spawnParticle(Particle.FALLING_DUST, freezerSound, 100, 2.5, 1.5, 2.5, 0.000001, Material.SNOW_BLOCK.createBlockData());
 		});
 
 		match.getTasks().repeat(delay, 5 * 20, () -> {
