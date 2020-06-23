@@ -40,6 +40,7 @@ import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
@@ -193,6 +194,7 @@ public class BNCore extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		try { Utils.runCommandAsConsole("save-all");		} catch (Throwable ex) { ex.printStackTrace(); }
 		try { cron.stop();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { Minigames.shutdown();							} catch (Throwable ex) { ex.printStackTrace(); }
 		try { AFK.shutdown();								} catch (Throwable ex) { ex.printStackTrace(); }
