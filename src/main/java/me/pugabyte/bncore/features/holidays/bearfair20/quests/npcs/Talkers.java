@@ -56,10 +56,10 @@ public class Talkers {
 			else {
 				line = line.replaceAll("<player>", player.getName());
 				if (line.contains("<self>")) {
-					npcName.set("&lYOU&f");
+					npcName.set("&b&lYOU&f");
 					line = line.replaceAll("<self> ", "");
 				}
-				String message = npcName.get() + "> " + line;
+				String message = "&3" + npcName.get() + " &7> &f" + line;
 				Tasks.wait(wait.get(), () -> {
 					send(message, player);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
