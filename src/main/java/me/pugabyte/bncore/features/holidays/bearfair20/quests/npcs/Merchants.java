@@ -19,10 +19,10 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loo
 // TODO: Trades & Economy
 public class Merchants {
 
-	private static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore);
-	private static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT).lore(itemLore);
-	private static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK).lore(itemLore);
-	private static ItemBuilder TBD = new ItemBuilder(Material.STICK).name("To Be Determined").lore(itemLore).amount(1);
+	public static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore);
+	public static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT).lore(itemLore);
+	public static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK).lore(itemLore);
+	public static ItemBuilder TBD = new ItemBuilder(Material.STICK).name("To Be Determined").lore(itemLore).amount(1);
 
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
