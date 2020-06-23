@@ -130,7 +130,6 @@ public class BearFairCommand extends _WarpCommand {
 		Interactables.strengthTest();
 	}
 
-	//TODO:
 	@Path("quests reset")
 	@Permission("group.admin")
 	void questReset() {
@@ -148,6 +147,27 @@ public class BearFairCommand extends _WarpCommand {
 		user.setQuest_SDU_Finish(false);
 		//
 		service.save(user);
+	}
+
+	@Path("quests info")
+	@Permission("group.admin")
+	void questInfo() {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player());
+		//
+		send("====");
+		send("Found Easter Eggs: " + user.getEasterEggsLocs().size());
+		//
+		send();
+		send("Main Quest Step: " + user.getQuest_Main_Step());
+		send("Main Quest Start: " + user.isQuest_Main_Start());
+		send("Main Quest Finish: " + user.isQuest_Main_Finish());
+		//
+		send();
+		send("SDU Quest Step: " + user.getQuest_SDU_Step());
+		send("SDU Quest Start: " + user.isQuest_SDU_Start());
+		send("SDU Quest Finish: " + user.isQuest_SDU_Finish());
+		send("====");
 	}
 
 	@Path("quests start main")
