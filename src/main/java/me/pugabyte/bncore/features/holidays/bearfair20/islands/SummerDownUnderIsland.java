@@ -10,14 +10,18 @@ import me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIs
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +30,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,7 +41,9 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.it
 public class SummerDownUnderIsland implements Listener, Island {
 
 	static ItemStack greatNortherns = new ItemBuilder(Material.BARREL).name("&aGreat Northerns").amount(1).lore(itemLore).build();
+	static ItemStack goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1).build();
 	static ItemStack foolsGold = new ItemBuilder(Material.GOLD_NUGGET).name("&6Fools Gold").lore(itemLore).amount(1).build();
+	static ItemStack sifter = new ItemBuilder(Material.BOWL).name("Sifter").lore(itemLore).amount(1).build();
 	static ItemStack anzacBiscuit = new ItemBuilder(Material.COOKIE).name("Anzac Biscuit").lore(itemLore).amount(1).build();
 	//
 	static ItemStack goldenSyrup = new ItemBuilder(Material.HONEY_BOTTLE).name("Golden Syrup").lore(itemLore).amount(1).build();
@@ -46,11 +51,9 @@ public class SummerDownUnderIsland implements Listener, Island {
 	static ItemStack wheat = new ItemBuilder(Material.WHEAT).lore(itemLore).amount(1).build();
 	static ItemStack sugar = new ItemBuilder(Material.SUGAR).lore(itemLore).amount(1).build();
 
-	// TODO:
-	//	- gold sifting
-
 	public SummerDownUnderIsland() {
 		BNCore.registerListener(this);
+		// TODO: REMINDER & GENERIC GREETING DIALOGS
 	}
 
 	public enum SummerDownUnderNPCs implements TalkingNPC {
@@ -63,11 +66,13 @@ public class SummerDownUnderIsland implements Listener, Island {
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
-				startQuest.add("Hey bro welcome to Queen’s Island!");
+				startQuest.add("Hey bro, welcome to Queen’s Island!");
+				startQuest.add("wait 80");
 				startQuest.add("<self> Thanks, Friend! I was hoping you could tell me about this thing called an ANZAC Biscuit?");
-				startQuest.add("So you’re looking for information about the ANZAC Biscuit hey? " +
-						"Don’t know too much about it bro but you should hit up the ANZAC Statue in the centre of town. " +
+				startQuest.add("wait 80");
+				startQuest.add("Don’t know too much about it bro, but you should hit up the ANZAC Statue in the centre of town. " +
 						"There’s bound to be someone there you can talk to!");
+				startQuest.add("wait 120");
 				startQuest.add("Oh and don’t forget to say G’day to everyone around town.");
 
 				if (!user.isQuest_Main_Start())
@@ -77,7 +82,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 					return Collections.singletonList("TODO: REMINDER");
 
 				user.setQuest_SDU_Start(true);
-				nextStep(user); // 1
+				nextStep(player); // 1
 				return startQuest;
 			}
 		},
@@ -90,15 +95,22 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Ah, you must be the one Rolex messaged me about. What can an old man such as myself do for ya?");
+				startQuest.add("wait 80");
 				startQuest.add("<self> I was hoping you could tell me how to get whatever an ANZAC Biscuit is?");
+				startQuest.add("wait 80");
 				startQuest.add("Well mate, it’s a biscuit the blokes and I used to get in the trenches back in the First World War. " +
 						"It was sent all the bloody way from Australia to the Western Front. " +
 						"It used to be a pretty common commodity in these parts and a damn good bikkie if I don’t say so myself.");
+				startQuest.add("wait 200");
 				startQuest.add("Unfortunately we don’t have any on hand, outta supply for months! " +
 						"But I can tell ya what you’re gonna need to make one yourself.");
+				startQuest.add("wait 120");
 				startQuest.add("You’ll need the following ingredients; Wheat, Sugar, Peanuts & Golden Syrup.");
+				startQuest.add("wait 80");
 				startQuest.add("I highly recommend you visit the Queen’s Island Pie Shop once you have what you need, I’m sure they’d be happy to help.");
+				startQuest.add("wait 120");
 				startQuest.add("<self> Thank you for your service. Any ideas where I should start?");
+				startQuest.add("wait 80");
 				startQuest.add("There’ll be a cheeky farm across the bridge you can have a gawk at. " +
 						"Afterwards, I’d recommend talking to my grandson Lachlan at the Pub. " +
 						"He should be able to sort you out with something.");
@@ -109,14 +121,16 @@ public class SummerDownUnderIsland implements Listener, Island {
 				if (step >= 2)
 					return Collections.singletonList("TODO: REMINDER");
 
-				nextStep(user); // 2
+				nextStep(player); // 2
 				return startQuest;
 			}
 		},
 		FARMER(2752, new ArrayList<String>() {{
 			add("G’day g’day, the crops are fresh and lookin’ real mean");
+			add("wait 80");
 			add("Oh you need it for the ANZAC Biscuit? Crikey, we haven’t had those around here for months! " +
 					"Take all the wheat you need chief, it’s for a bloody great cause.");
+			add("wait 120");
 			add("You’ll need Sugar too. I’m pretty sure the Main Island has some sugar cane you could abscond with mate. Good luck!");
 		}}),
 		LACHLAN(2747) {
@@ -129,16 +143,21 @@ public class SummerDownUnderIsland implements Listener, Island {
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Hey mate, my grandad told me you were headed here. Look, here’s the situation. " +
 						"I’d love to help out; but I need you to do me a favour first.");
+				startQuest.add("wait 120");
 				startQuest.add("Somehow, my delivery is missing a whole case of Great Northerns. One that I need to sell at the " +
 						"gatho tonight with the town. I suspect it’s been stolen. If you could find it for me and bring it back, " +
 						"I’ll give ya all the peanuts you need.");
+				startQuest.add("wait 160");
 				startQuest.add("Good luck mate! Happy hunting.");
 
 				List<String> endQuest = new ArrayList<>();
 				endQuest.add("No way! You’re an absolute legend mate. When the gatho starts, we’d love to have you over. " +
 						"Once the boys find out you rescued the bevvies they’ll love ya!");
+				endQuest.add("wait 120");
 				endQuest.add("Here’s the Peanuts, they’re pretty high quality stuff. I can’t just give you anything for that ANZAC Biscuit, hey?");
+				endQuest.add("wait 80");
 				endQuest.add("<self> What about the Golden Syrup?");
+				endQuest.add("wait 80");
 				endQuest.add("Yeah nah unfortunately I don’t have any on hand, but if you knock on some doors around town there’ll " +
 						"definitely be some available. Thanks again mate.");
 
@@ -147,7 +166,11 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				if (player.getInventory().contains(greatNortherns) && step == 3) {
 					player.getInventory().remove(greatNortherns);
-					nextStep(user); // 4
+					Tasks.wait(Time.SECOND.x(7), () -> {
+						player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+						Utils.giveItem(player, peanuts);
+					});
+					nextStep(player); // 4
 					return endQuest;
 				}
 
@@ -157,7 +180,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				if (step >= 3)
 					return Collections.singletonList("TODO: REMINDER 3");
 
-				nextStep(user); // 3
+				nextStep(player); // 3
 				return startQuest;
 			}
 		},
@@ -170,6 +193,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Hello mate. Golden Syrup hey? Hmm well. I think I should have some for you.");
+				startQuest.add("wait 80");
 				startQuest.add("Aha! Here it is. Have this mate. Fresh from a place called Landfall. Not really sure where that is on " +
 						"Bear Nation, but their syrup is to die for!");
 
@@ -179,8 +203,11 @@ public class SummerDownUnderIsland implements Listener, Island {
 				if (step >= 5)
 					return Collections.singletonList("TODO: REMINDER");
 
-				nextStep(user); // 5
-				Tasks.wait(Time.SECOND.x(2), () -> Utils.giveItem(player, goldenSyrup));
+				nextStep(player); // 5
+				Tasks.wait(Time.SECOND.x(6), () -> {
+					Utils.giveItem(player, goldenSyrup);
+					player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+				});
 				return startQuest;
 			}
 		},
@@ -193,35 +220,62 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Hi! What will it be for today?");
+				startQuest.add("wait 80");
 				startQuest.add("<self> Uh, hey! I was wondering if you guys could bake these ANZAC Biscuits for me? I have all the ingredients " +
 						"but I can’t make it myself. I’m new here!");
+				startQuest.add("wait 80");
 				startQuest.add("If it were up to me, sure! But you’ll need to speak with my Manager first. He’s really picky about these things.");
 
-				List<String> endQuest = new ArrayList<>();
-				endQuest.add("<self> Here’s the gold your manager wanted. Can you bake it now please?");
-				endQuest.add("I can see you have Fool’s Gold there, honestly, just give me that. He won’t notice!");
-				endQuest.add("Thanks! Alright now lets see what we can do...");
-				endQuest.add("Here’s your Biscuit! Like we said earlier, I’ll take the rest and give them out around town! Best of luck in " +
+				List<String> endQuest_gold = new ArrayList<>();
+				endQuest_gold.add("<self> Here’s the gold your manager wanted. Can you bake it now please?");
+				endQuest_gold.add("wait 80");
+				endQuest_gold.add("Thanks! Alright now lets see what we can do...");
+				endQuest_gold.add("wait 80");
+				endQuest_gold.add("Here’s your Biscuit! Like we said earlier, I’ll take the rest and give them out around town! Best of luck in " +
+						"your future endeavours. Feel free to stick around town for a while. We love visitors!");
+
+				List<String> endQuest_fool = new ArrayList<>();
+				endQuest_fool.add("<self> Here’s the gold your manager wanted. Can you bake it now please?");
+				endQuest_fool.add("wait 80");
+				endQuest_fool.add("I can see you have Fool’s Gold there, honestly, just give me that. He won’t notice!");
+				endQuest_fool.add("wait 80");
+				endQuest_fool.add("Thanks! Alright now lets see what we can do...");
+				endQuest_fool.add("wait 80");
+				endQuest_fool.add("Here’s your Biscuit! Like we said earlier, I’ll take the rest and give them out around town! Best of luck in " +
 						"your future endeavours. Feel free to stick around town for a while. We love visitors!");
 
 				if (!user.isQuest_SDU_Start() || step < 5 || user.isQuest_SDU_Finish())
 					return Collections.singletonList("TODO: GENERIC GREETING");
 
-
 				ItemStack gold = hasFoolsGold(player);
-				if (step == 8 && gold != null && hasAnzacIngredients(player)) {
-					gold.setAmount(gold.getAmount() - 1);
-					removeAnzacIngredients(player);
-					//
-					Utils.giveItem(player, anzacBiscuit);
-					player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
-					//
-					user.setQuest_SDU_Finish(true);
-					nextStep(user); // 9
-					return endQuest;
+				boolean fool = true;
+				if (gold == null) {
+					gold = hasGold(player);
+					fool = false;
 				}
 
-				Utils.giveItems(player, Arrays.asList(peanuts, goldenSyrup, wheat, sugar, foolsGold));
+				if (step == 8 && gold != null && hasAnzacIngredients(player)) {
+					ItemStack finalGold = gold;
+					int wait = 4;
+					if (fool)
+						wait = 8;
+
+					Tasks.wait(Time.SECOND.x(wait), () -> {
+						finalGold.setAmount(finalGold.getAmount() - 1);
+						removeAnzacIngredients(player);
+						Tasks.wait(Time.SECOND.x(5), () -> {
+							Utils.giveItem(player, anzacBiscuit);
+							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+						});
+					});
+
+					user.setQuest_SDU_Finish(true);
+					nextStep(player); // 9
+					if (fool)
+						return endQuest_fool;
+					else
+						return endQuest_gold;
+				}
 
 				if (step >= 8)
 					return Collections.singletonList("TODO: REMINDER 8");
@@ -229,7 +283,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				if (step >= 6)
 					return Collections.singletonList("TODO: REMINDER 6");
 
-				nextStep(user); // 6
+				nextStep(player); // 6
 				return startQuest;
 			}
 		},
@@ -242,9 +296,12 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("What? Who are you, what do you want?");
+				startQuest.add("wait 80");
 				startQuest.add("<self> I was wondering if you could bake these ANZAC Biscuits for me? I just need one to take back with me and " +
 						"Queen’s Island can keep the rest!");
+				startQuest.add("wait 80");
 				startQuest.add("Excuse me? You’ll need to pay for that mate! No pay, no bake.");
+				startQuest.add("wait 80");
 				startQuest.add("If you don’t have any gold, there’s a whole mineshaft nearby. " +
 						"They usually mine coal but recently they’ve been sifting for gold.");
 
@@ -254,7 +311,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				if (step >= 7)
 					return Collections.singletonList("TODO: REMINDER");
 
-				nextStep(user); // 7
+				nextStep(player); // 7
 				return startQuest;
 			}
 		},
@@ -267,8 +324,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Xin Chao friend! You want to sift?");
-				startQuest.add("Tuyet Dieu! Here, take the bowl and get to work in the water. I need one gold for you to sift here so chop chop! " +
-						"You can keep any other gold or fool’s gold you find.");
+				startQuest.add("wait 80");
+				startQuest.add("Tuyet Dieu! Here, take the bowl and get to work in the water. You can keep any other gold or fool’s gold you find.");
 
 				if (!user.isQuest_SDU_Start() || step < 7)
 					return Collections.singletonList("TODO: GENERIC GREETING");
@@ -276,7 +333,11 @@ public class SummerDownUnderIsland implements Listener, Island {
 				if (step >= 8)
 					return Collections.singletonList("TODO: REMINDER");
 
-				nextStep(user); // 8
+				nextStep(player); // 8
+				Tasks.wait(Time.SECOND.x(5), () -> {
+					Utils.giveItem(player, sifter);
+					player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+				});
 				return startQuest;
 			}
 		},
@@ -317,9 +378,13 @@ public class SummerDownUnderIsland implements Listener, Island {
 		}
 	}
 
-	private static void nextStep(BearFairUser user) {
+	private static void nextStep(Player player) {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
 		int step = user.getQuest_SDU_Step() + 1;
 		user.setQuest_SDU_Step(step);
+		service.save(user);
+
 	}
 
 	private static ItemStack hasFoolsGold(Player player) {
@@ -337,6 +402,17 @@ public class SummerDownUnderIsland implements Listener, Island {
 			}
 		}
 
+		return null;
+	}
+
+	private static ItemStack hasGold(Player player) {
+		ItemStack[] contents = player.getInventory().getContents();
+		for (ItemStack content : contents) {
+			if (Utils.isNullOrAir(content)) continue;
+			if (!BearFair20.isBFItem(content)) continue;
+			if (!content.getType().equals(Material.GOLD_NUGGET)) continue;
+			return content;
+		}
 		return null;
 	}
 
@@ -389,7 +465,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		Block clicked = event.getClickedBlock();
-		if (clicked == null) return;
+		if (Utils.isNullOrAir(clicked)) return;
 
 		Material material = clicked.getType();
 		if (!material.equals(Material.BARREL)) return;
@@ -407,6 +483,55 @@ public class SummerDownUnderIsland implements Listener, Island {
 			player.playSound(clicked.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
 		}
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onSift(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND) return;
+
+		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
+		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+
+		boolean water = false;
+
+		Block lookingAt = event.getPlayer().getTargetBlockExact(5, FluidCollisionMode.ALWAYS);
+		if (lookingAt != null && lookingAt.getType().equals(Material.WATER))
+			water = true;
+		else {
+			Block clicked = event.getClickedBlock();
+			if (!Utils.isNullOrAir(clicked) && clicked.getBlockData() instanceof Waterlogged) {
+				Waterlogged waterlogged = (Waterlogged) clicked.getBlockData();
+				if (waterlogged.isWaterlogged())
+					water = true;
+			}
+		}
+
+		if (!water) return;
+
+		ItemStack tool = event.getItem();
+		if (Utils.isNullOrAir(tool)) return;
+		if (!tool.equals(sifter)) return;
+
+		// Player is sifting
+		Player player = event.getPlayer();
+		CooldownService cooldownService = new CooldownService();
+		if (!cooldownService.check(player, "BF20_SDU_Sifting", Time.SECOND.x(2)))
+			return;
+
+		Location loc = player.getLocation();
+		player.playSound(loc, Sound.ENTITY_HORSE_SADDLE, 0.5F, 0.5F);
+		player.playSound(loc, Sound.UI_STONECUTTER_TAKE_RESULT, 0.5F, 0.5F);
+		Tasks.wait(5, () -> {
+			player.playSound(loc, Sound.ENTITY_HORSE_SADDLE, 0.5F, 0.5F);
+			player.playSound(loc, Sound.UI_STONECUTTER_TAKE_RESULT, 0.5F, 0.5F);
+
+			if (Utils.chanceOf(33)) {
+				if (Utils.chanceOf(50))
+					Utils.giveItem(player, foolsGold);
+				else
+					Utils.giveItem(player, goldNugget);
+			}
+		});
 	}
 
 }
