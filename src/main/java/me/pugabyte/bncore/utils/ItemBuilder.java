@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
-public class ItemBuilder {
+public class ItemBuilder implements Cloneable {
 	private final ItemStack itemStack;
 	private final ItemMeta itemMeta;
 	private List<String> lore = new ArrayList<>();
@@ -239,6 +239,14 @@ public class ItemBuilder {
 			else
 				colorized.addAll(Arrays.asList(colorize(line).split("\\|\\|")));
 		itemMeta.setLore(colorized);
+	}
+
+	public ItemBuilder clone() {
+		itemStack.setItemMeta(itemMeta);
+		ItemBuilder builder = new ItemBuilder(itemStack.clone());
+		builder.lore(lore);
+		builder.loreize(doLoreize);
+		return builder;
 	}
 
 	/** Static helpers */
