@@ -157,7 +157,7 @@ public class MatchListener implements Listener {
 		if (!(event.getEntity() instanceof Player)) return;
 
 		Minigamer victim = PlayerManager.get((Player) event.getEntity());
-		Minigamer attacker;
+		Minigamer attacker = null;
 		Projectile projectile = null;
 		if (event.getDamager() instanceof Player) {
 			attacker = PlayerManager.get((Player) event.getDamager());
@@ -165,43 +165,42 @@ public class MatchListener implements Listener {
 			projectile = (Projectile) event.getDamager();
 			if (projectile.getShooter() instanceof Player) {
 				attacker = PlayerManager.get((Player) projectile.getShooter());
-			} else {
-				return;
 			}
-		} else {
-			return;
 		}
 
-		if (victim.getMatch() == null || attacker.getMatch() == null
-				|| victim.getTeam() == null || attacker.getTeam() == null) {
-			if (victim.getMatch() != null && attacker.getMatch() == null) {
-				// Normal player damaging someone in a minigame
-				event.setCancelled(true);
-			}
-			if (victim.getMatch() == null && attacker.getMatch() != null) {
-				// Minigamer damaging normal player
-				event.setCancelled(true);
+		if (victim.getMatch() == null || victim.getTeam() == null) {
+			if (attacker != null && (attacker.getMatch() == null || attacker.getTeam() == null)) {
+				if (victim.getMatch() != null && attacker.getMatch() == null) {
+					// Normal player damaging someone in a minigame
+					event.setCancelled(true);
+				}
+				if (victim.getMatch() == null && attacker.getMatch() != null) {
+					// Minigamer damaging normal player
+					event.setCancelled(true);
+				}
 			}
 			// Neither in minigames, ignore
 			return;
 		}
 
-		if (!(victim.isPlaying() && attacker.isPlaying())) return;
+		if (attacker != null) {
+			if (!(victim.isPlaying() && attacker.isPlaying())) return;
 
-		if ((victim.isRespawning() || attacker.isRespawning()) || victim.equals(attacker)) {
-			event.setCancelled(true);
-			return;
+			if ((victim.isRespawning() || attacker.isRespawning()) || victim.equals(attacker)) {
+				event.setCancelled(true);
+				return;
+			}
+
+			if (!victim.getMatch().isStarted()) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 
-		if (!victim.getMatch().isStarted()) {
-			event.setCancelled(true);
-			return;
-		}
-
-		if (victim.getMatch().equals(attacker.getMatch())) {
+		if (attacker == null || victim.getMatch().equals(attacker.getMatch())) {
 			// Same match
 			Mechanic mechanic = victim.getMatch().getArena().getMechanic();
-			if (victim.getTeam().equals(attacker.getTeam()) && mechanic.isTeamGame()) {
+			if (attacker != null && victim.getTeam().equals(attacker.getTeam()) && mechanic.isTeamGame()) {
 				// Friendly fire
 				event.setCancelled(true);
 			} else {
@@ -216,7 +215,7 @@ public class MatchListener implements Listener {
 						return;
 					}
 
-					if (event.getDamager() instanceof Arrow)
+					if (attacker != null && event.getDamager() instanceof Arrow)
 						attacker.tell("&7" + victim.getName() + " is on &c" + new DecimalFormat("#.0").format(newHealth) + " &7HP");
 
 					mechanic.onDamage(damageEvent);
@@ -231,7 +230,7 @@ public class MatchListener implements Listener {
 				if (projectile != null)
 					projectile.remove();
 
-				if (event.getDamager() instanceof Arrow)
+				if (attacker != null && event.getDamager() instanceof Arrow)
 					attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
 				MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, attacker, event);
