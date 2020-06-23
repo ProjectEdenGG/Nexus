@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.discord;
 
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.commands.info.SocialMediaCommand.SocialMedia;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -32,7 +33,7 @@ public class DiscordCommand extends CustomCommand {
 	@Path
 	void run() {
 		send("&3Join our discord to stay up to date with the community");
-		send(json().urlize("&e" + Discord.getUrl()));
+		send(json().urlize("&e" + SocialMedia.DISCORD.getUrl()));
 	}
 
 	@Path("link update roles")
@@ -56,7 +57,7 @@ public class DiscordCommand extends CustomCommand {
 				User userById = Bot.KODA.jda().getUserById(user.getUserId());
 				if (userById == null)
 					send(PREFIX + "Your minecraft account is linked to a Discord account, but I could not find that account. " +
-							"Are you in our discord server? &e" + Discord.getUrl());
+							"Are you in our discord server? &e" + SocialMedia.DISCORD.getUrl());
 				else
 					send(PREFIX + "Your minecraft account is linked to " + user.getName());
 				send(PREFIX + "You can unlink your account with &c/discord unlink");
