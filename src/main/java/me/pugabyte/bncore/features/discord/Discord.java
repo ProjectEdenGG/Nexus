@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.entities.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -193,11 +194,12 @@ public class Discord {
 	private static String getBridgeTopic() {
 		List<Player> players = Bukkit.getOnlinePlayers().stream()
 				.filter(player -> !Utils.isVanished(player))
+				.sorted(Comparator.comparing(Player::getName))
 				.collect(Collectors.toList());
 
 		return "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
-					String name = player.getName();
+					String name = discordize(player.getName());
 					if (AFK.get(player).isAfk())
 						name += " _[AFK]_";
 					return name.trim();
@@ -216,11 +218,12 @@ public class Discord {
 	private static String getStaffBridgeTopic() {
 		List<Player> players = Bukkit.getOnlinePlayers().stream()
 				.filter(player -> new Nerd(player).getRank().isStaff())
+				.sorted(Comparator.comparing(Player::getName))
 				.collect(Collectors.toList());
 
 		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
-					String name = player.getName();
+					String name = discordize(player.getName());
 					if (Utils.isVanished(player))
 						name += " _[V]_";
 					if (AFK.get(player).isAfk())
