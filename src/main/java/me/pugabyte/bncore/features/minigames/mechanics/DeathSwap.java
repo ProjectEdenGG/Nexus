@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class DeathSwap extends TeamlessMechanic {
 	@Override
@@ -64,25 +65,31 @@ public final class DeathSwap extends TeamlessMechanic {
 	public Map<String, Integer> getScoreboardLines(Match match) {
 		Map<String, Integer> map = new HashMap<>();
 		for (Minigamer minigamer : match.getMinigamers()) {
-			map.put(minigamer.getColoredName(), (int) minigamer.getPlayer().getHealth());
+			map.put((minigamer.isAlive() ? "" : "&c&m") + minigamer.getName(), (minigamer.isAlive() ? (int) minigamer.getPlayer().getHealth() : 0));
 		}
 		return map;
 	}
 
 	private void spreadPlayers(List<Minigamer> minigamers) {
 		for (Minigamer minigamer : minigamers) {
-			Location loc = Bukkit.getWorld(world).getHighestBlockAt(Utils.randomInt(-gameRadius / 2, gameRadius / 2),
-					Utils.randomInt(-gameRadius / 2, gameRadius / 2)).getLocation();
+			int tries = 0;
+			Location loc = null;
+			do {
+				loc = Bukkit.getWorld(world).getHighestBlockAt(Utils.randomInt(-gameRadius / 2, gameRadius / 2),
+						Utils.randomInt(-gameRadius / 2, gameRadius / 2)).getLocation();
+				tries++;
+			} while (!loc.getBlock().getType().isSolid() && tries < 20);
 			minigamer.teleport(loc.add(0, 2, 0));
 		}
 	}
 
 	public void swap(Match match) {
-		match.getMinigamers().forEach(player -> {
+		List<Minigamer> swappingList = new ArrayList(match.getMinigamers().stream().filter(Minigamer::isAlive).collect(Collectors.toList()));
+		swappingList.forEach(player -> {
 			player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 1));
 			Utils.sendActionBar(player.getPlayer(), "&3SWAPPING");
 		});
-		List<Minigamer> swappingList = new ArrayList(match.getMinigamers());
+
 		if (match.getMinigamers().size() % 2 != 0) {
 			Minigamer playerOne = Utils.getRandomElement(swappingList);
 			swappingList.remove(playerOne);
@@ -112,7 +119,7 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	public void aggroMobs(Match match) {
-		match.getMinigamers().forEach(player -> {
+		match.getMinigamers().stream().filter(Minigamer::isAlive).collect(Collectors.toList()).forEach(player -> {
 			Utils.getNearbyEntities(player.getPlayer().getLocation(), 10).keySet().forEach(entity -> {
 				if (!(entity instanceof Mob)) return;
 				Mob mob = (Mob) entity;
