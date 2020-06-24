@@ -87,7 +87,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"Now you can be the wither- enemies take wither damage for a short period from every successful hit") {
 				@Override
 				void onClick(Player player) {
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.BOW.name() + " power:2 wither:2 infinity:1 mending:1 unbreaking:2 knockback:1");
+					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.BOW.name() + " power:2 wither:2 infinity:1 mending:1 unbreaking:2 punch:1");
 				}
 		},
 		TAMING(4, 0, Material.BONE,
