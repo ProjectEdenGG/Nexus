@@ -32,7 +32,6 @@ public class DiscordCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send("&3Join our discord to stay up to date with the community");
 		send(json().urlize("&e" + SocialMedia.DISCORD.getUrl()));
 	}
 
