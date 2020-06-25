@@ -8,8 +8,6 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 public abstract class PlayerOwnedObject {
 
 	public abstract UUID getUuid();
@@ -29,8 +27,7 @@ public abstract class PlayerOwnedObject {
 	}
 
 	public void send(String message) {
-		if (isOnline())
-			getPlayer().sendMessage(colorize(message));
+		send(new JsonBuilder(message));
 	}
 
 	public void send(JsonBuilder message) {
