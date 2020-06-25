@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@PlayerClass(SafeCracker.class)
-public class SafeCrackerService extends MongoService {
-	private final static Map<UUID, SafeCracker> cache = new HashMap<>();
+@PlayerClass(SafeCrackerPlayer.class)
+public class SafeCrackerPlayerService extends MongoService {
+	private final static Map<UUID, SafeCrackerPlayer> cache = new HashMap<>();
 
-	public Map<UUID, SafeCracker> getCache() {
+	public Map<UUID, SafeCrackerPlayer> getCache() {
 		return cache;
 	}
 
