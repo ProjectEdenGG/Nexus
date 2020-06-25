@@ -13,6 +13,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -50,13 +51,27 @@ public class BearFairUser extends PlayerOwnedObject {
 	private boolean Quest_SDU_Finish = false;
 	private int Quest_SDU_Step = 0;
 	//
+	private boolean Quest_MGN_Start = false;
+	private boolean Quest_MGN_Finish = false;
+	private int Quest_MGN_Step = 0;
+	private List<ItemStack> arcadePieces = new ArrayList<>();
+	//
+	private boolean Quest_Halloween_Start = false;
+	private boolean Quest_Halloween_Finish = false;
+	private int Quest_Halloween_Step = 0;
+	//
+	private boolean Quest_Pugmas_Start = false;
+	private boolean Quest_Pugmas_Finish = false;
+	private int Quest_Pugmas_Step = 0;
+	//
 
 	public BearFairUser(UUID uuid) {
 		this.uuid = uuid;
 	}
 
 	public void givePoints(int points, boolean actionBar) {
-		sendActionBar(getPlayer(), "+" + points + " point" + (points == 1 ? "" : "s"));
+		if (actionBar)
+			sendActionBar(getPlayer(), "+" + points + " point" + (points == 1 ? "" : "s"));
 		givePoints(points);
 	}
 

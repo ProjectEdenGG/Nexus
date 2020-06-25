@@ -40,20 +40,21 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.it
 @NPCClass(SummerDownUnderNPCs.class)
 public class SummerDownUnderIsland implements Listener, Island {
 
-	static ItemStack greatNortherns = new ItemBuilder(Material.BARREL).name("&aGreat Northerns").amount(1).lore(itemLore).build();
-	static ItemStack goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1).build();
-	static ItemStack foolsGold = new ItemBuilder(Material.GOLD_NUGGET).name("&6Fools Gold").lore(itemLore).amount(1).build();
-	static ItemStack sifter = new ItemBuilder(Material.BOWL).name("Sifter").lore(itemLore).amount(1).build();
-	static ItemStack anzacBiscuit = new ItemBuilder(Material.COOKIE).name("Anzac Biscuit").lore(itemLore).amount(1).build();
+	private static ItemStack greatNortherns = new ItemBuilder(Material.BARREL).name("&aGreat Northerns").amount(1).lore(itemLore).build();
+	private static ItemStack goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1).build();
+	private static ItemStack foolsGold = new ItemBuilder(Material.GOLD_NUGGET).name("&6Fools Gold").lore(itemLore).amount(1).build();
+	private static ItemStack sifter = new ItemBuilder(Material.BOWL).name("Sifter").lore(itemLore).amount(1).build();
 	//
-	static ItemStack goldenSyrup = new ItemBuilder(Material.HONEY_BOTTLE).name("Golden Syrup").lore(itemLore).amount(1).build();
-	static ItemStack peanuts = new ItemBuilder(Material.BEETROOT_SEEDS).name("Peanuts").lore(itemLore).amount(1).build();
-	static ItemStack wheat = new ItemBuilder(Material.WHEAT).lore(itemLore).amount(1).build();
-	static ItemStack sugar = new ItemBuilder(Material.SUGAR).lore(itemLore).amount(1).build();
+	private static ItemStack goldenSyrup = new ItemBuilder(Material.HONEY_BOTTLE).name("Golden Syrup").lore(itemLore).amount(1).build();
+	private static ItemStack peanuts = new ItemBuilder(Material.BEETROOT_SEEDS).name("Peanuts").lore(itemLore).amount(1).build();
+	private static ItemStack wheat = new ItemBuilder(Material.WHEAT).lore(itemLore).amount(1).build();
+	private static ItemStack sugar = new ItemBuilder(Material.SUGAR).lore(itemLore).amount(1).build();
+	//
+	public static ItemStack anzacBiscuit = new ItemBuilder(Material.COOKIE).name("Anzac Biscuit").lore(itemLore).amount(1).build();
 
 	public SummerDownUnderIsland() {
 		BNCore.registerListener(this);
-		// TODO: REMINDER & GENERIC GREETING DIALOGS
+		// TODO: Dialogs
 	}
 
 	public enum SummerDownUnderNPCs implements TalkingNPC {
