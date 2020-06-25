@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs;
 
 import lombok.Getter;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MerchantBuilder;
 import me.pugabyte.bncore.utils.MerchantBuilder.TradeBuilder;
@@ -79,25 +80,25 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.MELON).amount(8).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(12).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(16).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.SUGAR_CANE).amount(48).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.BEETROOT).amount(32).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.POTATO).amount(64).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.CARROT).amount(64).lore(itemLore)));
 				}};
 			}
@@ -107,7 +108,7 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.amount(4))
+							.result(goldNugget.clone().amount(4))
 							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).lore(itemLore)));
 					add(new TradeBuilder()
 							.result(TBD)
@@ -127,16 +128,19 @@ public class Merchants {
 							.result(new ItemBuilder(Material.BLUE_ORCHID).name("Rare Flower").lore(itemLore))
 							.ingredient(new ItemBuilder(Material.STONE_PICKAXE).name("Ancient Pickaxe").lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldBlock.amount(1))
+							.result(MinigameNightIsland.joystick)
+							.ingredient(goldBlock.clone().amount(2)));
+					add(new TradeBuilder()
+							.result(goldBlock.clone().amount(1))
 							.ingredient(tigerTrout));
 					add(new TradeBuilder()
-							.result(goldBlock.amount(1))
+							.result(goldBlock.clone().amount(1))
 							.ingredient(glacierfish));
 					add(new TradeBuilder()
-							.result(goldBlock.amount(1))
+							.result(goldBlock.clone().amount(1))
 							.ingredient(crimsonfish));
 					add(new TradeBuilder()
-							.result(goldBlock.amount(1))
+							.result(goldBlock.clone().amount(1))
 							.ingredient(flathead));
 				}};
 			}
@@ -147,48 +151,48 @@ public class Merchants {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(itemLore))
-							.ingredient(goldIngot.amount(2)));
+							.ingredient(goldIngot.clone().amount(2)));
 					// Default
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(cod));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(salmon));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(1))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(tropicalFish));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(2))
+							.result(goldNugget.clone().amount(2))
 							.ingredient(pufferfish));
 					// Generic
 					add(new TradeBuilder()
-							.result(goldNugget.amount(2))
+							.result(goldNugget.clone().amount(2))
 							.ingredient(bullhead));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(2))
+							.result(goldNugget.clone().amount(2))
 							.ingredient(sturgeon));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(2))
+							.result(goldNugget.clone().amount(2))
 							.ingredient(woodskip));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(2))
+							.result(goldNugget.clone().amount(2))
 							.ingredient(voidSalmon));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(2))
+							.result(goldNugget.clone().amount(2))
 							.ingredient(redSnapper));
 					add(new TradeBuilder()
-							.result(goldNugget.amount(2))
+							.result(goldNugget.clone().amount(2))
 							.ingredient(redMullet));
 					// Island
 					add(new TradeBuilder()
-							.result(goldNugget.amount(3))
+							.result(goldNugget.clone().amount(3))
 							.ingredient(seaCucumber));
 					add(new TradeBuilder()
-							.result(goldBlock.amount(1))
+							.result(goldBlock.clone().amount(1))
 							.ingredient(midnightCarp));
 					add(new TradeBuilder()
-							.result(goldBlock.amount(1))
+							.result(goldBlock.clone().amount(1))
 							.ingredient(sunfish));
 				}};
 			}
@@ -205,7 +209,7 @@ public class Merchants {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.IRON_PICKAXE).lore(itemLore))
-							.ingredient(goldIngot.amount(1)));
+							.ingredient(goldIngot.clone().amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore))
 							.ingredient(new ItemBuilder(Material.SMOOTH_QUARTZ).name("Purified Marble").lore(itemLore)));
@@ -247,7 +251,7 @@ public class Merchants {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(TBD)
-							.ingredient(goldBlock.amount(1)));
+							.ingredient(goldBlock.clone().amount(1)));
 				}};
 			}
 		};
