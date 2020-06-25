@@ -35,6 +35,8 @@ import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
@@ -59,10 +61,12 @@ public class PugmasIsland implements Listener, Island {
 	private List<Location> presents_house = new ArrayList<>(Arrays.asList(present_house_1, present_house_2,
 			present_house_3, present_house_4, present_house_5, present_house_6));
 	private String presents_treeRg = getRegion() + "_tree";
+	private Location treeLoc = new Location(BearFair20.getWorld(), -1053, 140, -1869);
 	//
 	private List<Location> presents = new ArrayList<>();
 	private static int waitTime = 5;
 	private static String acceptQuest = "    &f[&aClick to accept quest&f]";
+	private static Location presentLoc = new Location(BearFair20.getWorld(), -1064, 127, -1847);
 
 	public PugmasIsland() {
 		BNCore.registerListener(this);
@@ -73,10 +77,6 @@ public class PugmasIsland implements Listener, Island {
 		effectTasks();
 
 		// TODO:
-		//  - Make sure each present head can only be picked up once, including the random one under the tree
-		//	- add lore to the picked up presents depending on the quest you're on,
-		//		if you switch quests, remove all presents from player's inventory and data from the player of the other quest
-		//	- only show effects for unfound presents
 		// 	- Dialogs & wait times
 	}
 
@@ -87,6 +87,7 @@ public class PugmasIsland implements Listener, Island {
 				BearFairService service = new BearFairService();
 				BearFairUser user = service.get(player);
 				int step = user.getQuest_Pugmas_Step();
+				int presents = user.getPresentLocs().size();
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("TODO: Accept Mayor Quest?");
@@ -94,16 +95,30 @@ public class PugmasIsland implements Listener, Island {
 				if (!user.isQuest_Main_Start())
 					return Collections.singletonList("TODO: GENERIC GREETING");
 
-				if (step >= 21) {
+				if (user.isQuest_Pugmas_Finish())
+					return Collections.singletonList("TODO: FINISHED THIS QUEST");
+
+				if (step == 21) {
+					if (user.getPresentLocs().size() > 0)
+						return Collections.singletonList("TODO: YOU ALREADY STARTED GRINCH QUEST");
+
+					if (user.isQuest_Pugmas_Switched())
+						return Collections.singletonList("TODO: YOU ALREADY SWITCHED");
+
 					Tasks.wait(waitTime, () -> {
 						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas switch_mayor").hover("Switch to Mayor's quest");
 						json.send(player);
 					});
-					return Collections.singletonList("TODO: Switch to Mayor Quest?");
+					return Collections.singletonList("TODO: Switch to Mayor Quest?"); //TODO: Include "you can only do this once"
 				}
 
-				if (step >= 11)
-					return Collections.singletonList("TODO: REMINDER");
+				if (step == 11) {
+					if (presents == 6) {
+						nextStep(player); // 12
+						return completeQuest(player);
+					} else
+						return Collections.singletonList("TODO: REMINDER");
+				}
 
 				//
 				Tasks.wait(waitTime, () -> {
@@ -119,6 +134,7 @@ public class PugmasIsland implements Listener, Island {
 				BearFairService service = new BearFairService();
 				BearFairUser user = service.get(player);
 				int step = user.getQuest_Pugmas_Step();
+				int presents = user.getPresentLocs().size();
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("TODO: Accept Grinch Quest?");
@@ -126,15 +142,29 @@ public class PugmasIsland implements Listener, Island {
 				if (!user.isQuest_Main_Start())
 					return Collections.singletonList("TODO: GENERIC GREETING");
 
-				if (step >= 21)
-					return Collections.singletonList("TODO: REMINDER ");
+				if (user.isQuest_Pugmas_Finish())
+					return Collections.singletonList("TODO: FINISHED THIS QUEST");
 
-				if (step >= 11) {
+				if (step == 21) {
+					if (presents == 7) {
+						nextStep(player); // 22
+						return completeQuest(player);
+					} else
+						return Collections.singletonList("TODO: REMINDER ");
+				}
+
+				if (step == 11) {
+					if (user.getPresentLocs().size() > 0)
+						return Collections.singletonList("TODO: YOU ALREADY STARTED MAYOR QUEST");
+
+					if (user.isQuest_Pugmas_Switched())
+						return Collections.singletonList("TODO: YOU ALREADY SWITCHED");
+
 					Tasks.wait(waitTime, () -> {
 						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas switch_grinch").hover("Switch to Grinch's quest");
 						json.send(player);
 					});
-					return Collections.singletonList("TODO: Switch to Grinch Quest?");
+					return Collections.singletonList("TODO: Switch to Grinch Quest?"); //TODO: Include "you can only do this once"
 				}
 
 				//
@@ -181,21 +211,28 @@ public class PugmasIsland implements Listener, Island {
 							boolean mayorQuest = true;
 
 							if (startedQuest) {
-								if (step >= 21)
+								if (step == 21)
 									mayorQuest = false;
 
 								// Only shows particle effect for active quest
 								if (mayorQuest) {
 									presents_grinch.forEach(present -> {
-										Location loc = Utils.getCenteredLocation(present);
-										loc.setY(loc.getBlockY() + 0.25);
-										player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+										if (!isFoundPresent(present, player)) {
+											Location loc = Utils.getCenteredLocation(present);
+											loc.setY(loc.getBlockY() + 0.25);
+											player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+										}
 									});
 								} else {
+									if (!hasFoundTreePresent(player))
+										player.spawnParticle(Particle.VILLAGER_HAPPY, treeLoc, 50, 2, 1, 2, 0.01);
+
 									presents_house.forEach(present -> {
-										Location loc = Utils.getCenteredLocation(present);
-										loc.setY(loc.getBlockY() + 0.25);
-										player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+										if (!isFoundPresent(present, player)) {
+											Location loc = Utils.getCenteredLocation(present);
+											loc.setY(loc.getBlockY() + 0.25);
+											player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+										}
 									});
 								}
 							}
@@ -214,23 +251,27 @@ public class PugmasIsland implements Listener, Island {
 		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
-		if (!isPresentHead(clicked)) return;
 
 		Player player = event.getPlayer();
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
 
+		if (!isPresentHead(clicked, player)) return;
+
 		// Prevents picking up heads of inactive quest
 		int step = user.getQuest_Pugmas_Step();
 		boolean isActiveQuest = false;
 
-		if (step >= 21 && isGrinchQuestPresent(clicked)) {
+		if (step == 21 && isGrinchQuestPresent(clicked)) {
 			isActiveQuest = true;
-		} else if (step >= 11 && step < 19 && !isGrinchQuestPresent(clicked)) {
+		} else if (step == 11 && !isGrinchQuestPresent(clicked)) {
 			isActiveQuest = true;
 		}
 		if (!isActiveQuest) return;
 		//
+
+		user.getPresentLocs().add(clicked.getLocation());
+		service.save(user);
 
 		List<ItemStack> drops = new ArrayList<>(clicked.getDrops());
 		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
@@ -240,7 +281,17 @@ public class PugmasIsland implements Listener, Island {
 		event.setCancelled(true);
 	}
 
-	private boolean isPresentHead(Block block) {
+	//
+
+	private boolean isPresentHead(Block block, Player player) {
+		// If already found, return false
+		if (isFoundPresent(block.getLocation(), player))
+			return false;
+
+		if (isTreePresent(block.getLocation()) && hasFoundTreePresent(player))
+			return false;
+		//
+
 		Location loc = block.getLocation();
 		if (presents_grinch.contains(loc))
 			return true;
@@ -253,24 +304,83 @@ public class PugmasIsland implements Listener, Island {
 		if (presents_house.contains(loc))
 			return true;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(presents_treeRg);
-		if (WGUtils.getRegionsAt(loc).contains(region))
-			return true;
+		return isTreePresent(block.getLocation());
+	}
 
+	private boolean isTreePresent(Location location) {
+		ProtectedRegion treeRg = WGUtils.getProtectedRegion(presents_treeRg);
+		return WGUtils.getRegionsAt(location).contains(treeRg);
+	}
+
+	private boolean isFoundPresent(Location location, Player player) {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		return user.getPresentLocs().contains(location);
+	}
+
+	private boolean hasFoundTreePresent(Player player) {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		for (Location presentLoc : user.getPresentLocs()) {
+			if (isTreePresent(presentLoc))
+				return true;
+		}
 		return false;
 	}
 
-	public static void switchQuest(Player player, Boolean mayor) {
+	//
+
+	public static void switchQuest(Player player, boolean mayor) {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		user.setQuest_Pugmas_Switched(true);
+		if (mayor)
+			user.setQuest_Pugmas_Step(11);
+		else
+			user.setQuest_Pugmas_Step(21);
+		service.save(user);
+
+		player.sendMessage(colorize("&b&lYOU &8> &fSure!"));
+		player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+	}
+
+	public static void acceptQuest(Player player, boolean mayor) {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
 		user.setQuest_Pugmas_Start(true);
-		if (mayor) {
+		if (mayor)
 			user.setQuest_Pugmas_Step(11);
-			player.sendMessage("Accepted Mayor's quest");
-		} else {
+		else
 			user.setQuest_Pugmas_Step(21);
-			player.sendMessage("Accepted Grinch's quest");
-		}
 		service.save(user);
+
+		player.sendMessage(colorize("&b&lYOU &8> &fSure!"));
+		player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+	}
+
+	//
+
+	private static List<String> completeQuest(Player player) {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		user.setQuest_Pugmas_Finish(true);
+		service.save(user);
+
+		List<String> endQuest = new ArrayList<>();
+		endQuest.add("TODO: THANKS");
+
+		for (ItemStack content : player.getInventory().getContents()) {
+			if (BearFair20.isBFItem(content) && stripColor(content.getItemMeta().getDisplayName()).contains("Present"))
+				player.getInventory().remove(content);
+		}
+
+		List<ItemStack> drops = new ArrayList<>(presentLoc.getBlock().getDrops());
+		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
+		Tasks.wait(Time.SECOND.x(1), () -> {
+			player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+			Utils.giveItem(player, present);
+		});
+
+		return endQuest;
 	}
 }

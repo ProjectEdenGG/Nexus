@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
+import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.warps.commands._WarpCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -136,36 +137,27 @@ public class BearFairCommand extends _WarpCommand {
 		Interactables.strengthTest();
 	}
 
-	@Path("quests reset")
+	@Path("clearData")
 	@Permission("group.admin")
-	void questReset() {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player());
-		//
-		user.getEasterEggsLocs().clear();
-		//
-		user.setQuest_Main_Step(0);
-		user.setQuest_Main_Start(false);
-		user.setQuest_Main_Finish(false);
-		//
-		user.setQuest_SDU_Step(0);
-		user.setQuest_SDU_Start(false);
-		user.setQuest_SDU_Finish(false);
-		//
-		user.setQuest_MGN_Step(0);
-		user.getArcadePieces().clear();
-		user.setQuest_MGN_Start(false);
-		user.setQuest_MGN_Finish(false);
-		//
-		user.setQuest_Halloween_Step(0);
-		user.setQuest_Halloween_Start(false);
-		user.setQuest_Halloween_Finish(false);
-		//
-		user.setQuest_Pugmas_Step(0);
-		user.setQuest_Pugmas_Start(false);
-		user.setQuest_Pugmas_Finish(false);
-		//
-		service.save(user);
+	void clearData() {
+		MenuUtils.ConfirmationMenu.builder()
+				.onConfirm(e -> Tasks.async(() -> {
+					BearFairService service = new BearFairService();
+					BearFairUser user = service.get(player());
+					service.delete(user);
+				}))
+				.open(player());
+	}
+
+	@Path("clearDatabase")
+	@Permission("group.admin")
+	void clearDatabase() {
+		MenuUtils.ConfirmationMenu.builder()
+				.onConfirm(e -> Tasks.async(() -> {
+					BearFairService service = new BearFairService();
+					service.deleteAll();
+				}))
+				.open(player());
 	}
 
 	@Path("quests info")
@@ -199,6 +191,8 @@ public class BearFairCommand extends _WarpCommand {
 		send("Halloween Finish: " + user.isQuest_Halloween_Finish());
 		//
 		send();
+		send("Pugmas Switched: " + user.isQuest_Pugmas_Switched());
+		send("Pugmas Presents: " + user.getPresentLocs().toString());
 		send("Pugmas Step: " + user.getQuest_Pugmas_Step());
 		send("Pugmas Start: " + user.isQuest_Pugmas_Start());
 		send("Pugmas Finish: " + user.isQuest_Pugmas_Finish());
@@ -209,11 +203,19 @@ public class BearFairCommand extends _WarpCommand {
 	void questsPugmasSwitchQuest(String string) {
 		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + PugmasIsland.class.getAnnotation(Island.Region.class).value());
 		if (!WGUtils.getRegionsAt(player().getLocation()).contains(region)) return;
-
-		if (string.equalsIgnoreCase("switch_mayor") || string.equalsIgnoreCase("accept_mayor")) {
-			PugmasIsland.switchQuest(player(), true);
-		} else if (string.equalsIgnoreCase("switch_grinch") || string.equalsIgnoreCase("accept_grinch")) {
-			PugmasIsland.switchQuest(player(), false);
+		switch (string) {
+			case "switch_mayor":
+				PugmasIsland.switchQuest(player(), true);
+				break;
+			case "switch_grinch":
+				PugmasIsland.switchQuest(player(), false);
+				break;
+			case "accept_mayor":
+				PugmasIsland.acceptQuest(player(), true);
+				break;
+			case "accept_grinch":
+				PugmasIsland.acceptQuest(player(), false);
+				break;
 		}
 	}
 

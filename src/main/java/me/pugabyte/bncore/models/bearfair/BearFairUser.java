@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
@@ -29,7 +30,7 @@ import static me.pugabyte.bncore.utils.Utils.sendActionBar;
 @Entity("bearfair_user")
 @NoArgsConstructor
 @AllArgsConstructor
-@Converters({UUIDConverter.class, LocationConverter.class})
+@Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
 public class BearFairUser extends PlayerOwnedObject {
 	@Id
 	@NonNull
@@ -42,7 +43,6 @@ public class BearFairUser extends PlayerOwnedObject {
 	@Property(concreteClass = Location.class)
 	private List<Location> easterEggsLocs = new ArrayList<>();
 	// Quests
-	//
 	private boolean Quest_Main_Start = false;
 	private boolean Quest_Main_Finish = false;
 	private int Quest_Main_Step = 0;
@@ -54,6 +54,7 @@ public class BearFairUser extends PlayerOwnedObject {
 	private boolean Quest_MGN_Start = false;
 	private boolean Quest_MGN_Finish = false;
 	private int Quest_MGN_Step = 0;
+	@Property(concreteClass = ItemStack.class)
 	private List<ItemStack> arcadePieces = new ArrayList<>();
 	//
 	private boolean Quest_Halloween_Start = false;
@@ -63,6 +64,9 @@ public class BearFairUser extends PlayerOwnedObject {
 	private boolean Quest_Pugmas_Start = false;
 	private boolean Quest_Pugmas_Finish = false;
 	private int Quest_Pugmas_Step = 0;
+	private boolean Quest_Pugmas_Switched = false;
+	@Property(concreteClass = Location.class)
+	private List<Location> presentLocs = new ArrayList<>();
 	//
 
 	public BearFairUser(UUID uuid) {
