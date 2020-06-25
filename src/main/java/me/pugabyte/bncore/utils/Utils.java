@@ -411,18 +411,6 @@ public class Utils {
 		return material == null || material.equals(Material.AIR);
 	}
 
-	public static boolean isInWater(Player player) {
-		Location location = player.getLocation();
-		Block block = location.getBlock();
-		Location locationBelow = location.subtract(0.0, 1.0, 0.0);
-		if (Material.WATER.equals(block.getType())) {
-			return true;
-		} else if (Material.AIR.equals(block.getType()) && Material.WATER.equals(locationBelow.getBlock().getType())) {
-			return true;
-		}
-		return false;
-	}
-
 	public static boolean isInWater(Entity entity) {
 		Location location = entity.getLocation();
 		Block block = location.getBlock();

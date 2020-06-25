@@ -1,6 +1,10 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.warps.commands._WarpCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -11,21 +15,14 @@ import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpType;
-import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 
 public class BearFairCommand extends _WarpCommand {
 
@@ -45,14 +42,14 @@ public class BearFairCommand extends _WarpCommand {
 
 	@Override
 	@Path("warps list [filter]")
-	@Permission("group.moderator")
+	@Permission("group.admin")
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		super.list(filter);
 	}
 
 	@Override
 	@Path("warps set <name>")
-	@Permission("group.moderator")
+	@Permission("group.admin")
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		player();
 		super.set(name);
@@ -60,14 +57,14 @@ public class BearFairCommand extends _WarpCommand {
 
 	@Override
 	@Path("warps (rm|remove|delete|del) <name>")
-	@Permission("group.moderator")
+	@Permission("group.admin")
 	public void delete(Warp warp) {
 		super.delete(warp);
 	}
 
 	@Override
 	@Path("warps (teleport|tp) <name>")
-	@Permission("group.moderator")
+	@Permission("group.admin")
 	public void teleport(Warp warp) {
 		player();
 		super.teleport(warp);
@@ -75,7 +72,7 @@ public class BearFairCommand extends _WarpCommand {
 
 	@Override
 	@Path("warps <name>")
-	@Permission("group.moderator")
+	@Permission("group.admin")
 	public void tp(Warp warp) {
 		player();
 		super.tp(warp);
@@ -89,7 +86,7 @@ public class BearFairCommand extends _WarpCommand {
 
 	@Override
 	@Path("warps nearest")
-	@Permission("group.moderator")
+	@Permission("group.admin")
 	public void nearest() {
 		super.nearest();
 	}
@@ -208,30 +205,24 @@ public class BearFairCommand extends _WarpCommand {
 		send("====");
 	}
 
+	@Path("quests pugmas <text>")
+	void questsPugmasSwitchQuest(String string) {
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + PugmasIsland.class.getAnnotation(Island.Region.class).value());
+		if (!WGUtils.getRegionsAt(player().getLocation()).contains(region)) return;
+
+		if (string.equalsIgnoreCase("switch_mayor") || string.equalsIgnoreCase("accept_mayor")) {
+			PugmasIsland.switchQuest(player(), true);
+		} else if (string.equalsIgnoreCase("switch_grinch") || string.equalsIgnoreCase("accept_grinch")) {
+			PugmasIsland.switchQuest(player(), false);
+		}
+	}
+
 	@Path("quests start main")
 	@Permission("group.admin")
 	void startMainQuest() {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player());
 		user.setQuest_Main_Start(true);
-		service.save(user);
-	}
-
-	@Path("quests start sdu")
-	@Permission("group.admin")
-	void startSDUQuest() {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player());
-		user.setQuest_SDU_Start(true);
-		service.save(user);
-	}
-
-	@Path("quests start mgn")
-	@Permission("group.admin")
-	void startMGNQuest() {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player());
-		user.setQuest_MGN_Start(true);
 		service.save(user);
 	}
 
@@ -251,28 +242,5 @@ public class BearFairCommand extends _WarpCommand {
 		BearFairUser user = service.get(player());
 		user.setQuest_Pugmas_Start(true);
 		service.save(user);
-	}
-
-	@Path("quests giveMGNItems")
-	@Permission("group.admin")
-	void giveMGNItems() {
-		ItemBuilder cpu = new ItemBuilder(Material.IRON_TRAPDOOR).lore(itemLore).amount(1).name("CPU");
-		ItemBuilder processor = new ItemBuilder(Material.DAYLIGHT_DETECTOR).lore(itemLore).amount(1).name("Processor");
-		ItemBuilder memoryCard = new ItemBuilder(Material.IRON_INGOT).lore(itemLore).amount(1).name("Memory Card");
-		ItemBuilder motherboard = new ItemBuilder(Material.GREEN_CARPET).lore(itemLore).amount(1).name("Motherboard");
-		ItemBuilder powerSupply = new ItemBuilder(Material.BLAST_FURNACE).lore(itemLore).amount(1).name("Power Supply");
-		ItemBuilder speaker = new ItemBuilder(Material.NOTE_BLOCK).lore(itemLore).amount(1).name("Speaker");
-		ItemBuilder hardDrive = new ItemBuilder(Material.HOPPER_MINECART).lore(itemLore).amount(1).name("Hard Drive");
-		ItemBuilder diode = new ItemBuilder(Material.REPEATER).lore(itemLore).amount(1).name("Diode");
-		ItemBuilder joystick = new ItemBuilder(Material.LEVER).lore(itemLore).amount(1).name("Joystick");
-		List<ItemStack> arcadePieces = Arrays.asList(cpu.build(), processor.build(), memoryCard.build(), motherboard.build(),
-				powerSupply.build(), speaker.build(), hardDrive.build(), diode.build(), joystick.build());
-		ItemStack solderingIron = new ItemBuilder(Material.END_ROD).lore(itemLore).amount(1).name("Soldering Iron").build();
-		ItemStack fakeMotherBoard = new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).lore(itemLore).amount(1).name("Motherboard").build();
-
-		for (ItemStack arcadePiece : arcadePieces)
-			Utils.giveItem(player(), arcadePiece);
-		Utils.giveItem(player(), solderingIron);
-		Utils.giveItem(player(), fakeMotherBoard);
 	}
 }

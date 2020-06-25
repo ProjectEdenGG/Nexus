@@ -38,6 +38,7 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 /*
 	NPC BEEs: 2730, 2731
 
+	TODO: Delete all BF Database data, and then transfer everyones points from skript
  */
 
 @Data
