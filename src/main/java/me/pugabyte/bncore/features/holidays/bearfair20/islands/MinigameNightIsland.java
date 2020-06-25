@@ -107,15 +107,15 @@ public class MinigameNightIsland implements Listener, Island {
 				startQuest.add("We just gotta find em first. Before we go hunting though, you'll need a soldering iron. I keep a spare one in my attic. Don't worry bro, this island is chill, the doors unlocked. Just uh, don't touch my gaming rig. I'll be here if you need any help.");
 
 				Map<ItemStack, String> hintMap = new HashMap<>();
-				String hint_cpu = "CPU Hint"; // Next to arcade machine
-				String hint_processor = "TODO Processor Hint"; // Roof of game gallery
-				String hint_memoryCard = "TODO MemoryCard Hint"; // At the roller coaster station
-				String hint_motherboard = "TODO MotherBoard Hint"; // Quarry cave/pit
-				String hint_powerSupply = "TODO PowerSupply Hint"; // Bottom of lake
-				String hint_speaker = "TODO Speaker Hint"; // inside of Frogger tent
-				String hint_hardDrive = "TODO HardDrive Hint"; // inside of Observatory
-				String hint_diode = "TODO Diode Hint"; // Behind Reflection game
-				String hint_joystick = "TODO Joystick Hint"; // Trade with the Collector NPC
+				String hint_cpu = "Bro, I'd def check around the arcade machine. Maybe there's a piece he left behind.";
+				String hint_processor = "Yo, when that sore-loser was having his rage session, I think I saw him throw something on the roof of the game gallery. Maybe it was a part?";
+				String hint_memoryCard = "Yo, so earlier today, I caught a glimpse of the kid riding the roller-coaster on the main island. I dunno, maybe he left a part on the tracks?";
+				String hint_motherboard = "One of the miners stopped by the Game Gallery earlier. I asked him if he'd seen any sign of the punk from last night and turns out he'd spotted him hanging around in the Quarry sneakin' around. I'd probs check there, bro.";
+				String hint_powerSupply = "Dude, so when I was skate-boarding to work this morning, I passed by one of the bodies of water on the main island and I swear there was, like, a shimmer in the water from something metal. Might have been part. I'd def check that out.";
+				String hint_speaker = "With all the dope minigames and awesome stands, bro, the tents on the main island are a popular place; especially for the kids. I'd bet my original copy of Atari's ET that there's a part in one of those.";
+				String hint_hardDrive = "Yo, I dunno if it helps, but the punk that trashed the arcade cabinet was totally into astronomy. He talked about space stuff all night.";
+				String hint_diode = "Ya know, bro, one of the security guys on the main island, he's a buddy of mine. He called me a few minutes ago and said he saw that sore-loser hanging out in the red tent. Sounds like a solid place to look for a part.";
+				String hint_joystick = "Yo, dude. I do not trust that \"collector\" guy. If he came across any of the components we're looking for, he'd probably swipe it for himself. You haven't seen him creepin' around have ya?";
 				hintMap.put(cpu.build(), hint_cpu);
 				hintMap.put(processor.build(), hint_processor);
 				hintMap.put(memoryCard.build(), hint_memoryCard);
@@ -152,7 +152,8 @@ public class MinigameNightIsland implements Listener, Island {
 						String hint = hintMap.get(Utils.getRandomElement(missingPieces));
 						return Collections.singletonList(hint);
 					} else {
-						return Collections.singletonList("TODO: you've found all parts, make sure to repair them and fix the arcade machine");
+						return Collections.singletonList("Duude! You got all the pieces! Epic work bro. " +
+								"Just gotta repair em and we'll be able to re-install them into the arcade machine!");
 					}
 				}
 
@@ -184,7 +185,6 @@ public class MinigameNightIsland implements Listener, Island {
 		int step = user.getQuest_MGN_Step() + 1;
 		user.setQuest_MGN_Step(step);
 		service.save(user);
-
 	}
 
 	@EventHandler
@@ -241,6 +241,7 @@ public class MinigameNightIsland implements Listener, Island {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
 		ItemStack arcadePiece = getArcadePiece(piece);
+		if (!user.isQuest_MGN_Start()) return;
 		if (user.getArcadePieces().contains(arcadePiece)) return;
 
 		user.getArcadePieces().add(arcadePiece);
