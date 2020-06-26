@@ -198,7 +198,7 @@ public final class Thimble extends TeamlessMechanic {
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		ThimbleArena arena = event.getMatch().getArena();
-		event.getMatch().getWEUtils().fill(arena.getRegion("pool"), BlockTypes.WATER);
+		event.getMatch().getWEUtils().set(arena.getRegion("pool"), BlockTypes.WATER);
 		super.onEnd(event);
 	}
 
@@ -443,7 +443,7 @@ public final class Thimble extends TeamlessMechanic {
 			}
 			arena.setCurrentMap(thimbleMaps.get(ndx));
 
-			WEUtils.fill(arena.getRegion("pool"), BlockTypes.WATER);
+			WEUtils.set(arena.getRegion("pool"), BlockTypes.WATER);
 		}
 
 		// Randomly place blocks in pool
@@ -539,7 +539,7 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleArena arena = match.getArena();
 			super.onInitialize(match);
 
-			WEUtils.fill(arena.getRegion("pool"), BlockTypes.PISTON);
+			WEUtils.set(arena.getRegion("pool"), BlockTypes.PISTON);
 		}
 
 		// Place x water holes randomly in pool

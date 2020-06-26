@@ -263,6 +263,6 @@ public class PixelDropMatchData extends MatchData {
 	// TODO: Counter clockwise animation
 	public void clearFloor(Match match) {
 		PixelDropArena arena = match.getArena();
-		WEUtils.fill(arena.getBoardRegion(), BlockTypes.AIR);
+		WEUtils.set(arena.getBoardRegion(), BlockTypes.AIR);
 	}
 }

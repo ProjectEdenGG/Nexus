@@ -11,7 +11,9 @@ import me.pugabyte.bncore.features.holidays.bearfair20.Fairgrounds;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -274,6 +276,8 @@ public class Basketball implements Listener {
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
+		if (new CooldownService().check(event.getPlayer(), "basketball-doublejump-tip", Time.SECOND.x(30)))
+			event.getPlayer().sendMessage("&aDouble Jump enabled!");
 		if (!regionContainsBasketball(event.getPlayer()))
 			giveBasketball(event.getPlayer());
 	}

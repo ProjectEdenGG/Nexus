@@ -116,7 +116,7 @@ public final class GoldRush extends TeamlessMechanic {
 		BlockVector3 p1 = WEUtils.toBlockVector3(loc.clone().subtract(0, 2, 0));
 		BlockVector3 p2 = WEUtils.toBlockVector3(loc.clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
-		WEUtils.fill(region, BlockTypes.AIR);
+		WEUtils.set(region, BlockTypes.AIR);
 	}
 
 	@EventHandler
