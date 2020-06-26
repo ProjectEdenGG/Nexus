@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
@@ -71,13 +70,9 @@ public class ArcheryMatchData extends MatchData {
 		colorRegions.forEach(colorRegion -> {
 			powderLocations.put(colorRegion, new ArrayList<>());
 
-			List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.convert(colorRegion));
-			blocks.forEach(block -> {
-				if (MaterialTag.CONCRETES.isTagged(block.getType())) {
-					ArrayList<Location> locations = powderLocations.get(colorRegion);
-					locations.add(block.getLocation());
-					powderLocations.put(colorRegion, locations);
-				}
+			WEUtils.getBlocks(WGUtils.convert(colorRegion)).forEach(block -> {
+				if (MaterialTag.CONCRETE_POWDERS.isTagged(block.getType()))
+					powderLocations.get(colorRegion).add(block.getLocation());
 			});
 		});
 	}

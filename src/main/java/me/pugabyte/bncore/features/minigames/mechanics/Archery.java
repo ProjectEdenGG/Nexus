@@ -92,9 +92,8 @@ public class Archery extends TeamlessMechanic {
 		Match match = event.getMatch();
 		ArcheryMatchData matchData = match.getMatchData();
 
-		if (match.isStarted()) {
+		if (match.isStarted())
 			matchData.removeInactiveRanges(match);
-		}
 	}
 
 	@Override
