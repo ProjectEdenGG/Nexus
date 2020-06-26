@@ -16,7 +16,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -54,12 +53,7 @@ public class RTPCommand extends CustomCommand {
 		}
 
 		int range = 250;
-		List<Location> locationList = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			double angle = Math.random() * Math.PI * 2;
-			double r = Math.sqrt(Math.random());
-			locationList.add(new Location(player().getWorld(), r * Math.cos(angle) * radius, 0, r * Math.sin(angle) * radius));
-		}
+		List<Location> locationList = Utils.getRandomPointInCircle(player().getWorld(), radius);
 
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);

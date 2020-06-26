@@ -37,6 +37,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -227,6 +228,22 @@ public class Utils {
 		z += (z >= 0) ? .5 : -.5;
 
 		return new Location(location.getWorld(), x, y, z);
+	}
+
+	@NotNull
+	public static List<Location> getRandomPointInCircle(World world, int radius) {
+		return getRandomPointInCircle(world, radius, 0, 0);
+	}
+
+	@NotNull
+	public static List<Location> getRandomPointInCircle(World world, int radius, double xOffset, double zOffset) {
+		List<Location> locationList = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			double angle = Math.random() * Math.PI * 2;
+			double r = Math.sqrt(Math.random());
+			locationList.add(new Location(world, r * Math.cos(angle) * radius, 0, r * Math.sin(angle) * radius));
+		}
+		return locationList;
 	}
 
 	public static EntityType getSpawnEggType(Material type) {
