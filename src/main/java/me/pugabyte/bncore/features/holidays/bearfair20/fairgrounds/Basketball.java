@@ -40,6 +40,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 // TODO: Make the double jump less
 public class Basketball implements Listener {
@@ -277,7 +278,7 @@ public class Basketball implements Listener {
 	public void onRegionEnter(RegionEnteredEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
 		if (new CooldownService().check(event.getPlayer(), "basketball-doublejump-tip", Time.SECOND.x(30)))
-			event.getPlayer().sendMessage("&aDouble Jump enabled!");
+			event.getPlayer().sendMessage(colorize("&aDouble Jump enabled!"));
 		if (!regionContainsBasketball(event.getPlayer()))
 			giveBasketball(event.getPlayer());
 	}
