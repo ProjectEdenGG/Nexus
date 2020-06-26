@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.utils.Utils.RelativeLocation;
@@ -94,7 +95,8 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	private static final Set<UUID> lockTeleports = new HashSet<>();
 
-	@Path("lock <player> [enable]")
+	@Path("toggle <player> [enable]")
+	@Permission("group.admin")
 	void lock(Player player, Boolean enable) {
 		UUID uuid = player.getUniqueId();
 		if (enable == null)

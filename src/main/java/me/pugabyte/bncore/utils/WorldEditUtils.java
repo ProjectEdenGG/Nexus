@@ -33,6 +33,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -288,9 +289,11 @@ public class WorldEditUtils {
 	}
 
 	public void set(Region region, BlockType blockType) {
-		EditSession editSession = getEditSession();
-		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
-		editSession.flushQueue();
+		// TODO move back to WE
+		getBlocks(region).forEach(block -> block.setType(Material.valueOf(blockType.getName())));
+//		EditSession editSession = getEditSession();
+//		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
+//		editSession.flushQueue();
 	}
 
 	public void replace(Region region, BlockType from, BlockType to) {

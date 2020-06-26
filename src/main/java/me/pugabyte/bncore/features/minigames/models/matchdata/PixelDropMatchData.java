@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
-import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -19,7 +18,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -170,16 +168,10 @@ public class PixelDropMatchData extends MatchData {
 
 	public void countDesigns(Match match) {
 		PixelDropArena arena = match.getArena();
-		Region designsRegion = arena.getDesignRegion();
-
-		int area = designsRegion.getArea();
-		EditSession editSession = WEUtils.getEditSession();
-		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(BlockTypes.AIR.getDefaultState().toBaseBlock()));
-		int blocksCount = area - airCount;
-
 		PixelDropMatchData matchData = match.getMatchData();
-		int totalDesigns = blocksCount / 225;
-		matchData.setDesignCount(totalDesigns);
+		Location min = arena.getWEUtils().toLocation(arena.getDesignRegion().getMinimumPoint());
+		int highest = min.getWorld().getHighestBlockYAt(min);
+		matchData.setDesignCount(highest - 4);
 	}
 
 	public void setupDesignWords(Match match) {
