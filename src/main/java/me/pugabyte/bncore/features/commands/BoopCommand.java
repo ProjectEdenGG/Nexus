@@ -32,10 +32,10 @@ public class BoopCommand extends CustomCommand {
 			else
 				showUsage();
 
-		if (playerArg.equals(player()))
+		if (isSelf(playerArg))
 			error("You cannot boop yourself!");
 
-		if (Minigames.isMinigameWorld(player().getWorld()))
+		if (isPlayer() && Minigames.isMinigameWorld(player().getWorld()))
 			error("You cannot boop in minigames!");
 
 		if (Minigames.isMinigameWorld(playerArg.getWorld()))

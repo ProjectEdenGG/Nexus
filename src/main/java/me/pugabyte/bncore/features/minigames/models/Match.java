@@ -11,7 +11,6 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.mechanics.Battleship;
-import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
 import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
@@ -106,7 +105,7 @@ public class Match {
 
 	public boolean join(Minigamer minigamer) {
 
-		List<Class<?>> usesWorldEdit = Arrays.asList(Battleship.class, UncivilEngineers.class, Thimble.class);
+		List<Class<?>> usesWorldEdit = Arrays.asList(Battleship.class, UncivilEngineers.class);
 		if (usesWorldEdit.contains(arena.getMechanic().getClass()) || arena.getName().equals("RavensNestEstate")) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
 			return false;
