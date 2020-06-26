@@ -64,20 +64,17 @@ public class PugmasIsland implements Listener, Island {
 	private Location treeLoc = new Location(BearFair20.getWorld(), -1053, 140, -1869);
 	//
 	private List<Location> presents = new ArrayList<>();
-	private static int waitTime = 5;
 	private static String acceptQuest = "    &f[&aClick to accept quest&f]";
 	private static Location presentLoc = new Location(BearFair20.getWorld(), -1064, 127, -1847);
 
 	public PugmasIsland() {
 		BNCore.registerListener(this);
-		//
 		presents.addAll(presents_grinch);
 		presents.addAll(presents_house);
-		//
 		effectTasks();
 
 		// TODO:
-		// 	- Dialogs & wait times
+		// 	- Dialog wait times
 	}
 
 	public enum PugmasNPCs implements TalkingNPC {
@@ -90,45 +87,60 @@ public class PugmasIsland implements Listener, Island {
 				int presents = user.getPresentLocs().size();
 
 				List<String> startQuest = new ArrayList<>();
-				startQuest.add("TODO: Accept Mayor Quest?");
+				startQuest.add("Hey there friendo! Would you mind doing me a little favor?");
+				startQuest.add("wait 80");
+				startQuest.add("I need someone to sneak into the Grinch's cave, and take back 6 presents that he stole.");
+				startQuest.add("wait 80");
+				startQuest.add("I'd do it myself, but he scares me.");
+				startQuest.add("wait 80");
+				startQuest.add("So, what do you say?");
+
+				List<String> thanks = new ArrayList<>();
+				thanks.add("Oh my goodness, Thank you so much for helping me out!");
+				thanks.add("wait 80");
+				thanks.add("You've saved our Christmas!");
+				thanks.add("wait 80");
+				thanks.add("Here, take this as a token of my gratitude.");
 
 				if (!user.isQuest_Main_Start())
-					return Collections.singletonList("TODO: GENERIC GREETING");
+					return Collections.singletonList("Happy holidays!");
 
 				if (user.isQuest_Pugmas_Finish()) {
 					if (step == 22)
-						return Collections.singletonList("TODO: FINISHED THIS QUEST FOR GRINCH");
+						return Collections.singletonList("You're as bad as they come, almost the Grinch himself!");
 					else
-						return Collections.singletonList("TODO: FINISHED THIS QUEST FOR MAYOR");
+						return thanks;
 				}
 
 				if (step == 21) {
-					if (user.getPresentLocs().size() > 0)
-						return Collections.singletonList("TODO: YOU ALREADY STARTED GRINCH QUEST");
+					if (user.getPresentLocs().size() > 0 || user.isQuest_Pugmas_Switched())
+						return Collections.singletonList("Have you come back to steal more of my presents? Well? What are you waiting for?");
 
-					if (user.isQuest_Pugmas_Switched())
-						return Collections.singletonList("TODO: YOU ALREADY SWITCHED");
-
-					Tasks.wait(waitTime, () -> {
+					Tasks.wait(340, () -> {
 						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas switch_mayor").hover("Switch to Mayor's quest");
 						json.send(player);
 					});
 
 					List<String> switchQuest = new ArrayList<>(startQuest);
-					switchQuest.add("But let it be known, you can only do this once.");
+					switchQuest.add("wait 80");
+					switchQuest.add("But let it be known, you can only switch quests once.");
 					return switchQuest;
 				}
 
 				if (step == 11) {
 					if (presents == 6) {
 						nextStep(player); // 12
-						return completeQuest(player);
+						return completeQuest(player, thanks);
 					} else
-						return Collections.singletonList("TODO: REMINDER");
+						return Arrays.asList(
+								"Hey there friendo! Oh you need a reminder? No problem...",
+								"wait 80",
+								"I just need you to sneak into the Grinch's cave and take back those 6 presents he stole."
+						);
 				}
 
 				//
-				Tasks.wait(waitTime, () -> {
+				Tasks.wait(260, () -> {
 					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas accept_mayor").hover("Accept Mayor's quest");
 					json.send(player);
 				});
@@ -169,16 +181,19 @@ public class PugmasIsland implements Listener, Island {
 				greeting.add("wait 80");
 				greeting.add("&lBOOGA-BOOGA!");
 
+				List<String> thanks = new ArrayList<>();
+				thanks.add("Well done, <player>! Serves them right, those yuletide-loving... sickly-sweet, nog-sucking cheer mongers! ");
+				thanks.add("wait 80");
+				thanks.add("*Picks up an onion* I really don't like 'em. Mm-mm. No, I don't. *Eats the onion*");
+				thanks.add("wait 80");
+				thanks.add("Why don't you take one of these as a reward, I certainly won't be needing it.");
+
 				if (!user.isQuest_Main_Start())
 					return greeting;
 
 				if (user.isQuest_Pugmas_Finish()) {
 					if (step == 22)
-						return Arrays.asList(
-								"Well done, <player>! Serves them right, those yuletide-loving... sickly-sweet, nog-sucking cheer mongers! ",
-								"wait 80",
-								"*Picks up an onion* I really don't like 'em. Mm-mm. No, I don't. *Eats the onion*"
-						);
+						return thanks;
 					else
 						return greeting;
 				}
@@ -186,7 +201,7 @@ public class PugmasIsland implements Listener, Island {
 				if (step == 21) {
 					if (presents == 7) {
 						nextStep(player); // 22
-						return completeQuest(player);
+						return completeQuest(player, thanks);
 					} else
 						return Arrays.asList(
 								"Have you already forgotten my SIMPLE REQUEST? Fine, I'll explain it AGAIN.",
@@ -196,20 +211,21 @@ public class PugmasIsland implements Listener, Island {
 
 				if (step == 11) {
 					if (user.getPresentLocs().size() > 0 || user.isQuest_Pugmas_Switched())
-						return Collections.singletonList("If you utter so much as one syllable, I’LL HUNT YOU DOWN AND GUT YOU LIKE A FISH! If you’d like to fax me, press the star key.");
+						return Collections.singletonList("If you utter so much as one syllable about this, I’LL HUNT YOU DOWN AND GUT YOU LIKE A FISH! If you’d like to fax me, press the star key.");
 
-					Tasks.wait(waitTime, () -> {
+					Tasks.wait(540, () -> {
 						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas switch_grinch").hover("Switch to Grinch's quest");
 						json.send(player);
 					});
 
 					List<String> switchQuest = new ArrayList<>(startQuest);
-					switchQuest.add("But let it be known, you can only do this once.");
+					switchQuest.add("wait 20");
+					switchQuest.add("But let it be known, you can only switch quests once.");
 					return switchQuest;
 				}
 
 				//
-				Tasks.wait(waitTime, () -> {
+				Tasks.wait(500, () -> {
 					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas accept_grinch").hover("Accept Grinch's quest");
 					json.send(player);
 				});
@@ -401,14 +417,11 @@ public class PugmasIsland implements Listener, Island {
 
 	//
 
-	private static List<String> completeQuest(Player player) {
+	private static List<String> completeQuest(Player player, List<String> thanks) {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
 		user.setQuest_Pugmas_Finish(true);
 		service.save(user);
-
-		List<String> endQuest = new ArrayList<>();
-		endQuest.add("TODO: THANKS");
 
 		for (ItemStack content : player.getInventory().getContents()) {
 			if (BearFair20.isBFItem(content) && stripColor(content.getItemMeta().getDisplayName()).contains("Present"))
@@ -417,11 +430,11 @@ public class PugmasIsland implements Listener, Island {
 
 		List<ItemStack> drops = new ArrayList<>(presentLoc.getBlock().getDrops());
 		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
-		Tasks.wait(Time.SECOND.x(1), () -> {
+		Tasks.wait(Time.SECOND.x(9), () -> {
 			player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
 			Utils.giveItem(player, present);
 		});
 
-		return endQuest;
+		return thanks;
 	}
 }
