@@ -290,7 +290,7 @@ public class WorldEditUtils {
 
 	public void set(Region region, BlockType blockType) {
 		// TODO move back to WE
-		getBlocks(region).forEach(block -> block.setType(Material.valueOf(blockType.getName())));
+		getBlocks(region).forEach(block -> block.setType(Material.valueOf(blockType.getName().toUpperCase())));
 //		EditSession editSession = getEditSession();
 //		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
 //		editSession.flushQueue();

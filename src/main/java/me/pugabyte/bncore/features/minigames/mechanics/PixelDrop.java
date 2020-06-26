@@ -172,8 +172,6 @@ public class PixelDrop extends TeamlessMechanic {
 
 		// Get min point from current chosen design
 		BlockVector3 designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
-		// Get min point of paste region
-		BlockVector3 pasteMin = dropRegion.getMinimumPoint();
 
 		// Builds the map
 		for (int x = 0; x < 15; x++) {
@@ -195,20 +193,10 @@ public class PixelDrop extends TeamlessMechanic {
 
 			String key = Utils.getRandomElement(matchData.getDesignKeys());
 			matchData.getDesignKeys().remove(key);
+
 			String[] xz = key.split("_");
-			int x = Integer.parseInt(xz[0]);
-			int z = Integer.parseInt(xz[1]);
-
-			Block block = matchData.getDesignMap().get(x + "_" + z);
-			double blockX = x + 0.5;
-			double blockZ = z + 0.5;
-			Location loc = match.getWGUtils().toLocation(pasteMin.add(BlockVector3.at(blockX, 0, blockZ)));
-
-			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
-			fallingBlock.setDropItem(false);
-			fallingBlock.setInvulnerable(true);
-			fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
-
+			Block block = matchData.getDesignMap().get(key);
+			drop(match, block, Integer.parseInt(xz[0]), Integer.parseInt(xz[1]));
 		});
 		matchData.setDesignTaskId(nextDesignTaskId);
 	}
@@ -219,26 +207,27 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	public void dropRemainingBlocks(Match match) {
-		PixelDropArena arena = match.getArena();
 		PixelDropMatchData matchData = match.getMatchData();
 
-		BlockVector3 pasteMin = arena.getDropRegion().getMinimumPoint();
 		for (String key : matchData.getDesignKeys()) {
 			Block block = matchData.getDesignMap().get(key);
 
 			String[] xz = key.split("_");
-			int x = Integer.parseInt(xz[0]);
-			int z = Integer.parseInt(xz[1]);
-			double blockX = x + 0.5;
-			double blockZ = z + 0.5;
-			Location loc = match.getWGUtils().toLocation(pasteMin.add(BlockVector3.at(blockX, 0, blockZ)));
-
-			FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
-			fallingBlock.setDropItem(false);
-			fallingBlock.setInvulnerable(true);
-			fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
+			drop(match, block, Integer.parseInt(xz[0]), Integer.parseInt(xz[1]));
 		}
 		matchData.getDesignKeys().clear();
+	}
+
+	public void drop(Match match, Block block, int x, int z) {
+		PixelDropArena arena = match.getArena();
+		Location pasteMin = match.getWGUtils().toLocation(arena.getDropRegion().getMinimumPoint());
+		Location blockCenter = Utils.getBlockCenter(new Location(block.getWorld(), x, pasteMin.getY(), z));
+		Location loc = pasteMin.add(blockCenter.getX(), 0, blockCenter.getZ());
+
+		FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
+		fallingBlock.setDropItem(false);
+		fallingBlock.setInvulnerable(true);
+		fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
 	}
 
 	@EventHandler
