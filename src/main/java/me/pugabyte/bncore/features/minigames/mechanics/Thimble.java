@@ -40,6 +40,8 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -51,6 +53,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 //TODO: Show turn timer to turn player
 //TODO: Gamemode description messages onm lobby join
@@ -128,6 +132,7 @@ public final class Thimble extends TeamlessMechanic {
 		matchData.getTurnList().remove(minigamer);
 		if (minigamer.equals(matchData.getTurnPlayer()))
 			kill(minigamer);
+		minigamer.getPlayer().getInventory().clear();
 		super.onQuit(event);
 	}
 
@@ -235,19 +240,16 @@ public final class Thimble extends TeamlessMechanic {
 		ThimbleMatchData matchData = match.getMatchData();
 
 		if (match.getAliveMinigamers().size() <= 1) {
-			match.broadcast("Alive Players <= 1, Ending game.");
 			match.end();
 			return;
 		}
 
 		if (matchData.getTurns() >= MAX_TURNS) {
-			match.broadcast("Max turns reached, Ending game. (newround)");
 			match.end();
 			return;
 		}
 
 		if (matchData.isEnding()) {
-			match.broadcast("Match End.");
 			match.end();
 			return;
 		}
@@ -269,7 +271,7 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 
 		if (matchData.getTurns() >= MAX_TURNS) {
-			match.broadcast("Max turns reached, Ending game. (nextturn)");
+			match.broadcast("Max turns reached, ending game");
 			match.end();
 			return;
 		}
@@ -453,7 +455,12 @@ public final class Thimble extends TeamlessMechanic {
 
 			int BLOCKS_TO_CHANGE = 3;
 			List<Block> blocks = WGUtils.getRandomBlocks(arena.getProtectedRegion("pool"), Material.WATER, BLOCKS_TO_CHANGE);
-			blocks.forEach(block -> block.setType(Material.PISTON));
+			blocks.forEach(block -> {
+				block.setType(Material.PISTON);
+				Directional directional = ((Directional) block.getBlockData());
+				directional.setFacing(BlockFace.DOWN);
+				block.setBlockData(directional);
+			});
 
 			matchData.setTurns(blocks.size());
 		}
@@ -539,7 +546,12 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleArena arena = match.getArena();
 			super.onInitialize(match);
 
-			WEUtils.set(arena.getRegion("pool"), BlockTypes.PISTON);
+			WEUtils.getBlocks(arena.getProtectedRegion("pool")).forEach(block -> {
+				block.setType(Material.PISTON);
+				Directional directional = ((Directional) block.getBlockData());
+				directional.setFacing(BlockFace.DOWN);
+				block.setBlockData(directional);
+			});
 		}
 
 		// Place x water holes randomly in pool
@@ -609,8 +621,7 @@ public final class Thimble extends TeamlessMechanic {
 			player.getInventory().setItem(0, concrete);
 			matchData.getChosenConcrete().put(minigamer.getPlayer(), concrete.getType());
 
-			String chosenColor = ColorType.fromDurability(concrete.getDurability()).getName();
-			minigamer.tell("You chose " + chosenColor + "!");
+			minigamer.tell("You chose " + camelCase(concrete.getType().name().replace("_CONCRETE", "")) + "!");
 
 			player.closeInventory();
 		}
