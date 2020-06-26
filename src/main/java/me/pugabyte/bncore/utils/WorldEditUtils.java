@@ -272,11 +272,11 @@ public class WorldEditUtils {
 		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), BuiltInClipboardFormat.SPONGE_SCHEMATIC);
 	}
 
-	public void fill(String region, BlockType blockType) {
-		fill(worldGuardUtils.convert(worldGuardUtils.getProtectedRegion(region)), blockType);
+	public void set(String region, BlockType blockType) {
+		set(worldGuardUtils.convert(worldGuardUtils.getProtectedRegion(region)), blockType);
 	}
 
-	public void fill(Region region, BlockType blockType) {
+	public void set(Region region, BlockType blockType) {
 		EditSession editSession = getEditSession();
 		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
 		editSession.flushQueue();
@@ -314,15 +314,15 @@ public class WorldEditUtils {
 	public void fixFlat(LocalSession session, Region region) {
 		region.expand(Direction.UP.toBlockVector().multiply(500));
 		region.expand(Direction.DOWN.toBlockVector().multiply(500));
-		fill(region, BlockTypes.AIR);
+		set(region, BlockTypes.AIR);
 		region.expand(Direction.DOWN.toBlockVector().multiply(500));
 		region.contract(Direction.DOWN.toBlockVector().multiply(500));
 		session.getRegionSelector(region.getWorld()).learnChanges();
-		fill(region, BlockTypes.BEDROCK);
+		set(region, BlockTypes.BEDROCK);
 		region.expand(Direction.UP.toBlockVector().multiply(3));
 		region.contract(Direction.UP.toBlockVector().multiply(1));
 		session.getRegionSelector(region.getWorld()).learnChanges();
-		fill(region, BlockTypes.GRASS);
+		set(region, BlockTypes.GRASS);
 	}
 
 }

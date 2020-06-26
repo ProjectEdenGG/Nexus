@@ -26,7 +26,7 @@ public class DelVillageCommand extends CustomCommand {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 		worldEditUtils.setSelection(player(), player().getLocation());
 		ExpandAllCommand.expandAll(player(), 75);
-		worldEditUtils.fill(worldEditUtils.getPlayerSelection(player()), BlockTypes.AIR);
+		worldEditUtils.set(worldEditUtils.getPlayerSelection(player()), BlockTypes.AIR);
 		worldEditUtils.fixFlat(session, worldEditUtils.getPlayerSelection(player()));
 		send("&3Successfully removed the village");
 	}

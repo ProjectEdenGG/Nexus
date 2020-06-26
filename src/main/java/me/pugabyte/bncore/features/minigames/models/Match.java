@@ -2,22 +2,35 @@ package me.pugabyte.bncore.features.minigames.models;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.google.common.base.Strings;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.ToString;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.mechanics.Battleship;
-import me.pugabyte.bncore.features.minigames.mechanics.PixelPainters;
 import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
 import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
-import me.pugabyte.bncore.features.minigames.models.events.matches.*;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -26,7 +39,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.reflections.Reflections;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -87,7 +106,7 @@ public class Match {
 
 	public boolean join(Minigamer minigamer) {
 
-		List<Class<?>> usesWorldEdit = Arrays.asList(Battleship.class, UncivilEngineers.class, Thimble.class, PixelPainters.class);
+		List<Class<?>> usesWorldEdit = Arrays.asList(Battleship.class, UncivilEngineers.class, Thimble.class);
 		if (usesWorldEdit.contains(arena.getMechanic().getClass()) || arena.getName().equals("RavensNestEstate")) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
 			return false;

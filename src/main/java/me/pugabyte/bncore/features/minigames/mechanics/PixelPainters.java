@@ -1,12 +1,12 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.PixelPaintersArena;
@@ -16,6 +16,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.PixelPaintersMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -31,7 +32,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -251,9 +251,9 @@ public class PixelPainters extends TeamlessMechanic {
 				Tasks.Countdown countdown = Tasks.Countdown.builder()
 						.duration(TIME_OUT)
 						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-							if (match.isEnded()) {
+							if (match.isEnded())
 								return;
-							}
+
 							matchData.setTimeLeft(i);
 							match.getScoreboard().update();
 
@@ -268,21 +268,15 @@ public class PixelPainters extends TeamlessMechanic {
 					}
 			);
 		}
-
 	}
 
 	public void countDesigns(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		Region designsRegion = arena.getDesignRegion();
-
-		int area = designsRegion.getArea();
-		EditSession editSession = match.getWEUtils().getEditSession();
-		int airCount = editSession.countBlocks(designsRegion, Collections.singleton(BlockTypes.AIR.getDefaultState().toBaseBlock()));
-		int blocksCount = area - airCount;
-
 		PixelPaintersMatchData matchData = match.getMatchData();
-		int totalDesigns = blocksCount / 81;
-		matchData.setDesignCount(totalDesigns);
+		Location min = arena.getWEUtils().toLocation(arena.getDesignRegion().getMinimumPoint());
+		int highest = min.getWorld().getHighestBlockYAt(min);
+		matchData.setDesignCount(highest - 4);
+		BNCore.log("Design count: " + matchData.getDesignCount());
 	}
 
 	public void newRound(Match match) {
@@ -335,8 +329,7 @@ public class PixelPainters extends TeamlessMechanic {
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
 			return;
 
-		// TODO: 1.13+ Convert to material tags
-		if (event.getClickedBlock() == null || !event.getClickedBlock().getType().toString().toLowerCase().contains("button"))
+		if (event.getClickedBlock() == null || !MaterialTag.BUTTONS.isTagged(event.getClickedBlock().getType()))
 			return;
 
 		if (matchData.getChecked().contains(minigamer)) return;
@@ -463,8 +456,10 @@ public class PixelPainters extends TeamlessMechanic {
 
 				Block floorBlock = match.getWEUtils().toLocation(floorV).getBlock();
 				Block designBlock = match.getWEUtils().toLocation(designV).getBlock();
-				if (!floorBlock.getType().equals(designBlock.getType()))
+				if (!floorBlock.getType().equals(designBlock.getType())) {
+					BNCore.log("floor block " + floorBlock.getType() + " != designBlock " + designBlock.getType());
 					++incorrect;
+				}
 			}
 		}
 		return incorrect;
@@ -550,7 +545,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> floorRegions = arena.getRegionsLike("floor_[0-9]+");
 		floorRegions.forEach(floorRegion -> {
 			Region region = match.getWGUtils().convert(floorRegion);
-			match.getWEUtils().fill(region, BlockTypes.AIR);
+			match.getWEUtils().set(region, BlockTypes.AIR);
 		});
 	}
 }
