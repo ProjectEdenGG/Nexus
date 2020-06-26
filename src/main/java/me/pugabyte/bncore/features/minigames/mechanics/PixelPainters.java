@@ -6,7 +6,6 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.PixelPaintersArena;
@@ -276,7 +275,6 @@ public class PixelPainters extends TeamlessMechanic {
 		Location min = arena.getWEUtils().toLocation(arena.getDesignRegion().getMinimumPoint());
 		int highest = min.getWorld().getHighestBlockYAt(min);
 		matchData.setDesignCount(highest - 4);
-		BNCore.log("Design count: " + matchData.getDesignCount());
 	}
 
 	public void newRound(Match match) {
@@ -456,10 +454,8 @@ public class PixelPainters extends TeamlessMechanic {
 
 				Block floorBlock = match.getWEUtils().toLocation(floorV).getBlock();
 				Block designBlock = match.getWEUtils().toLocation(designV).getBlock();
-				if (!floorBlock.getType().equals(designBlock.getType())) {
-					BNCore.log("floor block " + floorBlock.getType() + " != designBlock " + designBlock.getType());
+				if (!floorBlock.getType().equals(designBlock.getType()))
 					++incorrect;
-				}
 			}
 		}
 		return incorrect;
