@@ -95,8 +95,12 @@ public class PugmasIsland implements Listener, Island {
 				if (!user.isQuest_Main_Start())
 					return Collections.singletonList("TODO: GENERIC GREETING");
 
-				if (user.isQuest_Pugmas_Finish())
-					return Collections.singletonList("TODO: FINISHED THIS QUEST");
+				if (user.isQuest_Pugmas_Finish()) {
+					if (step == 22)
+						return Collections.singletonList("TODO: FINISHED THIS QUEST FOR GRINCH");
+					else
+						return Collections.singletonList("TODO: FINISHED THIS QUEST FOR MAYOR");
+				}
 
 				if (step == 21) {
 					if (user.getPresentLocs().size() > 0)
@@ -109,7 +113,10 @@ public class PugmasIsland implements Listener, Island {
 						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas switch_mayor").hover("Switch to Mayor's quest");
 						json.send(player);
 					});
-					return Collections.singletonList("TODO: Switch to Mayor Quest?"); //TODO: Include "you can only do this once"
+
+					List<String> switchQuest = new ArrayList<>(startQuest);
+					switchQuest.add("But let it be known, you can only do this once.");
+					return switchQuest;
 				}
 
 				if (step == 11) {
@@ -137,34 +144,68 @@ public class PugmasIsland implements Listener, Island {
 				int presents = user.getPresentLocs().size();
 
 				List<String> startQuest = new ArrayList<>();
-				startQuest.add("TODO: Accept Grinch Quest?");
+				startQuest.add("How dare you enter THE GRINCH'S LAIR?! *Max growls at you*");
+				startQuest.add("wait 80");
+				startQuest.add("Actually! Help me in meeting my quota of spreading sadness? I'd do it myself but I'm busy:");
+				startQuest.add("wait 80");
+				startQuest.add("At 4:00, I'll wallow in self-pity.");
+				startQuest.add("wait 40");
+				startQuest.add("4:30, stare into the abyss.");
+				startQuest.add("wait 40");
+				startQuest.add("5:00, solve world hunger, tell no one. ");
+				startQuest.add("wait 40");
+				startQuest.add("5:30, jazzercize; ");
+				startQuest.add("wait 40");
+				startQuest.add("6:30, dinner with me. I can’t cancel that again.");
+				startQuest.add("wait 40");
+				startQuest.add("See, I’m booked. So, I'll need you to sneak into each cabin in the town and steal one present, and grab a random one from under the tree, and give them to me.");
+				startQuest.add("wait 120");
+				startQuest.add("So, what do you say?");
+
+				List<String> greeting = new ArrayList<>();
+				greeting.add("How dare you enter THE GRINCH'S LAIR?! &lTHE IMPUDENCE! THE AUDACITY! THE UNMITIGATED GALL!");
+				greeting.add("wait 80");
+				greeting.add("You've called down the thunder. Now, get ready... FOR THE &lBOOOOOOM!&f Gaze into the face... of fear. ");
+				greeting.add("wait 80");
+				greeting.add("&lBOOGA-BOOGA!");
 
 				if (!user.isQuest_Main_Start())
-					return Collections.singletonList("TODO: GENERIC GREETING");
+					return greeting;
 
-				if (user.isQuest_Pugmas_Finish())
-					return Collections.singletonList("TODO: FINISHED THIS QUEST");
+				if (user.isQuest_Pugmas_Finish()) {
+					if (step == 22)
+						return Arrays.asList(
+								"Well done, <player>! Serves them right, those yuletide-loving... sickly-sweet, nog-sucking cheer mongers! ",
+								"wait 80",
+								"*Picks up an onion* I really don't like 'em. Mm-mm. No, I don't. *Eats the onion*"
+						);
+					else
+						return greeting;
+				}
 
 				if (step == 21) {
 					if (presents == 7) {
 						nextStep(player); // 22
 						return completeQuest(player);
 					} else
-						return Collections.singletonList("TODO: REMINDER ");
+						return Arrays.asList(
+								"Have you already forgotten my SIMPLE REQUEST? Fine, I'll explain it AGAIN.",
+								"wait 80",
+								"Sneak into each cabin in the town and steal one present, and grab a random one from under the tree, and give them to me.");
 				}
 
 				if (step == 11) {
-					if (user.getPresentLocs().size() > 0)
-						return Collections.singletonList("TODO: YOU ALREADY STARTED MAYOR QUEST");
-
-					if (user.isQuest_Pugmas_Switched())
-						return Collections.singletonList("TODO: YOU ALREADY SWITCHED");
+					if (user.getPresentLocs().size() > 0 || user.isQuest_Pugmas_Switched())
+						return Collections.singletonList("If you utter so much as one syllable, I’LL HUNT YOU DOWN AND GUT YOU LIKE A FISH! If you’d like to fax me, press the star key.");
 
 					Tasks.wait(waitTime, () -> {
 						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas switch_grinch").hover("Switch to Grinch's quest");
 						json.send(player);
 					});
-					return Collections.singletonList("TODO: Switch to Grinch Quest?"); //TODO: Include "you can only do this once"
+
+					List<String> switchQuest = new ArrayList<>(startQuest);
+					switchQuest.add("But let it be known, you can only do this once.");
+					return switchQuest;
 				}
 
 				//
