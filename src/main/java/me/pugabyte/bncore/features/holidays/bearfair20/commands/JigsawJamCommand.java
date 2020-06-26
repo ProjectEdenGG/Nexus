@@ -4,7 +4,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.bncore.features.discord.Discord;
+import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -35,6 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -55,7 +58,7 @@ import static me.pugabyte.bncore.utils.StringUtils.timespanFormat;
 public class JigsawJamCommand extends CustomCommand implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("JigsawJam");
 	private static final String WORLD = "gameworld";
-	private static final String SCHEMATIC = "jigsawjam2";
+	private static final String SCHEMATIC = "jigsawjam3";
 	private static final int LENGTH = 9, HEIGHT = 5;
 
 	private final JigsawJamService service = new JigsawJamService();
@@ -85,18 +88,29 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@Path("reset [player]")
 	@Permission("group.seniorstaff")
 	void reset(@Arg("self") OfflinePlayer player) {
-		jammer = service.get(player);
-		jammer.setPlaying(false);
-		jammer.setTime(0);
-		service.save(jammer);
-		send(PREFIX + "Reset");
+		ConfirmationMenu.builder()
+				.onConfirm(e -> Tasks.async(() -> {
+					service.delete(service.get(player));
+					send(PREFIX + "Reset");
+				}))
+				.open(player());
+	}
+
+	@Path("resetAll")
+	@Permission("group.seniorstaff")
+	void resetAll() {
+		ConfirmationMenu.builder()
+				.onConfirm(e -> Tasks.async(() -> {
+					service.deleteAll();
+					send(PREFIX + "Reset all");
+				}))
+				.open(player());
 	}
 
 	@Path("debug [player]")
 	@Permission("group.seniorstaff")
 	void debug(@Arg("self") OfflinePlayer player) {
-		jammer = service.get(player);
-		send(jammer.toString());
+		send(service.get(player).toString());
 	}
 
 	@Path("time [player]")
@@ -129,8 +143,18 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
+	public void onEntityDamage(HangingBreakByEntityEvent event) {
+		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
+		if (!(event.getRemover() instanceof Player)) return;
+		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
+		if (event.getRemover().hasPermission(WorldGuardEditCommand.getPermission())) return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onSignClick(PlayerInteractEvent event) {
-		if (!event.getPlayer().getWorld().getName().equals(WORLD))
+		if (!event.getPlayer().getWorld().getName().equals(WORLD)) return;
 		if (!Arrays.asList(Action.LEFT_CLICK_BLOCK, Action.RIGHT_CLICK_BLOCK).contains(event.getAction())) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
@@ -187,7 +211,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 
 			final ItemFrame finalMap = map;
 			Tasks.wait(++wait, () -> finalMap.setItem(null));
-			Tasks.wait(++wait, map::remove);
+			Tasks.wait(++wait, () -> map.setRotation(Rotation.NONE));
 		}
 
 		Tasks.wait(wait + 20, () -> paste(location));

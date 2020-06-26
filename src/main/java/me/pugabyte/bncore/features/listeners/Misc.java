@@ -29,7 +29,9 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
@@ -44,9 +46,13 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
 
+import java.nio.file.Paths;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +60,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.Utils.getTool;
 
 public class Misc implements Listener {
 
@@ -314,6 +321,31 @@ public class Misc implements Listener {
 
 		PlayerDamageByPlayerEvent newEvent = new PlayerDamageByPlayerEvent((Player) event.getEntity(), attacker, event);
 		Utils.callEvent(newEvent);
+	}
+
+	// ImageOnMap rotating frames on placement; rotate back one before placement to offset
+	@EventHandler
+	public void onMapHang(PlayerInteractEntityEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		Entity entity = event.getRightClicked();
+		if (!(entity instanceof ItemFrame))
+			return;
+
+		ItemStack tool = getTool(event.getPlayer());
+		if (tool == null)
+			return;
+
+		if (tool.getType() != Material.FILLED_MAP)
+			return;
+
+		int mapId = ((MapMeta) tool.getItemMeta()).getMapId();
+		if (!Paths.get("plugins/ImageOnMap/images/map" + mapId + ".png").toFile().exists())
+			return;
+
+		ItemFrame itemFrame = (ItemFrame) entity;
+		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
 	}
 
 }
