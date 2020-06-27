@@ -14,6 +14,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -55,7 +56,7 @@ public class MainIsland implements Listener, Island {
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Welcome, welcome <player>, the roots of the island informed me of your soon arrival.");
 				startQuest.add("wait 80");
-				startQuest.add("Wait, shhh, ... yes... no... ok... got it... ok!");
+				startQuest.add("Wait, shhh, &o... yes... no... ok... got it... ok!");
 				startQuest.add("wait 120");
 				startQuest.add("The roots have spoken. You are here to deliver my pizza.");
 				startQuest.add("wait 80");
@@ -71,7 +72,7 @@ public class MainIsland implements Listener, Island {
 
 				//
 				String mainIslandHint = "- A Honey Stroopwafel, I believe the Pastry Chef at the carnival can help you for more info on that.";
-				String mgnIslandHint = "- An Arcade Token... Huh? Ax? ... Alex? ... Oh, ok. The roots tell me a boy named \"Axel\" is the one you should look for";
+				String mgnIslandHint = "- An Arcade Token...&o Huh? Ax? ... Alex? ... Oh, ok.&f The roots tell me a boy named \"Axel\" is the one you should look for";
 				String pugmasIslandHint = "- A Present, <TODO: starting point>";
 				String halloweenIslandHint = "- A Halloween Candy Basket, <TODO: starting point>";
 				String sduIslandHint = "- A Anzac Biscuit, <TODO: starting point>";
@@ -101,11 +102,10 @@ public class MainIsland implements Listener, Island {
 				acceptQuest.addAll(reminderAll);
 
 				//
-				if (user.isQuest_Main_Start()) {
-					if (step == 1) {
-						return acceptQuest;
-					}
-
+				if (step == 1 && !user.isQuest_Main_Start()) {
+					user.setQuest_Main_Start(true);
+					return acceptQuest;
+				} else if (step == 1 && user.isQuest_Main_Start()) {
 					List<String> reminder = new ArrayList<>(Collections.singleton("I see you're missing some ingredients. The items you need are:"));
 					boolean sendReminder = false;
 
@@ -139,29 +139,31 @@ public class MainIsland implements Listener, Island {
 						reminder.add(sduIslandHint);
 					}
 
-
 					if (sendReminder) {
 						reminder.add("wait 120");
 						reminder.addAll(howToCraft);
 						return reminder;
 					} else
 						return reminderAll;
-				}
 
-				Tasks.wait(640, () -> {
-					JsonBuilder json = new JsonBuilder("&f[&aClick to accept quest&f]").command("bearfair quests accept_witch").hover("Accept the Witch's quest");
-					json.send(player);
-				});
-				Tasks.wait(85, () -> {
-					World world = BearFair20.getWorld();
-					Location loc = new Location(BearFair20.getWorld(), -1015.5, 136.8, -1602.5);
-					for (int i = 0; i < 8; i++) {
-						Tasks.wait(i * 10, () ->
-								world.spawnParticle(Particle.BLOCK_CRACK, loc, 40, 0.2, 0.2, 0.2, 0.000001, Material.OAK_LOG.createBlockData()));
-					}
-				});
-				user.setQuest_Main_Start(true);
-				return startQuest;
+				} else {
+					Tasks.wait(640, () -> {
+						JsonBuilder json = new JsonBuilder("&f[&aClick to accept quest&f]").command("bearfair quests accept_witch").hover("Accept the Witch's quest");
+						json.send(player);
+					});
+					Tasks.wait(85, () -> {
+						World world = BearFair20.getWorld();
+						Location loc = new Location(BearFair20.getWorld(), -1015.5, 136.8, -1602.5);
+						for (int i = 0; i < 8; i++) {
+							Tasks.wait(i * 10, () -> {
+								world.spawnParticle(Particle.BLOCK_CRACK, loc, 40, 0.2, 0.2, 0.2, 0.000001, Material.OAK_LOG.createBlockData());
+								world.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+								world.playSound(loc, Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 1F, 0.1F);
+							});
+						}
+					});
+					return startQuest;
+				}
 			}
 		};
 
