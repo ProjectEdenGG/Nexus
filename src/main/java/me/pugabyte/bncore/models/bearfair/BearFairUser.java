@@ -39,6 +39,8 @@ public class BearFairUser extends PlayerOwnedObject {
 	public transient static final int DAILY_SOURCE_MAX = 5;
 	private Map<BFPointSource, Map<LocalDate, Integer>> pointsReceivedToday = new HashMap<>();
 	private int totalPoints;
+	// First Visit
+	private boolean firstVisit = true;
 	// Easter Eggs
 	@Property(concreteClass = Location.class)
 	private List<Location> easterEggsLocs = new ArrayList<>();

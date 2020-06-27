@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 
 @Region("minigamenight")
@@ -134,7 +135,7 @@ public class MinigameNightIsland implements Listener, Island {
 						user.setQuest_MGN_Finish(true);
 						service.save(user);
 						Utils.giveItem(player, arcadeToken);
-						player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+						chime(player);
 					}
 					return Collections.singletonList("Yo, thanks again for fixing the Arcade Cabinet! Next tourney is gonna be awesome!");
 				}
@@ -247,7 +248,7 @@ public class MinigameNightIsland implements Listener, Island {
 		user.getArcadePieces().add(arcadePiece);
 		service.save(user);
 		Utils.giveItem(player, piece);
-		player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+		chime(player);
 
 	}
 
