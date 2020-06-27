@@ -64,7 +64,7 @@ public class BearFair20 implements Listener {
 
 	// TODO: Enable these.
 	public static boolean givePoints = false;
-	public static boolean allowWarp = true;
+	public static boolean allowWarp = false;
 
 	public BearFair20() {
 		BNCore.registerListener(this);
