@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.islands;
 
 import lombok.Getter;
+import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.Region;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.MainNPCs;
@@ -10,6 +11,10 @@ import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -45,14 +50,14 @@ public class MainIsland implements Listener, Island {
 			public List<String> getScript(Player player) {
 				BearFairService service = new BearFairService();
 				BearFairUser user = service.get(player);
-				int step = user.getQuest_Pugmas_Step();
+				int step = user.getQuest_Main_Step();
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Welcome, welcome <player>, the roots of the island informed me of your soon arrival.");
 				startQuest.add("wait 80");
 				startQuest.add("Wait, shhh, ... yes... no... ok... got it... ok!");
 				startQuest.add("wait 120");
-				startQuest.add("The roots have spoken. You are here to deliever my pizza.");
+				startQuest.add("The roots have spoken. You are here to deliver my pizza.");
 				startQuest.add("wait 80");
 				startQuest.add("<self> What? Uhh, no??");
 				startQuest.add("wait 60");
@@ -146,6 +151,14 @@ public class MainIsland implements Listener, Island {
 				Tasks.wait(640, () -> {
 					JsonBuilder json = new JsonBuilder("&f[&aClick to accept quest&f]").command("bearfair quests accept_witch").hover("Accept the Witch's quest");
 					json.send(player);
+				});
+				Tasks.wait(85, () -> {
+					World world = BearFair20.getWorld();
+					Location loc = new Location(BearFair20.getWorld(), -1015.5, 136.8, -1602.5);
+					for (int i = 0; i < 8; i++) {
+						Tasks.wait(i * 10, () ->
+								world.spawnParticle(Particle.BLOCK_CRACK, loc, 40, 0.2, 0.2, 0.2, 0.000001, Material.OAK_LOG.createBlockData()));
+					}
 				});
 				user.setQuest_Main_Start(true);
 				return startQuest;
