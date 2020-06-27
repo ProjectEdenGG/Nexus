@@ -7,8 +7,13 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -171,5 +176,56 @@ public class Connect4 extends CustomCommand {
 			return board;
 		}
 
+	}
+
+	// Tournament Command
+	@Path("tourney buttons <number> <text>")
+	@Permission("group.staff")
+	public void boardPlaceButtons(int board, String type) {
+		World gameworld = Bukkit.getWorld("gameworld");
+		// board 1 vars
+		Location place_1 = new Location(gameworld, 2286, 16, -136);
+		Location remove_1 = new Location(gameworld, 2286, 16, -133);
+		Location reset_1 = new Location(gameworld, 2275, 13, -132);
+		// board 2 vars
+		Location place_2 = new Location(gameworld, 2294, 16, -136);
+		Location remove_2 = new Location(gameworld, 2294, 16, -133);
+		Location reset_2 = new Location(gameworld, 2306, 13, -132);
+
+		if (board == 1) {
+			switch (type) {
+				case "remove":
+					triggerCommandBlock(remove_1);
+					send(PREFIX + "Removed buttons from board 1");
+					break;
+				case "place":
+					triggerCommandBlock(place_1);
+					send(PREFIX + "Placed buttons on board 1");
+					break;
+				case "reset":
+					triggerCommandBlock(reset_1);
+					break;
+			}
+		} else if (board == 2) {
+			switch (type) {
+				case "remove":
+					triggerCommandBlock(remove_2);
+					send(PREFIX + "Removed buttons from board 2");
+					break;
+				case "place":
+					triggerCommandBlock(place_2);
+					send(PREFIX + "Placed buttons on board 2");
+					break;
+				case "reset":
+					triggerCommandBlock(reset_2);
+					break;
+
+			}
+		}
+	}
+
+	private void triggerCommandBlock(Location location) {
+		location.getBlock().setType(Material.REDSTONE_BLOCK);
+		Tasks.wait(Time.SECOND.x(1), () -> location.getBlock().setType(Material.AIR));
 	}
 }

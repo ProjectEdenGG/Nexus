@@ -19,7 +19,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
@@ -99,8 +99,6 @@ public class PugmasIsland implements Listener, Island {
 				thanks.add("Oh my goodness, Thank you so much for helping me out!");
 				thanks.add("wait 80");
 				thanks.add("You've saved our Christmas!");
-				thanks.add("wait 80");
-				thanks.add("Here, take this as a token of my gratitude.");
 
 				if (!user.isQuest_Main_Start())
 					return Collections.singletonList("Happy holidays!");
@@ -117,7 +115,7 @@ public class PugmasIsland implements Listener, Island {
 						return Collections.singletonList("Have you come back to steal more of my presents? Well? What are you waiting for?");
 
 					Tasks.wait(340, () -> {
-						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas switch_mayor").hover("Switch to Mayor's quest");
+						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests switch_mayor").hover("Switch to Mayor's quest");
 						json.send(player);
 					});
 
@@ -130,7 +128,10 @@ public class PugmasIsland implements Listener, Island {
 				if (step == 11) {
 					if (presents == 6) {
 						nextStep(player); // 12
-						return completeQuest(player, thanks);
+						ArrayList<String> completeQuest = new ArrayList<>(thanks);
+						completeQuest.add("wait 80");
+						completeQuest.add("Here, take this as a token of my gratitude.");
+						return completeQuest(player, completeQuest);
 					} else
 						return Arrays.asList(
 								"Hey there friendo! Oh you need a reminder? No problem...",
@@ -141,7 +142,7 @@ public class PugmasIsland implements Listener, Island {
 
 				//
 				Tasks.wait(260, () -> {
-					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas accept_mayor").hover("Accept Mayor's quest");
+					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests accept_mayor").hover("Accept Mayor's quest");
 					json.send(player);
 				});
 				return startQuest;
@@ -185,8 +186,6 @@ public class PugmasIsland implements Listener, Island {
 				thanks.add("Well done, <player>! Serves them right, those yuletide-loving... sickly-sweet, nog-sucking cheer mongers! ");
 				thanks.add("wait 80");
 				thanks.add("*Picks up an onion* I really don't like 'em. Mm-mm. No, I don't. *Eats the onion*");
-				thanks.add("wait 80");
-				thanks.add("Why don't you take one of these as a reward, I certainly won't be needing it.");
 
 				if (!user.isQuest_Main_Start())
 					return greeting;
@@ -201,7 +200,10 @@ public class PugmasIsland implements Listener, Island {
 				if (step == 21) {
 					if (presents == 7) {
 						nextStep(player); // 22
-						return completeQuest(player, thanks);
+						ArrayList<String> completeQuest = new ArrayList<>(thanks);
+						completeQuest.add("wait 80");
+						completeQuest.add("Why don't you take one of these as a reward, I certainly won't be needing it.");
+						return completeQuest(player, completeQuest);
 					} else
 						return Arrays.asList(
 								"Have you already forgotten my SIMPLE REQUEST? Fine, I'll explain it AGAIN.",
@@ -214,7 +216,7 @@ public class PugmasIsland implements Listener, Island {
 						return Collections.singletonList("If you utter so much as one syllable about this, I’LL HUNT YOU DOWN AND GUT YOU LIKE A FISH! If you’d like to fax me, press the star key.");
 
 					Tasks.wait(540, () -> {
-						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas switch_grinch").hover("Switch to Grinch's quest");
+						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests switch_grinch").hover("Switch to Grinch's quest");
 						json.send(player);
 					});
 
@@ -226,7 +228,7 @@ public class PugmasIsland implements Listener, Island {
 
 				//
 				Tasks.wait(500, () -> {
-					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests pugmas accept_grinch").hover("Accept Grinch's quest");
+					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests accept_grinch").hover("Accept Grinch's quest");
 					json.send(player);
 				});
 				return startQuest;
@@ -334,7 +336,7 @@ public class PugmasIsland implements Listener, Island {
 		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
 
 		Utils.giveItem(player, present);
-		player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+		chime(player);
 		event.setCancelled(true);
 	}
 
@@ -398,7 +400,7 @@ public class PugmasIsland implements Listener, Island {
 		service.save(user);
 
 		player.sendMessage(colorize("&b&lYOU &8> &fSure!"));
-		player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+		chime(player);
 	}
 
 	public static void acceptQuest(Player player, boolean mayor) {
@@ -412,7 +414,7 @@ public class PugmasIsland implements Listener, Island {
 		service.save(user);
 
 		player.sendMessage(colorize("&b&lYOU &8> &fSure!"));
-		player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+		chime(player);
 	}
 
 	//
@@ -431,7 +433,7 @@ public class PugmasIsland implements Listener, Island {
 		List<ItemStack> drops = new ArrayList<>(presentLoc.getBlock().getDrops());
 		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
 		Tasks.wait(Time.SECOND.x(9), () -> {
-			player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+			chime(player);
 			Utils.giveItem(player, present);
 		});
 

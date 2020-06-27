@@ -17,6 +17,7 @@ import java.util.Collections;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 
+// NPC BEES: 2730, 2731
 public class Beehive implements Listener {
 	private String allowedMsg = "TODO: Allowed message here";
 	private String deniedMsg = "TODO: Denied message here";
