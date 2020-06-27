@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 
 @Region("summerdownunder")
@@ -168,7 +169,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				if (player.getInventory().contains(greatNortherns) && step == 3) {
 					player.getInventory().remove(greatNortherns);
 					Tasks.wait(Time.SECOND.x(7), () -> {
-						player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+						chime(player);
 						Utils.giveItem(player, peanuts);
 					});
 					nextStep(player); // 4
@@ -207,7 +208,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				nextStep(player); // 5
 				Tasks.wait(Time.SECOND.x(6), () -> {
 					Utils.giveItem(player, goldenSyrup);
-					player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+					chime(player);
 				});
 				return startQuest;
 			}
@@ -266,7 +267,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						removeAnzacIngredients(player);
 						Tasks.wait(Time.SECOND.x(5), () -> {
 							Utils.giveItem(player, anzacBiscuit);
-							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+							chime(player);
 						});
 					});
 
@@ -337,7 +338,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				nextStep(player); // 8
 				Tasks.wait(Time.SECOND.x(5), () -> {
 					Utils.giveItem(player, sifter);
-					player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+					chime(player);
 				});
 				return startQuest;
 			}
