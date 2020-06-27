@@ -15,11 +15,12 @@ public class TopCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void run() {
-		int y = player().getWorld().getHighestBlockYAt(player().getLocation());
+	@Path("[y]")
+	void run(Integer y) {
+		if (y == null)
+			y = player().getWorld().getHighestBlockYAt(player().getLocation()) + 1;
 		Location top = player().getLocation().clone();
-		top.setY(y + 1);
+		top.setY(y);
 		top.setYaw(player().getLocation().getYaw());
 		top.setPitch(player().getLocation().getPitch());
 		player().teleport(top, TeleportCause.COMMAND);
