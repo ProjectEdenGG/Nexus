@@ -344,19 +344,16 @@ public class StringUtils {
 
 	public static class TimespanFormatter {
 		private final int original;
+		private final boolean noneDisplay;
+		private final TimespanFormatType formatType;
 		private int years, days, hours, minutes, seconds;
-
-		@lombok.Builder.Default
-		private boolean noneDisplay = false;
-		@lombok.Builder.Default
-		private TimespanFormatType formatType = TimespanFormatType.SHORT;
 
 		@lombok.Builder(buildMethodName = "_build")
 		public TimespanFormatter(int seconds, boolean noneDisplay, TimespanFormatType formatType) {
 			this.original = seconds;
 			this.seconds = seconds;
 			this.noneDisplay = noneDisplay;
-			this.formatType = formatType;
+			this.formatType = formatType == null ? TimespanFormatType.SHORT : formatType;
 			calculate();
 		}
 
@@ -395,7 +392,8 @@ public class StringUtils {
 		}
 
 		public String format() {
-			if (original == 0 && noneDisplay) return "None";
+			if (original == 0 && noneDisplay)
+				return "None";
 
 			String result = "";
 			if (years > 0)
