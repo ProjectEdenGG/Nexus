@@ -19,6 +19,7 @@ import me.pugabyte.bncore.models.jigsawjam.JigsawJamService;
 import me.pugabyte.bncore.models.jigsawjam.JigsawJammer;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
@@ -49,7 +50,6 @@ import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
-import static me.pugabyte.bncore.utils.StringUtils.timespanFormat;
 
 // TODO Make logic common for minigames
 
@@ -119,7 +119,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (!jammer.isPlaying())
 			error("You have not started a game");
 
-		send(PREFIX + "Your current time: " + timespanFormat(jammer.getTime()));
+		send(PREFIX + "Your current time: " + TimespanFormatter.of(jammer.getTime()).format());
 	}
 
 	@Path("view")
@@ -187,7 +187,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	private void end(JigsawJammer jammer, Location location) {
-		Discord.staffLog("**[JigsawJam]** " + jammer.getOfflinePlayer().getName() + " finished in " + timespanFormat(jammer.getTime()));
+		Discord.staffLog("**[JigsawJam]** " + jammer.getOfflinePlayer().getName() + " finished in " + TimespanFormatter.of(jammer.getTime()).format());
 		jammer.setPlaying(false);
 		jammer.setTime(0);
 		new JigsawJamService().save(jammer);
@@ -351,7 +351,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		}
 
 		if (correct == totalMaps) {
-			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + timespanFormat(jammer.getTime()));
+			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + TimespanFormatter.of(jammer.getTime()).format());
 
 			BearFairService bearFairService = new BearFairService();
 			BearFairUser user = bearFairService.get(player);

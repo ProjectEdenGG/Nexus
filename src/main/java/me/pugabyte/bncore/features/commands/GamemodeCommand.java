@@ -36,6 +36,7 @@ public class GamemodeCommand extends CustomCommand {
 			checkPermission("essentials.gamemode.others");
 
 		checkPermission("essentials.gamemode." + gameMode.name().toLowerCase());
+		player.setGameMode(gameMode);
 		send(player, PREFIX + "Switched to &e" + camelCase(gameMode));
 		if (!isSelf(player))
 			send(PREFIX + "Switched to &e" + camelCase(gameMode) + " &3for &e" + player.getName());

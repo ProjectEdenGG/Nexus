@@ -19,6 +19,7 @@ import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -38,7 +39,6 @@ import java.util.Map;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.left;
 import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
-import static me.pugabyte.bncore.utils.StringUtils.timespanFormat;
 import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 public enum ScoreboardLine {
@@ -205,7 +205,8 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			Hours hours = new HoursService().get(player);
-			return "&3Hours: &e" + timespanFormat(hours == null ? 0 : hours.getTotal(), "None");
+			int seconds = hours == null ? 0 : hours.getTotal();
+			return "&3Hours: &e" + TimespanFormatter.of(seconds).noneDisplay(true).format();
 		}
 	},
 

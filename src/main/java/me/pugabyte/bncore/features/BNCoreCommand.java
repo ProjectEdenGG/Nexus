@@ -26,6 +26,8 @@ import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -286,6 +288,11 @@ public class BNCoreCommand extends CustomCommand {
 	})
 	void cooldown() {
 		send("Hello!");
+	}
+
+	@Path("timespanFormatter <seconds> <formatType>")
+	void timespanFormatter(int seconds, TimespanFormatType formatType) {
+		send(TimespanFormatter.of(seconds).formatType(formatType).format());
 	}
 
 	@Path("jingles <jingle>")

@@ -14,7 +14,7 @@ import me.pugabyte.bncore.models.hours.HoursService.PageResult;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.purchase.PurchaseService;
 import me.pugabyte.bncore.utils.CitizensUtils;
-import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -47,7 +47,7 @@ public class Leaderboards implements Listener {
 				return new HoursService().getPage(1).subList(0, 3).stream()
 						.collect(Collectors.toMap(
 								PageResult::getUuid,
-								hours -> StringUtils.timespanFormat(hours.getTotal()),
+								hours -> TimespanFormatter.of(hours.getTotal()).format(),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}

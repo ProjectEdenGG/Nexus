@@ -11,7 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTic
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
-import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,7 +47,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
 		Arena arena = minigamer.getMatch().getArena();
 		if (arena.ownsRegion(event.getRegion().getId(), "win")) {
-			Minigames.broadcast("&e" + minigamer.getColoredName() + " &3completed &e" + arena.getDisplayName() + " &3in &e" + StringUtils.timespanFormat(minigamer.getScore()));
+			Minigames.broadcast("&e" + minigamer.getColoredName() + " &3completed &e" + arena.getDisplayName() + " &3in &e" + TimespanFormatter.of(minigamer.getScore()).format());
 			minigamer.quit();
 		}
 	}

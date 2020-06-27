@@ -6,10 +6,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
-
-import static me.pugabyte.bncore.utils.StringUtils.timespanFormat;
 
 @Permission("group.seniorstaff")
 @Redirect(from = "/sun", to = "/weather sun")
@@ -31,7 +30,7 @@ public class WeatherCommand extends CustomCommand {
 		if (duration > 0)
 			world.setWeatherDuration(duration);
 
-		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + timespanFormat(duration) : ""));
+		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + TimespanFormatter.of(duration).format() : ""));
 	}
 
 }

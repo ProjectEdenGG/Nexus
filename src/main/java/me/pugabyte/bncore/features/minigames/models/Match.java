@@ -8,7 +8,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.mechanics.Battleship;
 import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
@@ -25,6 +24,8 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -165,8 +166,7 @@ public class Match {
 			throw new InvalidInputException("Match already started");
 
 		MatchStartEvent event = new MatchStartEvent(this);
-		Utils.callEvent(event);
-		if (event.isCancelled()) return;
+		if (!event.callEvent()) return;
 
 		started = true;
 		clearEntities();
@@ -184,8 +184,7 @@ public class Match {
 		if (ended) return;
 
 		MatchEndEvent event = new MatchEndEvent(this);
-		Utils.callEvent(event);
-		if (event.isCancelled()) return;
+		if (!event.callEvent()) return;
 
 		ended = true;
 		if (tasks != null)
@@ -208,8 +207,7 @@ public class Match {
 	private void initialize() {
 		if (!initialized) {
 			MatchInitializeEvent event = new MatchInitializeEvent(this);
-			Utils.callEvent(event);
-			if (event.isCancelled()) return;
+			if (!event.callEvent()) return;
 
 			initializeMatchData();
 			tasks = new MatchTasks();
@@ -253,10 +251,9 @@ public class Match {
 	private static List<EntityType> deletableTypes = Arrays.asList(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM);
 
 	private void clearEntities() {
-		WorldEditUtils worldEditUtils = Minigames.getWorldEditUtils();
 		entities.forEach(Entity::remove);
 		getWorld().getEntities().forEach(entity -> {
-			if (getArena().getRegion().contains(worldEditUtils.toBlockVector3(entity.getLocation())))
+			if (getArena().getRegion().contains(getWEUtils().toBlockVector3(entity.getLocation())))
 				if (deletableTypes.contains(entity.getType()))
 					entity.remove();
 		});
@@ -370,9 +367,9 @@ public class Match {
 		return entity;
 	}
 
-	public class MatchTimer {
-		private Match match;
-		private List<Integer> broadcasts = Arrays.asList((60 * 10), (60 * 5), 60, 30, 15, 5, 4, 3, 2, 1);
+	public static class MatchTimer {
+		private final Match match;
+		private static final List<Integer> broadcasts = Arrays.asList((60 * 10), (60 * 5), 60, 30, 15, 5, 4, 3, 2, 1);
 		private int taskId;
 		@Getter
 		@Setter
@@ -397,6 +394,7 @@ public class Match {
 							broadcastTimeLeft();
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
+						match.getPlayers().forEach(player -> Utils.sendActionBar(player, TimespanFormatter.of(time).format(), 2, false));
 					} else {
 						match.end();
 						stop();
@@ -415,7 +413,7 @@ public class Match {
 		}
 
 		public void broadcastTimeLeft(int time) {
-			match.broadcast("&e" + time + " &7seconds left...");
+			match.broadcast("&e" + TimespanFormatter.of(time).formatType(TimespanFormatType.LONG).format() + " &7left...");
 		}
 
 		void stop() {
@@ -423,8 +421,8 @@ public class Match {
 		}
 	}
 
-	public class MatchTasks {
-		private List<Integer> taskIds = new ArrayList<>();
+	public static class MatchTasks {
+		private final List<Integer> taskIds = new ArrayList<>();
 
 		void end() {
 			taskIds.forEach(this::cancel);
