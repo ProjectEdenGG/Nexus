@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.utils;
 
-import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import lombok.Data;
 import lombok.Getter;
@@ -312,46 +311,109 @@ public class StringUtils {
 	}
 
 	public static String timespanDiff(LocalDateTime from, LocalDateTime to) {
-		return timespanFormat(from.until(to, ChronoUnit.SECONDS));
+		return TimespanFormatter.of(Long.valueOf(from.until(to, ChronoUnit.SECONDS)).intValue()).format();
 	}
 
-	public static String timespanFormat(long seconds) {
-		return timespanFormat(Long.valueOf(seconds).intValue());
+	public enum TimespanFormatType {
+		SHORT("y", "d", "h", "m", "s") {
+			@Override
+			public String get(String label, int value) {
+				return label + " ";
+			}
+		},
+		LONG("year", "day", "hour", "minute", "second") {
+			@Override
+			public String get(String label, int value) {
+				return " " + label + (value == 1 ? "" : "s") + " ";
+			}
+		};
+
+		@Getter
+		private final String year, day, hour, minute, second;
+
+		TimespanFormatType(String year, String day, String hour, String minute, String second) {
+			this.year = year;
+			this.day = day;
+			this.hour = hour;
+			this.minute = minute;
+			this.second = second;
+		}
+
+		abstract String get(String label, int value);
 	}
 
-	public static String timespanFormat(int seconds) {
-		return timespanFormat(seconds, null);
-	}
+	public static class TimespanFormatter {
+		private final int original;
+		private int years, days, hours, minutes, seconds;
 
-	public static String timespanFormat(int seconds, String noneDisplay) {
-		if (seconds == 0 && !Strings.isNullOrEmpty(noneDisplay)) return noneDisplay;
+		@lombok.Builder.Default
+		private boolean noneDisplay = false;
+		@lombok.Builder.Default
+		private TimespanFormatType formatType = TimespanFormatType.SHORT;
 
-		int original = seconds;
-		int years = seconds / 60 / 60 / 24 / 365;
-		seconds -= years * 60 * 60 * 24 * 365;
-		int days = seconds / 60 / 60 / 24;
-		seconds -= days * 60 * 60 * 24;
-		int hours = seconds / 60 / 60;
-		seconds -= hours * 60 * 60;
-		int minutes = seconds / 60;
-		seconds -= minutes * 60;
+		@lombok.Builder(buildMethodName = "_build")
+		public TimespanFormatter(int seconds, boolean noneDisplay, TimespanFormatType formatType) {
+			this.original = seconds;
+			this.seconds = seconds;
+			this.noneDisplay = noneDisplay;
+			this.formatType = formatType;
+			calculate();
+		}
 
-		String result = "";
-		if (years > 0)
-			result += years + "y ";
-		if (days > 0)
-			result += days + "d ";
-		if (hours > 0)
-			result += hours + "h ";
-		if (minutes > 0)
-			result += minutes + "m ";
-		if (years == 0 && days == 0 && hours == 0 && minutes > 0 && seconds > 0)
-			result += seconds + "s ";
+		public static TimespanFormatterBuilder of(int seconds) {
+			return TimespanFormatter.builder().seconds(seconds);
+		}
 
-		if (result.length() > 0)
-			return result.trim();
-		else
-			return original + "s";
+		public static TimespanFormatterBuilder of(long seconds) {
+			return TimespanFormatter.builder().seconds(Long.valueOf(seconds).intValue());
+		}
+
+		public static class TimespanFormatterBuilder {
+
+			public String format() {
+				return _build().format();
+			}
+
+			@Deprecated
+			public TimespanFormatter build() {
+				throw new UnsupportedOperationException("Use format()");
+			}
+
+		}
+
+		private void calculate() {
+			if (seconds == 0) return;
+
+			years = seconds / 60 / 60 / 24 / 365;
+			seconds -= years * 60 * 60 * 24 * 365;
+			days = seconds / 60 / 60 / 24;
+			seconds -= days * 60 * 60 * 24;
+			hours = seconds / 60 / 60;
+			seconds -= hours * 60 * 60;
+			minutes = seconds / 60;
+			seconds -= minutes * 60;
+		}
+
+		public String format() {
+			if (original == 0 && noneDisplay) return "None";
+
+			String result = "";
+			if (years > 0)
+				result += years + formatType.get(formatType.getYear(), years);
+			if (days > 0)
+				result += days + formatType.get(formatType.getDay(), days);
+			if (hours > 0)
+				result += hours + formatType.get(formatType.getHour(), hours);
+			if (minutes > 0)
+				result += minutes + formatType.get(formatType.getMinute(), minutes);
+			if (years == 0 && days == 0 && hours == 0 && minutes > 0 && seconds > 0)
+				result += seconds + formatType.get(formatType.getSecond(), seconds);
+
+			if (result.length() > 0)
+				return result.trim();
+			else
+				return original + "";
+		}
 	}
 
 	public static String distanceMetricFormat(int cm) {

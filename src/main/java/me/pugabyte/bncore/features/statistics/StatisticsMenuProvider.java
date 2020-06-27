@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -257,7 +258,7 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 		ItemStack deathsDamage = new ItemBuilder(Material.TOTEM_OF_UNDYING)
 				.name("&eDeaths and Damage")
 				.lore("&eDeaths: &3" + targetPlayer.getStatistic(Statistic.DEATHS))
-				.lore("&eTime Since Last Death: &3" + StringUtils.timespanFormat(targetPlayer.getStatistic(Statistic.TIME_SINCE_DEATH) / 20))
+				.lore("&eTime Since Last Death: &3" + TimespanFormatter.of(targetPlayer.getStatistic(Statistic.TIME_SINCE_DEATH) / 20).format())
 				.lore("&eDamage Taken: &3" + targetPlayer.getStatistic(Statistic.DAMAGE_TAKEN))
 				.lore("&eDamage Resisted: &3" + targetPlayer.getStatistic(Statistic.DAMAGE_RESISTED))
 				.lore("&eDamage Absorbed: &3" + targetPlayer.getStatistic(Statistic.DAMAGE_ABSORBED))
@@ -268,8 +269,8 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 
 		ItemStack times = new ItemBuilder(Material.CLOCK)
 				.name("&3Times")
-				.lore("&ePlayed: &3" + StringUtils.timespanFormat(targetPlayer.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20))
-				.lore("&eSince Last Rest: &3" + StringUtils.timespanFormat(targetPlayer.getStatistic(Statistic.TIME_SINCE_REST) / 20))
+				.lore("&ePlayed: &3" + TimespanFormatter.of(targetPlayer.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20).format())
+				.lore("&eSince Last Rest: &3" + TimespanFormatter.of(targetPlayer.getStatistic(Statistic.TIME_SINCE_REST) / 20).format())
 				.lore("&eSlept in Bed: &3" + targetPlayer.getStatistic(Statistic.SLEEP_IN_BED))
 				.build();
 

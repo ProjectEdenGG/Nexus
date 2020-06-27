@@ -19,7 +19,7 @@ import me.pugabyte.bncore.models.litebans.LiteBansService;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -84,7 +84,7 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate);
 
 		if (hours.getTotal() > 0)
-			json.newline().next("&3Hours: &e" + StringUtils.timespanFormat(hours.getTotal(), "None"));
+			json.newline().next("&3Hours: &e" + TimespanFormatter.of(hours.getTotal()).noneDisplay(true).format());
 
 		if (history > 0)
 			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName());

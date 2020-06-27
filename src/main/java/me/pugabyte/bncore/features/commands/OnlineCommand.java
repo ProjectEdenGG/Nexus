@@ -13,6 +13,7 @@ import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
@@ -96,7 +97,7 @@ public class OnlineCommand extends CustomCommand {
 		String onlineFor = StringUtils.timespanDiff(nerd.getLastJoin());
 		WorldGroup world = WorldGroup.get(player);
 		double balance = BNCore.getEcon().getBalance(player);
-		String totalHours = StringUtils.timespanFormat(hours.getTotal());
+		String totalHours = TimespanFormatter.of(hours.getTotal()).format();
 		String afk = "";
 
 		if (modifiers.contains("AFK")) {

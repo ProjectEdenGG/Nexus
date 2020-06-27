@@ -15,6 +15,7 @@ import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.hours.HoursService.PageResult;
 import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -25,7 +26,6 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.timespanFormat;
 
 @Aliases({"playtime", "days", "minutes", "seconds"})
 public class HoursCommand extends CustomCommand {
@@ -45,14 +45,14 @@ public class HoursCommand extends CustomCommand {
 		Hours hours = service.get(player);
 		send("");
 		send(PREFIX + (isSelf ? "Your" : "&e" + player.getName() + "&3's") + " playtime");
-		send("&3Total: &e" + timespanFormat(hours.getTotal(), "None"));
-		send("&7- &3Today: &e" + timespanFormat(hours.getDaily(), "None"));
-		send("&7- &3This month: &e" + timespanFormat(hours.getMonthly(), "None"));
+		send("&3Total: &e" + TimespanFormatter.of(hours.getTotal()).noneDisplay(true).format());
+		send("&7- &3Today: &e" + TimespanFormatter.of(hours.getDaily()).noneDisplay(true).format());
+		send("&7- &3This month: &e" + TimespanFormatter.of(hours.getMonthly()).noneDisplay(true).format());
 
 		if (Rank.getHighestRank(player) == Rank.GUEST) {
 
 			String who = (isSelf ? "You need" : player.getName() + " needs") + " ";
-			String left = timespanFormat(DAY - hours.getTotal());
+			String left = TimespanFormatter.of(DAY - hours.getTotal()).format();
 
 			line();
 			send("&3" + who + "&e" + left + " more in-game play time &3to achieve &fMember&3.");
@@ -93,7 +93,7 @@ public class HoursCommand extends CustomCommand {
 		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
 		int i = (page - 1) * 10 + 1;
 		for (PageResult result : results)
-			send("&3" + i++ + " &e" + result.getOfflinePlayer().getName() + " &7- " + timespanFormat(result.getTotal()));
+			send("&3" + i++ + " &e" + result.getOfflinePlayer().getName() + " &7- " + TimespanFormatter.of(result.getTotal()).format());
 	}
 
 	private static final int INTERVAL = 5;
