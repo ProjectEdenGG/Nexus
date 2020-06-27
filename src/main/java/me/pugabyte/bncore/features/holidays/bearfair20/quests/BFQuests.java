@@ -64,6 +64,10 @@ public class BFQuests implements Listener {
 		Recipes.loadRecipes();
 	}
 
+	public static void chime(Player player) {
+		player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+	}
+
 	private void setupCollector() {
 		World world = BearFair20.getWorld();
 		Location observatory = new Location(world, -1097, 157, -1550);

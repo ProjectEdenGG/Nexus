@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.menus.MenuUtils;
@@ -31,15 +32,51 @@ public class BearFairCommand extends _WarpCommand {
 		super(event);
 	}
 
-	@Path
-	void bearfair() {
-		send(PREFIX + "Coming soon!");
-	}
-
 	@Override
 	public WarpType getWarpType() {
 		return WarpType.BEAR_FAIR;
 	}
+
+	@Path
+	void bearfair() {
+		if (!BearFair20.allowWarp)
+			error("Warp is disabled");
+
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player());
+
+		if (user.isFirstVisit())
+			error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
+
+		runCommandAsOp("bearfair tp bearfair");
+	}
+
+	@Path("quests <text>")
+	void questsPugmasSwitchQuest(String string) {
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + PugmasIsland.class.getAnnotation(Island.Region.class).value());
+		if (!WGUtils.getRegionsAt(player().getLocation()).contains(region)) return;
+		switch (string) {
+			// Main
+			case "accept_witch":
+				MainIsland.acceptWitchQuest(player());
+				break;
+			// Pugmas
+			case "switch_mayor":
+				PugmasIsland.switchQuest(player(), true);
+				break;
+			case "switch_grinch":
+				PugmasIsland.switchQuest(player(), false);
+				break;
+			case "accept_mayor":
+				PugmasIsland.acceptQuest(player(), true);
+				break;
+			case "accept_grinch":
+				PugmasIsland.acceptQuest(player(), false);
+				break;
+		}
+	}
+
+	// Admin/CommandBlock Commands
 
 	@Override
 	@Path("warps list [filter]")
@@ -197,26 +234,6 @@ public class BearFairCommand extends _WarpCommand {
 		send("Pugmas Start: " + user.isQuest_Pugmas_Start());
 		send("Pugmas Finish: " + user.isQuest_Pugmas_Finish());
 		send("====");
-	}
-
-	@Path("quests pugmas <text>")
-	void questsPugmasSwitchQuest(String string) {
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + PugmasIsland.class.getAnnotation(Island.Region.class).value());
-		if (!WGUtils.getRegionsAt(player().getLocation()).contains(region)) return;
-		switch (string) {
-			case "switch_mayor":
-				PugmasIsland.switchQuest(player(), true);
-				break;
-			case "switch_grinch":
-				PugmasIsland.switchQuest(player(), false);
-				break;
-			case "accept_mayor":
-				PugmasIsland.acceptQuest(player(), true);
-				break;
-			case "accept_grinch":
-				PugmasIsland.acceptQuest(player(), false);
-				break;
-		}
 	}
 
 	@Path("quests start main")

@@ -21,7 +21,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 public class EasterEggs implements Listener {
 	BearFairService service = new BearFairService();
 	private static final String easterEgg = "ba3b7698-589c-3326-90ff-4862853a5c24";
-	private static final int total = 10;
+	private static final int total = 13;
 	private static String foundOne = "TODO: You found a treasure chest!";
 	private static String duplicate = "TODO: You already found this one!";
 	private static String foundAll = "TODO: You found all treasure chests!";
@@ -30,6 +30,7 @@ public class EasterEggs implements Listener {
 	Easter Egg Spots:
 			-939 137 -1624
 			-1155 141 -1777
+			-1152 110 -1749
 			-902 133 -1637
 			-991 135 -1621
 			-1095 155 -1559
@@ -76,7 +77,7 @@ public class EasterEggs implements Listener {
 			service.save(bfUser);
 		}
 
-		if (foundLocs.size() == total) {
+		if (foundLocs.size() >= total) {
 			send(foundAll, player);
 			player.playSound(playerLoc, Sound.UI_TOAST_CHALLENGE_COMPLETE, 2F, 1F);
 		} else {
