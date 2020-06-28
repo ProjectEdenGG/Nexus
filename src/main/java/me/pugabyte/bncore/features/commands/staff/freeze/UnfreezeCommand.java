@@ -10,6 +10,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.freeze.Freeze;
 import me.pugabyte.bncore.models.freeze.FreezeService;
 import me.pugabyte.bncore.utils.StringUtils;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class UnfreezeCommand extends CustomCommand {
 				freeze.setFrozen(false);
 				service.save(freeze);
 
-				if (player.getVehicle() != null)
+				if (player.getVehicle() != null && player.getVehicle() instanceof ArmorStand)
 					player.getVehicle().remove();
 
 				send(player, "&cYou have been unfrozen.");

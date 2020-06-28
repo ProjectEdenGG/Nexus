@@ -69,7 +69,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 			try {
 				Freeze freeze = new FreezeService().get(player);
 				if (freeze.isFrozen()) {
-					if (player.getVehicle() != null)
+					if (player.getVehicle() != null && player.getVehicle() instanceof ArmorStand)
 						runCommand("unfreeze " + player.getName());
 					else
 						freezePlayer(player);
@@ -90,6 +90,8 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	}
 
 	public static void freezePlayer(Player player) {
+		if (player.getVehicle() != null)
+			player.getVehicle().removePassenger(player);
 		Location spawnLoc = player.getLocation().clone().subtract(0, 1, 0);
 		ArmorStand armorStand = player.getWorld().spawn(spawnLoc, ArmorStand.class);
 		armorStand.setInvulnerable(true);
