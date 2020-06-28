@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
@@ -222,26 +221,10 @@ public class Arena implements ConfigurationSerializable {
 	public int getCalculatedWinningScore(Match match) {
 		if (minWinningScore == 0 || maxWinningScore == 0)
 			return winningScore;
-		boolean debug = false;
 
-		int players = Math.min(Math.max(match.getAlivePlayers().size(), minPlayers), maxPlayers);
-		int alivePlayers = match.getAlivePlayers().size();
-		int calculatedWinningScore = Math.min(winningScore, Math.round((players - minPlayers) / (maxPlayers - minPlayers) * (maxWinningScore - minWinningScore) + minWinningScore));
-		if (debug) {
-			BNCore.log(" === getWinningScore === ");
-			BNCore.log("alivePlayers = " + alivePlayers);
-			BNCore.log("minPlayers = " + minPlayers);
-			BNCore.log("maxPlayers = " + maxPlayers);
-			BNCore.log("");
-			BNCore.log("winScore = " + winningScore);
-			BNCore.log("maxWinScore = " + maxWinningScore);
-			BNCore.log("minWinScore = " + minWinningScore);
-			BNCore.log("");
-			BNCore.log("players = " + players);
-			BNCore.log("calculatedWinScore = " + calculatedWinningScore);
-		}
+		float players = Math.min(Math.max(match.getAlivePlayers().size(), minPlayers), maxPlayers);
 
-		return calculatedWinningScore;
+		return Math.min(winningScore, Math.round((players - minPlayers) / (maxPlayers - minPlayers) * (maxWinningScore - minWinningScore) + minWinningScore));
 	}
 
 }
