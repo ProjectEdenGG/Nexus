@@ -19,16 +19,14 @@ import me.pugabyte.bncore.models.litebans.LiteBansService;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.bncore.utils.StringUtils.*;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.text.NumberFormat;
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.getLocationString;
-import static me.pugabyte.bncore.utils.StringUtils.shortDateTimeFormat;
-import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
+import static me.pugabyte.bncore.utils.StringUtils.*;
 import static me.pugabyte.bncore.utils.Utils.getLocation;
 
 @Aliases({"whotf", "whothefuck"})
@@ -87,7 +85,7 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3Hours: &e" + TimespanFormatter.of(hours.getTotal()).noneDisplay(true).format());
 
 		if (history > 0)
-			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName());
+			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName()).hover("Click to view history");
 
 		if (alts.size() > 0)
 			json.newline().next("&3Alts: &e" + String.join(", ", alts));
