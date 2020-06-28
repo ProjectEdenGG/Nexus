@@ -63,18 +63,17 @@ public class PugmasIsland implements Listener, Island {
 	private String presents_treeRg = getRegion() + "_tree";
 	private Location treeLoc = new Location(BearFair20.getWorld(), -1053, 140, -1869);
 	//
-	private List<Location> presents = new ArrayList<>();
 	private static String acceptQuest = "    &f[&aClick to accept quest&f]";
 	private static Location presentLoc = new Location(BearFair20.getWorld(), -1064, 127, -1847);
+	public static ItemStack presentItem;
 
 	public PugmasIsland() {
 		BNCore.registerListener(this);
-		presents.addAll(presents_grinch);
-		presents.addAll(presents_house);
 		effectTasks();
 
-		// TODO:
-		// 	- Dialog wait times
+		List<ItemStack> drops = new ArrayList<>(presentLoc.getBlock().getDrops());
+		presentItem = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
+
 	}
 
 	public enum PugmasNPCs implements TalkingNPC {
@@ -430,11 +429,9 @@ public class PugmasIsland implements Listener, Island {
 				player.getInventory().remove(content);
 		}
 
-		List<ItemStack> drops = new ArrayList<>(presentLoc.getBlock().getDrops());
-		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
 		Tasks.wait(Time.SECOND.x(9), () -> {
 			chime(player);
-			Utils.giveItem(player, present);
+			Utils.giveItem(player, presentItem);
 		});
 
 		return thanks;
