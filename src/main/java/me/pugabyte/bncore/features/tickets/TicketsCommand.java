@@ -64,10 +64,10 @@ public class TicketsCommand extends CustomCommand {
 
 		player().teleport(ticket.getLocation(), TeleportCause.COMMAND);
 
-		String message = PREFIX + "&e" + player().getName() + " &3teleported to ticket &e#" + ticket.getId();
+		String message = "&e" + player().getName() + " &3teleported to ticket &e#" + ticket.getId();
 		Tickets.tellOtherStaff(player(), message);
 		if (ticket.getOwner() instanceof Player)
-			send(ticket.getOwner(), message);
+			send(ticket.getOwner(), PREFIX + message);
 
 		send(PREFIX + "Teleporting to ticket &e#" + ticket.getId());
 
@@ -99,10 +99,10 @@ public class TicketsCommand extends CustomCommand {
 		ticket.setOpen(false);
 		service.save(ticket);
 
-		String message = PREFIX + "&e" + player().getName() + " &cclosed &3ticket &e#" + ticket.getId();
+		String message = "&e" + player().getName() + " &cclosed &3ticket &e#" + ticket.getId();
 		Tickets.tellOtherStaff(player(), message);
 		if (ticket.getOwner() instanceof Player)
-			send(ticket.getOwner(), message);
+			send(ticket.getOwner(), PREFIX + message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &cclosed");
 	}
@@ -115,10 +115,10 @@ public class TicketsCommand extends CustomCommand {
 		ticket.setOpen(true);
 		service.save(ticket);
 
-		String message = PREFIX + "&e" + player().getName() + " &areopened &3ticket &e#" + ticket.getId();
+		String message = "&e" + player().getName() + " &areopened &3ticket &e#" + ticket.getId();
 		Tickets.tellOtherStaff(player(), message);
 		if (ticket.getOwner() instanceof Player)
-			send(ticket.getOwner(), message);
+			send(ticket.getOwner(), PREFIX + message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &areopened");
 	}
