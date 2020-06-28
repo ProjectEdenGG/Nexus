@@ -21,6 +21,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -288,11 +289,11 @@ public class MinigamesCommand extends CustomCommand {
 		boolean canUse = false;
 		if (!isMinigameNight)
 			canUse = true;
-		if (player().hasPermission("mginvite.use"))
+		if (player().hasPermission("minigames.invite"))
 			canUse = true;
 
 		if (!canUse)
-			error("You do not have permission to use this command!");
+			throw new NoPermissionException();
 
 		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
 		if (!WGUtils.isInRegion(player().getLocation(), "minigamelobby"))
