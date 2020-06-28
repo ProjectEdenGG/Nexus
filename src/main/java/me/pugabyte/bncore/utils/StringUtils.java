@@ -357,12 +357,12 @@ public class StringUtils {
 			calculate();
 		}
 
-		public static TimespanFormatterBuilder of(int seconds) {
-			return TimespanFormatter.builder().seconds(seconds);
+		public static TimespanFormatterBuilder of(long seconds) {
+			return of(Long.valueOf(seconds).intValue());
 		}
 
-		public static TimespanFormatterBuilder of(long seconds) {
-			return TimespanFormatter.builder().seconds(Long.valueOf(seconds).intValue());
+		public static TimespanFormatterBuilder of(int seconds) {
+			return TimespanFormatter.builder().seconds(seconds);
 		}
 
 		public static class TimespanFormatterBuilder {
