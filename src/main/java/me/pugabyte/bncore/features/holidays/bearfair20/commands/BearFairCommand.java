@@ -52,9 +52,11 @@ public class BearFairCommand extends _WarpCommand {
 	}
 
 	@Path("quests <text>")
-	void questsPugmasSwitchQuest(String string) {
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + PugmasIsland.class.getAnnotation(Island.Region.class).value());
-		if (!WGUtils.getRegionsAt(player().getLocation()).contains(region)) return;
+	void questsSwitchQuest(String string) {
+		ProtectedRegion pugmasRegion = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + PugmasIsland.class.getAnnotation(Island.Region.class).value());
+		ProtectedRegion mainRegion = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + MainIsland.class.getAnnotation(Island.Region.class).value());
+		if (!WGUtils.getRegionsAt(player().getLocation()).contains(pugmasRegion) && !WGUtils.getRegionsAt(player().getLocation()).contains(mainRegion))
+			return;
 		switch (string) {
 			// Main
 			case "accept_witch":

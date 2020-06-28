@@ -34,18 +34,18 @@ public class Merchants {
 	}
 
 	public enum BFMerchant {
-		ARTIST(2657) {
-			@Override
-			public List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
-			}
-		},
-		BAKER(2659) {
-			@Override
-			public List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
-			}
-		},
+//		ARTIST(2657) {
+//			@Override
+//			public List<TradeBuilder> getTrades() {
+//				return new ArrayList<>();
+//			}
+//		},
+BAKER(2659) {
+	@Override
+	public List<TradeBuilder> getTrades() {
+		return new ArrayList<>();
+	}
+},
 		BARTENDER(2655) {
 			@Override
 			public List<TradeBuilder> getTrades() {
@@ -230,21 +230,20 @@ public class Merchants {
 				}};
 			}
 		},
-		SORCERER(2658) {
-			@Override
-			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
-					// TODO: Determine enchant on book, if at all
-					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.ENCHANTED_BOOK).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.BOOK).lore(itemLore))
-							.ingredient(TBD));
-					add(new TradeBuilder()
-							.result(TBD)
-							.ingredient(new ItemBuilder(Material.CAULDRON).lore(itemLore)));
-				}};
-			}
-		},
+		//		SORCERER(2658) {
+//			@Override
+//			public List<TradeBuilder> getTrades() {
+//				return new ArrayList<TradeBuilder>() {{
+//					add(new TradeBuilder()
+//							.result(new ItemBuilder(Material.ENCHANTED_BOOK).lore(itemLore))
+//							.ingredient(new ItemBuilder(Material.BOOK).lore(itemLore))
+//							.ingredient(TBD));
+//					add(new TradeBuilder()
+//							.result(TBD)
+//							.ingredient(new ItemBuilder(Material.CAULDRON).lore(itemLore)));
+//				}};
+//			}
+//		},
 		TRADER(2763) {
 			@Override
 			public List<TradeBuilder> getTrades() {
