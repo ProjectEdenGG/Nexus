@@ -33,12 +33,12 @@ public class Tickets {
 	}
 
 	public static void tellOtherStaff(Player player, String message) {
-		Discord.log(message);
+		Discord.log("**[Tickets]** " + message);
 
 		Bukkit.getOnlinePlayers().stream()
 				.filter(staff -> !staff.getUniqueId().equals(player.getUniqueId()))
 				.filter(staff -> staff.hasPermission("group.moderator"))
-				.forEach(staff -> staff.sendMessage(colorize(message)));
+				.forEach(staff -> staff.sendMessage(colorize(PREFIX + message)));
 	}
 
 }
