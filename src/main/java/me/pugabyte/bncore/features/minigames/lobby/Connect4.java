@@ -21,7 +21,7 @@ import java.util.Arrays;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Aliases("c4")
-@Permission("group.admin")
+@Permission("group.staff")
 public class Connect4 extends CustomCommand {
 	public final static String PREFIX = colorize("&f[&cConnect&94&f] ");
 	static Connect4Game game = new Connect4Game();
@@ -31,22 +31,26 @@ public class Connect4 extends CustomCommand {
 	}
 
 	@Path("reload")
+	@Permission("group.admin")
 	void reload() {
 		BNCore.getInstance().reloadConfig();
 		send(PREFIX + "Config reloaded");
 	}
 
 	@Path("(clear|reset)")
+	@Permission("group.admin")
 	void reset() {
 		game.reset();
 	}
 
 	@Path("place <team> <column>")
+	@Permission("group.admin")
 	void place(String team, int column) {
 		place(Connect4Team.valueOf(team.toUpperCase()), validate(column));
 	}
 
 	@Path("debug")
+	@Permission("group.admin")
 	void debug() {
 		send();
 		int[][] board = game.getBoard();
@@ -180,7 +184,6 @@ public class Connect4 extends CustomCommand {
 
 	// Tournament Command
 	@Path("tourney buttons <number> <text>")
-	@Permission("group.staff")
 	public void boardPlaceButtons(int board, String type) {
 		World gameworld = Bukkit.getWorld("gameworld");
 		// board 1 vars
