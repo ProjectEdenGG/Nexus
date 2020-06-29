@@ -400,8 +400,7 @@ public class BearFairCommand extends _WarpCommand {
 	public void pointsGive(BearFairUser user, int points) {
 		user.givePoints(points);
 		service.save(user);
-		String plural = points == 1 ? " point" : " points";
-		send(PREFIX + "&e" + points + plural + " &3given to &e" + user.getOfflinePlayer().getName());
+		send(PREFIX + "&e" + points + plural(" points", points) + " &3given to &e" + user.getOfflinePlayer().getName());
 	}
 
 	@Path("points take <player> <points>")
@@ -409,8 +408,7 @@ public class BearFairCommand extends _WarpCommand {
 	public void pointsTake(BearFairUser user, int points) {
 		user.takePoints(points);
 		service.save(user);
-		String plural = points == 1 ? " point" : " points";
-		send(PREFIX + "&e" + points + plural + " &3taken from &e" + user.getOfflinePlayer().getName());
+		send(PREFIX + "&e" + points + plural(" points", points) + " &3taken from &e" + user.getOfflinePlayer().getName());
 	}
 
 	@Path("points set <player> <points>")
@@ -418,8 +416,7 @@ public class BearFairCommand extends _WarpCommand {
 	public void pointsSet(BearFairUser user, int points) {
 		user.setTotalPoints(points);
 		service.save(user);
-		String plural = points == 1 ? " point" : " points";
-		send(PREFIX + "&3set &e" + user.getOfflinePlayer().getName() + "&3 to &e" + points + plural);
+		send(PREFIX + "&3set &e" + user.getOfflinePlayer().getName() + "&3 to &e" + points + plural(" point", points));
 	}
 
 	@Path("points reset <player>")

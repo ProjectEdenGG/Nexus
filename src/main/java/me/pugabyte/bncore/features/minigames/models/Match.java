@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.mechanics.Battleship;
 import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
@@ -42,6 +43,7 @@ import org.reflections.Reflections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,6 +192,7 @@ public class Match {
 		if (tasks != null)
 			tasks.end();
 		broadcast("Match has ended");
+		logScores();
 		broadcastNoPrefix("");
 		clearHolograms();
 		clearEntities();
@@ -202,6 +205,22 @@ public class Match {
 		if (scoreboardTeams != null) scoreboardTeams.handleEnd();
 
 		MatchManager.remove(this);
+	}
+
+	private void logScores() {
+		StringBuilder scores = new StringBuilder();
+		if (arena.getMechanic() instanceof TeamMechanic) {
+			getArena().getTeams().stream().sorted(Comparator.comparing((Team team) -> team.getScore(this)).reversed()).forEach(team ->
+					scores.append("= ").append(team.getName()).append(" - ").append(team.getScore(this)).append(System.lineSeparator()));
+		}
+
+		getMinigamers().stream().sorted(Comparator.comparing(Minigamer::getScore).reversed()).forEach(minigamer ->
+				scores.append("- ").append(minigamer.getName()).append(" - ").append(minigamer.getScore()).append(System.lineSeparator()));
+
+		if (scores.length() > 0) {
+			String header = "Scores for " + getArena().getName() + " (" + arena.getMechanic().getName() + "):" + System.lineSeparator();
+			Discord.staffLog("```" + header + scores.toString() + "```");
+		}
 	}
 
 	private void initialize() {
