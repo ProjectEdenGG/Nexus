@@ -6,7 +6,6 @@ import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
-import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.menus.MenuUtils;
@@ -35,7 +34,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -207,16 +205,16 @@ public class BearFairCommand extends _WarpCommand {
 				.open(player());
 	}
 
-	@Path("clearDatabase")
-	@Permission("group.admin")
-	void clearDatabase() {
-		MenuUtils.ConfirmationMenu.builder()
-				.onConfirm(e -> Tasks.async(() -> {
-					BearFairService service = new BearFairService();
-					service.deleteAll();
-				}))
-				.open(player());
-	}
+//	@Path("clearDatabase")
+//	@Permission("group.admin")
+//	void clearDatabase() {
+//		MenuUtils.ConfirmationMenu.builder()
+//				.onConfirm(e -> Tasks.async(() -> {
+//					BearFairService service = new BearFairService();
+//					service.deleteAll();
+//				}))
+//				.open(player());
+//	}
 
 	@Path("quests info")
 	@Permission("group.admin")
@@ -239,7 +237,6 @@ public class BearFairCommand extends _WarpCommand {
 		//
 		send();
 		send("MGN Step: " + user.getQuest_MGN_Step());
-//		send("MGN Pieces: " + user.getArcadePieces().toString());
 		send("MGN Start: " + user.isQuest_MGN_Start());
 		send("MGN Finish: " + user.isQuest_MGN_Finish());
 		//

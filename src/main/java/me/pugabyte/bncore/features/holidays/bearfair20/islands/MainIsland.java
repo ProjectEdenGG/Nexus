@@ -10,6 +10,8 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.models.vote.VoteService;
+import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
@@ -20,15 +22,21 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 
 @Region("main")
@@ -49,6 +57,8 @@ public class MainIsland implements Listener, Island {
 	private static String witchDwellingRg = "bearfair2020_witchdwelling";
 	private static Location specialPrizeLoc = new Location(BearFair20.getWorld(), -1016, 120, -1605);
 	private static ItemStack specialPrize;
+	//
+
 
 	public MainIsland() {
 		BNCore.registerListener(this);
@@ -333,6 +343,67 @@ public class MainIsland implements Listener, Island {
 		BearFairUser user = service.get(player);
 		user.setQuest_Main_Finish(true);
 		service.save(user);
+	}
+
+	@EventHandler
+	public void onPrizeOpen(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND) return;
+		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.RIGHT_CLICK_AIR))
+			return;
+		if (!BearFair20.isBFItem(event.getItem())) return;
+		if (!event.getItem().equals(specialPrize)) return;
+
+		event.setCancelled(true);
+		event.getItem().setAmount(event.getItem().getAmount() - 1);
+
+		Player player = event.getPlayer();
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+
+		user.givePoints(300);
+		service.save(user);
+
+		Utils.runCommandAsConsole("lp user " + player.getName() + " permission set powder.powder.OrientalDiscoBathtub");
+
+		String prefix = "&8&l[&eBearFair&8&l] &3";
+		BearFair20.send("", player);
+		BearFair20.send(prefix + "You Received: ", player);
+		BearFair20.send("&e-&3 &e300 &3Bear Fair Points", player);
+		BearFair20.send("&e-&3 Song: &eOrientalDiscoBathtub", player);
+		BearFair20.send("&e-&3 Random Reward: &e" + getRandomReward(player), player);
+		BearFair20.send("", player);
+		chime(player);
+	}
+
+	private String getRandomReward(Player player) {
+		int ndx = Utils.randomInt(1, 3);
+		String reward;
+		switch (ndx) {
+			case 1:
+				List<String> songs = Arrays.asList("AutumnVoyage", "ForestDance", "DrunkenSailor", "Astronomia", "OwenWasHer", "Queen-BohemianRhapsody");
+				String songPerm = Utils.getRandomElement(songs);
+				reward = "Song Coupon for " + songPerm;
+				ItemStack songCoupon = new ItemBuilder(Material.PAPER)
+						.name("Coupon For: " + songPerm)
+						.lore(itemLore, "&f", "&3Song: &e" + songPerm, "&3Redeem this with an admin", "&3to receive your song").amount(1).build();
+				Utils.giveItem(player, songCoupon);
+				break;
+			case 2:
+				reward = "50 Bear Fair Points";
+				BearFairService BFService = new BearFairService();
+				BearFairUser user = BFService.get(player);
+				user.givePoints(50);
+				BFService.save(user);
+				break;
+			default:
+				reward = "30 Vote Points";
+				VoteService voteService = new VoteService();
+				Voter voter = voteService.get(player);
+				voter.addPoints(30);
+				voteService.save(voter);
+				break;
+		}
+		return reward;
 	}
 
 }
