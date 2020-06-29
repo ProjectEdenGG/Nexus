@@ -193,67 +193,25 @@ public class BNCore extends JavaPlugin {
 		});
 	}
 
+	// @formatter:off
 	@Override
 	public void onDisable() {
-		try { Utils.runCommandAsConsole("save-all");		} catch (Throwable ex) { ex.printStackTrace(); }
-		try { cron.stop();									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { Minigames.shutdown();							} catch (Throwable ex) { ex.printStackTrace(); }
-		try {
-			AFK.shutdown();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			Discord.shutdown();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			LiteBans.shutdown();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			TrustFeature.shutdown();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			protocolManager.removePacketListeners(this);
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			commands.unregisterAll();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			broadcastReload();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			Chat.shutdown();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			MySQLPersistence.shutdown();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			MongoDBPersistence.shutdown();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
-		try {
-			BFQuests.shutdown();
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-		}
+		try { Utils.runCommandAsConsole("save-all");				} catch (Throwable ex) { ex.printStackTrace(); }
+		try { cron.stop();											} catch (Throwable ex) { ex.printStackTrace(); }
+		try { Minigames.shutdown();									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { AFK.shutdown(); 										} catch (Throwable ex) { ex.printStackTrace(); }
+		try { Discord.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { LiteBans.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { TrustFeature.shutdown(); 								} catch (Throwable ex) { ex.printStackTrace(); }
+		try { protocolManager.removePacketListeners(this); 	} catch (Throwable ex) { ex.printStackTrace(); }
+		try { commands.unregisterAll(); 							} catch (Throwable ex) { ex.printStackTrace(); }
+		try { broadcastReload(); 									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { Chat.shutdown(); 										} catch (Throwable ex) { ex.printStackTrace(); }
+		try { MySQLPersistence.shutdown(); 							} catch (Throwable ex) { ex.printStackTrace(); }
+		try { MongoDBPersistence.shutdown(); 						} catch (Throwable ex) { ex.printStackTrace(); }
+		try { BFQuests.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
 	}
+	// @formatter:on;
 
 	public void broadcastReload() {
 		Stream.of("Pugabyte", "WakkaFlocka", "Blast", "Camaros", "Zanitaeni", "lexikiq")
