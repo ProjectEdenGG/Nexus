@@ -1,8 +1,10 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Merchants;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
@@ -19,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -29,7 +32,10 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -128,9 +134,8 @@ public class BFQuests implements Listener {
 				return;
 			}
 
-			if (type.equals(Material.DIORITE_SLAB) || type.equals(Material.DIORITE_STAIRS) || type.equals(Material.DIORITE_WALL)) {
-				ItemStack diorite = new ItemBuilder(Material.DIORITE).amount(1).build();
-				item.setItemStack(diorite);
+			if (type.equals(Material.DIORITE_SLAB) || type.equals(Material.DIORITE_STAIRS) || type.equals(Material.DIORITE_WALL) || type.equals(Material.DIORITE)) {
+				item.setItemStack(MainIsland.unpurifiedMarble.clone());
 			}
 
 			item.getItemStack().setLore(Collections.singletonList(itemLore));
@@ -142,6 +147,60 @@ public class BFQuests implements Listener {
 		Location loc = event.getEntity().getLocation();
 		if (!isAtBearFair(loc)) return;
 		event.getItemDrop().getItemStack().setLore(Collections.singletonList(itemLore));
+	}
+
+	@EventHandler
+	public void onHoneyBottleFill(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		if (!isAtBearFair(player)) return;
+		if (event.getHand() != EquipmentSlot.HAND) return;
+
+		Block clicked = event.getClickedBlock();
+		if (Utils.isNullOrAir(clicked)) return;
+
+		ProtectedRegion beehiveRg = WGUtils.getProtectedRegion(Beehive.beehiveRg);
+		if (WGUtils.getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (!clicked.getType().equals(Material.BEE_NEST) && !clicked.getType().equals(Material.BEEHIVE)) return;
+		if (event.getItem() == null || !event.getItem().getType().equals(Material.GLASS_BOTTLE)) return;
+
+		event.setCancelled(true);
+		event.getItem().setAmount(event.getItem().getAmount() - 1);
+		ItemStack honeyBottle = new ItemBuilder(Material.HONEY_BOTTLE).lore(itemLore).amount(1).build();
+		Utils.giveItem(player, honeyBottle);
+	}
+
+	@EventHandler
+	public void onBeeHiveShear(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		if (!isAtBearFair(player)) return;
+		if (event.getHand() != EquipmentSlot.HAND) return;
+
+		Block clicked = event.getClickedBlock();
+		if (Utils.isNullOrAir(clicked)) return;
+
+		ProtectedRegion beehiveRg = WGUtils.getProtectedRegion(Beehive.beehiveRg);
+		if (WGUtils.getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (!clicked.getType().equals(Material.BEE_NEST) && !clicked.getType().equals(Material.BEEHIVE)) return;
+		if (event.getItem() == null || !event.getItem().getType().equals(Material.SHEARS)) return;
+
+		event.setCancelled(true);
+		ItemMeta meta = event.getItem().getItemMeta();
+		Damageable damageable = (Damageable) meta;
+		((Damageable) meta).setDamage(damageable.getDamage() + 40);
+		if (((Damageable) meta).getDamage() >= 238)
+			event.getItem().setAmount(0);
+		else
+			event.getItem().setItemMeta(meta);
+		ItemStack honeyComb = new ItemBuilder(Material.HONEYCOMB).lore(itemLore).amount(3).build();
+		Utils.giveItem(player, honeyComb);
 	}
 
 	@EventHandler
@@ -246,11 +305,8 @@ public class BFQuests implements Listener {
 
 	//TODO:
 	// give bf items:
-	// 		- on milk cow --> ignore if bucket is bf20 or not
 	// 		- on shear bee nest, give honeycomb
 	// 		- on fill honey bottle, give honey bottle
-	// - Prevent enchanting BF20 Items
-	// - Animation for Marble in quarry
-	// - Leather ??
+	//		- Bucket -> Milk Bucket
 
 }

@@ -46,29 +46,19 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 /*
 	TODO:
-	 - Hive Messages
-	 - Easter egg messages
 	 - Merchant Trades
-	 - Merchant Dialogs
-	 	- Miner
-	 	- Collector
+		- Trader
+			- gold -> BFP
+			- BFP -> VPS
 	 - Add Dialog to wakka
 		- Farm, Fish, and Trade w/ villagers to gain gold, the currency for the island to progress in quests
 	 -
 	 - Finish MainIsland quest
 	 	- Prizes for the item
-		- Crafting the item at midnight
-		- Obtaining the stroopwafel
-			- Remove crafting it, and just set the cake + cookie result trade to a normal stroop
-			- add a trade, blessed honey bottle + normal stroop = honey stroop
-		- Obtaining the blessed honey bottle
-			- Queen bee dialog, quest, and code
-		- Obtaining the honey bottle
-			- Glass bottle + bee nest
 	 -
 	 - Full test of the whole quest
 	 - Enable the 2 boolean below
-	 - (PUG) Transfer everyone's points from Skript
+	 - Replace yellow wool
  */
 
 @Data

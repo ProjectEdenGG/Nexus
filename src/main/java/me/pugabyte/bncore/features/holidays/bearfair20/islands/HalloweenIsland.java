@@ -21,9 +21,12 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -48,6 +51,10 @@ public class HalloweenIsland implements Listener, Island {
 			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS,
 			Sound.ENTITY_ILLUSIONER_CAST_SPELL, Sound.ENTITY_ELDER_GUARDIAN_AMBIENT, Sound.ENTITY_SHULKER_AMBIENT};
 	//
+	public static ItemStack atticKey = new ItemBuilder(Material.TRIPWIRE_HOOK).lore(itemLore).amount(1).name("Attic Key").build();
+	private String atticRg = getRegion() + "_atticdoor";
+	private Location atticDeniedLoc = new Location(BearFair20.getWorld(), -936, 159, -1917, -90, 32);
+	//
 	private String basketRg = getRegion() + "_basket";
 	private static Location basketLoc = new Location(BearFair20.getWorld(), -917, 126, -1848);
 	public static ItemStack basketItem;
@@ -68,17 +75,23 @@ public class HalloweenIsland implements Listener, Island {
 				BearFairUser user = service.get(player);
 
 				List<String> startQuest = new ArrayList<>();
-				startQuest.add("So, you're looking for a basket of halloween candy?");
+				startQuest.add("Hey there! Welcome to the historic Ravens' Nest Estate Museum!");
 				startQuest.add("wait 80");
-				startQuest.add("Well, you've come to the right place, because we have a museum wide scavenger hunt event happening right now, for that exact prize!");
+				startQuest.add("Here, we safely preserve the very location where the supernatural events that lead to the kidnap and resuce of the bear nation staff occured in 2018!");
 				startQuest.add("wait 120");
-				startQuest.add("If you want that basket of candy, you gotta find it! Good Luck!");
+				startQuest.add("<self> Hey! I was wondering if you could tell me where I might find a halloween candy basket?");
+				startQuest.add("wait 80");
+				startQuest.add("Ah, looking for some of our famous hallowen candy, eh?");
+				startQuest.add("wait 80");
+				startQuest.add("Well, you've come at the perfect time, because we have a museum wide scavenger hunt happening right now, with exactly that as the prize!");
+				startQuest.add("wait 120");
+				startQuest.add("If you want that basket of candy, you gotta find it! Good Luck! And enjoy the museum!");
 
 				if (!user.isQuest_Main_Start())
 					return Collections.singletonList("Hello there!");
 
 				if (user.isQuest_Halloween_Finish())
-					return Collections.singletonList("Oh you found it, good job!");
+					return Collections.singletonList("Oh you've found it! Congratulations!");
 
 				if (!user.isQuest_Halloween_Start()) {
 					user.setQuest_Halloween_Start(true);
@@ -90,16 +103,18 @@ public class HalloweenIsland implements Listener, Island {
 		PROFESSOR(2671, Collections.singletonList("You know, it is said that many of these books contain scriptures and spells that summon pure evil.")),
 		ARTIST(2672, Collections.singletonList("Look at the attention to detail! The skillfulness! I want to be able to paint like this one day.")),
 		INVESTIGATOR(2673, Arrays.asList(
-				"Hey you, yeah you, what are you doing down here alone!? Don't you know that these walls are haunted by the devil himself!",
+				"Hey you, yeah you, what are you doing down here alone!? Don't you know that this area is still a paranormal zone?!",
 				"wait 80",
-				"Now get out of here, I've got more paranormal investigating to do here.")
+				"Yeah, that's right. Some of the evil from the events of 2018 still lingers here and I've been clearing out the remnants.",
+				"wait 80",
+				"Now get out of here, I've got more investigating to do here. Don't worry, the ground and second floors are safe.")
 		),
 		GHOST_FATHER(2674, Arrays.asList(
 				"Don't bother me Celeste, I'm working. Go play with your sister.",
 				"wait 80",
 				"I must crack the code.")
 		),
-		GARDENER(2966, Collections.singletonList("Oh hey there darling, you probably should be out here at night. Be careful now!"));
+		GARDENER(2966, Collections.singletonList("Oh hey there darling, you probably shouldn't be out here at night. Be careful now!"));
 
 		@Getter
 		private final int npcId;
@@ -186,7 +201,7 @@ public class HalloweenIsland implements Listener, Island {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onHalloweenRegionEnter(RegionEnteredEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(getRegion())) return;
 		startSoundsTask(event.getPlayer());
 	}
@@ -210,5 +225,37 @@ public class HalloweenIsland implements Listener, Island {
 		Integer taskId = musicTaskMap.remove(player);
 		if (taskId != null)
 			Tasks.cancel(taskId);
+	}
+
+	@EventHandler
+	public void onClickAtticKey(PlayerInteractEntityEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND) return;
+
+		Player player = event.getPlayer();
+
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
+		if (!WGUtils.getRegionsAt(player.getLocation()).contains(region)) return;
+
+		Entity clicked = event.getRightClicked();
+		if (!(clicked instanceof ItemFrame)) return;
+
+		ItemFrame itemFrame = (ItemFrame) clicked;
+		ItemStack item = itemFrame.getItem();
+
+		if (!item.equals(atticKey)) return;
+
+		Utils.giveItem(player, atticKey);
+		chime(player);
+	}
+
+	@EventHandler
+	public void onAtticRegionEnter(RegionEnteredEvent event) {
+		if (event.getRegion().getId().equalsIgnoreCase(atticRg)) {
+			Player player = event.getPlayer();
+			if (!player.getInventory().contains(atticKey)) {
+				player.teleport(atticDeniedLoc);
+				BearFair20.send("&cYou need the attic key to enter", player);
+			}
+		}
 	}
 }

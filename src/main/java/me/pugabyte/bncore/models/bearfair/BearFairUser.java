@@ -48,6 +48,9 @@ public class BearFairUser extends PlayerOwnedObject {
 	private boolean Quest_Main_Start = false;
 	private boolean Quest_Main_Finish = false;
 	private int Quest_Main_Step = 0;
+	private boolean Quest_Hive_Access = false;
+	private boolean Quest_talkedWith_Collector = false;
+	private boolean Quest_talkedWith_Miner = false;
 	//
 	private boolean Quest_SDU_Start = false;
 	private boolean Quest_SDU_Finish = false;
