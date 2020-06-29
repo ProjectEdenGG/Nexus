@@ -29,8 +29,6 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -129,7 +127,7 @@ public class MinigameNightIsland implements Listener, Island {
 				if (!user.isQuest_Main_Start())
 					return Collections.singletonList("Sup dude!");
 
-				if (step >= 2 && user.isQuest_MGN_Finish()) {
+				if (step >= 2) {
 					if (!user.isQuest_MGN_Finish()) {
 						user.setQuest_MGN_Finish(true);
 						service.save(user);
@@ -142,7 +140,7 @@ public class MinigameNightIsland implements Listener, Island {
 				if (step >= 1) {
 					List<ItemStack> allPieces = new ArrayList<>();
 					arcadePieces.forEach(piece -> allPieces.add(piece.build()));
-					List<ItemStack> foundPieces = user.getArcadePieces();
+					List<ItemStack> foundPieces = getFoundPieces(player);
 					List<ItemStack> missingPieces = new ArrayList<>();
 					allPieces.forEach(piece -> {
 						if (!foundPieces.contains(piece))
@@ -242,10 +240,9 @@ public class MinigameNightIsland implements Listener, Island {
 		BearFairUser user = service.get(player);
 		ItemStack arcadePiece = getArcadePiece(piece);
 		if (!user.isQuest_MGN_Start()) return;
-		if (user.getArcadePieces().contains(arcadePiece)) return;
+		if (getFoundPieces(player).contains(arcadePiece)) return;
 
-		user.getArcadePieces().add(arcadePiece);
-		service.save(user);
+		foundPiece(player, arcadePiece);
 		Utils.giveItem(player, piece);
 		chime(player);
 
@@ -314,6 +311,67 @@ public class MinigameNightIsland implements Listener, Island {
 		return new ItemStack(Material.AIR);
 	}
 
+	private static List<ItemStack> getFoundPieces(Player player) {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		List<ItemStack> foundPieces = new ArrayList<>();
+		if (user.isQuest_MGN_hasCPU())
+			foundPieces.add(cpu.build());
+		if (user.isQuest_MGN_hasProcessor())
+			foundPieces.add(processor.build());
+		if (user.isQuest_MGN_hasMemoryCard())
+			foundPieces.add(memoryCard.build());
+		if (user.isQuest_MGN_hasMotherBoard())
+			foundPieces.add(motherboard.build());
+		if (user.isQuest_MGN_hasPowerSupply())
+			foundPieces.add(powerSupply.build());
+		if (user.isQuest_MGN_hasSpeaker())
+			foundPieces.add(speaker.build());
+		if (user.isQuest_MGN_hasHardDrive())
+			foundPieces.add(hardDrive.build());
+		if (user.isQuest_MGN_hasDiode())
+			foundPieces.add(diode.build());
+		if (user.isQuest_MGN_hasJoystick())
+			foundPieces.add(joystick.build());
+		return foundPieces;
+	}
+
+	public static void foundPiece(Player player, ItemStack piece) {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		Material pieceType = piece.getType();
+		switch (pieceType) {
+			case IRON_TRAPDOOR:
+				user.setQuest_MGN_hasCPU(true);
+				break;
+			case DAYLIGHT_DETECTOR:
+				user.setQuest_MGN_hasProcessor(true);
+				break;
+			case IRON_INGOT:
+				user.setQuest_MGN_hasMemoryCard(true);
+				break;
+			case GREEN_CARPET:
+				user.setQuest_MGN_hasMotherBoard(true);
+				break;
+			case BLAST_FURNACE:
+				user.setQuest_MGN_hasPowerSupply(true);
+				break;
+			case NOTE_BLOCK:
+				user.setQuest_MGN_hasSpeaker(true);
+				break;
+			case HOPPER_MINECART:
+				user.setQuest_MGN_hasHardDrive(true);
+				break;
+			case REPEATER:
+				user.setQuest_MGN_hasDiode(true);
+				break;
+			case LEVER:
+				user.setQuest_MGN_hasJoystick(true);
+				break;
+		}
+		service.save(user);
+	}
+
 	private void solderItem(ItemStack piece, ArmorStand armorStand, Player player) {
 		ItemStack air = new ItemStack(Material.AIR);
 
@@ -344,23 +402,6 @@ public class MinigameNightIsland implements Listener, Island {
 		}
 	}
 
-	@EventHandler
-	public void onCloseInventory(InventoryCloseEvent event) {
-		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) return;
-		if (!(event.getPlayer() instanceof Player)) return;
-
-		Player player = (Player) event.getPlayer();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(region)) return;
-
-		if (player.getInventory().contains(joystick.clone().build())) {
-			BearFairService service = new BearFairService();
-			BearFairUser user = service.get(player);
-			user.getArcadePieces().add(joystick.clone().build());
-			service.save(user);
-		}
-	}
-
 	private void soundTasks() {
 		Tasks.repeat(0, Time.SECOND.x(5), () -> Bukkit.getOnlinePlayers().stream()
 				.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(player.getLocation(), getRegion()).size() > 0)
@@ -372,8 +413,9 @@ public class MinigameNightIsland implements Listener, Island {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
 		boolean completedQuest = user.isQuest_MGN_Finish();
+		int step = user.getQuest_MGN_Step();
 
-		if (!completedQuest) {
+		if (!completedQuest && step <= 1) {
 			// Sounds
 			player.playSound(arcadeSoundLoc, Sound.BLOCK_CAMPFIRE_CRACKLE, 1F, 1F);
 			Tasks.wait(Time.SECOND.x(1) + 10, () -> player.playSound(arcadeSoundLoc, Sound.BLOCK_CAMPFIRE_CRACKLE, 1F, 1F));
@@ -395,7 +437,7 @@ public class MinigameNightIsland implements Listener, Island {
 				});
 			}
 
-		} else {
+		} else if (completedQuest || step == 2) {
 			player.playSound(arcadeSoundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
 		}
 	}

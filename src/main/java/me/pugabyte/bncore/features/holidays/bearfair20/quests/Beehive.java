@@ -68,18 +68,32 @@ public class Beehive implements Listener {
 
 			if (honeyBottle == null && rareFlower != null) {
 				send(queen + "What brings you to my grand halls, traveler?", player);
-				Tasks.wait(80, () -> send(you + "I humbly request a blessing of honey from you, your grace, " +
-						"so I may make the greatest stroopwafel.", player));
-				Tasks.wait(160, () -> send(queen + "I would gladly give you what you seek, but alas, your timing " +
-						"is poor for we are currently building our honey reserves for the winter and the new generation. " +
-						"If you would bring me a bottle of honey from the surface, I can bless it for you.", player));
-				Tasks.wait(240, () -> send(you + "Of course, I will return soon.", player));
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
+
+				Tasks.wait(80, () -> {
+					send(you + "I humbly request a blessing of honey from you, your grace, " +
+							"so I may make the greatest stroopwafel.", player);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
+				});
+
+				Tasks.wait(160, () -> {
+					send(queen + "I would gladly give you what you seek, but alas, your timing " +
+							"is poor for we are currently building our honey reserves for the winter and the new generation. " +
+							"If you would bring me a bottle of honey from the surface, I can bless it for you.", player);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
+				});
+
+				Tasks.wait(240, () -> {
+					send(you + "Of course, I will return soon.", player);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
+				});
 			} else if (honeyBottle != null && rareFlower != null) {
 				player.getInventory().remove(MainIsland.rareFlower.clone());
 				player.getInventory().remove(honeyBottle);
 
 				send(queen + "May this blessing grant you a divine Stroopwafel. Now please, feel free to visit any time. " +
 						"You've shown yourself to be a benefactor in the ways of the golden nectar.", player);
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 
 				BearFairService service = new BearFairService();
 				BearFairUser user = service.get(player);

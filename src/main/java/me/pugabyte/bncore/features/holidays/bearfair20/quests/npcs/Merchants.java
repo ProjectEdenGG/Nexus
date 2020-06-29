@@ -49,7 +49,11 @@ public class Merchants {
 		BAKER(2659) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(2))
+							.ingredient(new ItemBuilder(Material.BREAD).lore(itemLore).amount(64)));
+				}};
 			}
 		},
 		BARTENDER(2655) {
@@ -136,7 +140,7 @@ public class Merchants {
 							.ingredient(MainIsland.relic));
 					add(new TradeBuilder()
 							.result(MinigameNightIsland.joystick)
-							.ingredient(goldBlock.clone().amount(2)));
+							.ingredient(goldIngot.clone().amount(10)));
 					add(new TradeBuilder()
 							.result(goldBlock.clone().amount(1))
 							.ingredient(tigerTrout));
@@ -246,7 +250,7 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(MainIsland.stroofWafel)
 							.ingredient(new ItemBuilder(Material.CAKE).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.COOKIE).lore(itemLore)));
+							.ingredient(new ItemBuilder(Material.COOKIE).amount(8).lore(itemLore)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.EGG).lore(itemLore))
 							.ingredient(goldNugget.clone().amount(5)));
@@ -265,16 +269,17 @@ public class Merchants {
 							.ingredient(goldIngot.clone().amount(2)));
 				}};
 			}
-		},
-		TRADER(2763) {
-			@Override
-			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
-					add(new TradeBuilder()
-							.result(TBD)
-							.ingredient(TBD));
-				}};
-			}
+//		},
+//		// Temp disabled until a decent value for Gold Blocks --> BFP is found
+//		TRADER(2763) {
+//			@Override
+//			public List<TradeBuilder> getTrades() {
+//				return new ArrayList<TradeBuilder>() {{
+//					add(new TradeBuilder()
+//							.result(TBD)
+//							.ingredient(goldBlock.clone().amount(8)));
+//				}};
+//			}
 		};
 
 		@Getter

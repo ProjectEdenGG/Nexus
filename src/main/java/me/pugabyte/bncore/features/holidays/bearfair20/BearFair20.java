@@ -46,19 +46,14 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 /*
 	TODO:
-	 - Merchant Trades
-		- Trader
-			- gold -> BFP
-			- BFP -> VPS
-	 - Add Dialog to wakka
-		- Farm, Fish, and Trade w/ villagers to gain gold, the currency for the island to progress in quests
+	 - (After Release) Trader: gold -> BFP
 	 -
 	 - Finish MainIsland quest
-	 	- Prizes for the item
+	 	- Prizes for special prize
 	 -
-	 - Full test of the whole quest
-	 - Enable the 2 boolean below
-	 - Replace yellow wool
+	 - Release:
+	 	- Enable the 2 boolean below
+	 	- Replace yellow wool
  */
 
 @Data

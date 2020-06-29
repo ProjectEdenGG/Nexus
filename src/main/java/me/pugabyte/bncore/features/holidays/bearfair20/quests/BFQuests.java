@@ -5,9 +5,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Merchants;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
+import me.pugabyte.bncore.models.bearfair.BearFairService;
+import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -23,6 +26,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
@@ -30,6 +34,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -70,6 +76,11 @@ public class BFQuests implements Listener {
 		new EasterEggs();
 		new SellCrates();
 		Recipes.loadRecipes();
+	}
+
+	public static void shutdown() {
+		Quarry.shutdown();
+		RegenCrops.shutdown();
 	}
 
 	public static void chime(Player player) {
@@ -147,6 +158,24 @@ public class BFQuests implements Listener {
 		Location loc = event.getEntity().getLocation();
 		if (!isAtBearFair(loc)) return;
 		event.getItemDrop().getItemStack().setLore(Collections.singletonList(itemLore));
+	}
+
+	@EventHandler
+	public void onMilkCow(PlayerInteractEntityEvent event) {
+		Player player = event.getPlayer();
+		if (!isAtBearFair(player)) return;
+		if (event.getHand() != EquipmentSlot.HAND) return;
+		if (!event.getRightClicked().getType().equals(EntityType.COW)) return;
+
+		event.setCancelled(true);
+
+		ItemStack tool = Utils.getTool(player);
+		if (tool != null && tool.getType().equals(Material.BUCKET)) {
+			tool.setAmount(tool.getAmount() - 1);
+			ItemStack milkBucket = new ItemBuilder(Material.MILK_BUCKET).lore(itemLore).amount(1).build();
+			Utils.giveItem(player, milkBucket);
+		}
+
 	}
 
 	@EventHandler
@@ -279,6 +308,25 @@ public class BFQuests implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void onCloseInventory(InventoryCloseEvent event) {
+		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) return;
+		if (!(event.getPlayer() instanceof Player)) return;
+
+		Player player = (Player) event.getPlayer();
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
+		if (!WGUtils.getRegionsAt(player.getLocation()).contains(region)) return;
+
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		if (player.getInventory().contains(MinigameNightIsland.joystick.clone().build())) {
+			MinigameNightIsland.foundPiece(player, MinigameNightIsland.joystick.clone().build());
+			service.save(user);
+		} else if (player.getInventory().contains(MainIsland.honeyStroopWafel)) {
+			MainIsland.setStep(player, 3);
+		}
+	}
+
 	// Preventers
 	@EventHandler
 	public void onInteractWithVillager(PlayerInteractEntityEvent event) {
@@ -305,8 +353,6 @@ public class BFQuests implements Listener {
 
 	//TODO:
 	// give bf items:
-	// 		- on shear bee nest, give honeycomb
-	// 		- on fill honey bottle, give honey bottle
 	//		- Bucket -> Milk Bucket
 
 }

@@ -37,7 +37,7 @@ public class MainIsland implements Listener, Island {
 
 	public static ItemStack honeyStroopWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Honey Stroopwafel").amount(1).glow().build();
 	public static ItemStack stroofWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Stoopwafel").amount(1).build();
-	public static ItemStack blessedHoneyBottle = new ItemBuilder(Material.HONEY_BOTTLE).lore(itemLore).name("Blessed Bottle Of Honey").amount(1).build();
+	public static ItemStack blessedHoneyBottle = new ItemBuilder(Material.HONEY_BOTTLE).lore(itemLore, " ", "Blessed by the Queen herself").name("Blessed Bottle Of Honey").amount(1).build();
 	public static ItemStack unpurifiedMarble = new ItemBuilder(Material.DIORITE).lore(itemLore).name("Unpurified Marble").amount(1).build();
 	public static ItemStack relic_arms = new ItemBuilder(Material.BLAZE_ROD).lore(itemLore).name("Ancient Relic Arms").amount(2).build();
 	public static ItemStack relic_base = new ItemBuilder(Material.LIGHT_WEIGHTED_PRESSURE_PLATE).lore(itemLore).name("Ancient Relic Base").amount(1).build();
@@ -104,6 +104,8 @@ public class MainIsland implements Listener, Island {
 				script.add("wait 80");
 				script.add("And at the end of Bear Fair, you can buy unique prizes and perks using those points.");
 				script.add("wait 80");
+				script.add("I'd recommend having an empty inventory while you're here. All quests require only Bear Fair items/tools. To acquire the currency here, you can farm, fish, or mine, and then sell it.");
+				script.add("wait 120");
 				script.add("To get started with the quests, you must find the evil wicked Witch. Last I heard, she was brewing up something crooked in the forest.");
 				script.add("wait 120");
 				script.add("And if you need help figuring out where you are, check out this map to my side.");
@@ -147,7 +149,7 @@ public class MainIsland implements Listener, Island {
 
 				howToCraft.add("When you've collected all 5 ingredients, bring them here, and when the clock strikes midnight, a lightning bolt will strike the ingredients in your inventory and the special prize will be summoned.");
 
-				reminderAll.add("The recipe takes 5 unique items, one gathered from each of the islands:");
+				reminderAll.add("The recipe takes 5 unique items, each gathered from one of the islands:");
 				reminderAll.add("wait 80");
 				reminderAll.add(mainIslandHint);
 				reminderAll.add("wait 120");
@@ -166,10 +168,18 @@ public class MainIsland implements Listener, Island {
 				acceptQuest.addAll(reminderAll);
 
 				//
-				if (user.isQuest_Main_Finish())
+				if (user.isQuest_Main_Finish()) {
 					return null;
 
-				else if (step == 1 && !user.isQuest_Main_Start()) {
+				} else if (step == 3
+						&& user.isQuest_Halloween_Finish()
+						&& user.isQuest_MGN_Finish()
+						&& user.isQuest_Pugmas_Finish()
+						&& user.isQuest_SDU_Finish()) {
+					return Collections.singletonList("Come back at dusk and when the clock strikes midnight, a lightning bolt " +
+							"will strike the ingredients in your inventory and the special prize will be summoned.");
+
+				} else if (step == 1 && !user.isQuest_Main_Start()) {
 					user.setQuest_Main_Start(true);
 					return acceptQuest;
 				} else if (user.isQuest_Main_Start()) {
@@ -260,6 +270,13 @@ public class MainIsland implements Listener, Island {
 		}
 	}
 
+	public static void setStep(Player player, int step) {
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		user.setQuest_Main_Step(step);
+		service.save(user);
+	}
+
 	private static void nextStep(Player player) {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
@@ -284,6 +301,7 @@ public class MainIsland implements Listener, Island {
 		boolean arcadeToken = false;
 		boolean anzacBiscuit = false;
 		for (ItemStack itemStack : player.getInventory()) {
+			if (itemStack == null) continue;
 			if (itemStack.equals(MainIsland.honeyStroopWafel))
 				honeyStroop = true;
 			else if (itemStack.equals(HalloweenIsland.basketItem))

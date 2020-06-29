@@ -25,14 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.bottomBlockError;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.cantBreakError;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.decorOnlyError;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.notFullyGrownError;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.*;
 
 public class RegenCrops implements Listener {
 
@@ -40,13 +34,72 @@ public class RegenCrops implements Listener {
 			Material.BEETROOTS, Material.MELON, Material.PUMPKIN, Material.SUGAR_CANE, Material.COCOA);
 	private List<Material> noAge = Collections.singletonList(Material.SUGAR_CANE);
 	//
-	private Map<Location, Material> multiRegenMap = new HashMap<>();
-	private Map<Location, Material> blockRegenMap = new HashMap<>();
-	private List<Location> cropRegenList = new ArrayList<>();
+	private static Map<Location, Material> multiRegenMap = new HashMap<>();
+	private static Map<Location, Material> blockRegenMap = new HashMap<>();
+	private static List<Location> cropRegenList = new ArrayList<>();
 
 	public RegenCrops() {
 		BNCore.registerListener(this);
 		regenTasks();
+	}
+
+	public static void shutdown() {
+		List<Location> locationsList = new ArrayList<>(cropRegenList);
+		for (Location loc : locationsList) {
+			Block block = loc.getBlock();
+			BlockData blockData = block.getBlockData();
+
+			if (!(blockData instanceof Ageable)) {
+				cropRegenList.remove(loc);
+				continue;
+			}
+
+			Ageable ageable = (Ageable) blockData;
+			int age = ageable.getAge();
+			if (age == ageable.getMaximumAge()) {
+				cropRegenList.remove(loc);
+				continue;
+			}
+
+			ageable.setAge(ageable.getMaximumAge());
+			block.setBlockData(ageable);
+			cropRegenList.remove(loc);
+		}
+		//
+		Set<Location> locationsSet = new HashSet<>(blockRegenMap.keySet());
+		for (Location loc : locationsSet) {
+			Block block = loc.getBlock();
+			Material material = blockRegenMap.get(loc);
+			if (block.getType().equals(material)) {
+				blockRegenMap.remove(loc);
+				continue;
+			}
+
+			block.setType(material);
+			blockRegenMap.remove(loc);
+		}
+		//
+		locationsSet = new HashSet<>(multiRegenMap.keySet());
+		for (Location loc : locationsSet) {
+			Block block = loc.getBlock();
+			Material material = multiRegenMap.get(loc);
+			if (material == null) {
+				multiRegenMap.remove(loc);
+				continue;
+			}
+
+			if (block.getType().equals(material)) {
+				multiRegenMap.remove(loc);
+				continue;
+			}
+
+			Block down = block.getRelative(0, -1, 0);
+			if (down.getType().equals(material)) {
+				block.setType(material);
+				multiRegenMap.remove(loc);
+			}
+
+		}
 	}
 
 	private void regenTasks() {
