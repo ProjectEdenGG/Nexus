@@ -1,20 +1,20 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import io.papermc.lib.PaperLib;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,17 +70,34 @@ public final class DeathSwap extends TeamlessMechanic {
 		return map;
 	}
 
+	@Override
+	public void onEnd(MatchEndEvent event) {
+		super.onEnd(event);
+		WorldBorder border = Bukkit.getWorld(world).getWorldBorder();
+		border.reset();
+	}
+
 	private void spreadPlayers(List<Minigamer> minigamers) {
+		Location center = Bukkit.getWorld(world).getHighestBlockAt(Utils.randomInt(-5000, 5000), Utils.randomInt(-5000, 5000)).getLocation();
 		for (Minigamer minigamer : minigamers) {
 			int tries = 0;
-			Location loc = null;
+			Location loc;
 			do {
 				loc = Bukkit.getWorld(world).getHighestBlockAt(Utils.randomInt(-gameRadius / 2, gameRadius / 2),
-						Utils.randomInt(-gameRadius / 2, gameRadius / 2)).getLocation();
+						Utils.randomInt(-gameRadius / 2, gameRadius / 2)).getLocation().add(new Vector(center.getX(), 0, center.getZ()));
 				tries++;
 			} while (!loc.getBlock().getType().isSolid() && tries < 20);
-			minigamer.teleport(loc.add(0, 2, 0));
+			Location newLoc = loc.clone();
+			if (!PaperLib.isChunkGenerated(newLoc))
+				PaperLib.getChunkAtAsync(newLoc, true).thenAccept(chunk -> minigamer.teleport(newLoc.clone().add(0, 2, 0)));
+			else
+				minigamer.teleport(newLoc.clone().add(0, 2, 0));
 		}
+		WorldBorder border = Bukkit.getWorld(world).getWorldBorder();
+		border.setCenter(center);
+		border.setSize(gameRadius);
+		border.setDamageAmount(0);
+		border.setWarningDistance(1);
 	}
 
 	public void swap(Match match) {
