@@ -150,6 +150,10 @@ public class StringUtils {
 		return result.toString();
 	}
 
+	public static String plural(String label, double number) {
+		return label + (number == 1 ? "" : "s");
+	}
+
 	public static String trimFirst(String string) {
 		return right(string, string.length() - 1);
 	}

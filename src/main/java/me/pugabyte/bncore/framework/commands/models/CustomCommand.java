@@ -72,6 +72,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		return StringUtils.camelCase(string);
 	}
 
+	protected String plural(String string, double number) {
+		return StringUtils.plural(string, number);
+	}
+
 	protected void send(CommandSender sender, String message) {
 		send(sender, json(message));
 	}
