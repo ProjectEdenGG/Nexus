@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.plural;
 import static me.pugabyte.bncore.utils.Utils.sendActionBar;
 
 @Data
@@ -92,7 +92,7 @@ public class BearFairUser extends PlayerOwnedObject {
 
 	public void givePoints(int points, boolean actionBar) {
 		if (actionBar)
-			sendActionBar(getPlayer(), "+" + points + " point" + (points == 1 ? "" : "s"));
+			sendActionBar(getPlayer(), "+" + points + plural(" point", points));
 		givePoints(points);
 	}
 
@@ -115,13 +115,13 @@ public class BearFairUser extends PlayerOwnedObject {
 			return;
 
 		if ((sourcePoints + points) == DAILY_SOURCE_MAX)
-			getPlayer().sendMessage(colorize("Max daily points reached for " + StringUtils.camelCase(source.name())));
+			send("Max daily points reached for " + StringUtils.camelCase(source.name()));
 
 		givePoints(points);
 
 		getPointsReceivedToday().get(source).put(LocalDate.now(), sourcePoints + points);
 
-		sendActionBar(getPlayer(), "+" + points + " point" + (points == 1 ? "" : "s"));
+		sendActionBar(getPlayer(), "+" + points + plural(" point", points));
 	}
 
 	public enum BFPointSource {
