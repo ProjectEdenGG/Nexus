@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland;
@@ -19,12 +20,16 @@ import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -144,7 +149,7 @@ public class BearFairCommand extends _WarpCommand {
 		World world = loc.getWorld();
 		if (world != null)
 			world.strikeLightningEffect(loc);
-
+		MainIsland.witchQuestCraft();
 	}
 
 	@Path("yachtHorn")
@@ -347,4 +352,11 @@ public class BearFairCommand extends _WarpCommand {
 		put(UUID.fromString("fa8a62d4-e069-4626-afff-5fc5a6fb8a16"), 5);
 		put(UUID.fromString("fce1fe67-9514-4117-bcf6-d0c49ca0ba41"), 15);
 	}};
+
+	@Path("giveQuestItems")
+	@Permission("group.admin")
+	void questItems() {
+		List<ItemStack> questItems = Collections.singletonList(HalloweenIsland.atticKey);
+		Utils.giveItems(player(), questItems);
+	}
 }

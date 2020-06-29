@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
-
+// Unused in BF2020
 public class Recipes {
 
 	public static List<RecipeObject> recipes = new ArrayList<>();
@@ -35,32 +34,30 @@ public class Recipes {
 	}
 
 	public static void loadRecipes() {
-		//
 		NamespacedKey biscuitKey = new NamespacedKey(BNCore.getInstance(), "custom_bearfair_anzac_biscuit");
 		Bukkit.removeRecipe(biscuitKey);
-		//
 
-		RecipeObject biscuit = new RecipeObject()
-				.key("anzac_biscuit")
-				.ingredient(new ItemStack(Material.SUGAR))
-				.ingredient(new ItemStack(Material.WHEAT))
-				.ingredient(new ItemStack(Material.WHEAT))
-				.ingredient(new ItemStack(Material.WHEAT))
-				.ingredient(new ItemStack(Material.MILK_BUCKET))
-				.ingredient(new ItemStack(Material.MILK_BUCKET))
-				.result(new ItemBuilder(Material.COOKIE).lore(itemLore).name("Anzac Biscuit").build());
-
-
-		CustomRecipes.addRecipe(createBearFairRecipe(biscuit.getKey(),
-				new ItemBuilder(Material.COOKIE).name("Anzac Biscuit").lore(itemLore).build(),
-				new String[] {"AAA", "MSM", "WWW"},
-				new Ingredient("A", new ItemStack(Material.AIR)),
-				new Ingredient("S", new ItemStack(Material.SUGAR)),
-				new Ingredient("W", new ItemStack(Material.WHEAT)),
-				new Ingredient("M", new ItemStack(Material.MILK_BUCKET)))
-		);
-
-		recipes.add(biscuit);
+//		RecipeObject biscuit = new RecipeObject()
+//				.key("anzac_biscuit")
+//				.ingredient(new ItemStack(Material.SUGAR))
+//				.ingredient(new ItemStack(Material.WHEAT))
+//				.ingredient(new ItemStack(Material.WHEAT))
+//				.ingredient(new ItemStack(Material.WHEAT))
+//				.ingredient(new ItemStack(Material.MILK_BUCKET))
+//				.ingredient(new ItemStack(Material.MILK_BUCKET))
+//				.result(new ItemBuilder(Material.COOKIE).lore(itemLore).name("Anzac Biscuit").build());
+//
+//
+//		CustomRecipes.addRecipe(createBearFairRecipe(biscuit.getKey(),
+//				new ItemBuilder(Material.COOKIE).name("Anzac Biscuit").lore(itemLore).build(),
+//				new String[] {"AAA", "MSM", "WWW"},
+//				new Ingredient("A", new ItemStack(Material.AIR)),
+//				new Ingredient("S", new ItemStack(Material.SUGAR)),
+//				new Ingredient("W", new ItemStack(Material.WHEAT)),
+//				new Ingredient("M", new ItemStack(Material.MILK_BUCKET)))
+//		);
+//
+//		recipes.add(biscuit);
 	}
 
 	public static ItemStack getRecipe(List<ItemStack> itemStacks) {
