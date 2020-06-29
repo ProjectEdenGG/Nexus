@@ -47,7 +47,6 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 /*
 	TODO:
 	 - (After Release) Trader: gold -> BFP
-	 -
 	 - Finish MainIsland quest
 	 	- Prizes for special prize
 	 -
