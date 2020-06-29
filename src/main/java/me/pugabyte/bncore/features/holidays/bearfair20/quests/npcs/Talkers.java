@@ -46,6 +46,7 @@ public class Talkers {
 
 	public static void sendScript(Player player, TalkingNPC talker) {
 		List<String> script = talker.getScript(player);
+		if (script == null) return;
 		AtomicReference<String> npcName = new AtomicReference<>("");
 
 		AtomicInteger wait = new AtomicInteger(0);

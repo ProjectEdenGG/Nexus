@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.islands;
 
 import lombok.Getter;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.Region;
@@ -9,6 +10,7 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -19,16 +21,77 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 
 @Region("main")
 @NPCClass(MainNPCs.class)
 public class MainIsland implements Listener, Island {
 
+	public static ItemStack honeyStroopWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Honey Stroopwafel").amount(1).glow().build();
+	public static ItemStack stroofWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Stoopwafel").amount(1).build();
+	public static ItemStack blessedHoneyBottle = new ItemBuilder(Material.HONEY_BOTTLE).lore(itemLore).name("Blessed Bottle Of Honey").amount(1).build();
+	public static ItemStack unpurifiedMarble = new ItemBuilder(Material.DIORITE).lore(itemLore).name("Unpurified Marble").amount(1).build();
+	public static ItemStack relic_arms = new ItemBuilder(Material.BLAZE_ROD).lore(itemLore).name("Ancient Relic Arms").amount(2).build();
+	public static ItemStack relic_base = new ItemBuilder(Material.LIGHT_WEIGHTED_PRESSURE_PLATE).lore(itemLore).name("Ancient Relic Base").amount(1).build();
+	public static ItemStack relic_body = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR).lore(itemLore).name("Ancient Relic Body").amount(1).build();
+	public static ItemStack relic_eyes = new ItemBuilder(Material.EMERALD).lore(itemLore).name("Ancient Relic Eyes").amount(2).build();
+	public static ItemStack relic = new ItemBuilder(Material.TOTEM_OF_UNDYING).lore(itemLore).name("Ancient Relic").amount(1).build();
+	public static ItemStack ancientPickaxe = new ItemBuilder(Material.STONE_PICKAXE).lore(itemLore).name("Ancient Pickaxe").amount(1).build();
+	public static ItemStack rareFlower = new ItemBuilder(Material.BLUE_ORCHID).lore(itemLore).name("Rare Flower").amount(1).build();
+	private static String witchDwellingRg = "bearfair2020_witchdwelling";
+	private static Location specialPrizeLoc = new Location(BearFair20.getWorld(), -1016, 120, -1605);
+	private static ItemStack specialPrize;
+
+	public MainIsland() {
+		BNCore.registerListener(this);
+
+		List<ItemStack> drops = new ArrayList<>(specialPrizeLoc.getBlock().getDrops());
+		specialPrize = new ItemBuilder(drops.get(0)).clone().lore(itemLore, "&f", "RClick while holding to open").name("Special Prize").glow().build();
+	}
+
 	public enum MainNPCs implements TalkingNPC {
+		Miner(2743) {
+			@Override
+			public List<String> getScript(Player player) {
+				BearFairService service = new BearFairService();
+				BearFairUser user = service.get(player);
+				if (user.isQuest_talkedWith_Miner())
+					return null;
+				user.setQuest_talkedWith_Miner(true);
+				service.save(user);
+
+				List<String> script = new ArrayList<>();
+				script.add("We find all kinds'a stuff in this here marble quarry if yer interested. 'fact we recently dug up an old pickaxe.");
+				script.add("wait 80");
+				script.add("Can't quite figure how old but I'm sure you could put it in a museum or sumthin.");
+				return script;
+			}
+		},
+		Collector(2750) {
+			@Override
+			public List<String> getScript(Player player) {
+				BearFairService service = new BearFairService();
+				BearFairUser user = service.get(player);
+				if (user.isQuest_talkedWith_Collector())
+					return null;
+				user.setQuest_talkedWith_Collector(true);
+				service.save(user);
+
+				List<String> script = new ArrayList<>();
+				script.add("Ah hello there. I don't believe we've met. You can call me the Collector.");
+				script.add("wait 80");
+				script.add("I sell only the finest and rarest of items, but I don't dawdle in any one place for long so if you don't have the coin, don't waste my time.");
+				return script;
+			}
+		},
 		WakkaFlocka(2962) {
 			@Override
 			public List<String> getScript(Player player) {
@@ -103,8 +166,10 @@ public class MainIsland implements Listener, Island {
 				acceptQuest.addAll(reminderAll);
 
 				//
-				if (step == 1 && !user.isQuest_Main_Start()) {
-					Utils.wakka("Accepted Quest 4");
+				if (user.isQuest_Main_Finish())
+					return null;
+
+				else if (step == 1 && !user.isQuest_Main_Start()) {
 					user.setQuest_Main_Start(true);
 					return acceptQuest;
 				} else if (user.isQuest_Main_Start()) {
@@ -200,6 +265,55 @@ public class MainIsland implements Listener, Island {
 		BearFairUser user = service.get(player);
 		int step = user.getQuest_Main_Step() + 1;
 		user.setQuest_Main_Step(step);
+		service.save(user);
+	}
+
+	public static void witchQuestCraft() {
+		Collection<Player> players = WGUtils.getPlayersInRegion(witchDwellingRg);
+		for (Player player : players) {
+			if (hasAllIngredients(player)) {
+				endMainQuest(player);
+			}
+		}
+	}
+
+	private static boolean hasAllIngredients(Player player) {
+		boolean honeyStroop = false;
+		boolean halloweenBasket = false;
+		boolean present = false;
+		boolean arcadeToken = false;
+		boolean anzacBiscuit = false;
+		for (ItemStack itemStack : player.getInventory()) {
+			if (itemStack.equals(MainIsland.honeyStroopWafel))
+				honeyStroop = true;
+			else if (itemStack.equals(HalloweenIsland.basketItem))
+				halloweenBasket = true;
+			else if (itemStack.equals(PugmasIsland.presentItem))
+				present = true;
+			else if (itemStack.equals(SummerDownUnderIsland.anzacBiscuit))
+				anzacBiscuit = true;
+			else if (itemStack.equals(MinigameNightIsland.arcadeToken))
+				arcadeToken = true;
+		}
+
+		return honeyStroop && halloweenBasket && present && arcadeToken && anzacBiscuit;
+	}
+
+	private static void endMainQuest(Player player) {
+		player.getInventory().remove(MainIsland.honeyStroopWafel);
+		player.getInventory().remove(HalloweenIsland.basketItem);
+		player.getInventory().remove(PugmasIsland.presentItem);
+		player.getInventory().remove(SummerDownUnderIsland.anzacBiscuit);
+		player.getInventory().remove(MinigameNightIsland.arcadeToken);
+
+		Tasks.wait(20, () -> {
+			Utils.giveItem(player, specialPrize);
+			player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 2F, 1F);
+		});
+
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		user.setQuest_Main_Finish(true);
 		service.save(user);
 	}
 

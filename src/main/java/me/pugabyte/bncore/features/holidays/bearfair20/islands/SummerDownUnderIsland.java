@@ -52,7 +52,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 	private static ItemStack wheat = new ItemBuilder(Material.WHEAT).lore(itemLore).amount(1).build();
 	private static ItemStack sugar = new ItemBuilder(Material.SUGAR).lore(itemLore).amount(1).build();
 	//
-	public static ItemStack anzacBiscuit = new ItemBuilder(Material.COOKIE).name("Anzac Biscuit").lore(itemLore).amount(1).build();
+	public static ItemStack anzacBiscuit = new ItemBuilder(Material.COOKIE).name("Anzac Biscuit").lore(itemLore).amount(1).glow().build();
 	//
 	private static List<String> greetings = Arrays.asList("G'day", "G'day mate", "How's it hangin'");
 
