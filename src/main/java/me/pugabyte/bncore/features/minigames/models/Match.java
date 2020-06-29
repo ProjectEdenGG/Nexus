@@ -219,7 +219,7 @@ public class Match {
 
 		if (scores.length() > 0) {
 			String header = "Scores for " + getArena().getName() + " (" + arena.getMechanic().getName() + "):" + System.lineSeparator();
-			Discord.log("```" + header + scores.toString() + "```");
+			Discord.staffLog("```" + header + scores.toString() + "```");
 		}
 	}
 
