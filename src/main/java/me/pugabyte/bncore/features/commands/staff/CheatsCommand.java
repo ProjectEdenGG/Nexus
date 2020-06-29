@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redire
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.godmode.Godmode;
 import me.pugabyte.bncore.models.godmode.GodmodeService;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.GameMode;
 
 @Permission("group.staff")
@@ -36,7 +37,8 @@ public class CheatsCommand extends CustomCommand {
 			runCommand("vanish off");
 			godmode.setEnabled(false);
 			godmodeService.save(godmode);
-			player().setGameMode(GameMode.SURVIVAL);
+			if (WorldGroup.get(player()) != WorldGroup.CREATIVE)
+				player().setGameMode(GameMode.SURVIVAL);
 			player().setFallDistance(0);
 			player().setAllowFlight(false);
 			player().setFlying(false);
