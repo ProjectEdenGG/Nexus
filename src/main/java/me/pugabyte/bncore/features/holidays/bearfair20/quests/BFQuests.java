@@ -6,8 +6,10 @@ import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Merchants;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -204,11 +206,14 @@ public class BFQuests implements Listener {
 	}
 
 	// NPC Stuff
-	//TODO: add a cooldown
 	@EventHandler
 	public void onRightClickNPC(NPCRightClickEvent event) {
 		Player player = event.getClicker();
 		if (isAtBearFair(player)) {
+			CooldownService cooldownService = new CooldownService();
+			if (!cooldownService.check(player, "BF_NPCInteract", Time.SECOND.x(2)))
+				return;
+
 			int id = event.getNPC().getId();
 			Talkers.startScript(player, id);
 			Merchants.openMerchant(player, id);

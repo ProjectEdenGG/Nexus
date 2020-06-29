@@ -40,10 +40,10 @@ public class Loot {
 	public static ItemStack scales = new ItemBuilder(Material.PHANTOM_MEMBRANE).name("Scales").lore(itemLore).build();
 	public static ItemStack heartOfTheSea = new ItemBuilder(Material.HEART_OF_THE_SEA).lore(itemLore).build();
 	public static ItemStack nautilusShell = new ItemBuilder(Material.NAUTILUS_SHELL).lore(itemLore).build();
-	// Trash - TODO: Replace temp items with real items: oldboots, rustyspoon, brokencd
-	public static ItemStack oldBoots = new ItemBuilder(Material.STICK).name("Old Boots").lore(itemLore).build();
-	public static ItemStack rustySpoon = new ItemBuilder(Material.STICK).name("Rusty Spoon").lore(itemLore).build();
-	public static ItemStack brokenCD = new ItemBuilder(Material.STICK).name("Broken CD").lore(itemLore).build();
+	// Trash
+	public static ItemStack oldBoots = new ItemBuilder(Material.LEATHER_BOOTS).name("Old Boots").lore(itemLore).build();
+	public static ItemStack rustySpoon = new ItemBuilder(Material.WOODEN_SHOVEL).name("Rusty Spoon").lore(itemLore).build();
+	public static ItemStack brokenCD = new ItemBuilder(Material.MUSIC_DISC_11).name("Broken CD").lore(itemLore).build();
 	public static ItemStack lostBook = new ItemBuilder(Material.BOOK).name("Lost Book").lore(itemLore).build();
 	public static ItemStack soggyNewsPaper = new ItemBuilder(Material.PAPER).name("Soggy Newspaper").lore(itemLore).build();
 	public static ItemStack driftwood = new ItemBuilder(Material.STICK).name("Driftwood").lore(itemLore).build();

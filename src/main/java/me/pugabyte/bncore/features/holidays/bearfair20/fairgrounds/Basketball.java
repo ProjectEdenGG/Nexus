@@ -36,13 +36,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
-// TODO: Make the double jump less
 public class Basketball implements Listener {
 
 	@Getter

@@ -79,7 +79,6 @@ public class MinigameNightIsland implements Listener, Island {
 	public MinigameNightIsland() {
 		BNCore.registerListener(this);
 		soundTasks();
-		// TODO: dialog & wait times
 	}
 
 	public enum MinigameNightNPCs implements TalkingNPC {
@@ -92,19 +91,19 @@ public class MinigameNightIsland implements Listener, Island {
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Hey bro, welcome to the Game Gallery! Yo, you happen to see a pouty kid wearing a red hoodie anywhere over on the main island? No? Bummer man... ");
-				startQuest.add("wait 80");
+				startQuest.add("wait 120");
 				startQuest.add("I was hosting an arcade tournament last night on that big arcade cabinet outside and it was his turn when he got all crazy and rage-quitted the whole party after getting a game over.");
-				startQuest.add("wait 80");
+				startQuest.add("wait 120");
 				startQuest.add("Dude trashed the machine and stole a bunch of its parts. Anyway, I was just wondering if, like, he had bailed or was gonna come clean or whatever...");
-				startQuest.add("wait 80");
+				startQuest.add("wait 120");
 				startQuest.add("But bro, you look pretty bored. Check out our library of classic and epic games! Or hey, if you're feelin' up for a *real* quest, maybe you could do me a solid and help fix the busted arcade machine?");
-				startQuest.add("wait 80");
+				startQuest.add("wait 120");
 				startQuest.add("I've got this super rare arcade token I'd be willing to part with if you'd help.");
 				startQuest.add("wait 80");
 				startQuest.add("<self> Sure!");
-				startQuest.add("wait 80");
+				startQuest.add("wait 40");
 				startQuest.add("Yo, dude, that's like, totally awesome of you! Now I don't have any new parts for the arcade cabinet but I do have this cool machine in the basement of the Game Gallery that should be able to fix up the busted parts.");
-				startQuest.add("wait 80");
+				startQuest.add("wait 120");
 				startQuest.add("We just gotta find em first. Before we go hunting though, you'll need a soldering iron. I keep a spare one in my attic. Don't worry bro, this island is chill, the doors unlocked. Just uh, don't touch my gaming rig. I'll be here if you need any help.");
 
 				Map<ItemStack, String> hintMap = new HashMap<>();
@@ -263,7 +262,7 @@ public class MinigameNightIsland implements Listener, Island {
 
 		if (user.isQuest_MGN_Start() && player.getInventory().contains(solderingIron)) return;
 
-		BearFair20.send("TODO: Need soldering iron to enter", player);
+		BearFair20.send("&cYou need a soldering iron to enter", player);
 		player.teleport(basementExit);
 	}
 

@@ -14,6 +14,7 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Time.Timer;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -45,8 +46,29 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 /*
 	TODO:
-	 - Transfer everyone's points from Skript
-	 - Quest Dialogs & Wait Times
+	 - Hive Messages
+	 - Easter egg messages
+	 - Merchant Trades
+	 - Merchant Dialogs
+	 	- Miner
+	 	- Collector
+	 - Add Dialog to wakka
+		- Farm, Fish, and Trade w/ villagers to gain gold, the currency for the island to progress in quests
+	 -
+	 - Finish MainIsland quest
+	 	- Prizes for the item
+		- Crafting the item at midnight
+		- Obtaining the stroopwafel
+			- Remove crafting it, and just set the cake + cookie result trade to a normal stroop
+			- add a trade, blessed honey bottle + normal stroop = honey stroop
+		- Obtaining the blessed honey bottle
+			- Queen bee dialog, quest, and code
+		- Obtaining the honey bottle
+			- Glass bottle + bee nest
+	 -
+	 - Full test of the whole quest
+	 - Enable the 2 boolean below
+	 - (PUG) Transfer everyone's points from Skript
  */
 
 @Data
@@ -90,17 +112,16 @@ public class BearFair20 implements Listener {
 		event.setCancelled(true);
 	}
 
-	// TODO: Uncomment this
-//	@EventHandler
-//	public void onRegionEnter(RegionEnteredEvent event) {
-//		Player player = event.getPlayer();
-//		Location loc = player.getLocation();
-//		if (!WGUtils.getRegionsAt(loc).contains(BFProtectedRg)) return;
-//		if (player.hasPermission("worldguard.region.bypass.*")) {
-//			Utils.runCommand(player, "wgedit off");
-//		}
-//
-//	}
+	@EventHandler
+	public void onRegionEnter(RegionEnteredEvent event) {
+		Player player = event.getPlayer();
+		Location loc = player.getLocation();
+		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
+		if (player.hasPermission("worldguard.region.bypass.*")) {
+			Utils.runCommand(player, "wgedit off");
+		}
+
+	}
 
 	@EventHandler
 	public void onThrowEnderPearl(PlayerInteractEvent event) {

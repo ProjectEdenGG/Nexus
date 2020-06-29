@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -56,7 +57,7 @@ public class MainIsland implements Listener, Island {
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Welcome, welcome <player>, the roots of the island informed me of your soon arrival.");
 				startQuest.add("wait 80");
-				startQuest.add("Wait, shhh, &o... yes... no... ok... got it... ok!");
+				startQuest.add("Wait, shhh, &7&o... yes... no... ok... got it... ok!");
 				startQuest.add("wait 120");
 				startQuest.add("The roots have spoken. You are here to deliver my pizza.");
 				startQuest.add("wait 80");
@@ -71,17 +72,17 @@ public class MainIsland implements Listener, Island {
 				startQuest.add("Would you like to help me craft it?");
 
 				//
-				String mainIslandHint = "- A Honey Stroopwafel, I believe the Pastry Chef at the carnival can help you for more info on that.";
-				String mgnIslandHint = "- An Arcade Token...&o Huh? Ax? ... Alex? ... Oh, ok.&f The roots tell me a boy named \"Axel\" is the one you should look for";
-				String pugmasIslandHint = "- A Present, <TODO: starting point>";
-				String halloweenIslandHint = "- A Halloween Candy Basket, <TODO: starting point>";
-				String sduIslandHint = "- A Anzac Biscuit, <TODO: starting point>";
+				String mainIslandHint = "- A Honey Stroopwafel, I believe the Pastry Chef at the carnival has a trade for that";
+				String mgnIslandHint = "- An Arcade Token...&7&o Huh? Ax? ... Alex? ... Oh, ok.&f The roots tell me a boy named \"Axel\" is the one you should look for";
+				String pugmasIslandHint = "- A Present, I believe someone on the Pugmas Island can help you with that";
+				String halloweenIslandHint = "- A Halloween Candy Basket, last I heard, the mansion museum was giving out candy baskets, I'd ask the Tour Guide";
+				String sduIslandHint = "- A Anzac Biscuit, Rolex is the one you seek";
 
 				List<String> reminderAll = new ArrayList<>();
 				List<String> acceptQuest = new ArrayList<>();
 				List<String> howToCraft = new ArrayList<>();
 
-				howToCraft.add("TODO: Instructions on how and when to craft it");
+				howToCraft.add("When you've collected all 5 ingredients, bring them here, and when the clock strikes midnight, a lightning bolt will strike the ingredients in your inventory and the special prize will be summoned.");
 
 				reminderAll.add("The recipe takes 5 unique items, one gathered from each of the islands:");
 				reminderAll.add("wait 80");
@@ -103,13 +104,14 @@ public class MainIsland implements Listener, Island {
 
 				//
 				if (step == 1 && !user.isQuest_Main_Start()) {
+					Utils.wakka("Accepted Quest 4");
 					user.setQuest_Main_Start(true);
 					return acceptQuest;
-				} else if (step == 1 && user.isQuest_Main_Start()) {
+				} else if (user.isQuest_Main_Start()) {
 					List<String> reminder = new ArrayList<>(Collections.singleton("I see you're missing some ingredients. The items you need are:"));
 					boolean sendReminder = false;
 
-					if (!user.isQuest_Main_Start()) {
+					if (step != 3) {
 						sendReminder = true;
 						reminder.add("wait 120");
 						reminder.add(mainIslandHint);
@@ -157,7 +159,7 @@ public class MainIsland implements Listener, Island {
 						for (int i = 0; i < 8; i++) {
 							Tasks.wait(i * 10, () -> {
 								world.spawnParticle(Particle.BLOCK_CRACK, loc, 40, 0.2, 0.2, 0.2, 0.000001, Material.OAK_LOG.createBlockData());
-								world.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+								world.spawnParticle(Particle.VILLAGER_HAPPY, loc, 5, 0.25, 0.25, 0.25, 0.01);
 								world.playSound(loc, Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 1F, 0.1F);
 							});
 						}
@@ -184,9 +186,13 @@ public class MainIsland implements Listener, Island {
 	}
 
 	public static void acceptWitchQuest(Player player) {
-		nextStep(player); // 1
-		Talkers.sendScript(player, MainNPCs.Witch);
-		nextStep(player); // 2
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		if (user.getQuest_Main_Step() == 0) {
+			nextStep(player); // 1
+			Talkers.startScript(player, 2670);
+			nextStep(player); // 2
+		}
 	}
 
 	private static void nextStep(Player player) {

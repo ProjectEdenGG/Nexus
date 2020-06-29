@@ -30,6 +30,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,10 +53,11 @@ public class SummerDownUnderIsland implements Listener, Island {
 	private static ItemStack sugar = new ItemBuilder(Material.SUGAR).lore(itemLore).amount(1).build();
 	//
 	public static ItemStack anzacBiscuit = new ItemBuilder(Material.COOKIE).name("Anzac Biscuit").lore(itemLore).amount(1).build();
+	//
+	private static List<String> greetings = Arrays.asList("G'day", "G'day mate", "How's it hangin'");
 
 	public SummerDownUnderIsland() {
 		BNCore.registerListener(this);
-		// TODO: Dialogs
 	}
 
 	public enum SummerDownUnderNPCs implements TalkingNPC {
@@ -78,10 +80,10 @@ public class SummerDownUnderIsland implements Listener, Island {
 				startQuest.add("Oh and don’t forget to say G’day to everyone around town.");
 
 				if (!user.isQuest_Main_Start())
-					return Collections.singletonList("TODO: GENERIC GREETING");
+					return Collections.singletonList(Utils.getRandomElement(greetings));
 
 				if (step >= 1)
-					return Collections.singletonList("TODO: REMINDER");
+					return Collections.singletonList("G'day mate, have you talked to Sir Jack yet?");
 
 				user.setQuest_SDU_Start(true);
 				nextStep(player); // 1
@@ -118,10 +120,18 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"He should be able to sort you out with something.");
 
 				if (!user.isQuest_SDU_Start() || step < 1)
-					return Collections.singletonList("TODO: GENERIC GREETING");
+					return Collections.singletonList(Utils.getRandomElement(greetings));
 
 				if (step >= 2)
-					return Collections.singletonList("TODO: REMINDER");
+					return Arrays.asList(
+							"Have you gathered all the ingredients up yet? You need Wheat, Sugar, Peanuts & Golden Syrup.",
+							"wait 80",
+							"For some wheat, there’s a cheeky farm across the bridge you can have a gawk at. " +
+									"Afterwards, I’d recommend talking to my grandson Lachlan at the Pub. " +
+									"He should be able to sort you out with something.",
+							"wait 120",
+							"And I highly recommend you visit the Queen’s Island Pie Shop once you have what you need, I’m sure they’d be happy to help."
+					);
 
 				nextStep(player); // 2
 				return startQuest;
@@ -164,7 +174,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"definitely be some available. Thanks again mate.");
 
 				if (!user.isQuest_SDU_Start() || step < 2)
-					return Collections.singletonList("TODO: GENERIC GREETING");
+					return Collections.singletonList(Utils.getRandomElement(greetings));
 
 				if (player.getInventory().contains(greatNortherns) && step == 3) {
 					player.getInventory().remove(greatNortherns);
@@ -177,10 +187,10 @@ public class SummerDownUnderIsland implements Listener, Island {
 				}
 
 				if (step >= 4)
-					return Collections.singletonList("TODO: REMINDER 4");
+					return Collections.singletonList("I've already given you my peanuts, have a good day now.");
 
 				if (step >= 3)
-					return Collections.singletonList("TODO: REMINDER 3");
+					return Collections.singletonList("Have you found that crate of Great Northerns yet? Once you find it, return it to me please, and then I'll give you your peanuts.");
 
 				nextStep(player); // 3
 				return startQuest;
@@ -200,10 +210,10 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"Bear Nation, but their syrup is to die for!");
 
 				if (!user.isQuest_SDU_Start() || step < 4)
-					return Collections.singletonList("TODO: GENERIC GREETING");
+					return Collections.singletonList(Utils.getRandomElement(greetings));
 
 				if (step >= 5)
-					return Collections.singletonList("TODO: REMINDER");
+					return Collections.singletonList("I've already given you all my Golden Syrup, g'day!");
 
 				nextStep(player); // 5
 				Tasks.wait(Time.SECOND.x(6), () -> {
@@ -247,7 +257,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"your future endeavours. Feel free to stick around town for a while. We love visitors!");
 
 				if (!user.isQuest_SDU_Start() || step < 5 || user.isQuest_SDU_Finish())
-					return Collections.singletonList("TODO: GENERIC GREETING");
+					return Collections.singletonList(Utils.getRandomElement(greetings));
 
 				ItemStack gold = hasFoolsGold(player);
 				boolean fool = true;
@@ -280,10 +290,10 @@ public class SummerDownUnderIsland implements Listener, Island {
 				}
 
 				if (step >= 8)
-					return Collections.singletonList("TODO: REMINDER 8");
+					return Collections.singletonList("You need the ingredients to the Anzac Biscuit and a nugget of gold, fool's gold works too, my manager can't tell the difference.");
 
 				if (step >= 6)
-					return Collections.singletonList("TODO: REMINDER 6");
+					return Collections.singletonList("You’ll need to speak with my Manager first.");
 
 				nextStep(player); // 6
 				return startQuest;
@@ -308,10 +318,10 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"They usually mine coal but recently they’ve been sifting for gold.");
 
 				if (!user.isQuest_SDU_Start() || step < 6)
-					return Collections.singletonList("TODO: GENERIC GREETING");
+					return Collections.singletonList(Utils.getRandomElement(greetings));
 
 				if (step >= 7)
-					return Collections.singletonList("TODO: REMINDER");
+					return Collections.singletonList("Did you forget already? If you don’t have any gold, there’s a whole mineshaft nearby. Now get out!");
 
 				nextStep(player); // 7
 				return startQuest;
@@ -330,10 +340,10 @@ public class SummerDownUnderIsland implements Listener, Island {
 				startQuest.add("Tuyet Dieu! Here, take the bowl and get to work in the water. You can keep any other gold or fool’s gold you find.");
 
 				if (!user.isQuest_SDU_Start() || step < 7)
-					return Collections.singletonList("TODO: GENERIC GREETING");
+					return Collections.singletonList(Utils.getRandomElement(greetings));
 
 				if (step >= 8)
-					return Collections.singletonList("TODO: REMINDER");
+					return Collections.singletonList("Take the bowl and get to work in the water.");
 
 				nextStep(player); // 8
 				Tasks.wait(Time.SECOND.x(5), () -> {
@@ -386,7 +396,6 @@ public class SummerDownUnderIsland implements Listener, Island {
 		int step = user.getQuest_SDU_Step() + 1;
 		user.setQuest_SDU_Step(step);
 		service.save(user);
-
 	}
 
 	private static ItemStack hasFoolsGold(Player player) {
