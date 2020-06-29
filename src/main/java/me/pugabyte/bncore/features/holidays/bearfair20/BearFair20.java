@@ -177,6 +177,7 @@ public class BearFair20 implements Listener {
 				send("", player);
 				if (user.isFirstVisit()) {
 					user.setFirstVisit(false);
+					service.save(user);
 					Tasks.wait(Time.SECOND.x(3), () -> {
 						send("&8&l[&c&l!!!&8&l] &3You can now warp here using: &e/bearfair", player);
 						chime(player);
