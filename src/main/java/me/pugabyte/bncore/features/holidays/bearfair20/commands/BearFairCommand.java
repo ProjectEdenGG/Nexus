@@ -3,9 +3,9 @@ package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
-import me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.menus.MenuUtils;
@@ -27,7 +27,7 @@ import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -229,7 +229,7 @@ public class BearFairCommand extends _WarpCommand {
 		//
 		send();
 		send("MGN Step: " + user.getQuest_MGN_Step());
-		send("MGN Pieces: " + user.getArcadePieces().toString());
+//		send("MGN Pieces: " + user.getArcadePieces().toString());
 		send("MGN Start: " + user.isQuest_MGN_Start());
 		send("MGN Finish: " + user.isQuest_MGN_Finish());
 		//
@@ -272,6 +272,13 @@ public class BearFairCommand extends _WarpCommand {
 		BearFairUser user = service.get(player());
 		user.setQuest_Pugmas_Start(true);
 		service.save(user);
+	}
+
+	@Path("giveQuestItems")
+	@Permission("group.admin")
+	void questItems() {
+		List<ItemStack> questItems = Arrays.asList(MainIsland.honeyStroopWafel, MinigameNightIsland.joystick.build());
+		Utils.giveItems(player(), questItems);
 	}
 
 	Map<UUID, Integer> bfp = new HashMap<UUID, Integer>() {{
@@ -352,11 +359,4 @@ public class BearFairCommand extends _WarpCommand {
 		put(UUID.fromString("fa8a62d4-e069-4626-afff-5fc5a6fb8a16"), 5);
 		put(UUID.fromString("fce1fe67-9514-4117-bcf6-d0c49ca0ba41"), 15);
 	}};
-
-	@Path("giveQuestItems")
-	@Permission("group.admin")
-	void questItems() {
-		List<ItemStack> questItems = Collections.singletonList(HalloweenIsland.atticKey);
-		Utils.giveItems(player(), questItems);
-	}
 }

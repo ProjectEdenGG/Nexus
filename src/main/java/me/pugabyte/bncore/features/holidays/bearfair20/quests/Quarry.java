@@ -26,15 +26,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.miningError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.toolError;
 import static me.pugabyte.bncore.utils.Utils.getTool;
 
 public class Quarry implements Listener {
+
+	public static void shutdown() {
+		Set<Location> locations = new HashSet<>(dioriteRegenMap.keySet());
+		for (Location loc : locations) {
+			Diorite diorite = dioriteRegenMap.get(loc);
+			loc.getBlock().setType(diorite.getType());
+			loc.getBlock().setBlockData(diorite.getBlockData());
+			dioriteRegenMap.remove(loc);
+		}
+	}
 
 	@Data
 	@AllArgsConstructor
@@ -46,7 +53,7 @@ public class Quarry implements Listener {
 
 	public static String quarryRg = BearFair20.getRegion() + "_main_quarry";
 	private static List<Material> diorite = Arrays.asList(Material.DIORITE, Material.DIORITE_SLAB, Material.DIORITE_STAIRS, Material.DIORITE_WALL);
-	private Map<Location, Diorite> dioriteRegenMap = new HashMap<>();
+	private static Map<Location, Diorite> dioriteRegenMap = new HashMap<>();
 
 	public Quarry() {
 		BNCore.registerListener(this);

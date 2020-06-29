@@ -1,20 +1,20 @@
 package me.pugabyte.bncore.models.bearfair;
 
 import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Property;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import static me.pugabyte.bncore.utils.Utils.sendActionBar;
 @Entity("bearfair_user")
 @NoArgsConstructor
 @AllArgsConstructor
-@Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
+@Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
 public class BearFairUser extends PlayerOwnedObject {
 	@Id
 	@NonNull
@@ -42,7 +42,7 @@ public class BearFairUser extends PlayerOwnedObject {
 	// First Visit
 	private boolean firstVisit = true;
 	// Easter Eggs
-	@Property(concreteClass = Location.class)
+	@Embedded
 	private List<Location> easterEggsLocs = new ArrayList<>();
 	// Quests
 	private boolean Quest_Main_Start = false;
@@ -59,18 +59,30 @@ public class BearFairUser extends PlayerOwnedObject {
 	private boolean Quest_MGN_Start = false;
 	private boolean Quest_MGN_Finish = false;
 	private int Quest_MGN_Step = 0;
-	@Property(concreteClass = ItemStack.class)
-	private List<ItemStack> arcadePieces = new ArrayList<>();
+	//	@Embedded
+//	private List<ItemStack> arcadePieces = new ArrayList<>();
+	private boolean Quest_MGN_hasCPU = false;
+	private boolean Quest_MGN_hasProcessor = false;
+	private boolean Quest_MGN_hasMemoryCard = false;
+	private boolean Quest_MGN_hasMotherBoard = false;
+	private boolean Quest_MGN_hasPowerSupply = false;
+	private boolean Quest_MGN_hasSpeaker = false;
+	private boolean Quest_MGN_hasHardDrive = false;
+	private boolean Quest_MGN_hasDiode = false;
+	private boolean Quest_MGN_hasJoystick = false;
+
+
 	//
 	private boolean Quest_Halloween_Start = false;
 	private boolean Quest_Halloween_Finish = false;
 	private int Quest_Halloween_Step = 0;
+	private boolean Quest_Halloween_Key = false;
 	//
 	private boolean Quest_Pugmas_Start = false;
 	private boolean Quest_Pugmas_Finish = false;
 	private int Quest_Pugmas_Step = 0;
 	private boolean Quest_Pugmas_Switched = false;
-	@Property(concreteClass = Location.class)
+	@Embedded
 	private List<Location> presentLocs = new ArrayList<>();
 	//
 

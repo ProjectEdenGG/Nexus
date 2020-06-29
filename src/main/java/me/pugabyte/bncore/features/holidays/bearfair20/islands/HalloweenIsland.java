@@ -53,7 +53,7 @@ public class HalloweenIsland implements Listener, Island {
 	//
 	public static ItemStack atticKey = new ItemBuilder(Material.TRIPWIRE_HOOK).lore(itemLore).amount(1).name("Attic Key").build();
 	private String atticRg = getRegion() + "_atticdoor";
-	private Location atticDeniedLoc = new Location(BearFair20.getWorld(), -936, 159, -1917, -90, 32);
+	private Location atticDeniedLoc = new Location(BearFair20.getWorld(), -935.5, 159.5, -1916.5, -90, 32);
 	//
 	private String basketRg = getRegion() + "_basket";
 	private static Location basketLoc = new Location(BearFair20.getWorld(), -917, 126, -1848);
@@ -243,6 +243,13 @@ public class HalloweenIsland implements Listener, Island {
 		ItemStack item = itemFrame.getItem();
 
 		if (!item.equals(atticKey)) return;
+
+		BearFairService service = new BearFairService();
+		BearFairUser user = service.get(player);
+		if (user.isQuest_Halloween_Key()) return;
+
+		user.setQuest_Halloween_Key(true);
+		service.save(user);
 
 		Utils.giveItem(player, atticKey);
 		chime(player);
