@@ -46,13 +46,7 @@ import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 /*
 	TODO:
-	 - (After Release) Trader: gold -> BFP
-	 - Finish MainIsland quest
-	 	- Prizes for special prize
-	 -
-	 - Release:
-	 	- Enable the 2 boolean below
-	 	- Replace yellow wool
+	 - (Sometime After Release) Merchant Trader: decide how much gold -> BFP
  */
 
 @Data
@@ -68,9 +62,9 @@ public class BearFair20 implements Listener {
 	@Getter
 	private static final Set<Class<? extends Island>> islands = new Reflections("me.pugabyte.bncore.features.holidays.bearfair20.islands").getSubTypesOf(Island.class);
 
-	// TODO: Enable these.
-	public static boolean givePoints = false;
-	public static boolean allowWarp = false;
+	// TODO: When BF is over, disable these.
+	public static boolean givePoints = true;
+	public static boolean allowWarp = true;
 
 	public BearFair20() {
 		BNCore.registerListener(this);
