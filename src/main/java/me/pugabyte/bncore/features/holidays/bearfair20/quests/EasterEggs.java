@@ -22,9 +22,9 @@ public class EasterEggs implements Listener {
 	BearFairService service = new BearFairService();
 	private static final String easterEgg = "ba3b7698-589c-3326-90ff-4862853a5c24";
 	private static final int total = 13;
-	private static String foundOne = "TODO: You found a treasure chest!";
-	private static String duplicate = "TODO: You already found this one!";
-	private static String foundAll = "TODO: You found all treasure chests!";
+	private static String foundOne = "You found a secret treasure chest! There are still more to find throughout the islands.";
+	private static String duplicate = "You already found this one.";
+	private static String foundAll = "The final treasure chest has been found! You are a champion of treasure hunting. Congratulations!";
 
 	/*
 	Easter Egg Spots:

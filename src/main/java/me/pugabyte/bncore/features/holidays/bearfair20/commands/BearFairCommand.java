@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland;
@@ -10,26 +11,23 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.warps.commands._WarpCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
-import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
-import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
-import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
-import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpType;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
+import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +35,7 @@ import java.util.UUID;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 
-@Redirect(from = {"/bfp", "bfpoints", "/bearfairpoints"}, to = "/bearfair points")
 public class BearFairCommand extends _WarpCommand {
-	BearFairService service = new BearFairService();
 
 	public BearFairCommand(CommandEvent event) {
 		super(event);
@@ -153,7 +149,7 @@ public class BearFairCommand extends _WarpCommand {
 		World world = loc.getWorld();
 		if (world != null)
 			world.strikeLightningEffect(loc);
-
+		MainIsland.witchQuestCraft();
 	}
 
 	@Path("yachtHorn")
@@ -278,7 +274,7 @@ public class BearFairCommand extends _WarpCommand {
 		service.save(user);
 	}
 
-	Map<UUID, Integer> bfpImport = new HashMap<UUID, Integer>() {{
+	Map<UUID, Integer> bfp = new HashMap<UUID, Integer>() {{
 		put(UUID.fromString("0baaebf5-cfb0-431a-b625-465c64e694f1"), 125);
 		put(UUID.fromString("0f54da29-2d6e-48d9-9107-9dc89272e0ee"), 10);
 		put(UUID.fromString("3eafb33e-fcf9-4cee-8f94-478a2a91da23"), 125);
@@ -357,97 +353,10 @@ public class BearFairCommand extends _WarpCommand {
 		put(UUID.fromString("fce1fe67-9514-4117-bcf6-d0c49ca0ba41"), 15);
 	}};
 
-	@Path("points [player]")
-	public void points(@Arg("self") BearFairUser user) {
-		if (player().equals(user.getOfflinePlayer()))
-			send(PREFIX + "&3Total: &e" + user.getTotalPoints());
-		else
-			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Total: &e" + user.getTotalPoints());
-	}
-
-	@Path("points daily [player]")
-	public void pointsDaily(@Arg("self") BearFairUser user) {
-		if (player().equals(user.getOfflinePlayer()))
-			send(PREFIX + "&3Daily Points:");
-		else
-			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Daily Points:");
-
-		for (BFPointSource pointSource : BFPointSource.values()) {
-			Map<LocalDate, Integer> dailyMap = user.getPointsReceivedToday().get(pointSource);
-			int points = 0;
-			if (dailyMap != null)
-				points = dailyMap.get(LocalDate.now());
-
-			int dailyMax = BearFairUser.DAILY_SOURCE_MAX;
-			String sourceColor = points == dailyMax ? "&a" : "&3";
-			String sourceName = StringUtils.camelCase(pointSource.name());
-			send(" " + sourceColor + sourceName + " &7- &e" + points + "&3/&e" + dailyMax);
-		}
-	}
-
-	@Path("points give <player> <points>")
+	@Path("giveQuestItems")
 	@Permission("group.admin")
-	public void pointsGive(BearFairUser user, int points) {
-		user.givePoints(points);
-		service.save(user);
-		String plural = points == 1 ? " point" : " points";
-		send(PREFIX + "&e" + points + plural + " &3given to &e" + user.getOfflinePlayer().getName());
+	void questItems() {
+		List<ItemStack> questItems = Collections.singletonList(HalloweenIsland.atticKey);
+		Utils.giveItems(player(), questItems);
 	}
-
-	@Path("points take <player> <points>")
-	@Permission("group.admin")
-	public void pointsTake(BearFairUser user, int points) {
-		user.takePoints(points);
-		service.save(user);
-		String plural = points == 1 ? " point" : " points";
-		send(PREFIX + "&e" + points + plural + " &3taken from &e" + user.getOfflinePlayer().getName());
-	}
-
-	@Path("points set <player> <points>")
-	@Permission("group.admin")
-	public void pointsSet(BearFairUser user, int points) {
-		user.setTotalPoints(points);
-		service.save(user);
-		String plural = points == 1 ? " point" : " points";
-		send(PREFIX + "&3set &e" + user.getOfflinePlayer().getName() + "&3 to &e" + points + plural);
-	}
-
-	@Path("points reset <player>")
-	@Permission("group.admin")
-	public void pointsReset(BearFairUser user) {
-		user.setTotalPoints(0);
-		user.getPointsReceivedToday().clear();
-		service.save(user);
-	}
-
-	@Path("points top [page]")
-	public void pointsTop(@Arg("1") int page) {
-		List<BearFairUser> results = service.getTopPoints(page);
-		if (results.size() == 0)
-			error("&cNo results on page " + page);
-
-		send("");
-		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
-		int i = (page - 1) * 10 + 1;
-		for (BearFairUser user : results)
-			send("&3" + i++ + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTotalPoints());
-	}
-
-	@Path("points import")
-	@Permission("group.admin")
-	public void importPoints() {
-		bfpImport.forEach(((uuid, points) -> ((BearFairUser) service.get(uuid)).setTotalPoints(points)));
-		send(PREFIX + "Points successfully imported");
-	}
-
-	@ConverterFor(BearFairUser.class)
-	BearFairUser convertToBearFairUser(String value) {
-		return new BearFairService().get(convertToOfflinePlayer(value));
-	}
-
-	@TabCompleterFor(BearFairUser.class)
-	List<String> tabCompleteBearFairUser(String value) {
-		return tabCompletePlayer(value);
-	}
-
 }

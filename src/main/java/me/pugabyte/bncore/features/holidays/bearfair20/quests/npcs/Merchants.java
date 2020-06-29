@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs;
 
 import lombok.Getter;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MerchantBuilder;
@@ -25,6 +26,7 @@ public class Merchants {
 	public static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK).lore(itemLore);
 	public static ItemBuilder TBD = new ItemBuilder(Material.STICK).name("To Be Determined").lore(itemLore).amount(1);
 
+
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
 		if (bfMerchant == null)
@@ -34,31 +36,35 @@ public class Merchants {
 	}
 
 	public enum BFMerchant {
-//		ARTIST(2657) {
-//			@Override
-//			public List<TradeBuilder> getTrades() {
-//				return new ArrayList<>();
-//			}
-//		},
-BAKER(2659) {
-	@Override
-	public List<TradeBuilder> getTrades() {
-		return new ArrayList<>();
-	}
-},
+		ARTIST(2657) {
+			@Override
+			public List<TradeBuilder> getTrades() {
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(MainIsland.relic_base)
+							.ingredient(goldIngot.clone().amount(2)));
+				}};
+			}
+		},
+		BAKER(2659) {
+			@Override
+			public List<TradeBuilder> getTrades() {
+				return new ArrayList<>();
+			}
+		},
 		BARTENDER(2655) {
 			@Override
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false).lore(itemLore))
-							.ingredient(TBD));
+							.ingredient(goldNugget.clone().amount(3)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS).lore(itemLore))
-							.ingredient(TBD));
+							.ingredient(goldNugget.clone().amount(3)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potionType(PotionType.SLOWNESS).lore(itemLore))
-							.ingredient(TBD));
+							.ingredient(goldNugget.clone().amount(3)));
 				}};
 			}
 		},
@@ -67,11 +73,11 @@ BAKER(2659) {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.LEATHER).lore(itemLore))
-							.ingredient(TBD));
-					add(new TradeBuilder()
-							.result(TBD)
+							.result(goldNugget.clone().amount(16))
 							.ingredient(new ItemBuilder(Material.ANVIL).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.COAL_BLOCK).lore(itemLore).amount(2).build())
+							.ingredient(new ItemBuilder(Material.IRON_BLOCK).lore(itemLore).amount(1).build()));
 				}};
 			}
 		},
@@ -108,11 +114,11 @@ BAKER(2659) {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
+							.result(MainIsland.relic_eyes)
+							.ingredient(new ItemBuilder(Material.HONEYCOMB).amount(9).lore(itemLore)));
+					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(4))
 							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).lore(itemLore)));
-					add(new TradeBuilder()
-							.result(TBD)
-							.ingredient(new ItemBuilder(Material.HONEYCOMB).amount(9).lore(itemLore)));
 				}};
 			}
 		},
@@ -121,12 +127,13 @@ BAKER(2659) {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(TBD)
+							.result(goldNugget.clone().amount(25))
 							.ingredient(new ItemBuilder(Material.GLISTERING_MELON_SLICE).lore(itemLore))
 							.ingredient(new ItemBuilder(Material.GOLDEN_CARROT).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.BLUE_ORCHID).name("Rare Flower").lore(itemLore))
-							.ingredient(new ItemBuilder(Material.STONE_PICKAXE).name("Ancient Pickaxe").lore(itemLore)));
+							.result(MainIsland.rareFlower)
+							.ingredient(MainIsland.ancientPickaxe)
+							.ingredient(MainIsland.relic));
 					add(new TradeBuilder()
 							.result(MinigameNightIsland.joystick)
 							.ingredient(goldBlock.clone().amount(2)));
@@ -200,7 +207,16 @@ BAKER(2659) {
 		INVENTOR(2660) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<>();
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(MainIsland.relic)
+							.ingredient(MainIsland.relic_body)
+							.ingredient(MainIsland.relic_eyes));
+					add(new TradeBuilder()
+							.result(MainIsland.relic_body)
+							.ingredient(MainIsland.relic_arms)
+							.ingredient(MainIsland.relic_base));
+				}};
 			}
 		},
 		MINER(2743) {
@@ -208,11 +224,14 @@ BAKER(2659) {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.IRON_PICKAXE).lore(itemLore))
+							.result(new ItemBuilder(Material.IRON_PICKAXE).lore(itemLore).amount(1))
 							.ingredient(goldIngot.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.SMOOTH_QUARTZ).name("Purified Marble").lore(itemLore)));
+							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore).amount(1))
+							.ingredient(new ItemBuilder(MainIsland.unpurifiedMarble).clone().amount(3)));
+					add(new TradeBuilder()
+							.result(MainIsland.ancientPickaxe)
+							.ingredient(new ItemBuilder(Material.COAL_BLOCK).lore(itemLore).amount(4).build()));
 				}};
 			}
 		},
@@ -221,36 +240,39 @@ BAKER(2659) {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.PAPER).name("Recipe for: Honey Stroop Wafel").lore("Left click while holding to learn recipe", itemLore))
+							.result(MainIsland.honeyStroopWafel)
+							.ingredient(MainIsland.stroofWafel)
+							.ingredient(MainIsland.blessedHoneyBottle));
+					add(new TradeBuilder()
+							.result(MainIsland.stroofWafel)
 							.ingredient(new ItemBuilder(Material.CAKE).lore(itemLore))
 							.ingredient(new ItemBuilder(Material.COOKIE).lore(itemLore)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.EGG).lore(itemLore))
-							.ingredient(TBD));
+							.ingredient(goldNugget.clone().amount(5)));
 				}};
 			}
 		},
-		//		SORCERER(2658) {
-//			@Override
-//			public List<TradeBuilder> getTrades() {
-//				return new ArrayList<TradeBuilder>() {{
-//					add(new TradeBuilder()
-//							.result(new ItemBuilder(Material.ENCHANTED_BOOK).lore(itemLore))
-//							.ingredient(new ItemBuilder(Material.BOOK).lore(itemLore))
-//							.ingredient(TBD));
-//					add(new TradeBuilder()
-//							.result(TBD)
-//							.ingredient(new ItemBuilder(Material.CAULDRON).lore(itemLore)));
-//				}};
-//			}
-//		},
+		SORCERER(2658) {
+			@Override
+			public List<TradeBuilder> getTrades() {
+				return new ArrayList<TradeBuilder>() {{
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(3))
+							.ingredient(new ItemBuilder(Material.CAULDRON).lore(itemLore)));
+					add(new TradeBuilder()
+							.result(MainIsland.relic_arms)
+							.ingredient(goldIngot.clone().amount(2)));
+				}};
+			}
+		},
 		TRADER(2763) {
 			@Override
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(TBD)
-							.ingredient(goldBlock.clone().amount(1)));
+							.ingredient(TBD));
 				}};
 			}
 		};
