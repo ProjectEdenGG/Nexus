@@ -131,7 +131,7 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(25))
+							.result(goldNugget.clone().amount(18))
 							.ingredient(new ItemBuilder(Material.GLISTERING_MELON_SLICE).lore(itemLore))
 							.ingredient(new ItemBuilder(Material.GOLDEN_CARROT).lore(itemLore)));
 					add(new TradeBuilder()
