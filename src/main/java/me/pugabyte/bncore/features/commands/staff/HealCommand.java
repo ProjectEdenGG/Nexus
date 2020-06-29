@@ -23,6 +23,9 @@ public class HealCommand extends CustomCommand {
 		player.setFireTicks(0);
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
+		send(player, PREFIX + "You have been healed");
+		if (!isSelf(player))
+			send(PREFIX + player.getName() + " has been healed");
 	}
 
 }
