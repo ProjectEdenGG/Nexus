@@ -446,8 +446,13 @@ public class BearFairCommand extends _WarpCommand {
 	@Path("points import")
 	@Permission("group.admin")
 	public void importPoints() {
-		bfpImport.forEach(((uuid, points) -> ((BearFairUser) service.get(uuid)).setTotalPoints(points)));
-		send(PREFIX + "Points successfully imported");
+		error("Disabled.");
+//		bfpImport.forEach(((uuid, points) -> {
+//			BearFairUser user = service.get(uuid);
+//			user.setTotalPoints(points);
+//			service.save(user);
+//		}));
+//		send(PREFIX + "Points successfully imported");
 	}
 
 	@ConverterFor(BearFairUser.class)
