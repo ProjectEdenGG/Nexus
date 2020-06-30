@@ -61,6 +61,7 @@ public class BearFair20 implements Listener {
 	private static final ProtectedRegion protectedRegion = WGUtils.getProtectedRegion(region);
 	@Getter
 	private static final Set<Class<? extends Island>> islands = new Reflections("me.pugabyte.bncore.features.holidays.bearfair20.islands").getSubTypesOf(Island.class);
+	public static String PREFIX = "&8&l[&eBearFair&8&l] &3";
 
 	// TODO: When BF is over, disable these.
 	public static boolean givePoints = true;
