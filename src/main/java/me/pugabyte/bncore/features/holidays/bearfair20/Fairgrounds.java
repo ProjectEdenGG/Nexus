@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Archery;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Basketball;
@@ -17,6 +18,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -24,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
@@ -134,6 +137,19 @@ public class Fairgrounds implements Listener {
 		String minecartRg = BearFair20.getRegion() + "_minecart_";
 		if (id.contains(bowRg) || id.contains(minecartRg) || id.contains(BearFair20.getRegion())) {
 			removeKits(event.getPlayer());
+		}
+	}
+
+	@EventHandler
+	public void onDrop(PlayerDropItemEvent event) {
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
+		if (WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) {
+			for (BearFairKit kit : BearFairKit.values()) {
+				if (kit.getItems().contains(event.getItemDrop().getItemStack())) {
+					event.setCancelled(true);
+					return;
+				}
+			}
 		}
 	}
 
