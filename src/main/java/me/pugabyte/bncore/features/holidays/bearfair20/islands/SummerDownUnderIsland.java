@@ -536,8 +536,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 			player.playSound(loc, Sound.ENTITY_HORSE_SADDLE, 0.5F, 0.5F);
 			player.playSound(loc, Sound.UI_STONECUTTER_TAKE_RESULT, 0.5F, 0.5F);
 
-			if (Utils.chanceOf(33)) {
-				if (Utils.chanceOf(50))
+			if (Utils.chanceOf(10)) {
+				if (Utils.chanceOf(75))
 					Utils.giveItem(player, foolsGold);
 				else
 					Utils.giveItem(player, goldNugget);
