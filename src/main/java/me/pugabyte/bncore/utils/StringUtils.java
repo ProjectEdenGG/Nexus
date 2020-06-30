@@ -414,7 +414,7 @@ public class StringUtils {
 			if (result.length() > 0)
 				return result.trim();
 			else
-				return original + "";
+				return original + formatType.get(formatType.getSecond(), seconds);
 		}
 	}
 
