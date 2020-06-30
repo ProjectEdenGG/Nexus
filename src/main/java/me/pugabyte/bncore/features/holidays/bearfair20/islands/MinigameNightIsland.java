@@ -224,7 +224,8 @@ public class MinigameNightIsland implements Listener, Island {
 		if (item.equals(fakeMotherBoard))
 			piece = motherboard.clone().name("Broken Motherboard").build();
 		else if (item.equals(solderingIron)) {
-			piece = solderingIron.clone();
+			if (!player.getInventory().containsAtLeast(solderingIron, 1))
+				piece = solderingIron.clone();
 		} else {
 			for (ItemBuilder arcadePiece : arcadePieces) {
 				ItemStack arcadePieceItem = arcadePiece.build();
