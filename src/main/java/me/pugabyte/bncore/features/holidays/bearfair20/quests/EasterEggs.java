@@ -22,9 +22,9 @@ public class EasterEggs implements Listener {
 	BearFairService service = new BearFairService();
 	private static final String easterEgg = "ba3b7698-589c-3326-90ff-4862853a5c24";
 	private static final int total = 15;
-	private static String foundOne = "You found a secret treasure chest! There are still more to find throughout the islands.";
-	private static String duplicate = "You already found this one.";
-	private static String foundAll = "The final treasure chest has been found! You are a champion of treasure hunting. Congratulations!";
+	private static String foundOne = PREFIX + "You found a secret treasure chest! There are still more to find throughout the islands.";
+	private static String duplicate = PREFIX + "You already found this one.";
+	private static String foundAll = PREFIX + "The final treasure chest has been found! You are a champion of treasure hunting. Congratulations!";
 
 	/*
 	Easter Egg Spots:
@@ -74,19 +74,26 @@ public class EasterEggs implements Listener {
 		}
 
 		foundLocs.add(blockLoc);
-		if (givePoints) {
-			bfUser.givePoints(1, true); // TODO: Determine amount of points, random?
-			service.save(bfUser);
-		}
 
-		if (foundLocs.size() >= total) {
+		if (foundLocs.size() == total) {
 			send(foundAll, player);
 			player.playSound(playerLoc, Sound.UI_TOAST_CHALLENGE_COMPLETE, 2F, 1F);
+
+			if (givePoints) {
+				player.sendMessage(PREFIX + "&e+150 &3Points!");
+				bfUser.givePoints(150, true);
+			}
+
 		} else {
 			send(foundOne, player);
 			player.playSound(playerLoc, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 2F, 2F);
 			player.playSound(playerLoc, Sound.BLOCK_BEACON_POWER_SELECT, 2F, 2F);
+
+			if (givePoints) {
+				bfUser.givePoints(10, true);
+			}
 		}
+		service.save(bfUser);
 	}
 
 }
