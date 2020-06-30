@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -246,7 +247,10 @@ public class RegenCrops implements Listener {
 
 		Ageable ageable = (Ageable) blockData;
 		if (ageable.getAge() != ageable.getMaximumAge()) {
-			send(notFullyGrownError, player);
+			if (new CooldownService().check(player, "BF_notFullyGrown", Time.MINUTE)) {
+				send(notFullyGrownError, player);
+				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+			}
 			event.setCancelled(true);
 			return;
 		}
