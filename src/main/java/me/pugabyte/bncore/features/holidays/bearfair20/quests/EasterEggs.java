@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.utils.MaterialTag;
@@ -26,24 +27,6 @@ public class EasterEggs implements Listener {
 	private static String duplicate = PREFIX + "You already found this one.";
 	private static String foundAll = PREFIX + "The final treasure chest has been found! You are a champion of treasure hunting. Congratulations!";
 
-	/*
-	Easter Egg Spots:
-			-939 137 -1624 (under tree next to tent)
-			-1155 141 -1777 (under house at MGN)
-			-1152 110 -1749 (under volcano)
-			-902 133 -1637 (under fisherman)
-			-991 135 -1621 (roller coaster bit)
-			-1095 155 -1559 (observatory)
-			-1101 137 -1651 (basement by farm)
-			-944 119 -1895 (mansion blood sewer)
-			-1050 129 -1913 (pugmas cave)
-			-1020 139 -1702 (quarry, diorite)
-			-1050 127 -1660 (quarry, gravel)
-			-852 113 -1755 (SDU, under)
-			-828 161 -1797 (SDU, above)
-			-965 115 -1710 (lapis mine)
-			-977 135 -1528 (boat)
-	 */
 
 	public EasterEggs() {
 		BNCore.registerListener(this);
@@ -80,7 +63,7 @@ public class EasterEggs implements Listener {
 			player.playSound(playerLoc, Sound.UI_TOAST_CHALLENGE_COMPLETE, 2F, 1F);
 
 			if (givePoints) {
-				player.sendMessage(PREFIX + "&e+150 &3Points!");
+				BearFair20.send(PREFIX + "&e+150 &3Points!", player);
 				bfUser.givePoints(150, true);
 			}
 
