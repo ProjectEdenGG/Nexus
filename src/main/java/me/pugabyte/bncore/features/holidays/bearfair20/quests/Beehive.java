@@ -26,7 +26,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.ch
 // NPC BEES: 2730, 2731
 public class Beehive implements Listener {
 	private String allowedMsg = "The defending swarm seems calmed by the flower's pleasant aroma. The queen beckons you to enter.";
-	private String deniedMsg = "The swarming hoards of bees seem disturbed by your presence. Perhaps a peace offering would calm them?";
+	private String deniedMsg = "The swarming hoards of bees seem disturbed by your presence. Perhaps a peace offering would calm them, maybe their most favorite flower?";
 	private Location enterLoc = new Location(BearFair20.getWorld(), -1084, 135, -1548, 228, 20);
 	private Location exitLoc = new Location(BearFair20.getWorld(), -1088, 136, -1548, 40, 0);
 	private ItemStack key = MainIsland.rareFlower.clone();

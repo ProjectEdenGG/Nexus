@@ -360,7 +360,7 @@ public class MainIsland implements Listener, Island {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
 
-		user.givePoints(300);
+		user.givePoints(500);
 		service.save(user);
 
 		Utils.runCommandAsConsole("lp user " + player.getName() + " permission set powder.powder.OrientalDiscoBathtub");
@@ -368,7 +368,7 @@ public class MainIsland implements Listener, Island {
 		String prefix = "&8&l[&eBearFair&8&l] &3";
 		BearFair20.send("", player);
 		BearFair20.send(prefix + "You Received: ", player);
-		BearFair20.send("&e-&3 &e300 &3Bear Fair Points", player);
+		BearFair20.send("&e-&3 &e500 &3Bear Fair Points", player);
 		BearFair20.send("&e-&3 Song: &eOrientalDiscoBathtub", player);
 		BearFair20.send("&e-&3 Random Reward: &e" + getRandomReward(player), player);
 		BearFair20.send("", player);
