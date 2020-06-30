@@ -254,6 +254,9 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.EGG).lore(itemLore))
 							.ingredient(goldNugget.clone().amount(5)));
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(2))
+							.ingredient(new ItemBuilder(Material.EGG).lore(itemLore)));
 				}};
 			}
 		},
