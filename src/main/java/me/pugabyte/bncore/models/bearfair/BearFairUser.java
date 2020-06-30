@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
@@ -92,7 +93,7 @@ public class BearFairUser extends PlayerOwnedObject {
 
 	public void givePoints(int points, boolean actionBar) {
 		if (actionBar)
-			sendActionBar(getPlayer(), "+" + points + plural(" point", points));
+			sendActionBar(getPlayer(), "&e+" + points + plural(" point", points));
 		givePoints(points);
 	}
 
@@ -109,19 +110,19 @@ public class BearFairUser extends PlayerOwnedObject {
 			put(LocalDate.now(), 0);
 		}});
 
-		int sourcePoints = pointsReceivedToday.get(source).get(LocalDate.now());
+		int sourcePoints = pointsReceivedToday.get(source).getOrDefault(LocalDate.now(), 0);
 
 		if (sourcePoints == DAILY_SOURCE_MAX)
 			return;
 
 		if ((sourcePoints + points) == DAILY_SOURCE_MAX)
-			send("Max daily points reached for " + StringUtils.camelCase(source.name()));
+			send(BearFair20.PREFIX + "Max daily points reached for &e" + StringUtils.camelCase(source.name()));
 
 		givePoints(points);
 
 		getPointsReceivedToday().get(source).put(LocalDate.now(), sourcePoints + points);
 
-		sendActionBar(getPlayer(), "+" + points + plural(" point", points));
+		sendActionBar(getPlayer(), "&e+" + points + plural(" point", points));
 	}
 
 	public enum BFPointSource {

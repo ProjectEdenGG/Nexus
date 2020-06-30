@@ -89,7 +89,11 @@ public class Quarry implements Listener {
 		}
 
 		// If you mined diorite
-		if (!diorite.contains(block.getType())) return;
+		if (!diorite.contains(block.getType())) {
+			if (isInRegion(block, quarryRg))
+				event.setCancelled(true);
+			return;
+		}
 
 		// if your in the quarry
 		if (!isInRegion(block, quarryRg)) {

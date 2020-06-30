@@ -39,20 +39,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static org.bukkit.block.BlockFace.EAST;
-import static org.bukkit.block.BlockFace.NORTH;
-import static org.bukkit.block.BlockFace.NORTH_EAST;
-import static org.bukkit.block.BlockFace.NORTH_WEST;
-import static org.bukkit.block.BlockFace.SOUTH;
-import static org.bukkit.block.BlockFace.SOUTH_EAST;
-import static org.bukkit.block.BlockFace.SOUTH_WEST;
-import static org.bukkit.block.BlockFace.WEST;
+import static org.bukkit.block.BlockFace.*;
 
 public class Reflection implements Listener {
 
@@ -201,7 +191,7 @@ public class Reflection implements Listener {
 		final Location[] loc = {laserStart.clone()};
 		AtomicReference<Color> laserColor = new AtomicReference<>(Color.RED);
 		AtomicInteger reflections = new AtomicInteger(0);
-		BearFair20.getWorld().playSound(laserStart, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
+		BearFair20.getWorld().playSound(laserStart, Sound.BLOCK_BEACON_ACTIVATE, 2F, 1F);
 		laserSound();
 
 		laserTaskId = Tasks.repeat(0, 1, () -> {

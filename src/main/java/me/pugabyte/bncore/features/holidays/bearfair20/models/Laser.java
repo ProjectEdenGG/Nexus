@@ -18,13 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.bukkit.block.BlockFace.EAST;
-import static org.bukkit.block.BlockFace.NORTH;
-import static org.bukkit.block.BlockFace.NORTH_EAST;
-import static org.bukkit.block.BlockFace.NORTH_WEST;
-import static org.bukkit.block.BlockFace.SOUTH;
-import static org.bukkit.block.BlockFace.SOUTH_WEST;
-import static org.bukkit.block.BlockFace.WEST;
+import static org.bukkit.block.BlockFace.*;
 
 public class Laser {
 	private Player player;
@@ -54,7 +48,7 @@ public class Laser {
 		taskId = Tasks.Countdown.builder()
 				.duration(lifeSpan.get())
 				.onStart(() -> {
-					startLoc.getWorld().playSound(startLoc, Sound.BLOCK_BEACON_ACTIVATE, 10F, 1F);
+					startLoc.getWorld().playSound(startLoc, Sound.BLOCK_BEACON_ACTIVATE, 2F, 1F);
 					curLoc.set(startLoc.clone());
 					curFace.set(startFace);
 				})

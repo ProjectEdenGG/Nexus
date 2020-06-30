@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
-import me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland;
@@ -25,15 +24,13 @@ import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
-import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -216,6 +213,17 @@ public class BearFairCommand extends _WarpCommand {
 //				.open(player());
 //	}
 
+	@Path("quests eastereggs")
+	@Permission("group.admin")
+	void topEasterEggs() {
+		List<BearFairUser> all = new BearFairService().getAll();
+		send(PREFIX + "&3Found EasterEggs:");
+		all.stream()
+				.filter(user -> user.getEasterEggsLocs().size() > 0)
+				.sorted(Comparator.comparing((BearFairUser user) -> user.getEasterEggsLocs().size()).reversed())
+				.forEach(user -> send("&3" + user.getOfflinePlayer().getName() + " &7- &e" + user.getEasterEggsLocs().size()));
+	}
+
 	@Path("quests info")
 	@Permission("group.admin")
 	void questInfo() {
@@ -254,39 +262,6 @@ public class BearFairCommand extends _WarpCommand {
 		send("====");
 	}
 
-	@Path("quests start main")
-	@Permission("group.admin")
-	void startMainQuest() {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player());
-		user.setQuest_Main_Start(true);
-		service.save(user);
-	}
-
-	@Path("quests start halloween")
-	@Permission("group.admin")
-	void startHalloweenQuest() {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player());
-		user.setQuest_Halloween_Start(true);
-		service.save(user);
-	}
-
-	@Path("quests start pugmas")
-	@Permission("group.admin")
-	void startPugmasQuest() {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player());
-		user.setQuest_Pugmas_Start(true);
-		service.save(user);
-	}
-
-	@Path("giveQuestItems")
-	@Permission("group.admin")
-	void questItems() {
-		List<ItemStack> questItems = Collections.singletonList(HalloweenIsland.atticKey);
-		Utils.giveItems(player(), questItems);
-	}
 
 	Map<UUID, Integer> bfpImport = new HashMap<UUID, Integer>() {{
 		put(UUID.fromString("0baaebf5-cfb0-431a-b625-465c64e694f1"), 125);
@@ -386,7 +361,7 @@ public class BearFairCommand extends _WarpCommand {
 			Map<LocalDate, Integer> dailyMap = user.getPointsReceivedToday().get(pointSource);
 			int points = 0;
 			if (dailyMap != null)
-				points = dailyMap.get(LocalDate.now());
+				points = dailyMap.getOrDefault(LocalDate.now(), 0);
 
 			int dailyMax = BearFairUser.DAILY_SOURCE_MAX;
 			String sourceColor = points == dailyMax ? "&a" : "&3";
