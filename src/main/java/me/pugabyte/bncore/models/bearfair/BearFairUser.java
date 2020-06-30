@@ -110,7 +110,7 @@ public class BearFairUser extends PlayerOwnedObject {
 			put(LocalDate.now(), 0);
 		}});
 
-		int sourcePoints = pointsReceivedToday.get(source).get(LocalDate.now());
+		int sourcePoints = pointsReceivedToday.get(source).getOrDefault(LocalDate.now(), 0);
 
 		if (sourcePoints == DAILY_SOURCE_MAX)
 			return;

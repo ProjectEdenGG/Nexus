@@ -361,7 +361,7 @@ public class BearFairCommand extends _WarpCommand {
 			Map<LocalDate, Integer> dailyMap = user.getPointsReceivedToday().get(pointSource);
 			int points = 0;
 			if (dailyMap != null)
-				points = dailyMap.get(LocalDate.now());
+				points = dailyMap.getOrDefault(LocalDate.now(), 0);
 
 			int dailyMax = BearFairUser.DAILY_SOURCE_MAX;
 			String sourceColor = points == dailyMax ? "&a" : "&3";
