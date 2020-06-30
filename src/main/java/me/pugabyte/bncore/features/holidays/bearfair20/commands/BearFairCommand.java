@@ -400,7 +400,7 @@ public class BearFairCommand extends _WarpCommand {
 	public void pointsGive(BearFairUser user, int points) {
 		user.givePoints(points);
 		service.save(user);
-		send(PREFIX + "&e" + points + plural(" points", points) + " &3given to &e" + user.getOfflinePlayer().getName());
+		send(PREFIX + "&e" + points + plural(" point", points) + " &3given to &e" + user.getOfflinePlayer().getName());
 	}
 
 	@Path("points take <player> <points>")
@@ -408,7 +408,7 @@ public class BearFairCommand extends _WarpCommand {
 	public void pointsTake(BearFairUser user, int points) {
 		user.takePoints(points);
 		service.save(user);
-		send(PREFIX + "&e" + points + plural(" points", points) + " &3taken from &e" + user.getOfflinePlayer().getName());
+		send(PREFIX + "&e" + points + plural(" point", points) + " &3taken from &e" + user.getOfflinePlayer().getName());
 	}
 
 	@Path("points set <player> <points>")
