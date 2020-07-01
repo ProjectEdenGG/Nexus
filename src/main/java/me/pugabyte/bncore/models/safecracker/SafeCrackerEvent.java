@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.converters.BooleanConverter;
 import lombok.*;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -28,13 +29,15 @@ public class SafeCrackerEvent extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	@Embedded
-	private Map<String, SafeCrackerGames> games = new HashMap<>();
+	private Map<String, SafeCrackerGame> games = new HashMap<>();
 
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public class SafeCrackerGames {
+	@Converters({LocalDateTimeConverter.class, BooleanConverter.class})
+	public static class SafeCrackerGame {
 		private String name;
+		private boolean active;
 		private LocalDateTime created;
 		private String riddle;
 		private String answer;
@@ -45,8 +48,9 @@ public class SafeCrackerEvent extends PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public class SafeCrackerNPC {
+	public static class SafeCrackerNPC {
 		private int id;
+		private String name;
 		private String question;
 		private List<String> answers;
 		private String riddle;

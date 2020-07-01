@@ -43,6 +43,8 @@ public class SafeCrackerPlayer extends PlayerOwnedObject {
 	@AllArgsConstructor
 	@Converters(LocalDateTimeConverter.class)
 	public static class SafeCrackerPlayerNPC {
+		private int id;
+		private String name;
 		private LocalDateTime found;
 		private String answer;
 		private boolean correct;

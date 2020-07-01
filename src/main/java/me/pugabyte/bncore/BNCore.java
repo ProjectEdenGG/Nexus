@@ -24,6 +24,7 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.particles.Particles;
 import me.pugabyte.bncore.features.quests.Quests;
 import me.pugabyte.bncore.features.recipes.CustomRecipes;
+import me.pugabyte.bncore.features.safecracker.SafeCracker;
 import me.pugabyte.bncore.features.shops.Shops;
 import me.pugabyte.bncore.features.store.perks.joinquit.JoinQuit;
 import me.pugabyte.bncore.features.tickets.Tickets;
@@ -265,6 +266,7 @@ public class BNCore extends JavaPlugin {
 	public static Minigames minigames;
 	public static Particles particles;
 	public static Quests quests;
+	public static SafeCracker safeCracker;
 	public static Shops shops;
 	public static Tab tab;
 	public static Tickets tickets;
@@ -311,6 +313,7 @@ public class BNCore extends JavaPlugin {
 		new Timer("  Minigames", () -> minigames = new Minigames());
 		new Timer("  Particles", () -> particles = new Particles());
 		new Timer("  Quests", () -> quests = new Quests());
+		new Timer("  SafeCracker", () -> safeCracker = new SafeCracker());
 		new Timer("  Shops", () -> shops = new Shops());
 		new Timer("  Tab", () -> tab = new Tab());
 		new Timer("  Tickets", () -> tickets = new Tickets());
