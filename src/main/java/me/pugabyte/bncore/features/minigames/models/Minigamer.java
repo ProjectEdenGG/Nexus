@@ -293,6 +293,10 @@ public class Minigamer {
 		player.setLevel(0);
 		player.getInventory().setHeldItemSlot(0);
 		player.setFoodLevel(20);
+		player.setFallDistance(0f);
+		player.setAllowFlight(false);
+		player.setFlying(false);
+		BNCore.getEssentials().getUser(player).setVanished(false);
 
 		if (match.getArena().getMechanic().shouldClearInventory())
 			player.getInventory().clear();
