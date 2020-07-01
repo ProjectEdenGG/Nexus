@@ -107,7 +107,6 @@ public class Match {
 	}
 
 	public boolean join(Minigamer minigamer) {
-
 		List<Class<?>> usesWorldEdit = Arrays.asList(Battleship.class, UncivilEngineers.class);
 		if (usesWorldEdit.contains(arena.getMechanic().getClass()) || arena.getName().equals("RavensNestEstate")) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
@@ -225,15 +224,19 @@ public class Match {
 
 	private void initialize() {
 		if (!initialized) {
-			MatchInitializeEvent event = new MatchInitializeEvent(this);
-			if (!event.callEvent()) return;
+			try {
+				MatchInitializeEvent event = new MatchInitializeEvent(this);
+				if (!event.callEvent()) return;
 
-			initializeMatchData();
-			tasks = new MatchTasks();
-			scoreboard = MinigameScoreboard.Factory.create(this);
-			scoreboardTeams = MinigameScoreboard.Teams.Factory.create(this);
-			arena.getMechanic().onInitialize(event);
-			initialized = true;
+				initializeMatchData();
+				tasks = new MatchTasks();
+				scoreboard = MinigameScoreboard.Factory.create(this);
+				scoreboardTeams = MinigameScoreboard.Teams.Factory.create(this);
+				arena.getMechanic().onInitialize(event);
+				initialized = true;
+			} catch (Exception ex) {
+				end();
+			}
 		}
 	}
 
