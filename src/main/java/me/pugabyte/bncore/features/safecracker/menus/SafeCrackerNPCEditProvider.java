@@ -7,6 +7,8 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -32,6 +34,8 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 			MenuUtils.ConfirmationMenu.builder()
 					.onConfirm(event -> {
 						SafeCrackerEvent.SafeCrackerGame game = service.getActiveEvent();
+						NPC npcEntity = CitizensAPI.getNPCRegistry().getById(npc.getId());
+						npcEntity.destroy();
 						game.getNpcs().remove(npc.getName());
 						service.save(service.get());
 						SafeCrackerInventories.openAdminMenu(player);
