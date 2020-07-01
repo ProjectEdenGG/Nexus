@@ -103,7 +103,7 @@ public class Chat {
 				.nickname("M")
 				.color(ChatColor.DARK_AQUA)
 				.local(false)
-				.crossWorld(false)
+				.crossWorld(true)
 				.build()),
 		CREATIVE(PublicChannel.builder()
 				.name("Creative")

@@ -157,6 +157,7 @@ public class MatchListener implements Listener {
 		if (!(event.getEntity() instanceof Player)) return;
 
 		Minigamer victim = PlayerManager.get((Player) event.getEntity());
+		if (!victim.isAlive()) return;
 		Minigamer attacker = null;
 		Projectile projectile = null;
 		if (event.getDamager() instanceof Player) {
@@ -266,7 +267,7 @@ public class MatchListener implements Listener {
 
 		// Ignore damage by entity (see above)
 		if (event.getCause().name().contains("ENTITY")) return;
-		if (!victim.isPlaying()) return;
+		if (!victim.isPlaying() || !victim.isAlive()) return;
 		Mechanic mechanic = victim.getMatch().getArena().getMechanic();
 
 		if (victim.isRespawning() || !victim.getMatch().isStarted()) {
