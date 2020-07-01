@@ -103,6 +103,7 @@ public class Beehive implements Listener {
 				BearFairService service = new BearFairService();
 				BearFairUser user = service.get(player);
 				user.setQuest_Hive_Access(true);
+				MainIsland.setStep(player, 3);
 				service.save(user);
 
 				Tasks.wait(60, () -> {
