@@ -13,7 +13,7 @@ public enum WorldGroup {
 			"staff_world", "staff_world_nether", "staff_world_the_end",
 			"safepvp", "wither"),
 	CREATIVE("creative", "buildcontest", "buildadmin", "jail", "pirate", "tiger"),
-	MINIGAMES("gameworld", "blockball"),
+	MINIGAMES("gameworld", "blockball", "deathswap"),
 	SKYBLOCK("skyblock", "skyblock_nether"),
 	ADVENTURE("stranded"),
 	EVENT("2y"),
