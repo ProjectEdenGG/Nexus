@@ -28,6 +28,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.RelativeLocation;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -272,9 +273,9 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	private static String inviteCommand;
+	private static String inviteMessage;
 
-	@Path("invite")
-	void invite() {
+	private void updateInvite() {
 		boolean isMinigameNight = false;
 		LocalDateTime date = LocalDateTime.now();
 		DayOfWeek dow = date.getDayOfWeek();
@@ -304,10 +305,9 @@ public class MinigamesCommand extends CustomCommand {
 		if (count == 0)
 			error("There is no one to invite!");
 
-		String message;
 		if (WGUtils.isInRegion(player().getLocation(), "screenshot")) {
 			inviteCommand = "warp screenshot";
-			message = "take a screenshot";
+			inviteMessage = "take a screenshot";
 		} else {
 			Sign sign = getTargetSign(player());
 			String line2 = stripColor(sign.getLine(1)).toLowerCase();
@@ -325,23 +325,38 @@ public class MinigamesCommand extends CustomCommand {
 
 			String line3 = stripColor(sign.getLine(2)) + stripColor(sign.getLine(3));
 			inviteCommand = prefix + " join " + line3;
-			message = line3;
+			inviteMessage = line3;
 		}
+	}
 
+	private void sendInvite(Collection<? extends Player> players) {
 		String sender = player().getName();
-		send("&3Invite sent to &e" + count + " &3players for &e" + message);
+		send("&3Invite sent to &e" + (players.size() - 1) + " &3players for &e" + inviteMessage);
 		for (Player player : players) {
 			if (player.equals(player()))
 				continue;
 
 			send(player, json("")
 					.newline()
-					.next(" &e" + sender + " &3has invited you to &e" + message).group()
+					.next(" &e" + sender + " &3has invited you to &e" + inviteMessage).group()
 					.newline()
 					.next("&e Click here to &a&laccept")
 					.command("/mgm accept")
 					.hover("&eClick &3to accept"));
 		}
+	}
+
+	@Path("invite")
+	void invite() {
+		updateInvite();
+		sendInvite(new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby"));
+	}
+
+	@Permission("manage")
+	@Path("inviteAll")
+	void inviteAll() {
+		updateInvite();
+		sendInvite(Bukkit.getOnlinePlayers());
 	}
 
 	@Path("accept")
