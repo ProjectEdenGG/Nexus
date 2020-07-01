@@ -97,14 +97,6 @@ public class BearFairCommand extends _WarpCommand {
 
 	// Admin/CommandBlock Commands
 
-	@Path("give")
-	@Permission("group.admin")
-	public void give() {
-		ItemStack item = new ItemStack(Material.DIRT);
-		Utils.giveItem(player(), item);
-	}
-
-
 	@Override
 	@Path("warps list [filter]")
 	@Permission("group.admin")
@@ -224,6 +216,23 @@ public class BearFairCommand extends _WarpCommand {
 //				.open(player());
 //	}
 
+	@Path("quests give")
+	@Permission("group.admin")
+	public void give() {
+		ItemStack item = new ItemStack(Material.DIRT);
+		Utils.giveItem(player(), item);
+	}
+
+	@Path("quests started")
+	@Permission("group.admin")
+	void playersStartedQuest() {
+		List<BearFairUser> all = new BearFairService().getAll();
+		int started = (int) all.stream().filter(BearFairUser::isQuest_Main_Start).count();
+		int finished = (int) all.stream().filter(BearFairUser::isQuest_Main_Finish).count();
+		send(PREFIX + "&3Players Started Quest: " + started);
+		send(PREFIX + "&3Players Started Quest: " + finished);
+	}
+
 	@Path("quests eastereggs")
 	@Permission("group.admin")
 	void topEasterEggs() {
@@ -273,6 +282,7 @@ public class BearFairCommand extends _WarpCommand {
 		send("====");
 	}
 
+	// Point Commands
 
 	Map<UUID, Integer> bfpImport = new HashMap<UUID, Integer>() {{
 		put(UUID.fromString("0baaebf5-cfb0-431a-b625-465c64e694f1"), 125);
