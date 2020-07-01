@@ -206,6 +206,25 @@ public class MinigameNightIsland implements Listener, Island {
 	}
 
 	@EventHandler
+	public void onInteract(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND) return;
+
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
+		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+
+		ItemStack tool = Utils.getTool(event.getPlayer());
+		if (!BearFair20.isBFItem(tool)) return;
+
+		for (ItemBuilder arcadePiece : arcadePieces) {
+			ItemStack arcadePieceItem = arcadePiece.build();
+			if (arcadePieceItem.equals(tool)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+	}
+
+	@EventHandler
 	public void onClickArcadePiece(PlayerInteractEntityEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
