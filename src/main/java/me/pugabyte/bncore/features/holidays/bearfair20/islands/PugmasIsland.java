@@ -262,23 +262,24 @@ public class PugmasIsland implements Listener, Island {
 		Tasks.repeat(0, Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream()
 				.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(player.getLocation(), getRegion()).size() > 0)
 				.forEach(player -> {
-							BearFairService service = new BearFairService();
-							BearFairUser user = service.get(player);
-							int step = user.getQuest_Pugmas_Step();
-							boolean startedQuest = user.isQuest_Pugmas_Start();
-							boolean mayorQuest = true;
+					BearFairService service = new BearFairService();
+					BearFairUser user = service.get(player);
+					int step = user.getQuest_Pugmas_Step();
+					boolean startedQuest = user.isQuest_Pugmas_Start();
+					boolean finishedQuest = user.isQuest_Halloween_Finish();
+					boolean mayorQuest = true;
 
-							if (startedQuest) {
-								if (step == 21)
-									mayorQuest = false;
+					if (startedQuest && !finishedQuest) {
+						if (step == 21)
+							mayorQuest = false;
 
-								// Only shows particle effect for active quest
-								if (mayorQuest) {
-									presents_grinch.forEach(present -> {
-										if (!isFoundPresent(present, player)) {
-											Location loc = Utils.getCenteredLocation(present);
-											loc.setY(loc.getBlockY() + 0.25);
-											player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+						// Only shows particle effect for active quest
+						if (mayorQuest) {
+							presents_grinch.forEach(present -> {
+								if (!isFoundPresent(present, player)) {
+									Location loc = Utils.getCenteredLocation(present);
+									loc.setY(loc.getBlockY() + 0.25);
+									player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
 										}
 									});
 								} else {
@@ -313,6 +314,9 @@ public class PugmasIsland implements Listener, Island {
 		Player player = event.getPlayer();
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
+
+		if (user.isQuest_Halloween_Finish())
+			return;
 
 		if (!isPresentHead(clicked, player)) return;
 
@@ -391,6 +395,9 @@ public class PugmasIsland implements Listener, Island {
 	public static void switchQuest(Player player, boolean mayor) {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
+		if (user.isQuest_Halloween_Finish()) return;
+		if (user.isQuest_Pugmas_Switched()) return;
+
 		user.setQuest_Pugmas_Switched(true);
 		if (mayor)
 			user.setQuest_Pugmas_Step(11);
@@ -405,6 +412,9 @@ public class PugmasIsland implements Listener, Island {
 	public static void acceptQuest(Player player, boolean mayor) {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
+		if (user.isQuest_Halloween_Finish()) return;
+		if (user.isQuest_Pugmas_Switched()) return;
+
 		user.setQuest_Pugmas_Start(true);
 		if (mayor)
 			user.setQuest_Pugmas_Step(11);
