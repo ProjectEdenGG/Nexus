@@ -26,9 +26,11 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -98,7 +100,8 @@ public class BearFairCommand extends _WarpCommand {
 	@Path("give")
 	@Permission("group.admin")
 	public void give() {
-		Utils.giveItem(player(), MainIsland.rareFlower);
+		ItemStack item = new ItemStack(Material.DIRT);
+		Utils.giveItem(player(), item);
 	}
 
 
