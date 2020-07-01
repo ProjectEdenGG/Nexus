@@ -140,7 +140,6 @@ public class Votes implements Listener {
 
 	private static final int basePoints = 1;
 	private static final Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
-		put(1250, 50);
 		put(1500, 50);
 		put(500, 25);
 		put(200, 15);
