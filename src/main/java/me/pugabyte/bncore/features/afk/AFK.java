@@ -24,7 +24,7 @@ public class AFK {
 	static {
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream().map(AFK::get).forEach(player -> {
 			try {
-				if (!isSameLocation(player.getLocation(), player.getPlayer().getLocation()))
+				if (!isSameLocation(player.getLocation(), player.getPlayer().getLocation()) && player.getPlayer().getVehicle() == null)
 					if (player.isAfk() && !player.isForceAfk())
 						player.notAfk();
 					else
@@ -42,8 +42,8 @@ public class AFK {
 		if (!from.getWorld().equals(to.getWorld()))
 			return false;
 
-		boolean x = (int) from.getX() == (int) to.getX();
-		boolean z = (int) from.getZ() == (int) to.getZ();
+		boolean x = Math.abs(Math.round(from.getX()) - Math.round(to.getX())) < 2;
+		boolean z = Math.abs(Math.round(from.getZ()) - Math.round(to.getZ())) < 2;
 		return x && z;
 	}
 

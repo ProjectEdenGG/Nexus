@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public enum Achievement {
+	// New achievement: "You put the 'fun' in 'funeral'..." -> get every death message (PYROPEGUIN)
 	KILL_DA_DRAGON(
 			"Kill a dragon",
 			AchievementGroup.COMBAT,
