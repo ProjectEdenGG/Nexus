@@ -265,8 +265,6 @@ public class MatchListener implements Listener {
 			return;
 		}
 
-		// Ignore damage by entity (see above)
-		if (event.getCause().name().contains("ENTITY")) return;
 		if (!victim.isPlaying() || !victim.isAlive()) return;
 		Mechanic mechanic = victim.getMatch().getArena().getMechanic();
 
