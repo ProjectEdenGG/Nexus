@@ -287,7 +287,7 @@ public class MainIsland implements Listener, Island {
 		service.save(user);
 	}
 
-	private static void nextStep(Player player) {
+	public static void nextStep(Player player) {
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
 		int step = user.getQuest_Main_Step() + 1;
