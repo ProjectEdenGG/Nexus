@@ -29,6 +29,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,6 +69,95 @@ public class MainIsland implements Listener, Island {
 	}
 
 	public enum MainNPCs implements TalkingNPC {
+		Excavator1(2969) {
+			@Override
+			public List<String> getScript(Player player) {
+				List<String> script = new ArrayList<>();
+				switch (LocalDateTime.now().getDayOfMonth()) {
+					case 1:
+						script.add("We've got some digging to do. You should speak with my supervisor.");
+						break;
+					case 2:
+						script.add("I'm not too sure about this dig anymore...");
+						break;
+					case 3:
+						script.add("I was mining earlier and it sounded metallic. I hope we are close.");
+						break;
+					case 4:
+						script.add("The safe has some special word on it, 'SafeCracker.'");
+						break;
+					default:
+						return null;
+				}
+				return script;
+			}
+		},
+		Excavator2(2968) {
+			@Override
+			public List<String> getScript(Player player) {
+				List<String> script = new ArrayList<>();
+				switch (LocalDateTime.now().getDayOfMonth()) {
+					case 1:
+						script.add("I'm not supposed to tell you what we're looking for, but my supervisor may have some information for you.");
+						break;
+					case 2:
+						script.add("I hope I get to keep a part of whatever is in the evil safe");
+						break;
+					case 3:
+						script.add("I'm so ready for this dig to be over. I thought this was a one day job!");
+						break;
+					case 4:
+						script.add("I'm so glad this dig is finally over. I can go home and get some rest.");
+						break;
+					default:
+						return null;
+				}
+				return script;
+			}
+		},
+		Supervisor(2970) {
+			@Override
+			public List<String> getScript(Player player) {
+				List<String> script = new ArrayList<>();
+				switch (LocalDateTime.now().getDayOfMonth()) {
+					case 1:
+						script.add("We've heard about a lost safe under these fair grounds.");
+						script.add("wait 80");
+						script.add("We've tracked it to this location and are working hard to uncover it.");
+						script.add("wait 80");
+						script.add("Check back with us over the next few days and we should make some progress!");
+						break;
+					case 2:
+						script.add("We can feel a strong energy radiating from this site.");
+						script.add("wait 80");
+						script.add("I'm not sure what we're dealing with, but it's definitely special.");
+						script.add("wait 80");
+						script.add("We are getting closer to the safe, I can tell");
+						break;
+					case 3:
+						script.add("I've had to call in reinforcements for this dig, the stone around the safe is very tough.");
+						script.add("wait 80");
+						script.add("One of the excavators said he thought he heard a clink while mining, so we might be close.");
+						script.add("wait 80");
+						script.add("It should only be one more day before we find what we are looking for.");
+						break;
+					case 4:
+						script.add("We found the safe, but it's protected by a magical spell. We can't seem to break it no matter what we try.");
+						script.add("wait 80");
+						script.add("However, I've wandered around the island at night, and last night a whole bunch of strangers showed up.");
+						script.add("wait 80");
+						script.add("They were muttering strange questions at me, and I think they might have something to do with this safe.");
+						script.add("wait 80");
+						script.add("Search around the island for these strangers, and see if they can give you a clue on how to open this safe.");
+						// wait 80 + 20
+						Tasks.wait(340, () -> Utils.runCommand(player, "/safecracker start"));
+						break;
+					default:
+						return null;
+				}
+				return script;
+			}
+		},
 		Miner(2743) {
 			@Override
 			public List<String> getScript(Player player) {
