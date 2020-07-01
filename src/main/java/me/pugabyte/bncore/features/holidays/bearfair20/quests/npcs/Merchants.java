@@ -121,8 +121,8 @@ public class Merchants {
 							.result(MainIsland.relic_eyes)
 							.ingredient(new ItemBuilder(Material.HONEYCOMB).amount(9).lore(itemLore)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(4))
-							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).lore(itemLore)));
+							.result(goldNugget.clone().amount(2))
+							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(12).lore(itemLore)));
 				}};
 			}
 		},
