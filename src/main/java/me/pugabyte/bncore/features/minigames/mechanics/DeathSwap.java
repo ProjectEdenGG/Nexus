@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException
 import me.pugabyte.bncore.features.minigames.models.matchdata.DeathSwapMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.DeathSwapMatchData.Swap;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -76,13 +77,18 @@ public final class DeathSwap extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
-		DeathSwapMatchData matchData = event.getMatch().getMatchData();
-		Minigamer killer = matchData.getKiller(event.getMinigamer());
-		if (killer != null) {
-			event.setDeathMessage(event.getMinigamer().getColoredName() + " &3was killed by " + killer.getColoredName());
-			killer.scored();
+		if (event.getAttacker() != null) {
+			event.getAttacker().scored();
+		} else {
+			DeathSwapMatchData matchData = event.getMatch().getMatchData();
+			Minigamer killer = matchData.getKiller(event.getMinigamer());
+			if (killer != null) {
+				event.setDeathMessage(event.getMinigamer().getColoredName() + " &3was killed by " + killer.getColoredName());
+				killer.scored();
+			}
 		}
-		super.onDeath(event);
+
+		Tasks.wait(1, () -> super.onDeath(event));
 	}
 
 	@Override

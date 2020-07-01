@@ -58,6 +58,8 @@ public class Match {
 	private Arena arena;
 	@ToString.Exclude
 	private List<Minigamer> minigamers = new ArrayList<>();
+	@ToString.Exclude
+	private List<Minigamer> allMinigamers = new ArrayList<>();
 	private boolean initialized = false;
 	private boolean started = false;
 	private boolean ended = false;
@@ -80,6 +82,10 @@ public class Match {
 
 	public List<Player> getPlayers() {
 		return minigamers.stream().map(Minigamer::getPlayer).collect(Collectors.toList());
+	}
+
+	public List<Player> getAllPlayers() {
+		return allMinigamers.stream().map(Minigamer::getPlayer).collect(Collectors.toList());
 	}
 
 	public List<Team> getAliveTeams() {
@@ -130,6 +136,7 @@ public class Match {
 		if (event.isCancelled()) return false;
 
 		minigamers.add(minigamer);
+		allMinigamers.add(minigamer);
 
 		try {
 			arena.getMechanic().processJoin(minigamer);
@@ -213,7 +220,7 @@ public class Match {
 					scores.append("= ").append(team.getName()).append(" - ").append(team.getScore(this)).append(System.lineSeparator()));
 		}
 
-		getMinigamers().stream().sorted(Comparator.comparing(Minigamer::getScore).reversed()).forEach(minigamer ->
+		getAllMinigamers().stream().sorted(Comparator.comparing(Minigamer::getScore).reversed()).forEach(minigamer ->
 				scores.append("- ").append(minigamer.getName()).append(" - ").append(minigamer.getScore()).append(System.lineSeparator()));
 
 		if (scores.length() > 0) {
