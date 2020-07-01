@@ -77,6 +77,9 @@ public final class DeathSwap extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
+		if (!event.getMinigamer().isAlive()) return;
+		event.getMinigamer().setAlive(false);
+
 		if (event.getAttacker() != null) {
 			event.getAttacker().scored();
 		} else {
