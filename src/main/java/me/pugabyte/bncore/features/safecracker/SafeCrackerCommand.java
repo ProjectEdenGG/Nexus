@@ -59,6 +59,8 @@ public class SafeCrackerCommand extends CustomCommand {
 	void solve(String answer) {
 		if (safeCrackerPlayer.getGames().get(game.getName()).getScore() != 0)
 			error("You have already correctly solved the riddle");
+		if (safeCrackerPlayer.getGames().get(game.getName()).getNpcs().size() != game.getNpcs().size())
+			error("You have not found all the NPCs to solve the riddle. Keep hunting!");
 		if (eventService.getActiveEvent().getAnswer().equalsIgnoreCase(answer)) {
 			int score = (int) Math.abs(Duration.between(LocalDateTime.now(), safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted()).getSeconds() - 1);
 			safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).setScore(score);

@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import io.papermc.lib.PaperLib;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
@@ -80,18 +79,18 @@ public final class DeathSwap extends TeamlessMechanic {
 	private void spreadPlayers(List<Minigamer> minigamers) {
 		Location center = Bukkit.getWorld(world).getHighestBlockAt(Utils.randomInt(-5000, 5000), Utils.randomInt(-5000, 5000)).getLocation();
 		for (Minigamer minigamer : minigamers) {
+			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Time.SECOND.x(20), 10, false, false));
+			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(5), 10, false, false));
+			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, Time.SECOND.x(5), 255, false, false));
+			minigamer.getPlayer().setVelocity(new Vector(0, 0, 0));
 			int tries = 0;
 			Location loc;
 			do {
-				loc = Bukkit.getWorld(world).getHighestBlockAt(Utils.randomInt(-gameRadius / 2, gameRadius / 2),
-						Utils.randomInt(-gameRadius / 2, gameRadius / 2)).getLocation().add(new Vector(center.getX(), 0, center.getZ()));
+				loc = Bukkit.getWorld(world).getHighestBlockAt(new Location(Bukkit.getWorld(world), Utils.randomInt(-gameRadius / 2, gameRadius / 2), 0,
+						Utils.randomInt(-gameRadius / 2, gameRadius / 2)).add(new Vector(center.getX(), 0, center.getZ()))).getLocation();
 				tries++;
 			} while (!loc.getBlock().getType().isSolid() && tries < 20);
-			Location newLoc = loc.clone();
-			if (!PaperLib.isChunkGenerated(newLoc))
-				PaperLib.getChunkAtAsync(newLoc, true).thenAccept(chunk -> minigamer.teleport(newLoc.clone().add(0, 2, 0)));
-			else
-				minigamer.teleport(newLoc.clone().add(0, 2, 0));
+			minigamer.teleport(loc.clone().add(0, 2, 0));
 		}
 		WorldBorder border = Bukkit.getWorld(world).getWorldBorder();
 		border.setCenter(center);
