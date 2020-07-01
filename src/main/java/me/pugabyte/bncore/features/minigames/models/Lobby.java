@@ -53,11 +53,11 @@ public class Lobby implements ConfigurationSerializable {
 	}
 
 	private class LobbyTimer {
-		private Lobby lobby;
-		private Match match;
-		private Arena arena;
+		private final Lobby lobby;
+		private final Match match;
+		private final Arena arena;
 		private int time;
-		private List<Integer> broadcasts = Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1);
+		private final List<Integer> broadcasts = Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1);
 		private int taskId;
 
 		LobbyTimer(Lobby lobby, Match match, int time) {
