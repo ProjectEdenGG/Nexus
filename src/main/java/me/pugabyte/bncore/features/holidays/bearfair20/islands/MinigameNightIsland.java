@@ -407,7 +407,7 @@ public class MinigameNightIsland implements Listener, Island {
 			armorStand.getEquipment().setItemInMainHand(air);
 			Utils.giveItem(player, getArcadePiece(piece));
 			Tasks.wait(10, () -> activeSolder = false);
-			world.playSound(finalLoc, Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
+			world.playSound(finalLoc, Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
 		});
 		//
 
