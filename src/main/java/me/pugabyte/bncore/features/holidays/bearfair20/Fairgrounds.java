@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.PugDunk;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Reflection;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -144,8 +145,10 @@ public class Fairgrounds implements Listener {
 	public void onDrop(PlayerDropItemEvent event) {
 		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
 		if (WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) {
+			ItemStack dropped = event.getItemDrop().getItemStack();
+			String droppedName = StringUtils.stripColor(dropped.getItemMeta().getDisplayName());
 			for (BearFairKit kit : BearFairKit.values()) {
-				if (kit.getItems().contains(event.getItemDrop().getItemStack())) {
+				if (kit.getItems().contains(dropped) && !droppedName.equalsIgnoreCase("Basketball")) {
 					event.setCancelled(true);
 					return;
 				}

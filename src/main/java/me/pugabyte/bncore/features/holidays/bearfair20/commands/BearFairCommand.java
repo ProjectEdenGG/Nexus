@@ -24,6 +24,7 @@ import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -93,6 +94,13 @@ public class BearFairCommand extends _WarpCommand {
 	}
 
 	// Admin/CommandBlock Commands
+
+	@Path("give")
+	@Permission("group.admin")
+	public void give() {
+		Utils.giveItem(player(), MainIsland.rareFlower);
+	}
+
 
 	@Override
 	@Path("warps list [filter]")

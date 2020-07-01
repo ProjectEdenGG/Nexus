@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
@@ -11,15 +12,19 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Collections;
 
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
 
@@ -106,6 +111,25 @@ public class Beehive implements Listener {
 				});
 			}
 		}
+	}
+
+	@EventHandler
+	public void onUseFlower(PlayerInteractEntityEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND) return;
+
+		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
+		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+
+		ItemStack tool = Utils.getTool(event.getPlayer());
+		if (!BearFair20.isBFItem(tool)) return;
+
+		if (event.getRightClicked().getType().equals(EntityType.BEE)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (tool.equals(MainIsland.rareFlower))
+			event.setCancelled(true);
 	}
 
 	private void allowed(Player player) {
