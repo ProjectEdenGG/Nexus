@@ -290,6 +290,17 @@ public class BNCoreCommand extends CustomCommand {
 		send("Hello!");
 	}
 
+	@Path("argPermTest [one] [two] [three] [four] [five]")
+	void argPermTest(
+			@Arg(tabCompleter = Player.class) String one,
+			@Arg(value = "2", tabCompleter = Player.class) String two,
+			@Arg(permission = "group.staff", tabCompleter = Player.class) String three,
+			@Arg(value = "4", permission = "group.staff", tabCompleter = Player.class) String four,
+			@Arg(value = "5", permission = "group.admin", tabCompleter = Player.class) String five
+	) {
+		send(one + " / " + two + " / " + three + " / " + four + " / " + five);
+	}
+
 	@Path("timespanFormatter <seconds> <formatType>")
 	void timespanFormatter(int seconds, TimespanFormatType formatType) {
 		send(TimespanFormatter.of(seconds).formatType(formatType).format());

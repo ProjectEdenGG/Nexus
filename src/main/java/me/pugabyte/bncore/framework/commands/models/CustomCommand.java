@@ -479,9 +479,9 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		JsonBuilder buttons = json();
 		if (first)
-			buttons.next("&7 « Previous  ");
+			buttons.next("&7 « Previous  &3");
 		else
-			buttons.next("&e « Previous  ").command(command + " " + (page - 1));
+			buttons.next("&e « Previous  &3").command(command + " " + (page - 1));
 
 		buttons.group().next("&3|&3|").group();
 
