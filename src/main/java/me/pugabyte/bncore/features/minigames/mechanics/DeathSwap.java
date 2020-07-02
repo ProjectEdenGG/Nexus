@@ -71,6 +71,7 @@ public final class DeathSwap extends TeamlessMechanic {
 		super.onInitialize(event);
 		if (getWorld() == null)
 			throw new MinigameException("DeathSwap world not created");
+		getWorld().getWorldBorder().reset();
 	}
 
 	@Override
