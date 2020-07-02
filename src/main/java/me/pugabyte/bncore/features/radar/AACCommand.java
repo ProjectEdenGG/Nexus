@@ -31,7 +31,7 @@ public class AACCommand extends CustomCommand {
 		double ping = Double.parseDouble(numbers[1].trim());
 		double tps = Double.parseDouble(numbers[2].trim());
 		if (ping < 200 && tps >= 18) {
-			String message = "&a" + name + " &f" + reason.replace("{worldgroup}", worldGroup.name());
+			String message = "&a" + name + " &f" + reason.replace("{worldgroup}", camelCase(worldGroup));
 			Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, StaticChannel.STAFF);
 			Chat.broadcastDiscord("**[Radar]** " + message, StaticChannel.STAFF);
 		}
