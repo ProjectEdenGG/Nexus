@@ -22,6 +22,8 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.models.warps.WarpService;
+import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -363,7 +365,12 @@ public class MinigamesCommand extends CustomCommand {
 	void acceptInvite() {
 		if (inviteCommand == null)
 			error("There is no pending game invite");
-		runCommand(inviteCommand);
+
+		if (player().getWorld() != Minigames.getWorld()) {
+			new WarpService().get("minigames", WarpType.NORMAL).teleport(player());
+			Tasks.wait(5, this::acceptInvite);
+		} else
+			runCommand(inviteCommand);
 	}
 
 	private Sign getTargetSign(Player player) {
