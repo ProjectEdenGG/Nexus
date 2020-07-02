@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.poof;
 
+import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
@@ -62,14 +63,14 @@ public class RTPCommand extends CustomCommand {
 			return;
 		}
 
-		Tasks.sync(() -> {
+		PaperLib.getChunkAtAsync(best, true).thenAccept(chunk -> {
 			Block highestBlock = player().getWorld().getHighestBlockAt(best);
 			if (!highestBlock.getType().isSolid() && count.get() < 10) {
 				Tasks.async(this::rtp);
 				return;
 			}
 
-			player().teleport(Utils.getCenteredLocation(highestBlock.getLocation().add(0, 1, 0)), TeleportCause.COMMAND);
+			PaperLib.teleportAsync(player(), Utils.getCenteredLocation(highestBlock.getLocation().add(0, 1, 0)), TeleportCause.COMMAND);
 		});
 	}
 

@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -62,7 +63,7 @@ public final class DeathSwap extends TeamlessMechanic {
 		return true;
 	}
 
-	public int gameRadius = 1000;
+	public int radius = 1000;
 	public String world = "deathswap";
 
 	@Override
@@ -76,7 +77,9 @@ public final class DeathSwap extends TeamlessMechanic {
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 
-		event.getMatch().getTasks().wait(5, () -> spreadPlayers(new ArrayList<>(event.getMatch().getMinigamers())));
+		setWorldBorder(getWorld().getHighestBlockAt(Utils.randomInt(-5000, 5000), Utils.randomInt(-5000, 5000)).getLocation());
+
+		event.getMatch().getTasks().wait(1, () -> spreadPlayers(event.getMatch()));
 
 		event.getMatch().getTasks().wait(Time.SECOND.x(30), () -> delay(event.getMatch()));
 	}
@@ -110,25 +113,36 @@ public final class DeathSwap extends TeamlessMechanic {
 		return Bukkit.getWorld(this.world);
 	}
 
-	private void spreadPlayers(List<Minigamer> minigamers) {
-		Location center = getWorld().getHighestBlockAt(Utils.randomInt(-5000, 5000), Utils.randomInt(-5000, 5000)).getLocation();
-		for (Minigamer minigamer : minigamers) {
+	private void spreadPlayers(Match match) {
+		for (Minigamer minigamer : match.getMinigamers()) {
 			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Time.SECOND.x(20), 10, false, false));
 			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(5), 10, false, false));
 			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, Time.SECOND.x(5), 255, false, false));
 			minigamer.getPlayer().setVelocity(new Vector(0, 0, 0));
-			int tries = 0;
-			Location loc;
-			do {
-				loc = getWorld().getHighestBlockAt(new Location(getWorld(), Utils.randomInt(-gameRadius / 2, gameRadius / 2), 0,
-						Utils.randomInt(-gameRadius / 2, gameRadius / 2)).add(new Vector(center.getX(), 0, center.getZ()))).getLocation();
-				tries++;
-			} while (!loc.getBlock().getType().isSolid() && tries < 20);
-			minigamer.teleport(loc.clone().add(0, 2, 0));
+			Tasks.async(() -> randomTeleport(minigamer));
 		}
+	}
+
+	private void randomTeleport(Minigamer minigamer) {
+		Location center = getWorld().getWorldBorder().getCenter();
+		int x = Utils.randomInt(-radius / 2, radius / 2);
+		int z = Utils.randomInt(-radius / 2, radius / 2);
+		Location random = new Location(getWorld(), x, 0, z).add(center.getX(), 0, center.getZ());
+		PaperLib.getChunkAtAsync(random, true).thenRun(() -> {
+			Location location = getWorld().getHighestBlockAt(random).getLocation();
+			if (location.getBlock().getType().isSolid()) {
+				minigamer.canTeleport(true);
+				PaperLib.teleportAsync(minigamer.getPlayer(), location.clone().add(0, 2, 0))
+						.thenRun(() -> minigamer.canTeleport(false));
+			} else
+				randomTeleport(minigamer);
+		});
+	}
+
+	private void setWorldBorder(Location center) {
 		WorldBorder border = getWorld().getWorldBorder();
 		border.setCenter(center);
-		border.setSize(gameRadius);
+		border.setSize(radius);
 		border.setDamageAmount(0);
 		border.setWarningDistance(1);
 	}
