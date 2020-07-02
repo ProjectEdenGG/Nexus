@@ -325,7 +325,7 @@ public class MainIsland implements Listener, Island {
 
 				} else {
 					Tasks.wait(640, () -> {
-						JsonBuilder json = new JsonBuilder("&f[&aClick to accept quest&f]").command("bearfair quests accept_witch").hover("Accept the Witch's quest");
+						JsonBuilder json = new JsonBuilder("&f[&aClick to accept quest&f]").command("bearfair quests npc accept_witch").hover("Accept the Witch's quest");
 						json.send(player);
 					});
 					Tasks.wait(85, () -> {

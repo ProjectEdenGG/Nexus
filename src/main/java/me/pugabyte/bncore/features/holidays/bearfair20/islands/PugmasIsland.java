@@ -114,7 +114,7 @@ public class PugmasIsland implements Listener, Island {
 						return Collections.singletonList("Have you come back to steal more of my presents? Well? What are you waiting for?");
 
 					Tasks.wait(340, () -> {
-						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests switch_mayor").hover("Switch to Mayor's quest");
+						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests npc switch_mayor").hover("Switch to Mayor's quest");
 						json.send(player);
 					});
 
@@ -141,7 +141,7 @@ public class PugmasIsland implements Listener, Island {
 
 				//
 				Tasks.wait(260, () -> {
-					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests accept_mayor").hover("Accept Mayor's quest");
+					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests npc accept_mayor").hover("Accept Mayor's quest");
 					json.send(player);
 				});
 				return startQuest;
@@ -215,7 +215,7 @@ public class PugmasIsland implements Listener, Island {
 						return Collections.singletonList("If you utter so much as one syllable about this, I’LL HUNT YOU DOWN AND GUT YOU LIKE A FISH! If you’d like to fax me, press the star key.");
 
 					Tasks.wait(540, () -> {
-						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests switch_grinch").hover("Switch to Grinch's quest");
+						JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests npc switch_grinch").hover("Switch to Grinch's quest");
 						json.send(player);
 					});
 
@@ -227,7 +227,7 @@ public class PugmasIsland implements Listener, Island {
 
 				//
 				Tasks.wait(500, () -> {
-					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests accept_grinch").hover("Accept Grinch's quest");
+					JsonBuilder json = new JsonBuilder(acceptQuest).command("bearfair quests npc accept_grinch").hover("Accept Grinch's quest");
 					json.send(player);
 				});
 				return startQuest;

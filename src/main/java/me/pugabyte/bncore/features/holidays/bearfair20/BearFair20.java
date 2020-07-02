@@ -14,7 +14,6 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Time.Timer;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -91,16 +90,15 @@ public class BearFair20 implements Listener {
 		event.setCancelled(true);
 	}
 
-	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
-		Player player = event.getPlayer();
-		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
-		if (player.hasPermission("worldguard.region.bypass.*")) {
-			Utils.runCommand(player, "wgedit off");
-		}
-
-	}
+//	@EventHandler
+//	public void onRegionEnter(RegionEnteredEvent event) {
+//		Player player = event.getPlayer();
+//		Location loc = player.getLocation();
+//		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
+//		if (player.hasPermission("worldguard.region.bypass.*")) {
+//			Utils.runCommand(player, "wgedit off");
+//		}
+//	}
 
 	@EventHandler
 	public void onThrowEnderPearl(PlayerInteractEvent event) {
