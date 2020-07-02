@@ -59,7 +59,6 @@ public class BearFairCommand extends _WarpCommand {
 		if (!BearFair20.allowWarp)
 			error("Warp is disabled");
 
-		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player());
 
 		if (user.isFirstVisit())
@@ -198,7 +197,6 @@ public class BearFairCommand extends _WarpCommand {
 	void clearData() {
 		MenuUtils.ConfirmationMenu.builder()
 				.onConfirm(e -> Tasks.async(() -> {
-					BearFairService service = new BearFairService();
 					BearFairUser user = service.get(player());
 					service.delete(user);
 				}))
@@ -209,10 +207,7 @@ public class BearFairCommand extends _WarpCommand {
 //	@Permission("group.admin")
 //	void clearDatabase() {
 //		MenuUtils.ConfirmationMenu.builder()
-//				.onConfirm(e -> Tasks.async(() -> {
-//					BearFairService service = new BearFairService();
-//					service.deleteAll();
-//				}))
+//				.onConfirm(e -> Tasks.async(service::deleteAll))
 //				.open(player());
 //	}
 
@@ -226,7 +221,7 @@ public class BearFairCommand extends _WarpCommand {
 	@Path("quests started")
 	@Permission("group.admin")
 	void playersStartedQuest() {
-		List<BearFairUser> all = new BearFairService().getAll();
+		List<BearFairUser> all = service.getAll();
 		int started = (int) all.stream().filter(BearFairUser::isQuest_Main_Start).count();
 		int finished = (int) all.stream().filter(BearFairUser::isQuest_Main_Finish).count();
 		send(PREFIX + "&3Players Started Quest: " + started);
@@ -236,7 +231,7 @@ public class BearFairCommand extends _WarpCommand {
 	@Path("quests eastereggs")
 	@Permission("group.admin")
 	void topEasterEggs() {
-		List<BearFairUser> all = new BearFairService().getAll();
+		List<BearFairUser> all = service.getAll();
 		send(PREFIX + "&3Found EasterEggs:");
 		all.stream()
 				.filter(user -> user.getEasterEggsLocs().size() > 0)
@@ -247,7 +242,6 @@ public class BearFairCommand extends _WarpCommand {
 	@Path("quests info")
 	@Permission("group.admin")
 	void questInfo() {
-		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player());
 		//
 		send("====");
@@ -450,7 +444,7 @@ public class BearFairCommand extends _WarpCommand {
 
 	@ConverterFor(BearFairUser.class)
 	BearFairUser convertToBearFairUser(String value) {
-		return new BearFairService().get(convertToOfflinePlayer(value));
+		return service.get(convertToOfflinePlayer(value));
 	}
 
 	@TabCompleterFor(BearFairUser.class)
