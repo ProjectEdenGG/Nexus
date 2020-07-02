@@ -239,9 +239,6 @@ public class PixelDrop extends TeamlessMechanic {
 		PixelDropMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!matchData.canGuess()) return;
 
-		if (player.hasPermission("group.staff"))
-			return;
-
 		event.setCancelled(true);
 	}
 
