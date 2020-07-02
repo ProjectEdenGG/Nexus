@@ -1,7 +1,9 @@
 package me.pugabyte.bncore.utils;
 
 import com.google.common.base.Strings;
+import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTFile;
+import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTList;
 import lombok.Data;
 import lombok.NonNull;
@@ -329,16 +331,24 @@ public class Utils {
 		giveItem(player, material, 1);
 	}
 
+	public static void giveItem(Player player, Material material, String nbt) {
+		giveItem(player, material, 1, nbt);
+	}
+
 	public static void giveItem(Player player, Material material, int amount) {
+		giveItem(player, material, amount, null);
+	}
+
+	public static void giveItem(Player player, Material material, int amount, String nbt) {
 		if (material == Material.AIR)
 			throw new InvalidInputException("Cannot spawn air");
 
 		if (amount > 64) {
 			for (int i = 0; i < (amount / 64); i++)
-				giveItem(player, new ItemStack(material, 64));
-			giveItem(player, new ItemStack(material, amount % 64));
+				giveItem(player, new ItemStack(material, 64), nbt);
+			giveItem(player, new ItemStack(material, amount % 64), nbt);
 		} else {
-			giveItem(player, new ItemStack(material, amount));
+			giveItem(player, new ItemStack(material, amount), nbt);
 		}
 	}
 
@@ -346,8 +356,27 @@ public class Utils {
 		giveItems(player, Collections.singletonList(item));
 	}
 
+	public static void giveItem(Player player, ItemStack item, String nbt) {
+		giveItems(player, Collections.singletonList(item), nbt);
+	}
+
 	public static void giveItems(Player player, Collection<ItemStack> items) {
-		for (ItemStack item : items) {
+		giveItems(player, items, null);
+	}
+
+	public static void giveItems(Player player, Collection<ItemStack> items, String nbt) {
+		List<ItemStack> finalItems = new ArrayList<>(items);
+		if (!Strings.isNullOrEmpty(nbt)) {
+			finalItems.clear();
+			NBTContainer nbtContainer = new NBTContainer(nbt);
+			for (ItemStack item : new ArrayList<>(items)) {
+				NBTItem nbtItem = new NBTItem(item);
+				nbtItem.mergeCompound(nbtContainer);
+				finalItems.add(nbtItem.getItem());
+			}
+		}
+
+		for (ItemStack item : finalItems) {
 			Map<Integer, ItemStack> excess = player.getInventory().addItem(item);
 			if (!excess.isEmpty())
 				excess.values().forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));

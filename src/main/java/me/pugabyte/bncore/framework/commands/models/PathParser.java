@@ -75,9 +75,13 @@ class PathParser {
 				if (arg.isVariable()) {
 					arg.setParamIndex(paramIndex++);
 					Parameter parameter = method.getParameters()[arg.getParamIndex()];
+					Arg annotation = parameter.getAnnotation(Arg.class);
+					if (annotation != null && !Strings.isNullOrEmpty(annotation.permission()))
+						if (!event.getSender().hasPermission(annotation.permission()))
+							break;
+
 					arg.setTabCompleter(parameter.getType());
 					arg.setList(Collection.class.isAssignableFrom(parameter.getType()));
-					Arg annotation = parameter.getAnnotation(Arg.class);
 					if (annotation != null) {
 						if (List.class.isAssignableFrom(parameter.getType()) && annotation.type() != void.class)
 							arg.setTabCompleter(annotation.type());
