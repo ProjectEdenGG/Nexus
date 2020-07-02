@@ -14,7 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class GeoIPService extends MongoService {
 
 	private final String KEY = BNCore.getInstance().getConfig().getString("tokens.ipstack");
 	// Raven gives a huge boost to Canada with his VPN
-	private final static List<String> ignore = Arrays.asList("fce1fe67-9514-4117-bcf6-d0c49ca0ba41");
+	private final static List<String> ignore = new ArrayList<>(); // Arrays.asList("fce1fe67-9514-4117-bcf6-d0c49ca0ba41");
 
 	static {
 		BNCore.getInstance().addConfigDefault("tokens.ipstack", "abcdef");

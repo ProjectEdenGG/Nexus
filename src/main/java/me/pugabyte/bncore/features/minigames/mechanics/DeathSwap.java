@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
@@ -19,8 +20,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -179,6 +185,39 @@ public final class DeathSwap extends TeamlessMechanic {
 			return;
 		}
 		match.getTasks().wait(Time.SECOND.x(Utils.randomInt(30, 120)), () -> swap(match));
+	}
+
+	@EventHandler
+	public void onCraftItem(CraftItemEvent event) {
+		Minigamer minigamer = PlayerManager.get((Player) event.getView().getPlayer());
+		if (!minigamer.isPlaying(this)) return;
+
+		if (event.getRecipe().getResult().getType() != Material.LADDER) return;
+
+		event.setCancelled(true);
+		minigamer.tell("You cannot use ladders in this game! (Too OP)");
+	}
+
+	@EventHandler
+	public void onPlace(BlockPlaceEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this)) return;
+
+		if (event.getBlock().getType() != Material.LADDER) return;
+
+		event.setCancelled(true);
+		minigamer.tell("You cannot use ladders in this game! (Too OP)");
+	}
+
+	@EventHandler
+	public void onBreak(BlockBreakEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this)) return;
+
+		if (event.getBlock().getType() != Material.LADDER && event.getBlock().getRelative(BlockFace.UP).getType() != Material.LADDER) return;
+
+		event.setCancelled(true);
+		minigamer.tell("You cannot use ladders in this game! (Too OP)");
 	}
 
 }
