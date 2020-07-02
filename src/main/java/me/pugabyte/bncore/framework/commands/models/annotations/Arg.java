@@ -13,4 +13,6 @@ public @interface Arg {
 	Class<?> type() default void.class;
 	Class<?> tabCompleter() default void.class;
 	int contextArg() default -1;
+	String permission() default "";
+
 }

@@ -33,7 +33,7 @@ public class Pride20Command extends CustomCommand {
 	}
 
 	@Path("parade join [player]")
-	void joinParade(@Arg("self") OfflinePlayer player) {
+	void joinParade(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
 		if (!player().hasPermission("group.staff"))
 			player = player();
 

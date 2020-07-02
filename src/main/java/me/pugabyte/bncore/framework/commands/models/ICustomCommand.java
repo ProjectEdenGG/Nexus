@@ -151,6 +151,10 @@ public abstract class ICustomCommand {
 			}
 
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
+			if (annotation != null && !Strings.isNullOrEmpty(annotation.permission()))
+				if (!event.getSender().hasPermission(annotation.permission()))
+					break;
+
 			String value = (annotation == null ? null : annotation.value());
 			int contextArgIndex = (annotation == null ? -1 : annotation.contextArg());
 			Object contextArg = (contextArgIndex > 0 && objects.length >= contextArgIndex) ? objects[contextArgIndex - 1] : null;
