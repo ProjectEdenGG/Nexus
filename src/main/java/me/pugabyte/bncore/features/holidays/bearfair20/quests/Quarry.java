@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -88,6 +89,12 @@ public class Quarry implements Listener {
 				return;
 		}
 
+		// If you mined a block in the quarry that has an adj block that needs support
+		if (adjBlockNeedsSupport(block) && isInRegion(block, quarryRg)) {
+			event.setCancelled(true);
+			return;
+		}
+
 		// If you mined diorite
 		if (!diorite.contains(block.getType())) {
 			if (isInRegion(block, quarryRg))
@@ -112,5 +119,17 @@ public class Quarry implements Listener {
 
 		Diorite diorite = new Diorite(block.getType(), block.getBlockData());
 		Tasks.wait(Time.SECOND.x(3), () -> dioriteRegenMap.put(block.getLocation(), diorite));
+	}
+
+
+	private boolean adjBlockNeedsSupport(Block origin) {
+		List<Block> adj = Utils.getAdjacentBlocks(origin);
+		if (adj.size() == 0)
+			return false;
+		for (Block block : adj) {
+			if (MaterialTag.NEEDS_SUPPORT.isTagged(block.getType()))
+				return true;
+		}
+		return false;
 	}
 }
