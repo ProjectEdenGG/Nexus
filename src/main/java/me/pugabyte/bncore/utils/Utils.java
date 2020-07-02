@@ -310,6 +310,22 @@ public class Utils {
 		return blockHit;
 	}
 
+	public static List<Block> getAdjacentBlocks(Block block) {
+		Block north = block.getRelative(BlockFace.NORTH);
+		Block east = block.getRelative(BlockFace.EAST);
+		Block south = block.getRelative(BlockFace.SOUTH);
+		Block west = block.getRelative(BlockFace.WEST);
+		Block up = block.getRelative(BlockFace.UP);
+		Block down = block.getRelative(BlockFace.DOWN);
+		List<Block> relatives = Arrays.asList(north, east, south, west, up, down);
+		List<Block> adjacent = new ArrayList<>();
+		for (Block relative : relatives) {
+			if (!isNullOrAir(relative))
+				adjacent.add(relative);
+		}
+		return adjacent;
+	}
+
 	public static void lookAt(Player player, Location lookAt) {
 		Vector direction = player.getEyeLocation().toVector().subtract(lookAt.add(0.5, 0.5, 0.5).toVector()).normalize();
 		double x = direction.getX();
