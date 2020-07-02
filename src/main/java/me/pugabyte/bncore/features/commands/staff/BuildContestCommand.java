@@ -216,7 +216,6 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Saved the item to the item in your hand");
 	}
 
-
 	@EventHandler
 	public void onPlotCommand(PlayerCommandPreprocessEvent event) {
 		if (!event.getMessage().contains("plot setup buildcontest")) return;
