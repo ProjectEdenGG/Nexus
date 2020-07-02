@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
+import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -25,6 +26,7 @@ import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -74,20 +76,27 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("paste")
-	@Permission("group.seniorstaff")
+	@Permission("group.staff")
 	void paste() {
 		paste(player().getLocation());
 	}
 
 	@Path("clear")
-	@Permission("group.seniorstaff")
+	@Permission("group.staff")
 	void clear() {
 		clear(player().getLocation());
 	}
 
-	@Path("reset [player]")
-	@Permission("group.seniorstaff")
+	@Path("reset")
+	@Permission("group.staff")
 	void reset(@Arg("self") OfflinePlayer player) {
+		paste(player().getLocation());
+		clear(player().getLocation());
+	}
+
+	@Path("delete [player]")
+	@Permission("group.seniorstaff")
+	void delete(@Arg("self") OfflinePlayer player) {
 		ConfirmationMenu.builder()
 				.onConfirm(e -> Tasks.async(() -> {
 					service.delete(service.get(player));
@@ -96,9 +105,9 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 				.open(player());
 	}
 
-	@Path("resetAll")
+	@Path("deleteAll")
 	@Permission("group.seniorstaff")
-	void resetAll() {
+	void deleteAll() {
 		ConfirmationMenu.builder()
 				.onConfirm(e -> Tasks.async(() -> {
 					service.deleteAll();
@@ -147,7 +156,9 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
 		if (!(event.getRemover() instanceof Player)) return;
 		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
-		if (event.getRemover().hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (!((Player) event.getRemover()).isSneaking())
+			if (event.getRemover().hasPermission(WorldGuardEditCommand.getPermission()))
+				return;
 
 		event.setCancelled(true);
 	}
