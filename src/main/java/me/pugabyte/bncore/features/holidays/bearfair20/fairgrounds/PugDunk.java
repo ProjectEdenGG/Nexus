@@ -111,7 +111,7 @@ public class PugDunk implements Listener {
 
 		if (givePoints) {
 			BearFairUser user = new BearFairService().get(player);
-			user.giveDailyPoints(1, SOURCE);
+			user.giveDailyPoints(SOURCE);
 			new BearFairService().save(user);
 		}
 

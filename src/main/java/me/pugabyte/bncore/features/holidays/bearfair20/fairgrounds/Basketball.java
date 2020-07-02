@@ -36,7 +36,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Basketball implements Listener {
@@ -218,7 +221,7 @@ public class Basketball implements Listener {
 
 					if (givePoints) {
 						BearFairUser user = new BearFairService().get(player);
-						user.giveDailyPoints(1, SOURCE);
+						user.giveDailyPoints(SOURCE);
 						new BearFairService().save(user);
 					}
 

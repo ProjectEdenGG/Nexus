@@ -37,6 +37,7 @@ public class BearFairUser extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	// Points
+	public transient static final int DAILY_SOURCE_POINTS = 5;
 	public transient static final int DAILY_SOURCE_MAX = 5;
 	private Map<BFPointSource, Map<LocalDate, Integer>> pointsReceivedToday = new HashMap<>();
 	private int totalPoints;
@@ -105,24 +106,23 @@ public class BearFairUser extends PlayerOwnedObject {
 		totalPoints -= points;
 	}
 
-	public void giveDailyPoints(int points, BFPointSource source) {
+	public void giveDailyPoints(BFPointSource source) {
 		pointsReceivedToday.putIfAbsent(source, new HashMap<LocalDate, Integer>() {{
 			put(LocalDate.now(), 0);
 		}});
 
-		int sourcePoints = pointsReceivedToday.get(source).getOrDefault(LocalDate.now(), 0);
+		int timesCompleted = pointsReceivedToday.get(source).getOrDefault(LocalDate.now(), 0);
 
-		if (sourcePoints == DAILY_SOURCE_MAX)
+		if (timesCompleted == DAILY_SOURCE_MAX)
 			return;
 
-		if ((sourcePoints + points) == DAILY_SOURCE_MAX)
+		if ((timesCompleted + 1) == DAILY_SOURCE_MAX)
 			send(BearFair20.PREFIX + "Max daily points reached for &e" + StringUtils.camelCase(source.name()));
 
-		givePoints(points);
+		getPointsReceivedToday().get(source).put(LocalDate.now(), timesCompleted + 1);
 
-		getPointsReceivedToday().get(source).put(LocalDate.now(), sourcePoints + points);
-
-		sendActionBar(getPlayer(), "&e+" + points + plural(" point", points));
+		givePoints(DAILY_SOURCE_POINTS);
+		sendActionBar(getPlayer(), "&e+" + DAILY_SOURCE_POINTS + plural(" point", DAILY_SOURCE_POINTS));
 	}
 
 	public enum BFPointSource {

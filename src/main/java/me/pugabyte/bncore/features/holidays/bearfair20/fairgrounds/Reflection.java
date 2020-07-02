@@ -39,10 +39,20 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static org.bukkit.block.BlockFace.*;
+import static org.bukkit.block.BlockFace.EAST;
+import static org.bukkit.block.BlockFace.NORTH;
+import static org.bukkit.block.BlockFace.NORTH_EAST;
+import static org.bukkit.block.BlockFace.NORTH_WEST;
+import static org.bukkit.block.BlockFace.SOUTH;
+import static org.bukkit.block.BlockFace.SOUTH_EAST;
+import static org.bukkit.block.BlockFace.SOUTH_WEST;
+import static org.bukkit.block.BlockFace.WEST;
 
 public class Reflection implements Listener {
 
@@ -289,7 +299,7 @@ public class Reflection implements Listener {
 
 		if (givePoints) {
 			BearFairUser user = new BearFairService().get(buttonPresser);
-			user.giveDailyPoints(1, SOURCE);
+			user.giveDailyPoints(SOURCE);
 			new BearFairService().save(user);
 		}
 
