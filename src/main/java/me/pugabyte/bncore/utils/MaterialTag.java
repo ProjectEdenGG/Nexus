@@ -15,7 +15,6 @@ import static org.bukkit.Material.*;
 public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag WOOL = new MaterialTag("_WOOL", MatchMode.SUFFIX);
 	public static final MaterialTag DYES = new MaterialTag("_DYE", MatchMode.SUFFIX);
-	public static final MaterialTag CARPET = new MaterialTag("_CARPET", MatchMode.SUFFIX);
 	public static final MaterialTag BEDS = new MaterialTag("_BED", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_BANNERS = new MaterialTag(Tag.BANNERS);
 	public static final MaterialTag BANNERS = new MaterialTag("_BANNER", MatchMode.SUFFIX);
@@ -29,7 +28,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag CONCRETE_POWDERS = new MaterialTag("_CONCRETE_POWDER", MatchMode.SUFFIX);
 	public static final MaterialTag SHULKER_BOXES = new MaterialTag("_SHULKER_BOX", MatchMode.SUFFIX).append(SHULKER_BOX);
 
-	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPET, BEDS, BANNERS, WALL_BANNERS, STAINED_GLASS,
+	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, BANNERS, WALL_BANNERS, STAINED_GLASS,
 			STAINED_GLASS_PANES, TERRACOTTAS, GLAZED_TERRACOTTAS, CONCRETES, CONCRETE_POWDERS, SHULKER_BOXES);
 
 	public static final MaterialTag TOOLS = new MaterialTag("_PICKAXE", MatchMode.SUFFIX)
@@ -99,6 +98,13 @@ public class MaterialTag implements Tag<Material> {
 			ENDER_CHEST, Material.ANVIL, BREWING_STAND, TRAPPED_CHEST, HOPPER, DROPPER)
 			.append("_SHULKER_BOX", MatchMode.SUFFIX);
 	public static final MaterialTag PRESSURE_PLATES = new MaterialTag("_PRESSURE_PLATE", MatchMode.SUFFIX);
+
+	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(BAMBOO_SAPLING, BAMBOO, SEAGRASS, TALL_SEAGRASS, KELP,
+			SUGAR_CANE, CACTUS, SEA_PICKLE, Material.SAND, RED_SAND, GRAVEL, GRASS, FERN, TALL_GRASS, LARGE_FERN, DEAD_BUSH,
+			SWEET_BERRY_BUSH, BROWN_MUSHROOM, RED_MUSHROOM, CHORUS_PLANT, CHORUS_FLOWER, VINE, LILY_PAD, TURTLE_EGG, REPEATER,
+			COMPARATOR, ITEM_FRAME, BELL, SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, Material.ANVIL, CHIPPED_ANVIL, DAMAGED_ANVIL,
+			LEVER, END_ROD, TORCH, WALL_TORCH, REDSTONE_TORCH, REDSTONE_WALL_TORCH)
+			.append(SAPLINGS, DOORS, SIGNS, RAILS, BEDS, BANNERS, FLOWERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS, PRESSURE_PLATES, BUTTONS, FLOWER_POTS);
 
 	private final EnumSet<Material> materials;
 	private final NamespacedKey key = null;
