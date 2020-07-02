@@ -17,9 +17,9 @@ public class GiveCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<player> <type> [amount]")
-	void run(Player player, Material material, @Arg("1") int amount) {
-		Utils.giveItem(player, material, amount);
+	@Path("<player> <type> [amount] [nbt...]")
+	void run(Player player, Material material, @Arg("64") int amount, String nbt) {
+		Utils.giveItem(player, material, amount, nbt);
 	}
 
 }
