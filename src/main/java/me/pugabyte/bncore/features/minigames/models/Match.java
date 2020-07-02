@@ -475,6 +475,16 @@ public class Match {
 			return taskId;
 		}
 
+		public int waitAsync(Time delay, Runnable runnable) {
+			return waitAsync(delay.get(), runnable);
+		}
+
+		public int waitAsync(long delay, Runnable runnable) {
+			int taskId = Tasks.waitAsync(delay, runnable);
+			taskIds.add(taskId);
+			return taskId;
+		}
+
 		public int repeat(Time startDelay, long interval, Runnable runnable) {
 			return repeat(startDelay.get(), interval, runnable);
 		}
