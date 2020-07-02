@@ -16,11 +16,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,11 +26,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
@@ -149,8 +141,10 @@ public class MainIsland implements Listener, Island {
 						script.add("They were muttering strange questions at me, and I think they might have something to do with this safe.");
 						script.add("wait 80");
 						script.add("Search around the island for these strangers, and see if they can give you a clue on how to open this safe.");
+						script.add("wait 80");
+						script.add("When you think you know the code, go inspect that safe and try and crack the spell.");
 						// wait 80 + 20
-						Tasks.wait(340, () -> Utils.runCommand(player, "/safecracker start"));
+						Tasks.wait(400, () -> Utils.runCommand(player, "/safecracker start"));
 						break;
 					default:
 						return null;
