@@ -8,7 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-@Permission("group.staff")
+@Permission("worldedit.navigation.jumpto")
 public class JumpCommand extends CustomCommand {
 
 	public JumpCommand(@NonNull CommandEvent event) {
