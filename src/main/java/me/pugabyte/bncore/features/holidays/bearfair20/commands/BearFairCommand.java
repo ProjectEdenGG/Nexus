@@ -128,8 +128,7 @@ public class BearFairCommand extends _WarpCommand {
 		int finished = (int) all.stream().filter(BearFairUser::isQuest_Main_Finish).count();
 
 		send("");
-		send(PREFIX + "&3Players Started Quest: " + started);
-		send(PREFIX + "&3Players Started Quest: " + finished);
+		send(PREFIX + "&3Players Started/Finished: " + started + "\"" + finished);
 		send(PREFIX + "&3Found EasterEggs:");
 		all.stream()
 				.filter(user -> user.getEasterEggsLocs().size() > 0)
