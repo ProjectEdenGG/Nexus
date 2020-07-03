@@ -49,8 +49,11 @@ public enum WorldGroup {
 	public static WorldGroup get(String world) {
 		for (WorldGroup group : values())
 			if (group.getWorlds() != null)
-				if (Arrays.asList(group.getWorlds()).contains(world))
+				if (Arrays.asList(group.getWorlds()).contains(world.toLowerCase()))
 					return group;
+
+		if (world.toLowerCase().startsWith("build"))
+			return CREATIVE;
 
 		return UNKNOWN;
 	}

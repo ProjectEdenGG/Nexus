@@ -18,11 +18,14 @@ import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.jigsawjam.JigsawJamService;
 import me.pugabyte.bncore.models.jigsawjam.JigsawJammer;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.Axis;
+import me.pugabyte.bncore.utils.Utils.MapRotation;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -40,6 +43,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -94,13 +98,13 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		clear(player().getLocation());
 	}
 
-	@Path("delete [player]")
+	@Path("quit [player]")
 	@Permission("group.seniorstaff")
-	void delete(@Arg("self") OfflinePlayer player) {
+	void delete(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
 		ConfirmationMenu.builder()
 				.onConfirm(e -> Tasks.async(() -> {
 					service.delete(service.get(player));
-					send(PREFIX + "Reset");
+					send(PREFIX + "Quit game. Ask a staff member to reset the board.");
 				}))
 				.open(player());
 	}
@@ -176,7 +180,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		JigsawJammer jammer = service.get(event.getPlayer());
 		if (sign.getLine(2).toLowerCase().contains("start")) {
 			if (!jammer.isPlaying()) {
-				start(jammer, event.getClickedBlock().getLocation());
+				start(jammer);
 				sign.setLine(1, colorize("&c&lClick me"));
 				sign.setLine(2, colorize("&c&lto finish"));
 				sign.update();
@@ -184,30 +188,40 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 				jammer.send(PREFIX + "&cYou have already started a game");
 		} else if (sign.getLine(2).toLowerCase().contains("finish")) {
 			if (jammer.isPlaying()) {
-				if (validate(jammer, LENGTH, HEIGHT))
-					end(jammer, event.getClickedBlock().getLocation());
+				if (validate(jammer, LENGTH, HEIGHT)) {
+					end(jammer);
+					clear(event.getClickedBlock().getLocation());
+				}
 			} else
 				jammer.send(PREFIX + "&cYou have not started a game");
 		}
 	}
 
-	private void start(JigsawJammer jammer, Location location) {
+	@EventHandler
+	public void onMapPickup(EntityPickupItemEvent event) {
+		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
+		if (event.getItem().getItemStack().getType() != Material.FILLED_MAP) return;
+		if (!(event.getEntity() instanceof Player)) return;
+		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
+
+		ItemBuilder.setName(event.getItem().getItemStack(), null);
+	}
+
+	private void start(JigsawJammer jammer) {
 		jammer.setPlaying(true);
 		new JigsawJamService().save(jammer);
 		jammer.send(PREFIX + "You have begun the Jigsaw Jam! Put the puzzle together as fast as you can!");
 	}
 
-	private void end(JigsawJammer jammer, Location location) {
-		Discord.staffLog("**[JigsawJam]** " + jammer.getOfflinePlayer().getName() + " finished in " + TimespanFormatter.of(jammer.getTime()).format());
+	private void end(JigsawJammer jammer) {
+		Discord.staffLog("**[JigsawJam]** " + jammer.getOfflinePlayer().getName() + " finished in " + TimespanFormatter.of(jammer.getTime() / 20).format());
 		jammer.setPlaying(false);
 		jammer.setTime(0);
 		new JigsawJamService().save(jammer);
-		clear(location);
 	}
 
 	private void clear(Location location) {
 		List<ItemFrame> maps = new ArrayList<>();
-		int index = 0;
 
 		for (Entity entity : Utils.getNearbyEntities(location, 10).keySet())
 			if (entity.getType() == EntityType.ITEM_FRAME)
@@ -347,6 +361,8 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 								MapRotation mapRotation = MapRotation.getRotation(itemFrame.getRotation());
 								if (order.get(index) == mapId && rotation.get(index) == mapRotation)
 									++correct;
+								else
+									DotEffect.builder().player(player).location(entity.getLocation().getBlock().getLocation()).ticks(5 * 20).color(Color.RED).start();
 							}
 					}
 
@@ -380,43 +396,6 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 			int incorrect = totalMaps - correct;
 			BNCore.log(PREFIX + player.getName() + " got " + incorrect + " maps incorrect");
 			return false;
-		}
-	}
-
-	private enum Axis {
-		X,
-		Z;
-
-		static Axis getAxis(Location location1, Location location2) {
-			if (Math.floor(location1.getZ()) == Math.floor(location2.getZ()))
-				return Z;
-			else if (Math.floor(location1.getX()) == Math.floor(location2.getX()))
-				return X;
-
-			return null;
-		}
-	}
-
-	private enum MapRotation {
-		DEGREE_0,
-		DEGREE_90,
-		DEGREE_180,
-		DEGREE_270;
-
-		static MapRotation getRotation(Rotation rotation) {
-			switch (rotation) {
-				case CLOCKWISE_45:
-				case FLIPPED_45:
-					return DEGREE_90;
-				case CLOCKWISE:
-				case COUNTER_CLOCKWISE:
-					return DEGREE_180;
-				case CLOCKWISE_135:
-				case COUNTER_CLOCKWISE_45:
-					return DEGREE_270;
-				default:
-					return DEGREE_0;
-			}
 		}
 	}
 

@@ -19,6 +19,7 @@ import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.CardinalDirection;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -311,18 +312,10 @@ public class Battleship extends BalancedTeamMechanic {
 	}
 
 	private BlockFace getNextDirection(BlockFace direction) {
-		switch (direction) {
-			case NORTH:
-				return BlockFace.EAST;
-			case EAST:
-				return BlockFace.SOUTH;
-			case SOUTH:
-				return BlockFace.WEST;
-			case WEST:
-				return BlockFace.NORTH;
-			default:
-				return BlockFace.NORTH;
-		}
+		if (direction == null)
+			return BlockFace.NORTH;
+
+		return CardinalDirection.of(direction).turnRight().toBlockFace();
 	}
 
 	private boolean isCardinal(BlockFace face) {

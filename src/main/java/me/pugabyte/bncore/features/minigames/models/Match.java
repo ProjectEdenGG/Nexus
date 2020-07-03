@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.mechanics.Battleship;
@@ -177,15 +177,21 @@ public class Match {
 		if (!event.callEvent()) return;
 
 		started = true;
-		clearEntities();
-		balance();
-		initializeScores();
-		teleportIn();
-		startTimer(); // -> arena.getMechanic().startTimer();
-		arena.getMechanic().onStart(event);
 
-		if (scoreboard != null) scoreboard.update();
-		if (scoreboardTeams != null) scoreboardTeams.update();
+		try {
+			clearEntities();
+			balance();
+			initializeScores();
+			teleportIn();
+			startTimer(); // -> arena.getMechanic().startTimer();
+			arena.getMechanic().onStart(event);
+
+			if (scoreboard != null) scoreboard.update();
+			if (scoreboardTeams != null) scoreboardTeams.update();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			end();
+		}
 	}
 
 	public void end() {
@@ -242,30 +248,26 @@ public class Match {
 				arena.getMechanic().onInitialize(event);
 				initialized = true;
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				end();
 			}
 		}
 	}
 
+	@SneakyThrows
 	private void initializeMatchData() {
-		try {
-			String path = this.getClass().getPackage().getName();
-			Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".matchdata")
-					.getSubTypesOf(MatchData.class);
+		String path = this.getClass().getPackage().getName();
+		Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".matchdata")
+				.getSubTypesOf(MatchData.class);
 
-			matchDataTypes:
-			for (Class<?> matchDataType : matchDataTypes)
-				for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses())
-					if (matchDataType.getAnnotation(MatchDataFor.class) != null)
-						if (matchDataType.getAnnotation(MatchDataFor.class).value().equals(superclass)) {
-							matchData = (MatchData) matchDataType.getConstructor(Match.class).newInstance(this);
-							break matchDataTypes;
-						}
-
-		} catch (Exception ex) {
-			BNCore.log("Error initializing match data for " + arena.getMechanic().getName());
-			ex.printStackTrace();
-		}
+		matchDataTypes:
+		for (Class<?> matchDataType : matchDataTypes)
+			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses())
+				if (matchDataType.getAnnotation(MatchDataFor.class) != null)
+					if (matchDataType.getAnnotation(MatchDataFor.class).value().equals(superclass)) {
+						matchData = (MatchData) matchDataType.getConstructor(Match.class).newInstance(this);
+						break matchDataTypes;
+					}
 	}
 
 	private void startTimer() {
