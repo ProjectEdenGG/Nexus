@@ -170,6 +170,10 @@ public class Arena implements ConfigurationSerializable {
 		return getWGUtils().getRegionsLike(getRegionBaseName() + "_" + regex);
 	}
 
+	public Set<ProtectedRegion> getRegionsLikeAt(String regex, Location location) {
+		return getWGUtils().getRegionsLikeAt(location, getRegionBaseName() + "_" + regex);
+	}
+
 	public Set<ProtectedRegion> getNumberedRegionsLike(String regex) {
 		return getWGUtils().getRegionsLike(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER);
 	}
