@@ -111,11 +111,17 @@ public class BearFairCommand extends _WarpCommand {
 			return;
 		}
 
-		send(user.getQuest_Main_Step() == 3 ? done : notDone + " &7- &eHoney Stroopwafel");
-		send(user.isQuest_MGN_Finish() ? done : notDone + " &7- &eArcade Token");
-		send(user.isQuest_Pugmas_Finish() ? done : notDone + " &7- &ePresent");
-		send(user.isQuest_Halloween_Finish() ? done : notDone + " &7- &eHalloween Candy Basket");
-		send(user.isQuest_SDU_Finish() ? done : notDone + " &7- &eANZAC Biscuit");
+		String status_main = user.getQuest_Main_Step() == 3 ? done : notDone;
+		String status_mgn = user.isQuest_MGN_Finish() ? done : notDone;
+		String status_pugmas = user.isQuest_Pugmas_Finish() ? done : notDone;
+		String status_halloween = user.isQuest_Halloween_Finish() ? done : notDone;
+		String status_sdu = user.isQuest_SDU_Finish() ? done : notDone;
+
+		send(status_main + " &7- &eHoney Stroopwafel");
+		send(status_mgn + " &7- &eArcade Token");
+		send(status_pugmas + " &7- &ePresent");
+		send(status_halloween + " &7- &eHalloween Candy Basket");
+		send(status_sdu + " &7- &eANZAC Biscuit");
 		send("");
 	}
 
