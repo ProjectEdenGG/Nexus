@@ -403,7 +403,6 @@ public class SummerDownUnderIsland implements Listener, Island {
 		for (ItemStack content : contents) {
 			if (Utils.isNullOrAir(content)) continue;
 			if (!BearFair20.isBFItem(content)) continue;
-
 			if (!content.getType().equals(Material.GOLD_NUGGET)) continue;
 
 			String foolsGoldName = StringUtils.stripColor(foolsGold.getItemMeta().getDisplayName());
