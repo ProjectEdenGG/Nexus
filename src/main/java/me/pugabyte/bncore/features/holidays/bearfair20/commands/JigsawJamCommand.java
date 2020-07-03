@@ -35,6 +35,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -45,6 +46,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -207,6 +209,21 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		ItemBuilder.setName(event.getItem().getItemStack(), null);
 	}
 
+	@EventHandler
+	public void onChestOpen(InventoryOpenEvent event) {
+		if (!event.getPlayer().getWorld().getName().equals(WORLD)) return;
+		if (event.getInventory().getLocation() == null) return;
+		if (!(event.getInventory().getHolder() instanceof Chest)) return;
+		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getInventory().getLocation()).contains("jigsawjam")) return;
+
+		JigsawJamService service = new JigsawJamService();
+		JigsawJammer jammer = service.get((Player) event.getPlayer());
+		if (!jammer.isPlaying()) {
+			event.setCancelled(true);
+			jammer.send(PREFIX + "You must start the timer by clicking on the sign before collecting the pieces");
+		}
+	}
+
 	private void start(JigsawJammer jammer) {
 		jammer.setPlaying(true);
 		new JigsawJamService().save(jammer);
@@ -334,9 +351,6 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 			validate.add(0, -1, 0);
 		}
 
-		Utils.puga("order.size(): " + order.size());
-		Utils.puga("totalMaps: " + totalMaps);
-
 		if (order.size() != totalMaps) {
 			send(player, PREFIX + "&cCould not find all validation maps");
 			return false;
@@ -378,7 +392,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		}
 
 		if (correct == totalMaps) {
-			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + TimespanFormatter.of(jammer.getTime()).format());
+			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + TimespanFormatter.of(jammer.getTime() / 20).format());
 
 			BearFairService bearFairService = new BearFairService();
 			BearFairUser user = bearFairService.get(player);
