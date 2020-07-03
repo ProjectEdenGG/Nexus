@@ -123,6 +123,10 @@ public abstract class Mechanic implements Listener {
 		return true;
 	}
 
+	public boolean allowFly() {
+		return false;
+	}
+
 	public void tellMapAndMechanic(Minigamer minigamer) {
 		Arena arena = minigamer.getMatch().getArena();
 		minigamer.tell("You are playing &e" + arena.getMechanic().getName() + " &3on &e" + arena.getDisplayName());
