@@ -37,11 +37,12 @@ public class CheatsCommand extends CustomCommand {
 			runCommand("vanish off");
 			godmode.setEnabled(false);
 			godmodeService.save(godmode);
-			if (WorldGroup.get(player()) != WorldGroup.CREATIVE)
+			if (WorldGroup.get(player()) != WorldGroup.CREATIVE) {
 				player().setGameMode(GameMode.SURVIVAL);
-			player().setFallDistance(0);
-			player().setAllowFlight(false);
-			player().setFlying(false);
+				player().setFallDistance(0);
+				player().setAllowFlight(false);
+				player().setFlying(false);
+			}
 
 			send(PREFIX + "&cDisabled");
 		}
