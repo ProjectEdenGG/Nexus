@@ -42,6 +42,11 @@ public class HoleInTheWall extends TeamlessMechanic {
 	}
 
 	@Override
+	public boolean allowFly() {
+		return true;
+	}
+
+	@Override
 	public boolean shuffleSpawnpoints() {
 		return false;
 	}
