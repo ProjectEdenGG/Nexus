@@ -85,7 +85,7 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3Hours: &e" + TimespanFormatter.of(hours.getTotal()).noneDisplay(true).format());
 
 		if (history > 0)
-			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName()).hover("Click to view history");
+			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName()).hover("&eClick to view history");
 
 		if (alts.size() > 0)
 			json.newline().next("&3Alts: &e" + String.join(", ", alts));
@@ -101,7 +101,7 @@ public class WhoIsCommand extends CustomCommand {
 		}
 
 		try {
-			json.newline().next("&3Location: &e" + getLocationString(getLocation(offlinePlayer)));
+			json.newline().next("&3Location: &e" + getLocationString(getLocation(offlinePlayer))).hover("&eClick to TP").command("/tp " + offlinePlayer.getName());
 		} catch (InvalidInputException ex) {
 			json.newline().next("&3Location: &c" + ex.getMessage());
 		}

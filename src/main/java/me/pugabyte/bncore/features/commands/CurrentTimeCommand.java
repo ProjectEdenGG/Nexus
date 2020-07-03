@@ -9,7 +9,6 @@ import me.pugabyte.bncore.models.geoip.GeoIPService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.StringUtils;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
@@ -62,14 +61,13 @@ public class CurrentTimeCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	void timeFor(Player player) {
-		GeoIP geoIp = geoIpService.get(player);
+	void timeFor(GeoIP geoIp) {
 		if (geoIp == null || geoIp.getIp() == null)
 			error("That player's timezone is not set.");
 
 		DateFormat format = getDateFormat();
 		format.setTimeZone(TimeZone.getTimeZone(geoIp.getTimezone().getId()));
-		send(PREFIX + "The current time for &e" + player.getName() + " &3is &e" + format.format(new Date()));
+		send(PREFIX + "The current time for &e" + geoIp.getOfflinePlayer().getName() + " &3is &e" + format.format(new Date()));
 	}
 
 	@NotNull
