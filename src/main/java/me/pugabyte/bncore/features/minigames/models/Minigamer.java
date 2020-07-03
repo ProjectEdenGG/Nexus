@@ -285,6 +285,8 @@ public class Minigamer {
 	}
 
 	private void clearGameModeState() {
+		Mechanic mechanic = match.getArena().getMechanic();
+
 		player.setFireTicks(0);
 		player.resetMaxHealth();
 		player.setHealth(20);
@@ -294,11 +296,11 @@ public class Minigamer {
 		player.getInventory().setHeldItemSlot(0);
 		player.setFoodLevel(20);
 		player.setFallDistance(0f);
-		player.setAllowFlight(false);
-		player.setFlying(false);
+		player.setAllowFlight(mechanic.allowFly());
+		player.setFlying(mechanic.allowFly());
 		BNCore.getEssentials().getUser(player).setVanished(false);
 
-		if (match.getArena().getMechanic().shouldClearInventory())
+		if (mechanic.shouldClearInventory())
 			player.getInventory().clear();
 
 		for (PotionEffect effect : player.getActivePotionEffects())
