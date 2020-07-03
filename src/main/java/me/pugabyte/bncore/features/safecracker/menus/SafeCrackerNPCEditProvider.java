@@ -4,9 +4,11 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.safecracker.SafeCracker;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -46,12 +48,9 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 
 		contents.set(1, 2, ClickableItem.from(new ItemBuilder(Material.WRITABLE_BOOK).name("&eQuestion").loreize(true)
 				.lore("&3" + npc.getQuestion()).build(), e -> {
-			openAnvilMenu(player, npc.getQuestion(), (player1, response) -> {
-				npc.setQuestion(response);
-				service.save(service.get());
-				SafeCrackerInventories.openNPCEditMenu(player, npc);
-				return AnvilGUI.Response.text(response);
-			}, (player1) -> SafeCrackerInventories.openNPCEditMenu(player, npc));
+			player.closeInventory();
+			SafeCracker.adminQuestionMap.put(player, npc.getName());
+			player.sendMessage(new JsonBuilder("&e&lClick here to set " + npc.getName() + "'s question").suggest("/safecracker question ").build());
 		}));
 
 		ItemBuilder builder = new ItemBuilder(Material.PAPER).name("&eAnswers:");

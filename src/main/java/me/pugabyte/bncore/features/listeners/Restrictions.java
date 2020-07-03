@@ -262,7 +262,7 @@ public class Restrictions implements Listener {
 			Material.END_PORTAL,
 			Material.FERN,
 			Material.FLOWER_POT,
-			Material.GRASS,
+//			Material.GRASS,
 			Material.GRAVEL,
 			Material.GRAY_BANNER,
 			Material.GRAY_CARPET,
