@@ -50,11 +50,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
 import static me.pugabyte.bncore.utils.StringUtils.paste;
+import static me.pugabyte.bncore.utils.Utils.getDirection;
+import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Permission("group.seniorstaff")
 public class BNCoreCommand extends CustomCommand {
@@ -299,6 +302,25 @@ public class BNCoreCommand extends CustomCommand {
 			@Arg(value = "5", permission = "group.admin", tabCompleter = Player.class) String five
 	) {
 		send(one + " / " + two + " / " + three + " / " + four + " / " + five);
+	}
+
+	private static final Map<UUID, Location> directionTestMap = new HashMap<>();
+
+	@Path("directionTest <blockNumber>")
+	void directionTest(int blockNumber) {
+		Block targetBlockExact = player().getTargetBlockExact(500);
+		if (isNullOrAir(targetBlockExact))
+			error("You must be looking at a block");
+
+		if (blockNumber == 1) {
+			directionTestMap.put(uuid(), targetBlockExact.getLocation());
+			send(PREFIX + "Set second position to calcluate direction");
+		} else {
+			if (!directionTestMap.containsKey(uuid()))
+				error("You must set the first position");
+
+			send(PREFIX + camelCase(getDirection(directionTestMap.remove(uuid()), targetBlockExact.getLocation())));
+		}
 	}
 
 	@Path("timespanFormatter <seconds> <formatType>")
