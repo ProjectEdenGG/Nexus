@@ -10,6 +10,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
+import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.UncivilEngineersArena;
@@ -137,7 +138,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		UncivilEngineersMatchData matchData = minigamer.getMatch().getMatchData();
 
 		if (arena.ownsRegion(event.getRegion().getId(), "checkpoint")) {
-			int checkpointId = arena.getRegionTypeId(event.getRegion());
+			int checkpointId = Arena.getRegionTypeId(event.getRegion());
 			matchData.setCheckpoint(minigamer, checkpointId);
 		}
 	}

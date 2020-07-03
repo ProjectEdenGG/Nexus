@@ -411,10 +411,10 @@ public class StringUtils {
 			if (years == 0 && days == 0 && hours == 0 && minutes > 0 && seconds > 0)
 				result += seconds + formatType.get(formatType.getSecond(), seconds);
 
-			if (result.length() > 0)
-				return result.trim();
-			else
-				return original + formatType.get(formatType.getSecond(), seconds);
+			if (result.length() == 0)
+				result = original + formatType.get(formatType.getSecond(), seconds);
+
+			return result.trim();
 		}
 	}
 

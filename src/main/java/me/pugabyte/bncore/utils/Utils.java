@@ -20,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -501,6 +502,10 @@ public class Utils {
 		return getBlocksInRadius(start.getBlock(), radius, radius, radius);
 	}
 
+	public static List<Block> getBlocksInRadius(Location start, int xRadius, int yRadius, int zRadius) {
+		return getBlocksInRadius(start.getBlock(), xRadius, yRadius, zRadius);
+	}
+
 	public static List<Block> getBlocksInRadius(Block start, int radius) {
 		return getBlocksInRadius(start, radius, radius, radius);
 	}
@@ -512,6 +517,105 @@ public class Utils {
 				for (int y = -yRadius; y <= yRadius; y++)
 					blocks.add(start.getRelative(x, y, z));
 		return blocks;
+	}
+	public static BlockFace getDirection(Block from, Block to) {
+		return getDirection(from.getLocation(), to.getLocation());
+	}
+
+	public static BlockFace getDirection(Location from, Location to) {
+		Axis axis = Axis.getAxis(from, to);
+		if (axis == null)
+			throw new InvalidInputException("Locations not aligned on an axis, cannot determine direction");
+
+		switch (axis) {
+			case X:
+				if ((from.getZ() - to.getZ()) > 0)
+					return BlockFace.NORTH;
+				else
+					return BlockFace.SOUTH;
+			case Y:
+				if (from.getY() - to.getY() > 0)
+					return BlockFace.DOWN;
+				else
+					return BlockFace.UP;
+			case Z:
+				if (from.getX() - to.getX() > 0)
+					return BlockFace.WEST;
+				else
+					return BlockFace.EAST;
+		}
+
+		throw new InvalidInputException("Cannot determine direction");
+	}
+
+	public enum EgocentricDirection {
+		LEFT,
+		RIGHT
+	}
+
+	public enum CardinalDirection implements IteratableEnum {
+		NORTH,
+		EAST,
+		SOUTH,
+		WEST;
+
+		public static CardinalDirection of(BlockFace blockFace) {
+			return CardinalDirection.valueOf(blockFace.name());
+		}
+
+		// Clockwise
+		public CardinalDirection turnRight() {
+			return nextWithLoop();
+		}
+
+		// Counter-clockwise
+		public CardinalDirection turnLeft() {
+			return previousWithLoop();
+		}
+
+		public BlockFace toBlockFace() {
+			return BlockFace.valueOf(name());
+		}
+	}
+
+	public enum Axis {
+		X,
+		Y,
+		Z;
+
+		public static Axis getAxis(Location location1, Location location2) {
+			if (Math.floor(location1.getX()) == Math.floor(location2.getX()) && Math.floor(location1.getZ()) == Math.floor(location2.getZ()))
+				return Y;
+			if (Math.floor(location1.getX()) == Math.floor(location2.getX()))
+				return X;
+			if (Math.floor(location1.getZ()) == Math.floor(location2.getZ()))
+				return Z;
+
+			return null;
+		}
+	}
+
+	public enum MapRotation {
+		DEGREE_0,
+		DEGREE_90,
+		DEGREE_180,
+		DEGREE_270;
+
+		public static MapRotation getRotation(Rotation rotation) {
+			switch (rotation) {
+				case CLOCKWISE_45:
+				case FLIPPED_45:
+					return DEGREE_90;
+				case CLOCKWISE:
+				case COUNTER_CLOCKWISE:
+					return DEGREE_180;
+				case CLOCKWISE_135:
+				case COUNTER_CLOCKWISE_45:
+					return DEGREE_270;
+				default:
+					return DEGREE_0;
+			}
+		}
 	}
 
 	public static ItemStack addGlowing(ItemStack itemStack) {

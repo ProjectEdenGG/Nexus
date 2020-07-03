@@ -47,6 +47,13 @@ public class BlockCenterCommand extends CustomCommand {
 		player().teleport(newLocation);
 	}
 
+	@Path("corner")
+	void corner() {
+		centered.setX(Math.round(player().getLocation().getX()));
+		centered.setZ(Math.round(player().getLocation().getZ()));
+		player().teleport(centered);
+	}
+
 	@Path("java")
 	void java() {
 		Location loc = Utils.getCenteredLocation(player().getLocation());

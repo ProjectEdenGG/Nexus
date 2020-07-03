@@ -128,6 +128,10 @@ public class WorldGuardUtils {
 	}
 
 	public Collection<Player> getPlayersInRegion(String region) {
+		return getPlayersInRegion(getProtectedRegion(region));
+	}
+
+	public Collection<Player> getPlayersInRegion(ProtectedRegion region) {
 		return Bukkit.getOnlinePlayers().stream().filter(player -> isInRegion(player.getLocation(), region)).collect(Collectors.toList());
 	}
 

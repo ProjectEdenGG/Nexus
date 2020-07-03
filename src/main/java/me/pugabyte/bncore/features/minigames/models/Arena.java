@@ -144,8 +144,10 @@ public class Arena implements ConfigurationSerializable {
 		return (getMechanic().getClass().getSimpleName() + "_" + getName()).toLowerCase();
 	}
 
+	private static final String NUMBER_MODIFIER = "_[0-9]+";
+
 	public String getRegionTypeRegex(String type) {
-		return "^" + getRegionBaseName() + "_" + type.toLowerCase() + "(|_[0-9]+)$";
+		return "^" + getRegionBaseName() + "_" + type.toLowerCase() + "(|" + NUMBER_MODIFIER + ")$";
 	}
 
 	public boolean ownsRegion(String regionName, String type) {
@@ -160,16 +162,20 @@ public class Arena implements ConfigurationSerializable {
 		return getWGUtils().getRegion(getRegionBaseName() + "_" + type);
 	}
 
-	public int getRegionTypeId(String type) {
-		return getRegionTypeId(getProtectedRegion(type));
-	}
-
-	public int getRegionTypeId(ProtectedRegion region) {
+	public static int getRegionTypeId(ProtectedRegion region) {
 		return Integer.parseInt(region.getId().split("_")[3]);
 	}
 
 	public Set<ProtectedRegion> getRegionsLike(String regex) {
 		return getWGUtils().getRegionsLike(getRegionBaseName() + "_" + regex);
+	}
+
+	public Set<ProtectedRegion> getNumberedRegionsLike(String regex) {
+		return getWGUtils().getRegionsLike(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER);
+	}
+
+	public Set<ProtectedRegion> getNumberedRegionsLikeAt(String regex, Location location) {
+		return getWGUtils().getRegionsLikeAt(location, getRegionBaseName() + "_" + regex + NUMBER_MODIFIER);
 	}
 
 	public ProtectedRegion getProtectedRegion(String type) {
