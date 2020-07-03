@@ -16,7 +16,7 @@ import org.bukkit.entity.LivingEntity;
 @Permission("entity.cannon")
 @Redirect(from = "/pigpistol", to = "/entitycannon pig")
 @Redirect(from = "/kittycannon", to = "/entitycannon cat")
-@Redirect(from = {"/beezooka", "bz"}, to = "/entitycannon bee")
+@Redirect(from = {"/beezooka", "/bz"}, to = "/entitycannon bee")
 public class EntityCannonCommand extends CustomCommand {
 
 	public EntityCannonCommand(@NonNull CommandEvent event) {
