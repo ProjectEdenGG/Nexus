@@ -7,6 +7,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.commands.SpeedCommand;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
@@ -299,6 +300,7 @@ public class Minigamer {
 		player.setAllowFlight(mechanic.allowFly());
 		player.setFlying(mechanic.allowFly());
 		BNCore.getEssentials().getUser(player).setVanished(false);
+		SpeedCommand.resetSpeed(player);
 
 		if (mechanic.shouldClearInventory())
 			player.getInventory().clear();
