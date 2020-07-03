@@ -158,7 +158,13 @@ public class Minigamer {
 	}
 
 	public void toGamelobby() {
+		boolean staff = player.hasPermission("group.staff");
+
 		player.setGameMode(GameMode.SURVIVAL);
+		player.setFallDistance(0f);
+		player.setAllowFlight(staff);
+		player.setFlying(staff);
+
 		teleport(Minigames.getLobby());
 	}
 
