@@ -2,14 +2,12 @@ package me.pugabyte.bncore.features.commands;
 
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
-import me.pugabyte.bncore.framework.commands.models.annotations.Fallback;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
-@Fallback("essentials")
 @Permission("essentials.speed")
 @Redirect(from = "/flyspeed", to = "/speed fly")
 @Redirect(from = "/walkspeed", to = "/speed walk")
