@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.safecracker.NPCHandler;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProvider {
 
@@ -70,16 +72,24 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 		}));
 
 		contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build(), e -> {
-			openAnvilMenu(player, game.getRiddle(), (player1, response) -> {
-				game.setRiddle(response);
-				service.save(service.get());
-				SafeCrackerInventories.openAdminMenu(player);
-				return AnvilGUI.Response.text(response);
-			}, (player1) -> SafeCrackerInventories.openAdminMenu(player));
+			player.closeInventory();
+			player.sendMessage(new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle ").build());
 		}));
 
 		int row = 1;
 		int column = 0;
+
+
+		Map<String, SafeCrackerEvent.SafeCrackerNPC> npcs = new HashMap<>();
+		for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
+			try {
+				Utils.getPlayer(npc.getName()).hasPlayedBefore();
+				npcs.put(npc.getName(), npc);
+			} catch (Exception ignore) {
+			}
+		}
+		game.setNpcs(npcs);
+		service.save(service.get());
 
 		for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 			ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Utils.getPlayer(npc.getName()))

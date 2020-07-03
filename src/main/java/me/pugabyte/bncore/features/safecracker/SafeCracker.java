@@ -16,6 +16,7 @@ public class SafeCracker {
 	public static final String PREFIX = StringUtils.getPrefix("SafeCracker");
 
 	public static Map<Player, String> playerClickedNPC = new HashMap<>();
+	public static Map<Player, String> adminQuestionMap = new HashMap<>();
 
 	public static String[] correctResponses = {
 			"Wow! That's correct!",
