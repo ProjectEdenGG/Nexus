@@ -157,7 +157,11 @@ public class HoleInTheWall extends TeamlessMechanic {
 					.filter(track -> track.getMinigamer() != null)
 					.forEach(Track::end);
 
-			match.getTasks().wait(Time.SECOND.x(5), match::end);
+			// Not using matchtasks on purpose
+			Tasks.wait(Time.SECOND.x(5), () -> {
+				if (!match.isEnded())
+					match.end();
+			});
 		}
 	}
 
