@@ -20,7 +20,7 @@ public class BanDiscordCommand extends Command {
 
 	public BanDiscordCommand() {
 		this.name = "ban";
-		this.aliases = new String[]{"tempban", "unban", "kick", "warn", "unwarn", "mute", "unmute"};
+		this.aliases = new String[]{"tempban", "unban", "banip", "ipban", "kick", "warn", "unwarn", "mute", "unmute"};
 		this.requiredRole = Role.STAFF.name();
 		this.guildOnly = true;
 	}
