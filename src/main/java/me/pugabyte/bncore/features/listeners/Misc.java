@@ -175,9 +175,9 @@ public class Misc implements Listener {
 	public void onConnect(AsyncPlayerPreLoginEvent event) {
 		Nerd nerd = new Nerd(event.getUniqueId());
 		World world = nerd.getSpawnWorld();
-		if (world == null)
-			toSpawn.add(event.getUniqueId());
-		else if (world.getName().startsWith("resource")) {
+		if (world == null) return;
+
+		if (world.getName().startsWith("resource")) {
 			nerd = new NerdService().get(event.getUniqueId());
 			if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
 				toSpawn.add(event.getUniqueId());
