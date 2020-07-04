@@ -20,6 +20,7 @@ import me.pugabyte.bncore.models.tip.Tip.TipType;
 import me.pugabyte.bncore.models.tip.TipService;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -124,7 +125,7 @@ public class Misc implements Listener {
 			Player player = event.getPlayer();
 			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
-				Utils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get());
+				ActionBarUtils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get());
 				player.sendMessage("");
 				player.sendMessage(colorize("&4&lWARNING: &4You have chat disabled! Turn it on in your settings"));
 				player.sendMessage("");

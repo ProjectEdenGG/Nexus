@@ -81,7 +81,7 @@ class CommandMapUtils {
 				Commands.getRedirects().put(from, annotation.to());
 	}
 
-	void unregister(String name) throws IllegalAccessException {
+	void unregister(String name) {
 		CommandMap map = getCommandMap();
 		Iterator<Command> iterator = getKnownCommandMap().values().iterator();
 

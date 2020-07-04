@@ -348,7 +348,7 @@ public class Reflection implements Listener {
 		if (objReflections != 0)
 			reflectBool = reflectCount >= objReflections;
 
-		return reflectBool && objColor.equals(ColorType.fromMaterial(material));
+		return reflectBool && objColor.equals(ColorType.of(material));
 	}
 
 	private void broadcastObjective() {

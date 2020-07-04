@@ -25,6 +25,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
@@ -425,7 +426,7 @@ public class Match {
 							broadcastTimeLeft();
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
-						match.getPlayers().forEach(player -> Utils.sendActionBar(player, TimespanFormatter.of(time).format(), 2, false));
+						match.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, TimespanFormatter.of(time).format(), 2, false));
 					} else {
 						match.end();
 						stop();

@@ -84,8 +84,8 @@ public class BannerCommand extends CustomCommand implements Listener {
 	void all(DyeColor baseColor, DyeColor patternColor, @Arg("-") String input) {
 		String baseBanner = "minecraft:" + baseColor.name().toLowerCase().replace(" ", "_") + "_banner";
 		String patternBanner = "minecraft:" + patternColor.name().toLowerCase().replace(" ", "_") + "_banner";
-		String baseInt = ColorType.fromDyeColor(baseColor).getDurability() + "";
-		String patternInt = ColorType.fromDyeColor(patternColor).getDurability() + "";
+		String baseInt = ColorType.of(baseColor).getDurability() + "";
+		String patternInt = ColorType.of(patternColor).getDurability() + "";
 
 		String give = "minecraft:give " + player().getName();
 		if (input.equalsIgnoreCase("*")) {

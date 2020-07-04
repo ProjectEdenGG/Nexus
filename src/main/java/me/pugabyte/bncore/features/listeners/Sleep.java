@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.listeners;
 
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.store.perks.joinquit.VanishEvent;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -44,7 +45,7 @@ public class Sleep implements Listener {
 
 		if (sleeping != lastCalculatedSleeping || needed != lastCalculatedNeeded)
 			for (Player player : players)
-				Utils.sendActionBar(player, "Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed);
+				ActionBarUtils.sendActionBar(player, "Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed);
 
 		lastCalculatedSleeping = sleeping;
 		lastCalculatedNeeded = needed;
