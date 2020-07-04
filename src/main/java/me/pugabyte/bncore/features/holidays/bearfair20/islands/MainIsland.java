@@ -16,7 +16,11 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +30,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
@@ -127,25 +135,27 @@ public class MainIsland implements Listener, Island {
 						script.add("We are getting closer to the safe, I can tell");
 						break;
 					case 3:
+					case 4:
 						script.add("I've had to call in reinforcements for this dig, the stone around the safe is very tough.");
 						script.add("wait 80");
 						script.add("One of the excavators said he thought he heard a clink while mining, so we might be close.");
 						script.add("wait 80");
 						script.add("It should only be one more day before we find what we are looking for.");
 						break;
-					case 4:
-						script.add("We found the safe, but it's protected by a magical spell. We can't seem to break it no matter what we try.");
-						script.add("wait 80");
-						script.add("However, I've wandered around the island at night, and last night a whole bunch of strangers showed up.");
-						script.add("wait 80");
-						script.add("They were muttering strange questions at me, and I think they might have something to do with this safe.");
-						script.add("wait 80");
-						script.add("Search around the island for these strangers, and see if they can give you a clue on how to open this safe.");
-						script.add("wait 80");
-						script.add("When you think you know the code, go inspect that safe and try and crack the spell.");
-						// wait 80 + 20
-						Tasks.wait(400, () -> Utils.runCommand(player, "/safecracker start"));
-						break;
+					// till SafeCracker release
+//					case 4:
+//						script.add("We found the safe, but it's protected by a magical spell. We can't seem to break it no matter what we try.");
+//						script.add("wait 80");
+//						script.add("However, I've wandered around the island at night, and last night a whole bunch of strangers showed up.");
+//						script.add("wait 80");
+//						script.add("They were muttering strange questions at me, and I think they might have something to do with this safe.");
+//						script.add("wait 80");
+//						script.add("Search around the island for these strangers, and see if they can give you a clue on how to open this safe.");
+//						script.add("wait 80");
+//						script.add("When you think you know the code, go inspect that safe and try and crack the spell.");
+//						// wait 80 + 20
+//						Tasks.wait(400, () -> Utils.runCommand(player, "/safecracker start"));
+//						break;
 					default:
 						return null;
 				}
