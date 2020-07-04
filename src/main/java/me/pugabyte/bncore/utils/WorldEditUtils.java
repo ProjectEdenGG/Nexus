@@ -290,7 +290,7 @@ public class WorldEditUtils {
 
 	public void set(Region region, BlockType blockType) {
 		// TODO move back to WE
-		getBlocks(region).forEach(block -> block.setType(Material.valueOf(blockType.getName().toUpperCase())));
+		getBlocks(region).forEach(block -> block.setType(Material.valueOf(blockType.getId().replaceAll("minecraft:", "").toUpperCase())));
 //		EditSession editSession = getEditSession();
 //		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
 //		editSession.flushQueue();
@@ -336,7 +336,7 @@ public class WorldEditUtils {
 		region.expand(Direction.UP.toBlockVector().multiply(3));
 		region.contract(Direction.UP.toBlockVector().multiply(1));
 		session.getRegionSelector(region.getWorld()).learnChanges();
-		set(region, BlockTypes.GRASS);
+		set(region, BlockTypes.GRASS_BLOCK);
 	}
 
 }

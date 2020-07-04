@@ -16,12 +16,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static me.pugabyte.bncore.utils.StringUtils.plural;
 import static me.pugabyte.bncore.utils.Utils.randomInt;
 
 @Data
@@ -41,6 +44,14 @@ public class HoleInTheWallMatchData extends MatchData {
 		}
 	}
 
+	public Track getTrack(Minigamer minigamer) {
+		return tracks.stream().filter(track -> minigamer.equals(track.getMinigamer())).findFirst().orElse(null);
+	}
+
+	public Track getTrack(ProtectedRegion region) {
+		return tracks.stream().filter(track -> Arena.getRegionTypeId(region) == track.getId()).findFirst().orElse(null);
+	}
+
 	@Data
 	public class Track {
 		@NonNull
@@ -50,10 +61,14 @@ public class HoleInTheWallMatchData extends MatchData {
 		private BlockFace direction;
 		private Minigamer minigamer;
 		private int wallIndex = -1;
+		private AtomicInteger trackIndex = new AtomicInteger(0);
 		private int length;
 		private BlockFace drawDesignDirection;
 		private Block topLeft;
+		private Block topCenter;
 		private Block answerTopLeft;
+		private int taskId = -1;
+		private boolean validating;
 
 		public Track(@NonNull ProtectedRegion region, @NonNull Location designHangerLocation) {
 			this.region = region;
@@ -69,10 +84,10 @@ public class HoleInTheWallMatchData extends MatchData {
 			direction = Utils.getDirection(designHangerLocation.getBlock(), cobblestone.get()).getOppositeFace();
 
 			int over = (Wall.LENGTH - 1) / 2;
-			Location centerOfTopRow = designHangerLocation.clone().add(0, -1, 0);
+			topCenter = designHangerLocation.clone().add(0, -1, 0).getBlock();
 			BlockFace toTopLeftDirection = CardinalDirection.of(direction).turnRight().toBlockFace();
 			drawDesignDirection = toTopLeftDirection.getOppositeFace();
-			topLeft = centerOfTopRow.getBlock().getRelative(toTopLeftDirection, over);
+			topLeft = topCenter.getRelative(toTopLeftDirection, over);
 
 			int move = 0;
 			while (length == 0) {
@@ -92,28 +107,60 @@ public class HoleInTheWallMatchData extends MatchData {
 		}
 
 		public void start() {
+			reset();
 			nextWall();
 		}
 
 		public void nextWall() {
+			if (validating) return;
+
+			minigamer.getPlayer().getInventory().clear();
+			minigamer.getPlayer().getInventory().addItem(new ItemStack(Material.BLACK_STAINED_GLASS, 64));
+
 			clearAnswer();
 			Wall wall = walls.get(++wallIndex);
 
-			for (boolean[] row : wall.getBlocks()) {
-				int columnCount = 0;
-				for (boolean empty : row) {
-					Block relative = topLeft.getRelative(drawDesignDirection, columnCount++);
-					if (empty)
-						relative.setType(Material.AIR);
-					else
-						relative.setType(Material.BLACK_CONCRETE);
+			int delay = HoleInTheWall.BASE_TICK_SPEED - (wallIndex / HoleInTheWall.TICK_DECREASE_EVERY_X_WALLS);
+			trackIndex.set(0);
+
+			taskId = getMatch().getTasks().repeat(0, delay, () -> {
+				clearWall(trackIndex.getAndIncrement());
+
+				if (this.designHangerLocation.getBlock().getRelative(direction, trackIndex.get()).getType() != Material.AIR) {
+					cancelTask();
+					validate();
+					return;
 				}
-				topLeft = topLeft.getLocation().add(0, -1, 0).getBlock();
-			}
+
+				designHangerLocation.getBlock().getRelative(direction, trackIndex.get()).setType(Material.COBBLESTONE_WALL);
+
+				Block topLeft = this.topLeft.getRelative(direction, trackIndex.get());
+
+				for (boolean[] row : wall.getBlocks()) {
+					int columnCount = 0;
+					for (boolean empty : row) {
+						Block relative = topLeft.getRelative(drawDesignDirection, columnCount++);
+						if (empty)
+							relative.setType(Material.AIR);
+						else
+							relative.setType(Material.BLACK_CONCRETE);
+					}
+					topLeft = topLeft.getLocation().add(0, -1, 0).getBlock();
+				}
+			});
 		}
 
 		public void clearAnswer() {
-			Location start = answerTopLeft.getLocation().clone();
+			clearWall(length);
+		}
+
+		public void clearWall(int trackIndex) {
+			Block hangar = designHangerLocation.getBlock().getRelative(direction, trackIndex);
+			if (hangar.getType() == Material.COBBLESTONE_WALL)
+				hangar.setType(Material.AIR);
+
+			Location start = topLeft.getRelative(direction, trackIndex).getLocation();
+
 			for (int i = 0; i < Wall.HEIGHT; i++) {
 				for (int j = 0; j < Wall.LENGTH; j++)
 					start.getBlock().getRelative(drawDesignDirection, j).setType(Material.AIR);
@@ -121,8 +168,67 @@ public class HoleInTheWallMatchData extends MatchData {
 			}
 		}
 
+		public void reset() {
+			cancelTask();
+			for (int i = 0; i <= length; i++)
+				clearWall(i);
+		}
+
+		public void cancel() {
+			cancelTask();
+			clearWall(trackIndex.get());
+		}
+
+		public void cancelTask() {
+			getMatch().getTasks().cancel(taskId);
+		}
+
+		public void skip() {
+			cancel();
+			validate();
+		}
+
 		public void validate() {
+			validating = true;
 			Wall wall = walls.get(wallIndex);
+
+			Location topLeft = answerTopLeft.getLocation().clone();
+
+			int total = 0;
+			int correct = 0;
+
+			for (boolean[] row : wall.getBlocks()) {
+				int columnCount = 0;
+				for (boolean empty : row) {
+					Block relative = topLeft.getBlock().getRelative(drawDesignDirection, columnCount++);
+					if (empty) {
+						++total;
+						if (relative.getType() == Material.BLACK_STAINED_GLASS) {
+							relative.setType(Material.GREEN_STAINED_GLASS);
+							++correct;
+						} else
+							relative.setType(Material.RED_STAINED_GLASS);
+					} else
+						if (relative.getType() == Material.AIR)
+							relative.setType(Material.BLACK_CONCRETE);
+						else {
+							--correct;
+							relative.setType(Material.RED_CONCRETE);
+						}
+				}
+				topLeft.add(0, -1, 0);
+			}
+
+			int points = (correct - 1) + ((total == correct) ? 1 : 0);
+			if (points > 0) {
+				minigamer.scored(points);
+				minigamer.tell("You earned &e" + points + " " + plural("point", points));
+			}
+
+			getMatch().getTasks().wait(10, () -> {
+				validating = false;
+				nextWall();
+			});
 		}
 
 	}
