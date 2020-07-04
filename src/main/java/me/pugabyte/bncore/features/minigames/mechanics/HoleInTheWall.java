@@ -140,6 +140,27 @@ public class HoleInTheWall extends TeamlessMechanic {
 		super.onEnd(event);
 	}
 
+	@EventHandler
+	public void onMatchEnd(MatchEndEvent event) {
+		Match match = event.getMatch();
+		if (!match.isMechanic(this)) return;
+
+		HoleInTheWallMatchData matchData = match.getMatchData();
+
+		if (!matchData.isEnding() && !shouldBeOver(match)) {
+			if (match.getTimer().getTime() == 0)
+				match.broadcast("Time is up!");
+
+			matchData.setEnding(true);
+			event.setCancelled(true);
+			matchData.getTracks().stream()
+					.filter(track -> track.getMinigamer() != null)
+					.forEach(Track::end);
+
+			match.getTasks().wait(Time.SECOND.x(5), match::end);
+		}
+	}
+
 	private boolean isInAnswerRegion(Minigamer minigamer, Location location) {
 		Match match = minigamer.getMatch();
 		HoleInTheWallArena arena = match.getArena();

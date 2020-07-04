@@ -37,8 +37,9 @@ import static me.pugabyte.bncore.utils.Utils.randomInt;
 @Data
 @MatchDataFor(HoleInTheWall.class)
 public class HoleInTheWallMatchData extends MatchData {
-	public List<Wall> walls = new ArrayList<>();
-	public List<Track> tracks = new ArrayList<>();
+	private final List<Wall> walls = new ArrayList<>();
+	private final List<Track> tracks = new ArrayList<>();
+	private boolean isEnding;
 
 	private static final List<DyeColor> colors = Arrays.asList(DyeColor.ORANGE, DyeColor.MAGENTA, DyeColor.LIGHT_BLUE,
 			DyeColor.YELLOW, DyeColor.LIME, DyeColor.PINK, DyeColor.CYAN, DyeColor.PURPLE, DyeColor.BLUE);
@@ -121,6 +122,11 @@ public class HoleInTheWallMatchData extends MatchData {
 		public void start() {
 			reset();
 			nextWall();
+		}
+
+		public void end() {
+			cancelTask();
+			validate();
 		}
 
 		public void nextWall() {
@@ -250,10 +256,11 @@ public class HoleInTheWallMatchData extends MatchData {
 					player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
 			}
 
-			getMatch().getTasks().wait(10, () -> {
-				validating = false;
-				nextWall();
-			});
+			if (!isEnding)
+				getMatch().getTasks().wait(10, () -> {
+					validating = false;
+					nextWall();
+				});
 		}
 
 	}
