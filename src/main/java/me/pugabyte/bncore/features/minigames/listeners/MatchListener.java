@@ -318,7 +318,8 @@ public class MatchListener implements Listener {
 
 		Arena arena = ArenaManager.getFromLocation(event.getItem().getLocation());
 		if (arena == null) return;
-		Match match = MatchManager.get(arena);
+		Match match = MatchManager.find(arena);
+		if (match == null) return;
 		Player player = (Player) event.getEntity();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isIn(match))
