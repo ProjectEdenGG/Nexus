@@ -4,9 +4,9 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.commands.PodiumsCommand;
 import me.pugabyte.bncore.features.minigames.commands.PodiumsCommand.Position;
 import me.pugabyte.bncore.features.minigames.utils.MinigameNight.NextMGN;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -43,7 +43,7 @@ public class ActionBar {
 					Tasks.wait(wait.getAndAdd(DELAY), () ->
 							Minigames.getWorld().getPlayers().forEach(player -> {
 								if (isInRegion(player) && !isNPC(player))
-									Utils.sendActionBar(player, interpolate(message, player), DELAY);
+									ActionBarUtils.sendActionBar(player, interpolate(message, player), DELAY);
 							})));
 		});
 	}

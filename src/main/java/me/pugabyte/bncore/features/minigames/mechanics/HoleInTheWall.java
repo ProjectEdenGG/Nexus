@@ -20,7 +20,10 @@ import me.pugabyte.bncore.utils.Time;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -167,10 +170,12 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 		if (event.getClickedBlock() != null) {
 			if (event.getAction() == Action.LEFT_CLICK_BLOCK)
-				if (event.getClickedBlock().getType() == Material.BLACK_STAINED_GLASS) {
+				if (MaterialTag.STAINED_GLASS.isTagged(event.getClickedBlock().getType())) {
 					if (isInAnswerRegion(minigamer, event.getClickedBlock().getLocation())) {
+						Player player = event.getPlayer();
+						player.playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 1F, 1F);
+						player.getInventory().addItem(new ItemStack(event.getClickedBlock().getType()));
 						event.getClickedBlock().setType(Material.AIR);
-						event.getPlayer().getInventory().addItem(new ItemStack(Material.BLACK_STAINED_GLASS));
 					}
 				}
 

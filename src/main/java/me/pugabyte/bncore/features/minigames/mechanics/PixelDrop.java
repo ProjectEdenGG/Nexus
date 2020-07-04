@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.PixelDropMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -114,7 +115,7 @@ public class PixelDrop extends TeamlessMechanic {
 		if (matchData.getCurrentRound() == MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
 				minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-					Utils.sendActionBar(player, "&c&lGame Over!");
+					ActionBarUtils.sendActionBar(player, "&c&lGame Over!");
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 1F);
 				});
 				match.broadcast("&c&lGame Over!");
@@ -133,7 +134,7 @@ public class PixelDrop extends TeamlessMechanic {
 							matchData.setTimeLeft(i);
 							match.getScoreboard().update();
 
-							Utils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
+							ActionBarUtils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
 							if (i <= 3)
 								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 						}))

@@ -127,7 +127,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	private List<Color> removeUglies(List<Color> oldColors) {
 		List<Color> newColors = new ArrayList<>();
 		for (Color fwColor : oldColors) {
-			ColorType type = ColorType.fromColor(fwColor);
+			ColorType type = ColorType.of(fwColor);
 			if (!type.equals(ColorType.BLACK)
 					&& !type.equals(ColorType.GRAY)
 					&& !type.equals(ColorType.LIGHT_GRAY)

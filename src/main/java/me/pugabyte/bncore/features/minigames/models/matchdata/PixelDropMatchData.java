@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.arenas.PixelDropArena;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
@@ -235,9 +236,9 @@ public class PixelDropMatchData extends MatchData {
 			List<Minigamer> minigamers = match.getMinigamers();
 			minigamers.forEach(minigamer -> {
 				if (!guessed.contains(minigamer))
-					Utils.sendActionBar(minigamer.getPlayer(), hint.get(), 3 * 20, true);
+					ActionBarUtils.sendActionBar(minigamer.getPlayer(), hint.get(), 3 * 20, true);
 				else
-					Utils.sendActionBar(minigamer.getPlayer(), "&a" + word, 3 * 20, true);
+					ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&a" + word, 3 * 20, true);
 			});
 		});
 	}
@@ -249,7 +250,7 @@ public class PixelDropMatchData extends MatchData {
 	public void revealWord(Match match) {
 		List<Minigamer> minigamers = match.getMinigamers();
 		String word = getRoundWord().replaceAll("_", " ");
-		minigamers.forEach(minigamer -> Utils.sendActionBar(minigamer.getPlayer(), "&a" + word, 40, true));
+		minigamers.forEach(minigamer -> ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&a" + word, 40, true));
 	}
 
 	// TODO: Counter clockwise animation

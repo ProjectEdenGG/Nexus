@@ -15,6 +15,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEven
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.PixelPaintersMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -219,7 +220,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 		if (matchData.getCurrentRound() != 0) {
 			minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-				Utils.sendActionBar(player, "&c&lRound Over!");
+				ActionBarUtils.sendActionBar(player, "&c&lRound Over!");
 				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.7F);
 			});
 			match.broadcast("&c&lRound Over!");
@@ -234,7 +235,7 @@ public class PixelPainters extends TeamlessMechanic {
 		if (matchData.getCurrentRound() == MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
 				minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-					Utils.sendActionBar(player, "&c&lGame Over!");
+					ActionBarUtils.sendActionBar(player, "&c&lGame Over!");
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 1F);
 					match.getTasks().wait(20, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.85F));
 					match.getTasks().wait(40, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.65F));
@@ -256,7 +257,7 @@ public class PixelPainters extends TeamlessMechanic {
 							matchData.setTimeLeft(i);
 							match.getScoreboard().update();
 
-							Utils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
+							ActionBarUtils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
 									if (i <= 3)
 										player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 								}))
@@ -421,7 +422,7 @@ public class PixelPainters extends TeamlessMechanic {
 					matchData.setTimeLeft(i);
 					match.getScoreboard().update();
 
-					Utils.sendActionBar(player, "&cRound ends in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
+					ActionBarUtils.sendActionBar(player, "&cRound ends in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
 					if (i <= 3)
 						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 				}))

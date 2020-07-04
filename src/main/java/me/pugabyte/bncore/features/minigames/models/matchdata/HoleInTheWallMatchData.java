@@ -10,12 +10,18 @@ import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
+import me.pugabyte.bncore.utils.ActionBarUtils;
+import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.CardinalDirection;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -25,6 +31,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.pugabyte.bncore.utils.StringUtils.plural;
+import static me.pugabyte.bncore.utils.Utils.getRandomElement;
 import static me.pugabyte.bncore.utils.Utils.randomInt;
 
 @Data
@@ -32,6 +39,9 @@ import static me.pugabyte.bncore.utils.Utils.randomInt;
 public class HoleInTheWallMatchData extends MatchData {
 	public List<Wall> walls = new ArrayList<>();
 	public List<Track> tracks = new ArrayList<>();
+
+	private static final List<DyeColor> colors = Arrays.asList(DyeColor.ORANGE, DyeColor.MAGENTA, DyeColor.LIGHT_BLUE,
+			DyeColor.YELLOW, DyeColor.LIME, DyeColor.PINK, DyeColor.CYAN, DyeColor.PURPLE, DyeColor.BLUE);
 
 	public HoleInTheWallMatchData(Match match) {
 		super(match);
@@ -69,6 +79,8 @@ public class HoleInTheWallMatchData extends MatchData {
 		private Block answerTopLeft;
 		private int taskId = -1;
 		private boolean validating;
+		private Material wallMaterial;
+		private Material buildMaterial = ColorType.of(getRandomElement(colors)).getStainedGlass();
 
 		public Track(@NonNull ProtectedRegion region, @NonNull Location designHangerLocation) {
 			this.region = region;
@@ -113,15 +125,17 @@ public class HoleInTheWallMatchData extends MatchData {
 
 		public void nextWall() {
 			if (validating) return;
+			if (taskId > 0) return;
 
 			minigamer.getPlayer().getInventory().clear();
-			minigamer.getPlayer().getInventory().addItem(new ItemStack(Material.BLACK_STAINED_GLASS, 64));
+			minigamer.getPlayer().getInventory().addItem(new ItemStack(buildMaterial, 64));
 
 			clearAnswer();
 			Wall wall = walls.get(++wallIndex);
 
 			int delay = HoleInTheWall.BASE_TICK_SPEED - (wallIndex / HoleInTheWall.TICK_DECREASE_EVERY_X_WALLS);
 			trackIndex.set(0);
+			wallMaterial = ColorType.of(getRandomElement(colors)).getConcrete();
 
 			taskId = getMatch().getTasks().repeat(0, delay, () -> {
 				clearWall(trackIndex.getAndIncrement());
@@ -143,7 +157,7 @@ public class HoleInTheWallMatchData extends MatchData {
 						if (empty)
 							relative.setType(Material.AIR);
 						else
-							relative.setType(Material.BLACK_CONCRETE);
+							relative.setType(wallMaterial);
 					}
 					topLeft = topLeft.getLocation().add(0, -1, 0).getBlock();
 				}
@@ -181,14 +195,17 @@ public class HoleInTheWallMatchData extends MatchData {
 
 		public void cancelTask() {
 			getMatch().getTasks().cancel(taskId);
+			taskId = -1;
 		}
 
 		public void skip() {
+			if (validating) return;
 			cancel();
 			validate();
 		}
 
 		public void validate() {
+			if (validating) return;
 			validating = true;
 			Wall wall = walls.get(wallIndex);
 
@@ -203,14 +220,14 @@ public class HoleInTheWallMatchData extends MatchData {
 					Block relative = topLeft.getBlock().getRelative(drawDesignDirection, columnCount++);
 					if (empty) {
 						++total;
-						if (relative.getType() == Material.BLACK_STAINED_GLASS) {
+						if (MaterialTag.STAINED_GLASS.isTagged(relative.getType())) {
 							relative.setType(Material.GREEN_STAINED_GLASS);
 							++correct;
 						} else
 							relative.setType(Material.RED_STAINED_GLASS);
 					} else
 						if (relative.getType() == Material.AIR)
-							relative.setType(Material.BLACK_CONCRETE);
+							relative.setType(wallMaterial);
 						else {
 							--correct;
 							relative.setType(Material.RED_CONCRETE);
@@ -219,10 +236,18 @@ public class HoleInTheWallMatchData extends MatchData {
 				topLeft.add(0, -1, 0);
 			}
 
-			int points = (correct - 1) + ((total == correct) ? 1 : 0);
+			boolean allCorrect = total == correct;
+			int points = (correct - 1) + (allCorrect ? 1 : 0);
 			if (points > 0) {
 				minigamer.scored(points);
 				minigamer.tell("You earned &e" + points + " " + plural("point", points));
+
+				Player player = minigamer.getPlayer();
+				ActionBarUtils.sendActionBar(player, allCorrect ? "&a&lCorrect" : "&c&lIncorrect");
+				if (allCorrect)
+					player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
+				else
+					player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
 			}
 
 			getMatch().getTasks().wait(10, () -> {

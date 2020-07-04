@@ -152,29 +152,24 @@ public enum ColorType {
 	private final DyeColor similarDyeColor;
 	private final Integer durability;
 
-	public static ColorType fromString(String name) {
+	public static ColorType of(String name) {
 		return Arrays.stream(values()).filter(colorType -> name.equals(colorType.getName())).findFirst().orElse(null);
 	}
 
-	public static ColorType fromColor(Color color) {
+	public static ColorType of(Color color) {
 		return Arrays.stream(values()).filter(colorType -> color.equals(colorType.getColor())).findFirst().orElse(null);
 	}
 
-	public static ColorType fromChatColor(ChatColor chatColor) {
+	public static ColorType of(ChatColor chatColor) {
 		return Arrays.stream(values()).filter(colorType -> chatColor.equals(colorType.getChatColor())).findFirst().orElse(null);
 	}
 
-	public static ColorType fromDyeColor(DyeColor dyeColor) {
+	public static ColorType of(DyeColor dyeColor) {
 		return Arrays.stream(values()).filter(colorType -> dyeColor.equals(colorType.getDyeColor())).findFirst().orElse(null);
 	}
 
-	public static ColorType fromMaterial(Material material) {
-		return fromDyeColor(Arrays.stream(DyeColor.values()).filter(dyeColor -> material.name().startsWith(dyeColor.name())).findFirst().orElse(null));
-	}
-
-	@Deprecated
-	public static ColorType fromDurability(int durability) {
-		return Arrays.stream(values()).filter(colorType -> durability == (colorType.getDurability())).findFirst().orElse(null);
+	public static ColorType of(Material material) {
+		return of(Arrays.stream(DyeColor.values()).filter(dyeColor -> material.name().startsWith(dyeColor.name())).findFirst().orElse(null));
 	}
 
 	public Material switchColor(Material material) {
@@ -182,7 +177,7 @@ public enum ColorType {
 	}
 
 	public static Material switchColor(Material material, ColorType colorType) {
-		return Material.valueOf(material.name().replace(fromMaterial(material).getDyeColor().name(), colorType.getDyeColor().name()));
+		return Material.valueOf(material.name().replace(of(material).getDyeColor().name(), colorType.getDyeColor().name()));
 	}
 
 	private static String generic(Material material) {
