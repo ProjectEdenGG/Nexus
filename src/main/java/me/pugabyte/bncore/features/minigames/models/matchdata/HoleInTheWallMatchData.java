@@ -215,6 +215,7 @@ public class HoleInTheWallMatchData extends MatchData {
 			validating = true;
 			Wall wall = walls.get(wallIndex);
 
+			Player player = minigamer.getPlayer();
 			Location topLeft = answerTopLeft.getLocation().clone();
 
 			int total = 0;
@@ -248,13 +249,13 @@ public class HoleInTheWallMatchData extends MatchData {
 				minigamer.scored(points);
 				minigamer.tell("You earned &e" + points + " " + plural("point", points));
 
-				Player player = minigamer.getPlayer();
 				ActionBarUtils.sendActionBar(player, allCorrect ? "&a&lCorrect" : "&c&lIncorrect");
-				if (allCorrect)
-					player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
-				else
-					player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
 			}
+
+			if (allCorrect)
+				player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
+			else
+				player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
 
 			if (!isEnding)
 				getMatch().getTasks().wait(10, () -> {
