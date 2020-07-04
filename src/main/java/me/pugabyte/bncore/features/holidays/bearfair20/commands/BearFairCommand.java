@@ -24,6 +24,7 @@ import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -31,11 +32,18 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.atticKey;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.basketItem;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland.arcadePieces;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland.presentItem;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.*;
 
 @Redirect(from = {"/bfp", "bfpoints", "/bearfairpoints"}, to = "/bearfair points")
 public class BearFairCommand extends _WarpCommand {
@@ -61,6 +69,20 @@ public class BearFairCommand extends _WarpCommand {
 			error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
 
 		runCommandAsOp("bearfair tp bearfair");
+	}
+
+	@Path("quests giveAllQuestItem")
+	void giveQuestItems() {
+		// MAIN
+		Utils.giveItems(player(), Arrays.asList(honeyStroopWafel, stroofWafel, blessedHoneyBottle, relic, ancientPickaxe, rareFlower, specialPrize));
+		// SDU
+		Utils.giveItems(player(), Arrays.asList(anzacBiscuit, goldenSyrup, peanuts));
+		// PUGMAS
+		Utils.giveItem(player(), presentItem);
+		// MGN
+		arcadePieces.forEach(piece -> Utils.giveItem(player(), piece.build()));
+		// HALLOWEEN
+		Utils.giveItems(player(), Arrays.asList(atticKey, basketItem));
 	}
 
 	@Path("quests npc <text>")

@@ -57,7 +57,7 @@ public class MainIsland implements Listener, Island {
 	public static ItemStack rareFlower = new ItemBuilder(Material.BLUE_ORCHID).lore(itemLore).name("Rare Flower").amount(1).build();
 	private static String witchDwellingRg = "bearfair2020_witchdwelling";
 	private static Location specialPrizeLoc = new Location(BearFair20.getWorld(), -1016, 120, -1605);
-	private static ItemStack specialPrize;
+	public static ItemStack specialPrize;
 	//
 
 
