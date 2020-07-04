@@ -12,6 +12,7 @@ import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException
 import me.pugabyte.bncore.features.minigames.models.matchdata.DeathSwapMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.DeathSwapMatchData.Swap;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -152,7 +153,7 @@ public final class DeathSwap extends TeamlessMechanic {
 		List<Minigamer> swappingList = new ArrayList<>(match.getMinigamers().stream().filter(Minigamer::isAlive).collect(Collectors.toList()));
 		swappingList.forEach(player -> {
 			player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 1));
-			Utils.sendActionBar(player.getPlayer(), "&3SWAPPING");
+			ActionBarUtils.sendActionBar(player.getPlayer(), "&3SWAPPING");
 		});
 
 		if (match.getMinigamers().size() % 2 != 0) {

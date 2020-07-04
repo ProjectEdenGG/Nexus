@@ -76,7 +76,7 @@ public final class Paintball extends BalancedTeamMechanic {
 	}
 
 	public void changeBlockColor(Minigamer minigamer, Block block) {
-		ColorType colorType = ColorType.fromChatColor(minigamer.getTeam().getColor());
+		ColorType colorType = ColorType.of(minigamer.getTeam().getColor());
 		if (MaterialTag.COLORABLE.isTagged(block.getType()))
 			block.setType(colorType.switchColor(block.getType()));
 		else

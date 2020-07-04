@@ -626,37 +626,6 @@ public class Utils {
 		return itemStack;
 	}
 
-	public static void sendActionBar(final Player player, final String message) {
-		player.sendActionBar(colorize(message));
-	}
-
-	public static void sendActionBar(final Player player, final String message, int duration) {
-		sendActionBar(player, message, duration, true);
-	}
-
-	public static void sendActionBar(final Player player, final String message, int duration, boolean fade) {
-		sendActionBar(player, message);
-
-		if (!fade && duration >= 0)
-			Tasks.wait(duration + 1, () -> sendActionBar(player, ""));
-
-		while (duration > 40)
-			Tasks.wait(duration -= 40, () -> sendActionBar(player, message));
-	}
-
-	public static void sendActionBarToAllPlayers(String message) {
-		sendActionBarToAllPlayers(message, -1);
-	}
-
-	public static void sendActionBarToAllPlayers(String message, int duration) {
-		sendActionBarToAllPlayers(message, duration, true);
-	}
-
-	public static void sendActionBarToAllPlayers(String message, int duration, boolean fade) {
-		for (Player player : Bukkit.getOnlinePlayers())
-			sendActionBar(player, message, duration, fade);
-	}
-
 	public static int randomInt(int max) {
 		return randomInt(0, max);
 	}
