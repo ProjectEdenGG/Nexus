@@ -32,7 +32,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -99,10 +98,6 @@ public class Utils {
 
 	public static Player zani() {
 		return Bukkit.getPlayer("Zanitaeni");
-	}
-
-	public static void callEvent(Event event) {
-		BNCore.getInstance().getServer().getPluginManager().callEvent(event);
 	}
 
 	public static boolean isVanished(Player player) {

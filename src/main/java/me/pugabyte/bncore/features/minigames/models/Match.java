@@ -30,7 +30,6 @@ import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -133,8 +132,7 @@ public class Match {
 		}
 
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
-		Utils.callEvent(event);
-		if (event.isCancelled()) return false;
+		if (!event.callEvent()) return false;
 
 		minigamers.add(minigamer);
 		allMinigamers.add(minigamer);
@@ -154,7 +152,7 @@ public class Match {
 		if (!minigamers.contains(minigamer)) return;
 
 		MatchQuitEvent event = new MatchQuitEvent(this, minigamer);
-		Utils.callEvent(event);
+		event.callEvent();
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
@@ -334,8 +332,7 @@ public class Match {
 		int diff = score - scores.getOrDefault(team, 0);
 
 		TeamScoredEvent event = new TeamScoredEvent(this, team, diff);
-		Utils.callEvent(event);
-		if (event.isCancelled()) return;
+		if (!event.callEvent()) return;
 
 		scores.put(team, scores.getOrDefault(team, 0) + event.getAmount());
 		scoreboard.update();
@@ -348,22 +345,20 @@ public class Match {
 		}
 
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
-		Utils.callEvent(event);
+		event.callEvent();
 		if (!event.isCancelled())
 			minigamers.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
 	}
 
 	public void broadcastNoPrefix(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
-		Utils.callEvent(event);
-		if (!event.isCancelled())
+		if (event.callEvent())
 			minigamers.forEach(minigamer -> minigamer.send(colorize(event.getMessage())));
 	}
 
 	public void broadcast(String message, Team team) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message, team);
-		Utils.callEvent(event);
-		if (!event.isCancelled()) {
+		if (event.callEvent()) {
 			minigamers.stream()
 					.filter(minigamer -> minigamer.getTeam().equals(event.getTeam()))
 					.collect(Collectors.toSet())
@@ -435,7 +430,7 @@ public class Match {
 			} else {
 				taskId = match.getTasks().repeat(0, Time.SECOND, () -> {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, ++time);
-					Utils.callEvent(event);
+					event.callEvent();
 				});
 			}
 		}

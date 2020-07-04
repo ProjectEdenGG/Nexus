@@ -12,7 +12,6 @@ import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -64,7 +63,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 				DiscordChatEvent discordChatEvent = new DiscordChatEvent(event.getMember(), channel.get(), content, channel.get().getPermission());
 
 				Tasks.sync(() -> {
-					Utils.callEvent(discordChatEvent);
+					discordChatEvent.callEvent();
 					if (discordChatEvent.isCancelled()) {
 						Tasks.async(() -> event.getMessage().delete().queue());
 						return;

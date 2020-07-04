@@ -12,7 +12,6 @@ import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -70,13 +69,11 @@ public class ChatManager {
 		Set<Chatter> recipients = channel.getRecipients(chatter);
 		if (channel instanceof PublicChannel) {
 			PublicChatEvent event = new PublicChatEvent(chatter, (PublicChannel) channel, message, recipients);
-			Utils.callEvent(event);
-			if (!event.isCancelled())
+			if (event.callEvent())
 				process(event);
 		} else if (channel instanceof PrivateChannel) {
 			PrivateChatEvent event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, recipients);
-			Utils.callEvent(event);
-			if (!event.isCancelled())
+			if (event.callEvent())
 				process(event);
 		}
 	}

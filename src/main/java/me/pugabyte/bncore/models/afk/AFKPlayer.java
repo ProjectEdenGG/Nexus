@@ -70,7 +70,7 @@ public class AFKPlayer {
 	public void afk() {
 		setAfk(true);
 
-		Utils.callEvent(new NowAFKEvent(this));
+		new NowAFKEvent(this).callEvent();
 
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			if (!Utils.canSee(_player, getPlayer())) return;
@@ -93,7 +93,7 @@ public class AFKPlayer {
 		setTime();
 		setLocation();
 
-		Utils.callEvent(new NotAFKEvent(this));
+		new NotAFKEvent(this).callEvent();
 
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			if (!Utils.canSee(_player, getPlayer())) return;

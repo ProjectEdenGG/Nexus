@@ -321,7 +321,7 @@ public class Misc implements Listener {
 		if (attacker == null) return;
 
 		PlayerDamageByPlayerEvent newEvent = new PlayerDamageByPlayerEvent((Player) event.getEntity(), attacker, event);
-		Utils.callEvent(newEvent);
+		newEvent.callEvent();
 	}
 
 	// ImageOnMap rotating frames on placement; rotate back one before placement to offset

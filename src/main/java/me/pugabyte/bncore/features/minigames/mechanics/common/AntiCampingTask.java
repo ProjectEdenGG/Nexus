@@ -103,8 +103,7 @@ public class AntiCampingTask {
 
 		if (floorId < 2) {
 			MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(minigamer);
-			Utils.callEvent(deathEvent);
-			if (deathEvent.isCancelled()) return;
+			if (!deathEvent.callEvent()) return;
 			mechanic.onDeath(deathEvent);
 		} else {
 			Location location = minigamer.getPlayer().getLocation();

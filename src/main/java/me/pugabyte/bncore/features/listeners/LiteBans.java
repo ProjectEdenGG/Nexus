@@ -85,16 +85,16 @@ public class LiteBans implements Listener {
 				Plugin liteBans = Bukkit.getPluginManager().getPlugin("LiteBans");
 				switch (entry.getType()) {
 					case "ban":
-						Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new BanEvent(entry)));
+						Bukkit.getScheduler().runTask(liteBans, () -> new BanEvent(entry).callEvent());
 						break;
 					case "kick":
-						Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new KickEvent(entry)));
+						Bukkit.getScheduler().runTask(liteBans, () -> new KickEvent(entry).callEvent());
 						break;
 					case "mute":
-						Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new MuteEvent(entry)));
+						Bukkit.getScheduler().runTask(liteBans, () -> new MuteEvent(entry).callEvent());
 						break;
 					case "warn":
-						Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new WarnEvent(entry)));
+						Bukkit.getScheduler().runTask(liteBans, () -> new WarnEvent(entry).callEvent());
 						break;
 				}
 			}
@@ -104,7 +104,7 @@ public class LiteBans implements Listener {
 			@Override
 			public void broadcastSent(String message, String type) {
 				Plugin liteBans = Bukkit.getPluginManager().getPlugin("LiteBans");
-				Bukkit.getScheduler().runTask(liteBans, () -> Utils.callEvent(new BroadcastEvent(message, type)));
+				Bukkit.getScheduler().runTask(liteBans, () -> new BroadcastEvent(message, type).callEvent());
 			}
 		};
 

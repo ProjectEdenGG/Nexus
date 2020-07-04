@@ -8,7 +8,6 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
 
 @Fallback("premiumvanish")
 @Redirect(from = {"/fj", "/fakejoin"}, to = "/bncore:vanish fj")
@@ -20,7 +19,7 @@ public class VanishCommand extends CustomCommand {
 
 	public VanishCommand(@NonNull CommandEvent event) {
 		super(event);
-		Utils.callEvent(new VanishEvent(player()));
+		new VanishEvent(player()).callEvent();
 	}
 
 	@Path("(fj|fakejoin)")
