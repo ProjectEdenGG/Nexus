@@ -44,10 +44,17 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 			SafeCrackerInventories.openGameSelectorMenu(player);
 		}));
 
-		contents.set(0, 6, ClickableItem.from(new ItemBuilder(Material.COMPASS).name("&eSpawn NPCs").build(), e -> {
+		contents.set(0, 6, ClickableItem.from(new ItemBuilder(Material.POLAR_BEAR_SPAWN_EGG).name("&eSpawn NPCs").build(), e -> {
 			for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 				NPC npcEntity = CitizensAPI.getNPCRegistry().getById(npc.getId());
 				npcEntity.spawn(npcEntity.getStoredLocation());
+			}
+		}));
+
+		contents.set(0, 7, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&eDespawn NPCs").build(), e -> {
+			for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
+				NPC npcEntity = CitizensAPI.getNPCRegistry().getById(npc.getId());
+				npcEntity.despawn();
 			}
 		}));
 
