@@ -14,7 +14,6 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -113,8 +112,7 @@ public abstract class Mechanic implements Listener {
 
 	public void kill(Minigamer victim, Minigamer attacker) {
 		MinigamerDeathEvent event = new MinigamerDeathEvent(victim, attacker);
-		Utils.callEvent(event);
-		if (event.isCancelled()) return;
+		if (!event.callEvent()) return;
 
 		onDeath(event);
 	}

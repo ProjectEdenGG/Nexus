@@ -15,7 +15,6 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -212,8 +211,7 @@ public class Minigamer {
 		int diff = score - this.score;
 
 		MinigamerScoredEvent event = new MinigamerScoredEvent(this, diff);
-		Utils.callEvent(event);
-		if (event.isCancelled()) return;
+		if (!event.callEvent()) return;
 
 		this.score += event.getAmount();
 		match.getScoreboard().update();

@@ -210,8 +210,7 @@ public class MatchListener implements Listener {
 
 				if (newHealth > 0) {
 					MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, attacker, event);
-					Utils.callEvent(damageEvent);
-					if (damageEvent.isCancelled()) {
+					if (!damageEvent.callEvent()) {
 						event.setCancelled(true);
 						return;
 					}
@@ -235,8 +234,7 @@ public class MatchListener implements Listener {
 					attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
 				MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, attacker, event);
-				Utils.callEvent(deathEvent);
-				if (deathEvent.isCancelled()) return;
+				if (!deathEvent.callEvent()) return;
 
 				if (!victim.getMatch().isEnded())
 					mechanic.onDeath(deathEvent);
@@ -275,8 +273,7 @@ public class MatchListener implements Listener {
 
 		if (event.getFinalDamage() < victim.getPlayer().getHealth()) {
 			MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, event);
-			Utils.callEvent(damageEvent);
-			if (damageEvent.isCancelled()) {
+			if (!damageEvent.callEvent()) {
 				event.setCancelled(true);
 				return;
 			}
@@ -291,8 +288,7 @@ public class MatchListener implements Listener {
 		event.setCancelled(true);
 
 		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, event);
-		Utils.callEvent(deathEvent);
-		if (deathEvent.isCancelled()) return;
+		if (!deathEvent.callEvent()) return;
 
 		if (!victim.getMatch().isEnded())
 			mechanic.onDeath(deathEvent);
