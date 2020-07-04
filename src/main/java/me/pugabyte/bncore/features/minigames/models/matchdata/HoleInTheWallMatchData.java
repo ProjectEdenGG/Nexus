@@ -105,7 +105,7 @@ public class HoleInTheWallMatchData extends MatchData {
 			int move = 0;
 			while (length == 0) {
 				Block relative = designHangerLocation.getBlock().getRelative(direction, ++move);
-				if (relative.getType() != Material.AIR)
+				if (MaterialTag.STAINED_GLASS.isTagged(relative.getType()))
 					length = move;
 
 				if (length > 100)
