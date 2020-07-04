@@ -356,7 +356,7 @@ public class Battleship extends BalancedTeamMechanic {
 		}
 
 		public static ShipType get(Block block) {
-			ColorType colorType = ColorType.fromMaterial(block.getType());
+			ColorType colorType = ColorType.of(block.getType());
 			for (ShipType shipType : ShipType.values())
 				if (colorType == shipType.getColor())
 					return shipType;

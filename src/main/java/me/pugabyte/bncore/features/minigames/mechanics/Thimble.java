@@ -382,7 +382,7 @@ public final class Thimble extends TeamlessMechanic {
 
 			blockLocation.getBlock().setType(concreteType);
 
-			Color color = ColorType.fromMaterial(concreteType).getColor();
+			Color color = ColorType.of(concreteType).getColor();
 			Location fireworkLocation = blockLocation.clone().add(0.0, 2.0, 0.0);
 
 			new FireworkLauncher(fireworkLocation)

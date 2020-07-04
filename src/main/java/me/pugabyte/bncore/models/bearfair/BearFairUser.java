@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static me.pugabyte.bncore.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.bncore.utils.StringUtils.plural;
-import static me.pugabyte.bncore.utils.Utils.sendActionBar;
 
 @Data
 @Entity("bearfair_user")

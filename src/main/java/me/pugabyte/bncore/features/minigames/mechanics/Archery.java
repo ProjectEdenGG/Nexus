@@ -287,7 +287,7 @@ public class Archery extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
-		String color = ColorType.fromMaterial(hitBlock.getRelative(0, 1, 0).getType()).getName();
+		String color = ColorType.of(hitBlock.getRelative(0, 1, 0).getType()).getName();
 		minigamer.scored(getPoints(color));
 
 		ArcheryMatchData matchData = minigamer.getMatch().getMatchData();
