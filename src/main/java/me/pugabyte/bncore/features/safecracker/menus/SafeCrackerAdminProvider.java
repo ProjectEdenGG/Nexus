@@ -11,6 +11,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -54,7 +55,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 		contents.set(0, 7, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&eDespawn NPCs").build(), e -> {
 			for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 				NPC npcEntity = CitizensAPI.getNPCRegistry().getById(npc.getId());
-				npcEntity.despawn();
+				npcEntity.despawn(DespawnReason.PLUGIN);
 			}
 		}));
 
@@ -110,7 +111,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 					builder.lore("&e - " + answer);
 				}
 			}
-			builder.lore("&3Riddle: &e" + npc.getRiddle()).lore("").lore("&7&oClick me to Edit");
+			builder.lore("&3Hint: &e" + npc.getRiddle()).lore("").lore("&7&oClick me to Edit");
 			contents.set(row, column, ClickableItem.from(builder.build(),
 					e -> SafeCrackerInventories.openNPCEditMenu(player, npc)));
 
