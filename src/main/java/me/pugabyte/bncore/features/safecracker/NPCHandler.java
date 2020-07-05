@@ -38,7 +38,7 @@ public class NPCHandler implements Listener {
 			SafeCrackerPlayer.Game game = player.getActiveGame();
 
 			if (game.isFinished()) {
-				player.send(SafeCracker.PREFIX + "You have already correctly solved the riddle and finished the game");
+				player.send(SafeCracker.PREFIX + "&cYou have already correctly solved the riddle and finished the game");
 				return;
 			}
 
