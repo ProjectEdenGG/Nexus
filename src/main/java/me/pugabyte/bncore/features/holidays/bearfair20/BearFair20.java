@@ -64,6 +64,7 @@ public class BearFair20 implements Listener {
 
 	// TODO: When BF is over, disable these.
 	public static boolean givePoints = true;
+	public static boolean giveDailyPoints = true;
 	public static boolean allowWarp = true;
 
 	public BearFair20() {
