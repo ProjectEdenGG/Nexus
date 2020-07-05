@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.commands;
 
+import com.sk89q.worldguard.protection.flags.Flag;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
@@ -374,7 +375,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("holeinthewall flag <arena> <regionType> <flag> <setting...>")
-	void holeInTheWallFlag(Arena arena, String regionType, String flag, String setting) {
+	void holeInTheWallFlag(Arena arena, String regionType, Flag<?> flag, String setting) {
 		for (int i = 1; i <= arena.getMaxPlayers(); i++)
 			runCommand("rg flag holeinthewall_" + arena.getName() + "_" + regionType + "_" + i + " " + flag + " " + setting);
 	}
@@ -450,7 +451,7 @@ public class MinigamesCommand extends CustomCommand {
 	List<String> tabCompleteTeam(String filter, Arena context) {
 		return context.getTeams().stream()
 				.map(Team::getName)
-				.filter(name -> name.startsWith(filter))
+				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 }
