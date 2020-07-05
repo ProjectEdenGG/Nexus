@@ -373,6 +373,12 @@ public class MinigamesCommand extends CustomCommand {
 			runCommand(inviteCommand);
 	}
 
+	@Path("holeinthewall flag <arena> <regionType> <flag> <setting...>")
+	void holeInTheWallFlag(Arena arena, String regionType, String flag, String setting) {
+		for (int i = 1; i <= arena.getMaxPlayers(); i++)
+			runCommand("rg flag holeinthewall_" + arena.getName() + "_" + regionType + "_" + i + " " + flag + " " + setting);
+	}
+
 	private Sign getTargetSign(Player player) {
 		Block targetBlock = player.getTargetBlockExact(10);
 		if (Utils.isNullOrAir(targetBlock) || !MaterialTag.SIGNS.isTagged(targetBlock.getType()))
