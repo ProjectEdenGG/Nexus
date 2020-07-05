@@ -68,11 +68,13 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 		if (SafeCracker.playerClickedNPC.containsKey(player().getPlayer())) {
 			safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(SafeCracker.playerClickedNPC.get(player())).setAnswer(answer);
 			if (answerIsCorrect(answer)) {
+				player().playSound(player().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
 				send("&3" + SafeCracker.playerClickedNPC.get(player().getPlayer()) + " >&e " + Utils.getRandomElement(SafeCracker.correctResponses));
 				safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(SafeCracker.playerClickedNPC.get(player())).setCorrect(true);
 			} else {
 				send("&3" + SafeCracker.playerClickedNPC.get(player().getPlayer()) + " >&c " + Utils.getRandomElement(SafeCracker.wrongResponses));
 				safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(SafeCracker.playerClickedNPC.get(player())).setCorrect(false);
+				player().playSound(player().getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 2F);
 			}
 			playerService.save(safeCrackerPlayer);
 		} else error("You must find an NPC before answering");
@@ -111,7 +113,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 			playerService.save(safeCrackerPlayer);
 			send(PREFIX + "You just started the SafeCracker event");
 		} else if (safeCrackerPlayer.getGames().get(game.getName()).isFinished())
-			error("You already finished this game");
+			error("You have already correctly solved the riddle and finished the game");
 
 		send(PREFIX + "The riddle you are trying to solve: &e" + game.getRiddle());
 		send("&3You can use &e/safecracker check &3to check your progress");
@@ -186,7 +188,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 		}
 
 		if (safeCrackerPlayer.getGames().get(game.getName()).isFinished()) {
-			safeCrackerPlayer.send(SafeCracker.PREFIX + "You have already correctly solved the riddle and finished the game.");
+			safeCrackerPlayer.send(SafeCracker.PREFIX + "You have already correctly solved the riddle and finished the game");
 			return;
 		}
 
