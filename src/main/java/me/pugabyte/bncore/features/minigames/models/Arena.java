@@ -150,6 +150,10 @@ public class Arena implements ConfigurationSerializable {
 		return "^" + getRegionBaseName() + "_" + type.toLowerCase() + "(|" + NUMBER_MODIFIER + ")$";
 	}
 
+	public boolean ownsRegion(ProtectedRegion region, String type) {
+		return ownsRegion(region.getId(), type);
+	}
+
 	public boolean ownsRegion(String regionName, String type) {
 		return regionName.toLowerCase().matches(getRegionTypeRegex(type));
 	}

@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import com.mewin.worldguardregionapi.events.RegionLeavingEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -157,11 +158,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 					.filter(track -> track.getMinigamer() != null)
 					.forEach(Track::end);
 
-			// Not using matchtasks on purpose
-			Tasks.wait(Time.SECOND.x(5), () -> {
-				if (!match.isEnded())
-					match.end();
-			});
+			match.getTasks().wait(Time.SECOND.x(5), match::end);
 		}
 	}
 
@@ -185,6 +182,23 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 		if (!isInAnswerRegion(minigamer, event.getBlock().getLocation()))
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onRegionExit(RegionLeavingEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this)) return;
+
+		Match match = minigamer.getMatch();
+		HoleInTheWallArena arena = match.getArena();
+
+		if (arena.ownsRegion(event.getRegion(), "track")) {
+			if (match.isStarted())
+				event.setCancelled(true);
+		} else if (arena.ownsRegion(event.getRegion(), "lobby")) {
+			if (!match.isStarted())
+				event.setCancelled(true);
+		}
 	}
 
 	@Override
