@@ -210,7 +210,7 @@ public class Match {
 		clearStates();
 		toGamelobby();
 		arena.getMechanic().onEnd(event);
-		minigamers = new ArrayList<>();
+		minigamers.clear();
 
 		if (scoreboard != null) scoreboard.handleEnd();
 		if (scoreboardTeams != null) scoreboardTeams.handleEnd();
