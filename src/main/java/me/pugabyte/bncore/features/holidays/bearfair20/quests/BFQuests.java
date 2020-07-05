@@ -49,7 +49,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 
 public class BFQuests implements Listener {
 	public static String itemLore = "BearFair20 Item";
@@ -219,6 +222,7 @@ public class BFQuests implements Listener {
 
 		if (!clicked.getType().equals(Material.BEE_NEST) && !clicked.getType().equals(Material.BEEHIVE)) return;
 		if (event.getItem() == null || !event.getItem().getType().equals(Material.SHEARS)) return;
+		if (!isBFItem(event.getItem())) return;
 
 		event.setCancelled(true);
 		ItemMeta meta = event.getItem().getItemMeta();
