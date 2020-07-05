@@ -26,21 +26,21 @@ public class SafeCrackerCheckProvider extends MenuUtils implements InventoryProv
 
 		SafeCrackerPlayer safeCrackerPlayer = service.get(player);
 
-		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build()));
-
 		int row = 1;
 		int column = 0;
+		int found = 0;
 
 		for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 			ItemStack item = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Utils.getPlayer(npc.getName())).name("&e???").build();
 			if (safeCrackerPlayer.getGames().get(game.getName()).getNpcs().containsKey(npc.getName())) {
+				++found;
 				SafeCrackerPlayer.SafeCrackerPlayerNPC playerNPC = safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(npc.getName());
 				item = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Utils.getPlayer(npc.getName())).name("&e" + npc.getName())
 						.lore("&3Found: &e" + StringUtils.shortDateTimeFormat(playerNPC.getFound()))
 						.lore("&3Question: &e" + npc.getQuestion())
 						.lore("&3Answer: &e" + playerNPC.getAnswer())
 						.lore("")
-						.lore("&3Riddle: &e" + npc.getRiddle())
+						.lore("&3Hint: &e" + npc.getRiddle())
 						.build();
 			}
 			contents.set(row, column, ClickableItem.empty(item));
@@ -52,6 +52,18 @@ public class SafeCrackerCheckProvider extends MenuUtils implements InventoryProv
 				column++;
 		}
 
+		boolean foundAll = found == game.getNpcs().size();
+
+		ItemBuilder builder = new ItemBuilder(Material.BOOK)
+				.name("&eFinal Riddle")
+				.lore("&3" + game.getRiddle());
+
+		if (!foundAll)
+			builder.lore("", "&cFind all the NPCs before you solve the riddle!");
+		else
+			builder.lore("", "&eReturn to the excavation site and click the safe to solve the riddle");
+
+		contents.set(0, 4, ClickableItem.empty(builder.build()));
 	}
 
 	@Override

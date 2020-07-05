@@ -14,13 +14,19 @@ import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayer;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayerService;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.MaterialTag;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -59,7 +65,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	@Path("answer <answer...>")
 	void answer(String answer) {
-		if (SafeCracker.playerClickedNPC.keySet().contains(player().getPlayer())) {
+		if (SafeCracker.playerClickedNPC.containsKey(player().getPlayer())) {
 			safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(SafeCracker.playerClickedNPC.get(player())).setAnswer(answer);
 			if (answerIsCorrect(answer)) {
 				send("&3" + SafeCracker.playerClickedNPC.get(player().getPlayer()) + " >&e " + Utils.getRandomElement(SafeCracker.correctResponses));
@@ -98,15 +104,18 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	void start() {
 		if (safeCrackerPlayer.getGames() == null)
 			safeCrackerPlayer.setGames(new HashMap<>());
-		if (safeCrackerPlayer.getGames().containsKey(game.getName()))
-			error("You have already started the SafeCracker game");
-		safeCrackerPlayer.getGames().put(game.getName(), new SafeCrackerPlayer.Game());
-		safeCrackerPlayer.getGames().get(game.getName()).setStarted(LocalDateTime.now());
-		playerService.save(safeCrackerPlayer);
-		send(PREFIX + "You just started the SafeCracker event");
-		send(PREFIX + "Solve: &e" + game.getRiddle());
-		send(PREFIX + "Use &c/safecracker solve &3to solve the riddle");
-		send(PREFIX + "You can use &e/safecracker check &3to check your progress");
+
+		if (!safeCrackerPlayer.getGames().containsKey(game.getName())) {
+			safeCrackerPlayer.getGames().put(game.getName(), new SafeCrackerPlayer.Game());
+			safeCrackerPlayer.getGames().get(game.getName()).setStarted(LocalDateTime.now());
+			playerService.save(safeCrackerPlayer);
+			send(PREFIX + "You just started the SafeCracker event");
+		} else if (safeCrackerPlayer.getGames().get(game.getName()).isFinished())
+			error("You already finished this game");
+
+		send(PREFIX + "The riddle you are trying to solve: &e" + game.getRiddle());
+		send("&3You can use &e/safecracker check &3to check your progress");
+		send("&3When you have found all the NPCs, click the safe to solve the riddle");
 	}
 
 	@Path("admin edit")
@@ -172,32 +181,30 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 		SafeCrackerPlayer safeCrackerPlayer = playerService.get(event.getPlayer());
 
 		if (!safeCrackerPlayer.getGames().containsKey(game.getName())) {
-			event.getPlayer().sendMessage(StringUtils.colorize("&7&kasdl &7The safe is warded by some kind of spell. Talk to the supervisor for more information. &7&kasdl"));
+			safeCrackerPlayer.send("&7&kasdl &7The safe is warded by some kind of spell. Talk to the supervisor for more information. &7&kasdl");
 			return;
 		}
 
-		if (safeCrackerPlayer.getGames().get(game.getName()).getScore() != 0) {
-			event.getPlayer().sendMessage(StringUtils.colorize(StringUtils.getPrefix("SafeCracker") + "You have already correctly solved the riddle."));
+		if (safeCrackerPlayer.getGames().get(game.getName()).isFinished()) {
+			safeCrackerPlayer.send(SafeCracker.PREFIX + "You have already correctly solved the riddle and finished the game.");
 			return;
 		}
 
 		MenuUtils.openAnvilMenu(event.getPlayer(), "", (player, response) -> {
-
 			if (response.equalsIgnoreCase(game.getAnswer())) {
 				int score = (int) Math.abs(Duration.between(LocalDateTime.now(), safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted()).getSeconds() - 1);
 				safeCrackerPlayer.getGames().get(game.getName()).setScore(score);
 				playerService.save(safeCrackerPlayer);
-				Tasks.wait(Time.SECOND.x(10), () -> event.getPlayer().sendMessage(StringUtils.colorize(StringUtils.getPrefix("SafeCracker") +
-						"You correctly solved the riddle. You finished with a score of &e" + score)));
+				Tasks.wait(Time.SECOND.x(10), () -> safeCrackerPlayer.send(SafeCracker.PREFIX + "You correctly solved the riddle. You finished with a score of &e" + score));
 				Discord.staffLog("```[SafeCracker] " + player.getName() + " - " + score + "```");
 				player.closeInventory();
 				complete(player);
 			} else {
 				player.closeInventory();
-				player.sendMessage(StringUtils.getPrefix("SafeCCracker") + StringUtils.colorize("&c" + Utils.getRandomElement(SafeCracker.wrongResponses)));
+				safeCrackerPlayer.send(SafeCracker.PREFIX + "&c" + Utils.getRandomElement(SafeCracker.wrongResponses));
 			}
 			return AnvilGUI.Response.text(response);
-		}, (player) -> player.closeInventory());
+		}, HumanEntity::closeInventory);
 
 	}
 
