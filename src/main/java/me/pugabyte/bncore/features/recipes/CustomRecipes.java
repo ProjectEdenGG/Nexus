@@ -1,8 +1,10 @@
 package me.pugabyte.bncore.features.recipes;
 
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -15,8 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CustomRecipes {
-
-	public static int amount = 0;
+	@Getter
 	public static Map<NamespacedKey, Recipe> recipes = new HashMap<>();
 
 	public CustomRecipes() {
@@ -31,8 +32,6 @@ public class CustomRecipes {
 			bedDying();
 			setWoolUndyingRecipe();
 			misc();
-			BNCore.getInstance().getLogger().info("Registered " + amount + " new custom crafting recipes");
-			BNCore.getInstance().getLogger().info(recipes.size() + " total custom recipes are loaded on the server");
 		});
 	}
 
@@ -41,12 +40,14 @@ public class CustomRecipes {
 		for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
 			if (RecipeUtils.areEqual(recipe1, recipe)) return;
 
-		try {
-			Tasks.sync(() -> Bukkit.addRecipe(recipe));
-			amount++;
-		} catch (IllegalStateException duplicate) {
-			BNCore.log(duplicate.getMessage());
-		}
+		Tasks.sync(() -> {
+			try {
+				Bukkit.addRecipe(recipe);
+				recipes.put(((Keyed) recipe).getKey(), recipe);
+			} catch (IllegalStateException duplicate) {
+				BNCore.log(duplicate.getMessage());
+			}
+		});
 	}
 
 	public ShapelessRecipe createSingleItemShapelessRecipe(Material inputItem, int requiredAmount, Material outputItem, int outputAmount, CraftingMenuType type) {
@@ -247,7 +248,6 @@ public class CustomRecipes {
 		woolUndyingRecipe.setIngredient('b', Material.WATER_BUCKET);
 		addRecipe(woolUndyingRecipe);
 		recipes.put(new NamespacedKey(BNCore.getInstance(), "custom_whiteWool"), woolUndyingRecipe);
-		amount++;
 		CraftingMenuType.WOOL.getList().add(new CraftingRecipeMenu.CraftingRecipe(wool, Material.WATER_BUCKET, 1, Material.WHITE_WOOL, 8));
 	}
 

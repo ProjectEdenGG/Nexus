@@ -33,6 +33,7 @@ public class Commands {
 	private final String path;
 	private final CommandMapUtils mapUtils;
 	private final Set<Class<? extends CustomCommand>> commandSet;
+	@Getter
 	private static final Map<String, CustomCommand> commands = new HashMap<>();
 	@Getter
 	private static final Map<Class<?>, Method> converters = new HashMap<>();
@@ -65,7 +66,6 @@ public class Commands {
 				BNCore.log("Error while registering command " + command.getSimpleName());
 				ex.printStackTrace();
 			}
-		plugin.getLogger().info("Registered " + commands.size() + " commands");
 	}
 
 	private void register(CustomCommand customCommand) {
