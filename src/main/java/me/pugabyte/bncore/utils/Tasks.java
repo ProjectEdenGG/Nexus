@@ -94,12 +94,12 @@ public class Tasks {
 	}
 
 	public static class Countdown {
-		private int duration;
-		private boolean doZero;
-		private Consumer<Integer> onTick;
-		private Consumer<Integer> onSecond;
-		private Runnable onStart;
-		private Runnable onComplete;
+		private final int duration;
+		private final boolean doZero;
+		private final Consumer<Integer> onTick;
+		private final Consumer<Integer> onSecond;
+		private final Runnable onStart;
+		private final Runnable onComplete;
 
 		@Builder(buildMethodName = "start")
 		public Countdown(int duration, boolean doZero, Consumer<Integer> onTick, Consumer<Integer> onSecond, Runnable onStart, Runnable onComplete) {

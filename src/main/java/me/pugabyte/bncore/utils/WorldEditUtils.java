@@ -19,6 +19,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
+import com.sk89q.worldedit.math.transform.Transform;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.Direction;
@@ -27,7 +28,9 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -254,20 +257,49 @@ public class WorldEditUtils {
 		return clipboard;
 	}
 
-	public void paste(String fileName, Location location) {
-		paste(fileName, toBlockVector3(location));
+	public Paste paster() {
+		return new Paste();
 	}
 
-	public void paste(String fileName, BlockVector3 vector) {
-		paste(getSchematic(fileName), vector);
-	}
+	@Data
+	@NoArgsConstructor
+	public class Paste {
+		private Clipboard clipboard;
+		private BlockVector3 vector;
+		private boolean pasteAir;
+		private Transform transform;
 
-	public void paste(Clipboard clipboard, Location location) {
-		paste(clipboard, toBlockVector3(location));
-	}
+		public Paste file(String fileName) {
+			return clipboard(getSchematic(fileName));
+		}
 
-	public void paste(Clipboard clipboard, BlockVector3 vector) {
-		clipboard.paste(worldEditWorld, vector);
+		public Paste clipboard(Clipboard clipboard) {
+			this.clipboard = clipboard;
+			return this;
+		}
+
+		public Paste at(Location location) {
+			return at(toBlockVector3(location));
+		}
+
+		public Paste at(BlockVector3 vector) {
+			this.vector = vector;
+			return this;
+		}
+
+		public Paste air(boolean pasteAir) {
+			this.pasteAir = pasteAir;
+			return this;
+		}
+
+		public Paste transform(Transform transform) {
+			this.transform = transform;
+			return this;
+		}
+
+		public void paste() {
+			clipboard.paste(worldEditWorld, vector, pasteAir, transform);
+		}
 	}
 
 	public void save(String fileName, Location min, Location max) {

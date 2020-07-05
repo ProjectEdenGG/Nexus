@@ -141,15 +141,15 @@ public class RavensNestEstate implements Listener {
 	}
 
 	private void resetMap(Match match) {
-		WEUtils.paste(schemFireplace + 1, doorFireplace);
-		WEUtils.paste(schemBasement + 1, doorBasement);
-		WEUtils.paste(schemCloset + 1, doorCloset);
-		WEUtils.paste(schemMaster + 1, doorMaster);
-		WEUtils.paste(schemMain + 1, doorMain);
-		WEUtils.paste(schemStudy + 1, doorStudy);
-		WEUtils.paste(schemSmall + "S_1", doorSmall_S);
-		WEUtils.paste(schemSmall + "E_1", doorSmall_E);
-		WEUtils.paste(schemSmall + "W_1", doorSmall_W);
+		WEUtils.paster().file(schemFireplace + 1).at(doorFireplace).paste();
+		WEUtils.paster().file(schemBasement + 1).at(doorBasement).paste();
+		WEUtils.paster().file(schemCloset + 1).at(doorCloset).paste();
+		WEUtils.paster().file(schemMaster + 1).at(doorMaster).paste();
+		WEUtils.paster().file(schemMain + 1).at(doorMain).paste();
+		WEUtils.paster().file(schemStudy + 1).at(doorStudy).paste();
+		WEUtils.paster().file(schemSmall + "S_1").at(doorSmall_S).paste();
+		WEUtils.paster().file(schemSmall + "E_1").at(doorSmall_E).paste();
+		WEUtils.paster().file(schemSmall + "W_1").at(doorSmall_W).paste();
 
 		statusFireplace = false;
 		statusBasement = false;
@@ -360,13 +360,13 @@ public class RavensNestEstate implements Listener {
 			// Open
 			for (int frame = 1; frame <= frames; frame++) {
 				int finalFrame = frame;
-				match.getTasks().wait(wait += 3 + extra, () -> WEUtils.paste(finalSchematic + finalFrame, pasteLoc));
+				match.getTasks().wait(wait += 3 + extra, () -> WEUtils.paster().file(finalSchematic + finalFrame).at(pasteLoc).paste());
 			}
 		else
 			// Close
 			for (int frame = frames; frame > 0; frame--) {
 				int finalFrame = frame;
-				match.getTasks().wait(wait += 3, () -> WEUtils.paste(finalSchematic + finalFrame, pasteLoc));
+				match.getTasks().wait(wait += 3, () -> WEUtils.paster().file(finalSchematic + finalFrame).at(pasteLoc).paste());
 			}
 	}
 }

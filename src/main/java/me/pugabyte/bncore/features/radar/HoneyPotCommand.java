@@ -145,7 +145,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		WorldEditUtils WEUtils = new WorldEditUtils(world);
 		String fileName = region.getId().replace("_", "/");
 		try {
-			WEUtils.paste(fileName, getSchemRegen(region, world).getMinimumPoint());
+			WEUtils.paster().file(fileName).at(getSchemRegen(region, world).getMinimumPoint()).paste();
 		} catch (InvalidInputException ex) {
 			BNCore.log(ex.getMessage());
 		}

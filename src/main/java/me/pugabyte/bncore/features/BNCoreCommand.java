@@ -280,7 +280,7 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("schem paste <name>")
 	void schemPaste(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
-		worldEditUtils.paste(name, player().getLocation());
+		worldEditUtils.paster().file(name).at(player().getLocation()).paste();
 		send("Pasted schematic " + name);
 	}
 
