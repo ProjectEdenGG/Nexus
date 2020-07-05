@@ -14,12 +14,7 @@ import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayer;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayerService;
-import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
+import me.pugabyte.bncore.utils.*;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -160,9 +155,9 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	@Permission("group.staff")
 	void scores() {
 		send(PREFIX + "Scores for current event:");
-		LinkedHashMap<Player, Integer> scores = playerService.getScores(eventService.getActiveEvent());
+		LinkedHashMap<OfflinePlayer, Integer> scores = playerService.getScores(eventService.getActiveEvent());
 		int i = 1;
-		for (Player player : scores.keySet()) {
+		for (OfflinePlayer player : scores.keySet()) {
 			send("&e" + i++ + ". " + player.getName() + ": &3" + scores.get(player));
 		}
 	}
@@ -197,8 +192,8 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 				int score = (int) Math.abs(Duration.between(LocalDateTime.now(), safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted()).getSeconds() - 1);
 				safeCrackerPlayer.getGames().get(game.getName()).setScore(score);
 				playerService.save(safeCrackerPlayer);
-				Tasks.wait(Time.SECOND.x(10), () -> safeCrackerPlayer.send(SafeCracker.PREFIX + "You correctly solved the riddle. You finished with a score of &e" + score));
-				Discord.staffLog("```[SafeCracker] " + player.getName() + " - " + score + "```");
+				Tasks.wait(Time.SECOND.x(10), () -> safeCrackerPlayer.send(SafeCracker.PREFIX + "You correctly solved the riddle. You finished with a score of &e" + safeCrackerPlayer.getGames().get(game.getName()).getScore()));
+				Discord.staffLog("```[SafeCracker] " + player.getName() + " - " + StringUtils.timespanDiff(safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted(), LocalDateTime.now()) + "```");
 				player.closeInventory();
 				complete(player);
 			} else {
