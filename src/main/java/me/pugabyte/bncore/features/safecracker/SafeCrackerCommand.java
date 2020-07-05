@@ -188,7 +188,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 		}
 
 		if (safeCrackerPlayer.getGames().get(game.getName()).isFinished()) {
-			safeCrackerPlayer.send(SafeCracker.PREFIX + "You have already correctly solved the riddle and finished the game");
+			safeCrackerPlayer.send(SafeCracker.PREFIX + "&cYou have already correctly solved the riddle and finished the game");
 			return;
 		}
 
