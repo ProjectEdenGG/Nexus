@@ -44,6 +44,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -162,6 +164,24 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (!(event.getRemover() instanceof Player)) return;
 		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
 		if (event.getRemover().hasPermission(WorldGuardEditCommand.getPermission())) return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
+		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
+		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission())) return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
+		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
+		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission())) return;
 
 		event.setCancelled(true);
 	}
