@@ -31,10 +31,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.givePoints;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 
 public class Frogger implements Listener {
 
@@ -325,7 +322,7 @@ public class Frogger implements Listener {
 			player.teleport(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
 
-			if (givePoints) {
+			if (giveDailyPoints) {
 				BearFairUser user = new BearFairService().get(player);
 				user.giveDailyPoints(SOURCE);
 				new BearFairService().save(user);
