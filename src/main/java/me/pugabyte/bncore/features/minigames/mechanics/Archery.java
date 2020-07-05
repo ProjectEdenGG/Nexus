@@ -199,7 +199,7 @@ public class Archery extends TeamlessMechanic {
 						if (canPlaceTarget(targetLoc)) {
 							String key = (direction.name() + "_" + color).toLowerCase();
 							Clipboard schem = targetSchems.get(key);
-							match.getWEUtils().paste(schem, targetLoc);
+							match.getWEUtils().paster().clipboard(schem).at(targetLoc).paste();
 							break;
 						}
 					}

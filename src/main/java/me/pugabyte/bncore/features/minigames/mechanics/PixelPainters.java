@@ -133,13 +133,13 @@ public class PixelPainters extends TeamlessMechanic {
 				pasteMinV = pasteMin.add(0, i, 0);
 				Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
 				Clipboard schem = match.getWEUtils().copy(copyRg);
-				match.getWEUtils().paste(schem, pasteMinV);
+				match.getWEUtils().paster().clipboard(schem).at(pasteMinV).paste();
 			}
 
 			// Paste Design
 			Region pasteRegion = arena.getLobbyAnimationRegion();
 			Clipboard schem = match.getWEUtils().copy(arena.getLobbyDesignRegion());
-			match.getWEUtils().paste(schem, pasteRegion.getMinimumPoint());
+			match.getWEUtils().paster().clipboard(schem).at(pasteRegion.getMinimumPoint()).paste();
 		});
 		matchData.setAnimateLobbyId(taskId);
 	}
@@ -500,7 +500,7 @@ public class PixelPainters extends TeamlessMechanic {
 			pasteMinV = pasteMin.add(0, i, 0);
 			Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
 			Clipboard schem = match.getWEUtils().copy(copyRg);
-			match.getWEUtils().paste(schem, pasteMinV);
+			match.getWEUtils().paster().clipboard(schem).at(pasteMinV).paste();
 		}
 	}
 
@@ -510,7 +510,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Clipboard schem = match.getWEUtils().copy(arena.getNextDesignRegion());
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			match.getWEUtils().paste(schem, region.getMinimumPoint());
+			match.getWEUtils().paster().clipboard(schem).at(region.getMinimumPoint()).paste();
 		});
 	}
 
@@ -533,7 +533,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Clipboard schem = match.getWEUtils().copy(arena.getLogoRegion());
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			match.getWEUtils().paste(schem, region.getMinimumPoint());
+			match.getWEUtils().paster().clipboard(schem).at(region.getMinimumPoint()).paste();
 		});
 	}
 

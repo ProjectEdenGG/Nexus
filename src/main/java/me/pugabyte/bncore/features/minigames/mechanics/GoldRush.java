@@ -107,7 +107,7 @@ public final class GoldRush extends TeamlessMechanic {
 
 		Clipboard schematic = WEUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		for (Location location : locations) {
-			WEUtils.paste(schematic, WEUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0)));
+			WEUtils.paster().clipboard(schematic).at(WEUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0))).paste();
 		}
 	}
 

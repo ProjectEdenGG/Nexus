@@ -89,7 +89,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		match.getWGUtils().getRegionsLike(name + "_" + match.getArena().getName() + "_strip_[0-9]+")
 				.forEach(region -> {
 					String file = (name + "/" + match.getArena().getName() + "_strip").toLowerCase();
-					match.getWEUtils().paste(file, region.getMinimumPoint());
+					match.getWEUtils().paster().file(file).at(region.getMinimumPoint()).paste();
 				});
 	}
 

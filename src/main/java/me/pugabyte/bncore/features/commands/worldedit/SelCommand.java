@@ -14,11 +14,16 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 @Fallback("worldedit")
 @Permission("worldedit.wand")
 public class SelCommand extends CustomCommand {
-	WorldEditUtils worldEditUtils;
+	private final WorldEditUtils worldEditUtils;
 
 	public SelCommand(CommandEvent event) {
 		super(event);
 		worldEditUtils = new WorldEditUtils(player());
+	}
+
+	@Path
+	void run() {
+		runCommand("/desel");
 	}
 
 	@Path("(tp|teleport)")
