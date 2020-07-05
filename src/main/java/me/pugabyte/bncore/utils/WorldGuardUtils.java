@@ -10,6 +10,7 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
@@ -17,7 +18,6 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import com.sk89q.worldguard.protection.regions.RegionQuery;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
@@ -65,10 +65,10 @@ public class WorldGuardUtils {
 		this.manager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld);
 	}
 
-	public static void registerFlag(StateFlag flag) {
+	public static Flag<?> registerFlag(Flag<?> flag) {
 		if (plugin == null || registry == null) {
 			BNCore.warn("Could not find WorldGuard, aborting registry of flag " + flag.getName());
-			return;
+			return null;
 		}
 
 		try {
@@ -76,21 +76,26 @@ public class WorldGuardUtils {
 				registry.setInitialized(false);
 				registry.register(flag);
 			} catch (FlagConflictException ignore) {
-
+				flag = registry.get(flag.getName());
 			} finally {
 				registry.setInitialized(true);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			return null;
 		}
+
+		return flag;
 	}
 
-	public boolean isFlagSetFor(Player player, StateFlag flag) {
+	public static boolean isFlagSetFor(Player player, StateFlag flag) {
+		if (flag == null)
+			throw new InvalidInputException("Flag cannot be null");
+
 		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
 		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(player.getLocation());
 		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-		RegionQuery query = container.createQuery();
-		return query.testState(loc, localPlayer, new StateFlag[] {flag});
+		return container.createQuery().testState(loc, localPlayer, flag);
 	}
 
 	public ProtectedRegion getProtectedRegion(String name) {
