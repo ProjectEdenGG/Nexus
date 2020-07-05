@@ -59,7 +59,7 @@ public class BattleshipMatchData extends MatchData {
 		private Team team;
 		@NonNull
 		private ShipType type;
-		Location origin;
+		private Location origin;
 		private int health;
 		private boolean alive = true;
 
@@ -186,9 +186,9 @@ public class BattleshipMatchData extends MatchData {
 		EMPTY(false, ChatColor.BLUE);
 
 		@Getter
-		private boolean shotAt;
+		private final boolean shotAt;
 		@Getter
-		private ChatColor color;
+		private final ChatColor color;
 
 		State(boolean shotAt, ChatColor color) {
 			this.shotAt = shotAt;

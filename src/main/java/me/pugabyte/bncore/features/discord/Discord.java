@@ -87,7 +87,7 @@ public class Discord {
 	public static String discordize(String message) {
 		if (message != null) {
 			message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
-			message = message.replaceAll("_", "\\_");
+			message = message.replaceAll("_", "\\\\_");
 		}
 		return message;
 	}

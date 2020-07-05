@@ -1,15 +1,16 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldedit.math.transform.AffineTransform;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.minigames.commands.BattleshipCommand;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
-import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
+import me.pugabyte.bncore.features.minigames.models.arenas.BattleshipArena;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Ship;
@@ -27,6 +28,7 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -42,6 +44,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static me.pugabyte.bncore.utils.StringUtils.getShortLocationString;
 
 /*
 	Regions:
@@ -60,7 +64,7 @@ public class Battleship extends BalancedTeamMechanic {
 	public static final String LETTERS = "ABCDEFGHIJ";
 
 	private void debug(String message) {
-		if (false)
+		if (BattleshipCommand.isDebug())
 			BNCore.log(StringUtils.stripColor(PREFIX + message));
 	}
 
@@ -85,26 +89,31 @@ public class Battleship extends BalancedTeamMechanic {
 	}
 
 	@Override
+	public boolean allowFly() {
+		return true;
+	}
+
+	@Override
 	public String getScoreboardTitle(Match match) {
 		return "&6&lBattleship";
 	}
 
 	@Override
 	public Map<String, Integer> getScoreboardLines(Match match, Team team) {
+		BattleshipArena arena = match.getArena();
 		BattleshipMatchData matchData = match.getMatchData();
+
 		List<String> lines = new ArrayList<>();
-		lines.add("&cFleet: " + team.getColoredName());
 		lines.add("&cTime: &e" + "11s");
 		lines.add("&cChoose in: &e" + "17s");
 		lines.add("&f");
 
-		Team team1 = match.getArena().getTeams().get(0);
-		Team team2 = match.getArena().getTeams().get(1);
+		Team otherTeam = arena.getOtherTeam(team);
 
-		lines.add("&6&l" + team1.getName() + " Fleet");
-		lines.add("&0" + getProgressBar(matchData, team1));
-		lines.add("&6&l" + team2.getName() + " Fleet");
-		lines.add("&0" + getProgressBar(matchData, team2));
+		lines.add("&6&l" + team.getName() + " Fleet &e(You)");
+		lines.add("&0" + getProgressBar(matchData, team));
+		lines.add("&6&l" + otherTeam.getName() + " Fleet");
+		lines.add("&1" + getProgressBar(matchData, otherTeam));
 
 		// TODO: History
 
@@ -118,7 +127,7 @@ public class Battleship extends BalancedTeamMechanic {
 		return StringUtils.progressBar(matchData.getGrid(team1).getHealth(), ShipType.getCombinedHealth(), StringUtils.ProgressBarStyle.COUNT);
 	}
 
-	private void start(Match match) {
+	public void start(Match match) {
 		BattleshipMatchData matchData = match.getMatchData();
 		if (!matchData.isPlacingKits()) return;
 
@@ -137,15 +146,6 @@ public class Battleship extends BalancedTeamMechanic {
 			for (ShipType shipType : ShipType.values())
 				pasteShip(shipType, ships.get(shipType).getOrigin());
 		});
-	}
-
-	private Team getTeam(Arena arena, Location location) {
-		for (ProtectedRegion region : arena.getWGUtils().getRegionsAt(location))
-			if (arena.ownsRegion(region.getId(), "team"))
-				for (Team team : arena.getTeams())
-					if (region.getId().split("_")[3].equalsIgnoreCase(team.getName().replaceAll(" ", "").toLowerCase()))
-						return team;
-		return null;
 	}
 
 	@EventHandler
@@ -179,9 +179,9 @@ public class Battleship extends BalancedTeamMechanic {
 	@Override
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		super.onPlayerInteract(minigamer, event);
-		if (event.isCancelled()) return;
+		if (event.useInteractedBlock() == Result.DENY) return;
+		if (event.getClickedBlock() == null) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
-
 
 		BattleshipMatchData matchData = minigamer.getMatch().getMatchData();
 		Team team = minigamer.getTeam();
@@ -280,8 +280,6 @@ public class Battleship extends BalancedTeamMechanic {
 				return false;
 			}
 
-			// Hasnt gone off the board
-			// 1.13 yellow wool, blue/black concrete
 			List<Material> floorMaterials = Arrays.asList(Material.YELLOW_WOOL, Material.BLUE_CONCRETE, Material.BLACK_CONCRETE);
 			Material floorType = index.getLocation().add(0, -3, 0).getBlock().getType();
 			if (!floorMaterials.contains(floorType)) {
@@ -294,9 +292,20 @@ public class Battleship extends BalancedTeamMechanic {
 	}
 
 	private void pasteShip(ShipType shipType, Location location) {
-		BlockFace direction = getKitDirection(location);
+		BlockFace direction = getKitDirection(location).getOppositeFace();
 		deleteKit(location);
-		new WorldEditUtils(location).paste("battleship/" + shipType.name().toLowerCase() + "/" + direction.name().toLowerCase(), location);
+		pasteShip(shipType, location, CardinalDirection.of(direction));
+	}
+
+	public void pasteShip(ShipType shipType, Location location, CardinalDirection direction) {
+		String schematic = "battleship/" + shipType.name().toLowerCase();
+		int rotation = direction.ordinal() * -90;
+		debug("Pasting schematic " + schematic + " at " + getShortLocationString(location) + " with rotation " + rotation);
+		new WorldEditUtils(location).paster()
+				.file(schematic)
+				.at(location)
+				.transform(new AffineTransform().rotateY(rotation))
+				.paste();
 	}
 
 	public BlockFace getKitDirection(Location location) {
@@ -319,7 +328,11 @@ public class Battleship extends BalancedTeamMechanic {
 	}
 
 	private boolean isCardinal(BlockFace face) {
-		return Arrays.asList(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST).contains(face);
+		try {
+			return CardinalDirection.of(face) != null;
+		} catch (IllegalArgumentException ex) {
+			return false;
+		}
 	}
 
 	public enum ShipType {
@@ -330,11 +343,11 @@ public class Battleship extends BalancedTeamMechanic {
 		CARRIER(5, ColorType.CYAN);
 
 		@Getter
-		private int length;
+		private final int length;
 		@Getter
-		private ColorType color;
+		private final ColorType color;
 		@Getter
-		private ItemStack item;
+		private final ItemStack item;
 
 		ShipType(int length, ColorType color) {
 			this.length = length;
@@ -342,7 +355,6 @@ public class Battleship extends BalancedTeamMechanic {
 			this.item = new ItemBuilder(ColorType.getConcrete(color))
 					.name(color.getChatColor() + toString() + " &8| &7Size: &e" + length)
 					.lore("&fPlace on the yellow wool to configure")
-					.durability(color.getDurability())
 					.build();
 		}
 
