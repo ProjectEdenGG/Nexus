@@ -1,11 +1,13 @@
 package me.pugabyte.bncore.utils;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -14,6 +16,8 @@ import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
@@ -72,12 +76,21 @@ public class WorldGuardUtils {
 				registry.setInitialized(false);
 				registry.register(flag);
 			} catch (FlagConflictException ignore) {
+
 			} finally {
 				registry.setInitialized(true);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public boolean isFlagSetFor(Player player, StateFlag flag) {
+		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(player.getLocation());
+		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+		RegionQuery query = container.createQuery();
+		return query.testState(loc, localPlayer, new StateFlag[] {flag});
 	}
 
 	public ProtectedRegion getProtectedRegion(String name) {
@@ -210,5 +223,6 @@ public class WorldGuardUtils {
 		}
 		return blocks;
 	}
+
 
 }
