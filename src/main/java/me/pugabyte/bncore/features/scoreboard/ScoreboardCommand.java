@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.scoreboard;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.BookBuilder.WrittenBookMenu;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -147,6 +148,16 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		ScoreboardUser user = service.get(event.getMinigamer().getPlayer());
 		if (user.isActive() && user.getOfflinePlayer().isOnline())
 			user.on();
+	}
+
+	@EventHandler
+	public void onMatchEnd(MatchEndEvent event) {
+		ScoreboardService service = new ScoreboardService();
+		event.getMatch().getMinigamers().forEach(minigamer -> {
+			ScoreboardUser user = service.get(minigamer.getPlayer());
+			if (user.isActive() && user.getOfflinePlayer().isOnline())
+				user.on();
+		});
 	}
 
 	@EventHandler
