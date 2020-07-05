@@ -10,7 +10,8 @@ import me.pugabyte.bncore.models.snoweffect.SnowEffect;
 import me.pugabyte.bncore.models.snoweffect.SnowEffectService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
+import me.pugabyte.bncore.utils.WorldGuardFlagUtils;
+import me.pugabyte.bncore.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -24,7 +25,6 @@ import java.util.List;
 public class SnowEffectCommand extends CustomCommand implements Listener {
 	private final SnowEffectService service = new SnowEffectService();
 	private SnowEffect snowEffect;
-	public static final StateFlag SNOW_EFFECT_FLAG = (StateFlag) WorldGuardUtils.registerFlag(new StateFlag("snow-effect", false));
 
 	public SnowEffectCommand(CommandEvent event) {
 		super(event);
@@ -41,7 +41,7 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 			});
 
 			Bukkit.getOnlinePlayers().stream()
-					.filter(player -> WorldGuardUtils.isFlagSetFor(player, SNOW_EFFECT_FLAG))
+					.filter(player -> WorldGuardFlagUtils.isFlagSetFor(player, (StateFlag) Flags.SNOW_EFFECT.get()))
 					.forEach(SnowEffectCommand::playSnowEffect);
 		});
 	}

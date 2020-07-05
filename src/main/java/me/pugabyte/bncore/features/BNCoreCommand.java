@@ -2,7 +2,10 @@ package me.pugabyte.bncore.features;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
+import me.pugabyte.bncore.features.recipes.CustomRecipes;
+import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
@@ -74,6 +77,14 @@ public class BNCoreCommand extends CustomCommand {
 			error("There are active matches, cannot reload");
 
 		runCommand("plugman reload BNCore");
+	}
+
+	@Path("stats")
+	void stats() {
+		send("Commands: " + Commands.getCommands().size());
+		send("Listeners: " + BNCore.getListenerCount());
+		send("Arenas: " + ArenaManager.getAll().size());
+		send("Recipes: " + CustomRecipes.getRecipes().size());
 	}
 
 	@Path("listTest <player...>")

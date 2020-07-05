@@ -22,11 +22,11 @@ public class CustomRecipesCommand extends CustomCommand {
 	@Permission("group.admin")
 	void reload() {
 		send(PREFIX + "Reloading all recipes...");
+		int amount = CustomRecipes.getRecipes().size();
 		CustomRecipes.recipes.keySet().forEach(Bukkit::removeRecipe);
 		CustomRecipes.recipes.clear();
-		CustomRecipes.amount = 0;
 		new CustomRecipes();
-		send(PREFIX + "Successfully reloaded &e" + CustomRecipes.amount + "&3 custom recipes");
+		send(PREFIX + "Successfully reloaded &e" + amount + "&3 custom recipes");
 	}
 
 

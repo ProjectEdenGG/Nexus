@@ -44,6 +44,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.EnumUtils;
+import me.pugabyte.bncore.utils.WorldGuardFlagUtils;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -121,10 +122,14 @@ public class BNCore extends JavaPlugin {
 		getInstance().getLogger().severe(stripColor(message));
 	}
 
+	@Getter
+	private static int listenerCount = 0;
+
 	public static void registerListener(Listener listener) {
-		if (getInstance().isEnabled())
+		if (getInstance().isEnabled()) {
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
-		else
+			++listenerCount;
+		} else
 			log("Could not register listener " + listener.toString() + "!");
 	}
 
@@ -180,6 +185,11 @@ public class BNCore extends JavaPlugin {
 	@SneakyThrows
 	public static YamlConfiguration getConfig(String path) {
 		return YamlConfiguration.loadConfiguration(getFile(path));
+	}
+
+	@Override
+	public void onLoad() {
+		WorldGuardFlagUtils.Flags.register();
 	}
 
 	@Override

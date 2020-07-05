@@ -161,7 +161,6 @@ public class ArenaManager {
 		} catch (Exception ex) {
 			BNCore.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
 		}
-		BNCore.log("Loaded " + arenas.size() + " arenas");
 	}
 
 	public static void read(String name) {

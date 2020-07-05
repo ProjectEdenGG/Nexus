@@ -66,13 +66,10 @@ public enum Bot {
 			}
 
 			Tasks.sync(() -> {
-				if (this.jda == null) {
+				if (this.jda == null)
 					this.jda = jda;
-					BNCore.log("Successfully connected " + name() + " to Discord");
-				} else {
-					BNCore.log("Discarding extra Discord connection");
+				else
 					jda.shutdown();
-				}
 			});
 		}
 	}
