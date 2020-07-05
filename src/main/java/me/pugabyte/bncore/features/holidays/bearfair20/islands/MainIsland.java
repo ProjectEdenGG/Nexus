@@ -84,6 +84,7 @@ public class MainIsland implements Listener, Island {
 						script.add("I was mining earlier and it sounded metallic. I hope we are close.");
 						break;
 					case 4:
+					case 5:
 						script.add("The safe has some special word on it, 'SafeCracker.'");
 						break;
 					default:
@@ -107,6 +108,7 @@ public class MainIsland implements Listener, Island {
 						script.add("I'm so ready for this dig to be over. I thought this was a one day job!");
 						break;
 					case 4:
+					case 5:
 						script.add("I'm so glad this dig is finally over. I can go home and get some rest.");
 						break;
 					default:
@@ -142,8 +144,8 @@ public class MainIsland implements Listener, Island {
 						script.add("wait 80");
 						script.add("It should only be one more day before we find what we are looking for.");
 						break;
-					// till SafeCracker release
-//					case 4:
+					// TODO: UNCOMMENT THIS FOR SAFECRACKER RELEASE
+//					case 5:
 //						script.add("We found the safe, but it's protected by a magical spell. We can't seem to break it no matter what we try.");
 //						script.add("wait 80");
 //						script.add("However, I've wandered around the island at night, and last night a whole bunch of strangers showed up.");
