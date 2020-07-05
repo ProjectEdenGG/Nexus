@@ -266,7 +266,7 @@ public class WorldEditUtils {
 	public class Paste {
 		private Clipboard clipboard;
 		private BlockVector3 vector;
-		private boolean pasteAir;
+		private boolean pasteAir = true;
 		private Transform transform;
 
 		public Paste file(String fileName) {

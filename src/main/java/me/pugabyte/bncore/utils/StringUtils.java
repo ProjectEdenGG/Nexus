@@ -497,6 +497,10 @@ public class StringUtils {
 				nf.format(loc.getY()) + " &3z: &e" +  nf.format(loc.getZ());
 	}
 
+	public static String getShortLocationString(Location loc) {
+		return nf.format(loc.getX()) + " " + nf.format(loc.getY()) + " " +  nf.format(loc.getZ()) + " " + loc.getWorld().getName();
+	}
+
 	public static void sendJsonLocation(String message, Location location, Player player) {
 		int x = (int) location.getX();
 		int y = (int) location.getY();
