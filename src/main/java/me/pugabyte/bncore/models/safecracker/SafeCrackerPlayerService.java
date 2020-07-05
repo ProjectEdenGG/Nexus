@@ -2,15 +2,9 @@ package me.pugabyte.bncore.models.safecracker;
 
 import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @PlayerClass(SafeCrackerPlayer.class)
 public class SafeCrackerPlayerService extends MongoService {
@@ -20,8 +14,8 @@ public class SafeCrackerPlayerService extends MongoService {
 		return cache;
 	}
 
-	public LinkedHashMap<Player, Integer> getScores(SafeCrackerEvent.SafeCrackerGame game) {
-		LinkedHashMap<Player, Integer> scores = new LinkedHashMap<>();
+	public LinkedHashMap<OfflinePlayer, Integer> getScores(SafeCrackerEvent.SafeCrackerGame game) {
+		LinkedHashMap<OfflinePlayer, Integer> scores = new LinkedHashMap<>();
 		List<SafeCrackerPlayer> temp = new ArrayList<>();
 		List<SafeCrackerPlayer> players = getAll();
 		players.forEach(player -> {
@@ -30,7 +24,7 @@ public class SafeCrackerPlayerService extends MongoService {
 					temp.add(player);
 		});
 		temp.sort(Comparator.comparing(player -> player.getGames().get(game.getName()).getScore()));
-		temp.forEach(player -> scores.put(player.getPlayer(), player.getGames().get(game.getName()).getScore()));
+		temp.forEach(player -> scores.put(player.getOfflinePlayer(), player.getGames().get(game.getName()).getScore()));
 		return scores;
 	}
 
