@@ -5,13 +5,15 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
 
 @Redirect(from = "/chatinfo", to = "/faq chatinfo")
 public class FAQCommand extends CustomCommand {
 
 	public FAQCommand(CommandEvent event) {
 		super(event);
-		line(3);
+		if (!(event instanceof TabEvent))
+			line(3);
 	}
 
 	String PLUS = "&3[+] &e";
