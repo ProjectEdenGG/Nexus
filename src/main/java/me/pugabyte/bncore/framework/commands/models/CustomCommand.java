@@ -218,24 +218,24 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Strings.isNullOrEmpty(string);
 	}
 
-	protected void runCommand(String command) {
-		runCommand(sender(), command);
+	protected void runCommand(String commandNoSlash) {
+		runCommand(sender(), commandNoSlash);
 	}
 
-	protected void runCommand(CommandSender sender, String command) {
-		Utils.runCommand(sender, command);
+	protected void runCommand(CommandSender sender, String commandNoSlash) {
+		Utils.runCommand(sender, commandNoSlash);
 	}
 
-	protected void runCommandAsOp(String command) {
-		runCommandAsOp(sender(), command);
+	protected void runCommandAsOp(String commandNoSlash) {
+		runCommandAsOp(sender(), commandNoSlash);
 	}
 
-	protected void runCommandAsOp(CommandSender sender, String command) {
-		Utils.runCommandAsOp(sender, command);
+	protected void runCommandAsOp(CommandSender sender, String commandNoSlash) {
+		Utils.runCommandAsOp(sender, commandNoSlash);
 	}
 
-	protected void runCommandAsConsole(String command) {
-		Utils.runCommandAsConsole(command);
+	protected void runCommandAsConsole(String commandNoSlash) {
+		Utils.runCommandAsConsole(commandNoSlash);
 	}
 
 	protected void checkPermission(String permission) {

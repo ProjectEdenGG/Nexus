@@ -383,22 +383,22 @@ public class Utils {
 		}
 	}
 
-	public static void runCommand(CommandSender sender, String command) {
+	public static void runCommand(CommandSender sender, String commandNoSlash) {
 //		if (sender instanceof Player)
 //			Utils.callEvent(new PlayerCommandPreprocessEvent((Player) sender, "/" + command));
-		Bukkit.dispatchCommand(sender, command);
+		Bukkit.dispatchCommand(sender, commandNoSlash);
 	}
 
-	public static void runCommandAsOp(CommandSender sender, String command) {
+	public static void runCommandAsOp(CommandSender sender, String commandNoSlash) {
 		boolean deop = !sender.isOp();
 		sender.setOp(true);
-		runCommand(sender, command);
+		runCommand(sender, commandNoSlash);
 		if (deop)
 			sender.setOp(false);
 	}
 
-	public static void runCommandAsConsole(String command) {
-		runCommand(Bukkit.getConsoleSender(), command);
+	public static void runCommandAsConsole(String commandNoSlash) {
+		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
 	}
 
 	public static LocalDateTime epochSecond(String timestamp) {

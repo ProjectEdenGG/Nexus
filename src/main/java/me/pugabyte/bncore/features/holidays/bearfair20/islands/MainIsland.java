@@ -145,19 +145,19 @@ public class MainIsland implements Listener, Island {
 						script.add("It should only be one more day before we find what we are looking for.");
 						break;
 					// TODO: UNCOMMENT THIS FOR SAFECRACKER RELEASE
-//					case 5:
-//						script.add("We found the safe, but it's protected by a magical spell. We can't seem to break it no matter what we try.");
-//						script.add("wait 80");
-//						script.add("However, I've wandered around the island at night, and last night a whole bunch of strangers showed up.");
-//						script.add("wait 80");
-//						script.add("They were muttering strange questions at me, and I think they might have something to do with this safe.");
-//						script.add("wait 80");
-//						script.add("Search around the island for these strangers, and see if they can give you a clue on how to open this safe.");
-//						script.add("wait 80");
-//						script.add("When you think you know the code, go inspect that safe and try and crack the spell.");
-//						// wait 80 + 20
-//						Tasks.wait(400, () -> Utils.runCommand(player, "/safecracker start"));
-//						break;
+					case 5:
+						script.add("We found the safe, but it's protected by a magical spell. We can't seem to break it no matter what we try.");
+						script.add("wait 80");
+						script.add("However, I've wandered around the island at night, and last night a whole bunch of strangers showed up.");
+						script.add("wait 80");
+						script.add("They were muttering strange questions at me, and I think they might have something to do with this safe.");
+						script.add("wait 80");
+						script.add("Search around the island for these strangers, and see if they can give you a clue on how to open this safe.");
+						script.add("wait 80");
+						script.add("When you think you know the code, go inspect that safe and try and crack the spell.");
+						// wait 80 + 20
+						Tasks.wait(400, () -> Utils.runCommand(player, "safecracker start"));
+						break;
 					default:
 						return null;
 				}
