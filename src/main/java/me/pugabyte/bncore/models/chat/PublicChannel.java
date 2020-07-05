@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.discord.DiscordId;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -57,11 +56,11 @@ public class PublicChannel implements Channel {
 	public Set<Chatter> getRecipients(Chatter chatter) {
 		List<Player> recipients = new ArrayList<>();
 		if (local)
-			recipients.addAll(Utils.getPlayersNear(chatter.getPlayer().getLocation(), Chat.getLocalRadius()));
+			recipients.addAll(chatter.getPlayer().getLocation().getNearbyPlayers(Chat.getLocalRadius()));
 		else if (crossWorld)
 			recipients.addAll(Bukkit.getOnlinePlayers());
 		else
-			recipients.addAll(Utils.getPlayersInWorld(chatter.getPlayer().getWorld()));
+			recipients.addAll(chatter.getPlayer().getWorld().getPlayers());
 
 		return recipients.stream()
 				.map(player -> (Chatter) new ChatService().get(player))

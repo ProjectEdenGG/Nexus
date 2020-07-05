@@ -133,16 +133,14 @@ public class JWitherCommand extends CustomCommand implements Listener {
 		Entity entity = event.getEntity();
 		witherSuffocationPoints.put(entity, witherSuffocationPoints.getOrDefault(entity, 0) + 1);
 		if (witherSuffocationPoints.get(entity) > 30) {
-			Utils.getPlayersNear(entity.getLocation(), 50).forEach(player -> {
-				player.sendMessage(StringUtils.colorize(PREFIX + "&cThe wither was killed because of suffocation. No star was rewarded."));
-			});
+			entity.getLocation().getNearbyPlayers(50).forEach(player ->
+					player.sendMessage(StringUtils.colorize(PREFIX + "&cThe wither was killed because of suffocation. No star was rewarded.")));
 			entity.remove();
 			witherSuffocationPoints.remove(entity);
 		}
 		if (witherSuffocationPoints.get(entity) > 15) {
-			Utils.getPlayersNear(entity.getLocation(), 50).forEach(player -> {
-				player.sendMessage(StringUtils.colorize(PREFIX + "&cWarning! It appears you may be trying to suffocate your wither. This is cheating! Free it or face a forfeit."));
-			});
+			entity.getLocation().getNearbyPlayers(50).forEach(player ->
+					player.sendMessage(StringUtils.colorize(PREFIX + "&cWarning! It appears you may be trying to suffocate your wither. This is cheating! Free it or face a forfeit.")));
 		}
 	}
 
@@ -208,7 +206,6 @@ public class JWitherCommand extends CustomCommand implements Listener {
 				playerWhoWonStars.add(player);
 			} else
 				send(player, PREFIX + "You won a nether star, but &eyou did not have enough money for it &3($50,000). Try again when you have the funds!");
-			return;
 		} else
 			send(player, PREFIX + "Unfortunately, &eyou did not win anything&3. Thanks for player, better luck next time!");
 	}

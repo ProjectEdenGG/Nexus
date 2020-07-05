@@ -125,18 +125,6 @@ public class Utils {
 				.collect(Collectors.toList());
 	}
 
-	public static List<Player> getPlayersInWorld(World world) {
-		return Bukkit.getOnlinePlayers().stream()
-				.filter(_player -> _player.getWorld() == world)
-				.collect(Collectors.toList());
-	}
-
-	public static List<Player> getPlayersNear(Location location, int distance) {
-		return getPlayersInWorld(location.getWorld()).stream()
-				.filter(player -> player.getLocation().distance(location) <= distance)
-				.collect(Collectors.toList());
-	}
-
 	public static OfflinePlayer getPlayer(UUID uuid) {
 		return Bukkit.getOfflinePlayer(uuid);
 	}
