@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
+import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
@@ -44,6 +45,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -152,6 +154,16 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 					jammer.incrementTime(INTERVAL);
 					new JigsawJamService().save(jammer);
 				}));
+	}
+
+	@EventHandler
+	public void onEntityDamage(HangingBreakByEntityEvent event) {
+		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
+		if (!(event.getRemover() instanceof Player)) return;
+		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
+		if (event.getRemover().hasPermission(WorldGuardEditCommand.getPermission())) return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler
