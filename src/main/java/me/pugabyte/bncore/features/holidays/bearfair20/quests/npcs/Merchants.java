@@ -232,7 +232,7 @@ public class Merchants {
 							.ingredient(goldIngot.clone().amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore).amount(1))
-							.ingredient(new ItemBuilder(MainIsland.unpurifiedMarble).clone().amount(3)));
+							.ingredient(new ItemBuilder(MainIsland.unpurifiedMarble).clone().lore(itemLore).amount(3)));
 					add(new TradeBuilder()
 							.result(MainIsland.ancientPickaxe)
 							.ingredient(new ItemBuilder(Material.COAL_BLOCK).lore(itemLore).amount(4).build()));
