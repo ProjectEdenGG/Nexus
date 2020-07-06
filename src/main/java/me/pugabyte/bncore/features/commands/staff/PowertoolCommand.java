@@ -9,6 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.powertool.PowertoolService;
 import me.pugabyte.bncore.models.powertool.PowertoolUser;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,8 +21,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
-
-import static me.pugabyte.bncore.utils.Utils.getTool;
 
 @NoArgsConstructor
 @Permission("group.staff")
@@ -38,11 +37,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 
 	@Path("[string...]")
 	void run(String command) {
-		ItemStack item = getTool(player());
-		if (item == null)
-			error("You are not holding anything");
-
-		Material material = item.getType();
+		Material material = getToolRequired().getType();
 
 		if (isNullOrEmpty(command))
 			if (user.getPowertools().containsKey(material)) {
@@ -93,7 +88,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 		if (!event.getPlayer().hasPermission("group.staff")) return;
 
 		if (Arrays.asList(Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK).contains(event.getAction())) {
-			ItemStack item = getTool(event.getPlayer());
+			ItemStack item = Utils.getTool(event.getPlayer());
 			if (item == null) return;
 
 			PowertoolUser user = new PowertoolService().get(event.getPlayer());
@@ -112,7 +107,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 		Player player = (Player) event.getDamager();
 		if (!player.hasPermission("group.staff")) return;
 
-		ItemStack item = getTool(player);
+		ItemStack item = Utils.getTool(player);
 		if (item == null) return;
 
 		PowertoolUser user = new PowertoolService().get(player);

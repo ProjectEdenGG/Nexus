@@ -34,6 +34,7 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +75,14 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected String plural(String string, double number) {
 		return StringUtils.plural(string, number);
+	}
+
+	protected ItemStack getToolRequired() {
+		return Utils.getToolRequired(player());
+	}
+
+	protected ItemStack getTool() {
+		return Utils.getTool(player());
 	}
 
 	protected void send(CommandSender sender, String message) {
