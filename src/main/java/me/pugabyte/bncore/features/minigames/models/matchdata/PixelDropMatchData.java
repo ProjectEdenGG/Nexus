@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PixelDropMatchData extends MatchData {
 	private List<Minigamer> guessed = new ArrayList<>();
 	@Accessors(fluent = true)
-	private boolean canGuess;
 
 	private List<String> designWords = new ArrayList<>();
 	private List<Integer> designsPlayed = new ArrayList<>();
@@ -68,8 +67,7 @@ public class PixelDropMatchData extends MatchData {
 		clearFloor(match);
 	}
 
-	public void endRound(Match match) {
-		canGuess(false);
+	public void endRound() {
 		setRoundOver(true);
 		setTimeLeft(0);
 	}
@@ -86,7 +84,6 @@ public class PixelDropMatchData extends MatchData {
 		match.getScoreboard().update();
 		setCurrentRound(getCurrentRound() + 1);
 		setRoundStart(System.currentTimeMillis());
-		canGuess(true);
 	}
 
 	public void setDesign(int design) {
@@ -227,11 +224,10 @@ public class PixelDropMatchData extends MatchData {
 						char[] chars = oldHint.toCharArray();
 						chars[ndx] = letter;
 						String newHint = String.valueOf(chars);
+						hint.set(newHint);
 						if (newHint.equalsIgnoreCase(word)) {
 							PixelDrop pixelDrop = (PixelDrop) match.getArena().getMechanic();
 							pixelDrop.endTheRound(match);
-						} else {
-							hint.set(newHint);
 						}
 					}
 				}
@@ -239,21 +235,13 @@ public class PixelDropMatchData extends MatchData {
 			List<Minigamer> minigamers = match.getMinigamers();
 			minigamers.forEach(minigamer -> {
 				if (!guessed.contains(minigamer))
-					ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&6" + hint.get(), 3 * 20, true);
-				else
-					ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&6" + word, 3 * 20, true);
+					ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&2" + hint.get(), 3 * 20, true);
 			});
 		});
 	}
 
 	public void stopWordTask(Match match) {
 		match.getTasks().cancel(wordTaskId);
-	}
-
-	public void revealWord(Match match) {
-		List<Minigamer> minigamers = match.getMinigamers();
-		String word = getRoundWord().replaceAll("_", " ");
-		minigamers.forEach(minigamer -> ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&2" + word, 65, true));
 	}
 
 	public void clearFloor(Match match) {
@@ -277,5 +265,3 @@ public class PixelDropMatchData extends MatchData {
 		}));
 	}
 }
-
-// SAY MY NAME SAY MY NAME
