@@ -435,12 +435,19 @@ public class Utils {
 		return collection == null || collection.isEmpty();
 	}
 
+	public static ItemStack getToolRequired(Player player) {
+		ItemStack item = getTool(player);
+		if (isNullOrAir(item))
+			throw new InvalidInputException("You are not holding anything");
+		return item;
+	}
+
 	public static ItemStack getTool(Player player) {
 		ItemStack mainHand = player.getInventory().getItemInMainHand();
 		ItemStack offHand = player.getInventory().getItemInOffHand();
-		if (!Utils.isNullOrAir(mainHand))
+		if (!isNullOrAir(mainHand))
 			return mainHand;
-		else if (!Utils.isNullOrAir(offHand))
+		else if (!isNullOrAir(offHand))
 			return offHand;
 		return null;
 	}
