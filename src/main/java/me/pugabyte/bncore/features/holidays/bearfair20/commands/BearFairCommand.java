@@ -40,10 +40,18 @@ import java.util.Map;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.atticKey;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.basketItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.ancientPickaxe;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.blessedHoneyBottle;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.honeyStroopWafel;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.rareFlower;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.relic;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.specialPrize;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.stroofWafel;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland.arcadePieces;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland.presentItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.anzacBiscuit;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.goldenSyrup;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.peanuts;
 
 @Redirect(from = {"/bfp", "bfpoints", "/bearfairpoints"}, to = "/bearfair points")
 public class BearFairCommand extends _WarpCommand {
@@ -149,28 +157,6 @@ public class BearFairCommand extends _WarpCommand {
 
 	// Admin Commands
 
-	// Warp Overrides
-	@Override
-	@Path("<name>")
-	@Permission("group.admin")
-	public void tp(Warp warp) {
-		error("disabled");
-	}
-
-	@Override
-	@Path("(teleport|tp|warp) <name>")
-	@Permission("group.admin")
-	public void teleport(Warp warp) {
-		error("disabled");
-	}
-
-	@Override
-	@Path("(rm|remove|delete|del) <name>")
-	@Permission("group.admin")
-	public void delete(Warp warp) {
-		error("disabled");
-	}
-
 	@Path("quests info")
 	@Permission("group.admin")
 	public void topTreasureChests() {
@@ -205,20 +191,20 @@ public class BearFairCommand extends _WarpCommand {
 
 	@Path("warps (rm|remove|delete|del) <name>")
 	@Permission("group.admin")
-	public void warpsDelete(Warp warp) {
+	public void delete(Warp warp) {
 		super.delete(warp);
 	}
 
 	@Path("warps (teleport|tp) <name>")
 	@Permission("group.admin")
-	public void warpsTeleport(Warp warp) {
+	public void teleport(Warp warp) {
 		player();
 		super.teleport(warp);
 	}
 
 	@Path("warps <name>")
 	@Permission("group.admin")
-	public void warpsTP(Warp warp) {
+	public void tp(Warp warp) {
 		player();
 		super.tp(warp);
 	}
