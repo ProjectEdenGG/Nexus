@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.framework.commands.models;
 
-import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -28,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.bncore.utils.StringUtils.left;
 
 @Data
@@ -76,7 +76,7 @@ class PathParser {
 					arg.setParamIndex(paramIndex++);
 					Parameter parameter = method.getParameters()[arg.getParamIndex()];
 					Arg annotation = parameter.getAnnotation(Arg.class);
-					if (annotation != null && !Strings.isNullOrEmpty(annotation.permission()))
+					if (annotation != null && !isNullOrEmpty(annotation.permission()))
 						if (!event.getSender().hasPermission(annotation.permission()))
 							break;
 
@@ -163,11 +163,11 @@ class PathParser {
 
 		@ToString.Include
 		boolean matches() {
-			if (Strings.isNullOrEmpty(pathArg) || isVariable())
+			if (isNullOrEmpty(pathArg) || isVariable())
 				return true;
 
 			if (isCompletionIndex)
-				if (Strings.isNullOrEmpty(realArg))
+				if (isNullOrEmpty(realArg))
 					return true;
 				else
 					if (isLiteral())
@@ -255,8 +255,10 @@ class PathParser {
 		for (Method method : methods) {
 			if (!event.getCommand().hasPermission(event.getSender(), method))
 				continue;
-			if (method.getAnnotation(TabCompleteIgnore.class) != null)
-				continue;
+			TabCompleteIgnore tabCompleteIgnore = method.getAnnotation(TabCompleteIgnore.class);
+			if (tabCompleteIgnore != null)
+				if (isNullOrEmpty(tabCompleteIgnore.permission()) || !event.getSender().hasPermission(tabCompleteIgnore.permission()))
+					continue;
 
 			TabCompleteHelper helper = new TabCompleteHelper(method, event.getArgs());
 //			BNCore.log(helper.toString());
