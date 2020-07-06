@@ -14,12 +14,14 @@ import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.models.warps.Warp;
+import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -76,7 +78,7 @@ public class BearFairCommand extends _WarpCommand {
 		if (user.isFirstVisit())
 			error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
 
-		runCommandAsOp("bearfair tp bearfair");
+		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR));
 	}
 
 	@Path("quests giveAllQuestItem")
@@ -209,6 +211,7 @@ public class BearFairCommand extends _WarpCommand {
 		super.tp(warp);
 	}
 
+	@TabCompleteIgnore(permission = "group.admin")
 	@Path("warps tp nearest")
 	public void teleportNearest() {
 		player();
