@@ -40,6 +40,7 @@ public class EconomyCommand extends CustomCommand {
 		send("&3There are multiple ways to make money, such as:");
 		line();
 		send(json("&3[+] &eSelling items at the &c/market").suggest("/market"));
+		send(json("&3[+] &eSelling items at the &c/market &3in the &eresource world").hover("&3Non auto-farmable resources sell for more in this world").suggest("/warp resource"));
 		send(json("&3[+] &eSelling items to other players").command("/economy sell").hover("&3Click for a few tips on how to sell to other players"));
 		send(json("&3[+] &eKilling mobs").url("https://wiki.bnn.gg/wiki/Main_Page#Mobs").hover("&3Click to open the wiki section on mobs."));
 		send("&3[+] &eWorking for other players");

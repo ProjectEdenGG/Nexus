@@ -24,8 +24,7 @@ import static me.pugabyte.bncore.features.discord.Discord.discordize;
 @NoArgsConstructor
 public class IngameBridgeListener implements Listener {
 
-
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onChannelChat(PublicChatEvent event) {
 		DiscordId.Channel discordChannel = event.getChannel().getDiscordChannel();
 		if (discordChannel == null) return;
