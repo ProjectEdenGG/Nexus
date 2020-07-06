@@ -13,7 +13,7 @@ public class SeenCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path()
+	@Path("<player>")
 	public void seen(Nerd nerd) {
 		if (nerd.getOfflinePlayer().isOnline())
 			send(PREFIX + "&e" + nerd.getName() + " &3has been &aonline &3for &e" + StringUtils.timespanDiff(nerd.getLastJoin()));
