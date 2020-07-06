@@ -38,8 +38,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -264,7 +266,19 @@ public abstract class ICustomCommand {
 	}
 
 	List<Method> getPathMethods(CommandEvent event) {
-		ArrayList<Method> methods = new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
+		List<Method> methods = new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
+
+		Map<String, Method> overriden = new HashMap<>();
+		methods.forEach(method -> {
+			String key = method.getName() + "(" + Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.joining(",")) + ")";
+			if (!overriden.containsKey(key))
+				overriden.put(key, method);
+			else if (overriden.get(key).getDeclaringClass().isAssignableFrom(method.getDeclaringClass()))
+				overriden.put(key, method);
+		});
+
+		methods.clear();
+		methods.addAll(overriden.values());
 
 		methods.sort(
 				Comparator.comparing(method ->
