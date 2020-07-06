@@ -148,6 +148,29 @@ public class BearFairCommand extends _WarpCommand {
 	}
 
 	// Admin Commands
+
+	// Warp Overrides
+	@Override
+	@Path("<name>")
+	@Permission("group.admin")
+	public void tp(Warp warp) {
+		error("disabled");
+	}
+
+	@Override
+	@Path("(teleport|tp|warp) <name>")
+	@Permission("group.admin")
+	public void teleport(Warp warp) {
+		error("disabled");
+	}
+
+	@Override
+	@Path("(rm|remove|delete|del) <name>")
+	@Permission("group.admin")
+	public void delete(Warp warp) {
+		error("disabled");
+	}
+
 	@Path("quests info")
 	@Permission("group.admin")
 	public void topTreasureChests() {
@@ -180,25 +203,22 @@ public class BearFairCommand extends _WarpCommand {
 		super.set(name);
 	}
 
-	@Override
 	@Path("warps (rm|remove|delete|del) <name>")
 	@Permission("group.admin")
-	public void delete(Warp warp) {
+	public void warpsDelete(Warp warp) {
 		super.delete(warp);
 	}
 
-	@Override
 	@Path("warps (teleport|tp) <name>")
 	@Permission("group.admin")
-	public void teleport(Warp warp) {
+	public void warpsTeleport(Warp warp) {
 		player();
 		super.teleport(warp);
 	}
 
-	@Override
 	@Path("warps <name>")
 	@Permission("group.admin")
-	public void tp(Warp warp) {
+	public void warpsTP(Warp warp) {
 		player();
 		super.tp(warp);
 	}
