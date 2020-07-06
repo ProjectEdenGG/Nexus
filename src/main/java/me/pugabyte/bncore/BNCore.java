@@ -38,7 +38,9 @@ import me.pugabyte.bncore.models.ModelListeners;
 import me.pugabyte.bncore.models.geoip.GeoIP;
 import me.pugabyte.bncore.models.geoip.GeoIPService;
 import me.pugabyte.bncore.models.home.HomeService;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
+import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time.Timer;
@@ -49,7 +51,6 @@ import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -68,7 +69,6 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
@@ -225,10 +225,9 @@ public class BNCore extends JavaPlugin {
 	// @formatter:on;
 
 	public void broadcastReload() {
-		Stream.of("Pugabyte", "WakkaFlocka", "Blast", "Camaros", "Zanitaeni", "lexikiq")
-				.map(Bukkit::getOfflinePlayer)
-				.filter(OfflinePlayer::isOnline)
-				.map(OfflinePlayer::getPlayer)
+		Rank.getOnlineMods().stream()
+				.filter(nerd -> nerd.getOfflinePlayer().isOnline() && nerd.getPlayer() != null)
+				.map(Nerd::getPlayer)
 				.forEach(player -> {
 					GeoIP geoIp = new GeoIPService().get(player);
 					String message = " &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!";
