@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.features.commands.info;
 
 import lombok.NonNull;
-import me.pugabyte.bncore.features.commands.info.SocialMediaCommand.SocialMedia;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.socialmedia.SocialMedia.BNSocialMediaSite;
 
 public class SteamCommand extends CustomCommand {
 
@@ -14,7 +14,7 @@ public class SteamCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().urlize("&e" + SocialMedia.STEAM.getUrl()));
+		send(json().urlize("&e" + BNSocialMediaSite.STEAM.getUrl()));
 	}
 
 }
