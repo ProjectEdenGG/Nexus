@@ -13,8 +13,15 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayer;
+import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayer.Game;
+import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayer.SafeCrackerPlayerNPC;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayerService;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.MaterialTag;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -60,23 +67,27 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	@Path("answer <answer...>")
 	void answer(String answer) {
-		if (SafeCracker.playerClickedNPC.containsKey(player().getPlayer())) {
-			safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(SafeCracker.playerClickedNPC.get(player())).setAnswer(answer);
-			if (answerIsCorrect(answer)) {
+		if (SafeCracker.playerClickedNPC.containsKey(player())) {
+			SafeCrackerPlayerNPC npc = safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(SafeCracker.playerClickedNPC.get(player()));
+			npc.setAnswer(answer);
+
+			boolean correct = answerIsCorrect(answer);
+			npc.setCorrect(correct);
+
+			if (correct) {
 				player().playSound(player().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
-				send("&3" + SafeCracker.playerClickedNPC.get(player().getPlayer()) + " >&e " + Utils.getRandomElement(SafeCracker.correctResponses));
-				safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(SafeCracker.playerClickedNPC.get(player())).setCorrect(true);
+				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&e " + Utils.getRandomElement(SafeCracker.correctResponses));
 			} else {
-				send("&3" + SafeCracker.playerClickedNPC.get(player().getPlayer()) + " >&c " + Utils.getRandomElement(SafeCracker.wrongResponses));
-				safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(SafeCracker.playerClickedNPC.get(player())).setCorrect(false);
 				player().playSound(player().getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 2F);
+				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&c " + Utils.getRandomElement(SafeCracker.wrongResponses));
 			}
+
 			playerService.save(safeCrackerPlayer);
 		} else error("You must find an NPC before answering");
 	}
 
 	public boolean answerIsCorrect(String answer) {
-		for (String _answer : game.getNpcs().get(SafeCracker.playerClickedNPC.get(player().getPlayer())).getAnswers())
+		for (String _answer : game.getNpcs().get(SafeCracker.playerClickedNPC.get(player())).getAnswers())
 			if (answer.equalsIgnoreCase(_answer))
 				return true;
 		return false;
@@ -103,8 +114,9 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 			safeCrackerPlayer.setGames(new HashMap<>());
 
 		if (!safeCrackerPlayer.getGames().containsKey(game.getName())) {
-			safeCrackerPlayer.getGames().put(game.getName(), new SafeCrackerPlayer.Game());
-			safeCrackerPlayer.getGames().get(game.getName()).setStarted(LocalDateTime.now());
+			Game game = new Game();
+			game.setStarted(LocalDateTime.now());
+			safeCrackerPlayer.getGames().put(this.game.getName(), game);
 			playerService.save(safeCrackerPlayer);
 			send(PREFIX + "You just started the SafeCracker event");
 		} else if (safeCrackerPlayer.getGames().get(game.getName()).isFinished())
@@ -142,13 +154,13 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	@Path("question <question...>")
 	@Permission("group.staff")
 	void question(String question) {
-		if (!SafeCracker.adminQuestionMap.containsKey(player().getPlayer()))
+		if (!SafeCracker.adminQuestionMap.containsKey(player()))
 			error("You must select an NPC in the GUI first");
-		game.getNpcs().get(SafeCracker.adminQuestionMap.get(player().getPlayer())).setQuestion(question);
+		game.getNpcs().get(SafeCracker.adminQuestionMap.get(player())).setQuestion(question);
 		eventService.save(event);
-		send(PREFIX + "Set &e" + SafeCracker.adminQuestionMap.get(player().getPlayer()) + "'s &3question to &e" + question + "?");
+		send(PREFIX + "Set &e" + SafeCracker.adminQuestionMap.get(player()) + "'s &3question to &e" + question + "?");
 		SafeCrackerInventories.openAdminMenu(player());
-		SafeCracker.adminQuestionMap.remove(player().getPlayer());
+		SafeCracker.adminQuestionMap.remove(player());
 	}
 
 	@Path("scores")
