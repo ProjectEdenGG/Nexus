@@ -24,6 +24,12 @@ public class SocialMediaCommand extends CustomCommand {
 			send(json().urlize(site.getName() + " &7- &e" + site.getUrl()));
 	}
 
+	@Path("reload")
+	@Permission("group.admin")
+	void reload() {
+		SocialMediaSite.reload();
+	}
+
 	@Path("getItem <site>")
 	@Permission("group.admin")
 	void getItem(SocialMediaSite site) {
