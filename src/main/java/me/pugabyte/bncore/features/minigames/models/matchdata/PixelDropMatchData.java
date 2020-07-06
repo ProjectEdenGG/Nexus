@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.mechanics.PixelDrop;
@@ -15,6 +14,7 @@ import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Data
@@ -91,10 +92,6 @@ public class PixelDropMatchData extends MatchData {
 	public void setDesign(int design) {
 		this.design = design;
 		roundWord = designWords.get(design - 1);
-	}
-
-	public void setNewDesign(Match match) {
-
 	}
 
 	public void startLobbyAnimation(Match match) {
@@ -229,16 +226,22 @@ public class PixelDropMatchData extends MatchData {
 					if (ndx != -1) {
 						char[] chars = oldHint.toCharArray();
 						chars[ndx] = letter;
-						hint.set(String.valueOf(chars));
+						String newHint = String.valueOf(chars);
+						if (newHint.equalsIgnoreCase(word)) {
+							PixelDrop pixelDrop = (PixelDrop) match.getArena().getMechanic();
+							pixelDrop.endTheRound(match);
+						} else {
+							hint.set(newHint);
+						}
 					}
 				}
 			}
 			List<Minigamer> minigamers = match.getMinigamers();
 			minigamers.forEach(minigamer -> {
 				if (!guessed.contains(minigamer))
-					ActionBarUtils.sendActionBar(minigamer.getPlayer(), hint.get(), 3 * 20, true);
+					ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&6" + hint.get(), 3 * 20, true);
 				else
-					ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&a" + word, 3 * 20, true);
+					ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&6" + word, 3 * 20, true);
 			});
 		});
 	}
@@ -250,12 +253,29 @@ public class PixelDropMatchData extends MatchData {
 	public void revealWord(Match match) {
 		List<Minigamer> minigamers = match.getMinigamers();
 		String word = getRoundWord().replaceAll("_", " ");
-		minigamers.forEach(minigamer -> ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&a" + word, 40, true));
+		minigamers.forEach(minigamer -> ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&2" + word, 65, true));
 	}
 
-	// TODO: Counter clockwise animation
 	public void clearFloor(Match match) {
 		PixelDropArena arena = match.getArena();
-		WEUtils.set(arena.getBoardRegion(), BlockTypes.AIR);
+		List<Block> blocks = new ArrayList<>(WEUtils.getBlocks(arena.getBoardRegion()));
+
+		AtomicInteger taskId = new AtomicInteger();
+		taskId.set(match.getTasks().repeat(0, 2, () -> {
+			if (blocks.size() == 0)
+				match.getTasks().cancel(taskId.get());
+
+			for (int i = 0; i < 3; i++) {
+				if (blocks.size() == 0)
+					match.getTasks().cancel(taskId.get());
+
+				Block block = Utils.getRandomElement(blocks);
+				blocks.remove(block);
+				if (!Utils.isNullOrAir(block))
+					block.setType(Material.AIR);
+			}
+		}));
 	}
 }
+
+// SAY MY NAME SAY MY NAME

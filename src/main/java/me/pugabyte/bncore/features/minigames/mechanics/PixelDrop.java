@@ -93,6 +93,14 @@ public class PixelDrop extends TeamlessMechanic {
 		super.onEnd(event);
 	}
 
+	public void endTheRound(Match match) {
+		PixelDropMatchData matchData = match.getMatchData();
+		cancelCountdown(match);
+		stopDesignTask(match);
+		matchData.canGuess(false);
+		match.getTasks().wait(2 * 20, () -> endOfRound(match));
+	}
+
 	public void endOfRound(Match match) {
 		PixelDropMatchData matchData = match.getMatchData();
 		List<Minigamer> minigamers = match.getMinigamers();
@@ -107,7 +115,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 			minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.7F));
-			match.broadcast("&c&lRound Over!&c The word was: " + matchData.getRoundWord());
+			match.broadcast("&c&lRound Over!&3 The word was: &e" + matchData.getRoundWord());
 		}
 
 		matchData.resetRound();
@@ -271,7 +279,7 @@ public class PixelDrop extends TeamlessMechanic {
 			}
 
 			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10F, 0.5F);
-			match.broadcast("&a" + minigamer.getName() + " guessed the word!");
+			match.broadcast("&e" + minigamer.getName() + " &3guessed the word!");
 			matchData.getGuessed().add(minigamer);
 			minigamer.scored(Math.max(1, 1 + (4 - matchData.getGuessed().size())));
 			match.getScoreboard().update();
@@ -280,10 +288,7 @@ public class PixelDrop extends TeamlessMechanic {
 				startRoundCountdown(match);
 
 			if (match.getMinigamers().size() == matchData.getGuessed().size()) {
-				cancelCountdown(match);
-				stopDesignTask(match);
-				matchData.canGuess(false);
-				match.getTasks().wait(2 * 20, () -> endOfRound(match));
+				endTheRound(match);
 			}
 		});
 	}
