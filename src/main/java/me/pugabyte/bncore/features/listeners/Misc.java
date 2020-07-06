@@ -248,7 +248,7 @@ public class Misc implements Listener {
 				Utils.runCommandAsConsole("undisguiseplayer " + player.getName());
 				Utils.runCommandAsConsole("petadmin remove " + player.getName());
 				Utils.runCommandAsConsole("mpet remove " + player.getName());
-				Utils.runCommandAsOp(player, "jparticles stopall");
+				Utils.runCommandAsOp(player, "particles stopall");
 				Utils.runCommandAsOp(player, "powder cancel");
 				Utils.runCommandAsConsole("speed walk 1 " + player.getName());
 				player.resetPlayerTime();

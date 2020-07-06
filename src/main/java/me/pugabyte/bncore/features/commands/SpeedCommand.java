@@ -82,7 +82,7 @@ public class SpeedCommand extends CustomCommand {
 		else if (speed < 0.0001f)
 			speed = 0.0001f;
 
-		if (!player().hasPermission("group.staff") && speed > MAX_SPEED) {
+		if (isPlayer() && !player().hasPermission("group.staff") && speed > MAX_SPEED) {
 			send(player(), "&cMax speed is " + MAX_SPEED);
 			speed = MAX_SPEED;
 		}
