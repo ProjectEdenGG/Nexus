@@ -62,8 +62,6 @@ public class BearFairUser extends PlayerOwnedObject {
 	private boolean Quest_MGN_Start = false;
 	private boolean Quest_MGN_Finish = false;
 	private int Quest_MGN_Step = 0;
-	//	@Embedded
-//	private List<ItemStack> arcadePieces = new ArrayList<>();
 	private boolean Quest_MGN_hasCPU = false;
 	private boolean Quest_MGN_hasProcessor = false;
 	private boolean Quest_MGN_hasMemoryCard = false;
@@ -73,8 +71,6 @@ public class BearFairUser extends PlayerOwnedObject {
 	private boolean Quest_MGN_hasHardDrive = false;
 	private boolean Quest_MGN_hasDiode = false;
 	private boolean Quest_MGN_hasJoystick = false;
-
-
 	//
 	private boolean Quest_Halloween_Start = false;
 	private boolean Quest_Halloween_Finish = false;
