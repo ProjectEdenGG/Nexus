@@ -90,6 +90,10 @@ public class SocialMedia extends PlayerOwnedObject {
 		}
 
 		static {
+			reload();
+		}
+
+		public static void reload() {
 			try {
 				World world = Bukkit.getWorld("survival");
 
