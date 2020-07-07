@@ -154,7 +154,7 @@ public abstract class ICustomCommand {
 
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 			String value = (annotation == null ? null : annotation.value());
-			int contextArgIndex = (annotation == null ? -1 : annotation.contextArg());
+			int contextArgIndex = (annotation == null ? -1 : annotation.context());
 			Object contextArg = (contextArgIndex > 0 && objects.length >= contextArgIndex) ? objects[contextArgIndex - 1] : null;
 
 			if (args.size() >= pathIndex) {

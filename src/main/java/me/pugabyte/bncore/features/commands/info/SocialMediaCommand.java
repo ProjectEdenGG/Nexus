@@ -28,6 +28,7 @@ public class SocialMediaCommand extends CustomCommand {
 	@Permission("group.admin")
 	void reload() {
 		SocialMediaSite.reload();
+		send(PREFIX + "Reloaded");
 	}
 
 	@Path("getItem <site>")

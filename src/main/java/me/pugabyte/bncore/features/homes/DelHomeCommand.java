@@ -31,7 +31,7 @@ public class DelHomeCommand extends CustomCommand {
 
 	@Permission("group.staff")
 	@Path("<player> <name>")
-	void delhome(OfflinePlayer player, @Arg(contextArg = 1) Home home) {
+	void delhome(OfflinePlayer player, @Arg(context = 1) Home home) {
 		homeOwner = service.get(player);
 		homeOwner.delete(home);
 		service.save(homeOwner);

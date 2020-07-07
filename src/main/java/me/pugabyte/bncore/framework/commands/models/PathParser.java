@@ -87,8 +87,8 @@ class PathParser {
 							arg.setTabCompleter(annotation.type());
 						if (annotation.tabCompleter() != void.class)
 							arg.setTabCompleter(annotation.tabCompleter());
-						if (annotation.contextArg() > 0)
-							arg.setContextArg(command.getMethodParameters(method, event, false)[annotation.contextArg() - 1]);
+						if (annotation.context() > 0)
+							arg.setContextArg(command.getMethodParameters(method, event, false)[annotation.context() - 1]);
 					}
 
 					if (finalTabCompleter == null) {
