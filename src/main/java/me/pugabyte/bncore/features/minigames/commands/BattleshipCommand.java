@@ -7,11 +7,14 @@ import me.pugabyte.bncore.features.minigames.mechanics.Battleship;
 import me.pugabyte.bncore.features.minigames.mechanics.Battleship.ShipType;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.arenas.BattleshipArena;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData;
+import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -67,9 +70,37 @@ public class BattleshipCommand extends CustomCommand {
 		mechanic.pasteShip(shipType, player().getLocation(), direction);
 	}
 
+	@Path("toKitLocation <coordinate>")
+	void toKitLocation(Coordinate coordinate) {
+		minigamer.teleport(Utils.getCenteredLocation(coordinate.getKitLocation()));
+	}
+
+	@Path("toPegLocation <coordinate>")
+	void toPegLocation(Coordinate coordinate) {
+		minigamer.teleport(Utils.getCenteredLocation(coordinate.getPegLocation()));
+	}
+
+	@Path("aim <coordinate>")
+	void aim(Coordinate coordinate) {
+		coordinate.aim();
+	}
+
+	@Path("fire <coordinate>")
+	void fire(Coordinate coordinate) {
+		coordinate.fire();
+	}
+
 	@Path("start")
 	void start() {
 		mechanic.start(match);
+	}
+
+	@ConverterFor(Coordinate.class)
+	Coordinate convertToCoordinate(String value, Team context) {
+		if (context == null)
+			context = minigamer.getTeam();
+
+		return matchData.getGrid(context).getCoordinate(value);
 	}
 
 }

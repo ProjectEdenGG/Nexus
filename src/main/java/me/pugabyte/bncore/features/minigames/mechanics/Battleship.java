@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.sk89q.worldedit.math.transform.AffineTransform;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.commands.BattleshipCommand;
@@ -123,8 +122,8 @@ public class Battleship extends BalancedTeamMechanic {
 		}};
 	}
 
-	public String getProgressBar(BattleshipMatchData matchData, Team team1) {
-		return StringUtils.progressBar(matchData.getGrid(team1).getHealth(), ShipType.getCombinedHealth(), StringUtils.ProgressBarStyle.COUNT);
+	public String getProgressBar(BattleshipMatchData matchData, Team team) {
+		return StringUtils.progressBar(matchData.getGrid(team).getHealth(), ShipType.getCombinedHealth(), StringUtils.ProgressBarStyle.COUNT);
 	}
 
 	public void start(Match match) {
@@ -299,12 +298,11 @@ public class Battleship extends BalancedTeamMechanic {
 
 	public void pasteShip(ShipType shipType, Location location, CardinalDirection direction) {
 		String schematic = "battleship/" + shipType.name().toLowerCase();
-		int rotation = direction.ordinal() * -90;
-		debug("Pasting schematic " + schematic + " at " + getShortLocationString(location) + " with rotation " + rotation);
+		debug("Pasting schematic " + schematic + " at " + getShortLocationString(location) + " with rotation " + direction.getRotation());
 		new WorldEditUtils(location).paster()
 				.file(schematic)
 				.at(location)
-				.transform(new AffineTransform().rotateY(rotation))
+				.transform(direction.getRotationTransform())
 				.paste();
 	}
 
