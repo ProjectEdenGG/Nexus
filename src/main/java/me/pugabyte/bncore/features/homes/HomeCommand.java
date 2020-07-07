@@ -43,7 +43,7 @@ public class HomeCommand extends CustomCommand {
 	}
 
 	@Path("<player> <home>")
-	void teleport(OfflinePlayer player, @Arg(contextArg = 1) Home home) {
+	void teleport(OfflinePlayer player, @Arg(context = 1) Home home) {
 		home.teleport(player());
 	}
 

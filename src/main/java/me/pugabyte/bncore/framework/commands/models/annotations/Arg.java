@@ -12,7 +12,7 @@ public @interface Arg {
 	// Use for Lists due to java erasure
 	Class<?> type() default void.class;
 	Class<?> tabCompleter() default void.class;
-	int contextArg() default -1;
+	int context() default -1;
 	String permission() default "";
 
 }

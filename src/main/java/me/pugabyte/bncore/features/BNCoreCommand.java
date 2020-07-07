@@ -48,6 +48,9 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -56,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.zip.ZipFile;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
@@ -72,6 +76,16 @@ public class BNCoreCommand extends CustomCommand {
 
 	@Path("reload")
 	void reload() {
+		File file = Paths.get("plugins/BNCore.jar").toFile();
+		if (!file.exists())
+			error("BNCore.jar doesn't exist, cannot reload");
+
+		try {
+			new ZipFile(file).entries();
+		} catch(IOException ex) {
+			error("BNCore.jar is not complete, cannot reload");
+		}
+
 		long count = MatchManager.getAll().stream().filter(match -> match.isStarted() && !match.isEnded()).count();
 		if (count > 0)
 			error("There are active matches, cannot reload");
