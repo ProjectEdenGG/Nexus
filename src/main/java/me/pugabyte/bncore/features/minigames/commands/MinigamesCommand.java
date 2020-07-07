@@ -40,6 +40,7 @@ import org.bukkit.entity.Player;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -257,7 +258,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("addSpawnpoint <arena> [team]")
-	void addSpawnpoint(Arena arena, @Arg(contextArg = 1) Team team) {
+	void addSpawnpoint(Arena arena, @Arg(context = 1) Team team) {
 		List<Team> teams = arena.getTeams();
 
 		if (team == null) {
@@ -441,6 +442,9 @@ public class MinigamesCommand extends CustomCommand {
 		if ("current".equalsIgnoreCase(value))
 			return minigamer.getTeam();
 
+		if (context == null)
+			context = minigamer.getMatch().getArena();
+
 		return context.getTeams().stream()
 				.filter(team -> team.getName().startsWith(value))
 				.findFirst()
@@ -449,6 +453,12 @@ public class MinigamesCommand extends CustomCommand {
 
 	@TabCompleterFor(Team.class)
 	List<String> tabCompleteTeam(String filter, Arena context) {
+		if (context == null)
+			context = minigamer.getMatch().getArena();
+
+		if (context == null)
+			return new ArrayList<>();
+
 		return context.getTeams().stream()
 				.map(Team::getName)
 				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))

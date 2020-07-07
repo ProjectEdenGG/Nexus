@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.utils;
 
 import com.google.common.base.Strings;
+import com.sk89q.worldedit.math.transform.AffineTransform;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
@@ -565,6 +566,14 @@ public class Utils {
 
 		public BlockFace toBlockFace() {
 			return BlockFace.valueOf(name());
+		}
+
+		public int getRotation() {
+			return ordinal() * -90;
+		}
+
+		public AffineTransform getRotationTransform() {
+			return new AffineTransform().rotateY(getRotation());
 		}
 	}
 
