@@ -11,7 +11,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import static me.pugabyte.bncore.utils.Utils.getTool;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Permission("essentials.hat")
@@ -25,7 +24,7 @@ public class HatCommand extends CustomCommand {
 	void run() {
 		final PlayerInventory inv = player().getInventory();
 		final ItemStack hat = inv.getHelmet();
-		final ItemStack hand = getTool(player());
+		final ItemStack hand = getTool();
 		final ItemStack air = new ItemStack(Material.AIR);
 
 		if (!isNullOrAir(hat))
@@ -52,7 +51,7 @@ public class HatCommand extends CustomCommand {
 	void remove() {
 		final PlayerInventory inv = player().getInventory();
 		final ItemStack hat = inv.getHelmet();
-		final ItemStack hand = getTool(player());
+		final ItemStack hand = getTool();
 		final ItemStack air = new ItemStack(Material.AIR);
 
 		if (isNullOrAir(hat))

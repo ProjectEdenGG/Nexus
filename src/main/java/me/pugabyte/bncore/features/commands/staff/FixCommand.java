@@ -9,8 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import static me.pugabyte.bncore.utils.Utils.getTool;
-
 @Permission("group.seniorstaff")
 public class FixCommand extends CustomCommand {
 
@@ -20,9 +18,7 @@ public class FixCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		ItemStack item = getTool(player());
-		if (item == null)
-			error("You are not holding anything");
+		ItemStack item = getToolRequired();
 
 		if (!(item.getItemMeta() instanceof Damageable))
 			error(item.getType().name() + " is not damageable");
