@@ -14,7 +14,15 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
+
+	List<String> wordToInt = new ArrayList<>(Arrays.asList("zero", "one", "two", "three", "four", "five", "six", "seven",
+			"eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen"));
+
 	@Override
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> ParticleMenu.openSettingEditor(player, ParticleType.WINGS));
@@ -22,7 +30,7 @@ public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 		int row = 1;
 		int column = 1;
 		for (WingsEffect.WingStyle style : WingsEffect.WingStyle.values()) {
-			if (!player.hasPermission("particle.wingstyle." + style.name().toLowerCase())) continue;
+			if (!player.hasPermission("wings.style." + wordToInt.indexOf(style.name().toLowerCase()))) continue;
 			ParticleService service = new ParticleService();
 			ParticleOwner owner = service.get(player);
 			ItemStack item = nameItem(new ItemStack(Material.ELYTRA).clone(), "&3Style #" + (style.ordinal() + 1));
@@ -48,4 +56,5 @@ public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 	public void update(Player player, InventoryContents inventoryContents) {
 
 	}
+
 }
