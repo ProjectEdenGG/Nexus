@@ -99,6 +99,14 @@ public class Fishing implements Listener {
 			return safetyLoot;
 		}
 
+		Utils.wakka("");
+		Utils.wakka(player.getName() + "'s Possible Loot:");
+		for (ItemStack itemStack : lootList) {
+			String msg = itemStack.getType() + ": " + itemStack.getAmount();
+			Utils.wakka(" - " + msg);
+		}
+		Utils.wakka("");
+
 		ItemStack itemStack = Utils.getRandomElement(lootList);
 		WeightedLoot weightedLoot = null;
 		for (WeightedLoot weightedItem : weightedList) {
