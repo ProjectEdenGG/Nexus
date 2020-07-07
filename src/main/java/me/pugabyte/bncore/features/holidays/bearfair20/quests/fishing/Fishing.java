@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing;
 import com.gmail.nossr50.events.skills.fishing.McMMOPlayerFishingEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.IslandType;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.WeightedLoot;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
@@ -25,10 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.toolError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loot.*;
@@ -49,11 +46,11 @@ public class Fishing implements Listener {
 
 	// @formatter:off
 	private void addWeightedItems() {
-		String mainIsland = BearFair20.getRegion() + "_main";
-		String mgnIsland = BearFair20.getRegion() + "_gamelobby";
-		String halloweenIsland = BearFair20.getRegion() + "_halloween";
-		String pugmasIsland = BearFair20.getRegion() + "_pugmas";
-		String sduIsland = BearFair20.getRegion() + "_summerdownunder";
+		String mainIsland = IslandType.MAIN.get().getRegion();
+		String mgnIsland = IslandType.MINIGAME_NIGHT.get().getRegion();
+		String halloweenIsland = IslandType.HALLOWEEN.get().getRegion();
+		String pugmasIsland = IslandType.PUGMAS.get().getRegion();
+		String sduIsland = IslandType.SUMMER_DOWN_UNDER.get().getRegion();
 
 		// Default Fish (Global)
 		weightedList.add(new WeightedLoot(cod,				25));
