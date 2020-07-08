@@ -1,6 +1,9 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.commands;
 
+import com.google.common.base.Strings;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
@@ -23,21 +26,31 @@ import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.atticKey;
@@ -367,6 +380,72 @@ public class BearFairCommand extends _WarpCommand {
 	public void moveCollector() {
 		commandBlock();
 		BFQuests.moveCollector();
+	}
+
+	@Path("store maps reload")
+	@Permission("group.admin")
+	public void storeMapsReload() {
+		reloadMaps();
+		send(PREFIX + "Loaded " + maps.size() + " maps");
+	}
+
+	@Path("store maps get <map>")
+	@Permission("group.admin")
+	void storeGetMap(BearFairStoreMap map) {
+		Utils.giveItem(player(), map.getSplatterMap());
+	}
+
+	@ConverterFor(BearFairStoreMap.class)
+	BearFairStoreMap convertToBearFairStoreMap(String value) {
+		return maps.get(value);
+	}
+
+	@TabCompleterFor(BearFairStoreMap.class)
+	List<String> tabCompleteBearFairStoreMap(String filter) {
+		return maps.keySet().stream()
+				.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
+	}
+
+	@Data
+	@AllArgsConstructor
+	private static class BearFairStoreMap {
+		private String id;
+		private ItemStack splatterMap;
+	}
+
+	private static final Map<String, BearFairStoreMap> maps = new HashMap<>();
+
+	static {
+		reloadMaps();
+	}
+
+	private static void reloadMaps() {
+		try {
+			maps.clear();
+			WorldEditUtils WEUtils = new WorldEditUtils(Bukkit.getWorld("bearfair"));
+
+			for (Block block : WEUtils.getBlocks(WEUtils.getWorldGuardUtils().getRegion("maps"))) {
+				try {
+					if (!MaterialTag.SIGNS.isTagged(block.getType())) continue;
+
+					Sign sign = (Sign) block.getState();
+					String line = sign.getLine(0);
+					if (Strings.isNullOrEmpty(line)) continue;
+
+					Block chest = block.getRelative(BlockFace.DOWN);
+					if (!(chest.getState() instanceof Chest)) continue;
+
+					Chest inv = (Chest) chest.getState();
+					ItemStack map = inv.getBlockInventory().getContents()[0];
+					maps.put(line, new BearFairStoreMap(line, map));
+				} catch (Throwable ex) {
+					ex.printStackTrace();
+				}
+			}
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }
