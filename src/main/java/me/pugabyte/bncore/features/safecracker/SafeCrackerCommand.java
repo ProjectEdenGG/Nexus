@@ -20,7 +20,7 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -76,10 +76,10 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 			if (correct) {
 				player().playSound(player().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
-				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&e " + Utils.getRandomElement(SafeCracker.correctResponses));
+				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&e " + RandomUtils.randomElement(SafeCracker.correctResponses));
 			} else {
 				player().playSound(player().getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 2F);
-				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&c " + Utils.getRandomElement(SafeCracker.wrongResponses));
+				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&c " + RandomUtils.randomElement(SafeCracker.wrongResponses));
 			}
 
 			playerService.save(safeCrackerPlayer);
@@ -210,7 +210,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 				complete(player);
 			} else {
 				player.closeInventory();
-				safeCrackerPlayer.send(SafeCracker.PREFIX + "&c" + Utils.getRandomElement(SafeCracker.wrongResponses));
+				safeCrackerPlayer.send(SafeCracker.PREFIX + "&c" + RandomUtils.randomElement(SafeCracker.wrongResponses));
 			}
 			return AnvilGUI.Response.text(response);
 		}, HumanEntity::closeInventory);

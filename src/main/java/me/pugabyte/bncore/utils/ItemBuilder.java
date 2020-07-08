@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.utils;
 
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
@@ -252,19 +253,19 @@ public class ItemBuilder implements Cloneable {
 	/** Static helpers */
 
 	public static ItemStack setName(ItemStack item, String name) {
-		ItemMeta itemMeta = item.getItemMeta();
+		ItemMeta meta = item.getItemMeta();
 		if (name == null)
-			itemMeta.setDisplayName(null);
+			meta.setDisplayName(null);
 		else
-			itemMeta.setDisplayName(colorize("&f" + name));
-		item.setItemMeta(itemMeta);
+			meta.setDisplayName(colorize("&f" + name));
+		item.setItemMeta(meta);
 		return item;
 	}
 
 	public static ItemStack addItemFlags(ItemStack item, ItemFlag... flags) {
-		ItemMeta itemMeta = item.getItemMeta();
-		itemMeta.addItemFlags(flags);
-		item.setItemMeta(itemMeta);
+		ItemMeta meta = item.getItemMeta();
+		meta.addItemFlags(flags);
+		item.setItemMeta(meta);
 		return item;
 	}
 
@@ -274,12 +275,39 @@ public class ItemBuilder implements Cloneable {
 
 	public static ItemStack addLore(ItemStack item, List<String> lore) {
 		lore = lore.stream().map(StringUtils::colorize).collect(Collectors.toList());
-		ItemMeta itemMeta = item.getItemMeta();
-		List<String> existing = itemMeta.getLore();
+		ItemMeta meta = item.getItemMeta();
+		List<String> existing = meta.getLore();
 		if (existing == null) existing = new ArrayList<>();
 		existing.addAll(lore);
-		itemMeta.setLore(existing);
-		item.setItemMeta(itemMeta);
+		meta.setLore(existing);
+		item.setItemMeta(meta);
+		return item;
+	}
+
+	public static ItemStack setLoreLine(ItemStack item, int line, String text) {
+		ItemMeta meta = item.getItemMeta();
+		List<String> lore = meta.getLore();
+		if (lore == null)
+			lore = new ArrayList<>();
+		while (lore.size() < line)
+			lore.add("");
+
+		lore.set(line - 1, StringUtils.colorize(text));
+		meta.setLore(lore);
+		item.setItemMeta(meta);
+		return item;
+	}
+
+	public static ItemStack removeLoreLine(ItemStack item, int line) {
+		ItemMeta meta = item.getItemMeta();
+		List<String> lore = meta.getLore();
+
+		if (lore == null) throw new InvalidInputException("Item does not have lore");
+		if (line - 1 > lore.size()) throw new InvalidInputException("Line " + line + " does not exist");
+
+		lore.remove(line - 1);
+		meta.setLore(lore);
+		item.setItemMeta(meta);
 		return item;
 	}
 

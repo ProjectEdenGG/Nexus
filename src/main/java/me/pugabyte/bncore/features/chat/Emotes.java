@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.chat;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.events.ChatEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
@@ -92,7 +92,7 @@ public enum Emotes {
 				String result = value.getEmote();
 
 				if (value.getColors().size() > 0)
-					result = Utils.getRandomElement(value.getColors()) + result;
+					result = RandomUtils.randomElement(value.getColors()) + result;
 
 				int index = indexOfIgnoreCase(message, value.getKey());
 				message = message.substring(0, index) + result + (resetColor != null ? resetColor : "") + message.substring(index + value.getKey().length());

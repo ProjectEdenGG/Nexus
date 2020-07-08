@@ -28,6 +28,7 @@ import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Tasks.Countdown.CountdownBuilder;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -502,6 +503,12 @@ public class Match {
 
 		public int async(Runnable runnable) {
 			int taskId = Tasks.async(runnable);
+			taskIds.add(taskId);
+			return taskId;
+		}
+
+		public int countdown(CountdownBuilder countdown) {
+			int taskId = countdown.start().getTaskId();
 			taskIds.add(taskId);
 			return taskId;
 		}

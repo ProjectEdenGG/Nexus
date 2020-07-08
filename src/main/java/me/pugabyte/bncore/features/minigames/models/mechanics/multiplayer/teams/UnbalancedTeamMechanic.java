@@ -5,7 +5,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +46,7 @@ public abstract class UnbalancedTeamMechanic extends TeamMechanic {
 
 		for (Team team : teams)
 			while (team.getMinigamers(match).size() < team.getMinPlayers()) {
-				Minigamer minigamer = Utils.getRandomElement(match.getUnassignedPlayers());
+				Minigamer minigamer = RandomUtils.randomElement(match.getUnassignedPlayers());
 				if (minigamer.getTeam() == null)
 					minigamer.setTeam(team);
 			}
@@ -58,7 +58,7 @@ public abstract class UnbalancedTeamMechanic extends TeamMechanic {
 				Collections.shuffle(teams);
 				for (Team team : teams)
 					if (team.getMaxPlayers() < 0 || team.getMinigamers(match).size() < team.getMaxPlayers())
-						if (Utils.chanceOf(team.getBalancePercentage())) {
+						if (RandomUtils.chanceOf(team.getBalancePercentage())) {
 							minigamer.setTeam(team);
 							continue playerLoop;
 						}

@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.minigames.models.arenas.PixelDropArena;
 import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -108,9 +109,9 @@ public class PixelDropMatchData extends MatchData {
 			Region lobbyAnimationRegion = arena.getLobbyAnimationRegion();
 
 			int designCount = matchData.getDesignCount();
-			int design = Utils.randomInt(1, designCount);
+			int design = RandomUtils.randomInt(1, designCount);
 			for (int i = 0; i < designCount; i++) {
-				design = Utils.randomInt(1, designCount);
+				design = RandomUtils.randomInt(1, designCount);
 				if (matchData.getLobbyDesign() != design)
 					break;
 			}
@@ -139,7 +140,7 @@ public class PixelDropMatchData extends MatchData {
 						return;
 					}
 
-					String key = Utils.getRandomElement(lobbyKeys);
+					String key = RandomUtils.randomElement(lobbyKeys);
 					lobbyKeys.remove(key);
 					String[] xz = key.split("_");
 					int x = Integer.parseInt(xz[0]);
@@ -204,14 +205,14 @@ public class PixelDropMatchData extends MatchData {
 			long secondsElapsed = (System.currentTimeMillis() - getRoundStart()) / 1000;
 			if (secondsElapsed > 10) {
 				int chance = 15 + (5 * guessed.size());
-				if (Utils.chanceOf(chance)) {
+				if (RandomUtils.chanceOf(chance)) {
 					String oldHint = hint.get();
 					char letter = '-';
 					int ndx = -1;
 
 					// Try 5 times
 					for (int i = 0; i < 5; i++) {
-						int random = Utils.randomInt(0, word.length() - 1);
+						int random = RandomUtils.randomInt(0, word.length() - 1);
 						letter = oldHint.charAt(random);
 						if (letter == '_') {
 							ndx = oldHint.indexOf(letter, random);
@@ -257,7 +258,7 @@ public class PixelDropMatchData extends MatchData {
 				if (blocks.size() == 0)
 					match.getTasks().cancel(taskId.get());
 
-				Block block = Utils.getRandomElement(blocks);
+				Block block = RandomUtils.randomElement(blocks);
 				blocks.remove(block);
 				if (!Utils.isNullOrAir(block))
 					block.setType(Material.AIR);

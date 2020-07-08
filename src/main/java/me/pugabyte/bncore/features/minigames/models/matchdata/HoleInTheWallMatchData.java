@@ -31,8 +31,8 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.pugabyte.bncore.utils.StringUtils.plural;
-import static me.pugabyte.bncore.utils.Utils.getRandomElement;
-import static me.pugabyte.bncore.utils.Utils.randomInt;
+import static me.pugabyte.bncore.utils.Utils.RandomUtils.randomElement;
+import static me.pugabyte.bncore.utils.Utils.RandomUtils.randomInt;
 
 @Data
 @MatchDataFor(HoleInTheWall.class)
@@ -81,7 +81,7 @@ public class HoleInTheWallMatchData extends MatchData {
 		private int taskId = -1;
 		private boolean validating;
 		private Material wallMaterial;
-		private Material buildMaterial = ColorType.of(getRandomElement(colors)).getStainedGlass();
+		private Material buildMaterial = ColorType.of(randomElement(colors)).getStainedGlass();
 
 		public Track(@NonNull ProtectedRegion region, @NonNull Location designHangerLocation) {
 			this.region = region;
@@ -141,7 +141,7 @@ public class HoleInTheWallMatchData extends MatchData {
 
 			int delay = HoleInTheWall.BASE_TICK_SPEED - (wallIndex / HoleInTheWall.TICK_DECREASE_EVERY_X_WALLS);
 			trackIndex.set(0);
-			wallMaterial = ColorType.of(getRandomElement(colors)).getConcrete();
+			wallMaterial = ColorType.of(randomElement(colors)).getConcrete();
 
 			taskId = getMatch().getTasks().repeat(0, delay, () -> {
 				clearWall(trackIndex.getAndIncrement());

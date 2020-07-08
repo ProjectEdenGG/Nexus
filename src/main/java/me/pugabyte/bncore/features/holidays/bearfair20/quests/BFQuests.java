@@ -16,6 +16,7 @@ import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -106,7 +107,7 @@ public class BFQuests implements Listener {
 		if (prevCollectorLocs.size() == collectorLocs.size())
 			prevCollectorLocs.clear();
 
-		Location newLoc = Utils.getRandomElement(collectorLocs);
+		Location newLoc = RandomUtils.randomElement(collectorLocs);
 		if (newLoc == null) return;
 
 		for (int i = 0; i < 10; i++) {
@@ -114,7 +115,7 @@ public class BFQuests implements Listener {
 				prevCollectorLocs.add(newLoc);
 				break;
 			}
-			newLoc = Utils.getRandomElement(collectorLocs);
+			newLoc = RandomUtils.randomElement(collectorLocs);
 		}
 
 		if (newLoc == null) return;

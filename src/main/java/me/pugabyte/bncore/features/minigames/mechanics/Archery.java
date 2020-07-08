@@ -22,6 +22,7 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -169,10 +170,10 @@ public class Archery extends TeamlessMechanic {
 					ArrayList<Location> locations = powderLocations.get(colorRegion);
 
 					for (int i = 0; i < 10; i++) {
-						Location randomXZ = Utils.getRandomElement(locations);
+						Location randomXZ = RandomUtils.randomElement(locations);
 						int min = colorRegion.getMinimumPoint().getBlockY() + 2;
 						int max = colorRegion.getMaximumPoint().getBlockY() - 2;
-						int y = Utils.randomInt(min, max);
+						int y = RandomUtils.randomInt(min, max);
 
 						Location targetLoc = randomXZ.getBlock().getLocation();
 						targetLoc.setY(y);

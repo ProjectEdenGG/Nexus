@@ -9,7 +9,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -70,7 +70,7 @@ public class AnvilDrop extends TeamlessMechanic {
 			EntityDamageEvent entityDamageEvent = (EntityDamageEvent) event.getOriginalEvent();
 			if (entityDamageEvent.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
 				String minigamer = event.getMinigamer().getColoredName();
-				String deathMessage = Utils.getRandomElement(deathMessages);
+				String deathMessage = RandomUtils.randomElement(deathMessages);
 				event.setDeathMessage(minigamer + " &3" + deathMessage);
 
 				Entity eventEntity = entityDamageEvent.getEntity();
@@ -84,7 +84,7 @@ public class AnvilDrop extends TeamlessMechanic {
 	public void dropAnvils(Match match) {
 		AnvilDropArena arena = match.getArena();
 		List<Location> dropLocs = getLocations(match.getWEUtils().getBlocks(arena.getRegion("dropzone")));
-		match.getTasks().repeat(Time.SECOND.x(3), 5, () -> Utils.getRandomElement(dropLocs).getBlock().setType(Material.ANVIL));
+		match.getTasks().repeat(Time.SECOND.x(3), 5, () -> RandomUtils.randomElement(dropLocs).getBlock().setType(Material.ANVIL));
 	}
 
 	@EventHandler

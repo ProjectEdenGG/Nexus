@@ -14,6 +14,7 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -39,10 +40,20 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static org.bukkit.block.BlockFace.*;
+import static org.bukkit.block.BlockFace.EAST;
+import static org.bukkit.block.BlockFace.NORTH;
+import static org.bukkit.block.BlockFace.NORTH_EAST;
+import static org.bukkit.block.BlockFace.NORTH_WEST;
+import static org.bukkit.block.BlockFace.SOUTH;
+import static org.bukkit.block.BlockFace.SOUTH_EAST;
+import static org.bukkit.block.BlockFace.SOUTH_WEST;
+import static org.bukkit.block.BlockFace.WEST;
 
 public class Reflection implements Listener {
 
@@ -108,7 +119,7 @@ public class Reflection implements Listener {
 			Rotatable rotatable = (Rotatable) blockData;
 
 			if (block.getType().equals(Material.CYAN_CONCRETE_POWDER)) {
-				BlockFace newFace = Utils.getRandomElement(directions);
+				BlockFace newFace = RandomUtils.randomElement(directions);
 				if (newFace == null) continue;
 
 				rotatable.setRotation(newFace);
@@ -305,12 +316,12 @@ public class Reflection implements Listener {
 		List<String> mobs = Arrays.asList("Mooshroom", "Fox", "Bee", "Turtle", "Dolphin", "Guardian", "Squid", "Sheep", "Pig");
 
 		if (objColor == null) {
-			objColor = Utils.getRandomElement(colors);
+			objColor = RandomUtils.randomElement(colors);
 		} else {
-			ColorType newColor = Utils.getRandomElement(colors);
+			ColorType newColor = RandomUtils.randomElement(colors);
 			for (int i = 0; i < 10; i++) {
 				if (objColor.equals(newColor))
-					newColor = Utils.getRandomElement(colors);
+					newColor = RandomUtils.randomElement(colors);
 				else
 					break;
 			}
@@ -323,8 +334,8 @@ public class Reflection implements Listener {
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
 
 		objReflections = 0;
-		if (Utils.chanceOf(50))
-			objReflections = Utils.randomInt(4, 10);
+		if (RandomUtils.chanceOf(50))
+			objReflections = RandomUtils.randomInt(4, 10);
 
 		String reflections = "";
 		if (objReflections > 0)

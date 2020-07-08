@@ -3,6 +3,7 @@ package me.pugabyte.bncore.utils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -60,26 +61,26 @@ public class FireworkLauncher {
 		ColorType[] colorTypes = ColorType.values();
 		List<Color> colorList = new ArrayList<>();
 		for (ColorType colorType : colorTypes)
-			if (Utils.chanceOf(40))
+			if (RandomUtils.chanceOf(40))
 				colorList.add(colorType.getColor());
 		if (colorList.size() == 0)
-			colorList.add(Utils.getRandomElement(Arrays.asList(colorTypes)).getColor());
+			colorList.add(RandomUtils.randomElement(Arrays.asList(colorTypes)).getColor());
 
 		// Get Random Fade Colors
 		List<Color> fadeColorList = new ArrayList<>();
 		for (ColorType colorType : colorTypes)
-			if (Utils.chanceOf(40))
+			if (RandomUtils.chanceOf(40))
 				fadeColorList.add(colorType.getColor());
 
 		// Get Random Type
-		FireworkEffect.Type type = Utils.getRandomElement(Arrays.asList(FireworkEffect.Type.values()));
+		FireworkEffect.Type type = RandomUtils.randomElement(Arrays.asList(FireworkEffect.Type.values()));
 
 		return new FireworkLauncher(location)
 				.type(type)
 				.colors(colorList)
 				.fadeColors(fadeColorList)
-				.trailing(Utils.chanceOf(50))
-				.flickering(Utils.chanceOf(50))
-				.power(Utils.randomInt(1, 3));
+				.trailing(RandomUtils.chanceOf(50))
+				.flickering(RandomUtils.chanceOf(50))
+				.power(RandomUtils.randomInt(1, 3));
 	}
 }

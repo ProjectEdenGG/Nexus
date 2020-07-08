@@ -18,7 +18,7 @@ public class ExperienceCommand extends CustomCommand {
 
 	@Path("get <player>")
 	void get(Player player) {
-		send(PREFIX + player.getName() + " has &e" + player.getLevel() + " level" + (player.getLevel() == 1 ? "" : "s"));
+		send(PREFIX + player.getName() + " has &e" + player.getLevel() + plural(" level", player.getLevel()));
 	}
 
 	@Path("set <player> <level>")
@@ -41,7 +41,7 @@ public class ExperienceCommand extends CustomCommand {
 
 	private void common(Player player) {
 		player.setExp(0f);
-		send(PREFIX + player.getName() + " now has &e" + player.getLevel() + " level" + (player.getLevel() == 1 ? "" : "s"));
+		send(PREFIX + player.getName() + " now has &e" + player.getLevel() + plural(" level", player.getLevel()));
 	}
 
 }

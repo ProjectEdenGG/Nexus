@@ -18,6 +18,7 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
@@ -234,7 +235,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		}
 
 		double getRandomValue() {
-			return Utils.randomDouble(min, max);
+			return RandomUtils.randomDouble(min, max);
 		}
 
 	}

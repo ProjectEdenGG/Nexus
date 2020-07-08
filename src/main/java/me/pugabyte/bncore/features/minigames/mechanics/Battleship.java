@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.bncore.features.minigames.models.arenas.BattleshipArena;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Ship;
@@ -43,8 +44,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.getShortLocationString;
+import static me.pugabyte.bncore.utils.Utils.attempt;
 
 /*
 	Regions:
@@ -98,6 +102,12 @@ public class Battleship extends BalancedTeamMechanic {
 	}
 
 	@Override
+	public void begin(MatchBeginEvent event) {
+		super.begin(event);
+		start(event.getMatch());
+	}
+
+	@Override
 	public Map<String, Integer> getScoreboardLines(Match match, Team team) {
 		BattleshipArena arena = match.getArena();
 		BattleshipMatchData matchData = match.getMatchData();
@@ -131,12 +141,12 @@ public class Battleship extends BalancedTeamMechanic {
 		if (!matchData.isPlacingKits()) return;
 
 		for (Team team : matchData.getShips().keySet()) {
-			long count = matchData.getShips().get(team).values().stream()
+			matchData.getShips().get(team).values().stream()
 					.filter(ship -> ship.getOrigin() == null)
-					.count();
-
-			if (count > 0)
-				match.broadcast("Cannot start yet, setup incomplete");
+					.forEach(ship -> {
+						if (!attempt(100, () -> placeKit(match, team, ship.getType())))
+							BNCore.warn("Could not place " + camelCase(ship.getType().name()) + " on team " + team.getName() + " in " + match.getArena().getName());
+					});
 		}
 
 		matchData.setPlacingKits(false);
@@ -169,7 +179,8 @@ public class Battleship extends BalancedTeamMechanic {
 		Location floor = event.getBlockAgainst().getLocation();
 		if (!minigamer.getMatch().getArena().isInRegion(floor, "floor")) return;
 
-		// TODO: if (!matchData.isPlacingKits()) return;
+		BattleshipMatchData matchData = minigamer.getMatch().getMatchData();
+		if (!matchData.isPlacingKits()) return;
 
 		if (placeKit(minigamer, shipType, floor.add(0, 3, 0), BlockFace.NORTH))
 			minigamer.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
@@ -219,16 +230,24 @@ public class Battleship extends BalancedTeamMechanic {
 			}
 	}
 
+	private boolean placeKit(Match match, Team team, ShipType shipType) {
+		BattleshipMatchData matchData = match.getMatchData();
+		Location location = matchData.getGrid(team).getRandomCoordinate().getKitLocation();
+		return placeKit(null, shipType, location, CardinalDirection.random().toBlockFace());
+	}
+
 	private boolean placeKit(Minigamer minigamer, ShipType shipType, Location location, BlockFace direction) {
 		return placeKit(minigamer, shipType, location, direction, 0);
 	}
 
 	private boolean placeKit(Minigamer minigamer, ShipType shipType, Location location, BlockFace direction, int attempts) {
+		Consumer<String> send = message -> { if (minigamer != null) minigamer.tell(message); };
+
 		if (attempts >= 4) {
 			if (location.getBlock().getType() == shipType.getItem().getType())
-				minigamer.send(PREFIX + "Your &e" + shipType + " &3could not be rotated");
+				send.accept(PREFIX + "Your &e" + shipType + " &3could not be rotated");
 			else
-				minigamer.send(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
+				send.accept(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
 			return false;
 		}
 
@@ -239,14 +258,14 @@ public class Battleship extends BalancedTeamMechanic {
 
 		if (location.getBlock().getType() == shipType.getItem().getType()) {
 			deleteKit(location);
-			minigamer.send(PREFIX + "Rotated &e" + shipType);
+			send.accept(PREFIX + "Rotated &e" + shipType);
 		} else {
 			if (location.getBlock().getType() != Material.AIR) {
-				minigamer.send(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
+				send.accept(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
 				return false;
 			}
 
-			minigamer.send(PREFIX + "Placed &e" + shipType);
+			send.accept(PREFIX + "Placed &e" + shipType);
 		}
 
 		BattleshipMatchData matchData = minigamer.getMatch().getMatchData();
@@ -358,7 +377,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 		@Override
 		public String toString() {
-			return StringUtils.camelCase(name());
+			return camelCase(name());
 		}
 
 		public int getKitLength() {

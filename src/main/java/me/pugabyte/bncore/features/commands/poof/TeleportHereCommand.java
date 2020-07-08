@@ -8,7 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-@Aliases({"tphere", "s", "summon"})
+@Aliases({"tphere", "s"})
 public class TeleportHereCommand extends CustomCommand {
 
 	public TeleportHereCommand(@NonNull CommandEvent event) {

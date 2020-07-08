@@ -17,7 +17,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import me.pugabyte.bncore.features.minigames.utils.PowerUpUtils;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -158,7 +158,7 @@ public class MonsterMaze extends TeamlessMechanic {
 				.map(Map.Entry::getKey)
 				.collect(Collectors.toList());
 
-		return sorted.get(Utils.randomInt(sorted.size() / 2, sorted.size() - 1));
+		return sorted.get(RandomUtils.randomInt(sorted.size() / 2, sorted.size() - 1));
 	}
 
 	private void allowJump(Minigamer minigamer) {

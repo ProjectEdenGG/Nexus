@@ -113,7 +113,7 @@ public class Tasks {
 		}
 
 		@Getter
-		private int taskId;
+		private int taskId = -1;
 		private int ticks;
 		private int seconds;
 

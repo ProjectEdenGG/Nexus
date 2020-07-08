@@ -13,6 +13,7 @@ import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -55,7 +56,7 @@ public class JoinQuit implements Listener {
 
 		String message = "&a[player] &5has joined the server";
 		if (player.hasPermission("jq.custom") && joinMessages.size() > 0)
-			message = Utils.getRandomElement(joinMessages);
+			message = RandomUtils.randomElement(joinMessages);
 
 		final String finalMessage = message;
 
@@ -88,7 +89,7 @@ public class JoinQuit implements Listener {
 
 		String message = "&c[player] &5has left the server";
 		if (player.hasPermission("jq.custom") && quitMessages.size() > 0)
-			message = Utils.getRandomElement(quitMessages);
+			message = RandomUtils.randomElement(quitMessages);
 
 		final String finalMessage = message;
 

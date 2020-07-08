@@ -26,6 +26,7 @@ import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -389,7 +390,7 @@ public class BearFairCommand extends _WarpCommand {
 		send(PREFIX + "Loaded " + maps.size() + " maps");
 	}
 
-	@Path("store maps get <map>")
+	@Path("store maps get <map...>")
 	@Permission("group.admin")
 	void storeGetMap(BearFairStoreMap map) {
 		Utils.giveItem(player(), map.getSplatterMap());
@@ -430,15 +431,20 @@ public class BearFairCommand extends _WarpCommand {
 					if (!MaterialTag.SIGNS.isTagged(block.getType())) continue;
 
 					Sign sign = (Sign) block.getState();
-					String line = sign.getLine(0);
-					if (Strings.isNullOrEmpty(line)) continue;
+					String id = sign.getLine(0).trim();
+					if (Strings.isNullOrEmpty(id)) continue;
 
 					Block chest = block.getRelative(BlockFace.DOWN);
 					if (!(chest.getState() instanceof Chest)) continue;
 
 					Chest inv = (Chest) chest.getState();
 					ItemStack map = inv.getBlockInventory().getContents()[0];
-					maps.put(line, new BearFairStoreMap(line, map));
+					String[] split = map.getItemMeta().getDisplayName().split("-");
+					String name = String.join("-", Arrays.copyOfRange(split, 1, split.length));
+
+					ItemBuilder.setName(map, "&6" + id + " &8-" + name);
+					ItemBuilder.removeLoreLine(map, 1);
+					maps.put(id, new BearFairStoreMap(id, map));
 				} catch (Throwable ex) {
 					ex.printStackTrace();
 				}

@@ -10,7 +10,7 @@ import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +26,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
 
 public class PugDunk implements Listener {
 
@@ -85,7 +87,7 @@ public class PugDunk implements Listener {
 				if (WGUtils.getPlayersInRegion(gameRg).size() == 0)
 					setPugDunkBool(false);
 				else {
-					if (Utils.chanceOf(25)) {
+					if (RandomUtils.chanceOf(25)) {
 						buttonLoc.getBlock().setType(Material.STONE_BUTTON);
 						Directional data = (Directional) buttonLoc.getBlock().getBlockData();
 						data.setFacing(BlockFace.EAST);

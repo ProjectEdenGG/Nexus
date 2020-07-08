@@ -17,7 +17,6 @@ public class BurnCommand extends CustomCommand {
 	@Path("<player> <seconds>")
 	public void burn(Player player, int seconds) {
 		player.setFireTicks(Time.SECOND.x(seconds));
-		String plural = seconds == 1 ? " second" : " seconds";
-		send(PREFIX + "&3Set &e" + player.getName() + "&3 on fire for &e" + seconds + "&3" + plural);
+		send(PREFIX + "&3Set &e" + player.getName() + "&3 on fire for &e" + seconds + plural(" &3second", seconds));
 	}
 }

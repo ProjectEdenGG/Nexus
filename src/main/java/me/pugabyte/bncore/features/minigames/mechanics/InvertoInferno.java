@@ -13,7 +13,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -227,7 +227,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		if (clickedMaterial.equals(Material.FIRE)) {
 			minigamer.scored();
 
-			int random = Utils.randomInt(1, 100);
+			int random = RandomUtils.randomInt(1, 100);
 			if (random <= 5) {
 				int current = event.getPlayer().getFireTicks();
 				event.getPlayer().setFireTicks(current + 10 * 20);
@@ -262,7 +262,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		for (ProtectedRegion region : new WorldGuardUtils(location).getRegionsAt(location)) {
 			if (region.getId().equalsIgnoreCase("invertoinferno_fire")) {
 				if (event.getSource().getType().equals(Material.FIRE)) {
-					int chance = Utils.randomInt(1, 3);
+					int chance = RandomUtils.randomInt(1, 3);
 					if (chance != 1)
 						event.setCancelled(true);
 				}

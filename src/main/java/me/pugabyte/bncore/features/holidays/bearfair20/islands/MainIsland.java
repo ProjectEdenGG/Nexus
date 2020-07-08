@@ -16,6 +16,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -481,12 +482,12 @@ public class MainIsland implements Listener, Island {
 	}
 
 	private String getRandomReward(Player player) {
-		int ndx = Utils.randomInt(1, 3);
+		int ndx = RandomUtils.randomInt(1, 3);
 		String reward;
 		switch (ndx) {
 			case 1:
 				List<String> songs = Arrays.asList("AutumnVoyage", "ForestDance", "DrunkenSailor", "Astronomia", "OwenWasHer", "Queen-BohemianRhapsody");
-				String songPerm = Utils.getRandomElement(songs);
+				String songPerm = RandomUtils.randomElement(songs);
 				reward = "Song Coupon for " + songPerm;
 				ItemStack songCoupon = new ItemBuilder(Material.PAPER)
 						.name("Coupon For: " + songPerm)

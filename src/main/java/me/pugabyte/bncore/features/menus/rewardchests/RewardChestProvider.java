@@ -4,14 +4,26 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.SoundUtils;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.ColorType.*;
+import static me.pugabyte.bncore.utils.ColorType.LIGHT_BLUE;
+import static me.pugabyte.bncore.utils.ColorType.LIGHT_GREEN;
+import static me.pugabyte.bncore.utils.ColorType.MAGENTA;
+import static me.pugabyte.bncore.utils.ColorType.ORANGE;
+import static me.pugabyte.bncore.utils.ColorType.PINK;
+import static me.pugabyte.bncore.utils.ColorType.RED;
+import static me.pugabyte.bncore.utils.ColorType.YELLOW;
 
 public class RewardChestProvider extends MenuUtils implements InventoryProvider {
 
@@ -33,7 +45,7 @@ public class RewardChestProvider extends MenuUtils implements InventoryProvider 
 				menuItems[i][j] = ClickableItem.empty(loot[i].getItems()[j]);
 		}
 		time = 0;
-		lootIndex = Utils.randomInt(0, loot.length);
+		lootIndex = RandomUtils.randomInt(0, loot.length);
 	}
 
 	@Override

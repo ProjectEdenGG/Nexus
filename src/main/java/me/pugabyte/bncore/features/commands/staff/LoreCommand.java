@@ -4,13 +4,10 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.StringUtils;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import me.pugabyte.bncore.utils.ItemBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import static me.pugabyte.bncore.utils.ItemBuilder.removeLoreLine;
+import static me.pugabyte.bncore.utils.ItemBuilder.setLoreLine;
 
 @Permission("group.staff")
 public class LoreCommand extends CustomCommand {
@@ -21,49 +18,19 @@ public class LoreCommand extends CustomCommand {
 
 	@Path("set <line> <text...>")
 	void setLore(int line, String text) {
-		ItemStack tool = getTool(player());
-		ItemMeta meta = tool.getItemMeta();
-		List<String> lore = meta.getLore();
-		if (lore == null)
-			lore = new ArrayList<>();
-		while (lore.size() < line)
-			lore.add("");
-
-		lore.set(line - 1, StringUtils.colorize(text));
-		meta.setLore(lore);
-		tool.setItemMeta(meta);
+		setLoreLine(getToolRequired(), line, text);
 		player().updateInventory();
 	}
 
 	@Path("add <text...>")
 	void addLore(String text) {
-		ItemStack tool = getTool(player());
-		ItemMeta meta = tool.getItemMeta();
-		List<String> lore = meta.getLore();
-		if (lore == null)
-			lore = new ArrayList<>();
-		lore.add(StringUtils.colorize(text));
-		meta.setLore(lore);
-		tool.setItemMeta(meta);
+		ItemBuilder.addLore(getToolRequired(), text);
 		player().updateInventory();
 	}
 
 	@Path("remove <line>")
 	void removeLore(int line) {
-		ItemStack tool = getTool(player());
-		ItemMeta meta = tool.getItemMeta();
-		List<String> lore = meta.getLore();
-
-		if (lore == null) error("Item does not have lore");
-		if (line - 1 > lore.size()) error("Line " + line + " does not exist");
-
-		lore.remove(line - 1);
-		meta.setLore(lore);
-		tool.setItemMeta(meta);
+		removeLoreLine(getToolRequired(), line);
 		player().updateInventory();
-	}
-
-	ItemStack getTool(Player player) {
-		return player.getInventory().getItemInMainHand();
 	}
 }

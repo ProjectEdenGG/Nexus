@@ -4,12 +4,13 @@ import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.bncore.features.particles.ParticleUtils;
-import me.pugabyte.bncore.features.particles.RandomUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -134,7 +135,7 @@ public class DiscoEffect {
 				loc = player.getLocation().add(finalUpdateVector);
 
 			//Lines
-			int mL = RandomUtils.random.nextInt(maxLines - 2) + 2;
+			int mL = RandomUtils.getRandom().nextInt(maxLines - 2) + 2;
 			for (int m = 0; m < mL * 2; m++) {
 				if (rainbowOption == RainbowOption.FAST) {
 					if (finalLineRainbow)
@@ -143,13 +144,13 @@ public class DiscoEffect {
 						incSphereRainbow(sphereHue, sphereRed, sphereGreen, sphereBlue);
 				}
 
-				double x = RandomUtils.random.nextInt(lineLength - lineLength * (-1)) + lineLength * (-1);
-				double y = RandomUtils.random.nextInt(lineLength - lineLength * (-1)) + lineLength * (-1);
-				double z = RandomUtils.random.nextInt(lineLength - lineLength * (-1)) + lineLength * (-1);
+				double x = RandomUtils.getRandom().nextInt(lineLength - lineLength * (-1)) + lineLength * (-1);
+				double y = RandomUtils.getRandom().nextInt(lineLength - lineLength * (-1)) + lineLength * (-1);
+				double z = RandomUtils.getRandom().nextInt(lineLength - lineLength * (-1)) + lineLength * (-1);
 				if (direction == Direction.DOWN)
-					y = RandomUtils.random.nextInt(lineLength * 2 - lineLength) + lineLength;
+					y = RandomUtils.getRandom().nextInt(lineLength * 2 - lineLength) + lineLength;
 				else if (direction == Direction.UP)
-					y = RandomUtils.random.nextInt(lineLength * (-1) - lineLength * (-2)) + lineLength * (-2);
+					y = RandomUtils.getRandom().nextInt(lineLength * (-1) - lineLength * (-2)) + lineLength * (-2);
 
 				Location target = loc.clone().subtract(x, y, z);
 				if (target == null) {
@@ -180,7 +181,7 @@ public class DiscoEffect {
 
 			//Sphere
 			for (int i = 0; i < finalSphereDensity; i++) {
-				Vector vector = RandomUtils.getRandomVector().multiply(sphereRadius);
+				Vector vector = Utils.RandomUtils.getRandomVector().multiply(sphereRadius);
 				loc.add(vector);
 
 				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalSphereParticle, sphereRed.get(), sphereGreen.get(), sphereBlue.get());

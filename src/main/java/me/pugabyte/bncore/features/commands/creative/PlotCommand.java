@@ -21,7 +21,7 @@ public class PlotCommand extends CustomCommand {
 			error("&3You must be in the &c/creative &3world to use this command!");
 		if (getLimit() == 0)
 			error("&3You cannot claim any plots");
-		send("&3You can claim &e" + getLimit() + " &3plot" + (getLimit() == 1 ? "" : "s"));
+		send("&3You can claim &e" + getLimit() + plural(" &3plot", getLimit()));
 	}
 
 	public int getLimit() {

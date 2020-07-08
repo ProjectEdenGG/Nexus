@@ -16,6 +16,7 @@ import me.pugabyte.bncore.utils.MaterialTag.MatchMode;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -196,7 +197,7 @@ public class JWitherCommand extends CustomCommand implements Listener {
 		if (!enabled) return;
 		Chat.broadcastIngame(StringUtils.colorize(PREFIX + "&e" + player.getName() + "&3 has beat the wither in a battle to the death!"));
 		Discord.send("**[Wither]** " + player.getName() + " has beat the wither in a battle to the death!");
-		if (Utils.chanceOf(20)) {
+		if (RandomUtils.chanceOf(20)) {
 			if (BNCore.getEcon().getBalance(player) > 50000) {
 				send(player, PREFIX + "You won a nether star!");
 				send(player, PREFIX + "To receive it, you must pay a fee of $50,000 (400% discount from the market!)");

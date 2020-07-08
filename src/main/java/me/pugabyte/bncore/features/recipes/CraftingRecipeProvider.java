@@ -5,7 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -58,12 +58,12 @@ public class CraftingRecipeProvider extends MenuUtils implements InventoryProvid
 		for (int i : inputSlots)
 			contents.set(i, ClickableItem.NONE);
 		if (recipe.getChoice() != null && menu != CraftingMenuType.BEDS) {
-			ItemStack item = new ItemStack(Utils.getRandomElement(recipe.getChoice().getChoices()));
+			ItemStack item = new ItemStack(RandomUtils.randomElement(recipe.getChoice().getChoices()));
 			contents.fillRect(0, 2, 2, 4, ClickableItem.empty(item));
 			contents.set(1, 3, ClickableItem.empty(new ItemStack(recipe.getIngredient())));
 			contents.set(1, 6, ClickableItem.empty(new ItemStack(recipe.getOutput(), recipe.getOutputAmount())));
 		} else if (menu == CraftingMenuType.BEDS) {
-			contents.set(inputSlots[0], ClickableItem.empty(new ItemStack(Utils.getRandomElement(recipe.getChoice().getChoices()))));
+			contents.set(inputSlots[0], ClickableItem.empty(new ItemStack(RandomUtils.randomElement(recipe.getChoice().getChoices()))));
 			contents.set(inputSlots[1], ClickableItem.empty(new ItemStack(recipe.getIngredient())));
 			contents.set(1, 6, ClickableItem.empty(new ItemStack(recipe.getOutput(), recipe.getOutputAmount())));
 		} else {

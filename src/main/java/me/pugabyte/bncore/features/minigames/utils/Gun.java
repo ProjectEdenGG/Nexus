@@ -5,7 +5,6 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -88,13 +87,11 @@ public class Gun {
 
 	private void startCooldown() {
 		Player player = minigamer.getPlayer();
-		Countdown countdown = Tasks.Countdown.builder()
+		minigamer.getMatch().getTasks().countdown(Countdown.builder()
 				.duration(cooldown)
 				.onStart(() -> player.setLevel(0))
 				.onTick(ticks -> player.setExp((float) ticks / cooldown))
-				.onComplete(() -> player.setExp(0))
-				.start();
-		minigamer.getMatch().getTasks().register(countdown.getTaskId());
+				.onComplete(() -> player.setExp(0)));
 	}
 
 	public boolean canShoot() {

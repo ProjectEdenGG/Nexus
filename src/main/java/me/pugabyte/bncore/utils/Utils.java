@@ -7,6 +7,7 @@ import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTList;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -61,6 +62,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -554,6 +556,10 @@ public class Utils {
 			return CardinalDirection.valueOf(blockFace.name());
 		}
 
+		public static CardinalDirection random() {
+			return RandomUtils.randomElement(values());
+		}
+
 		// Clockwise
 		public CardinalDirection turnRight() {
 			return nextWithLoop();
@@ -625,43 +631,96 @@ public class Utils {
 		return itemStack;
 	}
 
-	public static int randomInt(int max) {
-		return randomInt(0, max);
+	public static boolean attempt(int times, BooleanSupplier to) {
+		int count = 0;
+		while (++count <= times)
+			if (to.getAsBoolean())
+				return true;
+		return false;
 	}
 
-	public static int randomInt(int min, int max) {
-		if (min == max) return min;
-		if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
-		return (int) ((Math.random() * ((max - min) + 1)) + min);
+	public static class RandomUtils {
+		@Getter
+		private static final Random random = new Random();
+
+		public static boolean chanceOf(int chance) {
+			return randomInt(0, 100) <= chance;
+		}
+
+		public static int randomInt(int max) {
+			return randomInt(0, max);
+		}
+
+		public static int randomInt(int min, int max) {
+			if (min == max) return min;
+			if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
+			return (int) ((random.nextDouble() * ((max - min) + 1)) + min);
+		}
+
+		public static double randomDouble(double max) {
+			return randomDouble(0, max);
+		}
+
+		public static double randomDouble(double min, double max) {
+			if (min == max) return min;
+			if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
+			return min + (max - min) * random.nextDouble();
+		}
+
+		public static String randomAlphanumeric() {
+			return randomElement(ALPHANUMERICS.split(""));
+		}
+
+		public static <T> T randomElement(Object... list) {
+			return (T) randomElement(Arrays.asList(list));
+		}
+
+		public static <T> T randomElement(Set<T> list) {
+			return randomElement(new ArrayList<>(list));
+		}
+
+		public static <T> T randomElement(List<T> list) {
+			if (list == null || list.isEmpty()) return null;
+			return list.get(random.nextInt(list.size()));
+		}
+
+		public static Vector getRandomVector() {
+			double x, y, z;
+			x = random.nextDouble() * 2 - 1;
+			y = random.nextDouble() * 2 - 1;
+			z = random.nextDouble() * 2 - 1;
+
+			return new Vector(x, y, z).normalize();
+		}
+
+		public static Vector getRandomCircleVector() {
+			double rnd, x, z;
+			rnd = random.nextDouble() * 2 * Math.PI;
+			x = Math.cos(rnd);
+			z = Math.sin(rnd);
+
+			return new Vector(x, 0, z);
+		}
+
+		public static Material getRandomMaterial() {
+			return getRandomMaterial(Material.values());
+		}
+
+		public static Material getRandomMaterial(MaterialTag tag) {
+			return getRandomMaterial(tag.getValues().toArray(new Material[0]));
+		}
+
+		public static Material getRandomMaterial(Material[] materials) {
+			return materials[random.nextInt(materials.length)];
+		}
+
+		public static double getRandomAngle() {
+			return random.nextDouble() * 2 * Math.PI;
+		}
+
 	}
 
-	public static double randomDouble(double max) {
-		return randomDouble(0, max);
-	}
-
-	public static double randomDouble(double min, double max) {
-		if (min == max) return min;
-		if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
-		return min + (max - min) * new Random().nextDouble();
-	}
-
-
-	public static boolean chanceOf(int chance) {
-		return randomInt(0, 100) <= chance;
-	}
-
-	public static <T> T getRandomElement(Object... list) {
-		return (T) getRandomElement(Arrays.asList(list));
-	}
-
-	public static <T> T getRandomElement(Set<T> list) {
-		return getRandomElement(new ArrayList<>(list));
-	}
-
-	public static <T> T getRandomElement(List<T> list) {
-		if (list == null || list.isEmpty()) return null;
-		return list.get(new Random().nextInt(list.size()));
-	}
+	private static final String ALPHANUMERICS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 	public static boolean isInt(String text) {
 		try {
@@ -817,7 +876,7 @@ public class Utils {
 		try {
 			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + player.getUniqueId().toString() + ".dat").toFile();
 			if (!file.exists())
-				throw new InvalidInputException("Could not get location of offline player, data file does not exist");
+				throw new InvalidInputException("Data file does not exist");
 
 			NBTFile nbt = new NBTFile(file);
 			String world = nbt.getString("SpawnWorld");

@@ -16,7 +16,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.matchdata.GrabAJumbuckMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -84,8 +84,8 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		while (sheepAmount != 0) {
 			Sheep sheep = match.getWorld().spawn(getRandomSheepSpawnLocation(match), Sheep.class);
 			sheep.setInvulnerable(true);
-			DyeColor color = ColorType.values()[Utils.randomInt(1, ColorType.values().length - 1)].getDyeColor();
-			if (Utils.randomInt(0, 100) > 80) sheep.setColor(color);
+			DyeColor color = ColorType.values()[RandomUtils.randomInt(1, ColorType.values().length - 1)].getDyeColor();
+			if (RandomUtils.randomInt(0, 100) > 80) sheep.setColor(color);
 			matchData.getSheeps().add(sheep);
 			sheepAmount--;
 		}

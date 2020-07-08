@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.utils;
 
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -125,17 +126,17 @@ public class SoundUtils {
 					player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
 					player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_SPLASH, 1, 1);
 				});
-				Tasks.wait(wait += Utils.randomInt(2, 5), () -> {
+				Tasks.wait(wait += RandomUtils.randomInt(2, 5), () -> {
 					player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
 					player.playSound(player.getLocation(), Sound.BLOCK_FIRE_AMBIENT, 1, 0.1F);
 				});
-				Tasks.wait(wait += Utils.randomInt(2, 5), () -> {
+				Tasks.wait(wait += RandomUtils.randomInt(2, 5), () -> {
 					player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
 					player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_SPLASH, 1, 1);
 				});
-				Tasks.wait(wait += Utils.randomInt(2, 5), () -> player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1));
-				Tasks.wait(wait += Utils.randomInt(1, 3), () -> player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1));
-				Tasks.wait(wait += Utils.randomInt(1, 4), () -> player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_SPLASH, 1, 1));
+				Tasks.wait(wait += RandomUtils.randomInt(2, 5), () -> player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1));
+				Tasks.wait(wait += RandomUtils.randomInt(1, 3), () -> player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1));
+				Tasks.wait(wait += RandomUtils.randomInt(1, 4), () -> player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_SPLASH, 1, 1));
 			}
 		};
 

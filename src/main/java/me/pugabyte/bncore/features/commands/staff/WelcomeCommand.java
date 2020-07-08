@@ -16,7 +16,7 @@ import me.pugabyte.bncore.models.hours.Hours;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -88,7 +88,7 @@ public class WelcomeCommand extends CustomCommand {
 		ArrayList<String> list = new ArrayList<>(messages);
 		if (lastMessage != null)
 			list.remove(lastMessage);
-		String message = Utils.getRandomElement(list);
+		String message = RandomUtils.randomElement(list);
 		lastMessage = message;
 		return message;
 	}

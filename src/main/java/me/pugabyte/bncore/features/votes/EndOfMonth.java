@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.io.BufferedWriter;
@@ -93,7 +94,7 @@ public class EndOfMonth {
 			eco20kWinners = getVotersBetween(75, 99);
 			eco15kWinners = getVotersBetween(50, 74);
 
-			mysteryChestWinner = Utils.getRandomElement(getVotersWith(100).stream()
+			mysteryChestWinner = RandomUtils.randomElement(getVotersWith(100).stream()
 					.filter(topVoter -> !first.contains(topVoter) && !second.contains(topVoter) && !third.contains(topVoter))
 					.collect(Collectors.toList()));
 		}

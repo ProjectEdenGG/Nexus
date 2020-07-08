@@ -16,6 +16,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -147,7 +148,7 @@ public class MinigameNightIsland implements Listener, Island {
 							missingPieces.add(piece);
 					});
 					if (missingPieces.size() > 0) {
-						String hint = hintMap.get(Utils.getRandomElement(missingPieces));
+						String hint = hintMap.get(RandomUtils.randomElement(missingPieces));
 						return Collections.singletonList(hint);
 					} else {
 						return Collections.singletonList("Duude! You got all the pieces! Epic work bro. " +
@@ -441,16 +442,16 @@ public class MinigameNightIsland implements Listener, Island {
 			Tasks.wait(Time.SECOND.x(1) + 10, () -> player.playSound(arcadeSoundLoc, Sound.BLOCK_CAMPFIRE_CRACKLE, 1F, 1F));
 			Tasks.wait(Time.SECOND.x(3), () -> player.playSound(arcadeSoundLoc, Sound.BLOCK_CAMPFIRE_CRACKLE, 1F, 1F));
 
-			ran = Utils.randomInt(0, 40);
+			ran = RandomUtils.randomInt(0, 40);
 			Tasks.wait(ran, () -> player.playSound(arcadeSoundLoc, Sound.ITEM_CROSSBOW_LOADING_MIDDLE, 1F, 2F));
 
-			ran = Utils.randomInt(0, 40);
+			ran = RandomUtils.randomInt(0, 40);
 			Tasks.wait(ran, () -> player.playSound(arcadeSoundLoc, Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 1F, 2F));
 
 			// Particles
-			int amount = Utils.randomInt(3, 10);
+			int amount = RandomUtils.randomInt(3, 10);
 			for (int i = 0; i < amount; i++) {
-				int wait = Utils.randomInt(10, 20);
+				int wait = RandomUtils.randomInt(10, 20);
 				Tasks.wait(i * wait, () -> {
 					player.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, arcadeSmokeLoc1, 0, 0, 0.05, 0, 1);
 					player.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, arcadeSmokeLoc2, 0, 0, 0.05, 0, 1);

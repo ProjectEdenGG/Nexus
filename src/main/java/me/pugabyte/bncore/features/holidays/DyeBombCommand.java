@@ -12,6 +12,7 @@ import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -110,7 +111,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		fw.colors(removeUglies(fw.colors()));
 		fw.fadeColors(removeUglies(fw.fadeColors()));
 
-		if (Utils.chanceOf(50))
+		if (RandomUtils.chanceOf(50))
 			fw.colors(Collections.singletonList(randomColor())).fadeColors(Collections.singletonList(randomColor()));
 		fw.launch();
 	}
@@ -121,7 +122,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		for (ColorType colortype : colorTypes) {
 			colors.add(colortype.getColor());
 		}
-		return Utils.getRandomElement(removeUglies(colors));
+		return RandomUtils.randomElement(removeUglies(colors));
 	}
 
 	private List<Color> removeUglies(List<Color> oldColors) {

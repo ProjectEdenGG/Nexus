@@ -16,7 +16,7 @@ import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -118,7 +118,7 @@ public class Koda {
 		private final String routine;
 
 		String getResponse() {
-			return Utils.getRandomElement(responses);
+			return RandomUtils.randomElement(responses);
 		}
 	}
 

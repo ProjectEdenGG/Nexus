@@ -5,7 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 
 @Disabled
 @Permission("group.staff")
@@ -31,7 +31,7 @@ public class MakeFishCommand extends CustomCommand {
 
 	@Path()
 	public void run() {
-		String cmd = Utils.getRandomElement(cmds);
+		String cmd = RandomUtils.randomElement(cmds);
 		int rot = (int) player().getPlayer().getLocation().getYaw();
 		cmd = cmd.replaceAll("<rot>", String.valueOf(rot));
 		runCommandAsOp(cmd);

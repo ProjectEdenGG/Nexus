@@ -16,6 +16,7 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -80,7 +81,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				startQuest.add("Oh and don’t forget to say G’day to everyone around town.");
 
 				if (!user.isQuest_Main_Start())
-					return Collections.singletonList(Utils.getRandomElement(greetings));
+					return Collections.singletonList(RandomUtils.randomElement(greetings));
 
 				if (step >= 1)
 					return Collections.singletonList("G'day mate, have you talked to Sir Jack yet?");
@@ -120,7 +121,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"He should be able to sort you out with something.");
 
 				if (!user.isQuest_SDU_Start() || step < 1)
-					return Collections.singletonList(Utils.getRandomElement(greetings));
+					return Collections.singletonList(RandomUtils.randomElement(greetings));
 
 				if (step >= 2)
 					return Arrays.asList(
@@ -174,7 +175,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"definitely be some available. Thanks again mate.");
 
 				if (!user.isQuest_SDU_Start() || step < 2)
-					return Collections.singletonList(Utils.getRandomElement(greetings));
+					return Collections.singletonList(RandomUtils.randomElement(greetings));
 
 				if (player.getInventory().contains(greatNortherns) && step == 3) {
 					player.getInventory().remove(greatNortherns);
@@ -210,7 +211,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"Bear Nation, but their syrup is to die for!");
 
 				if (!user.isQuest_SDU_Start() || step < 4)
-					return Collections.singletonList(Utils.getRandomElement(greetings));
+					return Collections.singletonList(RandomUtils.randomElement(greetings));
 
 				if (step >= 5)
 					return Collections.singletonList("I've already given you all my Golden Syrup, g'day!");
@@ -257,7 +258,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"your future endeavours. Feel free to stick around town for a while. We love visitors!");
 
 				if (!user.isQuest_SDU_Start() || step < 5 || user.isQuest_SDU_Finish())
-					return Collections.singletonList(Utils.getRandomElement(greetings));
+					return Collections.singletonList(RandomUtils.randomElement(greetings));
 
 				ItemStack gold = hasFoolsGold(player);
 				boolean fool = true;
@@ -318,7 +319,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						"They usually mine coal but recently they’ve been sifting for gold.");
 
 				if (!user.isQuest_SDU_Start() || step < 6)
-					return Collections.singletonList(Utils.getRandomElement(greetings));
+					return Collections.singletonList(RandomUtils.randomElement(greetings));
 
 				if (step >= 7)
 					return Collections.singletonList("Did you forget already? If you don’t have any gold, there’s a whole mineshaft nearby. Now get out!");
@@ -340,7 +341,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				startQuest.add("Tuyet Dieu! Here, take the bowl and get to work in the water. You can keep any other gold or fool’s gold you find.");
 
 				if (!user.isQuest_SDU_Start() || step < 7)
-					return Collections.singletonList(Utils.getRandomElement(greetings));
+					return Collections.singletonList(RandomUtils.randomElement(greetings));
 
 				if (step >= 8)
 					return Collections.singletonList("Take the bowl and get to work in the water.");
@@ -535,8 +536,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 			player.playSound(loc, Sound.ENTITY_HORSE_SADDLE, 0.5F, 0.5F);
 			player.playSound(loc, Sound.UI_STONECUTTER_TAKE_RESULT, 0.5F, 0.5F);
 
-			if (Utils.chanceOf(10)) {
-				if (Utils.chanceOf(75))
+			if (RandomUtils.chanceOf(10)) {
+				if (RandomUtils.chanceOf(75))
 					Utils.giveItem(player, foolsGold);
 				else
 					Utils.giveItem(player, goldNugget);

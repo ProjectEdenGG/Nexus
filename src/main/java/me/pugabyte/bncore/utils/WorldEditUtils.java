@@ -55,6 +55,7 @@ public class WorldEditUtils {
 	private final org.bukkit.World world;
 	private final BukkitWorld bukkitWorld;
 	private final World worldEditWorld;
+	@Getter
 	private final WorldGuardUtils worldGuardUtils;
 	@Getter
 	private static final String schematicsDirectory = "plugins/FastAsyncWorldEdit/schematics/";
@@ -71,6 +72,10 @@ public class WorldEditUtils {
 
 	public WorldEditUtils(@NonNull org.bukkit.block.Block block) {
 		this(block.getWorld());
+	}
+
+	public WorldEditUtils(@NonNull String world) {
+		this(Bukkit.getWorld(world));
 	}
 
 	public WorldEditUtils(@NonNull org.bukkit.World world) {
