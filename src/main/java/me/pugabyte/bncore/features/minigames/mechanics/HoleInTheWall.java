@@ -16,7 +16,7 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.HoleInTheWallMatch
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -110,7 +110,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 			minigamer.ifPresent(track::setMinigamer);
 		});
 
-		Tasks.Countdown.builder()
+		match.getTasks().countdown(Countdown.builder()
 				.duration(Time.SECOND.x(5))
 				.onSecond(i -> match.broadcast("&7Starting in &e" + i + "..."))
 				.onComplete(() -> {
@@ -118,8 +118,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 					matchData.getTracks().stream()
 							.filter(track -> track.getMinigamer() != null)
 							.forEach(Track::start);
-				})
-				.start();
+				}));
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import me.pugabyte.bncore.features.chat.events.ChatEvent;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.models.chat.PublicChannel;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -63,7 +63,7 @@ public class Censor {
 		private boolean cancel;
 
 		String getCensored() {
-			return Utils.getRandomElement(replace);
+			return RandomUtils.randomElement(replace);
 		}
 	}
 

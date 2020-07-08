@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -171,18 +172,18 @@ public class RavensNestEstate implements Listener {
 				}));
 
 		match.getTasks().repeat(delay, 30 * 20, () -> {
-			if (Utils.chanceOf(50)) {
-				Sound sound = Utils.getRandomElement(Arrays.asList(sounds));
+			if (RandomUtils.chanceOf(50)) {
+				Sound sound = RandomUtils.randomElement(Arrays.asList(sounds));
 				match.getMinigamers().stream().map(Minigamer::getPlayer).forEach(player ->
 						player.playSound(player.getLocation(), sound, 10F, 0.1F));
 			}
 		});
 
 		match.getTasks().repeat(delay, 25 * 20, () -> {
-			if (Utils.chanceOf(25))
+			if (RandomUtils.chanceOf(25))
 				match.getMinigamers().stream().map(Minigamer::getPlayer).forEach(player ->
 						player.playSound(musicLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10F, 0.1F));
-			else if (Utils.chanceOf(25))
+			else if (RandomUtils.chanceOf(25))
 				musicLocation.getWorld().strikeLightning(musicLocation);
 		});
 
@@ -237,7 +238,7 @@ public class RavensNestEstate implements Listener {
 	}
 
 	private void playPiano(Location location) {
-		float ran = (float) Utils.randomDouble(0.0, 2.0);
+		float ran = (float) RandomUtils.randomDouble(0.0, 2.0);
 		location.getWorld().playSound(location, Sound.BLOCK_NOTE_BLOCK_PLING, 0.7F, ran);
 	}
 

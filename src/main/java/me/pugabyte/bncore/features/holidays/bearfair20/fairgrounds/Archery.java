@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,7 +34,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
 
 public class Archery implements Listener {
 	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
@@ -53,7 +56,7 @@ public class Archery implements Listener {
 		Tasks.repeat(0, 10, () -> {
 			if (archeryBool) {
 				if (currentTargets < 10) {
-					Location loc = Utils.getRandomElement(spawnLocs);
+					Location loc = RandomUtils.randomElement(spawnLocs);
 					if (canPlaceTarget(loc, true)) {
 						placeTarget(loc);
 						++currentTargets;
@@ -135,7 +138,7 @@ public class Archery implements Listener {
 		Set<Material> concretes = new HashSet<>(MaterialTag.CONCRETES.getValues());
 		concretes.remove(Material.WHITE_CONCRETE);
 		concretes.remove(Material.BLACK_CONCRETE);
-		Material concrete = Utils.getRandomElement(concretes);
+		Material concrete = RandomUtils.randomElement(concretes);
 
 		block.setType(Material.WHITE_CONCRETE);
 		block.getRelative(BlockFace.UP).setType(concrete);

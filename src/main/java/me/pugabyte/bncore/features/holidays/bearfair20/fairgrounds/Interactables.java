@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -33,7 +33,7 @@ public class Interactables {
 		List<Location> lights = Arrays.asList(one, two, three, four, five, six, seven);
 
 		int max = 7;
-		int limit = Utils.randomInt(1, 7);
+		int limit = RandomUtils.randomInt(1, 7);
 		AtomicInteger count = new AtomicInteger();
 		AtomicInteger wait = new AtomicInteger(0);
 		AtomicBoolean breakBool = new AtomicBoolean(false);

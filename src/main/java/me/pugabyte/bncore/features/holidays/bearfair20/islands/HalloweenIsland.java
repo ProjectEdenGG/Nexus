@@ -16,6 +16,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -170,14 +171,14 @@ public class HalloweenIsland implements Listener, Island {
 
 	private void soundTasks() {
 		Tasks.repeat(0, 30 * 20, () -> {
-			if (Utils.chanceOf(50)) {
-				Sound sound = Utils.getRandomElement(Arrays.asList(halloweenSounds));
+			if (RandomUtils.chanceOf(50)) {
+				Sound sound = RandomUtils.randomElement(Arrays.asList(halloweenSounds));
 				musicTaskMap.forEach((player, integer) -> player.playSound(player.getLocation(), sound, 10F, 0.1F));
 			}
 		});
 
 		Tasks.repeat(0, 25 * 20, () -> {
-			if (Utils.chanceOf(25))
+			if (RandomUtils.chanceOf(25))
 				musicTaskMap.forEach((player, integer) -> player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10F, 0.1F));
 		});
 
@@ -196,7 +197,7 @@ public class HalloweenIsland implements Listener, Island {
 		if (!material.equals(Material.RAIL)) return;
 
 		Location loc = event.getClickedBlock().getLocation();
-		float ran = (float) Utils.randomDouble(0.0, 2.0);
+		float ran = (float) RandomUtils.randomDouble(0.0, 2.0);
 		BearFair20.getWorld().playSound(loc, Sound.BLOCK_NOTE_BLOCK_PLING, 0.7F, ran);
 	}
 

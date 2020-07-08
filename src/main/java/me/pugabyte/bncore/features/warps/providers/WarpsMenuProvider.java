@@ -16,6 +16,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.SerializationUtils.JSON;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -132,7 +133,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack parkour = nameItem(Material.IRON_BOOTS, "&3Parkour");
 				ItemStack mazes = nameItem(Material.OAK_LEAVES, "&3Mazes");
 				ItemStack mobarena = nameItem(Material.ZOMBIE_HEAD, "&3Mob Arena");
-				ItemStack connect4 = nameItem((Material) Utils.getRandomElement(Material.BLUE_CONCRETE, Material.RED_CONCRETE), "&3Connect4");
+				ItemStack connect4 = nameItem((Material) RandomUtils.randomElement(Material.BLUE_CONCRETE, Material.RED_CONCRETE), "&3Connect4");
 				ItemStack tictactoe = nameItem(Material.PAPER, "&3Tic Tac Toe");
 
 				contents.set(1, 1, ClickableItem.from(lobby, e -> warp(player, "minigames")));

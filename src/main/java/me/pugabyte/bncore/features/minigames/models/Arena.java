@@ -58,6 +58,7 @@ public class Arena implements ConfigurationSerializable {
 	private Location respawnLocation;
 	private int respawnSeconds = 5;
 	private int seconds = 300;
+	private int beginDelay = 0;
 	private int minPlayers = 2;
 	private int maxPlayers = 30;
 	private int winningScore;
@@ -89,6 +90,7 @@ public class Arena implements ConfigurationSerializable {
 		this.respawnLocation = (Location) map.get("respawnLocation");
 		this.respawnSeconds = (Integer) map.getOrDefault("respawnSeconds", respawnSeconds);
 		this.seconds = (Integer) map.getOrDefault("seconds", seconds);
+		this.beginDelay = (Integer) map.getOrDefault("beginDelay", beginDelay);
 		this.minPlayers = (Integer) map.getOrDefault("minPlayers", minPlayers);
 		this.maxPlayers = (Integer) map.getOrDefault("maxPlayers", maxPlayers);
 		this.winningScore = (Integer) map.getOrDefault("winningScore", winningScore);
@@ -113,6 +115,7 @@ public class Arena implements ConfigurationSerializable {
 			put("respawnLocation", getRespawnLocation());
 			put("respawnSeconds", getRespawnSeconds());
 			put("seconds", getSeconds());
+			put("beginDelay", getBeginDelay());
 			put("minPlayers", getMinPlayers());
 			put("maxPlayers", getMaxPlayers());
 			put("winningScore", getWinningScore());

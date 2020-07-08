@@ -17,6 +17,7 @@ import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 
@@ -60,8 +61,8 @@ public class SuggestDiscordCommand extends Command {
 
 				EmbedBuilder embed = new EmbedBuilder()
 						.appendDescription("\n:calendar_spiral: **First join**: " + firstJoin)
-						.appendDescription("\n:clock" + Utils.randomInt(1, 12) + ": **Hours (Total)**: " + hoursTotal)
-						.appendDescription("\n:clock" + Utils.randomInt(1, 12) + ": **Hours (Monthly)**: " + hoursMonthly)
+						.appendDescription("\n:clock" + RandomUtils.randomInt(1, 12) + ": **Hours (Total)**: " + hoursTotal)
+						.appendDescription("\n:clock" + RandomUtils.randomInt(1, 12) + ": **Hours (Monthly)**: " + hoursMonthly)
 						.appendDescription("\n:scroll: **History**: " + history)
 						.setThumbnail("https://minotar.net/helm/" + nerd.getName() + "/100.png");
 

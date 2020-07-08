@@ -13,11 +13,11 @@ import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.arenas.BattleshipArena;
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
-import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.Axis;
 import me.pugabyte.bncore.utils.Utils.CardinalDirection;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,8 +40,11 @@ import static me.pugabyte.bncore.utils.Utils.isInt;
 @MatchDataFor(Battleship.class)
 public class BattleshipMatchData extends MatchData {
 	private boolean placingKits = true;
-	private Map<Team, Grid> grids = new HashMap<>();
-	private Map<Team, Map<ShipType, Ship>> ships = new HashMap<>();
+	private final Map<Team, Grid> grids = new HashMap<>();
+	private final Map<Team, Map<ShipType, Ship>> ships = new HashMap<>();
+
+	private int startTaskId;
+	private int readyTaskId;
 
 	public BattleshipMatchData(Match match) {
 		super(match);
@@ -83,7 +86,6 @@ public class BattleshipMatchData extends MatchData {
 			--health;
 			if (health == 0)
 				alive = false;
-
 		}
 
 		public List<Coordinate> getCoordinates() {
@@ -184,6 +186,10 @@ public class BattleshipMatchData extends MatchData {
 
 		public void vacate(ShipType shipType) {
 			getShip(team, shipType).getCoordinates().forEach(Coordinate::vacate);
+		}
+
+		public Coordinate getRandomCoordinate() {
+			return RandomUtils.randomElement(coordinates);
 		}
 
 		@Data
@@ -338,7 +344,7 @@ public class BattleshipMatchData extends MatchData {
 		}
 	}
 
-	public static class AlreadyShotAtException extends BNException {
+	public static class AlreadyShotAtException extends MinigameException {
 		public AlreadyShotAtException() {
 			super("You already shot at that location");
 		}

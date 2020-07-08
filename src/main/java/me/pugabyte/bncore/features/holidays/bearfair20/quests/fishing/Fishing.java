@@ -6,7 +6,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.IslandType;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.WeightedLoot;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -25,7 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.toolError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loot.*;
@@ -107,7 +110,7 @@ public class Fishing implements Listener {
 //		}
 //		Utils.wakka("");
 
-		ItemStack itemStack = Utils.getRandomElement(lootList);
+		ItemStack itemStack = RandomUtils.randomElement(lootList);
 		WeightedLoot weightedLoot = null;
 		for (WeightedLoot weightedItem : weightedList) {
 			if (weightedItem.getItemStack().equals(itemStack)) {

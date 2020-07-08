@@ -14,7 +14,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineExc
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class Tip extends PlayerOwnedObject {
 		}
 
 		if (tipType.getRetryChance() > 0)
-			return Utils.chanceOf(tipType.getRetryChance());
+			return RandomUtils.chanceOf(tipType.getRetryChance());
 
 		return true;
 	}

@@ -10,7 +10,7 @@ import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,7 +31,10 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 
 public class Frogger implements Listener {
 
@@ -93,9 +96,9 @@ public class Frogger implements Listener {
 			BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
 			for (int i = 0; i < 4; i++) {
 
-				int ran = Utils.randomInt(2, 3);
+				int ran = RandomUtils.randomInt(2, 3);
 				// 10 = task update interval
-				int wait = ((lastLogLen * 10) + 30) + (((Utils.randomInt(1, 3)) * 10) * i);
+				int wait = ((lastLogLen * 10) + 30) + (((RandomUtils.randomInt(1, 3)) * 10) * i);
 //				int wait = (((20 * lastLogLen) + (Utils.randomInt(2, 4) * 10) + 10) * i);
 				lastLogLen = ran;
 
@@ -170,7 +173,7 @@ public class Frogger implements Listener {
 	private void carTask(Location location, BlockFace blockFace) {
 		int maxLength = 3;
 		final Location start = location.clone().getBlock().getRelative(blockFace).getLocation();
-		AtomicReference<Material> carMaterial = new AtomicReference<>(Utils.getRandomElement(carMaterials));
+		AtomicReference<Material> carMaterial = new AtomicReference<>(RandomUtils.randomElement(carMaterials));
 		AtomicReference<Location> current = new AtomicReference<>(start.clone());
 		AtomicInteger distance = new AtomicInteger(0);
 		AtomicInteger currentLength = new AtomicInteger(0);
@@ -189,7 +192,7 @@ public class Frogger implements Listener {
 				if (currentLength.get() < 0) {
 					current.set(location.clone());
 					distance.set(0);
-					carMaterial.set(Utils.getRandomElement(carMaterials));
+					carMaterial.set(RandomUtils.randomElement(carMaterials));
 				}
 			}
 			// If block at next location is not bedrock, set it to log

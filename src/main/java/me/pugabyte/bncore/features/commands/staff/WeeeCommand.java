@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -30,7 +30,7 @@ public class WeeeCommand extends CustomCommand {
 				.doZero(true)
 				.onTick(i -> {
 					if (i % 5 == 0)
-						player.setVelocity(Utils.getRandomElement(vectors));
+						player.setVelocity(RandomUtils.randomElement(vectors));
 				})
 				.start();
 	}

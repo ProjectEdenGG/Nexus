@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 import static me.pugabyte.bncore.features.votes.vps.VPS.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.plural;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class VPSProvider extends MenuUtils implements InventoryProvider {
@@ -64,7 +65,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 
 				if (item.getPrice() > 0) {
 					voter.takePoints(item.getPrice());
-					player.sendMessage(colorize(PREFIX + "You spent &e" + item.getPrice() + " &3point" + (item.getPrice() == 1 ? "" : "s")
+					player.sendMessage(colorize(PREFIX + "You spent &e" + item.getPrice() + plural(" &3point", item.getPrice())
 							+ " on &e" + stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining."));
 				}
 

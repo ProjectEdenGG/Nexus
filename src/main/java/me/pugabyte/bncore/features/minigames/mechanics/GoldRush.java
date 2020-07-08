@@ -12,6 +12,7 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.GoldRushArena;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
@@ -64,18 +65,17 @@ public final class GoldRush extends TeamlessMechanic {
 		createMineStacks(goldRushArena.getMineStackHeight(), match.getAliveTeams().get(0).getSpawnpoints());
 		for (Location loc : match.getAliveTeams().get(0).getSpawnpoints())
 			loc.clone().subtract(0, 1, 0).getBlock().setType(Material.GLASS);
+	}
 
-		Tasks.Countdown.builder()
-				.duration(5 * 20)
-				.onSecond(i -> match.broadcast("Starting in " + i + "..."))
-				.onComplete(() -> {
-					match.broadcast("Mine!");
-					for (Location location : match.getAliveTeams().get(0).getSpawnpoints())
-						location.clone().subtract(0, 1, 0).getBlock().breakNaturally();
-					for (Minigamer minigamer : match.getMinigamers())
-						minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
-				})
-				.start();
+	@Override
+	public void begin(MatchBeginEvent event) {
+		super.begin(event);
+		Match match = event.getMatch();
+		match.broadcast("Mine!");
+		for (Location location : match.getAliveTeams().get(0).getSpawnpoints())
+			location.clone().subtract(0, 1, 0).getBlock().breakNaturally();
+		for (Minigamer minigamer : match.getMinigamers())
+			minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
 	}
 
 	@Override

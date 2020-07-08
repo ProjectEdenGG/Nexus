@@ -14,6 +14,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -47,6 +48,10 @@ public class WorldGuardUtils {
 
 	public WorldGuardUtils(@NonNull org.bukkit.block.Block block) {
 		this(block.getWorld());
+	}
+
+	public WorldGuardUtils(@NonNull String world) {
+		this(Bukkit.getWorld(world));
 	}
 
 	public WorldGuardUtils(@NonNull org.bukkit.World world) {
@@ -158,9 +163,9 @@ public class WorldGuardUtils {
 		int yDiff = region.getMaximumPoint().getBlockY() - yMin;
 		int zDiff = region.getMaximumPoint().getBlockZ() - zMin;
 
-		int x = xMin + Utils.randomInt(0, xDiff);
-		int y = yMin + Utils.randomInt(0, yDiff);
-		int z = zMin + Utils.randomInt(0, zDiff);
+		int x = xMin + RandomUtils.randomInt(0, xDiff);
+		int y = yMin + RandomUtils.randomInt(0, yDiff);
+		int z = zMin + RandomUtils.randomInt(0, zDiff);
 
 		return world.getBlockAt(x, y, z);
 	}

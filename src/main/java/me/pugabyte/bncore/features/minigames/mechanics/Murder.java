@@ -18,10 +18,9 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -88,7 +87,7 @@ public class Murder extends UnbalancedTeamMechanic {
 		event.getMatch().getTasks().repeat(Time.SECOND.x(10), Time.SECOND.x(3), () -> {
 			for (Location loc : arena.getScrapPoints()) {
 				if (arena.getSpawnChance() != 0)
-					if (Utils.randomInt(1, arena.getSpawnChance()) != 1)
+					if (RandomUtils.randomInt(1, arena.getSpawnChance()) != 1)
 						continue;
 				loc.getWorld().dropItemNaturally(loc, scrap);
 			}
@@ -198,7 +197,7 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	private void assignGunner(Match match) {
-		Minigamer gunner = Utils.getRandomElement(match.getAliveMinigamers().stream()
+		Minigamer gunner = RandomUtils.randomElement(match.getAliveMinigamers().stream()
 				.filter(minigamer -> !isMurderer(minigamer))
 				.collect(Collectors.toList()));
 
@@ -271,7 +270,7 @@ public class Murder extends UnbalancedTeamMechanic {
 		minigamer.getMatch().broadcast("The murderer used bloodlust!");
 		minigamer.getPlayer().getInventory().remove(Material.ENDER_EYE);
 
-		Countdown countdown =Tasks.Countdown.builder()
+		minigamer.getMatch().getTasks().countdown(Countdown.builder()
 				.duration(20 * 14)
 				.onSecond(i -> {
 					if (i % 2 == 0)
@@ -279,12 +278,9 @@ public class Murder extends UnbalancedTeamMechanic {
 							Player player = _minigamer.getPlayer();
 							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.MASTER, 2F, 0.1F);
 							player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
-//							SkriptFunctions.redTint(player, 0.5, 10);
+							// TODO SkriptFunctions.redTint(player, 0.5, 10);
 						});
-				})
-				.start();
-
-		minigamer.getMatch().getTasks().register(countdown.getTaskId());
+				}));
 	}
 
 	private void useAdrenaline(Minigamer minigamer) {

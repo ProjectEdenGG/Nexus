@@ -4,9 +4,8 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
-import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
-import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -15,8 +14,6 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 @Regenerating("floor")
 public class TNTRun extends TeamlessMechanic {
@@ -37,8 +34,9 @@ public class TNTRun extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
-		super.onStart(event);
+	public void begin(MatchBeginEvent event) {
+		super.begin(event);
+		event.getMatch().broadcast("&eGo!");
 		new TNTRunTask(event.getMatch());
 	}
 
@@ -55,47 +53,37 @@ public class TNTRun extends TeamlessMechanic {
 	}
 
 	public static class TNTRunTask {
-		private Match match;
+		private final Match match;
 		private int taskId;
-		public List<Minigamer> minigamers;
 
 		TNTRunTask(Match match) {
 			this.match = match;
-			minigamers = match.getMinigamers();
 			start();
 		}
 
 		void start() {
-			int wait = 5 * 20;
-			Tasks.Countdown.builder()
-					.duration(wait)
-					.onSecond(i -> match.broadcast("&7Starting in &e" + i + "&7..."))
-					.onComplete(() -> {
-						match.broadcast("&eGo!");
+			taskId = match.getTasks().repeat(0, 1, () -> {
+				if (match.isEnded())
+					stop();
 
-						taskId = match.getTasks().repeat(0, 1, () -> {
-							if (match.isEnded())
-								stop();
+				match.getMinigamers().forEach(minigamer -> {
+					Block standingOn = Utils.getBlockStandingOn(minigamer.getPlayer());
+					if (standingOn == null)
+						return;
 
-							minigamers.forEach(minigamer -> {
-								Block standingOn = Utils.getBlockStandingOn(minigamer.getPlayer());
-								if (standingOn == null)
-									return;
+					Block tnt = standingOn.getRelative(0, -1, 0);
+					if (!tnt.getType().equals(Material.TNT))
+						return;
 
-								Block tnt = standingOn.getRelative(0, -1, 0);
-								if (!tnt.getType().equals(Material.TNT))
-									return;
+					match.getTasks().wait(4, () -> {
+						if (match.isEnded())
+							return;
+						standingOn.setType(Material.AIR);
+						tnt.setType(Material.AIR);
+					});
+				});
 
-								match.getTasks().wait(4, () -> {
-									if (match.isEnded())
-										return;
-									standingOn.setType(Material.AIR);
-									tnt.setType(Material.AIR);
-								});
-							});
-
-						});
-					}).start();
+			});
 		}
 
 		void stop() {

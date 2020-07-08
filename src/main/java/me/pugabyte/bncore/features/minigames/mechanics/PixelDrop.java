@@ -16,8 +16,11 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamle
 import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Tasks.Countdown;
+import me.pugabyte.bncore.utils.Tasks.Countdown.CountdownBuilder;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -131,7 +134,7 @@ public class PixelDrop extends TeamlessMechanic {
 			// Start countdown to new round
 			match.getTasks().wait(TIME_BETWEEN_ROUNDS / 2, () -> {
 				matchData.clearFloor(match);
-				Tasks.Countdown countdown = Tasks.Countdown.builder()
+				match.getTasks().countdown(Countdown.builder()
 						.duration(TIME_BETWEEN_ROUNDS)
 						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
 							if (match.isEnded())
@@ -144,10 +147,7 @@ public class PixelDrop extends TeamlessMechanic {
 							if (i <= 3)
 								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 						}))
-						.onComplete(() -> newRound(match))
-						.start();
-
-				match.getTasks().register(countdown.getTaskId());
+						.onComplete(() -> newRound(match)));
 			});
 		}
 	}
@@ -168,9 +168,9 @@ public class PixelDrop extends TeamlessMechanic {
 		Region designsRegion = arena.getDesignRegion();
 
 		int designCount = matchData.getDesignCount();
-		int design = Utils.randomInt(1, designCount);
+		int design = RandomUtils.randomInt(1, designCount);
 		for (int i = 0; i < designCount; i++) {
-			design = Utils.randomInt(1, designCount);
+			design = RandomUtils.randomInt(1, designCount);
 			if (matchData.getDesign() != design)
 				break;
 		}
@@ -198,7 +198,7 @@ public class PixelDrop extends TeamlessMechanic {
 				return;
 			}
 
-			String key = Utils.getRandomElement(matchData.getDesignKeys());
+			String key = RandomUtils.randomElement(matchData.getDesignKeys());
 			matchData.getDesignKeys().remove(key);
 
 			String[] xz = key.split("_");
@@ -296,12 +296,13 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	public void startRoundCountdown(Match match) {
+		PixelDropMatchData matchData = match.getMatchData();
+
 		List<Minigamer> minigamers = match.getMinigamers();
 		minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
 				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F));
 
-		PixelDropMatchData matchData = match.getMatchData();
-		Tasks.Countdown countdown = Tasks.Countdown.builder()
+		CountdownBuilder countdown = Countdown.builder()
 				.duration(ROUND_COUNTDOWN)
 				.onSecond(i -> minigamers.forEach(minigamer -> {
 
@@ -317,11 +318,9 @@ public class PixelDrop extends TeamlessMechanic {
 						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 					}
 				}))
-				.onComplete(() -> endOfRound(match))
-				.start();
+				.onComplete(() -> endOfRound(match));
 
-		matchData.setRoundCountdownId(countdown.getTaskId());
-		match.getTasks().register(countdown.getTaskId());
+		matchData.setRoundCountdownId(match.getTasks().countdown(countdown));
 	}
 
 	public void cancelCountdown(Match match) {

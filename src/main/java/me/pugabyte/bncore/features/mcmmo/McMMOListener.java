@@ -8,6 +8,7 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -62,7 +63,7 @@ public class McMMOListener implements Listener {
 				int radius = 5;
 				List<Block> blocksNearby = Utils.getBlocksInRadius(playerLoc, radius);
 				for (Block block : blocksNearby) {
-					if (Utils.chanceOf(80))
+					if (RandomUtils.chanceOf(80))
 						continue;
 
 					Material blockType = block.getType();
@@ -149,7 +150,7 @@ public class McMMOListener implements Listener {
 				if (possibleFaces.size() == 0)
 					return false;
 
-				BlockFace randomFace = Utils.getRandomElement(possibleFaces);
+				BlockFace randomFace = RandomUtils.randomElement(possibleFaces);
 				block.getRelative(randomFace).setType(placeType);
 				block.setType(stemType);
 				blockData = block.getBlockData();
@@ -181,7 +182,7 @@ public class McMMOListener implements Listener {
 			treeType = getMegaVariant(treeType);
 			treeLoc = megaLoc;
 		} else {
-			if (Utils.chanceOf(20))
+			if (RandomUtils.chanceOf(20))
 				treeType = getVariant(treeType);
 		}
 
@@ -233,7 +234,7 @@ public class McMMOListener implements Listener {
 	}
 
 	void showParticle(Player player, Location location) {
-		if (Utils.chanceOf(50))
+		if (RandomUtils.chanceOf(50))
 			player.spawnParticle(Particle.VILLAGER_HAPPY, location, 5, 0.5, 0.5, 0.5, 0.01);
 	}
 

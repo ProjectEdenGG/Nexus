@@ -26,6 +26,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.Axis;
 import me.pugabyte.bncore.utils.Utils.MapRotation;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -265,7 +266,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		int wait = 0;
 
 		for (int i = 0; i < size; i++) {
-			int random = Utils.randomInt(0, maps.size() - 1);
+			int random = RandomUtils.randomInt(0, maps.size() - 1);
 			ItemFrame map = maps.remove(random);
 
 			final ItemFrame finalMap = map;

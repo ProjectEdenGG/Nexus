@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
@@ -13,6 +14,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.GameMode;
 import org.bukkit.event.Listener;
@@ -22,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.bncore.utils.StringUtils.left;
+import static me.pugabyte.bncore.utils.StringUtils.plural;
 
 public abstract class Mechanic implements Listener {
 
@@ -73,7 +77,23 @@ public abstract class Mechanic implements Listener {
 				if (minigamer.getTeam().getLives() > 0)
 					minigamer.setLives(minigamer.getTeam().getLives());
 			});
+
+		int beginDelay = match.getArena().getBeginDelay();
+		if (beginDelay > 0)
+			match.getTasks().countdown(Countdown.builder()
+					.duration(Time.SECOND.x(beginDelay))
+					.onSecond(i -> {
+						if (Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1).contains(i))
+							match.broadcast("&7Starting in &e" + plural(i + " second", i) + "...");
+					})
+					.onComplete(() -> {
+						MatchBeginEvent beginEvent = new MatchBeginEvent(match);
+						if (beginEvent.callEvent())
+							begin(beginEvent);
+					}));
 	}
+
+	public void begin(MatchBeginEvent event) {}
 
 	public void onEnd(MatchEndEvent event) {
 		if (event.getMatch().isStarted())

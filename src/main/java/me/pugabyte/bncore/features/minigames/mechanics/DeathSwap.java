@@ -16,6 +16,7 @@ import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -79,7 +80,7 @@ public final class DeathSwap extends TeamlessMechanic {
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 
-		setWorldBorder(getWorld().getHighestBlockAt(Utils.randomInt(-5000, 5000), Utils.randomInt(-5000, 5000)).getLocation());
+		setWorldBorder(getWorld().getHighestBlockAt(RandomUtils.randomInt(-5000, 5000), RandomUtils.randomInt(-5000, 5000)).getLocation());
 
 		event.getMatch().getTasks().wait(1, () -> spreadPlayers(event.getMatch()));
 
@@ -127,8 +128,8 @@ public final class DeathSwap extends TeamlessMechanic {
 
 	private void randomTeleport(Minigamer minigamer) {
 		Location center = getWorld().getWorldBorder().getCenter();
-		int x = Utils.randomInt(-radius / 2, radius / 2);
-		int z = Utils.randomInt(-radius / 2, radius / 2);
+		int x = RandomUtils.randomInt(-radius / 2, radius / 2);
+		int z = RandomUtils.randomInt(-radius / 2, radius / 2);
 		Location random = new Location(getWorld(), x, 0, z).add(center.getX(), 0, center.getZ());
 		PaperLib.getChunkAtAsync(random, true).thenRun(() -> {
 			Location location = getWorld().getHighestBlockAt(random).getLocation();
@@ -157,11 +158,11 @@ public final class DeathSwap extends TeamlessMechanic {
 		});
 
 		if (match.getMinigamers().size() % 2 != 0) {
-			Minigamer playerOne = Utils.getRandomElement(swappingList);
+			Minigamer playerOne = RandomUtils.randomElement(swappingList);
 			swappingList.remove(playerOne);
-			Minigamer playerTwo = Utils.getRandomElement(swappingList);
+			Minigamer playerTwo = RandomUtils.randomElement(swappingList);
 			swappingList.remove(playerTwo);
-			Minigamer playerThree = Utils.getRandomElement(swappingList);
+			Minigamer playerThree = RandomUtils.randomElement(swappingList);
 			swappingList.remove(playerThree);
 
 			Swap one = new Swap(playerOne);
@@ -172,9 +173,9 @@ public final class DeathSwap extends TeamlessMechanic {
 			three.with(playerTwo);
 		}
 		while (swappingList.size() > 0) {
-			Minigamer playerOne = Utils.getRandomElement(swappingList);
+			Minigamer playerOne = RandomUtils.randomElement(swappingList);
 			swappingList.remove(playerOne);
-			Minigamer playerTwo = Utils.getRandomElement(swappingList);
+			Minigamer playerTwo = RandomUtils.randomElement(swappingList);
 			swappingList.remove(playerTwo);
 
 			Swap one = new Swap(playerOne);
@@ -200,7 +201,7 @@ public final class DeathSwap extends TeamlessMechanic {
 			match.end();
 			return;
 		}
-		match.getTasks().wait(Time.SECOND.x(Utils.randomInt(30, 120)), () -> swap(match));
+		match.getTasks().wait(Time.SECOND.x(RandomUtils.randomInt(30, 120)), () -> swap(match));
 	}
 
 	@EventHandler

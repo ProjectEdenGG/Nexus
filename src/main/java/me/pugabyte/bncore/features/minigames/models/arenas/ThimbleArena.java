@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.minigames.models.arenas;
 import lombok.Data;
 import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
 import me.pugabyte.bncore.features.minigames.models.Arena;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public class ThimbleArena extends Arena {
 			else if (gamemode instanceof Thimble.LastManStandingGamemode)
 				return new Thimble.ClassicGamemode();
 
-		return Utils.getRandomElement(Arrays.asList(new Thimble.ClassicGamemode(), new Thimble.RiskGamemode(), new Thimble.LastManStandingGamemode()));
+		return RandomUtils.randomElement(Arrays.asList(new Thimble.ClassicGamemode(), new Thimble.RiskGamemode(), new Thimble.LastManStandingGamemode()));
 	}
 
 

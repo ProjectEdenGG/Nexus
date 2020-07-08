@@ -47,6 +47,7 @@ import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import me.pugabyte.bncore.utils.WorldGuardFlagUtils;
+import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -289,6 +290,8 @@ public class BNCore extends JavaPlugin {
 	private static ProtocolManager protocolManager;
 	@Getter
 	private static Essentials essentials;
+	@Getter
+	private static BuycraftPluginBase buycraft;
 
 	@Getter
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
@@ -333,6 +336,7 @@ public class BNCore extends JavaPlugin {
 		signMenuFactory = new SignMenuFactory(this);
 		protocolManager = ProtocolLibrary.getProtocolManager();
 		essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
 		cron.start();
 		econ = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
 		perms = getServer().getServicesManager().getRegistration(Permission.class).getProvider();

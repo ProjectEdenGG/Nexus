@@ -25,6 +25,7 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -138,7 +139,7 @@ public class Misc implements Listener {
 		if (!event.getEntityType().equals(EntityType.ENDER_DRAGON))
 			return;
 
-		if (Utils.chanceOf(33))
+		if (RandomUtils.chanceOf(33))
 			event.getDrops().add(new ItemStack(Material.DRAGON_EGG));
 	}
 

@@ -5,7 +5,7 @@ import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -26,8 +26,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.bottomBlockError;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.cantBreakError;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.decorOnlyError;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
+import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.notFullyGrownError;
 
 public class RegenCrops implements Listener {
 
@@ -116,7 +122,7 @@ public class RegenCrops implements Listener {
 					continue;
 				}
 
-				if (Utils.chanceOf(20)) {
+				if (RandomUtils.chanceOf(20)) {
 					Ageable ageable = (Ageable) blockData;
 					int age = ageable.getAge();
 					if (age == ageable.getMaximumAge()) {
@@ -145,7 +151,7 @@ public class RegenCrops implements Listener {
 					continue;
 				}
 
-				if (Utils.chanceOf(20)) {
+				if (RandomUtils.chanceOf(20)) {
 					block.setType(material);
 					blockRegenMap.remove(loc);
 				}
@@ -168,7 +174,7 @@ public class RegenCrops implements Listener {
 					continue;
 				}
 
-				if (Utils.chanceOf(20)) {
+				if (RandomUtils.chanceOf(20)) {
 					Block down = block.getRelative(0, -1, 0);
 					if (down.getType().equals(material)) {
 						block.setType(material);

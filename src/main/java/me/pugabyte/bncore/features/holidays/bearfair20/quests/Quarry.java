@@ -9,6 +9,7 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -27,7 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.miningError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.toolError;
 import static me.pugabyte.bncore.utils.Utils.getTool;
@@ -68,7 +72,7 @@ public class Quarry implements Listener {
 				Block air = loc.getBlock();
 				Diorite diorite = dioriteRegenMap.get(loc);
 
-				if (Utils.chanceOf(20)) {
+				if (RandomUtils.chanceOf(20)) {
 					air.setType(diorite.getType());
 					air.setBlockData(diorite.getBlockData());
 					dioriteRegenMap.remove(loc);
