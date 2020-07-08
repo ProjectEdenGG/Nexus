@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.minigames.models.arenas;
 import lombok.Data;
 import me.pugabyte.bncore.features.minigames.mechanics.Thimble;
 import me.pugabyte.bncore.features.minigames.models.Arena;
-import me.pugabyte.bncore.utils.Utils.RandomUtils;
+import me.pugabyte.bncore.utils.RandomUtils;
 import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.Arrays;

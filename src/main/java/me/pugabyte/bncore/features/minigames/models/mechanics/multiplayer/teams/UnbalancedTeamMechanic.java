@@ -5,7 +5,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
-import me.pugabyte.bncore.utils.Utils.RandomUtils;
+import me.pugabyte.bncore.utils.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

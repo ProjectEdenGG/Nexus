@@ -8,8 +8,8 @@ import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
 import me.pugabyte.bncore.features.chat.events.ChatEvent;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.models.chat.PublicChannel;
+import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
