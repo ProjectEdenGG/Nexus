@@ -7,10 +7,9 @@ import me.pugabyte.bncore.features.particles.ParticleUtils;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
+import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -181,7 +180,7 @@ public class DiscoEffect {
 
 			//Sphere
 			for (int i = 0; i < finalSphereDensity; i++) {
-				Vector vector = Utils.RandomUtils.getRandomVector().multiply(sphereRadius);
+				Vector vector = RandomUtils.getRandomVector().multiply(sphereRadius);
 				loc.add(vector);
 
 				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalSphereParticle, sphereRed.get(), sphereGreen.get(), sphereBlue.get());

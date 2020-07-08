@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils.RandomUtils;
+import me.pugabyte.bncore.utils.RandomUtils;
 import net.buycraft.plugin.data.Coupon;
 import net.buycraft.plugin.data.Coupon.Discount;
 import net.buycraft.plugin.data.Coupon.Effective;

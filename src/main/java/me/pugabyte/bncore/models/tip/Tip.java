@@ -14,7 +14,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineExc
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
-import me.pugabyte.bncore.utils.Utils.RandomUtils;
+import me.pugabyte.bncore.utils.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.List;

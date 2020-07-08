@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static me.pugabyte.bncore.utils.RandomUtils.randomElement;
+import static me.pugabyte.bncore.utils.RandomUtils.randomInt;
 import static me.pugabyte.bncore.utils.StringUtils.plural;
-import static me.pugabyte.bncore.utils.Utils.RandomUtils.randomElement;
-import static me.pugabyte.bncore.utils.Utils.RandomUtils.randomInt;
 
 @Data
 @MatchDataFor(HoleInTheWall.class)

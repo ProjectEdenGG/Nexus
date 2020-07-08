@@ -8,10 +8,10 @@ import me.pugabyte.bncore.features.votes.mysterychest.MysteryChest;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.models.vote.TopVoter;
 import me.pugabyte.bncore.models.vote.VoteService;
+import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.Utils.RandomUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.io.BufferedWriter;

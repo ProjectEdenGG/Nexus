@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.chat;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.events.ChatEvent;
-import me.pugabyte.bncore.utils.Utils.RandomUtils;
+import me.pugabyte.bncore.utils.RandomUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
