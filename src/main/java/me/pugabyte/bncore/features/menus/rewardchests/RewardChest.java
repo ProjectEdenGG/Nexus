@@ -19,8 +19,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.reflections.Reflections;
@@ -93,8 +95,10 @@ public class RewardChest implements Listener {
 				if (player.isOnline()) {
 					amounts.remove(type);
 					mysteryChestPlayer.setAmounts(amounts);
+					service.delete(mysteryChestPlayer);
 					service.save(mysteryChestPlayer);
-					// If player logs out, it will break this
+
+					// this way wont work, will error if player logs out
 //					Tasks.wait(Time.SECOND.x(10), () -> {
 					Utils.giveItem(player, item);
 					player.sendMessage(StringUtils.colorize("&3You have been given &e" +
@@ -107,14 +111,14 @@ public class RewardChest implements Listener {
 		}
 	}
 
-//	@EventHandler
-//	public void onJoin(PlayerJoinEvent event) {
-//		processEvent(event);
-//	}
-//
-//	@EventHandler
-//	public void onWorldSwitch(PlayerChangedWorldEvent event) {
-//		processEvent(event);
-//	}
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		processEvent(event);
+	}
+
+	@EventHandler
+	public void onWorldSwitch(PlayerChangedWorldEvent event) {
+		processEvent(event);
+	}
 
 }
