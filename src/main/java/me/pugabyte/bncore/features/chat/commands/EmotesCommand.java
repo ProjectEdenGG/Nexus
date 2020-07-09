@@ -7,6 +7,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.emote.EmoteService;
+import me.pugabyte.bncore.models.emote.EmoteUser;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import org.bukkit.ChatColor;
 
@@ -14,9 +16,12 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 public class EmotesCommand extends CustomCommand {
+	private final EmoteService service = new EmoteService();
+	private EmoteUser user;
 
 	public EmotesCommand(@NonNull CommandEvent event) {
 		super(event);
+		user = service.get(player());
 	}
 
 	@Path("[page]")
@@ -49,6 +54,13 @@ public class EmotesCommand extends CustomCommand {
 		};
 
 		paginate(Arrays.asList(Emotes.values()), formatter, "/emotes", page);
+	}
+
+	@Path("toggle")
+	void toggle() {
+		user.setEnabled(!user.isEnabled());
+		service.save(user);
+		send(PREFIX + (user.isEnabled() ? "&aEnabled" : "&cDisabled"));
 	}
 
 	@TabCompleteIgnore
