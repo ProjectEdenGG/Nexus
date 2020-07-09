@@ -5,9 +5,9 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.socialmedia.SocialMedia.BNSocialMediaSite;
-import me.pugabyte.bncore.models.socialmedia.SocialMedia.SocialMediaSite;
 import me.pugabyte.bncore.models.socialmedia.SocialMediaService;
+import me.pugabyte.bncore.models.socialmedia.SocialMediaUser.BNSocialMediaSite;
+import me.pugabyte.bncore.models.socialmedia.SocialMediaUser.SocialMediaSite;
 import me.pugabyte.bncore.utils.Utils;
 
 public class SocialMediaCommand extends CustomCommand {

@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@PlayerClass(SocialMedia.class)
+@PlayerClass(SocialMediaUser.class)
 public class SocialMediaService extends MongoService {
-	private final static Map<UUID, SocialMedia> cache = new HashMap<>();
+	private final static Map<UUID, SocialMediaUser> cache = new HashMap<>();
 
-	public Map<UUID, SocialMedia> getCache() {
+	public Map<UUID, SocialMediaUser> getCache() {
 		return cache;
 	}
 

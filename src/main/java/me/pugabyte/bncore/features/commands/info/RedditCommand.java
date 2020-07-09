@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.commands.info;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.bncore.models.socialmedia.SocialMediaUser.BNSocialMediaSite;
 
 public class RedditCommand extends CustomCommand {
 
