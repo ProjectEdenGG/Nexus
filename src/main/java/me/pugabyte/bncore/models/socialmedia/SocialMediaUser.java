@@ -35,17 +35,21 @@ import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 @Data
 @Builder
-@Entity("social_media")
+@Entity("social_media_user")
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class})
-public class SocialMedia extends PlayerOwnedObject {
+public class SocialMediaUser extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
 	@Embedded
 	private List<Connection> connections = new ArrayList<>();
+
+	public Connection getConnection(SocialMediaSite site) {
+		return connections.stream().filter(connection -> connection.getSite() == site).findFirst().orElse(null);
+	}
 
 	@Data
 	@NoArgsConstructor

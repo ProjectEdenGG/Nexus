@@ -13,7 +13,7 @@ import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.models.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.bncore.models.socialmedia.SocialMediaUser.BNSocialMediaSite;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.entities.Member;
