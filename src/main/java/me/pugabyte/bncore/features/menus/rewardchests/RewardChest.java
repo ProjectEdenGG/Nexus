@@ -5,12 +5,19 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.votes.mysterychest.MysteryChest;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestPlayer;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.SoundUtils;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -21,6 +28,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.reflections.Reflections;
+
+import java.util.Map;
 
 public class RewardChest implements Listener {
 
@@ -73,24 +82,29 @@ public class RewardChest implements Listener {
 	}
 
 	public void processEvent(PlayerEvent event) {
-		if (!WorldGroup.get(event.getPlayer()).equals(WorldGroup.SURVIVAL)) return;
+		Player player = event.getPlayer();
+		if (!WorldGroup.get(player).equals(WorldGroup.SURVIVAL)) return;
+
 		MysteryChestService service = new MysteryChestService();
-		MysteryChestPlayer mysteryChestPlayer = service.get(event.getPlayer());
-		for (RewardChestType type : mysteryChestPlayer.getAmounts().keySet()) {
-			if (mysteryChestPlayer.getAmounts().get(type) > 0) {
+		MysteryChestPlayer mysteryChestPlayer = service.get(player);
+		Map<RewardChestType, Integer> amounts = mysteryChestPlayer.getAmounts();
+
+		for (RewardChestType type : amounts.keySet()) {
+			int amount = amounts.get(type);
+			if (amount > 0) {
 				ItemStack item = type.getItem().clone();
-				item.setAmount(mysteryChestPlayer.getAmounts().get(type));
-				Tasks.wait(Time.SECOND.x(10), () -> {
-					if (event.getPlayer().isOnline()) {
-						Utils.giveItem(event.getPlayer(), item);
-						event.getPlayer().sendMessage(StringUtils.colorize("&3You have been given &e" +
-								mysteryChestPlayer.getAmounts().get(type) + " " + StringUtils.camelCase(type.name()) +
-								" Chest Key" + ((mysteryChestPlayer.getAmounts().get(type) == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest"));
-						SoundUtils.Jingle.PING.play(event.getPlayer());
-						mysteryChestPlayer.getAmounts().remove(type);
-						service.save(mysteryChestPlayer);
-					}
-				});
+				item.setAmount(amount);
+				if (player.isOnline()) {
+					amounts.remove(type);
+					service.save(mysteryChestPlayer);
+					Tasks.wait(Time.SECOND.x(10), () -> {
+						Utils.giveItem(player, item);
+						player.sendMessage(StringUtils.colorize("&3You have been given &e" +
+								amount + " " + StringUtils.camelCase(type.name()) +
+								" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest"));
+						SoundUtils.Jingle.PING.play(player);
+					});
+				}
 			}
 		}
 	}
