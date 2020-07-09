@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,6 +58,13 @@ public class NerdService extends MySQLService {
 				.collect(Collectors.toList());
 
 		List<Nerd> nerds = database.where("uuid in (" + asList(filtered) + ")").results(Nerd.class);
+		for (Nerd nerd : nerds)
+			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
+		return nerds;
+	}
+
+	public List<Nerd> getNerdsLastJoinedAfter(LocalDateTime date) {
+		List<Nerd> nerds = database.where("lastJoin >= ?").args(date).results(Nerd.class);
 		for (Nerd nerd : nerds)
 			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
 		return nerds;

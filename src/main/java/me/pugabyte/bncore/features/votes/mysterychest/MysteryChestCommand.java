@@ -66,4 +66,39 @@ public class MysteryChestCommand extends CustomCommand {
 		RewardChest.getInv(MysteryChest.getAllActiveRewardsByType(type)).open(player());
 	}
 
+//	@Async
+//	@Path("giveMonthlyRewards")
+//	@Permission("group.admin")
+//	void giveMonthlyRewards() {
+//		send("Generating data...");
+//		String data = "";
+//		Map<String, Integer> map = new HashMap<>();
+//		for (Nerd nerd : new NerdService().getNerdsLastJoinedAfter(LocalDateTime.now().minusMonths(3)))
+//			map.put(nerd.getName(), map.getOrDefault(nerd.getName(), 0) + 1);
+//		EndOfMonth.TopVoterData topVoters = new EndOfMonth.TopVoterData(Month.JUNE);
+//		for (TopVoter voter : topVoters.getVotersWith(1))
+//			map.put(Utils.getPlayer(voter.getUuid()).getName(), map.getOrDefault(Utils.getPlayer(voter.getUuid()).getName(), 0) + 1);
+//		for (TopVoter voter : topVoters.getVotersWith(12))
+//			map.put(Utils.getPlayer(voter.getUuid()).getName(), map.getOrDefault(Utils.getPlayer(voter.getUuid()).getName(), 0) + 1);
+//		for (TopVoter voter : topVoters.getEco15kWinners())
+//			map.put(Utils.getPlayer(voter.getUuid()).getName(), map.getOrDefault(Utils.getPlayer(voter.getUuid()).getName(), 0) + 1);
+//		for (TopVoter voter : topVoters.getEco20kWinners())
+//			map.put(Utils.getPlayer(voter.getUuid()).getName(), map.getOrDefault(Utils.getPlayer(voter.getUuid()).getName(), 0) + 1);
+//		for (TopVoter voter : topVoters.getEco30kWinners())
+//			map.put(Utils.getPlayer(voter.getUuid()).getName(), map.getOrDefault(Utils.getPlayer(voter.getUuid()).getName(), 0) + 1);
+//		for (TopVoter voter : topVoters.getNpcOrHoloWinners())
+//			map.put(Utils.getPlayer(voter.getUuid()).getName(), map.getOrDefault(Utils.getPlayer(voter.getUuid()).getName(), 0) + 1);
+//		for (String string : map.keySet()) {
+//			data += string + ": " + map.get(string) + ", ";
+//		}
+//		send(new JsonBuilder("Click here to view data").url(StringUtils.paste(data)));
+//		for (String string : map.keySet()) {
+//			if (string == null || string.equalsIgnoreCase("null"))
+//				continue;
+//			new MysteryChest(Utils.getPlayer(string)).give(map.get(string), RewardChestType.MYSTERY);
+//			send("&3Gave &e" + string + " " + map.get(string) + " Mystery Chests");
+//		}
+//	}
+
+
 }
