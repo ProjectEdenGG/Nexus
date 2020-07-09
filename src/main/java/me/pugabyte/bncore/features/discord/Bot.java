@@ -9,7 +9,6 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.bridge.DiscordBridgeListener;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
 import me.pugabyte.bncore.utils.Tasks;
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -29,8 +28,7 @@ public enum Bot {
 		@Override
 		@SneakyThrows
 		JDA build() {
-			return new JDABuilder(AccountType.BOT)
-					.setToken(getToken())
+			return JDABuilder.createDefault(getToken())
 					.addEventListeners(new DiscordListener())
 					.addEventListeners(getCommands().build())
 					.build()
@@ -42,8 +40,7 @@ public enum Bot {
 		@Override
 		@SneakyThrows
 		JDA build() {
-			return new JDABuilder(AccountType.BOT)
-					.setToken(getToken())
+			return JDABuilder.createDefault(getToken())
 					.addEventListeners(new DiscordBridgeListener())
 					.addEventListeners(getCommands().setStatus(OnlineStatus.INVISIBLE).build())
 					.build()
