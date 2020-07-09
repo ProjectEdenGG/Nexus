@@ -56,37 +56,35 @@ public class RandomUtils {
 		return list.get(random.nextInt(list.size()));
 	}
 
-	public static Vector getRandomVector() {
-		double x, y, z;
-		x = random.nextDouble() * 2 - 1;
-		y = random.nextDouble() * 2 - 1;
-		z = random.nextDouble() * 2 - 1;
+	public static Vector randomVector() {
+		double x = random.nextDouble() * 2 - 1;
+		double y = random.nextDouble() * 2 - 1;
+		double z = random.nextDouble() * 2 - 1;
 
 		return new Vector(x, y, z).normalize();
 	}
 
-	public static Vector getRandomCircleVector() {
-		double rnd, x, z;
-		rnd = random.nextDouble() * 2 * Math.PI;
-		x = Math.cos(rnd);
-		z = Math.sin(rnd);
+	public static Vector randomCircleVector() {
+		double rnd = random.nextDouble() * 2 * Math.PI;
+		double x = Math.cos(rnd);
+		double z = Math.sin(rnd);
 
 		return new Vector(x, 0, z);
 	}
 
-	public static Material getRandomMaterial() {
-		return getRandomMaterial(Material.values());
+	public static Material randomMaterial() {
+		return randomMaterial(Material.values());
 	}
 
-	public static Material getRandomMaterial(MaterialTag tag) {
-		return getRandomMaterial(tag.getValues().toArray(new Material[0]));
+	public static Material randomMaterial(MaterialTag tag) {
+		return randomMaterial(tag.getValues().toArray(new Material[0]));
 	}
 
-	public static Material getRandomMaterial(Material[] materials) {
+	public static Material randomMaterial(Material[] materials) {
 		return materials[random.nextInt(materials.length)];
 	}
 
-	public static double getRandomAngle() {
+	public static double randomAngle() {
 		return random.nextDouble() * 2 * Math.PI;
 	}
 

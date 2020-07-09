@@ -180,7 +180,7 @@ public class DiscoEffect {
 
 			//Sphere
 			for (int i = 0; i < finalSphereDensity; i++) {
-				Vector vector = RandomUtils.getRandomVector().multiply(sphereRadius);
+				Vector vector = RandomUtils.randomVector().multiply(sphereRadius);
 				loc.add(vector);
 
 				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalSphereParticle, sphereRed.get(), sphereGreen.get(), sphereBlue.get());

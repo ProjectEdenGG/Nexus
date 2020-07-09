@@ -66,7 +66,7 @@ public class StormEffect {
 			newLoc.add(0, 3.2, 0);
 
 			for (int i = 0; i < finalDensity; i++) {
-				Vector v = RandomUtils.getRandomCircleVector().multiply(RandomUtils.getRandom().nextDouble() * finalCloudRadius);
+				Vector v = RandomUtils.randomCircleVector().multiply(RandomUtils.getRandom().nextDouble() * finalCloudRadius);
 				newLoc.add(v);
 
 				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(cloudParticle, cloudRed, cloudGreen, cloudBlue);
@@ -77,7 +77,7 @@ public class StormEffect {
 
 			Location l1 = newLoc.clone().add(0, 0.2, 0);
 			for (int i = 0; i < finalDensity; i++) {
-				Vector v = RandomUtils.getRandomCircleVector().multiply(RandomUtils.getRandom().nextDouble() * (finalCloudRadius - 0.25));
+				Vector v = RandomUtils.randomCircleVector().multiply(RandomUtils.getRandom().nextDouble() * (finalCloudRadius - 0.25));
 				l1.add(v);
 
 				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(cloudParticle, cloudRed, cloudGreen, cloudBlue);
@@ -88,7 +88,7 @@ public class StormEffect {
 
 			Location l2 = newLoc.clone().add(0, .05, 0);
 			for (int i = 0; i < 15; i++) {
-				Vector v = RandomUtils.getRandomCircleVector().multiply(RandomUtils.getRandom().nextDouble() * rainRadius);
+				Vector v = RandomUtils.randomCircleVector().multiply(RandomUtils.getRandom().nextDouble() * rainRadius);
 				l2.add(v);
 
 				ParticleUtils.display(finalRainParticle.getParticle(), l2.clone(), 0, 0, 0, 0, 0.1, null);
