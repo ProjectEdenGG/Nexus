@@ -7,8 +7,6 @@ import me.pugabyte.bncore.models.mysterychest.MysteryChestPlayer;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -21,10 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.reflections.Reflections;
@@ -96,27 +92,29 @@ public class RewardChest implements Listener {
 				item.setAmount(amount);
 				if (player.isOnline()) {
 					amounts.remove(type);
+					mysteryChestPlayer.setAmounts(amounts);
 					service.save(mysteryChestPlayer);
-					Tasks.wait(Time.SECOND.x(10), () -> {
-						Utils.giveItem(player, item);
-						player.sendMessage(StringUtils.colorize("&3You have been given &e" +
-								amount + " " + StringUtils.camelCase(type.name()) +
-								" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest"));
-						SoundUtils.Jingle.PING.play(player);
-					});
+					// If player logs out, it will break this
+//					Tasks.wait(Time.SECOND.x(10), () -> {
+					Utils.giveItem(player, item);
+					player.sendMessage(StringUtils.colorize("&3You have been given &e" +
+							amount + " " + StringUtils.camelCase(type.name()) +
+							" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest"));
+					SoundUtils.Jingle.PING.play(player);
+//					});
 				}
 			}
 		}
 	}
 
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-		processEvent(event);
-	}
-
-	@EventHandler
-	public void onWorldSwitch(PlayerChangedWorldEvent event) {
-		processEvent(event);
-	}
+//	@EventHandler
+//	public void onJoin(PlayerJoinEvent event) {
+//		processEvent(event);
+//	}
+//
+//	@EventHandler
+//	public void onWorldSwitch(PlayerChangedWorldEvent event) {
+//		processEvent(event);
+//	}
 
 }
