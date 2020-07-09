@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -45,14 +46,14 @@ public class MysteryChest {
 	}
 
 	public int give(int amount, RewardChestType type) {
-		if (player.isOnline()) {
+		if (player.isOnline() && WorldGroup.get(player.getPlayer()).equals(WorldGroup.SURVIVAL)) {
 			Player onlinePlayer = player.getPlayer();
 			ItemStack item = type.getItem().clone();
 			item.setAmount(amount);
 			Utils.giveItem(onlinePlayer, item);
 			onlinePlayer.sendMessage(StringUtils.colorize("&3You have been given &e" +
 					amount + " " + StringUtils.camelCase(type.name()) +
-					" Chest Keys. &3Use them at spawn at the &eMystery Chest"));
+					" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest"));
 			SoundUtils.Jingle.PING.play(onlinePlayer);
 			return amount;
 		} else {

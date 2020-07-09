@@ -85,7 +85,7 @@ public class RewardChest implements Listener {
 						Utils.giveItem(event.getPlayer(), item);
 						event.getPlayer().sendMessage(StringUtils.colorize("&3You have been given &e" +
 								mysteryChestPlayer.getAmounts().get(type) + " " + StringUtils.camelCase(type.name()) +
-								" Chest Keys. &3Use them at spawn at the &eMystery Chest"));
+								" Chest Key" + ((mysteryChestPlayer.getAmounts().get(type) == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest"));
 						SoundUtils.Jingle.PING.play(event.getPlayer());
 						mysteryChestPlayer.getAmounts().remove(type);
 						service.save(mysteryChestPlayer);
