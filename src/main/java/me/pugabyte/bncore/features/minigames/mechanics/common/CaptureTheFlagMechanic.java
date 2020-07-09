@@ -23,12 +23,12 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 
 		if (!(
 				minigamer.isPlaying(this) &&
-				event.getAction() == Action.RIGHT_CLICK_BLOCK &&
-				event.getClickedBlock() != null &&
-				event.getHand() != null &&
-				event.getHand().equals(EquipmentSlot.HAND) &&
-				minigamer.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR &&
-				!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())
+						event.getAction() == Action.RIGHT_CLICK_BLOCK &&
+						event.getClickedBlock() != null &&
+						event.getHand() != null &&
+						event.getHand().equals(EquipmentSlot.HAND) &&
+						minigamer.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR &&
+						MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())
 		)) return;
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
@@ -51,6 +51,7 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 			carriedFlag.drop(minigamer.getPlayer().getLocation());
 
 			matchData.removeFlagCarrier(minigamer);
+			event.getMatch().broadcast(minigamer.getColoredName() + " &3dropped " + carriedFlag.getTeam().getColoredName() + "&3's flag");
 		}
 
 		super.onDeath(event);

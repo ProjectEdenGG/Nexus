@@ -4,6 +4,7 @@ import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
+import me.pugabyte.bncore.features.menus.rewardchests.RewardChestType;
 import me.pugabyte.bncore.features.votes.mysterychest.MysteryChest;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.models.vote.TopVoter;
@@ -44,7 +45,7 @@ public class EndOfMonth {
 				Koda.announce(data.getDiscordMessage());
 				writeHtml(data);
 
-				new MysteryChest(Utils.getPlayer(data.getMysteryChestWinner().getUuid()));
+				new MysteryChest(Utils.getPlayer(data.getMysteryChestWinner().getUuid())).give(1, RewardChestType.VOTE);
 
 				data.getEco30kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 30000));
 				data.getEco20kWinners().forEach(topVoter -> BNCore.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 20000));

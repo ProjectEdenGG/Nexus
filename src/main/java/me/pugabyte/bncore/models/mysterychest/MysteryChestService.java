@@ -7,13 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@PlayerClass(MysteryChest.class)
+@PlayerClass(MysteryChestPlayer.class)
 public class MysteryChestService extends MongoService {
 
-	public Map<UUID, MysteryChest> cache = new HashMap<>();
+	public Map<UUID, MysteryChestPlayer> cache = new HashMap<>();
 
 	@Override
-	public Map<UUID, MysteryChest> getCache() {
+	public Map<UUID, MysteryChestPlayer> getCache() {
 		return cache;
 	}
 }

@@ -2,8 +2,10 @@ package me.pugabyte.bncore.features.minigames.models.matchdata;
 
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -79,6 +81,11 @@ public class Flag {
 		}
 
 		sign.update();
+		Match match = carrier.getMatch();
+		taskId = carrier.getMatch().getTasks().wait(Time.SECOND.x(60), () -> {
+			respawn();
+			match.broadcast(team.getColoredName() + "&3's flag has returned");
+		});
 	}
 
 }

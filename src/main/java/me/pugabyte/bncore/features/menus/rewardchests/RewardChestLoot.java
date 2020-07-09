@@ -22,6 +22,11 @@ public class RewardChestLoot implements ConfigurationSerializable {
 	public String title = "Reward Chest Loot";
 	public ItemStack[] items = new ItemStack[0];
 	public boolean active = true;
+	public RewardChestType type = RewardChestType.ALL;
+
+	public RewardChestLoot(RewardChestType type) {
+		this.type = type;
+	}
 
 	public RewardChestLoot(String title, ItemStack... items) {
 		this.title = title;
@@ -33,6 +38,7 @@ public class RewardChestLoot implements ConfigurationSerializable {
 		this.items = Arrays.stream(SerializationUtils.YML.deserializeItems((Map<String, Object>) map.getOrDefault("items", items)))
 				.filter(itemStack -> !Utils.isNullOrAir(itemStack)).collect(Collectors.toList()).toArray(new ItemStack[0]);
 		this.active = (boolean) map.getOrDefault("active", active);
+		this.type = RewardChestType.valueOf((String) map.getOrDefault("type", type.name()));
 	}
 
 	@Override
@@ -41,6 +47,7 @@ public class RewardChestLoot implements ConfigurationSerializable {
 			put("title", title);
 			put("items", SerializationUtils.YML.serializeItems(items));
 			put("active", active);
+			put("type", type.name());
 		}};
 	}
 

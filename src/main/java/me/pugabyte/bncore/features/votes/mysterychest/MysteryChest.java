@@ -5,15 +5,22 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChestLoot;
+import me.pugabyte.bncore.features.menus.rewardchests.RewardChestType;
+import me.pugabyte.bncore.models.mysterychest.MysteryChestPlayer;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
+import me.pugabyte.bncore.utils.SoundUtils;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MysteryChest {
+
 	private final MysteryChestService service = new MysteryChestService();
 	private final OfflinePlayer player;
 	@Getter
@@ -29,29 +36,43 @@ public class MysteryChest {
 		this.player = player;
 	}
 
-	public static SmartInventory getInv(Integer id) {
+	public static SmartInventory getInv(Integer id, RewardChestType type) {
 		return SmartInventory.builder()
 				.title("Mystery Chest Rewards")
-				.provider(new MysteryChestEditProvider(id))
+				.provider(new MysteryChestEditProvider(id, type))
 				.size(id == null ? 6 : 3, 9)
 				.build();
 	}
 
-	public int give(int amount) {
-		me.pugabyte.bncore.models.mysterychest.MysteryChest mysteryChest = getMysteryChest();
-		mysteryChest.setAmount(mysteryChest.getAmount() + amount);
-		service.save(mysteryChest);
-		return mysteryChest.getAmount();
+	public int give(int amount, RewardChestType type) {
+		if (player.isOnline()) {
+			Player onlinePlayer = player.getPlayer();
+			ItemStack item = type.getItem().clone();
+			item.setAmount(amount);
+			Utils.giveItem(onlinePlayer, item);
+			onlinePlayer.sendMessage(StringUtils.colorize("&3You have been given &e" +
+					amount + " " + StringUtils.camelCase(type.name()) +
+					" Chest Keys. &3Use them at spawn at the &eMystery Chest"));
+			SoundUtils.Jingle.PING.play(onlinePlayer);
+			return amount;
+		} else {
+			MysteryChestPlayer mysteryChestPlayer = getMysteryChestPlayer();
+			int newAmount = mysteryChestPlayer.getAmounts().getOrDefault(type, 0) + amount;
+			mysteryChestPlayer.getAmounts().put(type, newAmount);
+			service.save(mysteryChestPlayer);
+			return newAmount;
+		}
 	}
 
-	public int take(int amount) {
-		me.pugabyte.bncore.models.mysterychest.MysteryChest mysteryChest = getMysteryChest();
-		mysteryChest.setAmount(mysteryChest.getAmount() - amount);
-		service.save(mysteryChest);
-		return mysteryChest.getAmount();
+	public int take(int amount, RewardChestType type) {
+		MysteryChestPlayer mysteryChestPlayer = getMysteryChestPlayer();
+		int newAmount = Math.max(0, mysteryChestPlayer.getAmounts().getOrDefault(type, 0) - amount);
+		mysteryChestPlayer.getAmounts().put(type, newAmount);
+		service.save(mysteryChestPlayer);
+		return newAmount;
 	}
 
-	public me.pugabyte.bncore.models.mysterychest.MysteryChest getMysteryChest() {
+	public MysteryChestPlayer getMysteryChestPlayer() {
 		return service.get(player);
 	}
 
@@ -84,12 +105,17 @@ public class MysteryChest {
 		return id;
 	}
 
-	public static RewardChestLoot[] getActiveRewards() {
-		return Arrays.stream(getAllRewards()).filter(RewardChestLoot::isActive).collect(Collectors.toList()).toArray(new RewardChestLoot[0]);
-	}
-
 	public static RewardChestLoot getRewardChestLoot(int id) {
 		return (RewardChestLoot) config.get(id + "");
+	}
+
+	public static RewardChestLoot[] getAllRewardsByType(RewardChestType type) {
+		if (type == RewardChestType.ALL) return getAllRewards();
+		return Arrays.stream(getAllRewards()).filter(rewardChestLoot -> rewardChestLoot.getType() == type).toArray(RewardChestLoot[]::new);
+	}
+
+	public static RewardChestLoot[] getAllActiveRewardsByType(RewardChestType type) {
+		return Arrays.stream(getAllRewardsByType(type)).filter(rewardChestLoot -> rewardChestLoot.isActive()).toArray(RewardChestLoot[]::new);
 	}
 
 	public static RewardChestLoot[] getAllRewards() {
