@@ -396,12 +396,10 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		String prefix = stripColor(sign.getLine(0));
 		if (!prefix.equalsIgnoreCase("[Buy Painting]")) return;
 
-		String title = sign.getLine(2);
-		if (!sign.getLine(3).equals(""))
-			title += " " + sign.getLine(3);
+		String title = (sign.getLine(2).trim() + " " + sign.getLine(3).trim()).trim();
+		if (Strings.isNullOrEmpty(title)) return;
 
 		String price = stripColor(sign.getLine(1));
-
 		player.sendMessage("(TODO) Buying " + title + " for " + price);
 	}
 
