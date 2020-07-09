@@ -3,6 +3,8 @@ package me.pugabyte.bncore.features.chat;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.events.ChatEvent;
+import me.pugabyte.bncore.models.emote.EmoteService;
+import me.pugabyte.bncore.models.emote.EmoteUser;
 import me.pugabyte.bncore.utils.RandomUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -77,6 +79,8 @@ public enum Emotes {
 		if (event.getChatter() == null) return;
 		OfflinePlayer player = event.getChatter().getOfflinePlayer();
 		if (!BNCore.getPerms().playerHas(null, player, "emoticons.use"))
+			return;
+		if (!((EmoteUser) new EmoteService().get(player)).isEnabled())
 			return;
 
 		event.setMessage(process(event.getMessage(), event.getChannel().getMessageColor()));
