@@ -431,19 +431,21 @@ public class BearFairCommand extends _WarpCommand {
 					if (!MaterialTag.SIGNS.isTagged(block.getType())) continue;
 
 					Sign sign = (Sign) block.getState();
-					String id = sign.getLine(0).trim();
+					String id = (sign.getLine(0).trim() + " " + sign.getLine(1).trim()).trim();
 					if (Strings.isNullOrEmpty(id)) continue;
 
 					Block chest = block.getRelative(BlockFace.DOWN);
 					if (!(chest.getState() instanceof Chest)) continue;
 
 					Chest inv = (Chest) chest.getState();
-					ItemStack map = inv.getBlockInventory().getContents()[0];
-					String[] split = map.getItemMeta().getDisplayName().split("-");
-					String name = String.join("-", Arrays.copyOfRange(split, 1, split.length));
+					ItemStack map = inv.getBlockInventory().getContents()[0].clone();
 
-					ItemBuilder.setName(map, "&6" + id + " &8-" + name);
-					ItemBuilder.removeLoreLine(map, 1);
+					if (map.getItemMeta().hasLore()) {
+						String[] split = map.getItemMeta().getDisplayName().split("-");
+						String name = String.join("-", Arrays.copyOfRange(split, 1, split.length));
+						ItemBuilder.setName(map, "&6" + id + " &8-" + name);
+						ItemBuilder.removeLoreLine(map, 1);
+					}
 					maps.put(id, new BearFairStoreMap(id, map));
 				} catch (Throwable ex) {
 					ex.printStackTrace();
