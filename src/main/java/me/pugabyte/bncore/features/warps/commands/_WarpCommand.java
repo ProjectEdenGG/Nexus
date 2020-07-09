@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.warps.commands;
 
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 public abstract class _WarpCommand extends CustomCommand {
 	WarpService service = new WarpService();
 

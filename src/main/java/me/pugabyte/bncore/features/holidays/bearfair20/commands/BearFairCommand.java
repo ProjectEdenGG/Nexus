@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
@@ -43,6 +44,9 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
@@ -56,21 +60,15 @@ import java.util.stream.Collectors;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.atticKey;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.basketItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.ancientPickaxe;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.blessedHoneyBottle;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.honeyStroopWafel;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.rareFlower;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.relic;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.specialPrize;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.stroofWafel;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.*;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland.arcadePieces;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland.presentItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.anzacBiscuit;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.goldenSyrup;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.peanuts;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.*;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
+@NoArgsConstructor
 @Redirect(from = {"/bfp", "bfpoints", "/bearfairpoints"}, to = "/bearfair points")
-public class BearFairCommand extends _WarpCommand {
+public class BearFairCommand extends _WarpCommand implements Listener {
 	private final BearFairService service = new BearFairService();
 
 	public BearFairCommand(CommandEvent event) {
@@ -381,6 +379,30 @@ public class BearFairCommand extends _WarpCommand {
 	public void moveCollector() {
 		commandBlock();
 		BFQuests.moveCollector();
+	}
+
+	// Custom Maps
+
+	@EventHandler
+	public void onClickSign(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Location loc = player.getLocation();
+
+		if (!loc.getWorld().getName().toLowerCase().contains("bearfair")) return;
+		if (Utils.isNullOrAir(event.getClickedBlock())) return;
+		if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
+
+		Sign sign = (Sign) event.getClickedBlock().getState();
+		String prefix = stripColor(sign.getLine(0));
+		if (!prefix.equalsIgnoreCase("[Buy Painting]")) return;
+
+		String title = sign.getLine(2);
+		if (!sign.getLine(3).equals(""))
+			title += " " + sign.getLine(3);
+
+		String price = stripColor(sign.getLine(1));
+
+		player.sendMessage("(TODO) Buying " + title + " for " + price);
 	}
 
 	@Path("store maps reload")
