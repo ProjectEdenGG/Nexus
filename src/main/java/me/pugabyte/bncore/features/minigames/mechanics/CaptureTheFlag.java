@@ -76,6 +76,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 		Flag flag = matchData.getFlag(minigamer.getTeam());
 		flag.respawn();
+		match.getTasks().cancel(flag.getTaskId());
 	}
 
 	private void captureFlag(Minigamer minigamer, Team team) {
@@ -91,6 +92,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 		Flag flag = matchData.getFlag(team);
 		flag.respawn();
+		if (shouldBeOver(match))
+			match.end();
 	}
 
 	private void takeFlag(Flag flag, Minigamer minigamer) {

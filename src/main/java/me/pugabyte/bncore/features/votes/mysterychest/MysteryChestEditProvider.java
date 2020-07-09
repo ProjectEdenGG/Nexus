@@ -1,14 +1,12 @@
 package me.pugabyte.bncore.features.votes.mysterychest;
 
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.Pagination;
-import fr.minuskube.inv.content.SlotIterator;
-import fr.minuskube.inv.content.SlotPos;
+import fr.minuskube.inv.content.*;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChestLoot;
+import me.pugabyte.bncore.features.menus.rewardchests.RewardChestType;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -23,10 +21,13 @@ import java.util.List;
 
 public class MysteryChestEditProvider extends MenuUtils implements InventoryProvider {
 
+	RewardChestType type = RewardChestType.ALL;
 	Integer id;
 
-	public MysteryChestEditProvider(Integer id) {
+	public MysteryChestEditProvider(Integer id, RewardChestType type) {
 		this.id = id;
+		if (type != null)
+			this.type = type;
 	}
 
 	@Override
@@ -37,33 +38,43 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 			contents.set(0, 4, ClickableItem.from(
 					new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(), e -> {
 						int id = MysteryChest.getNextId();
-						MysteryChest.getConfig().set(id + "", new RewardChestLoot());
+						MysteryChest.getConfig().set(id + "", new RewardChestLoot(type));
 						MysteryChest.saveConfig();
-						MysteryChest.getInv(id).open(player);
+						MysteryChest.getInv(id, null).open(player);
+					}
+			));
+
+			contents.set(0, 8, ClickableItem.from(
+					new ItemBuilder(Material.BOOK).name("&eFilter:").lore("&3" + StringUtils.camelCase(type.name())).build(),
+					e -> {
+						MysteryChest.getInv(null, Utils.EnumUtils.nextWithLoop(RewardChestType.class, type.ordinal())).open(player);
 					}
 			));
 
 			Pagination page = contents.pagination();
 
-			RewardChestLoot[] loots = MysteryChest.getAllRewards();
+			RewardChestLoot[] loots = MysteryChest.getAllRewardsByType(type);
 			ClickableItem[] menuItems = new ClickableItem[loots.length];
 			for (int i = 0; i < loots.length; i++) {
 				int j = i;
 				menuItems[i] = ClickableItem.from(new ItemBuilder(loots[i].isActive() ? Material.ENDER_CHEST : Material.CHEST)
-								.name("&e" + loots[i].getTitle()).lore("&7Shift-Right Click to Delete").build(),
+								.name("&e" + loots[i].getTitle())
+								.lore("&3Type: &e" + StringUtils.camelCase(loots[i].getType().name()))
+								.lore("&7Shift-Right Click to Delete")
+								.build(),
 						e -> {
 							InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
 							if (event.isShiftClick() && event.isRightClick()) {
 								ConfirmationMenu.builder()
-										.onCancel(itemClickData -> MysteryChest.getInv(null).open(player, 0))
+										.onCancel(itemClickData -> MysteryChest.getInv(null, type).open(player, 0))
 										.onConfirm(itemClickData -> {
 											MysteryChest.getConfig().set(loots[j].getId() + "", null);
 											MysteryChest.saveConfig();
-											Tasks.wait(1, () -> MysteryChest.getInv(null).open(player, 0));
+											Tasks.wait(1, () -> MysteryChest.getInv(null, type).open(player, 0));
 										})
 										.open(player);
 							} else {
-								MysteryChest.getInv(loots[j].getId()).open(player);
+								MysteryChest.getInv(loots[j].getId(), null).open(player);
 							}
 						});
 			}
@@ -73,14 +84,14 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 
 			if (!page.isFirst())
 				contents.set(5, 0, ClickableItem.from(new ItemBuilder(Material.ARROW).name("<-- Back").build(),
-						e -> MysteryChest.getInv(null).open(player, page.previous().getPage())));
+						e -> MysteryChest.getInv(null, type).open(player, page.previous().getPage())));
 			if (!page.isLast())
 				contents.set(5, 8, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next -->").build(),
-						e -> MysteryChest.getInv(null).open(player, page.next().getPage())));
+						e -> MysteryChest.getInv(null, type).open(player, page.next().getPage())));
 		} else {
 			contents.set(0, 0, ClickableItem.from(backItem(), e -> {
 				save(player);
-				MysteryChest.getInv(null).open(player, 0);
+				MysteryChest.getInv(null, type).open(player, 0);
 			}));
 			RewardChestLoot loot = MysteryChest.getRewardChestLoot(id);
 			contents.set(0, 3, ClickableItem.from(new ItemBuilder(Material.PAPER).name("&eChange Title")
@@ -92,11 +103,11 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 							loot.setTitle(s);
 							MysteryChest.getConfig().set(id + "", loot);
 							MysteryChest.saveConfig();
-							Tasks.wait(1, () -> MysteryChest.getInv(id).open(player1));
+							Tasks.wait(1, () -> MysteryChest.getInv(id, type).open(player1));
 							return AnvilGUI.Response.close();
 						},
 						player1 -> {
-							Tasks.wait(1, () -> MysteryChest.getInv(id).open(player1));
+							Tasks.wait(1, () -> MysteryChest.getInv(id, type).open(player1));
 							AnvilGUI.Response.close();
 						});
 			}));
@@ -105,8 +116,18 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 				loot.setActive(!loot.isActive());
 				MysteryChest.getConfig().set(id + "", loot);
 				MysteryChest.saveConfig();
-				Tasks.wait(1, () -> MysteryChest.getInv(id).open(player));
+				Tasks.wait(1, () -> MysteryChest.getInv(id, type).open(player));
 			}));
+
+			contents.set(0, 6, ClickableItem.from(
+					new ItemBuilder(Material.BOOK).name("&eType").lore("&3" + StringUtils.camelCase(loot.getType().name())).build(),
+					e -> {
+						loot.setType(Utils.EnumUtils.nextWithLoop(RewardChestType.class, loot.getType().ordinal()));
+						MysteryChest.getConfig().set(id + "", loot);
+						MysteryChest.saveConfig();
+						Tasks.wait(1, () -> MysteryChest.getInv(id, type).open(player));
+					}
+			));
 
 			contents.set(0, 8, ClickableItem.from(new ItemBuilder(Material.END_CRYSTAL).name("&eSave").build(), e -> save(player)));
 
@@ -119,6 +140,7 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 			}
 
 		}
+
 	}
 
 	private void save(Player player) {
