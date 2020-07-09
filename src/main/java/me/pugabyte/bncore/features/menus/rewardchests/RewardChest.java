@@ -14,6 +14,8 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -70,8 +72,8 @@ public class RewardChest implements Listener {
 		event.getItem().setAmount(event.getItem().getAmount() - 1);
 	}
 
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
+	public void processEvent(PlayerEvent event) {
+		if (!WorldGroup.get(event.getPlayer()).equals(WorldGroup.SURVIVAL)) return;
 		MysteryChestService service = new MysteryChestService();
 		MysteryChestPlayer mysteryChestPlayer = service.get(event.getPlayer());
 		for (RewardChestType type : mysteryChestPlayer.getAmounts().keySet()) {
@@ -91,6 +93,16 @@ public class RewardChest implements Listener {
 				});
 			}
 		}
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		processEvent(event);
+	}
+
+	@EventHandler
+	public void onWorldSwitch(PlayerChangedWorldEvent event) {
+		processEvent(event);
 	}
 
 }
