@@ -150,6 +150,14 @@ public class MatchListener implements Listener {
 
 		event.setCancelled(true);
 	}
+	
+	@EventHandler
+	public void onItemDrop(PlayerDropItemEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying()) return;
+
+		event.setCancelled(true);
+	}
 
 	// TODO: Prevent damage of hanging entities/armor stands/etc
 	public void onDamage(EntityDamageByEntityEvent event) {
