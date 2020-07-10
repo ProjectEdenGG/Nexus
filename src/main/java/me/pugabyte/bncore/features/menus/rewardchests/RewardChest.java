@@ -88,24 +88,22 @@ public class RewardChest implements Listener {
 		Map<RewardChestType, Integer> amounts = mysteryChestPlayer.getAmounts();
 
 		for (RewardChestType type : amounts.keySet()) {
+			if (player.getInventory().firstEmpty() == -1) continue;
 			int amount = amounts.get(type);
 			if (amount > 0) {
 				ItemStack item = type.getItem().clone();
 				item.setAmount(amount);
-				if (player.isOnline()) {
+				if (player.isOnline() && player.getInventory().firstEmpty() != -1) {
 					amounts.remove(type);
 					mysteryChestPlayer.setAmounts(amounts);
 					service.delete(mysteryChestPlayer);
 					service.save(mysteryChestPlayer);
 
-					// this way wont work, will error if player logs out
-//					Tasks.wait(Time.SECOND.x(10), () -> {
 					Utils.giveItem(player, item);
 					player.sendMessage(StringUtils.colorize("&3You have been given &e" +
 							amount + " " + StringUtils.camelCase(type.name()) +
 							" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest"));
 					SoundUtils.Jingle.PING.play(player);
-//					});
 				}
 			}
 		}

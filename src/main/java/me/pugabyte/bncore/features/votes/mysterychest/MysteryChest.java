@@ -46,7 +46,7 @@ public class MysteryChest {
 	}
 
 	public int give(int amount, RewardChestType type) {
-		if (player.isOnline() && WorldGroup.get(player.getPlayer()).equals(WorldGroup.SURVIVAL)) {
+		if (player.isOnline() && WorldGroup.get(player.getPlayer()).equals(WorldGroup.SURVIVAL) && player.getPlayer().getInventory().firstEmpty() != -1) {
 			Player onlinePlayer = player.getPlayer();
 			ItemStack item = type.getItem().clone();
 			item.setAmount(amount);
