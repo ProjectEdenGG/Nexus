@@ -55,6 +55,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
@@ -388,6 +389,9 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
 
+		// TODO When Done - Remove this when done
+		if (!player.hasPermission("group.admin")) return;
+
 		if (!loc.getWorld().getName().toLowerCase().contains("bearfair")) return;
 		if (Utils.isNullOrAir(event.getClickedBlock())) return;
 		if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
@@ -400,7 +404,38 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		if (Strings.isNullOrEmpty(title)) return;
 
 		String price = stripColor(sign.getLine(1));
-		player.sendMessage("(TODO) Buying " + title + " for " + price);
+		int pricePoints = Integer.parseInt(price.replaceAll(" BFP", ""));
+
+		BearFairUser user = service.get(player);
+		AtomicInteger userPoints = new AtomicInteger(user.getTotalPoints());
+
+		MenuUtils.ConfirmationMenu.builder()
+				.onConfirm(e -> Tasks.async(() -> {
+					if (userPoints.get() >= pricePoints) {
+						userPoints.addAndGet(-pricePoints);
+						// TODO When Done - Uncomment this
+//						user.setTotalPoints(userPoints.get());
+//						service.save(user);
+
+						Tasks.sync(() -> {
+							runCommandAsOp(player, "bearfair store maps get " + title);
+							send(player, PREFIX + "&3You bought &e" + title + " &3for &e" + price
+									+ ", &3You now have &e" + userPoints.get() + " BFP");
+							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+						});
+					} else {
+						send(player, PREFIX + "&cYou do not have enough points for this");
+						player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+					}
+				}))
+				.title("&4&lAre you sure?")
+				.confirmText("&aBuy")
+				.confirmLore("&3Painting: &e" + title
+						+ "||&3Price: &e" + price
+						+ "||&f ||"
+						+ "&3You have &e" + userPoints.get() + " BFP")
+				.cancelText("&cCancel")
+				.open(player);
 	}
 
 	@Path("store maps reload")
