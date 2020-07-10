@@ -36,10 +36,11 @@ import java.util.List;
 
 // TODO:
 //  - Scoreboards
+//	- block pasted needs to copy blockdata (directional / slab side)
 
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
-	private final int MAX_ROUNDS = 5;
+	private final int MAX_ROUNDS = 10;
 	private final int TIME_BETWEEN_ROUNDS = Time.SECOND.x(8);
 	private final int ROUND_COUNTDOWN = Time.SECOND.x(45);
 
