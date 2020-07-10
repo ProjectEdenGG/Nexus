@@ -115,7 +115,7 @@
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>itemnbtapi-repo</id>
+            <id>codemc-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
         <repository>

@@ -8,8 +8,15 @@ import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.recipes.CustomRecipes;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.*;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.hours.HoursService;
@@ -20,10 +27,21 @@ import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
-import me.pugabyte.bncore.utils.StringUtils.*;
-import org.bukkit.*;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -36,11 +54,17 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
-import static me.pugabyte.bncore.utils.StringUtils.*;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
+import static me.pugabyte.bncore.utils.StringUtils.paste;
 import static me.pugabyte.bncore.utils.Utils.getDirection;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
@@ -63,13 +87,13 @@ public class BNCoreCommand extends CustomCommand {
 			error("BNCore.jar is not complete, cannot reload");
 		}
 
-		long count = MatchManager.getAll().stream().filter(match -> match.isStarted() && !match.isEnded()).count();
-		if (count > 0)
-			error("There are active matches, cannot reload");
+		long matchCount = MatchManager.getAll().stream().filter(match -> match.isStarted() && !match.isEnded()).count();
+		if (matchCount > 0)
+			error("There are " + matchCount + " active matches, cannot reload");
 
-		for (Player player : Bukkit.getOnlinePlayers())
-			if (SmartInvsPlugin.manager().getInventory(player).isPresent())
-				error("A player is in a SmartInvs menu, cannot reload");
+		long invCount = Bukkit.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
+		if (invCount > 0)
+			error("There are " + invCount + " SmartInvs menus open, cannot reload");
 
 		runCommand("plugman reload BNCore");
 	}
