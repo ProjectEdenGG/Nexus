@@ -22,19 +22,19 @@ import java.util.Map;
 public enum ParticleSetting {
 	COLOR(2, 2, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS, ParticleType.NYAN_CAT, ParticleType.BANDS, ParticleType.WINGS)) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return Color.RED;
 		}
 	},
 	RAINBOW(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS, ParticleType.NYAN_CAT, ParticleType.BANDS, ParticleType.WINGS)) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return true;
 		}
 	},
 	RADIUS(2, 4, Material.HOPPER, Double.class, ParticleType.valuesExcept(ParticleType.BANDS, ParticleType.NYAN_CAT, ParticleType.CIRCLES, ParticleType.DOUBLE_CHAOS, ParticleType.SPIRAL, ParticleType.WINGS)) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			switch (particleType) {
 				case CIRCLE:
 				case STAR:
@@ -78,7 +78,7 @@ public enum ParticleSetting {
 
 	SPIRAL_RADIUS(2, 4, Material.HOPPER, Double.class, ParticleType.SPIRAL) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return .15;
 		}
 
@@ -96,13 +96,13 @@ public enum ParticleSetting {
 
 	WHOLE(2, 5, Material.SNOWBALL, Boolean.class, ParticleType.CIRCLE, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return true;
 		}
 	},
 	ROTATE_SPEED(2, 6, Material.SUGAR, Double.class, ParticleType.STAR, ParticleType.GROWING_STARS, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			switch (particleType) {
 				case STAR:
 				case GROWING_STARS:
@@ -130,7 +130,7 @@ public enum ParticleSetting {
 
 	STAR_GROWTH_SPEED(2, 5, Material.BONE_MEAL, Double.class, ParticleType.STAR, ParticleType.GROWING_STARS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return .1;
 		}
 
@@ -142,26 +142,26 @@ public enum ParticleSetting {
 
 	STORM_RAIN_PARTICLE(2, 5, Material.PAPER, StormEffect.RainPartile.class, ParticleType.STORM) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return StormEffect.RainPartile.RAIN;
 		}
 	},
 
 	DOUBLE_CHAOS_COLOR_ONE(2, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DOUBLE_CHAOS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return Color.RED;
 		}
 	},
 	DOUBLE_CHAOS_RAINBOW_ONE(3, 1, Material.MAGMA_CREAM, Boolean.class, ParticleType.DOUBLE_CHAOS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return true;
 		}
 	},
 	DOUBLE_CHAOS_RADIUS_ONE(2, 4, Material.HOPPER, Double.class, ParticleType.DOUBLE_CHAOS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return 1.5;
 		}
 
@@ -172,19 +172,19 @@ public enum ParticleSetting {
 	},
 	DOUBLE_CHAOS_COLOR_TWO(2, 2, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DOUBLE_CHAOS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return Color.RED;
 		}
 	},
 	DOUBLE_CHAOS_RAINBOW_TWO(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.DOUBLE_CHAOS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return true;
 		}
 	},
 	DOUBLE_CHAOS_RADIUS_TWO(2, 5, Material.HOPPER, Double.class, ParticleType.DOUBLE_CHAOS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return 1.5;
 		}
 
@@ -196,43 +196,43 @@ public enum ParticleSetting {
 
 	DISCO_SPHERE_COLOR(2, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DISCO) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return Color.WHITE;
 		}
 	},
 	DISCO_SPHERE_RAINBOW(3, 1, Material.MAGMA_CREAM, Boolean.class, ParticleType.DISCO) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return false;
 		}
 	},
 	DISCO_LINE_COLOR(2, 2, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.DISCO) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return Color.RED;
 		}
 	},
 	DISCO_LINE_RAINBOW(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.DISCO) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return true;
 		}
 	},
 	DISCO_DIRECTION(2, 5, Material.MAGENTA_GLAZED_TERRACOTTA, DiscoEffect.Direction.class, ParticleType.DISCO) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return DiscoEffect.Direction.BOTH;
 		}
 	},
 	DISCO_RAINBOW_OPTION(2, 6, Material.GLISTERING_MELON_SLICE, DiscoEffect.RainbowOption.class, ParticleType.DISCO) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return DiscoEffect.RainbowOption.SLOW;
 		}
 	},
 	DISCO_LINE_LENGTH(2, 7, Material.REPEATER, Integer.class, ParticleType.DISCO) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return 5;
 		}
 
@@ -253,19 +253,23 @@ public enum ParticleSetting {
 		}
 
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
+			for (int i = 1; i <= 16; i++)
+				if (particleOwner.getOfflinePlayer().isOnline())
+					if (particleOwner.getPlayer().hasPermission("wings.style." + i))
+						return WingsEffect.WingStyle.values()[i - 1];
 			return WingsEffect.WingStyle.ONE;
 		}
 	},
 	WINGS_FLAP_MODE(2, 4, Material.FEATHER, Boolean.class, ParticleType.WINGS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return true;
 		}
 	},
 	WINGS_FLAP_SPEED(2, 5, Material.SUGAR, Integer.class, ParticleType.WINGS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return 1;
 		}
 
@@ -281,37 +285,37 @@ public enum ParticleSetting {
 	},
 	WINGS_COLOR_ONE(1, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.WINGS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return Color.RED;
 		}
 	},
 	WINGS_COLOR_TWO(2, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.WINGS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return Color.GREEN;
 		}
 	},
 	WINGS_COLOR_THREE(3, 1, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.WINGS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return Color.BLUE;
 		}
 	},
 	WINGS_RAINBOW_ONE(1, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.WINGS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return true;
 		}
 	},
 	WINGS_RAINBOW_TWO(2, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.WINGS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return true;
 		}
 	},
 	WINGS_RAINBOW_THREE(3, 2, Material.MAGMA_CREAM, Boolean.class, ParticleType.WINGS) {
 		@Override
-		Object getDefault(ParticleType particleType) {
+		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			return true;
 		}
 	};
@@ -412,9 +416,9 @@ public enum ParticleSetting {
 		if (settings != null && settings.containsKey(this)) {
 			return (T) settings.get(this);
 		}
-		return (T) getDefault(particleType);
+		return (T) getDefault(particleOwner, particleType);
 	}
 
-	abstract Object getDefault(ParticleType particleType);
+	abstract Object getDefault(ParticleOwner particleOwner, ParticleType particleType);
 
 }
