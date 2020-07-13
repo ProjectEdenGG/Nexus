@@ -12,17 +12,8 @@ import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException
 import me.pugabyte.bncore.features.minigames.models.matchdata.DeathSwapMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.DeathSwapMatchData.Swap;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.bncore.utils.ActionBarUtils;
-import me.pugabyte.bncore.utils.RandomUtils;
-import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.WorldBorder;
+import me.pugabyte.bncore.utils.*;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -65,7 +56,7 @@ public final class DeathSwap extends TeamlessMechanic {
 		return true;
 	}
 
-	public int radius = 1000;
+	public int radius = 2000;
 	public String world = "deathswap";
 
 	@Override
@@ -80,11 +71,13 @@ public final class DeathSwap extends TeamlessMechanic {
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 
+		getWorld().setTime(0);
+
 		setWorldBorder(getWorld().getHighestBlockAt(RandomUtils.randomInt(-5000, 5000), RandomUtils.randomInt(-5000, 5000)).getLocation());
 
 		event.getMatch().getTasks().wait(1, () -> spreadPlayers(event.getMatch()));
 
-		event.getMatch().getTasks().wait(Time.SECOND.x(30), () -> delay(event.getMatch()));
+		event.getMatch().getTasks().wait(Time.MINUTE.x(4), () -> delay(event.getMatch()));
 	}
 
 	@Override
@@ -201,7 +194,13 @@ public final class DeathSwap extends TeamlessMechanic {
 			match.end();
 			return;
 		}
-		match.getTasks().wait(Time.SECOND.x(RandomUtils.randomInt(30, 120)), () -> swap(match));
+
+		match.getTasks().countdown(Tasks.Countdown.builder()
+				.duration(Time.SECOND.x(RandomUtils.randomInt(60, 120)))
+				.onSecond(i -> {
+					if (i < 4)
+						match.broadcast("Swapping in " + i + "...");
+				}).onComplete(() -> swap(match)));
 	}
 
 	@EventHandler
