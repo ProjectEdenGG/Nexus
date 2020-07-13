@@ -13,12 +13,15 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.reflections.Reflections;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.EnumSet;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -26,25 +29,19 @@ public enum Bot {
 
 	KODA {
 		@Override
-		@SneakyThrows
-		JDA build() {
+		JDABuilder build() {
 			return JDABuilder.createDefault(getToken())
 					.addEventListeners(new DiscordListener())
-					.addEventListeners(getCommands().build())
-					.build()
-					.awaitReady();
+					.addEventListeners(getCommands().build());
 		}
 	},
 
 	RELAY {
 		@Override
-		@SneakyThrows
-		JDA build() {
+		JDABuilder build() {
 			return JDABuilder.createDefault(getToken())
 					.addEventListeners(new DiscordBridgeListener())
-					.addEventListeners(getCommands().setStatus(OnlineStatus.INVISIBLE).build())
-					.build()
-					.awaitReady();
+					.addEventListeners(getCommands().setStatus(OnlineStatus.INVISIBLE).build());
 		}
 	};
 
@@ -52,11 +49,17 @@ public enum Bot {
 	@Accessors(fluent = true)
 	private JDA jda;
 
-	abstract JDA build();
+	abstract JDABuilder build();
 
+	@SneakyThrows
 	void connect() {
 		if (this.jda == null && !isNullOrEmpty(getToken())) {
-			final JDA jda = build();
+			final JDA jda = build()
+					.enableIntents(EnumSet.allOf(GatewayIntent.class))
+					.setMemberCachePolicy(MemberCachePolicy.ALL)
+					.build()
+					.awaitReady();
+
 			if (jda == null) {
 				BNCore.log("Could not connect " + name() + " to Discord");
 				return;
