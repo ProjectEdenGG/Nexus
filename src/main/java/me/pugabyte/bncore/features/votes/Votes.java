@@ -96,7 +96,7 @@ public class Votes implements Listener {
 		if (!new CooldownService().check(UUID.fromString(vote.getUuid()), "vote-reminder", Time.MINUTE.x(10)))
 			return;
 
-		User user = Bot.KODA.jda().getUserById(discordUser.getUserId());
+		User user = Bot.KODA.jda().retrieveUserById(discordUser.getUserId()).complete();
 		if (user != null && user.getMutualGuilds().size() > 0) {
 			BNCore.log("[Votes] Sending vote reminder to " + Utils.getPlayer(vote.getUuid()).getName());
 			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(voteLinksEmbed);

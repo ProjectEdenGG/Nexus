@@ -126,7 +126,7 @@ public class DiscordListener extends ListenerAdapter {
 			if (result == CaptchaResult.UNCONFIRMED) {
 				captcha.confirm(id);
 
-				Member member = Discord.getGuild().getMemberById(id);
+				Member member = Discord.getGuild().retrieveMemberById(id).complete();
 				PrivateChannel complete = event.getUser().openPrivateChannel().complete();
 
 				if (member == null) {

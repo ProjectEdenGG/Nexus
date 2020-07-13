@@ -43,7 +43,7 @@ public class DiscordUser {
 	}
 
 	public String getDiscrim() {
-		return Bot.RELAY.jda().getUserById(userId).getDiscriminator();
+		return Bot.RELAY.jda().retrieveUserById(userId).complete().getDiscriminator();
 	}
 
 }

@@ -46,7 +46,7 @@ public class DiscordCaptcha extends PlayerOwnedObject {
 	public void require(String id) {
 		unconfirmed.put(id, LocalDateTime.now());
 
-		User user = Bot.KODA.jda().getUserById(id);
+		User user = Bot.KODA.jda().retrieveUserById(id).complete();
 		if (user == null) {
 			BNCore.warn("[Captcha] Cannot send verification message to null user");
 		} else {
@@ -66,7 +66,7 @@ public class DiscordCaptcha extends PlayerOwnedObject {
 		confirmed.put(id, LocalDateTime.now());
 		Discord.addRole(id, Role.NERD);
 
-		User user = Bot.KODA.jda().getUserById(id);
+		User user = Bot.KODA.jda().retrieveUserById(id).complete();
 		String name = id;
 		if (user != null)
 			name = user.getName();
@@ -101,7 +101,7 @@ public class DiscordCaptcha extends PlayerOwnedObject {
 					DiscordCaptcha verification = new DiscordCaptchaService().get();
 					CaptchaResult result = verification.check(id);
 					if (result != CaptchaResult.CONFIRMED) {
-						Member member = Discord.getGuild().getMemberById(id);
+						Member member = Discord.getGuild().retrieveMemberById(id).complete();
 
 						if (member != null) {
 							Discord.staffLog("**[Captcha]** " + name + " - Kicking");

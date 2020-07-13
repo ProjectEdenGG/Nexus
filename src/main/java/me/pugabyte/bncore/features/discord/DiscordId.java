@@ -67,7 +67,7 @@ public class DiscordId {
 		}
 
 		public net.dv8tion.jda.api.entities.Member getMember() {
-			return Discord.getGuild().getMemberById(id);
+			return Discord.getGuild().retrieveMemberById(id).complete();
 		}
 	}
 

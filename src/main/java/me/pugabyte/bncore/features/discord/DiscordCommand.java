@@ -16,9 +16,12 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.socialmedia.SocialMediaUser.BNSocialMediaSite;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+
+import java.util.stream.Collectors;
 
 public class DiscordCommand extends CustomCommand {
 	DiscordService service = new DiscordService();
@@ -41,7 +44,7 @@ public class DiscordCommand extends CustomCommand {
 		Tasks.async(() -> {
 			Role verified = Discord.getGuild().getRoleById(DiscordId.Role.VERIFIED.getId());
 			new DiscordService().getAll().stream().filter(discordUser -> !isNullOrEmpty(discordUser.getUserId())).forEach(discordUser -> {
-				Member member = Discord.getGuild().getMemberById(discordUser.getUserId());
+				Member member = Discord.getGuild().retrieveMemberById(discordUser.getUserId()).complete();
 				if (member == null) return;
 				if (!member.getRoles().contains(verified))
 					Discord.addRole(discordUser.getUserId(), DiscordId.Role.VERIFIED);
@@ -53,7 +56,7 @@ public class DiscordCommand extends CustomCommand {
 	void link(String code) {
 		if (isNullOrEmpty(code)) {
 			if (!isNullOrEmpty(user.getUserId())) {
-				User userById = Bot.KODA.jda().getUserById(user.getUserId());
+				User userById = Bot.KODA.jda().retrieveUserById(user.getUserId()).complete();
 				if (userById == null)
 					send(PREFIX + "Your minecraft account is linked to a Discord account, but I could not find that account. " +
 							"Are you in our discord server? &e" + BNSocialMediaSite.DISCORD.getUrl());
@@ -76,7 +79,7 @@ public class DiscordCommand extends CustomCommand {
 
 				String name = newUser.getName();
 				String discrim = newUser.getDiscrim();
-				Bot.KODA.jda().getUserById(newUser.getUserId()).openPrivateChannel().complete().sendMessage("You have successfully linked your Discord account with the Minecraft account **" + player().getName() + "**").queue();
+				Bot.KODA.jda().retrieveUserById(newUser.getUserId()).complete().openPrivateChannel().complete().sendMessage("You have successfully linked your Discord account with the Minecraft account **" + player().getName() + "**").queue();
 				send(PREFIX + "You have successfully linked your Minecraft account with the Discord account &e" + name + "#" + discrim);
 				Discord.addRole(newUser.getUserId(), DiscordId.Role.VERIFIED);
 				user.setUserId(newUser.getUserId());
@@ -93,7 +96,7 @@ public class DiscordCommand extends CustomCommand {
 		if (isNullOrEmpty(user.getUserId()))
 			error("This account is not linked to any Discord account");
 
-		User userById = Bot.KODA.jda().getUserById(user.getUserId());
+		User userById = Bot.KODA.jda().retrieveUserById(user.getUserId()).complete();
 		String name = user.getName();
 		String discrim = user.getDiscrim();
 
@@ -123,26 +126,39 @@ public class DiscordCommand extends CustomCommand {
 		send(PREFIX + "Lockdown " + (setting.getBoolean() ? "enabled, new members will be automatically kicked" : "disabled"));
 	}
 
-	@Path("dms send")
+	@Async
+	@Path("jda dms send <id> <message...>")
 	@Permission("group.admin")
-	void dmsSend() {
-		DiscordId.User.POOGATEST.get().openPrivateChannel().complete().sendMessage("Test").queue();
+	void jda_dms_send(String id, String message) {
+		Bot.KODA.jda().retrieveUserById(id).complete().openPrivateChannel().complete().sendMessage(message).queue();
 	}
 
 	@Async
-	@Path("dms view")
+	@Path("jda dms view <id>")
 	@Permission("group.admin")
-	void dmsView() {
-		DiscordId.User.POOGATEST.get().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
+	void jda_dms_view(String id) {
+		Bot.KODA.jda().retrieveUserById(id).complete().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
 				send(message.getContentRaw()));
 	}
 
 	@Async
-	@Path("dms delete")
+	@Path("jda dms delete <id>")
 	@Permission("group.admin")
-	void dmsDelete() {
-		DiscordId.User.POOGATEST.get().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
+	void jda_dms_delete(String id) {
+		Bot.KODA.jda().retrieveUserById(id).complete().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
 				message.delete().queue());
+	}
+
+	@Async
+	@Path("jda getUser <id>")
+	@Permission("group.admin")
+	void jda_getUser(String id) {
+		User user = Bot.KODA.jda().retrieveUserById(id).complete();
+		if (user == null)
+			error("User is null");
+		send(user.getName() + "#" + user.getDiscriminator());
+		send("Mutual guilds: " + user.getMutualGuilds().stream().map(Guild::getName).collect(Collectors.joining(", ")));
+		send("Has Private Channel: " + user.hasPrivateChannel());
 	}
 
 	static {
@@ -161,8 +177,8 @@ public class DiscordCommand extends CustomCommand {
 		DiscordCaptchaService captchaService = new DiscordCaptchaService();
 		DiscordCaptcha captcha = captchaService.get();
 
-		User user = Bot.KODA.jda().getUserById(id);
-		Member member = Discord.getGuild().getMemberById(id);
+		User user = Bot.KODA.jda().retrieveUserById(id).complete();
+		Member member = Discord.getGuild().retrieveMemberById(id).complete();
 
 		if (user == null)
 			send(PREFIX + "&cWarning: &3User is null");

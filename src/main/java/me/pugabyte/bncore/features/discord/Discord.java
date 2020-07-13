@@ -61,7 +61,7 @@ public class Discord {
 	}
 
 	public static String getName(String id) {
-		String name = getName(Discord.getGuild().getMemberById(id));
+		String name = getName(Discord.getGuild().retrieveMemberById(id).complete());
 		if (name == null) name = id;
 		return name;
 	}
