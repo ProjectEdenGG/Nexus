@@ -177,6 +177,108 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		send("");
 	}
 
+	// Point Commands
+
+	@Path("points [player]")
+	public void points(@Arg("self") BearFairUser user) {
+		if (player().equals(user.getOfflinePlayer()))
+			send(PREFIX + "&3Total: &e" + user.getTotalPoints());
+		else
+			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Total: &e" + user.getTotalPoints());
+	}
+
+	@Path("points daily [player]")
+	public void pointsDaily(@Arg("self") BearFairUser user) {
+		if (player().equals(user.getOfflinePlayer()))
+			send(PREFIX + "&3Daily Points:");
+		else
+			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Daily Points:");
+
+		for (BFPointSource pointSource : BFPointSource.values()) {
+			Map<LocalDate, Integer> dailyMap = user.getPointsReceivedToday().get(pointSource);
+			int points = 0;
+			if (dailyMap != null)
+				points = dailyMap.getOrDefault(LocalDate.now(), 0);
+
+			int dailyMax = BearFairUser.DAILY_SOURCE_MAX;
+			String sourceColor = points == dailyMax ? "&a" : "&3";
+			String sourceName = StringUtils.camelCase(pointSource.name());
+			send(" " + sourceColor + sourceName + " &7- &e" + points + "&3/&e" + dailyMax);
+		}
+	}
+
+	@Path("points pay <player> <points>")
+	public void pointsPay(BearFairUser toUser, int points) {
+		BearFairUser fromUser = service.get(player());
+		if (toUser.getOfflinePlayer().equals(fromUser.getOfflinePlayer()))
+			error("You cannot pay yourself");
+
+		fromUser.takePoints(points);
+		toUser.givePoints(points);
+
+		fromUser.send(PREFIX + "&e" + points + " BFP &3has been sent to &e" + toUser.getOfflinePlayer().getName());
+		if (toUser.getOfflinePlayer().isOnline())
+			toUser.send(PREFIX + "&e" + points + " BFP &3has been received from &e" + fromUser.getOfflinePlayer().getName());
+
+		service.save(fromUser);
+		service.save(toUser);
+	}
+
+	@Path("points give <player> <points>")
+	@Permission("group.admin")
+	public void pointsGive(BearFairUser user, int points) {
+		user.givePoints(points);
+		service.save(user);
+		send(PREFIX + "&e" + points + plural(" point", points) + " &3given to &e" + user.getOfflinePlayer().getName());
+	}
+
+	@Path("points take <player> <points>")
+	@Permission("group.admin")
+	public void pointsTake(BearFairUser user, int points) {
+		user.takePoints(points);
+		service.save(user);
+		send(PREFIX + "&e" + points + plural(" point", points) + " &3taken from &e" + user.getOfflinePlayer().getName());
+	}
+
+	@Path("points set <player> <points>")
+	@Permission("group.admin")
+	public void pointsSet(BearFairUser user, int points) {
+		user.setTotalPoints(points);
+		service.save(user);
+		send(PREFIX + "&3set &e" + user.getOfflinePlayer().getName() + "&3 to &e" + points + plural(" point", points));
+	}
+
+	@Path("points reset <player>")
+	@Permission("group.admin")
+	public void pointsReset(BearFairUser user) {
+		user.setTotalPoints(0);
+		user.getPointsReceivedToday().clear();
+		service.save(user);
+	}
+
+	@Path("points top [page]")
+	public void pointsTop(@Arg("1") int page) {
+		List<BearFairUser> results = service.getTopPoints(page);
+		if (results.size() == 0)
+			error("&cNo results on page " + page);
+
+		send("");
+		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
+		int i = (page - 1) * 10 + 1;
+		for (BearFairUser user : results)
+			send("&3" + i++ + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTotalPoints());
+	}
+
+	@ConverterFor(BearFairUser.class)
+	BearFairUser convertToBearFairUser(String value) {
+		return service.get(convertToOfflinePlayer(value));
+	}
+
+	@TabCompleterFor(BearFairUser.class)
+	List<String> tabCompleteBearFairUser(String value) {
+		return tabCompletePlayer(value);
+	}
+
 	// Admin Commands
 
 	@Path("quests info")
@@ -269,93 +371,6 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 				}))
 				.open(player());
 	}
-
-
-	// Point Commands
-
-	@Path("points [player]")
-	public void points(@Arg("self") BearFairUser user) {
-		if (player().equals(user.getOfflinePlayer()))
-			send(PREFIX + "&3Total: &e" + user.getTotalPoints());
-		else
-			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Total: &e" + user.getTotalPoints());
-	}
-
-	@Path("points daily [player]")
-	public void pointsDaily(@Arg("self") BearFairUser user) {
-		if (player().equals(user.getOfflinePlayer()))
-			send(PREFIX + "&3Daily Points:");
-		else
-			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Daily Points:");
-
-		for (BFPointSource pointSource : BFPointSource.values()) {
-			Map<LocalDate, Integer> dailyMap = user.getPointsReceivedToday().get(pointSource);
-			int points = 0;
-			if (dailyMap != null)
-				points = dailyMap.getOrDefault(LocalDate.now(), 0);
-
-			int dailyMax = BearFairUser.DAILY_SOURCE_MAX;
-			String sourceColor = points == dailyMax ? "&a" : "&3";
-			String sourceName = StringUtils.camelCase(pointSource.name());
-			send(" " + sourceColor + sourceName + " &7- &e" + points + "&3/&e" + dailyMax);
-		}
-	}
-
-	@Path("points give <player> <points>")
-	@Permission("group.admin")
-	public void pointsGive(BearFairUser user, int points) {
-		user.givePoints(points);
-		service.save(user);
-		send(PREFIX + "&e" + points + plural(" point", points) + " &3given to &e" + user.getOfflinePlayer().getName());
-	}
-
-	@Path("points take <player> <points>")
-	@Permission("group.admin")
-	public void pointsTake(BearFairUser user, int points) {
-		user.takePoints(points);
-		service.save(user);
-		send(PREFIX + "&e" + points + plural(" point", points) + " &3taken from &e" + user.getOfflinePlayer().getName());
-	}
-
-	@Path("points set <player> <points>")
-	@Permission("group.admin")
-	public void pointsSet(BearFairUser user, int points) {
-		user.setTotalPoints(points);
-		service.save(user);
-		send(PREFIX + "&3set &e" + user.getOfflinePlayer().getName() + "&3 to &e" + points + plural(" point", points));
-	}
-
-	@Path("points reset <player>")
-	@Permission("group.admin")
-	public void pointsReset(BearFairUser user) {
-		user.setTotalPoints(0);
-		user.getPointsReceivedToday().clear();
-		service.save(user);
-	}
-
-	@Path("points top [page]")
-	public void pointsTop(@Arg("1") int page) {
-		List<BearFairUser> results = service.getTopPoints(page);
-		if (results.size() == 0)
-			error("&cNo results on page " + page);
-
-		send("");
-		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
-		int i = (page - 1) * 10 + 1;
-		for (BearFairUser user : results)
-			send("&3" + i++ + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTotalPoints());
-	}
-
-	@ConverterFor(BearFairUser.class)
-	BearFairUser convertToBearFairUser(String value) {
-		return service.get(convertToOfflinePlayer(value));
-	}
-
-	@TabCompleterFor(BearFairUser.class)
-	List<String> tabCompleteBearFairUser(String value) {
-		return tabCompletePlayer(value);
-	}
-
 
 	// Command Blocks
 	@Path("smite")

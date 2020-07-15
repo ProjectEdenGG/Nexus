@@ -36,7 +36,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 		contents.set(1, 0, ClickableItem.empty(nameItem(Material.MAP, "&3Shapes")));
 		contents.set(3, 0, ClickableItem.empty(nameItem(Material.MAP, "&3Presets")));
 
-		if (player.hasPermission("particle.shapes")) {
+		if (player.hasPermission("particles.shapes")) {
 			int i = 1;
 			for (ParticleType type : ParticleType.getShapes()) {
 				ItemStack item = new ItemBuilder(type.getItemStack().clone()).name("&3" + type.getDisplayName())
@@ -57,21 +57,25 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 			}
 		}
 
-		int row = (player.hasPermission("particle.shapes")) ? 3 : 1;
+		int row = (player.hasPermission("particles.shapes")) ? 3 : 1;
 		int column = 1;
+
 		for (ParticleType type : ParticleType.getPresets()) {
-			if (type == ParticleType.WINGS) {
-				if (!player.hasPermission("wings.use")) {
+			if (type == ParticleType.WINGS)
+				if (!player.hasPermission("wings.use"))
 					continue;
-				}
-			} else if (!player.hasPermission("particles." + type.getCommandName())) continue;
+				else if (!player.hasPermission("particles." + type.getCommandName()))
+					continue;
+
 			ItemStack item = new ItemBuilder(type.getItemStack().clone()).name("&3" + type.getDisplayName())
 					.lore("&eLeft Click to toggle||&7&oRight click to edit settings").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
 			AtomicBoolean active = new AtomicBoolean(false);
+
 			if (owner.getTasks(type).size() > 0) {
 				active.set(true);
 				addGlowing(item);
 			}
+
 			contents.set(row, column, ClickableItem.from(item,
 					e -> {
 						if (((InventoryClickEvent) e.getEvent()).isLeftClick()) {
@@ -80,6 +84,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 							ParticleMenu.openMain(player);
 						} else ParticleMenu.openSettingEditor(player, type);
 					}));
+
 			if (column != 7)
 				column++;
 			else {

@@ -17,7 +17,7 @@ public class ParticleMenu {
 	}
 
 	public static int getSize(Player player) {
-		if (player.hasPermission("particle.shapes"))
+		if (player.hasPermission("particles.shapes"))
 			return 6;
 		return 3;
 	}
