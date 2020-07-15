@@ -12,11 +12,15 @@ import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
 import me.pugabyte.bncore.models.particle.ParticleSetting;
 import me.pugabyte.bncore.models.particle.ParticleType;
+import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import org.bukkit.Color;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+
+import java.util.Map;
 
 @NoArgsConstructor
 @Permission("wings.use")
@@ -40,15 +44,41 @@ public class WingsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("preview <effect>")
-	void effect(WingsEffect.WingStyle style) {
-		if (!player().hasPermission("wings.style." + (style.ordinal() + 1)))
+	void effect(WingsEffect.WingStyle wingStyle) {
+		if (!player().hasPermission("wings.style." + (wingStyle.ordinal() + 1)))
 			error("You do not have permission to use that wing style");
 		ParticleOwner owner = service.get(player());
 		owner.cancelTasks(ParticleType.WINGS);
-		owner.getSettings(ParticleType.WINGS).put(ParticleSetting.WINGS_STYLE, style);
-		service.save(owner);
+
+		Map<ParticleSetting, Object> wingSettings = owner.getSettings(ParticleType.WINGS);
+		WingsEffect.WingStyle cur_Style = (WingsEffect.WingStyle) wingSettings.get(ParticleSetting.WINGS_STYLE);
+		Color cur_Color1 = (Color) wingSettings.get(ParticleSetting.WINGS_COLOR_ONE);
+		Color cur_Color2 = (Color) wingSettings.get(ParticleSetting.WINGS_COLOR_TWO);
+		Color cur_Color3 = (Color) wingSettings.get(ParticleSetting.WINGS_COLOR_THREE);
+		Boolean cur_Rainbow1 = (Boolean) wingSettings.get(ParticleSetting.WINGS_RAINBOW_ONE);
+		Boolean cur_Rainbow2 = (Boolean) wingSettings.get(ParticleSetting.WINGS_RAINBOW_TWO);
+		Boolean cur_Rainbow3 = (Boolean) wingSettings.get(ParticleSetting.WINGS_RAINBOW_THREE);
+
+		// Default Preview Settings
+		wingSettings.put(ParticleSetting.WINGS_STYLE, wingStyle);
+		wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, Color.YELLOW);
+		wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, Color.BLACK);
+		wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, ColorType.CYAN.getColor());
+		wingSettings.put(ParticleSetting.WINGS_RAINBOW_ONE, false);
+		wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, false);
+		wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, false);
+
 		Tasks.wait(5, () -> ParticleType.WINGS.run(player()));
-		Tasks.wait(Time.SECOND.x(15), () -> owner.cancelTasks(ParticleType.WINGS));
+		Tasks.wait(Time.SECOND.x(15), () -> {
+			owner.cancelTasks(ParticleType.WINGS);
+			wingSettings.put(ParticleSetting.WINGS_STYLE, cur_Style);
+			wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, cur_Color1);
+			wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, cur_Color2);
+			wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, cur_Color3);
+			wingSettings.put(ParticleSetting.WINGS_RAINBOW_ONE, cur_Rainbow1);
+			wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, cur_Rainbow2);
+			wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, cur_Rainbow3);
+		});
 	}
 
 	@EventHandler

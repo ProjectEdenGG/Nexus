@@ -94,6 +94,13 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR));
 	}
 
+	@Path("store")
+	void warpToStore() {
+		// TODO - BearFairStore: Remove perm check
+		if (player().hasPermission("group.admin"))
+			teleport(new WarpService().get("store", WarpType.BEAR_FAIR));
+	}
+
 	@Path("quests giveAllQuestItem")
 	void giveQuestItems() {
 		// MAIN
@@ -389,7 +396,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
 
-		// TODO When Done - Remove this when done
+		// TODO - BearFairStore: Remove this when done
 		if (!player.hasPermission("group.admin")) return;
 
 		if (!loc.getWorld().getName().toLowerCase().contains("bearfair")) return;
@@ -413,7 +420,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 				.onConfirm(e -> Tasks.async(() -> {
 					if (userPoints.get() >= pricePoints) {
 						userPoints.addAndGet(-pricePoints);
-						// TODO When Done - Uncomment this
+						// TODO - BearFairStore: Uncomment this
 //						user.setTotalPoints(userPoints.get());
 //						service.save(user);
 
