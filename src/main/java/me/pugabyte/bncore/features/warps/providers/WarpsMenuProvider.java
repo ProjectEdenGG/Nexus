@@ -34,7 +34,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		switch (menu) {
 			case MAIN:
-				contents.set(0, 0, ClickableItem.from(closeItem(), e -> contents.inventory().close(player)));
+				addCloseItem(contents);
 				break;
 			case SURVIVAL:
 			case LEGACY:
