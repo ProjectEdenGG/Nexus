@@ -10,10 +10,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.features.delivery.DeliverWorldMenu;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
+import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -37,6 +39,14 @@ public class Delivery extends PlayerOwnedObject {
 	private List<ItemStack> survivalItems = new ArrayList<>();
 	@Embedded
 	private List<ItemStack> skyblockItems = new ArrayList<>();
+
+	public void add(ItemStack... itemStack) {
+		add(Arrays.asList(itemStack));
+	}
+
+	public void add(List<ItemStack> itemStacks) {
+		Tasks.sync(() -> new DeliverWorldMenu().open(getPlayer(), itemStacks));
+	}
 
 	public void addToSurvival(ItemStack... itemStack) {
 		addToSurvival(Arrays.asList(itemStack));

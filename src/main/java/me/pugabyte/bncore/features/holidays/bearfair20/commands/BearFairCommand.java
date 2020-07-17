@@ -24,6 +24,8 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.bncore.models.delivery.Delivery;
+import me.pugabyte.bncore.models.delivery.DeliveryService;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
@@ -439,12 +441,16 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 //						user.setTotalPoints(userPoints.get());
 //						service.save(user);
 
-						Tasks.sync(() -> {
-							runCommandAsOp(player, "bearfair store maps get " + title);
-							send(player, PREFIX + "&3You bought &e" + title + " &3for &e" + price
-									+ ", &3You now have &e" + userPoints.get() + " BFP");
-							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-						});
+						DeliveryService service = new DeliveryService();
+						Delivery delivery = service.get(player);
+						BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
+						delivery.add(bearFairStoreMap.getSplatterMap());
+						// TODO - send a message with info about the delivery
+
+						send(player, PREFIX + "&3You bought &e" + title + " &3for &e" + price
+								+ ", &3You now have &e" + userPoints.get() + " BFP");
+						player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+
 					} else {
 						send(player, PREFIX + "&cYou do not have enough points for this");
 						player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);

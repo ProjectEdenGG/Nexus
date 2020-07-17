@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
+import lombok.AllArgsConstructor;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.delivery.Delivery;
 import me.pugabyte.bncore.models.delivery.DeliveryService;
@@ -20,15 +21,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class DeliveryMenu extends MenuUtils implements InventoryProvider {
 	private final DeliveryService service = new DeliveryService();
 	private final Delivery delivery;
 	private final WorldGroup worldGroup;
-
-	public DeliveryMenu(Delivery delivery, WorldGroup worldGroup) {
-		this.delivery = delivery;
-		this.worldGroup = worldGroup;
-	}
 
 	public SmartInventory getInv() {
 		List<ItemStack> items = worldGroup.equals(WorldGroup.SURVIVAL) ? delivery.getSurvivalItems() : delivery.getSkyblockItems();

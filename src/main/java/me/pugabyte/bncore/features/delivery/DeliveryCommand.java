@@ -1,17 +1,24 @@
 package me.pugabyte.bncore.features.delivery;
 
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.delivery.Delivery;
 import me.pugabyte.bncore.models.delivery.DeliveryService;
-import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.WorldGroup;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.inventory.ItemStack;
 
-public class DeliveryCommand extends CustomCommand {
+import java.util.ArrayList;
+import java.util.List;
+
+@NoArgsConstructor
+public class DeliveryCommand extends CustomCommand implements Listener {
 	private final DeliveryService service = new DeliveryService();
 	private Delivery delivery;
 
@@ -28,18 +35,32 @@ public class DeliveryCommand extends CustomCommand {
 		if (WorldGroup.SURVIVAL != worldGroup && WorldGroup.SKYBLOCK != worldGroup)
 			error("&cYou cannot do that in this world");
 
-		if (delivery.getSurvivalItems().size() == 0) {
-			for (int i = 0; i < 5; i++)
-				delivery.addToSurvival(new ItemBuilder(Material.DIRT).name("Dirt" + i + " Delivery").amount(1).build());
-		}
-
 		new DeliveryMenu(delivery, worldGroup).getInv().open(player());
 	}
 
 	@Path("deleteAll")
 	@Permission("group.admin")
 	void clearDatabase() {
+		service.clearCache();
 		service.deleteAll();
+		service.clearCache();
+	}
+
+	@EventHandler
+	public void onWorldChange(PlayerChangedWorldEvent event) {
+		Player player = event.getPlayer();
+		WorldGroup worldGroup = WorldGroup.get(player);
+		Delivery delivery = service.get(player);
+		List<ItemStack> items = new ArrayList<>();
+
+		if (WorldGroup.SURVIVAL.equals(worldGroup))
+			items = delivery.getSurvivalItems();
+		else if (WorldGroup.SKYBLOCK.equals(worldGroup))
+			items = delivery.getSkyblockItems();
+
+		if (items.size() == 0) return;
+
+		send(player, PREFIX + "&3You have an unclaimed delivery, use &e/delivery &3to claim it!");
 	}
 
 }
