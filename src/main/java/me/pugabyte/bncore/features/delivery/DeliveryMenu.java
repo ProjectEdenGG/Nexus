@@ -51,8 +51,14 @@ public class DeliveryMenu extends MenuUtils implements InventoryProvider {
 
 		addCloseItem(contents);
 		Pagination page = contents.pagination();
-		ClickableItem[] clickableItems = new ClickableItem[items.size()];
 
+		for (int i = 0; i < items.size(); i++) {
+			ItemStack itemStack = items.get(i);
+			if (Utils.isNullOrAir(itemStack))
+				items.remove(itemStack);
+		}
+
+		ClickableItem[] clickableItems = new ClickableItem[items.size()];
 		for (int i = 0; i < items.size(); i++) {
 			ItemStack itemStack = items.get(i);
 			clickableItems[i] = ClickableItem.from(itemStack, e -> claimDelivery(itemStack, items, worldGroup));

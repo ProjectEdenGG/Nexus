@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
 public class DeliverWorldMenu extends MenuUtils implements InventoryProvider {
 	private final DeliveryService service = new DeliveryService();
 	private static List<ItemStack> items;
@@ -38,19 +40,23 @@ public class DeliverWorldMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		Delivery delivery = service.get(player);
 		ItemStack survival = new ItemBuilder(Material.GRASS_BLOCK).name("Survival").build();
-		ItemStack skyblock = new ItemBuilder(Material.COBBLESTONE).name("Skyblock").build();
+		ItemStack skyblock = new ItemBuilder(Material.COBBLESTONE).name("Skyblock").lore("&cCurrently Disabled").build();
 
 		contents.set(new SlotPos(1, 2), ClickableItem.from(survival, e -> {
 			delivery.addToSurvival(items);
 			service.save(delivery);
-			player.closeInventory();
+			getInv().close(player);
+			player.sendMessage(DeliveryCommand.PREFIX + colorize("Your items have been delivered to &eSurvival"));
 		}));
 
-		contents.set(new SlotPos(1, 6), ClickableItem.from(skyblock, e -> {
-			delivery.addToSkyblock(items);
-			service.save(delivery);
-			player.closeInventory();
-		}));
+		contents.set(new SlotPos(1, 6), ClickableItem.empty(skyblock));
+
+//		contents.set(new SlotPos(1, 6), ClickableItem.from(skyblock, e -> {
+//			delivery.addToSkyblock(items);
+//			service.save(delivery);
+//			getInv().close(player);
+//			player.sendMessage(DeliveryCommand.PREFIX + colorize("Your items have been delivered to &eSkyblock"));
+//		}));
 	}
 
 	@Override
