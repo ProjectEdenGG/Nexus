@@ -18,6 +18,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+
 @NoArgsConstructor
 public class DeliveryCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Delivery");
@@ -62,6 +64,9 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 
 		if (items.size() == 0) return;
 //		if (!new CooldownService().check(player, "deliveryReminder", Time.HOUR.x(1))) return;
+
+		player.sendMessage("\nSize3: " + items.size());
+		player.sendMessage(stripColor(items.toString()));
 
 		send(player, PREFIX + "&3You have an unclaimed delivery, use &e/delivery &3to claim it!");
 	}
