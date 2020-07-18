@@ -39,12 +39,14 @@ public class DeliverWorldMenu extends MenuUtils implements InventoryProvider {
 	@Override
 	public void init(Player player, InventoryContents contents) {
 		Delivery delivery = service.get(player);
-		ItemStack survival = new ItemBuilder(Material.GRASS_BLOCK).name("Survival").build();
-		ItemStack skyblock = new ItemBuilder(Material.COBBLESTONE).name("Skyblock").lore("&cCurrently Disabled").build();
+		ItemStack survival = new ItemBuilder(Material.GRASS_BLOCK).name("&3Survival").build();
+		ItemStack skyblock = new ItemBuilder(Material.COBBLESTONE).name("&3Skyblock").lore("&cCurrently Disabled").build();
 
 		contents.set(new SlotPos(1, 2), ClickableItem.from(survival, e -> {
 			delivery.addToSurvival(items);
+			service.delete(delivery);
 			service.save(delivery);
+
 			getInv().close(player);
 			player.sendMessage(DeliveryCommand.PREFIX + colorize("Your items have been delivered to &eSurvival"));
 		}));
@@ -53,7 +55,9 @@ public class DeliverWorldMenu extends MenuUtils implements InventoryProvider {
 
 //		contents.set(new SlotPos(1, 6), ClickableItem.from(skyblock, e -> {
 //			delivery.addToSkyblock(items);
+//			service.delete(delivery);
 //			service.save(delivery);
+//
 //			getInv().close(player);
 //			player.sendMessage(DeliveryCommand.PREFIX + colorize("Your items have been delivered to &eSkyblock"));
 //		}));

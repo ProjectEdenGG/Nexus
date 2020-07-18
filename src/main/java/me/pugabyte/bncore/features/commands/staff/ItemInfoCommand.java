@@ -44,12 +44,14 @@ public class ItemInfoCommand extends CustomCommand {
 				int length = nbtString.length();
 				if (length > 256) {
 					Tasks.async(() -> {
+						if (length < 32000) // max char limit in command blocks
+							send("NBT: " + colorize(nbtString));
 						String url = paste(stripColor(nbtString));
-						send(json("&eNBT: &l[Click to Open]").url(url).hover(url));
+						send(json("&e&l[Click to Open NBT]").url(url).hover(url));
 					});
 				} else {
 					send("NBT: " + colorize(nbtString));
-					send(json("&e&l[Click to Copy]").suggest(nbtString));
+					send(json("&e&l[Click to Copy NBT]").suggest(nbtString));
 				}
 			}
 		}
