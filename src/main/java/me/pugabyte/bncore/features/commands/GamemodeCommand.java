@@ -18,12 +18,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Aliases("gm")
+@Aliases({"gm", "egm", "egamemode", "gmt", "egmt"})
 @Permission("essentials.gamemode")
-@Redirect(from = { "/gms", "/gm0" }, to = "/gm s")
-@Redirect(from = { "/gmc", "/gm1" }, to = "/gm c")
-@Redirect(from = { "/gma", "/gm2" }, to = "/gm a")
-@Redirect(from = { "/gmsp", "/gm3" }, to = "/gm sp")
+@Redirect(from = {"/gms", "/gm0", "/egms", "/esurvival", "/survivalmode", "/esurvivalmode"}, to = "/gm s")
+@Redirect(from = {"/gmc", "/gm1", "/egmc", "/creativemode", "/ecreativemode"}, to = "/gm c")
+@Redirect(from = {"/gma", "/gm2", "/egma", "/adventure", "/eadventure", "/adventuremode", "/eadventuremode"}, to = "/gm a")
+@Redirect(from = {"/gmsp", "/gm3", "/egmsp", "/spectator", "/spec"}, to = "/gm sp")
 public class GamemodeCommand extends CustomCommand {
 
 	public GamemodeCommand(@NonNull CommandEvent event) {
