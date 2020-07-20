@@ -151,6 +151,7 @@ public class HalloweenIsland implements Listener, Island {
 		ProtectedRegion skullRegion = WGUtils.getProtectedRegion(basketRg);
 		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(skullRegion)) return;
 
+		if (!BearFair20.enableQuests) return;
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
 
 		Player player = event.getPlayer();
@@ -237,6 +238,8 @@ public class HalloweenIsland implements Listener, Island {
 		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
 		if (!WGUtils.getRegionsAt(player.getLocation()).contains(region)) return;
 
+		if (!BearFair20.enableQuests) return;
+
 		Entity clicked = event.getRightClicked();
 		if (!(clicked instanceof ItemFrame)) return;
 
@@ -259,6 +262,7 @@ public class HalloweenIsland implements Listener, Island {
 	@EventHandler
 	public void onAtticRegionEnter(RegionEnteredEvent event) {
 		if (event.getRegion().getId().equalsIgnoreCase(atticRg)) {
+			if (!BearFair20.enableQuests) return;
 			Player player = event.getPlayer();
 			if (!player.getInventory().contains(atticKey)) {
 				player.teleport(atticDeniedLoc);

@@ -309,6 +309,7 @@ public class PugmasIsland implements Listener, Island {
 		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
 		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
 
+		if (!BearFair20.enableQuests) return;
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
 
 		Player player = event.getPlayer();

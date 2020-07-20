@@ -475,6 +475,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
 		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
+		if (!BearFair20.enableQuests) return;
 		Block clicked = event.getClickedBlock();
 		if (Utils.isNullOrAir(clicked)) return;
 
@@ -502,6 +503,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
 		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+
+		if (!BearFair20.enableQuests) return;
 
 		boolean water = false;
 

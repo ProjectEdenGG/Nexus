@@ -8,6 +8,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.IslandType;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
+import me.pugabyte.bncore.features.holidays.bearfair20.quests.EasterEggs;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -62,16 +63,22 @@ public class BearFair20 implements Listener {
 	private static final Set<Class<? extends Island>> islands = new Reflections("me.pugabyte.bncore.features.holidays.bearfair20.islands").getSubTypesOf(Island.class);
 	public static String PREFIX = "&8&l[&eBearFair&8&l] &3";
 
-	// TODO: When BF is over, disable these.
-	public static boolean givePoints = true;
+	// TODO: When BF is over, disable these, and disable block break/place on regions
+	public static boolean enableQuests = false;
+	public static boolean givePoints = false;
 	public static boolean giveDailyPoints = false;
+
+	// TODO: When working on BF, disable this.
 	public static boolean allowWarp = true;
 
 	public BearFair20() {
 		BNCore.registerListener(this);
 		new Timer("    Fairgrounds", Fairgrounds::new);
 		new Timer("    Islands", IslandType::values);
-		new Timer("    BFQuests", BFQuests::new);
+		if (enableQuests) {
+			new Timer("    BFQuests", BFQuests::new);
+			new Timer("    EasterEggs", EasterEggs::new);
+		}
 	}
 
 	public static String isCheatingMsg(Player player) {
@@ -87,15 +94,14 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onTameEntity(EntityTameEvent event) {
 		Location loc = event.getEntity().getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
+		if (!isAtBearFair(loc)) return;
 		event.setCancelled(true);
 	}
 
 //	@EventHandler
 //	public void onRegionEnter(RegionEnteredEvent event) {
 //		Player player = event.getPlayer();
-//		Location loc = player.getLocation();
-//		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
+//		if(!isAtBearFair(player)) return;
 //		if (player.hasPermission("worldguard.region.bypass.*")) {
 //			Utils.runCommand(player, "wgedit off");
 //		}
@@ -104,8 +110,7 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onThrowEnderPearl(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
+		if (!isAtBearFair(player)) return;
 
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			ItemStack item = player.getInventory().getItemInMainHand();
@@ -120,7 +125,7 @@ public class BearFair20 implements Listener {
 	@EventHandler
 	public void onLecternTakeBook(PlayerTakeLecternBookEvent event) {
 		Location loc = event.getLectern().getBlock().getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
+		if (!isAtBearFair(loc)) return;
 
 		event.setCancelled(true);
 		event.getPlayer().closeInventory();
@@ -132,8 +137,7 @@ public class BearFair20 implements Listener {
 		if (!(event.getVehicle() instanceof Minecart)) return;
 
 		Player player = (Player) event.getExited();
-		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(protectedRegion)) return;
+		if (!isAtBearFair(player)) return;
 
 		Tasks.wait(1, () -> {
 			event.getVehicle().remove();

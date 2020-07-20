@@ -119,6 +119,8 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 
 	@Path("quests npc <text>")
 	void questsSwitchQuest(String string) {
+		if (!BearFair20.enableQuests) return;
+
 		ProtectedRegion pugmasRegion = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + PugmasIsland.class.getAnnotation(Island.Region.class).value());
 		ProtectedRegion mainRegion = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + MainIsland.class.getAnnotation(Island.Region.class).value());
 		if (!WGUtils.getRegionsAt(player().getLocation()).contains(pugmasRegion) && !WGUtils.getRegionsAt(player().getLocation()).contains(mainRegion))
@@ -378,6 +380,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	@Path("smite")
 	@Permission("group.admin")
 	public void smite() {
+		if (!BearFair20.enableQuests) return;
 		commandBlock();
 		BlockCommandSender sender = (BlockCommandSender) event.getSender();
 		Location loc = sender.getBlock().getLocation();

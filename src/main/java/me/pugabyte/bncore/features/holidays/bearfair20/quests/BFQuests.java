@@ -50,10 +50,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 
 public class BFQuests implements Listener {
 	public static String itemLore = "BearFair20 Item";
@@ -77,7 +74,6 @@ public class BFQuests implements Listener {
 		new Beehive();
 		new Quarry();
 		new Fishing();
-		new EasterEggs();
 		new SellCrates();
 		Recipes.loadRecipes();
 	}
@@ -241,8 +237,7 @@ public class BFQuests implements Listener {
 	public void onCraftItem(CraftItemEvent event) {
 		if (!(event.getView().getPlayer() instanceof Player)) return;
 		Player player = (Player) event.getView().getPlayer();
-		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
+		if (!isAtBearFair(player)) return;
 
 		ItemStack result = event.getInventory().getResult();
 		ItemStack[] ingredients = event.getInventory().getMatrix();
@@ -268,8 +263,7 @@ public class BFQuests implements Listener {
 	public void onPrepareCraftItem(PrepareItemCraftEvent event) {
 		if (!(event.getView().getPlayer() instanceof Player)) return;
 		Player player = (Player) event.getView().getPlayer();
-		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
+		if (!isAtBearFair(player)) return;
 
 		ItemStack[] ingredients = event.getInventory().getMatrix();
 		ItemStack result = event.getInventory().getResult();
@@ -319,8 +313,7 @@ public class BFQuests implements Listener {
 		if (!(event.getPlayer() instanceof Player)) return;
 
 		Player player = (Player) event.getPlayer();
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(region)) return;
+		if (!isAtBearFair(player)) return;
 
 		BearFairService service = new BearFairService();
 		BearFairUser user = service.get(player);
@@ -354,10 +347,5 @@ public class BFQuests implements Listener {
 		event.setRawXpGained(0F);
 		event.setCancelled(true);
 	}
-	//
-
-	//TODO:
-	// give bf items:
-	//		- Bucket -> Milk Bucket
 
 }

@@ -196,6 +196,7 @@ public class MinigameNightIsland implements Listener, Island {
 		ProtectedRegion region = WGUtils.getProtectedRegion(arcadeRg);
 		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
 
+		if (!BearFair20.enableQuests) return;
 		event.setCancelled(true);
 		Player player = event.getPlayer();
 		BearFairService service = new BearFairService();
@@ -213,6 +214,7 @@ public class MinigameNightIsland implements Listener, Island {
 		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
 		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
+		if (!BearFair20.enableQuests) return;
 		ItemStack tool = Utils.getTool(event.getPlayer());
 		if (!BearFair20.isBFItem(tool)) return;
 
@@ -234,6 +236,7 @@ public class MinigameNightIsland implements Listener, Island {
 		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
 		if (!WGUtils.getRegionsAt(player.getLocation()).contains(region)) return;
 
+		if (!BearFair20.enableQuests) return;
 		Entity clicked = event.getRightClicked();
 		if (!(clicked instanceof ItemFrame)) return;
 
@@ -273,6 +276,7 @@ public class MinigameNightIsland implements Listener, Island {
 	public void onRegionEnter(RegionEnteredEvent event) {
 		String regionId = event.getRegion().getId();
 		if (!regionId.equalsIgnoreCase(basementRg)) return;
+		if (!BearFair20.enableQuests) return;
 
 		Player player = event.getPlayer();
 		BearFairService service = new BearFairService();
@@ -293,6 +297,8 @@ public class MinigameNightIsland implements Listener, Island {
 
 		ProtectedRegion region = WGUtils.getProtectedRegion(solderRg);
 		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
+
+		if (!BearFair20.enableQuests) return;
 
 		event.setCancelled(true);
 		Player player = event.getPlayer();
