@@ -64,6 +64,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag REQUIRES_META = new MaterialTag(POTION, SPLASH_POTION, LINGERING_POTION,
 			TIPPED_ARROW, WRITTEN_BOOK, ENCHANTED_BOOK);
 
+	public static final MaterialTag ALL_CORALS = new MaterialTag(Tag.CORAL_BLOCKS).append(Tag.CORAL_PLANTS, Tag.WALL_CORALS, Tag.CORALS);
 	public static final MaterialTag CORAL_WALL_FANS = new MaterialTag("_WALL_FAN", MatchMode.SUFFIX);
 
 	public static final MaterialTag PLANTS = new MaterialTag(GRASS, FERN, TALL_GRASS, LARGE_FERN, DEAD_BUSH, SWEET_BERRY_BUSH,

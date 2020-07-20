@@ -30,6 +30,7 @@ import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -41,6 +42,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -65,6 +67,16 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.Utils.getTool;
 
 public class Misc implements Listener {
+
+	@EventHandler
+	public void onCoralDeath(BlockFadeEvent event) {
+		Block block = event.getBlock();
+		if (MaterialTag.ALL_CORALS.isTagged(block.getType())) {
+			WorldGroup worldGroup = WorldGroup.get(block.getWorld());
+			if (WorldGroup.CREATIVE.equals(worldGroup) || WorldGroup.ADVENTURE.equals(worldGroup))
+				event.setCancelled(true);
+		}
+	}
 
 	@EventHandler
 	public void onHorseLikeDamage(EntityDamageEvent event) {

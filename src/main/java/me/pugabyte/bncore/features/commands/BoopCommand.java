@@ -27,7 +27,7 @@ public class BoopCommand extends CustomCommand {
 	void boop(Player playerArg, String flag) {
 		boolean anon = false;
 		if (flag != null)
-			if (flag.equalsIgnoreCase("-s"))
+			if (flag.equalsIgnoreCase("-s") || flag.equalsIgnoreCase("-a"))
 				anon = true;
 			else
 				showUsage();
@@ -42,11 +42,11 @@ public class BoopCommand extends CustomCommand {
 			error("You cannot boop " + playerArg.getName() + " (in minigames)");
 
 		if (anon) {
-			send("You anonymously boop'd " + playerArg.getName());
-			send(playerArg, "Somebody boop'd you");
+			send(PREFIX + "&3You anonymously booped &e" + playerArg.getName());
+			send(playerArg, PREFIX + "&eSomebody &3booped you");
 		} else {
-			send("You boop'd " + playerArg.getName());
-			send(playerArg, player().getName() + " boop'd you");
+			send(PREFIX + "&3You booped &e" + playerArg.getName());
+			send(playerArg, PREFIX + "&e" + player().getName() + " &3booped you");
 		}
 
 		playerArg.playSound(playerArg.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10.0F, 0.1F);
