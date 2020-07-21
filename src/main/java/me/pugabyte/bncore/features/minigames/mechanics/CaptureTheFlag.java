@@ -105,6 +105,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		matchData.addFlagCarrier(flag, minigamer);
 
 		flag.despawn();
+
+		match.getTasks().cancel(flag.getTaskId());
 	}
 
 	@Override
