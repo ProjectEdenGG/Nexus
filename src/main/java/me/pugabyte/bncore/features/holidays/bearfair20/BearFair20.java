@@ -7,15 +7,19 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.IslandType;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.EasterEggs;
+import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -36,7 +40,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.reflections.Reflections;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
@@ -81,14 +87,29 @@ public class BearFair20 implements Listener {
 		}
 	}
 
-	public static String isCheatingMsg(Player player) {
-		if (player.hasPermission("worldguard.region.bypass.*")) return "wgedit";
-		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
-		if (player.isFlying()) return "fly";
-		if (isVanished(player)) return "vanish";
-		if (BNCore.getEssentials().getUser(player.getUniqueId()).isGodModeEnabled()) return "godmode";
+	@EventHandler
+	public void onRightClickWakka(NPCRightClickEvent event) {
+		Player player = event.getClicker();
+		if (isAtBearFair(player)) {
+			if (!enableQuests) {
+				CooldownService cooldownService = new CooldownService();
+				if (!cooldownService.check(player, "BF_NPCInteract", Time.SECOND.x(2)))
+					return;
 
-		return null;
+				int id = event.getNPC().getId();
+				if (id == MainIsland.MainNPCs.WakkaFlocka.getNpcId()) {
+					List<String> script = new ArrayList<>();
+					script.add("Welcome to Bear Fair, Bear Nation's anniversary event!");
+					script.add("wait 80");
+					script.add("This event starts every year on June 29th and lasts until the 5th!");
+					script.add("wait 80");
+					script.add("While this years event is over, you can still explore the island and play the minigames at the carnival.");
+					script.add("wait 80");
+					script.add("And if you need help figuring out where you are, check out this map to my side.");
+					Talkers.sendScript(player, MainIsland.MainNPCs.WakkaFlocka, script);
+				}
+			}
+		}
 	}
 
 	@EventHandler
@@ -189,6 +210,16 @@ public class BearFair20 implements Listener {
 				}
 			});
 		});
+	}
+
+	public static String isCheatingMsg(Player player) {
+		if (player.hasPermission("worldguard.region.bypass.*")) return "wgedit";
+		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
+		if (player.isFlying()) return "fly";
+		if (isVanished(player)) return "vanish";
+		if (BNCore.getEssentials().getUser(player.getUniqueId()).isGodModeEnabled()) return "godmode";
+
+		return null;
 	}
 
 	public static boolean isAtBearFair(Block block) {

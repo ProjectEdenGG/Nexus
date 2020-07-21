@@ -3,11 +3,13 @@ package me.pugabyte.bncore.features.commands.staff;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
+@Aliases({"sw", "swarn"})
 @Permission("group.moderator")
 public class SmiteWarnCommand extends CustomCommand {
 
