@@ -25,6 +25,7 @@ public class BoopCommand extends CustomCommand {
 	@Description("boop a player anonymously")
 	@Cooldown(value = @Part(value = Time.SECOND, x = 5), bypass = "group.admin")
 	void boopAnon(Player playerArg, String message) {
+		message = "-a " + message;
 		boopPlayer(playerArg, message);
 	}
 
