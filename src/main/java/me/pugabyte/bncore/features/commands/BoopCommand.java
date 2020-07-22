@@ -4,11 +4,16 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BoopCommand extends CustomCommand {
 
@@ -16,39 +21,70 @@ public class BoopCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void help() {
-		send("&4Correct Usage: &c/boop <player> [-s]");
-		send("&4-s&c: makes the boop anonymous");
+	@Path("<player> -a [message...]")
+	@Description("boop a player anonymously")
+	@Cooldown(value = @Part(value = Time.SECOND, x = 5), bypass = "group.admin")
+	void boopAnon(Player playerArg, String message) {
+		boopPlayer(playerArg, message);
 	}
 
-	@Path("<player> [flag]")
+	@Path("<player> [message...]")
+	@Description("boop a player")
 	@Cooldown(value = @Part(value = Time.SECOND, x = 5), bypass = "group.admin")
-	void boop(Player playerArg, String flag) {
-		boolean anon = false;
-		if (flag != null)
-			if (flag.equalsIgnoreCase("-s") || flag.equalsIgnoreCase("-a"))
-				anon = true;
-			else
-				showUsage();
+	void boopPlayer(Player playerArg, String message) {
+		if (message == null)
+			message = "";
 
-		if (isSelf(playerArg))
-			error("You cannot boop yourself!");
+		if (message.equalsIgnoreCase("-s"))
+			error("The anon flag has been changed to -a");
 
-		if (isPlayer() && Minigames.isMinigameWorld(player().getWorld()))
-			error("You cannot boop in minigames!");
+		if (message.contains("-a")) {
+			String[] messageSplit = message.split(" ");
+			List<String> list = new ArrayList<>(Arrays.asList(messageSplit));
+			if (list.get(0).equalsIgnoreCase("-a")) {
+				if (list.size() > 1) {
+					list.remove(0);
+					message = String.join(" ", list);
+				} else {
+					message = "";
+				}
 
-		if (Minigames.isMinigameWorld(playerArg.getWorld()))
-			error("You cannot boop " + playerArg.getName() + " (in minigames)");
-
-		if (anon) {
-			send(PREFIX + "&3You anonymously booped &e" + playerArg.getName());
-			send(playerArg, PREFIX + "&eSomebody &3booped you");
-		} else {
-			send(PREFIX + "&3You booped &e" + playerArg.getName());
-			send(playerArg, PREFIX + "&e" + player().getName() + " &3booped you");
+				boop(player(), playerArg, message, true);
+				return;
+			}
 		}
 
-		playerArg.playSound(playerArg.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10.0F, 0.1F);
+		boop(player(), playerArg, message, false);
+	}
+
+	public void boop(Player booper, Player booped, String message, boolean anon) {
+		if (message == null)
+			message = "";
+
+		if (booper.equals(booped))
+			error("You cannot boop yourself!");
+
+		if (Minigames.isMinigameWorld(booper.getWorld()))
+			error("You cannot boop in minigames!");
+
+		if (Minigames.isMinigameWorld(booped.getWorld()))
+			error("You cannot boop " + booped.getName() + " (in minigames)");
+
+		String toBooper = PREFIX;
+		String toBooped = PREFIX;
+		if (!message.equalsIgnoreCase(""))
+			message = " &3and said &e" + message;
+
+		if (anon) {
+			toBooper += "&3You anonymously booped &e" + booped.getName() + message;
+			toBooped += "&eSomebody &3booped you" + message;
+		} else {
+			toBooper += "&3You booped &e" + booped.getName() + message;
+			toBooped += "&e" + player().getName() + " &3booped you" + message;
+		}
+
+		send(toBooper);
+		send(booped, toBooped);
+		booped.playSound(booped.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10.0F, 0.1F);
 	}
 }
