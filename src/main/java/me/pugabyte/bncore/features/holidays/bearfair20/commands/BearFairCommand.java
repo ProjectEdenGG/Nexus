@@ -98,9 +98,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 
 	@Path("store")
 	void warpToStore() {
-		// TODO - BearFairStore: Remove perm check
-		if (player().hasPermission("group.admin"))
-			teleport(new WarpService().get("store", WarpType.BEAR_FAIR));
+		teleport(new WarpService().get("store", WarpType.BEAR_FAIR));
 	}
 
 	@Path("quests giveAllQuestItem")
@@ -416,9 +414,6 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
 
-		// TODO - BearFairStore: Remove this when done
-		if (!player.hasPermission("group.admin")) return;
-
 		if (!loc.getWorld().getName().toLowerCase().contains("bearfair")) return;
 		if (Utils.isNullOrAir(event.getClickedBlock())) return;
 		if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
@@ -433,6 +428,19 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		String price = stripColor(sign.getLine(1));
 		int pricePoints = Integer.parseInt(price.replaceAll(" BFP", ""));
 
+		// TODO - BearFairStore: Couldn't get DeliveryService to work
+		boolean disableDelivery = true;
+		if (disableDelivery) {
+			if (player.hasPermission("group.admin")) {
+				BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
+				Utils.giveItem(player, bearFairStoreMap.getSplatterMap());
+			} else {
+				send(player, PREFIX + "Couldn't get this feature to work ): include the title of this painting in your discord order");
+			}
+			return;
+		}
+		//
+
 		BearFairUser user = service.get(player);
 		AtomicInteger userPoints = new AtomicInteger(user.getTotalPoints());
 
@@ -440,20 +448,18 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 				.onConfirm(e -> Tasks.async(() -> {
 					if (userPoints.get() >= pricePoints) {
 						userPoints.addAndGet(-pricePoints);
-						// TODO - BearFairStore: Uncomment this
-//						user.setTotalPoints(userPoints.get());
-//						service.save(user);
+						user.setTotalPoints(userPoints.get());
+						service.save(user);
 
+						BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
 						DeliveryService service = new DeliveryService();
 						Delivery delivery = service.get(player);
-						BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
 						delivery.add(bearFairStoreMap.getSplatterMap());
-						// TODO - send a message with info about the delivery
+						service.save(delivery);
 
 						send(player, PREFIX + "&3You bought &e" + title + " &3for &e" + price
 								+ ", &3You now have &e" + userPoints.get() + " BFP");
 						player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-
 					} else {
 						send(player, PREFIX + "&cYou do not have enough points for this");
 						player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
