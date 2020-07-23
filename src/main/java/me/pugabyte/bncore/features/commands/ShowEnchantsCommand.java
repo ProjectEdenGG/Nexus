@@ -84,12 +84,10 @@ public class ShowEnchantsCommand extends CustomCommand {
 
 			String lore = "";
 			if (data.getCustomEnchantsList() == null || data.getCustomEnchantsList().size() == 0) {
-				if (data.getLoreList() != null) {
+				if (data.getLoreList() != null)
 					lore = getLoreIngame(data);
-				}
-			} else {
+			} else
 				lore = getCustomEnchantsIngame(data);
-			}
 
 			int durability = ((Damageable) item.getItemMeta()).getDamage();
 
@@ -173,7 +171,10 @@ public class ShowEnchantsCommand extends CustomCommand {
 		// Check lore
 		if (item.getItemMeta().hasLore()) {
 			List<String> lore = item.getItemMeta().getLore();
+			if (lore == null) return;
+
 			for (String line : lore) {
+				// TODO: Figure out a better way to determine custom enchantments, lore can be colored too.
 				// if the lore is colored, its a custom enchantment, so add it to the list
 				if (line.length() != stripColor(line).length()) {
 					data.getCustomEnchantsList().add(line);
@@ -201,7 +202,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 		StringBuilder string = new StringBuilder();
 		int i = 0;
 		for (String customEnchant : data.getCustomEnchantsList()) {
-			string.append("\"").append(customEnchant).append("\"");
+			string.append("'{\"text\":\"").append(customEnchant).append("\"}'");
 			if (i < data.getCustomEnchantsList().size() - 1)
 				string.append(",");
 			i++;
