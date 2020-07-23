@@ -19,10 +19,12 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -60,15 +62,28 @@ public class Fairgrounds implements Listener {
 	}
 
 	public static void removeKits(Player player) {
-		ItemStack[] items = player.getInventory().getContents();
+		List<ItemStack> items = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
 		for (ItemStack item : items) {
-			if (!BearFair20.isBFItem(item)) continue;
+			if (!BearFair20.isBFItem(item))
+				continue;
 
-			for (BearFairKit kit : BearFairKit.values()) {
-				if (kit.getItems().contains(item))
-					player.getInventory().remove(item);
-			}
+			if (isBFKitItem(item))
+				player.getInventory().remove(item);
 		}
+
+		ItemStack offHand = player.getInventory().getItemInOffHand();
+		if (isBFKitItem(offHand))
+			player.getInventory().setItemInOffHand(null);
+	}
+
+	private static boolean isBFKitItem(ItemStack item) {
+		ItemStack oneItem = item.clone();
+		oneItem.setAmount(1);
+		for (BearFairKit kit : BearFairKit.values()) {
+			if (kit.getItems().contains(oneItem))
+				return true;
+		}
+		return false;
 	}
 
 	public enum BearFairKit {
@@ -154,6 +169,12 @@ public class Fairgrounds implements Listener {
 				}
 			}
 		}
+	}
+
+	@EventHandler
+	public void onWorldChange(PlayerChangedWorldEvent event) {
+		if (event.getFrom().equals(BearFair20.getWorld()))
+			removeKits(event.getPlayer());
 	}
 
 }
