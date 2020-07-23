@@ -23,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -131,6 +132,17 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 				if (godmode.isEnabled() || player.getGameMode() == GameMode.CREATIVE || isVanished(player))
 					event.setIntensity(player, 0f);
 			}
+	}
+
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void onEntityTarget(final EntityTargetLivingEntityEvent event) {
+		if (event.getEntity() instanceof Player) {
+			Player player = (Player) event.getEntity();
+			Godmode godmode = new GodmodeService().get(player);
+			if (godmode.isEnabled()) {
+				event.setCancelled(true);
+			}
+		}
 	}
 
 }
