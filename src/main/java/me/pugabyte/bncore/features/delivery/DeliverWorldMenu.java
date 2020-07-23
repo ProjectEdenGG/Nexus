@@ -18,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class DeliverWorldMenu extends MenuUtils implements InventoryProvider {
 	private final DeliveryService service = new DeliveryService();
@@ -47,17 +46,17 @@ public class DeliverWorldMenu extends MenuUtils implements InventoryProvider {
 		contents.set(new SlotPos(1, 2), ClickableItem.from(survival, e -> {
 			delivery.addToSurvival(items);
 			Tasks.async(() -> {
-				player.sendMessage("Size1: " + delivery.getSurvivalItems().size());
-				player.sendMessage(stripColor(delivery.getSurvivalItems().toString()));
+//				player.sendMessage("Size1: " + delivery.getSurvivalItems().size());
+//				player.sendMessage(stripColor(delivery.getSurvivalItems().toString()));
 				service.deleteSync(delivery);
 
-				player.sendMessage("\nSize1.5: " + delivery.getSurvivalItems().size());
-				player.sendMessage(stripColor(delivery.getSurvivalItems().toString()));
+//				player.sendMessage("\nSize1.5: " + delivery.getSurvivalItems().size());
+//				player.sendMessage(stripColor(delivery.getSurvivalItems().toString()));
 				service.saveSync(delivery);
 
 				Delivery delivery1 = service.get(player);
-				player.sendMessage("\nSize2: " + delivery1.getSurvivalItems().size());
-				player.sendMessage(stripColor(delivery1.getSurvivalItems().toString()));
+//				player.sendMessage("\nSize2: " + delivery1.getSurvivalItems().size());
+//				player.sendMessage(stripColor(delivery1.getSurvivalItems().toString()));
 			});
 
 			getInv().close(player);

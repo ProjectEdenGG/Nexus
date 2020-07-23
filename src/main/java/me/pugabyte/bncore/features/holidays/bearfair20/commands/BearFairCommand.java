@@ -456,7 +456,6 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 						Delivery delivery = service.get(player);
 						delivery.add(bearFairStoreMap.getSplatterMap());
 						service.save(delivery);
-
 						send(player, PREFIX + "&3You bought &e" + title + " &3for &e" + price
 								+ ", &3You now have &e" + userPoints.get() + " BFP");
 						player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
