@@ -119,9 +119,10 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				return "Game Time (Seconds)";
 			}
 		},
-		WINNING_SCORE(3, 3, Material.GOLD_INGOT),
-		MIN_WINNING_SCORE(3, 4, Material.BRICK),
-		MAX_WINNING_SCORE(3, 5, Material.IRON_INGOT),
+		BEGIN_DELAY(3, 3, Material.REPEATER),
+		WINNING_SCORE(3, 4, Material.GOLD_INGOT),
+		MIN_WINNING_SCORE(3, 5, Material.BRICK),
+		MAX_WINNING_SCORE(3, 6, Material.IRON_INGOT),
 		MIN_PLAYERS(4, 1, Material.LEATHER_CHESTPLATE),
 		MAX_PLAYERS(4, 2, Material.DIAMOND_CHESTPLATE),
 		SPECTATE_LOCATION(5, 1, Material.COMPASS) {
