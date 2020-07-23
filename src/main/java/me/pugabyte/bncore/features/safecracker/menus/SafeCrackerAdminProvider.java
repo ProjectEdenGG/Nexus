@@ -5,6 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.safecracker.NPCHandler;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+@Disabled
 public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProvider {
 
 	SafeCrackerEventService service = new SafeCrackerEventService();

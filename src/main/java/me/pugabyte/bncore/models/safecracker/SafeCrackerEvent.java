@@ -5,7 +5,13 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.converters.BooleanConverter;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
@@ -23,6 +29,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocalDateTimeConverter.class})
+@Disabled
 public class SafeCrackerEvent extends PlayerOwnedObject {
 
 	@Id

@@ -1,12 +1,20 @@
 package me.pugabyte.bncore.models.safecracker;
 
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 import org.bukkit.OfflinePlayer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @PlayerClass(SafeCrackerPlayer.class)
+@Disabled
 public class SafeCrackerPlayerService extends MongoService {
 	private final static Map<UUID, SafeCrackerPlayer> cache = new HashMap<>();
 

@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.models.safecracker;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.bncore.models.MongoService;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent.SafeCrackerGame;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(SafeCrackerEvent.class)
+@Disabled
 public class SafeCrackerEventService extends MongoService {
 
 	private final static Map<UUID, SafeCrackerEvent> cache = new HashMap<>();

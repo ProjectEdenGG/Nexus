@@ -1,9 +1,11 @@
 package me.pugabyte.bncore.features.safecracker.menus;
 
 import fr.minuskube.inv.SmartInventory;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import org.bukkit.entity.Player;
 
+@Disabled
 public class SafeCrackerInventories {
 
 	public static void openCheckMenu(Player player) {

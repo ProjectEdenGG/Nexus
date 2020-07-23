@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.safecracker;
 
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayer;
@@ -18,6 +19,7 @@ import org.bukkit.event.Listener;
 
 import java.time.LocalDateTime;
 
+@Disabled
 public class NPCHandler implements Listener {
 
 	@EventHandler

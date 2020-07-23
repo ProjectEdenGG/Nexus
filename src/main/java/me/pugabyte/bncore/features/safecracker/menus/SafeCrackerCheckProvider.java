@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerPlayer;
@@ -15,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@Disabled
 public class SafeCrackerCheckProvider extends MenuUtils implements InventoryProvider {
 
 	SafeCrackerPlayerService service = new SafeCrackerPlayerService();

@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.safecracker.menus.SafeCrackerInventories;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -45,6 +46,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 @NoArgsConstructor
+@Disabled
 public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	public SafeCrackerEventService eventService = new SafeCrackerEventService();

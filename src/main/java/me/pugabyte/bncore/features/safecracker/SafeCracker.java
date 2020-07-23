@@ -1,12 +1,14 @@
 package me.pugabyte.bncore.features.safecracker;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Disabled
 public class SafeCracker {
 
 	public SafeCracker() {
