@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.holidays.bearfair20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.Getter;
@@ -11,8 +10,6 @@ import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.EasterEggs;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
-import me.pugabyte.bncore.models.bearfair.BearFairService;
-import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -36,24 +33,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 import static me.pugabyte.bncore.utils.Utils.isVanished;
-
-/*
-	TODO:
-	 - (Sometime After Release) Merchant Trader: decide how much gold -> BFP
- */
 
 @Data
 public class BearFair20 implements Listener {
@@ -166,51 +154,50 @@ public class BearFair20 implements Listener {
 		});
 	}
 
-	@EventHandler
-	public void onRegionEnterYacht(RegionEnteredEvent event) {
-		if (!allowWarp) return;
-		if (!event.getRegion().getId().equalsIgnoreCase("spawn_spaceyacht")) return;
-		Player player = event.getPlayer();
-		send("", player);
-		send("&3Captain &8> &fAll aboard! Everyone to their sleeping quarters! We'll be leaving soon.", player);
-		send("", player);
+//	@EventHandler
+//	public void onRegionEnterYacht(RegionEnteredEvent event) {
+//		if (!allowWarp) return;
+//		if (!event.getRegion().getId().equalsIgnoreCase("spawn_spaceyacht")) return;
+//		Player player = event.getPlayer();
+//		send("", player);
+//		send("&3Captain &8> &fAll aboard! Everyone to their sleeping quarters! We'll be leaving soon.", player);
+//		send("", player);
+//	}
 
-	}
-
-	@EventHandler
-	public void onRegionEnterQuarters(RegionEnteredEvent event) {
-		if (!allowWarp) return;
-		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
-
-		Location spawnTransition = new Location(Bukkit.getWorld("survival"), 24.5, 96.5, -189.5);
-		Location bearFairYacht = new Location(world, -984.5, 135.5, -1529.5);
-		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
-
-		Tasks.wait(Time.SECOND.x(2), () -> {
-			player.addPotionEffects(Collections.singletonList
-					(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
-			player.teleport(spawnTransition);
-			send("", player);
-			send("&e&o*You immediately fall asleep in your bed*", player);
-			send("", player);
-			Tasks.wait(Time.SECOND.x(4), () -> {
-				player.teleport(bearFairYacht);
-				send("", player);
-				send("&e&o*You awake to the sounds of birds chirping, you must have slept the whole trip*", player);
-				send("", player);
-				if (user.isFirstVisit()) {
-					user.setFirstVisit(false);
-					service.save(user);
-					Tasks.wait(Time.SECOND.x(3), () -> {
-						send("&8&l[&c&l!!!&8&l] &3You can now warp here using: &e/bearfair", player);
-						chime(player);
-					});
-				}
-			});
-		});
-	}
+//	@EventHandler
+//	public void onRegionEnterQuarters(RegionEnteredEvent event) {
+//		if (!allowWarp) return;
+//		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
+//
+//		Location spawnTransition = new Location(Bukkit.getWorld("survival"), 24.5, 96.5, -189.5);
+//		Location bearFairYacht = new Location(world, -984.5, 135.5, -1529.5);
+//		Player player = event.getPlayer();
+//		BearFairService service = new BearFairService();
+//		BearFairUser user = service.get(player);
+//
+//		Tasks.wait(Time.SECOND.x(2), () -> {
+//			player.addPotionEffects(Collections.singletonList
+//					(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
+//			player.teleport(spawnTransition);
+//			send("", player);
+//			send("&e&o*You immediately fall asleep in your bed*", player);
+//			send("", player);
+//			Tasks.wait(Time.SECOND.x(4), () -> {
+//				player.teleport(bearFairYacht);
+//				send("", player);
+//				send("&e&o*You awake to the sounds of birds chirping, you must have slept the whole trip*", player);
+//				send("", player);
+//				if (user.isFirstVisit()) {
+//					user.setFirstVisit(false);
+//					service.save(user);
+//					Tasks.wait(Time.SECOND.x(3), () -> {
+//						send("&8&l[&c&l!!!&8&l] &3You can now warp here using: &e/bearfair", player);
+//						chime(player);
+//					});
+//				}
+//			});
+//		});
+//	}
 
 	public static String isCheatingMsg(Player player) {
 		if (player.hasPermission("worldguard.region.bypass.*")) return "wgedit";

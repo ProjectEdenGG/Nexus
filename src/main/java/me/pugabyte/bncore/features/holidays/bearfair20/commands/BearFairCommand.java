@@ -88,12 +88,16 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		if (!BearFair20.allowWarp)
 			error("Warp is disabled");
 
-		BearFairUser user = service.get(player());
-
-		if (user.isFirstVisit())
-			error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
+//		BearFairUser user = service.get(player());
+//		if (user.isFirstVisit())
+//			error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
 
 		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR));
+	}
+
+	@Path("gallery")
+	void warpToGallery() {
+		teleport(new WarpService().get("gallery", WarpType.BEAR_FAIR));
 	}
 
 	@Path("store")
