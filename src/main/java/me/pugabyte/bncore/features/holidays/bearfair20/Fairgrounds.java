@@ -64,8 +64,7 @@ public class Fairgrounds implements Listener {
 	public static void removeKits(Player player) {
 		List<ItemStack> items = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
 		for (ItemStack item : items) {
-			if (!BearFair20.isBFItem(item))
-				continue;
+			if (!BearFair20.isBFItem(item)) continue;
 
 			if (isBFKitItem(item))
 				player.getInventory().remove(item);
