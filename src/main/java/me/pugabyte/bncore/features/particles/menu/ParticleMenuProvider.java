@@ -61,11 +61,11 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 		int column = 1;
 
 		for (ParticleType type : ParticleType.getPresets()) {
-			if (type == ParticleType.WINGS)
+			if (type == ParticleType.WINGS) {
 				if (!player.hasPermission("wings.use"))
 					continue;
-				else if (!player.hasPermission("particles." + type.getCommandName()))
-					continue;
+			} else if (!player.hasPermission("particles." + type.getCommandName()))
+				continue;
 
 			ItemStack item = new ItemBuilder(type.getItemStack().clone()).name("&3" + type.getDisplayName())
 					.lore("&eLeft Click to toggle||&7&oRight click to edit settings").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
