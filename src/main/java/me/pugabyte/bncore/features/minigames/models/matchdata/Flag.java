@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -74,9 +73,7 @@ public class Flag {
 		// TODO: Make sure flag is on a solid block and in an empty space
 
 		Block block = currentLocation.getBlock();
-
 		block.setType(Material.OAK_SIGN);
-//		block.setBlockData(blockData);
 
 		Sign sign = (Sign) block.getState();
 
@@ -94,16 +91,21 @@ public class Flag {
 
 	public Location getSuitableLocation(Location originalLocation) {
 		Location location = originalLocation.clone();
+		if (location.getBlock().isLiquid()) {
+			while (location.getBlock().isLiquid()) {
+				location.add(0, 1, 0);
+			}
+			return location;
+		}
+		while (location.getBlock().getType() != Material.AIR && !location.getBlock().getType().isSolid()) {
+			location.add(1, 0, 0);
+		}
 		Block below = location.clone().subtract(0, 1, 0).getBlock();
 		while ((below.getType() == Material.AIR || location.getBlock().getType() != Material.AIR) &&
 				ArenaManager.getFromLocation(originalLocation).getRegion().contains(new WorldGuardUtils(Minigames.getWorld()).toBlockVector3(location))) {
 			location.subtract(0, 1, 0);
 			below = location.clone().subtract(0, 1, 0).getBlock();
 		}
-		while (location.getBlock().getType() != Material.AIR || location.clone().subtract(0, 1, 0).getBlock().getType() == Material.AIR) {
-			location.add(0, 1, 0);
-		}
-		Utils.blast(location.toString());
 		return location;
 	}
 

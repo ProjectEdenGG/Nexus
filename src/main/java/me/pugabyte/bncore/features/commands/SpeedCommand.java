@@ -28,13 +28,15 @@ public class SpeedCommand extends CustomCommand {
 
 	@Path("fly <speed> [player]")
 	void fly(float speed, @Arg(value = "self", permission = "group.staff") Player player) {
-		setSpeed(player, validateSpeed(speed), true);
+		speed = validateSpeed(speed);
+		setSpeed(player, speed, true);
 		tell(speed, player, "Fly");
 	}
 
 	@Path("walk <speed> [player]")
 	void walk(float speed, @Arg(value = "self", permission = "group.staff") Player player) {
-		setSpeed(player, validateSpeed(speed), false);
+		speed = validateSpeed(speed);
+		setSpeed(player, speed, false);
 		tell(speed, player, "Walk");
 	}
 
