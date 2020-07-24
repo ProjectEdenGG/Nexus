@@ -233,7 +233,7 @@ public enum ParticleType {
 					.whole(true)
 					.updateLoc(true)
 					.color(color)
-					.rainbow(true)
+					.rainbow(rainbow)
 					.startDelay(20)
 					.start()
 					.getTaskId();
