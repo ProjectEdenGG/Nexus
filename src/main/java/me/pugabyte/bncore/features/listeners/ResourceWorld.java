@@ -7,6 +7,7 @@ import me.pugabyte.bncore.models.tip.Tip.TipType;
 import me.pugabyte.bncore.models.tip.TipService;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -35,6 +36,12 @@ public class ResourceWorld implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.getFrom().getWorld().getName().startsWith("resource")) return;
+
+		if (!WorldGroup.get(event.getFrom().getWorld()).equals(WorldGroup.SURVIVAL)) {
+			player.sendMessage(colorize("&eYou can only enter the resource world from the Survival world"));
+			event.setCancelled(true);
+			return;
+		}
 
 		if (event.getTo().getWorld().getName().startsWith("resource")) {
 			List<Material> materials = new ShopService().getMarket().getProducts(Shop.ShopGroup.RESOURCE).stream()
