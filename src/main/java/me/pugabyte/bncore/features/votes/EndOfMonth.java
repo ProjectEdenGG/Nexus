@@ -5,7 +5,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChestType;
-import me.pugabyte.bncore.features.votes.mysterychest.MysteryChest;
+import me.pugabyte.bncore.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.models.vote.TopVoter;
 import me.pugabyte.bncore.models.vote.VoteService;

@@ -2,14 +2,12 @@ package me.pugabyte.bncore.features.menus.rewardchests;
 
 import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.votes.mysterychest.MysteryChest;
+import me.pugabyte.bncore.features.menus.coupons.CouponBuilder;
+import me.pugabyte.bncore.features.menus.coupons.Coupons;
+import me.pugabyte.bncore.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestPlayer;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
-import me.pugabyte.bncore.utils.SoundUtils;
-import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGroup;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
+import me.pugabyte.bncore.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -34,6 +32,8 @@ public class RewardChest implements Listener {
 	public RewardChest() {
 		registerSerializables();
 		BNCore.registerListener(this);
+		BNCore.registerListener(new CouponBuilder());
+		new Coupons();
 	}
 
 	public static SmartInventory getInv(RewardChestLoot... loot) {

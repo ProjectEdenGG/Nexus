@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.votes.mysterychest;
+package me.pugabyte.bncore.features.menus.rewardchests.mysterychest;
 
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChest;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChestType;
