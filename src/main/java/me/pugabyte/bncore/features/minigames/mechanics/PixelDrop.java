@@ -37,6 +37,7 @@ import java.util.List;
 // TODO:
 //  - Scoreboards
 //	- block pasted needs to copy blockdata (directional / slab side)
+//	- players can guess the previous rounds word after the round has ended
 
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
