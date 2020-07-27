@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.votes.mysterychest;
+package me.pugabyte.bncore.features.menus.rewardchests.mysterychest;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.*;
