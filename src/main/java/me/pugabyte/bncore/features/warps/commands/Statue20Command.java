@@ -21,7 +21,6 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -39,7 +38,7 @@ import java.util.Arrays;
 public class Statue20Command extends _WarpCommand implements Listener {
 
 	public String header = StringUtils.colorize("&1[StatueHunt 20]");
-	public String enchant = "_";
+	public String enchant = "Gears 1";
 
 	public Statue20Command(CommandEvent event) {
 		super(event);
@@ -60,10 +59,10 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 	@Permission("group.staff")
 	@Path("sign <player>")
-	void sign(OfflinePlayer player) {
+	void sign(String player) {
 		Sign sign = getTargetSign(player());
 		sign.setLine(0, header);
-		sign.setLine(1, player.getName());
+		sign.setLine(1, player);
 		sign.update();
 	}
 
@@ -71,6 +70,9 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	void claim() {
 		StatueHuntService service = new StatueHuntService();
 		StatueHunt statueHunt = service.get(event.getPlayer());
+
+		if (statueHunt.isClaimed())
+			error("You have already claimed the reward for finding all the statues");
 
 		if (statueHunt.getFound().size() != 21)
 			error("You have not found all of the statues. Keep hunting!");
@@ -151,11 +153,27 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 			ItemStack beePet = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Pet").lore("&3Click here to receive")
 					.lore("&3the bee pet: &c/pets").build();
-			contents.set(1, 3, ClickableItem.empty(beePet));
+			contents.set(1, 3, ClickableItem.from(beePet, e -> {
+				runCommandAsConsole("lp user " + player.getName() + " permission set miniaturepets.pet.Bee true");
+				send(player, "&3You have claimed the &eBee Pet");
+				StatueHuntService service = new StatueHuntService();
+				StatueHunt statueHunt = service.get(player);
+
+				statueHunt.setClaimed(true);
+				service.save(statueHunt);
+			}));
 
 			ItemStack beeDis = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Disguise").lore("&3Click here to receive")
 					.lore("&3the bee disguise: &c/disguise bee").build();
-			contents.set(1, 5, ClickableItem.empty(beeDis));
+			contents.set(1, 5, ClickableItem.from(beeDis, e -> {
+				runCommandAsConsole("lp user " + player.getName() + " permission set libsdisguises.disguise.bee.* true");
+				send(player, "&3You have claimed the &eBee Disguise");
+				StatueHuntService service = new StatueHuntService();
+				StatueHunt statueHunt = service.get(player);
+
+				statueHunt.setClaimed(true);
+				service.save(statueHunt);
+			}));
 
 		}
 
