@@ -15,7 +15,7 @@ public enum WorldGroup {
 	CREATIVE("creative", "buildcontest", "buildadmin", "jail", "pirate", "tiger"),
 	MINIGAMES("gameworld", "blockball", "deathswap"),
 	SKYBLOCK("skyblock", "skyblock_nether"),
-	ADVENTURE("stranded"),
+	ADVENTURE("stranded", "aeveon_project"),
 	EVENT("2y"),
 	UNKNOWN;
 
