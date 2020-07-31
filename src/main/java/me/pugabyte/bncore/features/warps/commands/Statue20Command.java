@@ -132,7 +132,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		}
 
 		if (found == 21) {
-			send(event.getPlayer(), PREFIX + "You have found all the statues! You can not claim either a &eBee Pet &3 or &eBee Disguise&3. Use &e/statue20 claim &3to claim your prize.");
+			send(event.getPlayer(), PREFIX + "You have found all the statues! You can now claim either a &eBee Pet &3 or &eBee Disguise&3. Use &e/statue20 claim &3to claim your prize.");
 			return;
 		}
 	}
