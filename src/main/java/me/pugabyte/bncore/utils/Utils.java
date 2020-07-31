@@ -69,19 +69,27 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 public class Utils {
 
 	public static void puga(String message) {
-		Bukkit.getPlayer("Pugabyte").sendMessage(colorize(message));
+		Player player = Bukkit.getPlayer("Pugabyte");
+		if (player != null && player.isOnline())
+			player.sendMessage(colorize(message));
 	}
 
 	public static void wakka(String message) {
-		Bukkit.getPlayer("WakkaFlocka").sendMessage(colorize(message));
+		Player player = Bukkit.getPlayer("WakkaFlocka");
+		if (player != null && player.isOnline())
+			player.sendMessage(colorize(message));
 	}
 
 	public static void blast(String message) {
-		Bukkit.getPlayer("Blast").sendMessage(colorize(message));
+		Player player = Bukkit.getPlayer("Blast");
+		if (player != null && player.isOnline())
+			player.sendMessage(colorize(message));
 	}
 
 	public static void zani(String message) {
-		Bukkit.getPlayer("Zanitaeni").sendMessage(colorize(message));
+		Player player = Bukkit.getPlayer("Zanitaeni");
+		if (player != null && player.isOnline())
+			player.sendMessage(colorize(message));
 	}
 
 	public static Player puga() {

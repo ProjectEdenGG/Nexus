@@ -2,11 +2,14 @@ package me.pugabyte.bncore.features.holidays.aeveonproject;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -20,7 +23,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 // Adventure map for Bear Nation to replace Stranded.
 @Data
@@ -42,6 +48,21 @@ public class AeveonProject implements Listener {
 
 	public AeveonProject() {
 		BNCore.registerListener(this);
+
+		Tasks.repeat(0, Time.TICK.x(10), () -> {
+			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+			for (Player player : players) {
+				if (!isInWorld(player)) continue;
+
+				if (isInSpace(player)) {
+					if (player.getPlayerTime() != 570000)
+						player.setPlayerTime(18000, false);
+				} else {
+					if (player.getPlayerTime() == 570000)
+						player.resetPlayerTime();
+				}
+			}
+		});
 	}
 
 	@EventHandler
@@ -94,6 +115,12 @@ public class AeveonProject implements Listener {
 
 		player.removePotionEffect(PotionEffectType.SPEED);
 //		player.setGravity(true);
+	}
+
+	public static boolean isInSpace(Player player) {
+		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(player.getLocation());
+		Set<ProtectedRegion> spaceRegions = regions.stream().filter(region -> region.getId().contains("space")).collect(Collectors.toSet());
+		return spaceRegions.size() > 0;
 	}
 
 	public static boolean isInWorld(Block block) {
