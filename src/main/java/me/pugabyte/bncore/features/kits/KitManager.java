@@ -58,7 +58,7 @@ public class KitManager {
 	}
 
 	public static Kit getByName(String name) {
-		return Arrays.stream(getAllKits()).filter(kit -> kit.getName().contains(name)).findFirst().get();
+		return Arrays.stream(getAllKits()).filter(kit -> kit.getName().toLowerCase().contains(name.toLowerCase())).findFirst().get();
 	}
 
 	public static int getNextId() {
