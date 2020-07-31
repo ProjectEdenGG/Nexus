@@ -28,7 +28,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// Adventure map for Bear Nation to replace Stranded.
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProjectRegions.sialia_dockingports;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProjectRegions.sialia_shipColor;
+
 @Data
 public class AeveonProject implements Listener {
 	@Getter
@@ -39,16 +41,10 @@ public class AeveonProject implements Listener {
 
 	public static String PREFIX = "&8&l[&eAeveonProject&8&l] &3";
 
-	/*
-	Areas:
-		sialia
-		sialia_crashing
-		sialia_wreckage
-	 */
-
 	public AeveonProject() {
 		BNCore.registerListener(this);
 
+		// PlayerTime Control
 		Tasks.repeat(0, Time.TICK.x(10), () -> {
 			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 			for (Player player : players) {
@@ -66,19 +62,33 @@ public class AeveonProject implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterRegion_ShipColor(RegionEnteredEvent event) {
+	public void onEnterRegion_Update(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
 		if (!isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
-		if (!id.contains("shipcolor")) return;
+		if (!id.contains("update")) return;
 
-		Material concreteType = RandomUtils.randomMaterial(MaterialTag.CONCRETES);
-		List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(id));
+		// Sialia
+		if (id.contains("sialia_shipcolor")) {
+			// Ship Color
+			Material concreteType = RandomUtils.randomMaterial(MaterialTag.CONCRETES);
+			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(sialia_shipColor));
 
-		for (Block block : blocks) {
-			if (block.getType().equals(Material.WHITE_CONCRETE))
-				player.sendBlockChange(block.getLocation(), concreteType.createBlockData());
+			for (Block block : blocks) {
+				if (block.getType().equals(Material.WHITE_CONCRETE))
+					player.sendBlockChange(block.getLocation(), concreteType.createBlockData());
+			}
+
+			// Docking Port #1 & #2 - Water
+			blocks.clear();
+			for (int i = 1; i <= 2; i++) {
+				blocks = WEUtils.getBlocks(WGUtils.getRegion(sialia_dockingports.replaceAll("#", String.valueOf(i))));
+				for (Block block : blocks) {
+					if (block.getType().equals(Material.WATER))
+						player.sendBlockChange(block.getLocation(), Material.AIR.createBlockData());
+				}
+			}
 		}
 	}
 
@@ -102,7 +112,6 @@ public class AeveonProject implements Listener {
 		if (!id.contains("dockingtube")) return;
 
 		player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999999, 15, false, false));
-//		player.setGravity(false);
 	}
 
 	@EventHandler
@@ -114,7 +123,6 @@ public class AeveonProject implements Listener {
 		if (!id.contains("dockingtube")) return;
 
 		player.removePotionEffect(PotionEffectType.SPEED);
-//		player.setGravity(true);
 	}
 
 	public static boolean isInSpace(Player player) {
