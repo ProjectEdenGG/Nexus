@@ -15,6 +15,7 @@ import me.pugabyte.bncore.models.statuehunt.StatueHunt;
 import me.pugabyte.bncore.models.statuehunt.StatueHuntService;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
+import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
@@ -32,9 +33,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @NoArgsConstructor
-@Permission("group.staff")
 public class Statue20Command extends _WarpCommand implements Listener {
 
 	public String header = StringUtils.colorize("&1[StatueHunt 20]");
@@ -55,6 +56,38 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		if (Utils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
 			error("You must be looking at a sign!");
 		return (Sign) targetBlock.getState();
+	}
+
+	@Override
+	@Path("(teleport|tp|warp) <name>")
+	@Permission("group.staff")
+	public void teleport(Warp warp) {
+		warp.teleport(player());
+		send(PREFIX + "&3Warping to &e" + warp.getName());
+	}
+
+	@Path("<name>")
+	@Override
+	@Permission("group.staff")
+	public void tp(Warp warp) {
+		teleport(warp);
+	}
+
+	@Path("tp nearest")
+	@Override
+	@Permission("group.staff")
+	public void teleportNearest() {
+		getNearestWarp(player().getLocation()).ifPresent(this::teleport);
+	}
+
+	@Path("nearest")
+	@Override
+	@Permission("group.staff")
+	public void nearest() {
+		Optional<Warp> warp = getNearestWarp(player().getLocation());
+		if (!warp.isPresent())
+			error("No nearest warp found");
+		send(PREFIX + "Nearest warp is &e" + warp.get().getName() + " &3(&e" + (int) warp.get().getLocation().distance(player().getLocation()) + " &3blocks away)");
 	}
 
 	@Permission("group.staff")
@@ -132,7 +165,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		}
 
 		if (found == 21) {
-			send(event.getPlayer(), PREFIX + "You have found all the statues! You can not claim either a &eBee Pet &3 or &eBee Disguise&3. Use &e/statue20 claim &3to claim your prize.");
+			send(event.getPlayer(), PREFIX + "You have found all the statues! You can now claim either a &eBee Pet &3 or &eBee Disguise&3. Use &e/statue20 claim &3to claim your prize.");
 			return;
 		}
 	}
@@ -161,6 +194,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 				statueHunt.setClaimed(true);
 				service.save(statueHunt);
+				player.closeInventory();
 			}));
 
 			ItemStack beeDis = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Disguise").lore("&3Click here to receive")
@@ -173,6 +207,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 				statueHunt.setClaimed(true);
 				service.save(statueHunt);
+				player.closeInventory();
 			}));
 
 		}

@@ -88,7 +88,7 @@ public class KitCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onFirstJoin(PlayerJoinEvent event) {
 		if (event.getPlayer().hasPlayedBefore()) return;
-		Utils.giveItems(player(), Arrays.asList(KitManager.getByName("starter").getItems()));
+		Utils.giveItems(event.getPlayer(), Arrays.asList(KitManager.getByName("starter").getItems()));
 	}
 
 }
