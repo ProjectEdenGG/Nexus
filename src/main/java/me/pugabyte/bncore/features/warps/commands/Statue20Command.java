@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -22,6 +23,7 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -56,6 +58,22 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		if (Utils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
 			error("You must be looking at a sign!");
 		return (Sign) targetBlock.getState();
+	}
+
+	@Path("check [player]")
+	void check(@Arg("self") OfflinePlayer player) {
+		StatueHuntService service = new StatueHuntService();
+		StatueHunt statueHunt = service.get(player);
+
+		int found = statueHunt.getFound().size();
+		send(PREFIX + player.getName() + " has found &e" + found + " &3statue" + (found > 1 ? "s" : ""));
+		if (player().hasPermission("group.staff") && found > 0) {
+			String foundString = "";
+			for (String s : statueHunt.getFound()) {
+				foundString += "&3" + s + "\n";
+			}
+			send(json("&eClick here to view the found statues").hover(foundString));
+		}
 	}
 
 	@Override
