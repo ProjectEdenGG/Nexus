@@ -3,12 +3,12 @@ package me.pugabyte.bncore.features.commands.poof;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
-import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
-import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.*;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.bncore.models.setting.Setting;
+import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.RelativeLocation;
 import me.pugabyte.bncore.utils.Utils.RelativeLocation.Modify;
 import org.bukkit.Bukkit;
@@ -28,6 +28,7 @@ import static me.pugabyte.bncore.utils.Utils.getLocation;
 
 @NoArgsConstructor
 @Aliases({"tp", "tppos"})
+@Redirects.Redirect(from = "/tpo", to = "/tp override")
 public class TeleportCommand extends CustomCommand implements Listener {
 
 	public TeleportCommand(@NonNull CommandEvent event) {
@@ -48,9 +49,24 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		send(json(message).suggest(message));
 	}
 
+	@Path("override <player>")
+	@Permission("group.seniorstaff")
+	void override(Player player) {
+		player().teleport(player);
+		send(PREFIX + "Overriding teleport to &e" + player.getName());
+	}
+
 	@Path("<player> [player]")
 	void run(@Arg(tabCompleter = OfflinePlayer.class) String arg1, @Arg(tabCompleter = OfflinePlayer.class) String arg2) {
 		if (!player().hasPermission("group.staff")) {
+			runCommand("tpa " + argsString());
+			return;
+		}
+
+		SettingService settingService = new SettingService();
+		Setting setting = settingService.get(Utils.getPlayer(arg1), "tpDisable");
+		if (setting.getBoolean()) {
+			send(PREFIX + "&cThat player has teleports disabled. Sending a request instead");
 			runCommand("tpa " + argsString());
 			return;
 		}
@@ -109,6 +125,17 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			lockTeleports.remove(uuid);
 			send(PREFIX + "&aAllowing &3teleports from &e" + player.getName());
 		}
+	}
+
+	@Path("disable")
+	@Permission("ladder.architect")
+	void disable() {
+		SettingService settingService = new SettingService();
+		Setting setting = settingService.get(player(), "tpDisable");
+		boolean bol = setting.getBoolean();
+		setting.setBoolean(!bol);
+		settingService.save(setting);
+		send(PREFIX + "Teleports to you have been " + (bol ? "&aenabled" : "&cdisabled"));
 	}
 
 	@EventHandler
