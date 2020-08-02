@@ -3,12 +3,15 @@ package me.pugabyte.bncore.features.commands.poof;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.*;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.Redirects;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.RelativeLocation;
 import me.pugabyte.bncore.utils.Utils.RelativeLocation.Modify;
 import org.bukkit.Bukkit;
@@ -63,14 +66,6 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		SettingService settingService = new SettingService();
-		Setting setting = settingService.get(Utils.getPlayer(arg1), "tpDisable");
-		if (setting.getBoolean()) {
-			send(PREFIX + "&cThat player has teleports disabled. Sending a request instead");
-			runCommand("tpa " + argsString());
-			return;
-		}
-
 		if (isCoord(arg(1)) && isCoord(arg(2)) && isCoord(arg(3))) {
 			Location location = player().getLocation();
 			Modify modifier = RelativeLocation.modify(location).x(arg(1)).y(arg(2)).z(arg(3));
@@ -94,12 +89,18 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			Location location1 = getLocation(player1);
 			if (isOfflinePlayerArg(2)) {
 				OfflinePlayer player2 = offlinePlayerArg(2);
-				if (player1.isOnline()) {
+				if (player1.isOnline() && player1.getPlayer() != null) {
+					if (checkTeleportDisabled(player1.getPlayer(), player2))
+						return;
+
 					player1.getPlayer().teleport(getLocation(player2), TeleportCause.COMMAND);
 					send(PREFIX + "Poofing to &e" + player2.getName() + (player2.isOnline() ? "" : " &3(Offline)"));
 				} else
 					throw new PlayerNotOnlineException(player1);
 			} else {
+				if (checkTeleportDisabled(player(), player1))
+					return;
+
 				player().teleport(location1, TeleportCause.COMMAND);
 				send(PREFIX + "Poofing to &e" + player1.getName() + (player1.isOnline() ? "" : " &3(Offline)"));
 			}
@@ -107,6 +108,17 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			send("&c/" + getAliasUsed() + " <player> [player]");
 			send("&c/" + getAliasUsed() + " <x> <y> <z> [yaw] [pitch] [world]");
 		}
+	}
+
+	private boolean checkTeleportDisabled(Player from, OfflinePlayer to) {
+		SettingService settingService = new SettingService();
+		Setting setting = settingService.get(to, "tpDisable");
+		if (setting.getBoolean()) {
+			send(PREFIX + "&cThat player has teleports disabled. Sending a request instead");
+			runCommand(from, "tpa " + argsString());
+			return true;
+		}
+		return false;
 	}
 
 	private static final Set<UUID> lockTeleports = new HashSet<>();

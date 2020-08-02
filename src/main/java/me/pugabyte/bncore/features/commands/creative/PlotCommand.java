@@ -17,11 +17,12 @@ public class PlotCommand extends CustomCommand {
 
 	@Path("limit")
 	void plot() {
-		if (!WorldGroup.CREATIVE.getWorlds().toString().contains(player().getWorld().getName()))
+		if (WorldGroup.get(player()) != WorldGroup.CREATIVE)
 			error("&3You must be in the &c/creative &3world to use this command!");
-		if (getLimit() == 0)
+		int limit = getLimit();
+		if (limit == 0)
 			error("&3You cannot claim any plots");
-		send("&3You can claim &e" + getLimit() + plural(" &3plot", getLimit()));
+		send("&3You can claim &e" + limit + plural(" &3plot", limit));
 	}
 
 	public int getLimit() {
