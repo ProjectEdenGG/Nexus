@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.bearfair20.islands;
 
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;
 
@@ -33,12 +34,6 @@ public interface Island {
 	@Retention(RetentionPolicy.RUNTIME)
 	@interface NPCClass {
 		Class<? extends Enum<? extends TalkingNPC>> value();
-	}
-
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface Region {
-		String value();
 	}
 
 }

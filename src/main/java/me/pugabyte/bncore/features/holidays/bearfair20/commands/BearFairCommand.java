@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables;
-import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
+import me.pugabyte.bncore.features.holidays.bearfair20.islands.IslandType;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
@@ -123,8 +123,8 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	void questsSwitchQuest(String string) {
 		if (!BearFair20.enableQuests) return;
 
-		ProtectedRegion pugmasRegion = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + PugmasIsland.class.getAnnotation(Island.Region.class).value());
-		ProtectedRegion mainRegion = WGUtils.getProtectedRegion(BearFair20.getRegion() + "_" + MainIsland.class.getAnnotation(Island.Region.class).value());
+		ProtectedRegion pugmasRegion = WGUtils.getProtectedRegion(IslandType.PUGMAS.get().getRegion());
+		ProtectedRegion mainRegion = WGUtils.getProtectedRegion(IslandType.MAIN.get().getRegion());
 		if (!WGUtils.getRegionsAt(player().getLocation()).contains(pugmasRegion) && !WGUtils.getRegionsAt(player().getLocation()).contains(mainRegion))
 			return;
 		switch (string) {

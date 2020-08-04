@@ -2,9 +2,9 @@ package me.pugabyte.bncore.features.holidays.bearfair20.islands;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.NPCClass;
-import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.Region;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.MainNPCs;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;

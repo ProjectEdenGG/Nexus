@@ -22,6 +22,4 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 		send("TODO");
 	}
 
-	// Command that teleports armorstand to their pitch & yaw is 0
-
 }

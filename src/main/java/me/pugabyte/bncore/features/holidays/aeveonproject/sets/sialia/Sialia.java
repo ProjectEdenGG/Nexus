@@ -3,8 +3,11 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Set;
+import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -19,7 +22,11 @@ import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*;
 
-public class Sialia implements Listener {
+@Region("sialia")
+public class Sialia implements Listener, Set {
+	@Getter
+	static boolean active = true;
+
 	List<String> openDoors = new ArrayList<>();
 
 	public Sialia() {
@@ -45,7 +52,7 @@ public class Sialia implements Listener {
 
 		String folder = ROOT + "Bulkhead/";
 		Location loc = WGUtils.toLocation(door.getMinimumPoint());
-		getWorld().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
+		getWORLD().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 0; i <= 2; i++) {
 			int frame = i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {
@@ -72,7 +79,7 @@ public class Sialia implements Listener {
 		String folder = ROOT + "Bulkhead/";
 
 		Location loc = WGUtils.toLocation(door.getMinimumPoint());
-		getWorld().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
+		getWORLD().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 2; i >= 0; i--) {
 			int frame = 2 - i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {
