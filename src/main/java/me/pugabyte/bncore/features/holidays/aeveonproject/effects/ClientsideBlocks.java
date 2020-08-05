@@ -16,6 +16,7 @@ import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*
 import static me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia.Regions.*;
 
 public class ClientsideBlocks implements Listener {
+	// check on world change, and on login to update region
 
 	public ClientsideBlocks() {
 		BNCore.registerListener(this);

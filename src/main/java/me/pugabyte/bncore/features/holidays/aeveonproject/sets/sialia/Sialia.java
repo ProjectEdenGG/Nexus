@@ -26,12 +26,22 @@ import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*
 public class Sialia implements Listener, Set {
 	@Getter
 	static boolean active = true;
+	@Getter
+	public static Player nearbyPlayer = null;
 
 	List<String> openDoors = new ArrayList<>();
 
 	public Sialia() {
 		BNCore.registerListener(this);
+
 		new Particles();
+		new Sounds();
+
+		Tasks.repeat(0, Time.TICK.x(5), () -> {
+			List<Player> nearbyPlayers = new ArrayList<>(WGUtils.getPlayersInRegion(Regions.sialia));
+			if (nearbyPlayers.size() > 0)
+				nearbyPlayer = nearbyPlayers.get(0);
+		});
 	}
 
 

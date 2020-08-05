@@ -37,7 +37,8 @@ public class LineEffect {
 
 		double maxLineLength = 200;
 		if (distance != 0) {
-			if (distance > maxLineLength) distance = maxLineLength;
+			if (distance > maxLineLength)
+				distance = maxLineLength;
 			Vector direction = player.getEyeLocation().getDirection();
 			startLoc = player.getLocation().add(0, 1.5, 0);
 			endLoc = startLoc.clone().add(direction.multiply(distance));

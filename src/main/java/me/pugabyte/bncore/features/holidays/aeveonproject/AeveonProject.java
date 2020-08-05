@@ -42,6 +42,35 @@ public class AeveonProject implements Listener {
 		return spaceRegions.size() > 0;
 	}
 
+	public static boolean isInRegion(Player player, String protectedRegion) {
+		return isInRegion(player, WGUtils.getProtectedRegion(protectedRegion));
+	}
+
+	public static boolean isInRegion(Player player, ProtectedRegion protectedRegion) {
+		return isInRegion(player.getLocation(), protectedRegion);
+	}
+
+	public static boolean isInRegion(Block block, String protectedRegion) {
+		return isInRegion(block, WGUtils.getProtectedRegion(protectedRegion));
+	}
+
+	public static boolean isInRegion(Block block, ProtectedRegion protectedRegion) {
+		return isInRegion(block.getLocation(), protectedRegion);
+	}
+
+	public static boolean isInRegion(Location location, String protectedRegion) {
+		return isInRegion(location, WGUtils.getProtectedRegion(protectedRegion));
+	}
+
+	public static boolean isInRegion(Location location, ProtectedRegion protectedRegion) {
+		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
+		for (ProtectedRegion region : regions) {
+			if (region.equals(protectedRegion))
+				return true;
+		}
+		return false;
+	}
+
 	public static boolean isInWorld(Block block) {
 		return isInWorld(block.getLocation());
 	}

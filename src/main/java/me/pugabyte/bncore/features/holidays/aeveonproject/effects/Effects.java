@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.effects;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -15,6 +16,8 @@ import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.i
 
 public class Effects implements Listener {
 	public Effects() {
+		BNCore.registerListener(this);
+
 		new DockingPorts();
 		new GravLift();
 		new PlayerTime();
