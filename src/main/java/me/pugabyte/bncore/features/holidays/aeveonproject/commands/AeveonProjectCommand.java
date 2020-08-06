@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.commands;
 
-import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -10,7 +9,6 @@ import org.bukkit.event.Listener;
 
 @Aliases("ap")
 @Permission("group.staff")
-@NoArgsConstructor
 public class AeveonProjectCommand extends CustomCommand implements Listener {
 
 	public AeveonProjectCommand(CommandEvent event) {
