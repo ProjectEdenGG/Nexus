@@ -1,17 +1,8 @@
 package me.pugabyte.bncore.framework.commands.models;
 
 import com.google.common.base.Strings;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
-import me.pugabyte.bncore.framework.commands.models.annotations.Description;
-import me.pugabyte.bncore.framework.commands.models.annotations.Fallback;
-import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
-import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
+import lombok.*;
+import me.pugabyte.bncore.framework.commands.models.annotations.*;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -87,6 +78,15 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected void send(CommandSender sender, String message) {
 		send(sender, json(message));
+	}
+
+	protected void send(Object object) {
+		if (object instanceof String)
+			send(sender(), (String) object);
+		else if (object instanceof JsonBuilder)
+			send(sender(), (JsonBuilder) object);
+		else
+			throw new InvalidInputException("Cannot send object: " + object.getClass().getSimpleName());
 	}
 
 	protected void send(CommandSender sender, int delay, String message) {
