@@ -29,7 +29,6 @@ public abstract class _WarpCommand extends CustomCommand {
 	public abstract WarpType getWarpType();
 
 	@Path("(list|warps) [filter]")
-	@Permission("group.staff")
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		List<String> warps = tabCompleteWarp(filter);
 		JsonBuilder builder = new JsonBuilder();
@@ -60,14 +59,14 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("reset <name>")
-	@Permission("group.staff")
+	@Permission(value = "group.staff", absolute = true)
 	public void reset(@Arg(tabCompleter = Warp.class) String name) {
 		service.save(new Warp(name, player().getLocation(), getWarpType().name()));
 		send(PREFIX + "&e" + name + " &3set to your current location");
 	}
 
 	@Path("(rm|remove|delete|del) <name>")
-	@Permission("group.staff")
+	@Permission(value = "group.staff", absolute = true)
 	public void delete(Warp warp) {
 		service.delete(warp);
 		send(PREFIX + "Successfully deleted warp &e" + warp.getName());
