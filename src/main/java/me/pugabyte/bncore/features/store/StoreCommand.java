@@ -14,7 +14,7 @@ import net.buycraft.plugin.data.Coupon;
 import net.buycraft.plugin.data.Coupon.Discount;
 import net.buycraft.plugin.data.Coupon.Effective;
 import net.buycraft.plugin.data.Coupon.Expire;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -63,14 +63,14 @@ public class StoreCommand extends CustomCommand {
 	@Async
 	@SneakyThrows
 	@Path("createCoupon <player> <amount>")
-	void createCoupon(Player player, double amount) {
+	void createCoupon(OfflinePlayer offlinePlayer, double amount) {
 		Coupon coupon = Coupon.builder()
 				.code(generateCouponCode())
 				.effective(new Effective("cart", ImmutableList.of(), ImmutableList.of()))
 				.basketType("both")
 				.discount(new Discount("amount", BigDecimal.ZERO, BigDecimal.valueOf(amount)))
 				.discountMethod(2)
-				.username(player.getName())
+				.username(offlinePlayer.getName())
 				.redeemUnlimited(false)
 				.redeemUnlimited(1)
 				.minimum(BigDecimal.ZERO)
