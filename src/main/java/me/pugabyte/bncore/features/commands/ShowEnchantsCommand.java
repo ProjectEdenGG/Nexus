@@ -18,6 +18,7 @@ import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -58,6 +59,9 @@ public class ShowEnchantsCommand extends CustomCommand {
 	void run(String message) {
 		Player player = player();
 		ItemStack item = getItem(player, arg(1));
+		if (Utils.isNullOrAir(item))
+			error("You're not holding anything in that slot");
+
 		ItemData data = new ItemData();
 		if (message == null) message = "";
 

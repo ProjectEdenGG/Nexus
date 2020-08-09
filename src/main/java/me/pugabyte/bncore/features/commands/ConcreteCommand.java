@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 
 @NoArgsConstructor
 public class ConcreteCommand extends CustomCommand implements Listener {
+	private static final String TITLE = StringUtils.colorize("&6Concrete Exchange");
 
 	public ConcreteCommand(CommandEvent event) {
 		super(event);
@@ -35,7 +36,8 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
-		if (!event.getView().getTitle().equals(StringUtils.colorize("&6Concrete Exchange"))) return;
+		if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
+
 		for (ItemStack item : event.getInventory().getContents()) {
 			if (Utils.isNullOrAir(item)) continue;
 			if (!MaterialTag.CONCRETE_POWDERS.isTagged(item.getType())) {

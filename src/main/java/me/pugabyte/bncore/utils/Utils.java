@@ -34,6 +34,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -918,6 +919,21 @@ public class Utils {
 		default <T extends Enum<?>> T previousWithLoop() {
 			return (T) EnumUtils.previousWithLoop(this.getClass(), ordinal());
 		}
+	}
+
+	public static boolean equalsInvViewTitle(InventoryView view, String title) {
+		String viewTitle = null;
+		try {
+			viewTitle = view.getTitle();
+		} catch (Exception ignored) {
+
+		}
+
+		if (Strings.isNullOrEmpty(viewTitle))
+			return false;
+
+		return viewTitle.equals(title);
+
 	}
 
 }

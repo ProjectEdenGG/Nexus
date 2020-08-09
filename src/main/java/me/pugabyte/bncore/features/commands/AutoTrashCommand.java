@@ -73,7 +73,7 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
 		if (event.getInventory().getHolder() != null) return;
-		if (!event.getView().getTitle().equals(TITLE)) return;
+		if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
 
 		Player player = (Player) event.getPlayer();
 		if (!player.hasPermission(PERMISSION)) return;

@@ -48,7 +48,7 @@ public class TrashCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
 		if (event.getInventory().getHolder() != null) return;
-		if (!event.getView().getTitle().equals(TITLE)) return;
+		if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
 
 		DumpsterService service = new DumpsterService();
 		Dumpster dumpster = service.get();
