@@ -316,8 +316,6 @@ public abstract class ICustomCommand {
 
 	boolean hasPermission(CommandSender sender, Method method) {
 		String permission = _getPermission();
-		if (permission != null && !sender.hasPermission(permission))
-			return false;
 
 		if (method.isAnnotationPresent(Permission.class)) {
 			Permission pathPermission = method.getAnnotation(Permission.class);
@@ -325,8 +323,12 @@ public abstract class ICustomCommand {
 				permission = pathPermission.absolute() ? "" : (permission + ".") + pathPermission.value();
 			else
 				permission = pathPermission.value();
+
 			return sender.hasPermission(permission);
 		}
+
+		if (permission != null && !sender.hasPermission(permission))
+			return false;
 
 		return true;
 	}

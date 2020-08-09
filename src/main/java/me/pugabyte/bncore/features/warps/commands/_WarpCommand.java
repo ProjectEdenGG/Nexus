@@ -49,7 +49,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("set <name>")
-	@Permission("group.staff")
+	@Permission(value = "group.staff", absolute = true)
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		Warp warp = service.get(name, getWarpType());
 		if (warp != null)
