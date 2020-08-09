@@ -7,6 +7,7 @@ import me.pugabyte.bncore.models.alerts.AlertsService;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PrivateChannel;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +23,7 @@ public class AlertsListener implements Listener {
 		return recipients.stream().filter(chatter -> !chatter.equals(origin)).collect(Collectors.toSet());
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onChat(MinecraftChatEvent event) {
 		Set<Chatter> everyoneElse = getEveryoneElse(event.getChatter(), event.getRecipients());
 		if (event.getChannel() instanceof PrivateChannel) {
@@ -31,7 +32,7 @@ public class AlertsListener implements Listener {
 			tryAlerts(everyoneElse, event.getMessage());
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onDiscordMessage(DiscordChatEvent event) {
 		Set<Chatter> everyoneElse = event.getRecipients();
 		if (event.getChatter() != null)

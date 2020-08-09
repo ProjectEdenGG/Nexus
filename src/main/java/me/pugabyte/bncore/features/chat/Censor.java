@@ -133,7 +133,7 @@ public class Censor {
 	}
 
 	public static void dots(ChatEvent event) {
-		if (event.getMessage().toLowerCase().matches("(\\(|<|\\{|\\[)dot(]|}|>|\\))")) {
+		if (event.getMessage().toLowerCase().matches(".*(\\(|<|\\{|\\[)dot(]|}|>|\\)).*")) {
 			Chat.broadcast(PREFIX + "Prevented a possible advertisement attempt by " + event.getOrigin() + ": " + event.getMessage(), StaticChannel.STAFF);
 			event.setCancelled(true);
 		}
