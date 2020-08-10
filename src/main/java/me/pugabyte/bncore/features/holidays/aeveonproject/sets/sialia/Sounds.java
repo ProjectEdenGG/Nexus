@@ -4,6 +4,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -30,6 +31,9 @@ public class Sounds implements Listener {
 			Tasks.sync(() -> {
 				Collection<Player> players = WGUtils.getPlayersInRegion(Regions.sialia);
 				for (Player player : players) {
+					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
+						continue;
+
 					player.playSound(engineLoc, engineSound, SoundCategory.AMBIENT, 2.5F, 1F);
 				}
 			});
@@ -43,10 +47,11 @@ public class Sounds implements Listener {
 			Tasks.sync(() -> {
 				Collection<Player> players = WGUtils.getPlayersInRegion(Regions.sialia);
 				for (Player player : players) {
+					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
+						continue;
+
 					player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F);
-//					player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F);
 					Tasks.wait(Time.SECOND.x(2), () -> {
-//						player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F);
 						player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F);
 					});
 				}
