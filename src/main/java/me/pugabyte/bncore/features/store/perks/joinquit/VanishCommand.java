@@ -37,7 +37,7 @@ public class VanishCommand extends CustomCommand {
 	}
 
 	@Path("(ni|nointeract)")
-	@Permission("vanish.vanish")
+	@Permission("pv.use")
 	void toggleInteract() {
 		if (player().hasPermission("pv.interact")) {
 			BNCore.getPerms().playerRemove(player(), "pv.interact");
@@ -59,7 +59,7 @@ public class VanishCommand extends CustomCommand {
 	}
 
 	@Path("(np|nopickup)")
-	@Permission("vanish.vanish")
+	@Permission("pv.use")
 	void togglePickup() {
 		runCommand("premiumvanish:vanish tipu");
 	}
