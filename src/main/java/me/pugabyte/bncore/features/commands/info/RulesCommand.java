@@ -25,9 +25,9 @@ public class RulesCommand extends CustomCommand {
 	void search(String filter) {
 		List<Object> searched = new ArrayList<>();
 		searched.addAll(search(new ArrayList<Object>() {{
-			add(main1);
-			add(main2);
-			add(main3);
+			addAll(main1);
+			addAll(main2);
+			addAll(main3);
 		}}, filter, json("&3[+] &eCommunity Rules").command("/rules community")));
 		searched.addAll(search(survival, filter, json("&3[+] &eSurvival Rules").command("/rules survival")));
 		searched.addAll(search(minigames, filter, json("&3[+] &eMinigame Rules").command("/rules minigames")));
