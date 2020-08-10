@@ -24,9 +24,11 @@ public class RulesCommand extends CustomCommand {
 	@Path("search <string...>")
 	void search(String filter) {
 		List<Object> searched = new ArrayList<>();
-		searched.addAll(search(main1, filter, json("&3[+] &eCommunity Rules 1").command("/rules community")));
-		searched.addAll(search(main2, filter, json("&3[+] &eCommunity Rules 2").command("/rules community")));
-		searched.addAll(search(main3, filter, json("&3[+] &eCommunity Rules 3").command("/rules community")));
+		searched.addAll(search(new ArrayList<Object>() {{
+			add(main1);
+			add(main2);
+			add(main3);
+		}}, filter, json("&3[+] &eCommunity Rules").command("/rules community")));
 		searched.addAll(search(survival, filter, json("&3[+] &eSurvival Rules").command("/rules survival")));
 		searched.addAll(search(minigames, filter, json("&3[+] &eMinigame Rules").command("/rules minigames")));
 		searched.addAll(search(creative, filter, json("&3[+] &eCreative Rules").command("/rules creative")));
@@ -43,7 +45,7 @@ public class RulesCommand extends CustomCommand {
 	private List<Object> search(List<Object> list, String filter, Object title) {
 		List<Object> searched = new ArrayList<>();
 		for (Object o : list) {
-			if (o.toString().contains(filter)) {
+			if (o.toString().toLowerCase().contains(filter.toLowerCase())) {
 				if (!searched.contains(title)) {
 					searched.add(" ");
 					searched.add(title);
