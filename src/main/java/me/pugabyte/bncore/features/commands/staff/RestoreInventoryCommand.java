@@ -5,11 +5,7 @@ import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfi
 import lombok.NonNull;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
-import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
-import me.pugabyte.bncore.framework.commands.models.annotations.Path;
-import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
-import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
+import me.pugabyte.bncore.framework.commands.models.annotations.*;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -31,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Aliases("restoreinv")
-@Permission("group.moderator")
+@Permission("group.seniorstaff")
 public class RestoreInventoryCommand extends CustomCommand {
 	public static HashMap<Player, RestoreInventoryPlayer> restorers = new HashMap<>();
 
