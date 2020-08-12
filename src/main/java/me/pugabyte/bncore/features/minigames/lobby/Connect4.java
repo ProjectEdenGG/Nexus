@@ -9,6 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -119,7 +120,7 @@ public class Connect4 extends CustomCommand {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (player.getWorld().getName().equals("gameworld")) {
 					String teamName = team.getColor() + "" + team.name().charAt(0) + team.name().substring(1).toLowerCase() + " Team";
-					player.sendMessage(PREFIX + teamName + ChatColor.WHITE + " has won Connect4!");
+					Utils.send(player, PREFIX + teamName + ChatColor.WHITE + " has won Connect4!");
 				}
 			}
 		}

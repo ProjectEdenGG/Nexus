@@ -16,7 +16,6 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
@@ -39,7 +38,7 @@ public class SignListener implements Listener {
 						Arena arena = ArenaManager.find(sign.getLine(2));
 						PlayerManager.get(event.getPlayer()).join(arena);
 					} catch (Exception ex) {
-						event.getPlayer().sendMessage(colorize(Minigames.PREFIX + ex.getMessage()));
+						Utils.send(event.getPlayer(), Minigames.PREFIX + ex.getMessage());
 					}
 					break;
 				case "quit":

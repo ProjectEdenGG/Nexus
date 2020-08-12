@@ -5,6 +5,8 @@ import litebans.api.Entry;
 import litebans.api.Events;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.models.delayedban.DelayedBan;
+import me.pugabyte.bncore.models.delayedban.DelayedBanService;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.hours.Hours;
@@ -24,8 +26,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 public class LiteBans implements Listener {
 
 	@EventHandler
@@ -41,9 +41,28 @@ public class LiteBans implements Listener {
 			}
 
 			if (player.getUniqueId().version() != 4) {
-				if (executor.isOnline())
-					executor.getPlayer().sendMessage(colorize("&4&lUnknown player, check your spelling"));
+				if (executor.isOnline() && executor.getPlayer() != null)
+					Utils.send(executor, "&4&lUnknown player, check your spelling");
+
+			} else if (!player.isOnline()) {
+				Utils.runCommandAsConsole("unban " + player.getName());
+				Utils.runCommandAsConsole("prunehistory " + player.getName() + " 1minutes");
+
+				DelayedBanService delayedBanService = new DelayedBanService();
+				DelayedBan delayedBan = delayedBanService.get(player.getUniqueId());
+
+				if (delayedBan.getCommand() != null) {
+					// send message to executor about overwriting the old ban
+					if (executor.isOnline())
+						Utils.send(executor, "");
+				}
+
+				delayedBan.setUuid_staff(executor.getUniqueId());
+				delayedBan.setCommand("todo");
+				delayedBanService.save(delayedBan);
+
 			} else {
+
 				Tasks.waitAsync(10, () -> {
 					Nerd nerd = new Nerd(player);
 					Hours hours = new HoursService().get(nerd);

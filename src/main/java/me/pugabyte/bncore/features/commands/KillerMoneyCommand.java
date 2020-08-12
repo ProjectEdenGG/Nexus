@@ -41,8 +41,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 @Aliases("km")
 @NoArgsConstructor
 public class KillerMoneyCommand extends CustomCommand implements Listener {
@@ -72,7 +70,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 				Map<String, Object> data = task.getJson();
 				OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
 				if (player.isOnline() && player.getPlayer() != null)
-					player.getPlayer().sendMessage(colorize(StringUtils.getPrefix("KillerMoney") + "Your boost has expired"));
+					Utils.send(player, StringUtils.getPrefix("KillerMoney") + "Your boost has expired");
 
 				KillerMoneyService kmService = new KillerMoneyService();
 				KillerMoney km = kmService.get(player);
@@ -183,8 +181,8 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		double money = mob.getRandomValue() * BOOST * playerBoost;
 		BNCore.getEcon().depositPlayer(player, money);
 		if (!km.isMuted())
-			player.sendMessage(colorize("&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
-					"&3 and received &e" + formatter.format(money)));
+			send(player, "&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
+					"&3 and received &e" + formatter.format(money));
 	}
 
 	@Getter

@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -78,15 +79,15 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 			if (cache.containsKey(getKey())) {
 				for (ItemStack itemStack : player.getInventory().getContents()) {
 					if (!isNullOrAir(itemStack)) {
-						player.sendMessage(PREFIX + "Your inventory must be empty to restore an undo");
+						Utils.send(player, PREFIX + "Your inventory must be empty to restore an undo");
 						return;
 					}
 				}
 				player.getInventory().setContents(cache.get(getKey()));
 				removeCache();
-				player.sendMessage(PREFIX + "Inventory restored");
+				Utils.send(player, PREFIX + "Inventory restored");
 			} else {
-				player.sendMessage(PREFIX + "There's nothing to undo!");
+				Utils.send(player, PREFIX + "There's nothing to undo!");
 			}
 		}
 

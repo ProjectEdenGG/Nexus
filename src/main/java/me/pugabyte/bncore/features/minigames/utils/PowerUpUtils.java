@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -47,7 +46,7 @@ public class PowerUpUtils {
 			Minigamer minigamer = PlayerManager.get(player);
 			if (!minigamer.isPlaying(match)) return;
 
-			player.sendMessage(Minigames.PREFIX + "You picked up a power up!");
+			minigamer.tell("You picked up a power up!");
 			powerUp.onPickup(PlayerManager.get(player));
 			match.getHolograms().remove(hologram);
 			hologram.delete();

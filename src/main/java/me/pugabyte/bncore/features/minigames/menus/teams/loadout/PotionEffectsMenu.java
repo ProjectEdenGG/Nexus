@@ -8,7 +8,6 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -56,8 +55,8 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 				potions.append(potion.getName().substring(0, 1).toUpperCase()).append(potion.getName().substring(1).toLowerCase()).append(", ");
 
 			potions = new StringBuilder(potions.substring(0, potions.lastIndexOf(", ")));
-			player.sendMessage(StringUtils.colorize(PREFIX + "&3Available Potion Effect Types:"));
-			player.sendMessage(StringUtils.colorize(PREFIX + "&e" + potions));
+			Utils.send(player, PREFIX + "&3Available Potion Effect Types:");
+			Utils.send(player, PREFIX + "&e" + potions);
 		}));
 
 		contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&eAdd Potion Effect"),

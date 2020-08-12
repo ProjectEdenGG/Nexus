@@ -144,12 +144,12 @@ public class Minigamer {
 				.anyMatch(region -> match.getArena().ownsRegion(region.getId(), type));
 	}
 
-	public void send(String message) {
-		tell(message, false);
+	public void send(String noPrefix) {
+		tell(noPrefix, false);
 	}
 
-	public void tell(String message) {
-		tell(message, true);
+	public void tell(String withPrefix) {
+		tell(withPrefix, true);
 	}
 
 	public void tell(String message, boolean prefix) {

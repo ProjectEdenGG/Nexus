@@ -17,6 +17,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -126,7 +127,7 @@ public final class GoldRush extends TeamlessMechanic {
 		event.setDropItems(false);
 		if (event.getBlock().getType().equals(Material.IRON_ORE)) {
 			trap(event.getBlock());
-			event.getPlayer().sendMessage(Minigames.PREFIX + "You mined some fools gold! Next time, click it with the TNT to remove it!");
+			Utils.send(event.getPlayer(), Minigames.PREFIX + "You mined some fools gold! Next time, click it with the TNT to remove it!");
 		}
 	}
 

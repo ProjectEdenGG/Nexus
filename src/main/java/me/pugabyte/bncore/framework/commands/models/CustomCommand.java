@@ -1,8 +1,17 @@
 package me.pugabyte.bncore.framework.commands.models;
 
 import com.google.common.base.Strings;
-import lombok.*;
-import me.pugabyte.bncore.framework.commands.models.annotations.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
+import me.pugabyte.bncore.framework.commands.models.annotations.Fallback;
+import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -17,6 +26,7 @@ import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -80,6 +90,20 @@ public abstract class CustomCommand extends ICustomCommand {
 		send(sender, json(message));
 	}
 
+	protected void send(CommandSender sender, BaseComponent... baseComponents) {
+		sender.sendMessage(baseComponents);
+	}
+
+	protected void send(String UUID, String message) {
+		CommandSender sender = (CommandSender) Utils.getPlayer(UUID);
+		send(sender, message);
+	}
+
+	protected void send(UUID uuid, String message) {
+		CommandSender sender = (CommandSender) Utils.getPlayer(uuid);
+		send(sender, message);
+	}
+
 	protected void send(Object object) {
 		if (object instanceof String)
 			send(sender(), (String) object);
@@ -103,6 +127,10 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected void send(JsonBuilder builder) {
 		send(sender(), builder);
+	}
+
+	protected void send(BaseComponent... baseComponents) {
+		send(sender(), baseComponents);
 	}
 
 	protected void send(CommandSender sender, JsonBuilder builder) {

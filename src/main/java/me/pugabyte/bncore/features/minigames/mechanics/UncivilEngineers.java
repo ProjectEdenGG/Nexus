@@ -250,11 +250,11 @@ public class UncivilEngineers extends TeamlessMechanic {
 			}
 			regionManager.save();
 		} catch (NullPointerException ex) {
-			player.sendMessage(Minigames.PREFIX + "&cYou must setup the region: " + arena.getRegionBaseName() + "_strip_1");
+			Utils.send(player, Minigames.PREFIX + "&cYou must setup the region: " + arena.getRegionBaseName() + "_strip_1");
 		} catch (StorageException e) {
 			e.printStackTrace();
 		}
-		player.sendMessage(Minigames.PREFIX + "Successfully setup the arena");
+		Utils.send(player, Minigames.PREFIX + "Successfully setup the arena");
 	}
 
 	@Data

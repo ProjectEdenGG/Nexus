@@ -25,8 +25,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 @Aliases({"playtime", "days", "minutes", "seconds"})
 public class HoursCommand extends CustomCommand {
 	private final HoursService service = new HoursService();
@@ -115,12 +113,12 @@ public class HoursCommand extends CustomCommand {
 								Utils.runCommandAsConsole("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
 								Koda.say("Congrats on Member rank, " + player.getName() + "!");
 								Jingle.RANKUP.play(player);
-								player.sendMessage("");
-								player.sendMessage("");
-								player.sendMessage(colorize("&e&lCongratulations! &3You have been promoted to &fMember&3 for " +
-										"playing for &e24 hours &3in-game. You are now eligible for &c/trusted&3."));
-								player.sendMessage("");
-								player.sendMessage(colorize("&6&lThank you for flying Bear Nation!"));
+								Utils.send(player, "");
+								Utils.send(player, "");
+								Utils.send(player, "&e&lCongratulations! &3You have been promoted to &fMember&3 for " +
+										"playing for &e24 hours &3in-game. You are now eligible for &c/trusted&3.");
+								Utils.send(player, "");
+								Utils.send(player, "&6&lThank you for flying Bear Nation!");
 							});
 						}
 					}

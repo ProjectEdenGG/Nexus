@@ -37,7 +37,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Basketball implements Listener {
 
@@ -273,10 +272,11 @@ public class Basketball implements Listener {
 	@EventHandler
 	public void onRegionEnter(RegionEnteredEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
-		if (new CooldownService().check(event.getPlayer(), "basketball-doublejump-tip", Time.SECOND.x(30)))
-			event.getPlayer().sendMessage(colorize("&aDouble Jump enabled!"));
-		if (!regionContainsBasketball(event.getPlayer()))
-			giveBasketball(event.getPlayer());
+		Player player = event.getPlayer();
+		if (new CooldownService().check(player, "basketball-doublejump-tip", Time.SECOND.x(30)))
+			send("&aDouble Jump enabled!", player);
+		if (!regionContainsBasketball(player))
+			giveBasketball(player);
 	}
 
 	@EventHandler

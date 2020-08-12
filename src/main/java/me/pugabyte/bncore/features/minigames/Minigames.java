@@ -17,6 +17,7 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -33,8 +34,6 @@ import org.reflections.Reflections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Minigames {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
@@ -87,7 +86,7 @@ public class Minigames {
 	}
 
 	public static void broadcast(String announcement) {
-		getPlayers().forEach(player -> player.sendMessage(Minigames.PREFIX + colorize(announcement)));
+		getPlayers().forEach(player -> Utils.send(player, Minigames.PREFIX + announcement));
 
 		// TODO: If arena is public, announce to discord and whole server
 	}

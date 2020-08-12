@@ -62,7 +62,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 						});
 						return AnvilGUI.Response.text(text);
 					} else {
-						player.sendMessage(StringUtils.colorize(PREFIX + "You must use an integer for the duration."));
+						Utils.send(player, PREFIX + "You must use an integer for the duration.");
 						return AnvilGUI.Response.close();
 					}
 				})));
@@ -84,7 +84,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 						});
 						return AnvilGUI.Response.text(text);
 					} else {
-						player.sendMessage(StringUtils.colorize(PREFIX + "You must use an integer for the amplifier."));
+						Utils.send(player, PREFIX + "You must use an integer for the amplifier.");
 						return AnvilGUI.Response.close();
 					}
 				})));

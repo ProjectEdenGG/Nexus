@@ -44,7 +44,7 @@ public class GrabAJumbuckMenu extends MenuUtils implements InventoryProvider {
 				e -> Tasks.wait(2, () -> {
 					if (Utils.isNullOrAir(player.getItemOnCursor())) return;
 					if (arena.getSheepSpawnBlocks().size() == 9) {
-						player.sendMessage(Minigames.PREFIX + "The max amount of blocks has already been set.");
+						Utils.send(player, Minigames.PREFIX + "The max amount of blocks has already been set.");
 						return;
 					}
 					arena.getSheepSpawnBlocks().add(player.getItemOnCursor().getType());

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
@@ -89,7 +88,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
 					if (_minigamer != minigamer) {
 						_minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1));
-						_minigamer.getPlayer().sendMessage(Minigames.PREFIX + "You have been trapped!");
+						_minigamer.tell("You have been trapped!");
 					}
 			});
 
@@ -112,7 +111,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
 					if (_minigamer != minigamer) {
 						_minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 5 * 20, 3));
-						_minigamer.getPlayer().sendMessage(Minigames.PREFIX + "You have been trapped!");
+						_minigamer.tell("You have been trapped!");
 					}
 			});
 

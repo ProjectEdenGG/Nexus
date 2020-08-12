@@ -94,7 +94,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 					teamMenus.openTeamsEditorMenu(player, arena, team);
 					return AnvilGUI.Response.text(text);
 				} else {
-					player.sendMessage(Minigames.PREFIX + "The balance percentage must be an integer.");
+					Utils.send(player, Minigames.PREFIX + "The balance percentage must be an integer.");
 					return AnvilGUI.Response.close();
 				}
 			})));

@@ -217,14 +217,14 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 									try {
 										originID.set(Integer.parseInt(lines[0]));
 										if (originID.get() == 0) {
-											player.sendMessage("&cYou must use an integer greater than 0.");
+											Utils.send(player, "&cYou must use an integer greater than 0.");
 											player.closeInventory();
 										}
 										arena.getOrigins().put(originID.get(), loc.getBlock().getLocation());
 										arena.write();
 										openOriginsMenu(player);
 									} catch (Exception ignore) {
-										player.sendMessage("&cYou must use an integer greater than 0.");
+										Utils.send(player, "&cYou must use an integer greater than 0.");
 										player.closeInventory();
 									}
 								})

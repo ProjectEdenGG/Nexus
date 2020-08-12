@@ -15,7 +15,7 @@ public class FakeOpCommand extends CustomCommand {
 
 	@Path("<player>")
 	void fakeop(Player player) {
-		player.sendMessage("Opped " + player.getName());
+		send(player, "Opped " + player.getName());
 	}
 
 }

@@ -30,9 +30,7 @@ import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle;
-import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
-import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.bncore.utils.StringUtils.*;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -62,9 +60,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
-import static me.pugabyte.bncore.utils.StringUtils.paste;
+import static me.pugabyte.bncore.utils.StringUtils.*;
 import static me.pugabyte.bncore.utils.Utils.getDirection;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
@@ -119,7 +115,7 @@ public class BNCoreCommand extends CustomCommand {
 					Map<String, Object> data = task.getJson();
 					OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
 					if (player.isOnline() && player.getPlayer() != null)
-						player.getPlayer().sendMessage((String) data.get("message"));
+						Utils.send(player, (String) data.get("message"));
 					service.complete(task);
 				}));
 		});
