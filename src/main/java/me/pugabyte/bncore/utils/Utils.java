@@ -558,7 +558,7 @@ public class Utils {
 	}
 
 	public static void send(OfflinePlayer offlinePlayer, String message) {
-		if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null)
+		if (offlinePlayer.getPlayer() != null)
 			send(offlinePlayer.getPlayer(), message);
 	}
 
@@ -585,6 +585,31 @@ public class Utils {
 
 	public static void send(CommandSender sender, BaseComponent... baseComponents) {
 		sender.sendMessage(baseComponents);
+	}
+
+	public static void sendStaff(String message) {
+		for (Player staff : Bukkit.getOnlinePlayers()) {
+			if (!staff.hasPermission("group.moderator")) continue;
+			send(staff, message);
+		}
+	}
+
+	public static void sendStaff(String message, Player exclude) {
+		sendStaff(message, Collections.singletonList(exclude));
+	}
+
+	public static void sendStaff(String message, List<Player> exclude) {
+		List<UUID> excludedUuids = new ArrayList<>();
+		for (Player player : exclude)
+			excludedUuids.add(player.getUniqueId());
+
+		for (Player staff : Bukkit.getOnlinePlayers()) {
+			UUID uuid = staff.getUniqueId();
+			if (excludedUuids.contains(uuid)) continue;
+			if (!staff.hasPermission("group.moderator")) continue;
+
+			send(staff, message);
+		}
 	}
 
 	public enum EgocentricDirection {

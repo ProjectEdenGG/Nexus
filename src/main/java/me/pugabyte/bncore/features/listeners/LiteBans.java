@@ -3,6 +3,8 @@ package me.pugabyte.bncore.features.listeners;
 import com.google.common.base.Strings;
 import litebans.api.Entry;
 import litebans.api.Events;
+import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.commands.staff.DelayedBanCommand;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.delayedban.DelayedBan;
@@ -26,13 +28,16 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
 
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+
 public class LiteBans implements Listener {
 
 	@EventHandler
 	public void onLiteBansBan(BanEvent event) {
 		try {
-			OfflinePlayer player = Utils.getPlayer(event.getEntry().getUuid());
-			OfflinePlayer executor = Utils.getPlayer(event.getEntry().getExecutorUUID());
+			Entry entry = event.getEntry();
+			OfflinePlayer player = Utils.getPlayer(entry.getUuid());
+			OfflinePlayer executor = Utils.getPlayer(entry.getExecutorUUID());
 
 			OfflinePlayer pug = Utils.getPlayer("Pugabyte");
 			if (player.equals(pug) && !executor.equals(pug) && executor.isOnline()) {
@@ -44,24 +49,33 @@ public class LiteBans implements Listener {
 				if (executor.isOnline() && executor.getPlayer() != null)
 					Utils.send(executor, "&4&lUnknown player, check your spelling");
 
-			} else if (!player.isOnline()) {
-				Utils.runCommandAsConsole("unban " + player.getName());
-				Utils.runCommandAsConsole("prunehistory " + player.getName() + " 1minutes");
-
-				DelayedBanService delayedBanService = new DelayedBanService();
-				DelayedBan delayedBan = delayedBanService.get(player.getUniqueId());
-
-				if (delayedBan.getCommand() != null) {
-					// send message to executor about overwriting the old ban
-					if (executor.isOnline())
-						Utils.send(executor, "");
-				}
-
-				delayedBan.setUuid_staff(executor.getUniqueId());
-				delayedBan.setCommand("todo");
-				delayedBanService.save(delayedBan);
-
 			} else {
+
+				try {
+					if (!player.isOnline() && !entry.isPermanent()) {
+						DelayedBanService delayedBanService = new DelayedBanService();
+						DelayedBan delayedBan = delayedBanService.get(player.getUniqueId());
+
+						delayedBan.setUuid_staff(executor.getUniqueId());
+						delayedBan.setReason(entry.getReason());
+						delayedBan.setDuration(entry.getDurationString());
+						delayedBanService.save(delayedBan);
+
+						Utils.runCommandAsConsole("unban " + player.getName());
+
+						Tasks.wait(10, () -> {
+							Utils.runCommandAsConsole("prunehistory " + player.getName() + " 2minutes");
+
+							Tasks.wait(10, () -> {
+								String message = "&e" + player.getName() + " &3will be banned upon login for &e" + entry.getReason() + " &3for &e" + entry.getDurationString();
+								Utils.sendStaff(DelayedBanCommand.PREFIX + message);
+								Discord.log("**[DelayedBan]** " + stripColor(message));
+							});
+						});
+					}
+				} catch (Exception e) {
+					BNCore.log(e.getMessage());
+				}
 
 				Tasks.waitAsync(10, () -> {
 					Nerd nerd = new Nerd(player);
@@ -89,9 +103,32 @@ public class LiteBans implements Listener {
 
 	@EventHandler
 	public void onLiteBansBroadcast(BroadcastEvent event) {
-		if (Arrays.asList("broadcast", "banned_join", "mute").contains(event.getType()))
-			if (!event.getMessage().contains("Server restarting."))
-				Discord.log("**[LiteBans]** " + event.getMessage());
+		if (Arrays.asList("broadcast", "banned_join", "mute").contains(event.getType())) {
+			String message = event.getMessage();
+			if (!message.contains("Server restarting.")) {
+				Tasks.wait(10, () -> {
+					// Cancel message if there is a delayed ban queued
+					try {
+						if (event.getType().equalsIgnoreCase("broadcast")
+								&& (message.contains("tempbanned") || message.contains("unbanned"))) {
+
+							String[] messageSplit = message.split(" ");
+							OfflinePlayer offlinePlayer = Utils.getPlayer(stripColor(messageSplit[2]));
+
+							DelayedBanService delayedBanService = new DelayedBanService();
+							if (delayedBanService.hasQueuedBan(offlinePlayer))
+								return;
+						}
+					} catch (Exception e) {
+						BNCore.log(e.getMessage());
+					}
+					//
+
+					Discord.log("**[LiteBans]** " + message);
+				});
+
+			}
+		}
 	}
 
 	private static final Events.Listener entryAdded;
