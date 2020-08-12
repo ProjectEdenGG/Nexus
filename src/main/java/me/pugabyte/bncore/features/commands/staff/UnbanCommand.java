@@ -3,12 +3,14 @@ package me.pugabyte.bncore.features.commands.staff;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Fallback;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.delayedban.DelayedBan;
 import me.pugabyte.bncore.models.delayedban.DelayedBanService;
 import org.bukkit.OfflinePlayer;
 
 @Fallback("litebans")
+@Permission("group.moderator")
 public class UnbanCommand extends CustomCommand {
 
 	public UnbanCommand(CommandEvent event) {
