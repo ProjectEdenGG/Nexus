@@ -72,13 +72,14 @@ public class Easter20Command extends CustomCommand implements Listener {
 		if (!header.equals(sign.getLine(0))) return;
 
 		SettingService service = new SettingService();
-		Setting setting = service.get(event.getPlayer(), "easter2020");
-		Setting found = service.get(event.getPlayer(), "easter2020Found");
+		Player player = event.getPlayer();
+		Setting setting = service.get(player, "easter2020");
+		Setting found = service.get(player, "easter2020Found");
 
 		String name = sign.getLine(1);
 
 		if (found.getValue() != null && found.getValue().contains(name)) {
-			event.getPlayer().sendMessage(StringUtils.colorize(PREFIX + "You have already found this egg. Go search around warps for more"));
+			send(player, PREFIX + "You have already found this egg. Go search around warps for more");
 			return;
 		}
 
@@ -87,16 +88,16 @@ public class Easter20Command extends CustomCommand implements Listener {
 			clicked = Integer.parseInt(setting.getValue());
 		clicked++;
 		if (clicked == 19) {
-			event.getPlayer().sendMessage(StringUtils.colorize(PREFIX + "You have found all the eggs! You have won &e$10,000"));
-			BNCore.getEcon().depositPlayer(event.getPlayer(), 10000);
+			send(player, PREFIX + "You have found all the eggs! You have won &e$10,000");
+			BNCore.getEcon().depositPlayer(player, 10000);
 		} else if (clicked % 3 == 0) {
 			ItemStack headPaper = new ItemBuilder(Material.PAPER).name("&3Coupon for 1 HDB head").lore("&eThis coupon is valid for one head from the head database. " +
 					"Claim it with a staff member").build();
-			Utils.giveItem(event.getPlayer(), headPaper);
-			event.getPlayer().sendMessage(StringUtils.colorize(PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &eone head database coupon"));
+			Utils.giveItem(player, headPaper);
+			send(player, PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &eone head database coupon");
 		} else {
-			event.getPlayer().sendMessage(StringUtils.colorize(PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &e$500"));
-			BNCore.getEcon().depositPlayer(event.getPlayer(), 500);
+			send(player, PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &e$500");
+			BNCore.getEcon().depositPlayer(player, 500);
 		}
 		setting.setValue(clicked + "");
 		service.save(setting);

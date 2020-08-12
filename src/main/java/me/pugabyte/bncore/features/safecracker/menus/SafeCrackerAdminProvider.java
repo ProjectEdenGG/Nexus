@@ -83,7 +83,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 
 		contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build(), e -> {
 			player.closeInventory();
-			player.sendMessage(new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle ").build());
+			Utils.send(player, new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle ").build());
 		}));
 
 		int row = 1;

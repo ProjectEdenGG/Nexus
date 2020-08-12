@@ -7,6 +7,7 @@ import me.pugabyte.bncore.models.achievement.AchievementGroup;
 import me.pugabyte.bncore.models.achievement.AchievementPlayer;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,7 +30,7 @@ public class AchievementListener implements Listener {
 		Player player = achievementPlayer.getPlayer();
 		if (player.isOnline()) {
 			String message = StringUtils.getPrefix("Achievements") + "You have completed the &e" + achievement.toString() + " &3achievement!";
-			player.sendMessage(new JsonBuilder(message).hover("&e" + achievement.getDescription()).build());
+			Utils.send(player, new JsonBuilder(message).hover("&e" + achievement.getDescription()).build());
 		}
 
 	}

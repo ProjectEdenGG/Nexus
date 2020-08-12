@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import static me.pugabyte.bncore.features.votes.vps.VPS.PREFIX;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.plural;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
@@ -48,7 +47,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 
 			contents.set(slot, ClickableItem.from(display, e -> {
 				if (voter.getPoints() < item.getPrice()) {
-					player.sendMessage(colorize(PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!"));
+					Utils.send(player, PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!");
 					return;
 				}
 
@@ -65,8 +64,8 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 
 				if (item.getPrice() > 0) {
 					voter.takePoints(item.getPrice());
-					player.sendMessage(colorize(PREFIX + "You spent &e" + item.getPrice() + plural(" &3point", item.getPrice())
-							+ " on &e" + stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining."));
+					Utils.send(player, PREFIX + "You spent &e" + item.getPrice() + plural(" &3point", item.getPrice())
+							+ " on &e" + stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining.");
 				}
 
 				if (item.isClose())

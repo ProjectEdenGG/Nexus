@@ -4,10 +4,9 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Tickets {
 	public static final String PREFIX = StringUtils.getPrefix("Tickets");
@@ -38,7 +37,7 @@ public class Tickets {
 		Bukkit.getOnlinePlayers().stream()
 				.filter(staff -> !staff.getUniqueId().equals(player.getUniqueId()))
 				.filter(staff -> staff.hasPermission("group.moderator"))
-				.forEach(staff -> staff.sendMessage(colorize(PREFIX + message)));
+				.forEach(staff -> Utils.send(staff, PREFIX + message));
 	}
 
 }

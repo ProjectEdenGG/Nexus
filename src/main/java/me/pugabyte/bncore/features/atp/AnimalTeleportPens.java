@@ -6,6 +6,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
@@ -111,23 +112,23 @@ public class AnimalTeleportPens {
 	public void confirm(Player player, Location toLoc) {
 		ProtectedRegion region = getRegion(player);
 		if (region == null) {
-			player.sendMessage(PREFIX + "You are not inside an ATP region");
+			Utils.send(player, PREFIX + "You are not inside an ATP region");
 			return;
 		}
 		if (multiplePlayers()) {
 			player.closeInventory();
-			player.sendMessage(PREFIX + colorize("&cDetected multiple players. Cancelling."));
+			Utils.send(player, PREFIX + "&cDetected multiple players. Cancelling.");
 			return;
 		}
 		List<Entity> entities = getEntities();
 		if (entities.size() == 0) {
-			player.sendMessage(PREFIX + "&cThere are no entities to teleport");
+			Utils.send(player, PREFIX + "&cThere are no entities to teleport");
 			return;
 		}
 		int price = getPrice(entities);
 		double balance = BNCore.getEcon().getBalance(player);
 		if (balance < price) {
-			player.sendMessage(PREFIX + "&cYou do not have enough money to use the ATP");
+			Utils.send(player, PREFIX + "&cYou do not have enough money to use the ATP");
 			return;
 		}
 

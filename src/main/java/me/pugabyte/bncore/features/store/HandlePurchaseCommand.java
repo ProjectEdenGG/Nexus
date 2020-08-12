@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.uuidFormat;
 
 public class HandlePurchaseCommand extends CustomCommand {
@@ -92,10 +91,8 @@ public class HandlePurchaseCommand extends CustomCommand {
 			discordMessage += "\nPackage not recognized!";
 		else {
 			if (purchase.getPrice() > 0) {
-				OfflinePlayer player = Utils.getPlayer(purchase.getUuid());
-				if (player.isOnline())
-					player.getPlayer().sendMessage(colorize("&eThank you for buying " + purchase.getPackageName() + "! " +
-							"&3Your donation is &3&ogreatly &3appreciated and will be put to good use."));
+				send(purchase.getUuid(), ("&eThank you for buying " + purchase.getPackageName() + "! " +
+						"&3Your donation is &3&ogreatly &3appreciated and will be put to good use."));
 
 				if (packageType == Package.CUSTOM_DONATION)
 					Koda.say("Thank you for your custom donation, " + purchase.getName() + "! " +

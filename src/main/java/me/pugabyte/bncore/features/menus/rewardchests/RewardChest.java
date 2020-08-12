@@ -7,7 +7,11 @@ import me.pugabyte.bncore.features.menus.coupons.Coupons;
 import me.pugabyte.bncore.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestPlayer;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.SoundUtils;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -100,9 +104,9 @@ public class RewardChest implements Listener {
 					service.save(mysteryChestPlayer);
 
 					Utils.giveItem(player, item);
-					player.sendMessage(StringUtils.colorize("&3You have been given &e" +
+					Utils.send(player, "&3You have been given &e" +
 							amount + " " + StringUtils.camelCase(type.name()) +
-							" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest"));
+							" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest");
 					SoundUtils.Jingle.PING.play(player);
 				}
 			}

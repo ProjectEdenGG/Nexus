@@ -51,9 +51,9 @@ public class MysteryChest {
 			ItemStack item = type.getItem().clone();
 			item.setAmount(amount);
 			Utils.giveItem(onlinePlayer, item);
-			onlinePlayer.sendMessage(StringUtils.colorize("&3You have been given &e" +
+			Utils.send(onlinePlayer, "&3You have been given &e" +
 					amount + " " + StringUtils.camelCase(type.name()) +
-					" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest"));
+					" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest");
 			SoundUtils.Jingle.PING.play(onlinePlayer);
 			return amount;
 		} else {

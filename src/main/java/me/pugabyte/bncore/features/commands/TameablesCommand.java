@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
 	private static final Map<UUID, PendingTameblesAction> actions = new HashMap<>();
@@ -181,7 +179,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		if (actions.containsKey(uuid)) {
 			event.setCancelled(true);
 			if (!TameableEntity.isTameable(event.getEntityType())) {
-				player.sendMessage(colorize(PREFIX + "&cThat animal is not tameable"));
+				send(player, PREFIX + "&cThat animal is not tameable");
 				actions.remove(uuid);
 				return;
 			}
@@ -192,24 +190,24 @@ public class TameablesCommand extends CustomCommand implements Listener {
 					checkOwner(player, entity);
 					OfflinePlayer transfer = action.getPlayer();
 					updateOwner(entity, player, transfer);
-					player.sendMessage(colorize(PREFIX + "You have transferred the ownership of your " + entityName + " to " + transfer.getName()));
+					send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + transfer.getName());
 					break;
 				case UNTAME:
 					checkOwner(player, entity);
 					updateOwner(entity, player, null);
-					player.sendMessage(colorize(PREFIX + "You have untamed your " + entityName));
+					send(player, PREFIX + "You have untamed your " + entityName);
 					break;
 				case MOVE:
 					checkOwner(player, entity);
 					moveQueue.put(player.getUniqueId(), event.getEntity());
-					player.sendMessage(json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here").build());
+					send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here").build());
 					break;
 				case INFO:
 					String owner = getOwner(entity);
 					if (!isNullOrEmpty(owner))
-						player.sendMessage(colorize(PREFIX + "That " + entityName + " is owned by &e" + owner));
+						send(player, PREFIX + "That " + entityName + " is owned by &e" + owner);
 					else
-						player.sendMessage(colorize(PREFIX + "That " + entityName + " is not tamed"));
+						send(player, PREFIX + "That " + entityName + " is not tamed");
 					break;
 			}
 			actions.remove(uuid);

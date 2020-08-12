@@ -107,7 +107,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
 						Warp warp1 = warpService.get("legacy_" + warp.name().replace("_", ""), WarpType.NORMAL);
 						if (warp1 == null) {
-							player.sendMessage(StringUtils.colorize(StringUtils.getPrefix("Warps") + "&cThere was an error while trying to teleport you to the warp"));
+							Utils.send(player, StringUtils.getPrefix("Warps") + "&cThere was an error while trying to teleport you to the warp");
 							return;
 						}
 						warp1.teleport(player);

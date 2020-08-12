@@ -5,7 +5,6 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.event.EventHandler;
@@ -60,7 +59,7 @@ public class FetchCommand extends CustomCommand implements Listener {
 		if (!enabled) error("Fetch is not enabled");
 		enabled = false;
 		for (UUID uuid : fetchers) {
-			Utils.getPlayer(uuid).getPlayer().sendMessage(PREFIX + "Fetch has been disabled");
+			send(uuid, PREFIX + "Fetch has been disabled");
 		}
 		fetchers.clear();
 		arrows.clear();

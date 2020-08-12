@@ -14,6 +14,7 @@ import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.Shop.Product;
 import me.pugabyte.bncore.models.shop.Shop.ShopGroup;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -25,7 +26,6 @@ import java.util.List;
 
 import static me.pugabyte.bncore.features.shops.Shops.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class BrowseItemsProvider extends _ShopProvider {
 	@Getter
@@ -160,7 +160,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 					product.process(player);
 					open(player, page.getPage());
 				} catch (Exception ex) {
-					player.sendMessage(colorize(PREFIX + ex.getMessage()));
+					Utils.send(player, PREFIX + ex.getMessage());
 				}
 			}));
 		}));

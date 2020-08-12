@@ -95,11 +95,11 @@ public abstract class MenuUtils {
 
 	public static void handleException(Player player, Throwable ex) {
 		if (ex.getCause() != null && ex.getCause() instanceof BNException)
-			player.sendMessage(colorize(PREFIX + "&c" + ex.getCause().getMessage()));
+			Utils.send(player, PREFIX + "&c" + ex.getCause().getMessage());
 		else if (ex instanceof BNException)
-			player.sendMessage(colorize(PREFIX + "&c" + ex.getMessage()));
+			Utils.send(player, PREFIX + "&c" + ex.getMessage());
 		else {
-			player.sendMessage(colorize(("&cAn internal error occurred while attempting to execute this command")));
+			Utils.send(player, "&cAn internal error occurred while attempting to execute this command");
 			ex.printStackTrace();
 		}
 	}

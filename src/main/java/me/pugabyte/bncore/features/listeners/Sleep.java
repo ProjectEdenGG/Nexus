@@ -18,8 +18,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 public class Sleep implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("Sleep");
 	public boolean handling = false;
@@ -53,7 +51,7 @@ public class Sleep implements Listener {
 		if (sleeping >= needed) {
 			handling = true;
 			Tasks.wait(20, () -> {
-				players.forEach(player -> player.sendMessage(colorize(PREFIX + "The night was skipped because 50% of players slept!")));
+				players.forEach(player -> Utils.send(player, PREFIX + "The night was skipped because 50% of players slept!"));
 				world.setTime(0);
 				world.setStorm(false);
 				world.setThundering(false);

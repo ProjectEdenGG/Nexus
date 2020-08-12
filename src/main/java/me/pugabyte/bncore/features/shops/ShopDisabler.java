@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.shops;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -16,7 +17,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class ShopDisabler implements Listener {
@@ -34,7 +34,7 @@ public class ShopDisabler implements Listener {
 	}
 
 	public void tell(Player player) {
-		player.sendMessage(colorize(StringUtils.getPrefix("Shops") + "Shop signs are temporarily disabled until the new shop system is in place."));
+		Utils.send(player, StringUtils.getPrefix("Shops") + "Shop signs are temporarily disabled until the new shop system is in place.");
 	}
 
 	@EventHandler

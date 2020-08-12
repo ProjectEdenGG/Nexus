@@ -5,7 +5,11 @@ import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfi
 import lombok.NonNull;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
-import me.pugabyte.bncore.framework.commands.models.annotations.*;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
+import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -135,21 +139,21 @@ public class RestoreInventoryCommand extends CustomCommand {
 	}
 
 	private void sendInventoryRestoreNotEmptyMessage(Player owner, String type) throws InvalidInputException {
-		owner.sendMessage(PREFIX + ChatColor.RED + player().getName() + " is trying to restore your " + type + ", " +
-				" your current " + type + " must be " + ChatColor. YELLOW + "empty " + ChatColor.RED + "to avoid lost items!");
+		send(owner, PREFIX + ChatColor.RED + player().getName() + " is trying to restore your " + type + ", " +
+				" your current " + type + " must be " + ChatColor.YELLOW + "empty " + ChatColor.RED + "to avoid lost items!");
 		throw new InvalidInputException(ChatColor.RED + "The player's " + type + " contents must be empty to complete a restore. " +
 				"They have been asked to empty their " + type + ".");
 	}
 
 	private void sendInventoryRestoreSuccessMessage(Player owner, String type) {
-		owner.sendMessage(PREFIX + ChatColor.YELLOW + player().getName() + ChatColor.DARK_AQUA + " has successfully restored your " + type + ". " +
+		send(owner, PREFIX + ChatColor.YELLOW + player().getName() + ChatColor.DARK_AQUA + " has successfully restored your " + type + ". " +
 				"Please confirm that all your items are present.");
-		player().sendMessage(PREFIX + "Successfully restored " + type + " of " + ChatColor.YELLOW + owner.getName());
+		send(player(), PREFIX + "Successfully restored " + type + " of " + ChatColor.YELLOW + owner.getName());
 	}
 
 	private void sendExperienceRestoreSuccessMessage(Player owner) {
-		owner.sendMessage(PREFIX + "Successfully added your lost experience to your current experience");
-		player().sendMessage(PREFIX + "Successfully added " + ChatColor.YELLOW + owner.getName() + ChatColor.DARK_AQUA + "'s lost experience to their current experience");
+		send(owner, PREFIX + "Successfully added your lost experience to your current experience");
+		send(player(), PREFIX + "Successfully added " + ChatColor.YELLOW + owner.getName() + ChatColor.DARK_AQUA + "'s lost experience to their current experience");
 	}
 
 	private boolean inventoryIsEmpty(Inventory inventory) {

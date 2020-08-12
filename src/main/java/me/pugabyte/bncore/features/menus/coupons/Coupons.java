@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.menus.coupons;
 
 import lombok.Getter;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,9 +13,9 @@ public class Coupons {
 	}
 
 	private void registerCoupons() {
-		new CouponBuilder(anySong, event -> event.getPlayer().sendMessage("ur a song nerd lol"));
-		new CouponBuilder(wingStyle, event -> event.getPlayer().sendMessage("ur a wing nerd"));
-		new CouponBuilder(particle, event -> event.getPlayer().sendMessage("ur a particle nerd"));
+		new CouponBuilder(anySong, event -> Utils.send(event.getPlayer(), "ur a song nerd lol"));
+		new CouponBuilder(wingStyle, event -> Utils.send(event.getPlayer(), "ur a wing nerd"));
+		new CouponBuilder(particle, event -> Utils.send(event.getPlayer(), "ur a particle nerd"));
 	}
 
 	@Getter

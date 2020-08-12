@@ -76,7 +76,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			new NerdService().getOnlineNerdsWith("group.moderator").forEach(staff -> staff.send(message));
 			Discord.send(message, DiscordId.Channel.STAFF_BRIDGE, DiscordId.Channel.STAFF_LOG);
 
-			if (player.isOnline())
+			if (player.isOnline() && player.getPlayer() != null)
 				if (WorldGroup.get(player.getPlayer()).equals(worldGroup)) {
 					if (player.getPlayer().getVehicle() != null)
 						player.getPlayer().getVehicle().removePassenger(player.getPlayer());

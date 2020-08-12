@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public class HomesMenu {
@@ -117,7 +116,7 @@ public class HomesMenu {
 						}
 
 						if (itemStack == null) {
-							home.getPlayer().sendMessage(colorize(PREFIX + "&cCould not parse item"));
+							Utils.send(home.getPlayer(), PREFIX + "&cCould not parse item");
 							displayItem(home, onResponse);
 						} else {
 							home.setItem(itemStack);
@@ -135,7 +134,7 @@ public class HomesMenu {
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						if (home.getOwner().getHome(lines[0]).isPresent())
-							home.getPlayer().sendMessage(PREFIX + colorize("&cThat home already exists! Please pick a different name"));
+							Utils.send(home.getPlayer(), PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
 							home.setName(lines[0]);
 							new HomeService().save(home.getOwner());
@@ -151,7 +150,7 @@ public class HomesMenu {
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						if (homeOwner.getHome(lines[0]).isPresent())
-							homeOwner.getPlayer().sendMessage(PREFIX + colorize("&cThat home already exists! Please pick a different name"));
+							Utils.send(homeOwner.getPlayer(), PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
 							homeOwner.add(Home.builder()
 									.uuid(homeOwner.getUuid())

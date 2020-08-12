@@ -17,6 +17,7 @@ import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -80,7 +81,7 @@ public class Koda {
 	}
 
 	public static void dm(Player player, String message) {
-		player.sendMessage(StringUtils.colorize(dmFormat + message));
+		Utils.send(player, dmFormat + message);
 	}
 
 	@Getter

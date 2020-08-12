@@ -71,7 +71,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class BNCore extends JavaPlugin {
@@ -234,9 +233,9 @@ public class BNCore extends JavaPlugin {
 					String message = " &c&l ! &c&l! &eReloading BNCore &c&l! &c&l!";
 					if (geoIp != null && geoIp.getTimezone() != null) {
 						String timestamp = StringUtils.shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId())));
-						player.sendMessage(colorize("&7 " + timestamp + message));
+						Utils.send(player, "&7 " + timestamp + message);
 					} else
-						player.sendMessage(colorize(message));
+						Utils.send(player, message);
 				});
 	}
 

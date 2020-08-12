@@ -5,6 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.bncore.utils.MaterialTag;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -34,7 +35,7 @@ public class SearchItemsProvider extends _ShopProvider {
 						} else
 							open(player);
 					} catch (Exception ex) {
-						player.sendMessage(ex.getMessage());
+						Utils.send(player, ex.getMessage());
 						open(player);
 					}
 				})

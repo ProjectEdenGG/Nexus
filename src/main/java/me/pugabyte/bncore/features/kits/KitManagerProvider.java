@@ -2,7 +2,11 @@ package me.pugabyte.bncore.features.kits;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.*;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.Pagination;
+import fr.minuskube.inv.content.SlotIterator;
+import fr.minuskube.inv.content.SlotPos;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -103,8 +107,8 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 					try {
 						kit.setDelay(Integer.parseInt(response));
 					} catch (Exception ex) {
-						player.sendMessage(StringUtils.colorize("&cDelay must be a number written in ticks less than " + Integer.MAX_VALUE +
-								" (" + StringUtils.TimespanFormatter.of(Integer.MAX_VALUE / 20).format() + ")"));
+						Utils.send(player, "&cDelay must be a number written in ticks less than " + Integer.MAX_VALUE +
+								" (" + StringUtils.TimespanFormatter.of(Integer.MAX_VALUE / 20).format() + ")");
 						return AnvilGUI.Response.close();
 					}
 					KitManager.getConfig().set(id + "", kit);

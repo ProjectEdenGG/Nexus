@@ -35,7 +35,6 @@ import java.util.List;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @Region("pugmas")
@@ -406,7 +405,7 @@ public class PugmasIsland implements Listener, Island {
 			user.setQuest_Pugmas_Step(21);
 		service.save(user);
 
-		player.sendMessage(colorize("&b&lYOU &8> &fSure!"));
+		BearFair20.send("&b&lYOU &8> &fSure!", player);
 		chime(player);
 	}
 
@@ -423,7 +422,7 @@ public class PugmasIsland implements Listener, Island {
 			user.setQuest_Pugmas_Step(21);
 		service.save(user);
 
-		player.sendMessage(colorize("&b&lYOU &8> &fSure!"));
+		BearFair20.send("&b&lYOU &8> &fSure!", player);
 		chime(player);
 	}
 

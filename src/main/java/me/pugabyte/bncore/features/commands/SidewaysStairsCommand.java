@@ -142,9 +142,9 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 						swsPlayer.setDirection(direction);
 						swsPlayer.setHalf(half);
 						swsPlayer.setEnabled(true);
-						player.sendMessage(PREFIX + "Angle succesfully copied (" + direction + (!"bottom".equals(half) ? "/upsidedown" : "") + ").");
+						send(player, PREFIX + "Angle succesfully copied (" + direction + (!"bottom".equals(half) ? "/upsidedown" : "") + ").");
 					} else {
-						player.sendMessage(PREFIX + "Can only copy angle of a stair block.");
+						send(player, PREFIX + "Can only copy angle of a stair block.");
 					}
 		}
 	}

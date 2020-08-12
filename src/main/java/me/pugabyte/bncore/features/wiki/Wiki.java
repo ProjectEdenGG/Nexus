@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -76,9 +77,9 @@ public class Wiki {
 					Bukkit.getScheduler().runTaskAsynchronously(BNCore.getInstance(), () -> {
 						String query = getQuery(args);
 
-						sender.sendMessage("");
-						sender.sendMessage("");
-						sender.sendMessage(prefix + "Searching for §e" + query + "§3...");
+						Utils.send(sender, "");
+						Utils.send(sender, "");
+						Utils.send(sender, prefix + "Searching for §e" + query + "§3...");
 
 						try {
 							String queryEscaped = query.replaceAll(" ", SEP);
@@ -92,7 +93,7 @@ public class Wiki {
 
 							int results = resultCount.get("totalhits").getAsInt();
 							if (results > 0) {
-								sender.sendMessage("§eResults found!");
+								Utils.send(sender, "§eResults found!");
 
 								for (int i = 0; i < results && i < 2; i++) {
 
@@ -120,12 +121,12 @@ public class Wiki {
 									snippet.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url + wiki + page));
 									snippet.setColor(ChatColor.DARK_AQUA);
 
-									sender.sendMessage("");
-									((Player) sender).spigot().sendMessage(header);
-									((Player) sender).spigot().sendMessage(snippet);
+									Utils.send(sender, "");
+									Utils.send(sender, header);
+									Utils.send(sender, snippet);
 								}
 							} else {
-								sender.sendMessage(prefix + "No results found.");
+								Utils.send(sender, prefix + "No results found.");
 							}
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -133,13 +134,13 @@ public class Wiki {
 					});
 
 				} else {
-					sender.sendMessage(prefix + "You must be ingame to use this command.");
+					Utils.send(sender, prefix + "You must be ingame to use this command.");
 				}
 			} else {
-				sender.sendMessage(prefix + "You did not specify a search query.");
+				Utils.send(sender, prefix + "You did not specify a search query.");
 			}
 		} else {
-			sender.sendMessage(prefix + "You did not specify a search query.");
+			Utils.send(sender, prefix + "You did not specify a search query.");
 		}
 	}
 

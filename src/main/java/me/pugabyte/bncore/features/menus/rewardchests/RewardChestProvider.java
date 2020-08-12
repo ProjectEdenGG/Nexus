@@ -17,13 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.ColorType.LIGHT_BLUE;
-import static me.pugabyte.bncore.utils.ColorType.LIGHT_GREEN;
-import static me.pugabyte.bncore.utils.ColorType.MAGENTA;
-import static me.pugabyte.bncore.utils.ColorType.ORANGE;
-import static me.pugabyte.bncore.utils.ColorType.PINK;
-import static me.pugabyte.bncore.utils.ColorType.RED;
-import static me.pugabyte.bncore.utils.ColorType.YELLOW;
+import static me.pugabyte.bncore.utils.ColorType.*;
 
 public class RewardChestProvider extends MenuUtils implements InventoryProvider {
 
@@ -84,8 +78,8 @@ public class RewardChestProvider extends MenuUtils implements InventoryProvider 
 
 		if (time >= 450) {
 			RewardChest.getInv(loot).close(player);
-			player.sendMessage(StringUtils.colorize(StringUtils.getPrefix("RewardChest") + "You have received the &e" +
-					loot[lootIndex].getTitle() + "&3 reward"));
+			Utils.send(player, StringUtils.getPrefix("RewardChest") + "You have received the &e" +
+					loot[lootIndex].getTitle() + "&3 reward");
 			Utils.giveItems(player, Arrays.asList(loot[lootIndex].getItems()));
 		}
 	}

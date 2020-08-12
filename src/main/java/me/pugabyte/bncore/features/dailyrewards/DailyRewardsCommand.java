@@ -19,8 +19,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 @Aliases({"dr", "dailyreward"})
 @Permission("daily.rewards")
 public class DailyRewardsCommand extends CustomCommand {
@@ -102,10 +100,10 @@ public class DailyRewardsCommand extends CustomCommand {
 
 				dailyReward.setActive(false);
 				service.save(dailyReward);
-				e.getPlayer().sendMessage(PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
+				send(e.getPlayer(), PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
 				e.getPlayer().closeInventory();
 			} catch (CommandCooldownException ex) {
-				e.getPlayer().sendMessage(colorize(ex.getMessage()));
+				send(e.getPlayer(), ex.getMessage());
 			}
 		})
 		.open(player());

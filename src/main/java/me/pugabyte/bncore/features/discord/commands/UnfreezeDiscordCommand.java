@@ -22,7 +22,6 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.RELAY)
@@ -67,7 +66,7 @@ public class UnfreezeDiscordCommand extends Command {
 						if (player.getPlayer().getVehicle() != null)
 							player.getPlayer().getVehicle().remove();
 
-						player.getPlayer().sendMessage(colorize("&cYou have been unfrozen."));
+						Utils.send(player, "&cYou have been unfrozen.");
 						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));

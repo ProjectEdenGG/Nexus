@@ -6,7 +6,6 @@ import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -29,7 +28,7 @@ public class Pride20Listener implements Listener {
 		if (!cooldownService.check(player, "prideDyeBomb", Time.MINUTE.x(1)))
 			return;
 
-		player.sendMessage(StringUtils.colorize("&3Vendor > &eSadly all my balloons have uh... floated away, but I can give you this to play with"));
+		Utils.send(player, "&3Vendor > &eSadly all my balloons have uh... floated away, but I can give you this to play with");
 		DyeBombCommand.giveDyeBomb(player, 5);
 	}
 
@@ -61,7 +60,7 @@ public class Pride20Listener implements Listener {
 
 		setting.setBoolean(true);
 		service.save(setting);
-		player.sendMessage(StringUtils.colorize("&eHow did you even get here? I mean.... meow"));
+		Utils.send(player, "&eHow did you even get here? I mean.... meow");
 	}
 
 
@@ -71,9 +70,9 @@ public class Pride20Listener implements Listener {
 		CooldownService cooldownService = new CooldownService();
 		if (!cooldownService.check(event.getPlayer(), "pride20enter", Time.MINUTE.x(5)))
 			return;
-		event.getPlayer().sendMessage(StringUtils.colorize("&eWelcome to the Pride Parade!" +
+		Utils.send(event.getPlayer(), "&eWelcome to the Pride Parade!" +
 				" &3Have a look at all the colorful floats and roam around the city. If you'd like to join the parade, " +
-				"type &c/pride20 parade join &3while standing where you want to be in the parade. &eEnjoy and happy pride!"));
+				"type &c/pride20 parade join &3while standing where you want to be in the parade. &eEnjoy and happy pride!");
 	}
 
 }

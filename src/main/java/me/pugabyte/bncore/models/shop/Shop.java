@@ -18,6 +18,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConve
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.IteratableEnum;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
@@ -36,7 +37,6 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.shops.ShopUtils.giveItem;
 import static me.pugabyte.bncore.features.shops.Shops.PREFIX;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.pretty;
 
 @Data
@@ -205,7 +205,7 @@ public class Shop extends PlayerOwnedObject {
 				BNCore.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
 			giveItem(customer, product.getItem());
 			new ShopService().save(product.getShop());
-			customer.sendMessage(colorize(PREFIX + "You purchased " + pretty(product.getItem()) + " for $" + pretty(price)));
+			Utils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for $" + pretty(price));
 		}
 
 		@Override
@@ -263,7 +263,7 @@ public class Shop extends PlayerOwnedObject {
 				product.getShop().getHolding().add(price);
 			giveItem(customer, product.getItem());
 			new ShopService().save(product.getShop());
-			customer.sendMessage(colorize(PREFIX + "You purchased " + pretty(product.getItem()) + " for " + pretty(price)));
+			Utils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + pretty(price));
 		}
 
 		@Override
@@ -325,7 +325,7 @@ public class Shop extends PlayerOwnedObject {
 			if (!isMarket(product))
 				product.getShop().getHolding().add(product.getItem());
 			new ShopService().save(product.getShop());
-			customer.sendMessage(colorize(PREFIX + "You sold " + pretty(product.getItem()) + " for $" + pretty(price)));
+			Utils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for $" + pretty(price));
 		}
 
 		@Override

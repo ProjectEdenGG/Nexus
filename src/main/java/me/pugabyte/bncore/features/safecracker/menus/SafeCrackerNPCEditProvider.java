@@ -10,6 +10,7 @@ import me.pugabyte.bncore.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.bncore.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -52,7 +53,7 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 				.lore("&3" + npc.getQuestion()).build(), e -> {
 			player.closeInventory();
 			SafeCracker.adminQuestionMap.put(player, npc.getName());
-			player.sendMessage(new JsonBuilder("&e&lClick here to set " + npc.getName() + "'s question").suggest("/safecracker question ").build());
+			Utils.send(player, new JsonBuilder("&e&lClick here to set " + npc.getName() + "'s question").suggest("/safecracker question ").build());
 		}));
 
 		ItemBuilder builder = new ItemBuilder(Material.PAPER).name("&eAnswers:");

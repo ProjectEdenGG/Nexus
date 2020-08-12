@@ -12,6 +12,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConv
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -23,7 +24,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Data
@@ -82,7 +82,7 @@ public class Home extends PlayerOwnedObject {
 				location.add(0, .5, 0);
 			player.teleport(location, TeleportCause.COMMAND);
 		} else
-			player.sendMessage(PREFIX + colorize("&cYou don't have access to that home"));
+			Utils.send(player, PREFIX + "&cYou don't have access to that home");
 	}
 
 	public boolean hasAccess(Player player) {

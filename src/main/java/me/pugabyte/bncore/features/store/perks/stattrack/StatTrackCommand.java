@@ -35,11 +35,11 @@ public class StatTrackCommand implements CommandExecutor {
 							statItem.write();
 							player.getInventory().setItemInMainHand(statItem.getItem());
 
-							player.sendMessage(PREFIX + "Enabled statistic tracking on " + item.getType());
+							send(player, PREFIX + "Enabled statistic tracking on " + item.getType());
 							return true;
 						}
 					}
-					player.sendMessage(PREFIX + "Statistic tracking cannot be enabled on " + item.getType());
+					send(player, PREFIX + "Statistic tracking cannot be enabled on " + item.getType());
 					return true;
 				}
 			}

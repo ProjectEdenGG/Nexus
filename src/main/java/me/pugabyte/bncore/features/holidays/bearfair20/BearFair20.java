@@ -11,10 +11,10 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.EasterEggs;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Time.Timer;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
@@ -238,7 +238,7 @@ public class BearFair20 implements Listener {
 	}
 
 	public static void send(String message, Player to) {
-		to.sendMessage(StringUtils.colorize(message));
+		Utils.send(to, message);
 	}
 
 

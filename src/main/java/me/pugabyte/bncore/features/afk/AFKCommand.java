@@ -17,8 +17,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 @Aliases("away")
 @NoArgsConstructor
 public class AFKCommand extends CustomCommand implements Listener {
@@ -64,7 +62,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 						String message = "&e* " + to.getPlayer().getName() + " is AFK";
 						if (to.getMessage() != null)
 							message += ": &3" + to.getMessage();
-						event.getChatter().getPlayer().sendMessage(colorize(message));
+						send(event.getChatter().getPlayer(), message);
 					});
 				}
 			}

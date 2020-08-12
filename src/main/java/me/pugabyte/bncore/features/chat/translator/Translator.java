@@ -54,8 +54,7 @@ public class Translator implements Listener {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				for (UUID uuid : map.get(sender.getUniqueId())) {
-					Player translating = Utils.getPlayer(uuid).getPlayer();
-					translating.sendMessage(StringUtils.colorize(PREFIX + "Failed to translate message from " + sender.getDisplayName() + "."));
+					Utils.send(uuid, PREFIX + "Failed to translate message from " + sender.getDisplayName() + ".");
 				}
 			}
 		});
@@ -65,7 +64,7 @@ public class Translator implements Listener {
 	public void onTranslatedDisconnect(PlayerQuitEvent event) {
 		if (!map.containsKey(event.getPlayer().getUniqueId())) return;
 		for (UUID uuid : map.get(event.getPlayer().getUniqueId()))
-			Utils.getPlayer(uuid).getPlayer().sendMessage(PREFIX + event.getPlayer().getDisplayName() + " has logged out. Disabling translation.");
+			Utils.send(uuid, PREFIX + event.getPlayer().getDisplayName() + " has logged out. Disabling translation.");
 
 		map.remove(event.getPlayer().getUniqueId());
 	}

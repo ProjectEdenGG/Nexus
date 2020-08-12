@@ -3,9 +3,11 @@ package me.pugabyte.bncore.features.holidays;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -14,7 +16,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class ScavHuntLegacy implements Listener {
@@ -53,12 +54,13 @@ public class ScavHuntLegacy implements Listener {
 		if (!MaterialTag.SIGNS.isTagged(block.getType())) return;
 
 		Sign sign = (Sign) block.getState();
+		Player player = event.getPlayer();
 		if ("[Scav Hunt '16]".equals(stripColor(sign.getLine(0)))) {
-			event.getPlayer().sendMessage(colorize(SCAVHUNT_PREFIX + "You've found a statue from the &eSummer 2016 &3scavenger hunt!"));
+			Utils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eSummer 2016 &3scavenger hunt!");
 		} else if ("[Scav Hunt '18]".equals(stripColor(sign.getLine(0)))) {
-			event.getPlayer().sendMessage(colorize(SCAVHUNT_PREFIX + "You've found a statue from the &eFebruary 2018 &3scavenger hunt!"));
+			Utils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eFebruary 2018 &3scavenger hunt!");
 		} else if ("[Easter 2020]".equals(stripColor(sign.getLine(0)))) {
-			event.getPlayer().sendMessage(colorize(SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg Hunt!"));
+			Utils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg Hunt!");
 		}
 	}
 
@@ -72,10 +74,11 @@ public class ScavHuntLegacy implements Listener {
 
 		Skull skull = (Skull) block.getState();
 		if (skull.getOwningPlayer() == null) return;
+		Player player = event.getPlayer();
 		if (easter17.contains(skull.getOwningPlayer().getUniqueId().toString())) {
-			event.getPlayer().sendMessage(colorize(SCAVHUNT_PREFIX + "You've found an easter egg from the &e2017 Easter egg Hunt!"));
+			Utils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2017 Easter egg Hunt!");
 		} else if (easter19.contains(skull.getOwningPlayer().getUniqueId().toString())) {
-			event.getPlayer().sendMessage(colorize(SCAVHUNT_PREFIX + "You've found a bunny from the &e2019 Easter event!"));
+			Utils.send(player, SCAVHUNT_PREFIX + "You've found a bunny from the &e2019 Easter event!");
 		}
 	}
 

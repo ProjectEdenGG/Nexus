@@ -21,8 +21,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private final DailyRewardService service = new DailyRewardService();
 	private final DailyReward dailyReward;
@@ -159,18 +157,18 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 			if (money != null) {
 				BNCore.getEcon().depositPlayer(player, money);
-				player.sendMessage(PREFIX + colorize("&e" + money + " &3has been added to your balance"));
+				Utils.send(player, PREFIX + "&e" + money + " &3has been added to your balance");
 			}
 
 			if (levels != null) {
 				player.giveExpLevels(levels);
-				player.sendMessage(PREFIX + colorize("You have been given &e" + levels + " XP Levels"));
+				Utils.send(player, PREFIX + "You have been given &e" + levels + " XP Levels");
 			}
 
 			if (votePoints != null) {
 				Voter voter = new VoteService().get(player);
 				voter.addPoints(votePoints);
-				player.sendMessage(PREFIX + colorize("&e" + votePoints + " &3vote points has been added to your balance"));
+				Utils.send(player, PREFIX + "&e" + votePoints + " &3vote points has been added to your balance");
 			}
 
 			if (!Strings.isNullOrEmpty(command))

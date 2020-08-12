@@ -65,10 +65,10 @@ public class InviteRewardsCommand extends CustomCommand {
 		if (getMinutesPlayed(invited) < 60)
 			error("You have to play for an hour before you can do that.");
 
-		inviter.sendMessage(colorize("&e" + invited.getName() + "&3 has confirmed your invite; thank you for " +
-				"helping Bear Nation grow! You earned &e15 vote points"));
-		invited.sendMessage(colorize("You have confirmed &e" + inviter.getName() + "'s &3invite. Thank you " +
-				"for flying Bear Nation!"));
+		send(inviter, "&e" + invited.getName() + "&3 has confirmed your invite; thank you for " +
+				"helping Bear Nation grow! You earned &e15 vote points");
+		send(invited, "You have confirmed &e" + inviter.getName() + "'s &3invite. Thank you " +
+				"for flying Bear Nation!");
 		reward(inviter);
 		saveInvitation(invited, inviter);
 	}
@@ -100,17 +100,17 @@ public class InviteRewardsCommand extends CustomCommand {
 
 	private void sendInviteConfirmation(Player inviter, Player invited) {
 		// Inviter
-		inviter.sendMessage(colorize("Invite confirmation sent to &e" + invited.getName()));
+		send(inviter, "Invite confirmation sent to &e" + invited.getName());
 
 		// Invited player
-		invited.sendMessage("");
-		invited.spigot().sendMessage(new ComponentBuilder("")
+		send(invited, "");
+		send(invited, new ComponentBuilder("")
 				.append("  Did ").color(ChatColor.DARK_AQUA)
 				.append(inviter.getName()).color(ChatColor.YELLOW)
 				.append(" invite you to Bear Nation?").color(ChatColor.DARK_AQUA)
 				.create());
 
-		invited.spigot().sendMessage(new ComponentBuilder("")
+		send(invited, new ComponentBuilder("")
 				.append("  Click one  ||").color(ChatColor.DARK_AQUA)
 				.append("  Yes  ").color(ChatColor.GREEN).bold(true)
 				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ("/invited confirm " + inviter.getName())))

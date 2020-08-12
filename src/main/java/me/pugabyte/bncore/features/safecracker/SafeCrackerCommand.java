@@ -223,7 +223,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .5f, .01f);
 		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(1), 1, false, false));
 		player.teleport(new Location(Bukkit.getWorld("safepvp"), -985.5, 110, -1616.5));
-		player.sendMessage(StringUtils.colorize("&7&kasdl &eThe safe draws you inside. It is larger on the inside than it appears. &7&kasdl"));
+		send(player, "&7&kasdl &eThe safe draws you inside. It is larger on the inside than it appears. &7&kasdl");
 	}
 
 }

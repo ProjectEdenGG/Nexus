@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @Data
@@ -83,7 +82,7 @@ public class AFKPlayer {
 			}
 
 			// TODO: Mute menu
-			_player.sendMessage(colorize(broadcast));
+			Utils.send(_player, (broadcast));
 		});
 	}
 
@@ -103,7 +102,7 @@ public class AFKPlayer {
 				broadcast = "&7* You are no longer AFK";
 
 			// TODO: Mute menu
-			_player.sendMessage(colorize(broadcast));
+			Utils.send(_player, broadcast);
 		});
 	}
 

@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class ResourceWorld implements Listener {
 
@@ -39,7 +38,7 @@ public class ResourceWorld implements Listener {
 
 		if (event.getTo().getWorld().getName().startsWith("resource")) {
 			if (!WorldGroup.get(event.getFrom().getWorld()).equals(WorldGroup.SURVIVAL) || event.getFrom().getWorld().getName().startsWith("staff")) {
-				player.sendMessage(colorize("&eYou can only enter the resource world from the Survival world"));
+				Utils.send(player, "&eYou can only enter the resource world from the Survival world");
 				event.setCancelled(true);
 				return;
 			}
@@ -67,10 +66,10 @@ public class ResourceWorld implements Listener {
 			}
 
 			if (rejectedMaterials.size() != 0) {
-				player.sendMessage(colorize("&cYou can not go to the resource world with the below items, " +
-						"please remove them from your inventory before continuing:"));
+				Utils.send(player, "&cYou can not go to the resource world with the below items, " +
+						"please remove them from your inventory before continuing:");
 				for (Material material : rejectedMaterials) {
-					player.sendMessage(colorize("&e- " + camelCase(material.name())));
+					Utils.send(player, "&e- " + camelCase(material.name()));
 				}
 			}
 
@@ -96,20 +95,20 @@ public class ResourceWorld implements Listener {
 			if (rejectedMaterials.size() != 0) {
 				if (appendMessage) {
 					for (Material material : rejectedMaterials) {
-						player.sendMessage(colorize("&e- " + camelCase(material.name()) + " (in shulkerbox)"));
+						Utils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
 					}
 				} else {
-					player.sendMessage(colorize("&cYou can not go to the resource world with the below items, " +
-							"please remove them from your shulkerbox before continuing:"));
+					Utils.send(player, "&cYou can not go to the resource world with the below items, " +
+							"please remove them from your shulkerbox before continuing:");
 					for (Material material : rejectedMaterials) {
-						player.sendMessage(colorize("&e- " + camelCase(material.name()) + " (in shulkerbox)"));
+						Utils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
 					}
 				}
 			}
 
 			if (!event.isCancelled()) {
-				player.sendMessage(colorize(" &4Warning: &cYou are entering the resource world! This world is regenerated on the " +
-						"&c&lfirst of every month, &cso don't leave your stuff here or you will lose it!"));
+				Utils.send(player, " &4Warning: &cYou are entering the resource world! This world is regenerated on the " +
+						"&c&lfirst of every month, &cso don't leave your stuff here or you will lose it!");
 			}
 		}
 	}
@@ -125,8 +124,8 @@ public class ResourceWorld implements Listener {
 
 		Tip tip = new TipService().get(event.getPlayer());
 		if (tip.show(TipType.RESOURCE_WORLD_STORAGE))
-			event.getPlayer().sendMessage(colorize(" &4Warning: &cYou are currently building in the resource world! " +
-				"This world is regenerated on the &c&lfirst of every month, &cso don't leave your stuff here or you will lose it!"));
+			Utils.send(event.getPlayer(), " &4Warning: &cYou are currently building in the resource world! " +
+					"This world is regenerated on the &c&lfirst of every month, &cso don't leave your stuff here or you will lose it!");
 	}
 
 	@EventHandler
@@ -137,7 +136,7 @@ public class ResourceWorld implements Listener {
 
 		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
 			event.setCancelled(true);
-			player.sendMessage(colorize("&cYou can't open your enderchest while in the resource world, due to restrictions in place to keep the /market balanced"));
+			Utils.send(player, "&cYou can't open your enderchest while in the resource world, due to restrictions in place to keep the /market balanced");
 		}
 	}
 
@@ -151,7 +150,7 @@ public class ResourceWorld implements Listener {
 				case "/vault":
 				case "/playervaults":
 					event.setCancelled(true);
-					event.getPlayer().sendMessage(colorize("&cYou cannot use vaults while in the resource world"));
+					Utils.send(event.getPlayer(), "&cYou cannot use vaults while in the resource world");
 			}
 		}
 	}

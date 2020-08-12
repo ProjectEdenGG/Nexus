@@ -63,7 +63,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.Utils.getTool;
 
 public class Misc implements Listener {
@@ -114,8 +113,8 @@ public class Misc implements Listener {
 
 		Tip tip = new TipService().get(event.getPlayer());
 		if (tip.show(TipType.LWC_FURNACE))
-			event.getPlayer().sendMessage(colorize(Koda.getDmFormat() + "Your chest is protected with LWC! Use /lwcinfo to learn more. " +
-					"Use &c/trust lock <player> &eto allow someone else to use it."));
+			Utils.send(event.getPlayer(), Koda.getDmFormat() + "Your chest is protected with LWC! Use /lwcinfo to learn more. " +
+					"Use &c/trust lock <player> &eto allow someone else to use it.");
 	}
 
 	@EventHandler
@@ -128,8 +127,8 @@ public class Misc implements Listener {
 
 		Tip tip = new TipService().get(event.getPlayer());
 		if (tip.show(TipType.LWC_FURNACE))
-			event.getPlayer().sendMessage(colorize(Koda.getDmFormat() + "Your furnace is protected with LWC! Use /lwcinfo to learn more. " +
-					"Use &c/trust lock <player> &eto allow someone else to use it."));
+			Utils.send(event.getPlayer(), Koda.getDmFormat() + "Your furnace is protected with LWC! Use /lwcinfo to learn more. " +
+					"Use &c/trust lock <player> &eto allow someone else to use it.");
 	}
 
 	@EventHandler
@@ -139,9 +138,9 @@ public class Misc implements Listener {
 			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
 				ActionBarUtils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get());
-				player.sendMessage("");
-				player.sendMessage(colorize("&4&lWARNING: &4You have chat disabled! Turn it on in your settings"));
-				player.sendMessage("");
+				Utils.send(player, "");
+				Utils.send(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings");
+				Utils.send(player, "");
 			}
 		});
 	}
@@ -257,7 +256,7 @@ public class Misc implements Listener {
 
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
 			Tasks.wait(20, () -> {
-				player.sendMessage("Removing pets, disguises and ptime changes");
+				Utils.send(player, "Removing pets, disguises and ptime changes");
 				Utils.runCommandAsConsole("undisguiseplayer " + player.getName());
 				Utils.runCommandAsConsole("petadmin remove " + player.getName());
 				Utils.runCommandAsConsole("mpet remove " + player.getName());
@@ -272,10 +271,10 @@ public class Misc implements Listener {
 
 		if (player.getWorld().getName().equals("survival_nether")) {
 			Tasks.wait(5, () -> {
-				player.sendMessage("");
-				player.sendMessage(colorize("&4Warning: &cThis nether world will be reset in 1.16 " +
-						"due to the nether update, so don't build anything you don't want to lose!"));
-				player.sendMessage("");
+				Utils.send(player, "");
+				Utils.send(player, "&4Warning: &cThis nether world will be reset in 1.16 " +
+						"due to the nether update, so don't build anything you don't want to lose!");
+				Utils.send(player, "");
 			});
 		}
 	}

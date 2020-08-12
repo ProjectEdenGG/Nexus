@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.pretty;
 
 @Data
@@ -45,8 +44,8 @@ public class Curiosity extends PlayerOwnedObject {
 		earned.add(reward);
 		if (isOnline()) {
 			Utils.giveItem(getPlayer(), reward.getItem());
-			getPlayer().sendMessage("");
-			getPlayer().sendMessage(colorize("&3You earned &e" + pretty(reward.getItem()) + " &3for learning!"));
+			Utils.send(getPlayer(), "");
+			Utils.send(getPlayer(), "&3You earned &e" + pretty(reward.getItem()) + " &3for learning!");
 		}
 	}
 

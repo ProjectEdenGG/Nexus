@@ -36,7 +36,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				@Override
 				void onClick(Player player) {
 					Utils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for Glowing Enchant").build());
-					player.sendMessage(StringUtils.colorize("&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own."));
+					Utils.send(player, "&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own.");
 				}
 		},
 		EXCAVATION(2, 2, Material.DIAMOND_SHOVEL,
@@ -80,7 +80,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				@Override
 				void onClick(Player player) {
 					Utils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for AutoRepair").build());
-					player.sendMessage(StringUtils.colorize("&ePut in a &c/ticket &eto have a staff member add auto repair to one item you own."));
+					Utils.send(player, "&ePut in a &c/ticket &eto have a staff member add auto repair to one item you own.");
 				}
 		},
 		ARCHERY(3, 7, Material.BOW,
@@ -95,7 +95,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				@Override
 				void onClick(Player player) {
 					BNCore.getPerms().playerAdd(player, "horsepicker.pick");
-					player.sendMessage(StringUtils.colorize("&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!"));
+					Utils.send(player, "&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!");
 				}
 		},
 		WOODCUTTING(4, 2, Material.OAK_LOG,
@@ -121,8 +121,8 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				void onClick(Player player) {
 					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.HOPPER.name() + " potionlauncher");
 					BNCore.getPerms().playerAdd(player, "combine.use");
-					player.sendMessage(StringUtils.colorize("&eTo shoot potions, first run &c/combine &eto combine all similar potions in your inventory into one stack, " +
-							"then place the stack in the slot to the right of the Potion Launcher. If you place the hopper, hold it and do &c/fixpotionlauncher"));
+					Utils.send(player, "&eTo shoot potions, first run &c/combine &eto combine all similar potions in your inventory into one stack, " +
+							"then place the stack in the slot to the right of the Potion Launcher. If you place the hopper, hold it and do &c/fixpotionlauncher");
 				}
 		};
 
@@ -207,7 +207,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		for (PrimarySkillType skillType : PrimarySkillType.values()) {
 			player.modifySkill(skillType, 0);
 		}
-		player.getPlayer().sendMessage("&3You successfully reset all of your McMMO skills");
+		Utils.send(player.getPlayer(), "&3You successfully reset all of your McMMO skills");
 	}
 
 	public void prestigeAll(Player player) {

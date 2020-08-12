@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.RandomUtils.randomInt;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.plural;
 import static me.pugabyte.bncore.utils.Utils.epochSecond;
 
@@ -133,7 +132,7 @@ public class Votes implements Listener {
 			int points = vote.getExtra() + basePoints;
 			voter.addPoints(points);
 			if (player.isOnline() && player.getPlayer() != null)
-				player.getPlayer().sendMessage(colorize(VPS.PREFIX + "You have received " + points + plural(" point", points)));
+				Utils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
 
 		Tasks.async(Votes::write);

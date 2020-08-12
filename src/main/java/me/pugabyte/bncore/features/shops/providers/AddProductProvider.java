@@ -111,7 +111,7 @@ public class AddProductProvider extends _ShopProvider {
 						}
 						open(player);
 					} catch (Exception ex) {
-						player.sendMessage(ex.getMessage());
+						Utils.send(player, ex.getMessage());
 						open(player);
 					}
 				}).open(player)));
@@ -148,7 +148,7 @@ public class AddProductProvider extends _ShopProvider {
 						} else
 							open(player);
 					} catch (Exception ex) {
-						player.sendMessage(ex.getMessage());
+						Utils.send(player, ex.getMessage());
 						open(player);
 					}
 				}).open(player);

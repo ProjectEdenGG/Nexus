@@ -18,7 +18,6 @@ import org.bukkit.OfflinePlayer;
 import java.text.NumberFormat;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.KODA)
@@ -63,7 +62,7 @@ public class PayDiscordCommand extends Command {
 
 				String formatted = NumberFormat.getCurrencyInstance().format(amount);
 				if (target.isOnline() && target.getPlayer() != null)
-					target.getPlayer().sendMessage(colorize("&a" + formatted + " has been received from " + player.getName()));
+					Utils.send(target, "&a" + formatted + " has been received from " + player.getName());
 
 				event.reply("Successfully sent " + formatted + " to " + target.getName());
 			} catch (Exception ex) {

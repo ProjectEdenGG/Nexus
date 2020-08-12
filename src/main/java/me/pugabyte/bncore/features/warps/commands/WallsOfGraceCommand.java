@@ -19,8 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 @Aliases("wog")
 @NoArgsConstructor
 public class WallsOfGraceCommand extends CustomCommand implements Listener {
@@ -127,8 +125,8 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 		if (loc1 != null && loc2 != null) {
 			event.getPlayer().closeInventory();
 			event.setCancelled(true);
-			event.getPlayer().sendMessage(PREFIX + colorize("You can only place 2 signs. " +
-					"Remove your previous signs with &c/wallsofgrace removesign <id>"));
+			send(event.getPlayer(), PREFIX + "You can only place 2 signs. " +
+					"Remove your previous signs with &c/wallsofgrace removesign <id>");
 			return;
 		}
 

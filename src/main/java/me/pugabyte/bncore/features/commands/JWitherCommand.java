@@ -135,13 +135,13 @@ public class JWitherCommand extends CustomCommand implements Listener {
 		witherSuffocationPoints.put(entity, witherSuffocationPoints.getOrDefault(entity, 0) + 1);
 		if (witherSuffocationPoints.get(entity) > 30) {
 			entity.getLocation().getNearbyPlayers(50).forEach(player ->
-					player.sendMessage(StringUtils.colorize(PREFIX + "&cThe wither was killed because of suffocation. No star was rewarded.")));
+					send(player, PREFIX + "&cThe wither was killed because of suffocation. No star was rewarded."));
 			entity.remove();
 			witherSuffocationPoints.remove(entity);
 		}
 		if (witherSuffocationPoints.get(entity) > 15) {
 			entity.getLocation().getNearbyPlayers(50).forEach(player ->
-					player.sendMessage(StringUtils.colorize(PREFIX + "&cWarning! It appears you may be trying to suffocate your wither. This is cheating! Free it or face a forfeit.")));
+					send(player, PREFIX + "&cWarning! It appears you may be trying to suffocate your wither. This is cheating! Free it or face a forfeit."));
 		}
 	}
 

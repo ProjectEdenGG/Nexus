@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 
 public class CommandOverrideListener implements Listener {
@@ -23,7 +22,7 @@ public class CommandOverrideListener implements Listener {
 		String argsString = event.getMessage().replace(args.get(0) + " ", "");
 
 		Consumer<String> redirect = command -> Utils.runCommand(player, trimFirst(command));
-		Consumer<String> send = message -> player.sendMessage(colorize(message));
+		Consumer<String> send = message -> Utils.send(player, message);
 
 		switch (args.get(0)) {
 			case "/fill":

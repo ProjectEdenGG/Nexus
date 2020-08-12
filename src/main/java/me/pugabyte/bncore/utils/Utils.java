@@ -17,6 +17,7 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -72,25 +73,25 @@ public class Utils {
 	public static void puga(String message) {
 		Player player = Bukkit.getPlayer("Pugabyte");
 		if (player != null && player.isOnline())
-			player.sendMessage(colorize(message));
+			send(player, message);
 	}
 
 	public static void wakka(String message) {
 		Player player = Bukkit.getPlayer("WakkaFlocka");
 		if (player != null && player.isOnline())
-			player.sendMessage(colorize(message));
+			send(player, message);
 	}
 
 	public static void blast(String message) {
 		Player player = Bukkit.getPlayer("Blast");
 		if (player != null && player.isOnline())
-			player.sendMessage(colorize(message));
+			send(player, message);
 	}
 
 	public static void zani(String message) {
 		Player player = Bukkit.getPlayer("Zanitaeni");
 		if (player != null && player.isOnline())
-			player.sendMessage(colorize(message));
+			send(player, message);
 	}
 
 	public static Player puga() {
@@ -545,6 +546,45 @@ public class Utils {
 		}
 
 		throw new InvalidInputException("Cannot determine direction");
+	}
+
+	public static void send(String UUID, String message) {
+		send(getPlayer(UUID), message);
+	}
+
+	public static void send(UUID uuid, String message) {
+		OfflinePlayer offlinePlayer = getPlayer(uuid);
+		send(offlinePlayer, message);
+	}
+
+	public static void send(OfflinePlayer offlinePlayer, String message) {
+		if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null)
+			send(offlinePlayer.getPlayer(), message);
+	}
+
+	public static void send(Player player, String message) {
+		if (player.isOnline())
+			player.sendMessage(colorize(message));
+	}
+
+	public static void send(CommandSender sender, String message) {
+		if (sender instanceof Player)
+			send((Player) sender, message);
+		else if (sender instanceof OfflinePlayer) {
+			OfflinePlayer offlinePlayer = (OfflinePlayer) sender;
+			if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null)
+				send(offlinePlayer.getPlayer(), message);
+		} else
+			sender.sendMessage(colorize(message));
+	}
+
+	public static void send(Player player, BaseComponent... baseComponents) {
+		if (player.isOnline())
+			player.sendMessage(baseComponents);
+	}
+
+	public static void send(CommandSender sender, BaseComponent... baseComponents) {
+		sender.sendMessage(baseComponents);
 	}
 
 	public enum EgocentricDirection {

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Set;
 
 import static me.pugabyte.bncore.features.discord.Discord.discordize;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class JoinQuit implements Listener {
 	@Getter
@@ -65,7 +64,7 @@ public class JoinQuit implements Listener {
 
 			// TODO: mutemenu
 			Bukkit.getOnlinePlayers().forEach(_player -> {
-				_player.sendMessage(colorize(ingame));
+				Utils.send(_player, ingame);
 
 				if (!player.hasPlayedBefore())
 					Jingle.FIRST_JOIN.playAll();
@@ -97,7 +96,7 @@ public class JoinQuit implements Listener {
 
 		// TODO: mutemenu
 		Bukkit.getOnlinePlayers().forEach(_player -> {
-			_player.sendMessage(colorize(ingame));
+			Utils.send(_player, ingame);
 			Jingle.QUIT.playAll();
 		});
 
