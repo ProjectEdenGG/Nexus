@@ -6,7 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
-@Permission("group.operator")
+@Permission("group.seniorstaff")
 public class KillCommand extends CustomCommand {
 
 	public KillCommand(CommandEvent event) {

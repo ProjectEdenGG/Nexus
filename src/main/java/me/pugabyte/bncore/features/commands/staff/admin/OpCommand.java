@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.commands.staff;
+package me.pugabyte.bncore.features.commands.staff.admin;
 
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.chat.Chat.StaticChannel;
