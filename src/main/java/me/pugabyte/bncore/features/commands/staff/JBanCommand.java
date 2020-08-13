@@ -49,7 +49,19 @@ public class JBanCommand extends CustomCommand {
 	}
 
 	private String[] validate(String arguments) {
-		String timeRegex = "(([0-9]+) ?(years?|y|months?|mo|weeks?|w|hours?|h|days?|d|minutes?|m|seconds?|s))";
+		String timeRegex = "((([0-9]+) ?(years?|y|months?|mo|weeks?|w|hours?|h|days?|d|minutes?|m|seconds?|s) ?)+)";
+		/*
+			Supports all of the following time formats:
+				5 days
+				5 day
+				5days
+				5day
+				5d
+				5d5h
+				5d 5h
+				1y6mo6w3d5m2s
+				1y 6mo 6w 3d 5m 2s
+	 	*/
 
 		Pattern timeRegex_first = Pattern.compile("^" + timeRegex);
 		Pattern timeRegex_last = Pattern.compile(timeRegex + "$");
@@ -77,25 +89,5 @@ public class JBanCommand extends CustomCommand {
 
 		return validated;
 	}
-
-
-	/*
-		ban player
-		ban player reason
-		ban player time
-
-		ban player time reason
-		ban player reason time
-
-
-		time regex =
-			first parameter:
-				^([0-9]+) ?(years?|y|months?|mo|weeks?|w|hours?|h|days?|d|minutes?|m|seconds?|s)
-			last parameter:
-				([0-9]+) ?(years?|y|months?|mo|weeks?|w|hours?|h|days?|d|minutes?|m|seconds?|s)$
-
-		remaining = reason
-	 */
-
 
 }
