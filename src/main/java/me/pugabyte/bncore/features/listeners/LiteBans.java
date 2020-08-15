@@ -52,7 +52,7 @@ public class LiteBans implements Listener {
 			} else {
 
 				try {
-					if (!player.isOnline() && !entry.isPermanent()) {
+					if (!player.isOnline() && !entry.isPermanent() && player.hasPlayedBefore()) {
 						DelayedBanService delayedBanService = new DelayedBanService();
 						DelayedBan delayedBan = delayedBanService.get(player.getUniqueId());
 

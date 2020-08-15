@@ -10,9 +10,24 @@ import org.bukkit.event.Listener;
 @NoArgsConstructor
 @Permission("group.staff")
 public class TestCommand extends CustomCommand implements Listener {
+//	List<Player> controlMinecart = new ArrayList<>();
 
 	public TestCommand(CommandEvent event) {
 		super(event);
+
+//		Tasks.repeat(10, 5, () -> {
+//			List<Player> players = new ArrayList<>(controlMinecart);
+//			for (Player player : players) {
+//				if(player.getVehicle() == null || !player.getVehicle().getType().equals(EntityType.MINECART)) {
+//					controlMinecart.remove(player);
+//					send(player, "removed - got out of minecart");
+//				}
+//
+//				Entity minecart = player.getVehicle();
+//				Vector unitVector = player.getLocation().getDirection();
+//				minecart.setVelocity((minecart.getVelocity().add(unitVector.multiply(0.2))).setY(0));
+//			}
+//		});
 	}
 
 	@Path("gravity fix")
@@ -20,6 +35,18 @@ public class TestCommand extends CustomCommand implements Listener {
 		player().setGravity(true);
 	}
 
+//	@Path("minecart join")
+//	public void minecartJoin(){
+//		if(!controlMinecart.contains(player().getPlayer()))
+//			controlMinecart.add(player().getPlayer());
+//		send("joined");
+//	}
+//
+//	@Path("minecart leave")
+//	public void minecartLeave(){
+//		controlMinecart.remove(player().getPlayer());
+//		send("left");
+//	}
 
 
 }

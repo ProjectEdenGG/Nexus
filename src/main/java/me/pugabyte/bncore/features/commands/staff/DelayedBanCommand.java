@@ -54,6 +54,15 @@ public class DelayedBanCommand extends CustomCommand implements Listener {
 		send(PREFIX + player.getName() + "'s delayed ban removed");
 	}
 
+	@Path("clearDatabase")
+	@Permission("group.admin")
+	public void clearDatabase() {
+		service.clearCache();
+		service.deleteAll();
+		service.clearCache();
+		send(PREFIX + "Database cleared");
+	}
+
 	@EventHandler
 	public void onLogin(PlayerLoginEvent event) {
 		if (!service.hasQueuedBan(event.getPlayer()))

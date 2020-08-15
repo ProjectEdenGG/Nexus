@@ -31,8 +31,7 @@ public class UnlimitedElytraCommand extends CustomCommand {
 				List<UUID> uuids = new ArrayList<>(flyingPlayers);
 				for (UUID uuid : uuids) {
 					Player player = Bukkit.getPlayer(uuid);
-					if (player == null) continue;
-					if (!player.isGliding()) continue;
+					if (player == null || !player.isGliding()) continue;
 
 					Vector unitVector = new Vector(0, player.getLocation().getDirection().getY(), 0);
 					player.setVelocity(player.getVelocity().add(unitVector.multiply(speedMultiplayer)));

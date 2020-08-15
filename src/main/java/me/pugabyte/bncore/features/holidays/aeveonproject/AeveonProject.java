@@ -22,6 +22,11 @@ import java.util.stream.Collectors;
 /*
 	TODO:
 		PDA - Iron Pressure Plate, includes current objectives
+		Radius based armorstand names for NPCs
+			- Armorstands assigned to NPC names that mimic the NPCs nameplate, but disappear clientside
+			- https://www.spigotmc.org/threads/spawning-in-a-clientside-nametag-using-armor-stands-protocollib-packets.371934/
+			- Only toggle the armorstands name on if the player is nearby + has "met" the NPC
+			- armorstand data: gravity=deny, invulnerablie=true, equiptment=locked, size=small, visible=false
  */
 @Data
 public class AeveonProject implements Listener {
