@@ -43,6 +43,7 @@ public class AeveonProject implements Listener {
 		BNCore.registerListener(this);
 		new Timer("    Effects", Effects::new);
 		new Timer("    Sets", SetType::values);
+		new Timer("    Regions", Regions::new);
 	}
 
 	public static boolean isInSpace(Player player) {

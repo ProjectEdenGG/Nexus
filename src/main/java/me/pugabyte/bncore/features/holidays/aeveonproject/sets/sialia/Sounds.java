@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -51,9 +52,7 @@ public class Sounds implements Listener {
 						continue;
 
 					player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F);
-					Tasks.wait(Time.SECOND.x(2), () -> {
-						player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F);
-					});
+					Tasks.wait(Time.SECOND.x(2), () -> player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F));
 				}
 			});
 		});

@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 public class SialiaCrashing implements Listener, Set {
 	@Getter
 	static boolean active = false;
+
 		/*
 		Sound repeated when sialia is crashing
 			/playsound minecraft:entity.elder_guardian.curse master @a[distance=..20] ~ ~ ~ 10 0.8

@@ -6,6 +6,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
+import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Set;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.Tasks;
@@ -30,6 +31,7 @@ public class Sialia implements Listener, Set {
 	public static Player nearbyPlayer = null;
 
 	List<String> openDoors = new ArrayList<>();
+	public static int dockingport_count = 2;
 
 	public Sialia() {
 		BNCore.registerListener(this);
