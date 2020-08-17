@@ -9,7 +9,10 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.aeveonproject.AeveonProjectService;
 import me.pugabyte.bncore.models.aeveonproject.AeveonProjectUser;
+import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import org.bukkit.Sound;
 import org.bukkit.event.Listener;
 
 @Aliases("ap")
@@ -23,6 +26,10 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 		super(event);
 		PREFIX = StringUtils.getPrefix("AP");
 	}
+
+	// put updating ship color in a method, and when you pick a new ship color w/ the menu,
+	// 		call the method and see if the player is near an shipcolor region, and update
+	// 		the blocks in that region if so
 
 	@Path("start")
 	public void start() {
@@ -62,6 +69,21 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 		else
 			arguments = " " + arguments;
 		runCommand("aeveonprojectwarps" + arguments);
+	}
+
+	@Path("beepboop <text>")
+	public void beepboop(String type) {
+		int times = RandomUtils.randomInt(5, 10);
+		for (int i = 0; i < times; i++) {
+			double pitch = RandomUtils.randomDouble(0.0, 2.0);
+			if (type.equalsIgnoreCase("high"))
+				pitch = RandomUtils.randomDouble(1.0, 2.0);
+			else if (type.equalsIgnoreCase("low"))
+				pitch = RandomUtils.randomDouble(0.0, 1.0);
+
+			double finalPitch = pitch;
+			Tasks.wait(2 * i, () -> player().getWorld().playSound(player().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 2F, (float) finalPitch));
+		}
 	}
 
 	@Path("clearDatabase")

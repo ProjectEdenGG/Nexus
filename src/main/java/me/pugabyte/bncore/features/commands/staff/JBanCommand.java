@@ -1,24 +1,27 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import com.mysql.cj.util.StringUtils;
-import me.lucko.helper.time.DurationFormatter;
-import me.lucko.helper.time.DurationParser;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
+import java.text.DecimalFormat;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.regex.Pattern;
+
+// litebans bans for days hours minutes, and only allws you to type in 1 unit, and 20160 minutes --> 14 days
 
 //@Fallback("litebans")
 @Permission("group.moderator")
 //@Redirects.Redirect(from = {"/tempban", "/iptempban", "/tempbanip", "/tempipban", "/ipban", "/banip",
 //		"/ban-ip" , "/lban", "/lipban", "/tban"}, to = "/bncore:ban")
 public class JBanCommand extends CustomCommand {
-	private static final String timeRegex = "(([0-9]+) ?(y(?:ear)?s?|mo(?:nth)?s?|w(?:eek)?s?|d(?:ay)?s?|h(?:our|r)?s?|m(?:inute|in)?s?|s(?:econd|ec)?s?) ?)";
+	private static final String timeRegex = "(([0-9]+(?:\\.[0-9]+)?) ?(y(?:ear)?s?|mo(?:nth)?s?|w(?:eek)?s?|d(?:ay)?s?|h(?:our|r)?s?|m(?!o)(?:inute|in)?s?|s(?:econd|ec)?s?) ?)";
 
 	public JBanCommand(CommandEvent event) {
 		super(event);
@@ -29,28 +32,22 @@ public class JBanCommand extends CustomCommand {
 		fallback();
 	}
 
+	// public void ban(OfflinePlayer offlinePlayer, String arguments) {
+
 	@Path("<player> [string...]")
-	public void ban(OfflinePlayer offlinePlayer, String arguments) {
+	public void ban(@Arg(tabCompleter = OfflinePlayer.class) String playerName, String arguments) {
 		String[] timeReason = validateParameters(arguments);
 		String time = timeReason[0];
 		String reason = timeReason[1].trim();
 
 		boolean temporary = !StringUtils.isNullOrEmpty(time);
 
-		send("From: /jban " + offlinePlayer.getName() + " " + arguments);  // TODO: REMOVE DEBUG
+		send("From: /jban " + playerName + " " + arguments);  // TODO: REMOVE DEBUG
 		if (temporary)
-			tempBan(offlinePlayer, time.trim(), reason);
+			send("To: /tempban " + playerName + " " + time + " " + reason);
 		else
-			permBan(offlinePlayer, reason);
+			send("To: /ban " + playerName + " " + reason);
 		send(); // TODO: REMOVE DEBUG
-	}
-
-	private void permBan(OfflinePlayer player, String reason) {
-		send("To: /ban " + player.getName() + " " + reason);
-	}
-
-	private void tempBan(OfflinePlayer player, String time, String reason) {
-		send("To: /tempban " + player.getName() + " " + time + " " + reason);
 	}
 
 	private String[] validateParameters(String arguments) {
@@ -77,25 +74,71 @@ public class JBanCommand extends CustomCommand {
 
 		validated[0] = time;
 		if (time != null)
-			validated[0] = validateTime2(time);
+			validated[0] = parseTime(time);
 		validated[1] = reason;
 
 		return validated;
 	}
 
-	private String validateTime2(String timeString) {
-		Duration duration = DurationParser.parse(timeString);
+	private String parseTime(String timeString) {
+		Duration duration = parseDuration(timeString);
+
 		long seconds = duration.getSeconds();
-		String expanded = DurationFormatter.LONG.format(duration);
-		String concise = DurationFormatter.CONCISE.format(duration).replaceFirst("m", "mo");
+		float secondsInDay = ChronoUnit.DAYS.getDuration().getSeconds();
+		float leftover = (seconds - (duration.toDays() * secondsInDay)) / secondsInDay;
+		float days = duration.toDays() + leftover;
+		DecimalFormat nf = new DecimalFormat("#.00");
+		String daysStr = nf.format(days);
 
 		Utils.wakka("Debug:");
-		Utils.wakka("Seconds: " + seconds);
-		Utils.wakka("Long: " + expanded);
-		Utils.wakka("Concise: " + concise);
-		Utils.wakka("");
+		Utils.wakka("Days: " + daysStr);
+		Utils.wakka("Leftover: " + leftover);
 
-		return concise.replaceAll(" ", "");
+		return daysStr + "d";
+	}
+
+	private Duration parseDuration(String timeString) {
+		String unitsRegex = "(y(?:ear)?s?|mo(?:nth)?s?|w(?:eek)?s?|d(?:ay)?s?|h(?:our|r)?s?|m(?!o)(?:inute|in)?s?|s(?:econd|ec)?s?)";
+		String[] units = timeString.trim().split("(?<=" + unitsRegex + ")");
+
+		String regex_years = "y(?:ear)?s?";
+		String regex_months = "mo(?:nth)?s?";
+		String regex_weeks = "w(?:eek)?s?";
+		String regex_days = "d(?:ay)?s?";
+		String regex_hours = "h(?:our|r)?s?";
+		String regex_minutes = "m(?!o)(?:inute|in)?s?";
+		String regex_seconds = "s(?:econd|ec)?s?";
+		String regex_numbers = "([0-9]+(?:\\.[0-9]+)?) ?";
+		float totalSeconds = 0;
+		for (String unit : units) {
+			float amount = 0;
+			float seconds = 0;
+			if (unit.matches(regex_numbers + regex_years)) {
+				amount = Float.parseFloat(unit.replaceAll(regex_years, "").trim());
+				seconds = ChronoUnit.YEARS.getDuration().getSeconds();
+			} else if (unit.matches(regex_numbers + regex_months)) {
+				amount = Float.parseFloat(unit.replaceAll(regex_months, "").trim());
+				seconds = ChronoUnit.MONTHS.getDuration().getSeconds();
+			} else if (unit.matches(regex_numbers + regex_weeks)) {
+				amount = Float.parseFloat(unit.replaceAll(regex_weeks, "").trim());
+				seconds = ChronoUnit.WEEKS.getDuration().getSeconds();
+			} else if (unit.matches(regex_numbers + regex_days)) {
+				amount = Float.parseFloat(unit.replaceAll(regex_days, "").trim());
+				seconds = ChronoUnit.DAYS.getDuration().getSeconds();
+			} else if (unit.matches(regex_numbers + regex_hours)) {
+				amount = Float.parseFloat(unit.replaceAll(regex_hours, "").trim());
+				seconds = ChronoUnit.HOURS.getDuration().getSeconds();
+			} else if (unit.matches(regex_numbers + regex_minutes)) {
+				amount = Float.parseFloat(unit.replaceAll(regex_minutes, "").trim());
+				seconds = ChronoUnit.MINUTES.getDuration().getSeconds();
+			} else if (unit.matches(regex_numbers + regex_seconds)) {
+				amount = Float.parseFloat(unit.replaceAll(regex_seconds, "").trim());
+				seconds = 1;
+			}
+
+			totalSeconds += (amount * seconds);
+		}
+		return Duration.of((long) totalSeconds, ChronoUnit.SECONDS);
 	}
 
 }
