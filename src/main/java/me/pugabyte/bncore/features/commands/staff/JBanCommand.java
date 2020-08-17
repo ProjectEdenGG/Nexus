@@ -1,12 +1,16 @@
 package me.pugabyte.bncore.features.commands.staff;
 
 import com.mysql.cj.util.StringUtils;
+import me.lucko.helper.time.DurationFormatter;
+import me.lucko.helper.time.DurationParser;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
+import java.time.Duration;
 import java.util.regex.Pattern;
 
 //@Fallback("litebans")
@@ -14,6 +18,7 @@ import java.util.regex.Pattern;
 //@Redirects.Redirect(from = {"/tempban", "/iptempban", "/tempbanip", "/tempipban", "/ipban", "/banip",
 //		"/ban-ip" , "/lban", "/lipban", "/tban"}, to = "/bncore:ban")
 public class JBanCommand extends CustomCommand {
+	private static final String timeRegex = "(([0-9]+) ?(y(?:ear)?s?|mo(?:nth)?s?|w(?:eek)?s?|d(?:ay)?s?|h(?:our|r)?s?|m(?:inute|in)?s?|s(?:econd|ec)?s?) ?)";
 
 	public JBanCommand(CommandEvent event) {
 		super(event);
@@ -26,7 +31,7 @@ public class JBanCommand extends CustomCommand {
 
 	@Path("<player> [string...]")
 	public void ban(OfflinePlayer offlinePlayer, String arguments) {
-		String[] timeReason = validate(arguments);
+		String[] timeReason = validateParameters(arguments);
 		String time = timeReason[0];
 		String reason = timeReason[1].trim();
 
@@ -48,23 +53,9 @@ public class JBanCommand extends CustomCommand {
 		send("To: /tempban " + player.getName() + " " + time + " " + reason);
 	}
 
-	private String[] validate(String arguments) {
-		String timeRegex = "((([0-9]+) ?(years?|y|months?|mo|weeks?|w|hours?|h|days?|d|minutes?|m|seconds?|s) ?)+)";
-		/*
-			Supports all of the following time formats:
-				5 days
-				5 day
-				5days
-				5day
-				5d
-				5d5h
-				5d 5h
-				1y6mo6w3d5m2s
-				1y 6mo 6w 3d 5m 2s
-	 	*/
-
-		Pattern timeRegex_first = Pattern.compile("^" + timeRegex);
-		Pattern timeRegex_last = Pattern.compile(timeRegex + "$");
+	private String[] validateParameters(String arguments) {
+		Pattern timeRegex_first = Pattern.compile("^" + timeRegex + "+");
+		Pattern timeRegex_last = Pattern.compile(timeRegex + "+$");
 
 		String[] validated = new String[2];
 		String time = null;
@@ -85,9 +76,26 @@ public class JBanCommand extends CustomCommand {
 			reason = arguments;
 
 		validated[0] = time;
+		if (time != null)
+			validated[0] = validateTime2(time);
 		validated[1] = reason;
 
 		return validated;
+	}
+
+	private String validateTime2(String timeString) {
+		Duration duration = DurationParser.parse(timeString);
+		long seconds = duration.getSeconds();
+		String expanded = DurationFormatter.LONG.format(duration);
+		String concise = DurationFormatter.CONCISE.format(duration).replaceFirst("m", "mo");
+
+		Utils.wakka("Debug:");
+		Utils.wakka("Seconds: " + seconds);
+		Utils.wakka("Long: " + expanded);
+		Utils.wakka("Concise: " + concise);
+		Utils.wakka("");
+
+		return concise.replaceAll(" ", "");
 	}
 
 }
