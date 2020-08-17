@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets;
 
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.lobby.Lobby;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia.Sialia;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing.SialiaCrashing;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaWreckage.SialiaWreckage;
@@ -7,6 +8,7 @@ import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 
 public enum SetType {
+	LOBBY(new Lobby()),
 	SIALIA(new Sialia()),
 	SIALIA_CRASHING(new SialiaCrashing()),
 	SIALIA_WRECKAGE(new SialiaWreckage());

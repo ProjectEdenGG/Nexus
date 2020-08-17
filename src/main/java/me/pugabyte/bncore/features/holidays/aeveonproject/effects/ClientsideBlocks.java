@@ -4,8 +4,9 @@ import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia.Sialia;
-import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.RandomUtils;
+import me.pugabyte.bncore.models.aeveonproject.AeveonProjectService;
+import me.pugabyte.bncore.models.aeveonproject.AeveonProjectUser;
+import me.pugabyte.bncore.utils.ColorType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ import java.util.List;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*;
 
 public class ClientsideBlocks implements Listener {
+	AeveonProjectService service = new AeveonProjectService();
 	// check on world change, and on login to update region
 
 	public ClientsideBlocks() {
@@ -31,9 +33,12 @@ public class ClientsideBlocks implements Listener {
 		String id = event.getRegion().getId();
 		if (!Regions.group_shipColor_Update.contains(id)) return;
 
-		// Any Ship Color
+		if (!service.hasStarted(player)) return;
+		AeveonProjectUser user = service.get(player);
+
+		// Any Ship Color Region
 		if (Regions.group_shipColor_Update.contains(id)) {
-			Material concreteType = RandomUtils.randomMaterial(MaterialTag.CONCRETES.exclude(Material.WHITE_CONCRETE));
+			Material concreteType = ColorType.of(user.getShipColor()).getConcrete();
 			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(Regions.getShipColorRegion(id)));
 
 			for (Block block : blocks) {

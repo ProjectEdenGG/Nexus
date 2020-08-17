@@ -91,6 +91,5 @@ public class AeveonProject implements Listener {
 
 	public static boolean isInWorld(Location location) {
 		return location.getWorld().equals(AeveonProject.getWORLD());
-
 	}
 }
