@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.Utils.attempt;
-
 public abstract class UnbalancedTeamMechanic extends TeamMechanic {
 
 	@Override
@@ -53,17 +51,18 @@ public abstract class UnbalancedTeamMechanic extends TeamMechanic {
 					minigamer.setTeam(team);
 			}
 
+		playerLoop:
 		for (Minigamer minigamer : minigamers) {
-			attempt(50, () -> {
+			int SAFETY = 0;
+			while (minigamer.getTeam() == null && ++SAFETY < 50) {
 				Collections.shuffle(teams);
 				for (Team team : teams)
 					if (team.getMaxPlayers() < 0 || team.getMinigamers(match).size() < team.getMaxPlayers())
 						if (RandomUtils.chanceOf(team.getBalancePercentage())) {
 							minigamer.setTeam(team);
-							return true;
+							continue playerLoop;
 						}
-				return false;
-			});
+			}
 
 			if (minigamer.getTeam() == null) {
 				minigamer.tell("Could not assign you to a team!");
