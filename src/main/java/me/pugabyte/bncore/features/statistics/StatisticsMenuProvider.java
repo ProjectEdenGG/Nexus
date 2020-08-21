@@ -165,22 +165,28 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 			int total = killed + killedBy;
 
 			if (total > 1) {
-				Material material;
+				ItemStack material;
 				switch (entity) {
 					case PIG_ZOMBIE:
-						material = Material.ZOMBIE_PIGMAN_SPAWN_EGG;
+						material = new ItemStack(Material.ZOMBIE_PIGMAN_SPAWN_EGG);
 						break;
 					case MUSHROOM_COW:
-						material = Material.MOOSHROOM_SPAWN_EGG;
+						material = new ItemStack(Material.MOOSHROOM_SPAWN_EGG);
 						break;
 					case ENDER_DRAGON:
-						material = Material.DRAGON_HEAD;
+						material = new ItemStack(Material.DRAGON_HEAD);
 						break;
 					case WITHER:
-						material = Material.WITHER_SKELETON_SKULL;
+						material = new ItemStack(Material.WITHER_SKELETON_SKULL);
+						break;
+					case IRON_GOLEM:
+						material = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Golem").build();
+						break;
+					case SNOWMAN:
+						material = new ItemStack(Material.PUMPKIN);
 						break;
 					default:
-						material = Material.valueOf(entity.name() + "_SPAWN_EGG");
+						material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
 				}
 				ItemStack item = new ItemBuilder(material)
 						.name("&3" + StringUtils.camelCase(entity.name().replace("_", " ")))
