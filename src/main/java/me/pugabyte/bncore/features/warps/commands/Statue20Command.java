@@ -39,6 +39,7 @@ import java.util.Optional;
 
 @NoArgsConstructor
 public class Statue20Command extends _WarpCommand implements Listener {
+	private boolean disabled = true;
 
 	public String header = StringUtils.colorize("&1[StatueHunt 20]");
 	public String enchant = "Gears 1";
@@ -142,6 +143,11 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 		final String PREFIX = StringUtils.getPrefix("StatueHunt");
 		final String DISCORD_PREFIX = "**[StatueHunt]** ";
+
+		if (disabled) {
+			send(event.getPlayer(), PREFIX + "You've found a statue from the &e2020 Statue Hunt!'");
+			return;
+		}
 
 		String line = sign.getLine(1);
 

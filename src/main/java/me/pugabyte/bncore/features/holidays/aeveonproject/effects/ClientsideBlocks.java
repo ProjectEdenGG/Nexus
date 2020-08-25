@@ -1,9 +1,9 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.effects;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
-import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia.Sialia;
 import me.pugabyte.bncore.models.aeveonproject.AeveonProjectService;
 import me.pugabyte.bncore.models.aeveonproject.AeveonProjectUser;
 import me.pugabyte.bncore.utils.ColorType;
@@ -30,7 +30,8 @@ public class ClientsideBlocks implements Listener {
 		Player player = event.getPlayer();
 		if (!isInWorld(player)) return;
 
-		String id = event.getRegion().getId();
+		ProtectedRegion protectedRg = event.getRegion();
+		String id = protectedRg.getId();
 		if (!Regions.group_shipColor_Update.contains(id)) return;
 
 		if (!service.hasStarted(player)) return;
@@ -48,10 +49,10 @@ public class ClientsideBlocks implements Listener {
 		}
 
 
-		// Sialia Docking Ports Water
-		if (id.contains(Regions.sialia_shipColor_update)) {
-			for (int i = 1; i <= Sialia.dockingport_count; i++) {
-				List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(Regions.sialia_dockingports.replaceAll("#", String.valueOf(i))));
+		// Sialia & Crashing Docking Ports Water
+		if (id.equalsIgnoreCase(Regions.sialia_shipColor_update) || id.equalsIgnoreCase(Regions.sialiaCrashing_shipColor_update)) {
+			for (int i = 1; i <= 2; i++) {
+				List<Block> blocks = WEUtils.getBlocks(protectedRg);
 				for (Block block : blocks) {
 					if (block.getType().equals(Material.WATER))
 						player.sendBlockChange(block.getLocation(), Material.AIR.createBlockData());

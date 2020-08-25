@@ -14,7 +14,6 @@ public class Regions {
 	public static String sialia = "sialia";
 	public static String sialia_shipColor = sialia + "_shipcolor";
 	public static String sialia_shipColor_update = sialia_shipColor + "_update";
-	public static String sialia_dockingports = sialia + "_dockingport_#";
 
 	// Sialia Crashing
 	public static String sialiaCrashing = "sialia_crashing";

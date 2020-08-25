@@ -94,6 +94,11 @@ public class JBanCommand extends CustomCommand {
 		Utils.wakka("Days: " + daysStr);
 		Utils.wakka("Leftover: " + leftover);
 
+		// 15 minutes is 0.01d, but any less than that, and it breaks
+		// 15 = 0.01
+		// 14-8 = 0.01 (because of rounding)
+		// >7 = 0.00
+
 		return daysStr + "d";
 	}
 

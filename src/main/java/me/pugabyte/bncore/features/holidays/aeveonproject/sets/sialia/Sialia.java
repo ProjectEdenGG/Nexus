@@ -31,7 +31,6 @@ public class Sialia implements Listener, Set {
 	public static Player nearbyPlayer = null;
 
 	List<String> openDoors = new ArrayList<>();
-	public static int dockingport_count = 2;
 
 	public Sialia() {
 		BNCore.registerListener(this);
