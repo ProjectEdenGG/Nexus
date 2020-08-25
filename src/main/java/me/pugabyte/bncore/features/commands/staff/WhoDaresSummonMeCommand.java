@@ -12,7 +12,7 @@ import org.bukkit.entity.Bat;
 import java.util.ArrayList;
 import java.util.List;
 
-@Permission("vanish.vanish")
+@Permission("pv.see")
 public class WhoDaresSummonMeCommand extends CustomCommand {
 
 	public WhoDaresSummonMeCommand(CommandEvent event) {

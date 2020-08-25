@@ -29,4 +29,12 @@ public class StatisticsMenu {
 				.build().open(player, page);
 	}
 
+	public static void open(Player player, StatsMenus menu, OfflinePlayer targetPlayer, int startIndex) {
+		SmartInventory.builder()
+				.provider(new StatisticsMenuProvider(menu, targetPlayer, startIndex))
+				.size(menu.getSize(), 9)
+				.title(StringUtils.colorize(targetPlayer.getName() + "'s Statistics - " + StringUtils.camelCase(menu.name())))
+				.build().open(player);
+	}
+
 }

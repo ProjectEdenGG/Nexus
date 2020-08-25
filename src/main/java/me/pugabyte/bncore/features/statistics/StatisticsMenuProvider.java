@@ -10,7 +10,6 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
-import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
@@ -18,22 +17,25 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class StatisticsMenuProvider extends MenuUtils implements InventoryProvider {
 
+	final int itemsPerPage = 36;
 	StatisticsMenu.StatsMenus menu;
 	OfflinePlayer targetPlayer;
+	int startIndex;
 
 	public StatisticsMenuProvider(StatisticsMenu.StatsMenus menu, OfflinePlayer targetPlayer) {
 		this.menu = menu;
 		this.targetPlayer = targetPlayer;
+	}
+
+	public StatisticsMenuProvider(StatisticsMenu.StatsMenus menu, OfflinePlayer targetPlayer, int startIndex) {
+		this.menu = menu;
+		this.targetPlayer = targetPlayer;
+		this.startIndex = startIndex;
 	}
 
 	@Override
@@ -63,15 +65,76 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 			case GENERAL:
 				getGeneralStats(contents);
 				return;
-			case BLOCKS:
-				page.setItems(getBlockStats());
-				break;
-			case ITEMS:
-				page.setItems(getItemStats());
-				break;
 			case MOBS:
 				page.setItems(getMobStats());
 				break;
+			case BLOCKS:
+			case ITEMS:
+				List<Material> materials;
+				if (menu == StatisticsMenu.StatsMenus.BLOCKS)
+					materials = Arrays.stream(Material.values()).filter(Material::isBlock).filter(Material::isItem).filter(material -> !MaterialTag.UNOBTAINABLE.isTagged(material)).collect(Collectors.toList());
+				else
+					materials = Arrays.stream(Material.values()).filter(Material::isItem).filter(material -> {
+						if (MaterialTag.UNOBTAINABLE.isTagged(material))
+							return false;
+						return !MaterialTag.SPAWN_EGGS.isTagged(material);
+					}).collect(Collectors.toList());
+
+				List<ClickableItem> menuItems = new ArrayList<>();
+				for (int i = startIndex; i < startIndex + itemsPerPage; i++) {
+					if (i >= materials.size())
+						break;
+					ItemStack item;
+					if (menu == StatisticsMenu.StatsMenus.BLOCKS) {
+						int crafted = targetPlayer.getStatistic(Statistic.CRAFT_ITEM, materials.get(i));
+						int used = targetPlayer.getStatistic(Statistic.USE_ITEM, materials.get(i));
+						int mine = targetPlayer.getStatistic(Statistic.MINE_BLOCK, materials.get(i));
+						int pickup = targetPlayer.getStatistic(Statistic.PICKUP, materials.get(i));
+						int drop = targetPlayer.getStatistic(Statistic.DROP, materials.get(i));
+						item = new ItemBuilder(materials.get(i))
+								.name("&3" + StringUtils.camelCase(materials.get(i).name().replace("_", " ")))
+								.lore("&eCrafted: &3" + crafted)
+								.lore("&ePlaced: &3" + used)
+								.lore("&eMined: &3" + mine)
+								.lore("&ePicked Up: &3" + pickup)
+								.lore("&eDropped: &3" + drop)
+								.build();
+					} else {
+						int depleted = targetPlayer.getStatistic(Statistic.BREAK_ITEM, materials.get(i));
+						int crafted = targetPlayer.getStatistic(Statistic.CRAFT_ITEM, materials.get(i));
+						int used = targetPlayer.getStatistic(Statistic.USE_ITEM, materials.get(i));
+						int pickup = targetPlayer.getStatistic(Statistic.PICKUP, materials.get(i));
+						int drop = targetPlayer.getStatistic(Statistic.DROP, materials.get(i));
+						item = new ItemBuilder(materials.get(i))
+								.name("&3" + StringUtils.camelCase(materials.get(i).name().replace("_", " ")))
+								.lore("&eDepleted: &3" + depleted)
+								.lore("&eCrafted: &3" + crafted)
+								.lore("&eUsed: &3" + used)
+								.lore("&ePicked Up: &3" + pickup)
+								.lore("&eDropped: &3" + drop)
+								.build();
+					}
+					menuItems.add(ClickableItem.empty(item));
+				}
+				int row = 1;
+				int column = 0;
+				for (int i = 0; i < menuItems.size(); i++) {
+					contents.set(row, column, menuItems.get(i));
+					if (column == 8) {
+						column = 0;
+						row++;
+					} else
+						column++;
+				}
+
+				if (startIndex > 0)
+					contents.set(5, 0, ClickableItem.from(nameItem(Material.ARROW, "<- Page"), e ->
+							StatisticsMenu.open(player, menu, targetPlayer, Math.max(0, startIndex - itemsPerPage))));
+				if (startIndex + itemsPerPage < materials.size())
+					contents.set(5, 8, ClickableItem.from(nameItem(Material.ARROW, "Page ->"), e ->
+							StatisticsMenu.open(player, menu, targetPlayer, startIndex + itemsPerPage)));
+
+				return;
 		}
 
 		page.setItemsPerPage(36);
@@ -85,76 +148,8 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 					StatisticsMenu.open(player, menu, page.next().getPage(), targetPlayer)));
 	}
 
-	public ClickableItem[] getBlockStats() {
-		List<Material> blocks = Arrays.stream(Material.values()).filter(Material::isBlock).collect(Collectors.toList());
-		LinkedHashMap<ItemStack, Integer> stats = new LinkedHashMap<>();
-		List<ClickableItem> items = new ArrayList<>();
-
-		Tasks.async(() -> {
-			for (Material block : blocks) {
-				if (MaterialTag.UNOBTAINABLE.isTagged(block))
-					continue;
-				int crafted = targetPlayer.getStatistic(Statistic.CRAFT_ITEM, block);
-				int used = targetPlayer.getStatistic(Statistic.USE_ITEM, block);
-				int mine = targetPlayer.getStatistic(Statistic.MINE_BLOCK, block);
-				int pickup = targetPlayer.getStatistic(Statistic.PICKUP, block);
-				int drop = targetPlayer.getStatistic(Statistic.DROP, block);
-				int total = crafted + used + mine + pickup + drop;
-				if (total > 10) {
-					ItemStack item = new ItemBuilder(block)
-							.name("&3" + StringUtils.camelCase(block.name().replace("_", " ")))
-							.lore("&eCrafted: &3" + crafted)
-							.lore("&ePlaced: &3" + used)
-							.lore("&eMined: &3" + mine)
-							.lore("&ePicked Up: &3" + pickup)
-							.lore("&eDropped: &3" + drop)
-							.build();
-					stats.put(item, total);
-				}
-			}
-		});
-		stats.entrySet().stream()
-				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-				.forEachOrdered(x -> items.add(ClickableItem.empty(x.getKey())));
-		ClickableItem[] clickableItems = new ClickableItem[items.size()];
-		clickableItems = items.toArray(clickableItems);
-		return clickableItems;
-	}
-
-	public ClickableItem[] getItemStats() {
-		List<Material> items = Arrays.stream(Material.values()).filter(Material::isItem).collect(Collectors.toList());
-		LinkedHashMap<ItemStack, Integer> stats = new LinkedHashMap<>();
-		List<ClickableItem> menuItems = new ArrayList<>();
-
-		Tasks.async(() -> {
-			for (Material item : items) {
-				if (MaterialTag.UNOBTAINABLE.isTagged(item) || item.isLegacy() || MaterialTag.SPAWN_EGGS.isTagged(item))
-					continue;
-				int depleted = targetPlayer.getStatistic(Statistic.BREAK_ITEM, item);
-				int crafted = targetPlayer.getStatistic(Statistic.CRAFT_ITEM, item);
-				int used = targetPlayer.getStatistic(Statistic.USE_ITEM, item);
-				int pickup = targetPlayer.getStatistic(Statistic.PICKUP, item);
-				int drop = targetPlayer.getStatistic(Statistic.DROP, item);
-				int total = depleted + crafted + used + pickup + drop;
-				if (total > 10) {
-					ItemStack menuItem = new ItemBuilder(item)
-							.name("&3" + StringUtils.camelCase(item.name().replace("_", " ")))
-							.lore("&eDepleted: &3" + depleted)
-							.lore("&eCrafted: &3" + crafted)
-							.lore("&eUsed: &3" + used)
-							.lore("&ePicked Up: &3" + pickup)
-							.lore("&eDropped: &3" + drop)
-							.build();
-					stats.put(menuItem, total);
-				}
-			}
-		});
-		stats.entrySet().stream()
-				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-				.forEachOrdered(x -> menuItems.add(ClickableItem.empty(x.getKey())));
-		ClickableItem[] clickableItems = new ClickableItem[menuItems.size()];
-		clickableItems = menuItems.toArray(clickableItems);
-		return clickableItems;
+	@Override
+	public void update(Player player, InventoryContents contents) {
 	}
 
 	public ClickableItem[] getMobStats() {
@@ -170,16 +165,28 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 			int total = killed + killedBy;
 
 			if (total > 1) {
-				Material material;
+				ItemStack material;
 				switch (entity) {
 					case PIG_ZOMBIE:
-						material = Material.ZOMBIE_PIGMAN_SPAWN_EGG;
+						material = new ItemStack(Material.ZOMBIE_PIGMAN_SPAWN_EGG);
 						break;
 					case MUSHROOM_COW:
-						material = Material.MOOSHROOM_SPAWN_EGG;
+						material = new ItemStack(Material.MOOSHROOM_SPAWN_EGG);
+						break;
+					case ENDER_DRAGON:
+						material = new ItemStack(Material.DRAGON_HEAD);
+						break;
+					case WITHER:
+						material = new ItemStack(Material.WITHER_SKELETON_SKULL);
+						break;
+					case IRON_GOLEM:
+						material = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Golem").build();
+						break;
+					case SNOWMAN:
+						material = new ItemStack(Material.PUMPKIN);
 						break;
 					default:
-						material = Material.valueOf(entity.name() + "_SPAWN_EGG");
+						material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
 				}
 				ItemStack item = new ItemBuilder(material)
 						.name("&3" + StringUtils.camelCase(entity.name().replace("_", " ")))
@@ -308,11 +315,5 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 		contents.set(3, 3, ClickableItem.empty(interactions));
 		contents.set(3, 5, ClickableItem.empty(inventories));
 		contents.set(4, 4, ClickableItem.empty(misc));
-	}
-
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-
 	}
 }
