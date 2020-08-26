@@ -532,6 +532,10 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@Path("help")
 	void help() {
+		List<String> aliases = getAllAliases();
+		if (aliases.size() > 1)
+			send(PREFIX + "Aliases: " + String.join("&e, &3", aliases));
+
 		List<JsonBuilder> lines = new ArrayList<>();
 		getPathMethods(event).forEach(method -> {
 			Path path = method.getAnnotation(Path.class);
