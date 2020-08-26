@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.commands;
 
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import org.bukkit.Location;
@@ -15,17 +16,19 @@ public class TreeCommand extends CustomCommand {
 	}
 
 	@Path("[type]")
-	void run(TreeType treeType) {
+	void run(@Arg("tree") TreeType treeType) {
 		Block target = player().getTargetBlockExact(500);
 		if (target == null)
 			error("Target block not found");
 
 		Location location = target.getLocation().add(0, 1, 0);
-		if (!location.getBlock().isPassable())
+		if (location.getBlock().getType().isSolid())
 			error("Could not generate tree on " + camelCase(target.getType()));
 
-		player().getWorld().generateTree(target.getLocation(), treeType);
-		send(PREFIX + "Generated " + camelCase(treeType));
+		if (player().getWorld().generateTree(target.getLocation(), treeType))
+			send(PREFIX + "Generated " + camelCase(treeType));
+		else
+			send(PREFIX + "Tree generation failed");
 	}
 
 }
