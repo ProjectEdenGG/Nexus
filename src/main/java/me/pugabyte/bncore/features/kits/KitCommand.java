@@ -82,7 +82,7 @@ public class KitCommand extends CustomCommand implements Listener {
 
 	@ConverterFor(Kit.class)
 	Kit kitConverter(String string) {
-		return Arrays.stream(KitManager.getAllKits()).filter(kit -> kit.getName().equals(string.replace("_", " "))).findFirst().get();
+		return KitManager.getByName(string);
 	}
 
 	@EventHandler
