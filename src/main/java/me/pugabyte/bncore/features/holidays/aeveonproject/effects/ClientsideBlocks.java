@@ -40,6 +40,9 @@ public class ClientsideBlocks implements Listener {
 		// Any Ship Color Region
 		if (Regions.group_shipColor_Update.contains(id)) {
 			Material concreteType = ColorType.of(user.getShipColor()).getConcrete();
+			if (concreteType == null)
+				concreteType = Material.BLACK_CONCRETE;
+
 			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(Regions.getShipColorRegion(id)));
 
 			for (Block block : blocks) {
