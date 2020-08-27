@@ -15,4 +15,12 @@ public class PowertoolService extends MongoService {
 		return cache;
 	}
 
+	@Override
+	public <T> void save(T object) {
+		if (((PowertoolUser) object).getPowertools().size() > 0)
+			super.save(object);
+		else
+			super.delete(object);
+	}
+
 }
