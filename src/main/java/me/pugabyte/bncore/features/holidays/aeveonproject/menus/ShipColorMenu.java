@@ -43,6 +43,8 @@ public class ShipColorMenu extends MenuUtils implements InventoryProvider {
 		addCloseItem(contents);
 
 		for (ColorType colorType : ColorType.values()) {
+			if (colorType.getDyeColor() == null) continue;
+
 			Material concrete = colorType.getConcrete();
 			if (concrete != null) {
 				ItemStack color = new ItemBuilder(concrete).name(StringUtils.camelCase(colorType.name())).build();
