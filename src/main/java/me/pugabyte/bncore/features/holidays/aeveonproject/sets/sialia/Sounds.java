@@ -13,11 +13,11 @@ import org.bukkit.event.Listener;
 
 import java.util.Collection;
 
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WORLD;
 
 public class Sounds implements Listener {
-	private static final Location engineLoc = new Location(WORLD, -1294, 86, -1056);
+	private static final Location engineLoc = APLoc(-1294, 86, -1056);
 	private static final Sound shipSound = Sound.BLOCK_BEACON_AMBIENT;
 	private static final Sound engineSound = Sound.ENTITY_MINECART_RIDING;
 

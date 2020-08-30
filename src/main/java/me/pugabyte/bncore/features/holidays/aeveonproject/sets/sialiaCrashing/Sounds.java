@@ -13,11 +13,11 @@ import org.bukkit.event.Listener;
 
 import java.util.Collection;
 
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WORLD;
 
 public class Sounds implements Listener {
-	private static final Location engineLoc = new Location(WORLD, -823, 86, -1062);
+	private static final Location engineLoc = APLoc(-823, 86, -1062);
 	private static final Sound engineSound = Sound.ENTITY_MINECART_RIDING;
 	private static final Sound warningSound = Sound.ENTITY_ELDER_GUARDIAN_CURSE;
 
@@ -51,7 +51,7 @@ public class Sounds implements Listener {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
 
-					player.playSound(engineLoc, warningSound, SoundCategory.AMBIENT, 0.5F, 0.8F);
+					player.playSound(engineLoc, warningSound, SoundCategory.AMBIENT, 0.2F, 0.8F);
 				}
 			});
 		});
