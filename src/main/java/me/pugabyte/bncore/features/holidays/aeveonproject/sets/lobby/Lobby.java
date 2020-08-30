@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.lobby;
 
-import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
-import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Set;
+import me.pugabyte.bncore.features.holidays.aeveonproject.APLoc;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Location;
@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Region("lobby")
-public class Lobby implements Set {
-	Location armorStandLoc = new Location(AeveonProject.getWORLD(), -1765, 98, -1165);
+public class Lobby implements APSet {
+	Location armorStandLoc = new APLoc(-1765, 98, -1165);
 
 	public Lobby() {
 		Tasks.repeat(0, 2, () -> {

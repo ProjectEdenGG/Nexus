@@ -7,7 +7,7 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
 import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
-import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Set;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -24,7 +24,7 @@ import java.util.List;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*;
 
 @Region("sialia")
-public class Sialia implements Listener, Set {
+public class Sialia implements Listener, APSet {
 	@Getter
 	static boolean active = true;
 	@Getter

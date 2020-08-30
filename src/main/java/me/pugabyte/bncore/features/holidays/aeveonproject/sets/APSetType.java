@@ -7,26 +7,26 @@ import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaWreckage.Si
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 
-public enum SetType {
+public enum APSetType {
 	LOBBY(new Lobby()),
 	SIALIA(new Sialia()),
 	SIALIA_CRASHING(new SialiaCrashing()),
 	SIALIA_WRECKAGE(new SialiaWreckage());
 
-	private final Set set;
+	private final APSet APSet;
 
-	SetType(Set set) {
-		this.set = set;
+	APSetType(APSet APSet) {
+		this.APSet = APSet;
 	}
 
-	public Set get() {
-		return set;
+	public APSet get() {
+		return APSet;
 	}
 
-	public static Set getFromLocation(Location location) {
+	public static APSet getFromLocation(Location location) {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
 		java.util.Set<String> regions = WGUtils.getRegionNamesAt(location);
-		for (SetType set : values()) {
+		for (APSetType set : values()) {
 			if (regions.contains(set.get().getRegion()))
 				return set.get();
 		}
