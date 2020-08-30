@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.aeveonproject.APLoc;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.RandomUtils;
@@ -15,20 +14,22 @@ import org.bukkit.event.Listener;
 import java.util.Arrays;
 import java.util.List;
 
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
+
 @Region("sialia_crashing")
 public class SialiaCrashing implements Listener, APSet {
 	@Getter
 	static boolean active = true;
 	//
-	List<Location> light1 = Arrays.asList(new APLoc(-824, 90, -1177), new APLoc(-823, 90, -1177));
-	List<Location> light2 = Arrays.asList(new APLoc(-823, 90, -1173), new APLoc(-824, 90, -1173));
-	List<Location> light3 = Arrays.asList(new APLoc(-823, 90, -1164), new APLoc(-824, 90, -1164));
-	List<Location> light4 = Arrays.asList(new APLoc(-823, 90, -1160), new APLoc(-824, 90, -1160));
-	List<Location> light5 = Arrays.asList(new APLoc(-823, 90, -1125), new APLoc(-824, 90, -1125));
-	List<Location> light6 = Arrays.asList(new APLoc(-823, 90, -1121), new APLoc(-824, 90, -1121));
-	List<Location> light7 = Arrays.asList(new APLoc(-823, 90, -1117), new APLoc(-824, 90, -1117));
-	List<Location> light8 = Arrays.asList(new APLoc(-823, 90, -1113), new APLoc(-824, 90, -1113));
-	List<Location> light9 = Arrays.asList(new APLoc(-823, 90, -1109), new APLoc(-824, 90, -1109));
+	List<Location> light1 = Arrays.asList(APLoc(-824, 90, -1177), APLoc(-823, 90, -1177));
+	List<Location> light2 = Arrays.asList(APLoc(-823, 90, -1173), APLoc(-824, 90, -1173));
+	List<Location> light3 = Arrays.asList(APLoc(-823, 90, -1164), APLoc(-824, 90, -1164));
+	List<Location> light4 = Arrays.asList(APLoc(-823, 90, -1160), APLoc(-824, 90, -1160));
+	List<Location> light5 = Arrays.asList(APLoc(-823, 90, -1125), APLoc(-824, 90, -1125));
+	List<Location> light6 = Arrays.asList(APLoc(-823, 90, -1121), APLoc(-824, 90, -1121));
+	List<Location> light7 = Arrays.asList(APLoc(-823, 90, -1117), APLoc(-824, 90, -1117));
+	List<Location> light8 = Arrays.asList(APLoc(-823, 90, -1113), APLoc(-824, 90, -1113));
+	List<Location> light9 = Arrays.asList(APLoc(-823, 90, -1109), APLoc(-824, 90, -1109));
 	//
 
 	// sialia -> crashing = ~471 ~ ~-8

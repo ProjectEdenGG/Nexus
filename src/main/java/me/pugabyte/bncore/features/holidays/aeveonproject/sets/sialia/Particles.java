@@ -2,7 +2,6 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.aeveonproject.APLoc;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
@@ -12,20 +11,22 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
+
 public class Particles implements Listener {
 	private int laserTaskID = -1;
 	private boolean activeLaser = false;
 	private Player laserPlayer = null;
-	private final Location laserStart = new APLoc(-1300.5, 83.5, -1155.9);
-	private final Location laserEnd = new APLoc(-1300.5, 83.25, -1159.5);
+	private final Location laserStart = APLoc(-1300.5, 83.5, -1155.9);
+	private final Location laserEnd = APLoc(-1300.5, 83.25, -1159.5);
 	//
-	private final Location nautilisLoc = new APLoc(-1303.5, 83.5, -1164.5);
-	private final Location portalLoc = new APLoc(-1302.5, 82.5, -1166.5);
-	private final Location myceliumLoc = new APLoc(-1300.5, 82.5, -1168.5);
-	private final Location sneeze = new APLoc(-1287.0, 82.0, -1156.0);
-	private final Location gravLift_1 = new APLoc(-1294.0, 88.5, -1160.0);
-	private final Location gravLift_2 = new APLoc(-1301.0, 84.0, -1189.0);
-	private final Location gravLift_3 = new APLoc(-1287.0, 84.0, -1189.0);
+	private final Location nautilisLoc = APLoc(-1303.5, 83.5, -1164.5);
+	private final Location portalLoc = APLoc(-1302.5, 82.5, -1166.5);
+	private final Location myceliumLoc = APLoc(-1300.5, 82.5, -1168.5);
+	private final Location sneeze = APLoc(-1287.0, 82.0, -1156.0);
+	private final Location gravLift_1 = APLoc(-1294.0, 88.5, -1160.0);
+	private final Location gravLift_2 = APLoc(-1301.0, 84.0, -1189.0);
+	private final Location gravLift_3 = APLoc(-1287.0, 84.0, -1189.0);
 
 	public Particles() {
 		BNCore.registerListener(this);

@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.aeveonproject.APLoc;
 import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -14,10 +13,11 @@ import org.bukkit.event.Listener;
 
 import java.util.Collection;
 
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
 
 public class Sounds implements Listener {
-	private static final Location engineLoc = new APLoc(-823, 86, -1062);
+	private static final Location engineLoc = APLoc(-823, 86, -1062);
 	private static final Sound engineSound = Sound.ENTITY_MINECART_RIDING;
 	private static final Sound warningSound = Sound.ENTITY_ELDER_GUARDIAN_CURSE;
 
