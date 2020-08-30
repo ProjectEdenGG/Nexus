@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features;
 import fr.minuskube.inv.SmartInvsPlugin;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.recipes.CustomRecipes;
@@ -35,6 +36,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -111,14 +113,22 @@ public class BNCoreCommand extends CustomCommand {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(30), () -> {
 			TaskService service = new TaskService();
 			service.process("command-test").forEach(task ->
-				Tasks.wait(Time.MINUTE.x(2), () -> {
-					Map<String, Object> data = task.getJson();
-					OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
-					if (player.isOnline() && player.getPlayer() != null)
-						Utils.send(player, (String) data.get("message"));
-					service.complete(task);
-				}));
+					Tasks.wait(Time.MINUTE.x(2), () -> {
+						Map<String, Object> data = task.getJson();
+						OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
+						if (player.isOnline() && player.getPlayer() != null)
+							Utils.send(player, (String) data.get("message"));
+						service.complete(task);
+					}));
 		});
+	}
+
+	@Path("boosts")
+	void boosts() {
+		List<Member> boosters = Discord.getGuild().getBoosters();
+		for (Member booster : boosters) {
+			send(" - " + booster.getEffectiveName());
+		}
 	}
 
 	@Path("taskTest <message...>")
