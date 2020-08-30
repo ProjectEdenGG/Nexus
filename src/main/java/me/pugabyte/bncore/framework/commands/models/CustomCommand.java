@@ -190,6 +190,13 @@ public abstract class CustomCommand extends ICustomCommand {
 		return (Player) event.getSender();
 	}
 
+	protected OfflinePlayer offlinePlayer() {
+		if (!isPlayer())
+			throw new MustBeIngameException();
+
+		return Bukkit.getOfflinePlayer(player().getUniqueId());
+	}
+
 	protected UUID uuid() {
 		if (!isPlayer())
 			throw new MustBeIngameException();
