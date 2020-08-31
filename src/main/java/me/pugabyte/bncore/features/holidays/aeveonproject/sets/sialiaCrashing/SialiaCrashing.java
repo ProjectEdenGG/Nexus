@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Regions;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -19,7 +20,9 @@ import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.A
 @Region("sialia_crashing")
 public class SialiaCrashing implements Listener, APSet {
 	@Getter
-	static boolean active = true;
+	public static boolean active = true;
+	//
+	// sialia -> crashing = ~471 ~ ~-8
 	//
 	List<Location> light1 = Arrays.asList(APLoc(-824, 90, -1177), APLoc(-823, 90, -1177));
 	List<Location> light2 = Arrays.asList(APLoc(-823, 90, -1173), APLoc(-824, 90, -1173));
@@ -30,9 +33,10 @@ public class SialiaCrashing implements Listener, APSet {
 	List<Location> light7 = Arrays.asList(APLoc(-823, 90, -1117), APLoc(-824, 90, -1117));
 	List<Location> light8 = Arrays.asList(APLoc(-823, 90, -1113), APLoc(-824, 90, -1113));
 	List<Location> light9 = Arrays.asList(APLoc(-823, 90, -1109), APLoc(-824, 90, -1109));
+	List<Location> light10 = Arrays.asList(APLoc(-826, 89, -1103), APLoc(-821, 89, -1103));
+	List<Location> light11 = Arrays.asList(APLoc(-826, 89, -1098), APLoc(-821, 89, -1098));
+	List<List<Location>> lights = Arrays.asList(light1, light2, light3, light4, light5, light6, light7, light8, light9, light10, light11);
 	//
-
-	// sialia -> crashing = ~471 ~ ~-8
 
 	public SialiaCrashing() {
 		BNCore.registerListener(this);
@@ -40,34 +44,28 @@ public class SialiaCrashing implements Listener, APSet {
 		new Sounds();
 		new Particles();
 
-		flickeringLights();
+		flickeringLightsTask();
 	}
 
-	private void flickeringLights() {
+	private void flickeringLightsTask() {
 		Tasks.repeat(0, Time.TICK.x(10), () -> {
 			if (!SialiaCrashing.isActive())
 				return;
 
-			flickerLight(light1);
-			flickerLight(light2);
-			flickerLight(light3);
-			flickerLight(light4);
-			flickerLight(light5);
-			flickerLight(light6);
-			flickerLight(light7);
-			flickerLight(light8);
-			flickerLight(light9);
+			for (List<Location> locs : lights) {
+				if (RandomUtils.chanceOf(60)) {
+					int wait = RandomUtils.randomInt(3, 10);
+					for (Location loc : locs) {
+						loc.getBlock().setType(Material.SEA_LANTERN);
+						Tasks.wait(Time.TICK.x(wait), () -> loc.getBlock().setType(Material.BONE_BLOCK));
+					}
+				}
+			}
 		});
 	}
 
-	private void flickerLight(List<Location> locs) {
-		if (RandomUtils.chanceOf(60)) {
-			int wait = RandomUtils.randomInt(3, 10);
-			for (Location loc : locs) {
-				loc.getBlock().setType(Material.SEA_LANTERN);
-				Tasks.wait(Time.TICK.x(wait), () -> loc.getBlock().setType(Material.BONE_BLOCK));
-			}
-		}
-
+	@Override
+	public List<String> getUpdateRegions() {
+		return Arrays.asList(Regions.sialiaCrashing_shipColor, Regions.sialiaCrashing_dockingport_1, Regions.sialiaCrashing_dockingport_2);
 	}
 }

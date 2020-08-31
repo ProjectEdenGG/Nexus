@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -30,7 +30,7 @@ public class Sounds implements Listener {
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = WGUtils.getPlayersInRegion(Regions.sialia);
+				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
@@ -46,7 +46,7 @@ public class Sounds implements Listener {
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = WGUtils.getPlayersInRegion(Regions.sialia);
+				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;

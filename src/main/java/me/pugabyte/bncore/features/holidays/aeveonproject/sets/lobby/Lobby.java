@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.lobby;
 
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Regions;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Location;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,4 +76,8 @@ public class Lobby implements APSet {
 		return result;
 	}
 
+	@Override
+	public List<String> getUpdateRegions() {
+		return Collections.singletonList(Regions.lobby_shipColor);
+	}
 }

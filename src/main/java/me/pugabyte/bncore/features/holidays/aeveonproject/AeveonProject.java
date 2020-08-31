@@ -6,6 +6,7 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.effects.Effects;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Regions;
 import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -101,4 +102,9 @@ public class AeveonProject implements Listener {
 	public static Location APLoc(double x, double y, double z, float yaw, float pitch) {
 		return new Location(AeveonProject.WORLD, x, y, z, yaw, pitch);
 	}
+
+	public static String getShipColorRegion(String updateRg) {
+		return updateRg.replaceAll("_update", "");
+	}
+
 }

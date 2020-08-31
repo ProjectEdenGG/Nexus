@@ -6,8 +6,9 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
-import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Regions;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*;
@@ -26,10 +28,9 @@ import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*
 @Region("sialia")
 public class Sialia implements Listener, APSet {
 	@Getter
-	static boolean active = true;
+	public static boolean active = true;
 	@Getter
 	public static Player nearbyPlayer = null;
-
 	List<String> openDoors = new ArrayList<>();
 
 	public Sialia() {
@@ -39,7 +40,7 @@ public class Sialia implements Listener, APSet {
 		new Sounds();
 
 		Tasks.repeat(0, Time.TICK.x(5), () -> {
-			List<Player> nearbyPlayers = new ArrayList<>(WGUtils.getPlayersInRegion(Regions.sialia));
+			List<Player> nearbyPlayers = new ArrayList<>(WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion()));
 			if (nearbyPlayers.size() > 0)
 				nearbyPlayer = nearbyPlayers.get(0);
 		});
@@ -101,5 +102,10 @@ public class Sialia implements Listener, APSet {
 				}
 			});
 		}
+	}
+
+	@Override
+	public List<String> getUpdateRegions() {
+		return Arrays.asList(Regions.sialia_shipColor, Regions.sialia_dockingport_1, Regions.sialia_dockingport_2);
 	}
 }
