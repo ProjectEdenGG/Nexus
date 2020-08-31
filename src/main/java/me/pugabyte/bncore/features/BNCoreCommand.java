@@ -38,6 +38,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -106,6 +107,13 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("lastReload")
 	void lastReload() {
 		send(PREFIX + "Last reloaded &e" + timespanDiff(lastReload) + " ago");
+	}
+
+	@Path("gc")
+	void gc() {
+		send("Collecting garbage...");
+		System.gc();
+		send("Garbage collected");
 	}
 
 	@Path("stats")
@@ -375,6 +383,14 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("timespanFormatter <seconds> <formatType>")
 	void timespanFormatter(int seconds, TimespanFormatType formatType) {
 		send(TimespanFormatter.of(seconds).formatType(formatType).format());
+	}
+
+	@Path("voidNpc")
+	void voidNpc() {
+		CitizensAPI.getNPCRegistry().forEach(npc -> {
+			if (npc.getEntity() != null && npc.getEntity().getLocation().getY() < 0)
+				send(npc.getId());
+		});
 	}
 
 	@Path("jingles <jingle>")
