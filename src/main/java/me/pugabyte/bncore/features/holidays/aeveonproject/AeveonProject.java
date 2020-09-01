@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
@@ -11,14 +10,8 @@ import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /*
 	TODO:
@@ -42,69 +35,10 @@ public class AeveonProject implements Listener {
 
 	public AeveonProject() {
 		BNCore.registerListener(this);
-		new Timer("    Effects", Effects::new);
 		new Timer("    Sets", APSetType::values);
+		new Timer("    Effects", Effects::new);
 		new Timer("    Regions", Regions::new);
 	}
 
-	public static boolean isInSpace(Player player) {
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(player.getLocation());
-		Set<ProtectedRegion> spaceRegions = regions.stream().filter(region -> region.getId().contains("space")).collect(Collectors.toSet());
-		return spaceRegions.size() > 0;
-	}
-
-	public static boolean isInRegion(Player player, String protectedRegion) {
-		return isInRegion(player, WGUtils.getProtectedRegion(protectedRegion));
-	}
-
-	public static boolean isInRegion(Player player, ProtectedRegion protectedRegion) {
-		return isInRegion(player.getLocation(), protectedRegion);
-	}
-
-	public static boolean isInRegion(Block block, String protectedRegion) {
-		return isInRegion(block, WGUtils.getProtectedRegion(protectedRegion));
-	}
-
-	public static boolean isInRegion(Block block, ProtectedRegion protectedRegion) {
-		return isInRegion(block.getLocation(), protectedRegion);
-	}
-
-	public static boolean isInRegion(Location location, String protectedRegion) {
-		return isInRegion(location, WGUtils.getProtectedRegion(protectedRegion));
-	}
-
-	public static boolean isInRegion(Location location, ProtectedRegion protectedRegion) {
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
-		for (ProtectedRegion region : regions) {
-			if (region.equals(protectedRegion))
-				return true;
-		}
-		return false;
-	}
-
-	public static boolean isInWorld(Block block) {
-		return isInWorld(block.getLocation());
-	}
-
-	public static boolean isInWorld(Player player) {
-		return isInWorld(player.getLocation());
-	}
-
-	public static boolean isInWorld(Location location) {
-		return location.getWorld().equals(AeveonProject.getWORLD());
-	}
-
-
-	public static Location APLoc(double x, double y, double z) {
-		return new Location(AeveonProject.WORLD, x, y, z);
-	}
-
-	public static Location APLoc(double x, double y, double z, float yaw, float pitch) {
-		return new Location(AeveonProject.WORLD, x, y, z, yaw, pitch);
-	}
-
-	public static String getShipColorRegion(String updateRg) {
-		return updateRg.replaceAll("_update", "");
-	}
 
 }

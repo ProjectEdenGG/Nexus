@@ -5,6 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
+import me.pugabyte.bncore.features.holidays.aeveonproject.effects.ClientsideBlocks;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.aeveonproject.AeveonProjectService;
 import me.pugabyte.bncore.models.aeveonproject.AeveonProjectUser;
@@ -52,6 +53,7 @@ public class ShipColorMenu extends MenuUtils implements InventoryProvider {
 					user.setShipColor(colorType.getColor());
 					service.save(user);
 					e.getPlayer().closeInventory();
+					ClientsideBlocks.update(player);
 				}));
 
 				if (++col == 8) {

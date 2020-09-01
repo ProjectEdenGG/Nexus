@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.effects;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.APUtils;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
@@ -28,7 +29,7 @@ import java.util.List;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*;
 
 public class ClientsideBlocks implements Listener {
-	AeveonProjectService service = new AeveonProjectService();
+	private static final AeveonProjectService service = new AeveonProjectService();
 	private final int minBoundary = 20;
 	private final int maxBoundary = 40;
 
@@ -70,9 +71,7 @@ public class ClientsideBlocks implements Listener {
 		Player player = event.getPlayer();
 		if (!APUtils.isInWorld(player)) return;
 
-		APSet set = APSetType.getFromRegion(event.getRegion());
-		if (set != null)
-			update(player, set);
+		update(player, event.getRegion());
 	}
 
 	@EventHandler
@@ -80,9 +79,7 @@ public class ClientsideBlocks implements Listener {
 		Player player = event.getPlayer();
 		if (!APUtils.isInWorld(player)) return;
 
-		APSet set = APSetType.getFromLocation(player.getLocation());
-		if (set != null)
-			update(player, set);
+		update(player);
 	}
 
 	@EventHandler
@@ -90,9 +87,7 @@ public class ClientsideBlocks implements Listener {
 		Player player = event.getPlayer();
 		if (!APUtils.isInWorld(player)) return;
 
-		APSet set = APSetType.getFromLocation(player.getLocation());
-		if (set != null)
-			update(player, set);
+		update(player);
 	}
 
 	@EventHandler
@@ -100,19 +95,36 @@ public class ClientsideBlocks implements Listener {
 		if (!APUtils.isInWorld(event.getTo()))
 			return;
 
-		APSet set = APSetType.getFromLocation(event.getTo());
-		if (set != null)
-			update(event.getPlayer(), set);
+		update(event.getPlayer(), event.getTo());
 	}
 
-	public void update(Player player, APSet set) {
+	//
+
+	public static void update(Player player, ProtectedRegion region) {
+		APSet set = APSetType.getFromRegion(region);
+		if (set != null)
+			update(player, set);
+	}
+
+	public static void update(Player player) {
+		update(player, player.getLocation());
+	}
+
+	public static void update(Player player, Location location) {
+		APSet set = APSetType.getFromLocation(location);
+		if (set != null)
+			update(player, set);
+	}
+
+	//
+
+	public static void update(Player player, APSet set) {
 		for (String updateRegion : set.getUpdateRegions()) {
 			update(player, updateRegion);
 		}
 	}
 
-	public void update(Player player, String region) {
-
+	public static void update(Player player, String region) {
 		if (!service.hasStarted(player)) return;
 		AeveonProjectUser user = service.get(player);
 
