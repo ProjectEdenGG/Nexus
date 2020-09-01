@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.event.Listener;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 
 public class Particles implements Listener {
 

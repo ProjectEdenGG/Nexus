@@ -1,18 +1,29 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.effects;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.APUtils;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.lobby.Lobby;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia.Sialia;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing.SialiaCrashing;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.isInWorld;
+import java.util.Arrays;
+import java.util.List;
+
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.isInWorld;
 
 public class Effects implements Listener {
 	public Effects() {
@@ -22,6 +33,21 @@ public class Effects implements Listener {
 		new GravLift();
 		new PlayerTime();
 		new ClientsideBlocks();
+
+		shipRobotTask();
+	}
+
+	private void shipRobotTask() {
+		List<Location> shipRobotLocs = Arrays.asList(Lobby.shipRobot, Sialia.shipRobot, SialiaCrashing.shipRobot);
+		Tasks.repeat(0, 2, () -> {
+			for (Location shipRobot : shipRobotLocs) {
+				Player nearestPlayer = (Player) APUtils.getNearestEntityType(shipRobot, EntityType.PLAYER, 7);
+				ArmorStand armorStand = (ArmorStand) APUtils.getNearestEntityType(shipRobot, EntityType.ARMOR_STAND, 1);
+				if (nearestPlayer != null && armorStand != null) {
+					APUtils.makeArmorStandLookAtPlayer(armorStand, nearestPlayer);
+				}
+			}
+		});
 	}
 
 	// Netherbrick chairs

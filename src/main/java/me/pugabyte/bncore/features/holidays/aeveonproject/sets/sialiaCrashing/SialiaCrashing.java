@@ -2,25 +2,31 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.APUtils;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Regions;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Orientable;
 import org.bukkit.event.Listener;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 
 @Region("sialia_crashing")
 public class SialiaCrashing implements Listener, APSet {
 	@Getter
 	public static boolean active = true;
+	public static final Location shipRobot = APUtils.APLoc(-843, 85, -1088);
 	//
 	// sialia -> crashing = ~471 ~ ~-8
 	//
@@ -48,16 +54,36 @@ public class SialiaCrashing implements Listener, APSet {
 	}
 
 	private void flickeringLightsTask() {
+		final Material boneBlock = Material.BONE_BLOCK;
+		final Material seaLantern = Material.SEA_LANTERN;
+		AtomicBoolean applyBlockData = new AtomicBoolean(false);
+		BlockData blockData = Material.BONE_BLOCK.createBlockData();
+
+		Orientable orientable = (Orientable) blockData;
+		orientable.setAxis(Axis.X);
+		blockData = orientable;
+		BlockData finalBlockData = blockData;
+
 		Tasks.repeat(0, Time.TICK.x(10), () -> {
 			if (!SialiaCrashing.isActive())
 				return;
 
+			applyBlockData.set(false);
 			for (List<Location> locs : lights) {
 				if (RandomUtils.chanceOf(60)) {
+
+					if (locs.equals(light10) || locs.equals(light11))
+						applyBlockData.set(true);
+
 					int wait = RandomUtils.randomInt(3, 10);
 					for (Location loc : locs) {
-						loc.getBlock().setType(Material.SEA_LANTERN);
-						Tasks.wait(Time.TICK.x(wait), () -> loc.getBlock().setType(Material.BONE_BLOCK));
+						loc.getBlock().setType(seaLantern);
+
+						Tasks.wait(Time.TICK.x(wait), () -> {
+							loc.getBlock().setType(boneBlock);
+							if (applyBlockData.get())
+								loc.getBlock().setBlockData(finalBlockData);
+						});
 					}
 				}
 			}

@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.isInWorld;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.isInWorld;
 
 public class DockingPorts implements Listener {
 	public DockingPorts() {

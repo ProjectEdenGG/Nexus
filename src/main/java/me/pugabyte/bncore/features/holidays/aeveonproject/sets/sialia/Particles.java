@@ -11,7 +11,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 
 public class Particles implements Listener {
 	private int laserTaskID = -1;

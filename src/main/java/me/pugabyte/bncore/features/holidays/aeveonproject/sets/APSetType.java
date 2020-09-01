@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.lobby.Lobby;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia.Sialia;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing.SialiaCrashing;
@@ -29,6 +30,20 @@ public enum APSetType {
 		for (APSetType set : values()) {
 			if (regions.contains(set.get().getRegion()))
 				return set.get();
+		}
+
+		return null;
+	}
+
+	public static APSet getFromRegion(ProtectedRegion region) {
+		return getFromRegion(region.getId());
+	}
+
+	public static APSet getFromRegion(String id) {
+		for (APSetType setType : values()) {
+			if (setType.get().getRegion().equalsIgnoreCase(id)) {
+				return setType.get();
+			}
 		}
 
 		return null;

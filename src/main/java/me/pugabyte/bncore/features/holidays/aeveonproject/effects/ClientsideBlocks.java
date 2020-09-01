@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.effects;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldedit.regions.Region;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
+import me.pugabyte.bncore.features.holidays.aeveonproject.APUtils;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.models.aeveonproject.AeveonProjectService;
@@ -11,12 +11,16 @@ import me.pugabyte.bncore.models.aeveonproject.AeveonProjectUser;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,9 +29,8 @@ import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*
 
 public class ClientsideBlocks implements Listener {
 	AeveonProjectService service = new AeveonProjectService();
-	private final int minBoundary = 10;
-	private final int maxBoundary = 30;
-	// check on world change, and on login to update region
+	private final int minBoundary = 20;
+	private final int maxBoundary = 40;
 
 	public ClientsideBlocks() {
 		BNCore.registerListener(this);
@@ -62,6 +65,52 @@ public class ClientsideBlocks implements Listener {
 		});
 	}
 
+	@EventHandler
+	public void onEnterRegion(RegionEnteredEvent event) {
+		Player player = event.getPlayer();
+		if (!APUtils.isInWorld(player)) return;
+
+		APSet set = APSetType.getFromRegion(event.getRegion());
+		if (set != null)
+			update(player, set);
+	}
+
+	@EventHandler
+	public void onPlayerLogin(PlayerLoginEvent event) {
+		Player player = event.getPlayer();
+		if (!APUtils.isInWorld(player)) return;
+
+		APSet set = APSetType.getFromLocation(player.getLocation());
+		if (set != null)
+			update(player, set);
+	}
+
+	@EventHandler
+	public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
+		Player player = event.getPlayer();
+		if (!APUtils.isInWorld(player)) return;
+
+		APSet set = APSetType.getFromLocation(player.getLocation());
+		if (set != null)
+			update(player, set);
+	}
+
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		if (!APUtils.isInWorld(event.getTo()))
+			return;
+
+		APSet set = APSetType.getFromLocation(event.getTo());
+		if (set != null)
+			update(event.getPlayer(), set);
+	}
+
+	public void update(Player player, APSet set) {
+		for (String updateRegion : set.getUpdateRegions()) {
+			update(player, updateRegion);
+		}
+	}
+
 	public void update(Player player, String region) {
 
 		if (!service.hasStarted(player)) return;
@@ -69,11 +118,15 @@ public class ClientsideBlocks implements Listener {
 
 		// Any Ship Color Region
 		if (region.contains("shipcolor")) {
-			Material concreteType = ColorType.of(user.getShipColor()).getConcrete();
-			if (concreteType == null)
-				concreteType = Material.BLACK_CONCRETE;
+			Color shipColor = user.getShipColor();
+			Material concreteType = Material.BLACK_CONCRETE;
+			if (shipColor != null) {
+				Material concrete = ColorType.of(shipColor).getConcrete();
+				if (concrete != null)
+					concreteType = concrete;
+			}
 
-			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(AeveonProject.getShipColorRegion(region)));
+			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(APUtils.getShipColorRegion(region)));
 
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WHITE_CONCRETE))
@@ -88,28 +141,6 @@ public class ClientsideBlocks implements Listener {
 				if (block.getType().equals(Material.WATER))
 					player.sendBlockChange(block.getLocation(), Material.AIR.createBlockData());
 			}
-		}
-	}
-
-	@EventHandler
-	public void onEnterRegion_Update(RegionEnteredEvent event) {
-		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
-
-		String id = event.getRegion().getId();
-		for (APSetType APSetType : APSetType.values()) {
-			APSet set = APSetType.get();
-			if (id.equalsIgnoreCase(set.getRegion())) {
-				update(player, set);
-				return;
-			}
-		}
-
-	}
-
-	public void update(Player player, APSet set) {
-		for (String updateRegion : set.getUpdateRegions()) {
-			update(player, updateRegion);
 		}
 	}
 }

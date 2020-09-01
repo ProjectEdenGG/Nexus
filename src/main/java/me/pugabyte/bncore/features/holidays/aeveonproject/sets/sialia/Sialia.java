@@ -5,6 +5,7 @@ import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.APUtils;
 import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
@@ -32,6 +33,7 @@ public class Sialia implements Listener, APSet {
 	@Getter
 	public static Player nearbyPlayer = null;
 	List<String> openDoors = new ArrayList<>();
+	public static final Location shipRobot = APUtils.APLoc(-1314, 85, -1080);
 
 	public Sialia() {
 		BNCore.registerListener(this);
@@ -50,7 +52,7 @@ public class Sialia implements Listener, APSet {
 	@EventHandler
 	public void onEnterRegion_Bulkhead(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
+		if (!APUtils.isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
 		if (!id.contains("sensor")) return;
@@ -77,7 +79,7 @@ public class Sialia implements Listener, APSet {
 	@EventHandler
 	public void onExitRegion_Bulkhead(RegionLeftEvent event) {
 		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
+		if (!APUtils.isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
 		if (!id.contains("sensor")) return;

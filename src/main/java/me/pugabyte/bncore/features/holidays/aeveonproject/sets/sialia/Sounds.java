@@ -13,7 +13,7 @@ import org.bukkit.event.Listener;
 
 import java.util.Collection;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
 
 public class Sounds implements Listener {

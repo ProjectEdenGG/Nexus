@@ -13,7 +13,7 @@ import org.bukkit.event.Listener;
 
 import java.util.Collection;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.APLoc;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
 
 public class Sounds implements Listener {
@@ -31,7 +31,7 @@ public class Sounds implements Listener {
 
 			Tasks.sync(() -> {
 
-				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion());
+				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
@@ -47,7 +47,7 @@ public class Sounds implements Listener {
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion());
+				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
