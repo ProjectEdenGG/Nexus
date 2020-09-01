@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.features.listeners;
 
+import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +26,7 @@ public class EasterEggs implements Listener {
 		if (!event.getRightClicked().getType().equals(EntityType.PLAYER))
 			return;
 
-		if (Utils.isNPC(event.getRightClicked()))
+		if (CitizensUtils.isNPC(event.getRightClicked()))
 			return;
 
 		if (!event.getHand().equals(EquipmentSlot.HAND))

@@ -17,12 +17,12 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.matchdata.ArcheryMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -226,7 +226,7 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	public boolean canPlaceTarget(Location location) {
-		List<Block> nearbyBlocks = Utils.getBlocksInRadius(location, 3);
+		List<Block> nearbyBlocks = BlockUtils.getBlocksInRadius(location, 3);
 		for (Block block : nearbyBlocks) {
 			if (MaterialTag.CONCRETES.isTagged(block.getType()) || block.getType().equals(Material.STONE_BUTTON))
 				return false;
@@ -317,7 +317,7 @@ public class Archery extends TeamlessMechanic {
 			if (entity.getType().equals(EntityType.ARROW))
 				entity.remove();
 
-		List<Block> blocks = Utils.getBlocksInRadius(target, 2);
+		List<Block> blocks = BlockUtils.getBlocksInRadius(target, 2);
 		for (Block block : blocks)
 			if (block.getType().equals(Material.STONE_BUTTON))
 				block.setType(Material.AIR);

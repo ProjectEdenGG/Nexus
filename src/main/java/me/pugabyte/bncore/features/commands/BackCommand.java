@@ -10,8 +10,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.back.Back;
 import me.pugabyte.bncore.models.back.BackService;
+import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -78,7 +78,7 @@ public class BackCommand extends CustomCommand implements Listener {
 		Player player = event.getPlayer();
 		Location location = event.getFrom();
 
-		if (Utils.isNPC(player)) return;
+		if (CitizensUtils.isNPC(player)) return;
 		if (TeleportCause.COMMAND != event.getCause()) return;
 
 		if (!player.hasPermission("group.staff"))
@@ -95,7 +95,7 @@ public class BackCommand extends CustomCommand implements Listener {
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
 		if (!player.hasPermission("group.staff")) return;
-		if (Utils.isNPC(player)) return;
+		if (CitizensUtils.isNPC(player)) return;
 
 		Back back = new BackService().get(player);
 		back.add(player.getLocation());

@@ -11,9 +11,9 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.bncore.utils.ActionBarUtils;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.CardinalDirection;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -87,14 +87,14 @@ public class HoleInTheWallMatchData extends MatchData {
 			this.region = region;
 			this.designHangerLocation = designHangerLocation;
 
-			Optional<Block> cobblestone = Utils.getBlocksInRadius(designHangerLocation.clone().add(0, 1, 0), 3, 1, 3).stream()
+			Optional<Block> cobblestone = BlockUtils.getBlocksInRadius(designHangerLocation.clone().add(0, 1, 0), 3, 1, 3).stream()
 					.filter(block -> block.getType() == Material.COBBLESTONE)
 					.findFirst();
 
 			if (!cobblestone.isPresent())
 				throw new MinigameException("Could not determine direction track, make sure a cobblestone block is behind the start location");
 
-			direction = Utils.getDirection(designHangerLocation.getBlock(), cobblestone.get()).getOppositeFace();
+			direction = BlockUtils.getDirection(designHangerLocation.getBlock(), cobblestone.get()).getOppositeFace();
 
 			int over = (Wall.LENGTH - 1) / 2;
 			topCenter = designHangerLocation.clone().add(0, -1, 0).getBlock();

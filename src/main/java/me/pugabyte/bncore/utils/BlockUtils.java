@@ -1,12 +1,21 @@
 package me.pugabyte.bncore.utils;
 
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BlockUtils {
 
@@ -72,4 +81,111 @@ public class BlockUtils {
 		}
 	}
 
+	public static List<Block> getAdjacentBlocks(Block block) {
+		Block north = block.getRelative(BlockFace.NORTH);
+		Block east = block.getRelative(BlockFace.EAST);
+		Block south = block.getRelative(BlockFace.SOUTH);
+		Block west = block.getRelative(BlockFace.WEST);
+		Block up = block.getRelative(BlockFace.UP);
+		Block down = block.getRelative(BlockFace.DOWN);
+		List<Block> relatives = Arrays.asList(north, east, south, west, up, down);
+		List<Block> adjacent = new ArrayList<>();
+		for (Block relative : relatives) {
+			if (!Utils.isNullOrAir(relative))
+				adjacent.add(relative);
+		}
+		return adjacent;
+	}
+
+	public static List<Block> getBlocksInRadius(Location start, int radius) {
+		return getBlocksInRadius(start.getBlock(), radius, radius, radius);
+	}
+
+	public static List<Block> getBlocksInRadius(Location start, int xRadius, int yRadius, int zRadius) {
+		return getBlocksInRadius(start.getBlock(), xRadius, yRadius, zRadius);
+	}
+
+	public static List<Block> getBlocksInRadius(Block start, int radius) {
+		return getBlocksInRadius(start, radius, radius, radius);
+	}
+
+	public static List<Block> getBlocksInRadius(Block start, int xRadius, int yRadius, int zRadius) {
+		List<Block> blocks = new ArrayList<>();
+		for (int x = -xRadius; x <= xRadius; x++)
+			for (int z = -zRadius; z <= zRadius; z++)
+				for (int y = -yRadius; y <= yRadius; y++)
+					blocks.add(start.getRelative(x, y, z));
+		return blocks;
+	}
+
+	public static Block getBlockStandingOn(Player player) {
+		Location below = player.getLocation().add(0, -.25, 0);
+		Block block = below.getBlock();
+		if (block.getType().isSolid())
+			return block;
+
+		List<BlockFace> priority = new HashMap<BlockFace, Double>() {{
+			put(BlockFace.NORTH, below.getZ() - Math.floor(below.getZ()));
+			put(BlockFace.EAST, Math.abs(below.getX() - Math.ceil(below.getX())));
+			put(BlockFace.SOUTH, Math.abs(below.getZ() - Math.ceil(below.getZ())));
+			put(BlockFace.WEST, below.getX() - Math.floor(below.getX()));
+		}}.entrySet().stream()
+				.filter(direction -> direction.getValue() < .3)
+				.sorted(Map.Entry.comparingByValue())
+				.map(Map.Entry::getKey)
+				.limit(2)
+				.collect(Collectors.toList());
+
+		if (priority.size() == 2)
+			priority.add(getBlockFaceBetween(priority.get(0), priority.get(1)));
+
+		for (BlockFace blockFace : priority) {
+			Block relative = block.getRelative(blockFace);
+			if (relative.getType().isSolid())
+				return relative;
+		}
+
+		return null;
+	}
+
+	public static BlockFace getDirection(Block from, Block to) {
+		return getDirection(from.getLocation(), to.getLocation());
+	}
+
+	public static BlockFace getDirection(Location from, Location to) {
+		Utils.Axis axis = Utils.Axis.getAxis(from, to);
+		if (axis == null)
+			throw new InvalidInputException("Locations not aligned on an axis, cannot determine direction");
+
+		switch (axis) {
+			case X:
+				if ((from.getZ() - to.getZ()) > 0)
+					return BlockFace.NORTH;
+				else
+					return BlockFace.SOUTH;
+			case Y:
+				if (from.getY() - to.getY() > 0)
+					return BlockFace.DOWN;
+				else
+					return BlockFace.UP;
+			case Z:
+				if (from.getX() - to.getX() > 0)
+					return BlockFace.WEST;
+				else
+					return BlockFace.EAST;
+		}
+
+		throw new InvalidInputException("Cannot determine direction");
+	}
+
+	public static BlockFace getBlockFaceBetween(BlockFace face1, BlockFace face2) {
+		int x = face1.getModX() + face2.getModX();
+		int y = face1.getModY() + face2.getModY();
+		int z = face1.getModZ() + face2.getModZ();
+		for (BlockFace face : BlockFace.values())
+			if (face.getModX() == x && face.getModY() == y && face.getModZ() == z)
+				return face;
+
+		return null;
+	}
 }

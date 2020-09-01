@@ -29,11 +29,10 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.ActionBarUtils;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle;
-import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
-import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.bncore.utils.StringUtils.*;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -65,11 +64,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
-import static me.pugabyte.bncore.utils.StringUtils.paste;
-import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
-import static me.pugabyte.bncore.utils.Utils.getDirection;
+import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
+import static me.pugabyte.bncore.utils.StringUtils.*;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Permission("group.seniorstaff")
@@ -286,7 +282,7 @@ public class BNCoreCommand extends CustomCommand {
 
 	@Path("getBlockStandingOn")
 	void getBlockStandingOn() {
-		Block block = Utils.getBlockStandingOn(player());
+		Block block = BlockUtils.getBlockStandingOn(player());
 		if (block == null)
 			send("Nothing");
 		else

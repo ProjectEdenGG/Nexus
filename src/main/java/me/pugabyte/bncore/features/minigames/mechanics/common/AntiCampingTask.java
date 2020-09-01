@@ -12,6 +12,7 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
@@ -134,7 +135,7 @@ public class AntiCampingTask {
 				location.add(0, -yDiff, 0);
 			}
 
-			List<Block> blocks = Utils.getBlocksInRadius(location.getBlock(), 4, yDiff, 4).stream()
+			List<Block> blocks = BlockUtils.getBlocksInRadius(location.getBlock(), 4, yDiff, 4).stream()
 					.filter(block -> block.getType().isSolid())
 					.sorted((block1, block2) -> {
 						Double distance1 = block1.getLocation().distance(minigamer.getPlayer().getLocation());
