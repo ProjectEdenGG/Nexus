@@ -1,8 +1,9 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets;
 
-public class Regions {
+public class APRegions {
 
-	public Regions() {
+	public APRegions() {
+
 	}
 
 	// Lobby

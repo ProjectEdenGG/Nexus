@@ -4,8 +4,9 @@ import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.effects.Effects;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APRegions;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetToggler;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
-import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Regions;
 import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -35,9 +36,12 @@ public class AeveonProject implements Listener {
 
 	public AeveonProject() {
 		BNCore.registerListener(this);
-		new Timer("    Sets", APSetType::values);
+		new Timer("    Sets", () -> {
+			APSetType.values();
+			new APSetToggler();
+		});
 		new Timer("    Effects", Effects::new);
-		new Timer("    Regions", Regions::new);
+		new Timer("    Regions", APRegions::new);
 	}
 
 

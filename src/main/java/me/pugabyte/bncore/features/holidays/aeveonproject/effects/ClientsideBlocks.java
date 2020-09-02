@@ -16,6 +16,8 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Bed;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -131,11 +133,20 @@ public class ClientsideBlocks implements Listener {
 		// Any Ship Color Region
 		if (region.contains("shipcolor")) {
 			Color shipColor = user.getShipColor();
+			ColorType colorType;
+
 			Material concreteType = Material.BLACK_CONCRETE;
+			Material bedType = Material.BLACK_BED;
+
 			if (shipColor != null) {
-				Material concrete = ColorType.of(shipColor).getConcrete();
-				if (concrete != null)
-					concreteType = concrete;
+				colorType = ColorType.of(shipColor);
+
+				if (colorType.getConcrete() != null)
+					concreteType = colorType.getConcrete();
+
+				if (colorType.getBed() != null)
+					bedType = colorType.getBed();
+
 			}
 
 			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(APUtils.getShipColorRegion(region)));
@@ -143,6 +154,23 @@ public class ClientsideBlocks implements Listener {
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WHITE_CONCRETE))
 					user.getPlayer().sendBlockChange(block.getLocation(), concreteType.createBlockData());
+
+				else if (block.getType().equals(Material.WHITE_BED)) {
+					BlockData blockData = bedType.createBlockData();
+
+					Bed newBed = (Bed) blockData;
+					Bed oldBed = (Bed) block.getBlockData();
+
+					if (oldBed.getPart().equals(Bed.Part.HEAD))
+						newBed.setPart(Bed.Part.HEAD);
+					else
+						newBed.setPart(Bed.Part.FOOT);
+
+					newBed.setFacing(oldBed.getFacing());
+
+					blockData = newBed;
+					user.getPlayer().sendBlockChange(block.getLocation(), blockData);
+				}
 			}
 		}
 

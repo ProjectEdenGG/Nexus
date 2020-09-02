@@ -26,7 +26,7 @@ public class Sounds implements Listener {
 
 		// Engine Sound
 		Tasks.repeatAsync(0, Time.TICK.x(30), () -> {
-			if (!Sialia.isActive())
+			if (!APSetType.SIALIA.get().isActive())
 				return;
 
 			Tasks.sync(() -> {
@@ -42,7 +42,7 @@ public class Sounds implements Listener {
 
 		// Ship Sound
 		Tasks.repeatAsync(0, Time.SECOND.x(5), () -> {
-			if (!Sialia.isActive())
+			if (!APSetType.SIALIA.get().isActive())
 				return;
 
 			Tasks.sync(() -> {

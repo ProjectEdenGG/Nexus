@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -22,7 +23,7 @@ public class Particles implements Listener {
 		BNCore.registerListener(this);
 
 		Tasks.repeatAsync(0, Time.TICK.x(2), () -> {
-			if (!SialiaCrashing.isActive())
+			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
 			new ParticleBuilder(Particle.DOLPHIN).location(gravLift_1).count(10).offset(0.5, 4, 0.5).extra(0.1).spawn();

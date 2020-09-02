@@ -2,6 +2,8 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.commands;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.holidays.aeveonproject.menus.ShipColorMenu;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -60,6 +62,15 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 		send("ShipColor: " + user.getShipColor());
 
 		send("-----");
+	}
+
+	@Path("debug")
+	public void debug() {
+		send("Set Status's");
+		for (APSetType setType : APSetType.values()) {
+			APSet set = setType.get();
+			send(" - " + setType.name() + ": " + set.isActive());
+		}
 	}
 
 	@Path("warps [string...]")

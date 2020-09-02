@@ -7,9 +7,9 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.APUtils;
 import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APRegions;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
-import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Regions;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -28,8 +28,7 @@ import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*
 
 @Region("sialia")
 public class Sialia implements Listener, APSet {
-	@Getter
-	public static boolean active = true;
+	public static boolean active = false;
 	@Getter
 	public static Player nearbyPlayer = null;
 	List<String> openDoors = new ArrayList<>();
@@ -108,6 +107,16 @@ public class Sialia implements Listener, APSet {
 
 	@Override
 	public List<String> getUpdateRegions() {
-		return Arrays.asList(Regions.sialia_shipColor, Regions.sialia_dockingport_1, Regions.sialia_dockingport_2);
+		return Arrays.asList(APRegions.sialia_shipColor, APRegions.sialia_dockingport_1, APRegions.sialia_dockingport_2);
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
+	}
+
+	@Override
+	public void setActive(boolean bool) {
+		active = bool;
 	}
 }

@@ -26,7 +26,7 @@ public class Sounds implements Listener {
 
 		// Engine Sound
 		Tasks.repeatAsync(0, Time.TICK.x(30), () -> {
-			if (!SialiaCrashing.isActive())
+			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
 			Tasks.sync(() -> {
@@ -43,7 +43,7 @@ public class Sounds implements Listener {
 
 		// Alarm Sound
 		Tasks.repeatAsync(0, Time.TICK.x(50), () -> {
-			if (!SialiaCrashing.isActive())
+			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
 			Tasks.sync(() -> {

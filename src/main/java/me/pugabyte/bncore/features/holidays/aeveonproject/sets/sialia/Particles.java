@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
@@ -32,7 +33,7 @@ public class Particles implements Listener {
 		BNCore.registerListener(this);
 
 		Tasks.repeatAsync(0, Time.TICK.x(2), () -> {
-			if (!Sialia.isActive() || Sialia.nearbyPlayer == null)
+			if (!APSetType.SIALIA.get().isActive() || Sialia.nearbyPlayer == null)
 				return;
 
 			new ParticleBuilder(Particle.NAUTILUS).location(nautilisLoc).count(5).offset(0.1, 0.5, 0.1).extra(0.1).spawn();

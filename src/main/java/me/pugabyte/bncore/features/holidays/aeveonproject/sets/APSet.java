@@ -7,8 +7,16 @@ import java.util.List;
 public interface APSet {
 
 	default String getRegion() {
-		return getClass().getAnnotation(Region.class).value();
+		try {
+			return getClass().getAnnotation(Region.class).value();
+		} catch (Exception ignored) {
+		}
+		return null;
 	}
 
 	List<String> getUpdateRegions();
+
+	boolean isActive();
+
+	void setActive(boolean bool);
 }
