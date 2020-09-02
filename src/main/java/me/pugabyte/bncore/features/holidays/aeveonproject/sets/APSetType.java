@@ -41,7 +41,8 @@ public enum APSetType {
 
 	public static APSet getFromRegion(String id) {
 		for (APSetType setType : values()) {
-			if (setType.get().getRegion().equalsIgnoreCase(id)) {
+			String region = setType.get().getRegion();
+			if (region != null && region.equalsIgnoreCase(id)) {
 				return setType.get();
 			}
 		}
