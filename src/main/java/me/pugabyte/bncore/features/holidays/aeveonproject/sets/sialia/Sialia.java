@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.ROOT;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.getAPWorld;
 
 @Region("sialia")
 public class Sialia implements Listener, APSet {
@@ -65,7 +67,7 @@ public class Sialia implements Listener, APSet {
 
 		String folder = ROOT + "Bulkhead/";
 		Location loc = WGUtils.toLocation(door.getMinimumPoint());
-		getWORLD().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
+		getAPWorld().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 0; i <= 2; i++) {
 			int frame = i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {
@@ -92,7 +94,7 @@ public class Sialia implements Listener, APSet {
 		String folder = ROOT + "Bulkhead/";
 
 		Location loc = WGUtils.toLocation(door.getMinimumPoint());
-		getWORLD().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
+		getAPWorld().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 2; i >= 0; i--) {
 			int frame = 2 - i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {

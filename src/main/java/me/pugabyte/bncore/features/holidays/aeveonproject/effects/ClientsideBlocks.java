@@ -28,7 +28,12 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.util.Collection;
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.getPlayersInAPWorld;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.getPlayersInSet;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.getShipColorRegion;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.isInWorld;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WEUtils;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
 
 public class ClientsideBlocks implements Listener {
 	private static final AeveonProjectService service = new AeveonProjectService();
@@ -43,12 +48,18 @@ public class ClientsideBlocks implements Listener {
 
 	private void updateTask() {
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+			if (getPlayersInAPWorld() == 0)
+				return;
+
 			for (APSetType APSetType : APSetType.values()) {
 				APSet set = APSetType.get();
 				List<String> updateRegions = set.getUpdateRegions();
 				if (updateRegions == null)
 					continue;
-				Collection<Player> setPlayers = WGUtils.getPlayersInRegion(set.getRegion());
+
+				Collection<Player> setPlayers = getPlayersInSet(set);
+				if (setPlayers.size() == 0)
+					continue;
 
 				for (String updateRegion : updateRegions) {
 					Region region = WGUtils.getRegion(updateRegion);
@@ -56,7 +67,7 @@ public class ClientsideBlocks implements Listener {
 					double rgBoundary = Math.max(Math.min(Math.max(region.getWidth(), region.getLength()), maxBoundary), minBoundary);
 
 					for (Player player : setPlayers) {
-						if (!player.getWorld().equals(WORLD))
+						if (!APUtils.isInWorld(player))
 							continue;
 
 						double distance = player.getLocation().distance(rgCenter);
@@ -71,7 +82,7 @@ public class ClientsideBlocks implements Listener {
 	@EventHandler
 	public void onEnterRegion(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
-		if (!APUtils.isInWorld(player)) return;
+		if (!isInWorld(player)) return;
 
 		update(player, event.getRegion());
 	}
@@ -79,7 +90,7 @@ public class ClientsideBlocks implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
-		if (!APUtils.isInWorld(player)) return;
+		if (!isInWorld(player)) return;
 
 		update(player);
 	}
@@ -87,14 +98,14 @@ public class ClientsideBlocks implements Listener {
 	@EventHandler
 	public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
-		if (!APUtils.isInWorld(player)) return;
+		if (!isInWorld(player)) return;
 
 		update(player);
 	}
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		if (!APUtils.isInWorld(event.getTo()))
+		if (!isInWorld(event.getTo()))
 			return;
 
 		update(event.getPlayer(), event.getTo());
@@ -149,7 +160,7 @@ public class ClientsideBlocks implements Listener {
 
 			}
 
-			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(APUtils.getShipColorRegion(region)));
+			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(getShipColorRegion(region)));
 
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WHITE_CONCRETE))

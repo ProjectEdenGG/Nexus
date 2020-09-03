@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.commands;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.features.holidays.aeveonproject.APUtils;
 import me.pugabyte.bncore.features.holidays.aeveonproject.menus.ShipColorMenu;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
@@ -15,7 +16,10 @@ import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+
+import java.util.Collection;
 
 @Aliases("ap")
 @NoArgsConstructor
@@ -28,10 +32,6 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 		super(event);
 		PREFIX = StringUtils.getPrefix("AP");
 	}
-
-	// put updating ship color in a method, and when you pick a new ship color w/ the menu,
-	// 		call the method and see if the player is near an shipcolor region, and update
-	// 		the blocks in that region if so
 
 	@Path("start")
 	public void start() {
@@ -64,12 +64,20 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 		send("-----");
 	}
 
-	@Path("debug")
+	@Path("debug set")
 	public void debug() {
-		send("Set Status's");
+		send("Set: Status | Players");
 		for (APSetType setType : APSetType.values()) {
 			APSet set = setType.get();
-			send(" - " + setType.name() + ": " + set.isActive());
+
+			String name = StringUtils.camelCaseWithUnderscores(setType.name());
+			String status = (set.isActive() ? "&aActive" : "&cInactive");
+			Collection<Player> players = APUtils.getPlayersInSet(set);
+			Integer amt = null;
+			if (players != null)
+				amt = players.size();
+
+			send(" - " + name + ": " + status + "&f | " + amt);
 		}
 	}
 
@@ -93,7 +101,8 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 				pitch = RandomUtils.randomDouble(0.0, 1.0);
 
 			double finalPitch = pitch;
-			Tasks.wait(2 * i, () -> player().getWorld().playSound(player().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 2F, (float) finalPitch));
+			Tasks.wait(2 * i, () ->
+					player().getWorld().playSound(player().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 2F, (float) finalPitch));
 		}
 	}
 
