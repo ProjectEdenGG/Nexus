@@ -25,7 +25,6 @@ import org.bukkit.event.Listener;
  */
 @Data
 public class AeveonProject implements Listener {
-	@Getter
 	public static final World APWorld = Bukkit.getWorld("Aeveon_Project");
 	@Getter
 	public static final WorldGuardUtils WGUtils = new WorldGuardUtils(APWorld);
@@ -42,6 +41,11 @@ public class AeveonProject implements Listener {
 		});
 		new Timer("    Effects", Effects::new);
 		new Timer("    Regions", APRegions::new);
+	}
+
+
+	public static World getAPWorld() {
+		return APWorld;
 	}
 
 
