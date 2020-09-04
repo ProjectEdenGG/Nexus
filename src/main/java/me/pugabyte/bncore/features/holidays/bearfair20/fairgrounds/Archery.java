@@ -8,10 +8,10 @@ import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,9 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 
 public class Archery implements Listener {
 	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
@@ -123,7 +121,7 @@ public class Archery implements Listener {
 		if (loc == null)
 			return false;
 		if (checkRadius) {
-			List<Block> nearbyBlocks = Utils.getBlocksInRadius(loc, 1);
+			List<Block> nearbyBlocks = BlockUtils.getBlocksInRadius(loc, 1);
 			for (Block block : nearbyBlocks) {
 				if (!block.getType().equals(Material.AIR))
 					return false;

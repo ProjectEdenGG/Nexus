@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import static me.pugabyte.bncore.utils.Utils.getSpawnEgg;
 
-@Permission("plots.use")
+@Permission("essentials.gamemode.creative")
 public class SpawnEggCommand extends CustomCommand {
 
 	public SpawnEggCommand(@NonNull CommandEvent event) {

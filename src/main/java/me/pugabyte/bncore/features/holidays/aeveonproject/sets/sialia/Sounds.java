@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia;
 
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -13,11 +13,11 @@ import org.bukkit.event.Listener;
 
 import java.util.Collection;
 
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WORLD;
 
 public class Sounds implements Listener {
-	private static final Location engineLoc = new Location(WORLD, -1294, 86, -1056);
+	private static final Location engineLoc = APLoc(-1294, 86, -1056);
 	private static final Sound shipSound = Sound.BLOCK_BEACON_AMBIENT;
 	private static final Sound engineSound = Sound.ENTITY_MINECART_RIDING;
 
@@ -26,11 +26,11 @@ public class Sounds implements Listener {
 
 		// Engine Sound
 		Tasks.repeatAsync(0, Time.TICK.x(30), () -> {
-			if (!Sialia.isActive())
+			if (!APSetType.SIALIA.get().isActive())
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = WGUtils.getPlayersInRegion(Regions.sialia);
+				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
@@ -42,11 +42,11 @@ public class Sounds implements Listener {
 
 		// Ship Sound
 		Tasks.repeatAsync(0, Time.SECOND.x(5), () -> {
-			if (!Sialia.isActive())
+			if (!APSetType.SIALIA.get().isActive())
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = WGUtils.getPlayersInRegion(Regions.sialia);
+				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;

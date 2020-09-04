@@ -7,8 +7,8 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -67,7 +67,7 @@ public class TNTRun extends TeamlessMechanic {
 					stop();
 
 				match.getMinigamers().forEach(minigamer -> {
-					Block standingOn = Utils.getBlockStandingOn(minigamer.getPlayer());
+					Block standingOn = BlockUtils.getBlockStandingOn(minigamer.getPlayer());
 					if (standingOn == null)
 						return;
 

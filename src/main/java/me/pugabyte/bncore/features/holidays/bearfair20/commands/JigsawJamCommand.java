@@ -18,6 +18,7 @@ import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.jigsawjam.JigsawJamService;
 import me.pugabyte.bncore.models.jigsawjam.JigsawJammer;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
@@ -285,7 +286,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		Player player = jammer.getPlayer();
 		Block blue = null;
 		Block orange = null;
-		for (Block block : Utils.getBlocksInRadius(player.getLocation(), 20)) {
+		for (Block block : BlockUtils.getBlocksInRadius(player.getLocation(), 20)) {
 			if (block.getType() == Material.AIR)
 				continue;
 			else if (block.getType() == Material.LIGHT_BLUE_CONCRETE)

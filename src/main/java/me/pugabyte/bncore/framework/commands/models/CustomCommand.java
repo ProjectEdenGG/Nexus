@@ -94,14 +94,14 @@ public abstract class CustomCommand extends ICustomCommand {
 		sender.sendMessage(baseComponents);
 	}
 
-	protected void send(String UUID, String message) {
-		CommandSender sender = (CommandSender) Utils.getPlayer(UUID);
-		send(sender, message);
+	protected void send(String uuid, String message) {
+		send(UUID.fromString(uuid), message);
 	}
 
 	protected void send(UUID uuid, String message) {
-		CommandSender sender = (CommandSender) Utils.getPlayer(uuid);
-		send(sender, message);
+		OfflinePlayer player = Utils.getPlayer(uuid.toString());
+		if (player != null && player.isOnline())
+			send((CommandSender) Utils.getPlayer(uuid), message);
 	}
 
 	protected void send(Object object) {
@@ -188,6 +188,13 @@ public abstract class CustomCommand extends ICustomCommand {
 			throw new MustBeIngameException();
 
 		return (Player) event.getSender();
+	}
+
+	protected OfflinePlayer offlinePlayer() {
+		if (!isPlayer())
+			throw new MustBeIngameException();
+
+		return Bukkit.getOfflinePlayer(player().getUniqueId());
 	}
 
 	protected UUID uuid() {

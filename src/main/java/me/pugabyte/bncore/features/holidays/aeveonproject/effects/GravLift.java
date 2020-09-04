@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.isInWorld;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.isInWorld;
 
 public class GravLift implements Listener {
 

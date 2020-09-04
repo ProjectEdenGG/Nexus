@@ -16,6 +16,7 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchDat
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Ship;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -223,7 +224,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 	private void deleteKit(Location location) {
 		location.getBlock().setType(Material.AIR);
-		for (Block block : Utils.getBlocksInRadius(location, 1))
+		for (Block block : BlockUtils.getBlocksInRadius(location, 1))
 			if (Tag.WOOL.isTagged(block.getType())) {
 				block.setType(Material.AIR);
 				deleteKit(block.getLocation());
@@ -326,7 +327,7 @@ public class Battleship extends BalancedTeamMechanic {
 	}
 
 	public BlockFace getKitDirection(Location location) {
-		List<Block> blocks = Utils.getBlocksInRadius(location, 1);
+		List<Block> blocks = BlockUtils.getBlocksInRadius(location, 1);
 		BlockFace direction = null;
 		for (Block block : blocks)
 			if (block.getType() == Material.WHITE_WOOL)

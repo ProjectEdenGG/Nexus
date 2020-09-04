@@ -1,12 +1,26 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaWreckage;
 
-import lombok.Getter;
-import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Set;
-import me.pugabyte.bncore.features.holidays.annotations.Region;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import org.bukkit.event.Listener;
 
-@Region("sialia_wreckage")
-public class SialiaWreckage implements Listener, Set {
-	@Getter
-	static boolean active = false;
+import java.util.List;
+
+//@Region("")
+public class SialiaWreckage implements Listener, APSet {
+	public static boolean active = false;
+
+	@Override
+	public List<String> getUpdateRegions() {
+		return null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
+	}
+
+	@Override
+	public void setActive(boolean bool) {
+		active = bool;
+	}
 }

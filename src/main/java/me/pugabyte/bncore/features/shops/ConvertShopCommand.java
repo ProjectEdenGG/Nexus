@@ -11,6 +11,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.bncore.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -64,7 +65,7 @@ public class ConvertShopCommand extends CustomCommand {
 		List<Block> signs = new ArrayList<>();
 		List<SignData> conversions = new ArrayList<>();
 		List<Throwable> exceptions = new ArrayList<>();
-		Utils.getBlocksInRadius(player().getLocation(), radius).forEach(block -> {
+		BlockUtils.getBlocksInRadius(player().getLocation(), radius).forEach(block -> {
 			if (!MaterialTag.SIGNS.isTagged(block.getType())) return;
 
 			Sign sign = (Sign) block.getState();

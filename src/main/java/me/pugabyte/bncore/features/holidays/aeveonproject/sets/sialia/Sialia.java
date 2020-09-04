@@ -5,9 +5,11 @@ import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.APUtils;
 import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
-import me.pugabyte.bncore.features.holidays.aeveonproject.Regions;
-import me.pugabyte.bncore.features.holidays.aeveonproject.sets.Set;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APRegions;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -19,18 +21,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.*;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.ROOT;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.getAPWorld;
 
 @Region("sialia")
-public class Sialia implements Listener, Set {
-	@Getter
-	static boolean active = true;
+public class Sialia implements Listener, APSet {
+	public static boolean active = false;
 	@Getter
 	public static Player nearbyPlayer = null;
-
 	List<String> openDoors = new ArrayList<>();
+	public static final Location shipRobot = APUtils.APLoc(-1314, 85, -1080);
 
 	public Sialia() {
 		BNCore.registerListener(this);
@@ -39,7 +43,7 @@ public class Sialia implements Listener, Set {
 		new Sounds();
 
 		Tasks.repeat(0, Time.TICK.x(5), () -> {
-			List<Player> nearbyPlayers = new ArrayList<>(WGUtils.getPlayersInRegion(Regions.sialia));
+			List<Player> nearbyPlayers = new ArrayList<>(WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion()));
 			if (nearbyPlayers.size() > 0)
 				nearbyPlayer = nearbyPlayers.get(0);
 		});
@@ -49,7 +53,7 @@ public class Sialia implements Listener, Set {
 	@EventHandler
 	public void onEnterRegion_Bulkhead(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
+		if (!APUtils.isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
 		if (!id.contains("sensor")) return;
@@ -63,7 +67,7 @@ public class Sialia implements Listener, Set {
 
 		String folder = ROOT + "Bulkhead/";
 		Location loc = WGUtils.toLocation(door.getMinimumPoint());
-		getWORLD().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
+		getAPWorld().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 0; i <= 2; i++) {
 			int frame = i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {
@@ -76,7 +80,7 @@ public class Sialia implements Listener, Set {
 	@EventHandler
 	public void onExitRegion_Bulkhead(RegionLeftEvent event) {
 		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
+		if (!APUtils.isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
 		if (!id.contains("sensor")) return;
@@ -90,7 +94,7 @@ public class Sialia implements Listener, Set {
 		String folder = ROOT + "Bulkhead/";
 
 		Location loc = WGUtils.toLocation(door.getMinimumPoint());
-		getWORLD().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
+		getAPWorld().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 2; i >= 0; i--) {
 			int frame = 2 - i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {
@@ -101,5 +105,20 @@ public class Sialia implements Listener, Set {
 				}
 			});
 		}
+	}
+
+	@Override
+	public List<String> getUpdateRegions() {
+		return Arrays.asList(APRegions.sialia_shipColor, APRegions.sialia_dockingport_1, APRegions.sialia_dockingport_2);
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
+	}
+
+	@Override
+	public void setActive(boolean bool) {
+		active = bool;
 	}
 }

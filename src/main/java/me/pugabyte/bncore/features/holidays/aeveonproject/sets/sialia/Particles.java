@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.Tasks;
@@ -11,28 +12,28 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WORLD;
+import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 
 public class Particles implements Listener {
 	private int laserTaskID = -1;
 	private boolean activeLaser = false;
 	private Player laserPlayer = null;
-	private final Location laserStart = new Location(WORLD, -1300.5, 83.5, -1155.9);
-	private final Location laserEnd = new Location(WORLD, -1300.5, 83.25, -1159.5);
+	private final Location laserStart = APLoc(-1300.5, 83.5, -1155.9);
+	private final Location laserEnd = APLoc(-1300.5, 83.25, -1159.5);
 	//
-	private final Location nautilisLoc = new Location(WORLD, -1303.5, 83.5, -1164.5);
-	private final Location portalLoc = new Location(WORLD, -1302.5, 82.5, -1166.5);
-	private final Location myceliumLoc = new Location(WORLD, -1300.5, 82.5, -1168.5);
-	private final Location sneeze = new Location(WORLD, -1287.0, 82.0, -1156.0);
-	private final Location gravLift_1 = new Location(WORLD, -1294.0, 88.5, -1160.0);
-	private final Location gravLift_2 = new Location(WORLD, -1301.0, 84.0, -1189.0);
-	private final Location gravLift_3 = new Location(WORLD, -1287.0, 84.0, -1189.0);
+	private final Location nautilisLoc = APLoc(-1303.5, 83.5, -1164.5);
+	private final Location portalLoc = APLoc(-1302.5, 82.5, -1166.5);
+	private final Location myceliumLoc = APLoc(-1300.5, 82.5, -1168.5);
+	private final Location sneeze = APLoc(-1287.0, 82.0, -1156.0);
+	private final Location gravLift_1 = APLoc(-1294.0, 88.5, -1160.0);
+	private final Location gravLift_2 = APLoc(-1301.0, 84.0, -1189.0);
+	private final Location gravLift_3 = APLoc(-1287.0, 84.0, -1189.0);
 
 	public Particles() {
 		BNCore.registerListener(this);
 
 		Tasks.repeatAsync(0, Time.TICK.x(2), () -> {
-			if (!Sialia.isActive() || Sialia.nearbyPlayer == null)
+			if (!APSetType.SIALIA.get().isActive() || Sialia.nearbyPlayer == null)
 				return;
 
 			new ParticleBuilder(Particle.NAUTILUS).location(nautilisLoc).count(5).offset(0.1, 0.5, 0.1).extra(0.1).spawn();

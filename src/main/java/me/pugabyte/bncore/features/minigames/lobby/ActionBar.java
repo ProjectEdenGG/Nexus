@@ -17,8 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static me.pugabyte.bncore.utils.CitizensUtils.isNPC;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-import static me.pugabyte.bncore.utils.Utils.isNPC;
 
 public class ActionBar {
 	private static final int DELAY = Time.SECOND.x(5);

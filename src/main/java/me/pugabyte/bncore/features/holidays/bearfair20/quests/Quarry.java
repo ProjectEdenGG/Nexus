@@ -5,11 +5,11 @@ import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -28,10 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.miningError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.toolError;
 import static me.pugabyte.bncore.utils.Utils.getTool;
@@ -127,7 +124,7 @@ public class Quarry implements Listener {
 
 
 	private boolean adjBlockNeedsSupport(Block origin) {
-		List<Block> adj = Utils.getAdjacentBlocks(origin);
+		List<Block> adj = BlockUtils.getAdjacentBlocks(origin);
 		if (adj.size() == 0)
 			return false;
 		for (Block block : adj) {

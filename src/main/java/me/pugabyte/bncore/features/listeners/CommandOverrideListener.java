@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static me.pugabyte.bncore.utils.StringUtils.plural;
 import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 
 public class CommandOverrideListener implements Listener {
@@ -46,6 +48,32 @@ public class CommandOverrideListener implements Listener {
 			case "/lwc:cadmin":
 				event.setCancelled(true);
 				redirect.accept("/lwc admin " + argsString);
+				break;
+			case "/p2":
+			case "/plot":
+			case "/plots":
+			case "/plotme":
+			case "/plotsquared":
+				if (args.size() >= 2 && args.get(1).equalsIgnoreCase("limit")) {
+					event.setCancelled(true);
+
+					if (WorldGroup.get(player) != WorldGroup.CREATIVE) {
+						send.accept("&cYou must be in the /creative world to use this command!");
+						break;
+					}
+
+					int limit = 0;
+					for (int i = 1; i <= 6; i++)
+						if (player.hasPermission("plots.plot." + i))
+							limit = i;
+
+					if (limit == 0) {
+						send.accept("&cYou cannot claim any plots");
+						break;
+					}
+
+					send.accept("&3You can claim &e" + limit + plural(" &3plot", limit));
+				}
 				break;
 		}
 	}

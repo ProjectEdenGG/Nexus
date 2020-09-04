@@ -4,6 +4,7 @@ import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.util.player.UserManager;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -61,7 +62,7 @@ public class McMMOListener implements Listener {
 				// Loop all blocks in radius x of player
 				Location playerLoc = player.getLocation();
 				int radius = 5;
-				List<Block> blocksNearby = Utils.getBlocksInRadius(playerLoc, radius);
+				List<Block> blocksNearby = BlockUtils.getBlocksInRadius(playerLoc, radius);
 				for (Block block : blocksNearby) {
 					if (RandomUtils.chanceOf(80))
 						continue;

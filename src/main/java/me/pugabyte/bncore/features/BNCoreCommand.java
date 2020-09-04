@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features;
 import fr.minuskube.inv.SmartInvsPlugin;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.recipes.CustomRecipes;
@@ -28,6 +29,7 @@ import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.ActionBarUtils;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.*;
@@ -35,6 +37,8 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import net.citizensnpcs.api.CitizensAPI;
+import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -60,8 +64,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
+import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
 import static me.pugabyte.bncore.utils.StringUtils.*;
-import static me.pugabyte.bncore.utils.Utils.getDirection;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Permission("group.seniorstaff")
@@ -94,6 +98,20 @@ public class BNCoreCommand extends CustomCommand {
 		runCommand("plugman reload BNCore");
 	}
 
+	private static LocalDateTime lastReload = LocalDateTime.now();
+
+	@Path("lastReload")
+	void lastReload() {
+		send(PREFIX + "Last reloaded &e" + timespanDiff(lastReload) + " ago");
+	}
+
+	@Path("gc")
+	void gc() {
+		send("Collecting garbage...");
+		System.gc();
+		send("Garbage collected");
+	}
+
 	@Path("stats")
 	void stats() {
 		send("Commands: " + Commands.getCommands().size());
@@ -111,14 +129,22 @@ public class BNCoreCommand extends CustomCommand {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(30), () -> {
 			TaskService service = new TaskService();
 			service.process("command-test").forEach(task ->
-				Tasks.wait(Time.MINUTE.x(2), () -> {
-					Map<String, Object> data = task.getJson();
-					OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
-					if (player.isOnline() && player.getPlayer() != null)
-						Utils.send(player, (String) data.get("message"));
-					service.complete(task);
-				}));
+					Tasks.wait(Time.MINUTE.x(2), () -> {
+						Map<String, Object> data = task.getJson();
+						OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
+						if (player.isOnline() && player.getPlayer() != null)
+							Utils.send(player, (String) data.get("message"));
+						service.complete(task);
+					}));
 		});
+	}
+
+	@Path("boosts")
+	void boosts() {
+		List<Member> boosters = Discord.getGuild().getBoosters();
+		for (Member booster : boosters) {
+			send(" - " + booster.getEffectiveName());
+		}
 	}
 
 	@Path("taskTest <message...>")
@@ -256,7 +282,7 @@ public class BNCoreCommand extends CustomCommand {
 
 	@Path("getBlockStandingOn")
 	void getBlockStandingOn() {
-		Block block = Utils.getBlockStandingOn(player());
+		Block block = BlockUtils.getBlockStandingOn(player());
 		if (block == null)
 			send("Nothing");
 		else
@@ -353,6 +379,14 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("timespanFormatter <seconds> <formatType>")
 	void timespanFormatter(int seconds, TimespanFormatType formatType) {
 		send(TimespanFormatter.of(seconds).formatType(formatType).format());
+	}
+
+	@Path("voidNpc")
+	void voidNpc() {
+		CitizensAPI.getNPCRegistry().forEach(npc -> {
+			if (npc.getEntity() != null && npc.getEntity().getLocation().getY() < 0)
+				send(npc.getId());
+		});
 	}
 
 	@Path("jingles <jingle>")

@@ -14,8 +14,8 @@ import me.pugabyte.bncore.features.minigames.models.arenas.BattleshipArena;
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.Axis;
 import me.pugabyte.bncore.utils.Utils.CardinalDirection;
 import org.bukkit.ChatColor;
@@ -31,9 +31,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.minigames.mechanics.Battleship.LETTERS;
+import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
 import static me.pugabyte.bncore.utils.StringUtils.left;
 import static me.pugabyte.bncore.utils.StringUtils.right;
-import static me.pugabyte.bncore.utils.Utils.getDirection;
 import static me.pugabyte.bncore.utils.Utils.isInt;
 
 @Data
@@ -115,7 +115,7 @@ public class BattleshipMatchData extends MatchData {
 			this.a0_pegs = arena.getRegion("a0_pegs_" + team.getName());
 
 			Location a0 = arena.getWEUtils().toLocation(a0_ships.getCenter());
-			Utils.getBlocksInRadius(a0, 5).forEach(block -> {
+			BlockUtils.getBlocksInRadius(a0, 5).forEach(block -> {
 				if (block.getType() != Material.YELLOW_WOOL) return;
 
 				Axis axis = Axis.getAxis(a0, block.getLocation());

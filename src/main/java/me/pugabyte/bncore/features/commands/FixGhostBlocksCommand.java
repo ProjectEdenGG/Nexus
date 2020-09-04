@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -36,7 +37,7 @@ public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 	}
 
 	private void fixGhostBlocks(Player player, Location location, int radius) {
-		Utils.getBlocksInRadius(location, radius).forEach(block ->
+		BlockUtils.getBlocksInRadius(location, radius).forEach(block ->
 				player.sendBlockChange(block.getLocation(), block.getBlockData()));
 	}
 
