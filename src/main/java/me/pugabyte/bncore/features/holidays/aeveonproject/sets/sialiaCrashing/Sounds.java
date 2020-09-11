@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -9,20 +9,19 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import java.util.Collection;
 
 import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
 
-public class Sounds implements Listener {
+public class Sounds {
 	private static final Location engineLoc = APLoc(-823, 86, -1062);
 	private static final Sound engineSound = Sound.ENTITY_MINECART_RIDING;
+	private static final Sound shipSound = Sound.BLOCK_BEACON_AMBIENT;
 	private static final Sound warningSound = Sound.ENTITY_ELDER_GUARDIAN_CURSE;
 
 	public Sounds() {
-		BNCore.registerListener(this);
 
 		// Engine Sound
 		Tasks.repeatAsync(0, Time.TICK.x(30), () -> {
@@ -41,6 +40,23 @@ public class Sounds implements Listener {
 			});
 		});
 
+		// Ship Sound
+		Tasks.repeatAsync(0, Time.SECOND.x(5), () -> {
+			if (!APSetType.SIALIA_CRASHING.get().isActive())
+				return;
+
+			Tasks.sync(() -> {
+				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
+				for (Player player : players) {
+					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
+						continue;
+
+					player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F);
+					Tasks.wait(Time.SECOND.x(2), () -> player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F));
+				}
+			});
+		});
+
 		// Alarm Sound
 		Tasks.repeatAsync(0, Time.TICK.x(50), () -> {
 			if (!APSetType.SIALIA_CRASHING.get().isActive())
@@ -52,9 +68,19 @@ public class Sounds implements Listener {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
 
-					player.playSound(engineLoc, warningSound, SoundCategory.AMBIENT, 0.2F, 0.8F);
+					player.playSound(engineLoc, warningSound, SoundCategory.AMBIENT, 0.3F, 0.8F);
 				}
 			});
+		});
+
+		//Vent Sounds
+		Tasks.repeatAsync(0, Time.TICK.x(5), () -> {
+			if (!APSetType.SIALIA_CRASHING.get().isActive())
+				return;
+
+			Tasks.sync(() ->
+					Particles.pipes.forEach(pipe ->
+							AeveonProject.getAPWorld().playSound(pipe, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.1F, 0.5F)));
 		});
 	}
 

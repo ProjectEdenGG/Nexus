@@ -41,13 +41,13 @@ public class MysteryChestCommand extends CustomCommand {
 	@Path("give <player> <type> [amount]")
 	@Permission("group.admin")
 	void give(OfflinePlayer player, RewardChestType type, @Arg("1") int amount) {
-		send(PREFIX + "&e" + player.getName() + " &3now has &e" + new MysteryChest(player).give(amount, type) + "&3 Mystery Chests");
+		send(PREFIX + "&e" + player.getName() + " &3now has &e" + new MysteryChest(player).give(amount, type) + "&3 Mystery Chest Keys");
 	}
 
 	@Path("take <player> <type> [amount]")
 	@Permission("group.admin")
 	void take(OfflinePlayer player, RewardChestType type, @Arg("1") int amount) {
-		send(PREFIX + "&e" + player.getName() + " &3now has &e" + new MysteryChest(player).take(amount, type) + "&3 Mystery Chests");
+		send(PREFIX + "&e" + player.getName() + " &3now has &e" + new MysteryChest(player).take(amount, type) + "&3 Mystery Chest Keys");
 	}
 
 	@Path("edit [type]")

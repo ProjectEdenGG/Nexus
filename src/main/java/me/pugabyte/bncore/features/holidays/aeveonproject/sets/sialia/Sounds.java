@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -9,21 +8,18 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import java.util.Collection;
 
 import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
 
-public class Sounds implements Listener {
+public class Sounds {
 	private static final Location engineLoc = APLoc(-1294, 86, -1056);
 	private static final Sound shipSound = Sound.BLOCK_BEACON_AMBIENT;
 	private static final Sound engineSound = Sound.ENTITY_MINECART_RIDING;
 
 	public Sounds() {
-		BNCore.registerListener(this);
-
 		// Engine Sound
 		Tasks.repeatAsync(0, Time.TICK.x(30), () -> {
 			if (!APSetType.SIALIA.get().isActive())

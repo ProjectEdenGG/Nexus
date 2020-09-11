@@ -21,6 +21,7 @@ public class APRegions {
 	public static String sialiaCrashing_shipColor = sialiaCrashing + "_shipcolor";
 	public static String sialiaCrashing_dockingport_1 = sialiaCrashing + "_dockingport_1";
 	public static String sialiaCrashing_dockingport_2 = sialiaCrashing + "_dockingport_2";
+	public static String sialiaCrashing_vent_door = sialiaCrashing + "_vent_door";
 
 	// Sialia Wreckage
 

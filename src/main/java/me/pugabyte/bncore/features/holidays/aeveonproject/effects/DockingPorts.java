@@ -22,9 +22,9 @@ public class DockingPorts implements Listener {
 		if (!isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
-		if (!id.contains("dockingport")) return;
-
-		player.setSprinting(true);
+		if (id.contains("dockingport") || id.contains("vent_door")) {
+			player.setSprinting(true);
+		}
 	}
 
 	@EventHandler
@@ -33,9 +33,9 @@ public class DockingPorts implements Listener {
 		if (!isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
-		if (!id.contains("dockingtube")) return;
-
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999999, 15, false, false));
+		if (id.contains("dockingtube") || id.contains("vent")) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999999, 15, false, false));
+		}
 	}
 
 	@EventHandler
@@ -44,9 +44,9 @@ public class DockingPorts implements Listener {
 		if (!isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
-		if (!id.contains("dockingtube")) return;
-
-		player.removePotionEffect(PotionEffectType.SPEED);
+		if (id.contains("dockingtube") || id.contains("vent")) {
+			player.removePotionEffect(PotionEffectType.SPEED);
+		}
 	}
 
 }

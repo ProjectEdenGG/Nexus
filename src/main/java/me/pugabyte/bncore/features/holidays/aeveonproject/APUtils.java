@@ -37,7 +37,10 @@ public class APUtils {
 
 	public static boolean isInSpace(Player player) {
 		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(player.getLocation());
-		Set<ProtectedRegion> spaceRegions = regions.stream().filter(region -> region.getId().contains("space")).collect(Collectors.toSet());
+		Set<ProtectedRegion> spaceRegions = regions.stream()
+				.filter(region -> region.getId().contains("space") || region.getId().contains("night"))
+				.collect(Collectors.toSet());
+
 		return spaceRegions.size() > 0;
 	}
 

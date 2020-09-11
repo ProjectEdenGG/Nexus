@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.features.particles.effects.LineEffect;
 import me.pugabyte.bncore.utils.ColorType;
@@ -10,11 +9,10 @@ import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import static me.pugabyte.bncore.features.holidays.aeveonproject.APUtils.APLoc;
 
-public class Particles implements Listener {
+public class Particles {
 	private int laserTaskID = -1;
 	private boolean activeLaser = false;
 	private Player laserPlayer = null;
@@ -30,8 +28,6 @@ public class Particles implements Listener {
 	private final Location gravLift_3 = APLoc(-1287.0, 84.0, -1189.0);
 
 	public Particles() {
-		BNCore.registerListener(this);
-
 		Tasks.repeatAsync(0, Time.TICK.x(2), () -> {
 			if (!APSetType.SIALIA.get().isActive() || Sialia.nearbyPlayer == null)
 				return;

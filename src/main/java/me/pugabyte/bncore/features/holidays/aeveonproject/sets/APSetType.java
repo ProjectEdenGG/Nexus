@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.holidays.aeveonproject.sets.lobby.Lobby;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialia.Sialia;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaCrashing.SialiaCrashing;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.sialiaWreckage.SialiaWreckage;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.vespyr.Vespyr;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 
@@ -12,7 +13,8 @@ public enum APSetType {
 	LOBBY(new Lobby()),
 	SIALIA(new Sialia()),
 	SIALIA_CRASHING(new SialiaCrashing()),
-	SIALIA_WRECKAGE(new SialiaWreckage());
+	SIALIA_WRECKAGE(new SialiaWreckage()),
+	VESPYR(new Vespyr());
 
 	private final APSet APSet;
 

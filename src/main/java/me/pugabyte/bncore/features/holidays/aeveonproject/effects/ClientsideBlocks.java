@@ -186,7 +186,7 @@ public class ClientsideBlocks implements Listener {
 		}
 
 		// Any Docking Ports Region
-		if (region.contains("dockingport")) {
+		if (region.contains("dockingport") || region.contains("vent_door")) {
 			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(region));
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WATER))
