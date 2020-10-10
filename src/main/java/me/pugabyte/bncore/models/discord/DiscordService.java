@@ -1,10 +1,11 @@
 package me.pugabyte.bncore.models.discord;
 
-import me.pugabyte.bncore.models.MySQLService;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import me.pugabyte.bncore.features.discord.DiscordId.Role;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.models.MySQLService;
 
 public class DiscordService extends MySQLService {
 	private static final Map<String, DiscordUser> cache = new HashMap<>();
@@ -23,6 +24,15 @@ public class DiscordService extends MySQLService {
 		});
 
 		return cache.get(uuid);
+	}
+
+	public DiscordUser checkVerified(String userId) {
+		DiscordUser user = getFromUserId(userId);
+
+		if (user == null || user.getUserId() == null || user.getUuid() == null || !user.getMember().getRoles().contains(Role.VERIFIED.get()))
+			throw new InvalidInputException("You must link your Discord and Minecraft accounts before using this command");
+
+		return user;
 	}
 
 	public DiscordUser getFromUserId(String userId) {

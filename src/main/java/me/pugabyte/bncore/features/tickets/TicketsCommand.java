@@ -1,7 +1,10 @@
 package me.pugabyte.bncore.features.tickets;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import me.pugabyte.bncore.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
@@ -12,8 +15,6 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-
-import java.util.List;
 
 public class TicketsCommand extends CustomCommand {
 	private TicketService service = new TicketService();
@@ -33,12 +34,13 @@ public class TicketsCommand extends CustomCommand {
 				.forEach(ticket -> Tickets.showTicket(player(), ticket));
 	}
 
-	// TODO: Pagination
-	@Path("all")
-	void all() {
-		service.getAll().stream()
+	@Path("page [page]")
+	void run(@Arg("1") int page) {
+		List<Ticket> collect = service.getAll().stream()
 				.filter(ticket -> ticket.canBeSeenBy(player()))
-				.forEach(ticket -> Tickets.showTicket(player(), ticket));
+				.collect(Collectors.toList());
+
+		paginate(collect, ticket -> Tickets.formatTicket(player(), ticket), "/tickets page", page);
 	}
 
 	@Path("view <id>")

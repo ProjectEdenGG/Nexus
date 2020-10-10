@@ -11,11 +11,14 @@ import org.bukkit.entity.Player;
 public class Tickets {
 	public static final String PREFIX = StringUtils.getPrefix("Tickets");
 
-	static void showTicket(Player player, Ticket ticket) {
-		new JsonBuilder()
+	public static void showTicket(Player player, Ticket ticket) {
+		formatTicket(player, ticket).send(player);
+	}
+
+	public static JsonBuilder formatTicket(Player player, Ticket ticket) {
+		return new JsonBuilder()
 				.next("&7#" + ticket.getId() + " &3" + ticket.getOwnerName() + " &7- &e" + ticket.getDescription())
-				.command("/tickets view " + ticket.getId())
-				.send(player);
+				.command("/tickets view " + ticket.getId());
 	}
 
 	public static JsonBuilder getTicketButtons(Ticket ticket) {
@@ -35,7 +38,7 @@ public class Tickets {
 		Discord.log("**[Tickets]** " + message);
 
 		Bukkit.getOnlinePlayers().stream()
-				.filter(staff -> !staff.getUniqueId().equals(player.getUniqueId()))
+				.filter(staff -> player == null || !staff.getUniqueId().equals(player.getUniqueId()))
 				.filter(staff -> staff.hasPermission("group.moderator"))
 				.forEach(staff -> Utils.send(staff, PREFIX + message));
 	}
