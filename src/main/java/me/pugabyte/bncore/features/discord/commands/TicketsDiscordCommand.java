@@ -48,16 +48,15 @@ public class TicketsDiscordCommand extends Command {
 			final TicketService service = new TicketService();
 			Ticket ticket = service.get(Integer.parseInt(id));
 
-			if (!ticket.isOpen())
-				throw new InvalidInputException("Ticket already closed");
-
 			switch (args[0].toLowerCase()) {
 				case "view":
 					message += nl + PREFIX + "**#" + ticket.getId() + "**";
+					if (!ticket.isOpen())
+						message += " (Closed)";
 					message += nl + "**Owner:** " + ticket.getOwnerName();
 					message += nl + "**When:** " + ticket.getTimespan() + " ago";
 					message += nl + "**Description:** " + ticket.getDescription();
-					message += nl + Tickets.getTicketButtons(ticket);
+					break;
 				case "close": {
 					if (!ticket.isOpen())
 						throw new InvalidInputException("Ticket already closed");
@@ -69,8 +68,7 @@ public class TicketsDiscordCommand extends Command {
 					Tickets.tellOtherStaff(null, message);
 					if (ticket.getOwner() instanceof Player)
 						Utils.send((Player) ticket.getOwner(), PREFIX + message);
-
-					message = PREFIX + "Ticket #" + ticket.getId() + " closed";
+					break;
 				}
 				case "reopen": {
 					if (ticket.isOpen())
@@ -83,8 +81,7 @@ public class TicketsDiscordCommand extends Command {
 					Tickets.tellOtherStaff(null, message);
 					if (ticket.getOwner() instanceof Player)
 						Utils.send((Player) ticket.getOwner(), PREFIX + message);
-
-					message = PREFIX + "Ticket #" + ticket.getId() + " reopened";
+					break;
 				}
 			}
 
