@@ -17,7 +17,7 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-@HandledBy(Bot.KODA)
+@HandledBy(Bot.RELAY)
 public class TicketsDiscordCommand extends Command {
 
 	public TicketsDiscordCommand() {
@@ -56,6 +56,7 @@ public class TicketsDiscordCommand extends Command {
 					message += nl + "**Owner:** " + ticket.getOwnerName();
 					message += nl + "**When:** " + ticket.getTimespan() + " ago";
 					message += nl + "**Description:** " + ticket.getDescription();
+					event.reply(message);
 					break;
 				case "close": {
 					if (!ticket.isOpen())
@@ -84,9 +85,6 @@ public class TicketsDiscordCommand extends Command {
 					break;
 				}
 			}
-
-			if (!message.isEmpty())
-				event.reply(message);
 		});
 	}
 
