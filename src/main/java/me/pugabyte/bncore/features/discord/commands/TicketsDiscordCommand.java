@@ -15,7 +15,6 @@ import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 @HandledBy(Bot.RELAY)
 public class TicketsDiscordCommand extends Command {
@@ -42,17 +41,14 @@ public class TicketsDiscordCommand extends Command {
 			if (!Utils.isInt(id))
 				throw new InvalidInputException("Ticket ID must be a number");
 
-			final String PREFIX = "**[Tickets]** ";
-			String message = "";
-			String nl = System.lineSeparator();
+			final String nl = System.lineSeparator();
 			final TicketService service = new TicketService();
-			Ticket ticket = service.get(Integer.parseInt(id));
+			final Ticket ticket = service.get(Integer.parseInt(id));
 
 			switch (args[0].toLowerCase()) {
 				case "view":
-					message += nl + PREFIX + "**#" + ticket.getId() + "**";
-					if (!ticket.isOpen())
-						message += " (Closed)";
+					String message = "**[Tickets] #" + ticket.getId() + "** ";
+					message += ticket.isOpen() ? "(Open)" : "(Closed)";
 					message += nl + "**Owner:** " + ticket.getOwnerName();
 					message += nl + "**When:** " + ticket.getTimespan() + " ago";
 					message += nl + "**Description:** " + ticket.getDescription();
@@ -65,10 +61,7 @@ public class TicketsDiscordCommand extends Command {
 					ticket.setOpen(false);
 					service.save(ticket);
 
-					message += player.getName() + " closed ticket #" + ticket.getId();
-					Tickets.tellOtherStaff(null, message);
-					if (ticket.getOwner() instanceof Player)
-						Utils.send((Player) ticket.getOwner(), PREFIX + message);
+					Tickets.broadcast(ticket,null, player.getName() + " closed ticket #" + ticket.getId());
 					break;
 				}
 				case "reopen": {
@@ -78,10 +71,7 @@ public class TicketsDiscordCommand extends Command {
 					ticket.setOpen(true);
 					service.save(ticket);
 
-					message += player.getName() + " reopened ticket #" + ticket.getId();
-					Tickets.tellOtherStaff(null, message);
-					if (ticket.getOwner() instanceof Player)
-						Utils.send((Player) ticket.getOwner(), PREFIX + message);
+					Tickets.broadcast(ticket,null, player.getName() + " reopened ticket #" + ticket.getId());
 					break;
 				}
 			}
