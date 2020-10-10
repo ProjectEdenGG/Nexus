@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 
 import java.util.stream.Collectors;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
 public class DiscordCommand extends CustomCommand {
 	DiscordService service = new DiscordService();
@@ -96,16 +97,23 @@ public class DiscordCommand extends CustomCommand {
 		if (isNullOrEmpty(user.getUserId()))
 			error("This account is not linked to any Discord account");
 
-		User userById = Bot.KODA.jda().retrieveUserById(user.getUserId()).complete();
-		String name = user.getName();
-		String discrim = user.getDiscrim();
+		try {
+			User userById = Bot.KODA.jda().retrieveUserById(user.getUserId()).complete();
+			String name = user.getName();
+			String discrim = user.getDiscrim();
+
+			userById.openPrivateChannel().complete().sendMessage("This Discord account has been unlinked from the Minecraft account **" + player().getName() + "**").queue();
+			send(PREFIX + "Successfully unlinked this Minecraft account from Discord account " + name);
+			Discord.staffLog("**" + player().getName() + "** has unlinked their account from **" + name + "#" + discrim + "**");
+		} catch (ErrorResponseException ex) {
+			if (ex.getErrorCode() == 10007) {
+				send(PREFIX + "Successfully unlinked this Minecraft account from an unknown Discord account");
+				Discord.staffLog("**" + player().getName() + "** has unlinked their account from an unknown Discord account");
+			}
+		}
 
 		user.setUserId(null);
 		service.save(user);
-
-		userById.openPrivateChannel().complete().sendMessage("This Discord account has been unlinked from the Minecraft account **" + player().getName() + "**").queue();
-		send(PREFIX + "Successfully unlinked this Minecraft account from Discord account " + name);
-		Discord.staffLog("**" + player().getName() + "** has unlinked their account from **" + name + "#" + discrim + "**");
 	}
 
 	@Async
