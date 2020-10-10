@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.features.discord.commands;
 
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.bncore.features.discord.Bot;
@@ -78,7 +80,7 @@ public class TicketsDiscordCommand extends Command {
 					}
 				}
 			} catch (InvalidInputException ex) {
-				event.reply(PREFIX + ex.getMessage());
+				event.reply(stripColor(PREFIX + ex.getMessage()));
 			} catch (Exception ex) {
 				event.reply(PREFIX + "An internal error occurred while attempting to execute this command");
 				ex.printStackTrace();
