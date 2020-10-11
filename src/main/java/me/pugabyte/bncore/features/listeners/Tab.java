@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.scoreboard.ScoreboardLine;
@@ -11,8 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Tab implements Listener {
 
@@ -30,15 +30,18 @@ public class Tab implements Listener {
 	}
 
 	public static String getHeader(Player player) {
-		return ScoreboardLine.ONLINE.render(player);
+		return System.lineSeparator() + ScoreboardLine.ONLINE.render(player);
 	}
 
 	public static String getFooter(Player player) {
 		return "  " + ScoreboardLine.PING.render(player) + "  &8&l|  " + ScoreboardLine.TPS.render(player) + "  " +
 				System.lineSeparator() +
+				ScoreboardLine.CHANNEL.render(player) +
+				System.lineSeparator() +
 				"" +
 				System.lineSeparator() +
-				"&3Join us on &c/discord";
+				"&3Join us on &c/discord" +
+				System.lineSeparator();
 	}
 
 	public static String getFormat(Player player) {
