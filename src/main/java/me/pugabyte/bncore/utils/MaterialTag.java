@@ -54,6 +54,7 @@ import static org.bukkit.Material.FLINT_AND_STEEL;
 import static org.bukkit.Material.FURNACE;
 import static org.bukkit.Material.GRASS;
 import static org.bukkit.Material.GRASS_BLOCK;
+import static org.bukkit.Material.GRASS_PATH;
 import static org.bukkit.Material.GRAVEL;
 import static org.bukkit.Material.GRINDSTONE;
 import static org.bukkit.Material.HOPPER;
@@ -221,7 +222,7 @@ public class MaterialTag implements Tag<Material> {
 		.append(new MaterialTag("DIORITE", MatchMode.CONTAINS))
 		.append(new MaterialTag("ANDESITE", MatchMode.CONTAINS));
 
-	public static final MaterialTag ALL_DIRT = new MaterialTag(DIRT, GRASS_BLOCK, FARMLAND, PODZOL, COARSE_DIRT);
+	public static final MaterialTag ALL_DIRT = new MaterialTag(DIRT, GRASS_BLOCK, FARMLAND, PODZOL, COARSE_DIRT, GRASS_PATH);
 
 	public static final MaterialTag VILLAGER_WORKBLOCKS = new MaterialTag(BLAST_FURNACE, SMOKER,
 			CARTOGRAPHY_TABLE, BREWING_STAND, COMPOSTER, BARREL, FLETCHING_TABLE,
