@@ -1,85 +1,80 @@
 package me.pugabyte.bncore.features.store.perks.stattrack.models;
 
-/*
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import lombok.Data;
+import lombok.NonNull;
 import me.pugabyte.bncore.features.store.perks.stattrack.utils.HiddenLore;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
-
+@Data
 public class StatItem {
-	ItemStack item;
-	private String id;
-	private Map<Stat, Integer> stats;
+	@NonNull
+	private final ItemStack item;
+	private UUID id;
+	private Map<Stat, Integer> stats = new HashMap<>();
 
-	public StatItem(final ItemStack item) {
+	private static final String ID_PREFIX = "StatTrackId:";
+
+	public StatItem(@NonNull ItemStack item) {
 		this.item = item;
-	}
-
-	public StatItem(final ItemStack item, final String id, final Map<Stat, Integer> stats) {
-		this.item = item;
-		this.id = id;
-		this.stats = stats;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Map<Stat, Integer> getStats() {
-		return stats;
-	}
-
-	public void setStats(Map<Stat, Integer> stats) {
-		this.stats = stats;
-	}
-
-	public ItemStack getItem() {
-		return item;
-	}
-
-	public void setItem(ItemStack item) {
-		this.item = item;
+		parse();
 	}
 
 	public void parse() {
 		ItemMeta meta = item.getItemMeta();
-		if (meta.getLore() != null && HiddenLore.isEncoded(meta.getLore().get(0))) {
+		stats = new HashMap<>();
+		if (isEnabled()) {
 			List<String> lore = meta.getLore();
-			setId(HiddenLore.decode(meta.getLore().get(0).replace("ID:", "")));
 
-			Map<Stat, Integer> newStats = new HashMap<>();
+			id = UUID.fromString(HiddenLore.decode(lore.get(0)).replace(ID_PREFIX, ""));
 
 			lore.stream()
 					.filter(line -> line.contains(": "))
 					.forEach((line) -> {
-						String[] split = StringUtils.stripColor(line).split(": ");
+						String[] split = stripColor(line).split(": ");
 						Stat stat = Stat.valueOf(split[0].replace(" ", "_").toUpperCase());
 						int value = Integer.parseInt(split[1]);
-						newStats.put(stat, value);
+						stats.put(stat, value);
 					});
-
-			setStats(newStats);
-		} else {
-			setId(UUID.randomUUID().toString());
-			stats = new HashMap<>();
-		}
+		} else
+			id = UUID.randomUUID();
 	}
 
-	public void write() {
+	public StatItem write() {
 		List<String> lore = new ArrayList<>();
-		String id = HiddenLore.encode("ID:" + this.id);
+		String id = HiddenLore.encode(ID_PREFIX + this.id);
 		lore.add(id);
-		stats.forEach((stat, value) -> lore.add(ChatColor.DARK_AQUA + stat.toString() + ": " + ChatColor.YELLOW + value));
+		stats.entrySet().stream().sorted(Map.Entry.comparingByKey())
+			.forEachOrdered(entry -> lore.add(ChatColor.DARK_AQUA + entry.getKey().toString() + ": " + ChatColor.YELLOW + entry.getValue()));
 
 		ItemMeta meta = item.getItemMeta();
 		meta.setLore(lore);
 		item.setItemMeta(meta);
+		return this;
+	}
+
+	public void increaseStat(Stat stat, int value) {
+		stats.put(stat, stats.getOrDefault(stat, 0) + value);
+	}
+
+	public boolean isEnabled() {
+		List<String> lore = item.getItemMeta().getLore();
+		if (lore != null && !lore.isEmpty()) {
+			if (HiddenLore.isEncoded(lore.get(0))) {
+				String decoded = HiddenLore.decode(lore.get(0));
+				return !isNullOrEmpty(decoded) && decoded.matches(ID_PREFIX + StringUtils.UUID_REGEX);
+			}
+		}
+		return false;
 	}
 }
-*/

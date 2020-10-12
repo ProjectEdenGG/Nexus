@@ -1,27 +1,20 @@
 package me.pugabyte.bncore.features.store.perks.stattrack;
 
-/* 1.13
+import java.util.Arrays;
+import java.util.List;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.Stat;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.StatIncreaseEvent;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.StatItem;
 import me.pugabyte.bncore.features.store.perks.stattrack.utils.StatTrackUtils;
-import org.bukkit.Bukkit;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerItemMendEvent;
-import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import java.util.List;
-import java.util.Map;
 
 // Potion effect effect absorption, only apply absorption if they are wearing armor
 // damage and absorption for bow
@@ -33,7 +26,7 @@ public class StatTrackListener implements Listener {
 	}
 
 	@EventHandler
-	public void onStatIncrease(StatIncreaseEvent event){
+	public void onStatIncrease(StatIncreaseEvent event) {
 		Player player = event.getPlayer();
 		PlayerInventory inv = player.getInventory();
 		ItemStack item = event.getItem();
@@ -43,9 +36,7 @@ public class StatTrackListener implements Listener {
 		int slot = StatTrackUtils.findItem(inv, item);
 
 		StatItem statItem = new StatItem(item);
-		statItem.parse();
-		Map<Stat, Integer> stats = statItem.getStats();
-		stats.put(stat, stats.getOrDefault(stat, 0) + value);
+		statItem.increaseStat(stat, value);
 		statItem.write();
 
 		inv.setItem(slot, statItem.getItem());
@@ -53,31 +44,28 @@ public class StatTrackListener implements Listener {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (!event.getBlock().getDrops().isEmpty()) {
+		final List<Stat> stats = Arrays.asList(Stat.BLOCKS_BROKEN, Stat.STONE_MINED, Stat.WOOD_CHOPPED, Stat.FLOWERS_PICKED);
+		final Player player = event.getPlayer();
+if (!player.equals(Utils.puga())) return;
 
-			Player player = event.getPlayer();
-			for (Stat stat : Stat.values()) {
-				if (stat.getMaterials() == null || stat.getTool() == null) continue;
+		final ItemStack tool = Utils.getTool(player);
+		if (tool == null || !new StatItem(tool).isEnabled()) return;
+
+		if (!event.getBlock().getDrops().isEmpty()) // TODO: Remove?
+			for (Stat stat : stats) {
 				List<Material> materials = stat.getMaterials();
-				List<Material> tools = stat.getTool().getTools();
-
-				if (materials.contains(event.getBlock().getType())) {
-					ItemStack item = player.getInventory().getItemInMainHand();
-					Material tool = item.getType();
-					if (tools.contains(tool)) {
-						StatIncreaseEvent statIncreaseEvent = new StatIncreaseEvent(player, item, stat, 1);
-						Bukkit.getPluginManager().callEvent(statIncreaseEvent);
-					}
-				}
+				if (stat.isToolApplicable(tool.getType()))
+					if (materials.isEmpty() || materials.contains(event.getBlock().getType()))
+						new StatIncreaseEvent(player, tool, stat, 1).callEvent();
 			}
-		}
 	}
+}
 
 	// Add this to the items lore?
 //	Map<Player, Integer> hits = new HashMap<>();
 
 	// Getting crit % -- (totalCritDmg / 100)* totalNotCritDmg
-
+/*
 	private boolean isCritical(Player p) {
 		return (p.getVelocity().getY() + 0.0784000015258789) < 0;
 	}

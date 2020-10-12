@@ -1,5 +1,10 @@
 package me.pugabyte.bncore.framework.commands.models.events;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -12,12 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Data
 public class CommandEvent extends Event implements Cancellable {
@@ -32,7 +31,7 @@ public class CommandEvent extends Event implements Cancellable {
 	private Method method;
 	private String usage;
 	private boolean cancelled = false;
-	private HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerList();
 
 	public void reply(String message) {
 		sender.sendMessage(colorize(message));

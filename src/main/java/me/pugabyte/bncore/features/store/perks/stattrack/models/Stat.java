@@ -1,11 +1,11 @@
 package me.pugabyte.bncore.features.store.perks.stattrack.models;
 
-/* 1.13
-import org.bukkit.Material;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import lombok.Getter;
+import org.bukkit.Material;
 
 public enum Stat {
 	BLOCKS_BROKEN(
@@ -31,13 +31,13 @@ public enum Stat {
 			Material.STRIPPED_ACACIA_LOG, Material.STRIPPED_BIRCH_LOG, Material.STRIPPED_DARK_OAK_LOG, Material.STRIPPED_JUNGLE_LOG, Material.STRIPPED_OAK_LOG, Material.STRIPPED_SPRUCE_LOG,
 			Material.STRIPPED_ACACIA_WOOD, Material.STRIPPED_BIRCH_WOOD, Material.STRIPPED_DARK_OAK_WOOD, Material.STRIPPED_JUNGLE_WOOD, Material.STRIPPED_OAK_WOOD, Material.STRIPPED_SPRUCE_WOOD),
 	FLOWERS_PICKED(Tool.SHEARS,
-			Material.DANDELION, Material.ROSE_RED, Material.BLUE_ORCHID, Material.ALLIUM, Material.AZURE_BLUET,
+			Material.DANDELION, Material.ROSE_BUSH, Material.BLUE_ORCHID, Material.ALLIUM, Material.AZURE_BLUET,
 			Material.RED_TULIP, Material.ORANGE_TULIP, Material.WHITE_TULIP, Material.PINK_TULIP, Material.OXEYE_DAISY,
 			Material.SUNFLOWER, Material.LILAC, Material.ROSE_BUSH, Material.PEONY);
 
-
-	private Tool tool = null;
+	@Getter
 	private List<Tool> tools = new ArrayList<>();
+	@Getter
 	private List<Material> materials = new ArrayList<>();
 
 	Stat() {}
@@ -47,24 +47,18 @@ public enum Stat {
 	}
 
 	Stat(Tool tool, Material... materials) {
-		this.tool = tool;
+		this.tools = Collections.singletonList(tool);
 		this.materials = Arrays.asList(materials);
 	}
 
-	public Tool getTool() {
-		return tool;
-	}
-
-	public List<Tool> getTools() {
-		return tools;
-	}
-
-	public List<Material> getMaterials() {
-		return materials;
+	public boolean isToolApplicable(Material material) {
+		for (Tool tool : tools)
+			if (tool.getTools().contains(material))
+				return true;
+		return false;
 	}
 
 	public String toString() {
 		return (name().charAt(0) + name().substring(1).toLowerCase()).replaceAll("_", " ");
 	}
 }
-*/
