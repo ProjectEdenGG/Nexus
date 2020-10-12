@@ -63,8 +63,9 @@ public class StatItem {
 		return this;
 	}
 
-	public void increaseStat(Stat stat, int value) {
+	public StatItem increaseStat(Stat stat, int value) {
 		stats.put(stat, stats.getOrDefault(stat, 0) + value);
+		return this;
 	}
 
 	public boolean isEnabled() {

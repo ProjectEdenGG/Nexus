@@ -1,15 +1,13 @@
 package me.pugabyte.bncore.features.store.perks.stattrack.utils;
 
-import org.bukkit.ChatColor;
-
 import java.nio.charset.Charset;
+import org.bukkit.ChatColor;
 
 public class HiddenLore {
 
 	// String constants. TODO Change them to something unique to avoid conflict with other plugins!
 	private static final String SEQUENCE_HEADER = "" + ChatColor.RESET + ChatColor.UNDERLINE + ChatColor.RESET;
 	private static final String SEQUENCE_FOOTER = "" + ChatColor.RESET + ChatColor.ITALIC + ChatColor.RESET;
-
 
 	public static String encode(String hiddenString) {
 		return quote(stringToColors(hiddenString));
@@ -24,7 +22,6 @@ public class HiddenLore {
 	public static String decode(String input) {
 		return colorsToString(extract(input));
 	}
-
 
 	public static String replaceHiddenString(String input, String hiddenString) {
 		if (input == null) return null;

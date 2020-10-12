@@ -39,12 +39,27 @@ public class DiscordUser {
 		return name;
 	}
 
+	public OfflinePlayer getOfflinePlayer() {
+		return Utils.getPlayer(uuid);
+	}
+
+	public String getIngameName() {
+		OfflinePlayer player = getOfflinePlayer();
+		if (player == null)
+			return null;
+		return player.getName();
+	}
+
 	public String getName() {
 		return Discord.getName(userId);
 	}
 
 	public String getDiscrim() {
 		return getUser().getDiscriminator();
+	}
+
+	public String getNameAndDiscrim() {
+		return getName() + "#" + getDiscrim();
 	}
 
 	private User getUser() {

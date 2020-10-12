@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.store.perks.stattrack;
 
-import java.util.Arrays;
 import java.util.List;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.Stat;
@@ -8,11 +7,14 @@ import me.pugabyte.bncore.features.store.perks.stattrack.models.StatIncreaseEven
 import me.pugabyte.bncore.features.store.perks.stattrack.models.StatItem;
 import me.pugabyte.bncore.features.store.perks.stattrack.utils.StatTrackUtils;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -27,37 +29,38 @@ public class StatTrackListener implements Listener {
 
 	@EventHandler
 	public void onStatIncrease(StatIncreaseEvent event) {
-		Player player = event.getPlayer();
-		PlayerInventory inv = player.getInventory();
+		PlayerInventory inv = event.getPlayer().getInventory();
 		ItemStack item = event.getItem();
-		Stat stat = event.getStat();
-		int value = event.getValue();
 
 		int slot = StatTrackUtils.findItem(inv, item);
+		ItemStack newItem = new StatItem(item).increaseStat(event.getStat(), event.getValue()).write().getItem();
 
-		StatItem statItem = new StatItem(item);
-		statItem.increaseStat(stat, value);
-		statItem.write();
+		inv.setItem(slot, newItem);
+	}
 
-		inv.setItem(slot, statItem.getItem());
+	private void checkStats(Player player, Block block, Stat... stats) {
+		if (!player.equals(Utils.puga())) return;
+		if (player.getGameMode() != GameMode.SURVIVAL) return;
+		final ItemStack tool = Utils.getTool(player);
+		if (tool == null || !new StatItem(tool).isEnabled()) return;
+
+		for (Stat stat : stats) {
+			List<Material> materials = stat.getMaterials();
+			if (stat.isToolApplicable(tool.getType()))
+				if (materials.isEmpty() || materials.contains(block.getType()))
+					new StatIncreaseEvent(player, tool, stat, 1).callEvent();
+		}
 	}
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		final List<Stat> stats = Arrays.asList(Stat.BLOCKS_BROKEN, Stat.STONE_MINED, Stat.WOOD_CHOPPED, Stat.FLOWERS_PICKED);
-		final Player player = event.getPlayer();
-if (!player.equals(Utils.puga())) return;
-
-		final ItemStack tool = Utils.getTool(player);
-		if (tool == null || !new StatItem(tool).isEnabled()) return;
-
 		if (!event.getBlock().getDrops().isEmpty()) // TODO: Remove?
-			for (Stat stat : stats) {
-				List<Material> materials = stat.getMaterials();
-				if (stat.isToolApplicable(tool.getType()))
-					if (materials.isEmpty() || materials.contains(event.getBlock().getType()))
-						new StatIncreaseEvent(player, tool, stat, 1).callEvent();
-			}
+			checkStats(event.getPlayer(), event.getBlock(), Stat.BLOCKS_BROKEN, Stat.STONE_MINED, Stat.WOOD_CHOPPED, Stat.DIRT_EXCAVATED, Stat.FLOWERS_PICKED);
+	}
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		checkStats(event.getPlayer(), event.getBlock(), Stat.PATHS_CREATED, Stat.DIRT_TILLED);
 	}
 }
 

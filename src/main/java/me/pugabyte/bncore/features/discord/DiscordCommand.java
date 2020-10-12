@@ -1,11 +1,16 @@
 package me.pugabyte.bncore.features.discord;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.discord.DiscordCaptcha;
 import me.pugabyte.bncore.models.discord.DiscordCaptchaService;
@@ -20,8 +25,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-
-import java.util.stream.Collectors;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
 public class DiscordCommand extends CustomCommand {
@@ -114,6 +117,38 @@ public class DiscordCommand extends CustomCommand {
 
 		user.setUserId(null);
 		service.save(user);
+	}
+
+	@Path("linkStatus [player]")
+	@Permission("group.staff")
+	void linkStatus(@Arg("self") DiscordUser discordUser) {
+		send(PREFIX + "Link status of &e" + discordUser.getIngameName());
+
+		if (isNullOrEmpty(discordUser.getUserId()))
+			send(" &7- &cNot linked to any member");
+		else {
+			Member member = discordUser.getMember();
+			if (member == null)
+				send(json(" &7- &cLinked to unknown member with ID &e").next(discordUser.getUserId()).insert(discordUser.getUserId()));
+			else
+				send(json(" &7- &3Linked to member &e")
+					.next(discordUser.getNameAndDiscrim()).insert(discordUser.getNameAndDiscrim())
+					.next(" &3/ &e")
+					.next(discordUser.getUserId()).insert(discordUser.getUserId()));
+		}
+
+		if (isNullOrEmpty(discordUser.getRoleId()))
+			send(" &7- &cNot linked to any bridge role");
+		else {
+			Role role = Discord.getGuild().getRoleById(discordUser.getRoleId());
+			if (role == null)
+				send(json(" &7- &cLinked to unknown bridge role with ID &e").next(discordUser.getRoleId()).insert(discordUser.getRoleId()));
+			else
+				send(json(" &7- &3Linked to bridge role &e")
+					.next(role.getName()).insert(role.getName())
+					.next(" &3/ &e")
+					.next(role.getId()).insert(role.getId()));
+		}
 	}
 
 	@Async
@@ -215,4 +250,13 @@ public class DiscordCommand extends CustomCommand {
 		});
 	}
 
+	@ConverterFor(DiscordUser.class)
+	DiscordUser convertToDiscordUser(String value) {
+		return new DiscordService().get(convertToOfflinePlayer(value));
+	}
+
+	@TabCompleterFor(DiscordUser.class)
+	List<String> tabCompleteDiscordUser(String value) {
+		return tabCompletePlayer(value);
+	}
 }
