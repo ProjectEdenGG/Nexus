@@ -94,11 +94,16 @@ public enum Tool {
 		this.tools = Arrays.asList(tools);
 	}
 
-	public boolean isArmour() {
-		return this == HELMET || this == CHESTPLATE || this == LEGGINGS || this == BOOTS;
-	}
+	public enum ToolGroup {
+		ARMOUR(HELMET, CHESTPLATE, LEGGINGS, BOOTS),
+		WEAPONS(SWORD, AXE, BOW, CROSSBOW, TRIDENT),
+		TOOLS(PICKAXE, AXE, SHOVEL, HOE, SHEARS);
 
-	public boolean isWeapon() {
-		return this == BOW || this == CROSSBOW || this == SWORD || this == TRIDENT;
+		@Getter
+		private final List<Tool> tools;
+
+		ToolGroup(Tool... tools) {
+			this.tools = Arrays.asList(tools);
+		}
 	}
 }
