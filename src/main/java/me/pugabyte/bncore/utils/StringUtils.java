@@ -1,18 +1,6 @@
 package me.pugabyte.bncore.utils;
 
 import com.google.gson.Gson;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -27,6 +15,19 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 public class StringUtils {
 	@Getter
 	public static final String colorChar = "§";
@@ -39,7 +40,6 @@ public class StringUtils {
 	public static String colorize(String input) {
 		if (input == null)
 			return null;
-
 		// 1.16
 //		Matcher matcher = hexPattern.matcher(input);
 //		while (matcher.find()) {
