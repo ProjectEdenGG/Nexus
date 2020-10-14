@@ -214,13 +214,13 @@ public class BNCore extends JavaPlugin {
 		try { Discord.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { LiteBans.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { TrustFeature.shutdown(); 								} catch (Throwable ex) { ex.printStackTrace(); }
+		try { BFQuests.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { protocolManager.removePacketListeners(this); 	} catch (Throwable ex) { ex.printStackTrace(); }
 		try { commands.unregisterAll(); 							} catch (Throwable ex) { ex.printStackTrace(); }
 		try { broadcastReload(); 									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { Chat.shutdown(); 										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MySQLPersistence.shutdown(); 							} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MongoDBPersistence.shutdown(); 						} catch (Throwable ex) { ex.printStackTrace(); }
-		try { BFQuests.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
 	}
 	// @formatter:on;
 

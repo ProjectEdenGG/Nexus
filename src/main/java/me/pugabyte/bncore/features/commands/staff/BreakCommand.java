@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -21,7 +22,7 @@ public class BreakCommand extends CustomCommand {
 	void fuck() {
 		if (player().hasPermission("group.staff")) {
 			Block block = player().getTargetBlockExact(500);
-			if (block == null || block.getType() == Material.AIR)
+			if (Utils.isNullOrAir(block))
 				error("No block found");
 
 			final BlockBreakEvent event = new BlockBreakEvent(block, player());

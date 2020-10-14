@@ -24,6 +24,12 @@ public class APRegions {
 	public static String sialiaCrashing_vent_door = sialiaCrashing + "_vent_door";
 
 	// Sialia Wreckage
+	private static final String sialiaWreckage = APSetType.SIALIA_WRECKAGE.get().getRegion();
+	public static String sialiaWreckage_shipColor = sialiaWreckage + "_shipcolor";
+
+	// Vespyr
+	private static final String vespyr = APSetType.VESPYR.get().getRegion();
+	public static String vespyr_shipColor = vespyr + "_shipcolor";
 
 
 }

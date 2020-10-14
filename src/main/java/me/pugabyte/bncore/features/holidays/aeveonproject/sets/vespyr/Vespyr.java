@@ -1,10 +1,12 @@
 package me.pugabyte.bncore.features.holidays.aeveonproject.sets.vespyr;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APRegions;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.annotations.Region;
 import org.bukkit.event.Listener;
 
+import java.util.Collections;
 import java.util.List;
 
 @Region("vespyr")
@@ -20,7 +22,7 @@ public class Vespyr implements Listener, APSet {
 
 	@Override
 	public List<String> getUpdateRegions() {
-		return null;
+		return Collections.singletonList(APRegions.vespyr_shipColor);
 	}
 
 	@Override
