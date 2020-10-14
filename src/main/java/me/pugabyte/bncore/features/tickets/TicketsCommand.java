@@ -13,7 +13,6 @@ import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class TicketsCommand extends CustomCommand {
@@ -67,11 +66,7 @@ public class TicketsCommand extends CustomCommand {
 		player().teleport(ticket.getLocation(), TeleportCause.COMMAND);
 
 		String message = "&e" + player().getName() + " &3teleported to ticket &e#" + ticket.getId();
-		Tickets.tellOtherStaff(player(), message);
-		if (ticket.getOwner() instanceof Player) {
-			Player owner = ticket.getOwner();
-			send(owner, PREFIX + message);
-		}
+		Tickets.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Teleporting to ticket &e#" + ticket.getId());
 
@@ -104,11 +99,7 @@ public class TicketsCommand extends CustomCommand {
 		service.save(ticket);
 
 		String message = "&e" + player().getName() + " &cclosed &3ticket &e#" + ticket.getId();
-		Tickets.tellOtherStaff(player(), message);
-		if (ticket.getOwner() instanceof Player) {
-			Player owner = ticket.getOwner();
-			send(owner, PREFIX + message);
-		}
+		Tickets.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &cclosed");
 	}
@@ -122,11 +113,7 @@ public class TicketsCommand extends CustomCommand {
 		service.save(ticket);
 
 		String message = "&e" + player().getName() + " &areopened &3ticket &e#" + ticket.getId();
-		Tickets.tellOtherStaff(player(), message);
-		if (ticket.getOwner() instanceof Player) {
-			Player owner = ticket.getOwner();
-			send(owner, PREFIX + message);
-		}
+		Tickets.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &areopened");
 	}

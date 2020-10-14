@@ -1,5 +1,8 @@
 package me.pugabyte.bncore.features.tickets;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.models.ticket.Ticket;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -34,13 +37,19 @@ public class Tickets {
 				.line();
 	}
 
-	public static void tellOtherStaff(Player player, String message) {
+	public static void broadcast(Ticket ticket, Player player, String message) {
 		Discord.log("**[Tickets]** " + message);
 
-		Bukkit.getOnlinePlayers().stream()
-				.filter(staff -> player == null || !staff.getUniqueId().equals(player.getUniqueId()))
-				.filter(staff -> staff.hasPermission("group.moderator"))
-				.forEach(staff -> Utils.send(staff, PREFIX + message));
+		Set<UUID> uuids = new HashSet<>();
+		for (Player staff : Bukkit.getOnlinePlayers())
+			if (staff.hasPermission("group.moderator"))
+				if (player == null || !staff.getUniqueId().equals(player.getUniqueId()))
+					uuids.add(staff.getUniqueId());
+
+		if (ticket.getOwner() instanceof Player)
+			uuids.add(((Player) ticket.getOwner()).getUniqueId());
+
+		uuids.forEach(uuid -> Utils.send(uuid, PREFIX + message));
 	}
 
 }

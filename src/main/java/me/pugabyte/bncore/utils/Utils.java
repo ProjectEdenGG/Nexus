@@ -1,11 +1,33 @@
 package me.pugabyte.bncore.utils;
 
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
 import com.google.common.base.Strings;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTList;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -35,6 +57,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -43,29 +66,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Utils {
 
@@ -424,13 +424,6 @@ public class Utils {
 		return collection == null || collection.isEmpty();
 	}
 
-	public static ItemStack getToolRequired(Player player) {
-		ItemStack item = getTool(player);
-		if (isNullOrAir(item))
-			throw new InvalidInputException("You are not holding anything");
-		return item;
-	}
-
 	public static ItemStack getTool(Player player) {
 		ItemStack mainHand = player.getInventory().getItemInMainHand();
 		ItemStack offHand = player.getInventory().getItemInOffHand();
@@ -439,6 +432,30 @@ public class Utils {
 		else if (!isNullOrAir(offHand))
 			return offHand;
 		return null;
+	}
+
+	public static ItemStack getToolRequired(Player player) {
+		ItemStack item = getTool(player);
+		if (isNullOrAir(item))
+			throw new InvalidInputException("You are not holding anything");
+		return item;
+	}
+
+	public static EquipmentSlot getHandWithTool(Player player) {
+		ItemStack mainHand = player.getInventory().getItemInMainHand();
+		ItemStack offHand = player.getInventory().getItemInOffHand();
+		if (!isNullOrAir(mainHand))
+			return EquipmentSlot.HAND;
+		else if (!isNullOrAir(offHand))
+			return EquipmentSlot.OFF_HAND;
+		return null;
+	}
+
+	public static EquipmentSlot getHandWithToolRequired(Player player) {
+		EquipmentSlot hand = getHandWithTool(player);
+		if (hand == null)
+			throw new InvalidInputException("You are not holding anything");
+		return hand;
 	}
 
 	public static boolean isNullOrAir(Block block) {
@@ -886,7 +903,6 @@ public class Utils {
 			return false;
 
 		return viewTitle.equals(title);
-
 	}
 
 }

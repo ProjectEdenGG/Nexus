@@ -1,27 +1,22 @@
 package me.pugabyte.bncore.features.store.perks.stattrack;
 
-/* 1.13
+import java.util.List;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.Stat;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.StatIncreaseEvent;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.StatItem;
 import me.pugabyte.bncore.features.store.perks.stattrack.utils.StatTrackUtils;
-import org.bukkit.Bukkit;
+import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerItemMendEvent;
-import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import java.util.List;
-import java.util.Map;
 
 // Potion effect effect absorption, only apply absorption if they are wearing armor
 // damage and absorption for bow
@@ -33,51 +28,47 @@ public class StatTrackListener implements Listener {
 	}
 
 	@EventHandler
-	public void onStatIncrease(StatIncreaseEvent event){
-		Player player = event.getPlayer();
-		PlayerInventory inv = player.getInventory();
+	public void onStatIncrease(StatIncreaseEvent event) {
+		PlayerInventory inv = event.getPlayer().getInventory();
 		ItemStack item = event.getItem();
-		Stat stat = event.getStat();
-		int value = event.getValue();
 
 		int slot = StatTrackUtils.findItem(inv, item);
+		ItemStack newItem = new StatItem(item).increaseStat(event.getStat(), event.getValue()).write().getItem();
 
-		StatItem statItem = new StatItem(item);
-		statItem.parse();
-		Map<Stat, Integer> stats = statItem.getStats();
-		stats.put(stat, stats.getOrDefault(stat, 0) + value);
-		statItem.write();
+		inv.setItem(slot, newItem);
+	}
 
-		inv.setItem(slot, statItem.getItem());
+	private void checkStats(Player player, Block block, Stat... stats) {
+		if (!player.equals(Utils.puga())) return;
+		if (player.getGameMode() != GameMode.SURVIVAL) return;
+		final ItemStack tool = Utils.getTool(player);
+		if (tool == null || !new StatItem(tool).isEnabled()) return;
+
+		for (Stat stat : stats) {
+			List<Material> materials = stat.getMaterials();
+			if (stat.isToolApplicable(tool.getType()))
+				if (materials.isEmpty() || materials.contains(block.getType()))
+					new StatIncreaseEvent(player, tool, stat, 1).callEvent();
+		}
 	}
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (!event.getBlock().getDrops().isEmpty()) {
-
-			Player player = event.getPlayer();
-			for (Stat stat : Stat.values()) {
-				if (stat.getMaterials() == null || stat.getTool() == null) continue;
-				List<Material> materials = stat.getMaterials();
-				List<Material> tools = stat.getTool().getTools();
-
-				if (materials.contains(event.getBlock().getType())) {
-					ItemStack item = player.getInventory().getItemInMainHand();
-					Material tool = item.getType();
-					if (tools.contains(tool)) {
-						StatIncreaseEvent statIncreaseEvent = new StatIncreaseEvent(player, item, stat, 1);
-						Bukkit.getPluginManager().callEvent(statIncreaseEvent);
-					}
-				}
-			}
-		}
+		if (!event.getBlock().getDrops().isEmpty()) // TODO: Remove?
+			checkStats(event.getPlayer(), event.getBlock(), Stat.BLOCKS_BROKEN, Stat.STONE_MINED, Stat.WOOD_CHOPPED, Stat.DIRT_EXCAVATED, Stat.FLOWERS_PICKED);
 	}
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		checkStats(event.getPlayer(), event.getBlock(), Stat.PATHS_CREATED, Stat.DIRT_TILLED);
+	}
+}
 
 	// Add this to the items lore?
 //	Map<Player, Integer> hits = new HashMap<>();
 
 	// Getting crit % -- (totalCritDmg / 100)* totalNotCritDmg
-
+/*
 	private boolean isCritical(Player p) {
 		return (p.getVelocity().getY() + 0.0784000015258789) < 0;
 	}

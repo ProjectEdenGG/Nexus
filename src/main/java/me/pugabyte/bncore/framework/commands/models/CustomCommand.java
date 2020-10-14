@@ -1,6 +1,14 @@
 package me.pugabyte.bncore.framework.commands.models;
 
+import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
+
 import com.google.common.base.Strings;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,16 +43,8 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -78,12 +78,20 @@ public abstract class CustomCommand extends ICustomCommand {
 		return StringUtils.plural(string, number);
 	}
 
+	protected ItemStack getTool() {
+		return Utils.getTool(player());
+	}
+
 	protected ItemStack getToolRequired() {
 		return Utils.getToolRequired(player());
 	}
 
-	protected ItemStack getTool() {
-		return Utils.getTool(player());
+	protected EquipmentSlot getHandWithTool() {
+		return Utils.getHandWithTool(player());
+	}
+
+	protected EquipmentSlot getHandWithToolRequired() {
+		return Utils.getHandWithToolRequired(player());
 	}
 
 	protected void send(CommandSender sender, String message) {

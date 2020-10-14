@@ -1,5 +1,7 @@
 package me.pugabyte.bncore.features.discord.commands;
 
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.bncore.features.discord.Bot;
@@ -15,9 +17,8 @@ import me.pugabyte.bncore.models.ticket.TicketService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
-@HandledBy(Bot.KODA)
+@HandledBy(Bot.RELAY)
 public class TicketsDiscordCommand extends Command {
 
 	public TicketsDiscordCommand() {
@@ -31,62 +32,59 @@ public class TicketsDiscordCommand extends Command {
 			return;
 
 		Tasks.async(() -> {
-			DiscordUser user = new DiscordService().checkVerified(event.getAuthor().getId());
-			OfflinePlayer player = Utils.getPlayer(user.getUuid());
-
-			String[] args = event.getArgs().split(" ");
-			if (args.length == 0 || !args[0].toLowerCase().matches("(view|close|reopen)"))
-				throw new InvalidInputException("Correct usage: `/tickets <view|close|reopen> <ticketId>`");
-
-			String id = args[1];
-			if (!Utils.isInt(id))
-				throw new InvalidInputException("Ticket ID must be a number");
-
 			final String PREFIX = "**[Tickets]** ";
-			String message = "";
-			String nl = System.lineSeparator();
-			final TicketService service = new TicketService();
-			Ticket ticket = service.get(Integer.parseInt(id));
+			try {
+				DiscordUser user = new DiscordService().checkVerified(event.getAuthor().getId());
+				OfflinePlayer player = Utils.getPlayer(user.getUuid());
 
-			switch (args[0].toLowerCase()) {
-				case "view":
-					message += nl + PREFIX + "**#" + ticket.getId() + "**";
-					if (!ticket.isOpen())
-						message += " (Closed)";
-					message += nl + "**Owner:** " + ticket.getOwnerName();
-					message += nl + "**When:** " + ticket.getTimespan() + " ago";
-					message += nl + "**Description:** " + ticket.getDescription();
-					break;
-				case "close": {
-					if (!ticket.isOpen())
-						throw new InvalidInputException("Ticket already closed");
+				String[] args = event.getArgs().split(" ");
+				if (args.length == 0 || !args[0].toLowerCase().matches("(view|close|reopen)"))
+					throw new InvalidInputException("Correct usage: `/tickets <view|close|reopen> <ticketId>`");
 
-					ticket.setOpen(false);
-					service.save(ticket);
+				String id = args[1];
+				if (!Utils.isInt(id))
+					throw new InvalidInputException("Ticket ID must be a number");
 
-					message += player.getName() + " closed ticket #" + ticket.getId();
-					Tickets.tellOtherStaff(null, message);
-					if (ticket.getOwner() instanceof Player)
-						Utils.send((Player) ticket.getOwner(), PREFIX + message);
-					break;
+				final String nl = System.lineSeparator();
+				final TicketService service = new TicketService();
+				final Ticket ticket = service.get(Integer.parseInt(id));
+
+				switch (args[0].toLowerCase()) {
+					case "view":
+						String message = PREFIX + "**#" + ticket.getId() + "** ";
+						message += ticket.isOpen() ? "(Open)" : "(Closed)";
+						message += nl + "**Owner:** " + ticket.getOwnerName();
+						message += nl + "**When:** " + ticket.getTimespan() + " ago";
+						message += nl + "**Description:** " + ticket.getDescription();
+						event.reply(message);
+						break;
+					case "close": {
+						if (!ticket.isOpen())
+							throw new InvalidInputException("Ticket already closed");
+
+						ticket.setOpen(false);
+						service.save(ticket);
+
+						Tickets.broadcast(ticket,null, player.getName() + " closed ticket #" + ticket.getId());
+						break;
+					}
+					case "reopen": {
+						if (ticket.isOpen())
+							throw new InvalidInputException("Ticket already open");
+
+						ticket.setOpen(true);
+						service.save(ticket);
+
+						Tickets.broadcast(ticket,null, player.getName() + " reopened ticket #" + ticket.getId());
+						break;
+					}
 				}
-				case "reopen": {
-					if (ticket.isOpen())
-						throw new InvalidInputException("Ticket already open");
-
-					ticket.setOpen(true);
-					service.save(ticket);
-
-					message += player.getName() + " reopened ticket #" + ticket.getId();
-					Tickets.tellOtherStaff(null, message);
-					if (ticket.getOwner() instanceof Player)
-						Utils.send((Player) ticket.getOwner(), PREFIX + message);
-					break;
-				}
+			} catch (InvalidInputException ex) {
+				event.reply(stripColor(PREFIX + ex.getMessage()));
+			} catch (Exception ex) {
+				event.reply(PREFIX + "An internal error occurred while attempting to execute this command");
+				ex.printStackTrace();
 			}
-
-			if (!message.isEmpty())
-				event.reply(message);
 		});
 	}
 

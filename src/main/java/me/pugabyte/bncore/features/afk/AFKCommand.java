@@ -10,7 +10,6 @@ import me.pugabyte.bncore.models.afk.AFKPlayer;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PrivateChannel;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,17 +28,16 @@ public class AFKCommand extends CustomCommand implements Listener {
 	void afk(String autoreply) {
 		AFKPlayer player = AFK.get(player());
 
-		if (player.isAfk())
-			player.notAfk();
-		else {
+		if (!isNullOrEmpty(autoreply))
 			player.setMessage(autoreply);
-			player.setForceAfk(true);
-			player.afk();
-			Tasks.wait(Time.SECOND.x(10), () -> {
-				player.setLocation();
-				player.setForceAfk(false);
-			});
-		}
+
+		if (player.isAfk())
+			if (isNullOrEmpty(autoreply))
+				player.notAfk();
+			else
+				player.forceAfk(player::message);
+		else
+			player.forceAfk(player::afk);
 	}
 
 	@EventHandler(ignoreCancelled = true)

@@ -1,6 +1,18 @@
 package me.pugabyte.bncore.utils;
 
 import com.google.gson.Gson;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -14,19 +26,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class StringUtils {
 	@Getter
@@ -175,6 +174,10 @@ public class StringUtils {
 		return string.substring(0, Math.min(number, string.length()));
 	}
 
+	public static String camelCase(Enum<?> _enum) {
+		return camelCase(_enum.name());
+	}
+
 	public static String camelCase(String text) {
 		if (text == null || text.isEmpty()) {
 			return text;
@@ -225,6 +228,12 @@ public class StringUtils {
 
 	private static String uuidUnformat(String uuid) {
 		return uuid.replaceAll("-", "");
+	}
+
+	public static final String UUID_REGEX = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
+
+	public static boolean isUuid(String uuid) {
+		return uuid.matches(UUID_REGEX);
 	}
 
 	public static String pretty(ItemStack item) {
