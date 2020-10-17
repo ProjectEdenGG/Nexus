@@ -15,6 +15,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.SymbolBanner;
+import me.pugabyte.bncore.utils.SymbolBanner.Symbol;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.DyeColor;
@@ -42,7 +43,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		if (input.equalsIgnoreCase("*")) {
 			// All Banners
 			for (SymbolBanner.Symbol symbol : SymbolBanner.Symbol.values()) {
-				ItemBuilder banner = SymbolBanner.get(baseBanner.clone(), symbol, baseColor, patternColor);
+				ItemBuilder banner = symbol.get(baseBanner.clone(), baseColor, patternColor);
 				if (banner != null)
 					Utils.giveItem(player(), banner.build());
 			}
@@ -51,7 +52,9 @@ public class BannerCommand extends CustomCommand implements Listener {
 			char[] chars = input.toUpperCase().replaceAll(" ", "").toCharArray();
 			for (int i = 0; i < chars.length; i++) {
 				char character = input.charAt(i);
-				ItemBuilder banner = SymbolBanner.get(baseBanner.clone(), character, baseColor, patternColor);
+				Symbol symbol = Symbol.of(character);
+				if (symbol == null) continue;
+				ItemBuilder banner = symbol.get(baseBanner.clone(), baseColor, patternColor);
 				if (banner != null)
 					Utils.giveItem(player(), banner.build());
 			}
