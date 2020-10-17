@@ -22,6 +22,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -98,6 +99,8 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 		Player player = (Player) event.getEntity();
 		if (!player.hasPermission(PERMISSION)) return;
 		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player))) return;
+		ItemMeta meta = event.getItem().getItemStack().getItemMeta();
+		if (meta.hasDisplayName() || meta.hasLore() || meta.hasEnchants()) return;
 
 		AutoTrashService service = new AutoTrashService();
 		AutoTrash autoTrash = service.get(player);
