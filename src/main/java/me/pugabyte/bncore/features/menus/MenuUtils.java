@@ -13,6 +13,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Location;
@@ -163,13 +164,15 @@ public abstract class MenuUtils {
 		public static class ConfirmationMenuBuilder {
 
 			public void open(Player player) {
-				ConfirmationMenu build = _build();
-				SmartInventory.builder()
-						.title(colorize(build.getTitle()))
-						.provider(build)
-						.size(3, 9)
-						.build()
-						.open(player);
+				Tasks.sync(() -> {
+					ConfirmationMenu build = _build();
+					SmartInventory.builder()
+							.title(colorize(build.getTitle()))
+							.provider(build)
+							.size(3, 9)
+							.build()
+							.open(player);
+				});
 			}
 
 			@Deprecated
