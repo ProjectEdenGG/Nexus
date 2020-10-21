@@ -135,6 +135,11 @@ public class JsonBuilder {
 		return this;
 	}
 
+	public JsonBuilder copy(String command) {
+		builder.event(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, command));
+		return this;
+	}
+
 	public JsonBuilder insert(String insertion) {
 		builder.insertion(insertion);
 		return this;
