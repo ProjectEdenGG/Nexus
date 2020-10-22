@@ -1,14 +1,6 @@
 package me.pugabyte.bncore.framework.commands.models;
 
-import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
-
 import com.google.common.base.Strings;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,6 +37,15 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -264,6 +265,18 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected boolean isSelf(Player player) {
 		return isPlayer() && player.getUniqueId().equals(player().getUniqueId());
+	}
+
+	protected boolean isStaff() {
+		return isPlayer() && isStaff(player());
+	}
+
+	protected boolean isStaff(Player player) {
+		return isPlayer() && new Nerd(player).getRank().isStaff();
+	}
+
+	protected boolean isStaff(OfflinePlayer player) {
+		return isPlayer() && new Nerd(player).getRank().isStaff();
 	}
 
 	protected boolean isNullOrEmpty(String string) {

@@ -1,33 +1,11 @@
 package me.pugabyte.bncore.utils;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 import com.google.common.base.Strings;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTList;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -66,6 +44,29 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Utils {
 
@@ -522,6 +523,15 @@ public class Utils {
 				send(offlinePlayer.getPlayer(), message);
 		} else
 			sender.sendMessage(colorize(message));
+	}
+
+	public static void send(Player player, JsonBuilder builder) {
+		if (player.isOnline())
+			player.sendMessage(builder.build());
+	}
+
+	public static void send(CommandSender sender, JsonBuilder builder) {
+		sender.sendMessage(builder.build());
 	}
 
 	public static void send(Player player, BaseComponent... baseComponents) {

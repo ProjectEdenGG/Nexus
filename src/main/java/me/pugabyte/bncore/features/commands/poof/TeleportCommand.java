@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.commands.poof;
 
+import de.bluecolored.bluemap.api.BlueMapAPI;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -17,6 +18,7 @@ import me.pugabyte.bncore.utils.Utils.RelativeLocation.Modify;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,6 +28,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.utils.Utils.getLocation;
 
@@ -63,6 +66,43 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	void run(@Arg(tabCompleter = OfflinePlayer.class) String arg1, @Arg(tabCompleter = OfflinePlayer.class) String arg2) {
 		if (!player().hasPermission("group.staff")) {
 			runCommand("tpa " + argsString());
+			return;
+		}
+
+		if (arg1.matches("(http(s)?:\\/\\/)?(blue|staff)?map.bnn.gg/#[a-zA-Z0-9_]+(:-?[0-9]+){2}(:-?[0-9]+(\\.[0-9]+)?){3}:-?[0-9]+.*")) {
+			String[] split = arg1.split("#");
+			String[] coords = split[1].split(":");
+			AtomicReference<String> worldName = new AtomicReference<>(coords[0]);
+			if (BlueMapAPI.getInstance().isPresent())
+				BlueMapAPI.getInstance().get().getMap(worldName.get()).ifPresent(map -> worldName.set(map.getWorld().getSaveFolder().toFile().getName()));
+
+			World world = Bukkit.getWorld(worldName.get());
+			if (world == null)
+				error("World &e" + worldName + " &cnot found");
+
+			double x = Double.parseDouble(coords[1]);
+			double z = Double.parseDouble(coords[2]);
+			double terrainHeight = Double.parseDouble(coords[6]);
+			double aboveGround = Double.parseDouble(coords[4]);
+			double y = terrainHeight + aboveGround;
+			if (y > 275) y = 275;
+
+			float yaw = 0;
+			float pitch = 0;
+
+		/*
+			TODO yaw and pitch
+			double webyaw = Double.parseDouble(coords[3]);
+			double webpitch = Double.parseDouble(coords[5]);
+
+			float yaw = (float) Math.toDegrees(webyaw);
+			float pitch = (float) Math.toDegrees(webpitch);
+
+			BNCore.log("webyaw: " + webyaw + " / yaw: " + yaw + " / webpitch: " + webpitch + " / pitch: " + pitch);
+		*/
+
+			Location location = new Location(world, x, y, z, yaw, pitch);
+			player().teleport(location, TeleportCause.COMMAND);
 			return;
 		}
 
