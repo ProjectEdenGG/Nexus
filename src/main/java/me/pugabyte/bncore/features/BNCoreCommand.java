@@ -32,7 +32,9 @@ import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.StringUtils.*;
+import me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -45,6 +47,7 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -65,7 +68,10 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
-import static me.pugabyte.bncore.utils.StringUtils.*;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
+import static me.pugabyte.bncore.utils.StringUtils.paste;
+import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Permission("group.seniorstaff")
@@ -392,6 +398,26 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("jingles <jingle>")
 	void jingles(Jingle jingle) {
 		jingle.play(player());
+	}
+
+	// Doesnt work
+	@Path("setPowered [boolean] [doPhysics]")
+	void setPowered(@Arg("true") boolean powered, @Arg("false") boolean doPhysics) {
+		line();
+		Block block = player().getLocation().getBlock();
+		RedstoneRail rail = ((RedstoneRail) block.getBlockData());
+		send("Before: " + (rail.isPowered() ? "is" : "not") + " powered");
+		rail.setPowered(powered);
+		block.setBlockData(rail, doPhysics);
+		player().sendBlockChange(block.getLocation(), rail);
+		send("After: " + (((RedstoneRail) block.getBlockData()).isPowered() ? "is" : "not") + " powered");
+	}
+
+	@Path("getPowered")
+	void getPowered() {
+		Block block = player().getLocation().getBlock();
+		RedstoneRail rail = ((RedstoneRail) block.getBlockData());
+		send((rail.isPowered() ? "is" : "not") + " powered");
 	}
 
 	@ConverterFor(Nerd.class)

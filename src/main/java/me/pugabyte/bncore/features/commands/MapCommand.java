@@ -1,15 +1,13 @@
 package me.pugabyte.bncore.features.commands;
 
 import de.bluecolored.bluemap.api.BlueMapAPI;
-import de.bluecolored.bluemap.api.BlueMapMap;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @Aliases({"maplink", "livemap"})
 public class MapCommand extends CustomCommand {
@@ -33,15 +31,14 @@ public class MapCommand extends CustomCommand {
 		// also delete Censor#dynmapLinkShorten()
 
 		String subdomain = "bluemap"; // "map";
-		if (isStaff()) {
-			Set<String> names = new HashSet<>();
-			BlueMapAPI.getInstance().ifPresent(api -> names.addAll(api.getMaps().stream().map(BlueMapMap::getId).collect(Collectors.toSet())));
+		Map<String, String> names = new HashMap<>();
+		BlueMapAPI.getInstance().ifPresent(api -> api.getMaps().forEach(map -> names.put(map.getWorld().getSaveFolder().toFile().getName(), map.getId())));
 
-			if (!names.isEmpty() && !names.contains(world))
+		if (isStaff())
+			if (!names.isEmpty() && !names.containsKey(world))
 				subdomain = "staffmap";
-		}
 
-		link = "http://" + subdomain + ".bnn.gg/#" + world + ":" + x + ":" + z + ":0:30:0";
+		link = "http://" + subdomain + ".bnn.gg/#" + names.getOrDefault(world, world) + ":" + x + ":" + z + ":0:30:0";
 		send(json("&3Current Location: &e" + link).url(link));
 	}
 }

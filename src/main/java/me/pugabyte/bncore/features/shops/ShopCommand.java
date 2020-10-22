@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
+import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
@@ -34,6 +35,7 @@ public class ShopCommand extends CustomCommand {
 			send("&cComing soon!");
 	}
 
+	@Permission("group.admin")
 	@Path("addItems1 [player]")
 	void addItems1(@Arg("self") OfflinePlayer player) {
 		Shop shop = service.get(player);
@@ -46,6 +48,7 @@ public class ShopCommand extends CustomCommand {
 		service.save(shop);
 	}
 
+	@Permission("group.admin")
 	@Path("addItems2 [player]")
 	void addItems2(@Arg("self") OfflinePlayer player) {
 		Shop shop = service.get(player);
@@ -58,6 +61,7 @@ public class ShopCommand extends CustomCommand {
 		service.save(shop);
 	}
 
+	@Permission("group.admin")
 	@Path("addItems3 [player]")
 	void addItems3(@Arg("self") OfflinePlayer player) {
 		Shop shop = service.get(player);

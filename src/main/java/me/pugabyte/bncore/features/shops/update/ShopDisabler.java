@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.shops;
+package me.pugabyte.bncore.features.shops.update;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.MaterialTag;

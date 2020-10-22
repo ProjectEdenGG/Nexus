@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.shops;
+package me.pugabyte.bncore.features.shops.update;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

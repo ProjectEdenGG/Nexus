@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.shops;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.shops.update.ShopDisabler;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
 import me.pugabyte.bncore.models.shop.Shop.Product;
