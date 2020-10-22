@@ -29,17 +29,13 @@ public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvi
 		List<Material> correctOrder = new ArrayList<>();
 		for (int i = 0; i < 7; i++) {
 			Material mat;
-			do {
-				mat = RandomUtils.randomElement(validMaterials);
-			}
+			do mat = RandomUtils.randomElement(validMaterials);
 			while (usedCards.contains(mat));
 			usedCards.add(mat);
 		}
 		for (int i = 0; i < 5; i++) {
 			Material mat;
-			do {
-				mat = RandomUtils.randomElement(usedCards);
-			}
+			do mat = RandomUtils.randomElement(usedCards);
 			while (correctOrder.contains(mat));
 			correctOrder.add(mat);
 			contents.set(1, i + 2, ClickableItem.empty(new ItemBuilder(correctOrder.get(i)).name(" ").build()));

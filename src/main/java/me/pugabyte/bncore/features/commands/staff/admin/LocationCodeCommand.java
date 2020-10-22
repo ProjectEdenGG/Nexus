@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.commands.staff.admin;
 
 import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.regions.Region;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -14,29 +15,32 @@ import org.bukkit.World;
 import java.text.DecimalFormat;
 
 @Permission("group.admin")
-public class LocationJavaCommand extends CustomCommand {
+public class LocationCodeCommand extends CustomCommand {
 
-	public LocationJavaCommand(CommandEvent event) {
+	public LocationCodeCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("current")
 	void current() {
-		send(javaCode(player().getLocation()));
+		send(asJava(player().getLocation()));
 	}
 
 	@Path("selection")
 	void selection() {
 		try {
 			WorldEditUtils utils = new WorldEditUtils(player());
-			Location loc = utils.toLocation(utils.getPlayerSelection(player()).getMinimumPoint());
-			send(javaCode(loc));
-		} catch (NullPointerException | IncompleteRegionException exception) {
+			Region selection = utils.getPlayerSelection(player());
+			if (selection == null)
+				throw new IncompleteRegionException();
+			Location loc = utils.toLocation(selection.getMinimumPoint());
+			send(asJava(loc));
+		} catch (IncompleteRegionException exception) {
 			error("Incomplete region. Please select positions 1 & 2");
 		}
 	}
 
-	public static JsonBuilder javaCode(Location loc) {
+	public static JsonBuilder asJava(Location loc) {
 		DecimalFormat nf = new DecimalFormat("#.00");
 		World world = loc.getWorld();
 		String worldString = "Bukkit.getWorld(\"" + world.getName() + "\")";

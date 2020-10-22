@@ -1,10 +1,12 @@
 package me.pugabyte.bncore.features.holidays.halloween20;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.halloween20.models.Pumpkin;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,11 +21,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 public class LostPumpkins implements Listener {
+	private static final String PREFIX = StringUtils.getPrefix("LostPumpkins");
 
 	public LostPumpkins() {
+		BNCore.registerListener(this);
 		startParticleTask();
 	}
 
@@ -43,24 +45,24 @@ public class LostPumpkins implements Listener {
 	// Finding Pumpkins
 	@EventHandler
 	public void onClick(PlayerInteractEvent event) {
-		if (!Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.LEFT_CLICK_BLOCK).contains(event.getAction())) return;
+		if (!Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.LEFT_CLICK_BLOCK).contains(event.getAction()) || event.getClickedBlock() == null) return;
 		Pumpkin pumpkin = Pumpkin.getByLocation(event.getClickedBlock().getLocation());
 		if (pumpkin == null) return;
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(event.getPlayer());
 		if (user.getLostPumpkinsStage() == QuestStage.LostPumpkins.NOT_STARTED) {
-			event.getPlayer().sendMessage("&3This looks like it should be in the pumpkin carving contest. Maybe I should talk talk to &e(NPC).");
+			user.send(PREFIX + "This looks like it should be in the pumpkin carving contest. Maybe I should talk talk to &e(NPC).");
 			return;
 		}
 		if (user.getFoundPumpkins().contains(event.getClickedBlock())) {
-			event.getPlayer().sendMessage(colorize("&3You have already found that pumpkin."));
+			user.send(PREFIX + "&cYou have already found that pumpkin");
 			return;
 		}
 		user.getFoundPumpkins().add(event.getClickedBlock().getLocation());
 		event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.AIR.createBlockData());
 		event.getPlayer().sendBlockChange(pumpkin.getEnd(), event.getClickedBlock().getBlockData());
 		if (user.getFoundPumpkins().size() == 8) {
-			event.getPlayer().sendMessage(colorize("&3You have found the last pumpkin! Talk to &e(NPC) &3at the pumpkin carving contest"));
+			user.send(PREFIX + "You have found the last pumpkin! Talk to &e(NPC) &3at the pumpkin carving contest");
 		}
 	}
 

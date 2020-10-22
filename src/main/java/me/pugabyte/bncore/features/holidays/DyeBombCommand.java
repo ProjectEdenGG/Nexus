@@ -56,7 +56,6 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		Utils.giveItem(player, item);
 	}
 
-
 	@EventHandler
 	public void throwDyeBomb(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;

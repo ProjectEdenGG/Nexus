@@ -73,8 +73,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			String[] split = arg1.split("#");
 			String[] coords = split[1].split(":");
 			AtomicReference<String> worldName = new AtomicReference<>(coords[0]);
-			if (BlueMapAPI.getInstance().isPresent())
-				BlueMapAPI.getInstance().get().getMap(worldName.get()).ifPresent(map -> worldName.set(map.getWorld().getSaveFolder().toFile().getName()));
+			BlueMapAPI.getInstance().flatMap(api -> api.getMap(worldName.get())).ifPresent(map -> worldName.set(map.getWorld().getSaveFolder().toFile().getName()));
 
 			World world = Bukkit.getWorld(worldName.get());
 			if (world == null)
