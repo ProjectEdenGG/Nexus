@@ -69,7 +69,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (arg1.matches("(http(s)?:\\/\\/)?(blue|staff)?map.bnn.gg/#[a-zA-Z0-9_]+(:-?[0-9]+){2}(:-?[0-9]+(\\.[0-9]+)?){3}:-?[0-9]+.*")) {
+		if (arg1.matches("(http(s)?:\\/\\/)?(blue|staff)?map.bnn.gg/#[a-zA-Z0-9_]+(:-?[0-9]+(\\.[0-9]+)?){6}.*")) {
 			String[] split = arg1.split("#");
 			String[] coords = split[1].split(":");
 			AtomicReference<String> worldName = new AtomicReference<>(coords[0]);
@@ -87,21 +87,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			double y = terrainHeight + aboveGround;
 			if (y > 275) y = 275;
 
-			float yaw = 0;
-			float pitch = 0;
-
-		/*
-			TODO yaw and pitch
-			double webyaw = Double.parseDouble(coords[3]);
-			double webpitch = Double.parseDouble(coords[5]);
-
-			float yaw = (float) Math.toDegrees(webyaw);
-			float pitch = (float) Math.toDegrees(webpitch);
-
-			BNCore.log("webyaw: " + webyaw + " / yaw: " + yaw + " / webpitch: " + webpitch + " / pitch: " + pitch);
-		*/
-
-			Location location = new Location(world, x, y, z, yaw, pitch);
+			Location location = new Location(world, x, y, z, 0, 90);
 			player().teleport(location, TeleportCause.COMMAND);
 			return;
 		}
