@@ -31,7 +31,7 @@ public class LocationJavaCommand extends CustomCommand {
 			WorldEditUtils utils = new WorldEditUtils(player());
 			Location loc = utils.toLocation(utils.getPlayerSelection(player()).getMinimumPoint());
 			send(javaCode(loc));
-		} catch (IncompleteRegionException exception) {
+		} catch (NullPointerException | IncompleteRegionException exception) {
 			error("Incomplete region. Please select positions 1 & 2");
 		}
 	}
