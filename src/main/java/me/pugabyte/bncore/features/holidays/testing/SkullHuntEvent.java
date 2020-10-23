@@ -43,8 +43,10 @@ public abstract class SkullHuntEvent implements Listener {
 			new SoundUtils.SoundArgs(Sound.BLOCK_ENCHANTMENT_TABLE_USE, 2f, 2f),
 			new SoundUtils.SoundArgs(Sound.BLOCK_BEACON_POWER_SELECT, 2f, 2f)
 	);
-	protected List<SoundUtils.SoundArgs> duplicateSounds = Collections.singletonList(new SoundUtils.SoundArgs(Sound.ENTITY_VILLAGER_NO, 2F, 1F));
-	protected List<SoundUtils.SoundArgs> foundAllSounds = Collections.singletonList(new SoundUtils.SoundArgs(Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, 2F, 1F));
+	protected List<SoundUtils.SoundArgs> foundAlreadySounds = Collections.singletonList(
+			new SoundUtils.SoundArgs(Sound.ENTITY_VILLAGER_NO, 2F, 1F));
+	protected List<SoundUtils.SoundArgs> foundAllSounds = Collections.singletonList(
+			new SoundUtils.SoundArgs(Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, 2F, 1F));
 
 	// ItemStack Prizes
 	List<ItemBuilder> singlePrizes = null;
@@ -63,12 +65,12 @@ public abstract class SkullHuntEvent implements Listener {
 		if (clickedSkull(event)) {
 
 			if (hasFound(loc, player)) {
-				findSkull(loc, player);
+				find(loc, player);
 
 				if (hasFoundAll(player))
-					foundAllSkulls(player);
+					foundAll(player);
 			} else {
-				duplicateSkull(player);
+				foundAlready(player);
 			}
 		}
 	}
@@ -118,7 +120,7 @@ public abstract class SkullHuntEvent implements Listener {
 	}
 
 	// TODO
-	public void findSkull(Location location, Player player) {
+	public void find(Location location, Player player) {
 		// Add skull location to database
 
 		Utils.send(player, foundOneMsg);
@@ -126,15 +128,15 @@ public abstract class SkullHuntEvent implements Listener {
 		giveSinglePrize(player);
 	}
 
-	public void foundAllSkulls(Player player) {
+	public void foundAll(Player player) {
 		Utils.send(player, foundAllMsg);
 		playSounds(player, foundAllSounds);
 		giveOverallPrize(player);
 	}
 
-	public void duplicateSkull(Player player) {
+	public void foundAlready(Player player) {
 		Utils.send(player, foundAlreadyMsg);
-		playSounds(player, duplicateSounds);
+		playSounds(player, foundAlreadySounds);
 	}
 
 	public void playSounds(Player player, List<SoundUtils.SoundArgs> sounds) {
