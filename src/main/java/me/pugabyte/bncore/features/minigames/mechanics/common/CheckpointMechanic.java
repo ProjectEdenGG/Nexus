@@ -12,13 +12,11 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-
-import java.util.Arrays;
 
 public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
@@ -80,7 +78,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
 		if (player.getInventory().getItemInMainHand() == null) return;
 		if (player.getInventory().getItemInMainHand().getType() != Material.POISONOUS_POTATO) return;
-		if (!Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.RIGHT_CLICK_AIR).contains(event.getAction())) return;
+		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		getMatchData(minigamer).toCheckpoint(minigamer);
 	}

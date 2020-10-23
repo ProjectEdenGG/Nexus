@@ -17,6 +17,7 @@ import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -25,7 +26,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -455,7 +455,7 @@ public class MainIsland implements Listener, Island {
 	@EventHandler
 	public void onPrizeOpen(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
-		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.RIGHT_CLICK_AIR))
+		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 		if (!BearFair20.isBFItem(event.getItem())) return;
 		if (!event.getItem().equals(specialPrize)) return;

@@ -26,6 +26,7 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import me.pugabyte.bncore.utils.Utils.Axis;
 import me.pugabyte.bncore.utils.Utils.MapRotation;
 import me.pugabyte.bncore.utils.WorldEditUtils;
@@ -45,7 +46,6 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -57,7 +57,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -191,7 +190,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onSignClick(PlayerInteractEvent event) {
 		if (!event.getPlayer().getWorld().getName().equals(WORLD)) return;
-		if (!Arrays.asList(Action.LEFT_CLICK_BLOCK, Action.RIGHT_CLICK_BLOCK).contains(event.getAction())) return;
+		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		Sign sign = (Sign) event.getClickedBlock().getState();

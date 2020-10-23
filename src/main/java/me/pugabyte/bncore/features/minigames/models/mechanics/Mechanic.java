@@ -16,9 +16,9 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.GameMode;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -200,7 +200,7 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
+		if (ActionGroup.CLICK_BLOCK.applies(event))
 			if (event.getClickedBlock() != null)
 				if (!minigamer.getMatch().getArena().canUseBlock(event.getClickedBlock().getType())) {
 					BNCore.log("Cancelling interact");

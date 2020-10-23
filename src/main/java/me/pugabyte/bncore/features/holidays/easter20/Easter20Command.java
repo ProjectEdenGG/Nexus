@@ -14,6 +14,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -21,12 +22,9 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Arrays;
 
 @Disabled
 @NoArgsConstructor
@@ -64,7 +62,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onSignClick(PlayerInteractEvent event) {
-		if (!Arrays.asList(Action.LEFT_CLICK_BLOCK, Action.RIGHT_CLICK_BLOCK).contains(event.getAction())) return;
+		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
 		if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
 

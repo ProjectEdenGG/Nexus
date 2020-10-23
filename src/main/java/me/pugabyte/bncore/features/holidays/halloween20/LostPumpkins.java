@@ -8,6 +8,7 @@ import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -18,10 +19,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-
-import java.util.Arrays;
 
 public class LostPumpkins implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("LostPumpkins");
@@ -49,7 +47,7 @@ public class LostPumpkins implements Listener {
 	// Finding Pumpkins
 	@EventHandler
 	public void onClick(PlayerInteractEvent event) {
-		if (!Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.LEFT_CLICK_BLOCK).contains(event.getAction()) || event.getClickedBlock() == null) return;
+		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
 		Pumpkin pumpkin = Pumpkin.getByLocation(event.getClickedBlock().getLocation());
 		if (pumpkin == null) return;
 		Halloween20Service service = new Halloween20Service();

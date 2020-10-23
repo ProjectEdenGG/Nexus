@@ -10,6 +10,7 @@ import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import me.pugabyte.bncore.utils.WorldGroup;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -20,7 +21,6 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -58,7 +58,7 @@ public class RewardChest implements Listener {
 
 	@EventHandler
 	public void onMysteryChestClick(PlayerInteractEvent event) {
-		if (event.getAction() != Action.LEFT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
 		if (event.getClickedBlock() == null) return;
 		if (event.getHand() == null) return;
 		if (!event.getHand().equals(EquipmentSlot.HAND)) return;

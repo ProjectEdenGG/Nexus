@@ -13,6 +13,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -24,7 +25,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -59,7 +59,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void throwDyeBomb(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
-		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.RIGHT_CLICK_AIR))
+		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 		if (!event.getMaterial().equals(Material.MAGMA_CREAM)) return;
 

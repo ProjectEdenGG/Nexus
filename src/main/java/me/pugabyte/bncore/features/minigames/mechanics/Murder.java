@@ -21,6 +21,7 @@ import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -49,7 +50,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,8 +222,7 @@ public class Murder extends UnbalancedTeamMechanic {
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 
-		List<Action> actions = Arrays.asList(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);
-		if (!actions.contains(event.getAction())) return;
+		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
 			List<Material> allowedRedstone = new ArrayList<Material>() {{ add(Material.LEVER); }};

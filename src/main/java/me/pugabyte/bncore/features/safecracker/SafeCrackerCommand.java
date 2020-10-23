@@ -22,6 +22,7 @@ import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -33,7 +34,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
@@ -41,7 +41,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -179,7 +178,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onSignClick(PlayerInteractEvent event) {
 		WorldGuardUtils wgUtils = BearFair20.getWGUtils();
-		if (!Arrays.asList(Action.LEFT_CLICK_BLOCK, Action.RIGHT_CLICK_BLOCK).contains(event.getAction())) return;
+		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
 		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
 		//if (!wgUtils.isInRegion(event.getClickedBlock().getLocation(), BearFair20.getRegion())) return;

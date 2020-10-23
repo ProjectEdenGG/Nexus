@@ -15,6 +15,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
@@ -27,7 +28,6 @@ import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
@@ -121,7 +121,7 @@ public class BearFair20 implements Listener {
 		Player player = event.getPlayer();
 		if (!isAtBearFair(player)) return;
 
-		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+		if (ActionGroup.RIGHT_CLICK.applies(event)) {
 			ItemStack item = player.getInventory().getItemInMainHand();
 			if (!isNullOrAir(item)) {
 				if (item.getType().equals(Material.ENDER_PEARL)) {
