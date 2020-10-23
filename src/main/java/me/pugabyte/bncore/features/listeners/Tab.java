@@ -15,7 +15,7 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 public class Tab implements Listener {
 
-	public Tab() {
+	static {
 		Tasks.repeatAsync(Time.TICK, Time.SECOND.x(5), Tab::update);
 	}
 
