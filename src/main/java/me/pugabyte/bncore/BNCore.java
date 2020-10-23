@@ -32,6 +32,7 @@ import me.pugabyte.bncore.features.trust.TrustFeature;
 import me.pugabyte.bncore.features.votes.Votes;
 import me.pugabyte.bncore.features.wiki.Wiki;
 import me.pugabyte.bncore.framework.commands.Commands;
+import me.pugabyte.bncore.framework.features.Features;
 import me.pugabyte.bncore.framework.persistence.MongoDBPersistence;
 import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.ModelListeners;
@@ -69,12 +70,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 public class BNCore extends JavaPlugin {
 	private Commands commands;
+	private Features features;
 	private static BNCore instance;
 	@Getter
 	private final static UUID UUID0 = new UUID(0, 0);
@@ -96,7 +99,11 @@ public class BNCore extends JavaPlugin {
 
 	public enum Env {
 		DEV,
-		PROD
+		PROD;
+
+		public static boolean applies(Env... envs) {
+			return Arrays.asList(envs).contains(BNCore.getEnv());
+		}
 	}
 
 	public static Env getEnv() {
@@ -196,7 +203,11 @@ public class BNCore extends JavaPlugin {
 	public void onEnable() {
 		new Timer("Enable", () -> {
 			new Timer(" Config", this::setupConfig);
-			new Timer(" Features", this::enableFeatures);
+			new Timer(" Features (old)", this::enableFeatures);
+			new Timer(" Features", () -> {
+				features = new Features(this, "me.pugabyte.bncore.features");
+				features.registerAll();
+			});
 			new Timer(" Commands", () -> {
 				commands = new Commands(this, "me.pugabyte.bncore.features");
 				commands.registerAll();
@@ -210,17 +221,17 @@ public class BNCore extends JavaPlugin {
 		try { Utils.runCommandAsConsole("save-all");				} catch (Throwable ex) { ex.printStackTrace(); }
 		try { cron.stop();											} catch (Throwable ex) { ex.printStackTrace(); }
 		try { Minigames.shutdown();									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { AFK.shutdown(); 										} catch (Throwable ex) { ex.printStackTrace(); }
-		try { Discord.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { LiteBans.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { TrustFeature.shutdown(); 								} catch (Throwable ex) { ex.printStackTrace(); }
-		try { BFQuests.shutdown(); 									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { protocolManager.removePacketListeners(this); 	} catch (Throwable ex) { ex.printStackTrace(); }
-		try { commands.unregisterAll(); 							} catch (Throwable ex) { ex.printStackTrace(); }
-		try { broadcastReload(); 									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { Chat.shutdown(); 										} catch (Throwable ex) { ex.printStackTrace(); }
-		try { MySQLPersistence.shutdown(); 							} catch (Throwable ex) { ex.printStackTrace(); }
-		try { MongoDBPersistence.shutdown(); 						} catch (Throwable ex) { ex.printStackTrace(); }
+		try { AFK.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
+		try { Discord.shutdown();									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { LiteBans.shutdown();									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { BFQuests.shutdown();									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { protocolManager.removePacketListeners(this);			} catch (Throwable ex) { ex.printStackTrace(); }
+		try { commands.unregisterAll();								} catch (Throwable ex) { ex.printStackTrace(); }
+		try { features.unregisterAll();								} catch (Throwable ex) { ex.printStackTrace(); }
+		try { broadcastReload();									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { Chat.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
+		try { MySQLPersistence.shutdown();							} catch (Throwable ex) { ex.printStackTrace(); }
+		try { MongoDBPersistence.shutdown();						} catch (Throwable ex) { ex.printStackTrace(); }
 	}
 	// @formatter:on;
 

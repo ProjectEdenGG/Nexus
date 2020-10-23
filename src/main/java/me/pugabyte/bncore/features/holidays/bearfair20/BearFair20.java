@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.BNCore.Env;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.IslandType;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
@@ -66,6 +67,9 @@ public class BearFair20 implements Listener {
 	public static boolean allowWarp = true;
 
 	public BearFair20() {
+		if (BNCore.getEnv() != Env.PROD)
+			return;
+
 		BNCore.registerListener(this);
 		new Timer("    Fairgrounds", Fairgrounds::new);
 		new Timer("    Islands", IslandType::values);

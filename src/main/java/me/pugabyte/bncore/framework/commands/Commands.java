@@ -2,28 +2,22 @@ package me.pugabyte.bncore.framework.commands;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.DoubleSlash;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.utils.Time.Timer;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.plugin.Plugin;
 import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
-import static me.pugabyte.bncore.utils.StringUtils.listLast;
-import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -58,20 +52,18 @@ public class Commands {
 	}
 
 	public void registerAll() {
-		for (Class<? extends CustomCommand> command : commandSet)
+		for (Class<? extends CustomCommand> clazz : commandSet)
 			try {
-				if (!Modifier.isAbstract(command.getModifiers()) && command.getAnnotation(Disabled.class) == null)
-					register(new ObjenesisStd().newInstance(command));
+				if (Utils.canEnable(clazz))
+					register(new ObjenesisStd().newInstance(clazz));
 			} catch (Throwable ex) {
-				BNCore.log("Error while registering command " + command.getSimpleName());
+				BNCore.log("Error while registering command " + clazz.getSimpleName());
 				ex.printStackTrace();
 			}
 	}
 
 	private void register(CustomCommand customCommand) {
 		new Timer("  Register command " + customCommand.getName(), () -> {
-			if (listLast(customCommand.getClass().toString(), ".").startsWith("_")) return;
-
 			try {
 				for (String alias : customCommand.getAllAliases()) {
 					mapUtils.register(alias, customCommand);
@@ -83,20 +75,7 @@ public class Commands {
 				ex.printStackTrace();
 			}
 
-			try {
-				boolean hasNoArgsConstructor = Stream.of(customCommand.getClass().getConstructors()).anyMatch((c) -> c.getParameterCount() == 0);
-				if (customCommand instanceof Listener) {
-					if (!hasNoArgsConstructor)
-						BNCore.warn("Cannot register listener on command " + customCommand.getClass().getSimpleName() + ", needs @NoArgsConstructor");
-					else
-						BNCore.registerListener((Listener) customCommand.getClass().newInstance());
-				} else
-					if (new ArrayList<>(getAllMethods(customCommand.getClass(), withAnnotation(EventHandler.class))).size() > 0)
-						BNCore.warn("Found @EventHandlers in " + customCommand.getClass().getSimpleName() + " which does not implement Listener"
-								+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+			Utils.tryRegisterListener(customCommand);
 		});
 	}
 
@@ -112,19 +91,21 @@ public class Commands {
 	}
 
 	private void unregister(CustomCommand customCommand) {
-		try {
-			for (String alias : customCommand.getAllAliases()) {
-				mapUtils.unregister(customCommand.getName());
-				commands.remove(alias);
+		new Timer("  Unregister command " + customCommand.getName(), () -> {
+			try {
+				for (String alias : customCommand.getAllAliases()) {
+					mapUtils.unregister(customCommand.getName());
+					commands.remove(alias);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		try {
-			customCommand._shutdown();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+			try {
+				customCommand._shutdown();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 
 	private void registerConvertersAndTabCompleters() {
