@@ -20,7 +20,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,28 +27,24 @@ import java.util.List;
 
 @Data
 public class SkullHuntEvent implements Listener {
-	@Nonnull
-	String settingType = "skullHunt";
-	@Nonnull
-	List<String> skullUUIDs = new ArrayList<>();
-	@Nonnull
-	Integer totalHeads = -1;
-	List<Location> skullLocs = null;
-	List<String> activeRegions = null;
+	protected String settingType = "skullHunt";
+	protected List<String> skullUuids = new ArrayList<>();
+	protected List<Location> skullLocations = null;
+	protected List<String> activeRegions = null;
 
 	// Messages
-	String PREFIX = StringUtils.getPrefix("SkullHunt");
-	String foundOneMsg = PREFIX + "You found a skull!";
-	String duplicateMsg = PREFIX + "You already found this skull!";
-	String foundAllMsg = PREFIX + "You found all the skulls!";
+	protected String PREFIX = StringUtils.getPrefix("SkullHunt");
+	protected String foundOneMsg = "You found a skull!";
+	protected String foundAlreadyMsg = "You already found this skull!";
+	protected String foundAllMsg = "You found all the skulls!";
 
 	// Sounds
-	List<SoundUtils.SoundArgs> foundOneSounds = Arrays.asList(
+	protected List<SoundUtils.SoundArgs> foundOneSounds = Arrays.asList(
 			new SoundUtils.SoundArgs(Sound.BLOCK_ENCHANTMENT_TABLE_USE, 2f, 2f),
 			new SoundUtils.SoundArgs(Sound.BLOCK_BEACON_POWER_SELECT, 2f, 2f)
 	);
-	List<SoundUtils.SoundArgs> duplicateSounds = Collections.singletonList(new SoundUtils.SoundArgs(Sound.ENTITY_VILLAGER_NO, 2F, 1F));
-	List<SoundUtils.SoundArgs> foundAllSounds = Collections.singletonList(new SoundUtils.SoundArgs(Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, 2F, 1F));
+	protected List<SoundUtils.SoundArgs> duplicateSounds = Collections.singletonList(new SoundUtils.SoundArgs(Sound.ENTITY_VILLAGER_NO, 2F, 1F));
+	protected List<SoundUtils.SoundArgs> foundAllSounds = Collections.singletonList(new SoundUtils.SoundArgs(Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, 2F, 1F));
 
 	// ItemStack Prizes
 	List<ItemBuilder> singlePrizes = null;
@@ -67,7 +62,7 @@ public class SkullHuntEvent implements Listener {
 		Location loc = block.getLocation();
 		if (clickedSkull(event)) {
 
-			if (isNotFound(loc, player)) {
+			if (hasFound(loc, player)) {
 				findSkull(loc, player);
 
 				if (hasFoundAll(player))
@@ -86,7 +81,7 @@ public class SkullHuntEvent implements Listener {
 
 		Skull skull = (Skull) block.getState();
 		if (skull.getOwningPlayer() == null) return false;
-		if (!skullUUIDs.contains(skull.getOwningPlayer().getUniqueId().toString())) return false;
+		if (!skullUuids.contains(skull.getOwningPlayer().getUniqueId().toString())) return false;
 
 		Player player = event.getPlayer();
 		if (!Utils.isNullOrEmpty(activeRegions) && !isInActionRegion(player)) return false;
@@ -104,8 +99,12 @@ public class SkullHuntEvent implements Listener {
 		return false;
 	}
 
+	public Integer getTotalHeads() {
+		return skullLocations.size();
+	}
+
 	// TODO
-	boolean isNotFound(Location location, Player player) {
+	boolean hasFound(Location location, Player player) {
 		// Check with database
 
 		return true;
@@ -134,7 +133,7 @@ public class SkullHuntEvent implements Listener {
 	}
 
 	public void duplicateSkull(Player player) {
-		Utils.send(player, duplicateMsg);
+		Utils.send(player, foundAlreadyMsg);
 		playSounds(player, duplicateSounds);
 	}
 
