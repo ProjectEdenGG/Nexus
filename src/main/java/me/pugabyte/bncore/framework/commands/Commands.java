@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.framework.commands;
 
 import lombok.Getter;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.ICustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -27,7 +26,6 @@ import static org.reflections.ReflectionUtils.withAnnotation;
 @SuppressWarnings({"unused", "unchecked"})
 public class Commands {
 	private final Plugin plugin;
-	private final String path;
 	private final CommandMapUtils mapUtils;
 	private final Set<Class<? extends CustomCommand>> commandSet;
 	@Getter
@@ -39,11 +37,10 @@ public class Commands {
 	@Getter
 	private static final Map<String, String> redirects = new HashMap<>();
 	@Getter
-	private static final String pattern = "\\/(\\/|)[a-zA-Z0-9\\-_]+";
+	private static final String pattern = "(\\/){1,2}[a-zA-Z0-9\\-_]+";
 
 	public Commands(Plugin plugin, String path) {
 		this.plugin = plugin;
-		this.path = path;
 		this.mapUtils = new CommandMapUtils(plugin);
 		this.commandSet = new Reflections(path).getSubTypesOf(CustomCommand.class);
 		registerConvertersAndTabCompleters();
@@ -76,7 +73,7 @@ public class Commands {
 				if (Utils.canEnable(clazz))
 					register(new ObjenesisStd().newInstance(clazz));
 			} catch (Throwable ex) {
-				BNCore.log("Error while registering command " + prettyName(clazz));
+				plugin.getLogger().info("Error while registering command " + prettyName(clazz));
 				ex.printStackTrace();
 			}
 	}
@@ -111,7 +108,7 @@ public class Commands {
 				if (!Modifier.isAbstract(clazz.getModifiers()))
 					unregister(clazz);
 			} catch (Throwable ex) {
-				BNCore.log("Error while unregistering command " + prettyName(clazz));
+				plugin.getLogger().info("Error while unregistering command " + prettyName(clazz));
 				ex.printStackTrace();
 			}
 	}

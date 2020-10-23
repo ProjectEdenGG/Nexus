@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.framework.features;
 
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.utils.Time.Timer;
@@ -20,13 +19,11 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public class Features {
 	private final Plugin plugin;
-	private final String path;
 	private final Set<Class<? extends Feature>> featureSet;
 	private final static Map<Class<? extends Feature>, Feature> features = new HashMap<>();
 
 	public Features(Plugin plugin, String path) {
 		this.plugin = plugin;
-		this.path = path;
 		this.featureSet = new Reflections(path).getSubTypesOf(Feature.class);
 	}
 
@@ -52,7 +49,7 @@ public class Features {
 				if (Utils.canEnable(clazz))
 					register(new ObjenesisStd().newInstance(clazz));
 			} catch (Throwable ex) {
-				BNCore.log("Error while registering feature " + prettyName(clazz));
+				plugin.getLogger().info("Error while registering feature " + prettyName(clazz));
 				ex.printStackTrace();
 			}
 	}
@@ -75,7 +72,7 @@ public class Features {
 				Utils.tryRegisterListener(feature);
 				features.put(feature.getClass(), feature);
 			} catch (Exception ex) {
-				BNCore.log("Error while registering feature " + feature.getName());
+				plugin.getLogger().info("Error while registering feature " + feature.getName());
 				ex.printStackTrace();
 			}
 		});
@@ -107,7 +104,7 @@ public class Features {
 			try {
 				feature.shutdown();
 			} catch (Exception ex) {
-				BNCore.log("Error while unregistering feature " + feature.getName());
+				plugin.getLogger().info("Error while unregistering feature " + feature.getName());
 				ex.printStackTrace();
 			}
 			features.remove(feature.getClass());
