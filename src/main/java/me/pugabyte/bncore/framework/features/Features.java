@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static me.pugabyte.bncore.utils.StringUtils.listLast;
-
 public class Features {
 	private final Plugin plugin;
 	private final String path;
@@ -40,7 +38,7 @@ public class Features {
 	}
 
 	public static String prettyName(Class<? extends Feature> clazz) {
-		return listLast(clazz.toString(), ".").replaceAll("Feature$", "");
+		return clazz.getSimpleName().replaceAll("Feature$", "");
 	}
 
 	public void registerAll() {

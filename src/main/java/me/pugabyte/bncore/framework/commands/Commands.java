@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.utils.StringUtils.listLast;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -62,7 +61,7 @@ public class Commands {
 	}
 
 	public static String prettyName(Class<? extends ICustomCommand> clazz) {
-		return listLast(clazz.toString(), ".").replaceAll("Command$", "");
+		return clazz.getSimpleName().replaceAll("Command$", "");
 	}
 
 	public void registerAll() {
