@@ -279,6 +279,18 @@ public abstract class CustomCommand extends ICustomCommand {
 		return isPlayer() && new Nerd(player).getRank().isStaff();
 	}
 
+	protected boolean isSeniorStaff() {
+		return isPlayer() && isSeniorStaff(player());
+	}
+
+	protected boolean isSeniorStaff(Player player) {
+		return isPlayer() && new Nerd(player).getRank().isSeniorStaff();
+	}
+
+	protected boolean isSeniorStaff(OfflinePlayer player) {
+		return isPlayer() && new Nerd(player).getRank().isSeniorStaff();
+	}
+
 	protected boolean isNullOrEmpty(String string) {
 		return Strings.isNullOrEmpty(string);
 	}
