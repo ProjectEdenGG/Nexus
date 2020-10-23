@@ -66,7 +66,8 @@ public class MainIsland implements Listener, Island {
 		BNCore.registerListener(this);
 
 		List<ItemStack> drops = new ArrayList<>(specialPrizeLoc.getBlock().getDrops());
-		specialPrize = new ItemBuilder(drops.get(0)).clone().lore(itemLore, "&f", "RClick while holding to open").name("Special Prize").glow().build();
+		if (!drops.isEmpty())
+			specialPrize = new ItemBuilder(drops.get(0)).clone().lore(itemLore, "&f", "RClick while holding to open").name("Special Prize").glow().build();
 	}
 
 	public enum MainNPCs implements TalkingNPC {

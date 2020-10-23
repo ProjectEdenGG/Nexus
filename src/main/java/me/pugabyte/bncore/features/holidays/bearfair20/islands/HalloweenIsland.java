@@ -65,7 +65,8 @@ public class HalloweenIsland implements Listener, Island {
 		soundTasks();
 
 		List<ItemStack> drops = new ArrayList<>(basketLoc.getBlock().getDrops());
-		basketItem = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Basket of Halloween Candy").build();
+		if (!drops.isEmpty())
+			basketItem = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Basket of Halloween Candy").build();
 	}
 
 	public enum HalloweenNPCs implements TalkingNPC {

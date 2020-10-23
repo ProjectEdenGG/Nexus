@@ -9,9 +9,11 @@ import me.pugabyte.bncore.models.halloween20.Halloween20User;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,11 +34,13 @@ public class LostPumpkins implements Listener {
 	private void startParticleTask() {
 		Tasks.repeatAsync(0, 2 * 20, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				Halloween20Service service = new Halloween20Service();
-				Halloween20User user = service.get(player);
+				if (player.getWorld() != Halloween20.getWorld())
+					continue;
+
+				Halloween20User user = new Halloween20Service().get(player);
 				for (Pumpkin pumpkin : Pumpkin.values()) {
 					if (user.getFoundPumpkins().contains(pumpkin.getOriginal())) continue;
-					player.spawnParticle(Particle.REDSTONE, pumpkin.getOriginal(), 5);
+					player.spawnParticle(Particle.REDSTONE, pumpkin.getOriginal(), 5, new DustOptions(Color.ORANGE, 1));
 				}
 			}
 		});
@@ -70,7 +74,7 @@ public class LostPumpkins implements Listener {
 	@EventHandler
 	public void onEnterRegion(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
-		if (!event.getRegion().getId().equalsIgnoreCase(Halloween20.region)) return;
+		if (!event.getRegion().getId().equalsIgnoreCase(Halloween20.getRegion())) return;
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		for (Location loc : user.getFoundPumpkins()) {
