@@ -4,7 +4,6 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import org.bukkit.Material;
 
 public class FireworkBowCommand extends CustomCommand {
@@ -16,7 +15,7 @@ public class FireworkBowCommand extends CustomCommand {
 	@Path
 	void run() {
 		if (!(player().hasPermission("fireworkbow.single") || player().hasPermission("fireworkbow.infinite")))
-			throw new NoPermissionException();
+			permissionError();
 
 		if (player().getInventory().getItemInMainHand().getType() != Material.BOW)
 			error("You must be holding a bow");

@@ -10,7 +10,6 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.setting.Setting;
@@ -41,7 +40,7 @@ public class DiscordDiscordCommand extends Command {
 				switch (args[0].toLowerCase()) {
 					case "lockdown":
 						if (!event.getMember().hasPermission(Permission.KICK_MEMBERS))
-							throw new NoPermissionException();
+							permissionError();
 
 						SettingService service = new SettingService();
 						Setting setting = service.get("discord", "lockdown");

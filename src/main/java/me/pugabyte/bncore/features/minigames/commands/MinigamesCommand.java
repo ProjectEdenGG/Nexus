@@ -22,7 +22,6 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.MaterialTag;
@@ -298,7 +297,7 @@ public class MinigamesCommand extends CustomCommand {
 			canUse = true;
 
 		if (!canUse)
-			throw new NoPermissionException();
+			permissionError();
 
 		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
 		if (!WGUtils.isInRegion(player().getLocation(), "minigamelobby"))

@@ -5,7 +5,6 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,7 +33,7 @@ public class BreakCommand extends CustomCommand {
 			if ("fuck".equalsIgnoreCase(getAliasUsed()))
 				send("&4rude.");
 			else
-				throw new NoPermissionException();
+				permissionError();
 	}
 
 }

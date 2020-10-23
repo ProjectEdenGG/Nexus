@@ -179,6 +179,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		throw new InvalidInputException(error);
 	}
 
+	public void permissionError() {
+		throw new NoPermissionException();
+	}
+
 	@Deprecated
 	public void error(Player player, String error) {
 		player.sendMessage(StringUtils.colorize("&c" + error));

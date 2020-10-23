@@ -12,7 +12,6 @@ import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.freeze.Freeze;
@@ -45,7 +44,7 @@ public class UnfreezeDiscordCommand extends Command {
 
 				DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
 				if (user.getUuid() == null)
-					throw new NoPermissionException();
+					permissionError();
 
 				FreezeService service = new FreezeService();
 				OfflinePlayer executor = Utils.getPlayer(user.getUuid());
