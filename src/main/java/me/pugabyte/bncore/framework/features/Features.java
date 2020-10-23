@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.framework.features;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
@@ -86,7 +87,7 @@ public class Features {
 		for (Class<? extends Feature> clazz : features)
 			if (Features.features.containsKey(clazz))
 				unregister(Features.features.get(clazz));
-			else
+			else if (clazz.getAnnotation(Disabled.class) == null)
 				plugin.getLogger().severe("Cannot unregister feature " + prettyName(clazz) + " because it was never registered");
 	}
 

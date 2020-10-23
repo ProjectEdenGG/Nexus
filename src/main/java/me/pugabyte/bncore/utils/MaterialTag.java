@@ -1,154 +1,16 @@
 package me.pugabyte.bncore.utils;
 
-import static org.bukkit.Material.ACACIA_LOG;
-import static org.bukkit.Material.ACACIA_SLAB;
-import static org.bukkit.Material.ACACIA_STAIRS;
-import static org.bukkit.Material.ACACIA_WOOD;
-import static org.bukkit.Material.AIR;
-import static org.bukkit.Material.BAMBOO;
-import static org.bukkit.Material.BAMBOO_SAPLING;
-import static org.bukkit.Material.BARREL;
-import static org.bukkit.Material.BARRIER;
-import static org.bukkit.Material.BEDROCK;
-import static org.bukkit.Material.BELL;
-import static org.bukkit.Material.BIRCH_LOG;
-import static org.bukkit.Material.BIRCH_SLAB;
-import static org.bukkit.Material.BIRCH_STAIRS;
-import static org.bukkit.Material.BIRCH_WOOD;
-import static org.bukkit.Material.BLAST_FURNACE;
-import static org.bukkit.Material.BOW;
-import static org.bukkit.Material.BREWING_STAND;
-import static org.bukkit.Material.BROWN_MUSHROOM;
-import static org.bukkit.Material.CACTUS;
-import static org.bukkit.Material.CARTOGRAPHY_TABLE;
-import static org.bukkit.Material.CAULDRON;
-import static org.bukkit.Material.CHAIN_COMMAND_BLOCK;
-import static org.bukkit.Material.CHEST;
-import static org.bukkit.Material.CHORUS_FLOWER;
-import static org.bukkit.Material.CHORUS_PLANT;
-import static org.bukkit.Material.COARSE_DIRT;
-import static org.bukkit.Material.COMMAND_BLOCK;
-import static org.bukkit.Material.COMMAND_BLOCK_MINECART;
-import static org.bukkit.Material.COMPARATOR;
-import static org.bukkit.Material.COMPOSTER;
-import static org.bukkit.Material.CROSSBOW;
-import static org.bukkit.Material.DARK_OAK_LOG;
-import static org.bukkit.Material.DARK_OAK_SLAB;
-import static org.bukkit.Material.DARK_OAK_STAIRS;
-import static org.bukkit.Material.DARK_OAK_WOOD;
-import static org.bukkit.Material.DEAD_BUSH;
-import static org.bukkit.Material.DEBUG_STICK;
-import static org.bukkit.Material.DIRT;
-import static org.bukkit.Material.DISPENSER;
-import static org.bukkit.Material.DROPPER;
-import static org.bukkit.Material.ENCHANTED_BOOK;
-import static org.bukkit.Material.ENDER_CHEST;
-import static org.bukkit.Material.END_PORTAL;
-import static org.bukkit.Material.END_PORTAL_FRAME;
-import static org.bukkit.Material.END_STONE_BRICKS;
-import static org.bukkit.Material.FARMLAND;
-import static org.bukkit.Material.FERN;
-import static org.bukkit.Material.FISHING_ROD;
-import static org.bukkit.Material.FLETCHING_TABLE;
-import static org.bukkit.Material.FLINT_AND_STEEL;
-import static org.bukkit.Material.FURNACE;
-import static org.bukkit.Material.GRASS;
-import static org.bukkit.Material.GRASS_BLOCK;
-import static org.bukkit.Material.GRASS_PATH;
-import static org.bukkit.Material.GRAVEL;
-import static org.bukkit.Material.GRINDSTONE;
-import static org.bukkit.Material.HOPPER;
-import static org.bukkit.Material.ITEM_FRAME;
-import static org.bukkit.Material.JIGSAW;
-import static org.bukkit.Material.JUNGLE_LOG;
-import static org.bukkit.Material.JUNGLE_SLAB;
-import static org.bukkit.Material.JUNGLE_STAIRS;
-import static org.bukkit.Material.JUNGLE_WOOD;
-import static org.bukkit.Material.KELP;
-import static org.bukkit.Material.KELP_PLANT;
-import static org.bukkit.Material.KNOWLEDGE_BOOK;
-import static org.bukkit.Material.LADDER;
-import static org.bukkit.Material.LARGE_FERN;
-import static org.bukkit.Material.LAVA;
-import static org.bukkit.Material.LEAD;
-import static org.bukkit.Material.LECTERN;
-import static org.bukkit.Material.LEVER;
-import static org.bukkit.Material.LILY_PAD;
-import static org.bukkit.Material.LINGERING_POTION;
-import static org.bukkit.Material.LOOM;
-import static org.bukkit.Material.NETHER_PORTAL;
-import static org.bukkit.Material.OAK_LOG;
-import static org.bukkit.Material.OAK_SLAB;
-import static org.bukkit.Material.OAK_STAIRS;
-import static org.bukkit.Material.OAK_WOOD;
-import static org.bukkit.Material.PETRIFIED_OAK_SLAB;
-import static org.bukkit.Material.PISTON_HEAD;
-import static org.bukkit.Material.PLAYER_HEAD;
-import static org.bukkit.Material.PLAYER_WALL_HEAD;
-import static org.bukkit.Material.PODZOL;
-import static org.bukkit.Material.POTION;
-import static org.bukkit.Material.REDSTONE_TORCH;
-import static org.bukkit.Material.REDSTONE_WALL_TORCH;
-import static org.bukkit.Material.RED_MUSHROOM;
-import static org.bukkit.Material.RED_SAND;
-import static org.bukkit.Material.REPEATER;
-import static org.bukkit.Material.REPEATING_COMMAND_BLOCK;
-import static org.bukkit.Material.SCAFFOLDING;
-import static org.bukkit.Material.SEAGRASS;
-import static org.bukkit.Material.SEA_PICKLE;
-import static org.bukkit.Material.SHEARS;
-import static org.bukkit.Material.SHULKER_BOX;
-import static org.bukkit.Material.SMITHING_TABLE;
-import static org.bukkit.Material.SMOKER;
-import static org.bukkit.Material.SMOOTH_STONE;
-import static org.bukkit.Material.SMOOTH_STONE_SLAB;
-import static org.bukkit.Material.SNOW;
-import static org.bukkit.Material.SPAWNER;
-import static org.bukkit.Material.SPLASH_POTION;
-import static org.bukkit.Material.SPRUCE_LOG;
-import static org.bukkit.Material.SPRUCE_SLAB;
-import static org.bukkit.Material.SPRUCE_STAIRS;
-import static org.bukkit.Material.SPRUCE_WOOD;
-import static org.bukkit.Material.STONE;
-import static org.bukkit.Material.STONECUTTER;
-import static org.bukkit.Material.STONE_SLAB;
-import static org.bukkit.Material.STONE_STAIRS;
-import static org.bukkit.Material.STRIPPED_ACACIA_LOG;
-import static org.bukkit.Material.STRIPPED_ACACIA_WOOD;
-import static org.bukkit.Material.STRIPPED_BIRCH_LOG;
-import static org.bukkit.Material.STRIPPED_BIRCH_WOOD;
-import static org.bukkit.Material.STRIPPED_DARK_OAK_LOG;
-import static org.bukkit.Material.STRIPPED_DARK_OAK_WOOD;
-import static org.bukkit.Material.STRIPPED_JUNGLE_LOG;
-import static org.bukkit.Material.STRIPPED_JUNGLE_WOOD;
-import static org.bukkit.Material.STRIPPED_OAK_LOG;
-import static org.bukkit.Material.STRIPPED_OAK_WOOD;
-import static org.bukkit.Material.STRIPPED_SPRUCE_LOG;
-import static org.bukkit.Material.STRIPPED_SPRUCE_WOOD;
-import static org.bukkit.Material.STRUCTURE_BLOCK;
-import static org.bukkit.Material.STRUCTURE_VOID;
-import static org.bukkit.Material.SUGAR_CANE;
-import static org.bukkit.Material.SWEET_BERRY_BUSH;
-import static org.bukkit.Material.TALL_GRASS;
-import static org.bukkit.Material.TALL_SEAGRASS;
-import static org.bukkit.Material.TIPPED_ARROW;
-import static org.bukkit.Material.TORCH;
-import static org.bukkit.Material.TRAPPED_CHEST;
-import static org.bukkit.Material.TRIDENT;
-import static org.bukkit.Material.TRIPWIRE_HOOK;
-import static org.bukkit.Material.TURTLE_EGG;
-import static org.bukkit.Material.VINE;
-import static org.bukkit.Material.WALL_TORCH;
-import static org.bukkit.Material.WATER;
-import static org.bukkit.Material.WRITTEN_BOOK;
-
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Set;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Set;
+
+import static org.bukkit.Material.*;
 
 @SuppressWarnings("unused")
 public class MaterialTag implements Tag<Material> {
@@ -160,15 +22,16 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag WALL_BANNERS = new MaterialTag("_WALL_BANNER", MatchMode.SUFFIX);
 	public static final MaterialTag STAINED_GLASS = new MaterialTag("_STAINED_GLASS", MatchMode.SUFFIX);
 	public static final MaterialTag STAINED_GLASS_PANES = new MaterialTag("_STAINED_GLASS_PANE", MatchMode.SUFFIX);
-	public static final MaterialTag TERRACOTTAS = new MaterialTag("_TERRACOTTA", MatchMode.SUFFIX);
 	public static final MaterialTag GLAZED_TERRACOTTAS = new MaterialTag("_GLAZED_TERRACOTTA", MatchMode.SUFFIX);
+	public static final MaterialTag COLORED_TERRACOTTAS = new MaterialTag("_TERRACOTTA", MatchMode.SUFFIX).exclude(GLAZED_TERRACOTTAS);
+	public static final MaterialTag ALL_TERRACOTTAS = new MaterialTag("_TERRACOTTA", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_CONCRETES = new MaterialTag("CONCRETE", MatchMode.CONTAINS);
 	public static final MaterialTag CONCRETES = new MaterialTag("_CONCRETE", MatchMode.SUFFIX);
 	public static final MaterialTag CONCRETE_POWDERS = new MaterialTag("_CONCRETE_POWDER", MatchMode.SUFFIX);
 	public static final MaterialTag SHULKER_BOXES = new MaterialTag("_SHULKER_BOX", MatchMode.SUFFIX).append(SHULKER_BOX);
 
 	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, BANNERS, WALL_BANNERS, STAINED_GLASS,
-			STAINED_GLASS_PANES, TERRACOTTAS, GLAZED_TERRACOTTAS, CONCRETES, CONCRETE_POWDERS, SHULKER_BOXES);
+			STAINED_GLASS_PANES, ALL_TERRACOTTAS, GLAZED_TERRACOTTAS, CONCRETES, CONCRETE_POWDERS, SHULKER_BOXES);
 
 	public static final MaterialTag TOOLS = new MaterialTag("_PICKAXE", MatchMode.SUFFIX)
 			.append("_AXE", MatchMode.SUFFIX).append("_SHOVEL", MatchMode.SUFFIX).append("_HOE", MatchMode.SUFFIX)
@@ -390,6 +253,10 @@ public class MaterialTag implements Tag<Material> {
 	@Override
 	public Set<Material> getValues() {
 		return materials;
+	}
+
+	public Material[] toArray() {
+		return new ArrayList<>(materials).toArray(new Material[0]);
 	}
 
 	@Override

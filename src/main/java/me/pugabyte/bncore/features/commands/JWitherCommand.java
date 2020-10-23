@@ -183,7 +183,7 @@ public class JWitherCommand extends CustomCommand implements Listener {
 			add(Material.GOLD_INGOT);
 			add(Material.GOLD_NUGGET);
 			add(Material.QUARTZ);
-			addAll(MaterialTag.TERRACOTTAS.getValues());
+			addAll(MaterialTag.ALL_TERRACOTTAS.getValues());
 			addAll(MaterialTag.CARPETS.getValues());
 			addAll(MaterialTag.STAIRS.getValues());
 			addAll(MaterialTag.SLABS.getValues());
