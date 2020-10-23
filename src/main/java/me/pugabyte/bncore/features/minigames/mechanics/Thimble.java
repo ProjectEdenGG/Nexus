@@ -31,6 +31,7 @@ import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Color;
@@ -44,7 +45,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -332,8 +332,7 @@ public final class Thimble extends TeamlessMechanic {
 	public void setPlayerBlock(PlayerInteractEvent event) {
 		if (event.getItem() == null) return;
 		if (!MaterialTag.CONCRETES.isTagged(event.getItem().getType())) return;
-		if (!(event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)))
-			return;
+		if (!ActionGroup.CLICK_AIR.applies(event)) return;
 
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;

@@ -7,6 +7,7 @@ import com.griefcraft.scripting.ModuleLoader;
 import com.griefcraft.scripting.ModuleLoader.Event;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.features.Feature;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -14,14 +15,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TrustFeature {
+public class TrustFeature extends Feature {
 
-	public TrustFeature() {
+	@Override
+	public void startup() {
 		LWC.getInstance().getModuleLoader().registerModule(BNCore.getInstance(), new LWCTrustModule());
 	}
 
+	@Override
 	@SneakyThrows
-	public static void shutdown() {
+	public void shutdown() {
 		// LWC's ModuleLoader does not have a way to unload modules from their cache, so lets hack it
 		ModuleLoader loader = LWC.getInstance().getModuleLoader();
 		Class<? extends ModuleLoader> clazz = loader.getClass();

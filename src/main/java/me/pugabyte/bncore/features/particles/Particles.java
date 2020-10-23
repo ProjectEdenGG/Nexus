@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.particles;
 
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
 import me.pugabyte.bncore.utils.Tasks;
@@ -8,14 +9,11 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class Particles {
+public class Particles extends Feature {
 
-	public Particles() {
-		Tasks.async(this::startup);
-	}
-
-	private void startup() {
-		Bukkit.getOnlinePlayers().forEach(Particles::startParticles);
+	@Override
+	public void startup() {
+		Tasks.async(() -> Bukkit.getOnlinePlayers().forEach(Particles::startParticles));
 	}
 
 	protected static void startParticles(Player player) {

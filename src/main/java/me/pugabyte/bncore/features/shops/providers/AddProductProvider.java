@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.shops.Shops;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
@@ -98,7 +99,7 @@ public class AddProductProvider extends _ShopProvider {
 			item.name("&e$" + pretty(price));
 
 		contents.set(3, 4, ClickableItem.from(item.build(), e ->
-				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount").response(lines -> {
+				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount").prefix(Shops.PREFIX).response(lines -> {
 					try {
 						if (lines[0].length() > 0) {
 							String input = lines[0].replaceAll("[^0-9.]+", "");
@@ -137,7 +138,7 @@ public class AddProductProvider extends _ShopProvider {
 				itemStack.set(player.getItemOnCursor().clone());
 				open(player);
 			} else if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem().equals(placeholder)) {
-				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").response(lines -> {
+				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").prefix(Shops.PREFIX).response(lines -> {
 					try {
 						if (lines[0].length() > 0) {
 							Function<Material, Boolean> filter = material -> material.name().toLowerCase().contains(lines[0].toLowerCase());

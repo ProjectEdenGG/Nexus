@@ -18,6 +18,7 @@ import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,7 +32,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -217,7 +217,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 					}
 				}
 
-			if (Arrays.asList(Action.LEFT_CLICK_BLOCK, Action.RIGHT_CLICK_BLOCK).contains(event.getAction()))
+			if (ActionGroup.CLICK_BLOCK.applies(event))
 				if (MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) {
 					Sign sign = (Sign) event.getClickedBlock().getState();
 					if (stripColor(sign.getLine(2)).contains("Fast Forward")) {

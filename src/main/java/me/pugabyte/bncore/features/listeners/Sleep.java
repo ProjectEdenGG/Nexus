@@ -6,6 +6,7 @@ import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import org.apache.commons.lang.math.NumberRange;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ public class Sleep implements Listener {
 	public boolean handling = false;
 	public long lastCalculatedSleeping = 0;
 	public long lastCalculatedNeeded = 0;
+	public final long speed = 150;
 
 	public void calculate(World world) {
 		if (!(world.getTime() >= 12541 && world.getTime() <= 23458))
@@ -50,8 +52,21 @@ public class Sleep implements Listener {
 
 		if (sleeping >= needed) {
 			handling = true;
-			Tasks.wait(20, () -> {
-				players.forEach(player -> Utils.send(player, PREFIX + "The night was skipped because 50% of players slept!"));
+			world.setStorm(false);
+			world.setThundering(false);
+
+			players.forEach(player -> Utils.send(player, PREFIX + "The night was skipped because 50% of players slept!"));
+
+			int wait = 0;
+			while (true) {
+				long newTime = world.getTime() + (++wait * speed);
+				if (!new NumberRange(12541L, (24000L - speed)).containsNumber(newTime))
+					break;
+
+				Tasks.wait(wait, () -> world.setTime(newTime));
+			}
+
+			Tasks.wait(wait, () -> {
 				world.setTime(0);
 				world.setStorm(false);
 				world.setThundering(false);

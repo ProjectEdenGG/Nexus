@@ -3,6 +3,7 @@ main: me.pugabyte.bncore.BNCore
 version: ${project.version}
 api-version: "1.15"
 softdepend:
+  - BlueMap
   - BuycraftX
   - Citizens
   - Essentials

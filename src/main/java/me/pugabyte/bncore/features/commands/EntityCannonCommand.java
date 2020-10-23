@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -25,6 +26,9 @@ public class EntityCannonCommand extends CustomCommand {
 
 	@Path("[entityType]")
 	void run(EntityType type) {
+		if (!isSeniorStaff() && type == EntityType.THROWN_EXP_BOTTLE)
+			throw new NoPermissionException();
+
 		final Entity entity = player().getWorld().spawnEntity(player().getEyeLocation(), type);
 		entity.setInvulnerable(true);
 

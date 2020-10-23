@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -66,6 +67,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 	private static class DumpsterProvider extends MenuUtils implements InventoryProvider {
 		private final DumpsterService service = new DumpsterService();
 		private final Dumpster dumpster = service.get();
+		private final String PREFIX = Commands.get(DumpsterDivingCommand.class).getPrefix();
 
 		public static void open(Player player) {
 			if (new DumpsterService().get().getItems().size() == 0)
@@ -87,7 +89,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 				try {
 					open(player);
 				} catch (Exception ex) {
-					handleException(player, ex);
+					handleException(player, PREFIX, ex);
 				}
 			}));
 
@@ -104,7 +106,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 							service.save(dumpster);
 							Utils.giveItem(player, item);
 						} catch (Exception ex) {
-							handleException(player, ex);
+							handleException(player, PREFIX, ex);
 						}
 					}));
 

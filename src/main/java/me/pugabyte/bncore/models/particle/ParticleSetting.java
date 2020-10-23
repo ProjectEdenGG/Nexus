@@ -2,11 +2,13 @@ package me.pugabyte.bncore.models.particle;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.particles.Particles;
 import me.pugabyte.bncore.features.particles.effects.DiscoEffect;
 import me.pugabyte.bncore.features.particles.effects.StormEffect;
 import me.pugabyte.bncore.features.particles.effects.WingsEffect;
 import me.pugabyte.bncore.features.particles.menu.ParticleMenu;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.features.Features;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
@@ -367,6 +369,7 @@ public enum ParticleSetting {
 	public void onClick(Player player, ParticleType type) {
 		if (value == Double.class || value == Integer.class)
 			BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter new value for", getTitle())
+					.prefix(Features.get(Particles.class).getPrefix())
 					.response(lines -> {
 						setter(player, type, lines[0]);
 						ParticleMenu.openSettingEditor(player, type);

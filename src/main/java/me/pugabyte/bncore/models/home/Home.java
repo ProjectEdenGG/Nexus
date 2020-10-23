@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.homes.HomesFeature;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -23,7 +24,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Data
@@ -82,7 +82,7 @@ public class Home extends PlayerOwnedObject {
 				location.add(0, .5, 0);
 			player.teleport(location, TeleportCause.COMMAND);
 		} else
-			Utils.send(player, PREFIX + "&cYou don't have access to that home");
+			Utils.send(player, HomesFeature.PREFIX + "&cYou don't have access to that home");
 	}
 
 	public boolean hasAccess(Player player) {

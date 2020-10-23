@@ -37,11 +37,12 @@ public class BirthdaysCommand extends CustomCommand {
 		for (int i = 0; i < Math.min(amount, nerds.size()); i++) {
 			if (LocalDate.now().getDayOfYear() == getNextBirthday(nerds.get(i)).getDayOfYear())
 				send("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- Today");
-			else
+			else {
+				long until = ChronoUnit.DAYS.between(LocalDate.now(), getNextBirthday(nerds.get(i)));
 				send(json()
-						.next("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- " +
-								ChronoUnit.DAYS.between(LocalDate.now(), getNextBirthday(nerds.get(i))) + " days")
+						.next("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- " + until + plural(" day", until))
 						.hover(nerds.get(i).getBirthday().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
+			}
 		}
 	}
 

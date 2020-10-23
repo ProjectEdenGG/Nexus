@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.homes.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import me.pugabyte.bncore.features.homes.HomesFeature;
 import me.pugabyte.bncore.features.homes.HomesMenu;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.home.Home;
@@ -69,7 +70,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 					try {
 						HomesMenu.edit(addHome(name, item));
 					} catch (Exception ex) {
-						MenuUtils.handleException(homeOwner.getPlayer(), ex);
+						MenuUtils.handleException(homeOwner.getPlayer(), HomesFeature.PREFIX, ex);
 					}
 				})));
 	}

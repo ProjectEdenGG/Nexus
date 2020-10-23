@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.UncivilEngineersArena;
+import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -213,6 +214,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 						player.closeInventory();
 						BNCore.getSignMenuFactory()
 								.lines("", "^ ^ ^ ^ ^ ^", "UE Line", "Number")
+								.prefix(MechanicType.UNCIVIL_ENGINEERS.get().getPrefix())
 								.response(lines -> {
 									try {
 										originID.set(Integer.parseInt(lines[0]));

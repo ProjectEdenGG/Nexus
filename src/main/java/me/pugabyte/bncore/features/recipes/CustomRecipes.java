@@ -2,6 +2,8 @@ package me.pugabyte.bncore.features.recipes;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.features.Feature;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
@@ -16,11 +18,12 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomRecipes {
+public class CustomRecipes extends Feature {
 	@Getter
 	public static Map<NamespacedKey, Recipe> recipes = new HashMap<>();
 
-	public CustomRecipes() {
+	@Override
+	public void startup() {
 		Tasks.async(() -> {
 			slabsToBlocks();
 			quartsUncrafting();
@@ -36,18 +39,26 @@ public class CustomRecipes {
 	}
 
 	public static void addRecipe(Recipe recipe) {
-		if (recipe == null) return;
-		for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
-			if (RecipeUtils.areEqual(recipe1, recipe)) return;
+		try {
+			if (recipe == null) return;
+			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
+				if (RecipeUtils.areEqual(recipe1, recipe)) return;
 
-		Tasks.sync(() -> {
-			try {
-				Bukkit.addRecipe(recipe);
-				recipes.put(((Keyed) recipe).getKey(), recipe);
-			} catch (IllegalStateException duplicate) {
-				BNCore.log(duplicate.getMessage());
-			}
-		});
+			Tasks.sync(() -> {
+				try {
+					Bukkit.addRecipe(recipe);
+					recipes.put(((Keyed) recipe).getKey(), recipe);
+				} catch (IllegalStateException duplicate) {
+					BNCore.log(duplicate.getMessage());
+				} catch (Exception ex) {
+					BNCore.log("Error while adding custom recipe " + ((Keyed) recipe).getKey() + " to Bukkit");
+					ex.printStackTrace();
+				}
+			});
+		} catch (Exception ex) {
+			BNCore.log("Error while adding custom recipe " + ((Keyed) recipe).getKey());
+			ex.printStackTrace();
+		}
 	}
 
 	public ShapelessRecipe createSingleItemShapelessRecipe(Material inputItem, int requiredAmount, Material outputItem, int outputAmount, CraftingMenuType type) {
@@ -122,29 +133,12 @@ public class CustomRecipes {
 		addRecipe(createSingleItemShapelessRecipe(Material.MOSSY_STONE_BRICKS, 1, Material.STONE_BRICKS, 1, CraftingMenuType.STONE_BRICK));
 	}
 
-	RecipeChoice.MaterialChoice wool = new RecipeChoice.MaterialChoice(Material.WHITE_WOOL, Material.BLACK_WOOL, Material.BLUE_WOOL, Material.BROWN_WOOL,
-			Material.CYAN_WOOL, Material.GREEN_WOOL, Material.GRAY_WOOL, Material.LIGHT_BLUE_WOOL, Material.LIGHT_GRAY_WOOL, Material.LIME_WOOL,
-			Material.MAGENTA_WOOL, Material.ORANGE_WOOL, Material.PINK_WOOL, Material.PURPLE_WOOL, Material.RED_WOOL, Material.YELLOW_WOOL);
-
-	RecipeChoice.MaterialChoice concretePowder = new RecipeChoice.MaterialChoice(Material.WHITE_CONCRETE_POWDER, Material.BLACK_CONCRETE_POWDER, Material.BLUE_CONCRETE_POWDER, Material.BROWN_CONCRETE_POWDER,
-			Material.CYAN_CONCRETE_POWDER, Material.GREEN_CONCRETE_POWDER, Material.GRAY_CONCRETE_POWDER, Material.LIGHT_BLUE_CONCRETE_POWDER, Material.LIGHT_GRAY_CONCRETE_POWDER, Material.LIME_CONCRETE_POWDER,
-			Material.MAGENTA_CONCRETE_POWDER, Material.ORANGE_CONCRETE_POWDER, Material.PINK_CONCRETE_POWDER, Material.PURPLE_CONCRETE_POWDER, Material.RED_CONCRETE_POWDER, Material.YELLOW_CONCRETE_POWDER);
-
-	RecipeChoice.MaterialChoice stainedGlass = new RecipeChoice.MaterialChoice(Material.WHITE_STAINED_GLASS, Material.BLACK_STAINED_GLASS, Material.BLUE_STAINED_GLASS, Material.BROWN_STAINED_GLASS,
-			Material.CYAN_STAINED_GLASS, Material.GREEN_STAINED_GLASS, Material.GRAY_STAINED_GLASS, Material.LIGHT_BLUE_STAINED_GLASS, Material.LIGHT_GRAY_STAINED_GLASS, Material.LIME_STAINED_GLASS,
-			Material.MAGENTA_STAINED_GLASS, Material.ORANGE_STAINED_GLASS, Material.PINK_STAINED_GLASS, Material.PURPLE_STAINED_GLASS, Material.RED_STAINED_GLASS, Material.YELLOW_STAINED_GLASS);
-
-	RecipeChoice.MaterialChoice stainedGlassPane = new RecipeChoice.MaterialChoice(Material.WHITE_STAINED_GLASS_PANE, Material.BLACK_STAINED_GLASS_PANE, Material.BLUE_STAINED_GLASS_PANE, Material.BROWN_STAINED_GLASS_PANE,
-			Material.CYAN_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE, Material.GRAY_STAINED_GLASS_PANE, Material.LIGHT_BLUE_STAINED_GLASS_PANE, Material.LIGHT_GRAY_STAINED_GLASS_PANE, Material.LIME_STAINED_GLASS_PANE,
-			Material.MAGENTA_STAINED_GLASS_PANE, Material.ORANGE_STAINED_GLASS_PANE, Material.PINK_STAINED_GLASS_PANE, Material.PURPLE_STAINED_GLASS_PANE, Material.RED_STAINED_GLASS_PANE, Material.YELLOW_STAINED_GLASS_PANE);
-
-	RecipeChoice.MaterialChoice terracotta = new RecipeChoice.MaterialChoice(Material.WHITE_TERRACOTTA, Material.BLACK_TERRACOTTA, Material.BLUE_TERRACOTTA, Material.BROWN_TERRACOTTA,
-			Material.CYAN_TERRACOTTA, Material.GREEN_TERRACOTTA, Material.GRAY_TERRACOTTA, Material.LIGHT_BLUE_TERRACOTTA, Material.LIGHT_GRAY_TERRACOTTA, Material.LIME_TERRACOTTA,
-			Material.MAGENTA_TERRACOTTA, Material.ORANGE_TERRACOTTA, Material.PINK_TERRACOTTA, Material.PURPLE_TERRACOTTA, Material.RED_TERRACOTTA, Material.YELLOW_TERRACOTTA);
-
-	RecipeChoice.MaterialChoice bed = new RecipeChoice.MaterialChoice(Material.WHITE_BED, Material.BLACK_BED, Material.BLUE_BED, Material.BROWN_BED,
-			Material.CYAN_BED, Material.GREEN_BED, Material.GRAY_BED, Material.LIGHT_BLUE_BED, Material.LIGHT_GRAY_BED, Material.LIME_BED,
-			Material.MAGENTA_BED, Material.ORANGE_BED, Material.PINK_BED, Material.PURPLE_BED, Material.RED_BED, Material.YELLOW_BED);
+	RecipeChoice.MaterialChoice wool = new RecipeChoice.MaterialChoice(MaterialTag.WOOL.toArray());
+	RecipeChoice.MaterialChoice concretePowder = new RecipeChoice.MaterialChoice(MaterialTag.CONCRETE_POWDERS.toArray());
+	RecipeChoice.MaterialChoice stainedGlass = new RecipeChoice.MaterialChoice(MaterialTag.STAINED_GLASS.toArray());
+	RecipeChoice.MaterialChoice stainedGlassPane = new RecipeChoice.MaterialChoice(MaterialTag.STAINED_GLASS_PANES.toArray());
+	RecipeChoice.MaterialChoice terracotta = new RecipeChoice.MaterialChoice(MaterialTag.COLORED_TERRACOTTAS.toArray());
+	RecipeChoice.MaterialChoice bed = new RecipeChoice.MaterialChoice(MaterialTag.BEDS.toArray());
 
 	public void concretePowderDying() {
 		addRecipe(createColorChangingRecipe(concretePowder, Material.WHITE_DYE, Material.WHITE_CONCRETE_POWDER));

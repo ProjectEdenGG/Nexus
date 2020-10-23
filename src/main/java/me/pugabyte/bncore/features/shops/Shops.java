@@ -1,6 +1,8 @@
 package me.pugabyte.bncore.features.shops;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.shops.update.ShopDisabler;
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
 import me.pugabyte.bncore.models.shop.Shop.Product;
@@ -11,15 +13,16 @@ import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class Shops {
+public class Shops extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Shops");
 
-	public Shops() {
+	@Override
+	public void startup() {
 		new ShopDisabler();
 		new Market();
 	}
 
-	private class Market {
+	private static class Market {
 
 		public Market() {
 			Tasks.async(this::setup);

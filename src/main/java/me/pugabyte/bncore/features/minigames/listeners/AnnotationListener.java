@@ -14,13 +14,10 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitiali
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.utils.Gun;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-
-import java.util.Arrays;
-import java.util.List;
 
 @NoArgsConstructor
 public class AnnotationListener implements Listener {
@@ -66,9 +63,7 @@ public class AnnotationListener implements Listener {
 	public void onGunShoot(PlayerInteractEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying()) return;
-
-		List<Action> actions = Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.RIGHT_CLICK_AIR);
-		if (!actions.contains(event.getAction())) return;
+		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		Railgun railgun = minigamer.getMatch().getArena().getMechanic().getAnnotation(Railgun.class);
 		if (railgun == null) return;

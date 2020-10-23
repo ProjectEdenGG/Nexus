@@ -1,9 +1,10 @@
-package me.pugabyte.bncore.features.shops;
+package me.pugabyte.bncore.features.shops.update;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -11,7 +12,6 @@ import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -39,7 +39,7 @@ public class ShopDisabler implements Listener {
 
 	@EventHandler
 	public void onSignClick(PlayerInteractEvent event) {
-		if (!Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.LEFT_CLICK_BLOCK).contains(event.getAction())) return;
+		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
 		if (!isShopSign(event.getClickedBlock())) return;
 
 		event.setCancelled(true);

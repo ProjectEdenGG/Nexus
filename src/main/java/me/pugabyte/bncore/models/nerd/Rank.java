@@ -25,16 +25,16 @@ import java.util.stream.Collectors;
 public enum Rank {
 	GUEST("&7", false, false, false, true),
 	MEMBER("&f", false, false, false, true),
-	TRUSTED("&e", false, false, false, true, new Color(241, 196, 15)),
-	ELITE("&6", false, false, false, true, new Color(230, 126, 34)),
-	VETERAN("&6&l", true, false, false, true, new Color(230, 126, 34)),
-	BUILDER("&5", true, true, false, true, new Color(132, 61, 164)),
-	ARCHITECT("&5&l", true, true, false, true, new Color(132, 61, 164)),
-	MINIGAME_MODERATOR("&b&o", true, true, false, false, new Color(25, 211, 211)),
-	MODERATOR("&b&o", true, true, true, true, new Color(25, 211, 211)),
-	OPERATOR("&3&o", true, true, true, true, new Color(0, 170, 170)),
-	ADMIN("&9&o", true, true, true, true, new Color(32, 102, 148)),
-	OWNER("&4&o", true, true, true, true, new Color(153, 45, 34));
+	TRUSTED("&e", false, false, false, false, true, new Color(241, 196, 15)),
+	ELITE("&6", false, false, false, false, true, new Color(230, 126, 34)),
+	VETERAN("&6&l", true, false, false, false, true, new Color(230, 126, 34)),
+	BUILDER("&5", true, true, false, false, true, new Color(132, 61, 164)),
+	ARCHITECT("&5&l", true, true, false, false, true, new Color(132, 61, 164)),
+	MINIGAME_MODERATOR("&b&o", true, true, false, false, false, new Color(25, 211, 211)),
+	MODERATOR("&b&o", true, true, true, false, true, new Color(25, 211, 211)),
+	OPERATOR("&3&o", true, true, true, true, true, new Color(0, 170, 170)),
+	ADMIN("&9&o", true, true, true, true, true, new Color(32, 102, 148)),
+	OWNER("&4&o", true, true, true, true, true, new Color(153, 45, 34));
 
 	@Getter
 	private String format;
@@ -47,6 +47,9 @@ public enum Rank {
 	@Getter
 	@Accessors(fluent = true)
 	private boolean isMod;
+	@Getter
+	@Accessors(fluent = true)
+	private boolean isSeniorStaff;
 	@Getter
 	@Accessors(fluent = true)
 	private boolean isActive;

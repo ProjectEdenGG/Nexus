@@ -107,7 +107,8 @@ public class PoofCommand extends CustomCommand {
 			send(fromPlayer.getPlayer(), "&e" + toPlayer.getName() + " &3accepted your poof request");
 		} else {
 			send(fromPlayer.getPlayer(), "&3You accepted &e" + toPlayer.getName() + "'s &3poof-here request");
-			send(toPlayer.getPlayer(), "&e" + fromPlayer.getName() + " &3accepted your poof-here request");
+			if (toPlayer.isOnline())
+				send(toPlayer.getPlayer(), "&e" + fromPlayer.getName() + " &3accepted your poof-here request");
 		}
 	}
 

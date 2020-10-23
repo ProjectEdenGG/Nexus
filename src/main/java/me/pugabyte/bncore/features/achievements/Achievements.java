@@ -2,11 +2,13 @@ package me.pugabyte.bncore.features.achievements;
 
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.annotations.Disabled;
+import me.pugabyte.bncore.framework.features.Feature;
 import org.bukkit.event.Listener;
 import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
-public class Achievements {
+@Disabled
+public class Achievements extends Feature {
 
 	// TODO:
 	// - Test DB implementation, Mongo may not like Object
@@ -14,7 +16,8 @@ public class Achievements {
 	// - Update event listeners (see events folder)
 	// - Add more achievements
 
-	public Achievements() {
+	@Override
+	public void startup() {
 		new Reflections(getClass().getPackage().getName()).getSubTypesOf(Listener.class).forEach(listener -> {
 			try {
 				if (listener.getAnnotation(Disabled.class) == null)

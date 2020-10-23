@@ -33,6 +33,10 @@ public class StringUtils {
 	public static final String colorChar = "§";
 //	public static final Pattern hexPattern = Pattern.compile("(#[a-fA-F0-9]{6})"); // 1.16
 
+	public static String getPrefix(Class clazz) {
+		return getPrefix(clazz.getSimpleName());
+	}
+
 	public static String getPrefix(String prefix) {
 		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
 	}

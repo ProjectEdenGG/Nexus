@@ -13,6 +13,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Location;
@@ -26,7 +27,6 @@ import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
@@ -93,11 +93,11 @@ public abstract class MenuUtils {
 		return new ItemBuilder(Material.BARRIER).name("&cClose").build();
 	}
 
-	public static void handleException(Player player, Throwable ex) {
+	public static void handleException(Player player, String prefix, Throwable ex) {
 		if (ex.getCause() != null && ex.getCause() instanceof BNException)
-			Utils.send(player, PREFIX + "&c" + ex.getCause().getMessage());
+			Utils.send(player, prefix + "&c" + ex.getCause().getMessage());
 		else if (ex instanceof BNException)
-			Utils.send(player, PREFIX + "&c" + ex.getMessage());
+			Utils.send(player, prefix + "&c" + ex.getMessage());
 		else {
 			Utils.send(player, "&cAn internal error occurred while attempting to execute this command");
 			ex.printStackTrace();
@@ -163,13 +163,15 @@ public abstract class MenuUtils {
 		public static class ConfirmationMenuBuilder {
 
 			public void open(Player player) {
-				ConfirmationMenu build = _build();
-				SmartInventory.builder()
-						.title(colorize(build.getTitle()))
-						.provider(build)
-						.size(3, 9)
-						.build()
-						.open(player);
+				Tasks.sync(() -> {
+					ConfirmationMenu build = _build();
+					SmartInventory.builder()
+							.title(colorize(build.getTitle()))
+							.provider(build)
+							.size(3, 9)
+							.build()
+							.open(player);
+				});
 			}
 
 			@Deprecated

@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.shops.ShopMenuFunctions.FilterSearchType;
+import me.pugabyte.bncore.features.shops.Shops;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -26,7 +27,7 @@ public class SearchItemsProvider extends _ShopProvider {
 		super.init(player, contents);
 
 		contents.set(1, 1, ClickableItem.from(nameItem(Material.NAME_TAG, "&6Search by item name"),
-				e -> BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").response(lines -> {
+				e -> BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").prefix(Shops.PREFIX).response(lines -> {
 					try {
 						if (lines[0].length() > 0) {
 							((BrowseItemsProvider) previousMenu).getFilters().add(FilterSearchType.SEARCH.of(lines[0], product ->
@@ -38,8 +39,7 @@ public class SearchItemsProvider extends _ShopProvider {
 						Utils.send(player, ex.getMessage());
 						open(player);
 					}
-				})
-						.open(player)));
+				}).open(player)));
 
 		contents.set(1, 3, ClickableItem.from(nameItem(Material.APPLE, "&6Search for food"), e -> {
 			((BrowseItemsProvider) previousMenu).getFilters().add(FilterSearchType.SEARCH

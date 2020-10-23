@@ -9,6 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
@@ -18,11 +19,9 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +68,7 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 		if (!isPug(player))
 			return;
 
-		if (!Arrays.asList(Action.RIGHT_CLICK_BLOCK, Action.RIGHT_CLICK_AIR).contains(event.getAction()))
+		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 
 		Material material = player.getInventory().getItemInMainHand().getType();

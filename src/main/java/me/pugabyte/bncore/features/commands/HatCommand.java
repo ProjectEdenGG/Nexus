@@ -8,6 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -24,7 +25,8 @@ public class HatCommand extends CustomCommand {
 	void run() {
 		final PlayerInventory inv = player().getInventory();
 		final ItemStack hat = inv.getHelmet();
-		final ItemStack hand = getTool();
+		final EquipmentSlot slot = getHandWithTool();
+		final ItemStack hand = inv.getItem(slot);
 		final ItemStack air = new ItemStack(Material.AIR);
 
 		if (!isNullOrAir(hat))
@@ -37,12 +39,12 @@ public class HatCommand extends CustomCommand {
 				error("There is nothing on your head or in your hand");
 			else {
 				inv.setHelmet(air);
-				inv.setItemInMainHand(hat);
+				inv.setItem(slot, hat);
 				send(PREFIX + "Hat removed");
 			}
 		else {
 			inv.setHelmet(hand);
-			inv.setItemInMainHand(hat);
+			inv.setItem(slot, hat);
 			send(PREFIX + "Hat updated");
 		}
 	}

@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.commands.staff;
 
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -8,7 +7,8 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
-import org.bukkit.World;
+
+import static me.pugabyte.bncore.features.commands.staff.admin.LocationCodeCommand.asJava;
 
 @Aliases("lookcenter")
 @Permission("group.staff")
@@ -56,14 +56,6 @@ public class BlockCenterCommand extends CustomCommand {
 
 	@Path("java")
 	void java() {
-		Location loc = Utils.getCenteredLocation(player().getLocation());
-		World world = loc.getWorld();
-		String worldString = "Bukkit.getWorld(\"" + world.getName() + "\")";
-		if (world.equals(Minigames.getWorld())) worldString = "Minigames.getWorld()";
-
-		String locationString = "new Location(" + worldString + ", " + loc.getX() + ", " + loc.getY() + ", " +
-				loc.getZ() + ", " + loc.getYaw() + "F, " + loc.getPitch() + "F)";
-
-		send(json(locationString).suggest(locationString));
+		send(asJava(Utils.getCenteredLocation(player().getLocation())));
 	}
 }

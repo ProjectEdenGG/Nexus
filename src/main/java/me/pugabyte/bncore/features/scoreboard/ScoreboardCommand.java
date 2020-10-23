@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.scoreboard;
 
+import com.gmail.nossr50.events.scoreboard.McMMOScoreboardRevertEvent;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.BookBuilder.WrittenBookMenu;
@@ -165,6 +166,14 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getMinigamer().getPlayer());
 		user.pause();
+	}
+
+	@EventHandler
+	public void onMcMMOScoreboardEnd(McMMOScoreboardRevertEvent event) {
+		ScoreboardService service = new ScoreboardService();
+		ScoreboardUser user = service.get(event.getTargetPlayer());
+		if (user.isActive() && user.getOfflinePlayer().isOnline())
+			user.on();
 	}
 
 }

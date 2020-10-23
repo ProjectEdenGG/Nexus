@@ -1,8 +1,5 @@
 package me.pugabyte.bncore.features.listeners;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.scoreboard.ScoreboardLine;
 import me.pugabyte.bncore.models.afk.events.AFKEvent;
@@ -14,10 +11,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
 public class Tab implements Listener {
 
-	public Tab() {
-		BNCore.registerListener(this);
+	static {
 		Tasks.repeatAsync(Time.TICK, Time.SECOND.x(5), Tab::update);
 	}
 

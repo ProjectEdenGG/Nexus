@@ -1,9 +1,6 @@
 package me.pugabyte.bncore.features.discord;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NonNull;
-import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
@@ -12,6 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.features.Features;
 import me.pugabyte.bncore.models.discord.DiscordCaptcha;
 import me.pugabyte.bncore.models.discord.DiscordCaptchaService;
 import me.pugabyte.bncore.models.discord.DiscordService;
@@ -26,6 +24,9 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DiscordCommand extends CustomCommand {
 	DiscordService service = new DiscordService();
@@ -155,7 +156,7 @@ public class DiscordCommand extends CustomCommand {
 	@Path("connect")
 	@Permission("group.staff")
 	void connect() {
-		BNCore.discord.connect();
+		((Discord) Features.get(Discord.class)).connect();
 	}
 
 	@Path("lockdown")

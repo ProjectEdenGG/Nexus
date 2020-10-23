@@ -1,40 +1,19 @@
 package me.pugabyte.bncore.utils;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
 import com.google.common.base.Strings;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTList;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.BNCore.Env;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.framework.annotations.Disabled;
+import me.pugabyte.bncore.framework.annotations.Environments;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.bncore.models.nerd.Nerd;
@@ -56,7 +35,11 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFlag;
@@ -66,6 +49,33 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static org.reflections.ReflectionUtils.getAllMethods;
+import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class Utils {
 
@@ -420,6 +430,35 @@ public class Utils {
 		}
 	}
 
+	public static boolean canEnable(Class<?> clazz) {
+		if (clazz.getSimpleName().startsWith("_"))
+			return false;
+		if (Modifier.isAbstract(clazz.getModifiers()))
+			return false;
+		if (clazz.getAnnotation(Disabled.class) != null)
+			return false;
+		if (clazz.getAnnotation(Environments.class) != null && !Env.applies(clazz.getAnnotation(Environments.class).value()))
+			return false;
+
+		return true;
+	}
+
+	public static void tryRegisterListener(Object object) {
+		try {
+			boolean hasNoArgsConstructor = Stream.of(object.getClass().getConstructors()).anyMatch((c) -> c.getParameterCount() == 0);
+			if (object instanceof Listener) {
+				if (!hasNoArgsConstructor)
+					BNCore.warn("Cannot register listener on command " + object.getClass().getSimpleName() + ", needs @NoArgsConstructor");
+				else
+					BNCore.registerListener((Listener) object.getClass().newInstance());
+			} else if (new ArrayList<>(getAllMethods(object.getClass(), withAnnotation(EventHandler.class))).size() > 0)
+				BNCore.warn("Found @EventHandlers in " + object.getClass().getSimpleName() + " which does not implement Listener"
+						+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
 	public static boolean isNullOrEmpty(Collection<?> collection) {
 		return collection == null || collection.isEmpty();
 	}
@@ -522,6 +561,15 @@ public class Utils {
 				send(offlinePlayer.getPlayer(), message);
 		} else
 			sender.sendMessage(colorize(message));
+	}
+
+	public static void send(Player player, JsonBuilder builder) {
+		if (player.isOnline())
+			player.sendMessage(builder.build());
+	}
+
+	public static void send(CommandSender sender, JsonBuilder builder) {
+		sender.sendMessage(builder.build());
 	}
 
 	public static void send(Player player, BaseComponent... baseComponents) {
@@ -637,6 +685,25 @@ public class Utils {
 				default:
 					return DEGREE_0;
 			}
+		}
+	}
+
+	public enum ActionGroup {
+		CLICK_BLOCK(Action.RIGHT_CLICK_BLOCK, Action.LEFT_CLICK_BLOCK),
+		CLICK_AIR(Action.RIGHT_CLICK_AIR, Action.LEFT_CLICK_AIR),
+		RIGHT_CLICK(Action.RIGHT_CLICK_BLOCK, Action.RIGHT_CLICK_AIR),
+		LEFT_CLICK(Action.LEFT_CLICK_BLOCK, Action.LEFT_CLICK_AIR),
+		CLICK(Action.RIGHT_CLICK_BLOCK, Action.RIGHT_CLICK_AIR, Action.LEFT_CLICK_BLOCK, Action.LEFT_CLICK_AIR),
+		PHYSICAL(Action.PHYSICAL);
+
+		final List<Action> actions;
+
+		ActionGroup(Action... actions) {
+			this.actions = Arrays.asList(actions);
+		}
+
+		public boolean applies(PlayerInteractEvent event) {
+			return actions.contains(event.getAction());
 		}
 	}
 

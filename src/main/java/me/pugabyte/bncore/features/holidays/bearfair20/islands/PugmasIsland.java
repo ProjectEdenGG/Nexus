@@ -71,7 +71,8 @@ public class PugmasIsland implements Listener, Island {
 		effectTasks();
 
 		List<ItemStack> drops = new ArrayList<>(presentLoc.getBlock().getDrops());
-		presentItem = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").glow().build();
+		if (!drops.isEmpty())
+			presentItem = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").glow().build();
 
 	}
 

@@ -1,6 +1,7 @@
-package me.pugabyte.bncore.models.nerd;
+package me.pugabyte.bncore.features.listeners;
 
-import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,10 +9,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class NerdListener implements Listener {
-
-	public NerdListener() {
-		BNCore.registerListener(this);
-	}
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {

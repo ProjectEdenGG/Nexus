@@ -460,5 +460,11 @@
             <artifactId>NoteBlockAPI</artifactId>
             <version>1.4.4</version>
         </dependency>
+        <!-- BlueMap API -->
+        <dependency>
+            <groupId>com.github.BlueMap-Minecraft</groupId>
+            <artifactId>BlueMapAPI</artifactId>
+            <version>v1.3.1</version>
+        </dependency>
     </dependencies>
 </project>

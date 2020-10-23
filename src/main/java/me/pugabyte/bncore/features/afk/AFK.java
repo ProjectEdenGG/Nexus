@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.afk;
 
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.models.afk.AFKPlayer;
 import me.pugabyte.bncore.models.afk.AFKService;
 import me.pugabyte.bncore.models.nerd.Nerd;
@@ -14,14 +15,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
-public class AFK {
+public class AFK extends Feature {
 	static Map<UUID, AFKPlayer> players = new AFKService().getMap();
 
-	public static void shutdown() {
-		new AFKService().saveAll();
-	}
-
-	static {
+	@Override
+	public void startup() {
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream().map(AFK::get).forEach(player -> {
 			try {
 				if (!isSameLocation(player.getLocation(), player.getPlayer().getLocation()) && player.getPlayer().getVehicle() == null)
@@ -36,6 +34,11 @@ public class AFK {
 				ex.printStackTrace();
 			}
 		}));
+	}
+
+	@Override
+	public void shutdown() {
+		new AFKService().saveAll();
 	}
 
 	private static boolean isSameLocation(Location from, Location to) {

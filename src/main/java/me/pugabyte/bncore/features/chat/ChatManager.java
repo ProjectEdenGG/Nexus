@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.chat.Chat.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.Utils.canSee;
 
@@ -62,7 +61,7 @@ public class ChatManager {
 			return;
 
 		if (channel == null) {
-			chatter.send(PREFIX + "&cYou are not speaking in a channel. &3Use &c/ch g &3to return to Global chat.");
+			chatter.send(Chat.PREFIX + "&cYou are not speaking in a channel. &3Use &c/ch g &3to return to Global chat.");
 			return;
 		}
 
@@ -80,7 +79,7 @@ public class ChatManager {
 
 	public static void process(PublicChatEvent event) {
 		if (!event.wasSeen())
-			Tasks.wait(1, () -> event.getChatter().send(PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
+			Tasks.wait(1, () -> event.getChatter().send(Chat.PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
 
 		JsonBuilder json = new JsonBuilder()
 				.next(event.getChannel().getChatterFormat(event.getChatter()))
@@ -107,13 +106,13 @@ public class ChatManager {
 				boolean canSee = canSee(event.getChatter().getOfflinePlayer(), recipient.getOfflinePlayer());
 				String notOnline = new PlayerNotOnlineException(recipient.getOfflinePlayer()).getMessage();
 				if (!recipient.getOfflinePlayer().isOnline())
-					event.getChatter().send(PREFIX + notOnline);
+					event.getChatter().send(Chat.PREFIX + notOnline);
 				else {
 					recipient.send(from);
 					if (canSee)
 						++seen;
 					else
-						event.getChatter().send(PREFIX + notOnline);
+						event.getChatter().send(Chat.PREFIX + notOnline);
 				}
 			}
 		}

@@ -7,14 +7,12 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-
-import java.util.Arrays;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
@@ -24,7 +22,7 @@ public class SignListener implements Listener {
 
 	@EventHandler
 	public void onClickOnSign(PlayerInteractEvent event) {
-		if (!Arrays.asList(Action.LEFT_CLICK_BLOCK, Action.RIGHT_CLICK_BLOCK).contains(event.getAction())) return;
+		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
 		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
 		if (!Minigames.isMinigameWorld(event.getPlayer().getWorld())) return;
