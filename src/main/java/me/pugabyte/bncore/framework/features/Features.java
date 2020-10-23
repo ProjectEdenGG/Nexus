@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+@SuppressWarnings("unchecked")
 public class Features {
 	private final Plugin plugin;
 	private final String path;
@@ -47,8 +48,13 @@ public class Features {
 
 	public void register(Class<? extends Feature>... features) {
 		for (Class<? extends Feature> clazz : features)
-			if (Utils.canEnable(clazz))
-				register(new ObjenesisStd().newInstance(clazz));
+			try {
+				if (Utils.canEnable(clazz))
+					register(new ObjenesisStd().newInstance(clazz));
+			} catch (Throwable ex) {
+				BNCore.log("Error while registering feature " + prettyName(clazz));
+				ex.printStackTrace();
+			}
 	}
 
 	public void registerExcept(Class<? extends Feature>... features) {

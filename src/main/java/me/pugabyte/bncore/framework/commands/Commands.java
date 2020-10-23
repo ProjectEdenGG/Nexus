@@ -15,14 +15,16 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "unchecked"})
 public class Commands {
 	private final Plugin plugin;
 	private final String path;
@@ -65,14 +67,25 @@ public class Commands {
 	}
 
 	public void registerAll() {
-		for (Class<? extends CustomCommand> clazz : commandSet)
+		commandSet.forEach(this::register);
+	}
+
+	public void register(Class<? extends CustomCommand>... customCommands) {
+		for (Class<? extends CustomCommand> clazz : customCommands)
 			try {
 				if (Utils.canEnable(clazz))
 					register(new ObjenesisStd().newInstance(clazz));
 			} catch (Throwable ex) {
-				BNCore.log("Error while registering command " + clazz.getSimpleName());
+				BNCore.log("Error while registering command " + prettyName(clazz));
 				ex.printStackTrace();
 			}
+	}
+
+	public void registerExcept(Class<? extends CustomCommand>... customCommands) {
+		List<Class<? extends CustomCommand>> excluded = Arrays.asList(customCommands);
+		for (Class<? extends CustomCommand> clazz : commandSet)
+			if (!excluded.contains(clazz))
+				register(clazz);
 	}
 
 	private void register(CustomCommand customCommand) {
@@ -93,23 +106,34 @@ public class Commands {
 	}
 
 	public void unregisterAll() {
-		for (Class<? extends CustomCommand> command : commandSet)
+		for (Class<? extends CustomCommand> clazz : commandSet)
 			try {
-				if (!Modifier.isAbstract(command.getModifiers()))
-					unregister(new ObjenesisStd().newInstance(command));
+				if (!Modifier.isAbstract(clazz.getModifiers()))
+					unregister(clazz);
 			} catch (Throwable ex) {
-				BNCore.log("Error while unregistering command " + command.getSimpleName());
+				BNCore.log("Error while unregistering command " + prettyName(clazz));
 				ex.printStackTrace();
 			}
+	}
+
+	public void unregister(Class<? extends CustomCommand>... customCommands) {
+		for (Class<? extends CustomCommand> clazz : customCommands)
+			unregister(new ObjenesisStd().newInstance(clazz));
+	}
+
+	public void unregisterExcept(Class<? extends CustomCommand>... customCommands) {
+		List<Class<? extends CustomCommand>> excluded = Arrays.asList(customCommands);
+		for (Class<? extends CustomCommand> clazz : commandSet)
+			if (!excluded.contains(clazz))
+				unregister(clazz);
 	}
 
 	private void unregister(CustomCommand customCommand) {
 		new Timer("  Unregister command " + customCommand.getName(), () -> {
 			try {
-				for (String alias : customCommand.getAllAliases()) {
-					mapUtils.unregister(customCommand.getName());
+				mapUtils.unregister(customCommand.getName());
+				for (String alias : customCommand.getAllAliases())
 					commands.remove(alias);
-				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
