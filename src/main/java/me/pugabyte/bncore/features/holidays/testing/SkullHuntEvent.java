@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
-public class SkullHuntEvent implements Listener {
+public abstract class SkullHuntEvent implements Listener {
 	protected String settingType = "skullHunt";
 	protected List<String> skullUuids = new ArrayList<>();
 	protected List<Location> skullLocations = null;
@@ -99,7 +99,7 @@ public class SkullHuntEvent implements Listener {
 		return false;
 	}
 
-	public Integer getTotalHeads() {
+	public int getTotalHeads() {
 		return skullLocations.size();
 	}
 
