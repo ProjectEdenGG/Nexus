@@ -3,6 +3,7 @@ package me.pugabyte.bncore.framework.commands;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.ICustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.DoubleSlash;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static me.pugabyte.bncore.utils.StringUtils.listLast;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -49,6 +51,18 @@ public class Commands {
 
 	public static CustomCommand get(String alias) {
 		return commands.getOrDefault(alias, null);
+	}
+
+	public static CustomCommand get(Class<? extends CustomCommand> clazz) {
+		return commands.getOrDefault(prettyName(clazz), null);
+	}
+
+	public static String prettyName(ICustomCommand customCommand) {
+		return prettyName(customCommand.getClass());
+	}
+
+	public static String prettyName(Class<? extends ICustomCommand> clazz) {
+		return listLast(clazz.toString(), ".").replaceAll("Command$", "");
 	}
 
 	public void registerAll() {

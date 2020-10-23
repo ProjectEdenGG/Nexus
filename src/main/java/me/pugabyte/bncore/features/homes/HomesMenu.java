@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public class HomesMenu {
@@ -67,6 +66,7 @@ public class HomesMenu {
 
 	public static void allow(Home home, Consumer<String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
+				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						home.allow(Utils.getPlayer(lines[0]));
@@ -79,6 +79,7 @@ public class HomesMenu {
 
 	public static void remove(Home home, Consumer<String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
+				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						home.remove(Utils.getPlayer(lines[0]));
@@ -91,6 +92,7 @@ public class HomesMenu {
 
 	public static void displayItem(Home home, Consumer<String[]> onResponse) {
 		signMenuFactory.lines("", "Enter a player's", "name, 'hand'", "or an item name")
+				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					String input = lines[0];
 					if (input.length() > 0) {
@@ -116,7 +118,7 @@ public class HomesMenu {
 						}
 
 						if (itemStack == null) {
-							Utils.send(home.getPlayer(), PREFIX + "&cCould not parse item");
+							Utils.send(home.getPlayer(), HomesFeature.PREFIX + "&cCould not parse item");
 							displayItem(home, onResponse);
 						} else {
 							home.setItem(itemStack);
@@ -131,10 +133,11 @@ public class HomesMenu {
 
 	public static void rename(Home home, Consumer<String[]> onResponse) {
 		signMenuFactory.lines("", "^ ^ ^ ^ ^ ^", "Enter the home's", "new name")
+				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						if (home.getOwner().getHome(lines[0]).isPresent())
-							Utils.send(home.getPlayer(), PREFIX + "&cThat home already exists! Please pick a different name");
+							Utils.send(home.getPlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
 							home.setName(lines[0]);
 							new HomeService().save(home.getOwner());
@@ -147,10 +150,11 @@ public class HomesMenu {
 
 	public static void create(HomeOwner homeOwner, Consumer<String[]> onResponse) {
 		signMenuFactory.lines("", "^ ^ ^ ^ ^ ^", "Enter your new", "home's name")
+				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						if (homeOwner.getHome(lines[0]).isPresent())
-							Utils.send(homeOwner.getPlayer(), PREFIX + "&cThat home already exists! Please pick a different name");
+							Utils.send(homeOwner.getPlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
 							homeOwner.add(Home.builder()
 									.uuid(homeOwner.getUuid())

@@ -1,12 +1,14 @@
 package me.pugabyte.bncore.features.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.votes.vps.VPS;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundException;
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
@@ -45,10 +47,11 @@ import static me.pugabyte.bncore.utils.RandomUtils.randomInt;
 import static me.pugabyte.bncore.utils.StringUtils.plural;
 import static me.pugabyte.bncore.utils.Utils.epochSecond;
 
-public class Votes implements Listener {
+@NoArgsConstructor
+public class Votes extends Feature implements Listener {
 
-	public Votes() {
-		BNCore.registerListener(this);
+	@Override
+	public void startup() {
 		scheduler();
 
 		new Timer("    EndOfMonth", () -> BNCore.getCron().schedule("00 00 1 * *", EndOfMonth::run));

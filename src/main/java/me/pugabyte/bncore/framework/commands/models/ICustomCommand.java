@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.framework.commands.models.PathParser.getLiteralWords;
 import static me.pugabyte.bncore.framework.commands.models.PathParser.getPathString;
-import static me.pugabyte.bncore.utils.StringUtils.listLast;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -83,7 +82,7 @@ public abstract class ICustomCommand {
 	}
 
 	public String getName() {
-		return listLast(this.getClass().toString(), ".").replaceAll("Command$", "");
+		return Commands.prettyName(this);
 	}
 
 	public List<String> getAliases() {

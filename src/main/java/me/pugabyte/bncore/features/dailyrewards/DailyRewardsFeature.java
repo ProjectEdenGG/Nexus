@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.dailyrewards;
 
 import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.models.dailyreward.DailyReward;
 import me.pugabyte.bncore.models.dailyreward.DailyRewardService;
 import me.pugabyte.bncore.models.dailyreward.Reward;
@@ -20,14 +21,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.bukkit.Material.*;
-import static org.bukkit.enchantments.Enchantment.*;
+import static org.bukkit.enchantments.Enchantment.ARROW_DAMAGE;
+import static org.bukkit.enchantments.Enchantment.ARROW_INFINITE;
+import static org.bukkit.enchantments.Enchantment.ARROW_KNOCKBACK;
+import static org.bukkit.enchantments.Enchantment.DAMAGE_ALL;
+import static org.bukkit.enchantments.Enchantment.DIG_SPEED;
+import static org.bukkit.enchantments.Enchantment.DURABILITY;
+import static org.bukkit.enchantments.Enchantment.FIRE_ASPECT;
+import static org.bukkit.enchantments.Enchantment.KNOCKBACK;
+import static org.bukkit.enchantments.Enchantment.LUCK;
+import static org.bukkit.enchantments.Enchantment.LURE;
+import static org.bukkit.enchantments.Enchantment.MENDING;
+import static org.bukkit.enchantments.Enchantment.SILK_TOUCH;
 
-public class DailyRewardsFeature {
+public class DailyRewardsFeature extends Feature {
 	private static List<Reward> rewards1 = new ArrayList<>();
 	private static List<Reward> rewards2 = new ArrayList<>();
 	private static List<Reward> rewards3 = new ArrayList<>();
 
-	public DailyRewardsFeature() {
+	@Override
+	public void startup() {
 		setupDailyRewards();
 		scheduler();
 		BNCore.getCron().schedule("00 00 * * *", DailyRewardsFeature::dailyReset);

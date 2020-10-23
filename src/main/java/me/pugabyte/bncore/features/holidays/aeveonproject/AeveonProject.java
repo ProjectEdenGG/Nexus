@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.holidays.aeveonproject;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.BNCore.Env;
 import me.pugabyte.bncore.features.holidays.aeveonproject.effects.Effects;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APRegions;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetToggler;
@@ -35,9 +34,6 @@ public class AeveonProject implements Listener {
 	public static String ROOT = "Animations/AeveonProject/";
 
 	public AeveonProject() {
-		if (BNCore.getEnv() != Env.PROD)
-			return;
-
 		BNCore.registerListener(this);
 		new Timer("    Sets", () -> {
 			APSetType.values();

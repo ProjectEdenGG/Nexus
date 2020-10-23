@@ -11,7 +11,6 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.BNCore.Env;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.annotations.Environments;

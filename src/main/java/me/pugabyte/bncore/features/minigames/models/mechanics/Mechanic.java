@@ -14,6 +14,7 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
@@ -41,6 +42,10 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public abstract String getName();
+
+	public String getPrefix() {
+		return StringUtils.getPrefix(this.getClass());
+	}
 
 	public abstract String getDescription();
 

@@ -31,6 +31,8 @@ public final class SignMenuFactory {
 	private static final String NBT_FORMAT = "{\"text\":\"%s\"}";
 	private static final String NBT_BLOCK_ID = "minecraft:sign";
 
+	private static final List<String> BLANK = Arrays.asList("", "", "", "");
+
 	private final Plugin plugin;
 
 	private final Map<Player, Menu> inputReceivers;
@@ -44,7 +46,7 @@ public final class SignMenuFactory {
 	}
 
 	public Menu blank() {
-		return new Menu(Arrays.asList("", "", "", ""));
+		return new Menu(BLANK);
 	}
 
 	public Menu lines(String... linesArray) {
@@ -79,7 +81,7 @@ public final class SignMenuFactory {
 					try {
 						menu.response.accept(input);
 					} catch (Exception ex) {
-						MenuUtils.handleException(player, ex);
+						MenuUtils.handleException(player, menu.prefix, ex);
 					}
 				});
 
@@ -90,11 +92,17 @@ public final class SignMenuFactory {
 	}
 
 	public static final class Menu {
-		private final List<String> text;
+		private final List<String> lines;
 		private Consumer<String[]> response;
+		private String prefix; // for error handler
 
-		Menu(List<String> text) {
-			this.text = text;
+		Menu(List<String> lines) {
+			this.lines = lines;
+		}
+
+		public Menu prefix(String prefix) {
+			this.prefix = prefix;
+			return this;
 		}
 
 		public Menu response(Consumer<String[]> response) {
@@ -116,7 +124,7 @@ public final class SignMenuFactory {
 			NbtCompound signNBT = (NbtCompound) signData.getNbtModifier().read(0);
 
 			// DO NOT REMOVE "WW"
-			IntStream.range(0, SIGN_LINES).forEach(line -> signNBT.put("Text" + (line + 1), text.size() > line ? String.format(NBT_FORMAT, colorize(text.get(line))) : "WW"));
+			IntStream.range(0, SIGN_LINES).forEach(line -> signNBT.put("Text" + (line + 1), lines.size() > line ? String.format(NBT_FORMAT, colorize(lines.get(line))) : "WW"));
 
 			signNBT.put("x", blockPosition.getX());
 			signNBT.put("y", blockPosition.getY());

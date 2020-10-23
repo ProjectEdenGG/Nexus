@@ -143,7 +143,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 						player.closeInventory();
 					});
 				} else if (Reward.RequiredSubmenu.NAME.contains(item.getType())) {
-					BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name").response(lines -> {
+					BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name").prefix(PREFIX).response(lines -> {
 						Utils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
 						saveAndReturn(contents, day, initialDay);
 					}).open(player);

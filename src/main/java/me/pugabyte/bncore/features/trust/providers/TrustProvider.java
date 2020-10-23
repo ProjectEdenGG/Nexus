@@ -8,6 +8,8 @@ import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.trust.TrustFeature;
+import me.pugabyte.bncore.framework.features.Features;
 import me.pugabyte.bncore.models.trust.Trust;
 import me.pugabyte.bncore.models.trust.Trust.Type;
 import me.pugabyte.bncore.models.trust.TrustService;
@@ -99,6 +101,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
 		contents.set(0, 8, ClickableItem.from(add.build(), e ->
 				BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name")
+						.prefix(Features.get(TrustFeature.class).getPrefix())
 						.response(lines -> {
 							if (lines[0].length() > 0) {
 								OfflinePlayer trusted = Utils.getPlayer(lines[0]);

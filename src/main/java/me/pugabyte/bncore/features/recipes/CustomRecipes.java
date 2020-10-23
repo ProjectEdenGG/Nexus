@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.recipes;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
@@ -16,11 +17,12 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomRecipes {
+public class CustomRecipes extends Feature {
 	@Getter
 	public static Map<NamespacedKey, Recipe> recipes = new HashMap<>();
 
-	public CustomRecipes() {
+	@Override
+	public void startup() {
 		Tasks.async(() -> {
 			slabsToBlocks();
 			quartsUncrafting();

@@ -55,7 +55,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@NonNull
 	@Getter
 	protected CommandEvent event;
-	public String PREFIX = StringUtils.getPrefix(StringUtils.listLast(this.getClass().getName(), ".").replaceAll("Command$", ""));
+	public String PREFIX = StringUtils.getPrefix(getName());
 
 	public String getPrefix() {
 		return PREFIX;

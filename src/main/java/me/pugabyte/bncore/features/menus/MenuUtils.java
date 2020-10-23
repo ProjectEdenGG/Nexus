@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import static me.pugabyte.bncore.features.homes.HomesFeature.PREFIX;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
@@ -94,11 +93,11 @@ public abstract class MenuUtils {
 		return new ItemBuilder(Material.BARRIER).name("&cClose").build();
 	}
 
-	public static void handleException(Player player, Throwable ex) {
+	public static void handleException(Player player, String prefix, Throwable ex) {
 		if (ex.getCause() != null && ex.getCause() instanceof BNException)
-			Utils.send(player, PREFIX + "&c" + ex.getCause().getMessage());
+			Utils.send(player, prefix + "&c" + ex.getCause().getMessage());
 		else if (ex instanceof BNException)
-			Utils.send(player, PREFIX + "&c" + ex.getMessage());
+			Utils.send(player, prefix + "&c" + ex.getMessage());
 		else {
 			Utils.send(player, "&cAn internal error occurred while attempting to execute this command");
 			ex.printStackTrace();

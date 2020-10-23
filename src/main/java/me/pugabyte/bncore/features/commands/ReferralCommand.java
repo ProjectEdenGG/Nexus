@@ -72,6 +72,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 //					.open(player());
 
 			BNCore.getSignMenuFactory().blank()
+					.prefix(PREFIX)
 					.response(lines -> {
 						List<String> list = new ArrayList<>(Arrays.asList(lines));
 						list.removeIf(Strings::isNullOrEmpty);

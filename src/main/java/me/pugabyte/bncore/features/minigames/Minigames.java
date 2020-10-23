@@ -14,6 +14,7 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Minigames {
+public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	@Getter
 	private static final World world = Bukkit.getWorld("gameworld");
@@ -54,7 +55,8 @@ public class Minigames {
 	@Getter
 	public static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 
-	public Minigames() {
+	@Override
+	public void startup() {
 		registerSerializables();
 		ArenaManager.read();
 		registerListeners();
@@ -64,7 +66,8 @@ public class Minigames {
 		new Basketball();
 	}
 
-	public static void shutdown() {
+	@Override
+	public void shutdown() {
 		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
 		ArenaManager.write();
 	}

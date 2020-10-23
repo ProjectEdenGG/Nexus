@@ -60,6 +60,10 @@ public class Features {
 	}
 
 	public void register(Feature feature) {
+		if (features.containsKey(feature.getClass()))
+			// Already registered
+			return;
+
 		new Timer("  Register feature " + feature.getName(), () -> {
 			try {
 				feature.startup();
@@ -84,6 +88,13 @@ public class Features {
 				unregister(Features.features.get(clazz));
 			else
 				plugin.getLogger().severe("Cannot unregister feature " + prettyName(clazz) + " because it was never registered");
+	}
+
+	public void unregisterExcept(Class<? extends Feature>... features) {
+		List<Class<? extends Feature>> excluded = Arrays.asList(features);
+		for (Class<? extends Feature> clazz : featureSet)
+			if (!excluded.contains(clazz))
+				unregister(clazz);
 	}
 
 	public void unregister(Feature feature) {

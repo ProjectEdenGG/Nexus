@@ -6,6 +6,7 @@ import me.pugabyte.bncore.features.chat.alerts.AlertsListener;
 import me.pugabyte.bncore.features.chat.bridge.IngameBridgeListener;
 import me.pugabyte.bncore.features.chat.translator.Translator;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.models.chat.ChatService;
 import me.pugabyte.bncore.models.chat.Chatter;
 import me.pugabyte.bncore.models.chat.PublicChannel;
@@ -18,7 +19,7 @@ import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 
-public class Chat {
+public class Chat extends Feature {
 
 	// TODO:
 	//   Discord queue
@@ -26,15 +27,17 @@ public class Chat {
 
 	public static final String PREFIX = StringUtils.getPrefix("Chat");
 
-	public Chat() {
-		new Timer("    Translator", () -> BNCore.registerListener(new Translator()));
+	@Override
+	public void startup() {
+		new Timer("    addChannels", this::addChannels);
 		new Timer("    ChatListener", () -> BNCore.registerListener(new ChatListener()));
 		new Timer("    IngameBridgeListener", () -> BNCore.registerListener(new IngameBridgeListener()));
 		new Timer("    AlertsListener", () -> BNCore.registerListener(new AlertsListener()));
-		new Timer("    addChannels", this::addChannels);
+		new Timer("    Translator", () -> BNCore.registerListener(new Translator()));
 	}
 
-	public static void shutdown() {
+	@Override
+	public void shutdown() {
 		new HashMap<>(new ChatService().getCache()).forEach((uuid, chatter) -> new ChatService().saveSync(chatter));
 	}
 

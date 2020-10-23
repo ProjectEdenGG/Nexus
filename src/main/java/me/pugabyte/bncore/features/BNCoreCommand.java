@@ -335,6 +335,7 @@ public class BNCoreCommand extends CustomCommand {
 	void signgui() {
 		BNCore.getSignMenuFactory()
 				.lines("1", "2", "3", "4")
+				.prefix(PREFIX)
 				.response(lines -> {
 					for (String string : lines)
 						send(string);

@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.framework.annotations;
 
-import me.pugabyte.bncore.BNCore.Env;
+import me.pugabyte.bncore.utils.Env;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -2,11 +2,12 @@ package me.pugabyte.bncore.features.discord;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.BNCore.Env;
 import me.pugabyte.bncore.features.afk.AFK;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.nerd.Nerd;
+import me.pugabyte.bncore.utils.Env;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -28,13 +29,15 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
-public class Discord {
+public class Discord extends Feature {
 	@Getter
 	private static final Map<String, DiscordUser> codes = new HashMap<>();
 
-	public Discord() {
+	@Override
+	public void startup() {
 		if (BNCore.getEnv() != Env.PROD)
 			return;
+
 		Tasks.repeatAsync(0, Time.MINUTE, this::connect);
 		Tasks.waitAsync(Time.SECOND.x(2), this::connect);
 		BNCore.getCron().schedule("*/6 * * * *", Discord::updateTopics);
@@ -51,7 +54,8 @@ public class Discord {
 				}
 	}
 
-	public static void shutdown() {
+	@Override
+	public void shutdown() {
 		try {
 			for (Bot bot : Bot.values())
 				bot.shutdown();

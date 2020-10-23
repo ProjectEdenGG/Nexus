@@ -23,8 +23,6 @@ import java.net.URL;
 public class Wiki {
 	private static final String SEP = "%20";
 
-	public Wiki() {}
-
 	static String format(String snippetString) {
 		snippetString = snippetString.replace("<span class=\"searchmatch\">", "§e");
 		snippetString = snippetString.replace("</span>", "§3");

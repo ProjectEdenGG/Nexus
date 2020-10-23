@@ -1,12 +1,14 @@
 package me.pugabyte.bncore.features.store.perks.joinquit;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.chat.bridge.RoleManager;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
+import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
@@ -29,14 +31,15 @@ import java.util.Set;
 
 import static me.pugabyte.bncore.features.discord.Discord.discordize;
 
-public class JoinQuit implements Listener {
+@NoArgsConstructor
+public class JoinQuit extends Feature implements Listener {
 	@Getter
 	private static List<String> joinMessages = new ArrayList<>();
 	@Getter
 	private static List<String> quitMessages = new ArrayList<>();
 
-	public JoinQuit() {
-		BNCore.registerListener(this);
+	@Override
+	public void startup() {
 		reloadConfig();
 	}
 
