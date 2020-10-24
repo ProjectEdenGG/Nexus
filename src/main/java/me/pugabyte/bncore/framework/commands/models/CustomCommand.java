@@ -20,6 +20,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeCommandBlockE
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.JsonBuilder;
@@ -263,12 +264,20 @@ public abstract class CustomCommand extends ICustomCommand {
 		return object instanceof BlockCommandSender;
 	}
 
+	protected boolean isSelf(PlayerOwnedObject object) {
+		return isPlayer() && isSelf(object.getOfflinePlayer());
+	}
+
 	protected boolean isSelf(OfflinePlayer player) {
-		return isPlayer() && player.getUniqueId().equals(player().getUniqueId());
+		return isPlayer() && isSelf(player(), player);
 	}
 
 	protected boolean isSelf(Player player) {
-		return isPlayer() && player.getUniqueId().equals(player().getUniqueId());
+		return isPlayer() && isSelf(player(), player);
+	}
+
+	protected boolean isSelf(OfflinePlayer self, OfflinePlayer player) {
+		return self.getUniqueId().equals(player.getUniqueId());
 	}
 
 	protected boolean isStaff() {
@@ -609,6 +618,48 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		send(PREFIX + "Usage:");
 		lines.forEach(this::send);
+	}
+
+
+	@AllArgsConstructor
+	public class WhoFormatter {
+		private final OfflinePlayer self, target;
+		private final WhoType whoType;
+
+		public String format() {
+			boolean self = isSelf(this.self, target);
+			String targetName = (target.getName() == null ? "Unknown" : target.getName());
+
+			if (whoType == WhoType.POSSESSIVE_UPPER || whoType == WhoType.POSSESSIVE_LOWER)
+				return self ? (whoType == WhoType.POSSESSIVE_UPPER ? "Y" : "y") + "our" : targetName + "'" + (targetName.endsWith("s") ? "" : "s");
+			else if (whoType == WhoType.ACTIONARY_UPPER || whoType == WhoType.ACTIONARY_LOWER)
+				return self ? (whoType == WhoType.ACTIONARY_UPPER ? "Y" : "y") + "ou do" : targetName + " does";
+
+			throw new InvalidInputException("Unknown format action");
+		}
+	}
+
+	public String formatWho(PlayerOwnedObject target, WhoType whoType) {
+		return formatWho(player(), target, whoType);
+	}
+
+	public String formatWho(OfflinePlayer target, WhoType whoType) {
+		return formatWho(player(), target, whoType);
+	}
+
+	public String formatWho(Player self, PlayerOwnedObject target, WhoType whoType) {
+		return formatWho(target.getOfflinePlayer(), whoType);
+	}
+
+	public String formatWho(Player self, OfflinePlayer target, WhoType whoType) {
+		return new WhoFormatter(self, target, whoType).format();
+	}
+
+	public enum WhoType {
+		POSSESSIVE_UPPER,
+		POSSESSIVE_LOWER,
+		ACTIONARY_UPPER,
+		ACTIONARY_LOWER;
 	}
 
 }

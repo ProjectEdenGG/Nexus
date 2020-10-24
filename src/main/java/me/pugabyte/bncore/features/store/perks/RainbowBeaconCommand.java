@@ -2,8 +2,11 @@ package me.pugabyte.bncore.features.store.perks;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.rainbowbeacon.RainbowBeacon;
 import me.pugabyte.bncore.models.rainbowbeacon.RainbowBeaconService;
@@ -15,6 +18,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +35,10 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		rainbowBeacon = service.get(player());
 	}
 
-	@Path("start")
-	void activate() {
+	@Path("start [player]")
+	void activate(@Arg(value = "self", permission = "group.seniorstaff") RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getTaskId() != null)
-			error("Your rainbow beacon is already activated");
+			error(formatWho(rainbowBeacon, WhoType.POSSESSIVE_UPPER) + " rainbow beacon is already activated");
 
 		if (rainbowBeacon.getLocation() == null)
 			if (player().getLocation().clone().subtract(0, 1, 0).getBlock().getType().equals(Material.BEACON)) {
@@ -44,39 +48,57 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 				error("You must be standing on a beacon");
 
 		startTask(rainbowBeacon);
-		send(PREFIX + "Activated your rainbow beacon");
+		send(PREFIX + "Activated " + formatWho(rainbowBeacon, WhoType.POSSESSIVE_LOWER) + " rainbow beacon");
 	}
 
-	@Path("stop")
-	void stop() {
+	@Path("stop [player]")
+	void stop(@Arg(value = "self", permission = "group.seniorstaff") RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getTaskId() == null)
-			error("You do not have a running rainbow beacon");
+			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have a running rainbow beacon");
 		Tasks.cancel(rainbowBeacon.getTaskId());
 		rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
-		send(PREFIX + "Successfully deactivated your rainbow beacon");
+		send(PREFIX + "Successfully deactivated " +  formatWho(rainbowBeacon, WhoType.POSSESSIVE_LOWER) + " rainbow beacon");
 	}
 
-	@Path("delete")
-	void delete() {
+	@Path("delete [player]")
+	void delete(@Arg(value = "self", permission = "group.seniorstaff") RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getLocation() == null)
-			error("You do not have a rainbow beacon set");
+			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have a rainbow beacon set");
 
 		if (rainbowBeacon.getTaskId() != null)
 			Tasks.cancel(rainbowBeacon.getTaskId());
 
 		rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
 		service.delete(rainbowBeacon);
-		send(PREFIX + "Successfully deleted your rainbow beacon");
+		send(PREFIX + "Successfully deleted " + formatWho(rainbowBeacon, WhoType.POSSESSIVE_LOWER) + " rainbow beacon");
+	}
+
+	@Path("tp [player]")
+	void tp(@Arg(value = "self", permission = "group.seniorstaff") RainbowBeacon rainbowBeacon) {
+		if (rainbowBeacon.getLocation() == null)
+			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have an active rainbow beacon");
+
+		player().teleport(rainbowBeacon.getLocation(), TeleportCause.COMMAND);
+	}
+
+	@Path("list")
+	@Permission("group.seniorstaff")
+	void list() {
+		if (service.getCache().values().size() == 0)
+			error("No active rainbow beacons");
+
+		send(PREFIX + "Active beacons:");
+		for (RainbowBeacon rainbowBeacon : service.getCache().values())
+			send(rainbowBeacon.getOfflinePlayer().getName());
 	}
 
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
-		for (RainbowBeacon rainbowBeacon : service.getCache().values()) {
+		for (RainbowBeacon rainbowBeacon : service.getCache().values())
 			if (event.getBlock().getLocation().equals(rainbowBeacon.getLocation())) {
 				event.setCancelled(true);
 				break;
 			}
-		}
 	}
 
 	static {
@@ -126,6 +148,16 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			if (i.get() == 8)
 				i.set(0);
 		}));
+	}
+
+	@ConverterFor(RainbowBeacon.class)
+	RainbowBeacon convertToRainbowBeacon(String value) {
+		return service.get(convertToOfflinePlayer(value));
+	}
+
+	@TabCompleterFor(RainbowBeacon.class)
+	List<String> tabCompleteRainbowBeacon(String value) {
+		return tabCompletePlayer(value);
 	}
 
 }

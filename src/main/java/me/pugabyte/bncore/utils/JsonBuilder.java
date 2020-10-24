@@ -41,7 +41,7 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder next(String text) {
-		builder.append(getColoredWords(colorize(text)));
+		builder.appendLegacy(getColoredWords(colorize(text)));
 		return this;
 	}
 
@@ -77,6 +77,7 @@ public class JsonBuilder {
 	private static final Pattern URL_PATTERN = Pattern.compile("(https?)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
 
 	public JsonBuilder urlize(String input) {
+		if (true) return new JsonBuilder(input);
 		Matcher matcher = URL_PATTERN.matcher(input);
 		if (matcher.groupCount() > 0) {
 			int index = 0;
