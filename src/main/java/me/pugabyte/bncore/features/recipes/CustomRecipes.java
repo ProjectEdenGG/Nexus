@@ -9,11 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +38,7 @@ public class CustomRecipes extends Feature {
 		try {
 			if (recipe == null) return;
 			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
-				if (RecipeUtils.areEqual(recipe1, recipe)) return;
+				if (RecipeUtils.areEqual(recipe, recipe1)) return;
 
 			Tasks.sync(() -> {
 				try {

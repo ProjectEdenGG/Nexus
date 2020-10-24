@@ -57,7 +57,6 @@ public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvi
 					}
 				}));
 		});
-
 	}
 
 	public void complete(Player player) {
