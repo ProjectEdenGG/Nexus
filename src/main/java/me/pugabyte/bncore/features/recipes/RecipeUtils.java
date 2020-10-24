@@ -48,23 +48,27 @@ public class RecipeUtils {
 			if (!(recipe2 instanceof ShapelessRecipe))
 				return false;
 
-			ShapelessRecipe r1 = (ShapelessRecipe) recipe1;
-			ShapelessRecipe r2 = (ShapelessRecipe) recipe2;
+			try {
+				ShapelessRecipe r1 = (ShapelessRecipe) recipe1;
+				ShapelessRecipe r2 = (ShapelessRecipe) recipe2;
 
-			if (r1.getIngredientList().isEmpty() || r2.getIngredientList().isEmpty())
-				return false;
-
-			List<ItemStack> find = r1.getIngredientList();
-			List<ItemStack> compare = r2.getIngredientList();
-
-			if (find.size() != compare.size())
-				return false;
-
-			for (ItemStack item : compare) {
-				if (!find.remove(item))
+				if (r1.getIngredientList().isEmpty() || r2.getIngredientList().isEmpty())
 					return false;
+
+				List<ItemStack> find = r1.getIngredientList();
+				List<ItemStack> compare = r2.getIngredientList();
+
+				if (find.size() != compare.size())
+					return false;
+
+				for (ItemStack item : compare) {
+					if (!find.remove(item))
+						return false;
+				}
+				return find.isEmpty();
+			} catch (Exception ignore) {
+				return false;
 			}
-			return find.isEmpty();
 		} else if (recipe1 instanceof FurnaceRecipe) {
 			if (!(recipe2 instanceof FurnaceRecipe))
 				return false;
