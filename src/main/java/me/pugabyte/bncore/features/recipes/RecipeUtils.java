@@ -28,7 +28,7 @@ public class RecipeUtils {
 	}
 
 	private static boolean match(Recipe recipe1, Recipe recipe2) {
-		if (((Keyed) recipe1).getKey() == ((Keyed) recipe2).getKey()) return true;
+		if (((Keyed) recipe1).getKey().toString().equals(((Keyed) recipe2).getKey().toString())) return true;
 		if (recipe1 instanceof ShapedRecipe) {
 			if (!(recipe2 instanceof ShapedRecipe))
 				return false;
