@@ -4,13 +4,13 @@ import com.google.gson.Gson;
 import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.md_5.bungee.api.ChatColor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Request.Builder;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -32,9 +32,13 @@ import java.util.stream.Collectors;
 public class StringUtils {
 	@Getter
 	public static final String colorChar = "§";
-	public static final Pattern hexPattern = Pattern.compile("(#[a-fA-F0-9]{6})");
+	public static final String colorCharsPattern = "[" + colorChar + "&]";
+	public static final Pattern colorPattern = Pattern.compile(colorCharsPattern + "[0-9a-fA-f]");
+	public static final Pattern formatPattern = Pattern.compile(colorCharsPattern + "[k-orK-OR]");
+	public static final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
+	public static final Pattern hexColorizedPattern = Pattern.compile(colorCharsPattern + "x(" + colorCharsPattern + "[a-fA-F0-9]){6}");
 
-	public static String getPrefix(Class clazz) {
+	public static String getPrefix(Class<?> clazz) {
 		return getPrefix(clazz.getSimpleName());
 	}
 
@@ -45,13 +49,24 @@ public class StringUtils {
 	public static String colorize(String input) {
 		if (input == null)
 			return null;
+
 		Matcher matcher = hexPattern.matcher(input);
+		boolean match = false;
 		while (matcher.find()) {
 			String color = input.substring(matcher.start(), matcher.end());
-			input = input.replace(color, "" + net.md_5.bungee.api.ChatColor.of(color));
+			input = input.replace(color, ChatColor.of(color).toString());
+			match = true;
 		}
 
-		return ChatColor.translateAlternateColorCodes('&', input);
+		if (match)
+			Utils.puga().sendMessage(input);
+
+		input = ChatColor.translateAlternateColorCodes('&', input);
+
+		if (match)
+			Utils.puga().sendMessage(input);
+
+		return input;
 	}
 
 	@Deprecated
@@ -64,7 +79,7 @@ public class StringUtils {
 	}
 
 	public static String stripFormat(String input) {
-		return Pattern.compile("(?i)" + colorChar + "[K-OR]").matcher(colorize(input)).replaceAll("");
+		return Pattern.compile("(?i)" + colorCharsPattern + formatPattern).matcher(colorize(input)).replaceAll("");
 	}
 
 	public static int countUpperCase(String s) {
@@ -75,6 +90,7 @@ public class StringUtils {
 		return (int) s.codePoints().filter(c-> c >= 'a' && c <= 'z').count();
 	}
 
+	// TODO This will break with hex
 	public static String loreize(String string) {
 		int i = 0, lineLength = 0;
 		boolean watchForNewLine = false, watchForColor = false;
@@ -135,31 +151,11 @@ public class StringUtils {
 	}
 
 	public static String getLastColor(String text) {
-		String reversed = new StringBuilder(colorize(text)).reverse().toString();
-		StringBuilder result = new StringBuilder();
-		String lastChar = null;
-
-		for (String character : reversed.split("")) {
-			if (character.equals(getColorChar()) && lastChar != null) {
-				ChatColor color = ChatColor.getByChar(lastChar);
-
-				if (color != null) {
-					if (color.isFormat()) {
-						result.insert(0, color.toString());
-						continue;
-					} else {
-						if (color == ChatColor.RESET)
-							color = ChatColor.WHITE;
-						result.insert(0, color);
-						break;
-					}
-				}
-			}
-
-			lastChar = character;
-		}
-
-		return result.toString();
+		Matcher matcher = Pattern.compile("(" + colorPattern + "|" + hexPattern + ")((" + formatPattern + ")+)?").matcher(text);
+		String last = "";
+		while (matcher.find())
+			last = matcher.group();
+		return last;
 	}
 
 	public static String plural(String label, double number) {
