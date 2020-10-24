@@ -53,7 +53,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			} catch (Throwable ignore) {
 			} finally {
 				if (content.length() > 0)
-					builder.urlize(" " + colorize(content.replaceAll("&", "&&f")));
+					builder.next(" " + colorize(content.replaceAll("&", "&&f")));
 
 				for (Message.Attachment attachment : event.getMessage().getAttachments())
 					builder.group()

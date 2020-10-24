@@ -83,7 +83,7 @@ public class ChatManager {
 
 		JsonBuilder json = new JsonBuilder()
 				.next(event.getChannel().getChatterFormat(event.getChatter()))
-				.urlize(event.getChannel().getMessageColor() + event.getMessage());
+				.next(event.getChannel().getMessageColor() + event.getMessage());
 
 		event.getRecipients().forEach(recipient -> recipient.send(json));
 

@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,7 +42,7 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder next(String text) {
-		builder.appendLegacy(getColoredWords(colorize(text)));
+		builder.append(TextComponent.fromLegacyText(getColoredWords(colorize(text))), FormatRetention.NONE);
 		return this;
 	}
 

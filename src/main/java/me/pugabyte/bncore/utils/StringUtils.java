@@ -51,22 +51,12 @@ public class StringUtils {
 			return null;
 
 		Matcher matcher = hexPattern.matcher(input);
-		boolean match = false;
 		while (matcher.find()) {
 			String color = input.substring(matcher.start(), matcher.end());
 			input = input.replace(color, ChatColor.of(color).toString());
-			match = true;
 		}
 
-		if (match)
-			Utils.puga().sendMessage(input);
-
-		input = ChatColor.translateAlternateColorCodes('&', input);
-
-		if (match)
-			Utils.puga().sendMessage(input);
-
-		return input;
+		return ChatColor.translateAlternateColorCodes('&', input);
 	}
 
 	@Deprecated
@@ -151,7 +141,7 @@ public class StringUtils {
 	}
 
 	public static String getLastColor(String text) {
-		Matcher matcher = Pattern.compile("(" + colorPattern + "|" + hexPattern + ")((" + formatPattern + ")+)?").matcher(text);
+		Matcher matcher = Pattern.compile("(" + colorPattern + "|(" + hexPattern + "|" + hexColorizedPattern + "))((" + formatPattern + ")+)?").matcher(text);
 		String last = "";
 		while (matcher.find())
 			last = matcher.group();
