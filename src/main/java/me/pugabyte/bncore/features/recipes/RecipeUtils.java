@@ -51,6 +51,9 @@ public class RecipeUtils {
 			ShapelessRecipe r1 = (ShapelessRecipe) recipe1;
 			ShapelessRecipe r2 = (ShapelessRecipe) recipe2;
 
+			if (r1.getIngredientList().isEmpty() || r2.getIngredientList().isEmpty())
+				return false;
+
 			List<ItemStack> find = r1.getIngredientList();
 			List<ItemStack> compare = r2.getIngredientList();
 
