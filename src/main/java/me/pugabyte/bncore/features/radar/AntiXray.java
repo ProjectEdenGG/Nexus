@@ -28,13 +28,16 @@ import java.util.UUID;
 //TODO: Prevent false positives with silktouch/fortune somehow
 public class AntiXray implements Listener {
 	private final static Map<Material, Integer> countMap = new HashMap<Material, Integer>() {{
-		put(Material.DIAMOND_ORE, 20);
-		put(Material.EMERALD_ORE, 5);
-		put(Material.IRON_ORE, 50);
-		put(Material.GOLD_ORE, 20);
-		// TODO: 1.16 Netherrite
-		// TODO: 1.16 Nether gold
-		// TODO: 1.16 Gilded Blackstone
+		// @formatter:off
+		//										// Amount per chunk is not guaranteed, but is max
+		put(Material.ANCIENT_DEBRIS, 	3);		// vein of 1-3, 	2 per chunk
+		put(Material.DIAMOND_ORE, 		20);	// vein of 1-10, 	1 per chunk
+		put(Material.EMERALD_ORE, 		5);		// vein of 1, 		11 per chunk
+		put(Material.IRON_ORE, 			50);	// vein of 1-14,	20 per chunk
+		put(Material.GOLD_ORE, 			20);	// vein of 1-9, 	2 per chunk
+		put(Material.NETHER_GOLD_ORE, 	30);	// vein of 1-10, 	10 per chunk
+		put(Material.GILDED_BLACKSTONE, 20);	// generates in bastian remnants
+		// @formatter:on;
 	}};
 	private static Map<UUID, List<XRayLog>> XRayLogs = new HashMap<>();
 	private final static int minuteThreshold = 5;
