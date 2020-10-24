@@ -1,17 +1,24 @@
 package me.pugabyte.bncore.features.holidays.testing;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
+import me.pugabyte.bncore.models.skullhunt.SkullHuntService;
+import me.pugabyte.bncore.models.skullhunt.SkullHunter;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
@@ -27,10 +34,17 @@ import java.util.List;
 
 @Data
 public abstract class SkullHuntEvent implements Listener {
+	private SkullHuntService service = new SkullHuntService();
+	// Settings
 	protected String settingType = "skullHunt";
 	protected List<String> skullUuids = new ArrayList<>();
 	protected List<Location> skullLocations = null;
-	protected List<String> activeRegions = null;
+	protected List<World> activeWorlds = Collections.singletonList(Bukkit.getWorld("world"));
+	protected List<ProtectedRegion> activeRegions = null;
+
+	// Particles
+	protected Particle notFoundParticle = Particle.VILLAGER_HAPPY;
+	protected Particle foundAlreadyParticle = null;
 
 	// Messages
 	protected String PREFIX = StringUtils.getPrefix("SkullHunt");
@@ -64,7 +78,7 @@ public abstract class SkullHuntEvent implements Listener {
 		Location loc = block.getLocation();
 		if (clickedSkull(event)) {
 
-			if (hasFound(loc, player)) {
+			if (!hasFound(loc, player)) {
 				find(loc, player);
 
 				if (hasFoundAll(player))
@@ -73,6 +87,38 @@ public abstract class SkullHuntEvent implements Listener {
 				foundAlready(player);
 			}
 		}
+	}
+
+	public SkullHuntEvent() {
+		// TODO: Uncomment this
+//		BNCore.registerListener(this);
+
+		// Skull Particles Task
+		Tasks.repeat(0, Time.SECOND.x(3), () -> {
+			if (foundAlreadyParticle == null && notFoundParticle == null)
+				return;
+
+			if (Utils.isNullOrEmpty(skullLocations))
+				return;
+
+			Bukkit.getOnlinePlayers().forEach(player -> {
+				if (!activeWorlds.contains(player.getWorld()))
+					return;
+
+				if (!Utils.isNullOrEmpty(activeRegions) && !isInActionRegion(player))
+					return;
+
+				for (Location skullLoc : skullLocations) {
+					if (hasFound(skullLoc, player)) {
+						if (foundAlreadyParticle != null)
+							player.spawnParticle(foundAlreadyParticle, skullLoc, 10, 0.25, 0.25, 0.25, 0.01);
+					} else {
+						if (notFoundParticle != null)
+							player.spawnParticle(notFoundParticle, skullLoc, 10, 0.25, 0.25, 0.25, 0.01);
+					}
+				}
+			});
+		});
 	}
 
 	private boolean clickedSkull(PlayerInteractEvent event) {
@@ -93,7 +139,7 @@ public abstract class SkullHuntEvent implements Listener {
 
 	private boolean isInActionRegion(Player player) {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(player);
-		for (String activeRegion : activeRegions) {
+		for (ProtectedRegion activeRegion : activeRegions) {
 			if (WGUtils.isInRegion(player.getLocation(), activeRegion))
 				return true;
 		}
@@ -105,23 +151,20 @@ public abstract class SkullHuntEvent implements Listener {
 		return skullLocations.size();
 	}
 
-	// TODO
 	boolean hasFound(Location location, Player player) {
-		// Check with database
-
-		return true;
+		SkullHunter skullHunter = service.get(player);
+		return skullHunter.getFound(settingType).contains(location);
 	}
 
-	// TODO
 	public boolean hasFoundAll(Player player) {
-		// Get total of locations found from database, check with totalSkulls
-
-		return true;
+		SkullHunter skullHunter = service.get(player);
+		return skullHunter.getFound(settingType).size() == getTotalHeads();
 	}
 
-	// TODO
 	public void find(Location location, Player player) {
-		// Add skull location to database
+		SkullHunter skullHunter = service.get(player);
+		skullHunter.found(settingType, location);
+		service.save(skullHunter);
 
 		Utils.send(player, foundOneMsg);
 		playSounds(player, foundOneSounds);

@@ -37,4 +37,8 @@ public class SkullHunter extends PlayerOwnedObject {
 		found.putIfAbsent(type, new ArrayList<>()).add(location);
 	}
 
+	public List<Location> getFound(String type) {
+		return found.get(type);
+	}
+
 }
