@@ -1,10 +1,7 @@
 package me.pugabyte.bncore.features.recipes;
 
-import org.bukkit.inventory.FurnaceRecipe;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.Keyed;
+import org.bukkit.inventory.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +28,7 @@ public class RecipeUtils {
 	}
 
 	private static boolean match(Recipe recipe1, Recipe recipe2) {
+		if (((Keyed) recipe1).getKey() == ((Keyed) recipe2).getKey()) return true;
 		if (recipe1 instanceof ShapedRecipe) {
 			if (!(recipe2 instanceof ShapedRecipe))
 				return false;
