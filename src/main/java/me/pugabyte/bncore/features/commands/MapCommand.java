@@ -27,10 +27,7 @@ public class MapCommand extends CustomCommand {
 		String link = "http://map.bnn.gg/" + world + "/" + x + "/" + z;
 		send(json("&3Current Location: &e" + link).url(link));
 
-		if (!isStaff()) return; // temporary until release
-		// also delete Censor#dynmapLinkShorten()
-
-		String subdomain = "bluemap"; // "map";
+		String subdomain = "map";
 		Map<String, String> names = new HashMap<>();
 		BlueMapAPI.getInstance().ifPresent(api -> api.getMaps().forEach(map -> names.put(map.getWorld().getSaveFolder().toFile().getName(), map.getId())));
 

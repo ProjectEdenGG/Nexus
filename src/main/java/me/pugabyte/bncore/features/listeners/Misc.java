@@ -268,15 +268,6 @@ public class Misc implements Listener {
 
 		if (player.getWorld().getName().equalsIgnoreCase("staff_world"))
 			Tasks.wait(20, () -> Utils.runCommand(player, "cheats off"));
-
-		if (player.getWorld().getName().equals("survival_nether")) {
-			Tasks.wait(5, () -> {
-				Utils.send(player, "");
-				Utils.send(player, "&4Warning: &cThis nether world will be reset in 1.16 " +
-						"due to the nether update, so don't build anything you don't want to lose!");
-				Utils.send(player, "");
-			});
-		}
 	}
 
 	public void joinMinigames(Player player) {

@@ -1,9 +1,5 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.github.ysl3000.bukkit.pathfinding.PathfinderGoalAPI;
-import com.github.ysl3000.bukkit.pathfinding.entity.Insentient;
-import com.github.ysl3000.bukkit.pathfinding.goals.PathfinderGoalMoveToLocation;
-import com.github.ysl3000.bukkit.pathfinding.pathfinding.PathfinderManager;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
@@ -15,14 +11,12 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.matchdata.MonsterMazeMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.features.minigames.utils.PowerUpUtils;
-import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
@@ -73,9 +67,9 @@ public class MonsterMaze extends TeamlessMechanic {
 		MonsterMazeMatchData matchData = match.getMatchData();
 		ProtectedRegion floor = match.getArena().getProtectedRegion("floor");
 
-		PathfinderManager pathApi = PathfinderGoalAPI.INSTANCE.getAPI();
-		if (pathApi == null)
-			throw new BNException("PathfinderAPI is null?");
+//		PathfinderManager pathApi = PathfinderGoalAPI.INSTANCE.getAPI();
+//		if (pathApi == null)
+//			throw new BNException("PathfinderAPI is null?");
 
 		List<Location> goals = new ArrayList<>();
 		for (BlockVector3 vector : match.getArena().getRegion("floor")) {
@@ -102,8 +96,8 @@ public class MonsterMaze extends TeamlessMechanic {
 
 			match.getTasks().repeat(Time.SECOND.x(7), 30, () -> {
 				for (LivingEntity monster : matchData.getMonsters()) {
-					Insentient insentient = pathApi.getPathfinderGoalEntity((Creature) monster);
-					if (insentient.getNavigation().isDoneNavigating())
+//					Insentient insentient = pathApi.getPathfinderGoalEntity((Creature) monster);
+//					if (insentient.getNavigation().isDoneNavigating())
 						updatePath(monster, goals);
 				}
 			});
@@ -140,13 +134,13 @@ public class MonsterMaze extends TeamlessMechanic {
 	}
 
 	private void updatePath(LivingEntity monster, List<Location> goals) {
-		monster.setAI(true);
-		PathfinderManager pathApi = PathfinderGoalAPI.INSTANCE.getAPI();
-		Location goal = getNewGoal(monster.getLocation(), goals);
-		Insentient insentient = pathApi.getPathfinderGoalEntity((Creature) monster);
-		insentient.clearPathfinderGoals();
-		PathfinderGoalMoveToLocation path = new PathfinderGoalMoveToLocation(insentient, goal, 1, 1);
-		insentient.addPathfinderGoal(0, path);
+//		monster.setAI(true);
+//		PathfinderManager pathApi = PathfinderGoalAPI.INSTANCE.getAPI();
+//		Location goal = getNewGoal(monster.getLocation(), goals);
+//		Insentient insentient = pathApi.getPathfinderGoalEntity((Creature) monster);
+//		insentient.clearPathfinderGoals();
+//		PathfinderGoalMoveToLocation path = new PathfinderGoalMoveToLocation(insentient, goal, 1, 1);
+//		insentient.addPathfinderGoal(0, path);
 	}
 
 	public Location getNewGoal(Location start, List<Location> goals) {

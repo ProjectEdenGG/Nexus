@@ -217,7 +217,7 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 				.lore("&eCrafting Table: &3" + targetPlayer.getStatistic(Statistic.CRAFTING_TABLE_INTERACTION))
 				.lore("&eFurnace: &3" + targetPlayer.getStatistic(Statistic.FURNACE_INTERACTION))
 				.lore("&eLectern: &3" + targetPlayer.getStatistic(Statistic.INTERACT_WITH_LECTERN))
-				//1.16 .lore("&eSmithing Table: &3" + targetPlayer.getStatistic(INTERACT_WITH_SMITHING_TABLE))
+				.lore("&eSmithing Table: &3" + targetPlayer.getStatistic(Statistic.INTERACT_WITH_SMITHING_TABLE))
 				.lore("&eSmoker: &3" + targetPlayer.getStatistic(Statistic.INTERACT_WITH_SMOKER))
 				.lore("&eStonecutter: &3" + targetPlayer.getStatistic(Statistic.INTERACT_WITH_STONECUTTER))
 				.build();

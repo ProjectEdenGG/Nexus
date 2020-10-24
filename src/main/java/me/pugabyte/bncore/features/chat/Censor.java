@@ -71,7 +71,6 @@ public class Censor {
 		deUnicode(event);
 		lowercase(event);
 		censor(event);
-		dynmapLinkShorten(event);
 		dotCommand(event);
 		dots(event);
 		Emotes.process(event);
@@ -148,35 +147,6 @@ public class Censor {
 			String replace = group.replace("./", "/");
 			message = message.replace(group, replace);
 		}
-		event.setMessage(message);
-	}
-
-	public static void dynmapLinkShorten(ChatEvent event) {
-		String message = event.getMessage();
-		if (message.contains("map.bnn.gg")) {
-			List<String> words = Arrays.asList(message.split(" "));
-
-			for (String word : new ArrayList<>(words)) {
-				word = word.toLowerCase();
-				if (!word.contains("map.bnn.gg")) continue;
-
-				word = word.replaceAll("http(s|)://", "");
-				word = word.replaceAll("map\\.bnn\\.gg/\\?", "");
-				String[] params = word.split("&");
-				String world = null, x = null, z = null;
-				for (String param : params)
-					if (param.contains("worldname="))
-						world = param.replaceAll("worldname=", "");
-					else if (param.contains("x="))
-						x = param.replaceAll("x=", "");
-					else if (param.contains("z="))
-						z = param.replaceAll("z=", "");
-
-				if (world != null && x != null && z != null)
-					message = message.replaceAll("\\?" + word, world +"/" + x + "/" + z);
-			}
-		}
-
 		event.setMessage(message);
 	}
 

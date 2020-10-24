@@ -1,7 +1,7 @@
 name: BNCore
 main: me.pugabyte.bncore.BNCore
 version: ${project.version}
-api-version: "1.15"
+api-version: "1.16"
 softdepend:
   - BlueMap
   - BuycraftX

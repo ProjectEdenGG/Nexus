@@ -440,13 +440,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- PathfinderAPI -->
-        <dependency>
-            <groupId>com.github.yannicklamprecht</groupId>
-            <artifactId>PathfindergoalAPI</artifactId>
-            <version>1.152.1</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- LiteBans API -->
         <dependency>
             <groupId>com.gitlab.ruany</groupId>

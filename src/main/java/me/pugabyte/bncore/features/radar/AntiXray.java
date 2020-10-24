@@ -28,11 +28,11 @@ import java.util.UUID;
 //TODO: Prevent false positives with silktouch/fortune somehow
 public class AntiXray implements Listener {
 	private final static Map<Material, Integer> countMap = new HashMap<Material, Integer>() {{
-		// TODO: 1.16 Netherrite
 		put(Material.DIAMOND_ORE, 20);
 		put(Material.EMERALD_ORE, 5);
 		put(Material.IRON_ORE, 50);
 		put(Material.GOLD_ORE, 20);
+		// TODO: 1.16 Netherrite
 		// TODO: 1.16 Nether gold
 		// TODO: 1.16 Gilded Blackstone
 	}};
