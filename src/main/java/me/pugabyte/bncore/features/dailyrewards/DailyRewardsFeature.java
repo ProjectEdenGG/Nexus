@@ -295,8 +295,7 @@ public class DailyRewardsFeature extends Feature {
 			/*  63 */ add(new Reward("4 Iron Block")							.item(IRON_BLOCK, 4));
 			/*  64 */ add(new Reward("4 Lapis Block")							.item(LAPIS_BLOCK, 4));
 			/*  65 */ add(new Reward("4 Gold Block")							.item(GOLD_BLOCK, 4));
-			///*  66 */ add(new Reward("20 Shroomlight")						.item(SHROOMLIGHT, 20));
-			/*  66 */ add(new Reward("20 Glowstone")							.item(GLOWSTONE, 20));
+			/*  66 */ add(new Reward("20 Shroomlight")							.item(SHROOMLIGHT, 20));
 			/*  67 */ add(new Reward("20 Obsidian")								.item(OBSIDIAN, 20));
 			/*  68 */ add(new Reward("20 Quartz Blocks")						.item(QUARTZ_BLOCK, 20));
 			/*  69 */ add(new Reward("4 Emerald Block")							.item(EMERALD_BLOCK, 4));
@@ -316,8 +315,7 @@ public class DailyRewardsFeature extends Feature {
 			/*  83 */ add(new Reward("7 Iron Block")							.item(IRON_BLOCK, 7));
 			/*  84 */ add(new Reward("7 Lapis Block")							.item(LAPIS_BLOCK, 7));
 			/*  85 */ add(new Reward("7 Gold Block")							.item(GOLD_BLOCK, 7));
-			///*  86 */ add(new Reward("35 Shroomlight")						.item(SHROOMLIGHT, 35));
-			/*  86 */ add(new Reward("35 Glowstone")							.item(GLOWSTONE, 35));
+			/*  86 */ add(new Reward("35 Shroomlight")							.item(SHROOMLIGHT, 35));
 			/*  87 */ add(new Reward("35 Obsidian")								.item(OBSIDIAN, 35));
 			/*  88 */ add(new Reward("35 Quartz Blocks")						.item(QUARTZ_BLOCK, 35));
 			/*  89 */ add(new Reward("7 Emerald Block")							.item(EMERALD_BLOCK, 7));
@@ -397,8 +395,7 @@ public class DailyRewardsFeature extends Feature {
 			/*  60 */ add(new Reward("2 Parrot Spawn Eggs")						.item(PARROT_SPAWN_EGG, 2));
 			/*  61 */ add(new Reward("20 Bookshelves")							.item(BOOKSHELF, 20));
 			/*  62 */ add(new Reward("20 Chests")								.item(CHEST, 20));
-			///*  63 */ add(new Reward("20 Soul Lanterns")						.item(SOUL_LANTERN, 20));
-			/*  63 */ add(new Reward("20 Lanterns")								.item(LANTERN, 20));
+			/*  63 */ add(new Reward("20 Soul Lanterns")						.item(SOUL_LANTERN, 20));
 			/*  64 */ add(new Reward("20 Hoppers")								.item(HOPPER, 20));
 			/*  65 */ add(new Reward("20 Note Blocks")							.item(NOTE_BLOCK, 20));
 			/*  66 */ add(new Reward("4 Ender Chests")							.item(ENDER_CHEST, 4));
@@ -418,8 +415,7 @@ public class DailyRewardsFeature extends Feature {
 			/*  80 */ add(new Reward("5 Sponges")								.item(SPONGE, 5));
 			/*  81 */ add(new Reward("35 Bookshelves")							.item(BOOKSHELF, 35));
 			/*  82 */ add(new Reward("35 Chests")								.item(CHEST, 35));
-			///*  83 */ add(new Reward("2 Netherite Ingots")					.item(NETHERITE_INGOT, 2));
-			/*  83 */ add(new Reward("2 Netherite Ingots")						.item(DIAMOND, 2));
+			/*  83 */ add(new Reward("2 Netherite Ingots")						.item(NETHERITE_INGOT, 2));
 			/*  84 */ add(new Reward("35 Hoppers")								.item(HOPPER, 35));
 			/*  85 */ add(new Reward("35 Note Blocks")							.item(NOTE_BLOCK, 35));
 			/*  86 */ add(new Reward("12 White Banners")						.item(WHITE_BANNER, 12));
@@ -429,11 +425,9 @@ public class DailyRewardsFeature extends Feature {
 			/*  90 */ add(new Reward("Custom Player Head")						.item(PLAYER_HEAD, 1));
 			/*  91 */ add(new Reward("50 Bookshelves")							.item(BOOKSHELF, 50));
 			/*  92 */ add(new Reward("50 Chests")								.item(CHEST, 50));
-			///*  93 */ add(new Reward("5 Netherite Ingots")					.item(NETHERITE_INGOT, 5));
-			/*  93 */ add(new Reward("5 Diamonds")								.item(DIAMOND, 5));
+			/*  93 */ add(new Reward("5 Netherite Ingots")						.item(NETHERITE_INGOT, 5));
 			/*  94 */ add(new Reward("Maxed Bow")								.item(new ItemBuilder(BOW).enchantMax(ARROW_DAMAGE).enchantMax(ARROW_KNOCKBACK).enchantMax(ARROW_INFINITE).enchant(MENDING)));
-			///*  95 */ add(new Reward("5 Crying Obsidian")						.item(CRYING_OBSIDIAN, 5));
-			/*  95 */ add(new Reward("5 Obsidian")								.item(OBSIDIAN, 5));
+			/*  95 */ add(new Reward("5 Crying Obsidian")						.item(CRYING_OBSIDIAN, 5));
 			/*  96 */ add(new Reward("16 of each color Wool")					.item(MaterialTag.WOOL, 16));
 			/*  97 */ add(new Reward("150 Enchanting Levels")					.levels(150));
 			/*  98 */ add(new Reward("64 Podzol")								.item(PODZOL, 64));

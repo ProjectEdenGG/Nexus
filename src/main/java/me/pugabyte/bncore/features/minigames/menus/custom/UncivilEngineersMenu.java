@@ -131,7 +131,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 		MUSHROOM_COW(EntityType.MUSHROOM_COW),
 		OCELOT(EntityType.OCELOT),
 		PIG(EntityType.PIG),
-		PIG_ZOMBIE(EntityType.PIG_ZOMBIE),
+		PIG_ZOMBIE(EntityType.ZOMBIFIED_PIGLIN),
 		SHEEP(EntityType.SHEEP),
 		SKELETON(EntityType.SKELETON),
 		SHULKER(EntityType.SHULKER),

@@ -17,7 +17,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class StatisticsMenuProvider extends MenuUtils implements InventoryProvider {
@@ -167,9 +172,6 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 			if (total > 1) {
 				ItemStack material;
 				switch (entity) {
-					case PIG_ZOMBIE:
-						material = new ItemStack(Material.ZOMBIE_PIGMAN_SPAWN_EGG);
-						break;
 					case MUSHROOM_COW:
 						material = new ItemStack(Material.MOOSHROOM_SPAWN_EGG);
 						break;
