@@ -55,13 +55,6 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		send(json(message).suggest(message));
 	}
 
-	@Path("override <player>")
-	@Permission("group.seniorstaff")
-	void override(Player player) {
-		player().teleport(player);
-		send(PREFIX + "Overriding teleport to &e" + player.getName());
-	}
-
 	@Path("<player> [player]")
 	void run(@Arg(tabCompleter = OfflinePlayer.class) String arg1, @Arg(tabCompleter = OfflinePlayer.class) String arg2) {
 		if (!player().hasPermission("group.staff")) {
@@ -146,38 +139,45 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		return false;
 	}
 
-	private static final Set<UUID> lockTeleports = new HashSet<>();
+	private static final Set<UUID> preventTeleports = new HashSet<>();
 
-	@Path("toggle <player> [enable]")
+	@Path("freeze <player> [enable]")
 	@Permission("group.admin")
 	void lock(Player player, Boolean enable) {
 		UUID uuid = player.getUniqueId();
 		if (enable == null)
-			enable = !lockTeleports.contains(uuid);
+			enable = !preventTeleports.contains(uuid);
 
 		if (enable) {
-			lockTeleports.add(uuid);
+			preventTeleports.add(uuid);
 			send(PREFIX + "&cPreventing &3teleports from &e" + player.getName());
 		} else {
-			lockTeleports.remove(uuid);
+			preventTeleports.remove(uuid);
 			send(PREFIX + "&aAllowing &3teleports from &e" + player.getName());
 		}
 	}
 
-	@Path("disable")
-	@Permission("ladder.architect")
+	@Path("toggle")
+	@Permission("ladder.builder")
 	void disable() {
 		SettingService settingService = new SettingService();
 		Setting setting = settingService.get(player(), "tpDisable");
-		boolean bol = setting.getBoolean();
-		setting.setBoolean(!bol);
+		boolean enable = setting.getBoolean();
+		setting.setBoolean(!enable);
 		settingService.save(setting);
-		send(PREFIX + "Teleports to you have been " + (bol ? "&aenabled" : "&cdisabled"));
+		send(PREFIX + "Teleports to you have been " + (enable ? "&aenabled" : "&cdisabled"));
+	}
+
+	@Path("override <player>")
+	@Permission("group.seniorstaff")
+	void override(Player player) {
+		player().teleport(player);
+		send(PREFIX + "Overriding teleport to &e" + player.getName());
 	}
 
 	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
-		if (lockTeleports.contains(event.getPlayer().getUniqueId()))
+		if (preventTeleports.contains(event.getPlayer().getUniqueId()))
 			event.setCancelled(true);
 	}
 
