@@ -54,7 +54,7 @@ public class ChatManager {
 
 		message = message.trim();
 
-		if (!chatter.getOfflinePlayer().getPlayer().hasPermission("group.admin"))
+		if (!chatter.getPlayer().hasPermission("group.admin"))
 			message = stripColor(message);
 
 		if (message.length() == 0)
