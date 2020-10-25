@@ -15,7 +15,7 @@ public class WebsiteCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().urlize("&e" + BNSocialMediaSite.WEBSITE.getUrl()));
+		send(json().next("&e" + BNSocialMediaSite.WEBSITE.getUrl()));
 	}
 
 }

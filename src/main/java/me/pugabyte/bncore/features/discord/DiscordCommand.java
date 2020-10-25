@@ -40,7 +40,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().urlize("&e" + BNSocialMediaSite.DISCORD.getUrl()));
+		send(json().next("&e" + BNSocialMediaSite.DISCORD.getUrl()));
 	}
 
 	@Path("link update roles")

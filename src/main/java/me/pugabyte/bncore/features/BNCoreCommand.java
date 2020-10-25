@@ -169,7 +169,7 @@ public class BNCoreCommand extends CustomCommand {
 	@Async
 	@Path("getDataFile [player]")
 	void getDataFile(@Arg("self") Nerd nerd) {
-		send(json().urlize(paste(nerd.getDataFile().asNBTString())));
+		send(json().next(paste(nerd.getDataFile().asNBTString())));
 	}
 
 	@Path("koda <message...>")
@@ -186,11 +186,6 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("getRank <player>")
 	void getRank(Nerd player) {
 		send(player.getRank().withFormat());
-	}
-
-	@Path("urlize <message...>")
-	void urlize(String message) {
-		send(json("Urlized: ").urlize(message));
 	}
 
 	@Path("getPlayer [player]")

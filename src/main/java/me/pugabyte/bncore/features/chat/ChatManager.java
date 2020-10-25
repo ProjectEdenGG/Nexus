@@ -94,9 +94,9 @@ public class ChatManager {
 		Set<String> othersNames = event.getChannel().getOthersNames(event.getChatter());
 
 		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + String.join(", ", othersNames) + " &b&l> ")
-				.urlize(event.getChannel().getMessageColor() + event.getMessage());
+				.next(event.getChannel().getMessageColor() + event.getMessage());
 		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + event.getChatter().getOfflinePlayer().getName() + " &b&l> ")
-				.urlize(event.getChannel().getMessageColor() + event.getMessage());
+				.next(event.getChannel().getMessageColor() + event.getMessage());
 
 		int seen = 0;
 		for (Chatter recipient : event.getRecipients()) {

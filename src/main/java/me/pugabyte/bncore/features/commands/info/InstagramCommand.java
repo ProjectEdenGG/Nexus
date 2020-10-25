@@ -16,7 +16,7 @@ public class InstagramCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().urlize("&e" + BNSocialMediaSite.INSTAGRAM.getUrl()));
+		send(json().next("&e" + BNSocialMediaSite.INSTAGRAM.getUrl()));
 	}
 
 }

@@ -21,7 +21,7 @@ public class SocialMediaCommand extends CustomCommand {
 	void run() {
 		line();
 		for (BNSocialMediaSite site : BNSocialMediaSite.values())
-			send(json().urlize(site.getName() + " &7- &e" + site.getUrl()));
+			send(json().next(site.getName() + " &7- &e" + site.getUrl()));
 	}
 
 	@Path("reload")

@@ -15,7 +15,7 @@ public class YouTubeCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().urlize("&e" + BNSocialMediaSite.YOUTUBE.getUrl()));
+		send(json().next("&e" + BNSocialMediaSite.YOUTUBE.getUrl()));
 	}
 
 }

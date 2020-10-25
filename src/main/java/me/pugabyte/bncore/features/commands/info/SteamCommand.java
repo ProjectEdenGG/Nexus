@@ -14,7 +14,7 @@ public class SteamCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().urlize("&e" + BNSocialMediaSite.STEAM.getUrl()));
+		send(json().next("&e" + BNSocialMediaSite.STEAM.getUrl()));
 	}
 
 }

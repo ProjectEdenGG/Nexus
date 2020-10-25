@@ -214,7 +214,7 @@ public class RulesCommand extends CustomCommand {
 	List<Object> main2 = new ArrayList<Object>() {{
 		add("&e6. &3Do not do a staff member's job if they are available to do it themselves");
 		add("&e7. &3No inappropriate content");
-		add(json().urlize("&e8. &3No ban evading (that includes using Discord). Appeal at &chttps://bnn.gg/appeal"));
+		add(json().next("&e8. &3No ban evading (that includes using Discord). Appeal at &chttps://bnn.gg/appeal"));
 		add("&e9. &3Keep heavily opinionated and political arguments out of public chats");
 		add(json("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)").command("/rules streaming"));
 	}};

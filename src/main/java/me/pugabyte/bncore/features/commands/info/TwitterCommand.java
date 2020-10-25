@@ -13,7 +13,7 @@ public class TwitterCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().urlize("&e" + BNSocialMediaSite.TWITTER.getUrl()));
+		send(json().next("&e" + BNSocialMediaSite.TWITTER.getUrl()));
 	}
 
 }
