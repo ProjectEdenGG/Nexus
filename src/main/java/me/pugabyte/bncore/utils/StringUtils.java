@@ -31,12 +31,19 @@ import java.util.stream.Collectors;
 
 public class StringUtils {
 	@Getter
-	public static final String colorChar = "§";
-	public static final String colorCharsPattern = "[" + colorChar + "&]";
-	public static final Pattern colorPattern = Pattern.compile(colorCharsPattern + "[0-9a-fA-f]");
-	public static final Pattern formatPattern = Pattern.compile(colorCharsPattern + "[k-orK-OR]");
-	public static final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
-	public static final Pattern hexColorizedPattern = Pattern.compile(colorCharsPattern + "x(" + colorCharsPattern + "[a-fA-F0-9]){6}");
+	private static final String colorChar = "§";
+	@Getter
+	private static final String colorCharsRegex = "[" + colorChar + "&]";
+	@Getter
+	private static final Pattern colorPattern = Pattern.compile(colorCharsRegex + "[0-9a-fA-f]");
+	@Getter
+	private static final Pattern formatPattern = Pattern.compile(colorCharsRegex + "[k-orK-OR]");
+	@Getter
+	private static final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
+	@Getter
+	private static final Pattern hexColorizedPattern = Pattern.compile(colorCharsRegex + "x(" + colorCharsRegex + "[a-fA-F0-9]){6}");
+	@Getter
+	private static final Pattern colorGroupPattern = Pattern.compile("(" + colorPattern + "|(" + hexPattern + "|" + hexColorizedPattern + "))((" + formatPattern + ")+)?");
 
 	public static String getPrefix(Class<?> clazz) {
 		return getPrefix(clazz.getSimpleName());
@@ -143,7 +150,7 @@ public class StringUtils {
 	}
 
 	public static String getLastColor(String text) {
-		Matcher matcher = Pattern.compile("(" + colorPattern + "|(" + hexPattern + "|" + hexColorizedPattern + "))((" + formatPattern + ")+)?").matcher(text);
+		Matcher matcher = colorGroupPattern.matcher(text);
 		String last = "";
 		while (matcher.find())
 			last = matcher.group();

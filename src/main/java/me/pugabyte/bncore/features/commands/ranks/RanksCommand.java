@@ -90,7 +90,7 @@ public class RanksCommand extends CustomCommand {
 
 	@Path("hex <rank> <hex>")
 	void hex(Rank rank, String hex) {
-		if (!StringUtils.hexPattern.matcher(hex).matches())
+		if (!StringUtils.getHexPattern().matcher(hex).matches())
 			error("Hex code must be in format &e#123456");
 		send("&2[G] &8&l[" + hex + camelCase(rank) + "&8&l] " + hex + player().getName() + " &2&l> &fTesting");
 	}
