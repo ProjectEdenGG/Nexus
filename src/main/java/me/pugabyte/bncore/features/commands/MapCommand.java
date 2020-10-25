@@ -24,18 +24,15 @@ public class MapCommand extends CustomCommand {
 		int x = (int) player().getLocation().getX();
 		int z = (int) player().getLocation().getZ();
 
-		String link = "http://map.bnn.gg/" + world + "/" + x + "/" + z;
-		send(json("&3Current Location: &e" + link).url(link));
+		Map<String, String> names = new HashMap<>();
+		BlueMapAPI.getInstance().ifPresent(api -> api.getMaps().forEach(map -> names.put(map.getWorld().getSaveFolder().toFile().getName().toLowerCase(), map.getId())));
 
 		String subdomain = "map";
-		Map<String, String> names = new HashMap<>();
-		BlueMapAPI.getInstance().ifPresent(api -> api.getMaps().forEach(map -> names.put(map.getWorld().getSaveFolder().toFile().getName(), map.getId())));
-
 		if (isStaff())
 			if (!names.isEmpty() && !names.containsKey(world))
 				subdomain = "staffmap";
 
-		link = "http://" + subdomain + ".bnn.gg/#" + names.getOrDefault(world, world) + ":" + x + ":" + z + ":0:30:0";
+		String link = "http://" + subdomain + ".bnn.gg/#" + names.getOrDefault(world, world) + ":" + x + ":" + z + ":0:30:0";
 		send(json("&3Current Location: &e" + link).url(link));
 	}
 }

@@ -20,6 +20,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.framework.features.Features;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.Nerd.StaffMember;
@@ -81,6 +82,11 @@ public class BNCoreCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Override
+	public void _shutdown() {
+		shutdownBossBars();
+	}
+
 	@Path("reload")
 	void reload() {
 		File file = Paths.get("plugins/BNCore.jar").toFile();
@@ -104,7 +110,7 @@ public class BNCoreCommand extends CustomCommand {
 		runCommand("plugman reload BNCore");
 	}
 
-	private static LocalDateTime lastReload = LocalDateTime.now();
+	private static final LocalDateTime lastReload = LocalDateTime.now();
 
 	@Path("lastReload")
 	void lastReload() {
@@ -120,6 +126,7 @@ public class BNCoreCommand extends CustomCommand {
 
 	@Path("stats")
 	void stats() {
+		send("Features: " + Features.getFeatures().size());
 		send("Commands: " + Commands.getCommands().size());
 		send("Listeners: " + BNCore.getListenerCount());
 		send("Arenas: " + ArenaManager.getAll().size());
@@ -209,8 +216,7 @@ public class BNCoreCommand extends CustomCommand {
 				.start();
 	}
 
-	@Override
-	public void _shutdown() {
+	public void shutdownBossBars() {
 		bossBars.forEach((player, bossBar) -> {
 			bossBar.setVisible(false);
 			bossBar.removeAll();

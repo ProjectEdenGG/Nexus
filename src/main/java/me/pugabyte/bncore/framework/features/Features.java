@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.framework.features;
 
+import lombok.Getter;
 import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.utils.Time.Timer;
@@ -20,6 +21,7 @@ import java.util.Set;
 public class Features {
 	private final Plugin plugin;
 	private final Set<Class<? extends Feature>> featureSet;
+	@Getter
 	private final static Map<Class<? extends Feature>, Feature> features = new HashMap<>();
 
 	public Features(Plugin plugin, String path) {
