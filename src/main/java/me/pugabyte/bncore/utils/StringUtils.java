@@ -71,7 +71,7 @@ public class StringUtils {
 	}
 
 	public static String stripFormat(String input) {
-		return Pattern.compile("(?i)" + colorCharsPattern + formatPattern).matcher(colorize(input)).replaceAll("");
+		return formatPattern.matcher(colorize(input)).replaceAll("");
 	}
 
 	public static int countUpperCase(String s) {

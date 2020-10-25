@@ -15,7 +15,6 @@ softdepend:
   - Multiverse-Inventories
   - NBTAPI
   - NoteBlockAPI
-  - PathfinderAPI
   - ProtocolLib
   - SmartInvs
   - Vault
