@@ -78,9 +78,8 @@ public class RanksCommand extends CustomCommand {
 
 			jsonBuilder.get().next("&3[+] " + formattedRank);
 			jsonBuilder.get().command("/" + rank.name().toLowerCase());
-			if (Rank.getHighestRank(player()) == rank) {
+			if (Rank.getHighestRank(player()) == rank)
 				jsonBuilder.get().next("  &0&o<-- You");
-			}
 			jsonBuilder.get().newline().group();
 		});
 
@@ -91,7 +90,7 @@ public class RanksCommand extends CustomCommand {
 	@Path("hex <rank> <hex>")
 	void hex(Rank rank, String hex) {
 		if (!StringUtils.getHexPattern().matcher(hex).matches())
-			error("Hex code must be in format &e#123456");
+			error("Hex code must be in format &e&#123456");
 		send("&2[G] &8&l[" + hex + camelCase(rank) + "&8&l] " + hex + player().getName() + " &2&l> &fTesting");
 	}
 }

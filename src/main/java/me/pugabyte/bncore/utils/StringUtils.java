@@ -39,7 +39,7 @@ public class StringUtils {
 	@Getter
 	private static final Pattern formatPattern = Pattern.compile(colorCharsRegex + "[k-orK-OR]");
 	@Getter
-	private static final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
+	private static final Pattern hexPattern = Pattern.compile(colorCharsRegex + "#[a-fA-F0-9]{6}");
 	@Getter
 	private static final Pattern hexColorizedPattern = Pattern.compile(colorCharsRegex + "x(" + colorCharsRegex + "[a-fA-F0-9]){6}");
 	@Getter
@@ -62,7 +62,7 @@ public class StringUtils {
 			if (!matcher.find()) break;
 
 			String color = matcher.group();
-			input = input.replace(color, ChatColor.of(color).toString());
+			input = input.replace(color, ChatColor.of(color.replaceFirst(colorCharsRegex, "")).toString());
 		}
 
 		return ChatColor.translateAlternateColorCodes('&', input);
