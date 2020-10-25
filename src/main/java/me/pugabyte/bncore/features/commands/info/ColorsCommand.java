@@ -23,7 +23,7 @@ public class ColorsCommand extends CustomCommand {
 		line();
 		send("&eMinecraft formats:");
 		line();
-		send("&f &&fk &kMagic&f &&fl &lBold&r  &&fm &mStrike&r  &&fn &nUline&r  &&fo &oItalic&r  &&fr &rReset");
+		send("&f &&fk &kMagic&f &&fl &lBold&f  &&fm &mStrike&f  &&fn &nUline&f  &&fo &oItalic&f  &&fr &fReset");
 		line();
 		send("&eFormat &3codes may &enot &3be used in &eprefixes&3; only &ecolors&3.");
 		line();

@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.entity.Player;
 
 import java.time.format.DateTimeFormatter;
@@ -85,5 +86,12 @@ public class RanksCommand extends CustomCommand {
 
 		bookBuilder.addPage(jsonBuilder.get());
 		bookBuilder.open(player());
+	}
+
+	@Path("hex <rank> <hex>")
+	void hex(Rank rank, String hex) {
+		if (!StringUtils.hexPattern.matcher(hex).matches())
+			error("Hex code must be in format &e#123456");
+		send("&2[G] &8&l[" + hex + camelCase(rank) + "&8&l] " + hex + player().getName() + " &2&l> &fTesting");
 	}
 }

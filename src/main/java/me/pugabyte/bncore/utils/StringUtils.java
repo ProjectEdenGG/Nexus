@@ -50,8 +50,10 @@ public class StringUtils {
 		if (input == null)
 			return null;
 
-		Matcher matcher = hexPattern.matcher(input);
-		while (matcher.find()) {
+		while (true) {
+			Matcher matcher = hexPattern.matcher(input);
+			if (!matcher.find()) break;
+
 			String color = input.substring(matcher.start(), matcher.end());
 			input = input.replace(color, ChatColor.of(color).toString());
 		}
