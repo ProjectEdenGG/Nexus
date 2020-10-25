@@ -25,7 +25,9 @@ public class NewRankColorsCommand extends CustomCommand {
 	void test(Rank rank, String hex) {
 		if (!StringUtils.getHexPattern().matcher(hex).matches())
 			error("Hex code must be in format &e&&e#123456");
-		send("&2[G] &8&l[" + hex + camelCase(rank) + "&8&l] " + hex + player().getName() + " &2&l> &fTesting");
+
+		String format = (rank.isMod() ? "&o" : "");
+		send("&2[G] &8&l[" + hex + format + camelCase(rank) + "&8&l] " + hex + format + player().getName() + " &2&l> &fTesting");
 	}
 
 	@Path("set <rank> <color>")
