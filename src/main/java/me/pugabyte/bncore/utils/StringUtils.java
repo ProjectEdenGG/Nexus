@@ -54,7 +54,7 @@ public class StringUtils {
 			Matcher matcher = hexPattern.matcher(input);
 			if (!matcher.find()) break;
 
-			String color = input.substring(matcher.start(), matcher.end());
+			String color = matcher.group();
 			input = input.replace(color, ChatColor.of(color).toString());
 		}
 
