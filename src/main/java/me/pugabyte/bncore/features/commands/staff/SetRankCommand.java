@@ -18,7 +18,7 @@ public class SetRankCommand extends CustomCommand {
 	@Path("<player> <rank>")
 	void set(OfflinePlayer player, Rank rank) {
 		runCommandAsConsole("lp user " + player.getName() + " parent set " + rank.name());
-		send(PREFIX + "Set " + player.getName() + "'s rank to " + rank.withColor());
+		send(PREFIX + "Set " + player.getName() + "'s rank to " + rank.withFormat());
 	}
 
 }

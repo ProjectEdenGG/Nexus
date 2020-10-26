@@ -67,7 +67,7 @@ public class SuggestDiscordCommand extends Command {
 						.setThumbnail("https://minotar.net/helm/" + nerd.getName() + "/100.png");
 
 				Rank next = nerd.getRank().next();
-				embed.setColor(next.getColor());
+				embed.setColor(next.getDiscordColor());
 
 				event.reply(new MessageBuilder()
 						.setContent(event.getAuthor().getAsMention() + " is suggesting **" + nerd.getName() + "** for **" + camelCase(next.plain()) + "**")

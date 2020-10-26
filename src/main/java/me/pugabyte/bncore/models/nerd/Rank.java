@@ -23,18 +23,18 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum Rank {
-	GUEST("&7", false, false, false, true),
-	MEMBER("&f", false, false, false, true),
-	TRUSTED("&e", false, false, false, false, true, new Color(241, 196, 15)),
-	ELITE("&6", false, false, false, false, true, new Color(230, 126, 34)),
-	VETERAN("&6&l", true, false, false, false, true, new Color(230, 126, 34)),
-	BUILDER("&5", true, true, false, false, true, new Color(132, 61, 164)),
-	ARCHITECT("&5&l", true, true, false, false, true, new Color(132, 61, 164)),
-	MINIGAME_MODERATOR("&b&o", true, true, false, false, false, new Color(25, 211, 211)),
-	MODERATOR("&b&o", true, true, true, false, true, new Color(25, 211, 211)),
-	OPERATOR("&3&o", true, true, true, true, true, new Color(0, 170, 170)),
-	ADMIN("&9&o", true, true, true, true, true, new Color(32, 102, 148)),
-	OWNER("&4&o", true, true, true, true, true, new Color(153, 45, 34));
+	GUEST("&#aaaaaa", false, false, false, true),
+	MEMBER("&#ffffff", false, false, false, true),
+	TRUSTED("&#ff7069", false, false, false, false, true, Color.decode("#ff7069")),
+	ELITE("&#f5a138", false, false, false, false, true, Color.decode("#f5a138")),
+	VETERAN("&#ffff44", true, false, false, false, true, Color.decode("#bbb529")),
+	BUILDER("&#02883e", true, true, false, false, true, Color.decode("#02883e")),
+	ARCHITECT("&#02c93e", true, true, false, false, true, Color.decode("#02c93e")),
+	MINIGAME_MODERATOR("&#4cc9f0&o", true, true, false, false, false, Color.decode("#4cc9f0")),
+	MODERATOR("&#4cc9f0&o", true, true, true, false, true, Color.decode("#4cc9f0")),
+	OPERATOR("&#07a8a8&o", true, true, true, true, true, Color.decode("#07a8a8")),
+	ADMIN("&#3080ff&o", true, true, true, true, true, Color.decode("#206694")),
+	OWNER("&#915bf5&o", true, true, true, true, true, Color.decode("#915bf5"));
 
 	@Getter
 	private String format;
@@ -54,7 +54,7 @@ public enum Rank {
 	@Accessors(fluent = true)
 	private boolean isActive;
 	@Getter
-	private Color color;
+	private Color discordColor;
 
 	Rank(String format, boolean hasPrefix, boolean isStaff, boolean isMod, boolean isActive) {
 		this.format = format;

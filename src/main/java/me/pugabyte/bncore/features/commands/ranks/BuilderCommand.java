@@ -18,12 +18,12 @@ public class BuilderCommand extends CustomCommand {
 	@Path
 	void builder() {
 		line(5);
-		send("&5Builders &3help with any build related needs for the server, such as &ewarps&3, &eminigame maps&3, and &eevents&3");
+		send(Rank.BUILDER.getFormat() + "Builders &3help with any build related needs for the server, such as &ewarps&3, &eminigame maps&3, and &eevents&3");
 		line();
 		send(json()
-				.next("&3[+] &eHow to achieve&3:")
-				.next(" &eApply").url(builderApp)
-				.hover("&eClick to open the application on the website (must be &eTrusted &3or above)")
+				.next("&3[+] &eHow to achieve&3: ")
+				.next("&eApply").url(builderApp)
+				.hover("&eClick to open the application on the website (must be " + Rank.TRUSTED.getFormat() + "Trusted &3or above)")
 				.group());
 		send(json("&3[+] &eClick here &3for a list of builders").command("/builder list"));
 		line();
@@ -34,7 +34,7 @@ public class BuilderCommand extends CustomCommand {
 	@Path("list")
 	void list() {
 		line();
-		send("&3All current &5Builders &3and the date they were promoted:");
+		send("&3All current " + Rank.BUILDER.getFormat() + "Builders &3and the date they were promoted:");
 		Rank.BUILDER.getNerds().forEach(nerd -> {
 			send(Rank.BUILDER.getFormat() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
 		});

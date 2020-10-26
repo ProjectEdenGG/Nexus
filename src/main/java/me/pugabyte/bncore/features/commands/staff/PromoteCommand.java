@@ -23,7 +23,7 @@ public class PromoteCommand extends CustomCommand {
 			error("User is already max rank");
 
 		runCommandAsConsole("lp user " + nerd.getName() + " parent set " + next.name());
-		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.withColor());
+		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.withFormat());
 
 		if (nerd.getOfflinePlayer().isOnline())
 			Jingle.RANKUP.play(nerd.getPlayer());

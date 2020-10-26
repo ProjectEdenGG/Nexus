@@ -30,7 +30,7 @@ public class RoleManager {
 		if (ignore.contains(player.getName()))
 			return;
 
-		Color roleColor = new Nerd(player).getRank().getColor();
+		Color roleColor = new Nerd(player).getRank().getDiscordColor();
 
 		if (roleColor == null) {
 			user.setRoleId(null);
@@ -49,7 +49,7 @@ public class RoleManager {
 			else
 				Discord.getGuild().createRole()
 						.setName(player.getName())
-						.setColor(new Nerd(player).getRank().getColor())
+						.setColor(new Nerd(player).getRank().getDiscordColor())
 						.setMentionable(true)
 						.queue();
 		} else {
