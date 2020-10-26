@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.holidays.testing;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.skullhunt.SkullHuntService;
 import me.pugabyte.bncore.models.skullhunt.SkullHunter;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -90,35 +91,36 @@ public abstract class SkullHuntEvent implements Listener {
 	}
 
 	public SkullHuntEvent() {
-		// TODO: Uncomment this
-//		BNCore.registerListener(this);
+		BNCore.registerListener(this);
 
 		// Skull Particles Task
-		Tasks.repeat(0, Time.SECOND.x(3), () -> {
-			if (foundAlreadyParticle == null && notFoundParticle == null)
-				return;
+		Tasks.wait(Time.TICK, () ->
+				Tasks.repeat(0, Time.SECOND.x(3), () -> {
+					if (foundAlreadyParticle == null && notFoundParticle == null)
+						return;
 
-			if (Utils.isNullOrEmpty(skullLocations))
-				return;
+					if (Utils.isNullOrEmpty(skullLocations))
+						return;
 
-			Bukkit.getOnlinePlayers().forEach(player -> {
-				if (!activeWorlds.contains(player.getWorld()))
-					return;
+					Bukkit.getOnlinePlayers().forEach(player -> {
+						if (!activeWorlds.contains(player.getWorld()))
+							return;
 
-				if (!Utils.isNullOrEmpty(activeRegions) && !isInActionRegion(player))
-					return;
+						if (!Utils.isNullOrEmpty(activeRegions) && !isInActionRegion(player))
+							return;
 
-				for (Location skullLoc : skullLocations) {
-					if (hasFound(skullLoc, player)) {
-						if (foundAlreadyParticle != null)
-							player.spawnParticle(foundAlreadyParticle, skullLoc, 10, 0.25, 0.25, 0.25, 0.01);
-					} else {
-						if (notFoundParticle != null)
-							player.spawnParticle(notFoundParticle, skullLoc, 10, 0.25, 0.25, 0.25, 0.01);
-					}
-				}
-			});
-		});
+						for (Location skullLoc : skullLocations) {
+							if (hasFound(skullLoc, player)) {
+								if (foundAlreadyParticle != null)
+									player.spawnParticle(foundAlreadyParticle, skullLoc, 10, 0.25, 0.25, 0.25, 0.01);
+							} else {
+								if (notFoundParticle != null)
+									player.spawnParticle(notFoundParticle, skullLoc, 10, 0.25, 0.25, 0.25, 0.01);
+							}
+						}
+					});
+				})
+		);
 	}
 
 	private boolean clickedSkull(PlayerInteractEvent event) {
