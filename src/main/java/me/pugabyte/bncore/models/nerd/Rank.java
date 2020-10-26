@@ -27,14 +27,14 @@ public enum Rank {
 	MEMBER("&#ffffff", false, false, false, true),
 	TRUSTED("&#ff7069", false, false, false, false, true, Color.decode("#ff7069")),
 	ELITE("&#f5a138", false, false, false, false, true, Color.decode("#f5a138")),
-	VETERAN("&#ffff44", true, false, false, false, true, Color.decode("#bbb529")),
+	VETERAN("&#ffff44", true, false, false, false, true, Color.decode("#ffff44")),
 	BUILDER("&#02883e", true, true, false, false, true, Color.decode("#02883e")),
 	ARCHITECT("&#02c93e", true, true, false, false, true, Color.decode("#02c93e")),
-	MINIGAME_MODERATOR("&#4cc9f0&o", true, true, false, false, false, Color.decode("#4cc9f0")),
-	MODERATOR("&#4cc9f0&o", true, true, true, false, true, Color.decode("#4cc9f0")),
-	OPERATOR("&#07a8a8&o", true, true, true, true, true, Color.decode("#07a8a8")),
-	ADMIN("&#3080ff&o", true, true, true, true, true, Color.decode("#206694")),
-	OWNER("&#915bf5&o", true, true, true, true, true, Color.decode("#915bf5"));
+	MINIGAME_MODERATOR("&#4cc9f0", true, true, false, false, false, Color.decode("#4cc9f0")),
+	MODERATOR("&#4cc9f0", true, true, true, false, true, Color.decode("#4cc9f0")),
+	OPERATOR("&#07a8a8", true, true, true, true, true, Color.decode("#07a8a8")),
+	ADMIN("&#3080ff", true, true, true, true, true, Color.decode("#206694")),
+	OWNER("&#915bf5", true, true, true, true, true, Color.decode("#915bf5"));
 
 	@Getter
 	private String format;

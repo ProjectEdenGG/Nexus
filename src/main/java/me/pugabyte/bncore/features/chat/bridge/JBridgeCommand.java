@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class JBridgeCommand extends CustomCommand {
-	private DiscordService service;
+	private final DiscordService service;
 
 	public JBridgeCommand(CommandEvent event) {
 		super(event);
@@ -43,7 +43,6 @@ public class JBridgeCommand extends CustomCommand {
 	@Async
 	@Path("updateRoleColors <rank>")
 	void updateRoleColors(Rank rank) {
-		DiscordService service = new DiscordService();
 		int updated = 0;
 		for (DiscordUser user : service.getAll()) {
 			if (user.getRoleId() == null || user.getUuid() == null)
