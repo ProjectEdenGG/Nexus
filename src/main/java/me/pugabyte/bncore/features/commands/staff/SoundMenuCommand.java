@@ -36,8 +36,8 @@ public class SoundMenuCommand extends CustomCommand {
 			page = pageMap.getOrDefault(player().getUniqueId(), 1);
 		else {
 			if (page < 1)
-				page = 72;
-			else if (page > 72)
+				page = 88;
+			else if (page > 88)
 				page = 1;
 			pageMap.put(player().getUniqueId(), page);
 		}
@@ -75,11 +75,11 @@ public class SoundMenuCommand extends CustomCommand {
 				continue;
 
 			String soundDots = sound.replaceAll("_", ".");
-			String soundShort = soundDots;
-			if (soundShort.length() > 20)
-				soundShort = soundShort.substring(0, 19);
+			String soundCommas = soundDots.replace(".", "ͺ");
+			if (soundCommas.length() > 20)
+				soundCommas = soundCommas.substring(0, 19);
 
-			json.next(soundShort)
+			json.next(soundCommas)
 					.hover("&eClick to play " + soundDots)
 					.command("/soundmenu play " + sound)
 					.group().newline();
@@ -91,7 +91,7 @@ public class SoundMenuCommand extends CustomCommand {
 						.group()
 						.next("&0 &0 &9&l" + page + "&0 &0 ")
 						.group()
-						.next(" &3--->  &0 &0 &0 ")
+						.next(" &3--->")
 						.hover("&eNext")
 						.command("/soundmenu " + (page + 1))
 						.group().newline();
@@ -100,14 +100,14 @@ public class SoundMenuCommand extends CustomCommand {
 		}
 
 		if (index <= 13) {
-			json.line();
-			json.next("&0 &0 &0 &0 &3<--- ")
+			json.newline()
+					.next("&0 &0 &0 &0 &3<--- ")
 					.hover("&eBack")
 					.command("/soundmenu " + (page - 1))
 					.group()
 					.next("&0 &0 &9&l" + page + "&0 &0 ")
 					.group()
-					.next(" &3--->  &0 &0 &0 ")
+					.next(" &3--->")
 					.hover("&eNext")
 					.command("/soundmenu " + (page + 1))
 					.group();

@@ -75,6 +75,8 @@ public class AFKCommand extends CustomCommand implements Listener {
 			AFKPlayer player = AFK.get(event.getPlayer());
 			if (player.isAfk() && !player.isForceAfk())
 				player.notAfk();
+			else
+				player.update();
 		});
 	}
 
