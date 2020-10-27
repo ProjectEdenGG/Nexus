@@ -469,7 +469,7 @@ public class BNCoreCommand extends CustomCommand {
 			return ChatColor.of(value.replaceFirst("&", ""));
 
 		try {
-			return ColorType.valueOf(value).getChatColor();
+			return ColorType.valueOf(value.toUpperCase()).getChatColor();
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInputException("Color &e" + value + "&c not found");
 		}
@@ -478,8 +478,8 @@ public class BNCoreCommand extends CustomCommand {
 	@TabCompleterFor(ChatColor.class)
 	List<String> tabCompleteChatColor(String filter) {
 		return Arrays.stream(ColorType.values())
-				.filter(colorType -> colorType.name().toLowerCase().startsWith(filter.toLowerCase()))
-				.map(ColorType::name)
+				.map(colorType -> colorType.name().toLowerCase())
+				.filter(name -> name.startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 
