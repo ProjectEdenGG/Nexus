@@ -33,7 +33,7 @@ public enum Rank {
 	MINIGAME_MODERATOR("&#4cc9f0", true, true, false, false, false, Color.decode("#4cc9f0")),
 	MODERATOR("&#4cc9f0", true, true, true, false, true, Color.decode("#4cc9f0")),
 	OPERATOR("&#07a8a8", true, true, true, true, true, Color.decode("#07a8a8")),
-	ADMIN("&#3080ff", true, true, true, true, true, Color.decode("#206694")),
+	ADMIN("&#3080ff", true, true, true, true, true, Color.decode("#1687d3")),
 	OWNER("&#915bf5", true, true, true, true, true, Color.decode("#915bf5"));
 
 	@Getter
