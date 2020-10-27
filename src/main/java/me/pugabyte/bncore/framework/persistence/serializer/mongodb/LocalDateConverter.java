@@ -21,9 +21,9 @@ public class LocalDateConverter extends TypeConverter implements SimpleValueConv
 	}
 
 	@Override
-	public Object decode(Class<?> aClass, Object object, MappedField mappedField) {
-		if (object == null) return null;
-		return LocalDate.parse((String) object);
+	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
+		if (value == null) return null;
+		return LocalDate.parse((String) value);
 	}
 
 }

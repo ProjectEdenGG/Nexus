@@ -33,8 +33,8 @@ public class LocationConverter extends TypeConverter implements SimpleValueConve
 	}
 
 	@Override
-	public Object decode(Class<?> aClass, Object location, MappedField mappedField) {
-		BasicDBObject deserialized = (BasicDBObject) location;
+	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
+		BasicDBObject deserialized = (BasicDBObject) value;
 		return new Location(
 				Bukkit.getWorld(deserialized.getString("world")),
 				deserialized.getDouble("x"),

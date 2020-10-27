@@ -31,9 +31,12 @@ import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.BlockUtils;
+import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.Gradient;
 import me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle;
+import me.pugabyte.bncore.utils.StringUtils.Rainbow;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
@@ -42,6 +45,7 @@ import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -188,6 +192,16 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("getLastColor <message...>")
 	void getLastColor(String message) {
 		send(StringUtils.getLastColor(message) + "Last color");
+	}
+
+	@Path("gradient <color1> <color2> <input>")
+	void gradient(ChatColor color1, ChatColor color2, String input) {
+		send(Gradient.of(color1, color2).apply(input));
+	}
+
+	@Path("rainbow <input>")
+	void rainbow(String input) {
+		send(Rainbow.apply(input));
 	}
 
 	@Path("getRank <player>")
@@ -446,6 +460,26 @@ public class BNCoreCommand extends CustomCommand {
 				.filter(player -> new Nerd(player).getRank().isStaff())
 				.map(OfflinePlayer::getName)
 				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
+	}
+
+	@ConverterFor(ChatColor.class)
+	ChatColor convertToChatColor(String value) {
+		if (StringUtils.getHexPattern().matcher(value).matches())
+			return ChatColor.of(value.replaceFirst("&", ""));
+
+		try {
+			return ColorType.valueOf(value).getChatColor();
+		} catch (IllegalArgumentException ex) {
+			throw new InvalidInputException("Color &e" + value + "&c not found");
+		}
+	}
+
+	@TabCompleterFor(ChatColor.class)
+	List<String> tabCompleteChatColor(String filter) {
+		return Arrays.stream(ColorType.values())
+				.filter(colorType -> colorType.name().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(ColorType::name)
 				.collect(Collectors.toList());
 	}
 

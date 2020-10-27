@@ -1,12 +1,17 @@
 package me.pugabyte.bncore.utils;
 
 import lombok.Getter;
-import org.bukkit.ChatColor;
+import lombok.SneakyThrows;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Getter
 public enum ColorType {
@@ -290,6 +295,37 @@ public enum ColorType {
 
 	public String getDisplayName() {
 		return chatColor == null ? "" : chatColor + StringUtils.camelCase(name);
+	}
+
+	public static org.bukkit.ChatColor toBukkit(ChatColor color) {
+		return org.bukkit.ChatColor.valueOf(color.getName());
+	}
+
+	@Getter
+	private static Map<String, ChatColor> all;
+
+	static {
+		try {
+			Field BY_NAME = ChatColor.class.getDeclaredField("BY_NAME");
+			BY_NAME.setAccessible(true);
+			all = (Map<String, ChatColor>) BY_NAME.get(null);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@SneakyThrows
+	public static Map<String, ChatColor> getColors() {
+		return getAll().entrySet().stream()
+				.filter(entry -> entry.getValue().getColor() != null)
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+	}
+
+	@SneakyThrows
+	public static Map<String, ChatColor> getFormats() {
+		return getAll().entrySet().stream()
+				.filter(entry -> entry.getValue().getColor() == null)
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
 
 }

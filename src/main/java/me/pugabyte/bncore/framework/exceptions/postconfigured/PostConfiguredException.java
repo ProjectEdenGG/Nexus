@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.framework.exceptions.postconfigured;
 
 import me.pugabyte.bncore.framework.exceptions.BNException;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
 public class PostConfiguredException extends BNException {
 

@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.warps;
 
 import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.bncore.features.warps.providers.WarpsMenuProvider;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 public class WarpsMenu {

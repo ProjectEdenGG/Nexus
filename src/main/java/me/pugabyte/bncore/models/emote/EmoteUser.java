@@ -3,9 +3,6 @@ package me.pugabyte.bncore.models.emote;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +12,11 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.chat.Emotes;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Builder

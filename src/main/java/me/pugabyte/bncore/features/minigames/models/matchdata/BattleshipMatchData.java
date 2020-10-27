@@ -18,7 +18,7 @@ import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Utils.Axis;
 import me.pugabyte.bncore.utils.Utils.CardinalDirection;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;

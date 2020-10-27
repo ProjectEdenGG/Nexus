@@ -3,7 +3,7 @@ package me.pugabyte.bncore.models.chat;
 import lombok.Data;
 import lombok.ToString;
 import me.pugabyte.bncore.utils.Utils;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.Arrays;
 import java.util.HashSet;

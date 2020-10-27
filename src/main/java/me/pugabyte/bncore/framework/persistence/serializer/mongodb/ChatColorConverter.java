@@ -4,26 +4,26 @@ import dev.morphia.converters.SimpleValueConverter;
 import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
+import net.md_5.bungee.api.ChatColor;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+public class ChatColorConverter extends TypeConverter implements SimpleValueConverter {
 
-public class LocalDateTimeConverter extends TypeConverter implements SimpleValueConverter {
-
-	public LocalDateTimeConverter(Mapper mapper) {
-		super(LocalDateTime.class);
+	public ChatColorConverter(Mapper mapper) {
+		super(ChatColor.class);
 	}
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
-		if (value == null) return null;
-		return ((LocalDateTime) value).format(DateTimeFormatter.ISO_DATE_TIME);
+		if (value == null)
+			return null;
+
+		return "&#" + Integer.toHexString(((ChatColor) value).getColor().getRGB()).substring(2);
 	}
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
 		if (value == null) return null;
-		return LocalDateTime.parse((String) value);
+		return ChatColor.of(((String) value).replaceFirst("&", ""));
 	}
 
 }

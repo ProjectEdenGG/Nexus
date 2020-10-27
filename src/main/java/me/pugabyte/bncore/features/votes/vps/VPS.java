@@ -5,7 +5,7 @@ import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 public class VPS {

@@ -8,7 +8,7 @@ import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

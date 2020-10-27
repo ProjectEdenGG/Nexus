@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
+import me.pugabyte.bncore.utils.ColorType;
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
@@ -76,7 +77,7 @@ public interface MinigameScoreboard {
 		public ScoreboardTeam getScoreboardTeam(Team team) {
 			scoreboardTeams.computeIfAbsent(team, $ -> {
 				ScoreboardTeam scoreboardTeam = Minigames.getScoreboard().createTeam(match.getArena().getName() + "-" + team.getColoredName(), false);
-				scoreboardTeam.setColor(team.getColor());
+				scoreboardTeam.setColor(ColorType.toBukkit(team.getColor()));
 				scoreboardTeam.setPrefix(team.getColor().toString());
 				return scoreboardTeam;
 			});
