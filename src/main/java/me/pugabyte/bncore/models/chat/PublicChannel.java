@@ -56,7 +56,9 @@ public class PublicChannel implements Channel {
 	public Set<Chatter> getRecipients(Chatter chatter) {
 		List<Player> recipients = new ArrayList<>();
 		if (local)
-			recipients.addAll(chatter.getPlayer().getLocation().getNearbyPlayers(Chat.getLocalRadius()));
+			recipients.addAll(Bukkit.getOnlinePlayers().stream()
+					.filter(player -> player.getLocation().distance(chatter.getPlayer().getLocation()) <= Chat.getLocalRadius())
+					.collect(Collectors.toList()));
 		else if (crossWorld)
 			recipients.addAll(Bukkit.getOnlinePlayers());
 		else
