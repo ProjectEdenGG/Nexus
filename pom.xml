@@ -134,6 +134,10 @@
             <name>jcenter-bintray</name>
             <url>https://jcenter.bintray.com</url>
         </repository>
+        <repository>
+            <id>upstream</id>
+            <url>http://ci.nametagedit.com/plugin/repository/everything/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Paper API -->
@@ -452,12 +456,21 @@
             <groupId>com.github.koca2000</groupId>
             <artifactId>NoteBlockAPI</artifactId>
             <version>1.4.4</version>
+            <scope>provided</scope>
         </dependency>
         <!-- BlueMap API -->
         <dependency>
             <groupId>com.github.BlueMap-Minecraft</groupId>
             <artifactId>BlueMapAPI</artifactId>
             <version>v1.3.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- NametagEdit -->
+        <dependency>
+            <groupId>com.nametagedit</groupId>
+            <artifactId>nametagedit</artifactId>
+            <version>4.1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
