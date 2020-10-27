@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.achievements.listeners;
 import me.pugabyte.bncore.models.achievement.Achievement;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;

@@ -8,7 +8,7 @@ import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.utils.ColorType;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

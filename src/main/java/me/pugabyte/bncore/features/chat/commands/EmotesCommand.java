@@ -1,7 +1,5 @@
 package me.pugabyte.bncore.features.chat.commands;
 
-import java.util.Arrays;
-import java.util.function.Function;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.chat.Emotes;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -12,7 +10,10 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.emote.EmoteService;
 import me.pugabyte.bncore.models.emote.EmoteUser;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+
+import java.util.Arrays;
+import java.util.function.Function;
 
 public class EmotesCommand extends CustomCommand {
 	private final EmoteService service = new EmoteService();

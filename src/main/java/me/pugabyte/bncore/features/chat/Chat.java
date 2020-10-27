@@ -14,8 +14,8 @@ import me.pugabyte.bncore.models.nerd.Rank;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time.Timer;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 

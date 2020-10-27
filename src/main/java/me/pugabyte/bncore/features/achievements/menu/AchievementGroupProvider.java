@@ -7,7 +7,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.models.achievement.Achievement;
 import me.pugabyte.bncore.models.achievement.AchievementGroup;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

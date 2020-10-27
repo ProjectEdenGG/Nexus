@@ -3,18 +3,20 @@ package me.pugabyte.bncore.utils;
 import com.google.gson.Gson;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Request.Builder;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -538,10 +540,46 @@ public class StringUtils {
 
 	@SneakyThrows
 	public static String paste(String content) {
-		Request request = new Builder().url(HASTEBIN + "documents").post(RequestBody.create(MediaType.get("text/plain"), content)).build();
+		Request request = new Request.Builder().url(HASTEBIN + "documents").post(RequestBody.create(MediaType.get("text/plain"), content)).build();
 		try (Response response = new OkHttpClient().newCall(request).execute()) {
 			PasteResult result = new Gson().fromJson(response.body().string(), PasteResult.class);
 			return HASTEBIN + result.getKey();
+		}
+	}
+
+	@RequiredArgsConstructor
+	public static class Gradient {
+		@NonNull
+		private final ChatColor color1, color2;
+
+		public static Gradient of(ChatColor color1, ChatColor color2) {
+			return new Gradient(color1, color2);
+		}
+
+		public String apply(String text) {
+			int l = text.length();
+			StringBuilder builder = new StringBuilder();
+			for (int i = 0; i < l; i++) {
+				builder.append(ChatColor.of(new Color(
+						(color1.getColor().getRed() + (i * (1F / l) * (color2.getColor().getRed() - color1.getColor().getRed()))) / 255,
+						(color1.getColor().getGreen() + (i * (1F / l) * (color2.getColor().getGreen() - color1.getColor().getGreen()))) / 255,
+						(color1.getColor().getBlue() + (i * (1F / l) * (color2.getColor().getBlue() - color1.getColor().getBlue()))) / 255
+				)));
+				builder.append(text.charAt(i));
+			}
+			return builder.toString();
+		}
+	}
+
+	public static class Rainbow {
+		public static String apply(String text) {
+			StringBuilder builder = new StringBuilder();
+			int l = text.length();
+			for (int i = 0; i < l; i++) {
+				builder.append(ChatColor.of(Color.getHSBColor(((float) i / l) * .75F, .9F, .9F)));
+				builder.append(text.charAt(i));
+			}
+			return builder.toString();
 		}
 	}
 

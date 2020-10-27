@@ -8,7 +8,7 @@ import me.pugabyte.bncore.models.achievement.Achievement;
 import me.pugabyte.bncore.models.achievement.AchievementGroup;
 import me.pugabyte.bncore.models.achievement.AchievementPlayer;
 import me.pugabyte.bncore.models.achievement.AchievementService;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;

@@ -6,7 +6,7 @@ import me.pugabyte.bncore.features.chat.events.ChatEvent;
 import me.pugabyte.bncore.models.emote.EmoteService;
 import me.pugabyte.bncore.models.emote.EmoteUser;
 import me.pugabyte.bncore.utils.RandomUtils;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;

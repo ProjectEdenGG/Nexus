@@ -7,6 +7,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.utils.StringUtils.Gradient;
+import me.pugabyte.bncore.utils.StringUtils.Rainbow;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
@@ -50,18 +53,28 @@ public class PrefixCommand extends CustomCommand {
 
 	@Path("<prefix...>")
 	@Permission("set.my.prefix")
-	void prefix(String value) {
+	void prefix(String input) {
 		if (player().hasPermission("emoticons.use"))
-			value = Emotes.process(value);
+			input = Emotes.process(input);
 
-		if (stripColor(value).length() > 10)
+		if (stripColor(input).length() > 10)
 			error("Your prefix cannot be more than 10 characters");
 
-		value = stripFormat(value);
+		input = stripFormat(input);
 
-		prefix.setValue(value);
+		prefix.setValue(input);
 		service.save(prefix);
-		send(PREFIX + "Your prefix has been set to &8&l[&f" + value + "&8&l]");
+		send(PREFIX + "Your prefix has been set to &8&l[&f" + input + "&8&l]");
+	}
+
+	@Path("gradient <color1> <color2> <prefix...>")
+	void gradient(ChatColor color1, ChatColor color2, String input) {
+		prefix(Gradient.of(color1, color2).apply(input));
+	}
+
+	@Path("rainbow <prefix...>")
+	void rainbow(String input) {
+		prefix(Rainbow.apply(input));
 	}
 
 }

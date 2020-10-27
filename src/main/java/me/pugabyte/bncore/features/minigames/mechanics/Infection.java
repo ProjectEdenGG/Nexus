@@ -8,7 +8,7 @@ import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

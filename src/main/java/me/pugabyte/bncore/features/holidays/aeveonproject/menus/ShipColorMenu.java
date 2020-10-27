@@ -12,7 +12,7 @@ import me.pugabyte.bncore.models.aeveonproject.AeveonProjectUser;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

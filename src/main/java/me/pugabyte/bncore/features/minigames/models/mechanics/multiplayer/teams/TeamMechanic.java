@@ -7,7 +7,7 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
 import java.util.HashMap;

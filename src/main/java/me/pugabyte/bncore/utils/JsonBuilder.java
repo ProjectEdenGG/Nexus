@@ -103,8 +103,8 @@ public class JsonBuilder {
 		return this;
 	}
 
-	public JsonBuilder hover(String text, org.bukkit.ChatColor color) {
-		builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(loreize(text).replaceAll("\\|\\|", "\n")).create()));
+	public JsonBuilder hover(String text, ChatColor color) {
+		builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(loreize(text).replaceAll("\\|\\|", "\n")).color(color).create()));
 		return this;
 	}
 

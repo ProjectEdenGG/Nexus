@@ -1,20 +1,21 @@
 package me.pugabyte.bncore.features.store.perks.stattrack.models;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+import lombok.Data;
+import lombok.NonNull;
+import me.pugabyte.bncore.features.store.perks.stattrack.utils.HiddenLore;
+import me.pugabyte.bncore.utils.StringUtils;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import lombok.Data;
-import lombok.NonNull;
-import me.pugabyte.bncore.features.store.perks.stattrack.utils.HiddenLore;
-import me.pugabyte.bncore.utils.StringUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @Data
 public class StatItem {

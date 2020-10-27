@@ -5,7 +5,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
