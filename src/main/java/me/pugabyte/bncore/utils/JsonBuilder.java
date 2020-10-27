@@ -99,11 +99,6 @@ public class JsonBuilder {
 		return this;
 	}
 
-	public JsonBuilder insert(String insertion) {
-		builder.insertion(insertion);
-		return this;
-	}
-
 	public JsonBuilder hover(String text) {
 		BaseComponent[] components = new ComponentBuilder(loreize(text).replaceAll("\\|\\|", "\n")).create();
 		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(components)));
@@ -125,6 +120,17 @@ public class JsonBuilder {
 	public JsonBuilder hover(Entity entity) {
 		Content item = Bukkit.getServer().getItemFactory().hoverContentOf(entity);
 		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ENTITY, item));
+		return this;
+	}
+
+	public JsonBuilder insert(String insertion) {
+		builder.insertion(insertion);
+		ComponentBuilder newBuilder = new ComponentBuilder();
+		for (BaseComponent baseComponent : builder.getParts()) {
+			baseComponent.setInsertion(insertion);
+			newBuilder.append(baseComponent);
+		}
+		builder = newBuilder;
 		return this;
 	}
 
