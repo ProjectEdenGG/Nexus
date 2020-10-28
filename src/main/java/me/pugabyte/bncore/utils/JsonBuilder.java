@@ -128,7 +128,7 @@ public class JsonBuilder {
 		ComponentBuilder newBuilder = new ComponentBuilder();
 		for (BaseComponent baseComponent : builder.getParts()) {
 			baseComponent.setInsertion(insertion);
-			newBuilder.append(baseComponent);
+			newBuilder.append(baseComponent, FormatRetention.NONE);
 		}
 		builder = newBuilder;
 		return this;
@@ -138,7 +138,7 @@ public class JsonBuilder {
 		ComponentBuilder newBuilder = new ComponentBuilder();
 		for (BaseComponent baseComponent : builder.getParts()) {
 			baseComponent.setClickEvent(event);
-			newBuilder.append(baseComponent);
+			newBuilder.append(baseComponent, FormatRetention.NONE);
 		}
 		builder = newBuilder;
 	}
@@ -147,7 +147,7 @@ public class JsonBuilder {
 		ComponentBuilder newBuilder = new ComponentBuilder();
 		for (BaseComponent baseComponent : builder.getParts()) {
 			baseComponent.setHoverEvent(event);
-			newBuilder.append(baseComponent);
+			newBuilder.append(baseComponent, FormatRetention.NONE);
 		}
 		builder = newBuilder;
 	}
