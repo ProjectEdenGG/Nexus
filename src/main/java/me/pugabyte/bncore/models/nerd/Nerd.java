@@ -1,12 +1,14 @@
 package me.pugabyte.bncore.models.nerd;
 
 import de.tr7zw.nbtapi.NBTFile;
+import de.tr7zw.nbtapi.NBTList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
@@ -14,6 +16,7 @@ import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -132,9 +135,31 @@ public class Nerd {
 		return null;
 	}
 
-	public World getSpawnWorld() {
+	public World getDimension() {
 		NBTFile dataFile = getDataFile();
-		return dataFile == null ? null : Bukkit.getWorld(dataFile.getString("SpawnWorld"));
+		return dataFile == null ? null : Bukkit.getWorld(dataFile.getString("Dimension").replace("minecraft:", ""));
+	}
+
+	public Location getLocation() {
+		if (getOfflinePlayer().isOnline())
+			return getPlayer().getPlayer().getLocation();
+
+		try {
+			NBTFile file = getDataFile();
+			if (file == null)
+				throw new InvalidInputException("Data file does not exist");
+
+			World world = getDimension();
+			if (world == null)
+				throw new InvalidInputException("Player is not in a valid world (" + world + ")");
+
+			NBTList<Double> pos = file.getDoubleList("Pos");
+			NBTList<Float> rotation = file.getFloatList("Rotation");
+
+			return new Location(world, pos.get(0), pos.get(1), pos.get(2), rotation.get(0), rotation.get(1));
+		} catch (Exception ex) {
+			throw new InvalidInputException("Could not get location of offline player: " + ex.getMessage());
+		}
 	}
 
 	@Data
