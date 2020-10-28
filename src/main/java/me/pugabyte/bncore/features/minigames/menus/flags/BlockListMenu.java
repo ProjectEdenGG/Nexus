@@ -100,10 +100,10 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 		if (!page.isLast())
-			contents.set(0, 8, ClickableItem.from(new ItemStack(nameItem(Material.ARROW, "&rNext Page")),
+			contents.set(0, 8, ClickableItem.from(new ItemStack(nameItem(Material.ARROW, "&fNext Page")),
 					e -> menus.blockListMenu(arena).open(player, page.next().getPage())));
 		if (!page.isFirst())
-			contents.set(0, 7, ClickableItem.from(new ItemStack(nameItem(Material.BARRIER, "&rPrevious Page")),
+			contents.set(0, 7, ClickableItem.from(new ItemStack(nameItem(Material.BARRIER, "&fPrevious Page")),
 					e -> menus.blockListMenu(arena).open(player, page.previous().getPage())));
 
 	}
