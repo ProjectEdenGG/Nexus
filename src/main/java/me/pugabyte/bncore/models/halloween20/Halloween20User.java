@@ -4,11 +4,8 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import me.pugabyte.bncore.features.holidays.halloween20.models.ComboLockNumber;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -31,13 +28,17 @@ public class Halloween20User extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	// Pumpkin Finding
-	private QuestStage.LostPumpkins lostPumpkinsStage;
-	@Embedded
-	private List<Location> foundPumpkins = new ArrayList<>();
-
 	@Override
 	public UUID getUuid() {
 		return uuid;
 	}
+
+	// Pumpkin Finding
+	private QuestStage.LostPumpkins lostPumpkinsStage = QuestStage.LostPumpkins.NOT_STARTED;
+	@Embedded
+	private List<Location> foundPumpkins = new ArrayList<>();
+
+	private QuestStage.Combination combinationStage = QuestStage.Combination.NOT_STARTED;
+	private List<ComboLockNumber> foundComboLockNumbers;
+
 }

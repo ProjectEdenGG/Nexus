@@ -23,6 +23,7 @@ public class Halloween20Command extends CustomCommand {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		user.setLostPumpkinsStage(QuestStage.LostPumpkins.NOT_STARTED);
+		user.setCombinationStage(QuestStage.Combination.NOT_STARTED);
 		service.save(user);
 	}
 

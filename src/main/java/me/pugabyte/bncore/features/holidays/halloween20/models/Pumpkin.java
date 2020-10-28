@@ -35,7 +35,7 @@ public enum Pumpkin {
 
 	public static Pumpkin getByLocation(Location loc) {
 		for (Pumpkin pumpkin : values())
-			if (pumpkin.original == loc)
+			if (pumpkin.original.equals(loc))
 				return pumpkin;
 		return null;
 	}
