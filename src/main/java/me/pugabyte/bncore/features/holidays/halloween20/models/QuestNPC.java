@@ -60,8 +60,6 @@ public enum QuestNPC {
 			Halloween20User user = service.get(player);
 			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
 				case NOT_STARTED:
-					user.setLostPumpkinsStage(QuestStage.LostPumpkins.STARTED);
-					service.save(user);
 					return Arrays.asList(
 							"O hey there."
 					);
@@ -86,8 +84,6 @@ public enum QuestNPC {
 			Halloween20User user = service.get(player);
 			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
 				case NOT_STARTED:
-					user.setLostPumpkinsStage(QuestStage.LostPumpkins.STARTED);
-					service.save(user);
 					return Arrays.asList(
 							"Welcome to the party!"
 					);
@@ -111,8 +107,6 @@ public enum QuestNPC {
 			Halloween20User user = service.get(player);
 			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
 				case NOT_STARTED:
-					user.setLostPumpkinsStage(QuestStage.LostPumpkins.STARTED);
-					service.save(user);
 					return Arrays.asList(
 							"Hey there!",
 							"I don't see many people over here anymore."
@@ -141,8 +135,6 @@ public enum QuestNPC {
 			Halloween20User user = service.get(player);
 			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
 				case NOT_STARTED:
-					user.setLostPumpkinsStage(QuestStage.LostPumpkins.STARTED);
-					service.save(user);
 					return Arrays.asList(
 							"Welcome! There's some food at the stall over there if you want some."
 					);
@@ -202,8 +194,6 @@ public enum QuestNPC {
 			Halloween20User user = service.get(player);
 			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
 				case NOT_STARTED:
-					user.setLostPumpkinsStage(QuestStage.LostPumpkins.STARTED);
-					service.save(user);
 					return Arrays.asList(
 							"Hey, Welcome to our city."
 					);
