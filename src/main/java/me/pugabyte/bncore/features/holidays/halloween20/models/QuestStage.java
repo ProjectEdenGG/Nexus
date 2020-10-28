@@ -9,4 +9,10 @@ public class QuestStage {
 		COMPLETE
 	}
 
+	public enum Combination {
+		NOT_STARTED,
+		STARTED,
+		COMPLETE
+	}
+
 }
