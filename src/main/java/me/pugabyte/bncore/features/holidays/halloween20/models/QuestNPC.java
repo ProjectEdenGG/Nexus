@@ -51,7 +51,172 @@ public enum QuestNPC {
 			}
 			return new ArrayList<>();
 		}
+	},
+
+	PEDRO(3067) {
+		@Override
+		public List<String> getScript(Player player) {
+			Halloween20Service service = new Halloween20Service();
+			Halloween20User user = service.get(player);
+			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+				case NOT_STARTED:
+					return Arrays.asList(
+							"O hey there."
+					);
+				case STARTED:
+					return Arrays.asList(
+							"I might have a clue to the 3rd number of the combination.>",
+							"I think it has to do with the month of bear fair."
+					);
+				case COMPLETE:
+					return Arrays.asList(
+							"I heard you figured out the combination. That's great!"
+					);
+			}
+			return new ArrayList<>();
+		}
+	},
+
+	MARK(3068) {
+		@Override
+		public List<String> getScript(Player player) {
+			Halloween20Service service = new Halloween20Service();
+			Halloween20User user = service.get(player);
+			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+				case NOT_STARTED:
+					return Arrays.asList(
+							"Welcome to the party!"
+					);
+				case STARTED:
+					return Arrays.asList(
+							"If you're looking to solve the combination, I heard that the middle number is 1."
+					);
+				case COMPLETE:
+					return Arrays.asList(
+							"Now that you're free, it's party time!"
+					);
+			}
+			return new ArrayList<>();
+		}
+	},
+
+	ANA(3069) {
+		@Override
+		public List<String> getScript(Player player) {
+			Halloween20Service service = new Halloween20Service();
+			Halloween20User user = service.get(player);
+			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+				case NOT_STARTED:
+					return Arrays.asList(
+							"Hey there!",
+							"I don't see many people over here anymore."
+					);
+				case STARTED:
+					return Arrays.asList(
+							"<self> Hi, i'm trying to get out of here but the gate I came through is locked. ",
+							"<self> Do you happen to know the combination so that I can get out of here?",
+							"No, but I heard it contains the date of Halloween (MM/DD), Maybe you should try that?",
+							"Good luck!"
+					);
+				case COMPLETE:
+					return Arrays.asList(
+							"Welcome back!",
+							"Feel free to visit any time, not many people hang out around here anymore."
+					);
+			}
+			return new ArrayList<>();
+		}
+	},
+
+	ISSAC(3070) {
+		@Override
+		public List<String> getScript(Player player) {
+			Halloween20Service service = new Halloween20Service();
+			Halloween20User user = service.get(player);
+			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+				case NOT_STARTED:
+					return Arrays.asList(
+							"Welcome! There's some food at the stall over there if you want some."
+					);
+				case STARTED:
+					return Arrays.asList(
+							"<self> Hi, I seem to be stuck in this city.",
+							"<self> As soon as I went through that gate down there, it locked behind me.",
+							"Ah yes, that gate only opens one way.",
+							"Only the living can escape, and even then, you have to know the correct combination in order to leave.",
+							"I can't be of much help, but I can tell you that the last number of the combination is an even number. That is all I know"
+					);
+				case COMPLETE:
+					return Arrays.asList(
+							"So you figured out the combination huh? That's good to hear."
+					);
+			}
+			return new ArrayList<>();
+		}
+	},
+
+	CARLOS(3073) {
+		@Override
+		public List<String> getScript(Player player) {
+			Halloween20Service service = new Halloween20Service();
+			Halloween20User user = service.get(player);
+			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+				case NOT_STARTED:
+					user.setLostPumpkinsStage(QuestStage.LostPumpkins.STARTED);
+					service.save(user);
+					return Arrays.asList(
+							"I built a fire over there. Feel free to sit down and relax a bit."
+					);
+				case STARTED:
+					return Arrays.asList(
+							"Hey there, I'm carlos! Who are you?",
+							"<self> I am <player>, It's nice to meet you carlos.",
+							"<self> Do you by chance know how to get out of here? I can't get back through that gate I entered through.",
+							"<self> All I know is that there's a combination, but I don't know what it is.",
+							"I can give you a hint: How many staff members are there?",
+							"While you try to figure that out, why don't you sit down and relax for a while? There's a nice fire over there."
+					);
+				case COMPLETE:
+					return Arrays.asList(
+							"Hey, glad to see your back! Did you figure out how to get out of here?",
+							"<self> Yes, I did actually!",
+							"Well that's great!"
+					);
+			}
+			return new ArrayList<>();
+		}
+	},
+
+	AMELIA(3074) {
+		@Override
+		public List<String> getScript(Player player) {
+			Halloween20Service service = new Halloween20Service();
+			Halloween20User user = service.get(player);
+			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+				case NOT_STARTED:
+					return Arrays.asList(
+							"Hey, Welcome to our city."
+					);
+				case STARTED:
+					return Arrays.asList(
+							"Hey, I'm Amelia. What are you doing all the way up here?",
+							"<self> I'm trying to find clues on how to get out of here. I appear to be stuck here.",
+							"<self> I need to figure out the combination to the gate below.",
+							"<self> Do you have any information that could be helpful?",
+							"I believe somebody told me before that the number 7 is in there somewhere.",
+							"I'm not sure where, but I think it's in there somewhere.",
+							"<self> Ok, thanks!"
+					);
+				case COMPLETE:
+					return Arrays.asList(
+							"I'm glad to hear you figured out how to escape.",
+							"Feel free to come back and visit some time, not many people venture all the way up here!"
+					);
+			}
+			return new ArrayList<>();
+		}
 	};
+
 
 	int npcId;
 
