@@ -59,7 +59,7 @@ public class StatusBar extends PlayerOwnedObject {
 			if (!isOnline())
 				stop();
 			else if (bossBar != null) {
-				bossBar.setColor(getColor());
+				bossBar.setColor(getColor(uuid));
 				bossBar.setTitle(getText());
 			}
 		});
@@ -82,8 +82,8 @@ public class StatusBar extends PlayerOwnedObject {
 		);
 	}
 
-	private BarColor getColor() {
-		Chatter chatter = new ChatService().get(getUuid());
+	public static BarColor getColor(UUID uuid) {
+		Chatter chatter = new ChatService().get(uuid);
 		Channel activeChannel = chatter.getActiveChannel();
 		if (activeChannel instanceof PublicChannel) {
 			PublicChannel channel = (PublicChannel) activeChannel;

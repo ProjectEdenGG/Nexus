@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
+import me.pugabyte.bncore.models.statusbar.StatusBar;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
@@ -50,8 +51,10 @@ public class Compass extends PlayerOwnedObject {
 		taskId = Tasks.repeat(0, 1, () -> {
 			if (!isOnline())
 				stop();
-			else if (bossBar != null)
+			else if (bossBar != null) {
+				bossBar.setColor(StatusBar.getColor(uuid));
 				bossBar.setTitle(getCompass());
+			}
 		});
 	}
 
