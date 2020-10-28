@@ -13,7 +13,6 @@ import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -73,33 +72,14 @@ public class HomesCommand extends CustomCommand {
 		service.clearCache();
 	}
 
-	private static final List<Home> deleted = new ArrayList<>();
-
 	@Permission("group.admin")
 	@Path("deleteFromWorld <world>")
 	void deleteFromWorld(World world) {
 		ConfirmationMenu.builder()
-				.onConfirm(e -> Tasks.async(() -> {
-					deleted.clear();
-					List<HomeOwner> all = service.getAll();
-					all.forEach(homeOwner -> {
-						homeOwner.getHomes().stream().filter(home ->
-							home.getLocation() == null || home.getLocation().getWorld() == null || home.getLocation().getWorld().equals(world)
-						).forEach(home -> {
-							deleted.add(home);
-							send(homeOwner.getOfflinePlayer().getName() + " / " + home.getName());
-						});
-
-						deleted.forEach(homeOwner::delete);
-						// MongoDB no longer recognizes the homes after serialization so it can't merge the deletions
-						// Easy workaround is to delete the entire homeowner and re-save it
-						service.deleteSync(homeOwner);
-						service.saveSync(homeOwner);
-					});
-
-					send(json(PREFIX + "Deleted &e" + deleted.size() + " &3homes from null worlds or world &e" + world.getName() + "&3. ")
-							.next("&eClick here &3to restore them").command("/homes restoreDeleted"));
-				}))
+				.onConfirm(e ->
+						HomesFeature.deleteFromWorld(world.getName(), () ->
+								send(json(PREFIX + "Deleted &e" + HomesFeature.getDeleted().size() + " &3homes from null worlds or world &e" + world.getName() + "&3. ")
+										.next("&eClick here &3to restore them").command("/homes restoreDeleted"))))
 				.open(player());
 	}
 
@@ -108,6 +88,7 @@ public class HomesCommand extends CustomCommand {
 	void restoreDeleted() {
 		ConfirmationMenu.builder()
 				.onConfirm(e -> Tasks.async(() -> {
+					List<Home> deleted = HomesFeature.getDeleted();
 					deleted.forEach(home -> {
 						home.getOwner().add(home);
 						service.save(home.getOwner());

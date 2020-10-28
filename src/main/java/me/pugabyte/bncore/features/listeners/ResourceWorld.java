@@ -1,14 +1,27 @@
 package me.pugabyte.bncore.features.listeners;
 
+import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.homes.HomesFeature;
 import me.pugabyte.bncore.models.shop.Shop;
 import me.pugabyte.bncore.models.shop.ShopService;
 import me.pugabyte.bncore.models.tip.Tip;
 import me.pugabyte.bncore.models.tip.Tip.TipType;
 import me.pugabyte.bncore.models.tip.TipService;
+import me.pugabyte.bncore.models.warps.Warp;
+import me.pugabyte.bncore.models.warps.WarpService;
+import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.WorldType;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +34,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -174,19 +189,90 @@ public class ResourceWorld implements Listener {
 
 	// TODO Automation
 	/*
-	- unload all 3 worlds
-	- move the directories to old_<world>
-	- remove uuid.dat
-	- delete homes
-	- create new worlds
+	- #unload all 3 worlds
+	- #move the directories to old_<world>
+	- #remove uuid.dat
+	- #delete homes
+	- #create new worlds
 	- paste spawn (y = 150)
-	- mv setspawn
+	- #mv setspawn
 	- clean light
-	- create npc for filid
-	- set world border
-	- fill chunks
-	- dynamap purge
-	- delete from bearnation_smp_lwc.lwc_protections where world in ('resource', 'resource_nether', 'resource_the_end');
-	 */
+	- #create npc for filid
+	- #set world border
+	- #fill chunks
+	- #dynamap purge
+	- #delete from bearnation_smp_lwc.lwc_protections where world in ('resource', 'resource_nether', 'resource_the_end');
+	*/
+
+	private static final int filidId = 2766;
+	private static final int radius = 7500;
+
+	public static void reset(boolean test) {
+		test = true;
+
+		NPC filid = CitizensAPI.getNPCRegistry().getById(filidId);
+		filid.despawn();
+
+		for (String worldName : Arrays.asList("resource", "resource_nether", "resource_the_end")) {
+			if (test)
+				worldName = "test_" + worldName;
+			final String finalWorldName = worldName;
+
+			String root = new File(".").getAbsolutePath().replace(".", "");
+			File worldFolder = Paths.get(root + worldName).toFile();
+			File newFolder = Paths.get(root + "old_ " + worldName).toFile();
+
+			World world = Bukkit.getWorld(worldName);
+			if (world == null)
+				BNCore.severe("World " + finalWorldName + " not loaded");
+
+			try {
+				BNCore.getMultiverseCore().getMVWorldManager().unloadWorld(worldName);
+			} catch (Exception ex) {
+				BNCore.severe("Error unloading world " + worldName);
+				ex.printStackTrace();
+			}
+
+			boolean renameSuccess = worldFolder.renameTo(newFolder);
+			if (!renameSuccess) {
+				BNCore.severe("Could not rename " + finalWorldName + " folder");
+				return;
+			}
+
+			boolean deleteSuccess = Paths.get(newFolder.getAbsolutePath() + "/uid.dat").toFile().delete();
+			if (!deleteSuccess)
+				BNCore.severe("Could not delete " + finalWorldName + " uid.dat file");
+
+			HomesFeature.deleteFromWorld(worldName, null);
+
+			Environment env = Environment.NORMAL;
+			String seed = null;
+			if (worldName.contains("nether"))
+				env = Environment.NETHER;
+			else if (worldName.contains("the_end"))
+				env = Environment.THE_END;
+			else
+				// TODO List of approved seeds
+				seed = null;
+
+			BNCore.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.NORMAL, true, null);
+		}
+
+		String worldName = (test ? "test_" : "") + "resource";
+
+		new WorldEditUtils(worldName).paster()
+				.file("resource-world-spawn")
+				.at(new Location(Bukkit.getWorld(worldName), 0, 0, 0))
+				.air(false)
+				.paste();
+
+		Warp warp = new WarpService().get(worldName, WarpType.NORMAL);
+		BNCore.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
+		filid.spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
+
+		Utils.runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
+		Utils.runCommandAsConsole("bluemap purge " + worldName);
+		Utils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle");
+	}
 
 }
