@@ -28,11 +28,12 @@ public class Tab implements Listener {
 	}
 
 	public static String getHeader(Player player) {
-		return System.lineSeparator() + ScoreboardLine.ONLINE.render(player);
+		return System.lineSeparator() + ScoreboardLine.ONLINE.render(player) + System.lineSeparator();
 	}
 
 	public static String getFooter(Player player) {
-		return "  " + ScoreboardLine.PING.render(player) + "  &8&l|  " + ScoreboardLine.TPS.render(player) + "  " +
+		return System.lineSeparator() +
+				"  " + ScoreboardLine.PING.render(player) + "  &8&l|  " + ScoreboardLine.TPS.render(player) + "  " +
 				System.lineSeparator() +
 				ScoreboardLine.CHANNEL.render(player) +
 				System.lineSeparator() +

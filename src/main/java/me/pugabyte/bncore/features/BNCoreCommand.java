@@ -74,7 +74,6 @@ import java.util.zip.ZipFile;
 
 import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.getHexPattern;
 import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
 import static me.pugabyte.bncore.utils.StringUtils.paste;
 import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
@@ -466,11 +465,11 @@ public class BNCoreCommand extends CustomCommand {
 
 	@ConverterFor(ChatColor.class)
 	ChatColor convertToChatColor(String value) {
-		if (getHexPattern().matcher(value).matches())
+		if (StringUtils.getHexPattern().matcher(value).matches())
 			return ChatColor.of(value.replaceFirst("&", ""));
 
 		try {
-			return ChatColor.valueOf(value);
+			return ColorType.valueOf(value.toUpperCase()).getChatColor();
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInputException("Color &e" + value + "&c not found");
 		}
@@ -478,9 +477,9 @@ public class BNCoreCommand extends CustomCommand {
 
 	@TabCompleterFor(ChatColor.class)
 	List<String> tabCompleteChatColor(String filter) {
-		return ColorType.getColors().values().stream()
-				.map(ChatColor::getName)
-				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+		return Arrays.stream(ColorType.values())
+				.map(colorType -> colorType.name().toLowerCase())
+				.filter(name -> name.startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 

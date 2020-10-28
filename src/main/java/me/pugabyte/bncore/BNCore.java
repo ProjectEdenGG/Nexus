@@ -29,6 +29,7 @@ import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import me.pugabyte.bncore.utils.WorldGuardFlagUtils;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
+import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -246,6 +247,8 @@ public class BNCore extends JavaPlugin {
 	@Getter
 	private static Essentials essentials;
 	@Getter
+	private static Citizens citizens;
+	@Getter
 	private static BuycraftPluginBase buycraft;
 	@Getter
 	private static Economy econ = null;
@@ -267,6 +270,7 @@ public class BNCore extends JavaPlugin {
 		signMenuFactory = new SignMenuFactory(this);
 		protocolManager = ProtocolLibrary.getProtocolManager();
 		essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+		citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
 		cron.start();
 		econ = getServer().getServicesManager().getRegistration(Economy.class).getProvider();

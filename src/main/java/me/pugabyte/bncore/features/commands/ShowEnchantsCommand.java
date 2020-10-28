@@ -21,9 +21,7 @@ import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -75,7 +73,6 @@ public class ShowEnchantsCommand extends CustomCommand {
 			itemName = material;
 
 		int amount = item.getAmount();
-		getEnchants(item, data);
 
 		Chatter chatter = new ChatService().get(player);
 		if (!(chatter.getActiveChannel() instanceof PublicChannel))
@@ -84,29 +81,20 @@ public class ShowEnchantsCommand extends CustomCommand {
 
 		// Ingame
 		{
-			String enchants = getEnchantsIngame(item);
+			ChatColor color = channel.getMessageColor();
+			JsonBuilder json = json()
+					.next(channel.getChatterFormat(chatter))
+					.group()
+					.next((isNullOrEmpty(message) ? "" : message + " "))
+					.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "]")
+					.hover(item);
 
-			String lore = "";
-			if (data.getCustomEnchantsList() == null || data.getCustomEnchantsList().size() == 0) {
-				if (data.getLoreList() != null)
-					lore = getLoreIngame(data);
-			} else
-				lore = getCustomEnchantsIngame(data);
-
-			int durability = ((Damageable) item.getItemMeta()).getDamage();
-
-			ComponentBuilder herochat = new ComponentBuilder(channel.getChatterFormat(chatter));
-			ComponentBuilder json = new ComponentBuilder("{\"id\":\"minecraft:" + itemId.toLowerCase() + "\",\"Count\":1,\"tag\":{\"display\":{\"Lore\":[" + lore + "]},\"Damage\":" + durability + ",\"Enchantments\":[" + enchants + "]}}");
-			ComponentBuilder hover = new ComponentBuilder(itemName).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, json.create()));
-			ComponentBuilder enchantedItem = new ComponentBuilder((isNullOrEmpty(message) ? "" : message + " ")).append(channel.getMessageColor() + "[").bold(true).append(hover.create()).bold(true).append(channel.getMessageColor() + "]").bold(true);
-
-			BaseComponent[] component = herochat.append(enchantedItem.create()).append((amount > 1 ? " x" + amount : "")).create();
-
-			channel.broadcastIngame(chatter, new JsonBuilder(component));
+			channel.broadcastIngame(chatter, json);
 		}
 
 		// Discord
 		if (channel.getDiscordChannel() != null) {
+			getEnchants(item, data);
 			String enchants = getEnchantsDiscord(data);
 
 			String durability = String.valueOf(((int) item.getType().getMaxDurability()) - ((Damageable) item.getItemMeta()).getDamage());
@@ -143,21 +131,6 @@ public class ShowEnchantsCommand extends CustomCommand {
 			data.setEnchantsMap(item.getEnchantments());
 		}
 		getCustomEnchants(item, data);
-	}
-
-	private String getEnchantsIngame(ItemStack item) {
-		StringBuilder string = new StringBuilder();
-		int i = 0;
-		for (Map.Entry<Enchantment, Integer> entry : item.getItemMeta().getEnchants().entrySet()) {
-			String enchant = entry.getKey().getKey().getKey();
-			String level = entry.getValue().toString();
-
-			i++;
-			string.append("{\"id\":\"minecraft:-\",\"lvl\":#}".replaceAll("-", enchant).replaceAll("#", level));
-			if (i < item.getItemMeta().getEnchants().size())
-				string.append(",");
-		}
-		return string.toString();
 	}
 
 	private String getEnchantsDiscord(ItemData data) {

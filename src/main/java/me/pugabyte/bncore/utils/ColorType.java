@@ -306,7 +306,7 @@ public enum ColorType {
 
 	static {
 		try {
-			Field BY_NAME = ChatColor.class.getField("BY_NAME");
+			Field BY_NAME = ChatColor.class.getDeclaredField("BY_NAME");
 			BY_NAME.setAccessible(true);
 			all = (Map<String, ChatColor>) BY_NAME.get(null);
 		} catch (Exception ex) {
