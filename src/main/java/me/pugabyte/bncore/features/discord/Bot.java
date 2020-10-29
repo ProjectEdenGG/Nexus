@@ -32,6 +32,7 @@ public enum Bot {
 		JDABuilder build() {
 			return JDABuilder.createDefault(getToken())
 					.addEventListeners(new DiscordListener())
+					// .addEventListeners(new DiscordCaptchaListener())
 					.addEventListeners(getCommands().build());
 		}
 	},
