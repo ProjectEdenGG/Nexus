@@ -3,6 +3,7 @@ package me.pugabyte.bncore;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.earth2me.essentials.Essentials;
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -245,6 +246,8 @@ public class BNCore extends JavaPlugin {
 	@Getter
 	private static ProtocolManager protocolManager;
 	@Getter
+	private static MultiverseCore multiverseCore;
+	@Getter
 	private static Essentials essentials;
 	@Getter
 	private static Citizens citizens;
@@ -269,6 +272,7 @@ public class BNCore extends JavaPlugin {
 	private void hooks() {
 		signMenuFactory = new SignMenuFactory(this);
 		protocolManager = ProtocolLibrary.getProtocolManager();
+		multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("MultiverseCore");
 		essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 		citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");

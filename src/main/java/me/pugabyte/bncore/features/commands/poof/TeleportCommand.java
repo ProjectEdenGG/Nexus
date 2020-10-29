@@ -11,6 +11,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.Redirects;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.Utils.RelativeLocation;
@@ -29,8 +30,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static me.pugabyte.bncore.utils.Utils.getLocation;
 
 @NoArgsConstructor
 @Aliases({"tp", "tppos"})
@@ -104,14 +103,14 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			player().teleport(modifier.update(), TeleportCause.COMMAND);
 		} else if (isOfflinePlayerArg(1)) {
 			OfflinePlayer player1 = offlinePlayerArg(1);
-			Location location1 = getLocation(player1);
+			Location location1 = new Nerd(player1).getLocation();
 			if (isOfflinePlayerArg(2)) {
 				OfflinePlayer player2 = offlinePlayerArg(2);
 				if (player1.isOnline() && player1.getPlayer() != null) {
 					if (checkTeleportDisabled(player1.getPlayer(), player2))
 						return;
 
-					player1.getPlayer().teleport(getLocation(player2), TeleportCause.COMMAND);
+					player1.getPlayer().teleport(new Nerd(player2).getLocation(), TeleportCause.COMMAND);
 					send(PREFIX + "Poofing to &e" + player2.getName() + (player2.isOnline() ? "" : " &3(Offline)"));
 				} else
 					throw new PlayerNotOnlineException(player1);

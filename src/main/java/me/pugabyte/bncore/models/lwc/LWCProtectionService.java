@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.persistence.MySQLPersistence;
 import me.pugabyte.bncore.models.MySQLService;
 import org.bukkit.Location;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,5 +36,9 @@ public class LWCProtectionService extends MySQLService {
 		return database.where("(x BETWEEN ? AND ?) AND (z BETWEEN ? AND ?) AND world = ?")
 				.args(xneg, xpos, zneg, zpos, location.getWorld().getName())
 				.results(LWCProtection.class);
+	}
+
+	public int deleteFromWorlds(String... worlds) {
+		return database.table("lwc_protections").where("world in (" + asList(Arrays.asList(worlds)) + ")").delete().getRowsAffected();
 	}
 }

@@ -58,14 +58,14 @@ public enum QuestNPC {
 		public List<String> getScript(Player player) {
 			Halloween20Service service = new Halloween20Service();
 			Halloween20User user = service.get(player);
-			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+			switch (user.getCombinationStage()) {
 				case NOT_STARTED:
 					return Arrays.asList(
 							"O hey there."
 					);
 				case STARTED:
 					return Arrays.asList(
-							"I might have a clue to the 3rd number of the combination.>",
+							"I might have a clue to the 3rd number of the combination.",
 							"I think it has to do with the month of bear fair."
 					);
 				case COMPLETE:
@@ -82,7 +82,7 @@ public enum QuestNPC {
 		public List<String> getScript(Player player) {
 			Halloween20Service service = new Halloween20Service();
 			Halloween20User user = service.get(player);
-			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+			switch (user.getCombinationStage()) {
 				case NOT_STARTED:
 					return Arrays.asList(
 							"Welcome to the party!"
@@ -105,7 +105,7 @@ public enum QuestNPC {
 		public List<String> getScript(Player player) {
 			Halloween20Service service = new Halloween20Service();
 			Halloween20User user = service.get(player);
-			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+			switch (user.getCombinationStage()) {
 				case NOT_STARTED:
 					return Arrays.asList(
 							"Hey there!",
@@ -133,7 +133,7 @@ public enum QuestNPC {
 		public List<String> getScript(Player player) {
 			Halloween20Service service = new Halloween20Service();
 			Halloween20User user = service.get(player);
-			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+			switch (user.getCombinationStage()) {
 				case NOT_STARTED:
 					return Arrays.asList(
 							"Welcome! There's some food at the stall over there if you want some."
@@ -160,7 +160,7 @@ public enum QuestNPC {
 		public List<String> getScript(Player player) {
 			Halloween20Service service = new Halloween20Service();
 			Halloween20User user = service.get(player);
-			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+			switch (user.getCombinationStage()) {
 				case NOT_STARTED:
 					user.setLostPumpkinsStage(QuestStage.LostPumpkins.STARTED);
 					service.save(user);
@@ -192,7 +192,7 @@ public enum QuestNPC {
 		public List<String> getScript(Player player) {
 			Halloween20Service service = new Halloween20Service();
 			Halloween20User user = service.get(player);
-			switch (user.getLostPumpkinsStage()) { //needs to be changed to combination quest stage
+			switch (user.getCombinationStage()) {
 				case NOT_STARTED:
 					return Arrays.asList(
 							"Hey, Welcome to our city."
@@ -231,11 +231,12 @@ public enum QuestNPC {
 	}
 
 	public void sendScript(Player player) {
-		if (this.getScript(player) == null) return;
+		List<String> script = getScript(player);
+		if (script == null) return;
 		AtomicReference<String> npcName = new AtomicReference<>("");
 
 		AtomicInteger wait = new AtomicInteger(0);
-		this.getScript(player).forEach(line -> {
+		script.forEach(line -> {
 			npcName.set(camelCase(name().replaceAll("_", " ")));
 			npcName.set(npcName.get().replaceAll("[0-9]+", ""));
 			if (line.toLowerCase().matches("^wait \\d+$"))

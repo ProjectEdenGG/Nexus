@@ -19,15 +19,16 @@ import me.pugabyte.bncore.models.litebans.LiteBansService;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import me.pugabyte.bncore.utils.JsonBuilder;
-import me.pugabyte.bncore.utils.StringUtils.*;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.text.NumberFormat;
 import java.util.List;
 
-import static me.pugabyte.bncore.utils.StringUtils.*;
-import static me.pugabyte.bncore.utils.Utils.getLocation;
+import static me.pugabyte.bncore.utils.StringUtils.getLocationString;
+import static me.pugabyte.bncore.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
 
 @Aliases({"whotf", "whothefuck"})
 @Permission("group.staff")
@@ -101,7 +102,7 @@ public class WhoIsCommand extends CustomCommand {
 		}
 
 		try {
-			json.newline().next("&3Location: &e" + getLocationString(getLocation(offlinePlayer))).hover("&eClick to TP").command("/tp " + offlinePlayer.getName());
+			json.newline().next("&3Location: &e" + getLocationString(nerd.getLocation())).hover("&eClick to TP").command("/tp " + offlinePlayer.getName());
 		} catch (InvalidInputException ex) {
 			json.newline().next("&3Location: &c" + ex.getMessage());
 		}

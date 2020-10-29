@@ -82,9 +82,9 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 			if (!page.isLast())
-				contents.set(0, 8, ClickableItem.from(nameItem(Material.ARROW, "&rNext Page"), e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.next().getPage())));
+				contents.set(0, 8, ClickableItem.from(nameItem(Material.ARROW, "&fNext Page"), e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.next().getPage())));
 			if (!page.isFirst())
-				contents.set(0, 7, ClickableItem.from(nameItem(Material.BARRIER, "&rPrevious Page"), e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.previous().getPage())));
+				contents.set(0, 7, ClickableItem.from(nameItem(Material.BARRIER, "&fPrevious Page"), e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.previous().getPage())));
 
 		}
 	}
