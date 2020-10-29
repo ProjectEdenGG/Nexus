@@ -30,15 +30,18 @@ public class RedHandedCommand extends CustomCommand {
 	void player(@Arg(type = Player.class) List<Player> players) {
 		for (Player player : players) {
 			runCommand("freeze " + player.getName());
-			if (player().getGameMode().equals(GameMode.SPECTATOR))
-				if (player().hasPermission("group.seniorstaff"))
-					player().setGameMode(GameMode.CREATIVE);
-				else
-					player().setGameMode(GameMode.SURVIVAL);
+
 			((Chatter) chatService.get(player)).setActiveChannel(local);
 
 			Tasks.wait(1, () -> send(json("&c&lClick here to let them continue. Type a reason to warn them").suggest("/youmaycontinue " + player.getName() + " ")));
 		}
+
+		if (player().getGameMode().equals(GameMode.SPECTATOR))
+			if (player().hasPermission("group.seniorstaff"))
+				player().setGameMode(GameMode.CREATIVE);
+			else
+				player().setGameMode(GameMode.SURVIVAL);
+
 		runCommand("vanish off");
 		player().setAllowFlight(true);
 		player().setFlying(true);
