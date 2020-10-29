@@ -20,26 +20,26 @@ public class MySQLPersistence {
 	}
 
 	@SneakyThrows
-	private static void openConnection(MySQLDatabase dbType) {
+	private static void openConnection(MySQLDatabase bndb) {
 		Class.forName("com.mysql.jdbc.Driver");
 
 		DatabaseConfig config = new DatabaseConfig("mysql");
 		Database database = new Database();
-		database.setJdbcUrl("jdbc:mysql://" + config.getHost() + ":" + config.getPort() + "/" + config.getPrefix() + dbType.getDatabase() + "?useSSL=false&relaxAutoCommit=true&characterEncoding=UTF-8");
+		database.setJdbcUrl("jdbc:mysql://" + config.getHost() + ":" + config.getPort() + "/" + config.getPrefix() + bndb.getDatabase() + "?useSSL=false&relaxAutoCommit=true&characterEncoding=UTF-8");
 		database.setUser(config.getUsername());
 		database.setPassword(config.getPassword());
 		database.setSqlMaker(new MySqlMaker());
 		database.setMaxPoolSize(3);
-		databases.put(dbType, database);
+		databases.put(bndb, database);
 	}
 
-	public static Database getConnection(MySQLDatabase dbType) {
+	public static Database getConnection(MySQLDatabase bndb) {
 		try {
-			if (databases.get(dbType) == null)
-				openConnection(dbType);
-			return databases.get(dbType);
+			if (databases.get(bndb) == null)
+				openConnection(bndb);
+			return databases.get(bndb);
 		} catch (Exception ex) {
-			BNCore.severe("Could not establish connection to the MySQL \"" + dbType.getDatabase() + "\" database: " + ex.getMessage());
+			BNCore.severe("Could not establish connection to the MySQL \"" + bndb.getDatabase() + "\" database: " + ex.getMessage());
 			return null;
 		}
 	}
