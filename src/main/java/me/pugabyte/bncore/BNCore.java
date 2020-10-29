@@ -193,11 +193,11 @@ public class BNCore extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		try { broadcastReload();										} catch (Throwable ex) { ex.printStackTrace(); }
-		try { Utils.runCommandAsConsole("save-all");					} catch (Throwable ex) { ex.printStackTrace(); }
+		try { Utils.runCommandAsConsole("save-all");		} catch (Throwable ex) { ex.printStackTrace(); }
 		try { cron.stop();												} catch (Throwable ex) { ex.printStackTrace(); }
 		try { LiteBans.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { BFQuests.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
-		try { protocolManager.removePacketListeners(this);				} catch (Throwable ex) { ex.printStackTrace(); }
+		try { protocolManager.removePacketListeners(this);		} catch (Throwable ex) { ex.printStackTrace(); }
 		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }

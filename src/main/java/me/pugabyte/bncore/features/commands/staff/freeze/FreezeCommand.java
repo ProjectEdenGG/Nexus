@@ -141,9 +141,12 @@ public class FreezeCommand extends CustomCommand implements Listener {
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
 		if (!isFrozen(player)) return;
-		//event.setCancelled(true); 1.15
+		event.setCancelled(true);
 		ArmorStand armorStand = (ArmorStand) event.getDismounted();
-		armorStand.addPassenger(player);
+		Tasks.wait(1, () -> {
+			if (!armorStand.isDead())
+				armorStand.addPassenger(player);
+		});
 	}
 
 	//Players can spam click to enter another vehicle which can cause an internal error when unfreezing.
