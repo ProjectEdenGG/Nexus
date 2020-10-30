@@ -99,6 +99,12 @@ public class Utils {
 			send(player, message);
 	}
 
+	public static void vroom(String message){
+		Player player = cam();
+		if(player != null && player.isOnline())
+			send(player, message);
+	}
+
 	public static Player puga() {
 		return Bukkit.getPlayer("Pugabyte");
 	}
@@ -114,6 +120,8 @@ public class Utils {
 	public static Player zani() {
 		return Bukkit.getPlayer("Zanitaeni");
 	}
+
+	public static Player cam() { return Bukkit.getPlayer("Camaros")};
 
 	public static boolean isVanished(Player player) {
 		for (MetadataValue meta : player.getMetadata("vanished"))
