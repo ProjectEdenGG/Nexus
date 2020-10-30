@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.holidays.halloween20;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -10,11 +11,11 @@ public class Gate {
 
     private static String gateBlockData = "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]";
 
-    private static Location closedL1 = new Location(Bukkit.getWorld("world"), 303, 59, -1992);
-    private static Location closedL2 = new Location(Bukkit.getWorld("world"), 307, 63, -1992);
+    private static Location closedL1 = new Location(Halloween20.getWorld(), 303, 59, -1992);
+    private static Location closedL2 = new Location(Halloween20.getWorld(), 307, 63, -1992);
 
-    private static Location openL1 = new Location(Bukkit.getWorld("world"), 298, 59, -1992);
-    private static Location openL2 = new Location(Bukkit.getWorld("world"), 302, 63, -1992);
+    private static Location openL1 = new Location(Halloween20.getWorld(), 298, 59, -1992);
+    private static Location openL2 = new Location(Halloween20.getWorld(), 302, 63, -1992);
 
     private static void openGate(Player player) {openGate(player, closedL1, closedL2, openL1, openL2);}
     private static void openGate(Player player, Location c1, Location c2, Location o1, Location o2){ openGate(player, c1, c2, o1, o2, gateBlockData); }
@@ -44,7 +45,7 @@ public class Gate {
                 for(int z = c1.getBlockZ(); z < c2.getBlockZ()+1; z++){
                     for(int y = c1.getBlockY(); y < c2.getBlockY()+1; y++){
                         Location targetLocation = new Location(Halloween20.getWorld(),c2.getX()-x_cursor_c, y, z);
-                        player.sendBlockChange(targetLocation, Bukkit.createBlockData("minecraft:air")); // CHANGE WORLD
+                        player.sendBlockChange(targetLocation, Material.AIR.createBlockData());
                         if(targetLocation.equals(c1)){
                             closedPortionDone = true;
                         }
@@ -105,7 +106,7 @@ public class Gate {
                 for(int z = o1.getBlockZ(); z < o2.getBlockZ()+1; z++){
                     for(int y = o1.getBlockY(); y < o2.getBlockY()+1; y++){
                         Location targetLocation = new Location(Halloween20.getWorld(),o1.getX()+x_cursor_o, y, z);
-                        player.sendBlockChange(targetLocation, targetLocation.getWorld().getBlockAt(targetLocation).getBlockData()); // CHANGE WORLD
+                        player.sendBlockChange(targetLocation, targetLocation.getWorld().getBlockAt(targetLocation).getBlockData());
                         if(targetLocation.equals(o2)){
                             openPortionDone = true;
                         }
