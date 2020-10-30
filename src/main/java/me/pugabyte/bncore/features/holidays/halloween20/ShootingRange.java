@@ -28,7 +28,6 @@ public class ShootingRange implements Listener {
     private static String itemLore = "Halloween20";
     private static int targetSwitchTimeTicks = 60;
     private static int lastUpdateTicks = -1;
-    private static Location lastUsedTarget = null;
     private static HashMap<UUID, Integer> points = new HashMap<>();
 
     private static HashMap<Location, String> targets = new HashMap<>();
@@ -49,10 +48,10 @@ public class ShootingRange implements Listener {
     private void targetTask() {
         Tasks.repeat(0, 5, () -> {
             if(lastUpdateTicks==-1||lastUpdateTicks+targetSwitchTimeTicks < Bukkit.getServer().getCurrentTick()){
+                clearTargets();
                 Location nextTarget = getRandomTarget();
                 placeTarget(nextTarget);
                 lastUpdateTicks = Bukkit.getServer().getCurrentTick();
-                lastUsedTarget = nextTarget;
             }
         });
     }
@@ -60,15 +59,14 @@ public class ShootingRange implements Listener {
     @EventHandler
     public void onRegionEnter(RegionEnteredEvent event) { //give bow
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
-        Utils.vroom("You receive a bow.");
         giveItem(event.getPlayer(), Item.BOW);
         giveItem(event.getPlayer(), Item.ARROW);
+        Utils.send(event.getPlayer(), "You received a bow. Hit the skull targets to get points!");
     }
 
     @EventHandler
     public void onRegionExit(RegionLeftEvent event) { //take bow and announce points
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
-        Utils.vroom("Your bow has been removed.");
         removeItems(event.getPlayer());
         Utils.send(event.getPlayer(), String.format("You got a total of %s points.", getPoints(event.getPlayer())));
         removePoints(event.getPlayer());
