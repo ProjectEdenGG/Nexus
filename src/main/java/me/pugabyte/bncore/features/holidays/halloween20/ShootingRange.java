@@ -29,6 +29,7 @@ public class ShootingRange implements Listener {
     private static int targetSwitchTimeTicks = 60;
     private static int lastUpdateTicks = -1;
     private static Location lastUsedTarget = null;
+    private static HashMap<UUID, Integer> points = new HashMap<>();
 
     private static HashMap<Location, String> targets = new HashMap<>();
 
@@ -69,11 +70,14 @@ public class ShootingRange implements Listener {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         Utils.vroom("Your bow has been removed.");
         removeItems(event.getPlayer());
+        Utils.send(event.getPlayer(), String.format("You got a total of %s points.", getPoints(event.getPlayer())));
+        removePoints(event.getPlayer());
     }
 
     @EventHandler
     public void onLogoutInRegion(PlayerQuitEvent event){
         //Remove item maybe?
+        removePoints(event.getPlayer());
     }
 
     @EventHandler
@@ -98,6 +102,29 @@ public class ShootingRange implements Listener {
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0F, 1.0F);
         lastUpdateTicks = -1;
 
+        addPoints(player, 1);
+
+    }
+
+    private void addPoints(Player player, int newPoints){
+        UUID uuid = player.getUniqueId();
+        if(!points.containsKey(uuid)){
+            points.put(uuid, newPoints);
+        } else {
+            points.put(uuid, points.get(uuid) + newPoints);
+        }
+    }
+
+    private int getPoints(Player player){
+        if(points.containsKey(player.getUniqueId())){
+            return points.get(player.getUniqueId());
+        } else {
+            return 0;
+        }
+    }
+
+    private void removePoints(Player player){
+        if(points.containsKey(player.getUniqueId())) points.remove(player.getUniqueId());
     }
 
     private void giveItem(Player player, Item item){ player.getInventory().addItem(item.getItem()); }
@@ -126,7 +153,7 @@ public class ShootingRange implements Listener {
     private Location getRandomTarget(){
         ArrayList<Location> validLocations = new ArrayList<Location>(targets.keySet());
         if(lastUsedTarget!=null)validLocations.remove(lastUsedTarget);
-        return validLocations.get(new Random().nextInt()%validLocations.size());
+        return validLocations != null?  validLocations.get(new Random().nextInt()%validLocations.size()) : null;
     }
 
     private boolean isInRegion(Player player){
