@@ -19,6 +19,7 @@ public class Halloween20 implements Listener {
 
 	public Halloween20() {
 		new LostPumpkins();
+		new ShootingRange();
 		BNCore.registerListener(this);
 	}
 

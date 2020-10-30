@@ -10,7 +10,9 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -18,7 +20,9 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class ShootingRange implements Listener {
     //WorldEditUtils WEUtils = new WorldEditUtils(Halloween20.getWorld());
@@ -32,16 +36,11 @@ public class ShootingRange implements Listener {
 
     private static HashMap<Location, String> targets = new HashMap<>();
 
-    static {
-
-        targets.put(new Location(Halloween20.getWorld(), 209,13,-1844), "minecraft:skeleton_skull[rotation=14]");
-        targets.put(new Location(Halloween20.getWorld(), 208,14,-1842), "minecraft:zombie_head[rotation=0]");
-        targets.put(new Location(Halloween20.getWorld(), 206,13,-1845), "minecraft:skeleton_skull[rotation=2]");
-
-    }
-
     public ShootingRange() {
         BNCore.registerListener(this);
+        targets.put(new Location(Halloween20.getWorld(), 209, 13, -1844), "minecraft:skeleton_skull[rotation=14]");
+        targets.put(new Location(Halloween20.getWorld(), 208, 14, -1842), "minecraft:zombie_head[rotation=0]");
+        targets.put(new Location(Halloween20.getWorld(), 206, 13, -1845), "minecraft:skeleton_skull[rotation=2]");
         targetTask();
     }
 
@@ -61,14 +60,14 @@ public class ShootingRange implements Listener {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         giveItem(event.getPlayer(), Item.BOW);
         giveItem(event.getPlayer(), Item.ARROW);
-        Utils.send(event.getPlayer(), "You received a bow. Hit the skull targets to get points!");
+        Utils.send(event.getPlayer(), StringUtils.getPrefix("Archery") + "You received a bow. Hit the skull targets to get points!");
     }
 
     @EventHandler
     public void onRegionExit(RegionLeftEvent event) { //take bow and announce points
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         removeItems(event.getPlayer());
-        Utils.send(event.getPlayer(), String.format("You got a total of %s points.", getPoints(event.getPlayer())));
+        Utils.send(event.getPlayer(), StringUtils.getPrefix("Archery") + "You got a total of &e" + getPoints(event.getPlayer()) + " &3points");
         removePoints(event.getPlayer());
     }
 
@@ -99,9 +98,7 @@ public class ShootingRange implements Listener {
         clearTargets();
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0F, 1.0F);
         lastUpdateTicks = -1;
-
         addPoints(player, 1);
-
     }
 
     private void addPoints(Player player, int newPoints){
@@ -146,11 +143,13 @@ public class ShootingRange implements Listener {
         block.setType(Material.AIR);
     }
 
-    private void clearTargets(){ targets.keySet().forEach((location) -> {clearTarget(location);}); }
+    private void clearTargets() {
+        targets.keySet().forEach(this::clearTarget);
+    }
 
     private Location getRandomTarget(){
         ArrayList<Location> locations = new ArrayList<Location>(targets.keySet());
-        return locations.get(new Random().nextInt()%locations.size());
+        return RandomUtils.randomElement(locations);
     }
 
     private boolean isInRegion(Player player){
@@ -163,12 +162,18 @@ public class ShootingRange implements Listener {
 
     enum Item {
 
-        BOW(new ItemBuilder(Material.BOW).enchant(Enchantment.ARROW_INFINITE).lore(itemLore).unbreakable().build()), ARROW(new ItemBuilder(Material.ARROW).lore(itemLore).build());
+        BOW(new ItemBuilder(Material.BOW).enchant(Enchantment.ARROW_INFINITE).lore(itemLore).unbreakable().build()),
+        ARROW(new ItemBuilder(Material.ARROW).lore(itemLore).build());
 
         private ItemStack is;
-        Item(ItemStack is){ this.is = is; }
-        ItemStack getItem(){ return is; }
 
+        Item(ItemStack is) {
+            this.is = is;
+        }
+
+        ItemStack getItem() {
+            return is;
+        }
     }
 
 }
