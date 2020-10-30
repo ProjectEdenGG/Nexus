@@ -37,4 +37,14 @@ public class Halloween20Command extends CustomCommand {
 		Halloween20Menus.openFlashCardPuzzle(player());
 	}
 
+	@Path("gate open")
+	void openGate() {
+		new Gate(player()).open();
+	}
+
+	@Path("gate close")
+	void closeGate() {
+		new Gate(player()).close();
+	}
+
 }
