@@ -150,7 +150,8 @@ public class Leaderboards implements Listener {
 						Nerd nerd = new Nerd(entry.getKey());
 						CitizensUtils.updateSkin(ids[i.get()], nerd.getName());
 						CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
-						runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + nerd.getRankFormat());
+						// nerd.getRankFormat() // HD Doesnt support Hex
+						runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + nerd.getName());
 					});
 				});
 			});
