@@ -98,7 +98,7 @@ public class ShootingRange implements Listener {
         Player player = (Player) projectile.getShooter();
 
         projectile.remove();
-        clearTarget(block.getLocation());
+        clearTargets();
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0F, 1.0F);
         lastUpdateTicks = -1;
 
@@ -151,9 +151,8 @@ public class ShootingRange implements Listener {
     private void clearTargets(){ targets.keySet().forEach((location) -> {clearTarget(location);}); }
 
     private Location getRandomTarget(){
-        ArrayList<Location> validLocations = new ArrayList<Location>(targets.keySet());
-        if(lastUsedTarget!=null)validLocations.remove(lastUsedTarget);
-        return validLocations != null?  validLocations.get(new Random().nextInt()%validLocations.size()) : null;
+        ArrayList<Location> locations = new ArrayList<Location>(targets.keySet());
+        return locations.get(new Random().nextInt()%locations.size());
     }
 
     private boolean isInRegion(Player player){
