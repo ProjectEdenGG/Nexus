@@ -7,6 +7,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.BookBuilder.WrittenBookMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
+import me.pugabyte.bncore.framework.commands.models.annotations.Async;
 import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
@@ -28,7 +29,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static me.pugabyte.bncore.utils.Utils.sortReverse;
 
 @NoArgsConstructor
 public class ReferralCommand extends CustomCommand implements Listener {
@@ -90,6 +95,22 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	void debug(@Arg("self") OfflinePlayer player) {
 		Referral referral = service.get(player);
 		send(referral.toString());
+	}
+
+	@Async
+	@Path("stats")
+	void stats() {
+		List<Referral> referrals = service.getAll();
+		if (referrals.isEmpty())
+			error("No referral stats available");
+
+		Map<Origin, Integer> counts = new HashMap<>();
+		for (Referral referral : referrals)
+			counts.put(referral.getOrigin(), counts.getOrDefault(referral.getOrigin(), 0) + 1);
+
+		line();
+		send(PREFIX + "Stats:");
+		sortReverse(counts).forEach((origin, count) -> send("&7 " + count + " - &e" + camelCase(origin)));
 	}
 
 	@EventHandler
