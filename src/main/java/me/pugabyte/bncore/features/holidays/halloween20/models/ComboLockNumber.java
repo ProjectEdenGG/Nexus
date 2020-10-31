@@ -82,7 +82,7 @@ public enum ComboLockNumber {
 					break;
 				}
 				user.getFoundComboLockNumbers().add(this);
-				Utils.send(player, PREFIX + "That number can now be used on the combination lock at the entrance to the city.");
+				Utils.send(player, PREFIX + "&e" + this.getNumericalValue() + "&3 can now be used on the combination lock at the entrance to the city.");
 				service.save(user);
 				player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1f, 1f);
 				if (user.getFoundComboLockNumbers().size() == 11)
