@@ -41,6 +41,7 @@ public class CommandOverrideListener implements Listener {
 			case "/bukkit:rl":
 			case "/defaultgamemode":
 			case "/minecraft:defaultgamemode":
+			case "/minecraft:op":
 				event.setCancelled(true);
 				send.accept("no");
 				break;

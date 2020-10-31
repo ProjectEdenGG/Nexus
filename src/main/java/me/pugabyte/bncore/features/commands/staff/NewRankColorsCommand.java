@@ -67,7 +67,7 @@ public class NewRankColorsCommand extends CustomCommand {
 		line(5);
 		Arrays.asList(Rank.values()).forEach(rank -> {
 			if (!rank.isActive()) return;
-			String color = newRankColors.getColors().getOrDefault(rank, rank.getChatColor());
+			String color = newRankColors.getColors().getOrDefault(rank, rank.getColor().toString());
 			String hex;
 			if (StringUtils.getHexPattern().matcher(color).matches()) {
 				hex = color.replace("&", "");

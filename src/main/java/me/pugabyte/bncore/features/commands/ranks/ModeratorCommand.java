@@ -18,13 +18,13 @@ public class ModeratorCommand extends CustomCommand {
 	@Path
 	void moderator() {
 		line(5);
-		send(Rank.MODERATOR.getFormat() + "Moderators &3are the first level of staff. They &eanswer any questions &3a player has, &efix grief&3, moderate chat, " +
+		send(Rank.MODERATOR.getColor() + "Moderators &3are the first level of staff. They &eanswer any questions &3a player has, &efix grief&3, moderate chat, " +
 				"and see too any other basic problems players have.");
 		line();
 		send(json()
 				.next("&3[+] &eHow to achieve&3: ")
 				.next("&eApply").url(modApp)
-				.hover("&eClick to open the application on the website (must be " + Rank.ELITE.getFormat() + "Elite &3or above)")
+				.hover("&eClick to open the application on the website (must be " + Rank.ELITE.getColor() + "Elite &3or above)")
 				.group());
 		send(json("&3[+] &eClick here &3for a list of moderators").command("/moderator list"));
 		line();
@@ -35,9 +35,9 @@ public class ModeratorCommand extends CustomCommand {
 	@Path("list")
 	void list() {
 		line();
-		send("&3All current " + Rank.MODERATOR.getFormat() + "Moderators &3and the date they were promoted:");
+		send("&3All current " + Rank.MODERATOR.getColor() + "Moderators &3and the date they were promoted:");
 		Rank.MODERATOR.getNerds().forEach(nerd -> {
-			send(Rank.MODERATOR.getFormat() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
+			send(Rank.MODERATOR.getColor() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
 		});
 		line();
 		RanksCommand.ranksReturn(player());

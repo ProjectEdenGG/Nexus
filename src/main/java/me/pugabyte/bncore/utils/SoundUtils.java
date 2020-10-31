@@ -20,6 +20,10 @@ public class SoundUtils {
 		Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), sound, volume, pitch));
 	}
 
+	public static void playSound(Player player, Sound sound) {
+		playSound(player, sound, SoundCategory.MASTER, 1, 1);
+	}
+
 	public static void playSound(Player player, Sound sound, float volume, float pitch) {
 		playSound(player, sound, SoundCategory.MASTER, volume, pitch);
 	}

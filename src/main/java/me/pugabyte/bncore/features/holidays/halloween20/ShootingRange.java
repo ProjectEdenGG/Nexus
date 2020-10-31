@@ -2,8 +2,13 @@ package me.pugabyte.bncore.features.holidays.halloween20;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
+import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.RandomUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,17 +29,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static me.pugabyte.bncore.features.holidays.halloween20.Halloween20.PREFIX;
+
 public class ShootingRange implements Listener {
     //WorldEditUtils WEUtils = new WorldEditUtils(Halloween20.getWorld());
-    private static WorldGuardUtils WGUtils = new WorldGuardUtils(Halloween20.getWorld());
-    private static String gameRg = Halloween20.getRegion() + "_archery";
+    private static final WorldGuardUtils WGUtils = new WorldGuardUtils(Halloween20.getWorld());
+    @Getter
+    private static final String gameRg = Halloween20.getRegion() + "_archery";
     //private static String targetsRg = gameRg + "_targets";
-    private static String itemLore = "Halloween20";
-    private static int targetSwitchTimeTicks = 60;
+    private static final String itemLore = "Halloween20";
+    private static final int targetSwitchTimeTicks = 60;
     private static int lastUpdateTicks = -1;
-    private static HashMap<UUID, Integer> points = new HashMap<>();
+    private static final HashMap<UUID, Integer> points = new HashMap<>();
 
-    private static HashMap<Location, String> targets = new HashMap<>();
+    private static final HashMap<Location, String> targets = new HashMap<>();
 
     public ShootingRange() {
         BNCore.registerListener(this);
@@ -56,18 +64,18 @@ public class ShootingRange implements Listener {
     }
 
     @EventHandler
-    public void onRegionEnter(RegionEnteredEvent event) { //give bow
+    public void onRegionEnter(RegionEnteredEvent event) {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         giveItem(event.getPlayer(), Item.BOW);
         giveItem(event.getPlayer(), Item.ARROW);
-        Utils.send(event.getPlayer(), StringUtils.getPrefix("Archery") + "You received a bow. Hit the skull targets to get points!");
+        Utils.send(event.getPlayer(), PREFIX + "You received a bow. Hit the skull targets to get points!");
     }
 
     @EventHandler
-    public void onRegionExit(RegionLeftEvent event) { //take bow and announce points
+    public void onRegionExit(RegionLeftEvent event) {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         removeItems(event.getPlayer());
-        Utils.send(event.getPlayer(), StringUtils.getPrefix("Archery") + "You got a total of &e" + getPoints(event.getPlayer()) + " &3points");
+        Utils.send(event.getPlayer(), PREFIX + "You got a total of &e" + getPoints(event.getPlayer()) + " &3points");
         removePoints(event.getPlayer());
     }
 

@@ -6,12 +6,19 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.halloween20.models.ComboLockNumber;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestNPC;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
+import me.pugabyte.bncore.features.holidays.halloween20.models.SoundButton;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.Gate;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.menus.Halloween20Menus;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.SoundUtils;
+import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,13 +32,15 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import static me.pugabyte.bncore.utils.Utils.runCommandAsConsole;
+
 public class Halloween20 implements Listener {
 	@Getter
-	public static String region = "halloween20";
+	public static final String region = "halloween20";
 	@Getter
-	public static World world = Bukkit.getWorld("safepvp");
+	public static final World world = Bukkit.getWorld("safepvp");
 	@Getter
-	public static String PREFIX = StringUtils.getPrefix("Halloween20");
+	public static final String PREFIX = StringUtils.getPrefix("Halloween 2020");
 	public WorldGuardUtils utils = new WorldGuardUtils(world);
 
 	public Halloween20() {
@@ -98,5 +107,34 @@ public class Halloween20 implements Listener {
 		Tasks.wait(Time.SECOND.x(15) + 300, () -> sendInstructions(event.getPlayer()));
 	}
 
+
+	@EventHandler
+	public void onButtonClick(PlayerInteractEvent event) {
+		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
+		if (event.getHand() != EquipmentSlot.HAND) return;
+		SoundButton button = SoundButton.getByLocation(event.getClickedBlock().getLocation());
+		if (button == null) return;
+
+		SoundUtils.playSound(event.getPlayer(), button.getSound(), 1, 1);
+
+		Halloween20Service service = new Halloween20Service();
+		Halloween20User user = service.get(event.getPlayer());
+		if (user.getFoundButtons().contains(button)) {
+			if (new CooldownService().check(event.getPlayer(), "halloween20-button-alreadyfound", Time.SECOND.x(10)))
+				user.send(PREFIX + "You've already found this button!");
+			return;
+		}
+
+		user.getFoundButtons().add(button);
+		service.save(user);
+
+		user.send(PREFIX + "You have found a spooky button! &e(" + user.getFoundButtons().size() + "/" + SoundButton.values().length + ")");
+
+		if (user.getFoundButtons().size() != SoundButton.values().length)
+			return;
+
+		runCommandAsConsole("lp user " + event.getPlayer().getName() + " permission set powder.powder.spookyscaryskeletons true");
+		user.send(PREFIX + "You have unlocked the Spooky Scary Skeletons song! &c/songs");
+	}
 
 }

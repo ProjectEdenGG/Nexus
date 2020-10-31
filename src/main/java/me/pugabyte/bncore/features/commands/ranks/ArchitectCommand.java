@@ -16,9 +16,9 @@ public class ArchitectCommand extends CustomCommand {
 	@Path
 	void architect() {
 		line(5);
-		send(Rank.ARCHITECT.getFormat() + "Architects &3oversee the building tasks for the server and recruit players to help with projects.");
+		send(Rank.ARCHITECT.getColor() + "Architects &3oversee the building tasks for the server and recruit players to help with projects.");
 		line();
-		send("&3[+] &eHow to achieve&3: Promoted from " + Rank.BUILDER.getFormat() + "Builder &3by Senior Staff.");
+		send("&3[+] &eHow to achieve&3: Promoted from " + Rank.BUILDER.getColor() + "Builder &3by Senior Staff.");
 		send(json("&3[+] &eClick here &3for a list of architects").command("/architect list"));
 		line();
 		RanksCommand.ranksReturn(player());
@@ -28,9 +28,9 @@ public class ArchitectCommand extends CustomCommand {
 	@Path("list")
 	void list() {
 		line();
-		send("&3All current " + Rank.ARCHITECT.getFormat() + "Architects &3and the date they were promoted:");
+		send("&3All current " + Rank.ARCHITECT.getColor() + "Architects &3and the date they were promoted:");
 		Rank.ARCHITECT.getNerds().forEach(nerd -> {
-			send(Rank.ARCHITECT.getFormat() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
+			send(Rank.ARCHITECT.getColor() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
 		});
 		line();
 		RanksCommand.ranksReturn(player());

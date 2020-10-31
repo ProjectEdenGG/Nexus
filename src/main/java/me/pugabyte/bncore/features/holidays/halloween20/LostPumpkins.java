@@ -11,7 +11,11 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -61,8 +65,8 @@ public class LostPumpkins implements Listener {
 		}
 		user.getFoundPumpkins().add(event.getClickedBlock().getLocation());
 		Tasks.wait(1, () -> event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.AIR.createBlockData()));
-		NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getEnd(), pumpkin.getOriginal().getBlock());
-		user.send(PREFIX + "You have just found a pumpkin! It has been returned to Jeffery. &e(" + user.getFoundPumpkins().size() + "/8)");
+		NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
+		user.send(PREFIX + "You have found a pumpkin! It has been returned to Jeffery. &e(" + user.getFoundPumpkins().size() + "/8)");
 		service.save(user);
 		if (user.getFoundPumpkins().size() == 8) {
 			user.send(PREFIX + "You have found the last pumpkin! Talk to &eJeffery &3at the pumpkin carving contest.");
@@ -82,7 +86,7 @@ public class LostPumpkins implements Listener {
 			Pumpkin pumpkin = Pumpkin.getByLocation(loc);
 			if (pumpkin == null) continue;
 			event.getPlayer().sendBlockChange(pumpkin.getOriginal(), Material.AIR.createBlockData());
-			NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getEnd(), pumpkin.getOriginal().getBlock());
+			NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
 		}
 	}
 

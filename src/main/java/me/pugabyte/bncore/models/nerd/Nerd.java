@@ -95,7 +95,7 @@ public class Nerd {
 	}
 
 	public String getRankFormat() {
-		return getRank().getFormat() + getName();
+		return getRank().getColor() + getName();
 	}
 
 	private static final String CHECKMARK = "&a✔";
@@ -120,7 +120,7 @@ public class Nerd {
 
 		if (BNCore.getPerms().playerHas(null, getOfflinePlayer(), "donated") && checkmarkSetting != null && checkmarkSetting.getBoolean())
 			prefix = CHECKMARK + " " + prefix;
-		return colorize((prefix.trim() + " " + (rank.getFormat() + getName()).trim())).trim();
+		return colorize((prefix.trim() + " " + (rank.getColor() + getName()).trim())).trim();
 	}
 
 	public boolean isVanished() {

@@ -61,6 +61,6 @@ public class OnlineStaffCommand extends CustomCommand {
 		else if (afk)
 			modifiers = "&7[AFK] ";
 
-		return modifiers + nerd.getRank().getFormat() + nerd.getName();
+		return modifiers + nerd.getRank().getColor() + nerd.getName();
 	}
 }

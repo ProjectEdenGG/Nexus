@@ -7,6 +7,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.hours.HoursService;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils.EnumUtils;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -23,21 +24,21 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum Rank {
-	GUEST("&#aaaaaa", false, false, false, true),
-	MEMBER("&#ffffff", false, false, false, true),
-	TRUSTED("&#ff7069", false, false, false, false, true, Color.decode("#ff7069")),
-	ELITE("&#f5a138", false, false, false, false, true, Color.decode("#f5a138")),
-	VETERAN("&#ffff44", true, false, false, false, true, Color.decode("#ffff44")),
-	BUILDER("&#02883e", true, true, false, false, true, Color.decode("#02883e")),
-	ARCHITECT("&#02c93e", true, true, false, false, true, Color.decode("#02c93e")),
-	MINIGAME_MODERATOR("&#4cc9f0", true, true, false, false, false, Color.decode("#4cc9f0")),
-	MODERATOR("&#4cc9f0", true, true, true, false, true, Color.decode("#4cc9f0")),
-	OPERATOR("&#07a8a8", true, true, true, true, true, Color.decode("#07a8a8")),
-	ADMIN("&#3080ff", true, true, true, true, true, Color.decode("#1687d3")),
-	OWNER("&#915bf5", true, true, true, true, true, Color.decode("#915bf5"));
+	GUEST(ChatColor.of("#aaaaaa"), false, false, false, true),
+	MEMBER(ChatColor.of("#ffffff"), false, false, false, true),
+	TRUSTED(ChatColor.of("#ff7069"), false, false, false, false, true, Color.decode("#ff7069")),
+	ELITE(ChatColor.of("#f5a138"), false, false, false, false, true, Color.decode("#f5a138")),
+	VETERAN(ChatColor.of("#ffff44"), true, false, false, false, true, Color.decode("#ffff44")),
+	BUILDER(ChatColor.of("#02883e"), true, true, false, false, true, Color.decode("#02883e")),
+	ARCHITECT(ChatColor.of("#02c93e"), true, true, false, false, true, Color.decode("#02c93e")),
+	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), true, true, false, false, false, Color.decode("#4cc9f0")),
+	MODERATOR(ChatColor.of("#4cc9f0"), true, true, true, false, true, Color.decode("#4cc9f0")),
+	OPERATOR(ChatColor.of("#07a8a8"), true, true, true, true, true, Color.decode("#07a8a8")),
+	ADMIN(ChatColor.of("#3080ff"), true, true, true, true, true, Color.decode("#1687d3")),
+	OWNER(ChatColor.of("#915bf5"), true, true, true, true, true, Color.decode("#915bf5"));
 
 	@Getter
-	private String format;
+	private ChatColor color;
 	@Getter
 	@Accessors(fluent = true)
 	private boolean hasPrefix;
@@ -56,8 +57,8 @@ public enum Rank {
 	@Getter
 	private Color discordColor;
 
-	Rank(String format, boolean hasPrefix, boolean isStaff, boolean isMod, boolean isActive) {
-		this.format = format;
+	Rank(ChatColor color, boolean hasPrefix, boolean isStaff, boolean isMod, boolean isActive) {
+		this.color = color;
 		this.hasPrefix = hasPrefix;
 		this.isStaff = isStaff;
 		this.isMod = isMod;
@@ -72,15 +73,11 @@ public enum Rank {
 	}
 
 	public String withColor() {
-		return format + StringUtils.camelCase(name());
+		return color + StringUtils.camelCase(name());
 	}
 
 	public String plain() {
 		return StringUtils.camelCase(name());
-	}
-
-	public String getChatColor() {
-		return format.replaceAll("&[lo]", "");
 	}
 
 	public List<Nerd> getNerds() {

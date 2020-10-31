@@ -1,7 +1,9 @@
 package me.pugabyte.bncore.features.holidays.halloween20;
 
 import me.pugabyte.bncore.features.holidays.halloween20.models.ComboLockNumber;
+import me.pugabyte.bncore.features.holidays.halloween20.models.Pumpkin;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
+import me.pugabyte.bncore.features.holidays.halloween20.models.SoundButton;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.Gate;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.menus.Halloween20Menus;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -12,6 +14,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +23,16 @@ public class Halloween20Command extends CustomCommand {
 
 	public Halloween20Command(CommandEvent event) {
 		super(event);
+	}
+
+	@Path
+	void tp() {
+		player().resetPlayerTime();
+		Halloween20User user = new Halloween20Service().get(player());
+		if (user.getCombinationStage() == QuestStage.Combination.NOT_STARTED)
+			Halloween20.start(player());
+		else
+			new Gate(player()).teleportIn();
 	}
 
 	@Path("reset [player]")
@@ -34,10 +47,28 @@ public class Halloween20Command extends CustomCommand {
 		service.save(user);
 	}
 
-	@Path("number <number>")
+	@Path("tp pumpkin original <number>")
 	@Permission("group.admin")
-	void number(ComboLockNumber number) {
-		player().teleport(number.getLoc());
+	void teleportPumpkinOriginal(Pumpkin pumpkin) {
+		player().teleport(pumpkin.getOriginal(), TeleportCause.COMMAND);
+	}
+
+	@Path("tp pumpkin end <number>")
+	@Permission("group.admin")
+	void teleportPumpkinEnd(Pumpkin pumpkin) {
+		player().teleport(pumpkin.getEnd(), TeleportCause.COMMAND);
+	}
+
+	@Path("tp comboLockNumber <number>")
+	@Permission("group.admin")
+	void teleportComboLockNumber(ComboLockNumber number) {
+		player().teleport(number.getLoc(), TeleportCause.COMMAND);
+	}
+
+	@Path("tp button <number>")
+	@Permission("group.admin")
+	void teleportButton(SoundButton number) {
+		player().teleport(number.getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("picture")
@@ -73,15 +104,6 @@ public class Halloween20Command extends CustomCommand {
 		user.getFoundComboLockNumbers().addAll(Arrays.asList(ComboLockNumber.values()));
 		service.save(user);
 		Halloween20Menus.openComboLock(player());
-	}
-
-	@Path
-	void tp() {
-		Halloween20User user = new Halloween20Service().get(player());
-		if (user.getCombinationStage() == QuestStage.Combination.NOT_STARTED)
-			Halloween20.start(player());
-		else
-			new Gate(player()).teleportIn();
 	}
 
 }

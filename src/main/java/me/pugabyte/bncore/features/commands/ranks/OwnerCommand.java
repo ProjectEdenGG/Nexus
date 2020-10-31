@@ -14,7 +14,7 @@ public class OwnerCommand extends CustomCommand {
 	@Path
 	void owner() {
 		line(5);
-		send(Rank.OWNER.getFormat() + "Pugabyte&3, &efounder &3of the server. Along with the " + Rank.ADMIN.getChatColor() + "Admin &3duties, he does most of the &eplugin &3management, " +
+		send(Rank.OWNER.getColor() + "Pugabyte&3, &efounder &3of the server. Along with the " + Rank.ADMIN.getColor() + "Admin &3duties, he does most of the &eplugin &3management, " +
 				"&edevelops &3new aspects of the server, and uses donations to buy cool new things for the server.");
 		line();
 		send("&3[+] &eSenior Staff rank");

@@ -31,7 +31,6 @@ public class Gate {
 			xOff.getAndIncrement();
 			if (xOff.get() == 4) {
 				cancel();
-
 			}
 		});
 	}

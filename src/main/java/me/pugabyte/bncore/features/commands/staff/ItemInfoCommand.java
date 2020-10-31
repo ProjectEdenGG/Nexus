@@ -12,7 +12,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import static me.pugabyte.bncore.utils.StringUtils.*;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.paste;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Aliases({"nbt", "itemdb"})
@@ -25,17 +27,14 @@ public class ItemInfoCommand extends CustomCommand {
 
 	@Path("[material]")
 	void itemInfo(Material material) {
-		ItemStack tool = player().getInventory().getItemInMainHand();
-
-		if (material != null)
+		ItemStack tool;
+		if (material == null)
+			tool = getToolRequired();
+		else
 			tool = new ItemStack(material);
-		else if (isNullOrAir(tool))
-			error("Must be holding an item");
-
-		material = tool.getType();
 
 		send("");
-		send("Material: " + material + " (" + material.ordinal() + ")");
+		send("Material: " + tool.getType() + " (" + tool.getType().ordinal() + ")");
 
 		if (!isNullOrAir(tool)) {
 			final String nbtString = getNBTString(tool);

@@ -4,6 +4,7 @@ import fr.minuskube.inv.SmartInvsPlugin;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.discord.Discord;
+import me.pugabyte.bncore.features.holidays.halloween20.ShootingRange;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.recipes.CustomRecipes;
@@ -34,15 +35,14 @@ import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.StringUtils.Gradient;
 import me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle;
-import me.pugabyte.bncore.utils.StringUtils.Rainbow;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.md_5.bungee.api.ChatColor;
@@ -74,7 +74,6 @@ import java.util.zip.ZipFile;
 
 import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
-import static me.pugabyte.bncore.utils.StringUtils.decolorize;
 import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
 import static me.pugabyte.bncore.utils.StringUtils.paste;
 import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
@@ -111,6 +110,10 @@ public class BNCoreCommand extends CustomCommand {
 		long invCount = Bukkit.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
 		if (invCount > 0)
 			error("There are " + invCount + " SmartInvs menus open, cannot reload");
+
+		int archeryCount = new WorldGuardUtils(Bukkit.getWorld("safepvp")).getPlayersInRegion(ShootingRange.getGameRg()).size();
+		if (archeryCount > 0)
+			error("There are " + archeryCount + " players playing Halloween Archery, cannot reload");
 
 		runCommand("plugman reload BNCore");
 	}
@@ -187,42 +190,6 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("koda <message...>")
 	void koda(String message) {
 		Koda.say(message);
-	}
-
-	@Path("getSpigotHex <input...>")
-	void getSpigotHex(String input) {
-		send(json("Click to copy").copy(decolorize(colorize(input))));
-	}
-
-	@Path("runSpigotHexCommand <commandNoSlash...>")
-	void runHexCommand(String commandNoSlash) {
-		runCommand(decolorize(colorize(commandNoSlash)));
-	}
-
-	@Path("setNpcName withPrefix <player>")
-	void setNpcNameWithFormat(Nerd nerd) {
-		runCommand("npc rename " + decolorize(colorize("&8&l[" + nerd.getRank().withColor() + "&8&l] " + nerd.getRank().getChatColor() + nerd.getName())));
-	}
-
-	@Path("setNpcName withColor <player>")
-	void setNpcNameWithColor(Nerd nerd) {
-		runCommand("npc rename " + decolorize(colorize(nerd.getRank().getChatColor())) + nerd.getName());
-	}
-
-	@Description("Get the last color used in a string (including formatting)")
-	@Path("getLastColor <message...>")
-	void getLastColor(String message) {
-		send(StringUtils.getLastColor(message) + "Last color");
-	}
-
-	@Path("gradient <color1> <color2> <input>")
-	void gradient(ChatColor color1, ChatColor color2, String input) {
-		send(Gradient.of(color1, color2).apply(input));
-	}
-
-	@Path("rainbow <input>")
-	void rainbow(String input) {
-		send(Rainbow.apply(input));
 	}
 
 	@Path("getRank <player>")

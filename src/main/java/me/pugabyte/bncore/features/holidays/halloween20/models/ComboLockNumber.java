@@ -5,13 +5,14 @@ import me.pugabyte.bncore.features.holidays.halloween20.Halloween20;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.menus.Halloween20Menus;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
-import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import static me.pugabyte.bncore.features.holidays.halloween20.Halloween20.PREFIX;
 
 public enum ComboLockNumber {
 
@@ -69,7 +70,6 @@ public enum ComboLockNumber {
 	}
 
 	public void onFind(Player player) {
-		String PREFIX = StringUtils.getPrefix("Halloween20");
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		switch (user.getCombinationStage()) {
