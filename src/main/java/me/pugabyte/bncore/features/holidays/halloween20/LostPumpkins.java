@@ -60,7 +60,7 @@ public class LostPumpkins implements Listener {
 			return;
 		}
 		user.getFoundPumpkins().add(event.getClickedBlock().getLocation());
-		event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.AIR.createBlockData());
+		Tasks.wait(1, () -> event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.AIR.createBlockData()));
 		NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getEnd(), pumpkin.getOriginal().getBlock());
 		user.send(PREFIX + "You have just found a pumpkin! It has been returned to Jeffery. &e(" + user.getFoundPumpkins().size() + "/8)");
 		if (user.getFoundPumpkins().size() == 8) {
