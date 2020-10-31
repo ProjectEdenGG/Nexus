@@ -73,7 +73,7 @@ public class Halloween20 implements Listener {
 		ComboLockNumber number = ComboLockNumber.getByLocation(event.getClickedBlock().getLocation());
 		if (number == null) return;
 		event.setCancelled(true);
-		number.onFind(event.getPlayer());
+		Tasks.wait(1, () -> number.onFind(event.getPlayer()));
 	}
 
 	// Open Combo Lock
