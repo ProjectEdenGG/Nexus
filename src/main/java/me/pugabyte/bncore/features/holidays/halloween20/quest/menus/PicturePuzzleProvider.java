@@ -60,8 +60,12 @@ public class PicturePuzzleProvider extends MenuUtils implements InventoryProvide
 		player.closeInventory();
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
+		if (user.getFoundComboLockNumbers().contains(number)) {
+			Utils.send(player, Halloween20.PREFIX + "You already know of this number. Maybe there’s some more.");
+			return;
+		}
 		user.getFoundComboLockNumbers().add(number);
-		Utils.send(player, Halloween20.PREFIX + "You have found " + user.getFoundComboLockNumbers().size() + "/11 numbers for the combination lock.");
+		Utils.send(player, Halloween20.PREFIX + "The number &e" + number.getNumericalValue() + "&3 can now be used on the combination lock at the entrance to the city.");
 		service.save(user);
 		if (user.getFoundComboLockNumbers().size() == 11)
 			Utils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");

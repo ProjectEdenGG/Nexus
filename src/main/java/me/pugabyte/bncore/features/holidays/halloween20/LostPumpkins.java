@@ -6,13 +6,13 @@ import me.pugabyte.bncore.features.holidays.halloween20.models.Pumpkin;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
+import me.pugabyte.bncore.utils.NMSUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,15 +55,18 @@ public class LostPumpkins implements Listener {
 			user.send(PREFIX + "This looks like it should be in the pumpkin carving contest. Maybe I should talk talk to &eJeffery &3at the pumpkin carving contest.");
 			return;
 		}
-		if (user.getFoundPumpkins().contains(event.getClickedBlock())) {
+		if (user.getFoundPumpkins().contains(event.getClickedBlock().getLocation())) {
 			user.send(PREFIX + "&cYou have already found that pumpkin");
 			return;
 		}
 		user.getFoundPumpkins().add(event.getClickedBlock().getLocation());
 		event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.AIR.createBlockData());
-		event.getPlayer().sendBlockChange(pumpkin.getEnd(), event.getClickedBlock().getBlockData());
+		NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getEnd(), pumpkin.getOriginal().getBlock());
+		user.send(PREFIX + "You have just found a pumpkin! It has been returned to Jeffery. &e(" + user.getFoundPumpkins().size() + "/8)");
 		if (user.getFoundPumpkins().size() == 8) {
 			user.send(PREFIX + "You have found the last pumpkin! Talk to &eJeffery &3at the pumpkin carving contest.");
+			user.setLostPumpkinsStage(QuestStage.LostPumpkins.FOUND_ALL);
+			service.save(user);
 		}
 	}
 
@@ -77,9 +80,8 @@ public class LostPumpkins implements Listener {
 		for (Location loc : user.getFoundPumpkins()) {
 			Pumpkin pumpkin = Pumpkin.getByLocation(loc);
 			if (pumpkin == null) continue;
-			Block block = pumpkin.getOriginal().getBlock();
-			player.sendBlockChange(loc, Material.AIR.createBlockData());
-			player.sendBlockChange(pumpkin.getEnd(), block.getBlockData());
+			event.getPlayer().sendBlockChange(pumpkin.getOriginal(), Material.AIR.createBlockData());
+			NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getEnd(), pumpkin.getOriginal().getBlock());
 		}
 	}
 

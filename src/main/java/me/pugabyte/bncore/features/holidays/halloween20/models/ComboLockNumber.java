@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.holidays.halloween20.models;
 
+import lombok.Getter;
 import me.pugabyte.bncore.features.holidays.halloween20.Halloween20;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.menus.Halloween20Menus;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
@@ -8,47 +9,56 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public enum ComboLockNumber {
 
-	PUZZLE_TWO(new Location(Bukkit.getWorld("safepvp"), 327.00, 56.00, -1956.00, .00F, .00F), 2) {
+	PUZZLE_TWO(2, new Location(Bukkit.getWorld("safepvp"), 327.00, 56.00, -1956.00, .00F, .00F), 2) {
 		@Override
 		public void onFind(Player player) {
-			Halloween20Menus.openPicturePuzzle(player, this);
+			if (((Halloween20User) new Halloween20Service().get(player)).getCombinationStage() == QuestStage.Combination.STARTED)
+				Halloween20Menus.openPicturePuzzle(player, this);
 		}
 	},
-	ZERO(new Location(Bukkit.getWorld("safepvp"), 319.00, 60.00, -1924.00, .00F, .00F), 0),
-	SEVEN(new Location(Bukkit.getWorld("safepvp"), 364.00, 113.00, -1919.00, .00F, .00F), 5),
-	PUZZLE_EIGHT(new Location(Bukkit.getWorld("safepvp"), 394.00, 103.00, -1952.00, .00F, .00F), 6) {
+	ZERO(0, new Location(Bukkit.getWorld("safepvp"), 319.00, 60.00, -1924.00, .00F, .00F), 0),
+	SEVEN(7, new Location(Bukkit.getWorld("safepvp"), 364.00, 113.00, -1919.00, .00F, .00F), 5),
+	PUZZLE_EIGHT(8, new Location(Bukkit.getWorld("safepvp"), 394.00, 103.00, -1952.00, .00F, .00F), 6) {
 		@Override
 		public void onFind(Player player) {
-			Halloween20Menus.openPicturePuzzle(player, this);
+			if (((Halloween20User) new Halloween20Service().get(player)).getCombinationStage() == QuestStage.Combination.STARTED)
+				Halloween20Menus.openPicturePuzzle(player, this);
 		}
 	},
-	ONE(new Location(Bukkit.getWorld("safepvp"), 374.00, 112.00, -1963.00, .00F, .00F), 1),
-	PUZZLE_EIGHT_2(new Location(Bukkit.getWorld("safepvp"), 368.00, 152.00, -1933.00, .00F, .00F), 6) {
+	ONE(1, new Location(Bukkit.getWorld("safepvp"), 374.00, 112.00, -1963.00, .00F, .00F), 1),
+	PUZZLE_EIGHT_2(8, new Location(Bukkit.getWorld("safepvp"), 368.00, 152.00, -1933.00, .00F, .00F), 6) {
 		@Override
 		public void onFind(Player player) {
-			Halloween20Menus.openFlashCardPuzzle(player, this);
+			if (((Halloween20User) new Halloween20Service().get(player)).getCombinationStage() == QuestStage.Combination.STARTED)
+				Halloween20Menus.openFlashCardPuzzle(player, this);
 		}
 	},
-	ONE_2(new Location(Bukkit.getWorld("safepvp"), 329.00, 163.00, -1949.00, .00F, .00F), 1),
-	SIX(new Location(Bukkit.getWorld("safepvp"), 391.00, 154.00, -1958.00, .00F, .00F), 4),
-	ONE_3(new Location(Bukkit.getWorld("safepvp"), 285.00, 223.00, -1949.00, .00F, .00F), 1),
-	THREE(new Location(Bukkit.getWorld("safepvp"), 309.00, 202.00, -1925.00, .00F, .00F), 3),
-	PUZZLE_ZERO(new Location(Bukkit.getWorld("safepvp"), 326.00, 216.00, -1949.00, .00F, .00F), 0) {
+	ONE_2(1, new Location(Bukkit.getWorld("safepvp"), 329.00, 163.00, -1949.00, .00F, .00F), 1),
+	SIX(6, new Location(Bukkit.getWorld("safepvp"), 391.00, 154.00, -1958.00, .00F, .00F), 4),
+	ONE_3(1, new Location(Bukkit.getWorld("safepvp"), 285.00, 223.00, -1949.00, .00F, .00F), 1),
+	THREE(3, new Location(Bukkit.getWorld("safepvp"), 309.00, 202.00, -1925.00, .00F, .00F), 3),
+	PUZZLE_ZERO(0, new Location(Bukkit.getWorld("safepvp"), 326.00, 216.00, -1949.00, .00F, .00F), 0) {
 		@Override
 		public void onFind(Player player) {
-			Halloween20Menus.openFlashCardPuzzle(player, this);
+			if (((Halloween20User) new Halloween20Service().get(player)).getCombinationStage() == QuestStage.Combination.STARTED)
+				Halloween20Menus.openFlashCardPuzzle(player, this);
 		}
 	};
 
+	@Getter
+	int numericalValue;
+	@Getter
 	Location loc;
 	int yOff;
 
-	ComboLockNumber(Location loc, int yOff) {
+	ComboLockNumber(int numericalValue, Location loc, int yOff) {
+		this.numericalValue = numericalValue;
 		this.loc = loc;
 		this.yOff = yOff;
 	}
@@ -68,12 +78,13 @@ public enum ComboLockNumber {
 				break;
 			case STARTED:
 				if (user.getFoundComboLockNumbers().contains(this)) {
-					Utils.send(player, PREFIX + "You have already found this number");
+					Utils.send(player, PREFIX + "You already know of this number. Maybe there’s some more.");
 					break;
 				}
 				user.getFoundComboLockNumbers().add(this);
-				Utils.send(player, PREFIX + "You have found " + user.getFoundComboLockNumbers().size() + "/11 numbers for the combination lock.");
+				Utils.send(player, PREFIX + "That number can now be used on the combination lock at the entrance to the city.");
 				service.save(user);
+				player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1f, 1f);
 				if (user.getFoundComboLockNumbers().size() == 11)
 					Utils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");
 				break;

@@ -1,8 +1,10 @@
 package me.pugabyte.bncore.features.holidays.halloween20.models;
 
+import me.pugabyte.bncore.features.holidays.halloween20.Halloween20;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -45,13 +47,15 @@ public enum QuestNPC {
 					return Arrays.asList(
 							"You found all my pumpkins! Thank you so much.",
 							"wait 80",
-							"For all your work, I'll give you this.",
+							"For all your work, I'll give you these pumpkins to take home with you.",
 							"wait 80",
-							"I heard it works at spawn on some weird box. See what it gives you!"
+							"I even wrapped them up nicely for you!",
+							"wait 80",
+							"Thanks again. Come back to see me whenever you can."
 					);
 				case COMPLETE:
 					return Arrays.asList(
-
+							"Thanks again for helping me find all those pumpkins!"
 					);
 			}
 			return new ArrayList<>();
@@ -177,8 +181,6 @@ public enum QuestNPC {
 			Halloween20User user = service.get(player);
 			switch (user.getCombinationStage()) {
 				case NOT_STARTED:
-					user.setLostPumpkinsStage(QuestStage.LostPumpkins.STARTED);
-					service.save(user);
 					return Arrays.asList(
 							"I built a fire over there. Feel free to sit down and relax a bit."
 					);
@@ -240,6 +242,41 @@ public enum QuestNPC {
 							"I'm glad to hear you figured out how to escape.",
 							"wait 60",
 							"Feel free to come back and visit some time, not many people venture all the way up here!"
+					);
+			}
+			return new ArrayList<>();
+		}
+	},
+	DIEGO(3075) {
+		@Override
+		public List<String> getScript(Player player) {
+			Halloween20Service service = new Halloween20Service();
+			Halloween20User user = service.get(player);
+			switch (user.getCombinationStage()) {
+				case NOT_STARTED:
+					user.setCombinationStage(QuestStage.Combination.STARTED);
+					service.save(user);
+					return Arrays.asList(
+							"Hello, welcome to the land of the Dead!",
+							"wait 60",
+							"O yes, that door. It doesn’t open. It has been locked for a long time now. Most of us cannot leave here anyways.",
+							"wait 100",
+							"If you want to open it, you will have to unlock it. I hear there are clues laying around in the land of the dead. Maybe you can find some clues on how to unlock it.",
+							"wait 100",
+							"Try looking around here or in the city above."
+					);
+				case STARTED:
+					Tasks.wait(Time.SECOND.x(10), () -> Halloween20.sendInstructions(player));
+					return Arrays.asList(
+							"Have you found any clues to try to open that gate?",
+							"wait 60",
+							"You might have some luck getting it open if you look for some numbers around here and on the platforms above."
+					);
+				case COMPLETE:
+					return Arrays.asList(
+							"Hey look, you figured out how to open that gate!",
+							"wait 80",
+							"Well since you can get out of here now, don’t be afraid to come back and visit some time!"
 					);
 			}
 			return new ArrayList<>();
