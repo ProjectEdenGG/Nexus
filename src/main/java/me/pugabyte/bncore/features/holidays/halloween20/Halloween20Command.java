@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.halloween20;
 
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
+import me.pugabyte.bncore.features.holidays.halloween20.quest.Gate;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.menus.Halloween20Menus;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -29,12 +30,12 @@ public class Halloween20Command extends CustomCommand {
 
 	@Path("picture")
 	void picture() {
-		Halloween20Menus.openPicturePuzzle(player());
+		Halloween20Menus.openPicturePuzzle(player(), null);
 	}
 
 	@Path("flashCard")
 	void flash() {
-		Halloween20Menus.openFlashCardPuzzle(player());
+		Halloween20Menus.openFlashCardPuzzle(player(), null);
 	}
 
 	@Path("gate open")

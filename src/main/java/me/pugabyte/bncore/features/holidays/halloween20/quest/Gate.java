@@ -1,5 +1,6 @@
-package me.pugabyte.bncore.features.holidays.halloween20;
+package me.pugabyte.bncore.features.holidays.halloween20.quest;
 
+import me.pugabyte.bncore.features.holidays.halloween20.Halloween20;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -28,8 +29,10 @@ public class Gate {
 				}
 			}
 			xOff.getAndIncrement();
-			if (xOff.get() == 4)
+			if (xOff.get() == 4) {
 				cancel();
+
+			}
 		});
 	}
 
@@ -45,6 +48,14 @@ public class Gate {
 			if (xOff.get() == 4)
 				cancel();
 		});
+	}
+
+	public void teleportOut() {
+		player.teleport(new Location(Halloween20.getWorld(), 305, 58, -1995));
+	}
+
+	public void teleportIn() {
+		player.teleport(new Location(Halloween20.getWorld(), 305, 59, -1990));
 	}
 
 	public void cancel() {

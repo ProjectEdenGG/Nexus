@@ -4,10 +4,15 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
+import me.pugabyte.bncore.features.holidays.halloween20.Halloween20;
+import me.pugabyte.bncore.features.holidays.halloween20.models.ComboLockNumber;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.models.halloween20.Halloween20Service;
+import me.pugabyte.bncore.models.halloween20.Halloween20User;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -17,6 +22,11 @@ import java.util.List;
 public class PicturePuzzleProvider extends MenuUtils implements InventoryProvider {
 
 	List<Integer> correct = new ArrayList<>();
+	ComboLockNumber number;
+
+	public PicturePuzzleProvider(ComboLockNumber number) {
+		this.number = number;
+	}
 
 	public void setYellow(SlotPos pos, InventoryContents contents, Player player) {
 		contents.set(pos, ClickableItem.from(new ItemBuilder(Material.YELLOW_WOOL).name(" ").build(), e -> {
@@ -48,8 +58,13 @@ public class PicturePuzzleProvider extends MenuUtils implements InventoryProvide
 
 	public void complete(Player player) {
 		player.closeInventory();
-		player.sendMessage("complete");
-		// TODO
+		Halloween20Service service = new Halloween20Service();
+		Halloween20User user = service.get(player);
+		user.getFoundComboLockNumbers().add(number);
+		Utils.send(player, Halloween20.PREFIX + "You have found " + user.getFoundComboLockNumbers().size() + "/11 numbers for the combination lock.");
+		service.save(user);
+		if (user.getFoundComboLockNumbers().size() == 11)
+			Utils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");
 	}
 
 	@Override

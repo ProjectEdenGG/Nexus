@@ -39,6 +39,6 @@ public class Halloween20User extends PlayerOwnedObject {
 	private List<Location> foundPumpkins = new ArrayList<>();
 
 	private QuestStage.Combination combinationStage = QuestStage.Combination.NOT_STARTED;
-	private List<ComboLockNumber> foundComboLockNumbers;
+	private List<ComboLockNumber> foundComboLockNumbers = new ArrayList<>();
 
 }

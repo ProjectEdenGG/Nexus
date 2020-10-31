@@ -1,23 +1,24 @@
 package me.pugabyte.bncore.features.holidays.halloween20.quest.menus;
 
 import fr.minuskube.inv.SmartInventory;
+import me.pugabyte.bncore.features.holidays.halloween20.models.ComboLockNumber;
 import org.bukkit.entity.Player;
 
 public class Halloween20Menus {
 
-	public static void openPicturePuzzle(Player player) {
+	public static void openPicturePuzzle(Player player, ComboLockNumber number) {
 		SmartInventory.builder()
 				.title("Picture Puzzle")
 				.size(6, 9)
-				.provider(new PicturePuzzleProvider())
+				.provider(new PicturePuzzleProvider(number))
 				.build().open(player);
 	}
 
-	public static void openFlashCardPuzzle(Player player) {
+	public static void openFlashCardPuzzle(Player player, ComboLockNumber number) {
 		SmartInventory.builder()
 				.title("Flash Card Puzzle")
 				.size(3, 9)
-				.provider(new FlashCardPuzzleProvider())
+				.provider(new FlashCardPuzzleProvider(number))
 				.build().open(player);
 	}
 
