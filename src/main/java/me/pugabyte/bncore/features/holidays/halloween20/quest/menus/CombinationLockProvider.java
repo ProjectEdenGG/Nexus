@@ -63,14 +63,13 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 
 	public void parseCode(Player player, InventoryContents contents) {
 		int[][] groups = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};
-		boolean[] correct = {true, true, true};
-
-		if (StringUtils.isNullOrEmpty(playerCode)) return;
+		boolean[] correct = {false, false, false};
 
 		for (int i = 0; i < groups.length; i++) {
-			for (int j = 0; j < groups[i].length; j++) {
-				if (playerCode.charAt(groups[i][j]) != CORRECT_CODE.charAt(groups[i][j])) correct[i] = false;
-			}
+			if (!StringUtils.isNullOrEmpty(playerCode) && playerCode.length() == CORRECT_CODE.length())
+				for (int j = 0; j < groups[i].length; j++)
+					if (playerCode.charAt(groups[i][j]) == CORRECT_CODE.charAt(groups[i][j]))
+						correct[i] = true;
 			for (int j = 0; j < groups[i].length; j++) {
 				Material mat = correct[i] ? Material.LIME_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE;
 				contents.set(4, groups[i][j], ClickableItem.empty(new ItemBuilder(mat).name(" ").build()));
