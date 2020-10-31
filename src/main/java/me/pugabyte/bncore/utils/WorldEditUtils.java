@@ -36,7 +36,6 @@ import lombok.SneakyThrows;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -86,7 +85,7 @@ public class WorldEditUtils {
 	}
 
 	public EditSession getEditSession() {
-		return new EditSessionBuilder(worldEditWorld).fastmode(true).build();
+		return new EditSessionBuilder(worldEditWorld).allowedRegionsEverywhere().fastmode(true).build();
 	}
 
 	private File getSchematicFile(String fileName, boolean lookForExisting) {
@@ -326,11 +325,9 @@ public class WorldEditUtils {
 	}
 
 	public void set(Region region, BlockType blockType) {
-		// TODO move back to WE
-		getBlocks(region).forEach(block -> block.setType(Material.valueOf(blockType.getId().replaceAll("minecraft:", "").toUpperCase())));
-//		EditSession editSession = getEditSession();
-//		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
-//		editSession.flushQueue();
+		EditSession editSession = getEditSession();
+		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
+		editSession.flushQueue();
 	}
 
 	public void replace(Region region, BlockType from, BlockType to) {

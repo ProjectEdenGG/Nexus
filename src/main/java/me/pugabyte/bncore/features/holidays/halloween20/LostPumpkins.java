@@ -56,7 +56,7 @@ public class LostPumpkins implements Listener {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(event.getPlayer());
 		if (user.getLostPumpkinsStage() == QuestStage.LostPumpkins.NOT_STARTED) {
-			user.send(PREFIX + "This looks like it should be in the pumpkin carving contest. Maybe I should talk talk to &eJeffery &3at the pumpkin carving contest.");
+			user.send(PREFIX + "This looks like it should be in the pumpkin carving contest. Maybe I should talk to &eJeffery &3at the pumpkin carving contest.");
 			return;
 		}
 		if (user.getFoundPumpkins().contains(event.getClickedBlock().getLocation())) {
