@@ -17,12 +17,22 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotFoundExce
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Rotation;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -44,8 +54,15 @@ import java.lang.reflect.Modifier;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -247,6 +264,15 @@ public class Utils {
 	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sort(Map<K, V> map) {
 		return map.entrySet().stream().sorted(Entry.comparingByValue())
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+	}
+
+	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortReverse(Map<K, V> map) {
+		LinkedHashMap<K, V> sorted = sort(map);
+		LinkedHashMap<K, V> reverse = new LinkedHashMap<>();
+		List<K> keys = new ArrayList<>(sorted.keySet());
+		Collections.reverse(keys);
+		keys.forEach((key)->reverse.put(key, sorted.get(key)));
+		return reverse;
 	}
 
 	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, int radius) {

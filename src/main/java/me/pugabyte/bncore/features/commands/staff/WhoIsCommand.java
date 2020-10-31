@@ -50,7 +50,7 @@ public class WhoIsCommand extends CustomCommand {
 		GeoIPService geoIpService = new GeoIPService();
 
 		Hours hours = hoursService.get(nerd);
-		String rank = nerd.getRank().withFormat();
+		String rank = nerd.getRank().withColor();
 		String firstJoin = shortDateTimeFormat(nerd.getFirstJoin());
 		String lastJoinQuitLabel = null;
 		String lastJoinQuitDate = null;

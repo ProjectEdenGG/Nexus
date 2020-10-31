@@ -74,6 +74,7 @@ import java.util.zip.ZipFile;
 
 import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.decolorize;
 import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
 import static me.pugabyte.bncore.utils.StringUtils.paste;
 import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
@@ -188,6 +189,26 @@ public class BNCoreCommand extends CustomCommand {
 		Koda.say(message);
 	}
 
+	@Path("getSpigotHex <input...>")
+	void getSpigotHex(String input) {
+		send(json("Click to copy").copy(decolorize(colorize(input))));
+	}
+
+	@Path("runSpigotHexCommand <commandNoSlash...>")
+	void runHexCommand(String commandNoSlash) {
+		runCommand(decolorize(colorize(commandNoSlash)));
+	}
+
+	@Path("setNpcName withPrefix <player>")
+	void setNpcNameWithFormat(Nerd nerd) {
+		runCommand("npc rename " + decolorize(colorize("&8&l[" + nerd.getRank().withColor() + "&8&l] " + nerd.getRank().getChatColor() + nerd.getName())));
+	}
+
+	@Path("setNpcName withColor <player>")
+	void setNpcNameWithColor(Nerd nerd) {
+		runCommand("npc rename " + decolorize(colorize(nerd.getRank().getChatColor())) + nerd.getName());
+	}
+
 	@Description("Get the last color used in a string (including formatting)")
 	@Path("getLastColor <message...>")
 	void getLastColor(String message) {
@@ -206,7 +227,7 @@ public class BNCoreCommand extends CustomCommand {
 
 	@Path("getRank <player>")
 	void getRank(Nerd player) {
-		send(player.getRank().withFormat());
+		send(player.getRank().withColor());
 	}
 
 	@Path("getPlayer [player]")

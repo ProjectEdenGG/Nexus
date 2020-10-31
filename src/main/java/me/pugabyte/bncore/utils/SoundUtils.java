@@ -177,6 +177,18 @@ public class SoundUtils {
 		public void playAll() {
 			play(Bukkit.getOnlinePlayers());
 		}
+
+		void play(Player player, Sound intrument, int step) {
+			play(player, intrument, getPitch(step));
+		}
+
+		void play(Player player, Sound intrument, float pitch) {
+			playSound(player, intrument, SoundCategory.RECORDS, 1, pitch);
+		}
+	}
+
+	public static float getPitch(int step) {
+		return (float) Math.pow(2, ((-12 + step) / 12.0));
 	}
 
 	@Data

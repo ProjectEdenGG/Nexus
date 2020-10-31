@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.decolorize;
 import static me.pugabyte.bncore.utils.StringUtils.pretty;
 import static me.pugabyte.bncore.utils.Utils.runCommandAsConsole;
 
@@ -150,8 +151,7 @@ public class Leaderboards implements Listener {
 						Nerd nerd = new Nerd(entry.getKey());
 						CitizensUtils.updateSkin(ids[i.get()], nerd.getName());
 						CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
-						// nerd.getRankFormat() // HD Doesnt support Hex
-						runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + nerd.getName());
+						runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getRankFormat())));
 					});
 				});
 			});

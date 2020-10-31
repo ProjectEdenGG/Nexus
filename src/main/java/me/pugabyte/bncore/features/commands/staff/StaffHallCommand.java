@@ -23,7 +23,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 
-import static me.pugabyte.bncore.utils.StringUtils.*;
+import static me.pugabyte.bncore.utils.StringUtils.shortDateFormat;
+import static me.pugabyte.bncore.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class StaffHallCommand extends CustomCommand implements Listener {
@@ -68,7 +70,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		line(4);
 
 		send("&e&lIGN: &3" + nerd.getName());
-		send("&e&lRank: &3" + nerd.getRank().withFormat());
+		send("&e&lRank: &3" + nerd.getRank().withColor());
 		if (!isNullOrEmpty(nerd.getPreferredName()))
 			send("&e&lPreferred name: &3" + nerd.getPreferredName());
 		if (nerd.getBirthday() != null)

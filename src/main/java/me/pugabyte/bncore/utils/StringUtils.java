@@ -35,7 +35,9 @@ public class StringUtils {
 	@Getter
 	private static final String colorChar = "§";
 	@Getter
-	private static final String colorCharsRegex = "[" + colorChar + "&]";
+	private static final String altColorChar = "&";
+	@Getter
+	private static final String colorCharsRegex = "[" + colorChar + altColorChar + "]";
 	@Getter
 	private static final Pattern colorPattern = Pattern.compile(colorCharsRegex + "[0-9a-fA-f]");
 	@Getter
@@ -67,12 +69,12 @@ public class StringUtils {
 			input = input.replace(color, ChatColor.of(color.replaceFirst(colorCharsRegex, "")).toString());
 		}
 
-		return ChatColor.translateAlternateColorCodes('&', input);
+		return ChatColor.translateAlternateColorCodes(altColorChar.charAt(0), input);
 	}
 
 	@Deprecated
 	public static String decolorize(String input) {
-		return input.replaceAll(getColorChar(), "&");
+		return input.replaceAll(getColorChar(), altColorChar);
 	}
 
 	public static String stripColor(String input) {

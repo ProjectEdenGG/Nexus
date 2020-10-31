@@ -22,7 +22,7 @@ public class DemoteCommand extends CustomCommand {
 			error("User is already min rank");
 
 		runCommandAsConsole("lp user " + nerd.getName() + " parent set " + previous.name());
-		send(PREFIX + "Demoted " + nerd.getName() + " to " + previous.withFormat());
+		send(PREFIX + "Demoted " + nerd.getName() + " to " + previous.withColor());
 	}
 
 }

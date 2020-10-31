@@ -112,6 +112,10 @@ public enum Package {
 	@Permission("itemname.use")
 	ITEM_NAME,
 
+	@Id("4158709")
+	@Permission("entityname.use")
+	ENTITY_NAME,
+
 	@Id("2495885")
 	@Permission("firework.launch")
 	FIREWORKS,
