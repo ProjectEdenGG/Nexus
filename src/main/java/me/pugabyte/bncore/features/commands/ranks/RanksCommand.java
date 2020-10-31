@@ -38,7 +38,7 @@ public class RanksCommand extends CustomCommand {
 		line();
 		Arrays.asList(Rank.values()).forEach(rank -> {
 			if (!rank.isActive()) return;
-			JsonBuilder builder = new JsonBuilder("&3- " + rank.withFormat());
+			JsonBuilder builder = new JsonBuilder("&3- " + rank.withColor());
 			builder.command("/" + rank.name().toLowerCase());
 			if (Rank.getHighestRank(player()) == rank)
 				builder.next("  &e&o<-- You are here!");
@@ -68,7 +68,7 @@ public class RanksCommand extends CustomCommand {
 		Arrays.asList(Rank.values()).forEach(rank -> {
 			if (!rank.isActive()) return;
 
-			String formattedRank = rank.withFormat();
+			String formattedRank = rank.withColor();
 			if (rank.equals(Rank.GUEST))
 				formattedRank = colorize("&8" + rank.plain());
 			else if (rank.equals(Rank.MEMBER))

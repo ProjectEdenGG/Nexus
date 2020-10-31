@@ -66,17 +66,13 @@ public enum Rank {
 
 	public String getPrefix() {
 		if (hasPrefix)
-			return withFormat();
+			return withColor();
 
 		return "";
 	}
 
-	public String withFormat() {
-		return format + StringUtils.camelCase(name());
-	}
-
 	public String withColor() {
-		return getChatColor() + StringUtils.camelCase(name());
+		return format + StringUtils.camelCase(name());
 	}
 
 	public String plain() {
