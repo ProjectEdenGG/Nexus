@@ -63,6 +63,7 @@ public class LostPumpkins implements Listener {
 		Tasks.wait(1, () -> event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.AIR.createBlockData()));
 		NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getEnd(), pumpkin.getOriginal().getBlock());
 		user.send(PREFIX + "You have just found a pumpkin! It has been returned to Jeffery. &e(" + user.getFoundPumpkins().size() + "/8)");
+		service.save(user);
 		if (user.getFoundPumpkins().size() == 8) {
 			user.send(PREFIX + "You have found the last pumpkin! Talk to &eJeffery &3at the pumpkin carving contest.");
 			user.setLostPumpkinsStage(QuestStage.LostPumpkins.FOUND_ALL);
