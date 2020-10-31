@@ -110,7 +110,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 		line();
 		send(PREFIX + "Stats:");
-		sortReverse(counts).forEach((origin, count) -> send("&7 " + count + " - &e" + camelCase(origin)));
+		sortReverse(counts).forEach((origin, count) -> send("&7 " + count + " - &e" + origin.getDisplay()));
 	}
 
 	@EventHandler

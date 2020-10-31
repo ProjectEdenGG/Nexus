@@ -14,6 +14,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.LivingEntity;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @Aliases("nameentity")
 @Permission("entityname.use")
@@ -34,6 +35,9 @@ public class EntityNameCommand extends CustomCommand {
 
 	@Path("<name...>")
 	void name(String name) {
+		if (stripColor(name).length() > 17) // Why 17 and not 16? idk.
+			error("Name cannot be longer than 17 characters");
+
 		targetEntity.setCustomName(colorize(name));
 		targetEntity.setCustomNameVisible(name != null);
 	}
