@@ -1,13 +1,17 @@
 package me.pugabyte.bncore.features.holidays.halloween20.models;
 
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.halloween20.Halloween20;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +48,15 @@ public enum QuestNPC {
 				case FOUND_ALL:
 					user.setLostPumpkinsStage(QuestStage.LostPumpkins.COMPLETE);
 					service.save(user);
+					Tasks.wait(160, () -> {
+						ItemBuilder builder = new ItemBuilder(Material.ORANGE_SHULKER_BOX);
+						builder.name("&5Pumpkin Pouch");
+						for (Pumpkin pumpkin : Pumpkin.values())
+							builder.shulkerBox(pumpkin.getOriginal().getBlock().getDrops().toArray(new ItemStack[0]));
+						Utils.giveItem(player, builder.build());
+						BNCore.getEcon().depositPlayer(player, 5000);
+						Utils.send(player, "&a$5,000 has been added to your account.");
+					});
 					return Arrays.asList(
 							"You found all my pumpkins! Thank you so much.",
 							"wait 80",
