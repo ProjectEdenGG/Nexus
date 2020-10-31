@@ -68,8 +68,8 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		for (int i = 0; i < groups.length; i++) {
 			if (!StringUtils.isNullOrEmpty(playerCode) && playerCode.length() == CORRECT_CODE.length())
 				for (int j = 0; j < groups[i].length; j++)
-					if (playerCode.charAt(groups[i][j]) == CORRECT_CODE.charAt(groups[i][j]))
-						correct[i] = true;
+					if (playerCode.charAt(groups[i][j]) != CORRECT_CODE.charAt(groups[i][j]))
+						correct[i] = false;
 			for (int j = 0; j < groups[i].length; j++) {
 				Material mat = correct[i] ? Material.LIME_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE;
 				contents.set(4, groups[i][j], ClickableItem.empty(new ItemBuilder(mat).name(" ").build()));
