@@ -4,10 +4,13 @@ import com.mysql.jdbc.StringUtils;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.halloween20.Halloween20;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.Gate;
 import me.pugabyte.bncore.features.menus.MenuUtils;
+import me.pugabyte.bncore.features.menus.rewardchests.RewardChestType;
+import me.pugabyte.bncore.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
 import me.pugabyte.bncore.utils.ItemBuilder;
@@ -98,8 +101,14 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		Tasks.wait(Time.SECOND.x(4), gate::teleportOut);
 		user.setCombinationStage(QuestStage.Combination.COMPLETE);
 		service.save(user);
-		Tasks.wait(Time.SECOND.x(6), () ->
-				Utils.send(player, Halloween20.PREFIX + "To return to the land of the dead to continue exploring, simple use &c/halloween20 &3to be teleported inside of the gate."));
+		Tasks.wait(Time.SECOND.x(6), () -> {
+			Utils.send(player, Halloween20.PREFIX + "To return to the land of the dead to continue exploring, simple use &c/halloween20 &3to be teleported inside of the gate.");
+			Tasks.wait(Time.SECOND.x(5), () -> {
+				BNCore.getEcon().depositPlayer(player, 10000);
+				Utils.send(player, "&a$10,000 has been added to your account.");
+				new MysteryChest(player).give(2, RewardChestType.MYSTERY);
+			});
+		});
 	}
 
 	@Override
