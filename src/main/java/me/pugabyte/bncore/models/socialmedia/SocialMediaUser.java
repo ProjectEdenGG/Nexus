@@ -13,6 +13,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.utils.MaterialTag;
@@ -127,7 +128,15 @@ public class SocialMediaUser extends PlayerOwnedObject {
 
 	public enum BNSocialMediaSite {
 		WEBSITE("https://bnn.gg"),
-		DISCORD("https://discord.gg/bearnation"),
+		DISCORD("https://discord.gg/bearnation") {
+			@Override
+			public String getUrl() {
+				String code = "bearnation";
+				if (Discord.getGuild() != null)
+					code = Discord.getGuild().getBoostTier().getKey() == 3 ? "bearnation" : "0jwsKTH4ATkkN8iB";
+				return "https://discord.gg/" + code;
+			}
+		},
 		YOUTUBE("https://youtube.bnn.gg"),
 		TWITTER("https://twitter.bnn.gg"),
 		INSTAGRAM("https://instagram.bnn.gg"),
@@ -136,7 +145,6 @@ public class SocialMediaUser extends PlayerOwnedObject {
 
 		@Getter
 		private String name = "&3" + camelCase(name());
-		@Getter
 		private final String url;
 
 		BNSocialMediaSite(String url) {
@@ -145,6 +153,10 @@ public class SocialMediaUser extends PlayerOwnedObject {
 			} catch (IllegalArgumentException ignore) {}
 
 			this.url = url;
+		}
+
+		public String getUrl() {
+			return url;
 		}
 	}
 

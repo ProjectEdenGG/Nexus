@@ -9,6 +9,7 @@ import me.pugabyte.bncore.models.discord.DiscordCaptcha.CaptchaResult;
 import me.pugabyte.bncore.models.discord.DiscordCaptchaService;
 import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
+import me.pugabyte.bncore.models.socialmedia.SocialMediaUser.BNSocialMediaSite;
 import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -72,7 +73,7 @@ public class DiscordCaptchaListener extends ListenerAdapter {
 					if (message == null)
 						BNCore.warn("[Captcha] Could not find original message");
 					else
-						message.editMessage("Account confirmed. You may now join the server again: discord.gg/bearnation").queue();
+						message.editMessage("Account confirmed. You may now join the server again: " + BNSocialMediaSite.DISCORD.getUrl()).queue();
 				} else
 					complete.sendMessage("Account confirmed, thank you!").queue();
 

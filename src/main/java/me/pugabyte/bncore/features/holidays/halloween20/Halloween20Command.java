@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.holidays.halloween20.models.SoundButton;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.Gate;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.menus.Halloween20Menus;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
@@ -19,6 +20,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Aliases("h20")
 public class Halloween20Command extends CustomCommand {
 
 	public Halloween20Command(CommandEvent event) {
@@ -33,6 +35,42 @@ public class Halloween20Command extends CustomCommand {
 			Halloween20.start(player());
 		else
 			new Gate(player()).teleportIn();
+	}
+
+	@Path("progress [player]")
+	void progress(@Arg("self") OfflinePlayer player) {
+		Halloween20Service service = new Halloween20Service();
+		Halloween20User user = service.get(player);
+		send(PREFIX + "Progress:");
+
+		if (user.getCombinationStage() == QuestStage.Combination.NOT_STARTED)
+			send("&3Combination numbers: &cNot started");
+		else if (user.getCombinationStage() == QuestStage.Combination.STARTED)
+			send("&3Combination numbers: &e" + user.getFoundComboLockNumbers().size() + "/" + ComboLockNumber.values().length);
+		else if (user.getCombinationStage() == QuestStage.Combination.COMPLETE)
+			send("&3Combination numbers: &aComplete");
+
+		if (user.getLostPumpkinsStage() == QuestStage.LostPumpkins.NOT_STARTED)
+			send("&3Pumpkins: &cNot started (Talk to Jeffery)");
+		else if (user.getLostPumpkinsStage() == QuestStage.LostPumpkins.STARTED)
+			send("&3Pumpkins: &e" + user.getFoundPumpkins().size() + "/" + Pumpkin.values().length);
+		else if (user.getLostPumpkinsStage() == QuestStage.LostPumpkins.FOUND_ALL)
+			send("&3Pumpkins: &eFound all (Talk to Jeffery)");
+		else if (user.getLostPumpkinsStage() == QuestStage.LostPumpkins.COMPLETE)
+			send("&3Pumpkins: &aComplete");
+
+		if (user.getFoundButtons().size() == SoundButton.values().length)
+			send("&3Spooky Buttons: &aComplete");
+		else
+			send("&3Spooky Buttons: &e" + user.getFoundButtons().size() + "/" + SoundButton.values().length);
+	}
+
+	@Path("debug [player]")
+	@Permission("group.admin")
+	void debug(@Arg("self") OfflinePlayer player) {
+		Halloween20Service service = new Halloween20Service();
+		Halloween20User user = service.get(player);
+		send(user.toString());
 	}
 
 	@Path("reset [player]")
