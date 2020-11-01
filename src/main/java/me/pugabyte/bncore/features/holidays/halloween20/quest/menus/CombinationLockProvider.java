@@ -2,6 +2,8 @@ package me.pugabyte.bncore.features.holidays.halloween20.quest.menus;
 
 import com.mysql.jdbc.StringUtils;
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.SmartInvsPlugin;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.BNCore;
@@ -55,7 +57,9 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 					.name("&e" + user.getFoundComboLockNumbers().get(i).getNumericalValue()).build(), e -> {
 				if (foundIndex == 9) return;
 				contents.set(numberSlots[j], ClickableItem.empty(new ItemStack(Material.AIR)));
-				contents.set(4, foundIndex++, ClickableItem.empty(user.getFoundComboLockNumbers().get(j).getItem()));
+				contents.set(4, foundIndex++,
+						ClickableItem.empty(new ItemBuilder(user.getFoundComboLockNumbers().get(j).getItem())
+								.name("&e" + user.getFoundComboLockNumbers().get(j).getNumericalValue()).build()));
 				playerCode += user.getFoundComboLockNumbers().get(j).getNumericalValue();
 			}));
 		}
@@ -68,8 +72,12 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		for (int i = 0; i < groups.length; i++) {
 			if (!StringUtils.isNullOrEmpty(playerCode) && playerCode.length() == CORRECT_CODE.length())
 				for (int j = 0; j < groups[i].length; j++)
-					if (playerCode.charAt(groups[i][j]) != CORRECT_CODE.charAt(groups[i][j]))
+					if (playerCode.charAt(groups[i][j]) == CORRECT_CODE.charAt(groups[i][j]))
+						correct[i] = true;
+					else {
 						correct[i] = false;
+						break;
+					}
 			for (int j = 0; j < groups[i].length; j++) {
 				Material mat = correct[i] ? Material.LIME_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE;
 				contents.set(4, groups[i][j], ClickableItem.empty(new ItemBuilder(mat).name(" ").build()));
@@ -78,8 +86,11 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		Tasks.wait(Time.SECOND.x(5), () -> {
 			if (correct[0] && correct[1] && correct[2])
 				complete(player);
-			else
-				Halloween20Menus.openComboLock(player);
+			else {
+				SmartInventory inv = SmartInvsPlugin.manager().getInventory(player).orElseGet(null);
+				if (inv != null && inv.getProvider() == this)
+					Halloween20Menus.openComboLock(player);
+			}
 		});
 	}
 
