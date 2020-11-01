@@ -131,9 +131,9 @@ public class SocialMediaUser extends PlayerOwnedObject {
 		DISCORD("https://discord.gg/bearnation") {
 			@Override
 			public String getUrl() {
-				String code = "bearnation";
+				String code = "0jwsKTH4ATkkN8iB";
 				if (Discord.getGuild() != null)
-					code = Discord.getGuild().getBoostTier().getKey() == 3 ? "bearnation" : "0jwsKTH4ATkkN8iB";
+					code = Discord.getGuild().getBoostTier().getKey() == 3 ? "bearnation" : code;
 				return "https://discord.gg/" + code;
 			}
 		},
