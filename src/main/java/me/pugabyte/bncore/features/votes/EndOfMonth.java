@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class EndOfMonth {
@@ -117,10 +118,18 @@ public class EndOfMonth {
 		}
 
 		public String getAsString(List<TopVoter> topVoters) {
-			String names = topVoters.stream()
-					.map(topVoter -> Utils.getPlayer(topVoter.getUuid()).getName())
-					.collect(Collectors.joining(", "));
-			if (names.length() == 0)
+			String names = null;
+			if (topVoters.size() > 0)
+				names = topVoters.stream()
+						.filter(Objects::nonNull)
+						.map(topVoter -> {
+							OfflinePlayer player = Utils.getPlayer(topVoter.getUuid());
+							if (player != null)
+								return player.getName();
+							return "Unknown";
+						})
+						.collect(Collectors.joining(", "));
+			if (names == null || names.length() == 0)
 				return "None :(";
 			return names;
 		}
@@ -140,7 +149,7 @@ public class EndOfMonth {
 			msg += "(Note: Rewards are (Store Credit/In-Game Money/# of Mystery Chests) - you can choose only one)";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
-			msg += ":gift:   **Lucky mystery chest winner:** " + getAsString(mysteryChestWinner) + " (" + mysteryChestWinner.getCount() + ")";
+			msg += ":gift:   **Lucky mystery chest winner:** " + getAsString(mysteryChestWinner) + (mysteryChestWinner == null ? "" : " (" + mysteryChestWinner.getCount() + ")");
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 			msg += ":walking: :speech_balloon:   **NPC or Hologram award:** " + getAsString(npcOrHoloWinners);
