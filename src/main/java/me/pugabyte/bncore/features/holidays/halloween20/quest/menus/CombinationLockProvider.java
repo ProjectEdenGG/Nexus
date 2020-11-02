@@ -1,6 +1,6 @@
 package me.pugabyte.bncore.features.holidays.halloween20.quest.menus;
 
-import com.mysql.jdbc.StringUtils;
+import com.mysql.cj.util.StringUtils;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
@@ -112,7 +112,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		user.setCombinationStage(QuestStage.Combination.COMPLETE);
 		service.save(user);
 		Tasks.wait(Time.SECOND.x(6), () -> {
-			Utils.send(player, Halloween20.PREFIX + "To return to the land of the dead to continue exploring, simple use &c/halloween20 &3to be teleported inside of the gate.");
+			Utils.send(player, Halloween20.PREFIX + "To return to the land of the dead to continue exploring, simply use &c/halloween20 &3to be teleported inside of the gate.");
 			Tasks.wait(Time.SECOND.x(5), () -> {
 				BNCore.getEcon().depositPlayer(player, 10000);
 				Utils.send(player, "&a$10,000 has been added to your account.");
