@@ -54,6 +54,7 @@ public class WorldEditUtils {
 	private final org.bukkit.World world;
 	private final BukkitWorld bukkitWorld;
 	private final World worldEditWorld;
+	private final EditSession editSession;
 	@Getter
 	private final WorldGuardUtils worldGuardUtils;
 	@Getter
@@ -82,10 +83,7 @@ public class WorldEditUtils {
 		this.bukkitWorld = new BukkitWorld(world);
 		this.worldEditWorld = bukkitWorld;
 		this.worldGuardUtils = new WorldGuardUtils(world);
-	}
-
-	public EditSession getEditSession() {
-		return new EditSessionBuilder(worldEditWorld).allowedRegionsEverywhere().fastmode(true).build();
+		this.editSession = new EditSessionBuilder(worldEditWorld).allowedRegionsEverywhere().fastmode(true).build();
 	}
 
 	private File getSchematicFile(String fileName, boolean lookForExisting) {
@@ -302,7 +300,7 @@ public class WorldEditUtils {
 		}
 
 		public void paste() {
-			clipboard.paste(worldEditWorld, vector, pasteAir, transform);
+			clipboard.paste(editSession, vector, pasteAir, transform);
 		}
 	}
 
@@ -325,7 +323,6 @@ public class WorldEditUtils {
 	}
 
 	public void set(Region region, BlockType blockType) {
-		EditSession editSession = getEditSession();
 		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
 		editSession.flushQueue();
 	}
@@ -343,7 +340,6 @@ public class WorldEditUtils {
 	}
 
 	public void replace(Region region, Set<BlockType> from, Pattern pattern) {
-		EditSession editSession = getEditSession();
 		editSession.replaceBlocks(region, toBaseBlocks(from), pattern);
 		editSession.flushQueue();
 	}
