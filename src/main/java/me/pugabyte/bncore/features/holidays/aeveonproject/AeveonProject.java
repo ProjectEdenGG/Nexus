@@ -14,20 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
 
-/*
-	TODO:
-		PDA - Iron Pressure Plate, includes current objectives
-		Radius based armorstand names for NPCs
-			- Armorstands assigned to NPC names that mimic the NPCs nameplate, but disappear clientside
-			- https://www.spigotmc.org/threads/spawning-in-a-clientside-nametag-using-armor-stands-protocollib-packets.371934/
-			- Only toggle the armorstands name on if the player is nearby + has "met" the NPC
-			- armorstand data: gravity=deny, invulnerablie=true, equiptment=locked, size=small, visible=false
-		Wind:
-			what if the wind blowing inside sound was playing all the time, and then when you go outside,
-			it stacks the higher pitched sound on top, so there is a better fade
-			and since the lower pitched sound is longer, and the higher is shorter, 
-			I could even shorten how often the outside sound is repeated, resulting in a faster fad
- */
 @Data
 public class AeveonProject implements Listener {
 	public static final World APWorld = Bukkit.getWorld("Aeveon_Project");
