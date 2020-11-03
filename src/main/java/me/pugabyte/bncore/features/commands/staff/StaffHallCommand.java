@@ -40,6 +40,10 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	}
 
 	private static void writeHtml() {
+		File folder = Paths.get("plugins/website/meetthestaff/").toFile();
+		if (!folder.exists())
+			folder.mkdir();
+
 		Tasks.async(() -> Rank.getStaff().forEach(rank -> rank.getNerds().forEach(staff -> {
 			try {
 				String html = "";
