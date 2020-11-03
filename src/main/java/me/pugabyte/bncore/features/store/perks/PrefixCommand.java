@@ -86,7 +86,6 @@ public class PrefixCommand extends CustomCommand {
 		if (isNullOrEmpty(prefix.getValue()))
 			error("You do not have a custom prefix");
 
-
 		String prefix = this.prefix.getValue();
 		while (true) {
 			Matcher matcher = StringUtils.getHexColorizedPattern().matcher(prefix);

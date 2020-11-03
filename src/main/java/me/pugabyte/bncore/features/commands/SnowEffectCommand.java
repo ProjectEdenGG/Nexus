@@ -62,7 +62,7 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 			if (isBelowCeiling(player))
 				return;
 
-			player.spawnParticle(Particle.WHITE_ASH, player.getLocation(), 1400, 40, 15, 40, .01);
+			player.spawnParticle(Particle.WHITE_ASH, player.getLocation(), 3500, 40, 15, 40, .01);
 			player.spawnParticle(Particle.FALLING_DUST, player.getLocation(), 1400, 40, 15, 40, .01, Bukkit.createBlockData(Material.SNOW_BLOCK));
 			Tasks.wait(20, () ->
 					player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 1400, 40, 15, 40, .01));

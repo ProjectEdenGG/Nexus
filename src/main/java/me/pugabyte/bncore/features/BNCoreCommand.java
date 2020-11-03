@@ -47,7 +47,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -312,20 +311,8 @@ public class BNCoreCommand extends CustomCommand {
 	@Path("schem save <name>")
 	void schemSave(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
-//		TODO when API saving works again
 		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
 		send("Saved schematic " + name);
-		if (true) return;
-		GameMode originalGameMode = player().getGameMode();
-		Location originalLocation = player().getLocation().clone();
-		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
-		player().setGameMode(GameMode.SPECTATOR);
-		player().teleport(location);
-		runCommand("mcmd /copy ;; /schem save " + name + " -f");
-		Tasks.wait(10, () -> {
-			player().teleport(originalLocation);
-			player().setGameMode(originalGameMode);
-		});
 	}
 
 	@Path("schem paste <name>")
