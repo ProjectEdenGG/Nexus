@@ -13,7 +13,7 @@ import org.bukkit.OfflinePlayer;
 
 @Fallback("litebans")
 @Permission("group.moderator")
-//@Redirects.Redirect(from = {"/ipunban", "/unbanip", "/tempunban", "/tmpban", "/ltempban",
+//@Redirect(from = {"/ipunban", "/unbanip", "/tempunban", "/tmpban", "/ltempban",
 //		"/lunban", "/pardon", "/pardonip", "/pardon-ip"}, to = "/bncore:unban")
 public class UnbanCommand extends CustomCommand {
 

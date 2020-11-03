@@ -1,16 +1,12 @@
 package me.pugabyte.bncore.features.kits;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
-import me.pugabyte.bncore.framework.commands.models.annotations.Redirects;
+import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
@@ -21,9 +17,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Aliases("kits")
 @NoArgsConstructor
-@Redirects.Redirect(from = "/starter", to = "/kit starter")
+@Redirect(from = "/starter", to = "/kit starter")
 public class KitCommand extends CustomCommand implements Listener {
 
 	public KitCommand(CommandEvent event) {

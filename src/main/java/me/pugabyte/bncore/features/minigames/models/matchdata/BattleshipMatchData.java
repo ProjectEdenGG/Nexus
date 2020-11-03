@@ -267,7 +267,7 @@ public class BattleshipMatchData extends MatchData {
 						.file(peg.getFileName())
 						.at(peg.getBoard().getLocation(this))
 						.transform(CardinalDirection.of(numberDirection).getRotationTransform())
-						.paste();
+						.pasteAsync();
 
 				if (peg.getOpposite() != null)
 					getOppositeCoordinate().pastePeg(peg.getOpposite());

@@ -8,7 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
-import me.pugabyte.bncore.framework.commands.models.annotations.Redirects;
+import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.bncore.models.nerd.Nerd;
@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @NoArgsConstructor
 @Aliases({"tp", "tppos"})
-@Redirects.Redirect(from = "/tpo", to = "/tp override")
+@Redirect(from = "/tpo", to = "/tp override")
 public class TeleportCommand extends CustomCommand implements Listener {
 
 	public TeleportCommand(@NonNull CommandEvent event) {

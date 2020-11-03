@@ -1,20 +1,23 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import com.sk89q.worldedit.regions.Region;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 
-//@Regenerating("regen")
+@Regenerating("regen")
 public final class Paintball extends BalancedTeamMechanic {
 
 	@Override
@@ -54,23 +57,23 @@ public final class Paintball extends BalancedTeamMechanic {
 			kill(victim, attacker);
 	}
 
-//	@EventHandler
-//	public void onSnowBallHitBlock(ProjectileHitEvent event) {
-//		if (!(event.getEntity() instanceof Snowball)) return;
-//		if (!(event.getEntity().getShooter() instanceof Player)) return;
-//		Minigamer minigamer = PlayerManager.get((Player) event.getEntity().getShooter());
-//		if (!minigamer.isPlaying(this)) return;
-//		Block hitBlock = event.getHitBlock();
-//		if (hitBlock == null) return;
-//		Region region = minigamer.getMatch().getArena().getRegion("regen");
-//		if (region == null) return;
-//		if (!region.contains(minigamer.getMatch().getWGUtils().toBlockVector3(hitBlock.getLocation()))) return;
-//		for (BlockFace face : BlockFace.values()) {
-//			Block relative = hitBlock.getRelative(face);
-//			if (!region.contains(minigamer.getMatch().getWGUtils().toBlockVector3(relative.getLocation()))) continue;
-//			changeBlockColor(minigamer, relative);
-//		}
-//	}
+	@EventHandler
+	public void onSnowBallHitBlock(ProjectileHitEvent event) {
+		if (!(event.getEntity() instanceof Snowball)) return;
+		if (!(event.getEntity().getShooter() instanceof Player)) return;
+		Minigamer minigamer = PlayerManager.get((Player) event.getEntity().getShooter());
+		if (!minigamer.isPlaying(this)) return;
+		Block hitBlock = event.getHitBlock();
+		if (hitBlock == null) return;
+		Region region = minigamer.getMatch().getArena().getRegion("regen");
+		if (region == null) return;
+		if (!region.contains(minigamer.getMatch().getWGUtils().toBlockVector3(hitBlock.getLocation()))) return;
+		for (BlockFace face : BlockFace.values()) {
+			Block relative = hitBlock.getRelative(face);
+			if (!region.contains(minigamer.getMatch().getWGUtils().toBlockVector3(relative.getLocation()))) continue;
+			changeBlockColor(minigamer, relative);
+		}
+	}
 
 	public void changeBlockColor(Minigamer minigamer, Block block) {
 		ColorType colorType = ColorType.of(minigamer.getTeam().getColor());

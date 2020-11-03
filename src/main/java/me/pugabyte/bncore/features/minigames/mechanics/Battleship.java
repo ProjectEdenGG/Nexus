@@ -323,7 +323,7 @@ public class Battleship extends BalancedTeamMechanic {
 				.file(schematic)
 				.at(location)
 				.transform(direction.getRotationTransform())
-				.paste();
+				.pasteAsync();
 	}
 
 	public BlockFace getKitDirection(Location location) {

@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 //@Fallback("litebans")
 @Permission("group.moderator")
-//@Redirects.Redirect(from = {"/tempban", "/iptempban", "/tempbanip", "/tempipban", "/ipban", "/banip",
+//@Redirect(from = {"/tempban", "/iptempban", "/tempbanip", "/tempipban", "/ipban", "/banip",
 //		"/ban-ip" , "/lban", "/lipban", "/tban"}, to = "/bncore:ban")
 public class JBanCommand extends CustomCommand {
 	private static final String timeRegex = "(([0-9]+(?:\\.[0-9]+)?) ?(y(?:ear)?s?|mo(?:nth)?s?|w(?:eek)?s?|d(?:ay)?s?|h(?:our|r)?s?|m(?!o)(?:inute|in)?s?|s(?:econd|ec)?s?) ?)";

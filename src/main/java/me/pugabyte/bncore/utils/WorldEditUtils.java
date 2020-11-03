@@ -3,7 +3,6 @@ package me.pugabyte.bncore.utils;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
@@ -252,7 +251,7 @@ public class WorldEditUtils {
 
 	public Clipboard copy(Region region) {
 		Clipboard clipboard = new BlockArrayClipboard(region);
-		try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(worldEditWorld, -1)) {
+		try (EditSession editSession = getEditSession()) {
 			ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
 			Operations.completeLegacy(copy);
 		} catch (WorldEditException ex) {
