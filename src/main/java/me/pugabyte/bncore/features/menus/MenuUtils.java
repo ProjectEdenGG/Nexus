@@ -82,7 +82,11 @@ public abstract class MenuUtils {
 	}
 
 	protected void addCloseItem(InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(closeItem(), e -> e.getPlayer().closeInventory()));
+		addCloseItem(contents, 0, 0);
+	}
+
+	protected void addCloseItem(InventoryContents contents, int row, int col) {
+		contents.set(row, col, ClickableItem.from(closeItem(), e -> e.getPlayer().closeInventory()));
 	}
 
 	protected ItemStack backItem() {
