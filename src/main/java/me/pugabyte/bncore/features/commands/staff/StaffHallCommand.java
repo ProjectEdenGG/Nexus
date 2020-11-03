@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -53,7 +54,10 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 				if (!Strings.isNullOrEmpty(staff.getAbout()))
 					html += "<span style=\"font-weight: bold;\">About me:</span> " + staff.getAbout();
 
-				Files.write(Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html"), html.getBytes(), StandardOpenOption.CREATE);
+				File file = Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html").toFile();
+				if (!file.exists())
+					file.createNewFile();
+				Files.write(file.toPath(), html.getBytes(), StandardOpenOption.CREATE);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

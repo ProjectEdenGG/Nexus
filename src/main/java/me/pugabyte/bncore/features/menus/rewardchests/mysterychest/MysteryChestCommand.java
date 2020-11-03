@@ -10,6 +10,8 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
+import java.util.Map;
+
 public class MysteryChestCommand extends CustomCommand {
 
 	static {
@@ -48,6 +50,17 @@ public class MysteryChestCommand extends CustomCommand {
 	@Permission("group.admin")
 	void take(OfflinePlayer player, RewardChestType type, @Arg("1") int amount) {
 		send(PREFIX + "&e" + player.getName() + " &3now has &e" + new MysteryChest(player).take(amount, type) + "&3 Mystery Chest Keys");
+	}
+
+	@Path("count <player> [type]")
+	@Permission("group.admin")
+	void count(OfflinePlayer player, RewardChestType type) {
+		Map<RewardChestType, Integer> amounts = new MysteryChest(player).getMysteryChestPlayer().getAmounts();
+		if (type != null)
+			send(PREFIX + "&e" + player.getName() + " &3has &e" + amounts.getOrDefault(type, 0) + "&3 Mystery Chest Keys for type " + camelCase(type));
+		else
+			for (RewardChestType value : RewardChestType.values())
+				send(PREFIX + "&e" + player.getName() + " &3has &e" + amounts.getOrDefault(value, 0) + "&3 Mystery Chest Keys for type " + camelCase(value));
 	}
 
 	@Path("edit [type]")

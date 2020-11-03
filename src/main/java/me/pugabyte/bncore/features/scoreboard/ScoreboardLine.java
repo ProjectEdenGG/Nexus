@@ -267,7 +267,7 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.VOTE_POINTS.hasPermission(player))	put(ScoreboardLine.VOTE_POINTS, !player.hasPermission("group.staff"));
 			if (ScoreboardLine.GAMEMODE.hasPermission(player))		put(ScoreboardLine.GAMEMODE, true);
 			if (ScoreboardLine.WORLD.hasPermission(player))			put(ScoreboardLine.WORLD, true);
-			if (ScoreboardLine.BIOME.hasPermission(player))			put(ScoreboardLine.WORLD, false);
+			if (ScoreboardLine.BIOME.hasPermission(player))			put(ScoreboardLine.BIOME, false);
 			if (ScoreboardLine.COMPASS.hasPermission(player))		put(ScoreboardLine.COMPASS, true);
 			if (ScoreboardLine.COORDINATES.hasPermission(player))	put(ScoreboardLine.COORDINATES, true);
 			if (ScoreboardLine.HOURS.hasPermission(player))			put(ScoreboardLine.HOURS, true);

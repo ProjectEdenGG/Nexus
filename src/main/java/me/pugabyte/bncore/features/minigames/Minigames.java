@@ -8,11 +8,9 @@ import me.lucko.helper.scoreboard.PacketScoreboardProvider;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.lobby.ActionBar;
 import me.pugabyte.bncore.features.minigames.lobby.Basketball;
-import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.menus.MinigamesMenus;
-import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -32,7 +30,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.reflections.Reflections;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,9 +54,9 @@ public class Minigames extends Feature {
 
 	@Override
 	public void startup() {
-		registerSerializables();
-		ArenaManager.read();
-		registerListeners();
+//		registerSerializables();
+//		ArenaManager.read();
+//		registerListeners();
 		Tasks.repeat(Time.SECOND.x(5), 10, MatchManager::janitor);
 
 		new ActionBar();
@@ -68,8 +65,8 @@ public class Minigames extends Feature {
 
 	@Override
 	public void shutdown() {
-		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
-		ArenaManager.write();
+//		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
+//		ArenaManager.write();
 	}
 
 	public static boolean isMinigameWorld(World world) {

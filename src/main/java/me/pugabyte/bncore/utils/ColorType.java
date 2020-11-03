@@ -298,7 +298,7 @@ public enum ColorType {
 	}
 
 	public static org.bukkit.ChatColor toBukkit(ChatColor color) {
-		return org.bukkit.ChatColor.valueOf(color.getName());
+		return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
 	}
 
 	@Getter
