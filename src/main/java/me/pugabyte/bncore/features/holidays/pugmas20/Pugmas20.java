@@ -38,6 +38,7 @@ public class Pugmas20 implements Listener {
 
 	private void loadAdventMenuHeads() {
 		Block origin = adventHeadsLoc.getBlock().getRelative(BlockFace.UP);
+		String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturaday"};
 
 		int day = 1;
 		for (int z = 0; z <= 4; z++) {        // 1-7 row
@@ -48,7 +49,9 @@ public class Pugmas20 implements Listener {
 					if (!Utils.isNullOrAir(drop)) {
 						ItemBuilder skull = new ItemBuilder(drop);
 						int size = adventHeadMap.size();
-						if (size >= 7)
+						if (size <= 6)
+							skull.name(days[size]);
+						else
 							skull.name("Day: " + day++);
 
 						adventHeadMap.put(new SlotPos(z, x), skull);
