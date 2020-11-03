@@ -313,8 +313,9 @@ public class BNCoreCommand extends CustomCommand {
 	void schemSave(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 //		TODO when API saving works again
-//		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
-//		send("Saved schematic " + name);
+		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
+		send("Saved schematic " + name);
+		if (true) return;
 		GameMode originalGameMode = player().getGameMode();
 		Location originalLocation = player().getLocation().clone();
 		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());

@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.Gradient;
 import me.pugabyte.bncore.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
@@ -75,6 +76,15 @@ public class PrefixCommand extends CustomCommand {
 	@Path("rainbow <prefix...>")
 	void rainbow(String input) {
 		prefix(Rainbow.apply(input));
+	}
+
+	@Path("copy")
+	void copy() {
+		if (isNullOrEmpty(prefix.getValue()))
+			error("You do not have a custom prefix");
+
+		String prefix = this.prefix.getValue().replaceAll("&(" + StringUtils.getHexPattern() + ")", "&&f$1");
+		send(json(PREFIX + "Click here to copy your current prefix: " + this.prefix.getValue()).copy(prefix).hover("&7Click to copy"));
 	}
 
 }
