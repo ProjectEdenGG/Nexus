@@ -13,6 +13,9 @@ import me.pugabyte.bncore.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 
+import java.util.regex.Matcher;
+
+import static me.pugabyte.bncore.utils.StringUtils.decolorize;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.StringUtils.stripFormat;
 
@@ -83,8 +86,17 @@ public class PrefixCommand extends CustomCommand {
 		if (isNullOrEmpty(prefix.getValue()))
 			error("You do not have a custom prefix");
 
-		String prefix = this.prefix.getValue().replaceAll("&(" + StringUtils.getHexPattern() + ")", "&&f$1");
-		send(json(PREFIX + "Click here to copy your current prefix: " + this.prefix.getValue()).copy(prefix).hover("&7Click to copy"));
+
+		String prefix = this.prefix.getValue();
+		while (true) {
+			Matcher matcher = StringUtils.getHexColorizedPattern().matcher(prefix);
+			if (!matcher.find()) break;
+
+			String group = matcher.group();
+			prefix = prefix.replace(group, group.replaceAll(StringUtils.getColorChar() + "x", "&#").replaceAll(StringUtils.getColorChar(), ""));
+		}
+
+		send(json(PREFIX + "Click here to copy your current prefix: &f" + this.prefix.getValue()).copy(decolorize(prefix)).hover("&7Click to copy"));
 	}
 
 }
