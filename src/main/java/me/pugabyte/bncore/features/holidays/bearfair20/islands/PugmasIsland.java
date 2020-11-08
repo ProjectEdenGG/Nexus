@@ -260,7 +260,7 @@ public class PugmasIsland implements Listener, Island {
 
 	private void effectTasks() {
 		Tasks.repeat(0, Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream()
-				.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(player.getLocation(), getRegion()).size() > 0)
+				.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(player -> {
 					BearFairService service = new BearFairService();
 					BearFairUser user = service.get(player);

@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CheckpointMatchData;
+import me.pugabyte.bncore.features.minigames.models.matchdata.MastermindMatchData;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
@@ -273,6 +274,12 @@ public class MinigamesCommand extends CustomCommand {
 		team.getSpawnpoints().add(player().getLocation());
 		arena.write();
 		send(PREFIX + "Spawnpoint added");
+	}
+
+	@Path("mastermind showAnswer")
+	void mastermindShowAnswer() {
+		MastermindMatchData matchData = minigamer.getMatch().getMatchData();
+		send(matchData.getAnswer().toString());
 	}
 
 	private static String inviteCommand;

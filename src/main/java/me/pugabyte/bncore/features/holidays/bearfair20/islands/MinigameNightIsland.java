@@ -431,7 +431,7 @@ public class MinigameNightIsland implements Listener, Island {
 
 	private void soundTasks() {
 		Tasks.repeat(0, Time.SECOND.x(5), () -> Bukkit.getOnlinePlayers().stream()
-				.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(player.getLocation(), getRegion()).size() > 0)
+				.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(MinigameNightIsland::playArcadeEffects));
 	}
 

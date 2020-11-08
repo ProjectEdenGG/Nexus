@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import com.google.common.base.Strings;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.AllArgsConstructor;
@@ -150,6 +151,8 @@ public class Arena implements ConfigurationSerializable {
 	private static final String NUMBER_MODIFIER = "_[0-9]+";
 
 	public String getRegionTypeRegex(String type) {
+		if (Strings.isNullOrEmpty(type))
+			return "^" + getRegionBaseName() + "$";
 		return "^" + getRegionBaseName() + "_" + type.toLowerCase() + "(|" + NUMBER_MODIFIER + ")$";
 	}
 
@@ -178,7 +181,7 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public Set<ProtectedRegion> getRegionsLikeAt(String regex, Location location) {
-		return getWGUtils().getRegionsLikeAt(location, getRegionBaseName() + "_" + regex);
+		return getWGUtils().getRegionsLikeAt(getRegionBaseName() + "_" + regex, location);
 	}
 
 	public Set<ProtectedRegion> getNumberedRegionsLike(String regex) {
@@ -186,7 +189,7 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public Set<ProtectedRegion> getNumberedRegionsLikeAt(String regex, Location location) {
-		return getWGUtils().getRegionsLikeAt(location, getRegionBaseName() + "_" + regex + NUMBER_MODIFIER);
+		return getWGUtils().getRegionsLikeAt(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER, location);
 	}
 
 	public ProtectedRegion getProtectedRegion(String type) {
@@ -194,7 +197,7 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public boolean isInRegion(Location location, String type) {
-		return getWGUtils().getRegionsLikeAt(location, getRegionTypeRegex(type)).size() == 1;
+		return getWGUtils().getRegionsLikeAt(getRegionTypeRegex(type), location).size() == 1;
 	}
 
 	public boolean canUseBlock(Material type) {

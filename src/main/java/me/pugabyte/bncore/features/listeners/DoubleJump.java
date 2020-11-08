@@ -75,7 +75,7 @@ public class DoubleJump implements Listener {
 //		if (player.hasPermission("double.jump"))
 //			return true;
 
-		if (new WorldGuardUtils(player).getRegionsLikeAt(player.getLocation(), ".*doublejump.*").size() > 0)
+		if (new WorldGuardUtils(player).getRegionsLikeAt(".*doublejump.*", player.getLocation()).size() > 0)
 			return true;
 
 		return false;

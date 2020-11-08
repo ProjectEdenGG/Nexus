@@ -18,6 +18,7 @@ public enum MechanicType {
 	HOLE_IN_THE_WALL(new HoleInTheWall()),
 	HOLI_SPLEGG(new HoliSplegg()),
 	KANGAROO_JUMPING(new KangarooJumping()),
+	MASTERMIND(new Mastermind()),
 	MAZE(new Maze()),
 	MONSTER_MAZE(new MonsterMaze()),
 	MURDER(new Murder()),

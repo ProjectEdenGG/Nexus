@@ -312,20 +312,20 @@ public class PixelPainters extends TeamlessMechanic {
 
 		if (!matchData.canCheck()) return;
 
-		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-			event.setCancelled(true);
-			removeBlock(minigamer, event);
-			return;
-		}
-
-		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !Utils.isNullOrAir(event.getItem())) {
-			if (!canPlaceBlock(minigamer, event)) {
+		if (Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) {
+			Block placed = event.getClickedBlock().getRelative(event.getBlockFace());
+			if (!Utils.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
 				event.setCancelled(true);
-			}
 			return;
 		}
 
-		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+		if (Action.LEFT_CLICK_BLOCK.equals(event.getAction())) {
+			event.setCancelled(true);
+			removeBlock(minigamer, event.getClickedBlock());
+			return;
+		}
+
+		if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction()))
 			return;
 
 		if (event.getClickedBlock() == null || !MaterialTag.BUTTONS.isTagged(event.getClickedBlock().getType()))
@@ -336,30 +336,17 @@ public class PixelPainters extends TeamlessMechanic {
 		pressButton(minigamer, event);
 	}
 
-	public void removeBlock(Minigamer minigamer, PlayerInteractEvent event) {
-		PixelPaintersArena arena = minigamer.getMatch().getArena();
-		Block block = event.getClickedBlock();
-		Set<ProtectedRegion> regionsAt = minigamer.getMatch().getWGUtils().getRegionsAt(block.getLocation());
-		regionsAt.forEach(region -> {
-			if (region.getId().matches(arena.getRegionTypeRegex("floor"))) {
-				ItemStack item = new ItemStack(block.getType());
-				event.getClickedBlock().setType(Material.AIR);
-				Player player = minigamer.getPlayer();
-				player.getInventory().addItem(item);
-				player.playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 10F, 1F);
-			}
-		});
+	public void removeBlock(Minigamer minigamer, Block block) {
+		if (!canBuild(minigamer, block)) return;
+		ItemStack item = new ItemStack(block.getType());
+		block.setType(Material.AIR);
+		Player player = minigamer.getPlayer();
+		player.getInventory().addItem(item);
+		player.playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 10F, 1F);
 	}
 
-	public boolean canPlaceBlock(Minigamer minigamer, PlayerInteractEvent event) {
-		PixelPaintersArena arena = minigamer.getMatch().getArena();
-		Block block = event.getClickedBlock().getRelative(event.getBlockFace());
-		Set<ProtectedRegion> regionsAt = minigamer.getMatch().getWGUtils().getRegionsAt(block.getLocation());
-		for (ProtectedRegion region : regionsAt) {
-			if (region.getId().matches(arena.getRegionTypeRegex("floor")))
-				return true;
-		}
-		return false;
+	public boolean canBuild(Minigamer minigamer, Block block) {
+		return !minigamer.getMatch().getArena().getRegionsLikeAt("floor", block.getLocation()).isEmpty();
 	}
 
 	public void pressButton(Minigamer minigamer, PlayerInteractEvent event) {

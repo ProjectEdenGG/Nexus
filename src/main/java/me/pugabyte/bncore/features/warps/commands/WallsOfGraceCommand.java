@@ -72,7 +72,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
-		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
+		if (WGUtils.getRegionsLikeAt("wallsofgrace", event.getBlock().getLocation()).size() == 0) return;
 
 		if (!MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
 			if (!event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
@@ -102,7 +102,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
-		if (WGUtils.getRegionsLikeAt(event.getBlock().getLocation(), "wallsofgrace").size() == 0) return;
+		if (WGUtils.getRegionsLikeAt("wallsofgrace", event.getBlock().getLocation()).size() == 0) return;
 
 		if (MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
 			// Sign must be placed on concrete

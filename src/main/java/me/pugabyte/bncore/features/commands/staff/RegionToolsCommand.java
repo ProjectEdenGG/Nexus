@@ -19,7 +19,7 @@ public class RegionToolsCommand extends CustomCommand {
 	@Path("getRegionsLikeAt <filter>")
 	void getRegionsLikeAt(String filter) {
 		send(PREFIX + "Found regions:");
-		wgUtils.getRegionsLikeAt(player().getLocation(), filter).forEach(region -> send(region.getId()));
+		wgUtils.getRegionsLikeAt(filter, player().getLocation()).forEach(region -> send(region.getId()));
 	}
 
 }

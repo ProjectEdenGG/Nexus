@@ -18,7 +18,6 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.FallingBlock;
@@ -31,7 +30,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -45,24 +43,6 @@ public class MatchListener implements Listener {
 
 	public MatchListener() {
 		registerWaterDamageTask();
-	}
-
-	@EventHandler
-	public void onMinigameCommand(PlayerCommandPreprocessEvent event) {
-		if (event.getMessage().toLowerCase().matches("/mgm (quit|leave).*")) {
-			event.setCancelled(true);
-			Player player = event.getPlayer();
-			Minigamer minigamer = PlayerManager.get(player);
-			if (minigamer.isPlaying())
-				minigamer.quit();
-			else {
-				WorldGuardUtils worldGuardUtils = new WorldGuardUtils(player);
-				if (worldGuardUtils.getRegionsLikeAt(player.getLocation(), "mobarena_.*").size() > 0)
-					runCommand(player, "ma leave");
-				else
-					runCommand(player, "minigames:mgm quit");
-			}
-		}
 	}
 
 	private void registerWaterDamageTask() {

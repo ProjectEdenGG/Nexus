@@ -433,7 +433,7 @@ public class Murder extends UnbalancedTeamMechanic {
 
 	@EventHandler
 	public void onItemMerge(ItemMergeEvent event) {
-		if (new WorldGuardUtils(event.getEntity()).getRegionsLikeAt(event.getTarget().getLocation(), "murder_.*").size() > 0)
+		if (new WorldGuardUtils(event.getEntity()).getRegionsLikeAt("murder_.*", event.getTarget().getLocation()).size() > 0)
 			event.setCancelled(true);
 	}
 

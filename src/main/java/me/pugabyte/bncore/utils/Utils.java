@@ -60,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -478,6 +479,18 @@ public class Utils {
 
 	public static boolean isNullOrEmpty(Collection<?> collection) {
 		return collection == null || collection.isEmpty();
+	}
+
+	public static int getFirstIndexOf(Collection<?> collection, Object object) {
+		Iterator<?> iterator = collection.iterator();
+		int index = 0;
+		while (iterator.hasNext())
+			if (iterator.next().equals(object))
+				return index;
+			else
+				++index;
+
+		return -1;
 	}
 
 	public static ItemStack getTool(Player player) {
