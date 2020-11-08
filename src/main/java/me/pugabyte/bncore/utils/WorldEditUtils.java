@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.utils;
 
+import com.boydti.fawe.object.RegionWrapper;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
@@ -83,8 +84,12 @@ public class WorldEditUtils {
 		this.worldGuardUtils = new WorldGuardUtils(world);
 	}
 
+	public EditSessionBuilder getEditSessionBuilder() {
+		return new EditSessionBuilder(worldEditWorld).allowedRegionsEverywhere().fastmode(true);
+	}
+
 	public EditSession getEditSession() {
-		return new EditSessionBuilder(worldEditWorld).allowedRegionsEverywhere().fastmode(true).build();
+		return getEditSessionBuilder().build();
 	}
 
 	private File getSchematicFile(String fileName, boolean lookForExisting) {
@@ -271,6 +276,7 @@ public class WorldEditUtils {
 		private BlockVector3 vector;
 		private boolean pasteAir = true;
 		private Transform transform;
+		private Region[] regions = new Region[]{RegionWrapper.GLOBAL()};
 
 		public Paste file(String fileName) {
 			return clipboard(getSchematic(fileName));
@@ -278,6 +284,16 @@ public class WorldEditUtils {
 
 		public Paste clipboard(Clipboard clipboard) {
 			this.clipboard = clipboard;
+			return this;
+		}
+
+		public Paste clipboard(Region region) {
+			this.clipboard = copy(region);
+			return this;
+		}
+
+		public Paste regions(String... regions) {
+			this.regions = Arrays.stream(regions).map(worldGuardUtils::getRegion).toArray(Region[]::new);
 			return this;
 		}
 
@@ -301,7 +317,7 @@ public class WorldEditUtils {
 		}
 
 		public void paste() {
-			try (EditSession editSession = getEditSession()) {
+			try (EditSession editSession = getEditSessionBuilder().allowedRegions(regions).build()) {
 				clipboard.paste(editSession, vector, pasteAir, transform);
 			} catch (WorldEditException ex) {
 				ex.printStackTrace();

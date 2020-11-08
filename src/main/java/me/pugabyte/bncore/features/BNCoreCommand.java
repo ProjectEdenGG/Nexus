@@ -80,9 +80,12 @@ import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Permission("group.seniorstaff")
 public class BNCoreCommand extends CustomCommand {
+	private WorldEditUtils worldEditUtils;
 
 	public BNCoreCommand(CommandEvent event) {
 		super(event);
+		if (isPlayer())
+			worldEditUtils = new WorldEditUtils(player());
 	}
 
 	@Override
@@ -310,16 +313,20 @@ public class BNCoreCommand extends CustomCommand {
 
 	@Path("schem save <name>")
 	void schemSave(String name) {
-		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
 		send("Saved schematic " + name);
 	}
 
 	@Path("schem paste <name>")
 	void schemPaste(String name) {
-		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 		worldEditUtils.paster().file(name).at(player().getLocation()).pasteAsync();
 		send("Pasted schematic " + name);
+	}
+
+	@Path("allowedRegionsTest")
+	void allowedRegionsTest() {
+		worldEditUtils.paster().file("allowedRegionsTest").at(player().getLocation()).regions("allowedRegionsTest").pasteAsync();
+		send("Pasted schematic allowedRegionsTest");
 	}
 
 	@Path("signgui")
