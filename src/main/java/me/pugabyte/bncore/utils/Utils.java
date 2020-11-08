@@ -43,10 +43,12 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -951,17 +953,48 @@ public class Utils {
 	}
 
 	public static boolean equalsInvViewTitle(InventoryView view, String title) {
-		String viewTitle = null;
-		try {
-			viewTitle = view.getTitle();
-		} catch (Exception ignored) {
-
-		}
+		String viewTitle = getInvTitle(view);
 
 		if (Strings.isNullOrEmpty(viewTitle))
 			return false;
 
 		return viewTitle.equals(title);
+	}
+
+	public static boolean containsInvViewTitle(InventoryView view, String title) {
+		String viewTitle = getInvTitle(view);
+
+		if (Strings.isNullOrEmpty(viewTitle))
+			return false;
+
+		return viewTitle.contains(title);
+	}
+
+	private static String getInvTitle(InventoryView view) {
+		String viewTitle = null;
+		try {
+			viewTitle = StringUtils.stripColor(view.getTitle());
+		} catch (Exception ignored) {
+		}
+
+		return viewTitle;
+	}
+
+	public static @Nullable UUID getSkullOwner(ItemStack skull) {
+		if (!skull.getType().equals(Material.PLAYER_HEAD))
+			return null;
+
+		ItemMeta itemMeta = skull.getItemMeta();
+		SkullMeta skullMeta = (SkullMeta) itemMeta;
+
+
+		if (skullMeta.getPlayerProfile() == null)
+			return null;
+
+		if (skullMeta.getPlayerProfile().getId() == null)
+			return null;
+
+		return skullMeta.getPlayerProfile().getId();
 	}
 
 }
