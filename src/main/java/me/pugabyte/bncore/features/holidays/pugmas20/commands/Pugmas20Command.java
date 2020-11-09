@@ -1,5 +1,8 @@
-package me.pugabyte.bncore.features.holidays.pugmas20;
+package me.pugabyte.bncore.features.holidays.pugmas20.commands;
 
+import me.pugabyte.bncore.features.holidays.pugmas20.AdventChests;
+import me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20;
+import me.pugabyte.bncore.features.holidays.pugmas20.Train;
 import me.pugabyte.bncore.features.holidays.pugmas20.menu.AdventMenu;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
