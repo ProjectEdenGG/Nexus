@@ -16,7 +16,8 @@ World/region based plugin:
 
 ### TODO:
 - Resource pack textures
-- PDA - Iron Pressure Plate, includes current objectives
+- PDA - Iron Pressure Plate, includes current objectives, Menu like quest menu on valeria
+- Directional compass boss bar
 - Radius based armorstand names for NPCs
     - Armorstands assigned to NPC names that mimic the NPCs nameplate, but disappear clientside
     - https://www.spigotmc.org/threads/spawning-in-a-clientside-nametag-using-armor-stands-protocollib-packets.371934/

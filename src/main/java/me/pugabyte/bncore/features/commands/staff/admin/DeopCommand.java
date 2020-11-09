@@ -16,6 +16,7 @@ import org.bukkit.permissions.ServerOperator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Permission("group.admin")
 public class DeopCommand extends CustomCommand {
 
 	public DeopCommand(CommandEvent event) {
@@ -24,7 +25,6 @@ public class DeopCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	@Permission("group.admin")
 	public void deop(ServerOperator op) {
 		OfflinePlayer player = (OfflinePlayer) op;
 

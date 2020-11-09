@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Train {
 	// Options
 	private static final World world = Bukkit.getWorld("buildadmin");
-	private static final Location origin = new Location(world, 1045, 5, -922);
+	private static final Location origin = new Location(world, -926, 17, -2294);
 	private static final int frameTime = 3;
 	private static final int crossingThreshold = 30;
 	// Don't change anything below this
