@@ -60,9 +60,9 @@ public class Train {
 
 				trackNdx.getAndIncrement();
 				if (trackNdx.get() >= crossing1Ndx && !crossing1_closed)
-					animateCrossing1(false);
+					animateCrossing(1, false);
 				if (trackNdx.get() >= crossing2Ndx && !crossing2_closed)
-					animateCrossing2(false);
+					animateCrossing(2, false);
 			});
 
 		}
@@ -78,13 +78,13 @@ public class Train {
 					trackNdx.getAndIncrement();
 					if (trackNdx.get() >= crossing1Ndx + crossingThreshold + trainLength + 5) {
 						if (crossing1_closed)
-							animateCrossing1(true);
+							animateCrossing(1, true);
 					} else if (trackNdx.get() >= crossing1Ndx && !crossing1_closed) {
-						animateCrossing1(false);
+						animateCrossing(1, false);
 					}
 
 					if (trackNdx.get() >= crossing2Ndx && !crossing2_closed)
-						animateCrossing2(false);
+						animateCrossing(2, false);
 				});
 			}
 		});
@@ -99,9 +99,9 @@ public class Train {
 					trackNdx.getAndIncrement();
 					if (trackNdx.get() >= crossing2Ndx + crossingThreshold + trainLength + 5) {
 						if (crossing2_closed)
-							animateCrossing2(true);
+							animateCrossing(2, true);
 					} else if (trackNdx.get() >= crossing2Ndx && !crossing2_closed)
-						animateCrossing2(false);
+						animateCrossing(2, false);
 				});
 
 			}
@@ -113,9 +113,9 @@ public class Train {
 
 			// Just in case
 			if (crossing1_closed)
-				animateCrossing1(true);
+				animateCrossing(1, true);
 			if (crossing2_closed)
-				animateCrossing2(true);
+				animateCrossing(2, true);
 
 			animating = false;
 		});
@@ -123,53 +123,51 @@ public class Train {
 		return true;
 	}
 
-	private static void animateCrossing1(boolean open) {
-		if (open) {
-			crossing1_closed = false;
+	private static void animateCrossing(int crossing, boolean open) {
+		if (crossing == 1) {
+			if (open) {
+				crossing1_closed = false;
 
-			for (int i = 1; i <= 7; i++) {
-				int finalI = i;
-				Tasks.wait(frameTime * i, () -> {
-					WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/North/North_Opening_" + finalI).air(true).at(crossingNorthWest).paste();
-					WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/South/South_Opening_" + finalI).air(true).at(crossingSouthWest).paste();
-				});
+				for (int i = 1; i <= 7; i++) {
+					int finalI = i;
+					Tasks.wait(frameTime * i, () -> {
+						WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/North/North_Opening_" + finalI).air(true).at(crossingNorthWest).paste();
+						WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/South/South_Opening_" + finalI).air(true).at(crossingSouthWest).paste();
+					});
+				}
+			} else {
+				crossing1_closed = true;
+
+				for (int i = 1; i <= 7; i++) {
+					int finalI = i;
+					Tasks.wait(frameTime * i, () -> {
+						WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/North/North_Closing_" + finalI).air(true).at(crossingNorthWest).paste();
+						WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/South/South_Closing_" + finalI).air(true).at(crossingSouthWest).paste();
+					});
+				}
 			}
-		} else {
-			crossing1_closed = true;
+		} else if (crossing == 2) {
+			if (open) {
+				crossing2_closed = false;
 
-			for (int i = 1; i <= 7; i++) {
-				int finalI = i;
-				Tasks.wait(frameTime * i, () -> {
-					WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/North/North_Closing_" + finalI).air(true).at(crossingNorthWest).paste();
-					WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/South/South_Closing_" + finalI).air(true).at(crossingSouthWest).paste();
-				});
+				for (int i = 1; i <= 7; i++) {
+					int finalI = i;
+					Tasks.wait(frameTime * i, () -> {
+						WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/North/North_Opening_" + finalI).air(true).at(crossingNorthEast).paste();
+						WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/South/South_Opening_" + finalI).air(true).at(crossingSouthEast).paste();
+					});
+				}
+			} else {
+				crossing2_closed = true;
+
+				for (int i = 1; i <= 7; i++) {
+					int finalI = i;
+					Tasks.wait(frameTime * i, () -> {
+						WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/North/North_Closing_" + finalI).air(true).at(crossingNorthEast).paste();
+						WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/South/South_Closing_" + finalI).air(true).at(crossingSouthEast).paste();
+					});
+				}
 			}
 		}
 	}
-
-	private static void animateCrossing2(boolean open) {
-		if (open) {
-			crossing2_closed = false;
-
-			for (int i = 1; i <= 7; i++) {
-				int finalI = i;
-				Tasks.wait(frameTime * i, () -> {
-					WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/North/North_Opening_" + finalI).air(true).at(crossingNorthEast).paste();
-					WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/South/South_Opening_" + finalI).air(true).at(crossingSouthEast).paste();
-				});
-			}
-		} else {
-			crossing2_closed = true;
-
-			for (int i = 1; i <= 7; i++) {
-				int finalI = i;
-				Tasks.wait(frameTime * i, () -> {
-					WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/North/North_Closing_" + finalI).air(true).at(crossingNorthEast).paste();
-					WEUtils.paster().file("Animations/Pugmas20/Train/Crossing/South/South_Closing_" + finalI).air(true).at(crossingSouthEast).paste();
-				});
-			}
-		}
-	}
-
-
 }
