@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.experimental.Accessors;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
+import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -142,6 +143,25 @@ public class Arena implements ConfigurationSerializable {
 
 	public WorldEditUtils getWEUtils() {
 		return new WorldEditUtils(getWorld());
+	}
+
+	public void regenerate() {
+		for (Class<? extends Mechanic> mechanic : getMechanic().getSuperclasses()) {
+			Regenerating annotation = mechanic.getAnnotation(Regenerating.class);
+			if (annotation != null)
+				for (String type : annotation.value())
+					regenerate(type);
+		}
+	}
+
+	public void regenerate(String type) {
+		String name = getRegionBaseName().split("_")[0];
+		String regex = getRegionTypeRegex(type);
+
+		getWGUtils().getRegionsLike(regex).forEach(region -> {
+			String file = "minigames/" + name + "/" + region.getId().replaceFirst(name + "_", "");
+			Minigames.getWorldEditUtils().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
+		});
 	}
 
 	public String getRegionBaseName() {

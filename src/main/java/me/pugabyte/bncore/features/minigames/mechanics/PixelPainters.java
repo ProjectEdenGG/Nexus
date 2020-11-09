@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
@@ -136,14 +135,12 @@ public class PixelPainters extends TeamlessMechanic {
 				copyMaxV = designMax.subtract(0, 0, i);
 				pasteMinV = pasteMin.add(0, i, 0);
 				Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
-				Clipboard schem = match.getWEUtils().copy(copyRg);
-				match.getWEUtils().paster().clipboard(schem).at(pasteMinV).paste();
+				match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).paste();
 			}
 
 			// Paste Design
 			Region pasteRegion = arena.getLobbyAnimationRegion();
-			Clipboard schem = match.getWEUtils().copy(arena.getLobbyDesignRegion());
-			match.getWEUtils().paster().clipboard(schem).at(pasteRegion.getMinimumPoint()).paste();
+			match.getWEUtils().paster().clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).paste();
 		});
 		matchData.setAnimateLobbyId(taskId);
 	}
@@ -313,8 +310,15 @@ public class PixelPainters extends TeamlessMechanic {
 		if (!matchData.canCheck()) return;
 
 		if (Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) {
+			if (event.getClickedBlock() != null && MaterialTag.BUTTONS.isTagged(event.getClickedBlock().getType())) {
+				if (matchData.getChecked().contains(minigamer))
+					return;
+				pressButton(minigamer, event);
+				return;
+			}
+
 			Block placed = event.getClickedBlock().getRelative(event.getBlockFace());
-			if (!Utils.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
+			if (!canBuild(minigamer, placed))
 				event.setCancelled(true);
 			return;
 		}
@@ -324,16 +328,6 @@ public class PixelPainters extends TeamlessMechanic {
 			removeBlock(minigamer, event.getClickedBlock());
 			return;
 		}
-
-		if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction()))
-			return;
-
-		if (event.getClickedBlock() == null || !MaterialTag.BUTTONS.isTagged(event.getClickedBlock().getType()))
-			return;
-
-		if (matchData.getChecked().contains(minigamer)) return;
-
-		pressButton(minigamer, event);
 	}
 
 	public void removeBlock(Minigamer minigamer, Block block) {
@@ -485,18 +479,16 @@ public class PixelPainters extends TeamlessMechanic {
 			copyMaxV = designMax.subtract(0, 0, i);
 			pasteMinV = pasteMin.add(0, i, 0);
 			Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
-			Clipboard schem = match.getWEUtils().copy(copyRg);
-			match.getWEUtils().paster().clipboard(schem).at(pasteMinV).paste();
+			match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).paste();
 		}
 	}
 
 	public void pasteNewDesign(Match match) {
 		PixelPaintersArena arena = match.getArena();
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
-		Clipboard schem = match.getWEUtils().copy(arena.getNextDesignRegion());
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			match.getWEUtils().paster().clipboard(schem).at(region.getMinimumPoint()).paste();
+			match.getWEUtils().paster().clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).paste();
 		});
 	}
 
@@ -516,10 +508,9 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersArena arena = match.getArena();
 		// Paste Logo on all island walls
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
-		Clipboard schem = match.getWEUtils().copy(arena.getLogoRegion());
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			match.getWEUtils().paster().clipboard(schem).at(region.getMinimumPoint()).paste();
+			match.getWEUtils().paster().clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).paste();
 		});
 	}
 

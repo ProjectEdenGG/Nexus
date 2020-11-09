@@ -1,18 +1,14 @@
 package me.pugabyte.bncore.features.minigames.listeners;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.mechanics.common.AntiCampingTask;
-import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.AntiCamp;
 import me.pugabyte.bncore.features.minigames.models.annotations.Railgun;
-import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
-import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.utils.Gun;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.event.EventHandler;
@@ -31,32 +27,12 @@ public class AnnotationListener implements Listener {
 
 	@EventHandler
 	public void onMatchInitialize_Regeneration(MatchInitializeEvent event) {
-		for (Class<? extends Mechanic> mechanic : event.getMatch().getArena().getMechanic().getSuperclasses()) {
-			Regenerating annotation = mechanic.getAnnotation(Regenerating.class);
-			if (annotation != null)
-				for (String type : annotation.value())
-					regenerate(event.getMatch(), type);
-		}
+		event.getMatch().getArena().regenerate();
 	}
 
 	@EventHandler
 	public void onMatchEnd_Regeneration(MatchEndEvent event) {
-		for (Class<? extends Mechanic> mechanic : event.getMatch().getArena().getMechanic().getSuperclasses()) {
-			Regenerating annotation = mechanic.getAnnotation(Regenerating.class);
-			if (annotation != null)
-				for (String type : annotation.value())
-					regenerate(event.getMatch(), type);
-		}
-	}
-
-	private void regenerate(Match match, String type) {
-		String name = match.getArena().getRegionBaseName().split("_")[0];
-		String regex = match.getArena().getRegionTypeRegex(type);
-
-		match.getArena().getWGUtils().getRegionsLike(regex).forEach(region -> {
-			String file = name + "/" + region.getId().replaceFirst(name + "_", "");
-			Minigames.getWorldEditUtils().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
-		});
+		event.getMatch().getArena().regenerate();
 	}
 
 	@EventHandler

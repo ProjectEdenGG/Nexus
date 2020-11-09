@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.mechanics.common.CheckpointMechanic;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
+import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.matchdata.CheckpointMatchData;
@@ -16,8 +17,10 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
+import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
@@ -276,12 +279,6 @@ public class MinigamesCommand extends CustomCommand {
 		send(PREFIX + "Spawnpoint added");
 	}
 
-	@Path("mastermind showAnswer")
-	void mastermindShowAnswer() {
-		MastermindMatchData matchData = minigamer.getMatch().getMatchData();
-		send(matchData.getAnswer().toString());
-	}
-
 	private static String inviteCommand;
 	private static String inviteMessage;
 
@@ -385,6 +382,24 @@ public class MinigamesCommand extends CustomCommand {
 	void holeInTheWallFlag(Arena arena, String regionType, Flag<?> flag, String setting) {
 		for (int i = 1; i <= arena.getMaxPlayers(); i++)
 			runCommand("rg flag holeinthewall_" + arena.getName() + "_" + regionType + "_" + i + " " + flag + " " + setting);
+	}
+
+	@Path("mastermind showAnswer")
+	@Permission("group.admin")
+	void mastermindShowAnswer() {
+		MastermindMatchData matchData = minigamer.getMatch().getMatchData();
+		send(matchData.getAnswer().toString());
+	}
+
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Path("mastermind playAgain")
+	void mastermindPlayAgain() {
+		MatchData matchData = minigamer.getMatch().getMatchData();
+		if (!(matchData instanceof MastermindMatchData))
+			error("You must be playing Mastermind to use this command");
+
+		((MastermindMatchData) matchData).reset(minigamer);
 	}
 
 	private Sign getTargetSign(Player player) {

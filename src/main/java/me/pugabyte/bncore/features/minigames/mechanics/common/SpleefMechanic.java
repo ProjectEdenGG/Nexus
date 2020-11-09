@@ -5,8 +5,6 @@ import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.annotations.AntiCamp;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
-import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
-import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import org.bukkit.GameMode;
@@ -27,29 +25,9 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onInitialize(MatchInitializeEvent event) {
-		super.onInitialize(event);
-		resetFloors(event.getMatch());
-	}
-
-	@Override
-	public void onEnd(MatchEndEvent event) {
-		super.onEnd(event);
-		resetFloors(event.getMatch());
-	}
-
-	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 		new AntiCampingTask(event.getMatch()).start();
-	}
-
-	private void resetFloors(Match match) {
-		match.getWGUtils().getRegionsLike(getName() + "_" + match.getArena().getName() + "_floor_[0-9]+")
-				.forEach(floor -> {
-					String file = (getName() + "/" + floor.getId().replaceFirst(getName().toLowerCase() + "_", "")).toLowerCase();
-					match.getWEUtils().paster().file(file).at(floor.getMinimumPoint()).pasteAsync();
-				});
 	}
 
 	public boolean breakBlock(Match match, Location location) {

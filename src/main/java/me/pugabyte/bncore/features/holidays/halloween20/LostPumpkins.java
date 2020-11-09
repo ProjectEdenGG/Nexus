@@ -6,7 +6,7 @@ import me.pugabyte.bncore.features.holidays.halloween20.models.Pumpkin;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
-import me.pugabyte.bncore.utils.NMSUtils;
+import me.pugabyte.bncore.utils.PacketUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -65,7 +65,7 @@ public class LostPumpkins implements Listener {
 		}
 		user.getFoundPumpkins().add(event.getClickedBlock().getLocation());
 		Tasks.wait(1, () -> event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.AIR.createBlockData()));
-		NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
+		PacketUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
 		user.send(PREFIX + "You have found a pumpkin! It has been returned to Jeffery. &e(" + user.getFoundPumpkins().size() + "/8)");
 		service.save(user);
 		if (user.getFoundPumpkins().size() == 8) {
@@ -86,7 +86,7 @@ public class LostPumpkins implements Listener {
 			Pumpkin pumpkin = Pumpkin.getByLocation(loc);
 			if (pumpkin == null) continue;
 			event.getPlayer().sendBlockChange(pumpkin.getOriginal(), Material.AIR.createBlockData());
-			NMSUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
+			PacketUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
 		}
 	}
 

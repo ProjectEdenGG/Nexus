@@ -33,6 +33,7 @@ import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.PacketUtils;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.ProgressBarStyle;
@@ -327,6 +328,11 @@ public class BNCoreCommand extends CustomCommand {
 	void allowedRegionsTest() {
 		worldEditUtils.paster().file("allowedRegionsTest").at(player().getLocation()).regions("allowedRegionsTest").pasteAsync();
 		send("Pasted schematic allowedRegionsTest");
+	}
+
+	@Path("copyTileEntityClientTest")
+	void copyTileEntityClient() {
+		PacketUtils.copyTileEntityClient(player(), player().getLocation().getBlock(), player().getLocation().add(1, 0, 0));
 	}
 
 	@Path("signgui")

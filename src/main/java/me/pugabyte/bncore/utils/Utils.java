@@ -896,6 +896,16 @@ public class Utils {
 			return Arrays.stream(Env.values()).map(Env::name).collect(Collectors.toList());
 		}
 
+		public static <T> List<Enum<?>> valuesExcept(Class<? extends T> clazz, Enum<?>... exclude) {
+			List<Enum<?>> excluded = Arrays.asList(exclude);
+			List<Enum<?>> values = new ArrayList<>();
+ 			for (T enumValue : clazz.getEnumConstants())
+				if (!excluded.contains(enumValue))
+					values.add((Enum<?>) enumValue);
+
+			return values;
+		}
+
 		public static String prettyName(String name) {
 			if (!name.contains("_"))
 				return camelCase(name);

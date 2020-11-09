@@ -6,14 +6,24 @@ import lombok.Data;
 import me.pugabyte.bncore.features.minigames.mechanics.Mastermind;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.MatchData;
+import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
+import me.pugabyte.bncore.utils.FireworkLauncher;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.RandomUtils;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.CardinalDirection;
+import me.pugabyte.bncore.utils.Utils.EnumUtils;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -26,10 +36,12 @@ import static me.pugabyte.bncore.utils.Utils.getFirstIndexOf;
 @MatchDataFor(Mastermind.class)
 public class MastermindMatchData extends MatchData {
 	private int guess = 1;
-	private final boolean colorblind = false;
+	public boolean repeats = false;
+	private boolean colorblind = false;
 	private final List<Material> answer = new ArrayList<>();
 
 	public static final int answerLength = 4;
+	public static final int maxGuesses = 10;
 	public static final Material validateCorrect = Material.BLACK_CONCRETE;
 	public static final Material validateExists = Material.LIGHT_GRAY_CONCRETE;
 	public static final Material validateIncorrect = Material.RED_CONCRETE;
@@ -66,18 +78,31 @@ public class MastermindMatchData extends MatchData {
 		return colorblind ? colorblindMaterials : materials;
 	}
 
-	public void reset() {
-		guess = 0;
+	public void giveLoadout(Minigamer minigamer) {
+		minigamer.getPlayer().getInventory().clear();
+		for (Material material : getMaterials())
+			Utils.giveItem(minigamer.getPlayer(), new ItemStack(material, 64));
+	}
+
+	public void reset(Minigamer minigamer) {
+		guess = 1;
 		createAnswer();
+		getMatch().getArena().regenerate();
+		minigamer.setScore(0);
+		giveLoadout(minigamer);
 	}
 
 	public void createAnswer() {
 		answer.clear();
-		for (int i = 0; i < answerLength; i++)
-			answer.add(RandomUtils.randomElement(getMaterials()));
+		while (answer.size() < answerLength) {
+			Material material = RandomUtils.randomElement(getMaterials());
+			if (!repeats && answer.contains(material))
+				continue;
+			answer.add(material);
+		}
 	}
 
-	public void guess() {
+	public void guess(Minigamer minigamer) {
 		Region wallRegion = getMatch().getArena().getRegion("wall");
 		Region guessRegion = getMatch().getArena().getRegion("guess");
 
@@ -101,18 +126,26 @@ public class MastermindMatchData extends MatchData {
 		for (int i = 0; i < answerLength; i++)
 			guess.add(wallOrigin.getBlock().getRelative(direction, i).getType());
 
-		int correct = 0, exists = 0, incorrect = 0;
+		int correct = 0, exists = 0;
 		for (int i = 0; i < guess.size(); i++) {
-			Material current = guess.get(i);
-			if (current == answer.get(i)) {
+			if (guess.get(i) == answer.get(i)) {
 				++correct;
+				guess.set(i, Material.AIR);
 				answer.set(i, Material.AIR);
-			} else if (answer.contains(current)) {
-				++exists;
-				answer.set(getFirstIndexOf(answer, current), Material.AIR);
-			} else
-				++incorrect;
+			}
 		}
+
+		for (Material current : guess) {
+			if (current == Material.AIR)
+				continue;
+			if (answer.contains(current)) {
+				++exists;
+				int firstIndexOf = getFirstIndexOf(answer, current);
+				answer.set(firstIndexOf, Material.AIR);
+			}
+		}
+
+		int incorrect = answerLength - correct - exists;
 
 		Block validateOrigin = wallOrigin.getBlock().getRelative(direction, 5);
 		int relative = 0;
@@ -123,12 +156,71 @@ public class MastermindMatchData extends MatchData {
 		for (int i = 0; i < incorrect; i++)
 			validateOrigin.getRelative(direction, relative++).setType(validateIncorrect);
 
+		if (correct == 4) {
+			win(minigamer);
+			return;
+		}
+
 		++this.guess;
-		if (this.guess > 10)
-			gameOver();
+		if (this.guess > maxGuesses)
+			lose(minigamer);
 	}
 
-	private void gameOver() {
+	private void lose(Minigamer minigamer) {
+		showAnswer();
+		minigamer.tell("You were not able to crack the code! Better luck next time");
+		endOfGameChatButtons(minigamer);
+	}
+
+	private void showAnswer() {
+		Region wallRegion = getMatch().getArena().getRegion("wall");
+		Location wallOrigin = WEUtils.toLocation(wallRegion.getMinimumPoint());
+		wallOrigin.setY(wallOrigin.getY() + maxGuesses * 2);
+		BlockFace direction = getDirection(wallOrigin.getBlock());
+
+		for (int i = 0; i < answerLength; i++)
+			wallOrigin.getBlock().getRelative(direction, i).setType(answer.get(i));
+	}
+
+	private void win(Minigamer minigamer) {
+		showAnswer();
+		fireworks();
+		guess = maxGuesses + 1;
+		minigamer.tell("You are the Mastermind! You cracked the code in " + TimespanFormatter.of(minigamer.getScore()).format());
+		Tasks.wait(Time.SECOND.x(8), () -> endOfGameChatButtons(minigamer));
+	}
+
+	private void endOfGameChatButtons(Minigamer minigamer) {
+		new JsonBuilder()
+				.newline()
+				.next("&a&l  Play Again")
+				.command("/mgm mastermind playAgain")
+				.hover("Reset the board and play again")
+				.group()
+				.next("  &3||  &3")
+				.group()
+				.next("&c&lQuit")
+				.command("/mgm quit")
+				.hover("End the game")
+				.newline()
+				.send(minigamer.getPlayer());
+	}
+
+	private void fireworks() {
+		getMatch().getArena().getNumberedRegionsLike("fireworks").forEach(region -> {
+			for (int i = 0; i < 3; i++) {
+				Location location = getMatch().getWGUtils().getRandomBlock(region).getLocation();
+
+				int delay = RandomUtils.randomInt(Time.SECOND.get() / 2, Time.SECOND.get());
+				Tasks.wait(delay * i, () -> {
+					Type type = (Type) RandomUtils.randomElement(EnumUtils.valuesExcept(Type.class, Type.CREEPER, Type.BALL));
+					FireworkLauncher.random(location)
+							.type(type)
+							.power(RandomUtils.randomElement(1, 1, 1, 2))
+							.launch();
+				});
+			}
+		});
 	}
 
 	public BlockFace getDirection(Block wallOrigin) {

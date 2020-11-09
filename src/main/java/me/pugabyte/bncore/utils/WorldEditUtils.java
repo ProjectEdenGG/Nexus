@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.utils;
 
 import com.boydti.fawe.object.RegionWrapper;
+import com.boydti.fawe.object.RelightMode;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
@@ -85,7 +86,7 @@ public class WorldEditUtils {
 	}
 
 	public EditSessionBuilder getEditSessionBuilder() {
-		return new EditSessionBuilder(worldEditWorld).allowedRegionsEverywhere().fastmode(true);
+		return new EditSessionBuilder(worldEditWorld).allowedRegionsEverywhere().relightMode(RelightMode.ALL);
 	}
 
 	public EditSession getEditSession() {
