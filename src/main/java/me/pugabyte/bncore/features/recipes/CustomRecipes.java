@@ -2,6 +2,7 @@ package me.pugabyte.bncore.features.recipes;
 
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
+import me.pugabyte.bncore.framework.annotations.Disabled;
 import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
@@ -9,11 +10,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Disabled
 public class CustomRecipes extends Feature {
 	@Getter
 	public static Map<NamespacedKey, Recipe> recipes = new HashMap<>();

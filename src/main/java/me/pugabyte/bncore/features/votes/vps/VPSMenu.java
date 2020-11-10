@@ -138,28 +138,28 @@ public enum VPSMenu {
 						.price(35));
 				put(12, VPSSlot.builder()
 						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SILK_TOUCH, 1))
-						.price(30));
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SOUL_SPEED, 3))
+						.price(45));
 				put(13, VPSSlot.builder()
 						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DURABILITY, 3))
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SILK_TOUCH))
 						.price(30));
 				put(14, VPSSlot.builder()
 						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MENDING, 1))
-						.price(45));
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DURABILITY, 3))
+						.price(30));
 				put(15, VPSSlot.builder()
 						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.ARROW_INFINITE, 1))
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.ARROW_INFINITE))
 						.price(40));
 				put(16, VPSSlot.builder()
 						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.THORNS, 1))
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.THORNS))
 						.price(15));
 
 				put(19, VPSSlot.builder()
 						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.CHANNELING, 1))
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.CHANNELING))
 						.price(30));
 				put(20, VPSSlot.builder()
 						.name("Enchanted Book")
@@ -175,7 +175,7 @@ public enum VPSMenu {
 						.price(50));
 				put(23, VPSSlot.builder()
 						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MULTISHOT, 1))
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MULTISHOT))
 						.price(35));
 				put(24, VPSSlot.builder()
 						.name("Enchanted Book")
@@ -186,33 +186,38 @@ public enum VPSMenu {
 						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.PIERCING, 4))
 						.price(30));
 
+				put(31, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MENDING))
+						.price(45));
+
 				put(37, VPSSlot.builder()
+						.name("1 Netherite Ingot")
+						.displayAndGive(Material.NETHERITE_INGOT)
+						.price(5));
+				put(38, VPSSlot.builder()
 						.name("10 Emeralds")
 						.displayAndGive(Material.EMERALD, 10)
 						.price(12));
-				put(38, VPSSlot.builder()
+				put(39, VPSSlot.builder()
 						.name("10 Diamonds")
 						.displayAndGive(Material.DIAMOND, 10)
 						.price(15));
-				put(39, VPSSlot.builder()
+				put(40, VPSSlot.builder()
 						.name("10 Gold Ingots")
 						.displayAndGive(Material.GOLD_INGOT, 10)
 						.price(7));
-				put(40, VPSSlot.builder()
+				put(41, VPSSlot.builder()
 						.name("10 Iron Ingots")
 						.displayAndGive(Material.IRON_INGOT, 10)
 						.price(5));
-				put(41, VPSSlot.builder()
+				put(42, VPSSlot.builder()
 						.name("10 Lapis Lazuli")
 						.displayAndGive(Material.LAPIS_LAZULI, 10)
 						.price(3));
-				put(42, VPSSlot.builder()
+				put(43, VPSSlot.builder()
 						.name("16 Quartz")
 						.displayAndGive(Material.QUARTZ, 16)
-						.price(2));
-				put(43, VPSSlot.builder()
-						.name("32 Coal")
-						.displayAndGive(Material.COAL, 32)
 						.price(2));
 			}}).build());
 
@@ -275,18 +280,26 @@ public enum VPSMenu {
 						.displayAndGive(Material.PARROT_SPAWN_EGG, 2)
 						.price(75));
 
-				put(30, VPSSlot.builder()
+				put(29, VPSSlot.builder()
 						.name("2 Panda Spawn Eggs")
 						.displayAndGive(Material.PANDA_SPAWN_EGG, 2)
 						.price(100));
-				put(31, VPSSlot.builder()
+				put(30, VPSSlot.builder()
 						.name("2 Dolphin Spawn Eggs")
 						.displayAndGive(Material.DOLPHIN_SPAWN_EGG, 2)
 						.price(150));
-				put(32, VPSSlot.builder()
+				put(31, VPSSlot.builder()
 						.name("2 Turtle Spawn Eggs")
 						.displayAndGive(Material.TURTLE_SPAWN_EGG, 2)
 						.price(75));
+				put(32, VPSSlot.builder()
+						.name("2 Bee Spawn Eggs")
+						.displayAndGive(Material.BEE_SPAWN_EGG, 2)
+						.price(150));
+				put(33, VPSSlot.builder()
+						.name("2 Strider Spawn Eggs")
+						.displayAndGive(Material.STRIDER_SPAWN_EGG, 2)
+						.price(100));
 
 				put(40, VPSSlot.builder()
 						.name("1 Name Tag")
@@ -308,8 +321,8 @@ public enum VPSMenu {
 						.displayAndGive(Material.GLOWSTONE, 32)
 						.price(7));
 				put(13, VPSSlot.builder()
-						.name("32 Magma Blocks")
-						.displayAndGive(Material.MAGMA_BLOCK, 32)
+						.name("32 Shroomlight")
+						.displayAndGive(Material.SHROOMLIGHT, 32)
 						.price(10));
 				put(14, VPSSlot.builder()
 						.name("1 Sponge")
@@ -434,6 +447,10 @@ public enum VPSMenu {
 						.displayAndGive(Material.HEART_OF_THE_SEA)
 						.price(60));
 
+				put(37, VPSSlot.builder()
+						.name("1 respawn anchor")
+						.displayAndGive(Material.RESPAWN_ANCHOR)
+						.price(25));
 				put(38, VPSSlot.builder()
 						.name("1 dragon head")
 						.displayAndGive(Material.DRAGON_HEAD)
@@ -454,6 +471,10 @@ public enum VPSMenu {
 						.name("1 totem of undying")
 						.displayAndGive(Material.TOTEM_OF_UNDYING)
 						.price(50));
+				put(43, VPSSlot.builder()
+						.name("1 Pigstep music disc")
+						.displayAndGive(Material.MUSIC_DISC_PIGSTEP)
+						.price(30));
 			}}).build());
 		}};
 	},
@@ -509,7 +530,7 @@ public enum VPSMenu {
 								.price(10));
 						put(11, VPSSlot.builder()
 								.name("1 grass")
-								.displayAndGive(Material.GRASS_BLOCK, 1)
+								.displayAndGive(Material.GRASS_BLOCK)
 								.price(5));
 						put(12, VPSSlot.builder()
 								.name("64 cobble")

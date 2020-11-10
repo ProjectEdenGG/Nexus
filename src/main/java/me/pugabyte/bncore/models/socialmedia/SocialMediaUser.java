@@ -67,14 +67,14 @@ public class SocialMediaUser extends PlayerOwnedObject {
 	}
 
 	public enum SocialMediaSite {
-		TWITTER("#1DA1F2Twitter", "https://twitter.com", "https://twitter.com/{{USERNAME}}"),
-		INSTAGRAM("#E1306C&dInstagram", "https://instgram.com", "https://instgram.com/{{USERNAME}}"),
-		SNAPCHAT("#FFFC00Snapchat", "https://snapchat.com", "https://snapchat.com/add/{{USERNAME}}"),
-		YOUTUBE("#FF0000YouTube", "https://youtube.com", "{{USERNAME}}"),
-		TWITCH("#6441A5Twitch", "https://twitch.tv", "https://twitch.tv/{{USERNAME}}"),
-		DISCORD("#7289DADiscord", "https://discord.com", "{{USERNAME}}"),
-		STEAM("#356D92Steam", "https://store.steampowered.com", "https://steamcommunity.com/id/{{USERNAME}}"),
-		REDDIT("#FF5700Reddit", "https://reddit.com", "https://reddit.com/u/{{USERNAME}}"),
+		TWITTER("&#1DA1F2Twitter", "https://twitter.com", "https://twitter.com/{{USERNAME}}"),
+		INSTAGRAM("&#E1306CInstagram", "https://instgram.com", "https://instgram.com/{{USERNAME}}"),
+		SNAPCHAT("&#FFFC00Snapchat", "https://snapchat.com", "https://snapchat.com/add/{{USERNAME}}"),
+		YOUTUBE("&#FF0000YouTube", "https://youtube.com", "{{USERNAME}}"),
+		TWITCH("&#6441A5Twitch", "https://twitch.tv", "https://twitch.tv/{{USERNAME}}"),
+		DISCORD("&#7289DADiscord", "https://discord.com", "{{USERNAME}}"),
+		STEAM("&#356D92Steam", "https://store.steampowered.com", "https://steamcommunity.com/id/{{USERNAME}}"),
+		REDDIT("&#FF5700Reddit", "https://reddit.com", "https://reddit.com/u/{{USERNAME}}"),
 		GITHUB("&fGitHub", "https://github.com", "https://github.com/{{USERNAME}}");
 
 		@Getter
