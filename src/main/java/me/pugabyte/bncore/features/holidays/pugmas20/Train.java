@@ -1,13 +1,18 @@
 package me.pugabyte.bncore.features.holidays.pugmas20;
 
+import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,6 +32,7 @@ public class Train {
 	private static final int trainLength = 108;
 	private static final int crossing1Ndx = 52 - crossingThreshold;
 	private static final int crossing2Ndx = 170 - crossingThreshold;
+	private static final AtomicInteger trackNdx = new AtomicInteger(0);
 	private static boolean crossing1_closed = false;
 	private static boolean crossing2_closed = false;
 	private static boolean animateLights1 = false;
@@ -35,6 +41,7 @@ public class Train {
 	private static final int x = origin.getBlockX();
 	private static final int y = origin.getBlockY();
 	private static final int z = origin.getBlockZ();
+	private static final Location trackStart = pugmasLoc(x - 94, y, z);
 	private static final Location trainEnter = pugmasLoc(x + 13, y, z);
 	private static final Location trainExit = pugmasLoc(x, y, z);
 	private static final Location trainStart = pugmasLoc(x + 14, y, z);
@@ -42,6 +49,23 @@ public class Train {
 	private static final Location crossingNE = pugmasLoc(x + 79, y, z - 6);
 	private static final Location crossingSW = pugmasLoc(x - 47, y, z + 6);
 	private static final Location crossingNW = pugmasLoc(x - 39, y, z - 6);
+	// Lights
+	private static final int lightY = crossingSW.getBlockY() + 5;
+	private static final List<Location> crossingLights1_1 = Arrays.asList(
+			pugmasLoc(crossingSW.getBlockX(), lightY, crossingSW.getBlockZ() - 1),
+			pugmasLoc(crossingNW.getBlockX(), lightY, crossingNW.getBlockZ() + 1));
+	private static final List<Location> crossingLights1_2 = Arrays.asList(
+			pugmasLoc(crossingSW.getBlockX() + 2, lightY, crossingSW.getBlockZ() - 1),
+			pugmasLoc(crossingNW.getBlockX() - 2, lightY, crossingNW.getBlockZ() + 1));
+	private static final List<Location> crossingLights2_1 = Arrays.asList(
+			pugmasLoc(crossingSE.getBlockX(), lightY, crossingSE.getBlockZ() - 1),
+			pugmasLoc(crossingNE.getBlockX(), lightY, crossingNE.getBlockZ() + 1));
+	private static final List<Location> crossingLights2_2 = Arrays.asList(
+			pugmasLoc(crossingSE.getBlockX() + 2, lightY, crossingSE.getBlockZ() - 1),
+			pugmasLoc(crossingNE.getBlockX() - 2, lightY, crossingNE.getBlockZ() + 1));
+	// Smoke
+	private static final AtomicReference<Block> trackLoc = new AtomicReference<>(trackStart.clone().getBlock());
+	private static final AtomicReference<Block> smokeLoc = new AtomicReference<>(trackLoc.get().getRelative(-8, 8, 0));
 	// Misc
 	private static final WorldEditUtils WEUtils = new WorldEditUtils(world);
 	private static final String animationPath = "Animations/Pugmas20/Train";
@@ -61,7 +85,6 @@ public class Train {
 
 		animating = true;
 		int wait = 0;
-		AtomicInteger trackNdx = new AtomicInteger(0);
 		crossing1_closed = false;
 		crossing2_closed = false;
 
@@ -70,11 +93,7 @@ public class Train {
 			Tasks.wait(frameTime * i, () -> {
 				WEUtils.paster().file(animationPath + "/Enter/TrainEnter_" + finalI).air(true).at(trainEnter).paste();
 
-				trackNdx.getAndIncrement();
-				if (trackNdx.get() >= crossing1Ndx && !crossing1_closed)
-					animateCrossing(1, false);
-				if (trackNdx.get() >= crossing2Ndx && !crossing2_closed)
-					animateCrossing(2, false);
+				incrementTrain();
 			});
 
 		}
@@ -89,16 +108,7 @@ public class Train {
 					WEUtils.paster().file(animationPath + "/Train").air(true).at(temp.get()).paste();
 					temp.set(temp.get().getBlock().getRelative(1, 0, 0).getLocation());
 
-					trackNdx.getAndIncrement();
-					if (trackNdx.get() >= crossing1Ndx + crossingThreshold + trainLength + 5) {
-						if (crossing1_closed)
-							animateCrossing(1, true);
-					} else if (trackNdx.get() >= crossing1Ndx && !crossing1_closed) {
-						animateCrossing(1, false);
-					}
-
-					if (trackNdx.get() >= crossing2Ndx && !crossing2_closed)
-						animateCrossing(2, false);
+					incrementTrain();
 				});
 			}
 		});
@@ -110,31 +120,78 @@ public class Train {
 				Tasks.wait(frameTime * i, () -> {
 					WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).air(true).at(trainExit).paste();
 
-					trackNdx.getAndIncrement();
-					if (trackNdx.get() >= crossing2Ndx + crossingThreshold + trainLength + 5) {
-						if (crossing2_closed)
-							animateCrossing(2, true);
-					} else if (trackNdx.get() >= crossing2Ndx && !crossing2_closed)
-						animateCrossing(2, false);
+					incrementTrain();
 				});
 
 			}
 		});
 		wait += (frameTime * 110);
 
-		Tasks.wait(wait + frameTime, () -> {
-			trackNdx.set(0);
-
-			// Just in case
-			if (crossing1_closed)
-				animateCrossing(1, true);
-			if (crossing2_closed)
-				animateCrossing(2, true);
-
-			animating = false;
-		});
+		Tasks.wait(wait + frameTime, Train::resetTrain);
 
 		return true;
+	}
+
+	private static void resetTrain() {
+		trackNdx.set(0);
+		trackLoc.set(trackStart.clone().getBlock());
+		smokeLoc.set(trackLoc.get().getRelative(-8, 8, 0));
+
+		if (crossing1_closed)
+			animateCrossing(1, true);
+		if (crossing2_closed)
+			animateCrossing(2, true);
+
+		animating = false;
+		switchLightsOff();
+	}
+
+	private static void incrementTrain() {
+		trackNdx.getAndIncrement();
+		trackLoc.set(trackLoc.get().getRelative(1, 0, 0));
+
+		smokeLoc.set(smokeLoc.get().getRelative(1, 0, 0));
+		if (world != null) {
+			double x = 0;
+			double y = 3;
+			double z = 0;
+			double speed = 0.01;
+			int count = 0;
+			Particle smoke = Particle.CAMPFIRE_COSY_SMOKE;
+
+			world.spawnParticle(smoke, getSmokeLoc(), count, x, y, z, speed);
+			world.spawnParticle(smoke, getSmokeLoc(), count, x, y, z, speed);
+			Tasks.wait(1, () -> {
+				world.spawnParticle(smoke, getSmokeLoc(), count, x, y, z, speed);
+				world.spawnParticle(smoke, getSmokeLoc(), count, x, y, z, speed);
+				Tasks.wait(1, () -> {
+					world.spawnParticle(smoke, getSmokeLoc(), count, x, y, z, speed);
+					world.spawnParticle(smoke, getSmokeLoc(), count, x, y, z, speed);
+				});
+			});
+		}
+
+		if (trackNdx.get() >= crossing1Ndx + crossingThreshold + trainLength + 5) {
+			if (crossing1_closed)
+				animateCrossing(1, true);
+		} else if (trackNdx.get() >= crossing1Ndx && !crossing1_closed) {
+			animateCrossing(1, false);
+		}
+
+		if (trackNdx.get() >= crossing2Ndx + crossingThreshold + trainLength + 5) {
+			if (crossing2_closed)
+				animateCrossing(2, true);
+		} else if (trackNdx.get() >= crossing2Ndx && !crossing2_closed)
+			animateCrossing(2, false);
+
+	}
+
+	private static Location getSmokeLoc() {
+		Location loc = Utils.getCenteredLocation(smokeLoc.get().getLocation());
+		loc.setY(loc.getY() - 0.5);
+		loc.setX(loc.getX() + RandomUtils.randomDouble(-0.25, 0.25));
+		loc.setZ(loc.getZ() + RandomUtils.randomDouble(-0.25, 0.25));
+		return loc;
 	}
 
 	private static void animateCrossing(int crossing, boolean open) {
@@ -191,21 +248,10 @@ public class Train {
 	}
 
 	private static void lightsTask() {
-		final int lightY = crossingSW.getBlockY() + 5;
-		final List<Location> crossingLights1_1 = Arrays.asList(
-				pugmasLoc(crossingSW.getBlockX(), lightY, crossingSW.getBlockZ() - 1),
-				pugmasLoc(crossingNW.getBlockX(), lightY, crossingNW.getBlockZ() + 1));
-		final List<Location> crossingLights1_2 = Arrays.asList(
-				pugmasLoc(crossingSW.getBlockX() + 2, lightY, crossingSW.getBlockZ() - 1),
-				pugmasLoc(crossingNW.getBlockX() - 2, lightY, crossingNW.getBlockZ() + 1));
-		final List<Location> crossingLights2_1 = Arrays.asList(
-				pugmasLoc(crossingSE.getBlockX(), lightY, crossingSE.getBlockZ() - 1),
-				pugmasLoc(crossingNE.getBlockX(), lightY, crossingNE.getBlockZ() + 1));
-		final List<Location> crossingLights2_2 = Arrays.asList(
-				pugmasLoc(crossingSE.getBlockX() + 2, lightY, crossingSE.getBlockZ() - 1),
-				pugmasLoc(crossingNE.getBlockX() - 2, lightY, crossingNE.getBlockZ() + 1));
-
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(20), () -> {
+			if (!animating)
+				return;
+
 			if (animateLights1) {
 				switchLights(true, crossingLights1_1);
 				switchLights(false, crossingLights1_2);
@@ -232,6 +278,17 @@ public class Train {
 				switchLights(false, crossingLights2_2);
 			}
 		});
+	}
+
+	private static void switchLightsOff() {
+		List<Location> locs = new ArrayList<>(crossingLights1_1);
+		locs.addAll(crossingLights1_2);
+		locs.addAll(crossingLights2_1);
+		locs.addAll(crossingLights2_2);
+
+		for (Location loc : locs) {
+			loc.getBlock().setType(Material.REDSTONE_LAMP);
+		}
 	}
 
 	private static void switchLights(boolean powered, List<Location> lights) {
