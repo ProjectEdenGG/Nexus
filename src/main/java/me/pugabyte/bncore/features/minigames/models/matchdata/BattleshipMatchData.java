@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.bncore.features.minigames.mechanics.Battleship;
-import me.pugabyte.bncore.features.minigames.mechanics.Battleship.ShipType;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Team;
@@ -15,15 +14,20 @@ import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.BlockUtils;
+import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Utils.Axis;
 import me.pugabyte.bncore.utils.Utils.CardinalDirection;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.minigames.mechanics.Battleship.LETTERS;
 import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.left;
 import static me.pugabyte.bncore.utils.StringUtils.right;
 import static me.pugabyte.bncore.utils.Utils.isInt;
@@ -64,6 +69,57 @@ public class BattleshipMatchData extends MatchData {
 
 	public Ship getShip(Team team, ShipType shipType) {
 		return ships.get(team).get(shipType);
+	}
+
+	public enum ShipType {
+		CRUISER(2, ColorType.LIGHT_GREEN),
+		SUBMARINE(3, ColorType.RED),
+		DESTROYER(3, ColorType.PURPLE),
+		BATTLESHIP(4, ColorType.ORANGE),
+		CARRIER(5, ColorType.CYAN);
+
+		@Getter
+		private final int length;
+		@Getter
+		private final ColorType color;
+		@Getter
+		private final ItemStack item;
+
+		ShipType(int length, ColorType color) {
+			this.length = length;
+			this.color = color;
+			this.item = new ItemBuilder(ColorType.getConcrete(color))
+					.name(color.getChatColor() + toString() + " &8| &7Size: &e" + length)
+					.lore("&fPlace on the yellow wool to configure")
+					.build();
+		}
+
+		@Override
+		public String toString() {
+			return camelCase(name());
+		}
+
+		public int getKitLength() {
+			return (length - 1) * 4;
+		}
+
+		public static ShipType get(Block block) {
+			ColorType colorType = ColorType.of(block.getType());
+			for (ShipType shipType : ShipType.values())
+				if (colorType == shipType.getColor())
+					return shipType;
+
+			return null;
+		}
+
+		public static int getCombinedHealth() {
+			return Arrays.stream(values()).mapToInt(ShipType::getLength).sum();
+		}
+
+		public String getFileName() {
+			return ("minigames/battleship/ships/" + name()).toLowerCase();
+		}
+
 	}
 
 	@Data
@@ -106,6 +162,7 @@ public class BattleshipMatchData extends MatchData {
 		private Region a0_pegs;
 		private BlockFace letterDirection;
 		private BlockFace numberDirection;
+		private Coordinate aiming;
 
 		public Grid(Team team) {
 			this.arena = getMatch().getArena();
@@ -186,6 +243,19 @@ public class BattleshipMatchData extends MatchData {
 
 		public void vacate(ShipType shipType) {
 			getShip(team, shipType).getCoordinates().forEach(Coordinate::vacate);
+			getShip(team, shipType).setOrigin(null);
+		}
+
+		public void belay() {
+			if (aiming == null)
+				return;
+
+			arena.getWEUtils().paster()
+					.file(Peg.RESET.getFileName())
+					.at(Peg.RESET.getBoard().getLocation(aiming))
+					.transform(CardinalDirection.of(numberDirection).getRotationTransform())
+					.pasteAsync();
+			aiming = null;
 		}
 
 		public Coordinate getRandomCoordinate() {
@@ -246,6 +316,11 @@ public class BattleshipMatchData extends MatchData {
 				if (state.isShotAt())
 					throw new AlreadyShotAtException();
 
+				if (!this.equals(aiming))
+					belay();
+				else
+					aiming = null;
+
 				if (state == State.OCCUPIED) {
 					ship.fire();
 					state = State.HIT;
@@ -259,6 +334,8 @@ public class BattleshipMatchData extends MatchData {
 				if (state.isShotAt())
 					throw new AlreadyShotAtException();
 
+				belay();
+				aiming = this;
 				pastePeg(Peg.CONFIRMATION);
 			}
 
@@ -270,7 +347,11 @@ public class BattleshipMatchData extends MatchData {
 						.pasteAsync();
 
 				if (peg.getOpposite() != null)
-					getOppositeCoordinate().pastePeg(peg.getOpposite());
+					arena.getWEUtils().paster()
+							.file(peg.getOpposite().getFileName())
+							.at(peg.getOpposite().getBoard().getLocation(getOppositeCoordinate()))
+							.transform(CardinalDirection.of(numberDirection.getOppositeFace()).getRotationTransform())
+							.pasteAsync();
 			}
 
 			public Coordinate getOppositeCoordinate() {
@@ -280,6 +361,7 @@ public class BattleshipMatchData extends MatchData {
 	}
 
 	public enum Peg {
+		RESET(PegBoard.VERTICAL),
 		CONFIRMATION(PegBoard.VERTICAL),
 		HIT_ME(PegBoard.HORIZONTAL),
 		HIT_THEM(PegBoard.VERTICAL),
@@ -323,7 +405,7 @@ public class BattleshipMatchData extends MatchData {
 		}
 
 		public String getFileName() {
-			return "battleship/pegs/" + name().toLowerCase();
+			return ("minigames/battleship/pegs/" + name()).toLowerCase();
 		}
 	}
 

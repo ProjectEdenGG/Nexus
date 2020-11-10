@@ -137,6 +137,13 @@ public enum ColorType {
 			6
 	);
 
+	private final String name;
+	private final Color color;
+	private final ChatColor chatColor;
+	private final DyeColor dyeColor;
+	private final DyeColor similarDyeColor;
+	private final Integer durability;
+
 	ColorType(String name, Color color, ChatColor chatColor, DyeColor dyeColor, int durability) {
 		this(name, color, chatColor, dyeColor, dyeColor, durability);
 	}
@@ -149,13 +156,6 @@ public enum ColorType {
 		this.similarDyeColor = similarDyeColor;
 		this.durability = durability;
 	}
-
-	private final String name;
-	private final Color color;
-	private final ChatColor chatColor;
-	private final DyeColor dyeColor;
-	private final DyeColor similarDyeColor;
-	private final Integer durability;
 
 	public static ColorType of(String name) {
 		return Arrays.stream(values()).filter(colorType -> name.equals(colorType.getName())).findFirst().orElse(null);
@@ -182,7 +182,11 @@ public enum ColorType {
 	}
 
 	public static Material switchColor(Material material, ColorType colorType) {
-		return Material.valueOf(material.name().replace(of(material).getDyeColor().name(), colorType.getDyeColor().name()));
+		return switchColor(material, colorType.getSimilarDyeColor());
+	}
+
+	public static Material switchColor(Material material, DyeColor dyeColor) {
+		return Material.valueOf(material.name().replace(of(material).getSimilarDyeColor().name(), dyeColor.name()));
 	}
 
 	private static String generic(Material material) {

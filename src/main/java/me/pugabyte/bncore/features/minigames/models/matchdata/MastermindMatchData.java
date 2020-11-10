@@ -103,6 +103,9 @@ public class MastermindMatchData extends MatchData {
 	}
 
 	public void guess(Minigamer minigamer) {
+		if (this.guess > maxGuesses)
+			return;
+
 		Region wallRegion = getMatch().getArena().getRegion("wall");
 		Region guessRegion = getMatch().getArena().getRegion("guess");
 

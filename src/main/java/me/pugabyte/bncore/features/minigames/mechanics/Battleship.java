@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
-import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.commands.BattleshipCommand;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
+import me.pugabyte.bncore.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
@@ -14,11 +14,10 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEve
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Ship;
+import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.ShipType;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.utils.BlockUtils;
-import me.pugabyte.bncore.utils.ColorType;
-import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.CardinalDirection;
@@ -66,6 +65,12 @@ import static me.pugabyte.bncore.utils.Utils.attempt;
 public class Battleship extends BalancedTeamMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";
+	public static final List<String> COORDINATES = new ArrayList<String>() {{
+		for (int number = 0; number < 10; number++)
+			for (String letter : LETTERS.split(""))
+				add(letter + number);
+	}};
+	protected static final List<Material> floorMaterials = Arrays.asList(Material.YELLOW_WOOL, Material.BLUE_CONCRETE, Material.BLACK_CONCRETE);
 
 	private void debug(String message) {
 		if (BattleshipCommand.isDebug())
@@ -93,6 +98,11 @@ public class Battleship extends BalancedTeamMechanic {
 	}
 
 	@Override
+	public boolean shuffleSpawnpoints() {
+		return false;
+	}
+
+	@Override
 	public boolean allowFly() {
 		return true;
 	}
@@ -100,12 +110,6 @@ public class Battleship extends BalancedTeamMechanic {
 	@Override
 	public String getScoreboardTitle(Match match) {
 		return "&6&lBattleship";
-	}
-
-	@Override
-	public void begin(MatchBeginEvent event) {
-		super.begin(event);
-		start(event.getMatch());
 	}
 
 	@Override
@@ -137,7 +141,14 @@ public class Battleship extends BalancedTeamMechanic {
 		return StringUtils.progressBar(matchData.getGrid(team).getHealth(), ShipType.getCombinedHealth(), StringUtils.ProgressBarStyle.COUNT);
 	}
 
+	@Override
+	public void begin(MatchBeginEvent event) {
+		super.begin(event);
+		start(event.getMatch());
+	}
+
 	public void start(Match match) {
+		match.getTasks().cancel(MatchTaskType.BEGIN_DELAY);
 		BattleshipMatchData matchData = match.getMatchData();
 		if (!matchData.isPlacingKits()) return;
 
@@ -145,7 +156,7 @@ public class Battleship extends BalancedTeamMechanic {
 			matchData.getShips().get(team).values().stream()
 					.filter(ship -> ship.getOrigin() == null)
 					.forEach(ship -> {
-						if (!attempt(100, () -> placeKit(match, team, ship.getType())))
+						if (!attempt(100, () -> KitPlacer.of(match, team, ship.getType()).run()))
 							BNCore.warn("Could not place " + camelCase(ship.getType().name()) + " on team " + team.getName() + " in " + match.getArena().getName());
 					});
 		}
@@ -155,6 +166,11 @@ public class Battleship extends BalancedTeamMechanic {
 		matchData.getShips().forEach((team, ships) -> {
 			for (ShipType shipType : ShipType.values())
 				pasteShip(shipType, ships.get(shipType).getOrigin());
+		});
+
+		match.getMinigamers().forEach(minigamer -> {
+			minigamer.getPlayer().getInventory().clear();
+			minigamer.teleport(minigamer.getTeam().getSpawnpoints().get(1));
 		});
 	}
 
@@ -183,7 +199,7 @@ public class Battleship extends BalancedTeamMechanic {
 		BattleshipMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!matchData.isPlacingKits()) return;
 
-		if (placeKit(minigamer, shipType, floor.add(0, 3, 0), BlockFace.NORTH))
+		if (KitPlacer.of(minigamer, shipType, floor.add(0, 3, 0), BlockFace.NORTH).run())
 			minigamer.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 	}
 
@@ -204,7 +220,7 @@ public class Battleship extends BalancedTeamMechanic {
 			BlockFace direction = getKitDirection(start.getLocation());
 
 			if (direction != null)
-				placeKit(minigamer, shipType, start.getLocation(), getNextDirection(direction));
+				KitPlacer.of(minigamer, shipType, start.getLocation(), getNextDirection(direction)).run();
 		} else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 			event.setCancelled(true);
 			minigamer.send(PREFIX + "Removed &e" + shipType);
@@ -231,83 +247,114 @@ public class Battleship extends BalancedTeamMechanic {
 			}
 	}
 
-	private boolean placeKit(Match match, Team team, ShipType shipType) {
-		BattleshipMatchData matchData = match.getMatchData();
-		Location location = matchData.getGrid(team).getRandomCoordinate().getKitLocation();
-		return placeKit(null, shipType, location, CardinalDirection.random().toBlockFace());
-	}
+	private static class KitPlacer {
+		private final Match match;
+		private final BattleshipMatchData matchData;
+		private final Battleship mechanic;
+		private final Minigamer minigamer;
+		private final Team team;
+		private final Grid grid;
+		private final ShipType shipType;
+		private final Ship ship;
+		private final Location location;
+		private BlockFace direction;
+		private int attempts;
 
-	private boolean placeKit(Minigamer minigamer, ShipType shipType, Location location, BlockFace direction) {
-		return placeKit(minigamer, shipType, location, direction, 0);
-	}
-
-	private boolean placeKit(Minigamer minigamer, ShipType shipType, Location location, BlockFace direction, int attempts) {
-		Consumer<String> send = message -> { if (minigamer != null) minigamer.tell(message); };
-
-		if (attempts >= 4) {
-			if (location.getBlock().getType() == shipType.getItem().getType())
-				send.accept(PREFIX + "Your &e" + shipType + " &3could not be rotated");
-			else
-				send.accept(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
-			return false;
+		public KitPlacer(Match match, Minigamer minigamer, Team team, ShipType shipType, Location location, BlockFace direction) {
+			this.match = match;
+			this.matchData = match.getMatchData();
+			this.mechanic = match.getArena().getMechanic();
+			this.minigamer = minigamer;
+			this.team = team;
+			this.grid = matchData.getGrid(team);
+			this.shipType = shipType;
+			this.ship = matchData.getShip(team, shipType);
+			this.location = location;
+			this.direction = direction;
 		}
 
-		++attempts;
+		public static KitPlacer of(Match match, Team team, ShipType shipType) {
+			BattleshipMatchData matchData = match.getMatchData();
+			Grid grid = matchData.getGrid(team);
+			Location location = grid.getRandomCoordinate().getKitLocation();
+			return of(match, null, team, shipType, location, CardinalDirection.random().toBlockFace());
+		}
 
-		if (!kitFits(location, direction, shipType.getKitLength()))
-			return placeKit(minigamer, shipType, location, getNextDirection(direction), attempts);
+		public static KitPlacer of(Minigamer minigamer, ShipType shipType, Location location, BlockFace direction) {
+			return of(minigamer.getMatch(), minigamer, minigamer.getTeam(), shipType, location, direction);
+		}
 
-		if (location.getBlock().getType() == shipType.getItem().getType()) {
-			deleteKit(location);
-			send.accept(PREFIX + "Rotated &e" + shipType);
-		} else {
-			if (location.getBlock().getType() != Material.AIR) {
-				send.accept(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
+		public static KitPlacer of(Match match, Minigamer minigamer, Team team, ShipType shipType, Location location, BlockFace direction) {
+			return new KitPlacer(match, minigamer, team, shipType, location, direction);
+		}
+
+		private boolean run() {
+			Consumer<String> send = message -> { if (minigamer != null) minigamer.send(message); };
+
+			if (attempts >= 4) {
+				if (location.getBlock().getType() == shipType.getItem().getType())
+					send.accept(PREFIX + "Your &e" + shipType + " &3could not be rotated");
+				else
+					send.accept(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
 				return false;
 			}
 
-			send.accept(PREFIX + "Placed &e" + shipType);
+			++attempts;
+
+			if (!kitFits(location, direction, shipType.getKitLength())) {
+				this.direction = mechanic.getNextDirection(direction);
+				return run();
+			}
+
+			if (location.getBlock().getType() == shipType.getItem().getType()) {
+				mechanic.deleteKit(location);
+				send.accept(PREFIX + "Rotated &e" + shipType);
+			} else {
+				if (location.getBlock().getType() != Material.AIR) {
+					send.accept(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
+					return false;
+				}
+
+				send.accept(PREFIX + "Placed &e" + shipType);
+			}
+
+			grid.vacate(shipType);
+
+			location.getBlock().setType(shipType.getItem().getType());
+			grid.getCoordinate(location).occupy(ship);
+			ship.setOrigin(location);
+
+			Block index = location.getBlock();
+			for (int i = 0; i < shipType.getKitLength(); i++) {
+				index = index.getRelative(direction);
+				index.setType(Material.WHITE_WOOL);
+				grid.getCoordinate(index.getLocation()).occupy(ship);
+			}
+
+			return true;
 		}
 
-		BattleshipMatchData matchData = minigamer.getMatch().getMatchData();
-		Team team = minigamer.getTeam();
-		Grid grid = matchData.getGrid(team);
-		Ship ship = matchData.getShip(team, shipType);
-		grid.vacate(shipType);
+		private boolean kitFits(Location location, BlockFace direction, int kitLength) {
+			Block index = location.getBlock();
+			for (int i = 0; i < kitLength; i++) {
+				index = index.getRelative(direction);
+				if (index.getType() != Material.AIR)
+					return false;
 
-		location.getBlock().setType(shipType.getItem().getType());
-		grid.getCoordinate(location).occupy(ship);
-		ship.setOrigin(location);
+				Material floorType = index.getLocation().add(0, -3, 0).getBlock().getType();
+				if (!floorMaterials.contains(floorType))
+					return false;
+			}
 
-		Block index = location.getBlock();
-		for (int i = 0; i < shipType.getKitLength(); i++) {
-			index = index.getRelative(direction);
-			index.setType(Material.WHITE_WOOL);
-			grid.getCoordinate(index.getLocation()).occupy(ship);
+			return true;
 		}
-
-		return true;
 	}
 
-	private boolean kitFits(Location location, BlockFace direction, int kitLength) {
-		debug("Direction: " + direction + ", Kit length: " + kitLength);
-		Block index = location.getBlock();
-		for (int i = 0; i < kitLength; i++) {
-			index = index.getRelative(direction);
-			if (index.getType() != Material.AIR) {
-				debug("Kit doesnt fit, block is not air (" + index.getType() + ")");
-				return false;
-			}
+	private BlockFace getNextDirection(BlockFace direction) {
+		if (direction == null)
+			return BlockFace.NORTH;
 
-			List<Material> floorMaterials = Arrays.asList(Material.YELLOW_WOOL, Material.BLUE_CONCRETE, Material.BLACK_CONCRETE);
-			Material floorType = index.getLocation().add(0, -3, 0).getBlock().getType();
-			if (!floorMaterials.contains(floorType)) {
-				debug("Kit doesnt fit, floor is not wool/concrete (" + floorType + ")");
-				return false;
-			}
-		}
-
-		return true;
+		return CardinalDirection.of(direction).turnRight().toBlockFace();
 	}
 
 	private void pasteShip(ShipType shipType, Location location) {
@@ -317,7 +364,7 @@ public class Battleship extends BalancedTeamMechanic {
 	}
 
 	public void pasteShip(ShipType shipType, Location location, CardinalDirection direction) {
-		String schematic = "battleship/" + shipType.name().toLowerCase();
+		String schematic = shipType.getFileName();
 		debug("Pasting schematic " + schematic + " at " + getShortLocationString(location) + " with rotation " + direction.getRotation());
 		new WorldEditUtils(location).paster()
 				.file(schematic)
@@ -331,73 +378,11 @@ public class Battleship extends BalancedTeamMechanic {
 		BlockFace direction = null;
 		for (Block block : blocks)
 			if (block.getType() == Material.WHITE_WOOL)
-				if (isCardinal(block.getFace(location.getBlock())))
+				if (CardinalDirection.isCardinal(block.getFace(location.getBlock())))
 					direction = block.getFace(location.getBlock()).getOppositeFace();
 
 		debug("Kit direction: " + (direction == null ? "null" : direction.name().toLowerCase()));
 		return direction;
-	}
-
-	private BlockFace getNextDirection(BlockFace direction) {
-		if (direction == null)
-			return BlockFace.NORTH;
-
-		return CardinalDirection.of(direction).turnRight().toBlockFace();
-	}
-
-	private boolean isCardinal(BlockFace face) {
-		try {
-			return CardinalDirection.of(face) != null;
-		} catch (IllegalArgumentException ex) {
-			return false;
-		}
-	}
-
-	public enum ShipType {
-		CRUISER(2, ColorType.LIGHT_GREEN),
-		SUBMARINE(3, ColorType.RED),
-		DESTROYER(3, ColorType.PURPLE),
-		BATTLESHIP(4, ColorType.ORANGE),
-		CARRIER(5, ColorType.CYAN);
-
-		@Getter
-		private final int length;
-		@Getter
-		private final ColorType color;
-		@Getter
-		private final ItemStack item;
-
-		ShipType(int length, ColorType color) {
-			this.length = length;
-			this.color = color;
-			this.item = new ItemBuilder(ColorType.getConcrete(color))
-					.name(color.getChatColor() + toString() + " &8| &7Size: &e" + length)
-					.lore("&fPlace on the yellow wool to configure")
-					.build();
-		}
-
-		@Override
-		public String toString() {
-			return camelCase(name());
-		}
-
-		public int getKitLength() {
-			return (length - 1) * 4;
-		}
-
-		public static ShipType get(Block block) {
-			ColorType colorType = ColorType.of(block.getType());
-			for (ShipType shipType : ShipType.values())
-				if (colorType == shipType.getColor())
-					return shipType;
-
-			return null;
-		}
-
-		public static int getCombinedHealth() {
-			return Arrays.stream(values()).mapToInt(ShipType::getLength).sum();
-		}
-
 	}
 
 }

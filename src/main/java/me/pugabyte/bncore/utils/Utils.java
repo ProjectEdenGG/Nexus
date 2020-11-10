@@ -676,6 +676,14 @@ public class Utils {
 		public AffineTransform getRotationTransform() {
 			return new AffineTransform().rotateY(getRotation());
 		}
+
+		public static boolean isCardinal(BlockFace face) {
+			try {
+				return CardinalDirection.of(face) != null;
+			} catch (IllegalArgumentException ex) {
+				return false;
+			}
+		}
 	}
 
 	public enum Axis {

@@ -13,6 +13,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.LocalDateTime;
 
@@ -94,13 +95,13 @@ public class PoofCommand extends CustomCommand {
 			fromPlayer = request.getReceiverPlayer();
 		}
 
-		if (!fromPlayer.isOnline())
+		if (!fromPlayer.isOnline() || fromPlayer.getPlayer() == null)
 			throw new PlayerNotOnlineException(fromPlayer);
 
 		if (request.getType() == Poof.PoofType.POOF)
-			fromPlayer.getPlayer().teleport(toPlayer.getPlayer());
+			fromPlayer.getPlayer().teleport(toPlayer.getPlayer(), TeleportCause.COMMAND);
 		else
-			fromPlayer.getPlayer().teleport(request.getTeleportLocation());
+			fromPlayer.getPlayer().teleport(request.getTeleportLocation(), TeleportCause.COMMAND);
 
 		if (request.getType() == Poof.PoofType.POOF) {
 			send(toPlayer.getPlayer(), "&3You accepted &e" + fromPlayer.getName() + "'s &3poof request");

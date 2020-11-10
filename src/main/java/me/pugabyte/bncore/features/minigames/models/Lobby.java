@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.bncore.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
 import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Location;
@@ -99,6 +100,8 @@ public class Lobby implements ConfigurationSerializable {
 					match.start();
 				}
 			});
+
+			match.getTasks().register(MatchTaskType.LOBBY, taskId);
 		}
 
 		private void stop() {

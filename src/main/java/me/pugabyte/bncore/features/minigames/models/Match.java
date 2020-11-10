@@ -2,21 +2,37 @@ package me.pugabyte.bncore.features.minigames.models;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.google.common.base.Strings;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.ToString;
 import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.mechanics.UncivilEngineers;
+import me.pugabyte.bncore.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
-import me.pugabyte.bncore.features.minigames.models.events.matches.*;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBroadcastEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchInitializeEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchJoinEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.bncore.utils.*;
+import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown.CountdownBuilder;
+import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.WorldEditUtils;
+import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -25,7 +41,14 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.reflections.Reflections;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -411,6 +434,8 @@ public class Match {
 					event.callEvent();
 				});
 			}
+
+			match.getTasks().register(MatchTaskType.MATCH, taskId);
 		}
 
 		public void broadcastTimeLeft() {
@@ -428,6 +453,8 @@ public class Match {
 
 	public static class MatchTasks {
 		private final List<Integer> taskIds = new ArrayList<>();
+		@Getter
+		private final Map<MatchTaskType, Integer> taskTypeMap = new HashMap<>();
 
 		void end() {
 			taskIds.forEach(this::cancel);
@@ -437,8 +464,20 @@ public class Match {
 			Tasks.cancel(taskId);
 		}
 
+		public void cancel(MatchTaskType taskType) {
+			if (!taskTypeMap.containsKey(taskType))
+				return;
+
+			Tasks.cancel(taskTypeMap.get(taskType));
+			taskTypeMap.remove(taskType);
+		}
+
 		public void register(int taskId) {
 			taskIds.add(taskId);
+		}
+
+		public void register(MatchTaskType taskType, int taskId) {
+			taskTypeMap.put(taskType, taskId);
 		}
 
 		public int wait(Time delay, Runnable runnable) {
@@ -489,6 +528,13 @@ public class Match {
 			int taskId = countdown.start().getTaskId();
 			taskIds.add(taskId);
 			return taskId;
+		}
+
+		public enum MatchTaskType {
+			MATCH,
+			LOBBY,
+			BEGIN_DELAY,
+			SCOREBOARD;
 		}
 	}
 

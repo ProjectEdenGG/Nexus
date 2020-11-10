@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.models.mechanics;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
+import me.pugabyte.bncore.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
@@ -61,13 +62,15 @@ public abstract class Mechanic implements Listener {
 
 	public void onInitialize(MatchInitializeEvent event) {
 		Match match = event.getMatch();
-		match.getTasks().repeat(1, Time.SECOND, () -> {
+		int taskId = match.getTasks().repeat(1, Time.SECOND, () -> {
 			if (match.getScoreboard() != null)
 				match.getScoreboard().update();
 
 			if (match.getScoreboardTeams() != null)
 				match.getScoreboardTeams().update();
 		});
+
+		match.getTasks().register(MatchTaskType.SCOREBOARD, taskId);
 	}
 
 	public void onStart(MatchStartEvent event) {
@@ -84,8 +87,8 @@ public abstract class Mechanic implements Listener {
 			});
 
 		int beginDelay = match.getArena().getBeginDelay();
-		if (beginDelay > 0)
-			match.getTasks().countdown(Countdown.builder()
+		if (beginDelay > 0) {
+			int taskId = match.getTasks().countdown(Countdown.builder()
 					.duration(Time.SECOND.x(beginDelay))
 					.onSecond(i -> {
 						if (Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1).contains(i))
@@ -96,7 +99,9 @@ public abstract class Mechanic implements Listener {
 						if (beginEvent.callEvent())
 							begin(beginEvent);
 					}));
-		else {
+
+			match.getTasks().register(MatchTaskType.BEGIN_DELAY, taskId);
+		} else {
 			MatchBeginEvent beginEvent = new MatchBeginEvent(match);
 			if (beginEvent.callEvent())
 				begin(beginEvent);

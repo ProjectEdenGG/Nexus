@@ -77,25 +77,24 @@ public final class Paintball extends BalancedTeamMechanic {
 
 	public void changeBlockColor(Minigamer minigamer, Block block) {
 		ColorType colorType = ColorType.of(minigamer.getTeam().getColor());
-		if (MaterialTag.COLORABLE.isTagged(block.getType()))
-			block.setType(colorType.switchColor(block.getType()));
+		Material type = block.getType();
+		if (MaterialTag.COLORABLE.isTagged(type))
+			block.setType(colorType.switchColor(type));
 		else
-			switch (block.getType()) {
+			switch (type) {
 				case SAND:
-					block.setType(colorType.getConcretePowder());
-					break;
-				case GLASS_PANE:
-					block.setType(colorType.getStainedGlassPane());
+				case RED_SAND:
+					block.setType(ColorType.switchColor(Material.WHITE_CONCRETE_POWDER, colorType.getSimilarDyeColor()));
 					break;
 				case QUARTZ_BLOCK:
 				case SNOW_BLOCK:
 				case SANDSTONE:
-					block.setType(colorType.getConcrete());
+					block.setType(ColorType.switchColor(Material.WHITE_CONCRETE, colorType.getSimilarDyeColor()));
 					break;
 				case TERRACOTTA:
 				case PACKED_ICE:
 				case ICE:
-					block.setType(colorType.getTerracotta());
+					block.setType(ColorType.switchColor(Material.WHITE_TERRACOTTA, colorType.getSimilarDyeColor()));
 					break;
 			}
 	}

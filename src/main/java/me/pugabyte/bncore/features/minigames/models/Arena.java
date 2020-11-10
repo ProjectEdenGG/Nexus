@@ -73,8 +73,8 @@ public class Arena implements ConfigurationSerializable {
 	@Accessors(fluent = true)
 	private boolean canJoinLate = false;
 
-	public Mechanic getMechanic() {
-		return getMechanicType().get();
+	public <T extends Mechanic> T getMechanic() {
+		return (T) getMechanicType().get();
 	}
 
 	public Arena(@NonNull String name) {
