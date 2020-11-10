@@ -1,6 +1,5 @@
 package me.pugabyte.bncore.features.commands;
 
-import com.sk89q.worldguard.protection.flags.StateFlag;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
@@ -41,7 +40,7 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 			});
 
 			Bukkit.getOnlinePlayers().stream()
-					.filter(player -> WorldGuardFlagUtils.isFlagSetFor(player, (StateFlag) Flags.SNOW_EFFECT.get()))
+					.filter(player -> WorldGuardFlagUtils.test(player, Flags.SNOW_EFFECT))
 					.forEach(SnowEffectCommand::playSnowEffect);
 		});
 	}

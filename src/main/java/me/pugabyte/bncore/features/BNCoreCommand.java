@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features;
 
 import fr.minuskube.inv.SmartInvsPlugin;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.discord.Discord;
@@ -58,6 +59,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,8 +81,9 @@ import static me.pugabyte.bncore.utils.StringUtils.paste;
 import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
+@NoArgsConstructor
 @Permission("group.seniorstaff")
-public class BNCoreCommand extends CustomCommand {
+public class BNCoreCommand extends CustomCommand implements Listener {
 	private WorldEditUtils worldEditUtils;
 
 	public BNCoreCommand(CommandEvent event) {
