@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.holidays.pugmas20;
 
 import me.pugabyte.bncore.utils.RandomUtils;
+import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -9,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -73,6 +76,7 @@ public class Train {
 	public Train() {
 		// Task here on a random interval, to call animate
 		lightsTask();
+		soundsTask();
 	}
 
 	private static Location pugmasLoc(int x, int y, int z) {
@@ -91,7 +95,7 @@ public class Train {
 		for (int i = 1; i <= 109; i++) {
 			int finalI = i;
 			Tasks.wait(frameTime * i, () -> {
-				WEUtils.paster().file(animationPath + "/Enter/TrainEnter_" + finalI).air(true).at(trainEnter).paste();
+				WEUtils.paster().file(animationPath + "/Enter/TrainEnter_" + finalI).at(trainEnter).pasteAsync();
 
 				incrementTrain();
 			});
@@ -105,7 +109,7 @@ public class Train {
 			AtomicReference<Location> temp = new AtomicReference<>(trainStart.clone());
 			for (int i = 1; i <= 95; i++) {
 				Tasks.wait(frameTime * i, () -> {
-					WEUtils.paster().file(animationPath + "/Train").air(true).at(temp.get()).paste();
+					WEUtils.paster().file(animationPath + "/Train").at(temp.get()).pasteAsync();
 					temp.set(temp.get().getBlock().getRelative(1, 0, 0).getLocation());
 
 					incrementTrain();
@@ -118,7 +122,7 @@ public class Train {
 			for (int i = 1; i <= 110; i++) {
 				int finalI = i;
 				Tasks.wait(frameTime * i, () -> {
-					WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).air(true).at(trainExit).paste();
+					WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).pasteAsync();
 
 					incrementTrain();
 				});
@@ -203,8 +207,8 @@ public class Train {
 				for (int i = 1; i <= 7; i++) {
 					int finalI = i;
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).air(true).at(crossingNW).paste();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).air(true).at(crossingSW).paste();
+						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).at(crossingNW).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).at(crossingSW).pasteAsync();
 					});
 				}
 
@@ -215,8 +219,8 @@ public class Train {
 				for (int i = 1; i <= 7; i++) {
 					int finalI = i;
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).air(true).at(crossingNW).paste();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).air(true).at(crossingSW).paste();
+						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).at(crossingNW).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).at(crossingSW).pasteAsync();
 					});
 				}
 			}
@@ -228,8 +232,8 @@ public class Train {
 				for (int i = 1; i <= 7; i++) {
 					int finalI = i;
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).air(true).at(crossingNE).paste();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).air(true).at(crossingSE).paste();
+						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).at(crossingNE).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).at(crossingSE).pasteAsync();
 					});
 				}
 			} else {
@@ -239,8 +243,8 @@ public class Train {
 				for (int i = 1; i <= 7; i++) {
 					int finalI = i;
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).air(true).at(crossingNE).paste();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).air(true).at(crossingSE).paste();
+						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).at(crossingNE).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).at(crossingSE).pasteAsync();
 					});
 				}
 			}
@@ -248,17 +252,21 @@ public class Train {
 	}
 
 	private static void lightsTask() {
-		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(20), () -> {
+		Tasks.repeatAsync(0, Time.TICK.x(20), () -> {
 			if (!animating)
 				return;
 
 			if (animateLights1) {
 				switchLights(true, crossingLights1_1);
 				switchLights(false, crossingLights1_2);
+				lightSound(crossingNW, SoundUtils.getPitch(1));
+				lightSound(crossingSW, SoundUtils.getPitch(1));
 
 				Tasks.wait(10, () -> {
 					switchLights(false, crossingLights1_1);
 					switchLights(true, crossingLights1_2);
+					lightSound(crossingNW, SoundUtils.getPitch(2));
+					lightSound(crossingSW, SoundUtils.getPitch(2));
 				});
 			} else {
 				switchLights(false, crossingLights1_1);
@@ -268,16 +276,24 @@ public class Train {
 			if (animateLights2) {
 				switchLights(true, crossingLights2_1);
 				switchLights(false, crossingLights2_2);
+				lightSound(crossingNE, SoundUtils.getPitch(1));
+				lightSound(crossingSE, SoundUtils.getPitch(1));
 
 				Tasks.wait(10, () -> {
 					switchLights(false, crossingLights2_1);
 					switchLights(true, crossingLights2_2);
+					lightSound(crossingNE, SoundUtils.getPitch(2));
+					lightSound(crossingSE, SoundUtils.getPitch(2));
 				});
 			} else {
 				switchLights(false, crossingLights2_1);
 				switchLights(false, crossingLights2_2);
 			}
 		});
+	}
+
+	private static void lightSound(Location location, float pitch) {
+		location.getWorld().playSound(location, Sound.BLOCK_NOTE_BLOCK_BELL, 1.5F, pitch);
 	}
 
 	private static void switchLightsOff() {
@@ -292,11 +308,39 @@ public class Train {
 	}
 
 	private static void switchLights(boolean powered, List<Location> lights) {
-		for (Location light : lights) {
-			if (powered)
-				light.getBlock().setType(Material.SHROOMLIGHT);
-			else
-				light.getBlock().setType(Material.REDSTONE_LAMP);
-		}
+		Tasks.sync(() -> {
+			for (Location light : lights) {
+				if (powered)
+					light.getBlock().setType(Material.SHROOMLIGHT);
+				else
+					light.getBlock().setType(Material.REDSTONE_LAMP);
+			}
+		});
+	}
+
+	private static void soundsTask() {
+		Tasks.repeatAsync(0, Time.SECOND.x(2), () -> {
+			if (!animating)
+				return;
+
+			Location front = trackLoc.get().getLocation();
+			Location middle = front.getBlock().getRelative(-(trainLength / 2), 0, 0).getLocation();
+			Location back = front.getBlock().getRelative(-trainLength, 0, 0).getLocation();
+
+			if (trackNdx.get() <= 202)
+				playTrainSound(front);
+
+			if (trackNdx.get() <= (202 + (trainLength / 2)))
+				playTrainSound(middle);
+
+			if (trackNdx.get() <= (202 + trainLength))
+				playTrainSound(back);
+		});
+	}
+
+	private static void playTrainSound(Location location) {
+		float volume = 2F;
+		float pitch = 0.5F;
+		location.getWorld().playSound(location, Sound.ENTITY_MINECART_INSIDE, SoundCategory.AMBIENT, volume, pitch);
 	}
 }
