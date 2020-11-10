@@ -15,7 +15,6 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.particle.ParticleOwner;
 import me.pugabyte.bncore.models.particle.ParticleService;
 import me.pugabyte.bncore.models.particle.ParticleType;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,6 +23,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import static me.pugabyte.bncore.features.particles.Particles.startParticles;
 import static me.pugabyte.bncore.features.particles.Particles.stopParticles;
+import static me.pugabyte.bncore.utils.LocationUtils.getCenteredLocation;
 
 @NoArgsConstructor
 public class ParticlesCommand extends CustomCommand implements Listener {
@@ -85,7 +85,7 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	@Path("dot")
 	@Permission("group.admin")
 	void dot() {
-		Location loc = Utils.getCenteredLocation(player().getLocation()).add(0, 1, 0);
+		Location loc = getCenteredLocation(player().getLocation()).add(0, 1, 0);
 		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();
 	}
 }

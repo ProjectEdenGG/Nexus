@@ -20,6 +20,7 @@ import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.GameMode;
+import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -252,6 +253,10 @@ public abstract class Mechanic implements Listener {
 
 	public boolean canOpenInventoryBlocks() {
 		return false;
+	}
+
+	public boolean isInRegion(Match match, Block block, String region) {
+		return match.getArena().isInRegion(block, region);
 	}
 
 }

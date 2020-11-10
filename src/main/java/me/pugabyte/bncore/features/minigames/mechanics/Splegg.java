@@ -18,7 +18,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
-import static me.pugabyte.bncore.utils.Utils.getBlockHit;
+import static me.pugabyte.bncore.utils.LocationUtils.getBlockHit;
 
 public final class Splegg extends SpleefMechanic {
 

@@ -16,9 +16,9 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.LocationUtils.Axis;
+import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.RandomUtils;
-import me.pugabyte.bncore.utils.Utils.Axis;
-import me.pugabyte.bncore.utils.Utils.CardinalDirection;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -117,7 +117,7 @@ public class BattleshipMatchData extends MatchData {
 		}
 
 		public String getFileName() {
-			return ("minigames/battleship/ships/" + name()).toLowerCase();
+			return (Battleship.SCHEMATIC_FOLDER + "/ships/" + name()).toLowerCase();
 		}
 
 	}
@@ -370,21 +370,15 @@ public class BattleshipMatchData extends MatchData {
 
 		@Getter
 		private final PegBoard board;
-		private final String opposite;
+		@Getter
+		private final Peg opposite;
 
 		Peg(PegBoard board) {
 			this.board = board;
 			if (name().contains("_THEM"))
-				this.opposite = name().replace("_THEM", "_ME");
+				this.opposite = Peg.valueOf(name().replace("_THEM", "_ME"));
 			else
 				this.opposite = null;
-		}
-
-		public Peg getOpposite() {
-			if (opposite == null)
-				return null;
-
-			return Peg.valueOf(opposite);
 		}
 
 		public enum PegBoard {
@@ -405,7 +399,7 @@ public class BattleshipMatchData extends MatchData {
 		}
 
 		public String getFileName() {
-			return ("minigames/battleship/pegs/" + name()).toLowerCase();
+			return (Battleship.SCHEMATIC_FOLDER + "/pegs/" + name()).toLowerCase();
 		}
 	}
 

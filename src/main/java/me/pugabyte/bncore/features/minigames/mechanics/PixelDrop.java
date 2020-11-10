@@ -14,13 +14,13 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.matchdata.PixelDropMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ActionBarUtils;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Tasks.Countdown.CountdownBuilder;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -231,7 +231,7 @@ public class PixelDrop extends TeamlessMechanic {
 	public void drop(Match match, Block block, int x, int z) {
 		PixelDropArena arena = match.getArena();
 		Location pasteMin = match.getWGUtils().toLocation(arena.getDropRegion().getMinimumPoint());
-		Location blockCenter = Utils.getBlockCenter(new Location(block.getWorld(), x, pasteMin.getY(), z));
+		Location blockCenter = LocationUtils.getBlockCenter(new Location(block.getWorld(), x, pasteMin.getY(), z));
 		Location loc = pasteMin.add(blockCenter.getX(), 0, blockCenter.getZ());
 
 		FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());

@@ -13,8 +13,8 @@ import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException
 import me.pugabyte.bncore.utils.ActionBarUtils;
 import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.Utils.CardinalDirection;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -56,8 +56,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.utils.LocationUtils.getBlockHit;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
-import static me.pugabyte.bncore.utils.Utils.getBlockHit;
 
 @Railgun
 @Scoreboard(teams = false, sidebarType = Type.MATCH)

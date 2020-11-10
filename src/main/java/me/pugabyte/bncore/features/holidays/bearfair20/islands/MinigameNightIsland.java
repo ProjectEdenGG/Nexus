@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.Talki
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
@@ -50,8 +51,8 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.it
 @NPCClass(MinigameNightNPCs.class)
 public class MinigameNightIsland implements Listener, Island {
 	private static Location arcadeSoundLoc = new Location(BearFair20.getWorld(), -1170, 141, -1716);
-	private static Location arcadeSmokeLoc1 = Utils.getCenteredLocation(new Location(BearFair20.getWorld(), -1170, 140, -1715));
-	private static Location arcadeSmokeLoc2 = Utils.getCenteredLocation(new Location(BearFair20.getWorld(), -1169, 148, -1715));
+	private static Location arcadeSmokeLoc1 = LocationUtils.getCenteredLocation(new Location(BearFair20.getWorld(), -1170, 140, -1715));
+	private static Location arcadeSmokeLoc2 = LocationUtils.getCenteredLocation(new Location(BearFair20.getWorld(), -1169, 148, -1715));
 	private String arcadeRg = getRegion() + "_arcade";
 	private String basementRg = getRegion() + "_basement";
 	private String solderRg = getRegion() + "_solder";
@@ -404,7 +405,7 @@ public class MinigameNightIsland implements Listener, Island {
 
 		armorStand.getEquipment().setItemInMainHand(piece);
 		Location loc = new Location(BearFair20.getWorld(), -1182, 137, -1756);
-		loc = Utils.getCenteredLocation(loc);
+		loc = LocationUtils.getCenteredLocation(loc);
 		loc.setY(loc.getBlockY() + 0.5);
 		Location finalLoc = loc;
 		World world = loc.getWorld();

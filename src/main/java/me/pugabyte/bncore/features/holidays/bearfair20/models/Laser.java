@@ -2,10 +2,10 @@ package me.pugabyte.bncore.features.holidays.bearfair20.models;
 
 import me.pugabyte.bncore.features.particles.effects.DotEffect;
 import me.pugabyte.bncore.utils.FireworkLauncher;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,7 +18,13 @@ import org.bukkit.entity.Player;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.bukkit.block.BlockFace.*;
+import static org.bukkit.block.BlockFace.EAST;
+import static org.bukkit.block.BlockFace.NORTH;
+import static org.bukkit.block.BlockFace.NORTH_EAST;
+import static org.bukkit.block.BlockFace.NORTH_WEST;
+import static org.bukkit.block.BlockFace.SOUTH;
+import static org.bukkit.block.BlockFace.SOUTH_WEST;
+import static org.bukkit.block.BlockFace.WEST;
 
 public class Laser {
 	private Player player;
@@ -83,7 +89,7 @@ public class Laser {
 							Block below = block.getRelative(0, -1, 0);
 							Material bannerType = below.getType();
 							if (MaterialTag.BANNERS.isTagged(bannerType)) {
-								curLoc.set(Utils.getCenteredLocation(curLoc.get()));
+								curLoc.set(LocationUtils.getCenteredLocation(curLoc.get()));
 								curLoc.get().setY(curLoc.get().getY() + 0.25);
 								Rotatable rotatable = (Rotatable) below.getBlockData();
 								BlockFace newFace = getReflection(curFace.get(), rotatable.getRotation());

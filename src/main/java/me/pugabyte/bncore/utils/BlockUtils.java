@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.utils;
 
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.LocationUtils.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -153,7 +154,7 @@ public class BlockUtils {
 	}
 
 	public static BlockFace getDirection(Location from, Location to) {
-		Utils.Axis axis = Utils.Axis.getAxis(from, to);
+		Axis axis = Axis.getAxis(from, to);
 		if (axis == null)
 			throw new InvalidInputException("Locations not aligned on an axis, cannot determine direction");
 

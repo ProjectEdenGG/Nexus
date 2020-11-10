@@ -13,7 +13,6 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -30,6 +29,8 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Arrays;
 import java.util.Set;
+
+import static me.pugabyte.bncore.utils.LocationUtils.getCenteredLocation;
 
 public class RavensNestEstate implements Listener {
 	protected WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
@@ -196,8 +197,8 @@ public class RavensNestEstate implements Listener {
 		match.getTasks().repeat(delay, 5 * 20, () -> {
 			if (!statusFireplace) {
 				World world = fireplaceTrigger1.getWorld();
-				Location loc1 = Utils.getCenteredLocation(fireplaceTrigger1).add(0, 0.5, 0);
-				Location loc2 = Utils.getCenteredLocation(fireplaceTrigger2).add(0, 0.5, 0);
+				Location loc1 = getCenteredLocation(fireplaceTrigger1).add(0, 0.5, 0);
+				Location loc2 = getCenteredLocation(fireplaceTrigger2).add(0, 0.5, 0);
 				world.spawnParticle(Particle.VILLAGER_HAPPY, loc1, 50, 0.5, 0.5, 0.5, 0.1);
 				world.spawnParticle(Particle.VILLAGER_HAPPY, loc2, 50, 0.5, 0.5, 0.5, 0.1);
 			}

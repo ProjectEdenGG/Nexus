@@ -10,11 +10,11 @@ import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.utils.ColorType;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -40,9 +40,19 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-import static org.bukkit.block.BlockFace.*;
+import static org.bukkit.block.BlockFace.EAST;
+import static org.bukkit.block.BlockFace.NORTH;
+import static org.bukkit.block.BlockFace.NORTH_EAST;
+import static org.bukkit.block.BlockFace.NORTH_WEST;
+import static org.bukkit.block.BlockFace.SOUTH;
+import static org.bukkit.block.BlockFace.SOUTH_EAST;
+import static org.bukkit.block.BlockFace.SOUTH_WEST;
+import static org.bukkit.block.BlockFace.WEST;
 
 public class Reflection implements Listener {
 
@@ -138,7 +148,7 @@ public class Reflection implements Listener {
 			rotateBanner(banner);
 		} else if (powderType.equals(Material.WHITE_CONCRETE_POWDER) || powderType.equals(Material.BLACK_CONCRETE_POWDER)) {
 			if (!active) {
-				Location skullLoc = Utils.getCenteredLocation(powder.getRelative(0, 3, 0).getLocation());
+				Location skullLoc = LocationUtils.getCenteredLocation(powder.getRelative(0, 3, 0).getLocation());
 				skullLoc.setY(skullLoc.getY() + 0.25);
 				laserStart = skullLoc;
 
@@ -159,7 +169,7 @@ public class Reflection implements Listener {
 				}
 			}
 		} else if (powderType.equals(Material.RED_CONCRETE_POWDER)) {
-			Location skullLoc = Utils.getCenteredLocation(powder.getRelative(0, 3, 0).getLocation());
+			Location skullLoc = LocationUtils.getCenteredLocation(powder.getRelative(0, 3, 0).getLocation());
 			skullLoc.setY(skullLoc.getY() + 0.25);
 			skullLoc.getWorld().spawnParticle(Particle.LAVA, skullLoc, 5, 0, 0, 0);
 			skullLoc.getWorld().playSound(skullLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F);
@@ -223,7 +233,7 @@ public class Reflection implements Listener {
 				Block below = block.getRelative(0, -1, 0);
 				Material bannerType = below.getType();
 				if (middle == 0.5 && MaterialTag.BANNERS.isTagged(bannerType) && cooldown.get() == 0) {
-					loc[0] = Utils.getCenteredLocation(loc[0]);
+					loc[0] = LocationUtils.getCenteredLocation(loc[0]);
 					loc[0].setY(loc[0].getY() + 0.25);
 					Rotatable rotatable = (Rotatable) below.getBlockData();
 					BlockFace newFace = Laser.getReflection(blockFace[0], rotatable.getRotation());

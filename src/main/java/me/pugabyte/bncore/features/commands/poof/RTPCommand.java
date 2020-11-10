@@ -10,9 +10,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.lwc.LWCProtection;
 import me.pugabyte.bncore.models.lwc.LWCProtectionService;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -54,7 +54,7 @@ public class RTPCommand extends CustomCommand {
 		}
 
 		int range = 250;
-		List<Location> locationList = Utils.getRandomPointInCircle(player().getWorld(), radius);
+		List<Location> locationList = LocationUtils.getRandomPointInCircle(player().getWorld(), radius);
 
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);
@@ -70,7 +70,7 @@ public class RTPCommand extends CustomCommand {
 				return;
 			}
 
-			PaperLib.teleportAsync(player(), Utils.getCenteredLocation(highestBlock.getLocation().add(0, 1, 0)), TeleportCause.COMMAND);
+			PaperLib.teleportAsync(player(), LocationUtils.getCenteredLocation(highestBlock.getLocation().add(0, 1, 0)), TeleportCause.COMMAND);
 		});
 	}
 

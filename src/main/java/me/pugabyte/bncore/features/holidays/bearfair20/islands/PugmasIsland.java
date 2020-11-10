@@ -12,6 +12,7 @@ import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.JsonBuilder;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -277,7 +278,7 @@ public class PugmasIsland implements Listener, Island {
 						if (mayorQuest) {
 							presents_grinch.forEach(present -> {
 								if (!isFoundPresent(present, player)) {
-									Location loc = Utils.getCenteredLocation(present);
+									Location loc = LocationUtils.getCenteredLocation(present);
 									loc.setY(loc.getBlockY() + 0.25);
 									player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
 										}
@@ -288,7 +289,7 @@ public class PugmasIsland implements Listener, Island {
 
 									presents_house.forEach(present -> {
 										if (!isFoundPresent(present, player)) {
-											Location loc = Utils.getCenteredLocation(present);
+											Location loc = LocationUtils.getCenteredLocation(present);
 											loc.setY(loc.getBlockY() + 0.25);
 											player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
 										}

@@ -1,16 +1,11 @@
 package me.pugabyte.bncore.features.mcmmo;
 
-import static me.pugabyte.bncore.utils.StringUtils.camelCase;
-
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.util.player.UserManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.utils.BlockUtils;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -35,6 +30,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Sapling;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 public class McMMOListener implements Listener {
 
@@ -311,7 +313,7 @@ public class McMMOListener implements Listener {
 				int minZ = (int) Math.min(start.getZ(), z.getZ());
 
 				northwest = new Location(start.getWorld(), minX, start.getY(), minZ);
-				northwest = Utils.getBlockCenter(northwest);
+				northwest = LocationUtils.getBlockCenter(northwest);
 				break;
 			}
 		}

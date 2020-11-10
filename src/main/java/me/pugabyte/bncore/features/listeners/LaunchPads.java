@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static me.pugabyte.bncore.utils.LocationUtils.getCenteredLocation;
+
 public class LaunchPads implements Listener {
 	private static Map<Player, Integer> taskIDs = new HashMap<>();
 	private static Map<Player, FallingBlock> launchPadPlayers = new HashMap<>();
@@ -86,7 +88,7 @@ public class LaunchPads implements Listener {
 			direction = player.getLocation().getYaw();
 		power *= 2;
 
-		Location launchLocation = Utils.getCenteredLocation(player.getLocation());
+		Location launchLocation = getCenteredLocation(player.getLocation());
 		launchLocation.setPitch((float) -angle);
 		launchLocation.setYaw((float) direction);
 

@@ -5,10 +5,10 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 
 import static me.pugabyte.bncore.features.commands.staff.admin.LocationCodeCommand.asJava;
+import static me.pugabyte.bncore.utils.LocationUtils.getCenteredLocation;
 
 @Aliases("lookcenter")
 @Permission("group.staff")
@@ -17,7 +17,7 @@ public class BlockCenterCommand extends CustomCommand {
 
 	public BlockCenterCommand(CommandEvent event) {
 		super(event);
-		centered = Utils.getCenteredLocation(player().getLocation());
+		centered = getCenteredLocation(player().getLocation());
 	}
 
 	@Path
@@ -56,6 +56,6 @@ public class BlockCenterCommand extends CustomCommand {
 
 	@Path("java")
 	void java() {
-		send(asJava(Utils.getCenteredLocation(player().getLocation())));
+		send(asJava(getCenteredLocation(player().getLocation())));
 	}
 }

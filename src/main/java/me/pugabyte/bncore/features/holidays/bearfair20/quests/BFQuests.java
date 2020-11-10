@@ -14,6 +14,7 @@ import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -50,7 +51,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 
 public class BFQuests implements Listener {
 	public static String itemLore = "BearFair20 Item";
@@ -115,7 +119,7 @@ public class BFQuests implements Listener {
 		}
 
 		if (newLoc == null) return;
-		newLoc = Utils.getCenteredLocation(newLoc);
+		newLoc = LocationUtils.getCenteredLocation(newLoc);
 		Location finalNewLoc = newLoc;
 
 		NPC npc = CitizensUtils.getNPC(2750);

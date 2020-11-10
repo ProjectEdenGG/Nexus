@@ -18,9 +18,10 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchDat
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.utils.BlockUtils;
+import me.pugabyte.bncore.utils.LocationUtils;
+import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.Utils.CardinalDirection;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -65,6 +66,7 @@ import static me.pugabyte.bncore.utils.Utils.attempt;
 public class Battleship extends BalancedTeamMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";
+	public static final String SCHEMATIC_FOLDER = "minigames/battleship";
 	public static final List<String> COORDINATES = new ArrayList<String>() {{
 		for (int number = 0; number < 10; number++)
 			for (String letter : LETTERS.split(""))
@@ -118,6 +120,7 @@ public class Battleship extends BalancedTeamMechanic {
 		BattleshipMatchData matchData = match.getMatchData();
 
 		List<String> lines = new ArrayList<>();
+		// TODO
 		lines.add("&cTime: &e" + "11s");
 		lines.add("&cChoose in: &e" + "17s");
 		lines.add("&f");
@@ -199,34 +202,39 @@ public class Battleship extends BalancedTeamMechanic {
 		BattleshipMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!matchData.isPlacingKits()) return;
 
-		if (KitPlacer.of(minigamer, shipType, floor.add(0, 3, 0), BlockFace.NORTH).run())
+		BlockFace direction = CardinalDirection.of(minigamer.getPlayer()).toBlockFace();
+		if (KitPlacer.of(minigamer, shipType, floor.add(0, 3, 0), direction).run())
 			minigamer.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 	}
 
 	@Override
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		super.onPlayerInteract(minigamer, event);
+
 		if (event.useInteractedBlock() == Result.DENY) return;
 		if (event.getClickedBlock() == null) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		BattleshipMatchData matchData = minigamer.getMatch().getMatchData();
+		Match match = minigamer.getMatch();
+		BattleshipMatchData matchData = match.getMatchData();
 		Team team = minigamer.getTeam();
-		Block start = event.getClickedBlock();
-		ShipType shipType = ShipType.get(start);
-		if (shipType == null) return;
+		Block block = event.getClickedBlock();
+		if (matchData.isPlacingKits()) {
+			ShipType shipType = ShipType.get(block);
+			if (shipType == null) return;
 
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			BlockFace direction = getKitDirection(start.getLocation());
+			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				BlockFace direction = getKitDirection(block.getLocation());
 
-			if (direction != null)
-				KitPlacer.of(minigamer, shipType, start.getLocation(), getNextDirection(direction)).run();
-		} else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-			event.setCancelled(true);
-			minigamer.send(PREFIX + "Removed &e" + shipType);
-			deleteKit(start.getLocation());
-			matchData.getGrid(team).vacate(shipType);
-			giveKitItem(minigamer, shipType);
+				if (direction != null)
+					KitPlacer.of(minigamer, shipType, block.getLocation(), getNextDirection(direction)).run();
+			} else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+				event.setCancelled(true);
+				minigamer.send(PREFIX + "Removed &e" + shipType);
+				deleteKit(block.getLocation());
+				matchData.getGrid(team).vacate(shipType);
+				giveKitItem(minigamer, shipType);
+			}
 		}
 	}
 
@@ -277,7 +285,7 @@ public class Battleship extends BalancedTeamMechanic {
 			BattleshipMatchData matchData = match.getMatchData();
 			Grid grid = matchData.getGrid(team);
 			Location location = grid.getRandomCoordinate().getKitLocation();
-			return of(match, null, team, shipType, location, CardinalDirection.random().toBlockFace());
+			return of(match, null, team, shipType, location, LocationUtils.CardinalDirection.random().toBlockFace());
 		}
 
 		public static KitPlacer of(Minigamer minigamer, ShipType shipType, Location location, BlockFace direction) {
@@ -354,13 +362,13 @@ public class Battleship extends BalancedTeamMechanic {
 		if (direction == null)
 			return BlockFace.NORTH;
 
-		return CardinalDirection.of(direction).turnRight().toBlockFace();
+		return LocationUtils.CardinalDirection.of(direction).turnRight().toBlockFace();
 	}
 
 	private void pasteShip(ShipType shipType, Location location) {
 		BlockFace direction = getKitDirection(location).getOppositeFace();
 		deleteKit(location);
-		pasteShip(shipType, location, CardinalDirection.of(direction));
+		pasteShip(shipType, location, LocationUtils.CardinalDirection.of(direction));
 	}
 
 	public void pasteShip(ShipType shipType, Location location, CardinalDirection direction) {
@@ -378,7 +386,7 @@ public class Battleship extends BalancedTeamMechanic {
 		BlockFace direction = null;
 		for (Block block : blocks)
 			if (block.getType() == Material.WHITE_WOOL)
-				if (CardinalDirection.isCardinal(block.getFace(location.getBlock())))
+				if (LocationUtils.CardinalDirection.isCardinal(block.getFace(location.getBlock())))
 					direction = block.getFace(location.getBlock()).getOppositeFace();
 
 		debug("Kit direction: " + (direction == null ? "null" : direction.name().toLowerCase()));

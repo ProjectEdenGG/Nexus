@@ -6,10 +6,10 @@ import me.pugabyte.bncore.features.holidays.halloween20.models.Pumpkin;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.PacketUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -40,7 +40,7 @@ public class LostPumpkins implements Listener {
 				Halloween20User user = new Halloween20Service().get(player);
 				for (Pumpkin pumpkin : Pumpkin.values()) {
 					if (user.getFoundPumpkins().contains(pumpkin.getOriginal())) continue;
-					player.spawnParticle(Particle.REDSTONE, Utils.getCenteredLocation(pumpkin.getOriginal()), 5, .5, .5, .5, new DustOptions(Color.ORANGE, 1));
+					player.spawnParticle(Particle.REDSTONE, LocationUtils.getCenteredLocation(pumpkin.getOriginal()), 5, .5, .5, .5, new DustOptions(Color.ORANGE, 1));
 				}
 			}
 		});

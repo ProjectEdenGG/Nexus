@@ -534,7 +534,9 @@ public class Match {
 			MATCH,
 			LOBBY,
 			BEGIN_DELAY,
-			SCOREBOARD;
+			SCOREBOARD,
+			TURN,
+			TURN_TIMER;
 		}
 	}
 

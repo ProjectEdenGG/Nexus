@@ -14,8 +14,8 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.PlayerNotOnlineExc
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.utils.Utils.RelativeLocation;
-import me.pugabyte.bncore.utils.Utils.RelativeLocation.Modify;
+import me.pugabyte.bncore.utils.LocationUtils.RelativeLocation;
+import me.pugabyte.bncore.utils.LocationUtils.RelativeLocation.Modify;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;

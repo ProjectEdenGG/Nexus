@@ -1,13 +1,9 @@
 package me.pugabyte.bncore.utils;
 
 import com.google.common.base.Strings;
-import com.sk89q.worldedit.math.transform.AffineTransform;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
-import lombok.Data;
-import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.experimental.Accessors;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.framework.annotations.Disabled;
@@ -22,9 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
-import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Creature;
@@ -32,11 +26,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
@@ -45,9 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -78,36 +68,6 @@ import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class Utils {
 
-	public static void puga(String message) {
-		Player player = Bukkit.getPlayer("Pugabyte");
-		if (player != null && player.isOnline())
-			send(player, message);
-	}
-
-	public static void wakka(String message) {
-		Player player = Bukkit.getPlayer("WakkaFlocka");
-		if (player != null && player.isOnline())
-			send(player, message);
-	}
-
-	public static void blast(String message) {
-		Player player = Bukkit.getPlayer("Blast");
-		if (player != null && player.isOnline())
-			send(player, message);
-	}
-
-	public static void zani(String message) {
-		Player player = Bukkit.getPlayer("Zanitaeni");
-		if (player != null && player.isOnline())
-			send(player, message);
-	}
-
-	public static void vroom(String message){
-		Player player = cam();
-		if(player != null && player.isOnline())
-			send(player, message);
-	}
-
 	public static Player puga() {
 		return Bukkit.getPlayer("Pugabyte");
 	}
@@ -124,8 +84,28 @@ public class Utils {
 		return Bukkit.getPlayer("Zanitaeni");
 	}
 
-	public static Player cam() {
+	public static Player vroom() {
 		return Bukkit.getPlayer("Camaros");
+	}
+
+	public static void puga(String message) {
+		send(puga(), message);
+	}
+
+	public static void wakka(String message) {
+		send(wakka(), message);
+	}
+
+	public static void blast(String message) {
+		send(blast(), message);
+	}
+
+	public static void zani(String message) {
+		send(zani(), message);
+	}
+
+	public static void vroom(String message){
+		send(vroom(), message);
 	}
 
 	public static boolean isVanished(Player player) {
@@ -206,56 +186,6 @@ public class Utils {
 		return (int) entityPlayer.getClass().getField("ping").get(entityPlayer);
 	}
 
-	public static Location getCenteredLocation(Location location) {
-		double x = Math.floor(location.getX());
-		double y = Math.floor(location.getY());
-		double z = Math.floor(location.getZ());
-		double yaw = location.getYaw();
-		if (yaw < 0)
-			yaw += 360; // what the fuck minecraft
-
-		x += .5;
-		z += .5;
-
-		int newYaw = 0;
-		if (yaw < 315) newYaw = 270;
-		if (yaw < 225) newYaw = 180;
-		if (yaw < 135) newYaw = 90;
-		if (yaw < 45) newYaw = 0;
-
-		return new Location(location.getWorld(), x, y, z, newYaw, 0F);
-	}
-
-	@Deprecated
-	// The above method seems to be more accurate, but neither are 100% accurate
-	// Doesn't do yaw/pitch
-	public static Location getBlockCenter(Location location) {
-		double x = Math.floor(location.getX());
-		double y = Math.floor(location.getY());
-		double z = Math.floor(location.getZ());
-
-		x += (x >= 0) ? .5 : -.5;
-		z += (z >= 0) ? .5 : -.5;
-
-		return new Location(location.getWorld(), x, y, z);
-	}
-
-	@NotNull
-	public static List<Location> getRandomPointInCircle(World world, int radius) {
-		return getRandomPointInCircle(world, radius, 0, 0);
-	}
-
-	@NotNull
-	public static List<Location> getRandomPointInCircle(World world, int radius, double xOffset, double zOffset) {
-		List<Location> locationList = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			double angle = Math.random() * Math.PI * 2;
-			double r = Math.sqrt(Math.random());
-			locationList.add(new Location(world, r * Math.cos(angle) * radius, 0, r * Math.sin(angle) * radius));
-		}
-		return locationList;
-	}
-
 	public static EntityType getSpawnEggType(Material type) {
 		return EntityType.valueOf(type.toString().split("_SPAWN_EGG")[0]);
 	}
@@ -312,36 +242,6 @@ public class Utils {
 		}
 
 		return target;
-	}
-
-	public static Block getBlockHit(ProjectileHitEvent event) {
-		Projectile projectile = event.getEntity();
-		BlockIterator blockIter = new BlockIterator(projectile.getWorld(), projectile.getLocation().toVector(), projectile.getVelocity().normalize(), 0, 4);
-		Block blockHit = null;
-
-		while (blockIter.hasNext()) {
-			blockHit = blockIter.next();
-			if (blockHit.getType() != Material.AIR) break;
-		}
-
-		return blockHit;
-	}
-
-	public static void lookAt(Player player, Location lookAt) {
-		Vector direction = player.getEyeLocation().toVector().subtract(lookAt.add(0.5, 0.5, 0.5).toVector()).normalize();
-		double x = direction.getX();
-		double y = direction.getY();
-		double z = direction.getZ();
-
-		// Now change the angle
-		Location changed = player.getLocation().clone();
-		changed.setYaw(180 - toDegree(Math.atan2(x, z)));
-		changed.setPitch(90 - toDegree(Math.acos(y)));
-		player.teleport(changed);
-	}
-
-	private static float toDegree(double angle) {
-		return (float) Math.toDegrees(angle);
 	}
 
 	public static void giveItem(Player player, Material material) {
@@ -636,73 +536,6 @@ public class Utils {
 		}
 	}
 
-	public enum EgocentricDirection {
-		LEFT,
-		RIGHT
-	}
-
-	public enum CardinalDirection implements IteratableEnum {
-		NORTH,
-		EAST,
-		SOUTH,
-		WEST;
-
-		public static CardinalDirection of(BlockFace blockFace) {
-			return CardinalDirection.valueOf(blockFace.name());
-		}
-
-		public static CardinalDirection random() {
-			return RandomUtils.randomElement(values());
-		}
-
-		// Clockwise
-		public CardinalDirection turnRight() {
-			return nextWithLoop();
-		}
-
-		// Counter-clockwise
-		public CardinalDirection turnLeft() {
-			return previousWithLoop();
-		}
-
-		public BlockFace toBlockFace() {
-			return BlockFace.valueOf(name());
-		}
-
-		public int getRotation() {
-			return ordinal() * -90;
-		}
-
-		public AffineTransform getRotationTransform() {
-			return new AffineTransform().rotateY(getRotation());
-		}
-
-		public static boolean isCardinal(BlockFace face) {
-			try {
-				return CardinalDirection.of(face) != null;
-			} catch (IllegalArgumentException ex) {
-				return false;
-			}
-		}
-	}
-
-	public enum Axis {
-		X,
-		Y,
-		Z;
-
-		public static Axis getAxis(Location location1, Location location2) {
-			if (Math.floor(location1.getX()) == Math.floor(location2.getX()) && Math.floor(location1.getZ()) == Math.floor(location2.getZ()))
-				return Y;
-			if (Math.floor(location1.getX()) == Math.floor(location2.getX()))
-				return X;
-			if (Math.floor(location1.getZ()) == Math.floor(location2.getZ()))
-				return Z;
-
-			return null;
-		}
-	}
-
 	public enum MapRotation {
 		DEGREE_0,
 		DEGREE_90,
@@ -826,46 +659,6 @@ public class Utils {
 
 		public void to(Player player) {
 			player.showPlayer(BNCore.getInstance(), this.player);
-		}
-	}
-
-	public static class RelativeLocation {
-
-		public static Modify modify(Location location) {
-			return new Modify(location);
-		}
-
-		@Data
-		@Accessors(fluent = true)
-		public static class Modify {
-			@NonNull
-			private Location location;
-			private String x;
-			private String y;
-			private String z;
-			private String yaw;
-			private String pitch;
-
-			public Modify(@NonNull Location location) {
-				this.location = location;
-			}
-
-			public Location update() {
-				location.setX((x.startsWith("~") ? location.getX() + trim(x) : trim(x)));
-				location.setY((y.startsWith("~") ? location.getY() + trim(y) : trim(y)));
-				location.setZ((z.startsWith("~") ? location.getZ() + trim(z) : trim(z)));
-				location.setYaw((float) (x.startsWith("~") ? location.getYaw() + trim(yaw) : trim(yaw)));
-				location.setPitch((float) (x.startsWith("~") ? location.getPitch() + trim(pitch) : trim(pitch)));
-				return location;
-			}
-		}
-
-		private static double trim(String string) {
-			if (Strings.isNullOrEmpty(string)) return 0;
-			if (Utils.isDouble(string)) return Double.parseDouble(string);
-			string = StringUtils.right(string, string.length() - 1);
-			if (Strings.isNullOrEmpty(string)) return 0;
-			return Double.parseDouble(string);
 		}
 	}
 

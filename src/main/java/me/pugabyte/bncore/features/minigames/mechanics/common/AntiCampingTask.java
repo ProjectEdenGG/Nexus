@@ -13,8 +13,8 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.Mi
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.BlockUtils;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -155,7 +155,7 @@ public class AntiCampingTask {
 	}
 
 	private void teleport(Minigamer minigamer, Location to) {
-		to = Utils.getCenteredLocation(to);
+		to = LocationUtils.getCenteredLocation(to);
 		to.setYaw(minigamer.getPlayer().getLocation().getYaw());
 		to.setPitch(minigamer.getPlayer().getLocation().getPitch());
 		minigamer.teleport(to.add(0, 1, 0));

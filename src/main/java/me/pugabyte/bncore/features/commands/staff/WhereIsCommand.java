@@ -5,9 +5,9 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ public class WhereIsCommand extends CustomCommand {
 		if (distance > Chat.getLocalRadius())
 			error(StringUtils.camelCase(playerArg.getName() + " not found"));
 
-		Utils.lookAt(player(), playerArgLoc);
+		LocationUtils.lookAt(player(), playerArgLoc);
 
 		Tasks.GlowTask.builder()
 				.duration(10 * 20)

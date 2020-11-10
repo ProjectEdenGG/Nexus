@@ -1,10 +1,10 @@
 package me.pugabyte.bncore.features.holidays.pugmas20;
 
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -191,7 +191,7 @@ public class Train {
 	}
 
 	private static Location getSmokeLoc() {
-		Location loc = Utils.getCenteredLocation(smokeLoc.get().getLocation());
+		Location loc = LocationUtils.getCenteredLocation(smokeLoc.get().getLocation());
 		loc.setY(loc.getY() - 0.5);
 		loc.setX(loc.getX() + RandomUtils.randomDouble(-0.25, 0.25));
 		loc.setZ(loc.getZ() + RandomUtils.randomDouble(-0.25, 0.25));

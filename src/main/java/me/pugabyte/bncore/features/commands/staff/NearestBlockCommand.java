@@ -4,9 +4,9 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +18,8 @@ import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Collections;
+
+import static me.pugabyte.bncore.utils.LocationUtils.getCenteredLocation;
 
 @Permission("group.staff")
 public class NearestBlockCommand extends CustomCommand {
@@ -56,7 +58,7 @@ public class NearestBlockCommand extends CustomCommand {
 			Block block = nearestBlock;
 			Tasks.sync(() -> {
 				if (block != null) {
-					Location blockLoc = Utils.getCenteredLocation(block.getLocation());
+					Location blockLoc = getCenteredLocation(block.getLocation());
 					World blockWorld = blockLoc.getWorld();
 					FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, block.getType().createBlockData());
 					fallingBlock.setDropItem(false);
@@ -64,7 +66,7 @@ public class NearestBlockCommand extends CustomCommand {
 					fallingBlock.setInvulnerable(true);
 					fallingBlock.setVelocity(new Vector(0, 0, 0));
 
-					Utils.lookAt(player(), block.getLocation());
+					LocationUtils.lookAt(player(), block.getLocation());
 					StringUtils.sendJsonLocation(PREFIX + "&3&l[Click to Teleport]", block.getLocation(), player());
 
 					Tasks.GlowTask.builder()

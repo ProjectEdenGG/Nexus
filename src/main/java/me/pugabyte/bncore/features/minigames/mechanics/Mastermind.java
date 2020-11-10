@@ -66,7 +66,7 @@ public final class Mastermind extends SingleplayerMechanic {
 	}
 
 	public boolean canBuild(Minigamer minigamer, Block block) {
-		return !minigamer.getMatch().getArena().getRegionsLikeAt("guess", block.getLocation()).isEmpty();
+		return !isInRegion(minigamer.getMatch(), block, "guess");
 	}
 
 	@EventHandler
@@ -97,7 +97,7 @@ public final class Mastermind extends SingleplayerMechanic {
 		if (Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) {
 			Match match = minigamer.getMatch();
 			MastermindMatchData matchData = match.getMatchData();
-			if (!match.getArena().getRegionsLikeAt("button", block.getLocation()).isEmpty()) {
+			if (isInRegion(match, block, "button")) {
 				if (!MaterialTag.BUTTONS.isTagged(block.getType()))
 					return;
 
@@ -113,7 +113,7 @@ public final class Mastermind extends SingleplayerMechanic {
 			}
 
 			if (MaterialTag.SIGNS.isTagged(block.getType())) {
-				if (!match.getArena().getRegionsLikeAt("colorblind", block.getLocation()).isEmpty()) {
+				if (isInRegion(match, block, "colorblind")) {
 					if (matchData.getGuess() != 1) {
 						minigamer.tell("You cannot change colorblind mode in the middle of the game");
 						return;
@@ -124,7 +124,7 @@ public final class Mastermind extends SingleplayerMechanic {
 					match.getArena().regenerate();
 					return;
 				}
-				if (!match.getArena().getRegionsLikeAt("repeats_off", block.getLocation()).isEmpty()) {
+				if (isInRegion(match, block, "repeats_off")) {
 					if (matchData.getGuess() != 1) {
 						minigamer.tell("You cannot change the difficulty mode in the middle of the game");
 						return;
@@ -135,7 +135,7 @@ public final class Mastermind extends SingleplayerMechanic {
 					minigamer.tell("Difficulty mode updated");
 					return;
 				}
-				if (!match.getArena().getRegionsLikeAt("repeats_on", block.getLocation()).isEmpty()) {
+				if (isInRegion(match, block, "repeats_on")) {
 					if (matchData.getGuess() != 1) {
 						minigamer.tell("You cannot change the difficulty mode in the middle of the game");
 						return;

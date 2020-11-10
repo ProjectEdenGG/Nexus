@@ -16,20 +16,23 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchDat
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.framework.commands.models.events.TabEvent;
+import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.Utils.CardinalDirection;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.utils.LocationUtils.getCenteredLocation;
+
 @Aliases("bs")
-@Permission("group.staff")
 public class BattleshipCommand extends CustomCommand {
 	@Getter
 	private static boolean debug;
@@ -44,58 +47,21 @@ public class BattleshipCommand extends CustomCommand {
 
 	public BattleshipCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (isPlayer()) {
-			minigamer = PlayerManager.get(player());
-			mechanic = (Battleship) MechanicType.BATTLESHIP.get();
-			if (minigamer.isPlaying(Battleship.class)) {
-				match = minigamer.getMatch();
-				arena = minigamer.getMatch().getArena();
-				matchData = minigamer.getMatch().getMatchData();
-				grid = matchData.getGrid(minigamer.getTeam());
-			}
-		}
-	}
-
-	@Path("kit")
-	void kit() {
-		Arrays.asList(ShipType.values()).forEach(shipType -> Utils.giveItem(player(), shipType.getItem()));
-	}
-
-	@Path("debug")
-	void debug() {
-		debug = !debug;
-		send(PREFIX + "Debug " + (debug ? "&aenabled" : "&cdisabled"));
-	}
-
-	@Path("getChatGrid")
-	void getChatGrid() {
-		grid.getChatGrid().forEach(this::send);
-	}
-
-	@Path("pasteShip <shipType> <direction>")
-	void pasteShip(ShipType shipType, CardinalDirection direction) {
-		mechanic.pasteShip(shipType, player().getLocation(), direction);
-	}
-
-	@Path("toKitLocation <coordinate>")
-	void toKitLocation(Coordinate coordinate) {
-		minigamer.teleport(Utils.getCenteredLocation(coordinate.getKitLocation()));
-	}
-
-	@Path("toPegLocation <coordinate>")
-	void toPegLocation(Coordinate coordinate) {
-		minigamer.teleport(Utils.getCenteredLocation(coordinate.getPegLocation()));
-	}
-
-	@Path("belay")
-	void belay() {
-		grid.belay();
+		minigamer = PlayerManager.get(player());
+		mechanic = (Battleship) MechanicType.BATTLESHIP.get();
+		if (minigamer.isPlaying(Battleship.class)) {
+			match = minigamer.getMatch();
+			arena = minigamer.getMatch().getArena();
+			matchData = minigamer.getMatch().getMatchData();
+			grid = matchData.getGrid(minigamer.getTeam());
+		} else if (!(event instanceof TabEvent))
+			error("You must be playing Battleship to use this command");
 	}
 
 	private static final String[] aimMenuLines = {"", "^ ^ ^ ^ ^ ^", "Enter a", "coordinate (A0)"};
 
 	@Path("aim [coordinate]")
-	void aim(Coordinate coordinate) {
+	void aim(@Arg(permission = "minigames.manage") Coordinate coordinate) {
 		if (coordinate != null)
 			coordinate.aim();
 		else
@@ -106,21 +72,72 @@ public class BattleshipCommand extends CustomCommand {
 					.open(player());
 	}
 
-	@Path("fire random")
+	@Path("aim random")
 	void fireRandom() {
-		grid.getRandomCoordinate().fire();
+		grid.getRandomCoordinate().aim();
+	}
+
+	@Path("belay")
+	void belay() {
+		grid.belay();
 	}
 
 	@Path("fire [coordinate]")
-	void fire(Coordinate coordinate) {
+	void fire(@Arg(permission = "minigames.manage") Coordinate coordinate) {
 		if (coordinate == null)
 			coordinate = grid.getAiming();
+		if (coordinate == null)
+			error("You have not aimed your cannon yet");
 		coordinate.fire();
 	}
 
+	@Path("fire random")
+	@Permission("minigames.manage")
+	void toolsFireRandom() {
+		grid.getRandomCoordinate().fire();
+	}
+
 	@Path("start")
+	@Permission("minigames.manage")
 	void start() {
 		mechanic.start(match);
+	}
+
+	@Path("kit")
+	@Permission("minigames.manage")
+	void kit() {
+		Arrays.asList(ShipType.values()).forEach(shipType -> Utils.giveItem(player(), shipType.getItem()));
+	}
+
+	@Path("debug")
+	@Permission("minigames.manage")
+	void debug() {
+		debug = !debug;
+		send(PREFIX + "Debug " + (debug ? "&aenabled" : "&cdisabled"));
+	}
+
+	@Path("getChatGrid")
+	@Permission("minigames.manage")
+	void getChatGrid() {
+		grid.getChatGrid().forEach(this::send);
+	}
+
+	@Permission("minigames.manage")
+	@Path("pasteShip <shipType> <direction>")
+	void pasteShip(ShipType shipType, CardinalDirection direction) {
+		mechanic.pasteShip(shipType, player().getLocation(), direction);
+	}
+
+	@Permission("minigames.manage")
+	@Path("toKitLocation <coordinate>")
+	void toKitLocation(Coordinate coordinate) {
+		minigamer.teleport(getCenteredLocation(coordinate.getKitLocation()));
+	}
+
+	@Permission("minigames.manage")
+	@Path("toPegLocation <coordinate>")
+	void toPegLocation(Coordinate coordinate) {
+		minigamer.teleport(getCenteredLocation(coordinate.getPegLocation()));
 	}
 
 	@ConverterFor(Coordinate.class)

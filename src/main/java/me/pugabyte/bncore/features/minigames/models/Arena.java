@@ -21,6 +21,7 @@ import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -216,8 +217,12 @@ public class Arena implements ConfigurationSerializable {
 		return getWGUtils().getProtectedRegion(getRegionBaseName() + "_" + type);
 	}
 
+	public boolean isInRegion(Block block, String type) {
+		return isInRegion(block.getLocation(), type);
+	}
+
 	public boolean isInRegion(Location location, String type) {
-		return getWGUtils().getRegionsLikeAt(getRegionTypeRegex(type), location).size() == 1;
+		return !getRegionsLikeAt(type, location).isEmpty();
 	}
 
 	public boolean canUseBlock(Material type) {

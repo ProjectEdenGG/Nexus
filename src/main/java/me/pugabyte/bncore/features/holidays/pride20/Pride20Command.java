@@ -8,7 +8,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -65,7 +65,7 @@ public class Pride20Command extends CustomCommand {
 		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, player.getName());
 		npc.spawn(npcLoc.add(0, 2, 0));
 
-		npcLoc = Utils.getCenteredLocation(npcLoc);
+		npcLoc = LocationUtils.getCenteredLocation(npcLoc);
 		npc.teleport(npcLoc, PlayerTeleportEvent.TeleportCause.COMMAND);
 
 		setting.setBoolean(true);
