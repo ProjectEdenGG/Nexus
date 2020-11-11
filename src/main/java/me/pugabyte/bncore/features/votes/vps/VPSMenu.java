@@ -194,7 +194,7 @@ public enum VPSMenu {
 				put(37, VPSSlot.builder()
 						.name("1 Netherite Ingot")
 						.displayAndGive(Material.NETHERITE_INGOT)
-						.price(5));
+						.price(8));
 				put(38, VPSSlot.builder()
 						.name("10 Emeralds")
 						.displayAndGive(Material.EMERALD, 10)

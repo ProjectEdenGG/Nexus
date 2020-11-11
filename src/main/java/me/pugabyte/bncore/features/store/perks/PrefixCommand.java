@@ -5,6 +5,7 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -83,10 +84,16 @@ public class PrefixCommand extends CustomCommand {
 
 	@Path("copy")
 	void copy() {
-		if (isNullOrEmpty(prefix.getValue()))
-			error("You do not have a custom prefix");
-
 		String prefix = this.prefix.getValue();
+
+		if (isNullOrEmpty(prefix))
+			prefix = new Nerd(player()).getRank().getPrefix();
+
+		if (isNullOrEmpty(prefix))
+			error("You do not have a prefix");
+
+		String original = prefix;
+
 		while (true) {
 			Matcher matcher = StringUtils.getHexColorizedPattern().matcher(prefix);
 			if (!matcher.find()) break;
@@ -95,7 +102,7 @@ public class PrefixCommand extends CustomCommand {
 			prefix = prefix.replace(group, group.replaceAll(StringUtils.getColorChar() + "x", "&#").replaceAll(StringUtils.getColorChar(), ""));
 		}
 
-		send(json(PREFIX + "Click here to copy your current prefix: &f" + this.prefix.getValue()).copy(decolorize(prefix)).hover("&7Click to copy"));
+		send(json(PREFIX + "Click here to copy your current prefix: &f" + original).copy(decolorize(prefix)).hover("&7Click to copy"));
 	}
 
 }
