@@ -146,7 +146,15 @@ public class Battleship extends BalancedTeamMechanic {
 		lines.add("&6&l" + otherTeam.getName() + " Fleet");
 		lines.add("&1" + getProgressBar(matchData, team));
 
-		// TODO: History
+		lines.add("&e");
+
+		lines.add("&6&lHistory");
+		for (int i = 1; i <= 4; i++) {
+			String line = String.valueOf(i);
+			if (matchData.getHistory().size() >= i)
+				line += " " + matchData.getHistory().get(i - 1);
+			lines.add(line);
+		}
 
 		return new HashMap<String, Integer>() {{
 			for (int i = lines.size(); i > 0; i--)
@@ -190,6 +198,7 @@ public class Battleship extends BalancedTeamMechanic {
 		match.getMinigamers().forEach(minigamer -> {
 			minigamer.getPlayer().getInventory().clear();
 			minigamer.teleport(minigamer.getTeam().getSpawnpoints().get(1));
+			minigamer.getPlayer().setGameMode(GameMode.ADVENTURE);
 		});
 	}
 
@@ -411,7 +420,7 @@ public class Battleship extends BalancedTeamMechanic {
 
 	@Override
 	public void onTurnStart(Match match, Team team) {
-//		match.broadcast(team, "");
+		match.broadcast(team, "Your turn");
 
 		super.onTurnStart(match, team);
 	}

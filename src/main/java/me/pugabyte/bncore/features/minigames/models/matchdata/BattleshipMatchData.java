@@ -19,6 +19,7 @@ import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.LocationUtils.Axis;
 import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.RandomUtils;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,6 +50,7 @@ public class BattleshipMatchData extends MatchData {
 	private boolean placingKits = true;
 	private final Map<Team, Grid> grids = new HashMap<>();
 	private final Map<Team, Map<ShipType, Ship>> ships = new HashMap<>();
+	private final List<String> history = new ArrayList<>();
 
 	private int startTaskId;
 	private int readyTaskId;
@@ -148,6 +150,10 @@ public class BattleshipMatchData extends MatchData {
 				alive = false;
 		}
 
+		public String getName() {
+			return type.getColor().getChatColor() + type.toString();
+		}
+
 		public List<Coordinate> getCoordinates() {
 			return getGrid(team).getCoordinates().stream()
 					.filter(coordinate -> coordinate.getShip() != null)
@@ -213,17 +219,17 @@ public class BattleshipMatchData extends MatchData {
 			}};
 		}
 
-		public InvalidInputException invalidCoordinate() {
-			return new InvalidInputException("Not a valid coordinate");
+		public InvalidInputException invalidCoordinate(String input) {
+			return new InvalidInputException("Not a valid coordinate: " + input);
 		}
 
 		public Coordinate getCoordinate(String input) {
 			if (input.length() != 2)
-				throw invalidCoordinate();
+				throw invalidCoordinate(input);
 			String letter = left(input, 1);
 			String number = right(input, 1);
 			if (!isInt(number))
-				throw invalidCoordinate();
+				throw invalidCoordinate(input);
 
 			return getCoordinate(letter, Integer.parseInt(number));
 		}
@@ -242,7 +248,7 @@ public class BattleshipMatchData extends MatchData {
 					.filter(coordinate -> coordinate.getLetter().equalsIgnoreCase(letter))
 					.filter(coordinate -> coordinate.getNumber() == number)
 					.findFirst()
-					.orElseThrow(this::invalidCoordinate);
+					.orElseThrow(() -> invalidCoordinate(letter + number));
 		}
 
 		public void vacate(ShipType shipType) {
@@ -267,7 +273,7 @@ public class BattleshipMatchData extends MatchData {
 		}
 
 		public List<Coordinate> getNotShotAt() {
-			return coordinates.stream().filter(coordinate -> !coordinate.getState().isShotAt()).collect(Collectors.toList());
+			return coordinates.stream().filter(coordinate -> !coordinate.getOppositeCoordinate().getState().isShotAt()).collect(Collectors.toList());
 		}
 
 		@Data
@@ -281,6 +287,10 @@ public class BattleshipMatchData extends MatchData {
 			public Coordinate(String letter, int number) {
 				this.letter = letter;
 				this.number = number;
+			}
+
+			public String getName() {
+				return (letter + number).toUpperCase();
 			}
 
 			public Location getKitLocation() {
@@ -324,7 +334,7 @@ public class BattleshipMatchData extends MatchData {
 				if (!team.equals(getTurnTeam()))
 					throw new NotYourTurnException();
 
-				if (getOppositeCoordinate().state.isShotAt())
+				if (getOppositeCoordinate().getState().isShotAt())
 					throw new AlreadyShotAtException();
 
 				fired = true;
@@ -334,17 +344,52 @@ public class BattleshipMatchData extends MatchData {
 				else
 					aiming = null;
 
+				getOppositeCoordinate().firedUpon();
+			}
+
+			private void firedUpon() {
 				if (state == State.OCCUPIED) {
 					ship.fire();
 					state = State.HIT;
 				} else
 					state = State.MISS;
 
-				pastePeg(state == State.HIT ? Peg.HIT_THEM : Peg.MISS_THEM);
+				feedback();
+			}
+
+			private void feedback() {
+				pastePeg(state == State.HIT ? Peg.HIT_ME : Peg.MISS_ME);
+				playSound();
+				addHistory();
+				sendChat();
+				// TODO Subtitle
+			}
+
+			private void playSound() {
+				if (state == State.HIT)
+					if (ship.getHealth() == 0)
+						getMatch().playSound(Jingle.BATTLESHIP_SINK);
+					else
+						getMatch().playSound(Jingle.BATTLESHIP_HIT);
+				else if (state == State.MISS)
+					getMatch().playSound(Jingle.BATTLESHIP_MISS);
+			}
+
+			private void addHistory() {
+				String teamName = getOtherTeam().getColoredName();
+				if (teamName.contains("Alpha"))
+					teamName += " ";
+				history.add(0, teamName + " "  + (state == State.HIT ? "&c" : "&f") + getName() + " " + camelCase(state));
+			}
+
+			private void sendChat() {
+				if (ship == null) return;
+				getMatch().broadcast(team, "Your " + ship.getName() + " was " + (ship.getHealth() == 0 ? "sunk" : "hit"));
+				getMatch().broadcast(getOtherTeam(), "You "  + (ship.getHealth() == 0 ? "sunk" : "hit") + " their " + ship.getName());
 			}
 
 			public void aim() {
-				if (state.isShotAt())
+				if (getOppositeCoordinate().getState().isShotAt())
 					throw new AlreadyShotAtException();
 
 				belay();
@@ -388,8 +433,8 @@ public class BattleshipMatchData extends MatchData {
 
 		Peg(PegBoard board) {
 			this.board = board;
-			if (name().contains("_THEM"))
-				this.opposite = name().replace("_THEM", "_ME");
+			if (name().contains("_ME"))
+				this.opposite = name().replace("_ME", "_THEM");
 			else
 				this.opposite = null;
 		}

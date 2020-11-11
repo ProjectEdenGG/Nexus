@@ -5,10 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.discord.DiscordId.Channel;
+import me.pugabyte.bncore.features.discord.DiscordId.Role;
 import me.pugabyte.bncore.features.discord.DiscordId.User;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -32,6 +34,11 @@ public class DiscordListener extends ListenerAdapter {
 
 			BNCore.fileLog("discord", name + " joined " + channel);
 		});
+	}
+
+	@Override
+	public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
+		Tasks.async(() -> Discord.addRole(event.getUser().getId(), Role.NERD));
 	}
 
 	@Data

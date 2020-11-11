@@ -26,6 +26,7 @@ import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.utils.ActionBarUtils;
+import me.pugabyte.bncore.utils.SoundUtils.Jingle;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
@@ -365,6 +366,10 @@ public class Match {
 					.collect(Collectors.toSet())
 					.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
 		}
+	}
+
+	public void playSound(Jingle jingle) {
+		getPlayers().forEach(jingle::play);
 	}
 
 	public List<Minigamer> getAliveMinigamers() {

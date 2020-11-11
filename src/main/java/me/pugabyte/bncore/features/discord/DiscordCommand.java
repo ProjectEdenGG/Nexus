@@ -253,6 +253,8 @@ public class DiscordCommand extends CustomCommand {
 
 	@ConverterFor(DiscordUser.class)
 	DiscordUser convertToDiscordUser(String value) {
+		if (value.length() == 18)
+			return new DiscordService().getFromUserId(value);
 		return new DiscordService().get(convertToOfflinePlayer(value));
 	}
 

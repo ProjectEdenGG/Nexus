@@ -48,6 +48,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -81,6 +82,15 @@ public class Misc implements Listener {
 	public void onHorseLikeDamage(EntityDamageEvent event) {
 		if (event.getEntity() instanceof AbstractHorse)
 			if (event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION))
+				event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onWanderingTraderSpawn(EntitySpawnEvent event) {
+		List<EntityType> types = Arrays.asList(EntityType.WANDERING_TRADER, EntityType.TRADER_LLAMA);
+		List<WorldGroup> worlds = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
+		if (types.contains(event.getEntity().getType()))
+			if (!worlds.contains(WorldGroup.get(event.getLocation().getWorld())))
 				event.setCancelled(true);
 	}
 
