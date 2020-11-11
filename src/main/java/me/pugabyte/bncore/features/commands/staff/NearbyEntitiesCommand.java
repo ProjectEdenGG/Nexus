@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.Utils.getNearbyEntities;
 import static me.pugabyte.bncore.utils.Utils.getNearbyEntityTypes;
-import static me.pugabyte.bncore.utils.Utils.sort;
+import static me.pugabyte.bncore.utils.Utils.sortByValue;
 
 @Permission("group.staff")
 public class NearbyEntitiesCommand extends CustomCommand {
@@ -60,7 +60,7 @@ public class NearbyEntitiesCommand extends CustomCommand {
 
 	@Path("report [radius]")
 	void report(@Arg("200") int radius) {
-		sort(new HashMap<Player, Integer>() {{
+		sortByValue(new HashMap<Player, Integer>() {{
 			for (Player player : Bukkit.getOnlinePlayers())
 				put(player, player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius).size());
 		}}).forEach((player, count) ->
@@ -69,7 +69,7 @@ public class NearbyEntitiesCommand extends CustomCommand {
 
 	@Path("villagers")
 	void report() {
-		sort(new HashMap<Player, Integer>() {{
+		sortByValue(new HashMap<Player, Integer>() {{
 			for (Player player : Bukkit.getOnlinePlayers())
 				put(player, (int) player.getWorld().getNearbyEntities(player.getLocation(), 200, 200, 200).stream()
 						.filter(entity -> entity.getType() == EntityType.VILLAGER).count());

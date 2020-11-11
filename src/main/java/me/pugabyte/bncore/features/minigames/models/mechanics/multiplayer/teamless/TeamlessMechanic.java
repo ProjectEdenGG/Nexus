@@ -96,4 +96,9 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 		return false;
 	}
 
+	@Override
+	public void nextTurn(Match match) {
+		// TODO
+	}
+
 }

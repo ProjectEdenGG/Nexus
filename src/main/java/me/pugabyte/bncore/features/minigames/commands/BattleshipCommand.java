@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.arenas.BattleshipArena;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
@@ -88,19 +89,24 @@ public class BattleshipCommand extends CustomCommand {
 			coordinate = grid.getAiming();
 		if (coordinate == null)
 			error("You have not aimed your cannon yet");
+
 		coordinate.fire();
+		mechanic.nextTurn(match);
 	}
 
 	@Path("fire random")
 	@Permission("minigames.manage")
 	void toolsFireRandom() {
 		grid.getRandomCoordinate().fire();
+		mechanic.nextTurn(match);
 	}
 
 	@Path("start")
 	@Permission("minigames.manage")
 	void start() {
-		mechanic.start(match);
+		MatchBeginEvent beginEvent = new MatchBeginEvent(match);
+		if (beginEvent.callEvent())
+			mechanic.begin(beginEvent);
 	}
 
 	@Path("kit")

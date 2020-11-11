@@ -6,8 +6,8 @@ import org.bukkit.Location;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
+
+import static me.pugabyte.bncore.utils.Utils.sortByKey;
 
 public class InteractionCommandService extends MySQLService {
 	private static boolean initialized = false;
@@ -23,9 +23,7 @@ public class InteractionCommandService extends MySQLService {
 		if (!cache.containsKey(command.getLocation()))
 			cache.put(command.getLocation(), new LinkedHashMap<>());
 		cache.get(command.getLocation()).put(command.getIndex(), command);
-		cache.put(command.getLocation(), cache.get(command.getLocation()).entrySet().stream()
-				.sorted(Entry.comparingByKey())
-				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
+		cache.put(command.getLocation(), sortByKey(cache.get(command.getLocation())));
 	}
 
 	public Map<Integer, InteractionCommand> get(Location location) {

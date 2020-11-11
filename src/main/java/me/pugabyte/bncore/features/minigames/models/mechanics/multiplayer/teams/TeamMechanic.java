@@ -4,12 +4,19 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
+import me.pugabyte.bncore.features.minigames.models.Match.MatchTasks;
+import me.pugabyte.bncore.features.minigames.models.Match.MatchTasks.MatchTaskType;
+import me.pugabyte.bncore.features.minigames.models.MatchData;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
+import me.pugabyte.bncore.utils.Time;
 import net.md_5.bungee.api.ChatColor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -132,6 +139,67 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 				}
 
 		return false;
+	}
+
+	public void onTurnStart(Match match, Team team) {
+		match.getMatchData().setTurnStarted(LocalDateTime.now());
+	}
+
+	public void onTurnEnd(Match match, Team team) {
+
+	}
+
+	public void nextTurn(Match match) {
+		if (match.getMatchData().getTurnTeam() != null) {
+			onTurnEnd(match, match.getMatchData().getTurnTeam());
+			match.getMatchData().setTurnTeam(null);
+		}
+
+		Arena arena = match.getArena();
+		MatchData matchData = match.getMatchData();
+		MatchTasks tasks = match.getTasks();
+
+		if (match.getAliveTeams().size() <= 1) {
+			match.end();
+			BNCore.log("Ending 4");
+			return;
+		}
+
+		if (match.isEnded() || matchData == null)
+			return;
+
+		if (matchData.getTurns() >= match.getArena().getMaxTurns()) {
+			match.broadcast("Max turns reached, ending game");
+			match.end();
+			BNCore.log("Ending 5");
+			return;
+		}
+
+		if (matchData.getTurnTeamList().isEmpty()) {
+			matchData.setTurnTeamList(new ArrayList<>(match.getAliveTeams()));
+			if (shuffleTurnList())
+				Collections.shuffle(matchData.getTurnTeamList());
+		}
+
+		tasks.cancel(MatchTaskType.TURN);
+
+		Team team = matchData.getTurnTeamList().get(0);
+		matchData.getTurnTeamList().remove(team);
+		matchData.setTurnTeam(team);
+		match.getScoreboard().update();
+
+		onTurnStart(match, team);
+		tasks.register(MatchTaskType.TURN, tasks.wait(arena.getTurnTime() * Time.SECOND.get(), () -> nextTurn(match)));
+	}
+
+	@Override
+	public void onQuit(MatchQuitEvent event) {
+		Match match = event.getMatch();
+		Team team = event.getMinigamer().getTeam();
+		if (team.getMembers(match).size() == 0)
+			nextTurn(match);
+
+		super.onQuit(event);
 	}
 
 }

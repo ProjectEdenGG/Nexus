@@ -26,6 +26,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,12 +45,15 @@ import static me.pugabyte.bncore.utils.Utils.isInt;
 @Data
 @MatchDataFor(Battleship.class)
 public class BattleshipMatchData extends MatchData {
+	private LocalDateTime start;
 	private boolean placingKits = true;
 	private final Map<Team, Grid> grids = new HashMap<>();
 	private final Map<Team, Map<ShipType, Ship>> ships = new HashMap<>();
 
 	private int startTaskId;
 	private int readyTaskId;
+
+	private boolean fired;
 
 	public BattleshipMatchData(Match match) {
 		super(match);
@@ -259,7 +263,11 @@ public class BattleshipMatchData extends MatchData {
 		}
 
 		public Coordinate getRandomCoordinate() {
-			return RandomUtils.randomElement(coordinates);
+			return RandomUtils.randomElement(getNotShotAt());
+		}
+
+		public List<Coordinate> getNotShotAt() {
+			return coordinates.stream().filter(coordinate -> !coordinate.getState().isShotAt()).collect(Collectors.toList());
 		}
 
 		@Data
@@ -313,8 +321,13 @@ public class BattleshipMatchData extends MatchData {
 			}
 
 			public void fire() {
-				if (state.isShotAt())
+				if (!team.equals(getTurnTeam()))
+					throw new NotYourTurnException();
+
+				if (getOppositeCoordinate().state.isShotAt())
 					throw new AlreadyShotAtException();
+
+				fired = true;
 
 				if (!this.equals(aiming))
 					belay();
@@ -371,14 +384,21 @@ public class BattleshipMatchData extends MatchData {
 		@Getter
 		private final PegBoard board;
 		@Getter
-		private final Peg opposite;
+		private final String opposite;
 
 		Peg(PegBoard board) {
 			this.board = board;
 			if (name().contains("_THEM"))
-				this.opposite = Peg.valueOf(name().replace("_THEM", "_ME"));
+				this.opposite = name().replace("_THEM", "_ME");
 			else
 				this.opposite = null;
+		}
+
+		public Peg getOpposite() {
+			if (opposite == null)
+				return null;
+
+			return Peg.valueOf(opposite);
 		}
 
 		public enum PegBoard {
@@ -423,6 +443,12 @@ public class BattleshipMatchData extends MatchData {
 	public static class AlreadyShotAtException extends MinigameException {
 		public AlreadyShotAtException() {
 			super("You already shot at that location");
+		}
+	}
+
+	public static class NotYourTurnException extends MinigameException {
+		public NotYourTurnException() {
+			super("Please wait until your turn");
 		}
 	}
 

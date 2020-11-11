@@ -40,8 +40,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -194,13 +192,27 @@ public class Utils {
 		return Material.valueOf(type.toString() + "_SPAWN_EGG");
 	}
 
-	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sort(Map<K, V> map) {
-		return map.entrySet().stream().sorted(Entry.comparingByValue())
-				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+	public static <K extends Comparable<? super K>, V> LinkedHashMap<K, V> sortByKey(Map<K, V> map) {
+		return collect(map.entrySet().stream().sorted(Entry.comparingByKey()));
 	}
 
-	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortReverse(Map<K, V> map) {
-		LinkedHashMap<K, V> sorted = sort(map);
+	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValue(Map<K, V> map) {
+		return collect(map.entrySet().stream().sorted(Entry.comparingByValue()));
+	}
+
+	public static <K extends Comparable<? super K>, V> LinkedHashMap<K, V> sortByKeyReverse(Map<K, V> map) {
+		return reverse(sortByKey(map));
+	}
+
+	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValueReverse(Map<K, V> map) {
+		return reverse(sortByValue(map));
+	}
+
+	private static <K, V> LinkedHashMap<K, V> collect(Stream<Entry<K, V>> stream) {
+		return stream.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+	}
+
+	public static <K, V> LinkedHashMap<K, V> reverse(LinkedHashMap<K, V> sorted) {
 		LinkedHashMap<K, V> reverse = new LinkedHashMap<>();
 		List<K> keys = new ArrayList<>(sorted.keySet());
 		Collections.reverse(keys);
@@ -209,12 +221,12 @@ public class Utils {
 	}
 
 	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, int radius) {
-		return sort(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
+		return sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
 	}
 
 	public static LinkedHashMap<EntityType, Long> getNearbyEntityTypes(Location location, int radius) {
-		return sort(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
+		return sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
 				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
 	}
 
@@ -330,22 +342,6 @@ public class Utils {
 		return Instant.ofEpochMilli(timestamp)
 				.atZone(ZoneId.systemDefault())
 				.toLocalDateTime();
-	}
-
-	public static void dump(Object object) {
-		List<Method> methods = Arrays.asList(object.getClass().getDeclaredMethods());
-//		if (object.getClass().getSuperclass().getName().startsWith("me.pugabyte.bncore"))
-//			methods.addAll(Arrays.asList(object.getClass().getSuperclass().getDeclaredMethods()));
-		BNCore.log("================");
-		for (Method method : methods) {
-			if (method.getName().startsWith("get") && method.getParameterCount() == 0) {
-				try {
-					BNCore.log(method.getName() + ": " + method.invoke(object));
-				} catch (IllegalAccessException | InvocationTargetException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 
 	public static boolean canEnable(Class<?> clazz) {
@@ -478,7 +474,7 @@ public class Utils {
 	}
 
 	public static void send(Player player, String message) {
-		if (player.isOnline())
+		if (player != null && player.isOnline())
 			player.sendMessage(colorize(message));
 	}
 

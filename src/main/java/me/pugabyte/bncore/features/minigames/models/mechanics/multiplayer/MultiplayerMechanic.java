@@ -1,7 +1,9 @@
 package me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer;
 
+import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
 import me.pugabyte.bncore.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.bncore.features.minigames.models.mechanics.Mechanic;
 
@@ -44,5 +46,26 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			match.getArena().getLobby().join(minigamer);
 		}
 	}
+
+	@Override
+	public void begin(MatchBeginEvent event) {
+		super.begin(event);
+
+		Match match = event.getMatch();
+		Arena arena = match.getArena();
+
+		if (arena.getTurnTime() > 0)
+			nextTurn(match);
+	}
+
+	public boolean showTurnTimerInChat() {
+		return true;
+	}
+
+	public boolean shuffleTurnList() {
+		return false;
+	}
+
+	abstract public void nextTurn(Match match);
 
 }

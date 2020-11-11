@@ -21,6 +21,7 @@ import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.GameMode;
@@ -40,6 +41,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,6 +52,7 @@ import java.util.function.Consumer;
 
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 import static me.pugabyte.bncore.utils.StringUtils.getShortLocationString;
+import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
 import static me.pugabyte.bncore.utils.Utils.attempt;
 
 /*
@@ -120,17 +124,27 @@ public class Battleship extends BalancedTeamMechanic {
 		BattleshipMatchData matchData = match.getMatchData();
 
 		List<String> lines = new ArrayList<>();
-		// TODO
-		lines.add("&cTime: &e" + "11s");
-		lines.add("&cChoose in: &e" + "17s");
+		if (matchData.isPlacingKits()) {
+			lines.add("&cPlace your kits!");
+		} else {
+			lines.add("&cTime: &e" + timespanDiff(matchData.getStart()));
+
+			long turnDuration = matchData.getTurnStarted().until(LocalDateTime.now(), ChronoUnit.SECONDS);
+			String timeLeft = TimespanFormatter.of(arena.getTurnTime() - turnDuration).format();
+			if (team.equals(matchData.getTurnTeam()))
+				lines.add("&cTurn over in: &e" + timeLeft);
+			else
+				lines.add("&cYour turn in: &e" + timeLeft);
+		}
+
 		lines.add("&f");
 
 		Team otherTeam = arena.getOtherTeam(team);
 
 		lines.add("&6&l" + team.getName() + " Fleet &e(You)");
-		lines.add("&0" + getProgressBar(matchData, team));
+		lines.add("&0" + getProgressBar(matchData, otherTeam));
 		lines.add("&6&l" + otherTeam.getName() + " Fleet");
-		lines.add("&1" + getProgressBar(matchData, otherTeam));
+		lines.add("&1" + getProgressBar(matchData, team));
 
 		// TODO: History
 
@@ -154,6 +168,8 @@ public class Battleship extends BalancedTeamMechanic {
 		match.getTasks().cancel(MatchTaskType.BEGIN_DELAY);
 		BattleshipMatchData matchData = match.getMatchData();
 		if (!matchData.isPlacingKits()) return;
+
+		matchData.setStart(LocalDateTime.now());
 
 		for (Team team : matchData.getShips().keySet()) {
 			matchData.getShips().get(team).values().stream()
@@ -378,7 +394,7 @@ public class Battleship extends BalancedTeamMechanic {
 				.file(schematic)
 				.at(location)
 				.transform(direction.getRotationTransform())
-				.pasteAsync();
+				.paste();
 	}
 
 	public BlockFace getKitDirection(Location location) {
@@ -391,6 +407,30 @@ public class Battleship extends BalancedTeamMechanic {
 
 		debug("Kit direction: " + (direction == null ? "null" : direction.name().toLowerCase()));
 		return direction;
+	}
+
+	@Override
+	public void onTurnStart(Match match, Team team) {
+//		match.broadcast(team, "");
+
+		super.onTurnStart(match, team);
+	}
+
+	@Override
+	public void onTurnEnd(Match match, Team team) {
+		BattleshipMatchData matchData = match.getMatchData();
+		Grid grid = matchData.getGrid(team);
+		if (grid.getAiming() != null) {
+			match.broadcast(team, "Time is up, captain! Firing at current position");
+			grid.getAiming().fire();
+		} else if (!matchData.isFired()) {
+			match.broadcast(team, "Time is up, captain! Firing at random position");
+			grid.getRandomCoordinate().fire();
+		}
+
+		matchData.setFired(false);
+
+		super.onTurnEnd(match, team);
 	}
 
 }

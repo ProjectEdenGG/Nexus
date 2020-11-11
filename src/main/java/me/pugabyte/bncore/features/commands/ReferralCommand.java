@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.bncore.utils.Utils.sortReverse;
+import static me.pugabyte.bncore.utils.Utils.sortByValueReverse;
 
 @NoArgsConstructor
 public class ReferralCommand extends CustomCommand implements Listener {
@@ -110,7 +110,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 		line();
 		send(PREFIX + "Stats:");
-		sortReverse(counts).forEach((origin, count) -> send("&7 " + count + " - &e" + origin.getDisplay()));
+		sortByValueReverse(counts).forEach((origin, count) -> send("&7 " + count + " - &e" + origin.getDisplay()));
 	}
 
 	@EventHandler

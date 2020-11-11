@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.minigames.Minigames;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.models.Match;
+import me.pugabyte.bncore.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleArena;
 import me.pugabyte.bncore.features.minigames.models.arenas.ThimbleMap;
@@ -129,8 +130,8 @@ public final class Thimble extends TeamlessMechanic {
 	public void onQuit(MatchQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
-		matchData.getTurnList().remove(minigamer);
-		if (minigamer.equals(matchData.getTurnPlayer()))
+		matchData.getTurnMinigamerList().remove(minigamer);
+		if (minigamer.equals(matchData.getTurnMinigamer()))
 			kill(minigamer);
 		minigamer.getPlayer().getInventory().clear();
 		super.onQuit(event);
@@ -153,8 +154,8 @@ public final class Thimble extends TeamlessMechanic {
 		if (match.isStarted()) {
 			lines.put("&1", 0);
 			lines.put("&2Jumping:", 0);
-			if (matchData.getTurnPlayer() != null) {
-				lines.put("&a" + matchData.getTurnPlayer().getColoredName(), 0);
+			if (matchData.getTurnMinigamer() != null) {
+				lines.put("&a" + matchData.getTurnMinigamer().getColoredName(), 0);
 			} else {
 				lines.put("&f", 0);
 			}
@@ -212,7 +213,7 @@ public final class Thimble extends TeamlessMechanic {
 		super.onDamage(event);
 		event.setCancelled(true);
 		ThimbleMatchData matchData = event.getMinigamer().getMatch().getMatchData();
-		if (event.getMinigamer().equals(matchData.getTurnPlayer()))
+		if (event.getMinigamer().equals(matchData.getTurnMinigamer()))
 			kill(event.getMinigamer());
 	}
 
@@ -222,7 +223,7 @@ public final class Thimble extends TeamlessMechanic {
 		Minigamer minigamer = event.getMinigamer();
 		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
 		ThimbleArena arena = minigamer.getMatch().getArena();
-		if (minigamer.equals(matchData.getTurnPlayer())) {
+		if (minigamer.equals(matchData.getTurnMinigamer())) {
 			arena.getGamemode().kill(minigamer);
 			minigamer.getMatch().getTasks().wait(30, () -> nextTurn(MatchManager.get(arena)));
 			event.setDeathMessage(minigamer.getColoredName() + " missed");
@@ -236,7 +237,7 @@ public final class Thimble extends TeamlessMechanic {
 		minigamer.getMatch().getTasks().wait(30, () -> nextTurn(minigamer.getMatch()));
 	}
 
-	private void newRound(Match match) {
+	public void nextRound(Match match) {
 		ThimbleMatchData matchData = match.getMatchData();
 
 		if (match.getAliveMinigamers().size() <= 1) {
@@ -258,12 +259,12 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 
 		match.broadcast("New Round!");
-		matchData.setTurnList(new ArrayList<>(match.getAliveMinigamers()));
-		Collections.shuffle(matchData.getTurnList());
+		matchData.setTurnMinigamerList(new ArrayList<>(match.getAliveMinigamers()));
+		Collections.shuffle(matchData.getTurnMinigamerList());
 		match.getTasks().wait(30, () -> nextTurn(match));
 	}
 
-	private void nextTurn(Match match) {
+	public void nextTurn(Match match) {
 		ThimbleArena arena = match.getArena();
 		ThimbleMatchData matchData = match.getMatchData();
 
@@ -276,18 +277,18 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 		}
 
-		if (matchData.getTurnList().size() == 0) {
-			newRound(match);
+		if (matchData.getTurnMinigamerList().size() == 0) {
+			nextRound(match);
 			return;
 		}
 
 		Match.MatchTasks tasks = match.getTasks();
-		tasks.cancel(matchData.getTurnWaitTaskId());
+		tasks.cancel(MatchTaskType.TURN);
 
-		matchData.setTurnPlayer(matchData.getTurnList().get(0));
+		matchData.setTurnMinigamer(matchData.getTurnMinigamerList().get(0));
 		match.getScoreboard().update();
 
-		final Minigamer finalNextMinigamer = matchData.getTurnPlayer();
+		final Minigamer finalNextMinigamer = matchData.getTurnMinigamer();
 		Player player = finalNextMinigamer.getPlayer();
 
 		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation(), true);
@@ -302,14 +303,14 @@ public final class Thimble extends TeamlessMechanic {
 			else {
 				// wait 5 more seconds, if the turnPlayer is still equal to player, kill them
 				int taskId2 = tasks.wait(5 * 20, () -> {
-					if (matchData.getTurnPlayer() != null && matchData.getTurnPlayer().equals(finalNextMinigamer)) {
+					if (matchData.getTurnMinigamer() != null && matchData.getTurnMinigamer().equals(finalNextMinigamer)) {
 						kill(finalNextMinigamer);
 					}
 				});
-				matchData.setTurnWaitTaskId(taskId2);
+				tasks.register(MatchTaskType.TURN, taskId2);
 			}
 		});
-		matchData.setTurnWaitTaskId(taskId);
+		tasks.register(MatchTaskType.TURN, taskId);
 	}
 
 	// Auto-select unique concrete blocks for players who have not themselves
@@ -365,7 +366,7 @@ public final class Thimble extends TeamlessMechanic {
 
 			ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
 			if (!minigamer.isAlive()) return;
-			if (matchData.getTurnPlayer() == null || !matchData.getTurnPlayer().equals(minigamer)) return;
+			if (matchData.getTurnMinigamer() == null || !matchData.getTurnMinigamer().equals(minigamer)) return;
 
 			Location blockLocation = player.getLocation();
 			if (!Material.WATER.equals(blockLocation.getBlock().getType())) {
@@ -466,19 +467,19 @@ public final class Thimble extends TeamlessMechanic {
 
 		void score(Minigamer minigamer, Location blockLocation) {
 			ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
-			matchData.setTurnPlayer(null);
+			matchData.setTurnMinigamer(null);
 			minigamer.getMatch().getScoreboard().update();
 			matchData.setTurns(matchData.getTurns() + 1);
-			matchData.getTurnList().remove(minigamer);
+			matchData.getTurnMinigamerList().remove(minigamer);
 		}
 
 		void kill(Minigamer minigamer) {
 			ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
 			ThimbleArena arena = minigamer.getMatch().getArena();
 
-			matchData.setTurnPlayer(null);
+			matchData.setTurnMinigamer(null);
 			minigamer.getMatch().getScoreboard().update();
-			matchData.getTurnList().remove(minigamer);
+			matchData.getTurnMinigamerList().remove(minigamer);
 			minigamer.teleport(arena.getCurrentMap().getSpectateLocation());
 		}
 	}

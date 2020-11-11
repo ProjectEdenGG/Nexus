@@ -357,7 +357,7 @@ public class Match {
 			minigamers.forEach(minigamer -> minigamer.send(colorize(event.getMessage())));
 	}
 
-	public void broadcast(String message, Team team) {
+	public void broadcast(Team team, String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message, team);
 		if (event.callEvent()) {
 			minigamers.stream()

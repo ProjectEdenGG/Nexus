@@ -8,6 +8,7 @@ import me.pugabyte.bncore.features.discord.Discord;
 import me.pugabyte.bncore.features.holidays.halloween20.ShootingRange;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
+import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.features.recipes.CustomRecipes;
 import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
@@ -144,6 +145,7 @@ public class BNCoreCommand extends CustomCommand implements Listener {
 		send("Commands: " + Commands.getCommands().size());
 		send("Listeners: " + BNCore.getListenerCount());
 		send("Arenas: " + ArenaManager.getAll().size());
+		send("Mechanics: " + MechanicType.values().length);
 		send("Recipes: " + CustomRecipes.getRecipes().size());
 	}
 
@@ -493,4 +495,36 @@ public class BNCoreCommand extends CustomCommand implements Listener {
 				.map(enchantment -> enchantment.getKey().getKey())
 				.collect(Collectors.toList());
 	}
+
+	/*
+
+	@Path("treeFeller")
+	void treeFeller() {
+		deleteTree(player().getLocation());
+	}
+
+	private static final List<Material> toDrop = Arrays.asList(Material.STRIPPED_BIRCH_WOOD);
+	private static final List<Material> toBreak = Arrays.asList(Material.BIRCH_STAIRS, Material.BIRCH_FENCE,
+			Material.BIRCH_PLANKS, Material.BIRCH_SLAB, Material.BIRCH_LEAVES);
+
+	int wait = 0;
+
+	private void deleteTree(Location location) {
+		location.getBlock().setType(Material.AIR);
+		for (Block block : BlockUtils.getBlocksInRadius(location, 1)) {
+			if (toDrop.contains(block.getType())) {
+				Utils.giveItems(player(), block.getDrops());
+				block.setType(Material.AIR);
+				Tasks.wait(++wait / 20, () -> deleteTree(block.getLocation()));
+			}
+
+			if (toBreak.contains(block.getType())) {
+				block.setType(Material.AIR);
+				Tasks.wait(++wait / 20, () -> deleteTree(block.getLocation()));
+			}
+		}
+	}
+
+	*/
+
 }
