@@ -30,7 +30,7 @@ public class Train {
 	private static final Location origin = pugmasLoc(-926, 17, -2294);
 	private static final int frameTime = 3;
 	private static final int crossingThreshold = 30;
-	//	private static final int stationStopTime = Time.SECOND.x(15);
+	//private static final int stationStopTime = Time.SECOND.x(15);
 	// Don't change anything below this
 	//
 	private static boolean animating = false;
@@ -79,7 +79,14 @@ public class Train {
 	private static final String animationPath = "Animations/Pugmas20/Train";
 
 	public Train() {
-		// Task here on a random interval, to call animate
+		Tasks.repeat(Time.SECOND.x(30), Time.MINUTE.x(5), () -> {
+			if (Pugmas20.WGUtils.getPlayersInRegion("pugmas20").size() == 0)
+				return;
+
+			if (RandomUtils.chanceOf(50))
+				animate();
+		});
+
 		lightsTask();
 		soundsTask();
 	}
