@@ -1,10 +1,13 @@
 package me.pugabyte.bncore.features.minigames.models;
 
+import com.destroystokyo.paper.Title;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import me.pugabyte.bncore.utils.ActionBarUtils;
+import me.pugabyte.bncore.utils.ActionBarUtils.ActionBar;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -137,14 +140,11 @@ public class Team implements ConfigurationSerializable {
 	}
 
 	public List<Minigamer> getMembers(Match match) {
-		return getMembers(match.getMinigamers());
+		return getMembers(getMinigamers(match));
 	}
 
 	public List<Minigamer> getMembers(List<Minigamer> minigamers) {
-		return new ArrayList<>(minigamers).stream()
-				.filter(Minigamer::isAlive)
-				.filter(minigamer -> this.equals(minigamer.getTeam()))
-				.collect(Collectors.toList());
+		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
 	}
 
 	public int getScore(Match match) {
@@ -153,8 +153,24 @@ public class Team implements ConfigurationSerializable {
 
 	public List<Minigamer> getMinigamers(Match match) {
 		return match.getMinigamers().stream()
-				.filter(minigamer -> minigamer.getTeam() != null && minigamer.getTeam().equals(this))
+				.filter(minigamer -> minigamer.getTeam() != null && this.equals(minigamer.getTeam()))
 				.collect(Collectors.toList());
+	}
+
+	public void broadcast(Match match, String text) {
+		getMembers(match).forEach(minigamer -> minigamer.tell(text));
+	}
+
+	public void broadcastNoPrefix(Match match, String text) {
+		getMembers(match).forEach(minigamer -> minigamer.send(text));
+	}
+
+	public void title(Match match, Title title) {
+		getMembers(match).forEach(minigamer -> minigamer.getPlayer().sendTitle(title));
+	}
+
+	public void actionBar(Match match, ActionBar actionBar) {
+		getMembers(match).forEach(minigamer -> ActionBarUtils.sendActionBar(minigamer.getPlayer(), actionBar));
 	}
 
 }

@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.ICustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.DoubleSlash;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
+import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.plugin.Plugin;
@@ -61,6 +62,14 @@ public class Commands {
 
 	public static String prettyName(Class<? extends ICustomCommand> clazz) {
 		return clazz.getSimpleName().replaceAll("Command$", "");
+	}
+
+	public static String getPrefix(ICustomCommand customCommand) {
+		return getPrefix(customCommand.getClass());
+	}
+
+	public static String getPrefix(Class<? extends ICustomCommand> clazz) {
+		return StringUtils.getPrefix(prettyName(clazz));
 	}
 
 	public void registerAll() {

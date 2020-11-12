@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
+import com.destroystokyo.paper.Title;
 import com.sk89q.worldedit.regions.Region;
 import lombok.Data;
 import lombok.Getter;
@@ -20,6 +21,7 @@ import me.pugabyte.bncore.utils.LocationUtils.Axis;
 import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.SoundUtils.Jingle;
+import me.pugabyte.bncore.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,8 +41,10 @@ import java.util.stream.Collectors;
 import static me.pugabyte.bncore.features.minigames.mechanics.Battleship.LETTERS;
 import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
 import static me.pugabyte.bncore.utils.StringUtils.camelCase;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.left;
 import static me.pugabyte.bncore.utils.StringUtils.right;
+import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.Utils.isInt;
 
 @Data
@@ -358,11 +362,10 @@ public class BattleshipMatchData extends MatchData {
 			}
 
 			private void feedback() {
-				pastePeg(state == State.HIT ? Peg.HIT_ME : Peg.MISS_ME);
+				pastePeg();
 				playSound();
 				addHistory();
-				sendChat();
-				// TODO Subtitle
+				sendChatAndSubtitle();
 			}
 
 			private void playSound() {
@@ -382,10 +385,24 @@ public class BattleshipMatchData extends MatchData {
 				history.add(0, teamName + " "  + (state == State.HIT ? "&c" : "&f") + getName() + " " + camelCase(state));
 			}
 
-			private void sendChat() {
-				if (ship == null) return;
-				getMatch().broadcast(team, "Your " + ship.getName() + " was " + (ship.getHealth() == 0 ? "sunk" : "hit"));
-				getMatch().broadcast(getOtherTeam(), "You "  + (ship.getHealth() == 0 ? "sunk" : "hit") + " their " + ship.getName());
+			private void sendChatAndSubtitle() {
+				if (ship == null) {
+					team.title(getMatch(), new Title("", "They missed", 10, 40, 10));
+					getOtherTeam().title(getMatch(), new Title("", "You missed", 10, 40, 10));
+					return;
+				}
+
+				String target = colorize("Your " + ship.getName() + " &3was " + (ship.getHealth() == 0 ? "sunk" : "hit"));
+				String shooter = colorize("You " + (ship.getHealth() == 0 ? "sunk" : "hit") + " their " + ship.getName());
+
+				// Hacky fix to change colors for title
+				String targetTitle = colorize(stripColor(target).replace(camelCase(ship.getType()), ship.getName() + "&f"));
+
+				team.broadcast(getMatch(), target);
+				team.title(getMatch(), new Title("", targetTitle, 10, 40, 10));
+
+				getOtherTeam().broadcast(getMatch(), shooter);
+				getOtherTeam().title(getMatch(), new Title("", shooter, 10, 40, 10));
 			}
 
 			public void aim() {
@@ -397,19 +414,27 @@ public class BattleshipMatchData extends MatchData {
 				pastePeg(Peg.CONFIRMATION);
 			}
 
+			private void pastePeg() {
+				pastePeg(state == State.HIT ? Peg.HIT_ME : Peg.MISS_ME);
+				Tasks.wait(1, () -> {
+					if (ship != null && ship.getHealth() == 0)
+						ship.getCoordinates().forEach(coordinate -> coordinate.getOppositeCoordinate().pastePeg(Peg.SUNK_THEM));
+				});
+			}
+
 			public void pastePeg(Peg peg) {
 				arena.getWEUtils().paster()
 						.file(peg.getFileName())
 						.at(peg.getBoard().getLocation(this))
 						.transform(CardinalDirection.of(numberDirection).getRotationTransform())
-						.pasteAsync();
+						.paste();
 
 				if (peg.getOpposite() != null)
 					arena.getWEUtils().paster()
 							.file(peg.getOpposite().getFileName())
 							.at(peg.getOpposite().getBoard().getLocation(getOppositeCoordinate()))
 							.transform(CardinalDirection.of(numberDirection.getOppositeFace()).getRotationTransform())
-							.pasteAsync();
+							.paste();
 			}
 
 			public Coordinate getOppositeCoordinate() {
@@ -424,7 +449,8 @@ public class BattleshipMatchData extends MatchData {
 		HIT_ME(PegBoard.HORIZONTAL),
 		HIT_THEM(PegBoard.VERTICAL),
 		MISS_ME(PegBoard.HORIZONTAL),
-		MISS_THEM(PegBoard.VERTICAL);
+		MISS_THEM(PegBoard.VERTICAL),
+		SUNK_THEM(PegBoard.VERTICAL);
 
 		@Getter
 		private final PegBoard board;

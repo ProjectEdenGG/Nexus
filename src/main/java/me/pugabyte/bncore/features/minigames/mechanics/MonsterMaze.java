@@ -18,7 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
@@ -67,10 +67,6 @@ public class MonsterMaze extends TeamlessMechanic {
 		MonsterMazeMatchData matchData = match.getMatchData();
 		ProtectedRegion floor = match.getArena().getProtectedRegion("floor");
 
-//		PathfinderManager pathApi = PathfinderGoalAPI.INSTANCE.getAPI();
-//		if (pathApi == null)
-//			throw new BNException("PathfinderAPI is null?");
-
 		List<Location> goals = new ArrayList<>();
 		for (BlockVector3 vector : match.getArena().getRegion("floor")) {
 			Location location = match.getWGUtils().toLocation(vector);
@@ -80,31 +76,31 @@ public class MonsterMaze extends TeamlessMechanic {
 
 		List<Block> spawnpoints = match.getWGUtils().getRandomBlocks(floor, floorMaterial, MONSTERS);
 		spawnpoints.stream().map(block -> block.getLocation().add(.5, 1, .5)).forEach(spawnpoint -> {
-			LivingEntity monster = match.spawn(spawnpoint, Zombie.class);
+			Mob monster = match.spawn(spawnpoint, Zombie.class);
 			monster.setAI(false);
 			monster.setSilent(true);
-			monster.setInvulnerable(true);
 			monster.setCollidable(false);
+			monster.setInvulnerable(true);
 			matchData.getMonsters().add(monster);
 		});
 
 		match.getMinigamers().forEach(this::preventJump);
 
 		match.getTasks().wait(Time.SECOND.x(5), () -> {
-			for (LivingEntity monster : matchData.getMonsters())
+			for (Mob monster : matchData.getMonsters()) {
+				monster.setAI(true);
 				updatePath(monster, goals);
+			}
 
 			match.getTasks().repeat(Time.SECOND.x(7), 30, () -> {
-				for (LivingEntity monster : matchData.getMonsters()) {
-//					Insentient insentient = pathApi.getPathfinderGoalEntity((Creature) monster);
-//					if (insentient.getNavigation().isDoneNavigating())
+				for (Mob monster : matchData.getMonsters())
+					if (!monster.getPathfinder().hasPath())
 						updatePath(monster, goals);
-				}
 			});
 
 			match.getTasks().repeat(0, 2, () -> {
 				for (Minigamer minigamer : match.getMinigamers())
-					for (LivingEntity monster : matchData.getMonsters()) {
+					for (Mob monster : matchData.getMonsters()) {
 						double distance = monster.getLocation().distance(minigamer.getPlayer().getLocation());
 						if (distance < .7) {
 							minigamer.getPlayer().damage(4);
@@ -120,7 +116,7 @@ public class MonsterMaze extends TeamlessMechanic {
 		});
 	}
 
-	private void launch(Minigamer minigamer, LivingEntity monster) {
+	private void launch(Minigamer minigamer, Mob monster) {
 		Location playerCenterLocation = minigamer.getPlayer().getEyeLocation();
 		Location playerToThrowLocation = monster.getEyeLocation();
 
@@ -133,14 +129,8 @@ public class MonsterMaze extends TeamlessMechanic {
 		minigamer.getPlayer().setVelocity(throwVector);
 	}
 
-	private void updatePath(LivingEntity monster, List<Location> goals) {
-//		monster.setAI(true);
-//		PathfinderManager pathApi = PathfinderGoalAPI.INSTANCE.getAPI();
-//		Location goal = getNewGoal(monster.getLocation(), goals);
-//		Insentient insentient = pathApi.getPathfinderGoalEntity((Creature) monster);
-//		insentient.clearPathfinderGoals();
-//		PathfinderGoalMoveToLocation path = new PathfinderGoalMoveToLocation(insentient, goal, 1, 1);
-//		insentient.addPathfinderGoal(0, path);
+	private void updatePath(Mob monster, List<Location> goals) {
+		monster.getPathfinder().moveTo(getNewGoal(monster.getLocation(), goals));
 	}
 
 	public Location getNewGoal(Location start, List<Location> goals) {

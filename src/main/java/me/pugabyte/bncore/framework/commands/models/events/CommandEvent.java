@@ -1,12 +1,8 @@
 package me.pugabyte.bncore.framework.commands.models.events;
 
-import static me.pugabyte.bncore.utils.StringUtils.colorize;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.bncore.framework.commands.Commands;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
@@ -17,6 +13,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
 
 @Data
 public class CommandEvent extends Event implements Cancellable {
@@ -73,12 +76,16 @@ public class CommandEvent extends Event implements Cancellable {
 	}
 
 	public void handleException(Throwable ex) {
+		String prefix = command.getPrefix();
+		if (isNullOrEmpty(prefix))
+			prefix = Commands.getPrefix(command);
+
 		if (ex.getCause() != null && ex.getCause() instanceof BNException)
-			reply(command.getPrefix() + "&c" + ex.getCause().getMessage());
+			reply(prefix + "&c" + ex.getCause().getMessage());
 		else if (ex instanceof BNException)
-			reply(command.getPrefix() + "&c" + ex.getMessage());
+			reply(prefix + "&c" + ex.getMessage());
 		else if (ex instanceof IllegalArgumentException && ex.getMessage() != null && ex.getMessage().contains("type mismatch"))
-			reply(command.getPrefix() + "&c" + getUsageMessage());
+			reply(prefix + "&c" + getUsageMessage());
 		else {
 			reply("&cAn internal error occurred while attempting to execute this command");
 

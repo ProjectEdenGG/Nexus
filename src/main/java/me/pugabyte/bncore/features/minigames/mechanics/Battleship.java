@@ -11,6 +11,7 @@ import me.pugabyte.bncore.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.bncore.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.bncore.features.minigames.models.arenas.BattleshipArena;
 import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
+import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Ship;
@@ -142,9 +143,9 @@ public class Battleship extends BalancedTeamMechanic {
 		Team otherTeam = arena.getOtherTeam(team);
 
 		lines.add("&6&l" + team.getName() + " Fleet &e(You)");
-		lines.add("&0" + getProgressBar(matchData, otherTeam));
+		lines.add("&0" + getProgressBar(matchData, team));
 		lines.add("&6&l" + otherTeam.getName() + " Fleet");
-		lines.add("&1" + getProgressBar(matchData, team));
+		lines.add("&1" + getProgressBar(matchData, otherTeam));
 
 		lines.add("&e");
 
@@ -164,6 +165,17 @@ public class Battleship extends BalancedTeamMechanic {
 
 	public String getProgressBar(BattleshipMatchData matchData, Team team) {
 		return StringUtils.progressBar(matchData.getGrid(team).getHealth(), ShipType.getCombinedHealth(), StringUtils.ProgressBarStyle.COUNT);
+	}
+
+	@EventHandler
+	public void onMatchStart(MatchStartEvent event) {
+		Match match = event.getMatch();
+		if (!match.isMechanic(this)) return;
+
+		if (match.getPlayers().size() < 2) {
+			match.broadcast("Cannot start match, not enough players");
+			event.setCancelled(true);
+		}
 	}
 
 	@Override
