@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.pugmas20.menu.AdventMenu;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -21,6 +22,7 @@ public class Pugmas20 implements Listener {
 	@Getter
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas20");
 	public static final WorldGuardUtils WGUtils = new WorldGuardUtils(world);
+	public static final WorldEditUtils WEUtils = new WorldEditUtils(world);
 	// Dates
 	public static final LocalDateTime openingDay = LocalDateTime.of(2020, 12, 1, 0, 0, 0, 0);
 	public static final LocalDateTime secondChance = LocalDateTime.of(2020, 12, 25, 0, 0, 0, 0);

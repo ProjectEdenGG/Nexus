@@ -216,7 +216,7 @@ public class SoundUtils {
 			this.delay = delay;
 		}
 
-		public SoundArgs(Sound sound, SoundCategory category, float volume, float pitch) {
+		public SoundArgs(@NotNull Sound sound, SoundCategory category, float volume, float pitch) {
 			this.sound = sound;
 			this.category = category;
 			this.volume = volume;

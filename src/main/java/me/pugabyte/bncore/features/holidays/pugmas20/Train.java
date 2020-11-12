@@ -5,7 +5,6 @@ import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,12 +13,16 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.WEUtils;
 
 public class Train {
 	// Options
@@ -27,9 +30,12 @@ public class Train {
 	private static final Location origin = pugmasLoc(-926, 17, -2294);
 	private static final int frameTime = 3;
 	private static final int crossingThreshold = 30;
+	//	private static final int stationStopTime = Time.SECOND.x(15);
 	// Don't change anything below this
 	//
 	private static boolean animating = false;
+	private static boolean stopAtStation = false;
+	private static boolean stopped = false;
 	//
 	// Track Stuff
 	private static final int trainLength = 108;
@@ -68,9 +74,8 @@ public class Train {
 			pugmasLoc(crossingNE.getBlockX() - 2, lightY, crossingNE.getBlockZ() + 1));
 	// Smoke
 	private static final AtomicReference<Block> trackLoc = new AtomicReference<>(trackStart.clone().getBlock());
-	private static final AtomicReference<Block> smokeLoc = new AtomicReference<>(trackLoc.get().getRelative(-8, 8, 0));
+	private static final AtomicReference<Block> smokeLoc = new AtomicReference<>(trackLoc.get().getRelative(-9, 8, 0));
 	// Misc
-	private static final WorldEditUtils WEUtils = new WorldEditUtils(world);
 	private static final String animationPath = "Animations/Pugmas20/Train";
 
 	public Train() {
@@ -88,6 +93,7 @@ public class Train {
 			return false;
 
 		animating = true;
+		stopAtStation = false;
 		int wait = 0;
 		crossing1_closed = false;
 		crossing2_closed = false;
@@ -103,35 +109,90 @@ public class Train {
 		}
 		wait += (frameTime * 109);
 
-		// TODO PUGMAS - add stop animation branch
+		if (!stopAtStation) {
+			Tasks.wait(wait, () -> {
+				AtomicReference<Location> temp = new AtomicReference<>(trainStart.clone());
+				for (int i = 1; i <= 95; i++) {
+					Tasks.wait(frameTime * i, () -> {
+						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).pasteAsync();
+						temp.set(temp.get().getBlock().getRelative(1, 0, 0).getLocation());
 
-		Tasks.wait(wait, () -> {
-			AtomicReference<Location> temp = new AtomicReference<>(trainStart.clone());
-			for (int i = 1; i <= 95; i++) {
-				Tasks.wait(frameTime * i, () -> {
-					WEUtils.paster().file(animationPath + "/Train").at(temp.get()).pasteAsync();
-					temp.set(temp.get().getBlock().getRelative(1, 0, 0).getLocation());
+						incrementTrain();
+					});
+				}
+			});
+			wait += (frameTime * 95);
 
-					incrementTrain();
-				});
-			}
-		});
-		wait += (frameTime * 95);
+			Tasks.wait(wait, () -> {
+				for (int i = 1; i <= 110; i++) {
+					int finalI = i;
+					Tasks.wait(frameTime * i, () -> {
+						WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).pasteAsync();
 
-		Tasks.wait(wait, () -> {
-			for (int i = 1; i <= 110; i++) {
-				int finalI = i;
-				Tasks.wait(frameTime * i, () -> {
-					WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).pasteAsync();
+						incrementTrain();
+					});
 
-					incrementTrain();
-				});
+				}
+			});
+			wait += (frameTime * 110);
 
-			}
-		});
-		wait += (frameTime * 110);
-
-		Tasks.wait(wait + frameTime, Train::resetTrain);
+			Tasks.wait(wait + frameTime, Train::resetTrain);
+		}
+//		else {
+//			AtomicInteger slowFrameTime = new AtomicInteger(frameTime);
+//			AtomicInteger addWait = new AtomicInteger();
+//			Tasks.wait(wait, () -> {
+//				AtomicReference<Location> temp = new AtomicReference<>(trainStart.clone());
+//				for (int i = 1; i <= 57; i++) {
+//					if(i % 8 == 0) {
+//						slowFrameTime.incrementAndGet();
+//						addWait.addAndGet(i * slowFrameTime.get());
+//					}
+//
+//					Tasks.wait(slowFrameTime.get() * i, () -> {
+//						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).pasteAsync();
+//						temp.set(temp.get().getBlock().getRelative(1, 0, 0).getLocation());
+//
+//						incrementTrain();
+//					});
+//				}
+//			});
+//			wait += (frameTime * 57) + addWait.get();
+//
+//			Tasks.wait(wait, () -> stopped = true);
+//			wait += stationStopTime;
+//
+//			Tasks.wait(wait, () -> {
+//				stopped = false;
+//				stopAtStation = false;
+//				AtomicReference<Location> temp = new AtomicReference<>(trackLoc.get().getLocation().clone());
+//				for (int i = 1; i <= 38; i++) {
+//					Tasks.wait(frameTime * i, () -> {
+//						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).pasteAsync();
+//						temp.set(temp.get().getBlock().getLocation());
+//
+//						incrementTrain();
+//					});
+//				}
+//			});
+//			wait += (frameTime * 38);
+//
+//			Tasks.wait(wait, () -> {
+//				for (int i = 1; i <= 110; i++) {
+//					int finalI = i;
+//					Tasks.wait(frameTime * i, () -> {
+//						WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).pasteAsync();
+//
+//						incrementTrain();
+//					});
+//
+//				}
+//			});
+//			wait += (frameTime * 110);
+//
+//			Tasks.wait(wait + frameTime, Train::resetTrain);
+//
+//		}
 
 		return true;
 	}
@@ -147,6 +208,8 @@ public class Train {
 			animateCrossing(2, true);
 
 		animating = false;
+		stopped = false;
+		stopAtStation = false;
 		switchLightsOff();
 	}
 
@@ -185,7 +248,7 @@ public class Train {
 		if (trackNdx.get() >= crossing2Ndx + crossingThreshold + trainLength + 5) {
 			if (crossing2_closed)
 				animateCrossing(2, true);
-		} else if (trackNdx.get() >= crossing2Ndx && !crossing2_closed)
+		} else if (trackNdx.get() >= crossing2Ndx && !crossing2_closed && !stopAtStation)
 			animateCrossing(2, false);
 
 	}
@@ -323,24 +386,37 @@ public class Train {
 			if (!animating)
 				return;
 
-			Location front = trackLoc.get().getLocation();
-			Location middle = front.getBlock().getRelative(-(trainLength / 2), 0, 0).getLocation();
-			Location back = front.getBlock().getRelative(-trainLength, 0, 0).getLocation();
+			Block origin = trackLoc.get();
+			Location front = origin.getLocation();
+			Location middle = origin.getRelative(-(trainLength / 2), 0, 0).getLocation();
+			Location back = origin.getRelative(-trainLength, 0, 0).getLocation();
+			Collection<Player> players = Pugmas20.WGUtils.getPlayersInRegion("pugmas20_trainsound");
 
-			if (trackNdx.get() <= 202)
-				playTrainSound(front);
-
-			if (trackNdx.get() <= (202 + (trainLength / 2)))
-				playTrainSound(middle);
-
-			if (trackNdx.get() <= (202 + trainLength))
-				playTrainSound(back);
+			if (stopped) {
+				playStationSound(front, players);
+				playStationSound(middle, players);
+				playStationSound(back, players);
+			} else {
+				if (stopAtStation) {
+					if (trackNdx.get() <= 165 - (frameTime * 10))
+						playTrainSound(front, players);
+				} else {
+					if (trackNdx.get() <= (202 + (frameTime * 10)))
+						playTrainSound(front, players);
+				}
+			}
 		});
 	}
 
-	private static void playTrainSound(Location location) {
-		float volume = 2F;
-		float pitch = 0.5F;
-		location.getWorld().playSound(location, Sound.ENTITY_MINECART_INSIDE, SoundCategory.AMBIENT, volume, pitch);
+	private static void playTrainSound(Location location, Collection<Player> players) {
+		float volume = 6F;
+		float pitch = 0.1F;
+		players.forEach(player -> player.playSound(location, Sound.ENTITY_MINECART_INSIDE, SoundCategory.AMBIENT, volume, pitch));
+	}
+
+	private static void playStationSound(Location location, Collection<Player> players) {
+		float volume = 6F;
+		float pitch = 0.1F;
+		players.forEach(player -> player.playSound(location, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.AMBIENT, volume, pitch));
 	}
 }
