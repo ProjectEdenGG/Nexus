@@ -429,12 +429,15 @@ public class BattleshipMatchData extends MatchData {
 						.transform(CardinalDirection.of(numberDirection).getRotationTransform())
 						.paste();
 
-				if (peg.getOpposite() != null)
+				if (peg.getOpposite() != null) {
 					arena.getWEUtils().paster()
 							.file(peg.getOpposite().getFileName())
 							.at(peg.getOpposite().getBoard().getLocation(getOppositeCoordinate()))
 							.transform(CardinalDirection.of(numberDirection.getOppositeFace()).getRotationTransform())
 							.paste();
+
+					Tasks.wait(10, () -> ((Battleship) arena.getMechanic()).hideShips(getMatch(), getOtherTeam()));
+				}
 			}
 
 			public Coordinate getOppositeCoordinate() {

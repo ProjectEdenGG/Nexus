@@ -74,7 +74,20 @@ public class StringUtils {
 
 	@Deprecated
 	public static String decolorize(String input) {
-		return input.replaceAll(getColorChar(), altColorChar);
+		if (input == null)
+			return null;
+
+		input = colorize(input);
+
+		while (true) {
+			Matcher matcher = hexColorizedPattern.matcher(input);
+			if (!matcher.find()) break;
+
+			String color = matcher.group();
+			input = input.replace(color, color.replace(colorChar + "x", "&#").replaceAll(colorChar, ""));
+		}
+
+		return input.replaceAll(colorChar, altColorChar);
 	}
 
 	public static String stripColor(String input) {

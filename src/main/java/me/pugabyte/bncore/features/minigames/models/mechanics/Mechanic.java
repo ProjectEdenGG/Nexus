@@ -109,6 +109,12 @@ public abstract class Mechanic implements Listener {
 		}
 	}
 
+	public void begin(Match match) {
+		MatchBeginEvent beginEvent = new MatchBeginEvent(match);
+		if (beginEvent.callEvent())
+			begin(beginEvent);
+	}
+
 	public void begin(MatchBeginEvent event) {}
 
 	public void onEnd(MatchEndEvent event) {

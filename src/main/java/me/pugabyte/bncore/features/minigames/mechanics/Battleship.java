@@ -1,5 +1,9 @@
 package me.pugabyte.bncore.features.minigames.mechanics;
 
+import com.google.common.collect.Sets;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.minigames.commands.BattleshipCommand;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
@@ -23,8 +27,10 @@ import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -205,6 +211,7 @@ public class Battleship extends BalancedTeamMechanic {
 		matchData.getShips().forEach((team, ships) -> {
 			for (ShipType shipType : ShipType.values())
 				pasteShip(shipType, ships.get(shipType).getOrigin());
+			Tasks.wait(10, () -> hideShips(match, team));
 		});
 
 		match.getMinigamers().forEach(minigamer -> {
@@ -212,6 +219,24 @@ public class Battleship extends BalancedTeamMechanic {
 			minigamer.teleport(minigamer.getTeam().getSpawnpoints().get(1));
 			minigamer.getPlayer().setGameMode(GameMode.ADVENTURE);
 		});
+
+		Region floor = match.getArena().getRegion("floor");
+		match.getArena().getWEUtils().replace(floor, Sets.newHashSet(BlockTypes.BLUE_CONCRETE, BlockTypes.YELLOW_WOOL), BlockTypes.WATER);
+	}
+
+	public void hideShips(Match match, Team team) {
+		BattleshipMatchData matchData = match.getMatchData();
+		Team otherTeam = matchData.getGrid(team).getOtherTeam();
+		List<Minigamer> otherTeamMembers = otherTeam.getMembers(match);
+
+		Region region = match.getArena().getRegion("hideships_" + team.getName().toLowerCase());
+		for (BlockVector3 vector : region) {
+			Location location = match.getWEUtils().toLocation(vector);
+			for (Minigamer minigamer : otherTeamMembers) {
+				minigamer.getPlayer().sendBlockChange(location, Bukkit.createBlockData(Material.STONE));
+				minigamer.getPlayer().sendBlockChange(location.add(0, 10, 0), Bukkit.createBlockData(Material.STONE));
+			}
+		}
 	}
 
 	@EventHandler
@@ -334,13 +359,13 @@ public class Battleship extends BalancedTeamMechanic {
 		}
 
 		private boolean run() {
-			Consumer<String> send = message -> { if (minigamer != null) minigamer.send(message); };
+			Consumer<String> send = message -> { if (minigamer != null) minigamer.send(PREFIX + message); };
 
 			if (attempts >= 4) {
 				if (location.getBlock().getType() == shipType.getItem().getType())
-					send.accept(PREFIX + "Your &e" + shipType + " &3could not be rotated");
+					send.accept("Your &e" + shipType + " &3could not be rotated");
 				else
-					send.accept(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
+					send.accept("Your &e" + shipType + " &3doesnt fit there");
 				return false;
 			}
 
@@ -353,14 +378,14 @@ public class Battleship extends BalancedTeamMechanic {
 
 			if (location.getBlock().getType() == shipType.getItem().getType()) {
 				mechanic.deleteKit(location);
-				send.accept(PREFIX + "Rotated &e" + shipType);
+				send.accept("Rotated &e" + shipType);
 			} else {
 				if (location.getBlock().getType() != Material.AIR) {
-					send.accept(PREFIX + "Your &e" + shipType + " &3doesnt fit there");
+					send.accept("Your &e" + shipType + " &3doesnt fit there");
 					return false;
 				}
 
-				send.accept(PREFIX + "Placed &e" + shipType);
+				send.accept("Placed &e" + shipType);
 			}
 
 			grid.vacate(shipType);
@@ -375,6 +400,8 @@ public class Battleship extends BalancedTeamMechanic {
 				index.setType(Material.WHITE_WOOL);
 				grid.getCoordinate(index.getLocation()).occupy(ship);
 			}
+
+			mechanic.hideShips(match, grid.getOtherTeam());
 
 			return true;
 		}

@@ -9,7 +9,6 @@ import me.pugabyte.bncore.features.minigames.models.Match;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.Team;
 import me.pugabyte.bncore.features.minigames.models.arenas.BattleshipArena;
-import me.pugabyte.bncore.features.minigames.models.events.matches.MatchBeginEvent;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid;
 import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
@@ -45,16 +44,20 @@ public class BattleshipCommand extends CustomCommand {
 	private BattleshipArena arena;
 	private BattleshipMatchData matchData;
 	private Grid grid;
+	private Team team;
+	private Team otherTeam;
 
 	public BattleshipCommand(@NonNull CommandEvent event) {
 		super(event);
 		minigamer = PlayerManager.get(player());
-		mechanic = (Battleship) MechanicType.BATTLESHIP.get();
 		if (minigamer.isPlaying(Battleship.class)) {
+			mechanic = (Battleship) MechanicType.BATTLESHIP.get();
 			match = minigamer.getMatch();
 			arena = minigamer.getMatch().getArena();
 			matchData = minigamer.getMatch().getMatchData();
 			grid = matchData.getGrid(minigamer.getTeam());
+			team = minigamer.getTeam();
+			otherTeam = grid.getOtherTeam();
 		} else if (!(event instanceof TabEvent))
 			error("You must be playing Battleship to use this command");
 	}
@@ -104,15 +107,19 @@ public class BattleshipCommand extends CustomCommand {
 	@Path("start")
 	@Permission("minigames.manage")
 	void start() {
-		MatchBeginEvent beginEvent = new MatchBeginEvent(match);
-		if (beginEvent.callEvent())
-			mechanic.begin(beginEvent);
+		mechanic.begin(match);
 	}
 
 	@Path("kit")
 	@Permission("minigames.manage")
 	void kit() {
 		Arrays.asList(ShipType.values()).forEach(shipType -> Utils.giveItem(player(), shipType.getItem()));
+	}
+
+	@Path("hideShips")
+	@Permission("minigames.manage")
+	void hideShips() {
+		mechanic.hideShips(match, otherTeam);
 	}
 
 	@Path("debug")
