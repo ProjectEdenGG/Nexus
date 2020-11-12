@@ -100,11 +100,11 @@ public class WorldGuardUtils {
 	}
 
 	public boolean isInRegion(Location location, String region) {
-		return getRegionNamesAt(location).contains(region);
+		return location.getWorld().equals(world) && getRegionNamesAt(location).contains(region);
 	}
 
 	public boolean isInRegion(Location location, ProtectedRegion region) {
-		return region.contains(toBlockVector3(location));
+		return location.getWorld().equals(world) && region.contains(toBlockVector3(location));
 	}
 
 	public Collection<Player> getPlayersInRegion(String region) {
