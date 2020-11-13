@@ -66,7 +66,7 @@ public final class Mastermind extends SingleplayerMechanic {
 	}
 
 	public boolean canBuild(Minigamer minigamer, Block block) {
-		return !isInRegion(minigamer.getMatch(), block, "guess");
+		return isInRegion(minigamer.getMatch(), block, "guess");
 	}
 
 	@EventHandler

@@ -42,8 +42,8 @@ public class MastermindMatchData extends MatchData {
 
 	public static final int answerLength = 4;
 	public static final int maxGuesses = 10;
-	public static final Material validateCorrect = Material.BLACK_CONCRETE;
-	public static final Material validateExists = Material.LIGHT_GRAY_CONCRETE;
+	public static final Material validateCorrect = Material.GREEN_CONCRETE;
+	public static final Material validateExists = Material.YELLOW_CONCRETE;
 	public static final Material validateIncorrect = Material.RED_CONCRETE;
 
 	private static final Set<Material> materials = new LinkedHashSet<Material>() {{

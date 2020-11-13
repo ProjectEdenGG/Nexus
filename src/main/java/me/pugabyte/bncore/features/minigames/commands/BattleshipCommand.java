@@ -50,7 +50,7 @@ public class BattleshipCommand extends CustomCommand {
 	public BattleshipCommand(@NonNull CommandEvent event) {
 		super(event);
 		minigamer = PlayerManager.get(player());
-		if (minigamer.isPlaying(Battleship.class)) {
+		if (minigamer.isIn(Battleship.class)) {
 			mechanic = (Battleship) MechanicType.BATTLESHIP.get();
 			match = minigamer.getMatch();
 			arena = minigamer.getMatch().getArena();
@@ -102,6 +102,12 @@ public class BattleshipCommand extends CustomCommand {
 	void toolsFireRandom() {
 		grid.getRandomCoordinate().fire();
 		mechanic.nextTurn(match);
+	}
+
+	@Path("testWithKoda [start]")
+	@Permission("minigames.manage")
+	void testWithKoda(@Arg("true") boolean start) {
+		runCommand("mcmd mgm join alphavs ;; sudo koda mgm join alphavs ;; wait 20 ;; mgm start" + (start ? " ;; wait 20 ;; bs start" : ""));
 	}
 
 	@Path("start")

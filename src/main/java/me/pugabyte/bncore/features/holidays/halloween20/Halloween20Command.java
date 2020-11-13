@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.holidays.halloween20;
 import me.pugabyte.bncore.features.holidays.halloween20.models.ComboLockNumber;
 import me.pugabyte.bncore.features.holidays.halloween20.models.Pumpkin;
 import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage;
+import me.pugabyte.bncore.features.holidays.halloween20.models.QuestStage.Combination;
 import me.pugabyte.bncore.features.holidays.halloween20.models.SoundButton;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.Gate;
 import me.pugabyte.bncore.features.holidays.halloween20.quest.menus.Halloween20Menus;
@@ -19,6 +20,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Aliases("h20")
 public class Halloween20Command extends CustomCommand {
@@ -71,6 +73,45 @@ public class Halloween20Command extends CustomCommand {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		send(user.toString());
+	}
+
+	@Path("stats")
+	@Permission("group.admin")
+	void stats(@Arg("self") OfflinePlayer player) {
+		Halloween20Service service = new Halloween20Service();
+		List<Halloween20User> users = service.getAll();
+
+		int foundButtons = 0;
+		int foundButtonsComplete = 0;
+
+		int foundPumpkins = 0;
+		int foundPumpkinsComplete = 0;
+
+		int foundComboNumbers = 0;
+		int foundComboNumbersComplete = 0;
+
+		long totalUsers = users.stream().filter(user ->
+				user.getFoundButtons().size() > 0 || user.getFoundPumpkins().size() > 0 || user.getFoundComboLockNumbers().size() > 0
+		).count();
+
+		for (Halloween20User user : users) {
+			foundButtons += user.getFoundButtons().size();
+			if (user.getFoundButtons().size() == SoundButton.values().length)
+				++foundButtonsComplete;
+
+			foundPumpkins += user.getFoundPumpkins().size();
+			if (user.getFoundPumpkins().size() == Pumpkin.values().length)
+				++foundPumpkinsComplete;
+
+			foundComboNumbers += user.getFoundComboLockNumbers().size();
+			if (user.getCombinationStage() == Combination.COMPLETE)
+				++foundComboNumbersComplete;
+		}
+
+		send("Total users: " + totalUsers);
+		send("Found Buttons: " + (foundButtons / totalUsers) + " avg, " + foundButtonsComplete + " complete");
+		send("Found Pumpkins: " + (foundPumpkins / totalUsers) + " avg, " + foundPumpkinsComplete + " complete");
+		send("Found Combo Numbers: " + (foundComboNumbers / totalUsers) + " avg, " + foundComboNumbersComplete + " complete");
 	}
 
 	@Path("reset [player]")

@@ -28,6 +28,7 @@ import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
@@ -181,7 +182,13 @@ public class Battleship extends BalancedTeamMechanic {
 		if (match.getPlayers().size() < 2) {
 			match.broadcast("Cannot start match, not enough players");
 			event.setCancelled(true);
+			return;
 		}
+
+		for (Team team : match.getArena().getTeams())
+			hideShips(match, team);
+
+		match.getWEUtils().fixLight(match.getArena().getRegion("board"));
 	}
 
 	@Override
@@ -219,6 +226,8 @@ public class Battleship extends BalancedTeamMechanic {
 			minigamer.teleport(minigamer.getTeam().getSpawnpoints().get(1));
 			minigamer.getPlayer().setGameMode(GameMode.ADVENTURE);
 		});
+
+		Tasks.wait(Time.SECOND, () -> match.getWEUtils().fixLight(match.getArena().getRegion("board")));
 
 		Region floor = match.getArena().getRegion("floor");
 		match.getArena().getWEUtils().replace(floor, Sets.newHashSet(BlockTypes.BLUE_CONCRETE, BlockTypes.YELLOW_WOOL), BlockTypes.WATER);
