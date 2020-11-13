@@ -24,6 +24,7 @@ public class Referral extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+	private String ip;
 	private Origin origin;
 	private String extra;
 

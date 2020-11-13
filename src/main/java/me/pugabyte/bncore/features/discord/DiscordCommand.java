@@ -1,6 +1,8 @@
 package me.pugabyte.bncore.features.discord;
 
 import lombok.NonNull;
+import me.pugabyte.bncore.features.socialmedia.SocialMedia;
+import me.pugabyte.bncore.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Async;
@@ -16,7 +18,6 @@ import me.pugabyte.bncore.models.discord.DiscordService;
 import me.pugabyte.bncore.models.discord.DiscordUser;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
-import me.pugabyte.bncore.models.socialmedia.SocialMediaUser.BNSocialMediaSite;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import net.dv8tion.jda.api.entities.Guild;
@@ -40,7 +41,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().next("&e" + BNSocialMediaSite.DISCORD.getUrl()));
+		send(json().next("&e" + SocialMedia.BNSocialMediaSite.DISCORD.getUrl()));
 	}
 
 	@Path("link update roles")

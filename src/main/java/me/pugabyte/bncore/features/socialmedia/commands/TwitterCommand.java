@@ -1,9 +1,9 @@
-package me.pugabyte.bncore.features.commands.info;
+package me.pugabyte.bncore.features.socialmedia.commands;
 
+import me.pugabyte.bncore.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.models.socialmedia.SocialMediaUser.BNSocialMediaSite;
 
 public class TwitterCommand extends CustomCommand {
 

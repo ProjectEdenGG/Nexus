@@ -238,7 +238,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			return tamer != null && tamer.equals(player);
 		} else if (entity instanceof Fox) {
 			Fox fox = (Fox) entity;
-			return fox.getFirstTrustedPlayer() == player() || fox.getSecondTrustedPlayer() == player();
+			return fox.getFirstTrustedPlayer() == player || fox.getSecondTrustedPlayer() == player;
 		}
 		return false;
 	}

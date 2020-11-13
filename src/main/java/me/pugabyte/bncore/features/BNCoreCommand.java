@@ -60,7 +60,9 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerListPingEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -428,6 +430,26 @@ public class BNCoreCommand extends CustomCommand implements Listener {
 		Block block = player().getLocation().getBlock();
 		RedstoneRail rail = ((RedstoneRail) block.getBlockData());
 		send((rail.isPowered() ? "is" : "not") + " powered");
+	}
+
+	private static String motd = null;
+
+	@Path("motd <text>")
+	void motd(String text) {
+		motd = text;
+		send(PREFIX + "Motd updated");
+	}
+
+	@Path("motd reset")
+	void motdReset() {
+		motd = null;
+		send(PREFIX + "Motd Reset");
+	}
+
+	@EventHandler
+	public void onServerListPing(ServerListPingEvent event) {
+		if (motd != null)
+			event.setMotd(motd);
 	}
 
 	@ConverterFor(Nerd.class)

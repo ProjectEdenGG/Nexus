@@ -25,6 +25,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -104,13 +105,22 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		if (referrals.isEmpty())
 			error("No referral stats available");
 
-		Map<Origin, Integer> counts = new HashMap<>();
-		for (Referral referral : referrals)
-			counts.put(referral.getOrigin(), counts.getOrDefault(referral.getOrigin(), 0) + 1);
+		Map<Origin, Integer> manuals = new HashMap<>();
+		Map<String, Integer> ips = new HashMap<>();
+		for (Referral referral : referrals) {
+			if (referral.getOrigin() != null)
+				manuals.put(referral.getOrigin(), manuals.getOrDefault(referral.getOrigin(), 0) + 1);
+			if (referral.getIp() != null)
+				ips.put(referral.getIp(), ips.getOrDefault(referral.getIp(), 0) + 1);
+		}
 
 		line();
 		send(PREFIX + "Stats:");
-		sortByValueReverse(counts).forEach((origin, count) -> send("&7 " + count + " - &e" + origin.getDisplay()));
+		send(" &3Manual input:");
+		sortByValueReverse(manuals).forEach((origin, count) -> send("&7  " + count + " - &e" + origin.getDisplay()));
+		line();
+		send(" &3IPs:");
+		sortByValueReverse(ips).forEach((ip, count) -> send("&7  " + count + " - &e" + ip));
 	}
 
 	@EventHandler
@@ -134,6 +144,23 @@ public class ReferralCommand extends CustomCommand implements Listener {
 				}
 			}
 		});
+	}
+
+	@EventHandler
+	public void onLogin(PlayerLoginEvent event) {
+		ReferralService service = new ReferralService();
+		Referral referral = service.get(event.getPlayer());
+
+		String hostname = event.getHostname();
+		if (hostname.contains(":"))
+			hostname = hostname.split(":")[0];
+		if (hostname.endsWith("."))
+			hostname = hostname.substring(0, hostname.length() - 1);
+		if (hostname.equalsIgnoreCase("server.bnn.gg"))
+			hostname = "bnn.gg";
+
+		referral.setIp(hostname);
+		service.save(referral);
 	}
 
 }
