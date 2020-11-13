@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.bncore.features.discord.Bot;
 import me.pugabyte.bncore.features.discord.Bot.HandledBy;
-import me.pugabyte.bncore.features.twitter.TwitterFeature;
+import me.pugabyte.bncore.features.socialmedia.SocialMedia;
 import me.pugabyte.bncore.framework.exceptions.BNException;
 import me.pugabyte.bncore.utils.Tasks;
 import twitter4j.Query;
@@ -27,10 +27,10 @@ public class TwitterDiscordCommand extends Command {
 			try {
 				Query query = new Query("from:BearNationSMP");
 
-				List<Status> tweets = TwitterFeature.getTwitter().search().search(query).getTweets();
+				List<Status> tweets = SocialMedia.getTwitter().search().search(query).getTweets();
 				StringBuilder reply = new StringBuilder("Tweets from past 7 days: " + (tweets.isEmpty() ? "None" : ""));
 				for (Status tweet : tweets)
-					reply.append(System.lineSeparator()).append(TwitterFeature.getUrl(tweet));
+					reply.append(System.lineSeparator()).append(SocialMedia.getUrl(tweet));
 
 				event.reply(reply.toString());
 			} catch (Exception ex) {
