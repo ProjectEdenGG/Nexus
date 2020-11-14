@@ -9,6 +9,8 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +27,43 @@ public class ItemInfoCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path("extended [material]")
+	void extended(Material material) {
+		ItemStack tool;
+		if (material == null)
+			tool = getToolRequired();
+		else
+			tool = new ItemStack(material);
+
+		if (material == null)
+			return;
+
+		sendJson(player(), tool);
+		line();
+		send("Namespaced key: " + material.getKey());
+		send("Blast resistance: " + material.getBlastResistance());
+		send("Hardness: " + material.getHardness());
+		send("Max durability: " + material.getMaxDurability());
+		send("Max stack size: " + material.getMaxStackSize());
+		line();
+		send("Has gravity: " + material.hasGravity());
+		send("Is air: " + material.isAir());
+		send("Is block: " + material.isBlock());
+		send("Is burnable: " + material.isBurnable());
+		send("Is edible: " + material.isEdible());
+		send("Is empty: " + material.isEmpty());
+		send("Is flammable: " + material.isFlammable());
+		send("Is fuel: " + material.isFuel());
+		send("Is interactable: " + material.isInteractable());
+		send("Is item: " + material.isItem());
+		send("Is occluding: " + material.isOccluding());
+		send("Is record: " + material.isRecord());
+		send("Is solid: " + material.isSolid());
+		send("Is transparent: " + material.isTransparent());
+		line();
+		BlockData blockData = material.createBlockData();
+	}
+
 	@Path("[material]")
 	void itemInfo(Material material) {
 		ItemStack tool;
@@ -33,8 +72,12 @@ public class ItemInfoCommand extends CustomCommand {
 		else
 			tool = new ItemStack(material);
 
-		send("");
-		send("Material: " + tool.getType() + " (" + tool.getType().ordinal() + ")");
+		sendJson(player(), tool);
+	}
+
+	private void sendJson(Player player, ItemStack tool) {
+		send(player, "");
+		send(player, "Material: " + tool.getType() + " (" + tool.getType().ordinal() + ")");
 
 		if (!isNullOrAir(tool)) {
 			final String nbtString = getNBTString(tool);
@@ -44,13 +87,13 @@ public class ItemInfoCommand extends CustomCommand {
 				if (length > 256) {
 					Tasks.async(() -> {
 						if (length < 32000) // max char limit in command blocks
-							send("NBT: " + colorize(nbtString));
+							send(player, "NBT: " + colorize(nbtString));
 						String url = paste(stripColor(nbtString));
-						send(json("&e&l[Click to Open NBT]").url(url).hover(url));
+						send(player, json("&e&l[Click to Open NBT]").url(url).hover(url));
 					});
 				} else {
-					send("NBT: " + colorize(nbtString));
-					send(json("&e&l[Click to Copy NBT]").suggest(nbtString));
+					send(player, "NBT: " + colorize(nbtString));
+					send(player, json("&e&l[Click to Copy NBT]").suggest(nbtString));
 				}
 			}
 		}
