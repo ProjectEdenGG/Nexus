@@ -107,7 +107,7 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("clearDatabase")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	public void clearDatabase() {
 		service.clearCache();
 		service.deleteAll();
