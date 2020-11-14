@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LocationUtils {
@@ -146,6 +147,10 @@ public class LocationUtils {
 
 		public BlockFace toBlockFace() {
 			return BlockFace.valueOf(name());
+		}
+
+		public static BlockFace[] blockFaces() {
+			return Arrays.stream(values()).map(CardinalDirection::toBlockFace).toArray(BlockFace[]::new);
 		}
 
 		public int getRotation() {

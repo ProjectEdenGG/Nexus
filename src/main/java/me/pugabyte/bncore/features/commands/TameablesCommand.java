@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.With;
 import me.pugabyte.bncore.features.commands.TameablesCommand.PendingTameblesAction.PendingTameablesActionType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
+import me.pugabyte.bncore.framework.commands.models.annotations.Description;
 import me.pugabyte.bncore.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleteIgnore;
@@ -49,12 +50,14 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("untame")
+	@Description("Remove ownership of an animal")
 	void untame() {
 		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.UNTAME));
 		send(PREFIX + "Punch the animal you wish to remove ownership of");
 	}
 
 	@Path("move")
+	@Description("Teleport an animal to your location")
 	void move() {
 		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.MOVE));
 		send(PREFIX + "Punch the animal you wish to move");
@@ -72,6 +75,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("transfer <player>")
+	@Description("Transfer ownership of an animal to another player")
 	void transfer(OfflinePlayer transfer) {
 		if (player().equals(transfer))
 			error("You can't transfer an animal to yourself");
@@ -80,12 +84,14 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("count <entityType>")
+	@Description("Count the animals you own (Must be in loaded chunks)")
 	void count(TameableEntity entityType) {
 		List<Entity> entities = find(entityType);
 		send(PREFIX + "Found &e" + entities.size() + " " + camelCase(entityType) + " &3in loaded chunks belonging to you");
 	}
 
 	@Path("summon <entityType>")
+	@Description("Summon the animals you own (Must be in loaded chunks)")
 	void summon(SummonableTameableEntity entityType) {
 		List<Entity> entities = find(entityType);
 		entities.forEach(entity -> entity.teleport(player()));
@@ -117,16 +123,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		WOLF,
 		CAT,
 		FOX,
-		PARROT;
-
-		public static boolean isSummonable(EntityType entityType) {
-			try {
-				valueOf(entityType.name());
-				return true;
-			} catch (IllegalArgumentException ex) {
-				return false;
-			}
-		}
+		PARROT
 	}
 
 	private enum TameableEntity implements TameableEntityList {
@@ -204,10 +201,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 					break;
 				case INFO:
 					String owner = getOwner(entity);
-					if (!isNullOrEmpty(owner))
-						send(player, PREFIX + "That " + entityName + " is owned by &e" + owner);
-					else
-						send(player, PREFIX + "That " + entityName + " is not tamed");
+					send(player, PREFIX + "That " + entityName + " is " + (isNullOrEmpty(owner) ? "not tamed" : "owned by &e" + owner));
 					break;
 			}
 			actions.remove(uuid);

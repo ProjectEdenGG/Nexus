@@ -689,6 +689,10 @@ public class Utils {
 			return previous < 0 ? values[values.length - 1] : values[previous];
 		}
 
+		public static <T> T random(Class<? extends T> clazz) {
+			return RandomUtils.randomElement(clazz.getEnumConstants());
+		}
+
 		public static <T> List<String> valueNameList(Class<? extends T> clazz) {
 			return Arrays.stream(Env.values()).map(Env::name).collect(Collectors.toList());
 		}

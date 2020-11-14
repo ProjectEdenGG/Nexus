@@ -13,6 +13,7 @@ import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -30,10 +31,10 @@ public class HomesCommand extends CustomCommand {
 
 	@Path
 	void list() {
-		List<Home> filtered = homeOwner.getHomes();
+		List<Home> filtered = new ArrayList<>(homeOwner.getHomes());
 		if (isPlayer())
 			filtered = filtered.stream().filter(home -> home.hasAccess(player())).collect(Collectors.toList());
-		if (filtered.size() == 0)
+		if (filtered.isEmpty())
 			error(homeOwner.getOfflinePlayer().getName() + " has no available homes");
 
 		send(PREFIX + filtered.stream().map(home -> (home.isLocked() ? "&c" : "&3") + home.getName())
