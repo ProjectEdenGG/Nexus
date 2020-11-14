@@ -7,19 +7,31 @@ import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSet;
 import me.pugabyte.bncore.features.holidays.aeveonproject.sets.APSetType;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.aeveonproject.AeveonProjectService;
 import me.pugabyte.bncore.models.aeveonproject.AeveonProjectUser;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
+import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import static me.pugabyte.bncore.utils.RandomUtils.getWeightedRandom;
 
 @Aliases("ap")
 @NoArgsConstructor
@@ -112,6 +124,42 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 		service.clearCache();
 		service.deleteAll();
 		service.clearCache();
+	}
+
+	private final static List<Material> allowedFloraMaterials = Arrays.asList(Material.WARPED_NYLIUM, Material.SOUL_SOIL);
+
+	private final static LinkedHashMap<Material, Double> floraChanceMap = new LinkedHashMap<Material, Double>() {{
+		put(Material.AIR, 36.08);
+		put(Material.WARPED_ROOTS, 33.16);
+		put(Material.NETHER_SPROUTS, 24.37);
+		put(Material.WARPED_FUNGUS, 05.08);
+		put(Material.CRIMSON_FUNGUS, 00.43);
+		put(Material.CRIMSON_ROOTS, 00.34);
+		put(Material.TWISTING_VINES_PLANT, 00.50);
+	}};
+
+	@Path("flora [radius]")
+	public void flora(@Arg("5") int radius) {
+		Tasks.async(() -> {
+			final int finalRadius = Math.max(1, Math.min(radius, 25));
+			List<Block> placeFloraOn = new ArrayList<>();
+			List<Block> blocks = BlockUtils.getBlocksInRadius(player().getLocation(), finalRadius);
+
+			for (Block block : blocks) {
+				Block above = block.getRelative(BlockFace.UP);
+				if (allowedFloraMaterials.contains(block.getType()) && Utils.isNullOrAir(above))
+					placeFloraOn.add(above);
+			}
+
+			for (Block block : placeFloraOn) {
+				Material material = getWeightedRandom(floraChanceMap);
+				Tasks.sync(() -> {
+					block.setType(material);
+					if (material.equals(Material.TWISTING_VINES_PLANT) && RandomUtils.chanceOf(75))
+						block.getRelative(BlockFace.UP).setType(Material.TWISTING_VINES);
+				});
+			}
+		});
 	}
 
 }

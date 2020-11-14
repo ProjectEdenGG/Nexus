@@ -8,6 +8,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -16,6 +17,10 @@ public class RandomUtils {
 	private static final Random random = new Random();
 
 	public static boolean chanceOf(int chance) {
+		return chanceOf((double) chance);
+	}
+
+	public static boolean chanceOf(double chance) {
 		return randomInt(0, 100) <= chance;
 	}
 
@@ -86,6 +91,22 @@ public class RandomUtils {
 
 	public static double randomAngle() {
 		return random.nextDouble() * 2 * Math.PI;
+	}
+
+	public static <E> E getWeightedRandom(Map<E, Double> weights) {
+		E result = null;
+		double bestValue = Double.MAX_VALUE;
+
+		for (E element : weights.keySet()) {
+			double value = -Math.log(RandomUtils.getRandom().nextDouble()) / weights.get(element);
+
+			if (value < bestValue) {
+				bestValue = value;
+				result = element;
+			}
+		}
+
+		return result;
 	}
 
 }
