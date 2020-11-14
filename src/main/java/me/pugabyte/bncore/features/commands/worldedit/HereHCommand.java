@@ -7,29 +7,19 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.WorldEditUtils;
-import org.bukkit.entity.Player;
 
 @DoubleSlash
 @Permission("worldedit.wand")
-public class ExpandVCommand extends CustomCommand {
+public class HereHCommand extends CustomCommand {
 
-	public ExpandVCommand(CommandEvent event) {
+	public HereHCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("[amount]")
-	void expandV(@Arg("1") int amount) {
-		expandV(amount);
-	}
-
-	public static void expandV(Player player, int amount) {
-		new WorldEditUtils(player).changeSelection(
-				player,
-				WorldEditUtils.SelectionChangeType.EXPAND,
-				WorldEditUtils.SelectionChangeDirectionType.VERTICAL,
-				amount
-		);
+	void here(@Arg("0") int amount) {
+		new WorldEditUtils(player()).setSelection(player(), player().getLocation());
+		ExpandHCommand.expandH(player(), amount);
 	}
 
 }
-

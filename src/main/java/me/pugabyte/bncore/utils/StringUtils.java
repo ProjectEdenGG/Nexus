@@ -524,6 +524,7 @@ public class StringUtils {
 			return number + "th";
 	}
 
+	@Getter
 	private static final DecimalFormat nf = new DecimalFormat("#.00");
 
 	public static String getLocationString(Location loc) {
