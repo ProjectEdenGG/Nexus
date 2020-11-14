@@ -176,24 +176,24 @@ public class SoundUtils {
 			@Override
 			public void play(Player player) {
 				Tasks.wait(0, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, 2);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, randomPitch());
 				});
 				Tasks.wait(1, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, 0.1F);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, randomPitch());
 				});
 				Tasks.wait(2, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, 0.1F);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, randomPitch());
 				});
 				Tasks.wait(3, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, 2);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, randomPitch());
 					playSound(player, Sound.BLOCK_CROP_BREAK, 1, 0.1F);
 				});
 				Tasks.wait(4, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, 0.5F);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, randomPitch());
 					playSound(player, Sound.BLOCK_SHROOMLIGHT_STEP, 1, 0.1F);
 				});
 				Tasks.wait(5, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, 1);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, 1, randomPitch());
 					playSound(player, Sound.ENTITY_HORSE_SADDLE, 1, 0.1F);
 				});
 				Tasks.wait(6, () -> {
@@ -219,6 +219,10 @@ public class SoundUtils {
 		void play(Player player, Sound intrument, float pitch) {
 			playSound(player, intrument, SoundCategory.RECORDS, 1, pitch);
 		}
+	}
+
+	public static float randomPitch() {
+		return (float) RandomUtils.randomDouble(0.1, 2);
 	}
 
 	public static float getPitch(int step) {

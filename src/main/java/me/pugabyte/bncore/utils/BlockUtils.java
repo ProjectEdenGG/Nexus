@@ -16,9 +16,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class BlockUtils {
+
+	public static Queue<Location> createDistanceSortedQueue(Location origin) {
+		return new PriorityQueue<>((loc1, loc2) -> (int) (loc1.distanceSquared(origin) - loc2.distanceSquared(origin)));
+	}
 
 	public static void updateBlockProperty(Block block, String key, String newValue) {
 		block.setBlockData(getBlockDataWithNewValue(block, key, newValue));

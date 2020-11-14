@@ -38,6 +38,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -45,6 +46,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -223,6 +225,10 @@ public class WorldEditUtils {
 		session.getRegionSelector(worldEditWorld).explainSecondarySelection(worldEditPlayer, session, region.getMaximumPoint());
 	}
 
+	public Material toMaterial(BaseBlock baseBlock) {
+		return Material.valueOf(baseBlock.getBlockType().getId().replace("minecraft:", "").toUpperCase());
+	}
+
 	public List<Block> getBlocks(ProtectedRegion region) {
 		return getBlocks((CuboidRegion) worldGuardUtils.convert(region));
 	}
@@ -332,6 +338,26 @@ public class WorldEditUtils {
 
 		public void pasteAsync() {
 			Tasks.async(this::paste);
+		}
+
+		public void build() {
+			Iterator<BlockVector3> iterator = clipboard.iterator();
+
+			BlockVector3 origin = BlockVector3.ZERO;
+			int relX = vector.getBlockX() - origin.getBlockX();
+			int relY = vector.getBlockY() - origin.getBlockY();
+			int relZ = vector.getBlockZ() - origin.getBlockZ();
+
+			while (iterator.hasNext()) {
+				BlockVector3 blockVector3 = iterator.next();
+				BaseBlock baseBlock = blockVector3.getFullBlock(clipboard);
+				if (baseBlock.getMaterial().isAir())
+					continue;
+
+				Location location = toLocation(blockVector3).add(relX, relY, relZ);
+				Material material = toMaterial(baseBlock);
+				location.getBlock().setType(material);
+			}
 		}
 	}
 
