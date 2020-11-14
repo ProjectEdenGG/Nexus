@@ -29,7 +29,7 @@ public class SoundUtils {
 	}
 
 	public static void playSound(Player player, Sound sound, SoundCategory category, float volume, float pitch) {
-		playSound(player, sound, category, volume, pitch);
+		player.playSound(player.getLocation(), sound, category, volume, pitch);
 	}
 
 	public static void playSound(Player player, SoundArgs soundArgs) {
