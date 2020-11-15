@@ -1,13 +1,18 @@
 package me.pugabyte.bncore.utils;
 
+import lombok.SneakyThrows;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static org.bukkit.Material.*;
@@ -121,6 +126,30 @@ public class MaterialTag implements Tag<Material> {
 			LADDER, LEVER, TORCH, WALL_TORCH, REDSTONE_TORCH, REDSTONE_WALL_TORCH)
 			.append(SAPLINGS, DOORS, SIGNS, RAILS, BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
 					PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS);
+
+	@SneakyThrows
+	public static Map<String, Tag> getApplicable(Material material) {
+		return new HashMap<String, Tag>() {{
+			putAll(getApplicable(material, MaterialTag.class.getFields()));
+			putAll(getApplicable(material, Tag.class.getFields()));
+		}};
+	}
+
+	private static Map<String, Tag> getApplicable(Material material, Field[] fields) throws IllegalAccessException {
+		Map<String, Tag> applicable = new HashMap<>();
+		for (Field field : fields) {
+			field.setAccessible(true);
+			if (field.getType() == Tag.class || field.getType() == MaterialTag.class) {
+				Tag materialTag = (Tag) field.get(null);
+				try {
+					Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
+					if (materialTag.isTagged(material))
+						applicable.put(field.getName(), materialTag);
+				} catch (NoSuchMethodException ignore) {}
+			}
+		}
+		return applicable;
+	}
 
 	private final EnumSet<Material> materials;
 	private final NamespacedKey key = null;

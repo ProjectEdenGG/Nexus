@@ -6,6 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Material;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.paste;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
+import static me.pugabyte.bncore.utils.Utils.dump;
 import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Aliases({"nbt", "itemdb"})
@@ -30,14 +32,13 @@ public class ItemInfoCommand extends CustomCommand {
 	@Path("extended [material]")
 	void extended(Material material) {
 		ItemStack tool;
-		if (material == null)
+		if (material == null) {
 			tool = getToolRequired();
-		else
+			material = tool.getType();
+		} else
 			tool = new ItemStack(material);
 
-		if (material == null)
-			return;
-
+		line(5);
 		sendJson(player(), tool);
 		line();
 		send("Namespaced key: " + material.getKey());
@@ -61,7 +62,12 @@ public class ItemInfoCommand extends CustomCommand {
 		send("Is solid: " + material.isSolid());
 		send("Is transparent: " + material.isTransparent());
 		line();
+		send("Applicable tags: " + String.join(", ", MaterialTag.getApplicable(material).keySet()));
+		line();
 		BlockData blockData = material.createBlockData();
+		send("BlockData: " + blockData.getClass().getSimpleName());
+		dump(blockData).forEach((method, output) -> send(method + "(): " + output));
+		line();
 	}
 
 	@Path("[material]")

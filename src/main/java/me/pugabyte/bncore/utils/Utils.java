@@ -40,6 +40,8 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -48,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -310,6 +313,22 @@ public class Utils {
 			if (!excess.isEmpty())
 				excess.values().forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
 		}
+	}
+
+	public static Map<String, String> dump(Object object) {
+		Map<String, String> output = new HashMap<>();
+		List<Method> methods = Arrays.asList(object.getClass().getDeclaredMethods());
+		for (Method method : methods) {
+			if (method.getName().matches("^(get|is|has).*") && method.getParameterCount() == 0) {
+				try {
+					output.put(method.getName(), method.invoke(object).toString());
+				} catch (IllegalAccessException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return output;
 	}
 
 	public static void runCommand(CommandSender sender, String commandNoSlash) {

@@ -40,18 +40,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static me.pugabyte.bncore.utils.BlockUtils.createDistanceSortedQueue;
 
 public class WorldEditUtils {
 	@NonNull
@@ -285,10 +290,13 @@ public class WorldEditUtils {
 	@NoArgsConstructor
 	public class Paste {
 		private Clipboard clipboard;
-		private BlockVector3 vector;
+		private BlockVector3 at;
 		private boolean pasteAir = true;
 		private Transform transform;
 		private Region[] regions = new Region[]{RegionWrapper.GLOBAL()};
+
+		private int ticks;
+		private Map<Location, BlockData> blockDataMap;
 
 		public Paste file(String fileName) {
 			return clipboard(getSchematic(fileName));
@@ -314,7 +322,7 @@ public class WorldEditUtils {
 		}
 
 		public Paste at(BlockVector3 vector) {
-			this.vector = vector;
+			this.at = vector;
 			return this;
 		}
 
@@ -328,9 +336,32 @@ public class WorldEditUtils {
 			return this;
 		}
 
+		public Paste duration(Time time) {
+			return duration(time.get());
+		}
+
+		public Paste duration(int ticks) {
+			this.ticks = ticks;
+			return this;
+		}
+
+		public Paste blocks(Map<Location, BlockData> blockDataMap) {
+			this.blockDataMap = blockDataMap;
+			return this;
+		}
+
+		public Paste computeBlocks() {
+			this.blockDataMap = findBlocks();
+			return this;
+		}
+
+		public Map<Location, BlockData> getComputedBlocks() {
+			return blockDataMap;
+		}
+
 		public void paste() {
 			try (EditSession editSession = getEditSessionBuilder().allowedRegions(regions).build()) {
-				clipboard.paste(editSession, vector, pasteAir, transform);
+				clipboard.paste(editSession, at, pasteAir, transform);
 			} catch (WorldEditException ex) {
 				ex.printStackTrace();
 			}
@@ -341,24 +372,63 @@ public class WorldEditUtils {
 		}
 
 		public void build() {
+			Tasks.async(() -> {
+				if (blockDataMap.isEmpty())
+					findBlocks();
+
+				Tasks.sync(() -> blockDataMap.forEach((location, material) -> location.getBlock().setBlockData(material)));
+			});
+		}
+
+		public void buildQueue() {
+			Tasks.async(() -> {
+				if (blockDataMap.isEmpty())
+					findBlocks();
+
+				Queue<Location> queue = createDistanceSortedQueue(toLocation(at));
+				queue.addAll(blockDataMap.keySet());
+
+				int wait = 0;
+				int blocksPerTick = Math.max(queue.size() / ticks, 1);
+
+				queueLoop:
+				while (true) {
+					++wait;
+					for (int i = 0; i < blocksPerTick; i++) {
+						Location poll = queue.poll();
+						if (poll == null)
+							break queueLoop;
+
+						Tasks.wait(wait, () -> poll.getBlock().setBlockData(blockDataMap.get(poll)));
+					}
+				}
+			});
+		}
+
+		public Map<Location, BlockData> findBlocks() {
 			Iterator<BlockVector3> iterator = clipboard.iterator();
 
-			BlockVector3 origin = BlockVector3.ZERO;
-			int relX = vector.getBlockX() - origin.getBlockX();
-			int relY = vector.getBlockY() - origin.getBlockY();
-			int relZ = vector.getBlockZ() - origin.getBlockZ();
+			BlockVector3 origin = clipboard.getOrigin();
+			int relX = at.getBlockX() - origin.getBlockX();
+			int relY = at.getBlockY() - origin.getBlockY();
+			int relZ = at.getBlockZ() - origin.getBlockZ();
+
+			Map<Location, BlockData> blockDataMap = new HashMap<>();
 
 			while (iterator.hasNext()) {
 				BlockVector3 blockVector3 = iterator.next();
 				BaseBlock baseBlock = blockVector3.getFullBlock(clipboard);
-				if (baseBlock.getMaterial().isAir())
+				if (baseBlock.getMaterial().isAir() && !pasteAir)
 					continue;
 
 				Location location = toLocation(blockVector3).add(relX, relY, relZ);
-				Material material = toMaterial(baseBlock);
-				location.getBlock().setType(material);
+				blockDataMap.put(location, BukkitAdapter.adapt(baseBlock));
 			}
+
+			this.blockDataMap = blockDataMap;
+			return blockDataMap;
 		}
+
 	}
 
 	public void save(String fileName, Location min, Location max) {

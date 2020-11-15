@@ -19,7 +19,7 @@ public class ExpandVCommand extends CustomCommand {
 
 	@Path("[amount]")
 	void expandV(@Arg("1") int amount) {
-		expandV(amount);
+		expandV(player(), amount);
 	}
 
 	public static void expandV(Player player, int amount) {

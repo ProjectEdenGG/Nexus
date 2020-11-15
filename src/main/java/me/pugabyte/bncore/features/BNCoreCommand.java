@@ -1,8 +1,5 @@
 package me.pugabyte.bncore.features;
 
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.world.block.BaseBlock;
 import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
@@ -46,7 +43,6 @@ import me.pugabyte.bncore.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Time.Timer;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -74,18 +70,14 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
-import static me.pugabyte.bncore.utils.BlockUtils.createDistanceSortedQueue;
 import static me.pugabyte.bncore.utils.BlockUtils.getBlocksInRadius;
 import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
@@ -462,55 +454,6 @@ public class BNCoreCommand extends CustomCommand implements Listener {
 			event.setMotd(motd);
 	}
 
-	@Async
-	@Path("buildSchematic [fileName]")
-	void buildSchematic(String fileName) {
-		Clipboard schematic = worldEditUtils.getSchematic("pugmas20/trees/" + fileName);
-		Iterator<BlockVector3> iterator = schematic.iterator();
-
-		Location origin = player().getLocation().clone();
-		Location trunk = origin.clone().add(6, 0, 6);
-		int relX = origin.getBlockX();
-		int relY = origin.getBlockY();
-		int relZ = origin.getBlockZ();
-
-		Map<Location, Material> materials = new HashMap<>();
-
-		Queue<Location> queue = createDistanceSortedQueue(trunk);
-
-		while (iterator.hasNext()) {
-			BlockVector3 blockVector3 = iterator.next();
-			BaseBlock baseBlock = blockVector3.getFullBlock(schematic);
-			if (baseBlock.getMaterial().isAir())
-				continue;
-
-			Location location = worldEditUtils.toLocation(blockVector3).add(relX, relY, relZ);
-			materials.put(location, worldEditUtils.toMaterial(baseBlock));
-		}
-
-		queue.addAll(materials.keySet());
-
-		send(queue.size() + " blocks queued");
-
-		int wait = 0;
-		int SAFETY = 0;
-
-		while (!queue.isEmpty()) {
-			if (++SAFETY > 500) {
-				send("&4 ======= Safety engaging =======");
-				break;
-			}
-
-			Tasks.wait(wait += 1, () -> {
-				for (int i = 0; i < 5; i++) {
-					Location poll = queue.poll();
-					if (poll != null)
-						poll.getBlock().setType(materials.get(poll));
-				}
-			});
-		}
-	}
-
 	@Path("radiusTest")
 	void radiusTest() {
 		Location origin = player().getLocation();
@@ -589,59 +532,6 @@ public class BNCoreCommand extends CustomCommand implements Listener {
 				.filter(enchantment -> enchantment.getKey().getKey().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(enchantment -> enchantment.getKey().getKey())
 				.collect(Collectors.toList());
-	}
-
-	Location start;
-	List<Location> treeFellerLocations = new ArrayList<>();
-
-	@Async
-	@Path("treeFeller")
-	void treeFeller() {
-		start = player().getLocation();
-		Queue<Location> queue = createDistanceSortedQueue(start);
-
-		new Timer("tree-feller", () -> {
-			deleteTree(start);
-			queue.addAll(treeFellerLocations);
-		});
-
-		send(queue.size() + " blocks queued");
-
-		Tasks.sync(() -> {
-			int wait = 0;
-			int blocksPerTick = queue.size() / 60;
-
-			loopThing:
-			while (true) {
-				++wait;
-				for (int i = 0; i < blocksPerTick; i++) {
-					Location poll = queue.poll();
-					if (poll == null)
-						break loopThing;
-
-					Tasks.wait(wait, () -> {
-						Block block = poll.getBlock();
-						if (toDrop.contains(block.getType()))
-							Utils.giveItems(player(), block.getDrops());
-						block.setType(Material.AIR);
-					});
-				}
-			}
-		});
-	}
-
-	private static final List<Material> toDrop = Arrays.asList(Material.ACACIA_WOOD, Material.STRIPPED_SPRUCE_WOOD, Material.STRIPPED_OAK_WOOD);
-	private static final List<Material> toBreak = Arrays.asList(Material.FIRE_CORAL_BLOCK, Material.NETHER_WART_BLOCK, Material.JUNGLE_LEAVES, Material.OAK_LEAVES, Material.ACACIA_LEAVES);
-
-	private void deleteTree(Location location) {
-		treeFellerLocations.add(location);
-		for (Block block : BlockUtils.getBlocksInRadius(location, 1)) {
-			if (treeFellerLocations.contains(block.getLocation()))
-				continue;
-
-			if (toDrop.contains(block.getType()) || toBreak.contains(block.getType()))
-				deleteTree(block.getLocation());
-		}
 	}
 
 }
