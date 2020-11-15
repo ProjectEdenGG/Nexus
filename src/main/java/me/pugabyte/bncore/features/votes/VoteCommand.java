@@ -46,7 +46,7 @@ public class VoteCommand extends CustomCommand {
 		line();
 		JsonBuilder builder = json("&3 Links &3|| &e");
 		for (VoteSite site : VoteSite.values())
-			builder.next("&e" + site.name()).url(site.getUrl()).next(" &3|| ");
+			builder.next("&e" + site.name()).url(site.getUrl()).next(" &3|| ").group();
 		send(builder);
 		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
 				.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();

@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.utils;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
@@ -12,9 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static me.pugabyte.bncore.utils.Utils.collect;
 import static org.bukkit.Material.*;
 
 @SuppressWarnings("unused")
@@ -27,16 +29,17 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag WALL_BANNERS = new MaterialTag("_WALL_BANNER", MatchMode.SUFFIX);
 	public static final MaterialTag STAINED_GLASS = new MaterialTag("_STAINED_GLASS", MatchMode.SUFFIX);
 	public static final MaterialTag STAINED_GLASS_PANES = new MaterialTag("_STAINED_GLASS_PANE", MatchMode.SUFFIX);
+	public static final MaterialTag ALL_STAINED_GLASS = new MaterialTag("STAINED_GLASS", MatchMode.CONTAINS);
 	public static final MaterialTag GLAZED_TERRACOTTAS = new MaterialTag("_GLAZED_TERRACOTTA", MatchMode.SUFFIX);
 	public static final MaterialTag COLORED_TERRACOTTAS = new MaterialTag("_TERRACOTTA", MatchMode.SUFFIX).exclude(GLAZED_TERRACOTTAS);
 	public static final MaterialTag ALL_TERRACOTTAS = new MaterialTag("_TERRACOTTA", MatchMode.SUFFIX);
-	public static final MaterialTag ALL_CONCRETES = new MaterialTag("CONCRETE", MatchMode.CONTAINS);
 	public static final MaterialTag CONCRETES = new MaterialTag("_CONCRETE", MatchMode.SUFFIX);
 	public static final MaterialTag CONCRETE_POWDERS = new MaterialTag("_CONCRETE_POWDER", MatchMode.SUFFIX);
+	public static final MaterialTag ALL_CONCRETES = new MaterialTag("CONCRETE", MatchMode.CONTAINS);
 	public static final MaterialTag SHULKER_BOXES = new MaterialTag("_SHULKER_BOX", MatchMode.SUFFIX).append(SHULKER_BOX);
 
-	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, BANNERS, WALL_BANNERS, STAINED_GLASS,
-			STAINED_GLASS_PANES, ALL_TERRACOTTAS, GLAZED_TERRACOTTAS, CONCRETES, CONCRETE_POWDERS, SHULKER_BOXES);
+	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, ALL_BANNERS,
+			ALL_STAINED_GLASS, ALL_TERRACOTTAS, ALL_CONCRETES, SHULKER_BOXES);
 
 	public static final MaterialTag TOOLS = new MaterialTag("_PICKAXE", MatchMode.SUFFIX)
 			.append("_AXE", MatchMode.SUFFIX).append("_SHOVEL", MatchMode.SUFFIX).append("_HOE", MatchMode.SUFFIX)
@@ -120,44 +123,43 @@ public class MaterialTag implements Tag<Material> {
 			ENDER_CHEST, Material.ANVIL, BREWING_STAND, TRAPPED_CHEST, HOPPER, DROPPER)
 			.append("_SHULKER_BOX", MatchMode.SUFFIX);
 	public static final MaterialTag PRESSURE_PLATES = new MaterialTag("_PRESSURE_PLATE", MatchMode.SUFFIX);
+	public static final MaterialTag TORCHES = new MaterialTag("TORCH", MatchMode.CONTAINS);
 
-	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.SAND, RED_SAND, GRAVEL,
-			VINE, LILY_PAD, TURTLE_EGG, REPEATER, COMPARATOR, ITEM_FRAME, BELL, SNOW, SCAFFOLDING, TRIPWIRE_HOOK,
-			LADDER, LEVER, TORCH, WALL_TORCH, REDSTONE_TORCH, REDSTONE_WALL_TORCH)
+	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.GRAVEL, VINE, LILY_PAD, TURTLE_EGG,
+			REPEATER, COMPARATOR, ITEM_FRAME, BELL, SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER)
 			.append(SAPLINGS, DOORS, SIGNS, RAILS, BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
-					PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS);
+					PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
 
 	@SneakyThrows
-	public static Map<String, Tag> getApplicable(Material material) {
-		return new HashMap<String, Tag>() {{
-			putAll(getApplicable(material, MaterialTag.class.getFields()));
-			putAll(getApplicable(material, Tag.class.getFields()));
-		}};
+	public static Map<String, Tag<Material>> getApplicable(Material material) {
+		return collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(material)));
 	}
 
-	private static Map<String, Tag> getApplicable(Material material, Field[] fields) throws IllegalAccessException {
-		Map<String, Tag> applicable = new HashMap<>();
-		for (Field field : fields) {
-			field.setAccessible(true);
-			if (field.getType() == Tag.class || field.getType() == MaterialTag.class) {
-				Tag materialTag = (Tag) field.get(null);
-				try {
-					Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
-					if (materialTag.isTagged(material))
-						applicable.put(field.getName(), materialTag);
-				} catch (NoSuchMethodException ignore) {}
+	@Getter
+	private static final Map<String, Tag<Material>> tags = new HashMap<String, Tag<Material>>() {{
+		try {
+			List<Field> fields = new ArrayList<Field>() {{
+				addAll(Arrays.asList(MaterialTag.class.getFields()));
+				addAll(Arrays.asList(Tag.class.getFields()));
+			}};
+
+			for (Field field : fields) {
+				field.setAccessible(true);
+				if (field.getType() == Tag.class || field.getType() == MaterialTag.class) {
+					Tag<Material> materialTag = (Tag<Material>) field.get(null);
+					try {
+						Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
+						put(field.getName(), materialTag);
+					} catch (NoSuchMethodException ignore) {}
+				}
 			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		return applicable;
-	}
+	}};
 
 	private final EnumSet<Material> materials;
 	private final NamespacedKey key = null;
-
-	static {
-		for (DyeColor value : DyeColor.values())
-			COLORABLE.append(value + "_", MatchMode.PREFIX);
-	}
 
 	public MaterialTag(EnumSet<Material> materials) {
 		this.materials = materials.clone();

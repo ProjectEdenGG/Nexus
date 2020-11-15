@@ -1,7 +1,6 @@
 package me.pugabyte.bncore.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Data;
 import me.pugabyte.bncore.features.minigames.mechanics.Mastermind;
 import me.pugabyte.bncore.features.minigames.models.Match;
@@ -42,7 +41,7 @@ public class MastermindMatchData extends MatchData {
 
 	public static final int answerLength = 4;
 	public static final int maxGuesses = 10;
-	public static final Material validateCorrect = Material.GREEN_CONCRETE;
+	public static final Material validateCorrect = Material.LIME_CONCRETE;
 	public static final Material validateExists = Material.YELLOW_CONCRETE;
 	public static final Material validateIncorrect = Material.RED_CONCRETE;
 
@@ -120,8 +119,8 @@ public class MastermindMatchData extends MatchData {
 		wallOrigin.setY(wallOrigin.getY() + (guess - 1) * 2);
 		BlockFace direction = getDirection(wallOrigin.getBlock());
 
-		WEUtils.paster().clipboard(guessRegion).at(wallOrigin).paste();
-		WEUtils.set(guessRegion, BlockTypes.AIR);
+		WEUtils.paster().clipboard(guessRegion).at(wallOrigin).build();
+		WEUtils.getBlocks(guessRegion).forEach(block -> block.setType(Material.AIR));
 
 		List<Material> guess = new ArrayList<>();
 		List<Material> answer = new ArrayList<>(this.answer);

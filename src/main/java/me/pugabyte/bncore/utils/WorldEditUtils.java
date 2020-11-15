@@ -296,7 +296,7 @@ public class WorldEditUtils {
 		private Region[] regions = new Region[]{RegionWrapper.GLOBAL()};
 
 		private int ticks;
-		private Map<Location, BlockData> blockDataMap;
+		private Map<Location, BlockData> blockDataMap = new HashMap<>();
 
 		public Paste file(String fileName) {
 			return clipboard(getSchematic(fileName));
@@ -372,6 +372,13 @@ public class WorldEditUtils {
 		}
 
 		public void build() {
+			if (blockDataMap.isEmpty())
+				findBlocks();
+
+			blockDataMap.forEach((location, material) -> location.getBlock().setBlockData(material));
+		}
+
+		public void buildAsync() {
 			Tasks.async(() -> {
 				if (blockDataMap.isEmpty())
 					findBlocks();

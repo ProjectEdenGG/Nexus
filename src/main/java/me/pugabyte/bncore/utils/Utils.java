@@ -211,7 +211,7 @@ public class Utils {
 		return reverse(sortByValue(map));
 	}
 
-	private static <K, V> LinkedHashMap<K, V> collect(Stream<Entry<K, V>> stream) {
+	public static <K, V> LinkedHashMap<K, V> collect(Stream<Entry<K, V>> stream) {
 		return stream.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
