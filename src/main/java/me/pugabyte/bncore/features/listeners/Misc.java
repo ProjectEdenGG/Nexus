@@ -73,7 +73,7 @@ public class Misc implements Listener {
 		Block block = event.getBlock();
 		if (MaterialTag.ALL_CORALS.isTagged(block.getType())) {
 			WorldGroup worldGroup = WorldGroup.get(block.getWorld());
-			if (WorldGroup.CREATIVE.equals(worldGroup) || WorldGroup.ADVENTURE.equals(worldGroup))
+			if (WorldGroup.CREATIVE.equals(worldGroup) || WorldGroup.ADVENTURE.equals(worldGroup) || WorldGroup.MINIGAMES.equals(worldGroup))
 				event.setCancelled(true);
 		}
 	}

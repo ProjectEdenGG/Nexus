@@ -7,6 +7,7 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -26,7 +27,7 @@ public class Pugmas20 implements Listener {
 	// Dates
 	public static final LocalDateTime openingDay = LocalDateTime.of(2020, 12, 1, 0, 0, 0, 0);
 	public static final LocalDateTime secondChance = LocalDateTime.of(2020, 12, 25, 0, 0, 0, 0);
-	public static final LocalDateTime closingDay = LocalDateTime.of(2021, 1, 1, 0, 0, 0, 0);
+	public static final LocalDateTime closingDay = LocalDateTime.of(2021, 1, 11, 0, 0, 0, 0);
 	// Advent Menu
 
 	public Pugmas20() {
@@ -35,6 +36,23 @@ public class Pugmas20 implements Listener {
 		AdventMenu.loadHeads();
 		new AdventChests();
 		new Train();
+	}
+
+	public static Location pugmasLoc(int x, int y, int z) {
+		return new Location(world, x, y, z);
+	}
+
+	public static boolean isBeforePugmas(LocalDateTime localDateTime) {
+		return localDateTime.isBefore(openingDay);
+	}
+
+	public static boolean isPastPugmas(LocalDateTime localDateTime) {
+		return localDateTime.isAfter(closingDay);
+	}
+
+	public static boolean isSecondChance(LocalDateTime localDateTime) {
+		return ((localDateTime.isEqual(secondChance) || localDateTime.isAfter(secondChance))
+				&& !isPastPugmas(localDateTime));
 	}
 
 	public static boolean isAtPugmas(Player player) {
