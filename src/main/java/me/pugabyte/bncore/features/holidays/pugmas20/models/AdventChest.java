@@ -16,10 +16,10 @@ public class AdventChest {
 	@Getter
 	@AllArgsConstructor
 	public enum District {
-		PORT("Port"),
-		SQUARE("Square"),
+		HARBOR("Harbor"),
+		PLAZA("Plaza"),
 		GARDENS("Gardens"),
-		ICE("Ice"),
+		FROZEN("Frozen"),
 		UNKNOWN("Unknown");
 
 		String name;
