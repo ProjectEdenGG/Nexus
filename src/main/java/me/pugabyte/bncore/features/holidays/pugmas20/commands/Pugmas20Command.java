@@ -17,10 +17,17 @@ import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.OfflinePlayer;
 
+import java.time.LocalDateTime;
+
+import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.isBeforePugmas;
+import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.isPastPugmas;
+import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.isSecondChance;
+
 @Aliases("pugmas")
 public class Pugmas20Command extends CustomCommand {
 	private final Pugmas20Service service = new Pugmas20Service();
 	private WorldEditUtils worldEditUtils;
+	String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
 
 
 	public Pugmas20Command(CommandEvent event) {
@@ -31,14 +38,30 @@ public class Pugmas20Command extends CustomCommand {
 
 	@Path()
 	void pugmas() {
-		String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
 		send("Soon™ (" + timeLeft + ")");
 	}
 
-	@Permission("group.staff") // TODO PUGMAS - Remove
-	@Path("advent [day]")
-	void advent(@Arg("-1") int day) {
-		AdventMenu.openAdvent(player(), day);
+	@Path("advent [month] [day]")
+	void advent(@Arg(value = "12", permission = "group.staff") int month, @Arg(value = "-1", permission = "group.staff") int day) {
+		LocalDateTime now = LocalDateTime.now();
+		int year = 2020;
+		if (month < 11)
+			year = 2021;
+		if (day == -1)
+			day = now.getDayOfMonth();
+
+		now = now.withYear(year).withMonth(month).withDayOfMonth(day);
+
+		if (isBeforePugmas(now) && !player().hasPermission("group.staff"))
+			error("Soon™ (" + timeLeft + ")");
+
+		if (isPastPugmas(now))
+			error("Next year!");
+
+		if (isSecondChance(now))
+			now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
+
+		AdventMenu.openAdvent(player(), now);
 	}
 
 	@Permission("group.admin")

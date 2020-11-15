@@ -3,7 +3,6 @@ package me.pugabyte.bncore.features.holidays.pugmas20.menu;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.SlotPos;
 import lombok.Getter;
-import me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20;
 import me.pugabyte.bncore.features.holidays.pugmas20.menu.providers.AdventProvider;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.Utils;
@@ -13,11 +12,14 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+
+import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.pugmasLoc;
 
 public class AdventMenu {
 	//TODO PUGMAS - Change to final location
-	private static final Location adventHeadsLoc = new Location(Pugmas20.world, -956, 9, -2096);
+	private static final Location adventHeadsLoc = pugmasLoc(-956, 9, -2096);
 	public static final Block origin = adventHeadsLoc.getBlock().getRelative(BlockFace.UP);
 	@Getter
 	private static final LinkedHashMap<SlotPos, ItemBuilder> adventHeadMap = new LinkedHashMap<>();
@@ -53,11 +55,11 @@ public class AdventMenu {
 		}
 	}
 
-	public static void openAdvent(Player player, int day) {
+	public static void openAdvent(Player player, LocalDateTime date) {
 		SmartInventory.builder()
 				.title("Advent")
 				.size(6, 9)
-				.provider(new AdventProvider(day))
+				.provider(new AdventProvider(date))
 				.build()
 				.open(player);
 	}

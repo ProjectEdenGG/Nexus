@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.WEUtils;
+import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.pugmasLoc;
 
 public class Train {
 	// Options
@@ -91,10 +92,6 @@ public class Train {
 
 		lightsTask();
 		soundsTask();
-	}
-
-	private static Location pugmasLoc(int x, int y, int z) {
-		return new Location(world, x, y, z);
 	}
 
 	public static boolean animate() {

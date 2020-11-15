@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.holidays.pugmas20;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.pugmas20.menu.AdventMenu;
 import me.pugabyte.bncore.features.holidays.pugmas20.models.AdventChest;
+import me.pugabyte.bncore.features.holidays.pugmas20.models.AdventChest.District;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.Utils;
@@ -31,6 +32,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.pugmasLoc;
+
 // TODO PUGMAS - Prevent adventLootHead from being placed, or opened if player doesn't have enough space
 public class AdventChests implements Listener {
 	public static Map<Integer, Location> adventLootMap = new HashMap<>();
@@ -38,7 +41,7 @@ public class AdventChests implements Listener {
 	public static ItemBuilder adventLootHead;
 	//
 	//TODO PUGMAS - Change to final location
-	private static final Block lootOrigin = new Location(Pugmas20.getWorld(), -959, 10, -2090).getBlock();
+	private static final Block lootOrigin = pugmasLoc(-959, 10, -2090).getBlock();
 	private static final String InvTitle = "Advent Chest #";
 	private static UUID adventLootHeadOwner = null;
 	private static final String adventLootHeadTitle = "Pugmas Advent Skull";
@@ -69,12 +72,12 @@ public class AdventChests implements Listener {
 	}
 
 	private void loadChestLocations() {
-		adventChestList.add(new AdventChest(1, chestLoc(-959, 11, -2081), "Test"));
-		// TODO PUGMAS
+		adventChestList.add(new AdventChest(1, chestLoc(-959, 11, -2081), District.UNKNOWN));
+		// TODO PUGMAS - Add all chest locations
 	}
 
 	private Location chestLoc(int x, int y, int z) {
-		return new Location(Pugmas20.getWorld(), x, y, z);
+		return pugmasLoc(x, y, z);
 	}
 
 	public static AdventChest getAdventChest(Location location) {

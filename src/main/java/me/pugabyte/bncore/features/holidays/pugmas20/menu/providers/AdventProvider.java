@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.holidays.pugmas20.AdventChests;
+import me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20;
 import me.pugabyte.bncore.features.holidays.pugmas20.menu.AdventMenu;
 import me.pugabyte.bncore.features.holidays.pugmas20.models.AdventChest;
 import me.pugabyte.bncore.features.menus.MenuUtils;
@@ -14,13 +15,13 @@ import me.pugabyte.bncore.models.pugmas20.Pugmas20User;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.entity.Player;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdventProvider extends MenuUtils implements InventoryProvider {
-	int day;
+	LocalDateTime date;
 	private static final ItemBuilder locked = AdventMenu.lockedHead.clone();
 	private static final ItemBuilder missed = AdventMenu.missedHead.clone();
 	private static final ItemBuilder toFind = AdventMenu.toFindHead.clone();
@@ -29,11 +30,10 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		user = service.get(player);
+		addCloseItem(contents);
 
-		addCloseItem(contents, 5, 1);
-		if (day == -1)
-			day = LocalDate.now().getDayOfMonth();
+		user = service.get(player);
+		int day = date.getDayOfMonth();
 
 		AtomicInteger index = new AtomicInteger(1);
 		AdventMenu.getAdventHeadMap().forEach((slotPos, skull) -> {
@@ -46,20 +46,25 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 				int dayIndex = (index.get() - 7);
 				String name = "Day: " + dayIndex;
 				AdventChest adventChest = AdventChests.getAdventChest(dayIndex);
-				String district = "District: N/A";
+				String districtName = "null";
 				if (adventChest != null)
-					district = "District: " + adventChest.getDistrict();
+					districtName = adventChest.getDistrict().getName();
+
+				String district = "District: " + districtName;
 
 				if (user.getFoundDays().contains(dayIndex)) {
 					// Found
 					contents.set(slotPos, ClickableItem.empty(skull.clone().name(name).lore(district).build()));
+
 				} else {
-					if (dayIndex == day) {
+					if (dayIndex == day || Pugmas20.isSecondChance(date)) {
 						// Find Me
 						contents.set(slotPos, ClickableItem.empty(toFind.clone().name(name).lore("&aFind me!", district).build()));
+
 					} else if (dayIndex < day) {
 						// Missed
 						contents.set(slotPos, ClickableItem.empty(missed.clone().name(name).lore("&cMissed").build()));
+
 					} else {
 						// Locked
 						contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked").build()));
