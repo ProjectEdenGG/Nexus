@@ -1,20 +1,30 @@
 package me.pugabyte.bncore.features.commands.staff.admin;
 
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NonNull;
+import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO Add Menus
+import static me.pugabyte.bncore.utils.StringUtils.colorize;
+
 public class MaterialTagCommand extends CustomCommand {
 
 	public MaterialTagCommand(@NonNull CommandEvent event) {
@@ -23,7 +33,7 @@ public class MaterialTagCommand extends CustomCommand {
 
 	@Path("materials [tag]")
 	void materials(Tag<Material> tag) {
-		send(PREFIX + "Materials in tag: " + tag.getValues().stream().map(Material::name).collect(Collectors.joining(", ")));
+		new MaterialTagMaterialsMenu(tag).open(player());
 	}
 
 	@Path("find [material]")
@@ -44,5 +54,49 @@ public class MaterialTagCommand extends CustomCommand {
 				.filter(tagName -> tagName.toLowerCase().startsWith(filter.toLowerCase()))
 				.map(String::toLowerCase)
 				.collect(Collectors.toList());
+	}
+
+	private class MaterialTagMaterialsMenu extends MenuUtils implements InventoryProvider {
+		private final Tag<Material> materialTag;
+
+		public MaterialTagMaterialsMenu(Tag<Material> materialTag) {
+			this.materialTag = materialTag;
+		}
+
+		public void open(Player viewer) {
+			open(viewer, 0);
+		}
+
+		@Override
+		public void open(Player viewer, int page) {
+			SmartInventory.builder()
+					.provider(this)
+					.title(colorize("&3" + camelCase(materialTag.getKey().getKey())))
+					.size(6, 9)
+					.build()
+					.open(viewer, page);
+		}
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			addCloseItem(contents);
+
+			List<ClickableItem> items = new ArrayList<>();
+			materialTag.getValues().forEach(material -> {
+				ItemStack item;
+				if (material.isItem())
+					item = new ItemStack(material);
+				else
+					item = new ItemBuilder(Material.BARRIER).name(camelCase(material)).build();
+
+				items.add(ClickableItem.empty(item));
+			});
+
+			addPagination(player, contents, items);
+		}
+
+		@Override
+		public void update(Player player, InventoryContents inventoryContents) {}
+
 	}
 }

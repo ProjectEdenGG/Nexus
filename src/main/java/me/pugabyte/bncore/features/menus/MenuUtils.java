@@ -5,6 +5,8 @@ import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.Pagination;
+import fr.minuskube.inv.content.SlotIterator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -31,6 +34,8 @@ import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public abstract class MenuUtils {
+
+	public void open(Player viewer, int page) {}
 
 	protected ItemStack addGlowing(ItemStack itemStack) {
 		return Utils.addGlowing(itemStack);
@@ -128,6 +133,27 @@ public abstract class MenuUtils {
 		else
 			for (int i = 0; i < items.length; i++)
 				contents.set(row, noSpace[i], items[i]);
+	}
+
+	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items) {
+		Pagination page = contents.pagination();
+		addPagination(player, contents, items, 36, e -> open(player, page.previous().getPage()), e -> open(player, page.next().getPage()));
+	}
+
+	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items, int perPage,
+								 Consumer<ItemClickData> previous, Consumer<ItemClickData> next) {
+		Pagination page = contents.pagination();
+		page.setItemsPerPage(perPage);
+		page.setItems(items.toArray(new ClickableItem[0]));
+		if (page.getPage() > items.size() / perPage)
+			page.page(items.size() / perPage);
+		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
+
+		int curPage = page.getPage() + 1;
+		if (!page.isFirst())
+			contents.set(5, 0, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, Math.max(curPage - 1, 1)), "&fPrevious Page"), previous));
+		if (!page.isLast())
+			contents.set(5, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, curPage + 1), "&fNext Page"), next));
 	}
 
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {

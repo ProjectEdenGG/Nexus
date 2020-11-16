@@ -4,8 +4,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.Pagination;
-import fr.minuskube.inv.content.SlotIterator;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
@@ -13,9 +11,6 @@ import me.pugabyte.bncore.models.shop.ShopService;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.pretty;
@@ -55,23 +50,5 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 
 	@Override
 	public void update(Player player, InventoryContents contents) {}
-
-	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items) {
-		Pagination page = contents.pagination();
-		int perPage = 36;
-		page.setItemsPerPage(perPage);
-		page.setItems(items.toArray(new ClickableItem[0]));
-		if (page.getPage() > items.size() / perPage)
-			page.page(items.size() / perPage);
-		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
-
-		int curPage = page.getPage() + 1;
-		if (!page.isFirst())
-			contents.set(5, 0, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, Math.max(curPage - 1, 1)),
-					"&fPrevious Page"), e -> open(player, page.previous().getPage())));
-		if (!page.isLast())
-			contents.set(5, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, curPage + 1),
-					"&fNext Page"), e -> open(player, page.next().getPage())));
-	}
 
 }

@@ -2,6 +2,7 @@ package me.pugabyte.bncore.utils;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import me.pugabyte.bncore.BNCore;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
@@ -71,8 +72,9 @@ public class MaterialTag implements Tag<Material> {
 			END_PORTAL, END_PORTAL_FRAME, NETHER_PORTAL, KNOWLEDGE_BOOK,
 			DEBUG_STICK, SPAWNER, CHORUS_PLANT);
 
-	public static final MaterialTag REQUIRES_META = new MaterialTag(POTION, SPLASH_POTION, LINGERING_POTION,
-			TIPPED_ARROW, WRITTEN_BOOK, ENCHANTED_BOOK);
+	public static final MaterialTag POTIONS = new MaterialTag(POTION, SPLASH_POTION, LINGERING_POTION);
+
+	public static final MaterialTag REQUIRES_META = new MaterialTag(POTIONS).append(TIPPED_ARROW, WRITTEN_BOOK, ENCHANTED_BOOK);
 
 	public static final MaterialTag ALL_CORALS = new MaterialTag(Tag.CORAL_BLOCKS).append(Tag.CORAL_PLANTS, Tag.WALL_CORALS, Tag.CORALS);
 	public static final MaterialTag CORAL_WALL_FANS = new MaterialTag("_WALL_FAN", MatchMode.SUFFIX);
@@ -99,16 +101,16 @@ public class MaterialTag implements Tag<Material> {
 			CARTOGRAPHY_TABLE, BREWING_STAND, COMPOSTER, BARREL, FLETCHING_TABLE,
 			CAULDRON, LECTERN, STONECUTTER, LOOM, SMITHING_TABLE, GRINDSTONE);
 
-	public static final MaterialTag TREE_LOGS = new MaterialTag(OAK_LOG, SPRUCE_LOG, BIRCH_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG);
-	public static final MaterialTag STRIPPED_LOGS = new MaterialTag(STRIPPED_OAK_LOG, STRIPPED_SPRUCE_LOG, STRIPPED_BIRCH_LOG, STRIPPED_JUNGLE_LOG, STRIPPED_ACACIA_LOG, STRIPPED_DARK_OAK_LOG);
+	public static final MaterialTag TREE_LOGS = new MaterialTag(OAK_LOG, SPRUCE_LOG, BIRCH_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG, WARPED_STEM, CRIMSON_STEM);
+	public static final MaterialTag STRIPPED_LOGS = new MaterialTag(STRIPPED_OAK_LOG, STRIPPED_SPRUCE_LOG, STRIPPED_BIRCH_LOG, STRIPPED_JUNGLE_LOG, STRIPPED_ACACIA_LOG, STRIPPED_DARK_OAK_LOG, STRIPPED_WARPED_STEM, STRIPPED_CRIMSON_STEM);
 	public static final MaterialTag LOGS = new MaterialTag(TREE_LOGS, STRIPPED_LOGS);
 
-	public static final MaterialTag TREE_WOOD = new MaterialTag(OAK_WOOD, SPRUCE_WOOD, BIRCH_WOOD, JUNGLE_WOOD, ACACIA_WOOD, DARK_OAK_WOOD);
-	public static final MaterialTag STRIPPED_WOOD = new MaterialTag(STRIPPED_OAK_WOOD, STRIPPED_SPRUCE_WOOD, STRIPPED_BIRCH_WOOD, STRIPPED_JUNGLE_WOOD, STRIPPED_ACACIA_WOOD, STRIPPED_DARK_OAK_WOOD);
+	public static final MaterialTag TREE_WOOD = new MaterialTag(OAK_WOOD, SPRUCE_WOOD, BIRCH_WOOD, JUNGLE_WOOD, ACACIA_WOOD, DARK_OAK_WOOD, WARPED_HYPHAE, CRIMSON_HYPHAE);
+	public static final MaterialTag STRIPPED_WOOD = new MaterialTag(STRIPPED_OAK_WOOD, STRIPPED_SPRUCE_WOOD, STRIPPED_BIRCH_WOOD, STRIPPED_JUNGLE_WOOD, STRIPPED_ACACIA_WOOD, STRIPPED_DARK_OAK_WOOD, STRIPPED_WARPED_HYPHAE, STRIPPED_CRIMSON_HYPHAE);
 	public static final MaterialTag WOOD = new MaterialTag(TREE_WOOD, STRIPPED_WOOD);
 
-	public static final MaterialTag WOOD_STAIRS = new MaterialTag(OAK_STAIRS, SPRUCE_STAIRS, BIRCH_STAIRS, JUNGLE_STAIRS, ACACIA_STAIRS, DARK_OAK_STAIRS);
-	public static final MaterialTag WOOD_SLABS = new MaterialTag(OAK_SLAB, SPRUCE_SLAB, BIRCH_SLAB, JUNGLE_SLAB, ACACIA_SLAB, DARK_OAK_SLAB, PETRIFIED_OAK_SLAB);
+	public static final MaterialTag WOOD_STAIRS = new MaterialTag(OAK_STAIRS, SPRUCE_STAIRS, BIRCH_STAIRS, JUNGLE_STAIRS, ACACIA_STAIRS, DARK_OAK_STAIRS, WARPED_STAIRS, CRIMSON_STAIRS);
+	public static final MaterialTag WOOD_SLABS = new MaterialTag(OAK_SLAB, SPRUCE_SLAB, BIRCH_SLAB, JUNGLE_SLAB, ACACIA_SLAB, DARK_OAK_SLAB, PETRIFIED_OAK_SLAB, WARPED_SLAB, CRIMSON_SLAB);
 
 	public static final MaterialTag ALL_WOOD = new MaterialTag(LOGS, WOOD, WOOD_STAIRS, WOOD_SLABS);
 
@@ -137,29 +139,50 @@ public class MaterialTag implements Tag<Material> {
 
 	@Getter
 	private static final Map<String, Tag<Material>> tags = new HashMap<String, Tag<Material>>() {{
-		try {
-			List<Field> fields = new ArrayList<Field>() {{
-				addAll(Arrays.asList(MaterialTag.class.getFields()));
-				addAll(Arrays.asList(Tag.class.getFields()));
-			}};
+		List<Field> fields = new ArrayList<Field>() {{
+			addAll(Arrays.asList(MaterialTag.class.getFields()));
+			addAll(Arrays.asList(Tag.class.getFields()));
+		}};
 
-			for (Field field : fields) {
+		for (Field field : fields) {
+			try {
 				field.setAccessible(true);
 				if (field.getType() == Tag.class || field.getType() == MaterialTag.class) {
 					Tag<Material> materialTag = (Tag<Material>) field.get(null);
+
 					try {
 						Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
-						put(field.getName(), materialTag);
 					} catch (NoSuchMethodException ignore) {}
+
+					put(field.getName(), materialTag);
 				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
 		}
 	}};
 
+	static {
+		for (Field field : MaterialTag.class.getFields()) {
+			try {
+				field.setAccessible(true);
+				if (field.getType() == MaterialTag.class) {
+					MaterialTag materialTag = (MaterialTag) field.get(null);
+
+					try {
+						Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
+					} catch (NoSuchMethodException ignore) {}
+
+					materialTag.key = new NamespacedKey(BNCore.getInstance(), field.getName());
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
 	private final EnumSet<Material> materials;
-	private final NamespacedKey key = null;
+	private NamespacedKey key = null;
 
 	public MaterialTag(EnumSet<Material> materials) {
 		this.materials = materials.clone();

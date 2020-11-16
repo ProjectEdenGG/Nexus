@@ -4,8 +4,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.Pagination;
-import fr.minuskube.inv.content.SlotIterator;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.trust.TrustFeature;
@@ -18,7 +16,6 @@ import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,7 +26,6 @@ import java.util.stream.Collectors;
 public class TrustProvider extends MenuUtils implements InventoryProvider {
 	private final Trust trust;
 	private final Runnable back;
-	private final TrustService service = new TrustService();
 	private final AtomicReference<Trust.Type> filterType = new AtomicReference<>();
 
 	public TrustProvider(Trust trust, Runnable back) {
@@ -38,15 +34,11 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public static void open(Player player) {
-		open(player, 1);
+		open(player, null);
 	}
 
 	public static void open(Player player, Runnable back) {
-		open(player, 1, back, null);
-	}
-
-	public static void open(Player player, int page) {
-		open(player, page, null, null);
+		open(player, 0, back, null);
 	}
 
 	public static void open(Player player, int page, Runnable back, InventoryProvider provider) {
@@ -127,24 +119,6 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 			filterType.set(finalNext);
 			refresh();
 		}));
-	}
-
-	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items) {
-		Pagination page = contents.pagination();
-		int perPage = 36;
-		page.setItemsPerPage(perPage);
-		page.setItems(items.toArray(new ClickableItem[0]));
-		if (page.getPage() > items.size() / perPage)
-			page.page(items.size() / perPage);
-		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
-
-		int curPage = page.getPage() + 1;
-		if (!page.isFirst())
-			contents.set(5, 0, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, Math.max(curPage - 1, 1)),
-					"&fPrevious Page"), e -> open(player, page.previous().getPage())));
-		if (!page.isLast())
-			contents.set(5, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, curPage + 1),
-					"&fNext Page"), e -> open(player, page.next().getPage())));
 	}
 
 	@Override
