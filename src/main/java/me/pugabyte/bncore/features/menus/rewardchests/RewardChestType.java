@@ -10,7 +10,8 @@ import org.bukkit.inventory.ItemStack;
 public enum RewardChestType {
 	ALL,
 	VOTE,
-	MYSTERY;
+	MYSTERY,
+	PUGMAS;
 
 	ItemStack item = new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eMystery Chest Key")
 			.lore(" ").lore("&3Type: &e" + StringUtils.camelCase(name()))

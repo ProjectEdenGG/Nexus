@@ -3,13 +3,18 @@ package me.pugabyte.bncore.features.holidays.pugmas20;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.pugmas20.menu.AdventMenu;
+import me.pugabyte.bncore.features.holidays.pugmas20.models.QuestNPC;
+import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.time.LocalDateTime;
@@ -56,5 +61,14 @@ public class Pugmas20 implements Listener {
 
 	public static boolean isAtPugmas(Player player) {
 		return WGUtils.isInRegion(player.getLocation(), region);
+	}
+
+	@EventHandler
+	public void onNPCClick(NPCRightClickEvent event) {
+		QuestNPC npc = QuestNPC.getByID(event.getNPC().getId());
+		if (npc == null) return;
+		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", Time.SECOND.x(2)))
+			return;
+		npc.sendScript(event.getClicker());
 	}
 }

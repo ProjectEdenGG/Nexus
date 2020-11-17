@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.bncore.features.holidays.QuestStage;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 
@@ -28,5 +29,17 @@ public class Pugmas20User extends PlayerOwnedObject {
 
 	// Advent
 	private List<Integer> foundDays = new ArrayList<>();
+
+	// Quest - Light The Tree
+	private QuestStage lightTreeStage = QuestStage.NOT_STARTED;
+
+	// Quest - Toy Testing
+	private QuestStage toyTestingStage = QuestStage.NOT_STARTED;
+
+	// Quest - Ornament Vendor
+	private QuestStage ornamentVendorStage = QuestStage.NOT_STARTED;
+
+	// Quest - The Mines
+	private QuestStage minesStage = QuestStage.NOT_STARTED;
 
 }
