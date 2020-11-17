@@ -152,9 +152,8 @@ public class MaterialTag implements Tag<Material> {
 
 					try {
 						Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
+						put(field.getName(), materialTag);
 					} catch (NoSuchMethodException ignore) {}
-
-					put(field.getName(), materialTag);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -171,9 +170,8 @@ public class MaterialTag implements Tag<Material> {
 
 					try {
 						Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
+						materialTag.key = new NamespacedKey(BNCore.getInstance(), field.getName());
 					} catch (NoSuchMethodException ignore) {}
-
-					materialTag.key = new NamespacedKey(BNCore.getInstance(), field.getName());
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

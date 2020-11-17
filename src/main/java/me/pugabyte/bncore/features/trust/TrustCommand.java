@@ -37,14 +37,14 @@ public class TrustCommand extends CustomCommand {
 	@Description("Open the trust menu")
 	@Path
 	void run() {
-		TrustProvider.open(player());
+		TrustProvider.openMenu(player());
 	}
 
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("edit")
 	void edit() {
-		TrustProvider.open(player());
+		TrustProvider.openMenu(player());
 	}
 
 	@Description("Open the trust menu for the specified player")

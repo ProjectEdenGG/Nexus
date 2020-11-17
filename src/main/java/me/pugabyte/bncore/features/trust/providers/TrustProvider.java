@@ -33,15 +33,16 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 		this.back = back;
 	}
 
-	public static void open(Player player) {
-		open(player, null);
+	// TODO Comply with MenuUtils
+	public static void openMenu(Player player) {
+		openMenu(player, null);
 	}
 
-	public static void open(Player player, Runnable back) {
-		open(player, 0, back, null);
+	public static void openMenu(Player player, Runnable back) {
+		openMenu(player, 0, back, null);
 	}
 
-	public static void open(Player player, int page, Runnable back, InventoryProvider provider) {
+	public static void openMenu(Player player, int page, Runnable back, InventoryProvider provider) {
 		Trust trust = new TrustService().get(player);
 		int rows = (int) Math.min(6, Math.ceil(trust.getAll().size() / 9) + 3);
 		SmartInventory.builder()
@@ -53,7 +54,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void refresh() {
-		open(trust.getPlayer(), 1, back, this);
+		openMenu(trust.getPlayer(), 1, back, this);
 	}
 
 	@Override
@@ -99,7 +100,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 								OfflinePlayer trusted = Utils.getPlayer(lines[0]);
 								TrustPlayerProvider.open(player, trusted);
 							} else
-								open(player);
+								openMenu(player);
 						})
 						.open(player)));
 

@@ -40,7 +40,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 
 	@Path
 	void run() {
-		DumpsterProvider.open(player());
+		new DumpsterProvider().open(player());
 	}
 
 	@Path("debug")
@@ -69,7 +69,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 		private final Dumpster dumpster = service.get();
 		private final String PREFIX = Commands.get(DumpsterDivingCommand.class).getPrefix();
 
-		public static void open(Player player) {
+		public void open(Player player) {
 			if (new DumpsterService().get().getItems().size() == 0)
 				throw new InvalidInputException("Dumpster is empty");
 

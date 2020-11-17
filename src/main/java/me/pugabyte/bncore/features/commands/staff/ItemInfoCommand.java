@@ -3,15 +3,16 @@ package me.pugabyte.bncore.features.commands.staff;
 import de.tr7zw.nbtapi.NBTItem;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
+import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.MaterialTag;
+import me.pugabyte.bncore.utils.SerializationUtils.JSON;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,17 +30,20 @@ public class ItemInfoCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path("[material]")
+	void itemInfo(Material material) {
+		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
+
+		sendJson(tool);
+	}
+
 	@Path("extended [material]")
 	void extended(Material material) {
-		ItemStack tool;
-		if (material == null) {
-			tool = getToolRequired();
-			material = tool.getType();
-		} else
-			tool = new ItemStack(material);
+		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
+		material = tool.getType();
 
 		line(5);
-		sendJson(player(), tool);
+		sendJson(tool);
 		line();
 		send("Namespaced key: " + material.getKey());
 		send("Blast resistance: " + material.getBlastResistance());
@@ -70,20 +74,9 @@ public class ItemInfoCommand extends CustomCommand {
 		line();
 	}
 
-	@Path("[material]")
-	void itemInfo(Material material) {
-		ItemStack tool;
-		if (material == null)
-			tool = getToolRequired();
-		else
-			tool = new ItemStack(material);
-
-		sendJson(player(), tool);
-	}
-
-	private void sendJson(Player player, ItemStack tool) {
-		send(player, "");
-		send(player, "Material: " + tool.getType() + " (" + tool.getType().ordinal() + ")");
+	private void sendJson(ItemStack tool) {
+		line();
+		send("Material: " + tool.getType() + " (" + tool.getType().ordinal() + ")");
 
 		if (!isNullOrAir(tool)) {
 			final String nbtString = getNBTString(tool);
@@ -93,16 +86,23 @@ public class ItemInfoCommand extends CustomCommand {
 				if (length > 256) {
 					Tasks.async(() -> {
 						if (length < 32000) // max char limit in command blocks
-							send(player, "NBT: " + colorize(nbtString));
+							send("NBT: " + colorize(nbtString));
 						String url = paste(stripColor(nbtString));
-						send(player, json("&e&l[Click to Open NBT]").url(url).hover(url));
+						send(json("&e&l[Click to Open NBT]").url(url).hover(url));
 					});
 				} else {
-					send(player, "NBT: " + colorize(nbtString));
-					send(player, json("&e&l[Click to Copy NBT]").suggest(nbtString));
+					send("NBT: " + colorize(nbtString));
+					send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(nbtString));
 				}
 			}
 		}
+	}
+
+	@Path("serialize json [material] [amount]")
+	void serializeJson(Material material, @Arg("1") int amount) {
+		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
+
+		send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(JSON.serializeItemStack(tool)));
 	}
 
 	@Nullable

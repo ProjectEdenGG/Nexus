@@ -6,12 +6,13 @@ import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import me.pugabyte.bncore.utils.SerializationUtils.JSON;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemStackConverter extends TypeConverter implements SimpleValueConverter {
 
 	public ItemStackConverter(Mapper mapper) {
-		super(ItemStack.class);
+		super(ItemStack.class, CraftItemStack.class);
 	}
 
 	@Override

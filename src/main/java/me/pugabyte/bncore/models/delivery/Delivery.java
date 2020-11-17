@@ -7,22 +7,28 @@ import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.bncore.features.delivery.DeliverWorldMenu;
+import me.pugabyte.bncore.features.delivery.DeliveryWorldMenu;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
-import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.WorldGroup;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import static me.pugabyte.bncore.utils.SoundUtils.playSound;
 
 @Data
 @Builder
@@ -36,31 +42,38 @@ public class Delivery extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	@Embedded
-	private List<ItemStack> survivalItems = new ArrayList<>();
-	@Embedded
-	private List<ItemStack> skyblockItems = new ArrayList<>();
+	private Map<WorldGroup, List<ItemStack>> items = new HashMap<>();
 
-	public void add(ItemStack... itemStack) {
-		add(Arrays.asList(itemStack));
+	@Getter
+	private static final List<WorldGroup> supportedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE, WorldGroup.SKYBLOCK);
+
+	public void add(WorldGroup worldGroup, ItemStack... items) {
+		add(worldGroup, Arrays.asList(items));
 	}
 
-	public void add(List<ItemStack> itemStacks) {
-		Tasks.sync(() -> new DeliverWorldMenu().open(getPlayer(), itemStacks));
+	public void add(WorldGroup worldGroup, List<ItemStack> items) {
+		List<ItemStack> existing = get(worldGroup);
+		existing.addAll(items);
+		this.items.put(worldGroup, existing);
 	}
 
-	public void addToSurvival(ItemStack... itemStack) {
-		addToSurvival(Arrays.asList(itemStack));
+	public List<ItemStack> get(WorldGroup worldGroup) {
+		return items.getOrDefault(worldGroup, new ArrayList<>());
 	}
 
-	public void addToSurvival(Collection<? extends ItemStack> itemStacks) {
-		survivalItems.addAll(itemStacks);
+	public void setupDelivery(ItemStack item) {
+		new DeliveryWorldMenu(item).open(getPlayer());
 	}
 
-	public void addToSkyblock(ItemStack... itemStack) {
-		addToSkyblock(Arrays.asList(itemStack));
+	public void deliver(ItemStack item, WorldGroup worldGroup) {
+		List<ItemStack> items = get(worldGroup);
+
+		items.remove(item);
+		if (items.isEmpty())
+			this.items.remove(worldGroup);
+
+		Utils.giveItem(getPlayer(), item);
+		playSound(getPlayer(), Sound.ENTITY_ITEM_PICKUP);
 	}
 
-	public void addToSkyblock(Collection<? extends ItemStack> itemStacks) {
-		skyblockItems.addAll(itemStacks);
-	}
 }

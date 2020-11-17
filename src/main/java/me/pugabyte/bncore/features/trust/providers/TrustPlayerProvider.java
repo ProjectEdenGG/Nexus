@@ -41,7 +41,7 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> TrustProvider.open(player));
+		addBackItem(contents, e -> TrustProvider.openMenu(player));
 
 		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(trusted).name("&f" + trusted.getName()).build()));
 
@@ -71,7 +71,7 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 							for (Type type : Type.values()) {
 								trust.get(type).remove(trusted.getUniqueId());
 								service.save(trust);
-								TrustProvider.open(player);
+								TrustProvider.openMenu(player);
 							}
 						})
 						.onCancel(e2 -> refresh())

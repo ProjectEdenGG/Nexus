@@ -95,7 +95,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 						.name("&eEdit Trusts")
 						.loreize(false)
 						.lore("&fManage access to||&fall your homes").build(),
-				e -> TrustProvider.open(homeOwner.getPlayer(), this::refresh)
+				e -> TrustProvider.openMenu(homeOwner.getPlayer(), this::refresh)
 		));
 	}
 

@@ -31,12 +31,12 @@ public class MaterialTagCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("materials [tag]")
+	@Path("materials <tag>")
 	void materials(Tag<Material> tag) {
 		new MaterialTagMaterialsMenu(tag).open(player());
 	}
 
-	@Path("find [material]")
+	@Path("find <material>")
 	void materialTag(Material material) {
 		send(PREFIX + "Applicable tags: " + String.join(", ", MaterialTag.getApplicable(material).keySet()));
 	}
@@ -61,10 +61,6 @@ public class MaterialTagCommand extends CustomCommand {
 
 		public MaterialTagMaterialsMenu(Tag<Material> materialTag) {
 			this.materialTag = materialTag;
-		}
-
-		public void open(Player viewer) {
-			open(viewer, 0);
 		}
 
 		@Override

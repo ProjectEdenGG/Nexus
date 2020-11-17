@@ -63,10 +63,18 @@ import java.util.stream.Collectors;
 import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.atticKey;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.HalloweenIsland.basketItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.ancientPickaxe;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.blessedHoneyBottle;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.honeyStroopWafel;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.rareFlower;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.relic;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.specialPrize;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland.stroofWafel;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsland.arcadePieces;
 import static me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland.presentItem;
-import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.anzacBiscuit;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.goldenSyrup;
+import static me.pugabyte.bncore.features.holidays.bearfair20.islands.SummerDownUnderIsland.peanuts;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
@@ -456,10 +464,8 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 						service.save(user);
 
 						BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
-						DeliveryService service = new DeliveryService();
-						Delivery delivery = service.get(player);
-						delivery.add(bearFairStoreMap.getSplatterMap());
-						service.save(delivery);
+						Delivery delivery = new DeliveryService().get(player);
+						delivery.setupDelivery(bearFairStoreMap.getSplatterMap());
 						send(player, PREFIX + "&3You bought &e" + title + " &3for &e" + price
 								+ ", &3You now have &e" + userPoints.get() + " BFP");
 						player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);

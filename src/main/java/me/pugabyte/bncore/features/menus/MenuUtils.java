@@ -35,6 +35,10 @@ import static me.pugabyte.bncore.utils.StringUtils.loreize;
 
 public abstract class MenuUtils {
 
+	public void open(Player player) {
+		open(player, 0);
+	}
+
 	public void open(Player viewer, int page) {}
 
 	protected ItemStack addGlowing(ItemStack itemStack) {
