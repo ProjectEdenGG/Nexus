@@ -79,7 +79,7 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	public ItemBuilder name(String displayName) {
-		itemMeta.setDisplayName("&f" + colorize(displayName));
+		itemMeta.setDisplayName(colorize("&f" + displayName));
 		return this;
 	}
 

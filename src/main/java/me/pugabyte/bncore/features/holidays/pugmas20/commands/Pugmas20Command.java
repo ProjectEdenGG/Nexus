@@ -14,7 +14,6 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.pugmas20.Pugmas20Service;
 import me.pugabyte.bncore.models.pugmas20.Pugmas20User;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
@@ -26,14 +25,10 @@ import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.isSecondCha
 @Aliases("pugmas")
 public class Pugmas20Command extends CustomCommand {
 	private final Pugmas20Service service = new Pugmas20Service();
-	private WorldEditUtils worldEditUtils;
 	String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
-
 
 	public Pugmas20Command(CommandEvent event) {
 		super(event);
-		if (isPlayer())
-			worldEditUtils = new WorldEditUtils(player());
 	}
 
 	@Path()
@@ -112,4 +107,11 @@ public class Pugmas20Command extends CustomCommand {
 	void treeFeller(PugmasTreeType treeType, int id) {
 		treeType.feller(player(), id);
 	}
+
+	@Permission("group.admin")
+	@Path("tree get")
+	void treeGet() {
+		send(PREFIX + "You are looking at a " + camelCase(PugmasTreeType.of(getTargetBlock().getType())) + " tree");
+	}
+
 }

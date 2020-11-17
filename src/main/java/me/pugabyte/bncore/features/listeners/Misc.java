@@ -65,6 +65,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static me.pugabyte.bncore.utils.Utils.getTool;
+import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 public class Misc implements Listener {
 
@@ -359,6 +360,10 @@ public class Misc implements Listener {
 			return;
 
 		ItemFrame itemFrame = (ItemFrame) entity;
+
+		if (!isNullOrAir(itemFrame.getItem()))
+			return;
+
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
 	}
 

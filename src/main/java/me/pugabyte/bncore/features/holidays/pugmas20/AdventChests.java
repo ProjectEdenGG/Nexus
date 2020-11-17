@@ -40,8 +40,7 @@ public class AdventChests implements Listener {
 	public static List<AdventChest> adventChestList = new ArrayList<>();
 	public static ItemBuilder adventLootHead;
 	//
-	//TODO PUGMAS - Change to final location
-	private static final Block lootOrigin = pugmasLoc(-959, 10, -2090).getBlock();
+	private static final Block lootOrigin = pugmasLoc(867, 45, 579).getBlock();
 	private static final String InvTitle = "Advent Chest #";
 	private static UUID adventLootHeadOwner = null;
 	private static final String adventLootHeadTitle = "Pugmas Advent Skull";
@@ -72,7 +71,7 @@ public class AdventChests implements Listener {
 	}
 
 	private void loadChestLocations() {
-		adventChestList.add(new AdventChest(1, chestLoc(-959, 11, -2081), District.UNKNOWN));
+		adventChestList.add(new AdventChest(1, chestLoc(867, 46, 588), District.UNKNOWN));
 		// TODO PUGMAS - Add all chest locations
 	}
 
@@ -139,8 +138,10 @@ public class AdventChests implements Listener {
 		if (skullOwner == null) return;
 		if (!skullOwner.equals(adventLootHeadOwner)) return;
 
-		event.setCancelled(true);
 		String lore = skull.getLore().get(0);
+		if(!lore.contains(adventLootHeadLore)) return;
+
+		event.setCancelled(true);
 		int day = Integer.parseInt(lore.replaceAll(adventLootHeadLore, ""));
 
 		if (openAdventLootInv(player, day))

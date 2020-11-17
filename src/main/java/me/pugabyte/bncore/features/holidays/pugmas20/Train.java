@@ -5,7 +5,6 @@ import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -24,11 +23,15 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.WEUtils;
 import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.pugmasLoc;
+/*
+-890, -2186
+ 935,   482
+1826  2666
 
+ */
 public class Train {
 	// Options
-	private static final World world = Bukkit.getWorld("buildadmin");
-	private static final Location origin = pugmasLoc(-926, 17, -2294);
+	private static final Location origin = pugmasLoc(900, 52, 375);
 	private static final int frameTime = 3;
 	private static final int crossingThreshold = 30;
 	//private static final int stationStopTime = Time.SECOND.x(15);
@@ -224,6 +227,7 @@ public class Train {
 		trackLoc.set(trackLoc.get().getRelative(1, 0, 0));
 
 		smokeLoc.set(smokeLoc.get().getRelative(1, 0, 0));
+		World world = Pugmas20.getWorld();
 		if (world != null) {
 			double x = 0;
 			double y = 3;

@@ -17,9 +17,8 @@ import java.time.LocalDateTime;
 public class Pugmas20 implements Listener {
 	@Getter
 	public static final String region = "pugmas20";
-	// TODO PUGMAS: Change to final world
 	@Getter
-	public static final World world = Bukkit.getWorld("buildadmin");
+	public static final World world = Bukkit.getWorld("safepvp");
 	@Getter
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas20");
 	public static final WorldGuardUtils WGUtils = new WorldGuardUtils(world);

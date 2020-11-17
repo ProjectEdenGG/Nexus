@@ -32,6 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -47,6 +48,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
+import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -94,6 +96,13 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected EquipmentSlot getHandWithToolRequired() {
 		return Utils.getHandWithToolRequired(player());
+	}
+
+	protected Block getTargetBlock() {
+		Block targetBlockExact = player().getTargetBlockExact(500);
+		if (isNullOrAir(targetBlockExact))
+			error("You must be looking at a block");
+		return targetBlockExact;
 	}
 
 	protected void send(CommandSender sender, String message) {

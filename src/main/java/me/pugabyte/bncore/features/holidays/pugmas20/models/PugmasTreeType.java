@@ -1,8 +1,8 @@
 package me.pugabyte.bncore.features.holidays.pugmas20.models;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.Getter;
 import me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20;
-import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
@@ -17,44 +17,55 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
 import static me.pugabyte.bncore.utils.BlockUtils.createDistanceSortedQueue;
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 public enum PugmasTreeType {
-	BLOODWOOD(2),
-	MAHOGANY(4),
-	EUCALYPTUS(3),
-	WILLOW(2),
-	CRYSTAL(0),
-	MAGIC(0),
-	OAK(1),
-	TEAK(3),
-	MAPLE(4),
-	BLISTERWOOD(3);
+	BLOODWOOD(Material.CRIMSON_HYPHAE),
+	MAHOGANY(Material.DARK_OAK_WOOD),
+	EUCALYPTUS(Material.STRIPPED_BIRCH_WOOD),
+	WILLOW(Material.STRIPPED_SPRUCE_WOOD),
+	CRYSTAL(Material.ICE),
+	MAGIC(Material.STRIPPED_WARPED_HYPHAE),
+	OAK(Material.OAK_WOOD),
+	TEAK(Material.STRIPPED_OAK_WOOD),
+	MAPLE(Material.ACACIA_WOOD),
+	BLISTERWOOD(Material.BONE_BLOCK);
+
+	@Getter
+	private final Material logs;
 
 	private final Map<Integer, Paste> pasters = new HashMap<>();
 	private final Map<Integer, Queue<Location>> queues = new HashMap<>();
 
-	PugmasTreeType(int count) {
-		Tasks.async(() -> {
-			if (count > 0)
-				for (int id = 1; id <= count; id++) {
-					if (getRegion(id) == null)
-						continue;
+	PugmasTreeType(Material logs) {
+		this.logs = logs;
 
-					getPaster(id);
-					getQueue(id);
-				}
+		Tasks.async(() -> {
+			for (int id = 1; id <= 10; id++) {
+				if (getRegion(id) == null)
+					continue;
+
+				getPaster(id);
+				getQueue(id);
+			}
 		});
 	}
 
+	public static PugmasTreeType of(Material logs) {
+		for (PugmasTreeType treeType : values())
+			if (treeType.getLogs() == logs)
+				return treeType;
+
+		throw new InvalidInputException("Pugmas Tree with logs " + camelCase(logs) + " not found");
+	}
+
 	public void build(int id) {
-//		PaperLib.getChunkAtAsync(Pugmas20.WEUtils.toLocation(region.getMinimumPoint())).thenRun(() ->
 		getPaster(id).buildQueue();
 	}
 
@@ -106,7 +117,7 @@ public enum PugmasTreeType {
 
 	public void feller(Player player, int id) {
 		Tasks.async(() -> {
-			Queue<Location> queue = new PriorityQueue<>(getQueue(id));
+			Queue<Location> queue = new LinkedList<>(getQueue(id));
 
 			int wait = 0;
 			int blocksPerTick = Math.max(queue.size() / 60, 1);
@@ -121,7 +132,7 @@ public enum PugmasTreeType {
 
 					Tasks.wait(wait, () -> {
 						Block block = poll.getBlock();
-						if (new ArrayList<>().contains(block.getType())) // TODO
+						if (block.getType() == logs)
 							Utils.giveItems(player, block.getDrops());
 						block.setType(Material.AIR);
 					});
@@ -138,7 +149,7 @@ public enum PugmasTreeType {
 		new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
 			put("tree", name());
 			put("id", id);
-		}}, LocalDateTime.now().plusMinutes(1))); //RandomUtils.randomInt(3, 5))));
+		}}, LocalDateTime.now().plusSeconds(1))); //RandomUtils.randomInt(3, 5))));
 	}
 
 	static {
@@ -157,8 +168,5 @@ public enum PugmasTreeType {
 		});
 	}
 
-	@Path("taskTest <message...>")
-	void taskTest(String message) {
-	}
 }
 

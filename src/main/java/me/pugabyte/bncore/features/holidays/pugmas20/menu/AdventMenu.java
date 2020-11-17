@@ -18,8 +18,7 @@ import java.util.LinkedHashMap;
 import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.pugmasLoc;
 
 public class AdventMenu {
-	//TODO PUGMAS - Change to final location
-	private static final Location adventHeadsLoc = pugmasLoc(-956, 9, -2096);
+	private static final Location adventHeadsLoc = pugmasLoc(870, 44, 573);
 	public static final Block origin = adventHeadsLoc.getBlock().getRelative(BlockFace.UP);
 	@Getter
 	private static final LinkedHashMap<SlotPos, ItemBuilder> adventHeadMap = new LinkedHashMap<>();
