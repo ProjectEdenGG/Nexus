@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.features.discord.Discord;
-import me.pugabyte.bncore.features.holidays.halloween20.ShootingRange;
+import me.pugabyte.bncore.features.events.y2020.halloween20.ShootingRange;
 import me.pugabyte.bncore.features.minigames.managers.ArenaManager;
 import me.pugabyte.bncore.features.minigames.managers.MatchManager;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;

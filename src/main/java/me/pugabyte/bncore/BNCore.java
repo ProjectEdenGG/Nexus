@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.bncore.features.chat.Chat;
 import me.pugabyte.bncore.features.discord.Discord;
-import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
+import me.pugabyte.bncore.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.listeners.LiteBans;
 import me.pugabyte.bncore.features.menus.SignMenuFactory;
 import me.pugabyte.bncore.framework.commands.Commands;

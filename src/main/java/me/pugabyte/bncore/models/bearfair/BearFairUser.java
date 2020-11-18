@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.LocationConverter;

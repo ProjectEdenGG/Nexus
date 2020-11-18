@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.safecracker;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.discord.Discord;
-import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
+import me.pugabyte.bncore.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.safecracker.menus.SafeCrackerInventories;
 import me.pugabyte.bncore.framework.annotations.Disabled;

@@ -1,7 +1,7 @@
 package me.pugabyte.bncore.features.listeners;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Basketball;
+import me.pugabyte.bncore.features.events.y2020.bearfair20.fairgrounds.Basketball;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.events.y2020.bearfair20.BearFair20.WGUtils;
 
 public class DoubleJump implements Listener {
 	static final int COOLDOWN = 0;
