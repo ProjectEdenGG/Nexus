@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.holidays.pugmas20.commands;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.features.holidays.pugmas20.AdventChests;
 import me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20;
 import me.pugabyte.bncore.features.holidays.pugmas20.Train;
@@ -13,10 +14,13 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.pugmas20.Pugmas20Service;
 import me.pugabyte.bncore.models.pugmas20.Pugmas20User;
+import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.isBeforePugmas;
 import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.isPastPugmas;
@@ -109,9 +113,58 @@ public class Pugmas20Command extends CustomCommand {
 	}
 
 	@Permission("group.admin")
+	@Path("tree feller all")
+	void treeFeller() {
+		for (PugmasTreeType treeType : PugmasTreeType.values())
+			for (Integer id : treeType.getPasters().keySet())
+				treeType.feller(player(), id);
+	}
+
+	@Permission("group.admin")
+	@Path("tree copy <treeType>")
+	void treeCopy(PugmasTreeType treeType) {
+		runCommand("/copy -m orange_wool,snow," + treeType.getAllMaterialsString());
+	}
+
+	@Permission("group.admin")
+	@Path("tree save <treeType> <id>")
+	void treeSave(PugmasTreeType treeType, int id) {
+		runCommand("mcmd /copy -m snow," + treeType.getAllMaterialsString() + " ;; /schem save pugmas20/trees/" + treeType.name().toLowerCase() + "/" + id + " -f");
+	}
+
+	@Permission("group.admin")
+	@Path("tree region <treeType> <id>")
+	void treeRegion(PugmasTreeType treeType, int id) {
+		ProtectedRegion region = treeType.getRegion(id);
+		String command = region == null ? "define" : "redefine";
+		runCommand("mcmd /here ;; rg " + command + " pugmas20_trees_" + treeType.name().toLowerCase() + "_" + id);
+	}
+
+	@Permission("group.admin")
 	@Path("tree get")
 	void treeGet() {
 		send(PREFIX + "You are looking at a " + camelCase(PugmasTreeType.of(getTargetBlock().getType())) + " tree");
+	}
+
+	@Permission("group.admin")
+	@Path("tree counts")
+	void treeCounts() {
+		int total = 0;
+		JsonBuilder json = json(PREFIX + "Pugmas tree counts:");
+		for (PugmasTreeType treeType : PugmasTreeType.values()) {
+			Set<Integer> ids = treeType.getPasters().keySet();
+			if (ids.size() == 0)
+				continue;
+
+			String collect = ids.stream().map(String::valueOf).collect(Collectors.joining(", "));
+			json.newline().next("&e " + camelCase(treeType) + " &7- " + ids.size() + " &3[" + collect + "]");
+			total += ids.size();
+		}
+
+		if (total == 0)
+			error("No pugmas trees found");
+
+		send(json.newline().next("&3Total: &e" + total));
 	}
 
 }
