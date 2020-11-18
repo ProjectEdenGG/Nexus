@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
-import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.SerializationUtils.JSON;
 import me.pugabyte.bncore.utils.Tasks;
@@ -25,26 +24,23 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.isAtPugmas;
+import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.pugmasItem;
 import static me.pugabyte.bncore.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.bncore.utils.SoundUtils.playSound;
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 public class Ores implements Listener {
 
 	public static String taskId = "pugmas-ore-regen";
 
-	private static final List<Material> ores = Arrays.asList(Material.COAL_ORE, Material.IRON_ORE, Material.GOLD_ORE,
-			Material.REDSTONE_ORE, Material.LAPIS_ORE, Material.EMERALD_ORE, Material.DIAMOND_ORE);
-
 	@Getter
-	private static final ItemStack minersPickaxe = new ItemBuilder(Material.IRON_PICKAXE).name("Miner's Pickaxe").lore("Pugmas20 Item").build();
+	private static final ItemStack minersPickaxe = pugmasItem(Material.IRON_PICKAXE).name("Miner's Pickaxe").build();
 	@Getter
-	private static final ItemStack minersSieve = new ItemBuilder(Material.HOPPER).name("Miner's Sieve").lore("Pugmas20 Item").build();
+	private static final ItemStack minersSieve = pugmasItem(Material.HOPPER).name("Miner's Sieve").build();
 
 	public Ores() {
 		BNCore.registerListener(this);
@@ -60,7 +56,8 @@ public class Ores implements Listener {
 
 		Block block = event.getBlock();
 		Material material = block.getType();
-		if (!ores.contains(material))
+		OreType oreType = OreType.ofOre(material);
+		if (oreType == null)
 			return;
 
 		ItemStack mainHand = player.getInventory().getItemInMainHand();
@@ -69,7 +66,7 @@ public class Ores implements Listener {
 
 		event.setCancelled(true);
 		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
-		player.getInventory().addItem(new ItemStack(material));
+		player.getInventory().addItem(oreType.getOre());
 
 		scheduleRegen(block);
 		block.setType(Material.STONE);
@@ -117,7 +114,7 @@ public class Ores implements Listener {
 		new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
 			put("location", JSON.serializeLocation(block.getLocation()));
 			put("material", block.getType());
-		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3, 10))));
+		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3, 15))));
 //		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));
 	}
 
@@ -135,5 +132,32 @@ public class Ores implements Listener {
 				service.complete(task);
 			});
 		});
+	}
+
+	public enum OreType {
+		LIGHT_ANIMICA(Material.DIAMOND_ORE, Material.DIAMOND),
+		NECRITE(Material.EMERALD_ORE, Material.EMERALD),
+		ADAMANTITE(Material.REDSTONE_ORE, Material.NETHER_BRICK),
+		MITHRIL(Material.LAPIS_ORE, Material.LAPIS_LAZULI),
+		IRON_NUGGET(Material.IRON_ORE, Material.IRON_NUGGET),
+		COAL(Material.COAL_ORE, Material.CHARCOAL),
+		LUMINITE_NUGGET(Material.GOLD_ORE, Material.GOLD_NUGGET);
+
+		@Getter
+		private final ItemStack ore;
+		@Getter
+		private final ItemStack ingot;
+
+		OreType(Material ore, Material ingot) {
+			this.ore = pugmasItem(ore).name(camelCase(name() + " Ore")).build();
+			this.ingot = pugmasItem(ingot).name(camelCase(name())).build();
+		}
+
+		public static OreType ofOre(Material ore) {
+			for (OreType oreType : OreType.values())
+				if (oreType.getOre().getType() == ore)
+					return oreType;
+			return null;
+		}
 	}
 }
