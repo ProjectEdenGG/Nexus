@@ -11,12 +11,13 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.Talki
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -181,7 +182,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 					player.getInventory().remove(greatNortherns);
 					Tasks.wait(Time.SECOND.x(7), () -> {
 						chime(player);
-						Utils.giveItem(player, peanuts);
+						ItemUtils.giveItem(player, peanuts);
 					});
 					nextStep(player); // 4
 					return endQuest;
@@ -218,7 +219,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				nextStep(player); // 5
 				Tasks.wait(Time.SECOND.x(6), () -> {
-					Utils.giveItem(player, goldenSyrup);
+					ItemUtils.giveItem(player, goldenSyrup);
 					chime(player);
 				});
 				return startQuest;
@@ -277,7 +278,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						finalGold.setAmount(finalGold.getAmount() - 1);
 						removeAnzacIngredients(player);
 						Tasks.wait(Time.SECOND.x(5), () -> {
-							Utils.giveItem(player, anzacBiscuit);
+							ItemUtils.giveItem(player, anzacBiscuit);
 							chime(player);
 						});
 					});
@@ -348,7 +349,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				nextStep(player); // 8
 				Tasks.wait(Time.SECOND.x(5), () -> {
-					Utils.giveItem(player, sifter);
+					ItemUtils.giveItem(player, sifter);
 					chime(player);
 				});
 				return startQuest;
@@ -402,7 +403,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 	private static ItemStack hasFoolsGold(Player player) {
 		ItemStack[] contents = player.getInventory().getContents();
 		for (ItemStack content : contents) {
-			if (Utils.isNullOrAir(content)) continue;
+			if (ItemUtils.isNullOrAir(content)) continue;
 			if (!BearFair20.isBFItem(content)) continue;
 			if (!content.getType().equals(Material.GOLD_NUGGET)) continue;
 
@@ -419,7 +420,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 	private static ItemStack hasGold(Player player) {
 		ItemStack[] contents = player.getInventory().getContents();
 		for (ItemStack content : contents) {
-			if (Utils.isNullOrAir(content)) continue;
+			if (ItemUtils.isNullOrAir(content)) continue;
 			if (!BearFair20.isBFItem(content)) continue;
 			if (!content.getType().equals(Material.GOLD_NUGGET)) continue;
 			return content;
@@ -442,7 +443,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 		boolean peanutsBool = true;
 		boolean syrupBool = true;
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (Utils.isNullOrAir(content)) continue;
+			if (ItemUtils.isNullOrAir(content)) continue;
 
 			ItemStack item = content.clone();
 			item.setAmount(1);
@@ -477,7 +478,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 		if (!BearFair20.enableQuests) return;
 		Block clicked = event.getClickedBlock();
-		if (Utils.isNullOrAir(clicked)) return;
+		if (BlockUtils.isNullOrAir(clicked)) return;
 
 		Material material = clicked.getType();
 		if (!material.equals(Material.BARREL)) return;
@@ -491,7 +492,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 		int step = user.getQuest_SDU_Step();
 
 		if (step == 3 && !player.getInventory().contains(greatNortherns)) {
-			Utils.giveItem(player, greatNortherns);
+			ItemUtils.giveItem(player, greatNortherns);
 			player.playSound(clicked.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
 		}
 		event.setCancelled(true);
@@ -513,7 +514,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 			water = true;
 		else {
 			Block clicked = event.getClickedBlock();
-			if (!Utils.isNullOrAir(clicked) && clicked.getBlockData() instanceof Waterlogged) {
+			if (!BlockUtils.isNullOrAir(clicked) && clicked.getBlockData() instanceof Waterlogged) {
 				Waterlogged waterlogged = (Waterlogged) clicked.getBlockData();
 				if (waterlogged.isWaterlogged())
 					water = true;
@@ -523,7 +524,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 		if (!water) return;
 
 		ItemStack tool = event.getItem();
-		if (Utils.isNullOrAir(tool)) return;
+		if (ItemUtils.isNullOrAir(tool)) return;
 		if (!tool.equals(sifter)) return;
 
 		// Player is sifting
@@ -541,9 +542,9 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 			if (RandomUtils.chanceOf(10)) {
 				if (RandomUtils.chanceOf(75))
-					Utils.giveItem(player, foolsGold);
+					ItemUtils.giveItem(player, foolsGold);
 				else
-					Utils.giveItem(player, goldNugget);
+					ItemUtils.giveItem(player, goldNugget);
 			}
 		});
 	}

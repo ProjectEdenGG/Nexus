@@ -12,12 +12,13 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.arcademachine.Arca
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -133,7 +134,7 @@ public class MinigameNightIsland implements Listener, Island {
 					if (!user.isQuest_MGN_Finish()) {
 						user.setQuest_MGN_Finish(true);
 						service.save(user);
-						Utils.giveItem(player, arcadeToken);
+						ItemUtils.giveItem(player, arcadeToken);
 						chime(player);
 					}
 					return Collections.singletonList("Yo, thanks again for fixing the Arcade Cabinet! Next tourney is gonna be awesome!");
@@ -192,7 +193,7 @@ public class MinigameNightIsland implements Listener, Island {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Utils.isNullOrAir(clicked)) return;
+		if (BlockUtils.isNullOrAir(clicked)) return;
 
 		ProtectedRegion region = WGUtils.getProtectedRegion(arcadeRg);
 		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
@@ -216,7 +217,7 @@ public class MinigameNightIsland implements Listener, Island {
 		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
-		ItemStack tool = Utils.getTool(event.getPlayer());
+		ItemStack tool = ItemUtils.getTool(event.getPlayer());
 		if (!BearFair20.isBFItem(tool)) return;
 
 		for (ItemBuilder arcadePiece : arcadePieces) {
@@ -268,7 +269,7 @@ public class MinigameNightIsland implements Listener, Island {
 		if (getFoundPieces(player).contains(arcadePiece)) return;
 
 		foundPiece(player, arcadePiece);
-		Utils.giveItem(player, piece);
+		ItemUtils.giveItem(player, piece);
 		chime(player);
 
 	}
@@ -294,7 +295,7 @@ public class MinigameNightIsland implements Listener, Island {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Utils.isNullOrAir(clicked)) return;
+		if (BlockUtils.isNullOrAir(clicked)) return;
 
 		ProtectedRegion region = WGUtils.getProtectedRegion(solderRg);
 		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
@@ -308,7 +309,7 @@ public class MinigameNightIsland implements Listener, Island {
 
 		if (!user.isQuest_MGN_Start()) return;
 
-		ItemStack tool = Utils.getTool(player);
+		ItemStack tool = ItemUtils.getTool(player);
 		if (tool == null || tool.getItemMeta() == null || !BearFair20.isBFItem(tool)) return;
 		String toolName = tool.getItemMeta().getDisplayName();
 		if (!toolName.contains("Broken")) return;
@@ -413,7 +414,7 @@ public class MinigameNightIsland implements Listener, Island {
 		//
 		Tasks.wait(Time.SECOND.x(5), () -> {
 			armorStand.getEquipment().setItemInMainHand(air);
-			Utils.giveItem(player, getArcadePiece(piece));
+			ItemUtils.giveItem(player, getArcadePiece(piece));
 			Tasks.wait(10, () -> activeSolder = false);
 			world.playSound(finalLoc, Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
 		});

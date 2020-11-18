@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.shop.Shop.ExchangeType;
 import me.pugabyte.bncore.models.shop.Shop.Product;
 import me.pugabyte.bncore.models.shop.Shop.ShopGroup;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -134,7 +135,7 @@ public class AddProductProvider extends _ShopProvider {
 
 		Consumer<ItemClickData> action = e -> {
 			((InventoryClickEvent) e.getEvent()).setCancelled(true);
-			if (!Utils.isNullOrAir(player.getItemOnCursor())) {
+			if (!ItemUtils.isNullOrAir(player.getItemOnCursor())) {
 				itemStack.set(player.getItemOnCursor().clone());
 				open(player);
 			} else if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem().equals(placeholder)) {

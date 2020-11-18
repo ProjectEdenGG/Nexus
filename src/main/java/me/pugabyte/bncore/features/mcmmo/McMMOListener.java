@@ -5,12 +5,12 @@ import com.gmail.nossr50.util.player.UserManager;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.utils.BlockUtils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -91,7 +91,7 @@ public class McMMOListener implements Listener {
 
 	boolean canBootBonemeal(Player player) {
 		// If player is wearing boots
-		if (Utils.isNullOrAir(player.getInventory().getBoots()))
+		if (ItemUtils.isNullOrAir(player.getInventory().getBoots()))
 			return false;
 
 		// If player is wearing gold boots

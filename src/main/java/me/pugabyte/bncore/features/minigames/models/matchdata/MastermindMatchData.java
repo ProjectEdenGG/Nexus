@@ -9,13 +9,13 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.bncore.utils.FireworkLauncher;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
@@ -80,7 +80,7 @@ public class MastermindMatchData extends MatchData {
 	public void giveLoadout(Minigamer minigamer) {
 		minigamer.getPlayer().getInventory().clear();
 		for (Material material : getMaterials())
-			Utils.giveItem(minigamer.getPlayer(), new ItemStack(material, 64));
+			ItemUtils.giveItem(minigamer.getPlayer(), new ItemStack(material, 64));
 	}
 
 	public void reset(Minigamer minigamer) {

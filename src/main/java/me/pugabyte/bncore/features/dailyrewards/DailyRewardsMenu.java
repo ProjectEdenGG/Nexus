@@ -13,6 +13,7 @@ import me.pugabyte.bncore.models.dailyreward.Reward;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -138,17 +139,17 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			for (ItemStack item : items) {
 				if (Reward.RequiredSubmenu.COLOR.contains(item.getType())) {
 					MenuUtils.colorSelectMenu(player, item.getType(), itemClickData -> {
-						Utils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), item.getAmount()));
+						ItemUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), item.getAmount()));
 						saveAndReturn(contents, day, initialDay);
 						player.closeInventory();
 					});
 				} else if (Reward.RequiredSubmenu.NAME.contains(item.getType())) {
 					BNCore.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name").prefix(PREFIX).response(lines -> {
-						Utils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
+						ItemUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
 						saveAndReturn(contents, day, initialDay);
 					}).open(player);
 				} else {
-					Utils.giveItem(player, item);
+					ItemUtils.giveItem(player, item);
 					saveAndReturn(contents, day, initialDay);
 				}
 			}

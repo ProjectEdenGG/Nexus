@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
+import static me.pugabyte.bncore.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
 @Aliases({"clean", "clear", "ci", "clearinvent", "eclean", "eclear", "eci", "eclearinvent", "eclearinventory"})

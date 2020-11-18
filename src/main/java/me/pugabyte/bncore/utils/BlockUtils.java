@@ -98,7 +98,7 @@ public class BlockUtils {
 		List<Block> relatives = Arrays.asList(north, east, south, west, up, down);
 		List<Block> adjacent = new ArrayList<>();
 		for (Block relative : relatives) {
-			if (!Utils.isNullOrAir(relative))
+			if (!isNullOrAir(relative))
 				adjacent.add(relative);
 		}
 		return adjacent;
@@ -195,4 +195,9 @@ public class BlockUtils {
 
 		return null;
 	}
+
+	public static boolean isNullOrAir(Block block) {
+		return block == null || block.getType().equals(Material.AIR);
+	}
+
 }

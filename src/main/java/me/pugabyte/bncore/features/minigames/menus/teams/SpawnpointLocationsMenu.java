@@ -9,8 +9,8 @@ import lombok.NonNull;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.Team;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -50,7 +50,7 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 		contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
 			if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 				player.setItemOnCursor(new ItemStack(Material.AIR));
-			} else if (Utils.isNullOrAir(player.getItemOnCursor())) {
+			} else if (ItemUtils.isNullOrAir(player.getItemOnCursor())) {
 				player.setItemOnCursor(deleteItem);
 			}
 		})));

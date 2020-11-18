@@ -5,8 +5,8 @@ import me.pugabyte.bncore.features.holidays.bearfair20.models.Ingredient;
 import me.pugabyte.bncore.features.holidays.bearfair20.models.RecipeObject;
 import me.pugabyte.bncore.features.recipes.CustomRecipes;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -65,7 +65,7 @@ public class Recipes {
 
 		// Remove nulls/air
 		for (ItemStack itemStack : itemStacks) {
-			if (!Utils.isNullOrAir(itemStack)) {
+			if (!ItemUtils.isNullOrAir(itemStack)) {
 				String displayName = null;
 				if (itemStack.getItemMeta().hasDisplayName())
 					displayName = StringUtils.stripColor(itemStack.getItemMeta().getDisplayName());

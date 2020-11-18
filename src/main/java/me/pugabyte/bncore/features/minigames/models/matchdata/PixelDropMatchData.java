@@ -11,9 +11,9 @@ import me.pugabyte.bncore.features.minigames.models.Minigamer;
 import me.pugabyte.bncore.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.bncore.features.minigames.models.arenas.PixelDropArena;
 import me.pugabyte.bncore.utils.ActionBarUtils;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -260,7 +260,7 @@ public class PixelDropMatchData extends MatchData {
 
 				Block block = RandomUtils.randomElement(blocks);
 				blocks.remove(block);
-				if (!Utils.isNullOrAir(block))
+				if (!BlockUtils.isNullOrAir(block))
 					block.setType(Material.AIR);
 			}
 		}));

@@ -17,7 +17,6 @@ import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -147,7 +146,7 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 
 			for (Block block : blocks) {
 				Block above = block.getRelative(BlockFace.UP);
-				if (allowedFloraMaterials.contains(block.getType()) && Utils.isNullOrAir(above))
+				if (allowedFloraMaterials.contains(block.getType()) && BlockUtils.isNullOrAir(above))
 					placeFloraOn.add(above);
 			}
 

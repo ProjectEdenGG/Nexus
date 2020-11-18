@@ -11,6 +11,7 @@ import me.pugabyte.bncore.models.autotrash.AutoTrash.Behavior;
 import me.pugabyte.bncore.models.autotrash.AutoTrashService;
 import me.pugabyte.bncore.models.dumpster.Dumpster;
 import me.pugabyte.bncore.models.dumpster.DumpsterService;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGroup;
@@ -85,7 +86,7 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 		autoTrash.getMaterials().clear();
 
 		Arrays.stream(event.getInventory().getContents())
-				.filter(item -> !Utils.isNullOrAir(item))
+				.filter(item -> !ItemUtils.isNullOrAir(item))
 				.forEach(item -> autoTrash.getMaterials().add(item.getType()));
 
 		service.save(autoTrash);

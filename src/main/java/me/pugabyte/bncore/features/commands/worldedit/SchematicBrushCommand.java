@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -33,7 +34,7 @@ public class SchematicBrushCommand extends CustomCommand implements Listener {
 
 	@Path("<schematic>")
 	public void schemBrush(String schematic) {
-		ItemStack tool = Utils.getToolRequired(player());
+		ItemStack tool = ItemUtils.getToolRequired(player());
 
 		WorldEditUtils WEUtils = new WorldEditUtils(player());
 		Clipboard clipboard = WEUtils.getSchematic(schematic);
@@ -51,8 +52,8 @@ public class SchematicBrushCommand extends CustomCommand implements Listener {
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ItemStack tool = Utils.getTool(player);
-		if (Utils.isNullOrAir(tool)) return;
+		ItemStack tool = ItemUtils.getTool(player);
+		if (ItemUtils.isNullOrAir(tool)) return;
 
 		ItemMeta meta = tool.getItemMeta();
 		if (!meta.getDisplayName().equals(brushName)) return;

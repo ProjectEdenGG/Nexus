@@ -6,6 +6,7 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.models.skullhunt.SkullHuntService;
 import me.pugabyte.bncore.models.skullhunt.SkullHunter;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.SoundUtils;
@@ -222,7 +223,7 @@ public abstract class SkullHuntEvent implements Listener {
 
 	private void givePrize(Player player, List<ItemBuilder> prizes) {
 		for (ItemBuilder prize : prizes) {
-			Utils.giveItem(player, prize.build());
+			ItemUtils.giveItem(player, prize.build());
 		}
 
 	}

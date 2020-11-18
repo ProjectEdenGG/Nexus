@@ -4,7 +4,9 @@ import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.pugmas20.menu.AdventMenu;
 import me.pugabyte.bncore.features.holidays.pugmas20.models.AdventChest;
 import me.pugabyte.bncore.features.holidays.pugmas20.models.AdventChest.District;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
@@ -51,7 +53,7 @@ public class AdventChests implements Listener {
 
 		AdventMenu.origin.getRelative(0, 0, 1).getDrops().stream()
 				.findFirst().ifPresent(skull -> adventLootHead = new ItemBuilder(skull));
-		adventLootHeadOwner = Utils.getSkullOwner(adventLootHead.build());
+		adventLootHeadOwner = ItemUtils.getSkullOwner(adventLootHead.build());
 
 		loadLootLocations();
 		loadChestLocations();
@@ -62,7 +64,7 @@ public class AdventChests implements Listener {
 		for (int z = 0; z <= 6; z++) {         // 0-3 col (Every other)
 			for (int x = 0; x <= 12; x++) {    // 0-6 row (Every other)
 				Block block = lootOrigin.getRelative(x, 0, z);
-				if (Utils.isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
+				if (ItemUtils.isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
 					continue;
 
 				adventLootMap.put(index++, block.getLocation());
@@ -93,7 +95,7 @@ public class AdventChests implements Listener {
 	public void onAdventChestOpen(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
-		if (Utils.isNullOrAir(event.getClickedBlock())) return;
+		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
 		if (!Pugmas20.isAtPugmas(event.getPlayer())) return;
 
 		Block block = event.getClickedBlock();
@@ -130,11 +132,11 @@ public class AdventChests implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
-		ItemStack skull = Utils.getTool(player);
-		if (Utils.isNullOrAir(skull) || !skull.getType().equals(Material.PLAYER_HEAD)) return;
+		ItemStack skull = ItemUtils.getTool(player);
+		if (ItemUtils.isNullOrAir(skull) || !skull.getType().equals(Material.PLAYER_HEAD)) return;
 		if (Utils.isNullOrEmpty(skull.getLore())) return;
 
-		UUID skullOwner = Utils.getSkullOwner(skull);
+		UUID skullOwner = ItemUtils.getSkullOwner(skull);
 		if (skullOwner == null) return;
 		if (!skullOwner.equals(adventLootHeadOwner)) return;
 
@@ -172,13 +174,13 @@ public class AdventChests implements Listener {
 		if (!Utils.containsInvViewTitle(event.getView(), InvTitle)) return;
 
 		List<ItemStack> leftover = new ArrayList<>(Arrays.asList(event.getInventory().getContents())).stream()
-				.filter(itemStack -> !Utils.isNullOrAir(itemStack)).collect(Collectors.toList());
+				.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack)).collect(Collectors.toList());
 
 		if (leftover.size() == 0)
 			return;
 
 		Utils.send(player, "Giving leftover items...");
-		Utils.giveItems(player, leftover);
+		ItemUtils.giveItems(player, leftover);
 	}
 
 

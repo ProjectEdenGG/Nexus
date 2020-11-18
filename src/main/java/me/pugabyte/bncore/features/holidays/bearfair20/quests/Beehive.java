@@ -7,8 +7,8 @@ import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.islands.MainIsland;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -107,7 +107,7 @@ public class Beehive implements Listener {
 				service.save(user);
 
 				Tasks.wait(60, () -> {
-					Utils.giveItem(player, MainIsland.blessedHoneyBottle.clone());
+					ItemUtils.giveItem(player, MainIsland.blessedHoneyBottle.clone());
 					chime(player);
 				});
 			}
@@ -121,7 +121,7 @@ public class Beehive implements Listener {
 		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
 		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
-		ItemStack tool = Utils.getTool(event.getPlayer());
+		ItemStack tool = ItemUtils.getTool(event.getPlayer());
 		if (!BearFair20.isBFItem(tool)) return;
 
 		if (event.getRightClicked().getType().equals(EntityType.BEE)) {

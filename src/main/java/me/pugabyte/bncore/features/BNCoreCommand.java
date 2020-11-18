@@ -80,11 +80,11 @@ import java.util.zip.ZipFile;
 
 import static me.pugabyte.bncore.utils.BlockUtils.getBlocksInRadius;
 import static me.pugabyte.bncore.utils.BlockUtils.getDirection;
+import static me.pugabyte.bncore.utils.BlockUtils.isNullOrAir;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.parseShortDate;
 import static me.pugabyte.bncore.utils.StringUtils.paste;
 import static me.pugabyte.bncore.utils.StringUtils.timespanDiff;
-import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")

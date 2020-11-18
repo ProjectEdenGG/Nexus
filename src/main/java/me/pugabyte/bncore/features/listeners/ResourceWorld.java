@@ -10,6 +10,7 @@ import me.pugabyte.bncore.models.tip.TipService;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
@@ -92,14 +93,14 @@ public class ResourceWorld implements Listener {
 
 			ItemStack[] items = player.getInventory().getContents();
 			for (ItemStack item : items) {
-				if (item == null || Utils.isNullOrAir(item.getType())) continue;
+				if (item == null || ItemUtils.isNullOrAir(item.getType())) continue;
 				if (!MaterialTag.SHULKER_BOXES.isTagged(item.getType())) continue;
 				if (!(item.getItemMeta() instanceof BlockStateMeta)) continue;
 
 				ShulkerBox shulkerBox = (ShulkerBox) ((BlockStateMeta) item.getItemMeta()).getBlockState();
 				ItemStack[] contents = shulkerBox.getInventory().getContents();
 				for (ItemStack content : contents) {
-					if (content == null || Utils.isNullOrAir(content.getType())) continue;
+					if (content == null || ItemUtils.isNullOrAir(content.getType())) continue;
 					if (materials.contains(content.getType())) {
 						rejectedMaterials.add(content.getType());
 						event.setCancelled(true);

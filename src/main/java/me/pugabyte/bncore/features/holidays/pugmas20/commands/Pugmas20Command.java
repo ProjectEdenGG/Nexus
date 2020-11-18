@@ -1,7 +1,9 @@
 package me.pugabyte.bncore.features.holidays.pugmas20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.holidays.pugmas20.AdventChests;
+import me.pugabyte.bncore.features.holidays.pugmas20.Ores;
 import me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20;
 import me.pugabyte.bncore.features.holidays.pugmas20.Train;
 import me.pugabyte.bncore.features.holidays.pugmas20.menu.AdventMenu;
@@ -14,9 +16,11 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.pugmas20.Pugmas20Service;
 import me.pugabyte.bncore.models.pugmas20.Pugmas20User;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.event.Listener;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -27,7 +31,8 @@ import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.isPastPugma
 import static me.pugabyte.bncore.features.holidays.pugmas20.Pugmas20.isSecondChance;
 
 @Aliases("pugmas")
-public class Pugmas20Command extends CustomCommand {
+@NoArgsConstructor
+public class Pugmas20Command extends CustomCommand implements Listener {
 	private final Pugmas20Service service = new Pugmas20Service();
 	String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
 
@@ -165,6 +170,18 @@ public class Pugmas20Command extends CustomCommand {
 			error("No pugmas trees found");
 
 		send(json.newline().next("&3Total: &e" + total));
+	}
+
+	@Permission("group.admin")
+	@Path("kit miners pickaxe")
+	void kitMinersPickaxe() {
+		ItemUtils.giveItem(player(), Ores.getMinersPickaxe());
+	}
+
+	@Permission("group.admin")
+	@Path("kit miners sieve")
+	void kitMinersSieve() {
+		ItemUtils.giveItem(player(), Ores.getMinersSieve());
 	}
 
 }

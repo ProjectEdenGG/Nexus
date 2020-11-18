@@ -8,10 +8,10 @@ import me.pugabyte.bncore.features.holidays.bearfair20.islands.MinigameNightIsla
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -57,7 +57,7 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 		contents.set(40, ClickableItem.from(closeItem(), e -> {
 			for (int i : openSlots) {
 				if (!contents.get(i).get().getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE))
-					Utils.giveItem(player, contents.get(i).get().getItem());
+					ItemUtils.giveItem(player, contents.get(i).get().getItem());
 			}
 			close(player, items);
 		}));
@@ -92,12 +92,12 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 			}
 			contents.set(openSlots[i], ClickableItem.from(item, e -> {
 				if (e.getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE)) {
-					if (Utils.isNullOrAir(player.getItemOnCursor())) return;
+					if (ItemUtils.isNullOrAir(player.getItemOnCursor())) return;
 					contents.set(e.getSlot(), ClickableItem.empty(player.getItemOnCursor()));
 					player.setItemOnCursor(null);
 					getItems(player, contents);
 				} else {
-					if (Utils.isNullOrAir(player.getItemOnCursor()))
+					if (ItemUtils.isNullOrAir(player.getItemOnCursor()))
 						contents.set(e.getSlot(), ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name(" ").build()));
 					else {
 						contents.set(e.getSlot(), ClickableItem.empty(player.getItemOnCursor()));

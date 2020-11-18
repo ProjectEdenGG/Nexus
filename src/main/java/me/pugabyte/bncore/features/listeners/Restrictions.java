@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.listeners;
 import me.pugabyte.bncore.features.chat.Koda;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.Rank;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -45,7 +46,7 @@ public class Restrictions implements Listener {
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
 			return;
 
-		if (Utils.isNullOrAir(event.getItem()))
+		if (ItemUtils.isNullOrAir(event.getItem()))
 			return;
 
 		Material itemType = event.getItem().getType();
@@ -117,7 +118,7 @@ public class Restrictions implements Listener {
 		if (player.hasPermission("use.fire"))
 			return;
 
-		if (!Utils.isNullOrAir(event.getItem()) && event.getItem().getType().equals(Material.END_CRYSTAL)) {
+		if (!ItemUtils.isNullOrAir(event.getItem()) && event.getItem().getType().equals(Material.END_CRYSTAL)) {
 			event.setCancelled(true);
 			Utils.send(player, PREFIX + "Sorry, but you can't use Ender Crystals! You must be Member or above");
 		}
@@ -143,7 +144,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onInteractHoldingSpawnEgg(PlayerInteractEvent event) {
-		if (Utils.isNullOrAir(event.getItem()))
+		if (ItemUtils.isNullOrAir(event.getItem()))
 			return;
 
 		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType()))

@@ -12,12 +12,13 @@ import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -173,11 +174,11 @@ public class BFQuests implements Listener {
 
 		event.setCancelled(true);
 
-		ItemStack tool = Utils.getTool(player);
+		ItemStack tool = ItemUtils.getTool(player);
 		if (tool != null && tool.getType().equals(Material.BUCKET)) {
 			tool.setAmount(tool.getAmount() - 1);
 			ItemStack milkBucket = new ItemBuilder(Material.MILK_BUCKET).lore(itemLore).amount(1).build();
-			Utils.giveItem(player, milkBucket);
+			ItemUtils.giveItem(player, milkBucket);
 		}
 
 	}
@@ -189,7 +190,7 @@ public class BFQuests implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Utils.isNullOrAir(clicked)) return;
+		if (BlockUtils.isNullOrAir(clicked)) return;
 
 		ProtectedRegion beehiveRg = WGUtils.getProtectedRegion(Beehive.beehiveRg);
 		if (WGUtils.getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
@@ -203,7 +204,7 @@ public class BFQuests implements Listener {
 		event.setCancelled(true);
 		event.getItem().setAmount(event.getItem().getAmount() - 1);
 		ItemStack honeyBottle = new ItemBuilder(Material.HONEY_BOTTLE).lore(itemLore).amount(1).build();
-		Utils.giveItem(player, honeyBottle);
+		ItemUtils.giveItem(player, honeyBottle);
 	}
 
 	@EventHandler
@@ -213,7 +214,7 @@ public class BFQuests implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Utils.isNullOrAir(clicked)) return;
+		if (BlockUtils.isNullOrAir(clicked)) return;
 
 		ProtectedRegion beehiveRg = WGUtils.getProtectedRegion(Beehive.beehiveRg);
 		if (WGUtils.getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
@@ -234,7 +235,7 @@ public class BFQuests implements Listener {
 		else
 			event.getItem().setItemMeta(meta);
 		ItemStack honeyComb = new ItemBuilder(Material.HONEYCOMB).lore(itemLore).amount(3).build();
-		Utils.giveItem(player, honeyComb);
+		ItemUtils.giveItem(player, honeyComb);
 	}
 
 	@EventHandler
@@ -248,7 +249,7 @@ public class BFQuests implements Listener {
 
 		boolean questCrafting = true;
 		for (ItemStack ingredient : ingredients) {
-			if (Utils.isNullOrAir(ingredient))
+			if (ItemUtils.isNullOrAir(ingredient))
 				continue;
 			if (!isBFItem(ingredient))
 				questCrafting = false;
@@ -275,7 +276,7 @@ public class BFQuests implements Listener {
 		// Each item must be a BF20 item, for it to result in a BF20 item
 		boolean questCrafting = true;
 		for (ItemStack ingredient : ingredients) {
-			if (Utils.isNullOrAir(ingredient))
+			if (ItemUtils.isNullOrAir(ingredient))
 				continue;
 			if (!isBFItem(ingredient))
 				questCrafting = false;

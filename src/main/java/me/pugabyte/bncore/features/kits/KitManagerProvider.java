@@ -9,6 +9,7 @@ import fr.minuskube.inv.content.SlotIterator;
 import fr.minuskube.inv.content.SlotPos;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -144,7 +145,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 		Inventory inv = player.getOpenInventory().getTopInventory();
 		List<ItemStack> items = new ArrayList<>();
 		for (int i : editableSlots) {
-			if (Utils.isNullOrAir(inv.getItem(i))) continue;
+			if (ItemUtils.isNullOrAir(inv.getItem(i))) continue;
 			items.add(inv.getItem(i));
 		}
 		Kit kit = KitManager.get(id);

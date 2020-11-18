@@ -16,11 +16,11 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import static me.pugabyte.bncore.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.bncore.utils.StringUtils.colorize;
 import static me.pugabyte.bncore.utils.StringUtils.paste;
 import static me.pugabyte.bncore.utils.StringUtils.stripColor;
 import static me.pugabyte.bncore.utils.Utils.dump;
-import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @Aliases({"nbt", "itemdb"})
 @Permission("group.staff")

@@ -10,9 +10,9 @@ import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.FireworkLauncher;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -53,7 +53,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	public static void giveDyeBomb(Player player, int amount) {
 		ItemStack item = dyeBomb.clone();
 		item.setAmount(amount);
-		Utils.giveItem(player, item);
+		ItemUtils.giveItem(player, item);
 	}
 
 	@EventHandler

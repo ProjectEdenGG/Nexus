@@ -32,7 +32,7 @@ import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.toolError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.fishing.Loot.*;
-import static me.pugabyte.bncore.utils.Utils.getTool;
+import static me.pugabyte.bncore.utils.ItemUtils.getTool;
 
 public class Fishing implements Listener {
 	private List<ItemStack> lootList = new ArrayList<>();

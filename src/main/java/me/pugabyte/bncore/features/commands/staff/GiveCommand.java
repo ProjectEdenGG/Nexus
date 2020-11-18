@@ -6,7 +6,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -19,7 +19,7 @@ public class GiveCommand extends CustomCommand {
 
 	@Path("<player> <type> [amount] [nbt...]")
 	void run(Player player, Material material, @Arg("64") int amount, @Arg(permission = "group.staff") String nbt) {
-		Utils.giveItem(player, material, amount, nbt);
+		ItemUtils.giveItem(player, material, amount, nbt);
 	}
 
 }

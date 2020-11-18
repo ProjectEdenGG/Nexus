@@ -11,12 +11,12 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.MaterialTag.MatchMode;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -63,7 +63,7 @@ public class JWitherCommand extends CustomCommand implements Listener {
 	void claim() {
 		if (!playerWhoWonStars.contains(player().getPlayer()))
 			error("You have not won any stars");
-		Utils.giveItem(player(), new ItemStack(Material.NETHER_STAR));
+		ItemUtils.giveItem(player(), new ItemStack(Material.NETHER_STAR));
 		BNCore.getEcon().withdrawPlayer(player(), 50000);
 		playerWhoWonStars.remove(player().getPlayer());
 		send(PREFIX + "You have received your nether star. If you do not have room in your inventory, it may be dropped at your feet.");

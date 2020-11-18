@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Material;
 
@@ -34,7 +34,7 @@ public class VPSCommand extends CustomCommand {
 			price = 9;
 
 		new VoteService().takePoints(player().getUniqueId().toString(), price);
-		Utils.giveItem(player(), new ItemBuilder(Material.PLAYER_HEAD).skullOwner(nerd.getOfflinePlayer()).build());
+		ItemUtils.giveItem(player(), new ItemBuilder(Material.PLAYER_HEAD).skullOwner(nerd.getOfflinePlayer()).build());
 		send(PREFIX + "Purchased &e" + nerd.getName() + "'s head &3for &e" + price + " vote points");
 	}
 

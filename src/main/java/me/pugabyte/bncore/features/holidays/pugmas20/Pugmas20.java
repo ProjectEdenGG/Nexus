@@ -40,6 +40,7 @@ public class Pugmas20 implements Listener {
 		AdventMenu.loadHeads();
 		new AdventChests();
 		new Train();
+		new Ores();
 	}
 
 	public static Location pugmasLoc(int x, int y, int z) {

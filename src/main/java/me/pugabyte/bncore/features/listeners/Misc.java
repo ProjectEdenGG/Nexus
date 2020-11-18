@@ -64,8 +64,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.Utils.getTool;
-import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
+import static me.pugabyte.bncore.utils.ItemUtils.getTool;
+import static me.pugabyte.bncore.utils.ItemUtils.isNullOrAir;
 
 public class Misc implements Listener {
 

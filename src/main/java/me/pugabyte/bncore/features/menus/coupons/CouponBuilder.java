@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.menus.coupons;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,7 +29,7 @@ public class CouponBuilder implements Listener {
 	@EventHandler
 	public void onClick(PlayerInteractEvent event) {
 		if (!ActionGroup.CLICK.applies(event)) return;
-		if (Utils.isNullOrAir(event.getItem())) return;
+		if (ItemUtils.isNullOrAir(event.getItem())) return;
 		if (!map.containsKey(event.getItem())) return;
 		map.get(event.getItem()).accept(event);
 	}

@@ -7,9 +7,9 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils.Paste;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -159,7 +159,7 @@ public enum PugmasTreeType {
 					Tasks.wait(wait, () -> {
 						Block block = poll.getBlock();
 						if (block.getType() == logs)
-							Utils.giveItems(player, block.getDrops(silk));
+							ItemUtils.giveItems(player, block.getDrops(silk));
 						block.setType(Material.AIR);
 					});
 				}

@@ -11,6 +11,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
@@ -41,7 +42,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 	private Sign getTargetSign(Player player) {
 		Block targetBlock = player.getTargetBlockExact(10);
 		Material material = targetBlock.getType();
-		if (Utils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
+		if (ItemUtils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
 			error("You must be looking at a sign!");
 		return (Sign) targetBlock.getState();
 	}
@@ -91,7 +92,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 		} else if (clicked % 3 == 0) {
 			ItemStack headPaper = new ItemBuilder(Material.PAPER).name("&3Coupon for 1 HDB head").lore("&eThis coupon is valid for one head from the head database. " +
 					"Claim it with a staff member").build();
-			Utils.giveItem(player, headPaper);
+			ItemUtils.giveItem(player, headPaper);
 			send(player, PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &eone head database coupon");
 		} else {
 			send(player, PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &e$500");

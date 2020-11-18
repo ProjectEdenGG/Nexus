@@ -4,8 +4,9 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.SlotPos;
 import lombok.Getter;
 import me.pugabyte.bncore.features.holidays.pugmas20.menu.providers.AdventProvider;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -39,9 +40,9 @@ public class AdventMenu {
 		for (int z = 0; z <= 4; z++) {        // 0-4 col
 			for (int x = 1; x <= 7; x++) {    // 1-7 row
 				Block block = origin.getRelative(x, 0, z);
-				if (!Utils.isNullOrAir(block)) {
+				if (!BlockUtils.isNullOrAir(block)) {
 					ItemStack drop = block.getDrops().stream().findFirst().orElse(null);
-					if (!Utils.isNullOrAir(drop)) {
+					if (!ItemUtils.isNullOrAir(drop)) {
 						ItemBuilder skull = new ItemBuilder(drop);
 						int size = adventHeadMap.size();
 						if (size <= 6)

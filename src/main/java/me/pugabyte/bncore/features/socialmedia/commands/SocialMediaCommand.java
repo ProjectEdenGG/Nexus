@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.socialmedia.SocialMediaService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 
 public class SocialMediaCommand extends CustomCommand {
 	private final SocialMediaService service = new SocialMediaService();
@@ -35,7 +35,7 @@ public class SocialMediaCommand extends CustomCommand {
 	@Path("getItem <site>")
 	@Permission("group.admin")
 	void getItem(SocialMediaSite site) {
-		Utils.giveItem(player(), site.getHead());
+		ItemUtils.giveItem(player(), site.getHead());
 	}
 
 }

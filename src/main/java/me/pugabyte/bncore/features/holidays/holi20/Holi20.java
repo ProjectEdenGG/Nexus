@@ -2,7 +2,7 @@ package me.pugabyte.bncore.features.holidays.holi20;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.bncore.BNCore;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +27,7 @@ public class Holi20 implements Listener {
 			if (region.getId().contains("quest_water")) {
 				event.getPlayer().getInventory().remove(new ItemStack(Material.BUCKET));
 //				event.getItemStack().setAmount(event.getItemStack().getAmount() - 1);
-				Utils.giveItem(event.getPlayer(), new ItemStack(Material.WATER_BUCKET));
+				ItemUtils.giveItem(event.getPlayer(), new ItemStack(Material.WATER_BUCKET));
 				event.setCancelled(true);
 			}
 		}

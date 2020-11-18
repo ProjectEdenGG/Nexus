@@ -23,6 +23,7 @@ import me.pugabyte.bncore.framework.exceptions.preconfigured.NoPermissionExcepti
 import me.pugabyte.bncore.models.PlayerOwnedObject;
 import me.pugabyte.bncore.models.nerd.Nerd;
 import me.pugabyte.bncore.models.nerd.NerdService;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -47,8 +48,8 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.bncore.utils.BlockUtils.isNullOrAir;
 import static me.pugabyte.bncore.utils.StringUtils.trimFirst;
-import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -83,19 +84,19 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected ItemStack getTool() {
-		return Utils.getTool(player());
+		return ItemUtils.getTool(player());
 	}
 
 	protected ItemStack getToolRequired() {
-		return Utils.getToolRequired(player());
+		return ItemUtils.getToolRequired(player());
 	}
 
 	protected EquipmentSlot getHandWithTool() {
-		return Utils.getHandWithTool(player());
+		return ItemUtils.getHandWithTool(player());
 	}
 
 	protected EquipmentSlot getHandWithToolRequired() {
-		return Utils.getHandWithToolRequired(player());
+		return ItemUtils.getHandWithToolRequired(player());
 	}
 
 	protected Block getTargetBlock() {

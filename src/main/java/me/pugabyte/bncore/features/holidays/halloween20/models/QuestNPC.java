@@ -5,6 +5,7 @@ import me.pugabyte.bncore.features.holidays.halloween20.Halloween20;
 import me.pugabyte.bncore.models.halloween20.Halloween20Service;
 import me.pugabyte.bncore.models.halloween20.Halloween20User;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
@@ -53,7 +54,7 @@ public enum QuestNPC {
 						builder.name("&5Pumpkin Pouch");
 						for (Pumpkin pumpkin : Pumpkin.values())
 							builder.shulkerBox(pumpkin.getOriginal().getBlock().getDrops().toArray(new ItemStack[0]));
-						Utils.giveItem(player, builder.build());
+						ItemUtils.giveItem(player, builder.build());
 						BNCore.getEcon().depositPlayer(player, 5000);
 						Utils.send(player, "&a$5,000 has been added to your account.");
 					});

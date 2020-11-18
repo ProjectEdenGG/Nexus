@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.StringUtils;
@@ -17,7 +18,13 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
-import static me.pugabyte.bncore.utils.ColorType.*;
+import static me.pugabyte.bncore.utils.ColorType.LIGHT_BLUE;
+import static me.pugabyte.bncore.utils.ColorType.LIGHT_GREEN;
+import static me.pugabyte.bncore.utils.ColorType.MAGENTA;
+import static me.pugabyte.bncore.utils.ColorType.ORANGE;
+import static me.pugabyte.bncore.utils.ColorType.PINK;
+import static me.pugabyte.bncore.utils.ColorType.RED;
+import static me.pugabyte.bncore.utils.ColorType.YELLOW;
 
 public class RewardChestProvider extends MenuUtils implements InventoryProvider {
 
@@ -80,7 +87,7 @@ public class RewardChestProvider extends MenuUtils implements InventoryProvider 
 			RewardChest.getInv(loot).close(player);
 			Utils.send(player, StringUtils.getPrefix("RewardChest") + "You have received the &e" +
 					loot[lootIndex].getTitle() + "&3 reward");
-			Utils.giveItems(player, Arrays.asList(loot[lootIndex].getItems()));
+			ItemUtils.giveItems(player, Arrays.asList(loot[lootIndex].getItems()));
 		}
 	}
 }

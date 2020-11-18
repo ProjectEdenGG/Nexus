@@ -7,6 +7,7 @@ import me.pugabyte.bncore.features.menus.coupons.Coupons;
 import me.pugabyte.bncore.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestPlayer;
 import me.pugabyte.bncore.models.mysterychest.MysteryChestService;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.SoundUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
@@ -103,7 +104,7 @@ public class RewardChest implements Listener {
 					service.delete(mysteryChestPlayer);
 					service.save(mysteryChestPlayer);
 
-					Utils.giveItem(player, item);
+					ItemUtils.giveItem(player, item);
 					Utils.send(player, "&3You have been given &e" +
 							amount + " " + StringUtils.camelCase(type.name()) +
 							" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest");

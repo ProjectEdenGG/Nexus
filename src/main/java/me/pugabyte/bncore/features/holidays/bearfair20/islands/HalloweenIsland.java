@@ -12,11 +12,12 @@ import me.pugabyte.bncore.features.holidays.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -147,7 +148,7 @@ public class HalloweenIsland implements Listener, Island {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Utils.isNullOrAir(clicked)) return;
+		if (BlockUtils.isNullOrAir(clicked)) return;
 
 		ProtectedRegion skullRegion = WGUtils.getProtectedRegion(basketRg);
 		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(skullRegion)) return;
@@ -166,7 +167,7 @@ public class HalloweenIsland implements Listener, Island {
 
 		List<ItemStack> drops = new ArrayList<>(basketLoc.getBlock().getDrops());
 		ItemStack basket = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Basket of Halloween Candy").build();
-		Utils.giveItem(player, basket);
+		ItemUtils.giveItem(player, basket);
 		chime(player);
 
 	}
@@ -256,7 +257,7 @@ public class HalloweenIsland implements Listener, Island {
 		user.setQuest_Halloween_Key(true);
 		service.save(user);
 
-		Utils.giveItem(player, atticKey);
+		ItemUtils.giveItem(player, atticKey);
 		chime(player);
 	}
 

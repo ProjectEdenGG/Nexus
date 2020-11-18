@@ -5,14 +5,14 @@ import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
+import static me.pugabyte.bncore.utils.ItemUtils.isNullOrAir;
 
 @Permission("essentials.hat")
 public class HatCommand extends CustomCommand {
@@ -63,7 +63,7 @@ public class HatCommand extends CustomCommand {
 		if (isNullOrAir(hand))
 			inv.setItemInMainHand(hat);
 		else
-			Utils.giveItem(player(), hat);
+			ItemUtils.giveItem(player(), hat);
 		send(PREFIX + "Hat removed");
 	}
 

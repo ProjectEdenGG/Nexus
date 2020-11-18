@@ -3,7 +3,7 @@ package me.pugabyte.bncore.features.commands;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -20,7 +20,7 @@ public class EmptyCommand extends CustomCommand {
 		ItemStack bucket = new ItemStack(Material.BUCKET);
 
 		ItemStack heldItem = playerInv.getItem(playerInv.getHeldItemSlot());
-		if (Utils.isNullOrAir(heldItem) || !isBucket(heldItem))
+		if (ItemUtils.isNullOrAir(heldItem) || !isBucket(heldItem))
 			error("You must be holding a bucket type");
 
 		if (heldItem == bucket) error("Nothing to empty");

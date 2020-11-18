@@ -9,9 +9,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -60,7 +60,7 @@ public class BFFishingCommand extends CustomCommand {
 			error("You're already fishing!");
 		timestamps.put(uuid, LocalDateTime.now());
 
-		Utils.giveItem(player(), unbreakable(fishingRod));
+		ItemUtils.giveItem(player(), unbreakable(fishingRod));
 		send("Start fishing!");
 	}
 
@@ -109,7 +109,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		weightedList.forEach(weightedLoot -> itemStacks.add(weightedLoot.getItemStack()));
 		for (ItemStack content : contents) {
-			if (Utils.isNullOrAir(content))
+			if (ItemUtils.isNullOrAir(content))
 				continue;
 
 			int amount = content.getAmount();
@@ -144,7 +144,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		// Remove fishing rod
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (Utils.isNullOrAir(content)) continue;
+			if (ItemUtils.isNullOrAir(content)) continue;
 			if (!content.getType().equals(Material.FISHING_ROD)) continue;
 			if (BearFair20.isBFItem(content))
 				player.getInventory().remove(content);
@@ -272,7 +272,7 @@ public class BFFishingCommand extends CustomCommand {
 	private void giveAllLoot(Player player) {
 		List<ItemStack> items = new ArrayList<>();
 		weightedList.forEach(weightedLoot -> items.add(weightedLoot.getItemStack()));
-		Utils.giveItems(player, items);
+		ItemUtils.giveItems(player, items);
 	}
 
 }

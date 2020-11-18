@@ -2,8 +2,8 @@ package me.pugabyte.bncore.features.menus.rewardchests;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.SerializationUtils;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
@@ -36,7 +36,7 @@ public class RewardChestLoot implements ConfigurationSerializable {
 	public RewardChestLoot(Map<String, Object> map) {
 		this.title = (String) map.getOrDefault("title", title);
 		this.items = Arrays.stream(SerializationUtils.YML.deserializeItems((Map<String, Object>) map.getOrDefault("items", items)))
-				.filter(itemStack -> !Utils.isNullOrAir(itemStack)).collect(Collectors.toList()).toArray(new ItemStack[0]);
+				.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack)).collect(Collectors.toList()).toArray(new ItemStack[0]);
 		this.active = (boolean) map.getOrDefault("active", active);
 		this.type = RewardChestType.valueOf((String) map.getOrDefault("type", type.name()));
 	}

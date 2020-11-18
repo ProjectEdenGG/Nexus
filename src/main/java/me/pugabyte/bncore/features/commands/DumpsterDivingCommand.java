@@ -16,7 +16,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.bncore.models.dumpster.Dumpster;
 import me.pugabyte.bncore.models.dumpster.DumpsterService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -104,7 +104,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 							contents.set(e.getSlot(), ClickableItem.NONE);
 							dumpster.getItems().remove(item);
 							service.save(dumpster);
-							Utils.giveItem(player, item);
+							ItemUtils.giveItem(player, item);
 						} catch (Exception ex) {
 							handleException(player, PREFIX, ex);
 						}

@@ -1,11 +1,11 @@
 package me.pugabyte.bncore.features.store.perks.stattrack;
 
-import java.util.List;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.Stat;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.StatIncreaseEvent;
 import me.pugabyte.bncore.features.store.perks.stattrack.models.StatItem;
 import me.pugabyte.bncore.features.store.perks.stattrack.utils.StatTrackUtils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -17,6 +17,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import java.util.List;
 
 // Potion effect effect absorption, only apply absorption if they are wearing armor
 // damage and absorption for bow
@@ -41,7 +43,7 @@ public class StatTrackListener implements Listener {
 	private void checkStats(Player player, Block block, Stat... stats) {
 		if (!player.equals(Utils.puga())) return;
 		if (player.getGameMode() != GameMode.SURVIVAL) return;
-		final ItemStack tool = Utils.getTool(player);
+		final ItemStack tool = ItemUtils.getTool(player);
 		if (tool == null || !new StatItem(tool).isEnabled()) return;
 
 		for (Stat stat : stats) {

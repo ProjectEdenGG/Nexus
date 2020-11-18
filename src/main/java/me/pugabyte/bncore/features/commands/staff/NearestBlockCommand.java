@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
+import me.pugabyte.bncore.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -70,7 +71,7 @@ public class NearestBlockCommand extends CustomCommand {
 					StringUtils.sendJsonLocation(PREFIX + "&3&l[Click to Teleport]", block.getLocation(), player());
 
 					Tasks.GlowTask.builder()
-							.duration(10 * 20)
+							.duration(Time.SECOND.x(10))
 							.entity(fallingBlock)
 							.color(GlowAPI.Color.RED)
 							.viewers(Collections.singletonList(player()))

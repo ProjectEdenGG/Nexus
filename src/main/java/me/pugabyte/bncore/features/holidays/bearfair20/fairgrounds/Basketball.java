@@ -12,9 +12,9 @@ import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.bearfair.BearFairUser.BFPointSource;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -36,7 +36,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.giveDailyPoints;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 
 public class Basketball implements Listener {
 
@@ -81,16 +84,16 @@ public class Basketball implements Listener {
 		removeBasketball(inv.getExtraContents(), player);
 		removeBasketball(inv.getArmorContents(), player);
 		removeBasketball(inv.getStorageContents(), player);
-		if (!Utils.isNullOrAir(inv.getHelmet()) && isBasketball(inv.getHelmet()))
+		if (!ItemUtils.isNullOrAir(inv.getHelmet()) && isBasketball(inv.getHelmet()))
 			inv.setHelmet(new ItemStack(Material.AIR));
-		if (!Utils.isNullOrAir(inv.getItemInOffHand()) && isBasketball(inv.getItemInOffHand()))
+		if (!ItemUtils.isNullOrAir(inv.getItemInOffHand()) && isBasketball(inv.getItemInOffHand()))
 			inv.setItemInOffHand(new ItemStack(Material.AIR));
 
 	}
 
 	private static void removeBasketball(ItemStack[] itemStacks, Player player) {
 		for (ItemStack item : itemStacks) {
-			if (Utils.isNullOrAir(item))
+			if (ItemUtils.isNullOrAir(item))
 				continue;
 			if (isBasketball(item)) {
 				player.getInventory().remove(item);

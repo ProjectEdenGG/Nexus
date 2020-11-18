@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.dumpster.Dumpster;
 import me.pugabyte.bncore.models.dumpster.DumpsterService;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
@@ -54,7 +55,7 @@ public class TrashCommand extends CustomCommand implements Listener {
 		Dumpster dumpster = service.get();
 
 		Arrays.stream(event.getInventory().getContents())
-				.filter(item -> !Utils.isNullOrAir(item))
+				.filter(item -> !ItemUtils.isNullOrAir(item))
 				.forEach(dumpster::add);
 
 		service.save(dumpster);

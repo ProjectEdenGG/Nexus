@@ -6,6 +6,7 @@ import me.pugabyte.bncore.models.cooldown.CooldownService;
 import me.pugabyte.bncore.models.setting.Setting;
 import me.pugabyte.bncore.models.setting.SettingService;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.Utils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -50,7 +51,7 @@ public class Pride20Listener implements Listener {
 		}
 
 		player.playSound(player.getLocation(), Sound.ENTITY_CAT_PURREOW, 5f, .08f);
-		Utils.giveItem(player, new ItemBuilder(Material.ORANGE_BANNER)
+		ItemUtils.giveItem(player, new ItemBuilder(Material.ORANGE_BANNER)
 				.pattern(DyeColor.RED, PatternType.STRIPE_TOP)
 				.pattern(DyeColor.YELLOW, PatternType.STRIPE_MIDDLE)
 				.pattern(DyeColor.LIME, PatternType.HALF_HORIZONTAL_MIRROR)

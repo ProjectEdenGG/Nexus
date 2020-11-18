@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
+import static me.pugabyte.bncore.utils.BlockUtils.isNullOrAir;
 
 @Data
 @NoArgsConstructor

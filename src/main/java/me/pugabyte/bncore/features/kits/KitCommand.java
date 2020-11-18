@@ -10,9 +10,9 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Redirects.Redire
 import me.pugabyte.bncore.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -69,7 +69,7 @@ public class KitCommand extends CustomCommand implements Listener {
 		CooldownService service = new CooldownService();
 		if (!service.check(player(), "kit." + kit.getName(), kit.getDelay()))
 			error("You must wait " + service.getDiff(player(), "kit." + kit.getName()) + " before you can receive that kit again");
-		Utils.giveItems(player(), Arrays.asList(kit.getItems()));
+		ItemUtils.giveItems(player(), Arrays.asList(kit.getItems()));
 		send(PREFIX + "You have been given the &e" + StringUtils.camelCase(kit.getName()) + " &3kit");
 	}
 
@@ -92,7 +92,7 @@ public class KitCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onFirstJoin(PlayerJoinEvent event) {
 		if (event.getPlayer().hasPlayedBefore()) return;
-		Utils.giveItems(event.getPlayer(), Arrays.asList(KitManager.getByName("starter").getItems()));
+		ItemUtils.giveItems(event.getPlayer(), Arrays.asList(KitManager.getByName("starter").getItems()));
 	}
 
 }

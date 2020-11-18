@@ -207,7 +207,7 @@ public class BNCore extends JavaPlugin {
 	// @formatter:on;
 
 	public void broadcastReload() {
-		Rank.getOnlineMods().stream()
+		Rank.getOnlineStaff().stream()
 				.filter(nerd -> nerd.getOfflinePlayer().isOnline() && nerd.getPlayer() != null)
 				.map(Nerd::getPlayer)
 				.forEach(player -> {

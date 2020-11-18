@@ -15,12 +15,12 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchStartEve
 import me.pugabyte.bncore.features.minigames.models.matchdata.PixelPaintersMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.bncore.utils.ActionBarUtils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks.Countdown;
 import me.pugabyte.bncore.utils.Tasks.Countdown.CountdownBuilder;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -501,7 +501,7 @@ public class PixelPainters extends TeamlessMechanic {
 			items.add(new ItemStack(block.getType(), 1));
 
 		List<Minigamer> minigamers = match.getMinigamers();
-		minigamers.forEach(minigamer -> Utils.giveItems(minigamer.getPlayer(), items));
+		minigamers.forEach(minigamer -> ItemUtils.giveItems(minigamer.getPlayer(), items));
 	}
 
 	public void pasteLogo(Match match) {

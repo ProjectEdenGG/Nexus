@@ -24,6 +24,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.invisiblearmour.InvisibleArmour;
 import me.pugabyte.bncore.models.invisiblearmour.InvisibleArmourService;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
@@ -225,7 +226,7 @@ public class InvisibleArmourCommand extends CustomCommand {
 
 			AtomicInteger row = new AtomicInteger(1);
 			armourSlots.forEach(slot -> {
-				if (!Utils.isNullOrAir(invisibleArmour.getItem(slot))) {
+				if (!ItemUtils.isNullOrAir(invisibleArmour.getItem(slot))) {
 					contents.set(row.get(), 2, ClickableItem.empty(invisibleArmour.getItem(slot)));
 
 					ItemBuilder item;

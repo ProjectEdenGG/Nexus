@@ -9,6 +9,7 @@ import me.pugabyte.bncore.features.votes.vps.VPSMenu.VPSPage;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -60,7 +61,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 				if (item.getOnPurchase() != null)
 					item.getOnPurchase().accept(player, item);
 				if (item.getItems() != null && item.getItems().size() > 0)
-					Utils.giveItems(player, item.getItems());
+					ItemUtils.giveItems(player, item.getItems());
 
 				if (item.getPrice() > 0) {
 					voter.takePoints(item.getPrice());

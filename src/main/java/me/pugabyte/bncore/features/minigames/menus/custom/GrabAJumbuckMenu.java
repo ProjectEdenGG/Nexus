@@ -10,6 +10,7 @@ import me.pugabyte.bncore.features.minigames.mechanics.GrabAJumbuck;
 import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.GrabAJumbuckArena;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
@@ -42,7 +43,7 @@ public class GrabAJumbuckMenu extends MenuUtils implements InventoryProvider {
 				"&3Click me with an item||&3in your hand to add it."
 				),
 				e -> Tasks.wait(2, () -> {
-					if (Utils.isNullOrAir(player.getItemOnCursor())) return;
+					if (ItemUtils.isNullOrAir(player.getItemOnCursor())) return;
 					if (arena.getSheepSpawnBlocks().size() == 9) {
 						Utils.send(player, Minigames.PREFIX + "The max amount of blocks has already been set.");
 						return;

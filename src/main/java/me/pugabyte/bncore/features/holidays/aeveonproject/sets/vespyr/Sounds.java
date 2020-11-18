@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static me.pugabyte.bncore.features.holidays.aeveonproject.AeveonProject.WGUtils;
-import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
+import static me.pugabyte.bncore.utils.ItemUtils.isNullOrAir;
 
 public class Sounds {
 	private final List<Material> ignoreMaterials = Arrays.asList(Material.SNOW, Material.SNOW_BLOCK, Material.ICE, Material.PACKED_ICE,

@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Set;
 
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.itemLore;
-import static me.pugabyte.bncore.utils.Utils.isNullOrAir;
+import static me.pugabyte.bncore.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.bncore.utils.Utils.isVanished;
 
 @Data

@@ -19,9 +19,9 @@ import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpType;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -55,7 +55,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	private Sign getTargetSign(Player player) {
 		Block targetBlock = player.getTargetBlockExact(10);
 		Material material = targetBlock.getType();
-		if (Utils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
+		if (ItemUtils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
 			error("You must be looking at a sign!");
 		return (Sign) targetBlock.getState();
 	}

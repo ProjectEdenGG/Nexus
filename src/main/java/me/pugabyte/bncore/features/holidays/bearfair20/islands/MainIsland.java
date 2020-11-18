@@ -13,6 +13,7 @@ import me.pugabyte.bncore.models.bearfair.BearFairUser;
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.models.vote.Voter;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.Tasks;
@@ -442,7 +443,7 @@ public class MainIsland implements Listener, Island {
 		player.getInventory().remove(MinigameNightIsland.arcadeToken);
 
 		Tasks.wait(20, () -> {
-			Utils.giveItem(player, specialPrize);
+			ItemUtils.giveItem(player, specialPrize);
 			player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 2F, 1F);
 		});
 
@@ -493,7 +494,7 @@ public class MainIsland implements Listener, Island {
 				ItemStack songCoupon = new ItemBuilder(Material.PAPER)
 						.name("Coupon For: " + songPerm)
 						.lore(itemLore, "&f", "&3Song: &e" + songPerm, "&3Redeem this with an admin", "&3to receive your song").amount(1).build();
-				Utils.giveItem(player, songCoupon);
+				ItemUtils.giveItem(player, songCoupon);
 				break;
 			case 2:
 				reward = "50 Bear Fair Points";

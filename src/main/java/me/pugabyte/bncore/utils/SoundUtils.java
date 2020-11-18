@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -21,7 +22,11 @@ public class SoundUtils {
 	}
 
 	public static void playSound(Player player, Sound sound) {
-		playSound(player, sound, SoundCategory.MASTER, 1, 1);
+		playSound(player, sound, SoundCategory.MASTER);
+	}
+
+	public static void playSound(Player player, Sound sound, SoundCategory category) {
+		playSound(player, sound, category, 1, 1);
 	}
 
 	public static void playSound(Player player, Sound sound, float volume, float pitch) {
@@ -30,6 +35,22 @@ public class SoundUtils {
 
 	public static void playSound(Player player, Sound sound, SoundCategory category, float volume, float pitch) {
 		player.playSound(player.getLocation(), sound, category, volume, pitch);
+	}
+
+	public static void playSound(Location location, Sound sound) {
+		playSound(location, sound, SoundCategory.MASTER);
+	}
+
+	public static void playSound(Location location, Sound sound, SoundCategory category) {
+		playSound(location, sound, category, 1, 1);
+	}
+
+	public static void playSound(Location location, Sound sound, float volume, float pitch) {
+		playSound(location, sound, SoundCategory.MASTER, volume, pitch);
+	}
+
+	public static void playSound(Location location, Sound sound, SoundCategory category, float volume, float pitch) {
+		location.getWorld().playSound(location, sound, category, volume, pitch);
 	}
 
 	public static void playSound(Player player, SoundArgs soundArgs) {

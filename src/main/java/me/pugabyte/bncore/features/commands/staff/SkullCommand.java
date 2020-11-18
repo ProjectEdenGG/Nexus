@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.utils.ItemBuilder;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 
@@ -20,7 +20,7 @@ public class SkullCommand extends CustomCommand {
 
 	@Path("<owner>")
 	void run(@Arg(tabCompleter = OfflinePlayer.class) String owner) {
-		Utils.giveItem(player(), new ItemBuilder(Material.PLAYER_HEAD).name("&fSkull of " + owner).skullOwner(owner).build());
+		ItemUtils.giveItem(player(), new ItemBuilder(Material.PLAYER_HEAD).name("&fSkull of " + owner).skullOwner(owner).build());
 	}
 
 }

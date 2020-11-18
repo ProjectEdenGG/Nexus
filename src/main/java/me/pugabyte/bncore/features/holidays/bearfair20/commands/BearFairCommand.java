@@ -29,12 +29,13 @@ import me.pugabyte.bncore.models.delivery.DeliveryService;
 import me.pugabyte.bncore.models.warps.Warp;
 import me.pugabyte.bncore.models.warps.WarpService;
 import me.pugabyte.bncore.models.warps.WarpType;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -116,15 +117,15 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	@Path("quests giveAllQuestItem")
 	void giveQuestItems() {
 		// MAIN
-		Utils.giveItems(player(), Arrays.asList(honeyStroopWafel, stroofWafel, blessedHoneyBottle, relic, ancientPickaxe, rareFlower, specialPrize));
+		ItemUtils.giveItems(player(), Arrays.asList(honeyStroopWafel, stroofWafel, blessedHoneyBottle, relic, ancientPickaxe, rareFlower, specialPrize));
 		// SDU
-		Utils.giveItems(player(), Arrays.asList(anzacBiscuit, goldenSyrup, peanuts));
+		ItemUtils.giveItems(player(), Arrays.asList(anzacBiscuit, goldenSyrup, peanuts));
 		// PUGMAS
-		Utils.giveItem(player(), presentItem);
+		ItemUtils.giveItem(player(), presentItem);
 		// MGN
-		arcadePieces.forEach(piece -> Utils.giveItem(player(), piece.build()));
+		arcadePieces.forEach(piece -> ItemUtils.giveItem(player(), piece.build()));
 		// HALLOWEEN
-		Utils.giveItems(player(), Arrays.asList(atticKey, basketItem));
+		ItemUtils.giveItems(player(), Arrays.asList(atticKey, basketItem));
 	}
 
 	@Path("quests npc <text>")
@@ -427,7 +428,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		Location loc = player.getLocation();
 
 		if (!loc.getWorld().getName().toLowerCase().contains("bearfair")) return;
-		if (Utils.isNullOrAir(event.getClickedBlock())) return;
+		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
 		if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
@@ -445,7 +446,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		if (disableDelivery) {
 			if (player.hasPermission("group.admin")) {
 				BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
-				Utils.giveItem(player, bearFairStoreMap.getSplatterMap());
+				ItemUtils.giveItem(player, bearFairStoreMap.getSplatterMap());
 			} else {
 				send(player, PREFIX + "Couldn't get this feature to work ): include the title of this painting in your discord order");
 			}
@@ -494,7 +495,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	@Path("store maps get <map...>")
 	@Permission("group.admin")
 	void storeGetMap(BearFairStoreMap map) {
-		Utils.giveItem(player(), map.getSplatterMap());
+		ItemUtils.giveItem(player(), map.getSplatterMap());
 	}
 
 	@ConverterFor(BearFairStoreMap.class)

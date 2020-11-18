@@ -12,11 +12,11 @@ import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputExcept
 import me.pugabyte.bncore.models.vote.VoteService;
 import me.pugabyte.bncore.utils.ColorType;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.SymbolBanner;
 import me.pugabyte.bncore.utils.SymbolBanner.Symbol;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.block.Block;
@@ -45,7 +45,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 			for (SymbolBanner.Symbol symbol : SymbolBanner.Symbol.values()) {
 				ItemBuilder banner = symbol.get(baseBanner.clone(), baseColor, patternColor);
 				if (banner != null)
-					Utils.giveItem(player(), banner.build());
+					ItemUtils.giveItem(player(), banner.build());
 			}
 		} else {
 			// Input Banners
@@ -56,7 +56,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 				if (symbol == null) continue;
 				ItemBuilder banner = symbol.get(baseBanner.clone(), baseColor, patternColor);
 				if (banner != null)
-					Utils.giveItem(player(), banner.build());
+					ItemUtils.giveItem(player(), banner.build());
 			}
 		}
 	}
@@ -110,7 +110,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		Utils.giveItems(event.getPlayer(), banner.getDrops());
+		ItemUtils.giveItems(event.getPlayer(), banner.getDrops());
 		send(event.getPlayer(), StringUtils.getPrefix("VPS") + colorize("You purchased banner &e" + id + " &3for &e5 vote points"));
 	}
 

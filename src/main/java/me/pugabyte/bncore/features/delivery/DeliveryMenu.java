@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.models.delivery.Delivery;
 import me.pugabyte.bncore.models.delivery.DeliveryService;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
@@ -50,7 +50,7 @@ public class DeliveryMenu extends MenuUtils implements InventoryProvider {
 		addCloseItem(contents);
 
 		List<ItemStack> items = delivery.get(worldGroup);
-		items.removeIf(Utils::isNullOrAir);
+		items.removeIf(ItemUtils::isNullOrAir);
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		for (ItemStack itemStack : items)

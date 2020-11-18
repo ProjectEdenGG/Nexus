@@ -11,9 +11,9 @@ import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Interactables
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.PugDunk;
 import me.pugabyte.bncore.features.holidays.bearfair20.fairgrounds.Reflection;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Time.Timer;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -47,7 +47,7 @@ public class Fairgrounds implements Listener {
 
 	public static void giveKit(BearFairKit kit, Player player) {
 		if (slotsTaken(player) <= (36 - kit.items.size())) {
-			Utils.giveItems(player, kit.items);
+			ItemUtils.giveItems(player, kit.items);
 		}
 	}
 
@@ -55,7 +55,7 @@ public class Fairgrounds implements Listener {
 		ItemStack[] items = player.getInventory().getContents();
 		int count = 0;
 		for (ItemStack item : items) {
-			if (item == null || Utils.isNullOrAir(item.getType())) continue;
+			if (item == null || ItemUtils.isNullOrAir(item.getType())) continue;
 			count++;
 		}
 		return count;

@@ -13,6 +13,7 @@ import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.UncivilEngineersArena;
 import me.pugabyte.bncore.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -202,7 +203,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 			contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
-				} else if (Utils.isNullOrAir(player.getItemOnCursor())) {
+				} else if (ItemUtils.isNullOrAir(player.getItemOnCursor())) {
 					player.setItemOnCursor(deleteItem);
 				}
 			})));

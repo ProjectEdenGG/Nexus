@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.snoweffect.SnowEffect;
 import me.pugabyte.bncore.models.snoweffect.SnowEffectService;
+import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.WorldGuardFlagUtils;
@@ -14,6 +15,7 @@ import me.pugabyte.bncore.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -63,8 +65,7 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 
 			player.spawnParticle(Particle.WHITE_ASH, player.getLocation(), 3500, 40, 15, 40, .01);
 			player.spawnParticle(Particle.FALLING_DUST, player.getLocation(), 1400, 40, 15, 40, .01, Bukkit.createBlockData(Material.SNOW_BLOCK));
-			Tasks.wait(20, () ->
-					player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 1400, 40, 15, 40, .01));
+			Tasks.wait(20, () -> player.spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 1400, 40, 15, 40, .01));
 		});
 	}
 
@@ -72,9 +73,11 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 		int count = 0;
 		int playerY = (int) player.getLocation().getY() + 1;
 		for (int y = playerY; y <= 255; y++) {
-			if (player.getLocation().getBlock().getRelative(0, y - playerY, 0).getType().isOccluding())
+			Block relative = player.getLocation().getBlock().getRelative(0, y - playerY, 0);
+			Material material = relative.getType();
+			if (material.isOccluding() || MaterialTag.STAIRS.isTagged(material) || MaterialTag.SLABS.isTagged(material))
 				++count;
-			if (count >= 2)
+			if (count >= 1)
 				return true;
 		}
 		return false;

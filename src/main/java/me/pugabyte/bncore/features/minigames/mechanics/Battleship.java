@@ -23,13 +23,13 @@ import me.pugabyte.bncore.features.minigames.models.matchdata.BattleshipMatchDat
 import me.pugabyte.bncore.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import me.pugabyte.bncore.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.bncore.utils.BlockUtils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -314,7 +314,7 @@ public class Battleship extends BalancedTeamMechanic {
 		if (inventory.getItemInMainHand().getType() == Material.AIR)
 			inventory.setItemInMainHand(shipType.getItem());
 		else
-			Utils.giveItem(minigamer.getPlayer(), shipType.getItem());
+			ItemUtils.giveItem(minigamer.getPlayer(), shipType.getItem());
 	}
 
 	private void deleteKit(Location location) {

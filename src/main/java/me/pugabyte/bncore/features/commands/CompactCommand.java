@@ -7,7 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Aliases;
 import me.pugabyte.bncore.framework.commands.models.annotations.Path;
 import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,7 +38,7 @@ public class CompactCommand extends CustomCommand {
 	public void combineItems() {
 		Loop:
 		for (int slot = 0; slot < player().getInventory().getContents().length; slot++) {
-			if (Utils.isNullOrAir(player().getInventory().getContents()[slot])) continue;
+			if (ItemUtils.isNullOrAir(player().getInventory().getContents()[slot])) continue;
 			if (player().getInventory().getContents()[slot].getMaxStackSize() == 1) continue;
 			ItemStack item = player().getInventory().getContents()[slot].clone();
 			int amount = item.getAmount();
@@ -63,7 +63,7 @@ public class CompactCommand extends CustomCommand {
 
 	@Path("hand")
 	void hand() {
-		if (Utils.isNullOrAir(player().getInventory().getItemInMainHand()))
+		if (ItemUtils.isNullOrAir(player().getInventory().getItemInMainHand()))
 			error("You cannot be holding air while running this command");
 		compact(player().getInventory().getItemInMainHand());
 	}
@@ -81,7 +81,7 @@ public class CompactCommand extends CustomCommand {
 			ItemStack craftedItem = new ItemStack(compactable.getResult(), crafted);
 			ItemStack leftOverItem = item.clone();
 			leftOverItem.setAmount(leftOver);
-			Utils.giveItem(player(), craftedItem);
+			ItemUtils.giveItem(player(), craftedItem);
 		}
 	}
 

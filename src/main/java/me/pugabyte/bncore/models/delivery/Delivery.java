@@ -16,7 +16,7 @@ import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemMetaConve
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.WorldGroup;
 import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
@@ -72,7 +72,7 @@ public class Delivery extends PlayerOwnedObject {
 		if (items.isEmpty())
 			this.items.remove(worldGroup);
 
-		Utils.giveItem(getPlayer(), item);
+		ItemUtils.giveItem(getPlayer(), item);
 		playSound(getPlayer(), Sound.ENTITY_ITEM_PICKUP);
 	}
 

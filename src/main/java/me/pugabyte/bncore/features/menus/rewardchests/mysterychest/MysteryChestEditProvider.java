@@ -1,11 +1,16 @@
 package me.pugabyte.bncore.features.menus.rewardchests.mysterychest;
 
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.*;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.Pagination;
+import fr.minuskube.inv.content.SlotIterator;
+import fr.minuskube.inv.content.SlotPos;
 import me.pugabyte.bncore.features.menus.MenuUtils;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChestLoot;
 import me.pugabyte.bncore.features.menus.rewardchests.RewardChestType;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
@@ -148,7 +153,7 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 		Inventory inv = player.getOpenInventory().getTopInventory();
 		List<ItemStack> items = new ArrayList<>();
 		for (int i : editableSlots) {
-			if (Utils.isNullOrAir(inv.getItem(i))) continue;
+			if (ItemUtils.isNullOrAir(inv.getItem(i))) continue;
 			items.add(inv.getItem(i));
 		}
 		RewardChestLoot loot = MysteryChest.getRewardChestLoot(id);

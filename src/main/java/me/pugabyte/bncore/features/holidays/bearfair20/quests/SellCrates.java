@@ -3,9 +3,10 @@ package me.pugabyte.bncore.features.holidays.bearfair20.quests;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.holidays.bearfair20.BearFair20;
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Merchants;
+import me.pugabyte.bncore.utils.BlockUtils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.MerchantBuilder;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,7 +46,7 @@ public class SellCrates implements Listener {
 			return;
 
 		Block block = event.getClickedBlock();
-		if (Utils.isNullOrAir(block)) return;
+		if (BlockUtils.isNullOrAir(block)) return;
 
 		Material type = block.getType();
 		String crateType = "null";
@@ -111,7 +112,7 @@ public class SellCrates implements Listener {
 
 		List<ItemStack> profit = new ArrayList<>();
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (Utils.isNullOrAir(item)) {
+			if (ItemUtils.isNullOrAir(item)) {
 				continue;
 			}
 
@@ -122,8 +123,8 @@ public class SellCrates implements Listener {
 				List<ItemStack> ingredients = tradeBuilder.getIngredients();
 				if (ingredients.size() != 1) continue;
 				ItemStack ingredient = ingredients.get(0);
-				if (Utils.isNullOrAir(ingredient)) continue;
-				if (Utils.isNullOrAir(result)) continue;
+				if (ItemUtils.isNullOrAir(ingredient)) continue;
+				if (ItemUtils.isNullOrAir(result)) continue;
 
 				if (item.getType().equals(ingredient.getType())) {
 					if (item.getAmount() >= ingredient.getAmount()) {

@@ -2,8 +2,8 @@ package me.pugabyte.bncore.features.kits;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.SerializationUtils;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +26,7 @@ public class Kit implements ConfigurationSerializable {
 	public Kit(Map<String, Object> map) {
 		this.name = (String) map.getOrDefault("name", name);
 		this.items = Arrays.stream(SerializationUtils.YML.deserializeItems((Map<String, Object>) map.getOrDefault("items", items)))
-				.filter(itemStack -> !Utils.isNullOrAir(itemStack)).collect(Collectors.toList()).toArray(new ItemStack[0]);
+				.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack)).collect(Collectors.toList()).toArray(new ItemStack[0]);
 		this.delay = (int) map.getOrDefault("delay", delay);
 	}
 

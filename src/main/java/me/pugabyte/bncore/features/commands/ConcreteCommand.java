@@ -7,6 +7,7 @@ import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.tip.Tip;
 import me.pugabyte.bncore.models.tip.Tip.TipType;
 import me.pugabyte.bncore.models.tip.TipService;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.StringUtils;
 import me.pugabyte.bncore.utils.Utils;
@@ -39,7 +40,7 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 		if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
 
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (Utils.isNullOrAir(item)) continue;
+			if (ItemUtils.isNullOrAir(item)) continue;
 			if (!MaterialTag.CONCRETE_POWDERS.isTagged(item.getType())) {
 				event.getPlayer().getInventory().addItem(item);
 				continue;

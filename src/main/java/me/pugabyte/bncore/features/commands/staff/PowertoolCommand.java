@@ -9,7 +9,7 @@ import me.pugabyte.bncore.framework.commands.models.annotations.Permission;
 import me.pugabyte.bncore.framework.commands.models.events.CommandEvent;
 import me.pugabyte.bncore.models.powertool.PowertoolService;
 import me.pugabyte.bncore.models.powertool.PowertoolUser;
-import me.pugabyte.bncore.utils.Utils;
+import me.pugabyte.bncore.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -88,7 +88,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 		if (!event.getPlayer().hasPermission("group.staff")) return;
 
 		if (Arrays.asList(Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK).contains(event.getAction())) {
-			ItemStack item = Utils.getTool(event.getPlayer());
+			ItemStack item = ItemUtils.getTool(event.getPlayer());
 			if (item == null) return;
 
 			PowertoolUser user = new PowertoolService().get(event.getPlayer());
@@ -107,7 +107,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 		Player player = (Player) event.getDamager();
 		if (!player.hasPermission("group.staff")) return;
 
-		ItemStack item = Utils.getTool(player);
+		ItemStack item = ItemUtils.getTool(player);
 		if (item == null) return;
 
 		PowertoolUser user = new PowertoolService().get(player);

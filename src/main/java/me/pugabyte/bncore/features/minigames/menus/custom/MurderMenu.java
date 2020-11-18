@@ -15,6 +15,7 @@ import me.pugabyte.bncore.features.minigames.menus.annotations.CustomMechanicSet
 import me.pugabyte.bncore.features.minigames.models.Arena;
 import me.pugabyte.bncore.features.minigames.models.arenas.MurderArena;
 import me.pugabyte.bncore.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -109,7 +110,7 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 			contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
-				} else if (Utils.isNullOrAir(player.getItemOnCursor())) {
+				} else if (ItemUtils.isNullOrAir(player.getItemOnCursor())) {
 					player.setItemOnCursor(deleteItem);
 				}
 			})));

@@ -9,8 +9,8 @@ import me.pugabyte.bncore.features.minigames.models.events.matches.MatchTimerTic
 import me.pugabyte.bncore.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.bncore.features.minigames.models.matchdata.MastermindMatchData;
 import me.pugabyte.bncore.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -149,7 +149,7 @@ public final class Mastermind extends SingleplayerMechanic {
 			}
 
 			Block placed = event.getClickedBlock().getRelative(event.getBlockFace());
-			if (!Utils.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
+			if (!ItemUtils.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
 				event.setCancelled(true);
 		}
 	}

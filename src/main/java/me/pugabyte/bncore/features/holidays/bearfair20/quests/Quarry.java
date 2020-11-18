@@ -28,10 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.*;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isAtBearFair;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isBFItem;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.isInRegion;
+import static me.pugabyte.bncore.features.holidays.bearfair20.BearFair20.send;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.miningError;
 import static me.pugabyte.bncore.features.holidays.bearfair20.quests.BFQuests.toolError;
-import static me.pugabyte.bncore.utils.Utils.getTool;
+import static me.pugabyte.bncore.utils.ItemUtils.getTool;
 
 public class Quarry implements Listener {
 

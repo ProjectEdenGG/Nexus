@@ -10,12 +10,13 @@ import me.pugabyte.bncore.features.holidays.bearfair20.islands.PugmasIsland.Pugm
 import me.pugabyte.bncore.features.holidays.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.bncore.models.bearfair.BearFairService;
 import me.pugabyte.bncore.models.bearfair.BearFairUser;
+import me.pugabyte.bncore.utils.BlockUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.JsonBuilder;
 import me.pugabyte.bncore.utils.LocationUtils;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -305,7 +306,7 @@ public class PugmasIsland implements Listener, Island {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Utils.isNullOrAir(clicked)) return;
+		if (BlockUtils.isNullOrAir(clicked)) return;
 
 		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
 		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
@@ -340,7 +341,7 @@ public class PugmasIsland implements Listener, Island {
 		List<ItemStack> drops = new ArrayList<>(clicked.getDrops());
 		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
 
-		Utils.giveItem(player, present);
+		ItemUtils.giveItem(player, present);
 		chime(player);
 		event.setCancelled(true);
 	}
@@ -443,7 +444,7 @@ public class PugmasIsland implements Listener, Island {
 
 		Tasks.wait(Time.SECOND.x(9), () -> {
 			chime(player);
-			Utils.giveItem(player, presentItem);
+			ItemUtils.giveItem(player, presentItem);
 		});
 
 		return thanks;

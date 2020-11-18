@@ -1,9 +1,9 @@
 package me.pugabyte.bncore.features.listeners;
 
 import me.pugabyte.bncore.features.minigames.Minigames;
+import me.pugabyte.bncore.utils.ItemUtils;
 import me.pugabyte.bncore.utils.MaterialTag;
 import me.pugabyte.bncore.utils.Tasks;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -50,7 +50,7 @@ public class LaunchPads implements Listener {
 		event.setUseInteractedBlock(Event.Result.DENY);
 
 		Block belowBelow = below.getRelative(0, -1, 0).getLocation().getBlock();
-		if (Utils.isNullOrAir(belowBelow.getType())) return;
+		if (ItemUtils.isNullOrAir(belowBelow.getType())) return;
 
 		if (MaterialTag.SIGNS.isTagged(belowBelow.getType())) {
 			Sign sign = (Sign) belowBelow.getState();
