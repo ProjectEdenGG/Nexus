@@ -1,4 +1,4 @@
-package me.pugabyte.bncore.features.holidays;
+package me.pugabyte.bncore.features.holidays.models;
 
 public enum QuestStage {
 	NOT_STARTED,
