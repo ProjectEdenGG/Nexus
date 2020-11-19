@@ -45,6 +45,8 @@ public class Ores implements Listener {
 	@Getter
 	private static final ItemStack minersSieve = pugmasItem(Material.HOPPER).name("Miner's Sieve").build();
 
+	private static final int orePerCoal = 2;
+
 	public Ores() {
 		BNCore.registerListener(this);
 	}
@@ -130,14 +132,21 @@ public class Ores implements Listener {
 		if (!isAtPugmas(event.getBlock().getLocation()))
 			return;
 
+		if (!(event.getBlock().getState() instanceof BlastFurnace))
+			return;
+
 		BlastFurnace state = (BlastFurnace) event.getBlock().getState();
-		state.setCookSpeedMultiplier(5);
+		if (state.getCookSpeedMultiplier() != 5) {
+			state.setCookSpeedMultiplier(5);
+			state.update();
+		}
 
 		if (isNullOrAir(event.getFuel()))
 			return;
 
 		if (!isFuzzyMatch(event.getFuel(), OreType.COAL.getIngot())) {
 			state.setCookTimeTotal(0);
+			state.update();
 			event.setCancelled(true);
 			return;
 		}
@@ -161,7 +170,7 @@ public class Ores implements Listener {
 			state.getInventory().setFuel(fuel);
 		}
 
-		event.setBurnTime(event.getBurnTime() / 20);
+		event.setBurnTime((int) (event.getBurnTime() / ((8 / orePerCoal) * state.getCookSpeedMultiplier())));
 	}
 
 	static {
