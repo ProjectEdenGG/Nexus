@@ -1,19 +1,26 @@
 package me.pugabyte.bncore.features.events.y2020.pugmas20;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.bncore.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.bncore.models.cooldown.CooldownService;
+import me.pugabyte.bncore.models.pugmas20.Pugmas20Service;
+import me.pugabyte.bncore.models.pugmas20.Pugmas20User;
+import me.pugabyte.bncore.utils.CitizensUtils;
 import me.pugabyte.bncore.utils.ItemBuilder;
 import me.pugabyte.bncore.utils.StringUtils;
+import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
 import me.pugabyte.bncore.utils.WorldEditUtils;
 import me.pugabyte.bncore.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,6 +50,29 @@ public class Pugmas20 implements Listener {
 		new AdventChests();
 		new Train();
 		new Ores();
+		npcParticles();
+	}
+
+	private void npcParticles() {
+		Pugmas20Service service = new Pugmas20Service();
+		Particle particle = Particle.VILLAGER_HAPPY;
+
+		Tasks.repeatAsync(0, Time.SECOND.x(2), () -> {
+			for (Player player : WGUtils.getPlayersInRegion(region)) {
+				Pugmas20User user = service.get(player);
+				for (Integer npcId : user.getNextStepNPCs()) {
+					NPC npc = CitizensUtils.getNPC(npcId);
+					if (npc.isSpawned()) {
+						Location loc = npc.getEntity().getLocation().add(0, 1.5, 0);
+						new ParticleBuilder(particle)
+								.location(loc)
+								.offset(0.25, 0.25, 0.25)
+								.receivers(player)
+								.spawn();
+					}
+				}
+			}
+		});
 	}
 
 	public static Location pugmasLoc(int x, int y, int z) {

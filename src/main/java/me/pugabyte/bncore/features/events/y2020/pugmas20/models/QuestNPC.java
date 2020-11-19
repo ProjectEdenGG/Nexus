@@ -1,5 +1,6 @@
 package me.pugabyte.bncore.features.events.y2020.pugmas20.models;
 
+import lombok.Getter;
 import me.pugabyte.bncore.features.events.models.QuestStage;
 import me.pugabyte.bncore.features.events.models.Script;
 import me.pugabyte.bncore.models.pugmas20.Pugmas20Service;
@@ -129,7 +130,7 @@ public enum QuestNPC {
 			);
 		}
 	},
-	Q_PERIOD_A_PERIOD_ELF(3081) {
+	QA_ELF(3081) {
 		@Override
 		public List<Script> getScript(Player player) {
 			Pugmas20Service service = new Pugmas20Service();
@@ -190,15 +191,16 @@ public enum QuestNPC {
 		}
 	};
 
-	int npcId;
+	@Getter
+	int id;
 
 	QuestNPC(int id) {
-		npcId = id;
+		this.id = id;
 	}
 
 	public static QuestNPC getByID(int id) {
 		for (QuestNPC value : QuestNPC.values())
-			if (value.npcId == id) return value;
+			if (value.id == id) return value;
 		return null;
 	}
 
