@@ -1,6 +1,8 @@
 package me.pugabyte.bncore.features.events.y2020.pugmas20;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.events.y2020.pugmas20.menu.AdventMenu;
@@ -25,8 +27,11 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pugmas20 implements Listener {
 	@Getter
@@ -41,6 +46,8 @@ public class Pugmas20 implements Listener {
 	public static final LocalDateTime openingDay = LocalDateTime.of(2020, 12, 1, 0, 0, 0, 0);
 	public static final LocalDateTime secondChance = LocalDateTime.of(2020, 12, 25, 0, 0, 0, 0);
 	public static final LocalDateTime closingDay = LocalDateTime.of(2021, 1, 11, 0, 0, 0, 0);
+
+	public static final List<Hologram> holograms = new ArrayList<>();
 	// Advent Menu
 
 	public Pugmas20() {
@@ -50,7 +57,23 @@ public class Pugmas20 implements Listener {
 		new AdventChests();
 		new Train();
 		new Ores();
+		npcHolograms();
 		npcParticles();
+	}
+
+	public void shutdown() {
+		holograms.forEach(Hologram::delete);
+	}
+
+	private void npcHolograms() {
+		for (QuestNPC questNPC : QuestNPC.values()) {
+			NPC npc = CitizensUtils.getNPC(questNPC.getId());
+			if (npc.isSpawned()) {
+				Hologram hologram = HologramsAPI.createHologram(BNCore.getInstance(), npc.getEntity().getLocation().clone().add(0, 3.15, 0));
+				hologram.appendItemLine(new ItemStack(Material.EMERALD));
+				holograms.add(hologram);
+			}
+		}
 	}
 
 	private void npcParticles() {
@@ -63,10 +86,11 @@ public class Pugmas20 implements Listener {
 				for (Integer npcId : user.getNextStepNPCs()) {
 					NPC npc = CitizensUtils.getNPC(npcId);
 					if (npc.isSpawned()) {
-						Location loc = npc.getEntity().getLocation().add(0, 1.5, 0);
+						Location loc = npc.getEntity().getLocation().add(0, 1, 0);
 						new ParticleBuilder(particle)
 								.location(loc)
-								.offset(0.25, 0.25, 0.25)
+								.offset(.25, .5, .25)
+								.count(10)
 								.receivers(player)
 								.spawn();
 					}
@@ -97,7 +121,19 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static boolean isAtPugmas(Player player) {
-		return WGUtils.isInRegion(player.getLocation(), region);
+		return isAtPugmas(player.getLocation());
+	}
+
+	public static boolean isAtPugmas(Location location) {
+		return WGUtils.isInRegion(location, region);
+	}
+
+	public static boolean isAtPugmas(Player player, String name) {
+		return isAtPugmas(player.getLocation(), name);
+	}
+
+	public static boolean isAtPugmas(Location location, String name) {
+		return !WGUtils.getRegionsLikeAt(getRegion() + "_" + name + "(_[0-9]+)?", location).isEmpty();
 	}
 
 	@EventHandler
@@ -108,4 +144,5 @@ public class Pugmas20 implements Listener {
 			return;
 		npc.sendScript(event.getClicker());
 	}
+
 }

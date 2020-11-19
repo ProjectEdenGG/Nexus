@@ -10,6 +10,7 @@ import me.pugabyte.bncore.utils.Env;
 
 @Environments(Env.PROD)
 public class Events extends Feature {
+	private Pugmas20 pugmas20;
 
 	@Override
 	public void startup() {
@@ -19,7 +20,12 @@ public class Events extends Feature {
 
 		new BearFair20();
 		new Halloween20();
-		new Pugmas20();
+		pugmas20 = new Pugmas20();
+	}
+
+	@Override
+	public void shutdown() {
+		pugmas20.shutdown();
 	}
 
 }

@@ -137,7 +137,14 @@ public class Nerd {
 
 	public World getDimension() {
 		NBTFile dataFile = getDataFile();
-		return dataFile == null ? null : Bukkit.getWorld(dataFile.getString("Dimension").replace("minecraft:", ""));
+		if (dataFile == null)
+			return null;
+
+		String dimension = dataFile.getString("Dimension").replace("minecraft:", "");
+		if (isNullOrEmpty(dimension))
+			dimension = dataFile.getString("SpawnWorld");
+
+		return Bukkit.getWorld(dimension);
 	}
 
 	public Location getLocation() {
