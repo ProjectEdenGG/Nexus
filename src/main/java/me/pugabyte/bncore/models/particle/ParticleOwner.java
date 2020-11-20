@@ -89,10 +89,8 @@ public class ParticleOwner extends PlayerOwnedObject {
 	}
 
 	public void cancelTasks(int taskId) {
-		getTasks(taskId).forEach(particleTask -> {
-			Tasks.cancel(particleTask.getTaskId());
-			tasks.remove(particleTask);
-		});
+		Tasks.cancel(taskId);
+		getTasks(taskId).forEach(particleTask -> tasks.remove(particleTask));
 	}
 
 	public void addTasks(ParticleType particleType, int... taskIds) {

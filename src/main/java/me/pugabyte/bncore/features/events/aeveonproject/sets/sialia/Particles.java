@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import static me.pugabyte.bncore.features.events.aeveonproject.APUtils.APLoc;
 
 public class Particles {
-	private int laserTaskID = -1;
+	private int laserTaskId = -1;
 	private boolean activeLaser = false;
 	private Player laserPlayer = null;
 	private final Location laserStart = APLoc(-1300.5, 83.5, -1155.9);
@@ -55,7 +55,7 @@ public class Particles {
 
 				if (!activeLaser) {
 					activeLaser = true;
-					laserTaskID = LineEffect.builder()
+					laserTaskId = LineEffect.builder()
 							.player(laserPlayer)
 							.startLoc(laserStart)
 							.endLoc(laserEnd)
@@ -72,7 +72,7 @@ public class Particles {
 	}
 
 	public void cancelTasks() {
-		Tasks.cancel(laserTaskID);
+		Tasks.cancel(laserTaskId);
 		activeLaser = false;
 	}
 
