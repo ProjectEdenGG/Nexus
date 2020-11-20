@@ -132,6 +132,12 @@ public class MaterialTag implements Tag<Material> {
 			.append(SAPLINGS, DOORS, SIGNS, RAILS, BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
 					PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
 
+	public static final MaterialTag SWORDS = new MaterialTag("_SWORD", MatchMode.SUFFIX);
+	public static final MaterialTag PICKAXES = new MaterialTag("_PICKAXE", MatchMode.SUFFIX);
+	public static final MaterialTag AXES = new MaterialTag("_AXE", MatchMode.SUFFIX);
+	public static final MaterialTag SHOVELS = new MaterialTag("_SHOVEL", MatchMode.SUFFIX);
+	public static final MaterialTag HOES = new MaterialTag("_HOE", MatchMode.SUFFIX);
+
 	@SneakyThrows
 	public static Map<String, Tag<Material>> getApplicable(Material material) {
 		return collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(material)));

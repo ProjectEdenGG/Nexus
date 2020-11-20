@@ -3,6 +3,7 @@ package me.pugabyte.bncore.features.minigames.mechanics;
 import me.pugabyte.bncore.features.minigames.managers.PlayerManager;
 import me.pugabyte.bncore.features.minigames.mechanics.common.SpleefMechanic;
 import me.pugabyte.bncore.features.minigames.models.Minigamer;
+import me.pugabyte.bncore.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -50,8 +51,7 @@ public final class Splegg extends SpleefMechanic {
 		if (!event.getAction().name().contains("RIGHT_CLICK")) return;
 
 		Material hand = minigamer.getPlayer().getInventory().getItemInMainHand().getType();
-		// TODO: 1.13 material tags
-		if (hand.name().contains("SPADE") || hand.name().contains("SHOVEL"))
+		if (MaterialTag.SHOVELS.isTagged(hand))
 			throwEgg(minigamer);
 	}
 

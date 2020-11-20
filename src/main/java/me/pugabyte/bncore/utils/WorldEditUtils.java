@@ -202,8 +202,7 @@ public class WorldEditUtils {
 		session.getRegionSelector(worldEditWorld).learnChanges();
 		int newSize = region.getArea();
 		session.getRegionSelector(worldEditWorld).explainRegionAdjust(getPlayer(player), session);
-//		1.12: BBC.SELECTION_EXPAND.send(worldEditPlayer, (newSize - oldSize));
-//		1.15?: actor.printInfo(TranslatableComponent.of("worldedit.expand.expanded.vert", new Component[]{TextComponent.of(changeSize)}));
+//		actor.printInfo(TranslatableComponent.of("worldedit.expand.expanded.vert", new Component[]{TextComponent.of(changeSize)}));
 	}
 
 	public void setSelection(Player player, Location location) {
