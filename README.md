@@ -1,4 +1,4 @@
-# BNCore
+# Nexus
 [Bear Nation](https://bnn.gg)'s main java plugin 
 
 ## Building

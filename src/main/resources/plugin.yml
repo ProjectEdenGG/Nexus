@@ -1,5 +1,5 @@
-name: BNCore
-main: me.pugabyte.bncore.BNCore
+name: Nexus
+main: me.pugabyte.nexus.Nexus
 version: ${project.version}
 api-version: "1.16"
 softdepend:
