@@ -709,9 +709,8 @@ public class Utils {
 	private static String getInvTitle(InventoryView view) {
 		String viewTitle = null;
 		try {
-			viewTitle = StringUtils.stripColor(view.getTitle());
-		} catch (Exception ignored) {
-		}
+			viewTitle = view.getTitle();
+		} catch (Exception ignored) {}
 
 		return viewTitle;
 	}
