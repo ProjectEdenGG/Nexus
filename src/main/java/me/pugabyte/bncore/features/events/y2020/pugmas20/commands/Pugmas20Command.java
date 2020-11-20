@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
 import me.pugabyte.bncore.features.events.y2020.pugmas20.AdventChests;
 import me.pugabyte.bncore.features.events.y2020.pugmas20.Ores;
+import me.pugabyte.bncore.features.events.y2020.pugmas20.Ores.OreType;
 import me.pugabyte.bncore.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.bncore.features.events.y2020.pugmas20.Train;
 import me.pugabyte.bncore.features.events.y2020.pugmas20.menu.AdventMenu;
@@ -34,10 +35,13 @@ import static me.pugabyte.bncore.features.events.y2020.pugmas20.Pugmas20.isSecon
 @NoArgsConstructor
 public class Pugmas20Command extends CustomCommand implements Listener {
 	private final Pugmas20Service service = new Pugmas20Service();
+	private Pugmas20User user;
 	String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
 
 	public Pugmas20Command(CommandEvent event) {
 		super(event);
+		if (isPlayer())
+			user = service.get(player());
 	}
 
 	@Path()
@@ -83,7 +87,6 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("advent addDay <player> <day>")
 	void adventAddDay(OfflinePlayer player, int day) {
-		Pugmas20User user = service.get(player);
 		user.getFoundDays().add(day);
 		service.save(user);
 
@@ -93,7 +96,6 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("database delete <player>")
 	void databaseDelete(OfflinePlayer player) {
-		Pugmas20User user = service.get(player);
 		service.delete(user);
 		send("Deleted data for " + player.getName());
 	}
@@ -182,6 +184,33 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path("kit miners sieve")
 	void kitMinersSieve() {
 		ItemUtils.giveItem(player(), Ores.getMinersSieve());
+	}
+
+	@Permission("group.admin")
+	@Path("kit miners ores")
+	void kitMinersOres() {
+		for (OreType oreType : OreType.values())
+			ItemUtils.giveItem(player(), oreType.getOre());
+	}
+
+	@Permission("group.admin")
+	@Path("kit miners ingots")
+	void kitMinersIngot() {
+		for (OreType oreType : OreType.values())
+			ItemUtils.giveItem(player(), oreType.getIngot());
+	}
+
+	@Permission("group.admin")
+	@Path("inventory store")
+	void inventoryStore() {
+		user.storeInventory();
+		send(PREFIX + "Stored inventory");
+	}
+
+	@Permission("group.admin")
+	@Path("inventory apply")
+	void inventoryApply() {
+		user.applyInventory();
 	}
 
 }

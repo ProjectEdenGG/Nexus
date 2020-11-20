@@ -48,6 +48,8 @@ public class Pugmas20 implements Listener {
 	public static final LocalDateTime closingDay = LocalDateTime.of(2021, 1, 11, 0, 0, 0, 0);
 
 	public static final List<Hologram> holograms = new ArrayList<>();
+	@Getter
+	private static final String itemLore = "Pugmas20 Item";
 	// Advent Menu
 
 	public Pugmas20() {
@@ -68,11 +70,9 @@ public class Pugmas20 implements Listener {
 	private void npcHolograms() {
 		for (QuestNPC questNPC : QuestNPC.values()) {
 			NPC npc = CitizensUtils.getNPC(questNPC.getId());
-			if (npc.isSpawned()) {
-				Hologram hologram = HologramsAPI.createHologram(BNCore.getInstance(), npc.getEntity().getLocation().clone().add(0, 3.15, 0));
-				hologram.appendItemLine(new ItemStack(Material.EMERALD));
-				holograms.add(hologram);
-			}
+			Hologram hologram = HologramsAPI.createHologram(BNCore.getInstance(), npc.getStoredLocation().clone().add(0, 3.15, 0));
+			hologram.appendItemLine(new ItemStack(Material.EMERALD));
+			holograms.add(hologram);
 		}
 	}
 
@@ -104,7 +104,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static ItemBuilder pugmasItem(Material material) {
-		return new ItemBuilder(material).lore("Pugmas20 Item");
+		return new ItemBuilder(material).lore(itemLore);
 	}
 
 	public static boolean isBeforePugmas(LocalDateTime localDateTime) {
@@ -138,7 +138,7 @@ public class Pugmas20 implements Listener {
 
 	@EventHandler
 	public void onNPCClick(NPCRightClickEvent event) {
-		QuestNPC npc = QuestNPC.getByID(event.getNPC().getId());
+		QuestNPC npc = QuestNPC.getById(event.getNPC().getId());
 		if (npc == null) return;
 		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", Time.SECOND.x(2)))
 			return;

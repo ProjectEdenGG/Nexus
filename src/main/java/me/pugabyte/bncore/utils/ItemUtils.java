@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -87,11 +86,20 @@ public class ItemUtils {
 			}
 		}
 
-		for (ItemStack item : finalItems) {
-			Map<Integer, ItemStack> excess = player.getInventory().addItem(item);
-			if (!excess.isEmpty())
-				excess.values().forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
-		}
+		dropExcessItems(player, giveItemsGetExcess(player, finalItems));
+	}
+
+	public static List<ItemStack> giveItemsGetExcess(Player player, List<ItemStack> finalItems) {
+		List<ItemStack> excess = new ArrayList<>();
+		for (ItemStack item : finalItems)
+			excess.addAll(player.getInventory().addItem(item).values());
+
+		return excess;
+	}
+
+	public static void dropExcessItems(Player player, List<ItemStack> excess) {
+		if (!excess.isEmpty())
+			excess.forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
 	}
 
 	public static ItemStack getTool(Player player) {

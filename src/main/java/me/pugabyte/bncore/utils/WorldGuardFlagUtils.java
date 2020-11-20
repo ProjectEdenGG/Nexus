@@ -21,7 +21,8 @@ public class WorldGuardFlagUtils {
 
 	public enum Flags {
 		SNOW_EFFECT(registerFlag(new StateFlag("snow-effect", false))),
-		HANGING_BREAK(registerFlag(new StateFlag("hanging-break", false)));
+		HANGING_BREAK(registerFlag(new StateFlag("hanging-break", false))),
+		GRASS_DECAY(registerFlag(new StateFlag("grass-decay", false)));
 
 		public final Flag<?> flag;
 

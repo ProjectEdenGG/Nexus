@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.bncore.features.events.y2020.pugmas20.Pugmas20.WEUtils;
 import static me.pugabyte.bncore.features.events.y2020.pugmas20.Pugmas20.pugmasLoc;
+
 /*
 -890, -2186
  935,   482

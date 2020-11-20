@@ -3,12 +3,15 @@ package me.pugabyte.bncore.features.events.y2020.pugmas20;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
+import me.pugabyte.bncore.models.pugmas20.Pugmas20Service;
+import me.pugabyte.bncore.models.pugmas20.Pugmas20User;
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.RandomUtils;
 import me.pugabyte.bncore.utils.SerializationUtils.JSON;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
+import me.pugabyte.bncore.utils.Utils.ActionGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -23,6 +26,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
@@ -84,17 +88,20 @@ public class Ores implements Listener {
 		if (!isAtPugmas(player, "cave"))
 			return;
 
-		if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getClickedBlock() == null)
+		if (!minersSieve.equals(player.getInventory().getItemInMainHand()))
+			return;
+
+		if (!ActionGroup.CLICK_BLOCK.applies(event) || event.getClickedBlock() == null)
+			return;
+
+		event.setCancelled(true);
+
+		if (Action.LEFT_CLICK_BLOCK != event.getAction())
 			return;
 
 		Block block = event.getClickedBlock();
 		if (block.getType() != Material.GRAVEL)
 			return;
-
-		if (!minersSieve.equals(player.getInventory().getItemInMainHand()))
-			return;
-
-		event.setCancelled(true);
 
 		playSound(player, Sound.ENTITY_HORSE_SADDLE, .5F, .5F);
 		playSound(player, Sound.UI_STONECUTTER_TAKE_RESULT, .5F, .5F);
@@ -129,7 +136,7 @@ public class Ores implements Listener {
 
 	@EventHandler
 	public void onBurn(FurnaceBurnEvent event) {
-		if (!isAtPugmas(event.getBlock().getLocation()))
+		if (!isAtPugmas(event.getBlock().getLocation(), "cave"))
 			return;
 
 		if (!(event.getBlock().getState() instanceof BlastFurnace))
@@ -171,6 +178,23 @@ public class Ores implements Listener {
 		}
 
 		event.setBurnTime((int) (event.getBurnTime() / ((8 / orePerCoal) * state.getCookSpeedMultiplier())));
+	}
+
+	@EventHandler
+	public void onTeleport(PlayerTeleportEvent event) {
+		Pugmas20Service service = new Pugmas20Service();
+
+		if (isAtPugmas(event.getFrom()) && !isAtPugmas(event.getTo())) {
+			Pugmas20User user = service.get(event.getPlayer());
+			user.storeInventory();
+		}
+
+		if (isAtPugmas(event.getTo())) {
+			Tasks.wait(1, () -> {
+				Pugmas20User user = service.get(event.getPlayer());
+				user.applyInventory();
+			});
+		}
 	}
 
 	static {

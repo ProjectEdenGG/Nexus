@@ -27,6 +27,14 @@ import static me.pugabyte.bncore.utils.StringUtils.plural;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
+/*
+	TODO
+		Create an EventType enum
+		Use Pugmas20 inventory store to manage event items between events
+		Add a way to clear the eventtype inventory once upon entering the world
+		Add a way to differentiate between event-world only items and survival items
+		Add a way to send survival items back to survival (delivery service)
+ */
 public class EventUser extends PlayerOwnedObject {
 	@Id
 	@NonNull

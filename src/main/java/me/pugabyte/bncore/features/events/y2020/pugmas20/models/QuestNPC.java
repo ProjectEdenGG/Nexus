@@ -7,7 +7,6 @@ import me.pugabyte.bncore.models.pugmas20.Pugmas20Service;
 import me.pugabyte.bncore.models.pugmas20.Pugmas20User;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Utils;
-import me.pugabyte.bncore.utils.Utils.EnumUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -15,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static me.pugabyte.bncore.utils.StringUtils.camelCase;
 
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public enum QuestNPC {
@@ -198,7 +199,7 @@ public enum QuestNPC {
 		this.id = id;
 	}
 
-	public static QuestNPC getByID(int id) {
+	public static QuestNPC getById(int id) {
 		for (QuestNPC value : QuestNPC.values())
 			if (value.id == id) return value;
 		return null;
@@ -214,7 +215,10 @@ public enum QuestNPC {
 			wait.getAndAdd(script.getDelay());
 
 			script.getLines().forEach(line -> {
-				npcName.set(EnumUtils.prettyName(name()));
+				if(npcName.get().equalsIgnoreCase(QA_ELF.name()))
+					npcName.set("Q.A. Elf");
+				else
+					npcName.set(camelCase(name()));
 				npcName.set(npcName.get().replaceAll("[0-9]+", ""));
 
 				line = line.replaceAll("<player>", player.getName());

@@ -10,14 +10,22 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.bncore.features.events.models.QuestStage;
+import me.pugabyte.bncore.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.bncore.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.bncore.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.bncore.models.PlayerOwnedObject;
+import me.pugabyte.bncore.utils.ItemUtils;
+import me.pugabyte.bncore.utils.JsonBuilder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import static me.pugabyte.bncore.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
+import static me.pugabyte.bncore.utils.ItemUtils.isNullOrAir;
 
 @Data
 @NoArgsConstructor
@@ -49,5 +57,40 @@ public class Pugmas20User extends PlayerOwnedObject {
 
 	// Quest - The Mines
 	private QuestStage minesStage = QuestStage.NOT_STARTED;
+
+	@Embedded
+	private List<ItemStack> inventory = new ArrayList<>();
+
+	public void storeInventory() {
+		if (!isOnline()) return;
+
+		PlayerInventory playerInventory = getPlayer().getInventory();
+		for (ItemStack item : playerInventory.getContents()) {
+			if (isNullOrAir(item) || item.getLore() == null || item.getLore().isEmpty())
+				continue;
+
+			if (item.getLore().get(0).contains(Pugmas20.getItemLore())) {
+				playerInventory.remove(item);
+				inventory.add(item);
+			}
+		}
+	}
+
+	public void applyInventory() {
+		if (!isOnline()) return;
+		if (!isAtPugmas(getPlayer())) return;
+
+		ArrayList<ItemStack> inventory = new ArrayList<>(this.inventory);
+		this.inventory.clear();
+		this.inventory.addAll(ItemUtils.giveItemsGetExcess(getPlayer(), inventory));
+
+		if (this.inventory.isEmpty())
+			send(Pugmas20.PREFIX + "Inventory applied");
+		else
+			send(new JsonBuilder(Pugmas20.PREFIX + "Could not give all event items, clear up some inventory space and click here or re-enter the world")
+					.hover("Click to collect the rest of your event items")
+					.command("/pugmas20 inventory apply"));
+
+	}
 
 }
