@@ -27,6 +27,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
@@ -143,6 +144,23 @@ public class Pugmas20 implements Listener {
 		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", Time.SECOND.x(2)))
 			return;
 		npc.sendScript(event.getClicker());
+	}
+
+	@EventHandler
+	public void onTeleport(PlayerTeleportEvent event) {
+		Pugmas20Service service = new Pugmas20Service();
+
+		if (isAtPugmas(event.getFrom()) && !isAtPugmas(event.getTo())) {
+			Pugmas20User user = service.get(event.getPlayer());
+			user.storeInventory();
+		}
+
+		if (isAtPugmas(event.getTo()) && !isAtPugmas(event.getFrom())) {
+			Tasks.wait(1, () -> {
+				Pugmas20User user = service.get(event.getPlayer());
+				user.applyInventory();
+			});
+		}
 	}
 
 }

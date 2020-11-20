@@ -3,8 +3,6 @@ package me.pugabyte.bncore.features.events.y2020.pugmas20;
 import lombok.Getter;
 import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.features.commands.staff.WorldGuardEditCommand;
-import me.pugabyte.bncore.models.pugmas20.Pugmas20Service;
-import me.pugabyte.bncore.models.pugmas20.Pugmas20User;
 import me.pugabyte.bncore.models.task.Task;
 import me.pugabyte.bncore.models.task.TaskService;
 import me.pugabyte.bncore.utils.RandomUtils;
@@ -26,7 +24,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
@@ -180,23 +177,6 @@ public class Ores implements Listener {
 		event.setBurnTime((int) (event.getBurnTime() / ((8 / orePerCoal) * state.getCookSpeedMultiplier())));
 	}
 
-	@EventHandler
-	public void onTeleport(PlayerTeleportEvent event) {
-		Pugmas20Service service = new Pugmas20Service();
-
-		if (isAtPugmas(event.getFrom()) && !isAtPugmas(event.getTo())) {
-			Pugmas20User user = service.get(event.getPlayer());
-			user.storeInventory();
-		}
-
-		if (isAtPugmas(event.getTo())) {
-			Tasks.wait(1, () -> {
-				Pugmas20User user = service.get(event.getPlayer());
-				user.applyInventory();
-			});
-		}
-	}
-
 	static {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(1), () -> {
 			TaskService service = new TaskService();
@@ -237,18 +217,6 @@ public class Ores implements Listener {
 				if (oreType.getOre().getType() == ore)
 					return oreType;
 			return null;
-		}
-
-		public ItemStack getOre(int amount) {
-			ItemStack itemStack = new ItemStack(ore).clone();
-			itemStack.setAmount(amount);
-			return itemStack;
-		}
-
-		public ItemStack getIngot(int amount) {
-			ItemStack itemStack = new ItemStack(ingot).clone();
-			itemStack.setAmount(amount);
-			return itemStack;
 		}
 	}
 }
