@@ -79,6 +79,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 	public void applyInventory() {
 		if (!isOnline()) return;
 		if (!isAtPugmas(getPlayer())) return;
+		if (this.inventory.isEmpty()) return;
 
 		ArrayList<ItemStack> inventory = new ArrayList<>(this.inventory);
 		this.inventory.clear();

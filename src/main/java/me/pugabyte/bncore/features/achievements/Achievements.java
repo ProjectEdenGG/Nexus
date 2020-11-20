@@ -3,8 +3,8 @@ package me.pugabyte.bncore.features.achievements;
 import me.pugabyte.bncore.framework.features.Feature;
 import me.pugabyte.bncore.utils.Tasks;
 import me.pugabyte.bncore.utils.Time;
-import me.pugabyte.bncore.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.World;
 
 public class Achievements extends Feature {
@@ -19,7 +19,7 @@ public class Achievements extends Feature {
 	public void startup() {
 		Tasks.wait(Time.SECOND.x(5), () -> {
 			for (World world : Bukkit.getWorlds())
-				Utils.runCommandAsConsole("mv gamerule announceAdvancements false " + world.getName());
+				world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
 		});
 
 	/*

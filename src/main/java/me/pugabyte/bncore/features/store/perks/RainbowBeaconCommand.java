@@ -1,6 +1,7 @@
 package me.pugabyte.bncore.features.store.perks;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.bncore.BNCore;
 import me.pugabyte.bncore.framework.commands.models.CustomCommand;
 import me.pugabyte.bncore.framework.commands.models.annotations.Arg;
 import me.pugabyte.bncore.framework.commands.models.annotations.ConverterFor;
@@ -89,7 +90,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Active beacons:");
 		for (RainbowBeacon rainbowBeacon : service.getCache().values())
-			send(rainbowBeacon.getOfflinePlayer().getName());
+			send("&e" + rainbowBeacon.getOfflinePlayer().getName() + " &7- " + (rainbowBeacon.getTaskId() == null ? "Inactive" : "&aActive"));
 	}
 
 	@EventHandler
@@ -106,6 +107,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			RainbowBeaconService service = new RainbowBeaconService();
 			List<RainbowBeacon> beacons = service.getAll();
 			for (RainbowBeacon rainbowBeacon : beacons) {
+				BNCore.log("[RainbowBeacon] Starting task for " + rainbowBeacon.getOfflinePlayer().getName());
 				startTask(rainbowBeacon);
 				service.cache(rainbowBeacon);
 			}

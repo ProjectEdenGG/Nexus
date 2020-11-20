@@ -91,12 +91,13 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 			if (!countriesMap.containsKey(key))
 				countriesMap.put(key, geoIp.getCountryName());
 
-			int hours = ((Hours) hoursService.get(geoIp.getOfflinePlayer())).getTotal() / 3600;
-			if (hours < 1) return;
+			Hours hours = hoursService.get(geoIp.getOfflinePlayer());
+			int hoursPlayed = hours.getTotal() / 3600;
+			if (hoursPlayed < 1) return;
 
 			if (hoursMap.containsKey(key))
-				hours += hoursMap.get(key);
-			hoursMap.put(key, hours);
+				hoursPlayed += hoursMap.get(key);
+			hoursMap.put(key, hoursPlayed);
 
 			int players = 1;
 			if (playersMap.containsKey(key))

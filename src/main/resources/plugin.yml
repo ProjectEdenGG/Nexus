@@ -8,6 +8,7 @@ softdepend:
   - Citizens
   - Essentials
   - helper
+  - HolographicDisplays
   - LiteBans
   - LWC
   - mcMMO
