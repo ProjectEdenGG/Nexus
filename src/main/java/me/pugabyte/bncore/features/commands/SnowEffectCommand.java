@@ -71,9 +71,9 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 
 	private static boolean isBelowCeiling(Player player) {
 		int count = 0;
-		int playerY = (int) player.getLocation().getY() + 1;
+		int playerY = player.getLocation().getBlockY();
 		for (int y = playerY; y <= 255; y++) {
-			Block relative = player.getLocation().getBlock().getRelative(0, y - playerY, 0);
+			Block relative = player.getLocation().getBlock().getRelative(0, y - (playerY - 1), 0);
 			Material material = relative.getType();
 			if (material.isOccluding() || MaterialTag.STAIRS.isTagged(material) || MaterialTag.SLABS.isTagged(material))
 				++count;
