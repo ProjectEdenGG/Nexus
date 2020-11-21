@@ -107,6 +107,8 @@ public class Trees implements Listener {
 		@Getter
 		private final Map<Integer, ProtectedRegion> regions = new HashMap<>();
 
+		private static final int animationTime = Time.SECOND.x(3);
+
 		PugmasTreeType(Material logs, Material... others) {
 			this.logs = logs;
 			this.others = Arrays.asList(others);
@@ -173,7 +175,7 @@ public class Trees implements Listener {
 				return Pugmas20.WEUtils.paster()
 						.air(false)
 						.at(region.getMinimumPoint())
-						.duration(Time.SECOND.x(3))
+						.duration(animationTime)
 						.file(schematicName)
 						.computeBlocks();
 			});
@@ -204,7 +206,7 @@ public class Trees implements Listener {
 				Queue<Location> queue = new PriorityQueue<>(getQueue(id));
 
 				int wait = 0;
-				int blocksPerTick = Math.max(queue.size() / 60, 1);
+				int blocksPerTick = Math.max(queue.size() / animationTime, 1);
 
 				queueLoop:
 				while (true) {
