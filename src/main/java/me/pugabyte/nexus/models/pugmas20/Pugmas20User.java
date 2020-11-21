@@ -44,13 +44,17 @@ public class Pugmas20User extends PlayerOwnedObject {
 
 	// Active Quest NPCs
 	@Embedded
-	private List<Integer> nextStepNPCs = Arrays.asList(QuestNPC.ELF1.getId(), QuestNPC.QA_ELF.getId(), QuestNPC.ELF3.getId());
+	private List<Integer> nextStepNPCs = Arrays.asList(QuestNPC.ELF2.getId(), QuestNPC.QA_ELF.getId(), QuestNPC.ELF3.getId());
 
 	// Quest - Light The Tree
 	private QuestStage lightTreeStage = QuestStage.NOT_STARTED;
 
 	// Quest - Toy Testing
 	private QuestStage toyTestingStage = QuestStage.NOT_STARTED;
+	private boolean masterMind = false;
+	private boolean connectFour = false;
+	private boolean ticTacToe = false;
+	private boolean battleship = false;
 
 	// Quest - Ornament Vendor
 	private QuestStage ornamentVendorStage = QuestStage.NOT_STARTED;
@@ -93,5 +97,4 @@ public class Pugmas20User extends PlayerOwnedObject {
 					.command("/pugmas20 inventory apply"));
 
 	}
-
 }
