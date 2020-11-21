@@ -503,10 +503,4 @@ public class Battleship extends BalancedTeamMechanic {
 		Tasks.wait(Time.SECOND.x(10), () -> super.end(match));
 	}
 
-	@Override
-	public void announceWinners(Match match) {
-		super.announceWinners(match);
-
-	}
-
 }

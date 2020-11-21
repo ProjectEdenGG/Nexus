@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models.arenas;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
+@ToString(callSuper = true)
 @SerializableAs("ThimbleMap")
 public class ThimbleMap implements ConfigurationSerializable {
 	private String name;

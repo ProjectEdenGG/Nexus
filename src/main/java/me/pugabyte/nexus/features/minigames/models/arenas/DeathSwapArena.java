@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.arenas;
 
 import lombok.Data;
+import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
+@ToString(callSuper = true)
 @SerializableAs("DeathSwapArena")
 public class DeathSwapArena extends Arena {
 	private List<Location> schematicResetLocations;

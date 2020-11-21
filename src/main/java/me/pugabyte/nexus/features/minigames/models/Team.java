@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.Utils.getNearestPlayer;
@@ -149,9 +150,7 @@ public class Team implements ConfigurationSerializable {
 	}
 
 	public List<Minigamer> getAliveMinigamers(List<Minigamer> minigamers) {
-		return ensureThisTeam(minigamers.stream()
-				.filter(Minigamer::isAlive)
-				.collect(Collectors.toList()));
+		return ensureThisTeam(minigamers.stream().filter(Minigamer::isAlive));
 	}
 
 	public List<Minigamer> getMinigamers(Match match) {
@@ -159,7 +158,11 @@ public class Team implements ConfigurationSerializable {
 	}
 
 	public List<Minigamer> ensureThisTeam(List<Minigamer> minigamers) {
-		return minigamers.stream()
+		return ensureThisTeam(minigamers.stream());
+	}
+
+	public List<Minigamer> ensureThisTeam(Stream<Minigamer> minigamers) {
+		return minigamers
 				.filter(minigamer -> this.equals(minigamer.getTeam()))
 				.collect(Collectors.toList());
 	}
