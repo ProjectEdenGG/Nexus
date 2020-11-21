@@ -114,9 +114,8 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		Map<Team, Integer> assignments = new HashMap<>();
 		teams.forEach(team -> assignments.put(team, 0));
 		minigamers.forEach(minigamer -> {
-			if (minigamer.getTeam() != null) {
+			if (minigamer.getTeam() != null)
 				assignments.put(minigamer.getTeam(), assignments.get(minigamer.getTeam()) + 1);
-			}
 		});
 		return assignments;
 	}
@@ -134,6 +133,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		if (winningScore > 0)
 			for (Team team : teams)
 				if (team.getScore(match) >= winningScore) {
+					match.getMatchData().setWinnerTeam(team);
 					Nexus.log("Team match has reached calculated winning score (" + winningScore + "), ending");
 					return true;
 				}
@@ -150,28 +150,26 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	public void nextTurn(Match match) {
-		if (match.getMatchData().getTurnTeam() != null) {
-			onTurnEnd(match, match.getMatchData().getTurnTeam());
-			match.getMatchData().setTurnTeam(null);
-		}
-
 		Arena arena = match.getArena();
 		MatchData matchData = match.getMatchData();
 		MatchTasks tasks = match.getTasks();
 
-		if (match.getAliveTeams().size() <= 1) {
-			match.end();
-			Nexus.log("Ending 4");
-			return;
-		}
-
 		if (match.isEnded() || matchData == null)
 			return;
+
+		if (matchData.getTurnTeam() != null) {
+			onTurnEnd(match, matchData.getTurnTeam());
+			matchData.setTurnTeam(null);
+		}
+
+		if (shouldBeOver(match)) {
+			end(match);
+			return;
+		}
 
 		if (matchData.getTurns() >= match.getArena().getMaxTurns()) {
 			match.broadcast("Max turns reached, ending game");
 			match.end();
-			Nexus.log("Ending 5");
 			return;
 		}
 
@@ -196,7 +194,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	public void onQuit(MatchQuitEvent event) {
 		Match match = event.getMatch();
 		Team team = event.getMinigamer().getTeam();
-		if (team.getMembers(match).size() == 0)
+		if (team.getAliveMinigamers(match).size() == 0)
 			nextTurn(match);
 
 		super.onQuit(event);

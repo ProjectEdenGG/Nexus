@@ -135,14 +135,18 @@ public class Battleship extends BalancedTeamMechanic {
 		if (matchData.isPlacingKits()) {
 			lines.add("&cPlace your kits!");
 		} else {
-			lines.add("&cTime: &e" + timespanDiff(matchData.getStart()));
+			lines.add("&cTime: &e" + timespanDiff(matchData.getStart(), matchData.getEnd() == null ? LocalDateTime.now() : matchData.getEnd()));
 
-			long turnDuration = matchData.getTurnStarted().until(LocalDateTime.now(), ChronoUnit.SECONDS);
-			String timeLeft = TimespanFormatter.of(arena.getTurnTime() - turnDuration).format();
-			if (team.equals(matchData.getTurnTeam()))
-				lines.add("&cTurn over in: &e" + timeLeft);
-			else
-				lines.add("&cYour turn in: &e" + timeLeft);
+			if (matchData.isEnding()) {
+				lines.add("&cWinner: " + matchData.getWinnerTeam().getColoredName());
+			} else {
+				long turnDuration = matchData.getTurnStarted().until(LocalDateTime.now(), ChronoUnit.SECONDS);
+				String timeLeft = TimespanFormatter.of(arena.getTurnTime() - turnDuration).format();
+				if (team.equals(matchData.getTurnTeam()))
+					lines.add("&cTurn over in: &e" + timeLeft);
+				else
+					lines.add("&cYour turn in: &e" + timeLeft);
+			}
 		}
 
 		lines.add("&f");
@@ -236,7 +240,7 @@ public class Battleship extends BalancedTeamMechanic {
 	public void hideShips(Match match, Team team) {
 		BattleshipMatchData matchData = match.getMatchData();
 		Team otherTeam = matchData.getGrid(team).getOtherTeam();
-		List<Minigamer> otherTeamMembers = otherTeam.getMembers(match);
+		List<Minigamer> otherTeamMembers = otherTeam.getAliveMinigamers(match);
 
 		Region region = match.getArena().getRegion("hideships_" + team.getName().toLowerCase());
 		for (BlockVector3 vector : region) {
@@ -488,6 +492,21 @@ public class Battleship extends BalancedTeamMechanic {
 		matchData.setFired(false);
 
 		super.onTurnEnd(match, team);
+	}
+
+	@Override
+	public void end(Match match) {
+		BattleshipMatchData matchData = match.getMatchData();
+		matchData.isEnding(true);
+		matchData.setEnd(LocalDateTime.now());
+		match.broadcast(matchData.getWinnerTeam().getColoredName() + " &3won!");
+		Tasks.wait(Time.SECOND.x(10), () -> super.end(match));
+	}
+
+	@Override
+	public void announceWinners(Match match) {
+		super.announceWinners(match);
+
 	}
 
 }

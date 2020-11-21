@@ -52,6 +52,7 @@ import static me.pugabyte.nexus.utils.Utils.isInt;
 @MatchDataFor(Battleship.class)
 public class BattleshipMatchData extends MatchData {
 	private LocalDateTime start;
+	private LocalDateTime end;
 	private boolean placingKits = true;
 	private final Map<Team, Grid> grids = new HashMap<>();
 	private final Map<Team, Map<ShipType, Ship>> ships = new HashMap<>();
@@ -358,6 +359,7 @@ public class BattleshipMatchData extends MatchData {
 				if (state == State.OCCUPIED) {
 					ship.fire();
 					state = State.HIT;
+					getMatch().scored(getOtherTeam());
 				} else
 					state = State.MISS;
 

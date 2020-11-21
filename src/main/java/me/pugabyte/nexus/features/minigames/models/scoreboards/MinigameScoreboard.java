@@ -93,7 +93,7 @@ public interface MinigameScoreboard {
 			});
 
 			scoreboardTeams.forEach((team, scoreboardTeam) -> {
-				team.getMembers(match).forEach(minigamer -> scoreboardTeam.addPlayer(minigamer.getPlayer()));
+				team.getAliveMinigamers(match).forEach(minigamer -> scoreboardTeam.addPlayer(minigamer.getPlayer()));
 				Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
 			});
 		}

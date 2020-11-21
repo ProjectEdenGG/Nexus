@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models.arenas;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
+import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
@@ -11,6 +12,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import java.util.Map;
 
 @Data
+@ToString(callSuper = true)
 @SerializableAs("BattleshipArena")
 public class BattleshipArena extends Arena {
 
