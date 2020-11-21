@@ -213,4 +213,10 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		user.applyInventory();
 	}
 
+	@Permission("group.admin")
+	@Path("npcs emeralds")
+	void npcsHolograms() {
+		Pugmas20.createNpcHolograms();
+	}
+
 }

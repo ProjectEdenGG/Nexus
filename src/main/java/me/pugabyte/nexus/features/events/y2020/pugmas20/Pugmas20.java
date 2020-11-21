@@ -60,15 +60,20 @@ public class Pugmas20 implements Listener {
 		new AdventChests();
 		new Train();
 		new Ores();
-		npcHolograms();
+		createNpcHolograms();
 		npcParticles();
 	}
 
 	public void shutdown() {
+		deleteNpcHolograms();
+	}
+
+	public static void deleteNpcHolograms() {
 		holograms.forEach(Hologram::delete);
 	}
 
-	private void npcHolograms() {
+	public static void createNpcHolograms() {
+		deleteNpcHolograms();
 		for (QuestNPC questNPC : QuestNPC.values()) {
 			NPC npc = CitizensUtils.getNPC(questNPC.getId());
 			Hologram hologram = HologramsAPI.createHologram(Nexus.getInstance(), npc.getStoredLocation().clone().add(0, 3.15, 0));

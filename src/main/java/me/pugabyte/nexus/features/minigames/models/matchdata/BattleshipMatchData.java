@@ -269,7 +269,7 @@ public class BattleshipMatchData extends MatchData {
 					.file(Peg.RESET.getFileName())
 					.at(Peg.RESET.getBoard().getLocation(aiming))
 					.transform(CardinalDirection.of(numberDirection).getRotationTransform())
-					.pasteAsync();
+					.buildAsync();
 			aiming = null;
 
 
