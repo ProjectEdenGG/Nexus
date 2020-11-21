@@ -21,7 +21,11 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -30,6 +34,7 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isBeforePugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @Aliases("pugmas")
 @NoArgsConstructor
@@ -217,6 +222,34 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path("npcs emeralds")
 	void npcsHolograms() {
 		Pugmas20.createNpcHolograms();
+	}
+
+	@Permission("group.admin")
+	@Path("trimItemNames")
+	void trimItemNames() {
+		Block block = getTargetBlock();
+		if (!(block.getState() instanceof Container))
+			return;
+
+		Container state = (Container) block.getState();
+
+		for (ItemStack content : state.getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			ItemMeta itemMeta = content.getItemMeta();
+			String displayName = itemMeta.getDisplayName();
+
+			if (!displayName.matches(StringUtils.getColorGroupPattern() + " .*"))
+				continue;
+
+			String trimmed = displayName.replaceFirst(" ", "");
+
+			send("\"" + displayName + "&f\" -> \"" + trimmed + "&f\"");
+
+			itemMeta.setDisplayName(trimmed);
+			content.setItemMeta(itemMeta);
+		}
 	}
 
 }
