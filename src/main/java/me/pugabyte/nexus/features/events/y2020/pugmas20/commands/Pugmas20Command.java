@@ -7,8 +7,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Ores;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Ores.OreType;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.Trees.PugmasTreeType;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.models.PugmasTreeType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -20,12 +20,9 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
-import org.bukkit.block.Container;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -34,7 +31,6 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isBeforePugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
-import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @Aliases("pugmas")
 @NoArgsConstructor
@@ -155,7 +151,12 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("tree get")
 	void treeGet() {
-		send(PREFIX + "You are looking at a " + camelCase(PugmasTreeType.of(getTargetBlock().getType())) + " tree");
+		Material logs = getTargetBlock().getType();
+		PugmasTreeType treeType = PugmasTreeType.of(logs);
+		if (treeType == null)
+			error("Pugmas Tree with logs " + camelCase(logs) + " not found");
+
+		send(PREFIX + "You are looking at a " + camelCase(treeType) + " tree");
 	}
 
 	@Permission("group.admin")
@@ -222,34 +223,6 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path("npcs emeralds")
 	void npcsHolograms() {
 		Pugmas20.createNpcHolograms();
-	}
-
-	@Permission("group.admin")
-	@Path("trimItemNames")
-	void trimItemNames() {
-		Block block = getTargetBlock();
-		if (!(block.getState() instanceof Container))
-			return;
-
-		Container state = (Container) block.getState();
-
-		for (ItemStack content : state.getInventory().getContents()) {
-			if (isNullOrAir(content))
-				continue;
-
-			ItemMeta itemMeta = content.getItemMeta();
-			String displayName = itemMeta.getDisplayName();
-
-			if (!displayName.matches(StringUtils.getColorGroupPattern() + " .*"))
-				continue;
-
-			String trimmed = displayName.replaceFirst(" ", "");
-
-			send("\"" + displayName + "&f\" -> \"" + trimmed + "&f\"");
-
-			itemMeta.setDisplayName(trimmed);
-			content.setItemMeta(itemMeta);
-		}
 	}
 
 }
