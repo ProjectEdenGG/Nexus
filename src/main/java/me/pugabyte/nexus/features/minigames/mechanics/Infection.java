@@ -32,6 +32,11 @@ public class Infection extends UnbalancedTeamMechanic {
 		return new ItemStack(Material.ZOMBIE_HEAD);
 	}
 
+	@Override
+	public boolean canDropItem(ItemStack item) {
+		return item.getType() == Material.ARROW;
+	}
+
 	public List<Minigamer> getZombies(Match match) {
 		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam().getColor() == ChatColor.RED).collect(Collectors.toList());
 	}

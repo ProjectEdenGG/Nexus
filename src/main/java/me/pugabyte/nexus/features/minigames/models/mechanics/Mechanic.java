@@ -61,6 +61,10 @@ public abstract class Mechanic implements Listener {
 		return GameMode.ADVENTURE;
 	}
 
+	public boolean canDropItem(ItemStack item) {
+		return false;
+	}
+
 	public void onInitialize(MatchInitializeEvent event) {
 		Match match = event.getMatch();
 		int taskId = match.getTasks().repeat(1, Time.SECOND, () -> {

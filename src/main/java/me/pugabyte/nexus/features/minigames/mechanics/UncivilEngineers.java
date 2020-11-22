@@ -62,6 +62,11 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@Override
+	public boolean canDropItem(ItemStack item) {
+		return true;
+	}
+
+	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 		separatePlayers(event.getMatch());

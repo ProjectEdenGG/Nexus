@@ -30,9 +30,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 
@@ -129,6 +131,15 @@ public class MatchListener implements Listener {
 		if (!minigamer.isPlaying()) return;
 
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onItemDrop(PlayerDropItemEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying()) return;
+
+		ItemStack item = event.getItemDrop().getItemStack();
+		event.setCancelled(!minigamer.getMatch().getArena().getMechanic().canDropItem(item));
 	}
 
 	// TODO: Prevent damage of hanging entities/armor stands/etc

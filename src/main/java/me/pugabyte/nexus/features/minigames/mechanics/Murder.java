@@ -79,6 +79,11 @@ public class Murder extends UnbalancedTeamMechanic {
 	}
 
 	@Override
+	public boolean canDropItem(ItemStack item) {
+		return item.getType() == Material.IRON_INGOT;
+	}
+
+	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 

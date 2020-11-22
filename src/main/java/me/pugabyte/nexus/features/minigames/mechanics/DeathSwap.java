@@ -65,6 +65,11 @@ public final class DeathSwap extends TeamlessMechanic {
 		return true;
 	}
 
+	@Override
+	public boolean canDropItem(ItemStack item) {
+		return true;
+	}
+
 	public int radius = 2000;
 	public String world = "deathswap";
 
