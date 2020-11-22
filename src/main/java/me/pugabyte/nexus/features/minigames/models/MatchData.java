@@ -19,6 +19,9 @@ public class MatchData {
 	protected WorldGuardUtils WGUtils;
 	protected WorldEditUtils WEUtils;
 
+	private Team winnerTeam;
+	private Minigamer winnerPlayer;
+
 	private Team turnTeam;
 	private Minigamer turnMinigamer;
 	private List<Team> turnTeamList = new ArrayList<>();

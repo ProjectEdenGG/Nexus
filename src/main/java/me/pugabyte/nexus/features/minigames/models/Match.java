@@ -307,7 +307,7 @@ public class Match {
 	}
 
 	private void teleportIn() {
-		arena.getTeams().forEach(team -> team.spawn(minigamers));
+		arena.getTeams().forEach(team -> team.spawn(this));
 	}
 
 	public void teleportIn(Minigamer minigamer) {

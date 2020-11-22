@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.arenas;
 
 import lombok.Data;
+import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.utils.SerializationUtils;
 import org.bukkit.Material;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Data
+@ToString(callSuper = true)
 @SerializableAs("GrabAJumbuckArena")
 public class GrabAJumbuckArena extends Arena {
 	private Set<Material> sheepSpawnBlocks = new HashSet<>();

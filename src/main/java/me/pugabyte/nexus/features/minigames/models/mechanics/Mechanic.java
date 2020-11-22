@@ -117,6 +117,10 @@ public abstract class Mechanic implements Listener {
 
 	public void begin(MatchBeginEvent event) {}
 
+	public void end(Match match) {
+		match.end();
+	}
+
 	public void onEnd(MatchEndEvent event) {
 		if (event.getMatch().isStarted())
 			announceWinners(event.getMatch());

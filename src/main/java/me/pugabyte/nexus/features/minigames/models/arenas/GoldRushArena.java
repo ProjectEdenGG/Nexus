@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.arenas;
 
 import lombok.Data;
+import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -8,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
+@ToString(callSuper = true)
 @SerializableAs("GoldRushArena")
 public class GoldRushArena extends Arena {
 	private int mineStackHeight = 0;

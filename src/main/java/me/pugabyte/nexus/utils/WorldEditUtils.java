@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.utils;
 
-import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.object.RegionWrapper;
 import com.boydti.fawe.object.RelightMode;
 import com.boydti.fawe.util.EditSessionBuilder;
@@ -145,8 +144,8 @@ public class WorldEditUtils {
 		return getPlayer(player).getSelection();
 	}
 
-	public void fixLight(Region board) {
-		FaweAPI.fixLighting(worldEditWorld, board, null, RelightMode.ALL);
+	public void fixLight(Region region) {
+//		FaweAPI.fixLighting(worldEditWorld, region, null, RelightMode.ALL);
 	}
 
 	public enum SelectionChangeDirectionType {

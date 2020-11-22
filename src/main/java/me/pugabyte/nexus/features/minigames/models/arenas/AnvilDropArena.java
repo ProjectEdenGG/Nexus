@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.arenas;
 
 import lombok.Data;
+import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
+@ToString(callSuper = true)
 @SerializableAs("AnvilDropArena")
 public class AnvilDropArena extends Arena {
 	private List<AnvilDropMap> anvilDropMaps;
@@ -37,3 +39,4 @@ public class AnvilDropArena extends Arena {
 	}
 
 }
+

@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.features.minigames.models.arenas;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -11,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 @Data
+@NoArgsConstructor
+@ToString(callSuper = true)
 @SerializableAs("CheckpointArena")
 public class CheckpointArena extends Arena {
 	private List<Location> checkpoints = new ArrayList<>();

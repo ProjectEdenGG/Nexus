@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.arenas;
 
 import lombok.Data;
+import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.mechanics.Thimble;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
+@ToString(callSuper = true)
 @SerializableAs("ThimbleArena")
 public class ThimbleArena extends Arena {
 	private List<ThimbleMap> thimbleMaps;

@@ -101,6 +101,12 @@ public class MinigamesCommand extends CustomCommand {
 		getRunningMatch(arena).end();
 	}
 
+	@Path("debug [arena]")
+	@Permission("manage")
+	void debug(@Arg("current") Arena arena) {
+		send(arena.toString());
+	}
+
 	@Permission("manage")
 	@Path("signs join <arena>")
 	void joinSign(Arena arena) {

@@ -34,7 +34,7 @@ public class TeamSidebar implements MinigameScoreboard {
 		});
 
 		match.getArena().getTeams().forEach(team ->
-				team.getMembers(match).forEach(minigamer ->
+				team.getAliveMinigamers(match).forEach(minigamer ->
 						scoreboards.get(team).subscribe(minigamer.getPlayer())));
 	}
 

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.AdventChests;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.Trees.PugmasTreeType;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.PugmasTreeType;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
@@ -20,6 +21,7 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
 
@@ -150,7 +152,12 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("tree get")
 	void treeGet() {
-		send(PREFIX + "You are looking at a " + camelCase(PugmasTreeType.of(getTargetBlock().getType())) + " tree");
+		Material logs = getTargetBlock().getType();
+		PugmasTreeType treeType = PugmasTreeType.of(logs);
+		if (treeType == null)
+			error("Pugmas Tree with logs " + camelCase(logs) + " not found");
+
+		send(PREFIX + "You are looking at a " + camelCase(treeType) + " tree");
 	}
 
 	@Permission("group.admin")

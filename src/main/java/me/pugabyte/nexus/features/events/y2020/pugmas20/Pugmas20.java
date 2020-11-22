@@ -62,6 +62,7 @@ public class Pugmas20 implements Listener {
 		new AdventChests();
 		new Quests();
 		new Train();
+		new Trees();
 		new Ores();
 		createNpcHolograms();
 		npcParticles();

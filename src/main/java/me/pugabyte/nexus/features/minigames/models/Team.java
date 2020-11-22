@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.Utils.getNearestPlayer;
@@ -35,6 +36,7 @@ public class Team implements ConfigurationSerializable {
 	@EqualsAndHashCode.Include
 	private String name = "Default";
 	@NonNull
+	@EqualsAndHashCode.Include
 	private ChatColor color = ChatColor.WHITE;
 	private String objective;
 	private Loadout loadout = new Loadout();
@@ -83,12 +85,16 @@ public class Team implements ConfigurationSerializable {
 		return color + name;
 	}
 
+	public void spawn(Match match) {
+		spawn(getMinigamers(match));
+	}
+
 	public void spawn(Minigamer minigamer) {
 		spawn(Collections.singletonList(minigamer));
 	}
 
 	public void spawn(List<Minigamer> minigamers) {
-		List<Minigamer> members = getMembers(minigamers);
+		List<Minigamer> members = getAliveMinigamers(minigamers);
 		if (members.isEmpty()) return;
 
 		members.forEach(minigamer -> {
@@ -103,7 +109,7 @@ public class Team implements ConfigurationSerializable {
 	}
 
 	public void toSpawnpoints(Match match) {
-		toSpawnpoints(getMembers(match));
+		toSpawnpoints(getAliveMinigamers(match));
 	}
 
 	public void toSpawnpoints(List<Minigamer> members) {
@@ -139,38 +145,46 @@ public class Team implements ConfigurationSerializable {
 		}
 	}
 
-	public List<Minigamer> getMembers(Match match) {
-		return getMembers(getMinigamers(match));
+	public List<Minigamer> getAliveMinigamers(Match match) {
+		return getAliveMinigamers(getMinigamers(match));
 	}
 
-	public List<Minigamer> getMembers(List<Minigamer> minigamers) {
-		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
+	public List<Minigamer> getAliveMinigamers(List<Minigamer> minigamers) {
+		return ensureThisTeam(minigamers.stream().filter(Minigamer::isAlive));
+	}
+
+	public List<Minigamer> getMinigamers(Match match) {
+		return ensureThisTeam(match.getMinigamers());
+	}
+
+	public List<Minigamer> ensureThisTeam(List<Minigamer> minigamers) {
+		return ensureThisTeam(minigamers.stream());
+	}
+
+	public List<Minigamer> ensureThisTeam(Stream<Minigamer> minigamers) {
+		return minigamers
+				.filter(minigamer -> this.equals(minigamer.getTeam()))
+				.collect(Collectors.toList());
 	}
 
 	public int getScore(Match match) {
 		return match.getScores().getOrDefault(this, 0);
 	}
 
-	public List<Minigamer> getMinigamers(Match match) {
-		return match.getMinigamers().stream()
-				.filter(minigamer -> minigamer.getTeam() != null && this.equals(minigamer.getTeam()))
-				.collect(Collectors.toList());
-	}
-
 	public void broadcast(Match match, String text) {
-		getMembers(match).forEach(minigamer -> minigamer.tell(text));
+		getAliveMinigamers(match).forEach(minigamer -> minigamer.tell(text));
 	}
 
 	public void broadcastNoPrefix(Match match, String text) {
-		getMembers(match).forEach(minigamer -> minigamer.send(text));
+		getAliveMinigamers(match).forEach(minigamer -> minigamer.send(text));
 	}
 
 	public void title(Match match, Title title) {
-		getMembers(match).forEach(minigamer -> minigamer.getPlayer().sendTitle(title));
+		getAliveMinigamers(match).forEach(minigamer -> minigamer.getPlayer().sendTitle(title));
 	}
 
 	public void actionBar(Match match, ActionBar actionBar) {
-		getMembers(match).forEach(minigamer -> ActionBarUtils.sendActionBar(minigamer.getPlayer(), actionBar));
+		getAliveMinigamers(match).forEach(minigamer -> ActionBarUtils.sendActionBar(minigamer.getPlayer(), actionBar));
 	}
 
 }

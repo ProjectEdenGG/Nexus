@@ -2,12 +2,14 @@ package me.pugabyte.nexus.features.minigames.models.arenas;
 
 import com.sk89q.worldedit.regions.Region;
 import lombok.Data;
+import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.Map;
 
 @Data
+@ToString(callSuper = true)
 @SerializableAs("PixelDropArena")
 public class PixelDropArena extends Arena {
 	private Region designRegion = getRegion("designs");
