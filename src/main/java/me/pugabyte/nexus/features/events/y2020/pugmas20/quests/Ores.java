@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.Tasks;
@@ -212,6 +213,14 @@ public class Ores implements Listener {
 				if (oreType.getOre().getType() == ore)
 					return oreType;
 			return null;
+		}
+
+		public ItemStack getIngot(int amount) {
+			return new ItemBuilder(ingot).amount(amount).build();
+		}
+
+		public ItemStack getOre(int amount) {
+			return new ItemBuilder(ore).amount(amount).build();
 		}
 	}
 }

@@ -9,6 +9,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.eventuser.EventUser;
+import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.CitizensUtils;
@@ -33,7 +35,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Pugmas20 implements Listener {
 	@Getter
@@ -53,6 +57,10 @@ public class Pugmas20 implements Listener {
 	@Getter
 	private static final String itemLore = "Pugmas20 Item";
 	// Advent Menu
+
+	private static final Map<String, Integer> tokenMaxes = new HashMap<String, Integer>() {{
+		put("abc", 1);
+	}};
 
 	public Pugmas20() {
 		Nexus.registerListener(this);
@@ -104,6 +112,13 @@ public class Pugmas20 implements Listener {
 				}
 			}
 		});
+	}
+
+	public static void giveDailyTokens(Player player, String id, int amount) {
+		EventUserService service = new EventUserService();
+		EventUser user = service.get(player);
+
+		user.giveTokens(id, amount, tokenMaxes);
 	}
 
 	public static Location pugmasLoc(int x, int y, int z) {

@@ -47,6 +47,14 @@ public class EventUser extends PlayerOwnedObject {
 		return tokensReceivedToday.getOrDefault(id, new HashMap<>()).getOrDefault(LocalDate.now(), 0);
 	}
 
+	public void giveTokens(String id, int amount, Map<String, Integer> maxes) {
+		Map<LocalDate, Integer> today = tokensReceivedToday.getOrDefault(id, new HashMap<>());
+		int max = maxes.getOrDefault(id, 0);
+		int newAmount = Math.min(max, getTokensReceivedToday(id) + amount);
+		today.put(LocalDate.now(), newAmount);
+		tokensReceivedToday.put(id, today);
+	}
+
 	public void giveTokens(int tokens) {
 		giveTokens(tokens, true);
 	}

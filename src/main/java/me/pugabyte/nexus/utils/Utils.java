@@ -222,7 +222,7 @@ public class Utils {
 		LinkedHashMap<K, V> reverse = new LinkedHashMap<>();
 		List<K> keys = new ArrayList<>(sorted.keySet());
 		Collections.reverse(keys);
-		keys.forEach((key)->reverse.put(key, sorted.get(key)));
+		keys.forEach(key -> reverse.put(key, sorted.get(key)));
 		return reverse;
 	}
 
@@ -325,7 +325,7 @@ public class Utils {
 
 	public static void tryRegisterListener(Object object) {
 		try {
-			boolean hasNoArgsConstructor = Stream.of(object.getClass().getConstructors()).anyMatch((c) -> c.getParameterCount() == 0);
+			boolean hasNoArgsConstructor = Stream.of(object.getClass().getConstructors()).anyMatch(c -> c.getParameterCount() == 0);
 			if (object instanceof Listener) {
 				if (!hasNoArgsConstructor)
 					Nexus.warn("Cannot register listener on command " + object.getClass().getSimpleName() + ", needs @NoArgsConstructor");
