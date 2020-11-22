@@ -15,21 +15,21 @@ import java.util.List;
 @NoArgsConstructor
 public class MatchData {
 	@ToString.Exclude
-	private Match match;
+	protected Match match;
 	protected WorldGuardUtils WGUtils;
 	protected WorldEditUtils WEUtils;
 
-	private Team winnerTeam;
-	private Minigamer winnerPlayer;
+	protected Team winnerTeam;
+	protected Minigamer winnerPlayer;
 
-	private Team turnTeam;
-	private Minigamer turnMinigamer;
-	private List<Team> turnTeamList = new ArrayList<>();
-	private List<Minigamer> turnMinigamerList = new ArrayList<>();
-	private LocalDateTime turnStarted;
-	private int turns;
+	protected Team turnTeam;
+	protected Minigamer turnMinigamer;
+	protected List<Team> turnTeamList = new ArrayList<>();
+	protected List<Minigamer> turnMinigamerList = new ArrayList<>();
+	protected LocalDateTime turnStarted;
+	protected int turns;
 	@Accessors(fluent = true)
-	private boolean isEnding;
+	protected boolean isEnding;
 
 	public MatchData(Match match) {
 		this.match = match;

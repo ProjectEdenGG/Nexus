@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import lombok.Getter;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
@@ -47,10 +46,6 @@ public class Ores implements Listener {
 	private static final ItemStack minersSieve = pugmasItem(Material.HOPPER).name("Miner's Sieve").build();
 
 	private static final int orePerCoal = 2;
-
-	public Ores() {
-		Nexus.registerListener(this);
-	}
 
 	@EventHandler
 	public void onOreBreak(BlockBreakEvent event) {

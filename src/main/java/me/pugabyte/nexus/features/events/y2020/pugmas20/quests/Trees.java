@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
@@ -44,11 +45,8 @@ import static me.pugabyte.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
+@NoArgsConstructor
 public class Trees implements Listener {
-
-	public Trees() {
-		Nexus.registerListener(this);
-	}
 
 	@Getter
 	private static final ItemStack lumberjacksAxe = pugmasItem(Material.IRON_AXE).name("Lumberjack's Axe").build();

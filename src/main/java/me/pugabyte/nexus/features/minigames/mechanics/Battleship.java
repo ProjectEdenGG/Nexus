@@ -73,6 +73,13 @@ import static me.pugabyte.nexus.utils.Utils.attempt;
 		grid
  */
 
+/*
+TODO
+	Ready up
+	Hide lobby
+
+ */
+
 @Regenerating("board")
 @Scoreboard(sidebarType = Type.TEAM)
 public class Battleship extends BalancedTeamMechanic {
@@ -497,8 +504,7 @@ public class Battleship extends BalancedTeamMechanic {
 	@Override
 	public void end(Match match) {
 		BattleshipMatchData matchData = match.getMatchData();
-		matchData.isEnding(true);
-		matchData.setEnd(LocalDateTime.now());
+		matchData.end();
 		match.broadcast(matchData.getWinnerTeam().getColoredName() + " &3won!");
 		Tasks.wait(Time.SECOND.x(10), () -> super.end(match));
 	}

@@ -22,7 +22,7 @@ import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -168,6 +168,20 @@ public class BattleshipMatchData extends MatchData {
 		}
 	}
 
+	public void end() {
+		isEnding = true;
+		end = LocalDateTime.now();
+
+		grids.forEach((team, grid) -> {
+			for (Coordinate coordinate : grid.getNotShotAt()) {
+				if (coordinate.getOppositeCoordinate().getState() != State.OCCUPIED)
+					continue;
+
+				coordinate.getOppositeCoordinate().pastePeg(Peg.COULDNT_FIND_THEM);
+			}
+		});
+	}
+
 	@Data
 	public class Grid {
 		private Team team;
@@ -181,7 +195,7 @@ public class BattleshipMatchData extends MatchData {
 		private Coordinate aiming;
 
 		public Grid(Team team) {
-			this.arena = getMatch().getArena();
+			this.arena = match.getArena();
 			this.team = team;
 			this.otherTeam = arena.getOtherTeam(team);
 			this.a0_ships = arena.getRegion("a0_ships_" + team.getName());
@@ -266,11 +280,7 @@ public class BattleshipMatchData extends MatchData {
 			if (aiming == null)
 				return;
 
-			arena.getWEUtils().paster()
-					.file(Peg.RESET.getFileName())
-					.at(Peg.RESET.getBoard().getLocation(aiming))
-					.transform(CardinalDirection.of(numberDirection).getRotationTransform())
-					.buildAsync();
+			aiming.pastePeg(Peg.BELAY);
 			aiming = null;
 
 
@@ -359,7 +369,7 @@ public class BattleshipMatchData extends MatchData {
 				if (state == State.OCCUPIED) {
 					ship.fire();
 					state = State.HIT;
-					getMatch().scored(getOtherTeam());
+					match.scored(getOtherTeam());
 				} else
 					state = State.MISS;
 
@@ -376,11 +386,11 @@ public class BattleshipMatchData extends MatchData {
 			private void playSound() {
 				if (state == State.HIT)
 					if (ship.getHealth() == 0)
-						getMatch().playSound(Jingle.BATTLESHIP_SINK);
+						match.playSound(Jingle.BATTLESHIP_SINK);
 					else
-						getMatch().playSound(Jingle.BATTLESHIP_HIT);
+						match.playSound(Jingle.BATTLESHIP_HIT);
 				else if (state == State.MISS)
-					getMatch().playSound(Jingle.BATTLESHIP_MISS);
+					match.playSound(Jingle.BATTLESHIP_MISS);
 			}
 
 			private void addHistory() {
@@ -392,22 +402,26 @@ public class BattleshipMatchData extends MatchData {
 
 			private void sendChatAndSubtitle() {
 				if (ship == null) {
-					team.title(getMatch(), new Title("", "They missed", 10, 40, 10));
-					getOtherTeam().title(getMatch(), new Title("", "You missed", 10, 40, 10));
+					team.title(match, new Title("", "They missed", 10, 40, 10));
+					getOtherTeam().title(match, new Title("", "You missed", 10, 40, 10));
 					return;
 				}
 
 				String target = colorize("Your " + ship.getName() + " &3was " + (ship.getHealth() == 0 ? "sunk" : "hit"));
-				String shooter = colorize("You " + (ship.getHealth() == 0 ? "sunk" : "hit") + " their " + ship.getName());
+				String shooter;
+				if (ship.getHealth() == 0)
+					shooter = colorize("You sunk their " + ship.getName());
+				else
+					shooter = colorize("You hit an enemy ships");
 
 				String colorChar = StringUtils.getColorChar();
 				String targetTitle = target.replace(" " + colorChar + "3", " " + colorChar + "f");
 
-				team.broadcast(getMatch(), target);
-				team.title(getMatch(), new Title("", targetTitle, 10, 40, 10));
+				team.broadcast(match, target);
+				team.title(match, new Title("", targetTitle, 10, 40, 10));
 
-				getOtherTeam().broadcast(getMatch(), shooter);
-				getOtherTeam().title(getMatch(), new Title("", shooter, 10, 40, 10));
+				getOtherTeam().broadcast(match, shooter);
+				getOtherTeam().title(match, new Title("", shooter, 10, 40, 10));
 			}
 
 			public void aim() {
@@ -420,11 +434,10 @@ public class BattleshipMatchData extends MatchData {
 			}
 
 			private void pastePeg() {
-				pastePeg(state == State.HIT ? Peg.HIT_ME : Peg.MISS_ME);
-				Tasks.wait(1, () -> {
-					if (ship != null && ship.getHealth() == 0)
-						ship.getCoordinates().forEach(coordinate -> coordinate.getOppositeCoordinate().pastePeg(Peg.SUNK_THEM));
-				});
+				if (ship != null && ship.getHealth() == 0)
+					ship.getCoordinates().forEach(coordinate -> coordinate.getOppositeCoordinate().pastePeg(Peg.SUNK_ME));
+				else
+					pastePeg(state == State.HIT ? Peg.HIT_ME : Peg.MISS_ME);
 			}
 
 			// Avoid using WorldEdit to prevent chunk updates from removing the client side ship hiding blocks
@@ -434,7 +447,7 @@ public class BattleshipMatchData extends MatchData {
 				if (peg.getOpposite() != null)
 					peg.getOpposite().build(getOppositeCoordinate(), numberDirection.getOppositeFace());
 
-				((Battleship) arena.getMechanic()).hideShips(getMatch(), getOtherTeam());
+				((Battleship) arena.getMechanic()).hideShips(match, getOtherTeam());
 			}
 
 			public Coordinate getOppositeCoordinate() {
@@ -444,13 +457,25 @@ public class BattleshipMatchData extends MatchData {
 	}
 
 	public enum Peg {
-		RESET(PegBoard.VERTICAL, null),
 		CONFIRMATION(PegBoard.VERTICAL, Material.YELLOW_CONCRETE),
 		HIT_ME(PegBoard.HORIZONTAL, Material.RED_CONCRETE),
 		HIT_THEM(PegBoard.VERTICAL, Material.RED_CONCRETE),
-		MISS_ME(PegBoard.HORIZONTAL, Material.WHITE_CONCRETE),
+		MISS_ME(PegBoard.HORIZONTAL, Material.WHITE_STAINED_GLASS),
 		MISS_THEM(PegBoard.VERTICAL, Material.WHITE_CONCRETE),
-		SUNK_THEM(PegBoard.VERTICAL, Material.GRAY_CONCRETE);
+		SUNK_ME(PegBoard.HORIZONTAL, Material.GRAY_CONCRETE),
+		SUNK_THEM(PegBoard.VERTICAL, Material.GRAY_CONCRETE),
+		COULDNT_FIND_THEM(PegBoard.VERTICAL, Material.LIME_CONCRETE),
+		BELAY(PegBoard.VERTICAL, null) {
+			@Override
+			public void build(Coordinate coordinate, BlockFace direction) {
+				Consumer<Block> update = block -> {
+					boolean board = !new WorldGuardUtils(block).getRegionsLikeAt("battleship_.*_grid", block.getLocation()).isEmpty();
+					block.setType(board ? Material.WATER : Material.BARRIER, false);
+				};
+
+				PegBoard.VERTICAL.build(coordinate, direction, update);
+			}
+		};
 
 		@Getter
 		private final PegBoard board;
@@ -476,7 +501,7 @@ public class BattleshipMatchData extends MatchData {
 		}
 
 		public void build(Coordinate coordinate, BlockFace direction) {
-			getBoard().build(this, coordinate, direction);
+			getBoard().build(this, coordinate, direction, material);
 		}
 
 		public enum PegBoard {
@@ -487,8 +512,12 @@ public class BattleshipMatchData extends MatchData {
 				}
 
 				@Override
-				public void build(Peg peg, Coordinate coordinate, BlockFace direction) {
+				public void build(Peg peg, Coordinate coordinate, BlockFace direction, Material material) {
 					Consumer<Block> update = block -> block.setType(peg.getMaterial(), false);
+					build(coordinate, direction, update);
+				}
+
+				public void build(Coordinate coordinate, BlockFace direction, Consumer<Block> update) {
 					Location location = getLocation(coordinate);
 
 					BlockFace rightDirection = CardinalDirection.of(direction).turnRight().toBlockFace();
@@ -513,8 +542,13 @@ public class BattleshipMatchData extends MatchData {
 				}
 
 				@Override
-				public void build(Peg peg, Coordinate coordinate, BlockFace direction) {
+				public void build(Peg peg, Coordinate coordinate, BlockFace direction, Material material) {
 					Consumer<Block> update = block -> block.setType(peg.getMaterial(), false);
+					build(coordinate, direction, update);
+				}
+
+				@Override
+				public void build(Coordinate coordinate, BlockFace direction, Consumer<Block> update) {
 					Location location = getLocation(coordinate);
 
 					for (CardinalDirection cardinalDirection : CardinalDirection.values()) {
@@ -529,7 +563,9 @@ public class BattleshipMatchData extends MatchData {
 
 			abstract public Location getLocation(Coordinate coordinate);
 
-			abstract public void build(Peg peg, Coordinate coordinate, BlockFace direction);
+			abstract public void build(Peg peg, Coordinate coordinate, BlockFace direction, Material material);
+
+			abstract public void build(Coordinate coordinate, BlockFace direction, Consumer<Block> update);
 		}
 
 		public String getFileName() {
