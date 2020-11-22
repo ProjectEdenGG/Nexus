@@ -215,6 +215,13 @@ public class Ores implements Listener {
 			return null;
 		}
 
+		public static OreType ofIngot(Material ingot) {
+			for (OreType oreType : OreType.values())
+				if (oreType.getIngot().getType() == ingot)
+					return oreType;
+			return null;
+		}
+
 		public ItemStack getIngot(int amount) {
 			return new ItemBuilder(ingot).amount(amount).build();
 		}

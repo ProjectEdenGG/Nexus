@@ -118,7 +118,7 @@ public class Pugmas20 implements Listener {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 
-		user.giveTokens(id, amount, tokenMaxes);
+		user.giveTokens("pugmas20_" + id, amount, tokenMaxes);
 	}
 
 	public static Location pugmasLoc(int x, int y, int z) {
