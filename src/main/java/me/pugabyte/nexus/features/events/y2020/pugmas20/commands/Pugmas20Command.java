@@ -7,7 +7,6 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Trees.PugmasTreeType;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.models.PugmasTreeType;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores.OreType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
