@@ -47,6 +47,8 @@ public class Ores implements Listener {
 	private static final ItemStack minersPickaxe = item(Material.IRON_PICKAXE).name("Miner's Pickaxe").build();
 	@Getter
 	private static final ItemStack minersSieve = item(Material.HOPPER).name("Miner's Sieve").build();
+	@Getter
+	private static final ItemStack flint = item(Material.FLINT).build();
 
 	private static final int orePerCoal = 2;
 
@@ -105,7 +107,7 @@ public class Ores implements Listener {
 			playSound(player, Sound.UI_STONECUTTER_TAKE_RESULT, .5F, .5F);
 		});
 
-		player.getInventory().addItem(item(Material.FLINT).build());
+		player.getInventory().addItem(flint);
 
 		scheduleRegen(block);
 		block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);
@@ -225,11 +227,11 @@ public class Ores implements Listener {
 		}
 
 		public ItemStack getIngot(int amount) {
-			return new ItemBuilder(ingot).amount(amount).build();
+			return new ItemBuilder(ingot).lore(ingot.getLore()).amount(amount).build();
 		}
 
 		public ItemStack getOre(int amount) {
-			return new ItemBuilder(ore).amount(amount).build();
+			return new ItemBuilder(ore).lore(ingot.getLore()).amount(amount).build();
 		}
 	}
 }

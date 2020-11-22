@@ -3,12 +3,16 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.models;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.models.Script;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +45,12 @@ public enum QuestNPC {
 							Script.wait(0, "todo - reminder")
 					);
 				case STEP_TWO:
+					if (!hasItem(player, LightTheTree.lighter_broken.build())) {
+						return Arrays.asList(
+								Script.wait(0, "todo - <did you find the ceremonial lighter?>")
+						);
+					}
+
 					return Arrays.asList(
 							Script.wait(0, "The mechanism is broken! How could I have been so careless."),
 
@@ -50,10 +60,10 @@ public enum QuestNPC {
 
 				case STEPS_DONE:
 					return Arrays.asList(
-							Script.wait(0, "You have it! Just in the nick of time. The ceremony has begun."),
+							Script.wait(0, "You have it! Just in the nick of time. The ceremony shall now begin."),
 
-							Script.wait(0, "Light all the torches around Santa’s Workshop leading up to the tree, " +
-									"don’t forget the one at the base of the tree! You have <time limit>, starting..."),
+							Script.wait(0, "Light all the torches around Santa’s Workshop leading up to the tree using the ceremonial lighter, " +
+									"don’t forget the one at the base of the tree! You have <todo time limit>, starting..."),
 
 							Script.wait(0, "Now!")
 							// todo: start challenge for player
@@ -84,14 +94,20 @@ public enum QuestNPC {
 							Script.wait(0, "It's time for our annual tree lighting ceremony, but " + ELF1.getName() +
 									" still hasn’t returned with the special lighter!"),
 
-							Script.wait(0, "<ask the player to find elf 1 in the workshop>")
+							Script.wait(0, "todo - <ask the player to find elf 1 in the workshop>")
 					);
 				case STARTED:
 					return Arrays.asList(
-							Script.wait(0, "<ask the player to find elf 1 in the workshop>")
+							Script.wait(0, "todo - <ask the player to find elf 1 in the workshop>")
 					);
 
 				case STEP_TWO:
+					if (!hasItem(player, LightTheTree.lighter_broken.build())) {
+						return Arrays.asList(
+								Script.wait(0, "todo - <have you found " + ELF1.getName() + " and that ceremonial lighter?>")
+						);
+					}
+
 					user.setLightTreeStage(QuestStage.STEP_THREE);
 					service.save(user);
 
@@ -105,7 +121,21 @@ public enum QuestNPC {
 							Script.wait(0, "Head to the coal mine and you should be able to get both- ask the mine supervisor for help")
 					);
 				case STEP_THREE:
-					// todo: if player does not have required materials, send reminder
+					ItemStack lighter = getItem(player, LightTheTree.lighter_broken.build());
+					ItemStack steelNugget = getItem(player, LightTheTree.steel_nugget.build());
+					ItemStack flint = getItem(player, Ores.getFlint());
+					if (lighter == null || steelNugget == null || flint == null) {
+						return Arrays.asList(
+								Script.wait(0, "todo - <you seem to be missing a few ingredients>")
+						);
+					}
+
+					player.getInventory();
+					lighter.setAmount(lighter.getAmount() - 1);
+					steelNugget.setAmount(steelNugget.getAmount() - 1);
+					flint.setAmount(flint.getAmount() - 1);
+					ItemUtils.giveItem(player, LightTheTree.lighter.build());
+
 					user.setLightTreeStage(QuestStage.STEPS_DONE);
 					service.save(user);
 
@@ -115,7 +145,7 @@ public enum QuestNPC {
 					);
 				case STEPS_DONE:
 					return Arrays.asList(
-							Script.wait(0, "todo - reminder")
+							Script.wait(0, "todo - <reminder>")
 					);
 			}
 
@@ -215,7 +245,7 @@ public enum QuestNPC {
 						getScript(player);
 					}
 
-					String reminder = String.join(",", leftover);
+					String reminder = String.join(", ", leftover);
 
 					return Arrays.asList(
 							Script.wait(0, "todo - " + reminder)
@@ -296,6 +326,12 @@ public enum QuestNPC {
 		return null;
 	}
 
+	public static void startScript(Player player, int id) {
+		QuestNPC npc = QuestNPC.getById(id);
+		if (npc != null)
+			npc.sendScript(player);
+	}
+
 	public void sendScript(Player player) {
 		List<Script> scripts = getScript(player);
 		if (scripts == null || scripts.isEmpty()) return;
@@ -326,16 +362,38 @@ public enum QuestNPC {
 	public abstract List<Script> getScript(Player player);
 
 	private String getName() {
-		return getName(new AtomicReference<>());
+		return getName(new AtomicReference<>(""));
 	}
 
 	private String getName(AtomicReference<String> npcName) {
-		if (npcName.get().equalsIgnoreCase(QA_ELF.name()))
+		if (npcName == null)
+			npcName = new AtomicReference<>("");
+
+		if (!npcName.get().isEmpty() && npcName.get().equalsIgnoreCase(QA_ELF.name()))
 			npcName.set("Q.A. Elf");
 		else
 			npcName.set(camelCase(name()));
 		npcName.set(npcName.get().replaceAll("[0-9]+", ""));
 
 		return npcName.get();
+	}
+
+	public boolean hasItem(Player player, ItemStack item) {
+		return player.getInventory().containsAtLeast(item, 1);
+	}
+
+	public ItemStack getItem(Player player, ItemStack item) {
+		ItemStack _item = item.clone();
+		_item.setAmount(1);
+		for (ItemStack content : player.getInventory().getContents()) {
+			if (ItemUtils.isNullOrAir(content))
+				continue;
+			ItemStack _content = content.clone();
+			_content.setAmount(1);
+
+			if (_content.equals(_item))
+				return content;
+		}
+		return null;
 	}
 }

@@ -242,16 +242,17 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send("  - Battleship: " + user.isBattleship());
 		send("  - Connect4: " + user.isConnectFour());
 		send("  - TicTacToe: " + user.isTicTacToe());
-		send("- Ornament:" + user.getOrnamentVendorStage());
+		send("- Ornament: " + user.getOrnamentVendorStage());
 		send("- The Mines: " + user.getMinesStage());
 
 		EventUser eventUser = new EventUserService().get(player);
 		line();
 		send("Total Tokens: " + eventUser.getTokens());
-		send("Today:");
-		eventUser.getTokensReceivedToday().forEach((key, map) ->
-				send("- " + key + ": " + eventUser.getTokensReceivedToday(key)));
-
+		if (eventUser.getTokens() != 0) {
+			send("Today:");
+			eventUser.getTokensReceivedToday().forEach((key, map) ->
+					send("- " + key + ": " + eventUser.getTokensReceivedToday(key)));
+		}
 		line();
 	}
 

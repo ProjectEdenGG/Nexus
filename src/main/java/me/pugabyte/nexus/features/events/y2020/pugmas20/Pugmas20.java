@@ -6,6 +6,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -171,11 +172,13 @@ public class Pugmas20 implements Listener {
 
 	@EventHandler
 	public void onNPCClick(NPCRightClickEvent event) {
-		QuestNPC npc = QuestNPC.getById(event.getNPC().getId());
-		if (npc == null) return;
-		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", Time.SECOND.x(2)))
-			return;
-		npc.sendScript(event.getClicker());
+		Player player = event.getClicker();
+		if (!isAtPugmas(player)) return;
+		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", Time.SECOND.x(2))) return;
+
+		int id = event.getNPC().getId();
+		QuestNPC.startScript(player, id);
+		Merchants.openMerchant(player, id);
 	}
 
 	@EventHandler
