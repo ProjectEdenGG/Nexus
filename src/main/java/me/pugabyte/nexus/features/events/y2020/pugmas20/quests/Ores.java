@@ -178,7 +178,7 @@ public class Ores implements Listener {
 	}
 
 	static {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(1), () -> {
+		Tasks.repeatAsync(Time.SECOND, Time.SECOND, () -> {
 			TaskService service = new TaskService();
 			service.process(taskId).forEach(task -> {
 				Map<String, Object> data = task.getJson();

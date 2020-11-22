@@ -102,7 +102,7 @@ public class Nerd {
 
 	public String getChatFormat() {
 		if ("KodaBear".equals(name))
-			return "&5&oKodaBear";
+			return "&5KodaBear";
 
 		Rank rank = getRank();
 		String prefix = null;

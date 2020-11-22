@@ -233,19 +233,46 @@ public class WorldEditUtils {
 	}
 
 	public List<Block> getBlocks(ProtectedRegion region) {
-		return getBlocks((CuboidRegion) worldGuardUtils.convert(region));
+		return getBlocks((CuboidRegion) worldGuardUtils.convert(region), new ArrayList<>());
 	}
 
 	public List<Block> getBlocks(Region region) {
-		return getBlocks((CuboidRegion) region);
+		return getBlocks((CuboidRegion) region, new ArrayList<>());
 	}
 
 	public List<Block> getBlocks(CuboidRegion region) {
+		return getBlocks(region, new ArrayList<>());
+	}
+
+	public List<Block> getBlocks(ProtectedRegion region, Material material) {
+		return getBlocks((CuboidRegion) worldGuardUtils.convert(region), material);
+	}
+
+	public List<Block> getBlocks(Region region, Material material) {
+		return getBlocks((CuboidRegion) region, material);
+	}
+
+	public List<Block> getBlocks(CuboidRegion region, Material material) {
+		return getBlocks(region, Collections.singletonList(material));
+	}
+
+	public List<Block> getBlocks(ProtectedRegion region, List<Material> materials) {
+		return getBlocks((CuboidRegion) worldGuardUtils.convert(region), materials);
+	}
+
+	public List<Block> getBlocks(Region region, List<Material> materials) {
+		return getBlocks((CuboidRegion) region, materials);
+	}
+
+	public List<Block> getBlocks(CuboidRegion region, List<Material> materials) {
 		List<Block> blockList = new ArrayList<>();
 		for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++)
 			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++)
-				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++)
-					blockList.add(world.getBlockAt(x, y, z));
+				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
+					Block blockAt = world.getBlockAt(x, y, z);
+					if (materials == null || materials.isEmpty() || materials.contains(blockAt.getType()))
+						blockList.add(blockAt);
+				}
 		return blockList;
 	}
 

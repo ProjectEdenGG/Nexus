@@ -1,9 +1,10 @@
-package me.pugabyte.nexus.features.events.y2020.pugmas20;
+package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.task.Task;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.pugmasItem;
 import static me.pugabyte.nexus.utils.BlockUtils.createDistanceSortedQueue;
+import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public class Trees implements Listener {
@@ -47,6 +49,9 @@ public class Trees implements Listener {
 	public Trees() {
 		Nexus.registerListener(this);
 	}
+
+	@Getter
+	private static final ItemStack lumberjacksAxe = pugmasItem(Material.IRON_AXE).name("Lumberjack's Axe").build();
 
 	@EventHandler
 	public void onTreeBreak(BlockBreakEvent event) {
@@ -57,6 +62,9 @@ public class Trees implements Listener {
 			return;
 
 		event.setCancelled(true);
+
+		if (!isFuzzyMatch(lumberjacksAxe, event.getPlayer().getInventory().getItemInMainHand()))
+			return;
 
 		PugmasTreeType treeType = PugmasTreeType.of(event.getBlock().getType());
 		if (treeType == null)
@@ -240,7 +248,7 @@ public class Trees implements Listener {
 				put("id", id);
 			}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3, 15))));
 			// TODO PUGMAS Uncomment
-//		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));
+//			}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));
 		}
 
 		static {

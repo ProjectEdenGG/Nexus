@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.events.y2020.halloween20.ShootingRange;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
@@ -45,7 +44,6 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
-import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.md_5.bungee.api.ChatColor;
@@ -121,10 +119,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 		long invCount = Bukkit.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
 		if (invCount > 0)
 			error("There are " + invCount + " SmartInvs menus open, cannot reload");
-
-		int archeryCount = new WorldGuardUtils(Bukkit.getWorld("safepvp")).getPlayersInRegion(ShootingRange.getGameRg()).size();
-		if (archeryCount > 0)
-			error("There are " + archeryCount + " players playing Halloween Archery, cannot reload");
 
 		runCommand("plugman reload Nexus");
 	}
@@ -432,6 +426,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		Block block = player().getLocation().getBlock();
 		RedstoneRail rail = ((RedstoneRail) block.getBlockData());
 		send((rail.isPowered() ? "is" : "not") + " powered");
+	}
+
+	@Path("clientSideBlock <material>")
+	void clientSideBlock(Material material) {
+		player().sendBlockChange(player().getLocation().add(0, -1, 0), Bukkit.createBlockData(material));
 	}
 
 	private static String motd = null;

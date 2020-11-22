@@ -84,6 +84,10 @@ public class Utils {
 		return Bukkit.getPlayer("Camaros");
 	}
 
+	public static Player lexi() {
+		return Bukkit.getPlayer("lexikiq");
+	}
+
 	public static void puga(String message) {
 		send(puga(), message);
 	}
@@ -102,6 +106,10 @@ public class Utils {
 
 	public static void vroom(String message){
 		send(vroom(), message);
+	}
+
+	public static void lexi(String message){
+		send(lexi(), message);
 	}
 
 	public static boolean isVanished(Player player) {
