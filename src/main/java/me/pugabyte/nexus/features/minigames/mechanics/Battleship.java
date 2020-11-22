@@ -76,7 +76,6 @@ import static me.pugabyte.nexus.utils.Utils.attempt;
 /*
 TODO
 	Ready up
-	Hide lobby
 
  */
 

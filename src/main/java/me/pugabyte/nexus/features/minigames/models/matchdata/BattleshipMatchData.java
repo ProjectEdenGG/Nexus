@@ -412,7 +412,7 @@ public class BattleshipMatchData extends MatchData {
 				if (ship.getHealth() == 0)
 					shooter = colorize("You sunk their " + ship.getName());
 				else
-					shooter = colorize("You hit an enemy ships");
+					shooter = colorize("You hit an enemy ship");
 
 				String colorChar = StringUtils.getColorChar();
 				String targetTitle = target.replace(" " + colorChar + "3", " " + colorChar + "f");
@@ -435,7 +435,7 @@ public class BattleshipMatchData extends MatchData {
 
 			private void pastePeg() {
 				if (ship != null && ship.getHealth() == 0)
-					ship.getCoordinates().forEach(coordinate -> coordinate.getOppositeCoordinate().pastePeg(Peg.SUNK_ME));
+					ship.getCoordinates().forEach(coordinate -> coordinate.pastePeg(Peg.SUNK_ME));
 				else
 					pastePeg(state == State.HIT ? Peg.HIT_ME : Peg.MISS_ME);
 			}
@@ -457,13 +457,13 @@ public class BattleshipMatchData extends MatchData {
 	}
 
 	public enum Peg {
-		CONFIRMATION(PegBoard.VERTICAL, Material.YELLOW_CONCRETE),
 		HIT_ME(PegBoard.HORIZONTAL, Material.RED_CONCRETE),
 		HIT_THEM(PegBoard.VERTICAL, Material.RED_CONCRETE),
 		MISS_ME(PegBoard.HORIZONTAL, Material.WHITE_STAINED_GLASS),
 		MISS_THEM(PegBoard.VERTICAL, Material.WHITE_CONCRETE),
 		SUNK_ME(PegBoard.HORIZONTAL, Material.GRAY_CONCRETE),
 		SUNK_THEM(PegBoard.VERTICAL, Material.GRAY_CONCRETE),
+		CONFIRMATION(PegBoard.VERTICAL, Material.YELLOW_CONCRETE),
 		COULDNT_FIND_THEM(PegBoard.VERTICAL, Material.LIME_CONCRETE),
 		BELAY(PegBoard.VERTICAL, null) {
 			@Override
@@ -485,10 +485,17 @@ public class BattleshipMatchData extends MatchData {
 		private final String opposite;
 
 		Peg(PegBoard board, Material material) {
+			this(board, material, true);
+		}
+
+		Peg(PegBoard board, Material material, boolean opposite) {
 			this.board = board;
 			this.material = material;
-			if (name().contains("_ME"))
-				this.opposite = name().replace("_ME", "_THEM");
+			if (opposite)
+				if (name().contains("_ME"))
+					this.opposite = name().replace("_ME", "_THEM");
+				else
+					this.opposite = null;
 			else
 				this.opposite = null;
 		}
