@@ -33,30 +33,30 @@ public enum QuestNPC {
 
 					return Arrays.asList(
 							Script.wait(0, "I can’t find the special lighter… Ooooh Santa is gonna be SO mad at me if I’ve lost it."),
+
 							Script.wait(0, "We haven't used it since last year. Could you search in the basement to help me find it?")
 					);
 				case STEP_ONE:
-					// TODO: if user doesn't have special lighter, send reminder
-					user.setLightTreeStage(QuestStage.STEP_TWO);
-					service.save(user);
-
-					return Arrays.asList(
-							Script.wait(0, "The mechanism is broken! How could I have been so careless."),
-							Script.wait(0, "The ceremony is supposed to start soon, but there might be enough time- " +
-									"hurry to the tree and find <Elf2> they will know how to fix this.")
-					);
-				case STEP_TWO:
 					return Arrays.asList(
 							Script.wait(0, "todo - reminder")
 					);
+				case STEP_TWO:
+					return Arrays.asList(
+							Script.wait(0, "The mechanism is broken! How could I have been so careless."),
 
+							Script.wait(0, "The ceremony is supposed to start soon, but there might be enough time- " +
+									"hurry to the tree and find " + ELF2.getName() + " they will know how to fix this.")
+					);
 
 				case STEPS_DONE:
-					// todo: start challenge for player
 					return Arrays.asList(
 							Script.wait(0, "You have it! Just in the nick of time. The ceremony has begun."),
+
 							Script.wait(0, "Light all the torches around Santa’s Workshop leading up to the tree, " +
-									"don’t forget the one at the base of the tree! You have <time limit>")
+									"don’t forget the one at the base of the tree! You have <time limit>, starting..."),
+
+							Script.wait(0, "Now!")
+							// todo: start challenge for player
 					);
 				case COMPLETE:
 					return Arrays.asList(
@@ -81,7 +81,9 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, "It's time for our annual tree lighting ceremony, but <Elf1> still hasn’t returned with the special lighter!"),
+							Script.wait(0, "It's time for our annual tree lighting ceremony, but " + ELF1.getName() +
+									" still hasn’t returned with the special lighter!"),
+
 							Script.wait(0, "<ask the player to find elf 1 in the workshop>")
 					);
 				case STARTED:
@@ -94,9 +96,12 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, "Dangit <Elf1>, I *told* him to be careful with this."),
+							Script.wait(0, "Dangit " + ELF1.getName() + ", I *told* him to be careful with this."),
+
 							Script.wait(0, "Hmm, yes, it is fixable, just needs a new flint wheel and a steel striker."),
+
 							Script.wait(0, "If you get me a piece of Flint and a steel nugget I can make both fast."),
+
 							Script.wait(0, "Head to the coal mine and you should be able to get both- ask the mine supervisor for help")
 					);
 				case STEP_THREE:
@@ -105,7 +110,8 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, "There you go, right as rain. Now tell <Elf 1> to be careful with it this time!")
+							Script.wait(0, "There you go, right as rain. Now give this back to " +
+									ELF1.getName() + " and tell them to be careful with it this time!")
 					);
 				case STEPS_DONE:
 					return Arrays.asList(
@@ -128,8 +134,13 @@ public enum QuestNPC {
 				case STEP_THREE:
 					return Arrays.asList(
 							Script.wait(0, "Eh? What? Oh, right, lemme take the ear plugs out."),
-							Script.wait(0, "Sorry, we don’t have any flint or steel available right now but you can certainly go grab your own."),
-							Script.wait(0, "Go into the equipment room and grab a sieve and a pick- you will need to sift the gavel piles for flint."),
+
+							Script.wait(0, "Sorry, we don’t have any flint or steel available right now but " +
+									"you can certainly go grab your own."),
+
+							Script.wait(0, "Go into the equipment room and grab a sieve and a pick- you will need " +
+									"to sift the gavel piles for flint."),
+
 							Script.wait(0, "For the steel you will need <how to obtain steel>")
 					);
 			}
@@ -139,8 +150,12 @@ public enum QuestNPC {
 					case NOT_STARTED:
 						return Arrays.asList(
 								Script.wait(0, "Since you’re already cleared for the mine, wanna do me a favor?"),
-								Script.wait(0, "There's always a rush of last minute demands for materials by the workshop- things that need to be fixed, production that came up a little short."),
+
+								Script.wait(0, "There's always a rush of last minute demands for materials by the workshop- " +
+										"things that need to be fixed, production that came up a little short."),
+
 								Script.wait(0, "And almost all my mine-elfs have been sent to help in the wrapping and sled loading."),
+
 								Script.wait(0, "If you bring me materials, put them in this chest here, I’ll see you get paid")
 						);
 					case STARTED:
@@ -171,9 +186,16 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, "Hey kid, I need a favor! After last year’s debacle with the sled, half of the Quality Assurance team was fired, and the other half have spent all year on making sure that the Sled won’t fall apart again."),
-							Script.wait(0, "But that's left just me to try and keep up with testing all the toys that come off the line. I’m way, way behind and Pugmas is coming fast."),
-							Script.wait(0, "Think you can help an elf out? You might need to find a friend to help you, all these games need to be tested before they can be added to the present piles."),
+							Script.wait(0, "Hey kid, I need a favor! After last year’s debacle with the sled, " +
+									"half of the Quality Assurance team was fired, and the other half have spent all year " +
+									"on making sure that the Sled won’t fall apart again."),
+
+							Script.wait(0, "But that's left just me to try and keep up with testing all the toys " +
+									"that come off the line. I’m way, way behind and Pugmas is coming fast."),
+
+							Script.wait(0, "Think you can help an elf out? You might need to find a friend to help you, " +
+									"all these games need to be tested before they can be added to the present piles."),
+
 							Script.wait(0, "If you could just play a round or two of each, that would be perfect")
 					);
 				case STARTED:
@@ -231,8 +253,10 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait(0, "This tree is so big it takes a lot of ornaments to fill, " +
 									"and I may have uh, lost some of them from last year."),
+
 							Script.wait(0, "Don’t tell Santa! Just help me out. Here in town is an ornament vendor, " +
 									"he trades players different wood types that we need for the factory for spare pugmas ornaments."),
+
 							Script.wait(0, "I’d just ask him for some extra myself, but he’s mean and would tell Santa I " +
 									"lost the town’s ornaments. If you bring me one of each of the 10 ornaments, I'll reward you")
 					);
@@ -278,16 +302,12 @@ public enum QuestNPC {
 		AtomicReference<String> npcName = new AtomicReference<>("");
 
 		AtomicInteger wait = new AtomicInteger(0);
+		getName(npcName);
+
 		scripts.forEach(script -> {
 			wait.getAndAdd(script.getDelay());
 
 			script.getLines().forEach(line -> {
-				if(npcName.get().equalsIgnoreCase(QA_ELF.name()))
-					npcName.set("Q.A. Elf");
-				else
-					npcName.set(camelCase(name()));
-				npcName.set(npcName.get().replaceAll("[0-9]+", ""));
-
 				line = line.replaceAll("<player>", player.getName());
 				if (line.contains("<self>")) {
 					npcName.set("&b&lYOU&f");
@@ -304,4 +324,18 @@ public enum QuestNPC {
 	}
 
 	public abstract List<Script> getScript(Player player);
+
+	private String getName() {
+		return getName(new AtomicReference<>());
+	}
+
+	private String getName(AtomicReference<String> npcName) {
+		if (npcName.get().equalsIgnoreCase(QA_ELF.name()))
+			npcName.set("Q.A. Elf");
+		else
+			npcName.set(camelCase(name()));
+		npcName.set(npcName.get().replaceAll("[0-9]+", ""));
+
+		return npcName.get();
+	}
 }

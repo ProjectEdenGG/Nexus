@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.WEUtils;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.pugmasLoc;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
 
 /*
 -890, -2186
@@ -32,7 +32,7 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.pugmasLo
  */
 public class Train {
 	// Options
-	private static final Location origin = pugmasLoc(900, 52, 375);
+	private static final Location origin = location(900, 52, 375);
 	private static final int frameTime = 3;
 	private static final int crossingThreshold = 30;
 	//private static final int stationStopTime = Time.SECOND.x(15);
@@ -55,28 +55,28 @@ public class Train {
 	private static final int x = origin.getBlockX();
 	private static final int y = origin.getBlockY();
 	private static final int z = origin.getBlockZ();
-	private static final Location trackStart = pugmasLoc(x - 94, y, z);
-	private static final Location trainEnter = pugmasLoc(x + 13, y, z);
-	private static final Location trainExit = pugmasLoc(x, y, z);
-	private static final Location trainStart = pugmasLoc(x + 14, y, z);
-	private static final Location crossingSE = pugmasLoc(x + 71, y, z + 6);
-	private static final Location crossingNE = pugmasLoc(x + 79, y, z - 6);
-	private static final Location crossingSW = pugmasLoc(x - 47, y, z + 6);
-	private static final Location crossingNW = pugmasLoc(x - 39, y, z - 6);
+	private static final Location trackStart = location(x - 94, y, z);
+	private static final Location trainEnter = location(x + 13, y, z);
+	private static final Location trainExit = location(x, y, z);
+	private static final Location trainStart = location(x + 14, y, z);
+	private static final Location crossingSE = location(x + 71, y, z + 6);
+	private static final Location crossingNE = location(x + 79, y, z - 6);
+	private static final Location crossingSW = location(x - 47, y, z + 6);
+	private static final Location crossingNW = location(x - 39, y, z - 6);
 	// Lights
 	private static final int lightY = crossingSW.getBlockY() + 5;
 	private static final List<Location> crossingLights1_1 = Arrays.asList(
-			pugmasLoc(crossingSW.getBlockX(), lightY, crossingSW.getBlockZ() - 1),
-			pugmasLoc(crossingNW.getBlockX(), lightY, crossingNW.getBlockZ() + 1));
+			location(crossingSW.getBlockX(), lightY, crossingSW.getBlockZ() - 1),
+			location(crossingNW.getBlockX(), lightY, crossingNW.getBlockZ() + 1));
 	private static final List<Location> crossingLights1_2 = Arrays.asList(
-			pugmasLoc(crossingSW.getBlockX() + 2, lightY, crossingSW.getBlockZ() - 1),
-			pugmasLoc(crossingNW.getBlockX() - 2, lightY, crossingNW.getBlockZ() + 1));
+			location(crossingSW.getBlockX() + 2, lightY, crossingSW.getBlockZ() - 1),
+			location(crossingNW.getBlockX() - 2, lightY, crossingNW.getBlockZ() + 1));
 	private static final List<Location> crossingLights2_1 = Arrays.asList(
-			pugmasLoc(crossingSE.getBlockX(), lightY, crossingSE.getBlockZ() - 1),
-			pugmasLoc(crossingNE.getBlockX(), lightY, crossingNE.getBlockZ() + 1));
+			location(crossingSE.getBlockX(), lightY, crossingSE.getBlockZ() - 1),
+			location(crossingNE.getBlockX(), lightY, crossingNE.getBlockZ() + 1));
 	private static final List<Location> crossingLights2_2 = Arrays.asList(
-			pugmasLoc(crossingSE.getBlockX() + 2, lightY, crossingSE.getBlockZ() - 1),
-			pugmasLoc(crossingNE.getBlockX() - 2, lightY, crossingNE.getBlockZ() + 1));
+			location(crossingSE.getBlockX() + 2, lightY, crossingSE.getBlockZ() - 1),
+			location(crossingNE.getBlockX() - 2, lightY, crossingNE.getBlockZ() + 1));
 	// Smoke
 	private static final AtomicReference<Block> trackLoc = new AtomicReference<>(trackStart.clone().getBlock());
 	private static final AtomicReference<Block> smokeLoc = new AtomicReference<>(trackLoc.get().getRelative(-9, 8, 0));

@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.pugmasLoc;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
 
 // TODO PUGMAS - Prevent adventLootHead from being placed, or opened if player doesn't have enough space
 public class AdventChests implements Listener {
@@ -42,7 +42,7 @@ public class AdventChests implements Listener {
 	public static List<AdventChest> adventChestList = new ArrayList<>();
 	public static ItemBuilder adventLootHead;
 	//
-	private static final Block lootOrigin = pugmasLoc(867, 45, 579).getBlock();
+	private static final Block lootOrigin = location(867, 45, 579).getBlock();
 	private static final String InvTitle = "Advent Chest #";
 	private static UUID adventLootHeadOwner = null;
 	private static final String adventLootHeadTitle = "Pugmas Advent Skull";
@@ -78,7 +78,7 @@ public class AdventChests implements Listener {
 	}
 
 	private Location chestLoc(int x, int y, int z) {
-		return pugmasLoc(x, y, z);
+		return location(x, y, z);
 	}
 
 	public static AdventChest getAdventChest(Location location) {

@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
@@ -31,20 +32,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.pugmasItem;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.item;
 import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.SoundUtils.playSound;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
+@NoArgsConstructor
 public class Ores implements Listener {
 
 	public static String taskId = "pugmas-ore-regen";
 
 	@Getter
-	private static final ItemStack minersPickaxe = pugmasItem(Material.IRON_PICKAXE).name("Miner's Pickaxe").build();
+	private static final ItemStack minersPickaxe = item(Material.IRON_PICKAXE).name("Miner's Pickaxe").build();
 	@Getter
-	private static final ItemStack minersSieve = pugmasItem(Material.HOPPER).name("Miner's Sieve").build();
+	private static final ItemStack minersSieve = item(Material.HOPPER).name("Miner's Sieve").build();
 
 	private static final int orePerCoal = 2;
 
@@ -103,7 +105,7 @@ public class Ores implements Listener {
 			playSound(player, Sound.UI_STONECUTTER_TAKE_RESULT, .5F, .5F);
 		});
 
-		player.getInventory().addItem(pugmasItem(Material.FLINT).build());
+		player.getInventory().addItem(item(Material.FLINT).build());
 
 		scheduleRegen(block);
 		block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);
@@ -204,8 +206,8 @@ public class Ores implements Listener {
 		private final ItemStack ingot;
 
 		OreType(Material ore, Material ingot) {
-			this.ore = pugmasItem(ore).name(camelCase(name() + " Ore")).build();
-			this.ingot = pugmasItem(ingot).name(camelCase(name())).build();
+			this.ore = item(ore).name(camelCase(name() + " Ore")).build();
+			this.ingot = item(ingot).name(camelCase(name())).build();
 		}
 
 		public static OreType ofOre(Material ore) {

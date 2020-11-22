@@ -15,6 +15,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.eventuser.EventUser;
+import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -223,6 +225,34 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path("npcs emeralds")
 	void npcsHolograms() {
 		Pugmas20.createNpcHolograms();
+	}
+
+	@Permission("group.admin")
+	@Path("debug <player>")
+	void debugUser(OfflinePlayer player) {
+		user = service.get(player);
+
+		line();
+		send("Days Found: " + user.getFoundDays());
+		send("Next Step NPCs: " + user.getNextStepNPCs());
+		send("Stages: ");
+		send("- Light Tree: " + user.getLightTreeStage());
+		send("- Toy Testing: " + user.getToyTestingStage());
+		send("  - MasterMind: " + user.isMasterMind());
+		send("  - Battleship: " + user.isBattleship());
+		send("  - Connect4: " + user.isConnectFour());
+		send("  - TicTacToe: " + user.isTicTacToe());
+		send("- Ornament:" + user.getOrnamentVendorStage());
+		send("- The Mines: " + user.getMinesStage());
+
+		EventUser eventUser = new EventUserService().get(player);
+		line();
+		send("Total Tokens: " + eventUser.getTokens());
+		send("Today:");
+		eventUser.getTokensReceivedToday().forEach((key, map) ->
+				send("- " + key + ": " + eventUser.getTokensReceivedToday(key)));
+
+		line();
 	}
 
 }

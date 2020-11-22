@@ -40,7 +40,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.pugmasItem;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.item;
 import static me.pugabyte.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
@@ -49,7 +49,7 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 public class Trees implements Listener {
 
 	@Getter
-	private static final ItemStack lumberjacksAxe = pugmasItem(Material.IRON_AXE).name("Lumberjack's Axe").build();
+	private static final ItemStack lumberjacksAxe = item(Material.IRON_AXE).name("Lumberjack's Axe").build();
 
 	@EventHandler
 	public void onTreeBreak(BlockBreakEvent event) {
@@ -226,7 +226,7 @@ public class Trees implements Listener {
 							Block block = poll.getBlock();
 							if (block.getType() == logs)
 								for (ItemStack itemStack : block.getDrops(silk))
-									ItemUtils.giveItem(player, pugmasItem(itemStack.getType()).name(camelCase(name() + " Logs")).build());
+									ItemUtils.giveItem(player, item(itemStack.getType()).name(camelCase(name() + " Logs")).build());
 							block.setType(Material.AIR);
 						});
 					}

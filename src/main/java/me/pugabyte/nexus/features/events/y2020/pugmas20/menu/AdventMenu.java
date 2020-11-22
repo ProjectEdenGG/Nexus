@@ -16,10 +16,10 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.pugmasLoc;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
 
 public class AdventMenu {
-	private static final Location adventHeadsLoc = pugmasLoc(870, 44, 573);
+	private static final Location adventHeadsLoc = location(870, 44, 573);
 	public static final Block origin = adventHeadsLoc.getBlock().getRelative(BlockFace.UP);
 	@Getter
 	private static final LinkedHashMap<SlotPos, ItemBuilder> adventHeadMap = new LinkedHashMap<>();

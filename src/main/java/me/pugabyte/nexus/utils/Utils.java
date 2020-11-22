@@ -190,6 +190,14 @@ public class Utils {
 		return (int) entityPlayer.getClass().getField("ping").get(entityPlayer);
 	}
 
+	public static void deposit(Player player, double amount) {
+		Nexus.getEcon().depositPlayer(player, amount);
+	}
+
+	public static void withdraw(Player player, double amount) {
+		Nexus.getEcon().withdrawPlayer(player, amount);
+	}
+
 	public static EntityType getSpawnEggType(Material type) {
 		return EntityType.valueOf(type.toString().split("_SPAWN_EGG")[0]);
 	}

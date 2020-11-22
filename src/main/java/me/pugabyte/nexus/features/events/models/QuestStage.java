@@ -6,6 +6,8 @@ public enum QuestStage {
 	STEP_ONE,
 	STEP_TWO,
 	STEP_THREE,
+	STEP_FOUR,
+	STEP_FIVE,
 	STEPS_DONE,
 	FOUND_ALL,
 	COMPLETE

@@ -58,9 +58,8 @@ public class Pugmas20 implements Listener {
 	private static final String itemLore = "Pugmas20 Item";
 	// Advent Menu
 
-	private static final Map<String, Integer> tokenMaxes = new HashMap<String, Integer>() {{
-		put("abc", 1);
-	}};
+	@Getter
+	private static final Map<String, Integer> tokenMaxes = new HashMap<>();
 
 	public Pugmas20() {
 		Nexus.registerListener(this);
@@ -114,18 +113,30 @@ public class Pugmas20 implements Listener {
 		});
 	}
 
+	public static void addTokenMax(String id, int amount) {
+		tokenMaxes.put("pugmas20_" + id, amount);
+	}
+
+	public static int checkDailyTokens(Player player, String id, int amount) {
+		EventUserService service = new EventUserService();
+		EventUser user = service.get(player);
+
+		return user.checkDaily("pugmas20_" + id, amount, tokenMaxes);
+	}
+
 	public static void giveDailyTokens(Player player, String id, int amount) {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 
 		user.giveTokens("pugmas20_" + id, amount, tokenMaxes);
+		service.save(user);
 	}
 
-	public static Location pugmasLoc(int x, int y, int z) {
+	public static Location location(int x, int y, int z) {
 		return new Location(world, x, y, z);
 	}
 
-	public static ItemBuilder pugmasItem(Material material) {
+	public static ItemBuilder item(Material material) {
 		return new ItemBuilder(material).lore(itemLore);
 	}
 
