@@ -7,6 +7,8 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
@@ -58,6 +60,7 @@ public class Pugmas20 implements Listener {
 
 		AdventMenu.loadHeads();
 		new AdventChests();
+		new Quests();
 		new Train();
 		new Ores();
 		createNpcHolograms();

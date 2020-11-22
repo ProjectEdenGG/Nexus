@@ -111,7 +111,7 @@ public class Train {
 		for (int i = 1; i <= 109; i++) {
 			int finalI = i;
 			Tasks.wait(frameTime * i, () -> {
-				WEUtils.paster().file(animationPath + "/Enter/TrainEnter_" + finalI).at(trainEnter).pasteAsync();
+				WEUtils.paster().file(animationPath + "/Enter/TrainEnter_" + finalI).at(trainEnter).paste();
 
 				incrementTrain();
 			});
