@@ -17,7 +17,7 @@ public @interface Arg {
 	// Use for Lists due to java erasure
 	Class<?> type() default void.class;
 
-	double min() default Short.MIN_VALUE;
+	double min() default Integer.MIN_VALUE;
 	double max() default Integer.MAX_VALUE;
 
 }
