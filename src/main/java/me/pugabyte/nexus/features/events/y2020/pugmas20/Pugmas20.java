@@ -115,21 +115,21 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static void addTokenMax(String id, int amount) {
-		tokenMaxes.put("pugmas20_" + id, amount);
+		tokenMaxes.put(("pugmas20_" + id).toLowerCase(), amount);
 	}
 
 	public static int checkDailyTokens(Player player, String id, int amount) {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 
-		return user.checkDaily("pugmas20_" + id, amount, tokenMaxes);
+		return user.checkDaily(("pugmas20_" + id).toLowerCase(), amount, tokenMaxes);
 	}
 
 	public static void giveDailyTokens(Player player, String id, int amount) {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 
-		user.giveTokens("pugmas20_" + id, amount, tokenMaxes);
+		user.giveTokens(("pugmas20_" + id).toLowerCase(), amount, tokenMaxes);
 		service.save(user);
 	}
 

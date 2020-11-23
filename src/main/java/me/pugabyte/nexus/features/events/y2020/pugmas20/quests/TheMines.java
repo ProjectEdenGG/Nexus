@@ -32,14 +32,14 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class TheMines implements Listener {
-	public TheMines() {
-		addTokenMax(OreType.COAL.name(), 1);
-		addTokenMax(OreType.IRON_NUGGET.name(), 1);
-		addTokenMax(OreType.LUMINITE_NUGGET.name(), 1);
-		addTokenMax(OreType.MITHRIL.name(), 1);
-		addTokenMax(OreType.ADAMANTITE.name(), 1);
-		addTokenMax(OreType.NECRITE.name(), 1);
-		addTokenMax(OreType.LIGHT_ANIMICA.name(), 1);
+	static {
+		addTokenMax("themines_" + OreType.COAL.name(), 1);
+		addTokenMax("themines_" + OreType.IRON_NUGGET.name(), 1);
+		addTokenMax("themines_" + OreType.LUMINITE_NUGGET.name(), 1);
+		addTokenMax("themines_" + OreType.MITHRIL.name(), 1);
+		addTokenMax("themines_" + OreType.ADAMANTITE.name(), 1);
+		addTokenMax("themines_" + OreType.NECRITE.name(), 1);
+		addTokenMax("themines_" + OreType.LIGHT_ANIMICA.name(), 1);
 	}
 
 	@EventHandler
