@@ -73,7 +73,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 			if (isNullOrAir(item) || item.getLore() == null || item.getLore().isEmpty())
 				continue;
 
-			if (item.getLore().get(0).contains(Pugmas20.getItemLore())) {
+			if (item.getLore().get(0).contains(Pugmas20.getQuestLore())) {
 				playerInventory.remove(item);
 				inventory.add(item);
 			}

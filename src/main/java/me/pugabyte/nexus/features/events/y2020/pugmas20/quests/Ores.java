@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.item;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
 import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.SoundUtils.playSound;
@@ -44,11 +44,11 @@ public class Ores implements Listener {
 	public static String taskId = "pugmas-ore-regen";
 
 	@Getter
-	private static final ItemStack minersPickaxe = item(Material.IRON_PICKAXE).name("Miner's Pickaxe").build();
+	private static final ItemStack minersPickaxe = questItem(Material.IRON_PICKAXE).name("Miner's Pickaxe").build();
 	@Getter
-	private static final ItemStack minersSieve = item(Material.HOPPER).name("Miner's Sieve").build();
+	private static final ItemStack minersSieve = questItem(Material.HOPPER).name("Miner's Sieve").build();
 	@Getter
-	private static final ItemStack flint = item(Material.FLINT).build();
+	private static final ItemStack flint = questItem(Material.FLINT).build();
 
 	private static final int orePerCoal = 2;
 
@@ -208,8 +208,8 @@ public class Ores implements Listener {
 		private final ItemStack ingot;
 
 		OreType(Material ore, Material ingot) {
-			this.ore = item(ore).name(camelCase(name() + " Ore")).build();
-			this.ingot = item(ingot).name(camelCase(name())).build();
+			this.ore = questItem(ore).name(camelCase(name() + " Ore")).build();
+			this.ingot = questItem(ingot).name(camelCase(name())).build();
 		}
 
 		public static OreType ofOre(Material ore) {

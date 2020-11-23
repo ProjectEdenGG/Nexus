@@ -56,6 +56,8 @@ public class Pugmas20 implements Listener {
 
 	public static final List<Hologram> holograms = new ArrayList<>();
 	@Getter
+	private static final String questLore = "Pugmas20 Quest Item";
+	@Getter
 	private static final String itemLore = "Pugmas20 Item";
 	// Advent Menu
 
@@ -137,8 +139,16 @@ public class Pugmas20 implements Listener {
 		return new Location(world, x, y, z);
 	}
 
+	public static ItemBuilder questItem(Material material) {
+		return new ItemBuilder(material).lore(questLore);
+	}
+
 	public static ItemBuilder item(Material material) {
-		return new ItemBuilder(material).lore(itemLore);
+		return item(new ItemStack(material));
+	}
+
+	public static ItemBuilder item(ItemStack itemStack) {
+		return new ItemBuilder(itemStack).lore(itemLore);
 	}
 
 	public static boolean isBeforePugmas(LocalDateTime localDateTime) {

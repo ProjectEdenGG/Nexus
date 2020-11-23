@@ -138,7 +138,9 @@ public class TheMines implements Listener {
 								foundTrade = true;
 
 								int testAmt = profit + result.getAmount();
-								if (Pugmas20.checkDailyTokens(player, "themines_" + key.name(), testAmt) <= 0) {
+								int excess = Pugmas20.checkDailyTokens(player, "themines_" + key.name(), testAmt);
+								Utils.send(player, "Excess: " + excess);
+								if (excess <= 0) {
 									itemAmount -= ingredientAmount;
 									item.setAmount(itemAmount);
 									profit += result.getAmount();
@@ -153,6 +155,7 @@ public class TheMines implements Listener {
 					// TODO: this aint workin
 					Pugmas20.giveDailyTokens(player, "themines_" + key.name(), profit);
 					Utils.send(player, "giving " + profit + " tokens as " + "themines_" + key.name());
+					profit = 0;
 				}
 			}
 

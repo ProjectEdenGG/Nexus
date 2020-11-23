@@ -22,9 +22,9 @@ public class LightTheTree implements Listener {
 	private static final String torchRg = Pugmas20.getRegion() + "_torch_";
 	private static final String treeTorchRg = Pugmas20.getRegion() + "_treetorch_";
 	//
-	public static final ItemBuilder lighter_broken = Pugmas20.item(Material.FLINT_AND_STEEL).name("Broken Ceremonial Lighter");
-	public static final ItemBuilder lighter = Pugmas20.item(Material.FLINT_AND_STEEL).name("Ceremonial Lighter");
-	public static final ItemBuilder steel_nugget = Pugmas20.item(Material.IRON_NUGGET).name("Steel Nugget").glow();
+	public static final ItemBuilder lighter_broken = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Broken Ceremonial Lighter");
+	public static final ItemBuilder lighter = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Ceremonial Lighter");
+	public static final ItemBuilder steel_nugget = Pugmas20.questItem(Material.IRON_NUGGET).name("Steel Nugget").glow();
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEntityEvent event) {

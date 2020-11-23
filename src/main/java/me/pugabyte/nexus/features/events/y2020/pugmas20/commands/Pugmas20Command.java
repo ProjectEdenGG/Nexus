@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores.OreType;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees.PugmasTreeType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -187,6 +188,13 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path("kit lumberjacks axe")
 	void kitLumberjacksAxe() {
 		ItemUtils.giveItem(player(), Trees.getLumberjacksAxe());
+	}
+
+	@Permission("group.admin")
+	@Path("kit lumberjacks logs")
+	void kitLumberjacksLogs() {
+		for (Ornament ornament : Ornament.values())
+			ItemUtils.giveItem(player(), ornament.getTreeType().getLog(32));
 	}
 
 	@Permission("group.admin")
