@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
@@ -50,21 +49,20 @@ public class EventUser extends PlayerOwnedObject {
 
 	public int checkDaily(String id, int amount, Map<String, Integer> maxes) {
 		int max = maxes.getOrDefault(id, 0);
-		int newAmount = Math.min(max, getTokensReceivedToday(id) + amount);
-		return newAmount - max; // excess
+		int tokensReceivedToday = getTokensReceivedToday(id);
+		return (tokensReceivedToday + amount) - max;
 	}
 
 	public void giveTokens(String id, int amount, Map<String, Integer> maxes) {
-		Nexus.log("id: " + id + " / amount: " + amount);
-		Nexus.log("Maxes: " + maxes.toString());
-		Map<LocalDate, Integer> today = tokensReceivedToday.getOrDefault(id, new HashMap<>());
-		int max = maxes.getOrDefault(id, 0);
-		Nexus.log("max: " + max);
-		Nexus.log("tokensReceivedToday: " + getTokensReceivedToday(id));
-		int newAmount = Math.min(max, getTokensReceivedToday(id) + amount);
-		Nexus.log("newAmount: " + newAmount);
-		today.put(LocalDate.now(), newAmount);
-		tokensReceivedToday.put(id, today);
+		int excess = checkDaily(id, amount, maxes);
+		if (excess > 0)
+			amount -= excess;
+
+		tokens += amount;
+
+		Map<LocalDate, Integer> today = this.tokensReceivedToday.getOrDefault(id, new HashMap<>());
+		today.put(LocalDate.now(), getTokensReceivedToday(id) + amount);
+		this.tokensReceivedToday.put(id, today);
 	}
 
 	public void giveTokens(int tokens) {

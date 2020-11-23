@@ -99,9 +99,12 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.admin")
-	@Path("database delete <player>")
-	void databaseDelete(OfflinePlayer player) {
+	@Path("database delete [player]")
+	void databaseDelete(@Arg("self") OfflinePlayer player) {
 		service.delete(user);
+		EventUserService eventUserService = new EventUserService();
+		EventUser eventUser = eventUserService.get(player);
+		eventUserService.delete(eventUser);
 		send("Deleted data for " + player.getName());
 	}
 

@@ -32,14 +32,15 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class TheMines implements Listener {
+
 	static {
-		addTokenMax("themines_" + OreType.COAL.name(), 1);
-		addTokenMax("themines_" + OreType.IRON_NUGGET.name(), 1);
-		addTokenMax("themines_" + OreType.LUMINITE_NUGGET.name(), 1);
-		addTokenMax("themines_" + OreType.MITHRIL.name(), 1);
-		addTokenMax("themines_" + OreType.ADAMANTITE.name(), 1);
-		addTokenMax("themines_" + OreType.NECRITE.name(), 1);
-		addTokenMax("themines_" + OreType.LIGHT_ANIMICA.name(), 1);
+		addTokenMax("themines_" + OreType.COAL.name(), 4);
+		addTokenMax("themines_" + OreType.IRON_NUGGET.name(), 4);
+		addTokenMax("themines_" + OreType.LUMINITE_NUGGET.name(), 4);
+		addTokenMax("themines_" + OreType.MITHRIL.name(), 4);
+		addTokenMax("themines_" + OreType.ADAMANTITE.name(), 4);
+		addTokenMax("themines_" + OreType.NECRITE.name(), 4);
+		addTokenMax("themines_" + OreType.LIGHT_ANIMICA.name(), 4);
 	}
 
 	@EventHandler
@@ -142,12 +143,13 @@ public class TheMines implements Listener {
 								Utils.send(player, "Excess: " + excess);
 								if (excess <= 0) {
 									itemAmount -= ingredientAmount;
-									item.setAmount(itemAmount);
 									profit += result.getAmount();
 									Utils.send(player, "selling " + type + " | profit: " + profit);
 								} else {
 									Utils.send(player, "hit max for " + type);
 								}
+
+								item.setAmount(itemAmount);
 							}
 						}
 					}
@@ -159,7 +161,7 @@ public class TheMines implements Listener {
 				}
 			}
 
-			if (!foundTrade || leftovers)
+			if (!foundTrade || leftovers || item.getAmount() > 0)
 				player.getInventory().addItem(item);
 		}
 	}
