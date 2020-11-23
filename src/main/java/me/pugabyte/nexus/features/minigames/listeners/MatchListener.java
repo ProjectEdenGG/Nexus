@@ -139,7 +139,8 @@ public class MatchListener implements Listener {
 		if (!minigamer.isPlaying()) return;
 
 		ItemStack item = event.getItemDrop().getItemStack();
-		event.setCancelled(!minigamer.getMatch().getArena().getMechanic().canDropItem(item));
+		if (!minigamer.getMatch().getArena().getMechanic().canDropItem(item))
+			event.setCancelled(true);
 	}
 
 	// TODO: Prevent damage of hanging entities/armor stands/etc
