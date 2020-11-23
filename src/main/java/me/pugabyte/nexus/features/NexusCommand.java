@@ -62,6 +62,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.io.File;
 import java.io.IOException;
@@ -336,6 +338,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("copyTileEntityClientTest")
 	void copyTileEntityClient() {
 		PacketUtils.copyTileEntityClient(player(), player().getLocation().getBlock(), player().getLocation().add(1, 0, 0));
+	}
+
+	@Path("removeTest")
+	void removeTest() {
+		PlayerInventory inventory = player().getInventory();
+		inventory.remove(new ItemStack(Material.DIRT, 2));
+		inventory.removeItem(new ItemStack(Material.COBBLESTONE, 4));
+		inventory.removeItemAnySlot(new ItemStack(Material.STONE, 6));
 	}
 
 	@Path("signgui")

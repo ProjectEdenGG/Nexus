@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
@@ -64,9 +63,7 @@ public class LightTheTree implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
 		if (!Pugmas20.isAtPugmas(player)) return;
-		if (player.hasPermission(WorldGuardEditCommand.getPermission())) return;
 		if (block == null) return;
-
 
 		Pugmas20Service service = new Pugmas20Service();
 		Pugmas20User user = service.get(player);
@@ -95,5 +92,6 @@ public class LightTheTree implements Listener {
 
 		if (torch == 9)
 			user.send("Done");
+			// TODO PUGMAS Animation
 	}
 }

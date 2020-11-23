@@ -245,11 +245,16 @@ public abstract class ICustomCommand {
 			if (Long.class == type || Long.TYPE == type) number = Long.parseLong(value);
 			if (Byte.class == type || Byte.TYPE == type) number = Byte.parseByte(value);
 
-			if (number != null)
-				if (number.doubleValue() < annotation.min() || number.doubleValue() > annotation.max()) {
-					DecimalFormat formatter = StringUtils.getFormatter(type);
-					throw new InvalidInputException(camelCase(name) + " must be between &e" + formatter.format(annotation.min()) + " &cand &e" + formatter.format(annotation.max()));
+			if (number != null) {
+				if (annotation != null) {
+					if (number.doubleValue() < annotation.min() || number.doubleValue() > annotation.max()) {
+						DecimalFormat formatter = StringUtils.getFormatter(type);
+						throw new InvalidInputException(camelCase(name) + " must be between &e" + formatter.format(annotation.min()) + " &cand &e" + formatter.format(annotation.max()));
+					}
 				}
+
+				return number;
+			}
 		} catch (NumberFormatException ex) {
 			throw new InvalidInputException("'" + value + "' is not a number");
 		}

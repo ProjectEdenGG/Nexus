@@ -132,10 +132,7 @@ public enum QuestNPC {
 						);
 					}
 
-					player.getInventory();
-					lighter.setAmount(lighter.getAmount() - 1);
-					steelNugget.setAmount(steelNugget.getAmount() - 1);
-					flint.setAmount(flint.getAmount() - 1);
+					player.getInventory().removeItem(lighter, steelNugget, flint);
 					ItemUtils.giveItem(player, LightTheTree.lighter);
 
 					user.setLightTreeStage(QuestStage.STEPS_DONE);
@@ -305,7 +302,7 @@ public enum QuestNPC {
 					service.save(user);
 
 					for (ItemStack ornament : ornaments)
-						ornament.setAmount(ornament.getAmount() - 1);
+						player.getInventory().removeItem(ornament);
 
 					return Arrays.asList(
 							Script.wait(0, "todo - steps done")

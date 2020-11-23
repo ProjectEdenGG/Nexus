@@ -53,7 +53,7 @@ public class Trees implements Listener {
 
 	@EventHandler
 	public void onTreeBreak(BlockBreakEvent event) {
-		if (!isAtPugmas(event.getPlayer(), "trees"))
+		if (!isAtPugmas(event.getBlock().getLocation(), "trees"))
 			return;
 
 		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
@@ -238,7 +238,7 @@ public class Trees implements Listener {
 									if (treeType != null)
 										ItemUtils.giveItem(player, treeType.getLog());
 								}
-							block.setType(Material.AIR);
+							block.setType(Material.AIR, false);
 						});
 					}
 				}
