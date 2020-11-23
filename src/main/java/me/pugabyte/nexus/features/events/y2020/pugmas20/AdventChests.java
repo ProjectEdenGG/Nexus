@@ -4,6 +4,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -42,7 +43,7 @@ public class AdventChests implements Listener {
 	public static List<AdventChest> adventChestList = new ArrayList<>();
 	public static ItemBuilder adventLootHead;
 	//
-	private static final Block lootOrigin = location(867, 45, 579).getBlock();
+	public static final Block lootOrigin = location(867, 45, 579).getBlock();
 	private static final String InvTitle = "Advent Chest #";
 	private static UUID adventLootHeadOwner = null;
 	private static final String adventLootHeadTitle = "Pugmas Advent Skull";
@@ -159,7 +160,14 @@ public class AdventChests implements Listener {
 			return false;
 
 		Chest chest = (Chest) loc.getBlock().getState();
-		inventory.setContents(chest.getBlockInventory().getContents());
+		ItemStack[] contents = chest.getBlockInventory().getContents();
+		if (!Quests.hasRoomFor(player, contents)) {
+			Utils.send(player, Quests.fullInvError);
+			Quests.sound_villagerNo(player);
+			return false;
+		}
+
+		inventory.setContents(contents);
 
 		player.openInventory(inventory);
 		SoundUtils.playSound(player, Sound.BLOCK_CHEST_OPEN);

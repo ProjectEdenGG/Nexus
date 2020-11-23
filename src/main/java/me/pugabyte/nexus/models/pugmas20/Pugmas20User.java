@@ -44,9 +44,10 @@ public class Pugmas20User extends PlayerOwnedObject {
 
 	// Active Quest NPCs
 	@Embedded
-	private List<Integer> nextStepNPCs = Arrays.asList(QuestNPC.ELF2.getId(), QuestNPC.QA_ELF.getId(), QuestNPC.ELF3.getId());
+	private List<Integer> nextStepNPCs = Arrays.asList(
+			QuestNPC.ELF2.getId(), QuestNPC.QA_ELF.getId(), QuestNPC.ELF3.getId(), QuestNPC.GIFT_GIVER.getId());
 
-	// Quest - Light The Tree
+	// Quest - Gift Giver
 	private QuestStage giftGiverStage = QuestStage.NOT_STARTED;
 
 	// Quest - Light The Tree

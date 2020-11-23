@@ -43,7 +43,6 @@ public class ToyTesting implements Listener {
 
 		@Getter
 		private final Location location;
-		@Getter
 		private final String command;
 		@Getter
 		private final BiConsumer<Pugmas20User, Boolean> setter;
@@ -123,12 +122,17 @@ public class ToyTesting implements Listener {
 		Pugmas20Service service = new Pugmas20Service();
 		for (Player player : players) {
 			Pugmas20User user = service.get(player);
+			if (user.getToyTestingStage().equals(QuestStage.STARTED)) {
+				toy.getSetter().accept(user, true);
+				if (hasPlayedAll(user))
+					user.setToyTestingStage(QuestStage.STEPS_DONE);
 
-			if (!user.getToyTestingStage().equals(QuestStage.STARTED))
-				continue;
-
-			toy.getSetter().accept(user, true);
-			service.save(user);
+				service.save(user);
+			}
 		}
+	}
+
+	public boolean hasPlayedAll(Pugmas20User user) {
+		return user.isMasterMind() && user.isBattleship() && user.isConnectFour() && user.isTicTacToe();
 	}
 }

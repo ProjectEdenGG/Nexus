@@ -57,7 +57,8 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent [month] [day]")
-	void advent(@Arg(value = "12", permission = "group.staff") int month, @Arg(value = "-1", permission = "group.staff") int day) {
+	void advent(@Arg(value = "12", permission = "group.staff") int month,
+				@Arg(value = "-1", permission = "group.staff") int day) {
 		LocalDateTime now = LocalDateTime.now();
 		int year = 2020;
 		if (month < 11)

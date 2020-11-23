@@ -3,16 +3,17 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.models;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.models.Script;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.GiftGiver;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -238,16 +239,8 @@ public enum QuestNPC {
 					if (!user.isTicTacToe())
 						leftover.add("TicTacToe");
 
-					if (Utils.isNullOrEmpty(leftover)) {
-						user.setToyTestingStage(QuestStage.STEPS_DONE);
-						service.save(user);
-						getScript(player);
-					}
-
-					String reminder = String.join(", ", leftover);
-
 					return Arrays.asList(
-							Script.wait(0, "todo - " + reminder)
+							Script.wait(0, "todo - " + String.join(", ", leftover))
 					);
 				case STEPS_DONE:
 					user.setToyTestingStage(QuestStage.COMPLETE);
@@ -255,6 +248,7 @@ public enum QuestNPC {
 
 					return Arrays.asList(
 							Script.wait(0, "They all work! Excellent! You have the thanks of many children and one overworked elf."),
+
 							Script.wait(0, "Have this too <prize>")
 					);
 				case COMPLETE:
@@ -317,6 +311,28 @@ public enum QuestNPC {
 					Script.wait(0, "todo - default")
 			);
 		}
+	},
+	GIFT_GIVER(3110) {
+		@Override
+		public List<Script> getScript(Player player) {
+			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20User user = service.get(player);
+
+			if (user.getGiftGiverStage() == QuestStage.NOT_STARTED) {
+				user.setGiftGiverStage(QuestStage.COMPLETE);
+				service.save(user);
+
+				GiftGiver.giveGift(player);
+
+				return Arrays.asList(
+						Script.wait(0, "Spread some cheer and give this gift to another player!")
+				);
+			}
+
+			return Arrays.asList(
+					Script.wait(0, "todo - default")
+			);
+		}
 	};
 
 	@Getter
@@ -359,7 +375,7 @@ public enum QuestNPC {
 				String message = "&3" + npcName.get() + " &7> &f" + line;
 				Tasks.wait(wait.get(), () -> {
 					Utils.send(player, message);
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
+					Quests.sound_npcAlert(player);
 				});
 			});
 		});

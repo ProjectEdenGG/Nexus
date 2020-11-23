@@ -4,16 +4,27 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class Quests {
+	public static final String fullInvError = Pugmas20.getPREFIX() + "&cYour inventory is too full to open this!";
+
 	public Quests() {
 		new Reflections(getClass().getPackage().getName()).getSubTypesOf(Listener.class).forEach(listener -> {
 			try {
@@ -42,5 +53,38 @@ public class Quests {
 			this.getter = getQuestStage;
 			this.setter = setQuestStage;
 		}
+	}
+
+	public static void sound_obtainItem(Player player) {
+		SoundUtils.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+	}
+
+	public static void sound_villagerNo(Player player) {
+		SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO);
+	}
+
+	public static void sound_npcAlert(Player player) {
+		SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_BIT);
+	}
+
+	public static boolean hasRoomFor(Player player, ItemStack... items) {
+		List<ItemStack> itemList = new ArrayList<>();
+		for (ItemStack item : new ArrayList<>(Arrays.asList(items))) {
+			if (!ItemUtils.isNullOrAir(item))
+				itemList.add(item);
+		}
+
+		return hasRoomFor(player, itemList.size());
+	}
+
+	public static boolean hasRoomFor(Player player, int slots) {
+		ItemStack[] contents = player.getInventory().getContents();
+		int slotsUsed = 0;
+		for (ItemStack content : contents) {
+			if (!ItemUtils.isNullOrAir(content))
+				slotsUsed++;
+		}
+
+		return (slotsUsed <= (36 - slots));
 	}
 }
