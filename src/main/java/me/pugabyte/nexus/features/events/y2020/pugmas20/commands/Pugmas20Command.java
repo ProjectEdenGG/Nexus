@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores.OreType;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees.PugmasTreeType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -180,6 +181,12 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 			error("No pugmas trees found");
 
 		send(json.newline().next("&3Total: &e" + total));
+	}
+
+	@Permission("group.admin")
+	@Path("kit lumberjacks axe")
+	void kitLumberjacksAxe() {
+		ItemUtils.giveItem(player(), Trees.getLumberjacksAxe());
 	}
 
 	@Permission("group.admin")
