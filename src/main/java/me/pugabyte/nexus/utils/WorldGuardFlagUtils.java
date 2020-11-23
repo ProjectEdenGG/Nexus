@@ -13,22 +13,20 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
+import lombok.AllArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 
 public class WorldGuardFlagUtils {
 
+	@AllArgsConstructor
 	public enum Flags {
 		SNOW_EFFECT(registerFlag(new StateFlag("snow-effect", false))),
 		HANGING_BREAK(registerFlag(new StateFlag("hanging-break", false))),
 		GRASS_DECAY(registerFlag(new StateFlag("grass-decay", false)));
 
 		public final Flag<?> flag;
-
-		Flags(Flag<?> flag) {
-			this.flag = flag;
-		}
 
 		public Flag<?> get() {
 			return flag;

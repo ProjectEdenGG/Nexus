@@ -12,6 +12,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Range;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.framework.exceptions.BNException;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getPathString;
+import static me.pugabyte.nexus.utils.StringUtils.getNf;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -166,7 +168,7 @@ public abstract class ICustomCommand {
 
 			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !Strings.isNullOrEmpty(value)));
 			try {
-				objects[i - 1] = convert(value, contextArg, parameter.getType(), annotation, event, required);
+				objects[i - 1] = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
 			} catch (MissingArgumentException ex) {
 				event.getCommand().showUsage();
 			}
@@ -182,11 +184,13 @@ public abstract class ICustomCommand {
 	);
 
 	@SneakyThrows
-	private Object convert(String value, Object context, Class<?> type, Arg annotation, CommandEvent event, boolean required) {
+	private Object convert(String value, Object context, Class<?> type, Parameter parameter, String name, CommandEvent event, boolean required) {
+		Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
+
 		if (Collection.class.isAssignableFrom(type)) {
 			List<Object> values = new ArrayList<>();
 			for (String index : value.split("[, ]"))
-				values.add(convert(index, context, annotation.type(), annotation, event, required));
+				values.add(convert(index, context, annotation.type(), parameter, name, event, required));
 			values.removeIf(Objects::isNull);
 			return values;
 		}
@@ -232,12 +236,20 @@ public abstract class ICustomCommand {
 			return Boolean.parseBoolean(value);
 		}
 		try {
-			if (Integer.class == type || Integer.TYPE == type) return Integer.parseInt(value);
-			if (Double.class == type || Double.TYPE == type) return Double.parseDouble(value);
-			if (Float.class == type || Float.TYPE == type) return Float.parseFloat(value);
-			if (Short.class == type || Short.TYPE == type) return Short.parseShort(value);
-			if (Long.class == type || Long.TYPE == type) return Long.parseLong(value);
-			if (Byte.class == type || Byte.TYPE == type) return Byte.parseByte(value);
+			Number number = null;
+			if (Integer.class == type || Integer.TYPE == type) number = Integer.parseInt(value);
+			if (Double.class == type || Double.TYPE == type) number = Double.parseDouble(value);
+			if (Float.class == type || Float.TYPE == type) number = Float.parseFloat(value);
+			if (Short.class == type || Short.TYPE == type) number = Short.parseShort(value);
+			if (Long.class == type || Long.TYPE == type) number = Long.parseLong(value);
+			if (Byte.class == type || Byte.TYPE == type) number = Byte.parseByte(value);
+
+			if (number != null) {
+				Range range = parameter.getAnnotation(Range.class);
+				if (range != null)
+					if (number.doubleValue() < range.min() || number.doubleValue() > range.max())
+						throw new InvalidInputException(name + " must be between &e" + getNf().format(range.min()) + " &cand &e" + getNf().format(range.max()));
+			}
 		} catch (NumberFormatException ex) {
 			throw new InvalidInputException("'" + value + "' is not a number");
 		}

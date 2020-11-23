@@ -28,6 +28,8 @@ public class Referral extends PlayerOwnedObject {
 	private Origin origin;
 	private String extra;
 
+	@Getter
+	@AllArgsConstructor
 	public enum Origin {
 		PLANET_MINECRAFT("PlanetMC.com", "http://www.planetminecraft.com/server/bear-nation/"),
 		TOP_MINECRAFT_SERVERS("TopMCServers.org", "https://topminecraftservers.org/server/3738"),
@@ -44,13 +46,7 @@ public class Referral extends PlayerOwnedObject {
 
 		@Getter
 		private final String display;
-		@Getter
 		private final String link;
-
-		Origin(String display, String link) {
-			this.display = display;
-			this.link = link;
-		}
 	}
 
 }

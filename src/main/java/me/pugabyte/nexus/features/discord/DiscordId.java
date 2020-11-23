@@ -1,10 +1,13 @@
 package me.pugabyte.nexus.features.discord;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Member;
 
 public class DiscordId {
 
+	@Getter
+	@AllArgsConstructor
 	public enum Channel {
 		GENERAL("132680070480396288"),
 		ANNOUNCEMENTS("133970047382061057"),
@@ -23,14 +26,11 @@ public class DiscordId {
 
 		TEST("241774576822910976");
 
-		@Getter
-		private String id;
-
-		Channel(String id) {
-			this.id = id;
-		}
+		private final String id;
 	}
 
+	@Getter
+	@AllArgsConstructor
 	public enum VoiceChannel {
 		MINIGAMES("133782271822921728"),
 		RED("133785819432353792"),
@@ -39,14 +39,11 @@ public class DiscordId {
 		YELLOW("133785902680899585"),
 		WHITE("360496040501051392");
 
-		@Getter
-		private String id;
-
-		VoiceChannel(String id) {
-			this.id = id;
-		}
+		private final String id;
 	}
 
+	@Getter
+	@AllArgsConstructor
 	public enum User {
 		PUGABYTE("115552359458799616"),
 		POOGATEST("719574999673077912"),
@@ -54,12 +51,7 @@ public class DiscordId {
 		KODA("223794142583455744"),
 		UBER("85614143951892480");
 
-		@Getter
-		private String id;
-
-		User(String id) {
-			this.id = id;
-		}
+		private final String id;
 
 		public net.dv8tion.jda.api.entities.User get() {
 			Member member = getMember();
@@ -71,17 +63,16 @@ public class DiscordId {
 		}
 	}
 
+	@Getter
+	@AllArgsConstructor
 	public enum Guild {
 		BEAR_NATION("132680070480396288");
 
-		@Getter
-		private String id;
-
-		Guild(String id) {
-			this.id = id;
-		}
+		private final String id;
 	}
 
+	@Getter
+	@AllArgsConstructor
 	public enum Role {
 		OWNER("133668441717604352"),
 		ADMINS("133751307096817664"),
@@ -100,12 +91,7 @@ public class DiscordId {
 		MOVIE_GOERS("583293370085015553"),
 		BEAR_FAIR_PARTICIPANT("469666444888506378");
 
-		@Getter
-		private String id;
-
-		Role(String id) {
-			this.id = id;
-		}
+		private final String id;
 
 		public net.dv8tion.jda.api.entities.Role get() {
 			return Discord.getGuild().getRoleById(id);

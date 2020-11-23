@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.utils;
 
+import lombok.AllArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 
+@AllArgsConstructor
 public enum Time {
 	TICK(1),
 	SECOND(TICK.get() * 20),
@@ -13,10 +15,6 @@ public enum Time {
 	YEAR(DAY.get() * 365);
 
 	private final int value;
-
-	Time(int value) {
-		this.value = value;
-	}
 
 	public int get() {
 		return value;

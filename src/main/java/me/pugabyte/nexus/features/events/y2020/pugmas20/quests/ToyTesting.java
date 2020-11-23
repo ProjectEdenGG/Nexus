@@ -28,6 +28,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
 // TODO PUGMAS: teleport back to pugmas
 @NoArgsConstructor
@@ -36,10 +37,10 @@ public class ToyTesting implements Listener {
 
 	@AllArgsConstructor
 	private enum Toy {
-		BATTLESHIP(Pugmas20.location(930, 84, 321), "mcmd gl ;; wait 20 ;; mgm join alphavsomega", Pugmas20User::setBattleship),
-		MASTER_MIND(Pugmas20.location(930, 84, 320), "mcmd gl ;; wait 20 ;; mgm join mastermind", Pugmas20User::setMasterMind),
-		CONNECT_4(Pugmas20.location(930, 84, 319), "mcmd gl ;; wait 20 ;; warp connect4", Pugmas20User::setConnectFour),
-		TIC_TAC_TOE(Pugmas20.location(930, 84, 318), "mcmd gl ;; wait 20 ;; warp tictactoe", Pugmas20User::setTicTacToe);
+		BATTLESHIP(Pugmas20.location(930, 94, 321), "mgm join alphavsomega", Pugmas20User::setBattleship),
+		MASTER_MIND(Pugmas20.location(930, 94, 320), "mgm join mastermind", Pugmas20User::setMasterMind),
+		CONNECT_4(Pugmas20.location(930, 94, 319), "warp connect4", Pugmas20User::setConnectFour),
+		TIC_TAC_TOE(Pugmas20.location(930, 94, 318), "warp tictactoe", Pugmas20User::setTicTacToe);
 
 		@Getter
 		private final Location location;
@@ -50,9 +51,13 @@ public class ToyTesting implements Listener {
 
 		public static Toy of(Location location) {
 			for (Toy toy : Toy.values())
-				if (toy.getLocation() == location)
+				if (toy.getLocation().equals(location))
 					return toy;
 			return null;
+		}
+
+		public String getCommand() {
+			return "mcmd warp minigames ;; wait 20 ;; " + command;
 		}
 	}
 
@@ -67,6 +72,7 @@ public class ToyTesting implements Listener {
 		if (isNullOrAir(block)) return;
 
 		Toy toy = Toy.of(block.getLocation());
+		Utils.send(player, getShortLocationString(block.getLocation()) + " (" + toy + ")");
 		if (toy == null) return;
 
 		Predicate<String> isStarted = name -> MatchManager.get(ArenaManager.get(name)).isStarted();

@@ -6,6 +6,7 @@ import com.gmail.nossr50.util.player.UserManager;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
@@ -24,6 +25,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	McMMOService service = new McMMOService();
 
 	@Getter
+	@AllArgsConstructor
 	public enum ResetSkillType {
 		SWORDS(1, 3, Material.DIAMOND_SWORD,
 				"A frozen sword that slows your enemies and may trap them in ice") {
@@ -127,17 +129,10 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				}
 		};
 
-		int row, column;
-		Material material;
-		String rewardDescription;
-		ItemStack itemStack;
-
-		ResetSkillType(int row, int column, Material material, String rewardsDescription) {
-			this.row = row;
-			this.column = column;
-			this.material = material;
-			this.rewardDescription = rewardsDescription;
-		}
+		private final int row;
+		private final int column;
+		private final Material material;
+		private final String rewardDescription;
 
 		abstract void onClick(Player player);
 	}

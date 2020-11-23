@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.AdventChests;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
@@ -9,6 +10,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores.OreType;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas20Quest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees.PugmasTreeType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -243,6 +245,27 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path("npcs emeralds")
 	void npcsHolograms() {
 		Pugmas20.createNpcHolograms();
+	}
+
+	@Permission("group.admin")
+	@Path("quests stage set <quest> <stage>")
+	void questStageSet(Pugmas20Quest quest, QuestStage stage) {
+		quest.setter().accept(user, stage);
+		service.save(user);
+		send(PREFIX + "Quest stage for Quest " + camelCase(quest) + " set to " + camelCase(stage));
+	}
+
+	@Permission("group.admin")
+	@Path("quests stage get <quest>")
+	void questStageSet(Pugmas20Quest quest) {
+		send(PREFIX + "Quest stage for Quest " + camelCase(quest) + ": " + quest.getter().apply(user));
+	}
+
+	@Permission("group.admin")
+	@Path("quests light_the_tree setTorchesLit <int>")
+	void questLighterSetLit(int lit) {
+		user.setTorchesLit(lit);
+		send(PREFIX + "Set torches lit to " + lit);
 	}
 
 	@Permission("group.admin")

@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.chat.translator;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 public enum Language {
 	UNKNOWN("Unknown"),
 	AF("Afrikaans"),
@@ -99,11 +101,5 @@ public enum Language {
 	ZH("Chinese");
 
 	@Getter
-	String name;
-
-	Language(String name) {
-		this.name = name;
-	}
-
-
+	private final String name;
 }

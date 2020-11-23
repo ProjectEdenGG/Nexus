@@ -85,8 +85,8 @@ public class CompactCommand extends CustomCommand {
 		}
 	}
 
-	@AllArgsConstructor
 	@Getter
+	@AllArgsConstructor
 	public enum Compactable {
 		COAL(Material.COAL_BLOCK, 9),
 		IRON_NUGGET(Material.IRON_INGOT, 9),
@@ -98,14 +98,14 @@ public class CompactCommand extends CustomCommand {
 		DIAMOND(Material.DIAMOND_BLOCK, 9),
 		EMERALD(Material.EMERALD_BLOCK, 9),
 		QUARTZ(Material.QUARTZ_BLOCK, 4),
-		//NETHERITE(Material.NETHERITE_BLOCK, 9);
+		NETHERITE(Material.NETHERITE_BLOCK, 9),
 		SNOWBALL(Material.SNOW_BLOCK, 4),
 		ICE(Material.PACKED_ICE, 9),
 		PACKED_ICE(Material.BLUE_ICE, 9),
 		SLIME_BALL(Material.SLIME_BLOCK, 9);
 
-		Material result;
-		int requiredAmount;
+		private final Material result;
+		private final int requiredAmount;
 	}
 
 

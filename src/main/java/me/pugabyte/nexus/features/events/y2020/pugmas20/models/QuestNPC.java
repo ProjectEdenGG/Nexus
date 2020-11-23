@@ -47,7 +47,7 @@ public enum QuestNPC {
 							Script.wait(0, "todo - reminder")
 					);
 				case STEP_TWO:
-					if (!hasItem(player, LightTheTree.lighter_broken.build())) {
+					if (!hasItem(player, LightTheTree.lighter_broken)) {
 						return Arrays.asList(
 								Script.wait(0, "todo - <did you find the ceremonial lighter?>")
 						);
@@ -104,7 +104,7 @@ public enum QuestNPC {
 					);
 
 				case STEP_TWO:
-					if (!hasItem(player, LightTheTree.lighter_broken.build())) {
+					if (!hasItem(player, LightTheTree.lighter_broken)) {
 						return Arrays.asList(
 								Script.wait(0, "todo - <have you found " + ELF1.getName() + " and that ceremonial lighter?>")
 						);
@@ -123,8 +123,8 @@ public enum QuestNPC {
 							Script.wait(0, "Head to the coal mine and you should be able to get both- ask the mine supervisor for help")
 					);
 				case STEP_THREE:
-					ItemStack lighter = getItem(player, LightTheTree.lighter_broken.build());
-					ItemStack steelNugget = getItem(player, LightTheTree.steel_nugget.build());
+					ItemStack lighter = getItem(player, LightTheTree.lighter_broken);
+					ItemStack steelNugget = getItem(player, LightTheTree.steel_nugget);
 					ItemStack flint = getItem(player, Ores.getFlint());
 					if (lighter == null || steelNugget == null || flint == null) {
 						return Arrays.asList(
@@ -136,7 +136,7 @@ public enum QuestNPC {
 					lighter.setAmount(lighter.getAmount() - 1);
 					steelNugget.setAmount(steelNugget.getAmount() - 1);
 					flint.setAmount(flint.getAmount() - 1);
-					ItemUtils.giveItem(player, LightTheTree.lighter.build());
+					ItemUtils.giveItem(player, LightTheTree.lighter);
 
 					user.setLightTreeStage(QuestStage.STEPS_DONE);
 					service.save(user);
