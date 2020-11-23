@@ -9,10 +9,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Arg {
 	String value() default "";
+	String permission() default "";
+
+	int context() default -1;
+	Class<?> tabCompleter() default void.class;
+
 	// Use for Lists due to java erasure
 	Class<?> type() default void.class;
-	Class<?> tabCompleter() default void.class;
-	int context() default -1;
-	String permission() default "";
+
+	double min() default Double.MIN_VALUE;
+	double max() default Double.MAX_VALUE;
 
 }

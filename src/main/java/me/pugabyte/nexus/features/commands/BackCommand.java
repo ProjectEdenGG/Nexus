@@ -7,7 +7,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.Range;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.back.Back;
 import me.pugabyte.nexus.models.back.BackService;
@@ -36,7 +35,7 @@ public class BackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[count]")
-	void back(@Arg(value = "1", permission = "group.staff") @Range(min = 1, max = 10) int count) {
+	void back(@Arg(value = "1", permission = "group.staff", min = 1, max = 10) int count) {
 		Location location = null;
 		if (back.getLocations().size() >= count)
 			location = back.getLocations().get(count - 1);

@@ -12,7 +12,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.Range;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.framework.exceptions.BNException;
@@ -23,6 +22,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.command.CommandSender;
@@ -35,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,7 +51,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getPathString;
-import static me.pugabyte.nexus.utils.StringUtils.getNf;
+import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -244,12 +245,11 @@ public abstract class ICustomCommand {
 			if (Long.class == type || Long.TYPE == type) number = Long.parseLong(value);
 			if (Byte.class == type || Byte.TYPE == type) number = Byte.parseByte(value);
 
-			if (number != null) {
-				Range range = parameter.getAnnotation(Range.class);
-				if (range != null)
-					if (number.doubleValue() < range.min() || number.doubleValue() > range.max())
-						throw new InvalidInputException(name + " must be between &e" + getNf().format(range.min()) + " &cand &e" + getNf().format(range.max()));
-			}
+			if (number != null)
+				if (number.doubleValue() < annotation.min() || number.doubleValue() > annotation.max()) {
+					DecimalFormat formatter = StringUtils.getFormatter(type);
+					throw new InvalidInputException(camelCase(name) + " must be between &e" + formatter.format(annotation.min()) + " &cand &e" + formatter.format(annotation.max()));
+				}
 		} catch (NumberFormatException ex) {
 			throw new InvalidInputException("'" + value + "' is not a number");
 		}

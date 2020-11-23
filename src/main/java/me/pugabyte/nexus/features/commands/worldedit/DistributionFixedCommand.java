@@ -46,7 +46,7 @@ public class DistributionFixedCommand extends CustomCommand {
 			percentages.put(material, ((double) counts.get(material) / (double) blocks.size()) * 100);
 
 		sortByValue(percentages).forEach((material, percentage) ->
-				send("&e - " + StringUtils.getNf().format(percentage) + "% &7- " + material));
+				send("&e - " + StringUtils.getDf().format(percentage) + "% &7- " + material));
 	}
 
 }

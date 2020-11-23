@@ -28,7 +28,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
 // TODO PUGMAS: teleport back to pugmas
 @NoArgsConstructor
@@ -72,7 +71,6 @@ public class ToyTesting implements Listener {
 		if (isNullOrAir(block)) return;
 
 		Toy toy = Toy.of(block.getLocation());
-		Utils.send(player, getShortLocationString(block.getLocation()) + " (" + toy + ")");
 		if (toy == null) return;
 
 		Predicate<String> isStarted = name -> MatchManager.get(ArenaManager.get(name)).isStarted();

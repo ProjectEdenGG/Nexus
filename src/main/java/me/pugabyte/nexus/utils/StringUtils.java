@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import net.md_5.bungee.api.ChatColor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -525,15 +526,28 @@ public class StringUtils {
 	}
 
 	@Getter
-	private static final DecimalFormat nf = new DecimalFormat("#.00");
+	private static final DecimalFormat df = new DecimalFormat("#.00");
+
+	@Getter
+	private static final DecimalFormat nf = new DecimalFormat("#");
+
+	public static DecimalFormat getFormatter(Class<?> type) {
+		if (Integer.class == type || Integer.TYPE == type) return nf;
+		if (Double.class == type || Double.TYPE == type) return df;
+		if (Float.class == type || Float.TYPE == type) return df;
+		if (Short.class == type || Short.TYPE == type) return nf;
+		if (Long.class == type || Long.TYPE == type) return nf;
+		if (Byte.class == type || Byte.TYPE == type) return nf;
+		throw new InvalidInputException("No formatter found for class " + type.getSimpleName());
+	}
 
 	public static String getLocationString(Location loc) {
-		return "&3World: &e" + loc.getWorld().getName() + " &3x: &e" + nf.format(loc.getX()) + " &3y: &e" +
-				nf.format(loc.getY()) + " &3z: &e" +  nf.format(loc.getZ());
+		return "&3World: &e" + loc.getWorld().getName() + " &3x: &e" + df.format(loc.getX()) + " &3y: &e" +
+				df.format(loc.getY()) + " &3z: &e" +  df.format(loc.getZ());
 	}
 
 	public static String getShortLocationString(Location loc) {
-		return nf.format(loc.getX()) + " " + nf.format(loc.getY()) + " " +  nf.format(loc.getZ()) + " " + loc.getWorld().getName();
+		return df.format(loc.getX()) + " " + df.format(loc.getY()) + " " +  df.format(loc.getZ()) + " " + loc.getWorld().getName();
 	}
 
 	public static void sendJsonLocation(String message, Location location, Player player) {
