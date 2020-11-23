@@ -108,9 +108,9 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send("Deleted data for " + player.getName());
 	}
 
-	@Path("testtrain")
+	@Path("train")
 	@Permission("group.admin")
-	void testTrain() {
+	void train() {
 		if (!Train.animate())
 			error("Train is animating!");
 	}

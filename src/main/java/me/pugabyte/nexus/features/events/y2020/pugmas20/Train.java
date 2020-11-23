@@ -28,7 +28,6 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location
 -890, -2186
  935,   482
 1826  2666
-
  */
 public class Train {
 	// Options
@@ -124,7 +123,7 @@ public class Train {
 				AtomicReference<Location> temp = new AtomicReference<>(trainStart.clone());
 				for (int i = 1; i <= 95; i++) {
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).paste();
 						temp.set(temp.get().getBlock().getRelative(1, 0, 0).getLocation());
 
 						incrementTrain();
@@ -137,7 +136,7 @@ public class Train {
 				for (int i = 1; i <= 110; i++) {
 					int finalI = i;
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).paste();
 
 						incrementTrain();
 					});
@@ -160,7 +159,7 @@ public class Train {
 //					}
 //
 //					Tasks.wait(slowFrameTime.get() * i, () -> {
-//						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).pasteAsync();
+//						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).paste();
 //						temp.set(temp.get().getBlock().getRelative(1, 0, 0).getLocation());
 //
 //						incrementTrain();
@@ -178,7 +177,7 @@ public class Train {
 //				AtomicReference<Location> temp = new AtomicReference<>(trackLoc.get().getLocation().clone());
 //				for (int i = 1; i <= 38; i++) {
 //					Tasks.wait(frameTime * i, () -> {
-//						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).pasteAsync();
+//						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).paste();
 //						temp.set(temp.get().getBlock().getLocation());
 //
 //						incrementTrain();
@@ -191,7 +190,7 @@ public class Train {
 //				for (int i = 1; i <= 110; i++) {
 //					int finalI = i;
 //					Tasks.wait(frameTime * i, () -> {
-//						WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).pasteAsync();
+//						WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).paste();
 //
 //						incrementTrain();
 //					});
@@ -281,8 +280,8 @@ public class Train {
 				for (int i = 1; i <= 7; i++) {
 					int finalI = i;
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).at(crossingNW).pasteAsync();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).at(crossingSW).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).at(crossingNW).paste();
+						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).at(crossingSW).paste();
 					});
 				}
 
@@ -293,8 +292,8 @@ public class Train {
 				for (int i = 1; i <= 7; i++) {
 					int finalI = i;
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).at(crossingNW).pasteAsync();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).at(crossingSW).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).at(crossingNW).paste();
+						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).at(crossingSW).paste();
 					});
 				}
 			}
@@ -306,8 +305,8 @@ public class Train {
 				for (int i = 1; i <= 7; i++) {
 					int finalI = i;
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).at(crossingNE).pasteAsync();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).at(crossingSE).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).at(crossingNE).paste();
+						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).at(crossingSE).paste();
 					});
 				}
 			} else {
@@ -317,8 +316,8 @@ public class Train {
 				for (int i = 1; i <= 7; i++) {
 					int finalI = i;
 					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).at(crossingNE).pasteAsync();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).at(crossingSE).pasteAsync();
+						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).at(crossingNE).paste();
+						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).at(crossingSE).paste();
 					});
 				}
 			}

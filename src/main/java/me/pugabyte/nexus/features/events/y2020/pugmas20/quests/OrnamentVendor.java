@@ -6,7 +6,11 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees.PugmasTreeType;
 import me.pugabyte.nexus.utils.ItemUtils;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
@@ -38,5 +42,15 @@ public class OrnamentVendor {
 			else
 				this.skull = Pugmas20.item(itemStack).name(camelCase(name() + " Ornament")).build();
 		}
+	}
+
+	public static List<ItemStack> getOrnaments(Player player) {
+		List<ItemStack> ornaments = new ArrayList<>();
+		for (Ornament ornament : Ornament.values()) {
+			if (player.getInventory().containsAtLeast(ornament.getSkull(), 1))
+				ornaments.add(ornament.getSkull());
+		}
+
+		return ornaments;
 	}
 }

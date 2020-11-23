@@ -5,6 +5,8 @@ import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.models.Script;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -291,16 +293,23 @@ public enum QuestNPC {
 									"lost the town’s ornaments. If you bring me one of each of the 10 ornaments, I'll reward you")
 					);
 				case STARTED:
-					// TODO: if player has all ornaments, set to steps done and call getscript,
-					//  otherwise tell the player which ornament they are missing
-					return Arrays.asList(
-							Script.wait(0, "todo - reminder")
-					);
-				case STEPS_DONE:
+					List<ItemStack> ornaments = OrnamentVendor.getOrnaments(player);
+
+					if (ornaments.size() != Ornament.values().length) {
+						return Arrays.asList(
+								Script.wait(0, "todo - reminder")
+						);
+					}
+
+					user.setOrnamentVendorStage(QuestStage.COMPLETE);
+					service.save(user);
+
+					for (ItemStack ornament : ornaments)
+						ornament.setAmount(ornament.getAmount() - 1);
+
 					return Arrays.asList(
 							Script.wait(0, "todo - steps done")
 					);
-
 				case COMPLETE:
 					return Arrays.asList(
 							Script.wait(0, "todo - already complete")
@@ -383,15 +392,11 @@ public enum QuestNPC {
 	}
 
 	public ItemStack getItem(Player player, ItemStack item) {
-		ItemStack _item = item.clone();
-		_item.setAmount(1);
 		for (ItemStack content : player.getInventory().getContents()) {
 			if (ItemUtils.isNullOrAir(content))
 				continue;
-			ItemStack _content = content.clone();
-			_content.setAmount(1);
 
-			if (_content.equals(_item))
+			if (ItemUtils.isFuzzyMatch(item, content))
 				return content;
 		}
 		return null;

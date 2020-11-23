@@ -99,6 +99,10 @@ public class WorldGuardUtils {
 		return manager.getApplicableRegions(toBlockVector3(location)).getRegions().stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
 	}
 
+	public boolean isInRegion(Player player, String region) {
+		return isInRegion(player.getLocation(), region);
+	}
+
 	public boolean isInRegion(Location location, String region) {
 		return location.getWorld().equals(world) && getRegionNamesAt(location).contains(region);
 	}
