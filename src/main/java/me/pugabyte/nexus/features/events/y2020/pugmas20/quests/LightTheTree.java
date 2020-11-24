@@ -10,6 +10,7 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Time;
@@ -17,6 +18,7 @@ import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -126,6 +128,7 @@ public class LightTheTree implements Listener {
 			return;
 		} else if (torch == user.getTorchesLit() + 1) {
 			user.send("Found next torch");
+			SoundUtils.playSound(player, Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0.1F);
 			user.setTorchesLit(torch);
 			service.save(user);
 		}
@@ -146,10 +149,14 @@ public class LightTheTree implements Listener {
 			int wait = 0;
 			for (int i = 1; i <= treeTorches; i++) {
 				Location location = getLocation("treetorch", i);
-				Tasks.wait(wait += Time.SECOND.get(), () -> fire(player, location));
+				Tasks.wait(wait += Time.SECOND.get(), () -> {
+					fire(player, location);
+					SoundUtils.playSound(player, Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0.1F);
+				});
 			}
 
 			Tasks.wait(wait + 1, () -> {
+				SoundUtils.playSound(player, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1F, 0.1F);
 				user.setLightTreeStage(QuestStage.COMPLETE);
 				user.getNextStepNPCs().remove(QuestNPC.ELF1.getId());
 				user.getNextStepNPCs().remove(QuestNPC.ELF2.getId());

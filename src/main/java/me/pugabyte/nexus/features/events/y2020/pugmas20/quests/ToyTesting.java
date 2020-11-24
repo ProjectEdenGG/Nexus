@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
+import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
@@ -28,6 +29,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 // TODO PUGMAS: teleport back to pugmas
 @NoArgsConstructor
@@ -85,7 +87,10 @@ public class ToyTesting implements Listener {
 			}
 		}
 
-		Utils.runCommandAsOp(player, toy.getCommand());
+		ConfirmationMenu.builder()
+				.title("Play " + camelCase(toy) + "?")
+				.onConfirm(e -> Utils.runCommandAsOp(player, toy.getCommand()))
+				.open(player);
 	}
 
 	@EventHandler
