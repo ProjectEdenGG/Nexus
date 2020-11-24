@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ActionBarUtils;
@@ -149,6 +150,8 @@ public class LightTheTree implements Listener {
 
 			Tasks.wait(wait + 1, () -> {
 				user.setLightTreeStage(QuestStage.COMPLETE);
+				user.getNextStepNPCs().remove(QuestNPC.ELF1.getId());
+				user.getNextStepNPCs().remove(QuestNPC.ELF2.getId());
 				service.save(user);
 			});
 		}

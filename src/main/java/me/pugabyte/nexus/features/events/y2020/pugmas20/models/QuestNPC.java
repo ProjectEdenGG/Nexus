@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.models;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.models.Script;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.GiftGiver;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
@@ -66,9 +67,7 @@ public enum QuestNPC {
 							Script.wait(0, "You have it! Just in the nick of time. The ceremony shall now begin."),
 
 							Script.wait(0, "Light all the torches around Santa’s Workshop leading up to the tree using the ceremonial lighter, " +
-									"don’t forget the one at the base of the tree! You have <todo time limit>, starting..."),
-
-							Script.wait(0, "Now!")
+									"don’t forget the one at the base of the tree! You will be timed, so hurry!")
 					);
 				case COMPLETE:
 					return Arrays.asList(
@@ -90,6 +89,7 @@ public enum QuestNPC {
 			switch (user.getLightTreeStage()) {
 				case NOT_STARTED:
 					user.setLightTreeStage(QuestStage.STARTED);
+					user.getNextStepNPCs().add(ELF1.getId());
 					service.save(user);
 
 					return Arrays.asList(
@@ -111,6 +111,7 @@ public enum QuestNPC {
 					}
 
 					user.setLightTreeStage(QuestStage.STEP_THREE);
+					user.getNextStepNPCs().add(SUPERVISOR.getId());
 					service.save(user);
 
 					return Arrays.asList(
@@ -243,6 +244,7 @@ public enum QuestNPC {
 					);
 				case STEPS_DONE:
 					user.setToyTestingStage(QuestStage.COMPLETE);
+					user.getNextStepNPCs().remove(getId());
 					service.save(user);
 
 					return Arrays.asList(
@@ -270,6 +272,7 @@ public enum QuestNPC {
 			switch (user.getOrnamentVendorStage()) {
 				case NOT_STARTED:
 					user.setOrnamentVendorStage(QuestStage.STARTED);
+					user.getNextStepNPCs().add(MerchantNPC.ORNAMENT_VENDOR.getNpcId());
 					service.save(user);
 
 					return Arrays.asList(
@@ -292,6 +295,7 @@ public enum QuestNPC {
 					}
 
 					user.setOrnamentVendorStage(QuestStage.COMPLETE);
+					user.getNextStepNPCs().remove(getId());
 					service.save(user);
 
 					for (ItemStack ornament : ornaments)
@@ -319,6 +323,7 @@ public enum QuestNPC {
 
 			if (user.getGiftGiverStage() == QuestStage.NOT_STARTED) {
 				user.setGiftGiverStage(QuestStage.COMPLETE);
+				user.getNextStepNPCs().remove(getId());
 				service.save(user);
 
 				GiftGiver.giveGift(player);

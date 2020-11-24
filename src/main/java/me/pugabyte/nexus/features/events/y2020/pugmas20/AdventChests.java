@@ -63,8 +63,8 @@ public class AdventChests implements Listener {
 	private static final String districtRg = Pugmas20.getRegion() + "_district_";
 	//
 	private static final String wrongDay = Pugmas20.getPREFIX() + "You cannot open this chest, look for chest #<day>";
-	private static final String openPrevious = Pugmas20.getPREFIX() + "need to find the rest to open this one";
-	private static final String alreadyFound = Pugmas20.getPREFIX() + "already opened this chest!";
+	private static final String openPrevious = Pugmas20.getPREFIX() + "Need to find the rest to open this one";
+	private static final String alreadyFound = Pugmas20.getPREFIX() + "Already opened this chest!";
 
 	public AdventChests() {
 		Nexus.registerListener(this);
