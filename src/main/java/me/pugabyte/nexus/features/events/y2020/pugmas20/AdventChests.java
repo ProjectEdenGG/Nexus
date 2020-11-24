@@ -146,9 +146,7 @@ public class AdventChests implements Listener {
 		if (user.getFoundDays().contains(chestDay))
 			reason = alreadyFound;
 		else if (isSecondChance(now))
-			if (chestDay != 25)
-				openChest = true;
-			else if (user.getFoundDays().size() == 24)
+			if (chestDay != 25 || user.getFoundDays().size() == 24)
 				openChest = true;
 			else
 				reason = openPrevious;

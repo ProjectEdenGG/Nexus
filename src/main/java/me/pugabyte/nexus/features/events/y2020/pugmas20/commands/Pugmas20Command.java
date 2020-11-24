@@ -58,9 +58,9 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent [day]")
-	void advent(@Arg(value = "-1", permission = "group.staff") int day) {
+	void advent(@Arg(min = 1, max = 25, permission = "group.staff") Integer day) {
 		LocalDateTime now = LocalDateTime.now();
-		if (day != -1)
+		if (day != null)
 			now = now.withYear(2020).withMonth(12).withDayOfMonth(day);
 
 		if (isBeforePugmas(now) && !player().hasPermission("group.staff"))
