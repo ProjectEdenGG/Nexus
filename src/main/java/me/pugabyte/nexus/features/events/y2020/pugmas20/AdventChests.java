@@ -265,7 +265,7 @@ public class AdventChests implements Listener {
 		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Location loc = player.getLocation();
-		if (Pugmas20.WGUtils.getRegionsLikeAt(districtRg + ".*", loc).size() == 0) return;
+		if (!event.getRegion().getId().matches(districtRg + ".*")) return;
 
 		District district = getDistrict(loc);
 		if (district != District.UNKNOWN)
@@ -278,7 +278,7 @@ public class AdventChests implements Listener {
 		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Location loc = player.getLocation();
-		if (Pugmas20.WGUtils.getRegionsLikeAt(districtRg + ".*", loc).size() == 0) return;
+		if (!event.getRegion().getId().matches(districtRg + ".*")) return;
 
 		District district = getDistrict(loc);
 		if (district != District.UNKNOWN)

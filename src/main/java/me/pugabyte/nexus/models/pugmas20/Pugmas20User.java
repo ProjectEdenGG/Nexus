@@ -55,6 +55,8 @@ public class Pugmas20User extends PlayerOwnedObject {
 	// Quest - Light The Tree
 	private QuestStage lightTreeStage = QuestStage.NOT_STARTED;
 	private int torchesLit = 0;
+	private boolean lightingTorches = false;
+	private int torchTimerTaskId = -1;
 
 	// Quest - Toy Testing
 	private QuestStage toyTestingStage = QuestStage.NOT_STARTED;

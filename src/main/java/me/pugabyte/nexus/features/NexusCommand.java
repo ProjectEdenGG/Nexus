@@ -27,6 +27,8 @@ import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
@@ -121,6 +123,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		long invCount = Bukkit.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
 		if (invCount > 0)
 			error("There are " + invCount + " SmartInvs menus open, cannot reload");
+
+		List<Pugmas20User> all = new Pugmas20Service().getAll();
+		long torchCount = all.stream().filter(pugmas20User -> pugmas20User.isOnline() && pugmas20User.isLightingTorches() && pugmas20User.getTorchTimerTaskId() > 0).count();
+		if (torchCount > 0)
+			error("There are " + torchCount + " people completing the Pugmas20 torch quest, cannot reload");
 
 		runCommand("plugman reload Nexus");
 	}

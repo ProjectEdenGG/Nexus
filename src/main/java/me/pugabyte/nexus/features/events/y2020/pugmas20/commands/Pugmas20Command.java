@@ -274,6 +274,13 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.admin")
+	@Path("debug2 <player>")
+	void debugUser2(@Arg("self") OfflinePlayer player) {
+		user = service.get(player);
+		send(user.toString());
+	}
+
+	@Permission("group.admin")
 	@Path("debug <player>")
 	void debugUser(OfflinePlayer player) {
 		user = service.get(player);

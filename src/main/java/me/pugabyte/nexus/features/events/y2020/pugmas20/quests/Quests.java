@@ -2,18 +2,16 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
@@ -27,14 +25,7 @@ public class Quests {
 	public static final String leftoverItems = Pugmas20.getPREFIX() + "Giving leftover items...";
 
 	public Quests() {
-		new Reflections(getClass().getPackage().getName()).getSubTypesOf(Listener.class).forEach(listener -> {
-			try {
-				if (listener.getAnnotation(Disabled.class) == null)
-					Nexus.registerListener(new ObjenesisStd().newInstance(listener));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		});
+		new Reflections(getClass().getPackage().getName()).getSubTypesOf(Listener.class).forEach(Utils::tryRegisterListener);
 	}
 
 	@Accessors(fluent = true)

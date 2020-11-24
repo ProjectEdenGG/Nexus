@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
+import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
@@ -31,6 +32,7 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.addToken
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
+@NoArgsConstructor
 public class TheMines implements Listener {
 
 	static {

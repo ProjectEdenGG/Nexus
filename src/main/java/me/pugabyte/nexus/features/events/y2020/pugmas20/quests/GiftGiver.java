@@ -42,7 +42,7 @@ public class GiftGiver implements Listener {
 	private static final ItemStack skull = AdventMenu.origin.getRelative(0, 0, 5).getDrops().stream().findFirst().orElse(null);
 	private static ItemStack gift_locked = null;
 	private static ItemStack gift_unlocked = null;
-	private static List<Location> lootChestList = new ArrayList<>();
+	private static final List<Location> lootChestList = new ArrayList<>();
 	private static final String invTitle = "Pugmas20 Gift";
 
 	static {
@@ -82,7 +82,7 @@ public class GiftGiver implements Listener {
 
 		Utils.send(to, Pugmas20.getPREFIX() + from.getName() + " gave you a gift!");
 		ItemUtils.giveItem(to, gift_unlocked);
-		Quests.sound_obtainItem(from);
+		Quests.sound_obtainItem(to);
 	}
 
 	public static void openGift(Player player, ItemStack gift) {

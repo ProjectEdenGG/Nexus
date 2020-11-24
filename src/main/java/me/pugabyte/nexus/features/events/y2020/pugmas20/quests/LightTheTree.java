@@ -41,6 +41,10 @@ public class LightTheTree implements Listener {
 	public static final ItemStack lighter = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Ceremonial Lighter").glow().build();
 	public static final ItemStack steel_nugget = Pugmas20.questItem(Material.IRON_NUGGET).name("Steel Nugget").glow().build();
 
+	public static final int timerTicks = Time.MINUTE.x(1);
+	public static final int torches = 9;
+	public static final int treeTorches = 7;
+
 	@EventHandler
 	public void onFindBrokenLighter(PlayerInteractEntityEvent event) {
 		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
@@ -60,6 +64,29 @@ public class LightTheTree implements Listener {
 		ItemUtils.giveItem(player, lighter_broken);
 		user.setLightTreeStage(QuestStage.STEP_TWO);
 		service.save(user);
+	}
+
+	public static void startTimer(Player player) {
+		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20User user = service.get(player);
+
+		Countdown timer = Countdown.builder()
+				.duration(timerTicks)
+				.onStart(() -> {
+					user.setLightingTorches(true);
+					user.send("Timer started");
+				})
+				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&e" + i))
+				.onComplete(() -> {
+					user.send("You ran out of time!");
+					// TODO PUGMAS Click to teleport to start
+					user.setLightingTorches(false);
+					user.setTorchTimerTaskId(-1);
+					user.setTorchesLit(0);
+				})
+				.start();
+
+		user.setTorchTimerTaskId(timer.getTaskId());
 	}
 
 	@EventHandler
@@ -86,6 +113,13 @@ public class LightTheTree implements Listener {
 
 		int torch = Integer.parseInt(regions.iterator().next().getId().split("_")[2]);
 		user.send("Torch #" + torch);
+
+		if (torch == 1) {
+			user.setLightingTorches(true);
+			if (user.getTorchTimerTaskId() == -1)
+				startTimer(player);
+		}
+
 		if (torch > user.getTorchesLit() + 1) {
 			user.send("You missed one!");
 			return;
@@ -100,12 +134,15 @@ public class LightTheTree implements Listener {
 		if (torch == 9) {
 			user.send("Done");
 			user.setLightTreeStage(QuestStage.FOUND_ALL);
+			Tasks.cancel(user.getTorchTimerTaskId());
+			user.setTorchTimerTaskId(-1);
+			user.setLightingTorches(false);
 			service.save(user);
 
 			animateTreeLightBlocks(player);
 
 			int wait = 0;
-			for (int i = 1; i <= 7; i++) {
+			for (int i = 1; i <= treeTorches; i++) {
 				Location location = getLocation("treetorch", i);
 				Tasks.wait(wait += Time.SECOND.get(), () -> fire(player, location));
 			}
@@ -173,12 +210,12 @@ public class LightTheTree implements Listener {
 	}
 
 	private static void updateAllTorches(Player player, BiConsumer<Player, Location> method) {
-		for (int i = 1; i <= 9; i++)
+		for (int i = 1; i <= torches; i++)
 			method.accept(player, getLocation("torch", i));
 	}
 
 	private static void updateAllTreeTorches(Player player, BiConsumer<Player, Location> method) {
-		for (int i = 1; i <= 7; i++)
+		for (int i = 1; i <= treeTorches; i++)
 			method.accept(player, getLocation("treetorch", i));
 	}
 

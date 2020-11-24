@@ -14,7 +14,6 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
-
 @NoArgsConstructor
 public class OrnamentVendor {
 	public enum Ornament {

@@ -34,6 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
+import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -331,12 +332,19 @@ public class Utils {
 		return true;
 	}
 
+	public static void tryRegisterListener(Class<?> clazz) {
+		tryRegisterListener(new ObjenesisStd().newInstance(clazz));
+	}
+
 	public static void tryRegisterListener(Object object) {
 		try {
+			if (!canEnable(object.getClass()))
+				return;
+
 			boolean hasNoArgsConstructor = Stream.of(object.getClass().getConstructors()).anyMatch(c -> c.getParameterCount() == 0);
 			if (object instanceof Listener) {
 				if (!hasNoArgsConstructor)
-					Nexus.warn("Cannot register listener on command " + object.getClass().getSimpleName() + ", needs @NoArgsConstructor");
+					Nexus.warn("Cannot register listener on " + object.getClass().getSimpleName() + ", needs @NoArgsConstructor");
 				else
 					Nexus.registerListener((Listener) object.getClass().newInstance());
 			} else if (new ArrayList<>(getAllMethods(object.getClass(), withAnnotation(EventHandler.class))).size() > 0)
