@@ -41,18 +41,18 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, "I can’t find the special lighter… Ooooh Santa is gonna be SO mad at me if I’ve lost it."),
+							Script.wait(0, "I can’t find the Ceremonial Lighter… Ooooh Santa is gonna be SO mad at me if I’ve lost it."),
 
 							Script.wait(0, "We haven't used it since last year. Could you search in the basement to help me find it?")
 					);
 				case STEP_ONE:
 					return Arrays.asList(
-							Script.wait(0, "reminder")  // TODO PUGMAS
+							Script.wait(0, "Did you find the Ceremonial Lighter in the basement?")
 					);
 				case STEP_TWO:
 					if (!hasItem(player, LightTheTree.lighter_broken)) {
 						return Arrays.asList(
-								Script.wait(0, "<did you find the ceremonial lighter?>")  // TODO PUGMAS
+								Script.wait(0, "Did you find the Ceremonial Lighter in the basement?")
 						);
 					}
 
@@ -77,7 +77,7 @@ public enum QuestNPC {
 			}
 
 			return Arrays.asList(
-					Script.wait(0, "generic greeting")  // TODO PUGMAS
+					Script.wait(0, getGreeting())
 			);
 		}
 	},
@@ -95,7 +95,7 @@ public enum QuestNPC {
 
 					return Arrays.asList(
 							Script.wait(0, "It's time for our annual tree lighting ceremony, but " + ELF1.getName() +
-									" still hasn’t returned with the special lighter!"),
+									" still hasn’t returned with the Ceremonial Lighter!"),
 
 							Script.wait(0, "Would you mind finding him for me? He should be in the workshop.")
 					);
@@ -107,7 +107,7 @@ public enum QuestNPC {
 				case STEP_TWO:
 					if (!hasItem(player, LightTheTree.lighter_broken)) {
 						return Arrays.asList(
-								Script.wait(0, "<have you found " + ELF1.getName() + " and the ceremonial lighter?>")  // TODO PUGMAS
+								Script.wait(0, "Did you find " + ELF1.getName() + " in the workshop?")
 						);
 					}
 
@@ -151,7 +151,7 @@ public enum QuestNPC {
 			}
 
 			return Arrays.asList(
-					Script.wait(0, "generic greeting")  // TODO PUGMAS
+					Script.wait(0, getGreeting())
 			);
 		}
 	},
@@ -203,7 +203,7 @@ public enum QuestNPC {
 			}
 
 			return Arrays.asList(
-					Script.wait(0, "generic greeting")  // TODO PUGMAS
+					Script.wait(0, getGreeting())
 			);
 		}
 	},
@@ -262,7 +262,7 @@ public enum QuestNPC {
 			}
 
 			return Arrays.asList(
-					Script.wait(0, "generic greeting")  // TODO PUGMAS
+					Script.wait(0, getGreeting())
 			);
 		}
 	},
@@ -314,7 +314,7 @@ public enum QuestNPC {
 			}
 
 			return Arrays.asList(
-					Script.wait(0, "generic greeting")  // TODO PUGMAS
+					Script.wait(0, getGreeting())
 			);
 		}
 	},
@@ -337,7 +337,7 @@ public enum QuestNPC {
 			}
 
 			return Arrays.asList(
-					Script.wait(0, getGreeting())  // TODO PUGMAS
+					Script.wait(0, getGreeting())
 			);
 		}
 	};
@@ -425,8 +425,9 @@ public enum QuestNPC {
 	private static String getGreeting() {
 		List<String> greetings = Arrays.asList(
 				"Happy holidays!",
-				"",
-				"");
+				"Yuletide greetings!",
+				"Season’s greetings!",
+				"Happy New Year!");
 
 		return RandomUtils.randomElement(greetings);
 	}
