@@ -138,6 +138,7 @@ public class LightTheTree implements Listener {
 			Tasks.cancel(user.getTorchTimerTaskId());
 			user.setTorchTimerTaskId(-1);
 			user.setLightingTorches(false);
+			user.getPlayer().getInventory().removeItem(lighter);
 			service.save(user);
 
 			animateTreeLightBlocks(player);
