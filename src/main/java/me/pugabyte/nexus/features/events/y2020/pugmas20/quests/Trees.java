@@ -238,7 +238,7 @@ public class Trees implements Listener {
 									if (treeType != null)
 										ItemUtils.giveItem(player, treeType.getLog());
 								}
-							block.setType(Material.AIR, false);
+							block.setType(Material.AIR, this != CRYSTAL);
 						});
 					}
 				}

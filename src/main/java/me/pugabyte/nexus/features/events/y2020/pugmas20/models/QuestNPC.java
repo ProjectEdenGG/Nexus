@@ -69,7 +69,6 @@ public enum QuestNPC {
 									"don’t forget the one at the base of the tree! You have <todo time limit>, starting..."),
 
 							Script.wait(0, "Now!")
-							// todo: start challenge for player
 					);
 				case COMPLETE:
 					return Arrays.asList(

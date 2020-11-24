@@ -83,6 +83,7 @@ public class Train {
 	private static final String animationPath = "Animations/Pugmas20/Train";
 
 	public Train() {
+	/*
 		Tasks.repeat(Time.SECOND.x(30), Time.MINUTE.x(5), () -> {
 			if (Pugmas20.WGUtils.getPlayersInRegion("pugmas20").size() == 0)
 				return;
@@ -90,6 +91,7 @@ public class Train {
 			if (RandomUtils.chanceOf(50))
 				animate();
 		});
+	*/
 
 		lightsTask();
 		soundsTask();

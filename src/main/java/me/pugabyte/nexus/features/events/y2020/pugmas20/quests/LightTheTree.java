@@ -1,14 +1,20 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Tasks.Countdown;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -23,12 +29,13 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
+import java.util.function.BiConsumer;
+
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 
 @NoArgsConstructor
 public class LightTheTree implements Listener {
 	private static final String lighterRg = Pugmas20.getRegion() + "_lighter";
-	private static final String torchRg = Pugmas20.getRegion() + "_torch_";
-	private static final String treeTorchRg = Pugmas20.getRegion() + "_treetorch_";
 	//
 	public static final ItemStack lighter_broken = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Broken Ceremonial Lighter").build();
 	public static final ItemStack lighter = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Ceremonial Lighter").glow().build();
@@ -39,7 +46,7 @@ public class LightTheTree implements Listener {
 		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
 
 		Player player = event.getPlayer();
-		if (!Pugmas20.isAtPugmas(player)) return;
+		if (!isAtPugmas(player)) return;
 
 		Entity entity = event.getRightClicked();
 		if (!entity.getType().equals(EntityType.ITEM_FRAME)) return;
@@ -62,7 +69,7 @@ public class LightTheTree implements Listener {
 
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
-		if (!Pugmas20.isAtPugmas(player)) return;
+		if (!isAtPugmas(player)) return;
 		if (block == null) return;
 
 		Pugmas20Service service = new Pugmas20Service();
@@ -88,10 +95,110 @@ public class LightTheTree implements Listener {
 			service.save(user);
 		}
 
-		Tasks.wait(1, () -> player.sendBlockChange(placed.getLocation(), Bukkit.createBlockData(Material.FIRE)));
+		fire(player, placed.getLocation());
 
-		if (torch == 9)
+		if (torch == 9) {
 			user.send("Done");
-			// TODO PUGMAS Animation
+			user.setLightTreeStage(QuestStage.FOUND_ALL);
+			service.save(user);
+
+			animateTreeLightBlocks(player);
+
+			int wait = 0;
+			for (int i = 1; i <= 7; i++) {
+				Location location = getLocation("treetorch", i);
+				Tasks.wait(wait += Time.SECOND.get(), () -> fire(player, location));
+			}
+
+			Tasks.wait(wait + 1, () -> {
+				user.setLightTreeStage(QuestStage.COMPLETE);
+				service.save(user);
+			});
+		}
 	}
+
+	public static Location getLocation(String type, int i) {
+		Region region = Pugmas20.WGUtils.getRegion("pugmas20_" + type + "_" + i);
+		return Pugmas20.WGUtils.toLocation(region.getMinimumPoint());
+	}
+
+	public static void fire(Player player, Location location) {
+		Tasks.wait(1, () -> player.sendBlockChange(location, Bukkit.createBlockData(Material.FIRE)));
+	}
+
+	public static void air(Player player, Location location) {
+		Tasks.wait(1, () -> player.sendBlockChange(location, Bukkit.createBlockData(Material.AIR)));
+	}
+
+	static {
+		Tasks.repeatAsync(Time.SECOND, Time.SECOND, () -> {
+			Pugmas20Service service = new Pugmas20Service();
+
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				if (!isAtPugmas(player))
+					continue;
+
+				Pugmas20User user = service.get(player);
+
+				switch (user.getLightTreeStage()) {
+					case STEPS_DONE:
+						updateFound(user);
+						updateAllTreeTorches(player, LightTheTree::air);
+						updateTreeLightBlocksAir(player);
+						continue;
+					case FOUND_ALL:
+						updateFound(user);
+						continue;
+					case COMPLETE:
+						updateAll(player, LightTheTree::fire);
+						updateTreeLightBlocks(player);
+						continue;
+					default:
+						updateAll(player, LightTheTree::air);
+				}
+			}
+		});
+	}
+
+	private static void updateFound(Pugmas20User user) {
+		for (int i = 1; i <= user.getTorchesLit(); i++)
+			fire(user.getPlayer(), getLocation("torch", i));
+		for (int i = (user.getTorchesLit() + 1); i <= 9; i++)
+			air(user.getPlayer(), getLocation("torch", i));
+	}
+
+	private static void updateAll(Player player, BiConsumer<Player, Location> method) {
+		updateAllTorches(player, method);
+		updateAllTreeTorches(player, method);
+	}
+
+	private static void updateAllTorches(Player player, BiConsumer<Player, Location> method) {
+		for (int i = 1; i <= 9; i++)
+			method.accept(player, getLocation("torch", i));
+	}
+
+	private static void updateAllTreeTorches(Player player, BiConsumer<Player, Location> method) {
+		for (int i = 1; i <= 7; i++)
+			method.accept(player, getLocation("treetorch", i));
+	}
+
+	private final static Paste treeLightPaster = Pugmas20.WEUtils.paster()
+			.at(Pugmas20.location(936, 61, 483))
+			.file("pugmas20/tree_light")
+			.duration(Time.SECOND.x(7))
+			.air(false)
+			.computeBlocks();
+
+	public static void updateTreeLightBlocks(Player player) {
+		treeLightPaster.buildClientSide(player);
+	}
+
+	public static void updateTreeLightBlocksAir(Player player) {
+		treeLightPaster.getComputedBlocks().forEach((location, blockData) -> air(player, location));
+	}
+
+	public static void animateTreeLightBlocks(Player player) {
+		treeLightPaster.buildQueueClientSide(player);
+	}
+
 }

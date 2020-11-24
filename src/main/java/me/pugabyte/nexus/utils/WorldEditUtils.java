@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -400,7 +401,14 @@ public class WorldEditUtils {
 			if (blockDataMap.isEmpty())
 				findBlocks();
 
-			blockDataMap.forEach((location, material) -> location.getBlock().setBlockData(material));
+			blockDataMap.forEach((location, blockData) -> location.getBlock().setBlockData(blockData));
+		}
+
+		public void buildClientSide(Player player) {
+			if (blockDataMap.isEmpty())
+				findBlocks();
+
+			blockDataMap.forEach(player::sendBlockChange);
 		}
 
 		public void buildAsync() {
@@ -408,11 +416,19 @@ public class WorldEditUtils {
 				if (blockDataMap.isEmpty())
 					findBlocks();
 
-				Tasks.sync(() -> blockDataMap.forEach((location, material) -> location.getBlock().setBlockData(material)));
+				Tasks.sync(() -> blockDataMap.forEach((location, blockData) -> location.getBlock().setBlockData(blockData)));
 			});
 		}
 
 		public void buildQueue() {
+			buildQueue(location -> () -> location.getBlock().setBlockData(blockDataMap.get(location)));
+		}
+
+		public void buildQueueClientSide(Player player) {
+			buildQueue(location -> () -> player.sendBlockChange(location.getBlock().getLocation(), blockDataMap.get(location)));
+		}
+
+		public void buildQueue(Function<Location, Runnable> action) {
 			Tasks.async(() -> {
 				if (blockDataMap.isEmpty())
 					findBlocks();
@@ -422,16 +438,16 @@ public class WorldEditUtils {
 
 				int wait = 0;
 				int blocksPerTick = Math.max(queue.size() / ticks, 1);
+				int delay = Math.max(ticks / queue.size(), 1);
 
 				queueLoop:
 				while (true) {
-					++wait;
+					wait += delay;
 					for (int i = 0; i < blocksPerTick; i++) {
 						Location poll = queue.poll();
 						if (poll == null)
 							break queueLoop;
-
-						Tasks.wait(wait, () -> poll.getBlock().setBlockData(blockDataMap.get(poll)));
+						Tasks.wait(wait, action.apply(poll));
 					}
 				}
 			});

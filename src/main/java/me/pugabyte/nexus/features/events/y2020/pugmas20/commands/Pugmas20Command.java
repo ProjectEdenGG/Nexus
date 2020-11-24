@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.AdventChests;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores.OreType;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
@@ -230,6 +231,14 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.admin")
+	@Path("kit light_the_tree")
+	void kitLightTheTree() {
+		ItemUtils.giveItem(player(), LightTheTree.lighter);
+		ItemUtils.giveItem(player(), LightTheTree.lighter_broken);
+		ItemUtils.giveItem(player(), LightTheTree.steel_nugget);
+	}
+
+	@Permission("group.admin")
 	@Path("inventory store")
 	void inventoryStore() {
 		user.storeInventory();
@@ -266,6 +275,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path("quests light_the_tree setTorchesLit <int>")
 	void questLighterSetLit(int lit) {
 		user.setTorchesLit(lit);
+		service.save(user);
 		send(PREFIX + "Set torches lit to " + lit);
 	}
 
