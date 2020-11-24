@@ -2,26 +2,39 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.AdventChests;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Location;
 
 @Data
-@AllArgsConstructor
 public class AdventChest {
 	@NonNull int day;
 	@NonNull Location location;
 	@NonNull District district;
 
-	@Getter
+	public AdventChest(int day, Location location) {
+		this.day = day;
+		this.location = location;
+		this.district = AdventChests.getDistrict(location);
+	}
+
+	public AdventChest(int day, Location location, District district) {
+		this.day = day;
+		this.location = location;
+		this.district = district;
+	}
+
 	@AllArgsConstructor
 	public enum District {
-		HARBOR("Harbor"),
-		PLAZA("Plaza"),
-		GARDENS("Gardens"),
-		FROZEN("Frozen"),
-		UNKNOWN("Unknown");
+		HARBOR,
+		PLAZA,
+		GARDENS,
+		FROZEN,
+		UNKNOWN;
 
-		String name;
+		public String getName() {
+			return StringUtils.camelCase(name());
+		}
 	}
 }

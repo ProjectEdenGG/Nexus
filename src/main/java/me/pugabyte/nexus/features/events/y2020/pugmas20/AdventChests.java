@@ -1,16 +1,23 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
+import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import com.mewin.worldguardregionapi.events.RegionLeavingEvent;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,6 +34,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,6 +44,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isBeforePugmas;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
 
 // TODO PUGMAS - Prevent adventLootHead from being placed, or opened if player doesn't have enough space
@@ -48,6 +60,11 @@ public class AdventChests implements Listener {
 	private static UUID adventLootHeadOwner = null;
 	private static final String adventLootHeadTitle = "Pugmas Advent Skull";
 	private static final String adventLootHeadLore = "Day #";
+	private static final String districtRg = Pugmas20.getRegion() + "_district_";
+	//
+	private static final String wrongDay = Pugmas20.getPREFIX() + "You cannot open this chest, look for chest #<day>";
+	private static final String openPrevious = Pugmas20.getPREFIX() + "need to find the rest to open this one";
+	private static final String alreadyFound = Pugmas20.getPREFIX() + "already opened this chest!";
 
 	public AdventChests() {
 		Nexus.registerListener(this);
@@ -74,7 +91,7 @@ public class AdventChests implements Listener {
 	}
 
 	private void loadChestLocations() {
-		adventChestList.add(new AdventChest(1, chestLoc(867, 46, 588), District.UNKNOWN));
+		adventChestList.add(new AdventChest(1, chestLoc(867, 46, 588)));
 		// TODO PUGMAS - Add all chest locations
 	}
 
@@ -97,7 +114,9 @@ public class AdventChests implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
-		if (!Pugmas20.isAtPugmas(event.getPlayer())) return;
+
+		Player player = event.getPlayer();
+		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Block block = event.getClickedBlock();
 		if (!block.getType().equals(Material.CHEST)) return;
@@ -105,26 +124,77 @@ public class AdventChests implements Listener {
 		AdventChest adventChest = getAdventChest(block.getLocation());
 		if (adventChest == null) return;
 
+		if (!Quests.hasRoomFor(player, 1)) {
+			Utils.send(player, Quests.fullInvError);
+			return;
+		}
+
 		event.setCancelled(true);
+
+		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20User user = service.get(player);
+
 		int chestDay = adventChest.getDay();
+		LocalDateTime now = LocalDateTime.now();
+		int day = LocalDate.now().getDayOfMonth();
+
+		if (isBeforePugmas(now)) return;
+		if (isPastPugmas(now)) return;
+
+		boolean openChest = false;
+		String reason = "";
+		if (user.getFoundDays().contains(chestDay))
+			reason = alreadyFound;
+		else if (isSecondChance(now))
+			if (chestDay != 25)
+				openChest = true;
+			else if (user.getFoundDays().size() == 24)
+				openChest = true;
+			else
+				reason = openPrevious;
+		else if (chestDay == day)
+			openChest = true;
+		else
+			reason = wrongDay;
+
+		if (!openChest) {
+			reason = reason.replaceAll("<day>", String.valueOf(day));
+			Utils.send(player, reason);
+			return;
+		}
 
 		// TODO PUGMAS:
 		//  - verify that the player can open this chest
-		//  - verify that the player has at least 1 slot free
 		//  - save which chest was opened to pugmas20 user
-//		int day = LocalDate.now().getDayOfMonth();
 
-		giveAdventHead(event.getPlayer(), chestDay);
+		user.getFoundDays().add(chestDay);
+		service.save(user);
+
+		giveAdventHead(player, chestDay);
 	}
 
 	public static void giveAdventHead(Player player, int day) {
-		// TODO PUGMAS: "item get" sound?
 		ItemStack skull = adventLootHead.clone().name(adventLootHeadTitle).lore(adventLootHeadLore + day).build();
 
 		Inventory inventory = Bukkit.createInventory(null, 3 * 9, InvTitle + day);
 		inventory.setItem(13, skull);
 		player.openInventory(inventory);
 		SoundUtils.playSound(player, Sound.BLOCK_CHEST_OPEN);
+	}
+
+	public static District getDistrict(Location location) {
+		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
+		District district = null;
+		for (ProtectedRegion region : WGUtils.getRegionsAt(location)) {
+			if (region.getId().contains(districtRg)) {
+				district = District.valueOf(region.getId().replace(districtRg, "").toUpperCase());
+			}
+		}
+
+		if (district == null)
+			district = District.UNKNOWN;
+
+		return district;
 	}
 
 	@EventHandler
@@ -152,7 +222,6 @@ public class AdventChests implements Listener {
 	}
 
 	public static boolean openAdventLootInv(Player player, int day) {
-		// TODO PUGMAS: verify that the player has space for contents, if not, return false
 		Inventory inventory = Bukkit.createInventory(null, 3 * 9, InvTitle + day);
 
 		Location loc = AdventChests.adventLootMap.get(day);
@@ -187,8 +256,34 @@ public class AdventChests implements Listener {
 		if (leftover.size() == 0)
 			return;
 
-		Utils.send(player, "Giving leftover items...");
+		Utils.send(player, Quests.leftoverItems);
 		ItemUtils.giveItems(player, leftover);
+	}
+
+	@EventHandler
+	public void onDistrictEnter(RegionEnteredEvent event) {
+		Player player = event.getPlayer();
+		if (!Pugmas20.isAtPugmas(player)) return;
+
+		Location loc = player.getLocation();
+		if (Pugmas20.WGUtils.getRegionsLikeAt(districtRg + ".*", loc).size() == 0) return;
+
+		District district = getDistrict(loc);
+		if (district != District.UNKNOWN)
+			ActionBarUtils.sendActionBar(player, "&a&lEntering " + district.getName() + " District");
+	}
+
+	@EventHandler
+	public void onDistrictExit(RegionLeavingEvent event) {
+		Player player = event.getPlayer();
+		if (!Pugmas20.isAtPugmas(player)) return;
+
+		Location loc = player.getLocation();
+		if (Pugmas20.WGUtils.getRegionsLikeAt(districtRg + ".*", loc).size() == 0) return;
+
+		District district = getDistrict(loc);
+		if (district != District.UNKNOWN)
+			ActionBarUtils.sendActionBar(player, "&c&lExiting " + district.getName() + " District");
 	}
 
 

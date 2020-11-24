@@ -24,6 +24,7 @@ import java.util.function.Function;
 
 public class Quests {
 	public static final String fullInvError = Pugmas20.getPREFIX() + "&cYour inventory is too full to open this!";
+	public static final String leftoverItems = Pugmas20.getPREFIX() + "Giving leftover items...";
 
 	public Quests() {
 		new Reflections(getClass().getPackage().getName()).getSubTypesOf(Listener.class).forEach(listener -> {
@@ -56,15 +57,15 @@ public class Quests {
 	}
 
 	public static void sound_obtainItem(Player player) {
-		SoundUtils.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+		SoundUtils.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 2F);
 	}
 
 	public static void sound_villagerNo(Player player) {
-		SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO);
+		SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, 0.5F, 1F);
 	}
 
 	public static void sound_npcAlert(Player player) {
-		SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_BIT);
+		SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_BIT, 0.5F, 1F);
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {

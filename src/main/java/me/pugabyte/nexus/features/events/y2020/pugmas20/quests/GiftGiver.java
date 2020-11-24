@@ -121,7 +121,7 @@ public class GiftGiver implements Listener {
 		if (leftover.size() == 0)
 			return;
 
-		Utils.send(player, "Giving leftover items...");
+		Utils.send(player, Quests.leftoverItems);
 		ItemUtils.giveItems(player, leftover);
 	}
 

@@ -57,17 +57,11 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send("Soon™ (" + timeLeft + ")");
 	}
 
-	@Path("advent [month] [day]")
-	void advent(@Arg(value = "12", permission = "group.staff") int month,
-				@Arg(value = "-1", permission = "group.staff") int day) {
+	@Path("advent [day]")
+	void advent(@Arg(value = "-1", permission = "group.staff") int day) {
 		LocalDateTime now = LocalDateTime.now();
-		int year = 2020;
-		if (month < 11)
-			year = 2021;
-		if (day == -1)
-			day = now.getDayOfMonth();
-
-		now = now.withYear(year).withMonth(month).withDayOfMonth(day);
+		if (day != -1)
+			now = now.withYear(2020).withMonth(12).withDayOfMonth(day);
 
 		if (isBeforePugmas(now) && !player().hasPermission("group.staff"))
 			error("Soon™ (" + timeLeft + ")");
