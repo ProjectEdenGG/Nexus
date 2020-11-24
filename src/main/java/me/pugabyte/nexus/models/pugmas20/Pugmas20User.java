@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.pugmas20;
 
+import com.google.common.collect.Sets;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
@@ -20,8 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
@@ -40,11 +42,11 @@ public class Pugmas20User extends PlayerOwnedObject {
 
 	// Advent
 	@Embedded
-	private List<Integer> foundDays = new ArrayList<>();
+	private Set<Integer> foundDays = new HashSet<>();
 
 	// Active Quest NPCs
 	@Embedded
-	private List<Integer> nextStepNPCs = Arrays.asList(
+	private Set<Integer> nextStepNPCs = Sets.newHashSet(
 			QuestNPC.ELF2.getId(), QuestNPC.QA_ELF.getId(), QuestNPC.ELF3.getId(), QuestNPC.GIFT_GIVER.getId());
 
 	// Quest - Gift Giver

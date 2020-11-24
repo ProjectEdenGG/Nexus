@@ -124,12 +124,11 @@ public class AdventChests implements Listener {
 		AdventChest adventChest = getAdventChest(block.getLocation());
 		if (adventChest == null) return;
 
+		event.setCancelled(true);
 		if (!Quests.hasRoomFor(player, 1)) {
 			Utils.send(player, Quests.fullInvError);
 			return;
 		}
-
-		event.setCancelled(true);
 
 		Pugmas20Service service = new Pugmas20Service();
 		Pugmas20User user = service.get(player);
@@ -138,8 +137,10 @@ public class AdventChests implements Listener {
 		LocalDateTime now = LocalDateTime.now();
 		int day = LocalDate.now().getDayOfMonth();
 
-		if (isBeforePugmas(now)) return;
-		if (isPastPugmas(now)) return;
+		if (!player.hasPermission("group.admin")) {
+			if (isBeforePugmas(now)) return;
+			if (isPastPugmas(now)) return;
+		}
 
 		boolean openChest = false;
 		String reason = "";
