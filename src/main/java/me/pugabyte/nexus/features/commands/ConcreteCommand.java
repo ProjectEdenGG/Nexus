@@ -56,7 +56,7 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 		if (WorldGroup.get(event.getPlayer()) != WorldGroup.SURVIVAL)
 			return;
 
-		if (!MaterialTag.ALL_CONCRETES.isTagged(event.getBlock().getType()))
+		if (!MaterialTag.CONCRETE_POWDERS.isTagged(event.getBlock().getType()))
 			return;
 
 		TipService tipService = new TipService();

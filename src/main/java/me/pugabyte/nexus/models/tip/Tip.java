@@ -14,7 +14,9 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.Time;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,9 @@ public class Tip extends PlayerOwnedObject {
 			return true;
 		}
 
+		if (!new CooldownService().check(getUuid(), "Tip." + tipType.name(), tipType.getCooldown()))
+			return false;
+
 		if (tipType.getPermissions().length > 0) {
 			boolean hasPerm = false;
 			for (String permission : tipType.getPermissions()) {
@@ -60,15 +65,17 @@ public class Tip extends PlayerOwnedObject {
 		return true;
 	}
 
-	@NoArgsConstructor
 	public enum TipType {
-		CONCRETE(1),
-		LWC_CHEST(1, "rank.guest"),
-		LWC_FURNACE(1, "rank.guest"),
+		CONCRETE(1, Time.HOUR, "group.nonstaff"),
+		LWC_CHEST(1, Time.MINUTE.x(15), "rank.guest"),
+		LWC_FURNACE(1, Time.MINUTE.x(15), "rank.guest"),
 		RESOURCE_WORLD_STORAGE(15);
 
 		@Getter
+		@NonNull
 		private int retryChance;
+		@Getter
+		private int cooldown;
 		@Getter
 		private String[] permissions = new String[]{};
 
@@ -76,12 +83,13 @@ public class Tip extends PlayerOwnedObject {
 			this.retryChance = retryChance;
 		}
 
-		TipType(String... permissions) {
-			this.permissions = permissions;
+		TipType(int retryChance, Time cooldown, String... permissions) {
+			this(retryChance, cooldown.get(), permissions);
 		}
 
-		TipType(int retryChance, String... permissions) {
+		TipType(int retryChance, int cooldown, String... permissions) {
 			this.retryChance = retryChance;
+			this.cooldown = cooldown;
 			this.permissions = permissions;
 		}
 	}

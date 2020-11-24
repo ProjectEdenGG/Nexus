@@ -20,6 +20,7 @@ public @interface Permission {
 		group.moderator     - moderator+
 		group.builder       - builder/architect
 		group.staff         - staff + builders
+		group.nonstaff      - guest - veteran
 
 	Rank Exclusive:
 		rank.<rankname>
