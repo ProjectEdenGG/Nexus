@@ -112,7 +112,7 @@ public enum QuestNPC {
 					}
 
 					user.setLightTreeStage(QuestStage.STEP_THREE);
-					user.getNextStepNPCs().add(SUPERVISOR.getId());
+					user.getNextStepNPCs().add(FORELF.getId());
 					service.save(user);
 
 					return Arrays.asList(
@@ -122,7 +122,7 @@ public enum QuestNPC {
 
 							Script.wait(0, "If you get me a piece of flint and a steel nugget, I can make both fast."),
 
-							Script.wait(0, "Head to the coal mine and you should be able to get both- ask the mine supervisor for help.")
+							Script.wait(0, "Head to the coal mine and you should be able to get both- ask the mine forelf for help.")
 					);
 				case STEP_THREE:
 					ItemStack lighter = getItem(player, LightTheTree.lighter_broken);
@@ -155,7 +155,7 @@ public enum QuestNPC {
 			);
 		}
 	},
-	SUPERVISOR(3080) {
+	FORELF(3080) {
 		@Override
 		public List<Script> getScript(Player player) {
 			Pugmas20Service service = new Pugmas20Service();
