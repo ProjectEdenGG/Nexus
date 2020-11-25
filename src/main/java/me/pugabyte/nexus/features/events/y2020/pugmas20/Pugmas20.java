@@ -56,9 +56,11 @@ public class Pugmas20 implements Listener {
 
 	public static final List<Hologram> holograms = new ArrayList<>();
 	@Getter
-	private static final String questLore = "Pugmas20 Quest Item";
+	private static final String questLore = "&ePugmas 2020 Quest Item";
 	@Getter
-	private static final String itemLore = "Pugmas20 Item";
+	private static final String itemLore = "&ePugmas 2020 Item";
+	@Getter
+	private static final String adventLore = "&ePugmas 2020 Advent Item";
 	// Advent Menu
 
 	@Getter
@@ -140,7 +142,19 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static ItemBuilder questItem(Material material) {
-		return new ItemBuilder(material).lore(questLore);
+		return questItem(new ItemStack(material));
+	}
+
+	public static ItemBuilder questItem(ItemStack itemStack) {
+		return new ItemBuilder(itemStack).lore(questLore);
+	}
+
+	public static ItemBuilder adventItem(Material material) {
+		return adventItem(new ItemStack(material));
+	}
+
+	public static ItemBuilder adventItem(ItemStack itemStack) {
+		return new ItemBuilder(itemStack).lore(adventLore);
 	}
 
 	public static ItemBuilder item(Material material) {

@@ -37,7 +37,7 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
 		if (event.getEntity() instanceof Monster)
-			if (WorldGuardFlagUtils.query(event.getLocation(), Flags.DENY_HOSTILE_SPAWN) == State.DENY)
+			if (WorldGuardFlagUtils.query(event.getLocation(), Flags.HOSTILE_SPAWN) == State.DENY)
 				event.setCancelled(true);
 	}
 }

@@ -34,5 +34,6 @@ public class MapCommand extends CustomCommand {
 
 		String link = "http://" + subdomain + ".bnn.gg/#" + names.getOrDefault(world, world) + ":" + x + ":" + z + ":0:30:0";
 		send(json("&3Current Location: &e" + link).url(link));
+		send("&eTip: &3Zoom in, right click and drag");
 	}
 }
