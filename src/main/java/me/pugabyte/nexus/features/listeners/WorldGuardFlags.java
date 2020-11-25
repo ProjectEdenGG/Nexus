@@ -4,9 +4,12 @@ import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Material;
+import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 
@@ -31,4 +34,10 @@ public class WorldGuardFlags implements Listener {
 				event.setCancelled(true);
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onCreatureSpawn(CreatureSpawnEvent event) {
+		if (event.getEntity() instanceof Monster)
+			if (WorldGuardFlagUtils.query(event.getLocation(), Flags.DENY_HOSTILE_SPAWN) == State.DENY)
+				event.setCancelled(true);
+	}
 }
