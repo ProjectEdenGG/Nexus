@@ -116,8 +116,10 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path("train")
 	@Permission("group.admin")
 	void train() {
-		if (!Train.animate())
+		if (Train.animating())
 			error("Train is animating!");
+
+		Train.animate();
 	}
 
 	@Permission("group.admin")

@@ -1,10 +1,13 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -17,7 +20,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -37,6 +42,8 @@ public class Train {
 	//private static final int stationStopTime = Time.SECOND.x(15);
 	// Don't change anything below this
 	//
+	@Getter
+	@Accessors(fluent = true)
 	private static boolean animating = false;
 	private static boolean stopAtStation = false;
 	private static boolean stopped = false;
@@ -57,7 +64,7 @@ public class Train {
 	private static final Location trackStart = location(x - 94, y, z);
 	private static final Location trainEnter = location(x + 13, y, z);
 	private static final Location trainExit = location(x, y, z);
-	private static final Location trainStart = location(x + 14, y, z);
+	private static final Location trainStart = location(x + 13, y, z);
 	private static final Location crossingSE = location(x + 71, y, z + 6);
 	private static final Location crossingNE = location(x + 79, y, z - 6);
 	private static final Location crossingSW = location(x - 47, y, z + 6);
@@ -97,113 +104,39 @@ public class Train {
 		soundsTask();
 	}
 
-	public static boolean animate() {
+	public static void animate() {
 		if (animating)
-			return false;
+			return;
 
 		animating = true;
 		stopAtStation = false;
-		int wait = 0;
 		crossing1_closed = false;
 		crossing2_closed = false;
 
-		for (int i = 1; i <= 109; i++) {
-			int finalI = i;
-			Tasks.wait(frameTime * i, () -> {
-				WEUtils.paster().file(animationPath + "/Enter/TrainEnter_" + finalI).at(trainEnter).paste();
+		Queue<Paste> pastes = new LinkedList<>();
 
-				incrementTrain();
-			});
+		for (int i = 1; i <= 109; i++)
+			pastes.add(WEUtils.paster().file(animationPath + "/Enter/TrainEnter_" + i).at(trainEnter));
 
-		}
-		wait += (frameTime * 109);
+		for (int i = 1; i <= 95; i++)
+			pastes.add(WEUtils.paster().file(animationPath + "/Train").at(trainStart.getBlock().getRelative(i, 0, 0).getLocation()));
 
-		if (!stopAtStation) {
-			Tasks.wait(wait, () -> {
-				AtomicReference<Location> temp = new AtomicReference<>(trainStart.clone());
-				for (int i = 1; i <= 95; i++) {
-					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).paste();
-						temp.set(temp.get().getBlock().getRelative(1, 0, 0).getLocation());
+		for (int i = 1; i <= 110; i++)
+			pastes.add(WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
 
-						incrementTrain();
-					});
-				}
-			});
-			wait += (frameTime * 95);
+		Tasks.async(() -> animate(pastes));
 
-			Tasks.wait(wait, () -> {
-				for (int i = 1; i <= 110; i++) {
-					int finalI = i;
-					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).paste();
+		Tasks.wait((pastes.size() + 1) * frameTime , Train::resetTrain);
+	}
 
-						incrementTrain();
-					});
+	private static void animate(Queue<Paste> pastes) {
+		Paste paste = pastes.poll();
+		if (paste == null)
+			return;
 
-				}
-			});
-			wait += (frameTime * 110);
-
-			Tasks.wait(wait + frameTime, Train::resetTrain);
-		}
-//		else {
-//			AtomicInteger slowFrameTime = new AtomicInteger(frameTime);
-//			AtomicInteger addWait = new AtomicInteger();
-//			Tasks.wait(wait, () -> {
-//				AtomicReference<Location> temp = new AtomicReference<>(trainStart.clone());
-//				for (int i = 1; i <= 57; i++) {
-//					if(i % 8 == 0) {
-//						slowFrameTime.incrementAndGet();
-//						addWait.addAndGet(i * slowFrameTime.get());
-//					}
-//
-//					Tasks.wait(slowFrameTime.get() * i, () -> {
-//						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).paste();
-//						temp.set(temp.get().getBlock().getRelative(1, 0, 0).getLocation());
-//
-//						incrementTrain();
-//					});
-//				}
-//			});
-//			wait += (frameTime * 57) + addWait.get();
-//
-//			Tasks.wait(wait, () -> stopped = true);
-//			wait += stationStopTime;
-//
-//			Tasks.wait(wait, () -> {
-//				stopped = false;
-//				stopAtStation = false;
-//				AtomicReference<Location> temp = new AtomicReference<>(trackLoc.get().getLocation().clone());
-//				for (int i = 1; i <= 38; i++) {
-//					Tasks.wait(frameTime * i, () -> {
-//						WEUtils.paster().file(animationPath + "/Train").at(temp.get()).paste();
-//						temp.set(temp.get().getBlock().getLocation());
-//
-//						incrementTrain();
-//					});
-//				}
-//			});
-//			wait += (frameTime * 38);
-//
-//			Tasks.wait(wait, () -> {
-//				for (int i = 1; i <= 110; i++) {
-//					int finalI = i;
-//					Tasks.wait(frameTime * i, () -> {
-//						WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + finalI).at(trainExit).paste();
-//
-//						incrementTrain();
-//					});
-//
-//				}
-//			});
-//			wait += (frameTime * 110);
-//
-//			Tasks.wait(wait + frameTime, Train::resetTrain);
-//
-//		}
-
-		return true;
+		paste.paste();
+		incrementTrain();
+		Tasks.waitAsync(frameTime, () -> animate(pastes));
 	}
 
 	private static void resetTrain() {
@@ -429,4 +362,5 @@ public class Train {
 		float pitch = 0.1F;
 		players.forEach(player -> player.playSound(location, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.AMBIENT, volume, pitch));
 	}
+
 }
