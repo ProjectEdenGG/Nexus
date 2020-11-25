@@ -250,8 +250,6 @@ public class LightTheTree implements Listener {
 		treeLightPaster.buildQueueClientSide(player);
 	}
 
-	private static final Location armorStandLocation = Pugmas20.location(750, 51, 507);
-
 	@EventHandler
 	public void onArmorStandInteract(PlayerInteractAtEntityEvent event) {
 		if (EquipmentSlot.HAND != event.getHand())

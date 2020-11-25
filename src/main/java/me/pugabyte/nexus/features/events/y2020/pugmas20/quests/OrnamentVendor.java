@@ -2,20 +2,30 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees.PugmasTreeType;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
-public class OrnamentVendor {
+public class OrnamentVendor implements Listener {
 	public enum Ornament {
 		RED(PugmasTreeType.BLOODWOOD, -3),
 		ORANGE(PugmasTreeType.MAHOGANY, -4),
@@ -51,5 +61,36 @@ public class OrnamentVendor {
 		}
 
 		return ornaments;
+	}
+
+	@EventHandler
+	public void onItemFrameInteract(PlayerInteractAtEntityEvent event) {
+		if (EquipmentSlot.HAND != event.getHand())
+			return;
+
+		Player player = event.getPlayer();
+		if (!isAtPugmas(player))
+			return;
+
+		Entity entity = event.getRightClicked();
+		if (entity.getType() != EntityType.ITEM_FRAME)
+			return;
+
+		if (!isAtPugmas(entity.getLocation(), "lumberjacksaxe"))
+			return;
+
+		event.setCancelled(true);
+
+		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20User user = service.get(player);
+
+		if (user.getOrnamentVendorStage() == QuestStage.NOT_STARTED)
+			return;
+
+		if (!player.getInventory().contains(Trees.getLumberjacksAxe())) {
+			ItemUtils.giveItem(player, Trees.getLumberjacksAxe());
+			Quests.sound_obtainItem(player);
+			user.send("Message"); // TODO PUGMAS
+		}
 	}
 }
