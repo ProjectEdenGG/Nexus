@@ -1,15 +1,19 @@
 package me.pugabyte.nexus.features.listeners;
 
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Material;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 
@@ -39,5 +43,20 @@ public class WorldGuardFlags implements Listener {
 		if (event.getEntity() instanceof Monster)
 			if (WorldGuardFlagUtils.query(event.getLocation(), Flags.HOSTILE_SPAWN) == State.DENY)
 				event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onEntityTarget(EntityTargetEvent event) {
+		if (event.getTarget() != null)
+			if (WorldGuardFlagUtils.query(event.getTarget().getLocation(), Flags.MOB_AGGRESSION) == State.DENY)
+				event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onEntityTame(EntityTameEvent event) {
+		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), Flags.TAMING) == State.DENY) {
+			event.setCancelled(true);
+			Utils.send((Player) event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
+		}
 	}
 }
