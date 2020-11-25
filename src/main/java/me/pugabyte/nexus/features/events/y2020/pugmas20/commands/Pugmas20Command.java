@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.AdventChests;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores.OreType;
@@ -94,6 +95,12 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		service.save(user);
 
 		send("Added day " + day + " to " + player.getName());
+	}
+
+	@Path("district")
+	void district() {
+		District district = District.of(player().getLocation());
+		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getName() + " District"));
 	}
 
 	@Permission("group.admin")

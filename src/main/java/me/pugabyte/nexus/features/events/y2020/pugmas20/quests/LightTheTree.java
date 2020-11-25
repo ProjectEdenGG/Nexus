@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -247,6 +248,45 @@ public class LightTheTree implements Listener {
 
 	public static void animateTreeLightBlocks(Player player) {
 		treeLightPaster.buildQueueClientSide(player);
+	}
+
+	@EventHandler
+	public void onArmorStandInteract(PlayerInteractAtEntityEvent event) {
+		if (EquipmentSlot.HAND != event.getHand())
+			return;
+
+		Player player = event.getPlayer();
+		if (!isAtPugmas(player))
+			return;
+
+		Entity entity = event.getRightClicked();
+		if (entity.getType() != EntityType.ARMOR_STAND)
+			return;
+
+		if (!isAtPugmas(entity.getLocation(), "minerskit"))
+			return;
+
+		event.setCancelled(true);
+
+		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20User user = service.get(player);
+
+		if (user.getLightTreeStage() != QuestStage.STEP_THREE)
+			return;
+
+		boolean gavePickaxe = false, gaveSieve = false;
+		if (!player.getInventory().contains(Ores.getMinersPickaxe())) {
+			ItemUtils.giveItem(player, Ores.getMinersPickaxe());
+			gavePickaxe = true;
+		}
+
+		if (!player.getInventory().contains(Ores.getMinersSieve())) {
+			ItemUtils.giveItem(player, Ores.getMinersSieve());
+			gaveSieve = true;
+		}
+
+		if (gavePickaxe || gaveSieve)
+			Quests.sound_obtainItem(player);
 	}
 
 }

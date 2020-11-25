@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeavingEvent;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
@@ -17,7 +16,6 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
-import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -60,7 +58,6 @@ public class AdventChests implements Listener {
 	private static UUID adventLootHeadOwner = null;
 	private static final String adventLootHeadTitle = "Pugmas Advent Skull";
 	private static final String adventLootHeadLore = "Day #";
-	private static final String districtRg = Pugmas20.getRegion() + "_district_";
 	//
 	private static final String wrongDay = Pugmas20.getPREFIX() + "You cannot open this chest, look for chest #<day>";
 	private static final String openPrevious = Pugmas20.getPREFIX() + "Need to find the rest to open this one";
@@ -181,21 +178,6 @@ public class AdventChests implements Listener {
 		SoundUtils.playSound(player, Sound.BLOCK_CHEST_OPEN);
 	}
 
-	public static District getDistrict(Location location) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
-		District district = null;
-		for (ProtectedRegion region : WGUtils.getRegionsAt(location)) {
-			if (region.getId().contains(districtRg)) {
-				district = District.valueOf(region.getId().replace(districtRg, "").toUpperCase());
-			}
-		}
-
-		if (district == null)
-			district = District.UNKNOWN;
-
-		return district;
-	}
-
 	@EventHandler
 	public void onOpenAdventLootHead(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
@@ -265,9 +247,9 @@ public class AdventChests implements Listener {
 		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Location loc = player.getLocation();
-		if (!event.getRegion().getId().matches(districtRg + ".*")) return;
+		if (!event.getRegion().getId().matches(District.getRegion() + ".*")) return;
 
-		District district = getDistrict(loc);
+		District district = District.of(loc);
 		if (district != District.UNKNOWN)
 			ActionBarUtils.sendActionBar(player, "&a&lEntering " + district.getName() + " District");
 	}
@@ -278,9 +260,9 @@ public class AdventChests implements Listener {
 		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Location loc = player.getLocation();
-		if (!event.getRegion().getId().matches(districtRg + ".*")) return;
+		if (!event.getRegion().getId().matches(District.getRegion() + ".*")) return;
 
-		District district = getDistrict(loc);
+		District district = District.of(loc);
 		if (district != District.UNKNOWN)
 			ActionBarUtils.sendActionBar(player, "&c&lExiting " + district.getName() + " District");
 	}

@@ -194,8 +194,9 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	public void onQuit(MatchQuitEvent event) {
 		Match match = event.getMatch();
 		Team team = event.getMinigamer().getTeam();
-		if (team.getAliveMinigamers(match).size() == 0)
-			nextTurn(match);
+		if (team != null && team.equals(match.getMatchData().getTurnTeam()))
+			if (team.getAliveMinigamers(match).size() == 0)
+				nextTurn(match);
 
 		super.onQuit(event);
 	}
