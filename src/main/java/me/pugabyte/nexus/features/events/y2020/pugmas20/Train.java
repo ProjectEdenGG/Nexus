@@ -37,7 +37,8 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location
 public class Train {
 	// Options
 	private static final Location origin = location(900, 52, 375);
-	private static final int frameTime = 3;
+	private static final int trainFrameTime = 0;
+	private static final int crossingFrameTime = 4;
 	private static final int crossingThreshold = 30;
 	//private static final int stationStopTime = Time.SECOND.x(15);
 	// Don't change anything below this
@@ -125,18 +126,18 @@ public class Train {
 			pastes.add(WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
 
 		Tasks.async(() -> animate(pastes));
-
-		Tasks.wait((pastes.size() + 1) * frameTime , Train::resetTrain);
 	}
 
 	private static void animate(Queue<Paste> pastes) {
 		Paste paste = pastes.poll();
-		if (paste == null)
+		if (paste == null) {
+			Tasks.waitAsync(trainFrameTime, Train::resetTrain);
 			return;
+		}
 
 		paste.paste();
 		incrementTrain();
-		Tasks.waitAsync(frameTime, () -> animate(pastes));
+		Tasks.waitAsync(trainFrameTime, () -> animate(pastes));
 	}
 
 	private static void resetTrain() {
@@ -204,57 +205,68 @@ public class Train {
 		return loc;
 	}
 
+	private static void animateCrossings(Queue<Paste> pastes, Runnable onComplete) {
+		if (!animateCrossing(pastes, onComplete)) return;
+		if (!animateCrossing(pastes, onComplete)) return;
+
+		Tasks.waitAsync(crossingFrameTime, () -> animateCrossings(pastes, onComplete));
+	}
+
+	private static boolean animateCrossing(Queue<Paste> pastes, Runnable onComplete) {
+		Paste paste = pastes.poll();
+		if (paste == null) {
+			if (onComplete != null)
+				onComplete.run();
+			return false;
+		}
+
+		paste.buildAsync();
+		return true;
+	}
+
 	private static void animateCrossing(int crossing, boolean open) {
+		Queue<Paste> pastes = new LinkedList<>();
+		Runnable onComplete = null;
+
 		if (crossing == 1) {
 			if (open) {
 				crossing1_closed = false;
-				Tasks.wait(frameTime * 7, () -> animateLights1 = false);
+				onComplete = () -> animateLights1 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					int finalI = i;
-					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).at(crossingNW).paste();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).at(crossingSW).paste();
-					});
+					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNW));
+					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSW));
 				}
-
 			} else {
 				crossing1_closed = true;
 				animateLights1 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					int finalI = i;
-					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).at(crossingNW).paste();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).at(crossingSW).paste();
-					});
+					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNW));
+					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSW));
 				}
 			}
 		} else if (crossing == 2) {
 			if (open) {
 				crossing2_closed = false;
-				Tasks.wait(frameTime * 7, () -> animateLights2 = false);
+				onComplete = () -> animateLights2 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					int finalI = i;
-					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + finalI).at(crossingNE).paste();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + finalI).at(crossingSE).paste();
-					});
+					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNE));
+					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSE));
 				}
 			} else {
 				crossing2_closed = true;
 				animateLights2 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					int finalI = i;
-					Tasks.wait(frameTime * i, () -> {
-						WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + finalI).at(crossingNE).paste();
-						WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + finalI).at(crossingSE).paste();
-					});
+					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNE));
+					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSE));
 				}
 			}
 		}
+
+		animateCrossings(pastes, onComplete);
 	}
 
 	private static void lightsTask() {
@@ -341,10 +353,10 @@ public class Train {
 				playStationSound(back, players);
 			} else {
 				if (stopAtStation) {
-					if (trackNdx.get() <= 165 - (frameTime * 10))
+					if (trackNdx.get() <= 165 - (trainFrameTime * 10))
 						playTrainSound(front, players);
 				} else {
-					if (trackNdx.get() <= (202 + (frameTime * 10)))
+					if (trackNdx.get() <= (202 + (trainFrameTime * 10)))
 						playTrainSound(front, players);
 				}
 			}

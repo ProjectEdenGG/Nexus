@@ -58,7 +58,7 @@ public class Tasks {
 
 	public static int waitAsync(long delay, Runnable runnable) {
 		if (instance.isEnabled())
-			return scheduler.runTaskLater(instance, () -> async(runnable), delay).getTaskId();
+			return scheduler.runTaskLaterAsynchronously(instance, runnable, delay).getTaskId();
 		Nexus.log("Attempted to register waitAsync task while disabled");
 		return -1;
 	}
