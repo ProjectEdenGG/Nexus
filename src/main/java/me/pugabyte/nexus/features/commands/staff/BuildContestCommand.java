@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -22,7 +23,6 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -30,16 +30,15 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
+@Aliases("bc")
 @NoArgsConstructor
 public class BuildContestCommand extends CustomCommand implements Listener {
-
-	WarpService warpService = new WarpService();
-	SettingService settingService = new SettingService();
-	Setting info = settingService.get("buildcontest", "info");
-	Map<String, Object> bcInfo = info.getJson();
-	int id;
+	private final WarpService warpService = new WarpService();
+	private final SettingService settingService = new SettingService();
+	private final Setting info = settingService.get("buildcontest", "info");
+	private Map<String, Object> bcInfo = info.getJson();
+	private int id;
 
 	public BuildContestCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -58,7 +57,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		Nexus.registerListener(new BuildContestCommand());
 	}
 
-	@Path()
+	@Path
 	void buildcontest() {
 		if (!(Boolean) bcInfo.get("active"))
 			error("There are no active build contests running");
@@ -67,6 +66,26 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 			error("That warp is not set.");
 		warp.teleport(player());
 		send(PREFIX + "Warping to build contest &e" + bcInfo.get("theme"));
+	}
+
+	@Path("help")
+	void help() {
+		line(2);
+		send("&3These are all the commands available to you in the build contest world.");
+		send(json("&3[+] &c/hdb").hover("&eFind decorative heads!").suggest("/hdb"));
+		send(json("&3[+] &c/plots home").hover("&eTeleport to your plot").suggest("/plots home"));
+		send(json("&3[+] &c/plots setbiome <biome>").hover("&eChange the biome of your plot").suggest("/plots setbiome "));
+		send(json("&3[+] &c/plots middle").hover("&&eTeleport to the middle of your current plot").suggest("/plots middle"));
+		send(json("&3[+] &c/plots clear").hover("&eClear your plot of all builds").suggest("/plots delete"));
+		send(json("&3[+] &c/plots delete").hover("&eClear and unclaim your plot").suggest("/plots home"));
+		send(json("&3[+] &c/plots auto").hover("&eClaim a plot").suggest("/plots auto"));
+		send(json("&3[+] &c/ci").hover("&eClear your inventory").suggest("/ci"));
+		send(json("&3[+] &c/ptime <time>").hover("&eChange the appearance of time.").suggest("/ptime night"));
+		send(json("&3[+] &c/speed <speed>").hover("&eChange your walk or fly speed.").suggest("/speed "));
+		send(json("&3[+] &c/jump").hover("&eJump forward").suggest("/jump"));
+		send(json("&3[+] See the &ecreative commands wiki &3for more info").hover("&eClick to open the wiki").url("https://wiki.bnn.gg/wiki/Commands#Creative"));
+		send("&3[+] &eYou can also use WorldEdit, VoxelSniper, and a compass to teleport through walls");
+		line();
 	}
 
 	@Path("end")
@@ -95,9 +114,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		runCommand("plot setup");
 		Tasks.wait(1, () -> {
 			runCommand("plot setup PlotSquared");
-			Tasks.wait(1, () -> {
-				runCommand("plot setup Default");
-			});
+			Tasks.wait(1, () -> runCommand("plot setup normal"));
 		});
 	}
 
@@ -106,44 +123,26 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	void setupSteps() {
 		int wait = 0;
 		send("&ePlease wait while I do some automatic configuration...");
-		Tasks.wait(wait += 2, () -> runCommandAsConsole("pex world buildcontest" + id + " inherit creative"));
-		Tasks.wait(wait += 2, () -> runCommandAsConsole("pex reload"));
-		Tasks.wait(wait += 3, () -> {
-			Nexus.log("Setting Dynmap order (1/2)");
-			runCommandAsConsole("dynmap worldset world order:1");
-		});
-		Tasks.wait(wait += 3, () -> runCommandAsConsole("dynmap worldset creative order:2"));
-		Tasks.wait(wait += 3, () -> runCommandAsConsole("dynmap worldset skyblock order:3"));
-		Tasks.wait(wait += 3, () -> runCommandAsConsole("dynmap worldset skyblock_nether order:4"));
-		final AtomicInteger i = new AtomicInteger(id);
-		for (int j = 0; j < id; j++) {
-			Tasks.wait(wait += 3, () -> runCommandAsConsole("dynmap worldset buildcontests" + (i.get() - 1) + " order:" + (i.get() + 4)));
-			i.incrementAndGet();
-		}
+		Tasks.wait(wait += 2, () -> runCommandAsConsole("lp group guest parent add buildcontest" + id));
 		Tasks.wait(wait += 3, () -> player().teleport(new Location(Bukkit.getWorld("buildcontest" + id), 0, 255, 0, 0, 0)));
 		Tasks.wait(wait += 3, () -> runCommand("top"));
 		Tasks.wait(wait += 3, () -> {
 			Nexus.log("Setting Warps");
 			Warp buildContestWarp = new Warp("buildcontest", player().getLocation(), WarpType.NORMAL.name());
 			warpService.save(buildContestWarp);
-			Warp buildContestIDWarp = new Warp("buildcontest" + id, player().getLocation(), WarpType.NORMAL.name());
-			warpService.save(buildContestIDWarp);
+			Warp buildContestIdWarp = new Warp("buildcontest" + id, player().getLocation(), WarpType.NORMAL.name());
+			warpService.save(buildContestIdWarp);
 		});
-		Tasks.wait(wait += 3, () -> {
-			Nexus.log("Setting Gamerules");
-			runCommand("mv set spawn");
-		});
+		Tasks.wait(wait += 3, () -> Nexus.log("Setting Gamerules"));
+		Tasks.wait(wait += 3, () -> runCommand("mv set spawn"));
 		Tasks.wait(wait += 3, () -> runCommand("mv modify set gamemode creative"));
-		Tasks.wait(wait += 3, () -> runCommand("mv gamerule doDaylightCycle false"));
-		Tasks.wait(wait += 3, () -> runCommand("time set noon"));
 		Tasks.wait(wait += 3, () -> runCommand("mv modify set allowWeather false"));
+		Tasks.wait(wait += 3, () -> runCommand("tl noon"));
 		Tasks.wait(wait += 3, () -> runCommand("wb set 1000"));
 		Tasks.wait(wait += 3, () -> {
 			Nexus.log("Setting global region flags");
-			runCommand("rg flag __global__ pvp deny");
-		});
-		Tasks.wait(wait += 3, () -> {
 			GlobalProtectedRegion region = (GlobalProtectedRegion) new WorldGuardUtils(player()).getProtectedRegion("__global__");
+			region.setFlag(Flags.PVP, StateFlag.State.DENY);
 			region.setFlag(Flags.VINE_GROWTH, StateFlag.State.DENY);
 			region.setFlag(Flags.LEAF_DECAY, StateFlag.State.DENY);
 			region.setFlag(Flags.GRASS_SPREAD, StateFlag.State.DENY);
@@ -158,37 +157,13 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 				e.printStackTrace();
 			}
 		});
-		Tasks.wait(wait += 3, () -> Nexus.log("Setting Dynmap order (2/2)"));
-		Tasks.wait(wait += 3, () -> runCommand("dynmap worldset pirate order:" + i.incrementAndGet()));
-		Tasks.wait(wait += 3, () -> runCommand("dynmap worldset 2y order:" + i.incrementAndGet()));
-		Tasks.wait(wait += 3, () -> runCommand("dynmap pause all"));
-		Tasks.wait(wait += 3, () -> runCommand("dmap mapdelete buildcontests" + id + ":cave"));
-		Tasks.wait(wait += 3, () -> runCommand("dmap mapset buildcontests" + id + ":flat img-format:jpg-q75"));
-		Tasks.wait(wait += 3, () -> runCommand("dmap mapset buildcontests" + id + ":surface img-format:jpg-q75"));
-		Tasks.wait(wait += 3, () -> runCommand("dynmap pause none"));
-		Tasks.wait(wait += 3, () -> {
-			runCommand("dynmap purgeworld buildcontest" + id);
-			Nexus.log("Completed initial setup");
-		});
 		Tasks.wait(wait += 3, () -> line(4));
 		Tasks.wait(wait += 3, () -> send("&e&lStep 1: &3HolographicDisplays"));
 		Tasks.wait(wait += 3, () -> send("&e    &3Open &cdatabase.yml &3and find the &ebuildcontest &3hologram."));
 		Tasks.wait(wait += 3, () -> send("&e    &3Change the theme and the world. If applicable, change the Y coordinate to (road height + 5)"));
 		Tasks.wait(wait += 3, () -> line());
-		Tasks.wait(wait += 3, () -> send(json("&a&l Continue &a»").command("buildcontest setup warps")));
+		Tasks.wait(wait += 3, () -> send(json("&a&l Continue &a»").command("buildcontest setup finalize")));
 		Tasks.wait(wait += 3, () -> line());
-	}
-
-	@Path("setup warps")
-	@Permission("group.admin")
-	void setupWarps() {
-		runCommandAsConsole("rh reload");
-		send("&e&lStep 2: &3Warps menu");
-		send("&e    &3Open &cscripts/commands/warps.sk &3and search for &e/buildcontest&3. There should be a commented out line");
-		send("&e    &3Uncomment the line, change the item & theme, and change the lines of the menu to 6");
-		line();
-		send(json("&a&l Continue &a»").command("buildcontest setup finalize"));
-		line();
 	}
 
 	@Path("setup finalize")
@@ -204,9 +179,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	@Path("setup item <theme...>")
 	@Permission("group.admin")
 	void item(String theme) {
-		if (player().getInventory().getItemInMainHand() == null || player().getInventory().getItemInMainHand().getType().equals(Material.AIR))
-			error("You must be holding an item to run this command");
-		ItemStack item = player().getInventory().getItemInMainHand();
+		ItemStack item = getToolRequired();
 		ItemBuilder.setName(item, "&6&lBuild Contest");
 		ItemBuilder.addLore(item, "&e&lJoin our latest build contest!");
 		ItemBuilder.addLore(item, "&e&lTheme: &6&l" + theme);
