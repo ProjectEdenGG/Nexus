@@ -19,5 +19,7 @@ public @interface Arg {
 
 	double min() default Short.MIN_VALUE;
 	double max() default Short.MAX_VALUE;
+	boolean alphanumeriscore() default false;
+	String regex() default "";
 
 }

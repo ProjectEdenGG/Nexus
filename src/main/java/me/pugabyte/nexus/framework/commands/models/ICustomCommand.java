@@ -188,6 +188,38 @@ public abstract class ICustomCommand {
 	private Object convert(String value, Object context, Class<?> type, Parameter parameter, String name, CommandEvent event, boolean required) {
 		Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 
+		if (annotation != null) {
+			if (annotation.alphanumeriscore())
+				if (!value.matches("[A-Za-z0-9_]+"))
+					throw new InvalidInputException(camelCase(name) + " must be alphanumeriscore");
+
+			if (annotation.regex().length() > 0)
+				if (!value.matches(annotation.regex()))
+					throw new InvalidInputException(camelCase(name) + " must match regex " + annotation.regex());
+		}
+
+		if (type == String.class) {
+			if (annotation != null) {
+				if (value.length() < annotation.min() || value.length() > annotation.max()) {
+					DecimalFormat formatter = StringUtils.getFormatter(Integer.class);
+					String min = formatter.format(annotation.min());
+					String max = formatter.format(annotation.max());
+					double minDefault = (Double) annotation.getClass().getDeclaredMethod("min").getDefaultValue();
+					double maxDefault = (Double) annotation.getClass().getDeclaredMethod("max").getDefaultValue();
+
+					String error = camelCase(name) + " length must be";
+					if (annotation.min() == minDefault && annotation.max() != maxDefault)
+						throw new InvalidInputException(error + " &e" + max + " &ccharacters or shorter");
+					else if (annotation.min() != minDefault && annotation.max() == maxDefault)
+						throw new InvalidInputException(error + " &e" + min + " &ccharacters or longer");
+					else
+						throw new InvalidInputException(error + " between &e" + min + " &cand &e" + max + " &ccharacters");
+				}
+			}
+
+			return value;
+		}
+
 		if (Collection.class.isAssignableFrom(type)) {
 			List<Object> values = new ArrayList<>();
 			for (String index : value.split("[, ]"))
