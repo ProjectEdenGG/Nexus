@@ -20,10 +20,8 @@ import me.pugabyte.nexus.models.trust.TrustService;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -41,7 +39,6 @@ public class HomeOwner extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private List<Home> homes = new ArrayList<>();
-	private Set<UUID> fullAccessList = new HashSet<>();
 	private boolean autoLock;
 	private boolean usedDeathHome;
 
