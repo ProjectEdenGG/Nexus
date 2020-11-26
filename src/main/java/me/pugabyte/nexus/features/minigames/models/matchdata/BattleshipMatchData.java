@@ -21,7 +21,6 @@ import me.pugabyte.nexus.utils.LocationUtils.Axis;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -88,7 +87,7 @@ public class BattleshipMatchData extends MatchData {
 		SUBMARINE(3, ColorType.RED),
 		DESTROYER(3, ColorType.PURPLE),
 		BATTLESHIP(4, ColorType.ORANGE),
-		CARRIER(5, ColorType.CYAN);
+		CARRIER(5, ColorType.LIGHT_BLUE);
 
 		@Getter
 		private final int length;
@@ -101,8 +100,12 @@ public class BattleshipMatchData extends MatchData {
 			this.length = length;
 			this.color = color;
 			this.item = new ItemBuilder(ColorType.getConcrete(color))
-					.name(color.getChatColor() + toString() + " &8| &7Size: &e" + length)
+					.name(getColoredName() + " &8| &7Size: &e" + length)
 					.lore("&fPlace on the yellow wool to configure")
+					.lore("&f")
+					.lore("&fLeft click to break")
+					.lore("&fRight click to rotate")
+					.loreize(false)
 					.build();
 		}
 
@@ -111,12 +114,23 @@ public class BattleshipMatchData extends MatchData {
 			return camelCase(name());
 		}
 
+		public String getColoredName() {
+			return color.getChatColor() + camelCase(name());
+		}
+
 		public int getKitLength() {
 			return (length - 1) * 4;
 		}
 
-		public static ShipType get(Block block) {
-			ColorType colorType = ColorType.of(block.getType());
+		public static ShipType of(Block block) {
+			return of(block.getType());
+		}
+
+		public static ShipType of(Material material) {
+			return of(ColorType.of(material));
+		}
+
+		public static ShipType of(ColorType colorType) {
 			for (ShipType shipType : ShipType.values())
 				if (colorType == shipType.getColor())
 					return shipType;
@@ -157,7 +171,7 @@ public class BattleshipMatchData extends MatchData {
 		}
 
 		public String getName() {
-			return type.getColor().getChatColor() + type.toString();
+			return type.getColoredName();
 		}
 
 		public List<Coordinate> getCoordinates() {
@@ -177,7 +191,7 @@ public class BattleshipMatchData extends MatchData {
 				if (coordinate.getOppositeCoordinate().getState() != State.OCCUPIED)
 					continue;
 
-				coordinate.getOppositeCoordinate().pastePeg(Peg.COULDNT_FIND_THEM);
+				coordinate.pastePeg(Peg.COULDNT_FIND_THEM);
 			}
 		});
 	}
@@ -282,8 +296,6 @@ public class BattleshipMatchData extends MatchData {
 
 			aiming.pastePeg(Peg.BELAY);
 			aiming = null;
-
-
 		}
 
 		public Coordinate getRandomCoordinate() {
@@ -380,7 +392,8 @@ public class BattleshipMatchData extends MatchData {
 				pastePeg();
 				playSound();
 				addHistory();
-				sendChatAndSubtitle();
+				sendChat();
+				sendSubtitle();
 			}
 
 			private void playSound() {
@@ -397,31 +410,29 @@ public class BattleshipMatchData extends MatchData {
 				String teamName = getOtherTeam().getColoredName();
 				if (teamName.contains("Alpha"))
 					teamName += " ";
-				history.add(0, teamName + " "  + (state == State.HIT ? "&c" : "&f") + getName() + " " + camelCase(state));
+				history.add(0, teamName + " "  + (state == State.HIT ? "&4" : "&f") + getName() + " " + camelCase(state));
 			}
 
-			private void sendChatAndSubtitle() {
+			private void sendChat() {
+				String target = "&eYour " + ship.getName() + " &ewas " + (ship.getHealth() == 0 ? "sunk" : "hit");
+				String shooter = ship.getHealth() == 0 ? "&eYou sunk their " + ship.getName() : "&eYou hit an enemy ship";
+
+				team.broadcast(match, colorize(target));
+				getOtherTeam().broadcast(match, colorize(shooter));
+			}
+
+			private void sendSubtitle() {
 				if (ship == null) {
 					team.title(match, new Title("", "They missed", 10, 40, 10));
 					getOtherTeam().title(match, new Title("", "You missed", 10, 40, 10));
 					return;
 				}
 
-				String target = colorize("Your " + ship.getName() + " &3was " + (ship.getHealth() == 0 ? "sunk" : "hit"));
-				String shooter;
-				if (ship.getHealth() == 0)
-					shooter = colorize("You sunk their " + ship.getName());
-				else
-					shooter = colorize("You hit an enemy ship");
+				String target = "Your " + ship.getName() + " &fwas " + (ship.getHealth() == 0 ? "sunk" : "hit");
+				String shooter = ship.getHealth() == 0 ? "You sunk their " + ship.getName() : "You hit an enemy ship";
 
-				String colorChar = StringUtils.getColorChar();
-				String targetTitle = target.replace(" " + colorChar + "3", " " + colorChar + "f");
-
-				team.broadcast(match, target);
-				team.title(match, new Title("", targetTitle, 10, 40, 10));
-
-				getOtherTeam().broadcast(match, shooter);
-				getOtherTeam().title(match, new Title("", shooter, 10, 40, 10));
+				team.title(match, new Title("", colorize(target), 10, 40, 10));
+				getOtherTeam().title(match, new Title("", colorize(shooter), 10, 40, 10));
 			}
 
 			public void aim() {

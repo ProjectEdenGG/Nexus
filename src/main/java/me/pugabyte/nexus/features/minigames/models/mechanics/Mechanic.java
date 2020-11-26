@@ -227,11 +227,15 @@ public abstract class Mechanic implements Listener {
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		if (ActionGroup.CLICK_BLOCK.applies(event))
 			if (event.getClickedBlock() != null)
-				if (!minigamer.getMatch().getArena().canUseBlock(event.getClickedBlock().getType())) {
+				if (!canUseBlock(minigamer, event.getClickedBlock())) {
 					Nexus.log("Cancelling interact");
 					event.setCancelled(true);
 					return;
 				}
+	}
+
+	public boolean canUseBlock(Minigamer minigamer, Block block) {
+		return minigamer.getMatch().getArena().canUseBlock(block.getType());
 	}
 
 	public abstract boolean shouldBeOver(Match match);
