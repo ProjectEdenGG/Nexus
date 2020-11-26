@@ -2,8 +2,6 @@ package me.pugabyte.nexus.features.menus.rewardchests;
 
 import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.menus.coupons.CouponBuilder;
-import me.pugabyte.nexus.features.menus.coupons.Coupons;
 import me.pugabyte.nexus.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.nexus.models.mysterychest.MysteryChestPlayer;
 import me.pugabyte.nexus.models.mysterychest.MysteryChestService;
@@ -37,8 +35,6 @@ public class RewardChest implements Listener {
 	public RewardChest() {
 		registerSerializables();
 		Nexus.registerListener(this);
-		Nexus.registerListener(new CouponBuilder());
-		new Coupons();
 	}
 
 	public static SmartInventory getInv(RewardChestLoot... loot) {
