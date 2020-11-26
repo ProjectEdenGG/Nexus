@@ -38,9 +38,11 @@ public final class Paintball extends BalancedTeamMechanic {
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
 		event.getAttacker().scored();
+		event.getAttacker().getMatch().scored(event.getAttacker().getTeam());
+
 		if (event.getAttacker().getTeam().getScore(event.getMatch()) == event.getMatch().getArena().getCalculatedWinningScore(event.getMatch()) - 1)
 			event.getMatch().broadcast(event.getAttacker().getColoredName() + " &3took the final kill from " + event.getMinigamer().getColoredName());
-		event.getAttacker().getMatch().scored(event.getAttacker().getTeam());
+
 		super.onDeath(event);
 	}
 

@@ -331,7 +331,6 @@ public class Battleship extends BalancedTeamMechanic {
 
 	@Override
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
-		Nexus.log("Interact");
 		super.onPlayerInteract(minigamer, event);
 
 		if (event.getHand() != EquipmentSlot.HAND) return;

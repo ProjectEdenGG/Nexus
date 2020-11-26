@@ -167,7 +167,7 @@ public class Arena implements ConfigurationSerializable {
 
 		getWGUtils().getRegionsLike(regex).forEach(region -> {
 			String file = "minigames/" + name + "/" + region.getId().replaceFirst(name + "_", "");
-			Minigames.getWorldEditUtils().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
+			getWEUtils().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
 
