@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
@@ -20,11 +21,13 @@ public class Tab implements Listener {
 	}
 
 	public static void update() {
-		Bukkit.getOnlinePlayers().forEach(player -> {
-			player.setPlayerListHeader(colorize(getHeader(player)));
-			player.setPlayerListFooter(colorize(getFooter(player)));
-			player.setPlayerListName(colorize(getFormat(player)));
-		});
+		Bukkit.getOnlinePlayers().forEach(Tab::update);
+	}
+
+	public static void update(Player player) {
+		player.setPlayerListHeader(colorize(getHeader(player)));
+		player.setPlayerListFooter(colorize(getFooter(player)));
+		player.setPlayerListName(colorize(getFormat(player)));
 	}
 
 	public static String getHeader(Player player) {
@@ -57,6 +60,11 @@ public class Tab implements Listener {
 	@EventHandler
 	public void onAFKChange(AFKEvent event) {
 		update();
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		update(event.getPlayer());
 	}
 
 }

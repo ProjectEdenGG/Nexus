@@ -3,8 +3,11 @@ package me.pugabyte.nexus.features.commands;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Nerd;
+import org.bukkit.Location;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,13 +19,12 @@ public class MapCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void map() {
-		send(json("&3Map: &ehttp://map.bnn.gg").url("http://map.bnn.gg"));
-
-		String world = player().getWorld().getName().toLowerCase();
-		int x = (int) player().getLocation().getX();
-		int z = (int) player().getLocation().getZ();
+	@Path("[player]")
+	void map(@Arg(value = "self", permission = "group.staff") Nerd nerd) {
+		Location location = nerd.getLocation();
+		String world = location.getWorld().getName().toLowerCase();
+		int x = (int) location.getX();
+		int z = (int) location.getZ();
 
 		Map<String, String> names = new HashMap<>();
 		BlueMapAPI.getInstance().ifPresent(api -> api.getMaps().forEach(map -> names.put(map.getWorld().getSaveFolder().toFile().getName().toLowerCase(), map.getId())));
@@ -33,6 +35,8 @@ public class MapCommand extends CustomCommand {
 				subdomain = "staffmap";
 
 		String link = "http://" + subdomain + ".bnn.gg/#" + names.getOrDefault(world, world) + ":" + x + ":" + z + ":0:30:0";
+
+		send(json("&3Map: &ehttp://map.bnn.gg").url("http://map.bnn.gg"));
 		send(json("&3Current Location: &e" + link).url(link));
 		send("&eTip: &3Zoom in, right click and drag");
 	}

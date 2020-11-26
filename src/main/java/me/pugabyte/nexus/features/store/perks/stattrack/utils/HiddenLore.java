@@ -34,7 +34,7 @@ public class HiddenLore {
 			return null;
 		}
 
-		return input.substring(0, start + SEQUENCE_HEADER.length()) + stringToColors(hiddenString) + input.substring(end, input.length());
+		return input.substring(0, start + SEQUENCE_HEADER.length()) + stringToColors(hiddenString) + input.substring(end);
 	}
 
 	/**

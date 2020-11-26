@@ -12,7 +12,7 @@ public abstract class Feature {
 		return PREFIX;
 	}
 
-	public abstract void startup();
+	public void startup() {}
 
 	public void shutdown() {}
 
