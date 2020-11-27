@@ -4,10 +4,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.BlockUtils;
-import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
 import java.util.HashMap;
@@ -35,14 +32,9 @@ public class SignLinesCommand extends CustomCommand {
 
 	@Path("[arguments...]")
 	void signLines(String arguments) {
-		Block targetBlock = player().getTargetBlockExact(5);
-		if (BlockUtils.isNullOrAir(targetBlock) || !MaterialTag.SIGNS.isTagged(targetBlock.getType())) {
-			usage();
-			return;
-		}
+		Sign sign = getTargetSign();
 
 		String uuid = player().getUniqueId().toString();
-		Sign sign = (Sign) targetBlock.getState();
 		String[] lines = sign.getLines();
 
 		if (arg(1).equalsIgnoreCase("read")) {

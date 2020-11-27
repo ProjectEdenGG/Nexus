@@ -19,13 +19,11 @@ import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,14 +48,6 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	@Override
 	public WarpType getWarpType() {
 		return WarpType.STATUE_HUNT20;
-	}
-
-	private Sign getTargetSign(Player player) {
-		Block targetBlock = player.getTargetBlockExact(10);
-		Material material = targetBlock.getType();
-		if (ItemUtils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
-			error("You must be looking at a sign!");
-		return (Sign) targetBlock.getState();
 	}
 
 	@Path("check [player]")
@@ -111,7 +101,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	@Permission("group.staff")
 	@Path("sign <player>")
 	void sign(String player) {
-		Sign sign = getTargetSign(player());
+		Sign sign = getTargetSign();
 		sign.setLine(0, header);
 		sign.setLine(1, player);
 		sign.update();

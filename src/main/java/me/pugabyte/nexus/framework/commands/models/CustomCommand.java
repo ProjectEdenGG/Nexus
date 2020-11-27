@@ -29,6 +29,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -38,6 +39,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -108,10 +110,22 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected Block getTargetBlock() {
+		return player().getTargetBlockExact(500);
+	}
+
+	protected Block getTargetBlockRequired() {
 		Block targetBlockExact = player().getTargetBlockExact(500);
 		if (isNullOrAir(targetBlockExact))
 			error("You must be looking at a block");
 		return targetBlockExact;
+	}
+
+	protected Sign getTargetSign() {
+		Block targetBlock = getTargetBlock();
+		Material material = targetBlock.getType();
+		if (ItemUtils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
+			error("You must be looking at a sign");
+		return (Sign) targetBlock.getState();
 	}
 
 	protected void send(CommandSender sender, String message) {

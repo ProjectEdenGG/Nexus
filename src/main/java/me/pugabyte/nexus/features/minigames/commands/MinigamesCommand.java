@@ -28,9 +28,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
-import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
-import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -38,7 +36,6 @@ import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
@@ -110,7 +107,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	@Path("signs join <arena>")
 	void joinSign(Arena arena) {
-		Sign sign = getTargetSign(player());
+		Sign sign = getTargetSign();
 		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
 		sign.setLine(1, StringUtils.colorize("&aJoin"));
 		String arenaName = arena.getName();
@@ -128,7 +125,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	@Path("signs quit")
 	void quitSign() {
-		Sign sign = getTargetSign(player());
+		Sign sign = getTargetSign();
 		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
 		sign.setLine(1, StringUtils.colorize("&aQuit"));
 		sign.setLine(2, "");
@@ -139,7 +136,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	@Path("signs lobby")
 	void lobbySign() {
-		Sign sign = getTargetSign(player());
+		Sign sign = getTargetSign();
 		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
 		sign.setLine(1, StringUtils.colorize("&aLobby"));
 		sign.setLine(2, "");
@@ -323,7 +320,7 @@ public class MinigamesCommand extends CustomCommand {
 			inviteCommand = "warp screenshot";
 			inviteMessage = "take a screenshot";
 		} else {
-			Sign sign = getTargetSign(player());
+			Sign sign = getTargetSign();
 			String line2 = stripColor(sign.getLine(1)).toLowerCase();
 			if (line2.contains("screenshot"))
 				error("Stand in the screenshot area then run the command (sign not needed)");
@@ -407,13 +404,6 @@ public class MinigamesCommand extends CustomCommand {
 			error("You must be playing Mastermind to use this command");
 
 		((MastermindMatchData) matchData).reset(minigamer);
-	}
-
-	private Sign getTargetSign(Player player) {
-		Block targetBlock = player.getTargetBlockExact(10);
-		if (BlockUtils.isNullOrAir(targetBlock) || !MaterialTag.SIGNS.isTagged(targetBlock.getType()))
-			error("Look at a sign!");
-		return (Sign) targetBlock.getState();
 	}
 
 	private Match getRunningMatch(Arena arena) {

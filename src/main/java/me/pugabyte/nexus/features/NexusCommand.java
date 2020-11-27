@@ -82,7 +82,6 @@ import java.util.zip.ZipFile;
 
 import static me.pugabyte.nexus.utils.BlockUtils.getBlocksInRadius;
 import static me.pugabyte.nexus.utils.BlockUtils.getDirection;
-import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.parseShortDate;
 import static me.pugabyte.nexus.utils.StringUtils.paste;
@@ -392,9 +391,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("directionTest <blockNumber>")
 	void directionTest(int blockNumber) {
-		Block targetBlockExact = player().getTargetBlockExact(500);
-		if (isNullOrAir(targetBlockExact))
-			error("You must be looking at a block");
+		Block targetBlockExact = getTargetBlockRequired();
 
 		if (blockNumber == 1) {
 			directionTestMap.put(uuid(), targetBlockExact.getLocation());

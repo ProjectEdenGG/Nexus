@@ -18,7 +18,6 @@ import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,27 +29,18 @@ import org.bukkit.inventory.ItemStack;
 @Disabled
 @NoArgsConstructor
 public class Easter20Command extends CustomCommand implements Listener {
-
-	private static String header = StringUtils.colorize("&1[Easter 2020]");
-	private static String PREFIX = StringUtils.getPrefix("Easter2020");
-	SettingService service = new SettingService();
+	private final static String header = StringUtils.colorize("&1[Easter 2020]");
+	private final static String PREFIX = StringUtils.getPrefix("Easter2020");
+	private final SettingService service = new SettingService();
 
 	public Easter20Command(CommandEvent event) {
 		super(event);
 	}
 
-	private Sign getTargetSign(Player player) {
-		Block targetBlock = player.getTargetBlockExact(10);
-		Material material = targetBlock.getType();
-		if (ItemUtils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
-			error("You must be looking at a sign!");
-		return (Sign) targetBlock.getState();
-	}
-
 	@Permission("group.staff")
 	@Path("set <player>")
 	void set(OfflinePlayer player) {
-		Sign sign = getTargetSign(player());
+		Sign sign = getTargetSign();
 		sign.setLine(0, header);
 		sign.setLine(1, player.getName());
 		sign.update();

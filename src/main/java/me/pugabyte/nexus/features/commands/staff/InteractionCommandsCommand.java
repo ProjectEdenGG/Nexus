@@ -33,7 +33,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 
 	public InteractionCommandsCommand(@NonNull CommandEvent event) {
 		super(event);
-		target = player().getTargetBlockExact(20);
+		target = getTargetBlock();
 		if (target != null)
 			commands = service.get(target.getLocation());
 	}

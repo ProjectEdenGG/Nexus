@@ -165,7 +165,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("tree get")
 	void treeGet() {
-		Material logs = getTargetBlock().getType();
+		Material logs = getTargetBlockRequired().getType();
 		PugmasTreeType treeType = PugmasTreeType.of(logs);
 		if (treeType == null)
 			error("Pugmas Tree with logs " + camelCase(logs) + " not found");

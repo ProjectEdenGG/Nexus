@@ -17,9 +17,7 @@ public class TreeCommand extends CustomCommand {
 
 	@Path("[type]")
 	void run(@Arg("tree") TreeType treeType) {
-		Block target = player().getTargetBlockExact(500);
-		if (target == null)
-			error("Target block not found");
+		Block target = getTargetBlockRequired();
 
 		Location location = target.getLocation().add(0, 1, 0);
 		if (location.getBlock().getType().isSolid())

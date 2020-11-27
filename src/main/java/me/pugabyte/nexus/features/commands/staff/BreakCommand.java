@@ -5,7 +5,6 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.BlockUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -20,9 +19,7 @@ public class BreakCommand extends CustomCommand {
 	@Path
 	void fuck() {
 		if (player().hasPermission("group.staff")) {
-			Block block = player().getTargetBlockExact(500);
-			if (BlockUtils.isNullOrAir(block))
-				error("No block found");
+			Block block = getTargetBlockRequired();
 
 			final BlockBreakEvent event = new BlockBreakEvent(block, player());
 			if (!event.callEvent())

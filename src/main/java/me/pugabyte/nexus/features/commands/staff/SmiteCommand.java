@@ -6,7 +6,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 @Permission("group.staff")
@@ -19,12 +18,9 @@ public class SmiteCommand extends CustomCommand {
 
 	@Path("[player]")
 	void run(Player player) {
-		if (player == null) {
-			Block target = player().getTargetBlockExact(500);
-			if (target == null)
-				error("You must be looking at a block");
-			player().getWorld().strikeLightning(target.getLocation());
-		} else {
+		if (player == null)
+			player().getWorld().strikeLightning(getTargetBlockRequired().getLocation());
+		else {
 			player.getWorld().strikeLightningEffect(player.getLocation());
 			send(PREFIX + "Smiting " + player.getName());
 			send(player, "&cThou hast been smitten!");
