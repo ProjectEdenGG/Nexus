@@ -47,7 +47,6 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPu
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
 
-// TODO PUGMAS - Prevent adventLootHead from being placed, or opened if player doesn't have enough space
 public class AdventChests implements Listener {
 	public static Map<Integer, Location> adventLootMap = new HashMap<>();
 	public static List<AdventChest> adventChestList = new ArrayList<>();
@@ -150,18 +149,17 @@ public class AdventChests implements Listener {
 				reason = openPrevious;
 		else if (chestDay == day)
 			openChest = true;
-		else
+		else {
 			reason = wrongDay;
+			user.getLocatedDays().add(adventChest.getLocation());
+			service.save(user);
+		}
 
 		if (!openChest) {
 			reason = reason.replaceAll("<day>", String.valueOf(day));
 			Utils.send(player, reason);
 			return;
 		}
-
-		// TODO PUGMAS:
-		//  - verify that the player can open this chest
-		//  - save which chest was opened to pugmas20 user
 
 		user.getFoundDays().add(chestDay);
 		service.save(user);

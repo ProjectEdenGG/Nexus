@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.AdventChests;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
@@ -20,28 +21,46 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
+import org.inventivetalent.glow.GlowAPI;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isBeforePugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
+import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 
 @Aliases("pugmas")
 @NoArgsConstructor
+@Redirect(from = "/advent", to = "/pugmas20 advent")
+@Redirect(from = "/district", to = "/pugmas20 district")
+@Redirect(from = "/waypoint", to = "/pugmas20 waypoints")
 public class Pugmas20Command extends CustomCommand implements Listener {
 	private final Pugmas20Service service = new Pugmas20Service();
 	private Pugmas20User user;
@@ -101,6 +120,39 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	void district() {
 		District district = District.of(player().getLocation());
 		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getName() + " District"));
+	}
+
+	@Path("waypoint <day>")
+	void waypoint(int day) {
+		AdventChest adventChest = AdventChests.getAdventChest(day);
+		Location chestLoc = adventChest.getLocation();
+		Block chest = chestLoc.getBlock();
+
+		if (!BlockUtils.isNullOrAir(chest)) {
+			Location blockLoc = getCenteredLocation(chestLoc);
+			World blockWorld = blockLoc.getWorld();
+			FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, chest.getType().createBlockData());
+			fallingBlock.setDropItem(false);
+			fallingBlock.setGravity(false);
+			fallingBlock.setInvulnerable(true);
+			fallingBlock.setVelocity(new Vector(0, 0, 0));
+
+			LocationUtils.lookAt(player(), blockLoc);
+
+			Tasks.GlowTask.builder()
+					.duration(Time.SECOND.x(10))
+					.entity(fallingBlock)
+					.color(GlowAPI.Color.RED)
+					.viewers(Collections.singletonList(player()))
+					.onComplete(() -> {
+						fallingBlock.remove();
+						for (Player player : Bukkit.getOnlinePlayers())
+							if (player.getWorld() == blockWorld)
+								player.sendBlockChange(blockLoc, chest.getType().createBlockData());
+					})
+					.start();
+		}
+
 	}
 
 	@Permission("group.admin")
