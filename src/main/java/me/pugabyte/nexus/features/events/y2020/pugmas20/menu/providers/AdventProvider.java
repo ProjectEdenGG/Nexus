@@ -62,7 +62,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 						if (dayIndex != 25 || user.getFoundDays().size() == 24)
 							find(contents, slotPos, name, district);
 						else
-							locked(contents, slotPos, name);
+							locked25(contents, slotPos, name);
 					} else {
 						if (dayIndex == day)
 							find(contents, slotPos, name, district);
@@ -88,6 +88,10 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void locked(InventoryContents contents, SlotPos slotPos, String name) {
 		contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked").build()));
+	}
+
+	private void locked25(InventoryContents contents, SlotPos slotPos, String name) {
+		contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked", "", "&cOpen all previous chests to unlock").build()));
 	}
 
 	private void missed(InventoryContents contents, SlotPos slotPos, String name) {
