@@ -2,8 +2,6 @@ package me.pugabyte.nexus.features.commands.staff;
 
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.managers.storage.StorageException;
-import com.sk89q.worldguard.protection.regions.GlobalProtectedRegion;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -20,7 +18,6 @@ import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -28,7 +25,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Aliases("bc")
@@ -94,6 +93,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		bcInfo.put("active", false);
 		info.setJson(bcInfo);
 		settingService.save(bcInfo);
+		runCommand("warps delete buildcontest");
 		send(PREFIX + "Build contest ended.");
 	}
 
@@ -121,59 +121,38 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	@Path("setup steps")
 	@Permission("group.admin")
 	void setupSteps() {
-		int wait = 0;
-		send("&ePlease wait while I do some automatic configuration...");
-		Tasks.wait(wait += 2, () -> runCommandAsConsole("lp group guest parent add buildcontest" + id));
-		Tasks.wait(wait += 3, () -> player().teleport(new Location(Bukkit.getWorld("buildcontest" + id), 0, 255, 0, 0, 0)));
-		Tasks.wait(wait += 3, () -> runCommand("top"));
-		Tasks.wait(wait += 3, () -> {
-			Nexus.log("Setting Warps");
-			Warp buildContestWarp = new Warp("buildcontest", player().getLocation(), WarpType.NORMAL.name());
-			warpService.save(buildContestWarp);
-			Warp buildContestIdWarp = new Warp("buildcontest" + id, player().getLocation(), WarpType.NORMAL.name());
-			warpService.save(buildContestIdWarp);
-		});
-		Tasks.wait(wait += 3, () -> Nexus.log("Setting Gamerules"));
-		Tasks.wait(wait += 3, () -> runCommand("mv set spawn"));
-		Tasks.wait(wait += 3, () -> runCommand("mv modify set gamemode creative"));
-		Tasks.wait(wait += 3, () -> runCommand("mv modify set allowWeather false"));
-		Tasks.wait(wait += 3, () -> runCommand("tl noon"));
-		Tasks.wait(wait += 3, () -> runCommand("wb set 1000"));
-		Tasks.wait(wait += 3, () -> {
-			Nexus.log("Setting global region flags");
-			GlobalProtectedRegion region = (GlobalProtectedRegion) new WorldGuardUtils(player()).getProtectedRegion("__global__");
-			region.setFlag(Flags.PVP, StateFlag.State.DENY);
-			region.setFlag(Flags.VINE_GROWTH, StateFlag.State.DENY);
-			region.setFlag(Flags.LEAF_DECAY, StateFlag.State.DENY);
-			region.setFlag(Flags.GRASS_SPREAD, StateFlag.State.DENY);
-			region.setFlag(Flags.SNOW_MELT, StateFlag.State.DENY);
-			region.setFlag(Flags.SNOW_FALL, StateFlag.State.DENY);
-			region.setFlag(Flags.ICE_MELT, StateFlag.State.DENY);
-			region.setFlag(Flags.ICE_FORM, StateFlag.State.DENY);
-			try {
-				Nexus.log("Saving region");
-				new WorldGuardUtils(player()).getManager().save();
-			} catch (StorageException e) {
-				e.printStackTrace();
-			}
-		});
-		Tasks.wait(wait += 3, () -> line(4));
-		Tasks.wait(wait += 3, () -> send("&e&lStep 1: &3HolographicDisplays"));
-		Tasks.wait(wait += 3, () -> send("&e    &3Open &cdatabase.yml &3and find the &ebuildcontest &3hologram."));
-		Tasks.wait(wait += 3, () -> send("&e    &3Change the theme and the world. If applicable, change the Y coordinate to (road height + 5)"));
-		Tasks.wait(wait += 3, () -> line());
-		Tasks.wait(wait += 3, () -> send(json("&a&l Continue &a»").command("buildcontest setup finalize")));
-		Tasks.wait(wait += 3, () -> line());
-	}
+		String worldName = "buildcontest" + id;
+		List<Runnable> tasks = new ArrayList<>();
 
-	@Path("setup finalize")
-	@Permission("group.admin")
-	void _finalize() {
-		send("&3Please wait while I finish the configuration...");
-		bcInfo.put("active", true);
-		info.setJson(bcInfo);
-		settingService.save(info);
-		send(PREFIX + "Build contest " + id + " setup completed!");
+		send("&ePlease wait while I do some automatic configuration...");
+		tasks.add(() -> runCommand("lp group guest parent add buildcontest world=" + worldName));
+		tasks.add(() -> player().teleport(new Location(Bukkit.getWorld(worldName), 0, 255, 0, 0, 0)));
+		tasks.add(() -> runCommand("top"));
+		tasks.add(() -> runCommand("blockcenter"));
+		tasks.add(() -> runCommand("mv set spawn"));
+		tasks.add(() -> runCommand("mv modify set gamemode creative"));
+		tasks.add(() -> runCommand("mv modify set allowWeather false"));
+		tasks.add(() -> runCommand("tl noon"));
+		tasks.add(() -> runCommand("wb set 1000"));
+		tasks.add(() -> runCommand("warps set buildcontest"));
+		tasks.add(() -> runCommand("warps set " + worldName));
+		tasks.add(() -> runCommand("rg flag -w \"" + worldName + "\" __global__ " + Flags.PVP.getName() + " " + StateFlag.State.DENY.name()));
+		tasks.add(() -> runCommand("creativeflags " + worldName));
+		tasks.add(() -> line(4));
+		tasks.add(() -> send("&e&lStep 1: &3HolographicDisplays"));
+		tasks.add(() -> send("&e    &3Open &cdatabase.yml &3and find the &ebuildcontest &3hologram."));
+		tasks.add(() -> send("&e    &3Change the theme and the world. If applicable, change the Y coordinate to (road height + 5)"));
+		tasks.add(this::line);
+		tasks.add(() -> send("&e&lStep 2: &3Warp Item"));
+		tasks.add(() -> send("&e    &3Hold the material you want to appear in the warp menu"));
+		tasks.add(() -> send(json("&e    &3Click here and type the theme").suggest("/bc setup item ")));
+		tasks.add(this::line);
+		tasks.add(() -> send(json("&a&l Continue &a»").command("buildcontest setup finalize")));
+		tasks.add(this::line);
+
+		int wait = 0;
+		for (Runnable task : tasks)
+			Tasks.wait(wait += 3, task);
 	}
 
 	@Path("setup item <theme...>")
@@ -187,6 +166,16 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		info.setJson(bcInfo);
 		settingService.save(info);
 		send(PREFIX + "Saved the item to the item in your hand");
+	}
+
+	@Path("setup finalize")
+	@Permission("group.admin")
+	void _finalize() {
+		send("&3Please wait while I finish the configuration...");
+		bcInfo.put("active", true);
+		info.setJson(bcInfo);
+		settingService.save(info);
+		send(PREFIX + "Build contest " + id + " setup completed!");
 	}
 
 	@EventHandler

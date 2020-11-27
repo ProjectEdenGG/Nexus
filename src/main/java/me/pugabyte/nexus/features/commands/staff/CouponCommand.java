@@ -64,7 +64,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("save <id>")
-	void save(@Arg(tabCompleter = Coupon.class, alphanumeriscore = true) String id) {
+	void save(@Arg(tabCompleter = Coupon.class, regex = "^[a-zA-Z0-9_]+$") String id) {
 		if (coupons.of(id) != null)
 			error("Coupon &e" + id + " &calready exists, use /coupon update <id>");
 

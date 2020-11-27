@@ -50,14 +50,14 @@ public class Home extends PlayerOwnedObject {
 		this.locked = getOwner().isAutoLock();
 		this.item = item;
 
+		validateName(name);
+
 		if (getOwner().getHome(name).isPresent())
 			throw new InvalidInputException("&cThat home already exists! Please pick a different name");
-
-		validateName(name);
 	}
 
 	public void validateName(String name) {
-		if (!name.matches("^[a-zA-Z0-9_]*$"))
+		if (!name.matches("^[a-zA-Z0-9_]+$"))
 			throw new InvalidInputException("Home names can only contain numbers, letters and underscores");
 	}
 
