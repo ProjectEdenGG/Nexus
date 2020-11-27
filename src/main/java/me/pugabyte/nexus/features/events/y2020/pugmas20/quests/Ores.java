@@ -73,7 +73,7 @@ public class Ores implements Listener {
 			return;
 
 		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
-		player.getInventory().addItem(oreType == OreType.COAL ? oreType.getIngot() : oreType.getOre());
+		player.getInventory().addItem(oreType == OreType.COAL ? oreType.getIngot(RandomUtils.randomElement(1, 1, 2, 2, 2, 3)) : oreType.getOre());
 
 		scheduleRegen(block);
 		block.setType(Material.STONE);
@@ -127,8 +127,12 @@ public class Ores implements Listener {
 		if (!isAtPugmas(event.getBlock().getLocation()))
 			return;
 
-		if (isFuzzyMatch(event.getSource(), OreType.LIGHT_ANIMICA.getOre()))
-			event.setResult(OreType.LIGHT_ANIMICA.getIngot());
+		OreType oreType = OreType.ofOre(event.getSource().getType());
+		if (oreType == null)
+			return;
+
+		if (isFuzzyMatch(event.getSource(), oreType.getOre()))
+			event.setResult(oreType.getIngot());
 	}
 
 	@EventHandler
@@ -196,11 +200,11 @@ public class Ores implements Listener {
 	public enum OreType {
 		LIGHT_ANIMICA(Material.DIAMOND_ORE, Material.DIAMOND),
 		NECRITE(Material.EMERALD_ORE, Material.EMERALD),
-		ADAMANTITE(Material.REDSTONE_ORE, Material.NETHER_BRICK),
+		ADAMANTITE(Material.REDSTONE_ORE, Material.REDSTONE),
 		MITHRIL(Material.LAPIS_ORE, Material.LAPIS_LAZULI),
-		IRON_NUGGET(Material.IRON_ORE, Material.IRON_NUGGET),
-		COAL(Material.COAL_ORE, Material.CHARCOAL),
-		LUMINITE_NUGGET(Material.GOLD_ORE, Material.GOLD_NUGGET);
+		IRON(Material.IRON_ORE, Material.IRON_INGOT),
+		LUMINITE(Material.GOLD_ORE, Material.GOLD_INGOT),
+		COAL(Material.COAL_ORE, Material.CHARCOAL);
 
 		@Getter
 		private final ItemStack ore;

@@ -120,21 +120,21 @@ public enum QuestNPC {
 
 							Script.wait(0, "Hmm, yes, it is fixable, just needs a new flint wheel and a steel striker."),
 
-							Script.wait(0, "If you get me a piece of flint and a steel nugget, I can make both fast."),
+							Script.wait(0, "If you get me a piece of flint and a steel ingot, I can make both fast."),
 
 							Script.wait(0, "Head to the coal mine and you should be able to get both- ask the mine forelf for help.")
 					);
 				case STEP_THREE:
 					ItemStack lighter = getItem(player, LightTheTree.lighter_broken);
-					ItemStack steelNugget = getItem(player, LightTheTree.steel_nugget);
+					ItemStack steelIngot = getItem(player, LightTheTree.steel_ingot);
 					ItemStack flint = getItem(player, Ores.getFlint());
-					if (lighter == null || steelNugget == null || flint == null) {
+					if (lighter == null || steelIngot == null || flint == null) {
 						return Arrays.asList(
-								Script.wait(0, "In order to fix the Ceremonial Lighter, I need a piece of flint and a steel nugget.")
+								Script.wait(0, "In order to fix the Ceremonial Lighter, I need a piece of flint and a steel ingot.")
 						);
 					}
 
-					player.getInventory().removeItem(lighter, steelNugget, flint);
+					player.getInventory().removeItem(lighter, steelIngot, flint);
 					ItemUtils.giveItem(player, LightTheTree.lighter);
 
 					user.setLightTreeStage(QuestStage.STEPS_DONE);

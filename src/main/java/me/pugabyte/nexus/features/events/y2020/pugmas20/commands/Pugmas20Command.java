@@ -60,7 +60,7 @@ import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 @NoArgsConstructor
 @Redirect(from = "/advent", to = "/pugmas20 advent")
 @Redirect(from = "/district", to = "/pugmas20 district")
-@Redirect(from = "/waypoint", to = "/pugmas20 waypoints")
+@Redirect(from = "/waypoint", to = "/pugmas20 waypoint")
 public class Pugmas20Command extends CustomCommand implements Listener {
 	private final Pugmas20Service service = new Pugmas20Service();
 	private Pugmas20User user;
@@ -97,8 +97,15 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 
 	@Permission("group.admin")
 	@Path("advent give <day>")
-	void adventGiveHead(int day) {
+	void adventGive(int day) {
 		AdventChests.giveAdventHead(player(), day);
+	}
+
+	@Permission("group.admin")
+	@Path("waypoint give <day>")
+	void waypointGive(int day) {
+		user.getLocatedDays().add(day);
+		service.save(user);
 	}
 
 	@Permission("group.admin")
@@ -124,6 +131,9 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 
 	@Path("waypoint <day>")
 	void waypoint(int day) {
+		if (!user.getLocatedDays().contains(day))
+			error("You have not located that chest yet");
+
 		AdventChest adventChest = AdventChests.getAdventChest(day);
 		Location chestLoc = adventChest.getLocation();
 		Block chest = chestLoc.getBlock();
@@ -131,7 +141,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		if (!BlockUtils.isNullOrAir(chest)) {
 			Location blockLoc = getCenteredLocation(chestLoc);
 			World blockWorld = blockLoc.getWorld();
-			FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, chest.getType().createBlockData());
+			FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, Material.RED_CONCRETE.createBlockData());
 			fallingBlock.setDropItem(false);
 			fallingBlock.setGravity(false);
 			fallingBlock.setInvulnerable(true);
@@ -148,7 +158,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 						fallingBlock.remove();
 						for (Player player : Bukkit.getOnlinePlayers())
 							if (player.getWorld() == blockWorld)
-								player.sendBlockChange(blockLoc, chest.getType().createBlockData());
+								player.sendBlockChange(chestLoc, chest.getBlockData());
 					})
 					.start();
 		}
@@ -290,7 +300,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	void kitLightTheTree() {
 		ItemUtils.giveItem(player(), LightTheTree.lighter);
 		ItemUtils.giveItem(player(), LightTheTree.lighter_broken);
-		ItemUtils.giveItem(player(), LightTheTree.steel_nugget);
+		ItemUtils.giveItem(player(), LightTheTree.steel_ingot);
 	}
 
 	@Permission("group.admin")

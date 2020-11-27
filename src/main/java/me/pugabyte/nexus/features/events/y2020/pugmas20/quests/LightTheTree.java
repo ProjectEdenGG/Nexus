@@ -43,7 +43,7 @@ public class LightTheTree implements Listener {
 	//
 	public static final ItemStack lighter_broken = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Broken Ceremonial Lighter").build();
 	public static final ItemStack lighter = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Ceremonial Lighter").glow().build();
-	public static final ItemStack steel_nugget = Pugmas20.questItem(Material.IRON_NUGGET).name("Steel Nugget").glow().build();
+	public static final ItemStack steel_ingot = Pugmas20.questItem(Material.IRON_INGOT).name("Steel Ingot").glow().build();
 
 	public static final int timerTicks = Time.MINUTE.x(1);
 	public static final int torches = 9;

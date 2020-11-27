@@ -151,7 +151,7 @@ public class AdventChests implements Listener {
 			openChest = true;
 		else {
 			reason = wrongDay;
-			user.getLocatedDays().add(adventChest.getLocation());
+			user.getLocatedDays().add(chestDay);
 			service.save(user);
 		}
 

@@ -17,7 +17,6 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -45,7 +44,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 	@Embedded
 	private Set<Integer> foundDays = new HashSet<>();
 	@Embedded
-	private Set<Location> locatedDays = new HashSet<>();
+	private Set<Integer> locatedDays = new HashSet<>();
 
 	// Active Quest NPCs
 	@Embedded
