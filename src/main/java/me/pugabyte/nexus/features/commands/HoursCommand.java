@@ -37,10 +37,10 @@ public class HoursCommand extends CustomCommand {
 
 	@Async
 	@Path("[player]")
-	void player(@Arg("self") OfflinePlayer player) {
+	void player(@Arg("self") Hours hours) {
+		OfflinePlayer player = hours.getOfflinePlayer();
 		boolean isSelf = isSelf(player);
 
-		Hours hours = service.get(player);
 		send("");
 		send(PREFIX + (isSelf ? "Your" : "&e" + player.getName() + "&3's") + " playtime");
 		send("&3Total: &e" + TimespanFormatter.of(hours.getTotal()).noneDisplay(true).format());

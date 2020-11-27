@@ -10,7 +10,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.assetcompetition.AssetCompetition;
 import me.pugabyte.nexus.models.assetcompetition.AssetCompetitionService;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.List;
@@ -46,8 +45,8 @@ public class AssetCompetitionCommand extends CustomCommand {
 			else
 				builder.next("&e, ").group();
 
-			builder.next("&3" + assetCompetition.getOfflinePlayer().getName())
-					.command(getAliasUsed() + " tp " + assetCompetition.getOfflinePlayer().getName())
+			builder.next("&3" + assetCompetition.getName())
+					.command(getAliasUsed() + " tp " + assetCompetition.getName())
 					.group();
 		}
 
@@ -58,8 +57,7 @@ public class AssetCompetitionCommand extends CustomCommand {
 
 	@Path("(view|tp) <player>")
 	@Permission("group.staff")
-	void view(OfflinePlayer player) {
-		assetCompetition = service.get(player);
+	void view(AssetCompetition assetCompetition) {
 		if (assetCompetition.getLocation() == null)
 			error("That player has not submitted an asset");
 

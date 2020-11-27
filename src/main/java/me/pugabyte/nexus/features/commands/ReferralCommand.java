@@ -21,7 +21,6 @@ import me.pugabyte.nexus.models.referral.ReferralService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -93,9 +92,8 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("debug [player]")
-	void debug(@Arg("self") OfflinePlayer player) {
-		Referral referral = service.get(player);
-		send(referral.toString());
+	void debug(@Arg("self") Referral referral) {
+		send(toPrettyString(referral));
 	}
 
 	@Async

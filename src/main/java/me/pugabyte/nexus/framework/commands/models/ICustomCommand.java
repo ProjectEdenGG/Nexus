@@ -21,6 +21,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundExcep
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -225,9 +226,8 @@ public abstract class ICustomCommand {
 			if (Commands.getConverters().containsKey(type)) {
 				Method converter = Commands.getConverters().get(type);
 				boolean isAbstract = Modifier.isAbstract(converter.getDeclaringClass().getModifiers());
-				if (!(isAbstract || converter.getDeclaringClass().equals(command.getClass()))) {
+				if (!(isAbstract || converter.getDeclaringClass().equals(command.getClass())))
 					command = getNewCommand(command.getEvent(), converter.getDeclaringClass());
-				}
 				if (converter.getParameterCount() == 1)
 					return converter.invoke(command, value);
 				else if (converter.getParameterCount() == 2)
@@ -235,7 +235,9 @@ public abstract class ICustomCommand {
 				else
 					throw new BNException("Unknown converter parameters in " + converter.getName());
 			} else if (type.isEnum()) {
-				return convertToEnum((Class<? extends Enum<?>>) type, value);
+				return convertToEnum(value, (Class<? extends Enum<?>>) type);
+			} else if (PlayerOwnedObject.class.isAssignableFrom(type)) {
+				return convertToPlayerOwnedObject(value, (Class<? extends PlayerOwnedObject>) type);
 			}
 		} catch (InvocationTargetException ex) {
 			if (required)
@@ -410,8 +412,10 @@ public abstract class ICustomCommand {
 		}
 	}
 
+	protected abstract <T extends PlayerOwnedObject> T convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type);
+
 	@SneakyThrows
-	protected Enum<?> convertToEnum(Class<? extends Enum<?>> clazz, String filter) {
+	protected Enum<?> convertToEnum(String filter, Class<? extends Enum<?>> clazz) {
 		if (filter == null) throw new InvocationTargetException(new BNException("Missing argument"));
 		return Arrays.stream(clazz.getEnumConstants())
 				.filter(value -> value.name().toLowerCase().startsWith(filter.toLowerCase()))

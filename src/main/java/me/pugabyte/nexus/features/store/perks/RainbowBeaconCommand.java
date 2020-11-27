@@ -4,10 +4,8 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
-import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.rainbowbeacon.RainbowBeacon;
 import me.pugabyte.nexus.models.rainbowbeacon.RainbowBeaconService;
@@ -150,16 +148,6 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			if (i.get() == 8)
 				i.set(0);
 		}));
-	}
-
-	@ConverterFor(RainbowBeacon.class)
-	RainbowBeacon convertToRainbowBeacon(String value) {
-		return service.get(convertToOfflinePlayer(value));
-	}
-
-	@TabCompleterFor(RainbowBeacon.class)
-	List<String> tabCompleteRainbowBeacon(String value) {
-		return tabCompletePlayer(value);
 	}
 
 }

@@ -70,46 +70,43 @@ public class TrustCommand extends CustomCommand {
 	@Description("Allow specified player(s) to all locks")
 	@Path("locks <players...>")
 	void locks(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		process(players, Type.LOCKS);
+		process(trust, players, Type.LOCKS);
 	}
 
 	@Description("Allow specified player(s) to all homes")
 	@Path("homes <players...>")
 	void homes(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		process(players, Type.HOMES);
+		process(trust, players, Type.HOMES);
 	}
 
 	@Description("Allow specified player(s) to everything")
 	@Path("all <players...>")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		process(players, Type.values());
+		process(trust, players, Type.values());
 	}
 
 	@Permission("group.staff")
 	@Path("admin locks <owner> <players...>")
-	void locks(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + owner.getName());
-		process(players, Type.LOCKS);
+	void locks(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		send(PREFIX + "Modifying trusts of &e" + trust.getName());
+		process(trust, players, Type.LOCKS);
 	}
 
 	@Permission("group.staff")
 	@Path("admin homes <owner> <players...>")
-	void homes(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + owner.getName());
-		process(players, Type.HOMES);
+	void homes(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		send(PREFIX + "Modifying trusts of &e" + trust.getName());
+		process(trust, players, Type.HOMES);
 	}
 
 	@Permission("group.staff")
 	@Path("admin all <owner> <players...>")
-	void all(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + owner.getName());
-		process(players, Type.values());
+	void all(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		send(PREFIX + "Modifying trusts of &e" + trust.getName());
+		process(trust, players, Type.values());
 	}
 
-	private void process(List<OfflinePlayer> players, Trust.Type... types) {
+	private void process(Trust trust, List<OfflinePlayer> players, Trust.Type... types) {
 		for (Type type : types)
 			players.forEach(player -> trust.get(type).add(player.getUniqueId()));
 		service.save(trust);

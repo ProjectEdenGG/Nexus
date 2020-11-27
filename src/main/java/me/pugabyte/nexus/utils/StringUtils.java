@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -251,6 +252,10 @@ public class StringUtils {
 
 	public static boolean isUuid(String uuid) {
 		return uuid.matches(UUID_REGEX);
+	}
+
+	public static String toPrettyString(Object object) {
+		return new GsonBuilder().setPrettyPrinting().create().toJson(object);
 	}
 
 	public static String pretty(ItemStack item) {

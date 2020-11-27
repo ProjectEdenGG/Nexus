@@ -14,6 +14,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
+import org.bukkit.OfflinePlayer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -81,6 +83,9 @@ class PathParser {
 							break;
 
 					arg.setTabCompleter(parameter.getType());
+					if (arg.getTabCompleter() == null && PlayerOwnedObject.class.isAssignableFrom(parameter.getType()))
+						arg.setTabCompleter(OfflinePlayer.class);
+
 					arg.setList(Collection.class.isAssignableFrom(parameter.getType()));
 					if (annotation != null) {
 						if (List.class.isAssignableFrom(parameter.getType()) && annotation.type() != void.class)

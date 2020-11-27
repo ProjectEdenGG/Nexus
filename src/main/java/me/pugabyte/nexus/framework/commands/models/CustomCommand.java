@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
@@ -20,6 +22,8 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeCommandBlockEx
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
+import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
@@ -40,10 +44,14 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -184,6 +192,10 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected JsonBuilder json(String message) {
 		return new JsonBuilder(message);
+	}
+
+	protected String toPrettyString(Object object) {
+		return StringUtils.toPrettyString(object);
 	}
 
 	public void error(String error) {
@@ -488,6 +500,29 @@ public abstract class CustomCommand extends ICustomCommand {
 			Utils.runCommand(sender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
 		else
 			throw new InvalidInputException("Nothing to fallback to");
+	}
+
+	// TODO Don't hardcode model path
+	private static final Set<Class<? extends MongoService>> services = new Reflections("me.pugabyte.nexus.models").getSubTypesOf(MongoService.class);
+	private static final Map<Class<? extends PlayerOwnedObject>, Class<? extends MongoService>> serviceMap = new HashMap<>();
+
+	static {
+		for (Class<? extends MongoService> service : services) {
+			PlayerClass annotation = service.getAnnotation(PlayerClass.class);
+			if (annotation == null) {
+				Nexus.log(service.getSimpleName() + " does not have @PlayerClass annotation");
+				continue;
+			}
+
+			serviceMap.put(annotation.value(), service);
+		}
+	}
+
+	@SneakyThrows
+	protected <T extends PlayerOwnedObject> T convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type) {
+		if (serviceMap.containsKey(type))
+			return serviceMap.get(type).newInstance().get(convertToOfflinePlayer(value));
+		return null;
 	}
 
 	@ConverterFor(OfflinePlayer.class)

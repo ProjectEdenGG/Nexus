@@ -10,12 +10,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.chat.Channel;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
-import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,15 +89,7 @@ public class ChannelCommand extends CustomCommand {
 
 	@ConverterFor(Chatter.class)
 	Chatter convertToChatter(String value) {
-		OfflinePlayer player = convertToOfflinePlayer(value);
-		if (!player.isOnline())
-			throw new PlayerNotOnlineException(player);
-		return new ChatService().get(player);
-	}
-
-	@TabCompleterFor(Chatter.class)
-	List<String> tabCompleteChatter(String filter) {
-		return tabCompletePlayer(filter);
+		return new ChatService().get(convertToPlayer(value));
 	}
 
 }

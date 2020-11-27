@@ -90,11 +90,11 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 
 	@Permission("group.admin")
 	@Path("advent addDay <player> <day>")
-	void adventAddDay(OfflinePlayer player, int day) {
+	void adventAddDay(Pugmas20User user, int day) {
 		user.getFoundDays().add(day);
 		service.save(user);
 
-		send("Added day " + day + " to " + player.getName());
+		send("Added day " + day + " to " + user.getName());
 	}
 
 	@Path("district")
@@ -282,40 +282,10 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "Set torches lit to " + lit);
 	}
 
-	@Permission("group.admin")
-	@Path("debug2 <player>")
-	void debugUser2(@Arg("self") OfflinePlayer player) {
-		user = service.get(player);
-		send(user.toString());
-	}
-
-	@Permission("group.admin")
 	@Path("debug <player>")
-	void debugUser(OfflinePlayer player) {
-		user = service.get(player);
-
-		line();
-		send("Days Found: " + user.getFoundDays());
-		send("Next Step NPCs: " + user.getNextStepNPCs());
-		send("Stages: ");
-		send("- Light Tree: " + user.getLightTreeStage());
-		send("- Toy Testing: " + user.getToyTestingStage());
-		send("  - MasterMind: " + user.isMasterMind());
-		send("  - Battleship: " + user.isBattleship());
-		send("  - Connect4: " + user.isConnectFour());
-		send("  - TicTacToe: " + user.isTicTacToe());
-		send("- Ornament: " + user.getOrnamentVendorStage());
-		send("- The Mines: " + user.getMinesStage());
-
-		EventUser eventUser = new EventUserService().get(player);
-		line();
-		send("Total Tokens: " + eventUser.getTokens());
-		if (eventUser.getTokens() != 0) {
-			send("Today:");
-			eventUser.getTokensReceivedToday().forEach((key, map) ->
-					send("- " + key + ": " + eventUser.getTokensReceivedToday(key)));
-		}
-		line();
+	@Permission("group.admin")
+	void debugUser(@Arg("self") Pugmas20User user) {
+		send(user.toPrettyString());
 	}
 
 }

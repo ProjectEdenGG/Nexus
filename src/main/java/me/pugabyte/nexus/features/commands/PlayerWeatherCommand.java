@@ -42,7 +42,7 @@ public class PlayerWeatherCommand extends CustomCommand {
 			value = WeatherType.DOWNFALL.name();
 		if (Arrays.asList("sun", "none").contains(value))
 			value = WeatherType.CLEAR.name();
-		return (WeatherType) convertToEnum(WeatherType.class, value);
+		return (WeatherType) convertToEnum(value, WeatherType.class);
 	}
 
 }

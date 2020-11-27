@@ -48,7 +48,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("[page]")
+	@Path("list [page]")
 	void list(@Arg("1") int page) {
 		if (coupons.getCoupons().isEmpty())
 			error("No coupons have been created");

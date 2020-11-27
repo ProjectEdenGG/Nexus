@@ -284,16 +284,6 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 			send("&3" + i++ + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTotalPoints());
 	}
 
-	@ConverterFor(BearFairUser.class)
-	BearFairUser convertToBearFairUser(String value) {
-		return service.get(convertToOfflinePlayer(value));
-	}
-
-	@TabCompleterFor(BearFairUser.class)
-	List<String> tabCompleteBearFairUser(String value) {
-		return tabCompletePlayer(value);
-	}
-
 	// Admin Commands
 
 	@Path("quests info")

@@ -64,10 +64,10 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<players...>")
-	void freeze(@Arg(type = Player.class) List<Player> players) {
-		for (Player player : players) {
+	void freeze(@Arg(type = Freeze.class) List<Freeze> players) {
+		for (Freeze freeze : players) {
 			try {
-				Freeze freeze = new FreezeService().get(player);
+				Player player = freeze.getPlayer();
 				if (freeze.isFrozen()) {
 					if (player.getVehicle() != null && player.getVehicle() instanceof ArmorStand)
 						runCommand("unfreeze " + player.getName());

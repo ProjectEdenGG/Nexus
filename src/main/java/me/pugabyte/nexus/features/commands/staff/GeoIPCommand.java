@@ -5,10 +5,8 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
-import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIPService;
@@ -27,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -58,16 +55,6 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Tasks.async(() -> new GeoIPService().get(event.getPlayer()));
-	}
-
-	@ConverterFor(GeoIP.class)
-	GeoIP convertToGeoIP(String value) {
-		return new GeoIPService().get(convertToOfflinePlayer(value));
-	}
-
-	@TabCompleterFor(GeoIP.class)
-	List<String> tabCompleteGeoIP(String value) {
-		return tabCompletePlayer(value);
 	}
 
 	@Async
