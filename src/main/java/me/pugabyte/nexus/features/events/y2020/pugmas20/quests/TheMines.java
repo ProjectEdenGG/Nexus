@@ -5,6 +5,8 @@ import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores.OreType;
+import me.pugabyte.nexus.models.eventuser.EventUser;
+import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -12,7 +14,6 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.MerchantBuilder;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,13 +37,13 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 public class TheMines implements Listener {
 
 	static {
-		addTokenMax("themines_" + OreType.COAL.name(), 4);
-		addTokenMax("themines_" + OreType.IRON_NUGGET.name(), 4);
-		addTokenMax("themines_" + OreType.LUMINITE_NUGGET.name(), 4);
-		addTokenMax("themines_" + OreType.MITHRIL.name(), 4);
-		addTokenMax("themines_" + OreType.ADAMANTITE.name(), 4);
-		addTokenMax("themines_" + OreType.NECRITE.name(), 4);
-		addTokenMax("themines_" + OreType.LIGHT_ANIMICA.name(), 4);
+		addTokenMax("themines_" + OreType.COAL.name(), 3);
+		addTokenMax("themines_" + OreType.IRON.name(), 3);
+		addTokenMax("themines_" + OreType.LUMINITE.name(), 3);
+		addTokenMax("themines_" + OreType.MITHRIL.name(), 3);
+		addTokenMax("themines_" + OreType.ADAMANTITE.name(), 3);
+		addTokenMax("themines_" + OreType.NECRITE.name(), 3);
+		addTokenMax("themines_" + OreType.LIGHT_ANIMICA.name(), 3);
 	}
 
 	@EventHandler
@@ -142,13 +143,9 @@ public class TheMines implements Listener {
 
 								int testAmt = profit + result.getAmount();
 								int excess = Pugmas20.checkDailyTokens(player, "themines_" + key.name(), testAmt);
-								Utils.send(player, "Excess: " + excess);
 								if (excess <= 0) {
 									itemAmount -= ingredientAmount;
 									profit += result.getAmount();
-									Utils.send(player, "selling " + type + " | profit: " + profit);
-								} else {
-									Utils.send(player, "hit max for " + type);
 								}
 
 								item.setAmount(itemAmount);
@@ -156,9 +153,7 @@ public class TheMines implements Listener {
 						}
 					}
 
-					// TODO: this aint workin
 					Pugmas20.giveDailyTokens(player, "themines_" + key.name(), profit);
-					Utils.send(player, "giving " + profit + " tokens as " + "themines_" + key.name());
 					profit = 0;
 				}
 			}
@@ -166,5 +161,9 @@ public class TheMines implements Listener {
 			if (!foundTrade || leftovers || item.getAmount() > 0)
 				player.getInventory().addItem(item);
 		}
+
+		EventUserService service = new EventUserService();
+		EventUser user = service.get(player);
+		user.send(Pugmas20.PREFIX + "New event token balance: " + user.getTokens());
 	}
 }

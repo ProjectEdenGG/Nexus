@@ -45,9 +45,9 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(LightTheTree.steel_nugget)
+							.result(LightTheTree.steel_ingot)
 							.ingredient(OreType.COAL.getIngot(1))
-							.ingredient(OreType.IRON_NUGGET.getIngot(8)));
+							.ingredient(OreType.IRON.getIngot(8)));
 				}};
 			}
 		},
@@ -56,26 +56,26 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
-							.result(Pugmas20.questItem(Material.GOLD_INGOT).amount(2))
-							.ingredient(OreType.LUMINITE_NUGGET.getIngot()));
+							.result(Pugmas20.questItem(Material.GOLD_INGOT))
+							.ingredient(OreType.LIGHT_ANIMICA.getIngot(15)));
 					add(new TradeBuilder()
-							.result(Pugmas20.questItem(Material.GOLD_INGOT).amount(2))
-							.ingredient(OreType.COAL.getIngot()));
+							.result(Pugmas20.questItem(Material.GOLD_INGOT))
+							.ingredient(OreType.NECRITE.getIngot(15)));
 					add(new TradeBuilder()
-							.result(Pugmas20.questItem(Material.GOLD_INGOT).amount(2))
-							.ingredient(OreType.IRON_NUGGET.getIngot()));
+							.result(Pugmas20.questItem(Material.GOLD_INGOT))
+							.ingredient(OreType.ADAMANTITE.getIngot(20)));
 					add(new TradeBuilder()
-							.result(Pugmas20.questItem(Material.GOLD_INGOT).amount(2))
-							.ingredient(OreType.MITHRIL.getIngot()));
+							.result(Pugmas20.questItem(Material.GOLD_INGOT))
+							.ingredient(OreType.MITHRIL.getIngot(20)));
 					add(new TradeBuilder()
-							.result(Pugmas20.questItem(Material.GOLD_INGOT).amount(2))
-							.ingredient(OreType.ADAMANTITE.getIngot()));
+							.result(Pugmas20.questItem(Material.GOLD_INGOT))
+							.ingredient(OreType.IRON.getIngot(30)));
 					add(new TradeBuilder()
-							.result(Pugmas20.questItem(Material.GOLD_INGOT).amount(2))
-							.ingredient(OreType.NECRITE.getIngot()));
+							.result(Pugmas20.questItem(Material.GOLD_INGOT))
+							.ingredient(OreType.LUMINITE.getIngot(15)));
 					add(new TradeBuilder()
-							.result(Pugmas20.questItem(Material.GOLD_INGOT).amount(2))
-							.ingredient(OreType.LIGHT_ANIMICA.getIngot()));
+							.result(Pugmas20.questItem(Material.GOLD_INGOT))
+							.ingredient(OreType.COAL.getIngot(20)));
 				}};
 			}
 		};
