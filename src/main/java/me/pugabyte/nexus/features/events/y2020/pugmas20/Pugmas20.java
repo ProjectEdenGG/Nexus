@@ -6,6 +6,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
@@ -14,8 +15,10 @@ import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -28,17 +31,24 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
+import org.inventivetalent.glow.GlowAPI;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 
 public class Pugmas20 implements Listener {
 	@Getter
@@ -219,6 +229,35 @@ public class Pugmas20 implements Listener {
 				Pugmas20User user = service.get(event.getPlayer());
 				user.applyInventory();
 			});
+		}
+	}
+
+	public static void showWaypoint(AdventChest adventChest, Player player) {
+		Location chestLoc = adventChest.getLocation();
+		Block chest = chestLoc.getBlock();
+		if (!BlockUtils.isNullOrAir(chest)) {
+			Location blockLoc = getCenteredLocation(chestLoc);
+			World blockWorld = blockLoc.getWorld();
+			FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, chest.getType().createBlockData());
+			fallingBlock.setDropItem(false);
+			fallingBlock.setGravity(false);
+			fallingBlock.setInvulnerable(true);
+			fallingBlock.setVelocity(new Vector(0, 0, 0));
+
+			LocationUtils.lookAt(player, blockLoc);
+
+			Tasks.GlowTask.builder()
+					.duration(Time.SECOND.x(10))
+					.entity(fallingBlock)
+					.color(GlowAPI.Color.RED)
+					.viewers(Collections.singletonList(player))
+					.onComplete(() -> {
+						fallingBlock.remove();
+						for (Player _player : Bukkit.getOnlinePlayers())
+							if (_player.getWorld() == blockWorld)
+								_player.sendBlockChange(blockLoc, chest.getType().createBlockData());
+					})
+					.start();
 		}
 	}
 

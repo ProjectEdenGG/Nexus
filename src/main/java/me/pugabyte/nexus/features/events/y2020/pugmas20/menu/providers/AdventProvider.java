@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.SlotPos;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.AdventChests;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.menus.MenuUtils;
@@ -14,8 +15,12 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
@@ -23,12 +28,14 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecond
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdventProvider extends MenuUtils implements InventoryProvider {
-	LocalDateTime date;
+	private LocalDateTime date;
 	private static final ItemBuilder locked = AdventMenu.lockedHead.clone();
 	private static final ItemBuilder missed = AdventMenu.missedHead.clone();
 	private static final ItemBuilder toFind = AdventMenu.toFindHead.clone();
-	private static final Pugmas20Service service = new Pugmas20Service();
-	private static Pugmas20User user;
+	private final Pugmas20Service service = new Pugmas20Service();
+	private Pugmas20User user;
+	private AdventChest adventChest;
+	private boolean located;
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
@@ -47,13 +54,15 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 				int dayIndex = (index.get() - 7);
 				String name = "Day: " + dayIndex;
 
-				AdventChest adventChest = AdventChests.getAdventChest(dayIndex);
+				adventChest = AdventChests.getAdventChest(dayIndex);
 
 				String districtName = "null";
 				if (adventChest != null)
 					districtName = adventChest.getDistrict().getName();
 
 				String district = "District: " + districtName;
+
+				located = user.getLocatedDays().contains(dayIndex);
 
 				if (user.getFoundDays().contains(dayIndex))
 					found(contents, slotPos, skull, name, district);
@@ -79,23 +88,50 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	private void found(InventoryContents contents, SlotPos slotPos, ItemBuilder skull, String name, String district) {
-		contents.set(slotPos, ClickableItem.empty(skull.clone().name(name).lore(district).build()));
+		if (located)
+			contents.set(slotPos, ClickableItem.from(skull.clone().name(name).lore(showWaypoint(Collections.singletonList(district))).build(),
+					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+		else
+			contents.set(slotPos, ClickableItem.empty(skull.clone().name(name).lore(district).build()));
 	}
 
 	private void find(InventoryContents contents, SlotPos slotPos, String name, String district) {
-		contents.set(slotPos, ClickableItem.empty(toFind.clone().name(name).lore("&aFind me!", district).build()));
+		if (located)
+			contents.set(slotPos, ClickableItem.from(toFind.clone().name(name).lore(showWaypoint(Arrays.asList("&aFind me!", district))).build(),
+					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+		else
+			contents.set(slotPos, ClickableItem.empty(toFind.clone().name(name).lore(Arrays.asList("&aFind me!", district)).build()));
 	}
 
 	private void locked(InventoryContents contents, SlotPos slotPos, String name) {
-		contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked").build()));
+		if (located)
+			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint(Collections.singletonList("&7Locked"))).build(),
+					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+		else
+			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore(Collections.singletonList("&7Locked")).build()));
 	}
 
 	private void locked25(InventoryContents contents, SlotPos slotPos, String name) {
-		contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked", "", "&cOpen all previous||&cchests to unlock").build()));
+		if (located)
+			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint(Arrays.asList("&7Locked", "", "&cOpen all previous||&cchests to unlock"))).build(),
+					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+		else
+			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore(Arrays.asList("&7Locked", "", "&cOpen all previous||&cchests to unlock")).build()));
+
 	}
 
 	private void missed(InventoryContents contents, SlotPos slotPos, String name) {
-		contents.set(slotPos, ClickableItem.empty(missed.clone().name(name).lore("&cMissed").build()));
+		if (located)
+			contents.set(slotPos, ClickableItem.from(missed.clone().name(name).lore(showWaypoint(Collections.singletonList("&cMissed"))).build(),
+					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+		else
+			contents.set(slotPos, ClickableItem.empty(missed.clone().name(name).lore(Collections.singletonList("&cMissed")).build()));
+	}
+
+	@NotNull
+	private List<String> showWaypoint(List<String> lines) {
+		lines.add("&f||&aClick to show waypoint");
+		return lines;
 	}
 
 	@Override
