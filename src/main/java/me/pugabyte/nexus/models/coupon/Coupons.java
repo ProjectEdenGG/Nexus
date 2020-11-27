@@ -38,7 +38,7 @@ public class Coupons extends PlayerOwnedObject {
 
 	public Coupon of(String id) {
 		for (Coupon coupon : coupons)
-			if (coupon.getId().equals(id))
+			if (coupon.getId().equalsIgnoreCase(id))
 				return coupon;
 
 		return null;
@@ -62,6 +62,10 @@ public class Coupons extends PlayerOwnedObject {
 		@NonNull
 		private ItemStack item;
 		private int uses;
+
+		public void use() {
+			++uses;
+		}
 	}
 
 }

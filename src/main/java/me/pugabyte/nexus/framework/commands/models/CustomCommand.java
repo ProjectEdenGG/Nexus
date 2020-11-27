@@ -114,10 +114,10 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected Block getTargetBlockRequired() {
-		Block targetBlockExact = player().getTargetBlockExact(500);
-		if (isNullOrAir(targetBlockExact))
+		Block targetBlock = getTargetBlock();
+		if (isNullOrAir(targetBlock))
 			error("You must be looking at a block");
-		return targetBlockExact;
+		return targetBlock;
 	}
 
 	protected Sign getTargetSign() {

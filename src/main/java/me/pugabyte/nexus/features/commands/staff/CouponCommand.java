@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -17,14 +19,12 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,12 +37,76 @@ public class CouponCommand extends CustomCommand implements Listener {
 	private final CouponService service = new CouponService();
 	private final Coupons coupons = service.get(Nexus.getUUID0());
 
-	private static final Map<String, Consumer<PlayerInteractEvent>> map = new HashMap<String, Consumer<PlayerInteractEvent>>() {{
-		put("pugmas20_advent_painting", event -> Utils.send(event.getPlayer(), "pugmas20_advent_painting"));
-		put("pugmas20_advent_song", event -> Utils.send(event.getPlayer(), "pugmas20_advent_song"));
-		put("pugmas20_item_painting", event -> Utils.send(event.getPlayer(), "pugmas20_item_painting"));
-		put("pugmas20_item_song", event -> Utils.send(event.getPlayer(), "pugmas20_item_song"));
-	}};
+	@Getter
+	@AllArgsConstructor
+	public enum CouponEvent {
+		PUGMAS20_ADVENT_PAINTING(false) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				Utils.send(event.getPlayer(), "pugmas20_advent_painting");
+			}
+		},
+		PUGMAS20_ADVENT_SONG(false) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				Utils.send(event.getPlayer(), "pugmas20_advent_song");
+			}
+		},
+		PUGMAS20_ADVENT_5000(true) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				Utils.runCommandAsConsole("eco give " + event.getPlayer().getName() + " 5000");
+			}
+		},
+		PUGMAS20_ITEM_PAINTING(false) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				Utils.send(event.getPlayer(), "pugmas20_item_painting");
+			}
+		},
+		PUGMAS20_ITEM_SONG(false) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				Utils.send(event.getPlayer(), "pugmas20_item_song");
+			}
+		};
+
+		private final boolean autoremove;
+
+		public void removeItem(Player player) {
+			Coupon coupon = getCoupon();
+			if (coupon == null) {
+				Nexus.log("Tried to remove coupon item " + name().toLowerCase() + " from " + player.getName() + " which does not exist");
+				return;
+			}
+
+			player.getInventory().removeItem(coupon.getItem());
+		}
+
+		public Coupon getCoupon() {
+			final CouponService service = new CouponService();
+			final Coupons coupons = service.get(Nexus.getUUID0());
+			return coupons.of(name());
+		}
+
+		public void handle(PlayerInteractEvent event) {
+			use(event);
+			if (autoremove) {
+				getCoupon().use();
+				removeItem(event.getPlayer());
+			}
+		}
+
+		abstract void use(PlayerInteractEvent event);
+
+		public static CouponEvent of(String id) {
+			try {
+				return valueOf(id.toUpperCase());
+			} catch (IllegalArgumentException ex) {
+				return null;
+			}
+		}
+	}
 
 	public CouponCommand(CommandEvent event) {
 		super(event);
@@ -120,9 +184,9 @@ public class CouponCommand extends CustomCommand implements Listener {
 		Coupon coupon = coupons.of(event.getItem());
 		if (coupon == null) return;
 
-		if (map.containsKey(coupon.getId()))
-			map.get(coupon.getId()).accept(event);
+		CouponEvent couponEvent = CouponEvent.of(coupon.getId());
+		if (couponEvent != null)
+			couponEvent.handle(event);
 	}
-
 
 }

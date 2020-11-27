@@ -69,7 +69,7 @@ public class ItemInfoCommand extends CustomCommand {
 		send("Applicable tags: " + String.join(", ", MaterialTag.getApplicable(material).keySet()));
 		line();
 		BlockData blockData = material.createBlockData();
-		send("BlockData: " + blockData.getClass().getSimpleName());
+		send("BlockData: " + material.data.getSimpleName());
 		dump(blockData).forEach((method, output) -> send(method + "(): " + output));
 		line();
 	}

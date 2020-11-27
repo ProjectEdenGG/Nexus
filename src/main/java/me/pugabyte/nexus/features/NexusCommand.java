@@ -55,6 +55,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -66,6 +67,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,6 +84,7 @@ import java.util.zip.ZipFile;
 
 import static me.pugabyte.nexus.utils.BlockUtils.getBlocksInRadius;
 import static me.pugabyte.nexus.utils.BlockUtils.getDirection;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.parseShortDate;
 import static me.pugabyte.nexus.utils.StringUtils.paste;
@@ -478,6 +481,33 @@ public class NexusCommand extends CustomCommand implements Listener {
 				block.setType(Material.ORANGE_CONCRETE);
 			else if (distance < 3)
 				block.setType(Material.YELLOW_CONCRETE);
+		}
+	}
+
+	@Path("trimItemNames")
+	void trimItemNames() {
+		Block block = getTargetBlock();
+		if (!(block.getState() instanceof Container))
+			return;
+
+		Container state = (Container) block.getState();
+
+		for (ItemStack content : state.getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			ItemMeta itemMeta = content.getItemMeta();
+			String displayName = itemMeta.getDisplayName();
+
+			if (!displayName.matches(StringUtils.getColorGroupPattern() + " .*"))
+				continue;
+
+			String trimmed = displayName.replaceFirst(" ", "");
+
+			send("\"" + displayName + "&f\" -> \"" + trimmed + "&f\"");
+
+			itemMeta.setDisplayName(trimmed);
+			content.setItemMeta(itemMeta);
 		}
 	}
 
