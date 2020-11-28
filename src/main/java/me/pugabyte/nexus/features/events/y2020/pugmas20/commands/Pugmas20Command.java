@@ -64,6 +64,11 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send("Soon™ (" + timeLeft + ")");
 	}
 
+	@Path("progress")
+	void progress() {
+		//
+	}
+
 	@Path("advent [day]")
 	void advent(@Arg(min = 1, max = 25, permission = "group.staff") Integer day) {
 		LocalDateTime now = LocalDateTime.now();

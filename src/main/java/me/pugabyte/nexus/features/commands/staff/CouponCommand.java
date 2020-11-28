@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -43,13 +44,13 @@ public class CouponCommand extends CustomCommand implements Listener {
 		PUGMAS20_ADVENT_PAINTING(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				Utils.send(event.getPlayer(), "pugmas20_advent_painting");
+				Utils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
 			}
 		},
 		PUGMAS20_ADVENT_SONG(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				Utils.send(event.getPlayer(), "pugmas20_advent_song");
+				Utils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
 			}
 		},
 		PUGMAS20_ADVENT_5000(true) {
@@ -61,13 +62,13 @@ public class CouponCommand extends CustomCommand implements Listener {
 		PUGMAS20_ITEM_PAINTING(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				Utils.send(event.getPlayer(), "pugmas20_item_painting");
+				Utils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
 			}
 		},
 		PUGMAS20_ITEM_SONG(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				Utils.send(event.getPlayer(), "pugmas20_item_song");
+				Utils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
 			}
 		};
 

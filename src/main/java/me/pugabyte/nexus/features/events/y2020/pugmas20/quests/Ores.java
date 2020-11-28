@@ -117,9 +117,7 @@ public class Ores implements Listener {
 		new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
 			put("location", JSON.serializeLocation(block.getLocation()));
 			put("material", block.getType());
-		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3, 15))));
-		// TODO PUGMAS Uncomment
-//		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));
+		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));
 	}
 
 	@EventHandler
