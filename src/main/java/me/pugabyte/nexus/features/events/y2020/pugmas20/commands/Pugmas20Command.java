@@ -77,37 +77,51 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		if (isSecondChance(now))
 			now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
 
+		line(2);
+
+		send(PREFIX + "Event progress:");
+		line();
+
+		String advent = "";
 		day = now.getDayOfMonth();
 		if (user.getFoundDays().size() == 25) {
-			send("Found all the chests");
+			advent = "&a☑ &3Complete";
 		} else {
 			if (user.getFoundDays().contains(day)) {
-				send("Found today's chests");
+				advent = "&a☑ &3Found today's chest";
 			} else {
 				if (day == 25) {
 					if (user.getFoundDays().size() != 24) {
-						send("Find all chests before 25");
+						advent = "&7☐ &3Find all chests before #25";
 					} else {
-						send("Find the last chest");
+						advent = "&7☐ &3Find the last chest";
 					}
 				} else {
-					send("Find today's chest (#" + day + ")");
+					advent = "&7☐ &3Find today's chest (&e#" + day + "&3)";
 				}
 			}
 		}
+
+		send("&6&lAdvent Chests");
+		send(json("&f  " + advent).hover("Click to open the Advent menu").command("/pugmas advent"));
+
+		line();
+		send("&6&lQuests");
 
 		for (Pugmas20QuestStageHelper quest : Pugmas20QuestStageHelper.values()) {
 			QuestStage stage = quest.getter().apply(user);
 			String instructions = Pugmas20Quest.valueOf(quest.name()).getInstructions(stage);
 
-			if (stage == QuestStage.NOT_STARTED) {
-				send(camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &e(" + instructions + ")"));
-			} else if (stage == QuestStage.COMPLETE) {
-				send(camelCase(quest) + " &a- Complete");
-			} else {
-				send(camelCase(quest) + " &7- &e" + (instructions == null ? "&cnull" : instructions));
+			if (stage == QuestStage.COMPLETE) {
+				send("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
+			} else if (stage == QuestStage.NOT_STARTED) {
+				send("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &e(" + instructions + ")"));
+			} else  {
+				send("&f  &7☐ &3" + camelCase(quest) + " &7- &e" + (instructions == null ? "&cnull" : instructions));
 			}
 		}
+
+		line();
 	}
 
 	@Path("advent [day]")
