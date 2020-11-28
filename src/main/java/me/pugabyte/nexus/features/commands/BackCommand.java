@@ -26,8 +26,8 @@ import java.text.DecimalFormat;
 @Aliases("return")
 @NoArgsConstructor
 public class BackCommand extends CustomCommand implements Listener {
-	BackService service = new BackService();
-	Back back;
+	private final BackService service = new BackService();
+	private Back back;
 
 	public BackCommand(CommandEvent event) {
 		super(event);

@@ -22,15 +22,15 @@ public abstract class DatabaseService {
 	}
 
 	public <T> T get(Player player) {
-		return (T) get(player.getUniqueId());
+		return get(player.getUniqueId());
 	}
 
 	public <T> T get(OfflinePlayer player) {
-		return (T) get(player.getUniqueId());
+		return get(player.getUniqueId());
 	}
 
 	public <T> T get(Nerd nerd) {
-		return (T) get(nerd.getOfflinePlayer());
+		return get(nerd.getOfflinePlayer());
 	}
 
 	abstract public <T> List<T> getAll();

@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.models.back;
 
 import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Property;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,7 +30,7 @@ public class Back extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	@Property(concreteClass = Location.class)
+	@Embedded
 	private List<Location> locations = new ArrayList<>();
 
 	public void add(Location from) {

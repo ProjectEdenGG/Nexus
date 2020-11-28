@@ -142,17 +142,21 @@ public class AdventChests implements Listener {
 		String reason = "";
 		if (user.getFoundDays().contains(chestDay))
 			reason = alreadyFound;
-		else if (isSecondChance(now))
-			if (chestDay != 25 || user.getFoundDays().size() == 24)
-				openChest = true;
-			else
-				reason = openPrevious;
-		else if (chestDay == day)
-			openChest = true;
 		else {
-			reason = wrongDay;
-			user.getLocatedDays().add(chestDay);
-			service.save(user);
+			if (isSecondChance(now))
+				if (chestDay != 25 || user.getFoundDays().size() == 24)
+					openChest = true;
+				else
+					reason = openPrevious;
+			else {
+				if (chestDay == day)
+					openChest = true;
+				else {
+					reason = wrongDay;
+					user.getLocatedDays().add(chestDay);
+					service.save(user);
+				}
+			}
 		}
 
 		if (!openChest) {
