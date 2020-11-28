@@ -47,9 +47,9 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.showWayp
 
 @Aliases("pugmas")
 @NoArgsConstructor
-@Redirect(from = "/advent", to = "/pugmas20 advent")
-@Redirect(from = "/district", to = "/pugmas20 district")
-@Redirect(from = "/waypoint", to = "/pugmas20 waypoint")
+@Redirect(from = "/advent", to = "/pugmas advent")
+@Redirect(from = "/district", to = "/pugmas district")
+@Redirect(from = "/waypoint", to = "/pugmas waypoint")
 public class PugmasCommand extends CustomCommand implements Listener {
 	private final String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
 	private final Pugmas20Service service = new Pugmas20Service();
@@ -73,6 +73,9 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		LocalDateTime now = LocalDateTime.now();
 		if (day != null)
 			now = now.withYear(2020).withMonth(12).withDayOfMonth(day);
+
+		if (isBeforePugmas(now))
+			now = now.withYear(2020).withMonth(12).withDayOfMonth(1);
 
 		if (isPastPugmas(now))
 			error("Next year!");
@@ -117,7 +120,9 @@ public class PugmasCommand extends CustomCommand implements Listener {
 			} else if (stage == QuestStage.NOT_STARTED) {
 				send("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &e(" + instructions + ")"));
 			} else  {
-				send("&f  &7☐ &3" + camelCase(quest) + " &7- &e" + (instructions == null ? "&cnull" : instructions));
+//				send("&f  &7☐ &3" + camelCase(quest) + " &7- &e" + (instructions == null ? "&cnull" : instructions));
+				JsonBuilder json = json("&f  &7☐ &3" + camelCase(quest) + " &7- ").group();
+				send(instructions == null ? json.next("&cnull").hover(camelCase(stage)) : json.next("&e" + instructions));
 			}
 		}
 
