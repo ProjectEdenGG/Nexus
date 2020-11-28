@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.utils.ColorType;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -94,7 +95,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 					teamMenus.openTeamsEditorMenu(player, arena, team);
 					return AnvilGUI.Response.text(text);
 				} else {
-					Utils.send(player, Minigames.PREFIX + "The balance percentage must be an integer.");
+					PlayerUtils.send(player, Minigames.PREFIX + "The balance percentage must be an integer.");
 					return AnvilGUI.Response.close();
 				}
 			})));

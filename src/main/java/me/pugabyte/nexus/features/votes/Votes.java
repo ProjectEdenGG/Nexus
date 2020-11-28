@@ -19,10 +19,10 @@ import me.pugabyte.nexus.models.vote.Vote;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Time.Timer;
-import me.pugabyte.nexus.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -100,7 +100,7 @@ public class Votes extends Feature implements Listener {
 
 		User user = Bot.KODA.jda().retrieveUserById(discordUser.getUserId()).complete();
 		if (user != null && user.getMutualGuilds().size() > 0) {
-			Nexus.log("[Votes] Sending vote reminder to " + Utils.getPlayer(vote.getUuid()).getName());
+			Nexus.log("[Votes] Sending vote reminder to " + PlayerUtils.getPlayer(vote.getUuid()).getName());
 			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(voteLinksEmbed);
 			user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
 		}
@@ -110,7 +110,7 @@ public class Votes extends Feature implements Listener {
 	public void onVote(VotifierEvent event) {
 		String username = event.getVote().getUsername().replaceAll(" ", "");
 		OfflinePlayer player = null;
-		try { player = Utils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
+		try { player = PlayerUtils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
 		String name = player != null ? player.getName() : "Unknown";
 		String uuid = player != null ? player.getUniqueId().toString() : "00000000-0000-0000-0000-000000000000";
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
@@ -135,7 +135,7 @@ public class Votes extends Feature implements Listener {
 			int points = vote.getExtra() + basePoints;
 			voter.addPoints(points);
 			if (player.isOnline() && player.getPlayer() != null)
-				Utils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
+				PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
 
 		Tasks.async(Votes::write);
@@ -166,7 +166,7 @@ public class Votes extends Feature implements Listener {
 				for (TopVoter topVoter : topVoters) {
 					if (++index <= 3) {
 						String name = "Unknown";
-						try { name = Utils.getPlayer(topVoter.getUuid()).getName(); } catch (PlayerNotFoundException ignore) {}
+						try { name = PlayerUtils.getPlayer(topVoter.getUuid()).getName(); } catch (PlayerNotFoundException ignore) {}
 
 						writer.write("<div class=\"col-sm-4\">" + System.lineSeparator());
 						writer.write("  <h3 style=\"text-align: center;\">#" + index + "</h3>" + System.lineSeparator());
@@ -188,7 +188,7 @@ public class Votes extends Feature implements Listener {
 						if (index < 54) {
 							String name = "Unknown";
 							try {
-								name = Utils.getPlayer(topVoter.getUuid()).getName();
+								name = PlayerUtils.getPlayer(topVoter.getUuid()).getName();
 							} catch (PlayerNotFoundException ignore) {}
 
 							writer.write("  <tr>" + System.lineSeparator());
@@ -213,7 +213,7 @@ public class Votes extends Feature implements Listener {
 					if (++index <= 50) {
 						String name = "Unknown";
 						try {
-							name = Utils.getPlayer(topVoter.getUuid()).getName();
+							name = PlayerUtils.getPlayer(topVoter.getUuid()).getName();
 						} catch (PlayerNotFoundException ignore) {}
 
 						writer.write("  <tr>" + System.lineSeparator());
@@ -241,7 +241,7 @@ public class Votes extends Feature implements Listener {
 				if (!file.exists()) file.createNewFile();
 				YamlConfiguration config = new YamlConfiguration();
 				activeVotes.forEach(vote -> {
-					OfflinePlayer player = Utils.getPlayer(vote.getUuid());
+					OfflinePlayer player = PlayerUtils.getPlayer(vote.getUuid());
 					if (player.getName() == null) return;
 					if (!config.isConfigurationSection(player.getName()))
 						config.createSection(player.getName());

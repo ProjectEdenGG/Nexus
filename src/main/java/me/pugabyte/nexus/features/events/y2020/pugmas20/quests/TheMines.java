@@ -70,7 +70,6 @@ public class TheMines implements Listener {
 		addTokenMax("themines_" + OreType.ADAMANTITE.name(), 3);
 		addTokenMax("themines_" + OreType.NECRITE.name(), 3);
 		addTokenMax("themines_" + OreType.LIGHT_ANIMICA.name(), 3);
-
 	}
 
 	@EventHandler
@@ -382,12 +381,12 @@ public class TheMines implements Listener {
 			return null;
 		}
 
-		public ItemStack getIngot(int amount) {
-			return new ItemBuilder(ingot).lore(ingot.getLore()).amount(amount).build();
-		}
-
 		public ItemStack getOre(int amount) {
 			return new ItemBuilder(ore).lore(ingot.getLore()).amount(amount).build();
+		}
+
+		public ItemStack getIngot(int amount) {
+			return new ItemBuilder(ingot).lore(ingot.getLore()).amount(amount).build();
 		}
 	}
 

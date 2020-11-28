@@ -7,7 +7,7 @@ import me.pugabyte.nexus.features.discord.Bot.HandledBy;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 
-import static me.pugabyte.nexus.utils.Utils.runCommandAsConsole;
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 
 @HandledBy(Bot.RELAY)
 public class ClearChatDiscordCommand extends Command {

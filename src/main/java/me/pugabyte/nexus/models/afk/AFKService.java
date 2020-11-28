@@ -2,8 +2,8 @@ package me.pugabyte.nexus.models.afk;
 
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.models.MySQLService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -25,11 +25,11 @@ public class AFKService extends MySQLService {
 
 	public Map<UUID, AFKPlayer> getMap() {
 		try {
-			List<AFKPlayer> results = database.where("uuid in (" + asList(Utils.getOnlineUuids()) + ")").results(AFKPlayer.class);
+			List<AFKPlayer> results = database.where("uuid in (" + asList(PlayerUtils.getOnlineUuids()) + ")").results(AFKPlayer.class);
 			Tasks.async(() -> database.table("afk").delete());
 			Map<UUID, AFKPlayer> players = new HashMap<>();
 			for (AFKPlayer afkPlayer : results) {
-				OfflinePlayer player = Utils.getPlayer(afkPlayer.getUuid());
+				OfflinePlayer player = PlayerUtils.getPlayer(afkPlayer.getUuid());
 				if (player.isOnline())
 					players.put(player.getUniqueId(), afkPlayer);
 			}

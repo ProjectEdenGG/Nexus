@@ -7,7 +7,7 @@ import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.events.models.Quest;
-import me.pugabyte.nexus.utils.Utils.EnumUtils;
+import me.pugabyte.nexus.utils.EnumUtils;
 
 public class QuestConverter extends TypeConverter implements SimpleValueConverter {
 

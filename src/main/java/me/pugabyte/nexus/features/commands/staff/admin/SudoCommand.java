@@ -5,7 +5,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
 @Permission("group.admin")
@@ -17,7 +17,7 @@ public class SudoCommand extends CustomCommand {
 
 	@Path("<player> <command...>")
 	void run(Player player, String command) {
-		Utils.runCommandAsOp(player, command);
+		PlayerUtils.runCommandAsOp(player, command);
 		send("&3Made &e" + player.getName() + " &3run &e/" + command);
 	}
 

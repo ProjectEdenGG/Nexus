@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
-import me.pugabyte.nexus.utils.Utils.IteratableEnum;
+import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;

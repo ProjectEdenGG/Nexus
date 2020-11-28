@@ -12,10 +12,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommand;
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsOp;
 import static me.pugabyte.nexus.utils.StringUtils.right;
-import static me.pugabyte.nexus.utils.Utils.runCommand;
-import static me.pugabyte.nexus.utils.Utils.runCommandAsConsole;
-import static me.pugabyte.nexus.utils.Utils.runCommandAsOp;
 
 @Data
 @NoArgsConstructor

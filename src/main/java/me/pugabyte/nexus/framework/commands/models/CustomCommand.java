@@ -30,9 +30,9 @@ import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -43,6 +43,8 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -130,6 +132,31 @@ public abstract class CustomCommand extends ICustomCommand {
 		return (Sign) targetBlock.getState();
 	}
 
+	protected Entity getTargetEntity() {
+		return player().getTargetEntity(500);
+	}
+
+	protected Entity getTargetEntityRequired() {
+		Entity targetEntity = getTargetEntity();
+		if (targetEntity == null)
+			error("You must be looking at an entity");
+		return targetEntity;
+	}
+
+	protected LivingEntity getTargetLivingEntityRequired() {
+		Entity targetEntity = getTargetEntity();
+		if (!(targetEntity instanceof LivingEntity))
+			error("You must be looking at a living entity");
+		return (LivingEntity) targetEntity;
+	}
+
+	protected Player getTargetPlayerRequired() {
+		Entity targetEntity = getTargetEntity();
+		if (!(targetEntity instanceof Player))
+			error("You must be looking at a player");
+		return (Player) targetEntity;
+	}
+
 	protected void send(CommandSender sender, String message) {
 		send(sender, json(message));
 	}
@@ -143,9 +170,9 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected void send(UUID uuid, String message) {
-		OfflinePlayer player = Utils.getPlayer(uuid.toString());
+		OfflinePlayer player = PlayerUtils.getPlayer(uuid.toString());
 		if (player != null && player.isOnline())
-			send((CommandSender) Utils.getPlayer(uuid), message);
+			send((CommandSender) PlayerUtils.getPlayer(uuid), message);
 	}
 
 	protected void send(Object object) {
@@ -352,7 +379,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected void runCommand(CommandSender sender, String commandNoSlash) {
-		Utils.runCommand(sender, commandNoSlash);
+		PlayerUtils.runCommand(sender, commandNoSlash);
 	}
 
 	protected void runCommandAsOp(String commandNoSlash) {
@@ -360,11 +387,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected void runCommandAsOp(CommandSender sender, String commandNoSlash) {
-		Utils.runCommandAsOp(sender, commandNoSlash);
+		PlayerUtils.runCommandAsOp(sender, commandNoSlash);
 	}
 
 	protected void runCommandAsConsole(String commandNoSlash) {
-		Utils.runCommandAsConsole(commandNoSlash);
+		PlayerUtils.runCommandAsConsole(commandNoSlash);
 	}
 
 	protected void checkPermission(String permission) {
@@ -482,7 +509,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected boolean isOfflinePlayerArg(int i) {
 		if (event.getArgs().size() < i) return false;
 		try {
-			Utils.getPlayer(arg(i));
+			PlayerUtils.getPlayer(arg(i));
 			return true;
 		} catch (PlayerNotFoundException ex) {
 			return false;
@@ -491,13 +518,13 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected OfflinePlayer offlinePlayerArg(int i) {
 		if (event.getArgs().size() < i) return null;
-		return Utils.getPlayer(arg(i));
+		return PlayerUtils.getPlayer(arg(i));
 	}
 
 	protected boolean isPlayerArg(int i) {
 		if (event.getArgs().size() < i) return false;
 		try {
-			return Utils.getPlayer(arg(i)).isOnline();
+			return PlayerUtils.getPlayer(arg(i)).isOnline();
 		} catch (PlayerNotFoundException ex) {
 			return false;
 		}
@@ -505,7 +532,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected Player playerArg(int i) {
 		if (event.getArgs().size() < i) return null;
-		OfflinePlayer player = Utils.getPlayer(arg(i));
+		OfflinePlayer player = PlayerUtils.getPlayer(arg(i));
 		if (!player.isOnline())
 			throw new PlayerNotOnlineException(player);
 		return player.getPlayer();
@@ -514,7 +541,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected void fallback() {
 		Fallback fallback = getClass().getAnnotation(Fallback.class);
 		if (fallback != null)
-			Utils.runCommand(sender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
+			PlayerUtils.runCommand(sender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
 		else
 			throw new InvalidInputException("Nothing to fallback to");
 	}
@@ -545,7 +572,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(OfflinePlayer.class)
 	public OfflinePlayer convertToOfflinePlayer(String value) {
 		if ("self".equalsIgnoreCase(value)) value = player().getUniqueId().toString();
-		return Utils.getPlayer(value);
+		return PlayerUtils.getPlayer(value);
 	}
 
 	@ConverterFor(Player.class)
@@ -553,7 +580,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		OfflinePlayer offlinePlayer = convertToOfflinePlayer(value);
 		if (!offlinePlayer.isOnline())
 			throw new PlayerNotOnlineException(offlinePlayer);
-		if (isPlayer() && !Utils.canSee(player(), offlinePlayer.getPlayer()))
+		if (isPlayer() && !PlayerUtils.canSee(player(), offlinePlayer.getPlayer()))
 			throw new PlayerNotOnlineException(offlinePlayer);
 
 		return offlinePlayer.getPlayer();
@@ -562,7 +589,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@TabCompleterFor({Player.class, OfflinePlayer.class})
 	public List<String> tabCompletePlayer(String filter) {
 		return Bukkit.getOnlinePlayers().stream()
-				.filter(player -> Utils.canSee(player(), player))
+				.filter(player -> PlayerUtils.canSee(player(), player))
 				.filter(player -> player.getName().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(Player::getName)
 				.collect(Collectors.toList());

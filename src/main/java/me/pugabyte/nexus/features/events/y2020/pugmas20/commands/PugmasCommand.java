@@ -20,6 +20,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines.OreType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
@@ -49,13 +50,14 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.showWayp
 @Redirect(from = "/advent", to = "/pugmas20 advent")
 @Redirect(from = "/district", to = "/pugmas20 district")
 @Redirect(from = "/waypoint", to = "/pugmas20 waypoint")
-public class Pugmas20Command extends CustomCommand implements Listener {
+public class PugmasCommand extends CustomCommand implements Listener {
+	private final String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
 	private final Pugmas20Service service = new Pugmas20Service();
 	private Pugmas20User user;
-	String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
 
-	public Pugmas20Command(CommandEvent event) {
+	public PugmasCommand(CommandEvent event) {
 		super(event);
+		PREFIX = Pugmas20.PREFIX;
 		if (isPlayer())
 			user = service.get(player());
 	}
@@ -66,6 +68,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Path("progress [player] [day]")
+	@Description("View your event progress")
 	void progress(@Arg("self") Pugmas20User user, @Arg(min = 1, max = 25, permission = "group.staff") Integer day) {
 		LocalDateTime now = LocalDateTime.now();
 		if (day != null)
@@ -77,30 +80,27 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		if (isSecondChance(now))
 			now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
 
+		day = now.getDayOfMonth();
+
 		line(2);
 
-		send(PREFIX + "Event progress:");
+		send(PREFIX + "Event progress (Day &e#" + day + "&3):");
 		line();
 
-		String advent = "";
-		day = now.getDayOfMonth();
-		if (user.getFoundDays().size() == 25) {
+		String advent;
+		AdventChest adventChest = AdventChests.getAdventChest(day);
+
+		if (user.getFoundDays().size() == 25)
 			advent = "&a☑ &3Complete";
-		} else {
-			if (user.getFoundDays().contains(day)) {
-				advent = "&a☑ &3Found today's chest";
-			} else {
-				if (day == 25) {
-					if (user.getFoundDays().size() != 24) {
-						advent = "&7☐ &3Find all chests before #25";
-					} else {
-						advent = "&7☐ &3Find the last chest";
-					}
-				} else {
-					advent = "&7☐ &3Find today's chest (&e#" + day + "&3)";
-				}
-			}
-		}
+		else if (user.getFoundDays().contains(day))
+			advent = "&a☑ &3Found today's chest";
+		else if (day == 25)
+			if (user.getFoundDays().size() != 24)
+				advent = "&7☐ &3Find all chests before #25";
+			else
+				advent = "&7☐ &3Find the last chest";
+		else
+			advent = "&7☐ &3Find today's chest (&e#" + day + " &3in the &e" + adventChest.getDistrict().getName() + " District&3)";
 
 		send("&6&lAdvent Chests");
 		send(json("&f  " + advent).hover("Click to open the Advent menu").command("/pugmas advent"));
@@ -125,6 +125,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent [day]")
+	@Description("Open the Advent menu")
 	void advent(@Arg(min = 1, max = 25, permission = "group.staff") Integer day) {
 		LocalDateTime now = LocalDateTime.now();
 		if (day != null)
@@ -164,6 +165,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Path("district")
+	@Description("View which district you are currently in")
 	void district() {
 		District district = District.of(player().getLocation());
 		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getName() + " District"));
@@ -177,6 +179,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Path("waypoint <day>")
+	@Description("Get directions to a chest you have already found")
 	void waypoint(int day) {
 		if (!user.getLocatedDays().contains(day))
 			error("You have not located that chest yet");
@@ -374,8 +377,8 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "Set torches lit to " + lit);
 	}
 
-	@Path("debug <player>")
 	@Permission("group.admin")
+	@Path("debug <player>")
 	void debugUser(@Arg("self") Pugmas20User user) {
 		send(user.toPrettyString());
 	}

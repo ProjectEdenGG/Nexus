@@ -8,9 +8,9 @@ import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.Env;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -195,7 +195,7 @@ public class Discord extends Feature {
 
 	private static String getBridgeTopic() {
 		List<Player> players = Bukkit.getOnlinePlayers().stream()
-				.filter(player -> !Utils.isVanished(player))
+				.filter(player -> !PlayerUtils.isVanished(player))
 				.sorted(Comparator.comparing(Player::getName))
 				.collect(Collectors.toList());
 
@@ -226,7 +226,7 @@ public class Discord extends Feature {
 		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
 					String name = discordize(player.getName());
-					if (Utils.isVanished(player))
+					if (PlayerUtils.isVanished(player))
 						name += " _[V]_";
 					if (AFK.get(player).isAfk())
 						name += " _[AFK]_";

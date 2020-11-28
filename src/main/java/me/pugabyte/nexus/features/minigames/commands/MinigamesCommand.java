@@ -29,9 +29,9 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameExceptio
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -444,7 +444,7 @@ public class MinigamesCommand extends CustomCommand {
 	Minigamer convertToMinigamer(String value) {
 		if ("self".equalsIgnoreCase(value))
 			return minigamer;
-		OfflinePlayer player = Utils.getPlayer(value);
+		OfflinePlayer player = PlayerUtils.getPlayer(value);
 		if (!player.isOnline())
 			throw new PlayerNotOnlineException(player);
 		return PlayerManager.get(player.getPlayer());

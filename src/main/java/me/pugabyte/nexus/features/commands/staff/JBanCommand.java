@@ -6,7 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.text.DecimalFormat;
@@ -90,9 +90,9 @@ public class JBanCommand extends CustomCommand {
 		DecimalFormat nf = new DecimalFormat("#.00");
 		String daysStr = nf.format(days);
 
-		Utils.wakka("Debug:");
-		Utils.wakka("Days: " + daysStr);
-		Utils.wakka("Leftover: " + leftover);
+		PlayerUtils.wakka("Debug:");
+		PlayerUtils.wakka("Days: " + daysStr);
+		PlayerUtils.wakka("Leftover: " + leftover);
 
 		// 15 minutes is 0.01d, but any less than that, and it breaks
 		// 15 = 0.01

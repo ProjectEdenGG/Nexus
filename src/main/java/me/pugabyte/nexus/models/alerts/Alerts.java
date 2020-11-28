@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 
 import javax.persistence.Id;
@@ -79,7 +79,7 @@ public class Alerts {
 	}
 
 	public void tryAlerts(String message) {
-		Player player = (Player) Utils.getPlayer(uuid);
+		Player player = (Player) PlayerUtils.getPlayer(uuid);
 
 		if (message.toLowerCase().contains(player.getName().toLowerCase())) {
 			playSound();
@@ -108,7 +108,7 @@ public class Alerts {
 
 	public void playSound() {
 		if (!isMuted())
-			Jingle.PING.play(Utils.getPlayer(uuid).getPlayer());
+			Jingle.PING.play(PlayerUtils.getPlayer(uuid).getPlayer());
 	}
 
 	@Data

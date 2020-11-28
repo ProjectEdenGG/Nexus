@@ -6,7 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 
 import java.util.Collections;
@@ -25,7 +25,7 @@ public class OnlineStaffCommand extends CustomCommand {
 		List<Rank> ranks = Rank.getStaff();
 		Collections.reverse(ranks);
 
-		long vanished = Bukkit.getOnlinePlayers().stream().filter(Utils::isVanished).count();
+		long vanished = Bukkit.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
 		long online = Rank.getOnlineStaff().size() - vanished;
 		boolean canSeeVanished = player().hasPermission("pv.see");
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");
@@ -45,11 +45,11 @@ public class OnlineStaffCommand extends CustomCommand {
 	}
 
 	private boolean canSee(Nerd nerd) {
-		return Utils.canSee(player(), nerd.getPlayer()) && player().canSee(nerd.getPlayer());
+		return PlayerUtils.canSee(player(), nerd.getPlayer()) && player().canSee(nerd.getPlayer());
 	}
 
 	String getNameWithModifiers(Nerd nerd) {
-		boolean vanished = Utils.isVanished(nerd.getPlayer());
+		boolean vanished = PlayerUtils.isVanished(nerd.getPlayer());
 		boolean afk = AFK.get(nerd.getPlayer()).isAfk();
 
 		String modifiers = "";

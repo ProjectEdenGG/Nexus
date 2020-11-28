@@ -13,7 +13,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConve
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -82,7 +82,7 @@ public class Home extends PlayerOwnedObject {
 				location.add(0, .5, 0);
 			player.teleport(location, TeleportCause.COMMAND);
 		} else
-			Utils.send(player, HomesFeature.PREFIX + "&cYou don't have access to that home");
+			PlayerUtils.send(player, HomesFeature.PREFIX + "&cYou don't have access to that home");
 	}
 
 	public boolean hasAccess(Player player) {

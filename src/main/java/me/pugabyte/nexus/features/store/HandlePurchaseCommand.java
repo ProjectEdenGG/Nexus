@@ -16,10 +16,10 @@ import me.pugabyte.nexus.models.purchase.Purchase;
 import me.pugabyte.nexus.models.purchase.PurchaseService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
@@ -51,11 +51,11 @@ public class HandlePurchaseCommand extends CustomCommand {
 					return;
 				}
 
-				packageType.getPermissions().forEach(permission -> Nexus.getPerms().playerRemove(null, Utils.getPlayer(uuid), permission));
+				packageType.getPermissions().forEach(permission -> Nexus.getPerms().playerRemove(null, PlayerUtils.getPlayer(uuid), permission));
 				packageType.getExpirationCommands().stream()
 						.map(StringUtils::trimFirst)
-						.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(uuid).getName()))
-						.forEach(Utils::runCommandAsConsole);
+						.map(command -> command.replaceAll("\\[player]", PlayerUtils.getPlayer(uuid).getName()))
+						.forEach(PlayerUtils::runCommandAsConsole);
 
 				service.complete(task);
 			});
@@ -102,7 +102,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 							"Enjoy your " + purchase.getPackageName() + " perk!");
 
 				if (purchase.getPurchaserUuid().length() == 36) {
-					Nexus.getPerms().playerAdd(null, Utils.getPlayer(purchase.getPurchaserUuid()), "donated");
+					Nexus.getPerms().playerAdd(null, PlayerUtils.getPlayer(purchase.getPurchaserUuid()), "donated");
 
 					DiscordUser user = new DiscordService().get(purchase.getPurchaserUuid());
 					if (user.getUserId() != null)
@@ -112,13 +112,13 @@ public class HandlePurchaseCommand extends CustomCommand {
 				}
 			}
 
-			OfflinePlayer permsUser = Utils.getPlayer(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
+			OfflinePlayer permsUser = PlayerUtils.getPlayer(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
 			packageType.getPermissions().forEach(permission ->
 					runCommandAsConsole("lp user " + permsUser.getUniqueId().toString() + " permission set " + permission + " true"));
 
 			packageType.getCommands().stream()
-					.map(command -> command.replaceAll("\\[player]", Utils.getPlayer(purchase.getUuid()).getName()))
-					.forEach(Utils::runCommandAsConsole);
+					.map(command -> command.replaceAll("\\[player]", PlayerUtils.getPlayer(purchase.getUuid()).getName()))
+					.forEach(PlayerUtils::runCommandAsConsole);
 
 			if (packageType.getExpirationDays() > 0)
 				new TaskService().save(new Task("package-expire", new HashMap<String, Object>() {{

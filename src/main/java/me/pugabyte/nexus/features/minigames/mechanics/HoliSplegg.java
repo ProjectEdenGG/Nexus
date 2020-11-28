@@ -13,7 +13,6 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamles
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,7 +61,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 
 		event.getMatch().getTasks().repeat(Time.SECOND, Time.SECOND, () -> {
 			matchData.setTime(matchData.getTime() + 1);
-			if (Utils.isInWater(matchData.getArmorStand()))
+			if (matchData.getArmorStand().isInWater())
 				event.getMatch().end();
 		});
 	}

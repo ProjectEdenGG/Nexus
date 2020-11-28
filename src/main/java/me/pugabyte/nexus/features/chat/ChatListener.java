@@ -17,8 +17,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.regex.Pattern;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommand;
 import static me.pugabyte.nexus.utils.StringUtils.right;
-import static me.pugabyte.nexus.utils.Utils.runCommand;
 
 @NoArgsConstructor
 public class ChatListener implements Listener {

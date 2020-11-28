@@ -9,8 +9,8 @@ import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -56,8 +56,8 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 				potions.append(potion.getName().substring(0, 1).toUpperCase()).append(potion.getName().substring(1).toLowerCase()).append(", ");
 
 			potions = new StringBuilder(potions.substring(0, potions.lastIndexOf(", ")));
-			Utils.send(player, PREFIX + "&3Available Potion Effect Types:");
-			Utils.send(player, PREFIX + "&e" + potions);
+			PlayerUtils.send(player, PREFIX + "&3Available Potion Effect Types:");
+			PlayerUtils.send(player, PREFIX + "&e" + potions);
 		}));
 
 		contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&eAdd Potion Effect"),

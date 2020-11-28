@@ -11,8 +11,8 @@ import me.pugabyte.nexus.features.minigames.menus.annotations.CustomMechanicSett
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.arenas.GrabAJumbuckArena;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -45,7 +45,7 @@ public class GrabAJumbuckMenu extends MenuUtils implements InventoryProvider {
 				e -> Tasks.wait(2, () -> {
 					if (ItemUtils.isNullOrAir(player.getItemOnCursor())) return;
 					if (arena.getSheepSpawnBlocks().size() == 9) {
-						Utils.send(player, Minigames.PREFIX + "The max amount of blocks has already been set.");
+						PlayerUtils.send(player, Minigames.PREFIX + "The max amount of blocks has already been set.");
 						return;
 					}
 					arena.getSheepSpawnBlocks().add(player.getItemOnCursor().getType());

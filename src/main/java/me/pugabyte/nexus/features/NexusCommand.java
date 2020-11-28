@@ -37,6 +37,7 @@ import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.PacketUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
@@ -44,7 +45,6 @@ import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
@@ -169,9 +169,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 			service.process("command-test").forEach(task ->
 					Tasks.wait(Time.MINUTE.x(2), () -> {
 						Map<String, Object> data = task.getJson();
-						OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
+						OfflinePlayer player = PlayerUtils.getPlayer((String) data.get("uuid"));
 						if (player.isOnline() && player.getPlayer() != null)
-							Utils.send(player, (String) data.get("message"));
+							PlayerUtils.send(player, (String) data.get("message"));
 						service.complete(task);
 					}));
 		});

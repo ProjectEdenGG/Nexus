@@ -18,7 +18,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.UncivilEngineersMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
@@ -243,7 +243,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 //			TODO when API saving works again
 //			WEUtils.save("uncivilengineers/" + arena.getName() + "_strip", arena.getRegion("strip_1"));
 			WEUtils.setSelection(player, arena.getRegion("strip_1"));
-			Utils.runCommand(player, "nexus schem save " + arena.getName() + "_strip");
+			PlayerUtils.runCommand(player, "nexus schem save " + arena.getName() + "_strip");
 			RegionManager regionManager = WGUtils.getManager();
 			Region region1 = arena.getRegion("strip_1");
 			for (int originID : arena.getOrigins().keySet()) {
@@ -255,11 +255,11 @@ public class UncivilEngineers extends TeamlessMechanic {
 			}
 			regionManager.save();
 		} catch (NullPointerException ex) {
-			Utils.send(player, Minigames.PREFIX + "&cYou must setup the region: " + arena.getRegionBaseName() + "_strip_1");
+			PlayerUtils.send(player, Minigames.PREFIX + "&cYou must setup the region: " + arena.getRegionBaseName() + "_strip_1");
 		} catch (StorageException e) {
 			e.printStackTrace();
 		}
-		Utils.send(player, Minigames.PREFIX + "Successfully setup the arena");
+		PlayerUtils.send(player, Minigames.PREFIX + "Successfully setup the arena");
 	}
 
 	@Data

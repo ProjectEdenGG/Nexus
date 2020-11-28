@@ -8,8 +8,8 @@ import me.pugabyte.nexus.features.discord.Bot.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.BNException;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
 import java.text.NumberFormat;
@@ -29,11 +29,11 @@ public class BalanceDiscordCommand extends Command {
 		Tasks.async(() -> {
 			try {
 				DiscordUser user = new DiscordService().checkVerified(event.getAuthor().getId());
-				OfflinePlayer player = Utils.getPlayer(user.getUuid());
+				OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 
 				String[] args = event.getArgs().split(" ");
 				if (args.length > 0 && !isNullOrEmpty(args[0]))
-					player = Utils.getPlayer(args[0]);
+					player = PlayerUtils.getPlayer(args[0]);
 
 				String formatted = NumberFormat.getCurrencyInstance().format(Nexus.getEcon().getBalance(player));
 				boolean isSelf = user.getUuid().equals(player.getUniqueId().toString());

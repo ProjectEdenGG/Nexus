@@ -7,8 +7,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.IntegerListSerializer;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
 import javax.persistence.GeneratedValue;
@@ -34,7 +34,7 @@ public class DailyReward {
 	private List<Integer> claimed;
 
 	public OfflinePlayer getPlayer() {
-		return Utils.getPlayer(uuid);
+		return PlayerUtils.getPlayer(uuid);
 	}
 
 	public void increaseStreak() {

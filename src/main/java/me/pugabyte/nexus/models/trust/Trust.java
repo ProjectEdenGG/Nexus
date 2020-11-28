@@ -12,8 +12,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils.IteratableEnum;
 import org.bukkit.Material;
 
 import java.util.ArrayList;

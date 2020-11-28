@@ -9,11 +9,11 @@ import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
-import static me.pugabyte.nexus.utils.Utils.runCommandAsConsole;
 
 @HandledBy(Bot.RELAY)
 public class BanDiscordCommand extends Command {
@@ -33,7 +33,7 @@ public class BanDiscordCommand extends Command {
 			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
 			if (!Strings.isNullOrEmpty(user.getUserId()))
 				Tasks.sync(() ->
-						runCommandAsConsole(trimFirst(event.getMessage().getContentRaw() + " --sender=" + Utils.getPlayer(user.getUuid()).getName())));
+						runCommandAsConsole(trimFirst(event.getMessage().getContentRaw() + " --sender=" + PlayerUtils.getPlayer(user.getUuid()).getName())));
 		});
 	}
 

@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.getNearestPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-import static me.pugabyte.nexus.utils.Utils.getNearestPlayer;
 
 @Data
 @Builder

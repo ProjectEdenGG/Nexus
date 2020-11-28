@@ -10,7 +10,7 @@ import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -48,16 +48,16 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 
 			contents.set(slot, ClickableItem.from(display, e -> {
 				if (voter.getPoints() < item.getPrice()) {
-					Utils.send(player, PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!");
+					PlayerUtils.send(player, PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!");
 					return;
 				}
 
 				if (item.getMoney() > 0)
 					Nexus.getEcon().depositPlayer(player, item.getMoney());
 				if (item.getConsoleCommand() != null && item.getConsoleCommand().length() > 0)
-					Utils.runCommandAsConsole(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
+					PlayerUtils.runCommandAsConsole(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getCommand() != null && item.getCommand().length() > 0)
-					Utils.runCommand(player, item.getCommand().replaceAll("\\[player]", player.getName()));
+					PlayerUtils.runCommand(player, item.getCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getOnPurchase() != null)
 					item.getOnPurchase().accept(player, item);
 				if (item.getItems() != null && item.getItems().size() > 0)
@@ -65,7 +65,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 
 				if (item.getPrice() > 0) {
 					voter.takePoints(item.getPrice());
-					Utils.send(player, PREFIX + "You spent &e" + item.getPrice() + plural(" &3point", item.getPrice())
+					PlayerUtils.send(player, PREFIX + "You spent &e" + item.getPrice() + plural(" &3point", item.getPrice())
 							+ " on &e" + stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining.");
 				}
 

@@ -18,9 +18,9 @@ import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.freeze.FreezeService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -49,11 +49,11 @@ public class FreezeDiscordCommand extends Command {
 					throw new NoPermissionException();
 
 				FreezeService service = new FreezeService();
-				OfflinePlayer executor = Utils.getPlayer(user.getUuid());
+				OfflinePlayer executor = PlayerUtils.getPlayer(user.getUuid());
 
 				for (String arg : event.getArgs().split(" ")) {
 					try {
-						OfflinePlayer player = Utils.getPlayer(arg);
+						OfflinePlayer player = PlayerUtils.getPlayer(arg);
 						if (!player.isOnline() || player.getPlayer() == null)
 							throw new PlayerNotOnlineException(player);
 
@@ -64,7 +64,7 @@ public class FreezeDiscordCommand extends Command {
 								service.save(freeze);
 								if (player.getPlayer().getVehicle() != null)
 									player.getPlayer().getVehicle().remove();
-								Utils.send(player, "&cYou have been unfrozen.");
+								PlayerUtils.send(player, "&cYou have been unfrozen.");
 								Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
 							} else
 								FreezeCommand.freezePlayer(player.getPlayer());
@@ -76,7 +76,7 @@ public class FreezeDiscordCommand extends Command {
 						service.save(freeze);
 
 						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has frozen &e" + player.getName(), StaticChannel.STAFF);
-						Utils.send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
+						PlayerUtils.send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));
 						if (!(ex instanceof BNException))

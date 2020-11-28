@@ -15,8 +15,8 @@ import me.pugabyte.nexus.models.mcmmo.McMMOPrestige;
 import me.pugabyte.nexus.models.mcmmo.McMMOService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -31,7 +31,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A frozen sword that slows your enemies and may trap them in ice") {
 				@Override
 				void onClick(Player player) {
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_SWORD.name() + " sharpness:2 looting:2 mending:1 iceaspect:3 knockback:1 unbreaking:2");
+					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_SWORD.name() + " sharpness:2 looting:2 mending:1 iceaspect:3 knockback:1 unbreaking:2");
 				}
 		},
 		MINING(1, 5, Material.DIAMOND_PICKAXE,
@@ -39,21 +39,21 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				@Override
 				void onClick(Player player) {
 					ItemUtils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for Glowing Enchant").build());
-					Utils.send(player, "&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own.");
+					PlayerUtils.send(player, "&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own.");
 				}
 		},
 		EXCAVATION(2, 2, Material.DIAMOND_SHOVEL,
 				"A shovel that hastens the user after every block broken") {
 				@Override
 				void onClick(Player player) {
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_SHOVEL.name() + " efficiency:5 unbreaking:3 silk_touch:1 mending:1");
+					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_SHOVEL.name() + " efficiency:5 unbreaking:3 silk_touch:1 mending:1");
 				}
 		},
 		AXES(2, 4, Material.DIAMOND_AXE,
 				"The power of Thor is imbued in this axe, giving you a chance of smiting your target with lightning") {
 				@Override
 				void onClick(Player player) {
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_AXE.name() + " thunderingblow:2 sharpness:3 mending:1 unbreaking:3");
+					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_AXE.name() + " thunderingblow:2 sharpness:3 mending:1 unbreaking:3");
 				}
 		},
 		HERBALISM(2, 6, Material.DIAMOND_HOE,
@@ -67,14 +67,14 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A godly rod that increases your catch") {
 				@Override
 				void onClick(Player player) {
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.FISHING_ROD.name() + " lure:4 luck:5 unbreaking:3 mending:1");
+					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.FISHING_ROD.name() + " lure:4 luck:5 unbreaking:3 mending:1");
 				}
 		},
 		ACROBATICS(3, 3, Material.DIAMOND_BOOTS,
 				"Jump higher and run faster with these boots") {
 				@Override
 				void onClick(Player player) {
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_BOOTS.name() + " protection:2 gears:3 springs:2 feather_falling:3 mending:1 unbreaking:2");
+					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_BOOTS.name() + " protection:2 gears:3 springs:2 feather_falling:3 mending:1 unbreaking:2");
 				}
 		},
 		REPAIR(3, 5, Material.ANVIL,
@@ -83,14 +83,14 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				@Override
 				void onClick(Player player) {
 					ItemUtils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for AutoRepair").build());
-					Utils.send(player, "&ePut in a &c/ticket &eto have a staff member add auto repair to one item you own.");
+					PlayerUtils.send(player, "&ePut in a &c/ticket &eto have a staff member add auto repair to one item you own.");
 				}
 		},
 		ARCHERY(3, 7, Material.BOW,
 				"Now you can be the wither- enemies take wither damage for a short period from every successful hit") {
 				@Override
 				void onClick(Player player) {
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.BOW.name() + " power:2 wither:2 infinity:1 mending:1 unbreaking:2 punch:1");
+					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.BOW.name() + " power:2 wither:2 infinity:1 mending:1 unbreaking:2 punch:1");
 				}
 		},
 		TAMING(4, 0, Material.BONE,
@@ -98,23 +98,23 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				@Override
 				void onClick(Player player) {
 					Nexus.getPerms().playerAdd(player, "horsepicker.pick");
-					Utils.send(player, "&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!");
+					PlayerUtils.send(player, "&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!");
 				}
 		},
 		WOODCUTTING(4, 2, Material.OAK_LOG,
 				"For every log or plank broken this shiny new axe will give you a short burst of haste") {
 				@Override
 				void onClick(Player player) {
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_AXE.name() + " energizing:3 mending:1");
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.LEATHER_HELMET.name() + " implants:1");
+					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_AXE.name() + " energizing:3 mending:1");
+					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.LEATHER_HELMET.name() + " implants:1");
 				}
 		},
 		UNARMED(4, 6, Material.ROTTEN_FLESH,
 				"Punching your enemies to death can be dangerous work, this bandage and stick will help with that.") {
 			@Override
 			void onClick(Player player) {
-				Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.PAPER.name() + " bandage");
-				Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.STICK.name() + " Quarterstaff disarming:1");
+				PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.PAPER.name() + " bandage");
+				PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.STICK.name() + " Quarterstaff disarming:1");
 			}
 		},
 		ALCHEMY(4, 8, Material.SPLASH_POTION,
@@ -122,9 +122,9 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 						"Watch your potions soar like they were shot from a bow to hit friend and foe alike from afar!") {
 				@Override
 				void onClick(Player player) {
-					Utils.runCommandAsConsole("ce give " + player.getName() + " " + Material.HOPPER.name() + " potionlauncher");
+					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.HOPPER.name() + " potionlauncher");
 					Nexus.getPerms().playerAdd(player, "combine.use");
-					Utils.send(player, "&eTo shoot potions, first run &c/combine &eto combine all similar potions in your inventory into one stack, " +
+					PlayerUtils.send(player, "&eTo shoot potions, first run &c/combine &eto combine all similar potions in your inventory into one stack, " +
 							"then place the stack in the slot to the right of the Potion Launcher. If you place the hopper, hold it and do &c/fixpotionlauncher");
 				}
 		};
@@ -203,14 +203,14 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		for (PrimarySkillType skillType : PrimarySkillType.values()) {
 			player.modifySkill(skillType, 0);
 		}
-		Utils.send(player.getPlayer(), "&3You successfully reset all of your McMMO skills");
+		PlayerUtils.send(player.getPlayer(), "&3You successfully reset all of your McMMO skills");
 	}
 
 	public void prestigeAll(Player player) {
 		// TODO Koda Broadcasts
 		Koda.say(player.getName() + " has reset all of their McMMO skills!");
 
-		Utils.runCommandAsConsole("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
+		PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
 		Nexus.getEcon().depositPlayer(player, 20000);
 
 		for (PrimarySkillType skillType : PrimarySkillType.values()) {

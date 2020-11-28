@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -30,7 +30,7 @@ public class CommandListener implements Listener {
 
 			event.setCancelled(true);
 			String command = redirect.getValue() + event.getMessage().substring(redirect.getKey().length());
-			Utils.runCommand(event.getPlayer(), trimFirst(command));
+			PlayerUtils.runCommand(event.getPlayer(), trimFirst(command));
 			return;
 		}
 	}

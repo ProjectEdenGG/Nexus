@@ -5,9 +5,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.inventivetalent.glow.GlowAPI;
@@ -38,10 +36,7 @@ public class HealthCommand extends CustomCommand {
 
 	@Path("target [number]")
 	void target(Double health) {
-		LivingEntity target = Utils.getTargetEntity(player());
-
-		if (target == null)
-			throw new InvalidInputException("No target entity found");
+		LivingEntity target = getTargetLivingEntityRequired();
 
 		Tasks.GlowTask.builder()
 				.duration(10 * 20)

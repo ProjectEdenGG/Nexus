@@ -9,11 +9,11 @@ import fr.minuskube.inv.content.SlotPos;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.menus.rewardchests.RewardChestLoot;
 import me.pugabyte.nexus.features.menus.rewardchests.RewardChestType;
+import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -52,7 +52,7 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 			contents.set(0, 8, ClickableItem.from(
 					new ItemBuilder(Material.BOOK).name("&eFilter:").lore("&3" + StringUtils.camelCase(type.name())).build(),
 					e -> {
-						MysteryChest.getInv(null, Utils.EnumUtils.nextWithLoop(RewardChestType.class, type.ordinal())).open(player);
+						MysteryChest.getInv(null, EnumUtils.nextWithLoop(RewardChestType.class, type.ordinal())).open(player);
 					}
 			));
 
@@ -127,7 +127,7 @@ public class MysteryChestEditProvider extends MenuUtils implements InventoryProv
 			contents.set(0, 6, ClickableItem.from(
 					new ItemBuilder(Material.BOOK).name("&eType").lore("&3" + StringUtils.camelCase(loot.getType().name())).build(),
 					e -> {
-						loot.setType(Utils.EnumUtils.nextWithLoop(RewardChestType.class, loot.getType().ordinal()));
+						loot.setType(EnumUtils.nextWithLoop(RewardChestType.class, loot.getType().ordinal()));
 						MysteryChest.getConfig().set(id + "", loot);
 						MysteryChest.saveConfig();
 						Tasks.wait(1, () -> MysteryChest.getInv(id, type).open(player));

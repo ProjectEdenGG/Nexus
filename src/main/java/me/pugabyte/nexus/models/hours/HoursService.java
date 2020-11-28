@@ -12,7 +12,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.OfflinePlayer;
@@ -132,7 +132,7 @@ public class HoursService extends MongoService {
 
 			activePlayers.addAll(
 					getPageResults(collection.aggregate(arguments)).stream()
-							.map(pageResult -> Utils.getPlayer(pageResult.getUuid()))
+							.map(pageResult -> PlayerUtils.getPlayer(pageResult.getUuid()))
 							.collect(Collectors.toList())
 			);
 		}

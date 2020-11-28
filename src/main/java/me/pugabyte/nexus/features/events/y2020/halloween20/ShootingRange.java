@@ -5,9 +5,9 @@ import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -68,14 +68,14 @@ public class ShootingRange implements Listener {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         giveItem(event.getPlayer(), Item.BOW);
         giveItem(event.getPlayer(), Item.ARROW);
-        Utils.send(event.getPlayer(), PREFIX + "You received a bow. Hit the skull targets to get points!");
+        PlayerUtils.send(event.getPlayer(), PREFIX + "You received a bow. Hit the skull targets to get points!");
     }
 
     @EventHandler
     public void onRegionExit(RegionLeftEvent event) {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         removeItems(event.getPlayer());
-        Utils.send(event.getPlayer(), PREFIX + "You got a total of &e" + getPoints(event.getPlayer()) + " &3points");
+        PlayerUtils.send(event.getPlayer(), PREFIX + "You got a total of &e" + getPoints(event.getPlayer()) + " &3points");
         removePoints(event.getPlayer());
     }
 

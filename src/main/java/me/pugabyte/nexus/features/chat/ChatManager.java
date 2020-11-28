@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.canSee;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-import static me.pugabyte.nexus.utils.Utils.canSee;
 
 public class ChatManager {
 	@Getter

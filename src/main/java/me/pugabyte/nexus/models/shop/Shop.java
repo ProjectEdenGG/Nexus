@@ -18,8 +18,8 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemMetaConver
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.Utils;
-import me.pugabyte.nexus.utils.Utils.IteratableEnum;
+import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -205,7 +205,7 @@ public class Shop extends PlayerOwnedObject {
 				Nexus.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
 			giveItem(customer, product.getItem());
 			new ShopService().save(product.getShop());
-			Utils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for $" + pretty(price));
+			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for $" + pretty(price));
 		}
 
 		@Override
@@ -263,7 +263,7 @@ public class Shop extends PlayerOwnedObject {
 				product.getShop().getHolding().add(price);
 			giveItem(customer, product.getItem());
 			new ShopService().save(product.getShop());
-			Utils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + pretty(price));
+			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + pretty(price));
 		}
 
 		@Override
@@ -325,7 +325,7 @@ public class Shop extends PlayerOwnedObject {
 			if (!isMarket(product))
 				product.getShop().getHolding().add(product.getItem());
 			new ShopService().save(product.getShop());
-			Utils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for $" + pretty(price));
+			PlayerUtils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for $" + pretty(price));
 		}
 
 		@Override

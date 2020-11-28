@@ -12,10 +12,10 @@ import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -67,7 +67,7 @@ public class JoinQuit extends Feature implements Listener {
 
 			// TODO: mutemenu
 			Bukkit.getOnlinePlayers().forEach(_player -> {
-				Utils.send(_player, ingame);
+				PlayerUtils.send(_player, ingame);
 
 				if (!player.hasPlayedBefore())
 					Jingle.FIRST_JOIN.playAll();
@@ -99,7 +99,7 @@ public class JoinQuit extends Feature implements Listener {
 
 		// TODO: mutemenu
 		Bukkit.getOnlinePlayers().forEach(_player -> {
-			Utils.send(_player, ingame);
+			PlayerUtils.send(_player, ingame);
 			Jingle.QUIT.playAll();
 		});
 
@@ -124,7 +124,7 @@ public class JoinQuit extends Feature implements Listener {
 			Koda.replyDiscord("**Welcome to Bear Nation, " + discordize(player.getName()) + "!**");
 		}
 
-		if (!Utils.isVanished(player))
+		if (!PlayerUtils.isVanished(player))
 			join(player);
 	}
 
@@ -144,7 +144,7 @@ public class JoinQuit extends Feature implements Listener {
 
 	public static void updateVanished() {
 		Bukkit.getOnlinePlayers().forEach(player -> {
-			if (Utils.isVanished(player))
+			if (PlayerUtils.isVanished(player))
 				vanished.add(player);
 			else
 				vanished.remove(player);

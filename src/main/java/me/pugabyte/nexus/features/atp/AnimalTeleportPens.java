@@ -4,9 +4,9 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
@@ -112,23 +112,23 @@ public class AnimalTeleportPens {
 	public void confirm(Player player, Location toLoc) {
 		ProtectedRegion region = getRegion(player);
 		if (region == null) {
-			Utils.send(player, PREFIX + "You are not inside an ATP region");
+			PlayerUtils.send(player, PREFIX + "You are not inside an ATP region");
 			return;
 		}
 		if (multiplePlayers()) {
 			player.closeInventory();
-			Utils.send(player, PREFIX + "&cDetected multiple players. Cancelling.");
+			PlayerUtils.send(player, PREFIX + "&cDetected multiple players. Cancelling.");
 			return;
 		}
 		List<Entity> entities = getEntities();
 		if (entities.size() == 0) {
-			Utils.send(player, PREFIX + "&cThere are no entities to teleport");
+			PlayerUtils.send(player, PREFIX + "&cThere are no entities to teleport");
 			return;
 		}
 		int price = getPrice(entities);
 		double balance = Nexus.getEcon().getBalance(player);
 		if (balance < price) {
-			Utils.send(player, PREFIX + "&cYou do not have enough money to use the ATP");
+			PlayerUtils.send(player, PREFIX + "&cYou do not have enough money to use the ATP");
 			return;
 		}
 

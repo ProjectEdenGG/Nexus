@@ -9,10 +9,10 @@ import me.pugabyte.nexus.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.nexus.framework.exceptions.BNException;
 import me.pugabyte.nexus.models.vote.TopVoter;
 import me.pugabyte.nexus.models.vote.VoteService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
 import java.io.BufferedWriter;
@@ -46,11 +46,11 @@ public class EndOfMonth {
 				Koda.announce(data.getDiscordMessage());
 				writeHtml(data);
 
-				new MysteryChest(Utils.getPlayer(data.getMysteryChestWinner().getUuid())).give(1, RewardChestType.VOTE);
+				new MysteryChest(PlayerUtils.getPlayer(data.getMysteryChestWinner().getUuid())).give(1, RewardChestType.VOTE);
 
-				data.getEco30kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 30000));
-				data.getEco20kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 20000));
-				data.getEco15kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(Utils.getPlayer(topVoter.getUuid()), 15000));
+				data.getEco30kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(PlayerUtils.getPlayer(topVoter.getUuid()), 30000));
+				data.getEco20kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(PlayerUtils.getPlayer(topVoter.getUuid()), 20000));
+				data.getEco15kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(PlayerUtils.getPlayer(topVoter.getUuid()), 15000));
 			} catch (BNException ex) {
 				Nexus.warn("[Votes] [End Of Month] " + ex.getMessage());
 			}
@@ -123,7 +123,7 @@ public class EndOfMonth {
 				names = topVoters.stream()
 						.filter(Objects::nonNull)
 						.map(topVoter -> {
-							OfflinePlayer player = Utils.getPlayer(topVoter.getUuid());
+							OfflinePlayer player = PlayerUtils.getPlayer(topVoter.getUuid());
 							if (player != null)
 								return player.getName();
 							return "Unknown";
@@ -184,7 +184,7 @@ public class EndOfMonth {
 		try (BufferedWriter writer = Files.newBufferedWriter(table, StandardCharsets.UTF_8)) {
 			int index = 0;
 			for (TopVoter topVoter : data.getTopVoters()) {
-				OfflinePlayer player = Utils.getPlayer(topVoter.getUuid());
+				OfflinePlayer player = PlayerUtils.getPlayer(topVoter.getUuid());
 				++index;
 
 				writer.write("  <tr>" + System.lineSeparator());

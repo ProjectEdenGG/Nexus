@@ -8,9 +8,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.delayedban.DelayedBan;
 import me.pugabyte.nexus.models.delayedban.DelayedBanService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,7 +37,7 @@ public class DelayedBanCommand extends CustomCommand implements Listener {
 		for (Object o : service.getAll()) {
 			delayedBan = (DelayedBan) o;
 			String playerName = delayedBan.getOfflinePlayer().getName();
-			String staffName = Utils.getPlayer(delayedBan.getUuid_staff()).getName();
+			String staffName = PlayerUtils.getPlayer(delayedBan.getUuid_staff()).getName();
 			String reason = delayedBan.getReason();
 			String duration = delayedBan.getDuration();
 			send(" &8- &e" + playerName + "&3: banned by &e" + staffName + " &3for &e" + reason + " &3for &e" + duration);
@@ -74,7 +74,7 @@ public class DelayedBanCommand extends CustomCommand implements Listener {
 			String reason = delayedBan.getReason();
 			String duration = delayedBan.getDuration();
 
-			Utils.runCommandAsConsole("ban " + playerName + " " + duration + " " + reason);
+			PlayerUtils.runCommandAsConsole("ban " + playerName + " " + duration + " " + reason);
 			service.deleteSync(delayedBan);
 		});
 	}

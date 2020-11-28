@@ -12,7 +12,7 @@ import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.citizensnpcs.api.CitizensAPI;
@@ -54,7 +54,7 @@ public class ResourceWorld implements Listener {
 
 		if (event.getTo().getWorld().getName().startsWith("resource")) {
 			if (!WorldGroup.get(event.getFrom().getWorld()).equals(WorldGroup.SURVIVAL) || event.getFrom().getWorld().getName().startsWith("staff")) {
-				Utils.send(player, "&eYou can only enter the resource world from the Survival world");
+				PlayerUtils.send(player, "&eYou can only enter the resource world from the Survival world");
 				event.setCancelled(true);
 				return;
 			}
@@ -82,10 +82,10 @@ public class ResourceWorld implements Listener {
 			}
 
 			if (rejectedMaterials.size() != 0) {
-				Utils.send(player, "&cYou can not go to the resource world with the below items, " +
+				PlayerUtils.send(player, "&cYou can not go to the resource world with the below items, " +
 						"please remove them from your inventory before continuing:");
 				for (Material material : rejectedMaterials) {
-					Utils.send(player, "&e- " + camelCase(material.name()));
+					PlayerUtils.send(player, "&e- " + camelCase(material.name()));
 				}
 			}
 
@@ -111,19 +111,19 @@ public class ResourceWorld implements Listener {
 			if (rejectedMaterials.size() != 0) {
 				if (appendMessage) {
 					for (Material material : rejectedMaterials) {
-						Utils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
+						PlayerUtils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
 					}
 				} else {
-					Utils.send(player, "&cYou can not go to the resource world with the below items, " +
+					PlayerUtils.send(player, "&cYou can not go to the resource world with the below items, " +
 							"please remove them from your shulkerbox before continuing:");
 					for (Material material : rejectedMaterials) {
-						Utils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
+						PlayerUtils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
 					}
 				}
 			}
 
 			if (!event.isCancelled()) {
-				Utils.send(player, " &4Warning: &cYou are entering the resource world! This world is regenerated on the " +
+				PlayerUtils.send(player, " &4Warning: &cYou are entering the resource world! This world is regenerated on the " +
 						"&c&lfirst of every month, &cso don't leave your stuff here or you will lose it!");
 			}
 		}
@@ -140,7 +140,7 @@ public class ResourceWorld implements Listener {
 
 		Tip tip = new TipService().get(event.getPlayer());
 		if (tip.show(TipType.RESOURCE_WORLD_STORAGE))
-			Utils.send(event.getPlayer(), " &4Warning: &cYou are currently building in the resource world! " +
+			PlayerUtils.send(event.getPlayer(), " &4Warning: &cYou are currently building in the resource world! " +
 					"This world is regenerated on the &c&lfirst of every month, &cso don't leave your stuff here or you will lose it!");
 	}
 
@@ -152,7 +152,7 @@ public class ResourceWorld implements Listener {
 
 		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
 			event.setCancelled(true);
-			Utils.send(player, "&cYou can't open your enderchest while in the resource world, due to restrictions in place to keep the /market balanced");
+			PlayerUtils.send(player, "&cYou can't open your enderchest while in the resource world, due to restrictions in place to keep the /market balanced");
 		}
 	}
 
@@ -166,7 +166,7 @@ public class ResourceWorld implements Listener {
 				case "/vault":
 				case "/playervaults":
 					event.setCancelled(true);
-					Utils.send(event.getPlayer(), "&cYou cannot use vaults while in the resource world");
+					PlayerUtils.send(event.getPlayer(), "&cYou cannot use vaults while in the resource world");
 			}
 		}
 	}
@@ -271,9 +271,9 @@ public class ResourceWorld implements Listener {
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
 		filid.spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
 
-		Utils.runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
-		Utils.runCommandAsConsole("bluemap purge " + worldName);
-		Utils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle");
+		PlayerUtils.runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
+		PlayerUtils.runCommandAsConsole("bluemap purge " + worldName);
+		PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle");
 	}
 
 }

@@ -7,7 +7,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +30,7 @@ public class DeleteArenaMenu extends MenuUtils implements InventoryProvider {
 		contents.set(1, 4, ClickableItem.from(nameItem(Material.TNT, "&4&lDELETE ARENA", "&7This cannot be undone."),
 				e -> {
 					arena.delete();
-					Utils.send(player, Minigames.PREFIX + "Arena &e" + arena.getName() + " &3deleted");
+					PlayerUtils.send(player, Minigames.PREFIX + "Arena &e" + arena.getName() + " &3deleted");
 				}));
 	}
 

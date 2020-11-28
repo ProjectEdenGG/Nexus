@@ -15,9 +15,9 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.FallingBlock;
@@ -38,8 +38,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 
-import static me.pugabyte.nexus.utils.Utils.runCommand;
-import static me.pugabyte.nexus.utils.Utils.runCommandAsOp;
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommand;
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsOp;
 
 public class MatchListener implements Listener {
 
@@ -51,7 +51,7 @@ public class MatchListener implements Listener {
 		// TODO: Move to a task triggered by entering the region
 		Tasks.repeat(Time.SECOND, Time.SECOND, () ->
 			Minigames.getActiveMinigamers().forEach(minigamer -> {
-				if (minigamer.isInMatchRegion("waterdamage") && Utils.isInWater(minigamer.getPlayer()))
+				if (minigamer.isInMatchRegion("waterdamage") && minigamer.getPlayer().isInWater())
 					minigamer.getPlayer().damage(1.25);
 		}));
 	}
@@ -80,7 +80,7 @@ public class MatchListener implements Listener {
 			runCommand(player, "b paint");
 		if (player.hasPermission("worldguard.region.bypass.*"))
 			runCommand(player, "wgedit off");
-		if (Utils.isVanished(player))
+		if (PlayerUtils.isVanished(player))
 			runCommand(player, "vanish off");
 		runCommandAsOp(player, "pweather clear");
 	}

@@ -8,7 +8,7 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.Bukkit;
 
@@ -46,7 +46,7 @@ public class DiscordChatEvent extends ChatEvent {
 		if (member != null) {
 			DiscordUser user = new DiscordService().getFromUserId(member.getUser().getId());
 			if (user != null && !isNullOrEmpty(user.getUuid()))
-				return new ChatService().get(Utils.getPlayer(user.getUuid()));
+				return new ChatService().get(PlayerUtils.getPlayer(user.getUuid()));
 		}
 		return null;
 	}

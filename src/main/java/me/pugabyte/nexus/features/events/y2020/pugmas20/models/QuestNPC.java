@@ -13,9 +13,9 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -381,7 +381,7 @@ public enum QuestNPC {
 
 				String message = "&3" + npcName.get() + " &7> &f" + line;
 				Tasks.wait(wait.get(), () -> {
-					Utils.send(player, message);
+					PlayerUtils.send(player, message);
 					Quests.sound_npcAlert(player);
 				});
 			});

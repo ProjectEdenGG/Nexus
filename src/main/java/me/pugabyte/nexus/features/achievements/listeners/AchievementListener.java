@@ -6,8 +6,8 @@ import me.pugabyte.nexus.models.achievement.Achievement;
 import me.pugabyte.nexus.models.achievement.AchievementGroup;
 import me.pugabyte.nexus.models.achievement.AchievementPlayer;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,7 +30,7 @@ public class AchievementListener implements Listener {
 		Player player = achievementPlayer.getPlayer();
 		if (player.isOnline()) {
 			String message = StringUtils.getPrefix("Achievements") + "You have completed the &e" + achievement.toString() + " &3achievement!";
-			Utils.send(player, new JsonBuilder(message).hover("&e" + achievement.getDescription()).build());
+			PlayerUtils.send(player, new JsonBuilder(message).hover("&e" + achievement.getDescription()).build());
 		}
 
 	}

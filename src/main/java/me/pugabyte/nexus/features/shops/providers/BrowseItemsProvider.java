@@ -14,7 +14,7 @@ import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -160,7 +160,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 					product.process(player);
 					open(player, page.getPage());
 				} catch (Exception ex) {
-					Utils.send(player, PREFIX + ex.getMessage());
+					PlayerUtils.send(player, PREFIX + ex.getMessage());
 				}
 			}));
 		}));

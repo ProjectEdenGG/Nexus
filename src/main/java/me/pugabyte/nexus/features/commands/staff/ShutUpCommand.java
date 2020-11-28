@@ -5,8 +5,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 @Permission("group.staff")
@@ -18,14 +16,11 @@ public class ShutUpCommand extends CustomCommand {
 	}
 
 	@Path()
-	void shutUp() {
-		Entity entity = Utils.getTargetEntity(player());
-		if (!(entity instanceof LivingEntity))
-			error("You must be looking at a living entity");
-		LivingEntity livingEntity = (LivingEntity) entity;
-		boolean isSilent = livingEntity.isSilent();
-		livingEntity.setSilent(!isSilent);
-		send(PREFIX + livingEntity.getClass().getSimpleName() + " is now " + (isSilent ? "unmuted" : "muted"));
+	void run() {
+		LivingEntity entity = getTargetLivingEntityRequired();
+		boolean isSilent = entity.isSilent();
+		entity.setSilent(!isSilent);
+		send(PREFIX + entity.getClass().getSimpleName() + " is now " + (isSilent ? "unmuted" : "muted"));
 	}
 
 }

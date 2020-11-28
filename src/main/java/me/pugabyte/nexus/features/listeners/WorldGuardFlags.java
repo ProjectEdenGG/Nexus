@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.listeners;
 
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Material;
@@ -57,7 +57,7 @@ public class WorldGuardFlags implements Listener {
 	public void onEntityTame(EntityTameEvent event) {
 		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), Flags.TAMING) == State.DENY) {
 			event.setCancelled(true);
-			Utils.send((Player) event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
+			PlayerUtils.send((Player) event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
 		}
 	}
 }

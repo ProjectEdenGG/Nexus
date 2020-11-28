@@ -8,6 +8,7 @@ import me.pugabyte.nexus.models.skullhunt.SkullHunter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -169,19 +170,19 @@ public abstract class SkullHuntEvent implements Listener {
 		skullHunter.found(settingType, location);
 		service.save(skullHunter);
 
-		Utils.send(player, foundOneMsg);
+		PlayerUtils.send(player, foundOneMsg);
 		playSounds(player, foundOneSounds);
 		giveSinglePrize(player);
 	}
 
 	public void foundAll(Player player) {
-		Utils.send(player, foundAllMsg);
+		PlayerUtils.send(player, foundAllMsg);
 		playSounds(player, foundAllSounds);
 		giveOverallPrize(player);
 	}
 
 	public void foundAlready(Player player) {
-		Utils.send(player, foundAlreadyMsg);
+		PlayerUtils.send(player, foundAlreadyMsg);
 		playSounds(player, foundAlreadySounds);
 	}
 

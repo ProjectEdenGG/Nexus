@@ -14,8 +14,8 @@ import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -158,22 +158,22 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 			if (money != null) {
 				Nexus.getEcon().depositPlayer(player, money);
-				Utils.send(player, PREFIX + "&e" + money + " &3has been added to your balance");
+				PlayerUtils.send(player, PREFIX + "&e" + money + " &3has been added to your balance");
 			}
 
 			if (levels != null) {
 				player.giveExpLevels(levels);
-				Utils.send(player, PREFIX + "You have been given &e" + levels + " XP Levels");
+				PlayerUtils.send(player, PREFIX + "You have been given &e" + levels + " XP Levels");
 			}
 
 			if (votePoints != null) {
 				Voter voter = new VoteService().get(player);
 				voter.addPoints(votePoints);
-				Utils.send(player, PREFIX + "&e" + votePoints + " &3vote points has been added to your balance");
+				PlayerUtils.send(player, PREFIX + "&e" + votePoints + " &3vote points has been added to your balance");
 			}
 
 			if (!Strings.isNullOrEmpty(command))
-				Utils.runCommandAsConsole(command.replaceAll("%player%", player.getName()));
+				PlayerUtils.runCommandAsConsole(command.replaceAll("%player%", player.getName()));
 
 			saveAndReturn(contents, day, initialDay);
 		}

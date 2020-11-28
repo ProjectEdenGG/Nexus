@@ -9,8 +9,8 @@ import me.pugabyte.nexus.features.particles.effects.WingsEffect;
 import me.pugabyte.nexus.features.particles.menu.ParticleMenu;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Features;
+import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -383,7 +383,7 @@ public enum ParticleSetting {
 			ParticleMenu.openColor(player, type, this);
 		} else if (Enum.class.isAssignableFrom(value)) {
 			Enum<?> val = get(new ParticleService().get(player), type);
-			Enum<?> next = Utils.EnumUtils.nextWithLoop(val.getClass(), val.ordinal());
+			Enum<?> next = EnumUtils.nextWithLoop(val.getClass(), val.ordinal());
 			setter(player, type, next.name());
 			ParticleMenu.openSettingEditor(player, type);
 		}

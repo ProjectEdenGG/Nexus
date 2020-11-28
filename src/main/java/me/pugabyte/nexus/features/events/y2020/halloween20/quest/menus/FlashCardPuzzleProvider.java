@@ -9,10 +9,10 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -75,14 +75,14 @@ public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvi
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		if (user.getFoundComboLockNumbers().contains(number)) {
-			Utils.send(player, Halloween20.PREFIX + "You already know of this number. Maybe there’s some more.");
+			PlayerUtils.send(player, Halloween20.PREFIX + "You already know of this number. Maybe there’s some more.");
 			return;
 		}
 		user.getFoundComboLockNumbers().add(number);
-		Utils.send(player, Halloween20.PREFIX + "The number &e" + number.getNumericalValue() + "&3 can now be used on the combination lock at the entrance to the city.");
+		PlayerUtils.send(player, Halloween20.PREFIX + "The number &e" + number.getNumericalValue() + "&3 can now be used on the combination lock at the entrance to the city.");
 		service.save(user);
 		if (user.getFoundComboLockNumbers().size() == 11)
-			Utils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");
+			PlayerUtils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");
 	}
 
 	@Override

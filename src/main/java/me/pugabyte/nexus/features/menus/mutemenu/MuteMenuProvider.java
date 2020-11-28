@@ -7,7 +7,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.mutemenu.MuteMenu;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuService;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -59,7 +59,7 @@ public class MuteMenuProvider extends MenuUtils implements InventoryProvider {
 	public void mute(Player player, MuteMenuItem item) {
 		MuteMenu settings = service.get(player.getUniqueId().toString());
 		if (Arrays.asList("GLOBAL", "LOCAL").contains(item.name())) {
-			Utils.runCommand(player, "ch leave " + item.name().toLowerCase());
+			PlayerUtils.runCommand(player, "ch leave " + item.name().toLowerCase());
 		}
 	}
 

@@ -2,8 +2,8 @@ package me.pugabyte.nexus.features.shops.update;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -34,7 +34,7 @@ public class ShopDisabler implements Listener {
 	}
 
 	public void tell(Player player) {
-		Utils.send(player, StringUtils.getPrefix("Shops") + "Shop signs are temporarily disabled until the new shop system is in place.");
+		PlayerUtils.send(player, StringUtils.getPrefix("Shops") + "Shop signs are temporarily disabled until the new shop system is in place.");
 	}
 
 	@EventHandler

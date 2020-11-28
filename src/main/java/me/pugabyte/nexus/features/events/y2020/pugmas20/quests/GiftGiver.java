@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Utils;
@@ -37,8 +38,8 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
 public class GiftGiver implements Listener {
-	private static final String error = Pugmas20.getPREFIX() + "&cYou can't do that with this item";
-	private static final String locked = Pugmas20.getPREFIX() + "&cYou can't open this gift!";
+	private static final String error = Pugmas20.PREFIX + "&cYou can't do that with this item";
+	private static final String locked = Pugmas20.PREFIX + "&cYou can't open this gift!";
 	private static final ItemStack skull = AdventMenu.origin.getRelative(0, 0, 5).getDrops().stream().findFirst().orElse(null);
 	private static ItemStack gift_locked = null;
 	private static ItemStack gift_unlocked = null;
@@ -71,23 +72,23 @@ public class GiftGiver implements Listener {
 
 	public static void tradeGift(Player from, Player to, ItemStack gift) {
 		if (!Quests.hasRoomFor(to, gift)) {
-			Utils.send(from, Pugmas20.getPREFIX() + "&cCannot give gift to " + to.getName() + ", their inventory is full!");
+			PlayerUtils.send(from, Pugmas20.PREFIX + "&cCannot give gift to " + to.getName() + ", their inventory is full!");
 			Quests.sound_villagerNo(from);
 			return;
 		}
 
-		Utils.send(from, Pugmas20.getPREFIX() + "You gave your gift to " + to.getName());
+		PlayerUtils.send(from, Pugmas20.PREFIX + "You gave your gift to " + to.getName());
 		from.getInventory().removeItem(gift);
 		Quests.sound_obtainItem(from);
 
-		Utils.send(to, Pugmas20.getPREFIX() + from.getName() + " gave you a gift!");
+		PlayerUtils.send(to, Pugmas20.PREFIX + from.getName() + " gave you a gift!");
 		ItemUtils.giveItem(to, gift_unlocked);
 		Quests.sound_obtainItem(to);
 	}
 
 	public static void openGift(Player player, ItemStack gift) {
 		if (!ItemUtils.isFuzzyMatch(gift_unlocked, gift)) {
-			Utils.send(player, locked);
+			PlayerUtils.send(player, locked);
 			Quests.sound_villagerNo(player);
 			return;
 		}
@@ -96,7 +97,7 @@ public class GiftGiver implements Listener {
 		Chest chest = (Chest) loc.getBlock().getState();
 		ItemStack[] contents = chest.getBlockInventory().getContents();
 		if (!Quests.hasRoomFor(player, contents)) {
-			Utils.send(player, Quests.fullInvError);
+			PlayerUtils.send(player, Quests.fullInvError);
 			Quests.sound_villagerNo(player);
 			return;
 		}
@@ -121,7 +122,7 @@ public class GiftGiver implements Listener {
 		if (leftover.size() == 0)
 			return;
 
-		Utils.send(player, Quests.leftoverItems);
+		PlayerUtils.send(player, Quests.leftoverItems);
 		ItemUtils.giveItems(player, leftover);
 	}
 
@@ -152,7 +153,7 @@ public class GiftGiver implements Listener {
 		if (ActionGroup.LEFT_CLICK.applies(event)) {
 			openGift(event.getPlayer(), gift);
 		} else
-			Utils.send(event.getPlayer(), error);
+			PlayerUtils.send(event.getPlayer(), error);
 	}
 
 	@EventHandler
@@ -163,6 +164,6 @@ public class GiftGiver implements Listener {
 		if (!ItemUtils.isFuzzyMatch(gift, gift_locked) && !ItemUtils.isFuzzyMatch(gift, gift_unlocked)) return;
 
 		event.setCancelled(true);
-		Utils.send(event.getPlayer(), error);
+		PlayerUtils.send(event.getPlayer(), error);
 	}
 }

@@ -3,9 +3,9 @@ package me.pugabyte.nexus.features.listeners;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.store.perks.joinquit.VanishEvent;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.apache.commons.lang.math.NumberRange;
 import org.bukkit.GameRule;
 import org.bukkit.World;
@@ -36,7 +36,7 @@ public class Sleep implements Listener {
 
 		List<Player> players = world.getPlayers();
 		long sleeping = players.stream().filter(Player::isSleeping).count();
-		long active = players.stream().filter(player -> !Utils.isVanished(player) && !AFK.get(player).isAfk()).count();
+		long active = players.stream().filter(player -> !PlayerUtils.isVanished(player) && !AFK.get(player).isAfk()).count();
 
 		if (sleeping == 0)
 			return;
@@ -55,7 +55,7 @@ public class Sleep implements Listener {
 			world.setStorm(false);
 			world.setThundering(false);
 
-			players.forEach(player -> Utils.send(player, PREFIX + "The night was skipped because 50% of players slept!"));
+			players.forEach(player -> PlayerUtils.send(player, PREFIX + "The night was skipped because 50% of players slept!"));
 
 			int wait = 0;
 			while (true) {

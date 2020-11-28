@@ -11,10 +11,10 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.EasterEggs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Time.Timer;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -41,7 +41,7 @@ import java.util.Set;
 
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.Utils.isVanished;
+import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
 @Data
 public class BearFair20 implements Listener {
@@ -238,7 +238,7 @@ public class BearFair20 implements Listener {
 	}
 
 	public static void send(String message, Player to) {
-		Utils.send(to, message);
+		PlayerUtils.send(to, message);
 	}
 
 

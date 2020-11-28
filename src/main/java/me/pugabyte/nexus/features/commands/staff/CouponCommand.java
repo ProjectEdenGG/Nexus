@@ -18,7 +18,7 @@ import me.pugabyte.nexus.models.coupon.Coupons;
 import me.pugabyte.nexus.models.coupon.Coupons.Coupon;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,31 +44,31 @@ public class CouponCommand extends CustomCommand implements Listener {
 		PUGMAS20_ADVENT_PAINTING(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				Utils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
+				PlayerUtils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
 			}
 		},
 		PUGMAS20_ADVENT_SONG(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				Utils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
+				PlayerUtils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
 			}
 		},
 		PUGMAS20_ADVENT_5000(true) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				Utils.runCommandAsConsole("eco give " + event.getPlayer().getName() + " 5000");
+				PlayerUtils.runCommandAsConsole("eco give " + event.getPlayer().getName() + " 5000");
 			}
 		},
 		PUGMAS20_ITEM_PAINTING(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				Utils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
+				PlayerUtils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
 			}
 		},
 		PUGMAS20_ITEM_SONG(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				Utils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
+				PlayerUtils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
 			}
 		};
 

@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.models.Arena;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -55,7 +56,7 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
 					menus.openLobbyMenu(player, arena);
 					return AnvilGUI.Response.text(text);
 				} else {
-					Utils.send(player, PREFIX + "You must use an integer for wait time.");
+					PlayerUtils.send(player, PREFIX + "You must use an integer for wait time.");
 					return AnvilGUI.Response.close();
 				}
 			})));

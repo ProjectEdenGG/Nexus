@@ -15,9 +15,9 @@ import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -168,7 +168,7 @@ public class MainIsland implements Listener, Island {
 							wait += 100;
 						}
 
-						Tasks.wait(wait, () -> Utils.runCommand(player, "safecracker start"));
+						Tasks.wait(wait, () -> PlayerUtils.runCommand(player, "safecracker start"));
 						break;
 					default:
 						return null;
@@ -471,7 +471,7 @@ public class MainIsland implements Listener, Island {
 		user.givePoints(500);
 		service.save(user);
 
-		Utils.runCommandAsConsole("lp user " + player.getName() + " permission set powder.powder.OrientalDiscoBathtub");
+		PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " permission set powder.powder.OrientalDiscoBathtub");
 
 		String prefix = "&8&l[&eBearFair&8&l] &3";
 		BearFair20.send("", player);

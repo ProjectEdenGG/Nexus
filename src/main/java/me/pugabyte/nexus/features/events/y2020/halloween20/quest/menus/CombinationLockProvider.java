@@ -16,9 +16,9 @@ import me.pugabyte.nexus.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -106,16 +106,16 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		}
 		gate.teleportIn();
 		player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1f, 1f);
-		Utils.send(player, "&7&oThe gate opens before you. You can now leave the land of the dead.");
+		PlayerUtils.send(player, "&7&oThe gate opens before you. You can now leave the land of the dead.");
 		Tasks.wait(Time.SECOND.x(1), gate::open);
 		Tasks.wait(Time.SECOND.x(4), gate::teleportOut);
 		user.setCombinationStage(QuestStage.Combination.COMPLETE);
 		service.save(user);
 		Tasks.wait(Time.SECOND.x(6), () -> {
-			Utils.send(player, Halloween20.PREFIX + "To return to the land of the dead to continue exploring, simply use &c/halloween20 &3to be teleported inside of the gate.");
+			PlayerUtils.send(player, Halloween20.PREFIX + "To return to the land of the dead to continue exploring, simply use &c/halloween20 &3to be teleported inside of the gate.");
 			Tasks.wait(Time.SECOND.x(5), () -> {
 				Nexus.getEcon().depositPlayer(player, 10000);
-				Utils.send(player, "&a$10,000 has been added to your account.");
+				PlayerUtils.send(player, "&a$10,000 has been added to your account.");
 				new MysteryChest(player).give(2, RewardChestType.MYSTERY);
 			});
 		});

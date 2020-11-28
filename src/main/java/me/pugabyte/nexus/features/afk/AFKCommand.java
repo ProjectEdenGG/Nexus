@@ -9,8 +9,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -51,7 +51,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 		if (event.getChannel() instanceof PrivateChannel) {
 			for (Chatter recipient : event.getRecipients()) {
 				if (!recipient.getOfflinePlayer().isOnline()) continue;
-				if (!Utils.canSee(player.getPlayer(), recipient.getPlayer())) return;
+				if (!PlayerUtils.canSee(player.getPlayer(), recipient.getPlayer())) return;
 				AFKPlayer to = AFK.get(recipient.getPlayer());
 				if (AFK.get(to.getPlayer()).isAfk()) {
 					Tasks.wait(3, () -> {

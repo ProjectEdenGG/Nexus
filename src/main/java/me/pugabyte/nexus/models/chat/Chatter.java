@@ -12,8 +12,8 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import me.pugabyte.nexus.utils.Utils;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -41,7 +41,7 @@ public class Chatter extends PlayerOwnedObject {
 
 	public void say(String message) {
 		if (message.startsWith("/"))
-			Utils.runCommand(getPlayer(), trimFirst(message));
+			PlayerUtils.runCommand(getPlayer(), trimFirst(message));
 		else
 			say(getActiveChannel(), message);
 	}

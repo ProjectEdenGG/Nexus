@@ -13,10 +13,10 @@ import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -107,7 +107,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
 						Warp warp1 = warpService.get("legacy_" + warp.name().replace("_", ""), WarpType.NORMAL);
 						if (warp1 == null) {
-							Utils.send(player, StringUtils.getPrefix("Warps") + "&cThere was an error while trying to teleport you to the warp");
+							PlayerUtils.send(player, StringUtils.getPrefix("Warps") + "&cThere was an error while trying to teleport you to the warp");
 							return;
 						}
 						warp1.teleport(player);
@@ -137,8 +137,8 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack tictactoe = nameItem(Material.PAPER, "&3Tic Tac Toe");
 
 				contents.set(1, 1, ClickableItem.from(lobby, e -> warp(player, "minigames")));
-				contents.set(1, 3, ClickableItem.from(spvp, e -> Utils.runCommand(player, "spvp")));
-				contents.set(1, 5, ClickableItem.from(wither, e -> Utils.runCommand(player, "wither")));
+				contents.set(1, 3, ClickableItem.from(spvp, e -> PlayerUtils.runCommand(player, "spvp")));
+				contents.set(1, 5, ClickableItem.from(wither, e -> PlayerUtils.runCommand(player, "wither")));
 				contents.set(1, 7, ClickableItem.from(stats, e -> warp(player, "statshall")));
 				contents.set(2, 2, ClickableItem.from(parkour, e -> warp(player, "parkour")));
 				contents.set(2, 4, ClickableItem.from(mazes, e -> warp(player, "mazes")));

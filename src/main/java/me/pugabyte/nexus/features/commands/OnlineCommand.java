@@ -12,9 +12,9 @@ import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class OnlineCommand extends CustomCommand {
 		List<Rank> ranks = Arrays.asList(Rank.values());
 		Collections.reverse(ranks);
 
-		long vanished = Bukkit.getOnlinePlayers().stream().filter(Utils::isVanished).count();
+		long vanished = Bukkit.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
 		long online = Bukkit.getOnlinePlayers().size() - vanished;
 		boolean canSeeVanished = player().hasPermission("pv.see");
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");
@@ -62,11 +62,11 @@ public class OnlineCommand extends CustomCommand {
 	}
 
 	private boolean canSee(Nerd nerd) {
-		return Utils.canSee(player(), nerd.getPlayer()) && player().canSee(nerd.getPlayer());
+		return PlayerUtils.canSee(player(), nerd.getPlayer()) && player().canSee(nerd.getPlayer());
 	}
 
 	void getNameWithModifiers(Nerd nerd, JsonBuilder builder) {
-		boolean vanished = Utils.isVanished(nerd.getPlayer());
+		boolean vanished = PlayerUtils.isVanished(nerd.getPlayer());
 		boolean afk = AFK.get(nerd.getPlayer()).isAfk();
 
 		String modifiers = "";
@@ -93,7 +93,7 @@ public class OnlineCommand extends CustomCommand {
 		Player player = nerd.getPlayer();
 		Hours hours = new HoursService().get(player);
 
-		int ping = Utils.getPing(player);
+		int ping = PlayerUtils.getPing(player);
 		String onlineFor = StringUtils.timespanDiff(nerd.getLastJoin());
 		WorldGroup world = WorldGroup.get(player);
 		double balance = Nexus.getEcon().getBalance(player);

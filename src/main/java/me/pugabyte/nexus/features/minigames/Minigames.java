@@ -15,10 +15,10 @@ import me.pugabyte.nexus.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -89,7 +89,7 @@ public class Minigames extends Feature {
 	}
 
 	public static void broadcast(String announcement) {
-		getPlayers().forEach(player -> Utils.send(player, Minigames.PREFIX + announcement));
+		getPlayers().forEach(player -> PlayerUtils.send(player, Minigames.PREFIX + announcement));
 
 		// TODO: If arena is public, announce to discord and whole server
 	}

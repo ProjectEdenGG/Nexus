@@ -4,7 +4,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.achievements.events.AchievementCompletedEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
-import me.pugabyte.nexus.utils.Utils.EnumUtils;
+import me.pugabyte.nexus.utils.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

@@ -28,7 +28,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import static me.pugabyte.nexus.utils.Utils.isVanished;
+import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
 @Aliases("god")
 // WorldEdit overriding our alias

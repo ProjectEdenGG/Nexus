@@ -7,8 +7,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -42,7 +42,7 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 	}
 
 	boolean isPug(Player player) {
-		return player.getUniqueId().equals(Utils.getPlayer("Pugabyte").getUniqueId());
+		return player.getUniqueId().equals(PlayerUtils.getPlayer("Pugabyte").getUniqueId());
 	}
 
 	@Path

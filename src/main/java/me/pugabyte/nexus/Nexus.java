@@ -22,12 +22,12 @@ import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.Env;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time.Timer;
-import me.pugabyte.nexus.utils.Utils;
-import me.pugabyte.nexus.utils.Utils.EnumUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
@@ -64,17 +64,15 @@ public class Nexus extends JavaPlugin {
 	private final static UUID UUID0 = new UUID(0, 0);
 
 	public Nexus() {
-		if (instance == null) {
+		if (instance == null)
 			instance = this;
-		} else {
+		else
 			Bukkit.getServer().getLogger().info("Nexus could not be initialized: Instance is not null, but is: " + instance.getClass().getName());
-		}
 	}
 
 	public static Nexus getInstance() {
-		if (instance == null) {
+		if (instance == null)
 			Bukkit.getServer().getLogger().info("Nexus could not be initialized");
-		}
 		return instance;
 	}
 
@@ -193,7 +191,7 @@ public class Nexus extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		try { broadcastReload();										} catch (Throwable ex) { ex.printStackTrace(); }
-		try { Utils.runCommandAsConsole("save-all");					} catch (Throwable ex) { ex.printStackTrace(); }
+		try { PlayerUtils.runCommandAsConsole("save-all");					} catch (Throwable ex) { ex.printStackTrace(); }
 		try { cron.stop();												} catch (Throwable ex) { ex.printStackTrace(); }
 		try { LiteBans.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { BFQuests.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
@@ -215,9 +213,9 @@ public class Nexus extends JavaPlugin {
 					String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
 					if (geoIp != null && geoIp.getTimezone() != null) {
 						String timestamp = StringUtils.shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId())));
-						Utils.send(player, "&7 " + timestamp + message);
+						PlayerUtils.send(player, "&7 " + timestamp + message);
 					} else
-						Utils.send(player, message);
+						PlayerUtils.send(player, message);
 				});
 	}
 

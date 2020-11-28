@@ -3,7 +3,7 @@ package me.pugabyte.nexus.models.discord;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.geoip.GeoIP;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -31,7 +31,7 @@ public class DiscordCaptchaService extends MongoService {
 		if (captcha == null) {
 			captcha = database.createQuery(DiscordCaptcha.class).first();
 			if (captcha == null)
-				captcha = new DiscordCaptcha(Utils.getPlayer("KodaBear").getUniqueId());
+				captcha = new DiscordCaptcha(PlayerUtils.getPlayer("KodaBear").getUniqueId());
 		}
 
 		return captcha;

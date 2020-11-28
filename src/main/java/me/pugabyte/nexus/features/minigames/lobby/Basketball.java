@@ -13,8 +13,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -182,14 +182,14 @@ public class Basketball extends CustomCommand implements Listener {
 				} else if (wgUtils.isInRegion(entity.getLocation(), region + "_hoop")) {
 					entity.remove();
 					giveBasketball(player);
-					Utils.send(player, "&eTouchdown!!");
+					PlayerUtils.send(player, "&eTouchdown!!");
 					wgUtils.getPlayersInRegion(region).forEach(loopPlayer ->
 							loopPlayer.spawnParticle(Particle.LAVA, entity.getLocation(), 50, 2, 2, 2, .01));
 					stop();
 				} else if (wgUtils.isInRegion(entity.getLocation(), region + "_backboard")) {
 					entity.remove();
 					giveBasketball(player);
-					Utils.send(player, "&eSo close...");
+					PlayerUtils.send(player, "&eSo close...");
 					stop();
 				}
 

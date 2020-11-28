@@ -10,9 +10,9 @@ import fr.minuskube.inv.content.SlotPos;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -108,7 +108,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 					try {
 						kit.setDelay(Integer.parseInt(response));
 					} catch (Exception ex) {
-						Utils.send(player, "&cDelay must be a number written in ticks less than " + Integer.MAX_VALUE +
+						PlayerUtils.send(player, "&cDelay must be a number written in ticks less than " + Integer.MAX_VALUE +
 								" (" + StringUtils.TimespanFormatter.of(Integer.MAX_VALUE / 20).format() + ")");
 						return AnvilGUI.Response.close();
 					}

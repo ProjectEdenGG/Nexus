@@ -15,8 +15,8 @@ import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.dv8tion.jda.api.Permission;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.OfflinePlayer;
@@ -56,7 +56,7 @@ public class DiscordDiscordCommand extends Command {
 							throw new InvalidInputException("Correct usage: `/discord link <name>`");
 						DiscordUser author = new DiscordService().getFromUserId(event.getAuthor().getId());
 
-						OfflinePlayer player = Utils.getPlayer(args[1]);
+						OfflinePlayer player = PlayerUtils.getPlayer(args[1]);
 						DiscordUser fromInput = new DiscordService().get(player);
 
 						if (author != null && !Strings.isNullOrEmpty(author.getUuid()))

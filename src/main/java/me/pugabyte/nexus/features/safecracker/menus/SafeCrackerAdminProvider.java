@@ -10,7 +10,7 @@ import me.pugabyte.nexus.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.NPC;
@@ -83,7 +83,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 
 		contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build(), e -> {
 			player.closeInventory();
-			Utils.send(player, new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle ").build());
+			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle ").build());
 		}));
 
 		int row = 1;
@@ -93,7 +93,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 		Map<String, SafeCrackerEvent.SafeCrackerNPC> npcs = new HashMap<>();
 		for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 			try {
-				Utils.getPlayer(npc.getName()).hasPlayedBefore();
+				PlayerUtils.getPlayer(npc.getName()).hasPlayedBefore();
 				npcs.put(npc.getName(), npc);
 			} catch (Exception ignore) {
 			}
@@ -102,7 +102,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 		service.save(service.get());
 
 		for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
-			ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Utils.getPlayer(npc.getName()))
+			ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(PlayerUtils.getPlayer(npc.getName()))
 					.loreize(true)
 					.name("&e" + npc.getName())
 					.lore("&3Id: &e" + npc.getId())

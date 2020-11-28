@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -97,7 +97,7 @@ public class InvisibleArmour {
 	}
 
 	public ItemStack getItem(ItemSlot slot) {
-		PlayerInventory inventory = Utils.getPlayer(uuid).getPlayer().getInventory();
+		PlayerInventory inventory = PlayerUtils.getPlayer(uuid).getPlayer().getInventory();
 		switch (slot) {
 			case HEAD:
 				return inventory.getHelmet();

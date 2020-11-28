@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -113,7 +114,7 @@ public class AddProductProvider extends _ShopProvider {
 						}
 						open(player);
 					} catch (Exception ex) {
-						Utils.send(player, ex.getMessage());
+						PlayerUtils.send(player, ex.getMessage());
 						open(player);
 					}
 				}).open(player)));
@@ -150,7 +151,7 @@ public class AddProductProvider extends _ShopProvider {
 						} else
 							open(player);
 					} catch (Exception ex) {
-						Utils.send(player, ex.getMessage());
+						PlayerUtils.send(player, ex.getMessage());
 						open(player);
 					}
 				}).open(player);

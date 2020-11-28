@@ -13,7 +13,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -77,19 +77,19 @@ public class ToyTesting implements Listener {
 		Predicate<String> isStarted = name -> MatchManager.get(ArenaManager.get(name)).isStarted();
 		if (toy.equals(Toy.BATTLESHIP)) {
 			if (isStarted.test("AlphaVsOmega")) {
-				Utils.send(player, error);
+				PlayerUtils.send(player, error);
 				return;
 			}
 		} else if (toy.equals(Toy.MASTER_MIND)) {
 			if (isStarted.test("MasterMind")) {
-				Utils.send(player, error);
+				PlayerUtils.send(player, error);
 				return;
 			}
 		}
 
 		ConfirmationMenu.builder()
 				.title("Play " + camelCase(toy) + "?")
-				.onConfirm(e -> Utils.runCommandAsOp(player, toy.getCommand()))
+				.onConfirm(e -> PlayerUtils.runCommandAsOp(player, toy.getCommand()))
 				.open(player);
 	}
 

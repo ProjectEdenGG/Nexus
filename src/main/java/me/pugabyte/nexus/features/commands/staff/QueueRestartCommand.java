@@ -7,9 +7,9 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 
 @Permission("group.seniorstaff")
 public class QueueRestartCommand extends CustomCommand {
@@ -25,7 +25,7 @@ public class QueueRestartCommand extends CustomCommand {
 				Nexus.log("Restart is queued");
 				Tasks.wait(30 * 20, () -> {
 					if (restart && AFK.getActivePlayers() == 0)
-						Utils.runCommandAsConsole("inject plugins/wget/restart.sh");
+						PlayerUtils.runCommandAsConsole("inject plugins/wget/restart.sh");
 				});
 			}
 		});

@@ -327,4 +327,12 @@ public class ItemBuilder implements Cloneable {
 		return item;
 	}
 
+	public static ItemStack glow(ItemStack itemStack) {
+		itemStack.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
+		ItemMeta meta = itemStack.getItemMeta();
+		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		itemStack.setItemMeta(meta);
+		return itemStack;
+	}
+
 }

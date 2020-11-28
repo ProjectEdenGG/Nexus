@@ -14,11 +14,11 @@ import me.pugabyte.nexus.models.killermoney.KillerMoneyService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.TaskService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
@@ -68,9 +68,9 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 			TaskService taskService = new TaskService();
 			taskService.process(expireTaskId).forEach(task -> {
 				Map<String, Object> data = task.getJson();
-				OfflinePlayer player = Utils.getPlayer((String) data.get("uuid"));
+				OfflinePlayer player = PlayerUtils.getPlayer((String) data.get("uuid"));
 				if (player.isOnline() && player.getPlayer() != null)
-					Utils.send(player, StringUtils.getPrefix("KillerMoney") + "Your boost has expired");
+					PlayerUtils.send(player, StringUtils.getPrefix("KillerMoney") + "Your boost has expired");
 
 				KillerMoneyService kmService = new KillerMoneyService();
 				KillerMoney km = kmService.get(player);

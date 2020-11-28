@@ -6,7 +6,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -36,7 +36,7 @@ public class SearchItemsProvider extends _ShopProvider {
 						} else
 							open(player);
 					} catch (Exception ex) {
-						Utils.send(player, ex.getMessage());
+						PlayerUtils.send(player, ex.getMessage());
 						open(player);
 					}
 				}).open(player)));

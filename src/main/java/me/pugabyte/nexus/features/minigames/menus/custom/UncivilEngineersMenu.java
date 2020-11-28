@@ -14,9 +14,9 @@ import me.pugabyte.nexus.features.minigames.models.arenas.UncivilEngineersArena;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -220,14 +220,14 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 									try {
 										originID.set(Integer.parseInt(lines[0]));
 										if (originID.get() == 0) {
-											Utils.send(player, "&cYou must use an integer greater than 0.");
+											PlayerUtils.send(player, "&cYou must use an integer greater than 0.");
 											player.closeInventory();
 										}
 										arena.getOrigins().put(originID.get(), loc.getBlock().getLocation());
 										arena.write();
 										openOriginsMenu(player);
 									} catch (Exception ignore) {
-										Utils.send(player, "&cYou must use an integer greater than 0.");
+										PlayerUtils.send(player, "&cYou must use an integer greater than 0.");
 										player.closeInventory();
 									}
 								})

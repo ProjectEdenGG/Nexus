@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.afk.events.NowAFKEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -101,21 +101,21 @@ public class AFKPlayer {
 
 	public void message() {
 		if (isAfk)
-			Utils.send(getPlayer(), "&7* You are now AFK" + (message == null ? "" : ". Your auto-reply message is set to:\n &e" + message));
+			PlayerUtils.send(getPlayer(), "&7* You are now AFK" + (message == null ? "" : ". Your auto-reply message is set to:\n &e" + message));
 		else
-			Utils.send(getPlayer(), "&7* You are no longer AFK");
+			PlayerUtils.send(getPlayer(), "&7* You are no longer AFK");
 	}
 
 	private void broadcast() {
 		String broadcast = "&7* &e" + getPlayer().getName() + " &7is " + (isAfk ? "now" : "no longer") + " AFK";
 		Bukkit.getOnlinePlayers().forEach(_player -> {
-			if (!Utils.canSee(_player, getPlayer()))
+			if (!PlayerUtils.canSee(_player, getPlayer()))
 				return;
 			if (_player.getUniqueId() == getPlayer().getUniqueId())
 				return;
 
 			// TODO: Mute menu
-			Utils.send(_player, (broadcast));
+			PlayerUtils.send(_player, (broadcast));
 		});
 	}
 

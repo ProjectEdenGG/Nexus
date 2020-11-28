@@ -14,11 +14,11 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.hours.HoursService.PageResult;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -110,15 +110,15 @@ public class HoursCommand extends CustomCommand {
 					if (Rank.getHighestRank(player) == Rank.GUEST) {
 						if (hours.getTotal() > DAY) {
 							Tasks.sync(() -> {
-								Utils.runCommandAsConsole("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
+								PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
 								Koda.say("Congrats on Member rank, " + player.getName() + "!");
 								Jingle.RANKUP.play(player);
-								Utils.send(player, "");
-								Utils.send(player, "");
-								Utils.send(player, "&e&lCongratulations! &3You have been promoted to &fMember&3 for " +
+								PlayerUtils.send(player, "");
+								PlayerUtils.send(player, "");
+								PlayerUtils.send(player, "&e&lCongratulations! &3You have been promoted to &fMember&3 for " +
 										"playing for &e24 hours &3in-game. You are now eligible for &c/trusted&3.");
-								Utils.send(player, "");
-								Utils.send(player, "&6&lThank you for flying Bear Nation!");
+								PlayerUtils.send(player, "");
+								PlayerUtils.send(player, "&6&lThank you for flying Bear Nation!");
 							});
 						}
 					}

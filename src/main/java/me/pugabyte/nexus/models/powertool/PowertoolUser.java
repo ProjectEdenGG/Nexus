@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.utils.Utils.runCommand;
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommand;
 
 @Data
 @Builder

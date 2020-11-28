@@ -7,7 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -27,7 +27,7 @@ public class NearCommand extends CustomCommand {
 				.filter(_player -> player.getUniqueId() != _player.getUniqueId()
 						 && player.getWorld() == _player.getWorld()
 						 && getDistance(player, _player) <= Chat.getLocalRadius()
-						 && Utils.canSee(player(), _player))
+						 && PlayerUtils.canSee(player(), _player))
 				.collect(Collectors.toList());
 
 		boolean showDistance = player.hasPermission("near.distance");

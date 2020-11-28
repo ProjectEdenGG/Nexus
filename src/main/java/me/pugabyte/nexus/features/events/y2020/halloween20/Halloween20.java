@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.quest.menus.Halloween
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -32,7 +33,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import static me.pugabyte.nexus.utils.Utils.runCommandAsConsole;
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 
 public class Halloween20 implements Listener {
 	@Getter
@@ -57,7 +58,7 @@ public class Halloween20 implements Listener {
 	}
 
 	public static void sendInstructions(Player player) {
-		Utils.send(player, "&7&oTo unlock the gate, you will need to find numbers that you can use to unlock it. " +
+		PlayerUtils.send(player, "&7&oTo unlock the gate, you will need to find numbers that you can use to unlock it. " +
 				"You can find these numbers laying around, or inside of special chests (ender chests) located anywhere from this level or above. " +
 				"You will also find clues hidden around the map that will help you figure out the combination. " +
 				"Try asking people in the city for help.");
@@ -102,7 +103,7 @@ public class Halloween20 implements Listener {
 		gate.open();
 		Tasks.wait(Time.SECOND.x(4), gate::teleportIn);
 		Tasks.wait(Time.SECOND.x(5), gate::close);
-		Tasks.wait(Time.SECOND.x(8), () -> Utils.send(event.getPlayer(), "&7&oYou enter the land of the dead, and the large gate shuts behind you. You try to open it, but it appears to be locked."));
+		Tasks.wait(Time.SECOND.x(8), () -> PlayerUtils.send(event.getPlayer(), "&7&oYou enter the land of the dead, and the large gate shuts behind you. You try to open it, but it appears to be locked."));
 		Tasks.wait(Time.SECOND.x(14), () -> QuestNPC.DIEGO.sendScript(event.getPlayer()));
 		Tasks.wait(Time.SECOND.x(15) + 300, () -> sendInstructions(event.getPlayer()));
 	}

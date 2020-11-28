@@ -7,11 +7,11 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -85,7 +85,7 @@ public class RewardChestProvider extends MenuUtils implements InventoryProvider 
 
 		if (time >= 450) {
 			RewardChest.getInv(loot).close(player);
-			Utils.send(player, StringUtils.getPrefix("RewardChest") + "You have received the &e" +
+			PlayerUtils.send(player, StringUtils.getPrefix("RewardChest") + "You have received the &e" +
 					loot[lootIndex].getTitle() + "&3 reward");
 			ItemUtils.giveItems(player, Arrays.asList(loot[lootIndex].getItems()));
 		}

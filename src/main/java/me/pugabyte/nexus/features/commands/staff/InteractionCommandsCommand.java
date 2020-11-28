@@ -10,8 +10,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.interactioncommand.InteractionCommand;
 import me.pugabyte.nexus.models.interactioncommand.InteractionCommandService;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -93,7 +93,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 		if (event.getClickedBlock() == null) return;
 		if (event.getHand() == EquipmentSlot.OFF_HAND) return;
 		if (event.getAction() != Action.PHYSICAL && MaterialTag.PRESSURE_PLATES.isTagged(event.getClickedBlock().getType())) return;
-		if (event.getAction() == Action.PHYSICAL && Utils.isVanished(event.getPlayer())) return;
+		if (event.getAction() == Action.PHYSICAL && PlayerUtils.isVanished(event.getPlayer())) return;
 
 		Map<Integer, InteractionCommand> commands = new InteractionCommandService().get(event.getClickedBlock().getLocation());
 		if (commands == null || commands.isEmpty()) return;

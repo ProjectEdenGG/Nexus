@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PotionEffectEditor;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -62,7 +63,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 						});
 						return AnvilGUI.Response.text(text);
 					} else {
-						Utils.send(player, PREFIX + "You must use an integer for the duration.");
+						PlayerUtils.send(player, PREFIX + "You must use an integer for the duration.");
 						return AnvilGUI.Response.close();
 					}
 				})));
@@ -84,7 +85,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 						});
 						return AnvilGUI.Response.text(text);
 					} else {
-						Utils.send(player, PREFIX + "You must use an integer for the amplifier.");
+						PlayerUtils.send(player, PREFIX + "You must use an integer for the amplifier.");
 						return AnvilGUI.Response.close();
 					}
 				})));

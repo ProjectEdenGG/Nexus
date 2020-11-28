@@ -2,8 +2,8 @@ package me.pugabyte.nexus.models.nerd;
 
 import com.google.common.base.Strings;
 import me.pugabyte.nexus.models.MySQLService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -17,7 +17,7 @@ public class NerdService extends MySQLService {
 	@Override
 	public Nerd get(String uuid) {
 		Nerd nerd = database.where("uuid = ?", uuid).first(Nerd.class);
-		nerd.fromPlayer(Utils.getPlayer(uuid));
+		nerd.fromPlayer(PlayerUtils.getPlayer(uuid));
 		return nerd;
 	}
 
@@ -40,14 +40,14 @@ public class NerdService extends MySQLService {
 				.args("%" + partialName.replaceAll("_", "\\\\_") + "%", partialName)
 				.results(Nerd.class);
 		for (Nerd nerd : nerds)
-			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
+			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
 		return nerds;
 	}
 
 	public List<Nerd> getOnlineNerds() {
-		List<Nerd> nerds = database.where("uuid in ?", asList(Utils.getOnlineUuids())).results(Nerd.class);
+		List<Nerd> nerds = database.where("uuid in ?", asList(PlayerUtils.getOnlineUuids())).results(Nerd.class);
 		for (Nerd nerd : nerds)
-			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
+			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
 		return nerds;
 	}
 
@@ -59,28 +59,28 @@ public class NerdService extends MySQLService {
 
 		List<Nerd> nerds = database.where("uuid in (" + asList(filtered) + ")").results(Nerd.class);
 		for (Nerd nerd : nerds)
-			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
+			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
 		return nerds;
 	}
 
 	public List<Nerd> getNerdsLastJoinedAfter(LocalDateTime date) {
 		List<Nerd> nerds = database.where("lastJoin >= ?").args(date).results(Nerd.class);
 		for (Nerd nerd : nerds)
-			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
+			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
 		return nerds;
 	}
 
 	public List<Nerd> getNerdsWithBirthdays() {
 		List<Nerd> nerds = database.where("birthday IS NOT NULL").results(Nerd.class);
 		for (Nerd nerd : nerds)
-			nerd.fromPlayer(Utils.getPlayer(nerd.getUuid()));
+			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
 		return nerds;
 	}
 
 	public OfflinePlayer getFromNickname(String nickname) {
 		String uuid = database.select("uuid").table("nickname").where("nickname = ?", nickname).first(String.class);
 		if (!Strings.isNullOrEmpty(uuid))
-			return Utils.getPlayer(uuid);
+			return PlayerUtils.getPlayer(uuid);
 		return null;
 	}
 

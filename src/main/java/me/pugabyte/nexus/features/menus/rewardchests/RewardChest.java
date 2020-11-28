@@ -6,9 +6,9 @@ import me.pugabyte.nexus.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.nexus.models.mysterychest.MysteryChestPlayer;
 import me.pugabyte.nexus.models.mysterychest.MysteryChestService;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -101,7 +101,7 @@ public class RewardChest implements Listener {
 					service.save(mysteryChestPlayer);
 
 					ItemUtils.giveItem(player, item);
-					Utils.send(player, "&3You have been given &e" +
+					PlayerUtils.send(player, "&3You have been given &e" +
 							amount + " " + StringUtils.camelCase(type.name()) +
 							" Chest Key" + ((amount == 1) ? "" : "s") + ". &3Use them at spawn at the &eMystery Chest");
 					SoundUtils.Jingle.PING.play(player);

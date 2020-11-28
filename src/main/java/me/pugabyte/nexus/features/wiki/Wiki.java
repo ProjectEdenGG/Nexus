@@ -3,8 +3,8 @@ package me.pugabyte.nexus.features.wiki;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -75,9 +75,9 @@ public class Wiki {
 					Bukkit.getScheduler().runTaskAsynchronously(Nexus.getInstance(), () -> {
 						String query = getQuery(args);
 
-						Utils.send(sender, "");
-						Utils.send(sender, "");
-						Utils.send(sender, prefix + "Searching for §e" + query + "§3...");
+						PlayerUtils.send(sender, "");
+						PlayerUtils.send(sender, "");
+						PlayerUtils.send(sender, prefix + "Searching for §e" + query + "§3...");
 
 						try {
 							String queryEscaped = query.replaceAll(" ", SEP);
@@ -91,7 +91,7 @@ public class Wiki {
 
 							int results = resultCount.get("totalhits").getAsInt();
 							if (results > 0) {
-								Utils.send(sender, "§eResults found!");
+								PlayerUtils.send(sender, "§eResults found!");
 
 								for (int i = 0; i < results && i < 2; i++) {
 
@@ -119,12 +119,12 @@ public class Wiki {
 									snippet.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url + wiki + page));
 									snippet.setColor(ChatColor.DARK_AQUA);
 
-									Utils.send(sender, "");
-									Utils.send(sender, header);
-									Utils.send(sender, snippet);
+									PlayerUtils.send(sender, "");
+									PlayerUtils.send(sender, header);
+									PlayerUtils.send(sender, snippet);
 								}
 							} else {
-								Utils.send(sender, prefix + "No results found.");
+								PlayerUtils.send(sender, prefix + "No results found.");
 							}
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -132,13 +132,13 @@ public class Wiki {
 					});
 
 				} else {
-					Utils.send(sender, prefix + "You must be ingame to use this command.");
+					PlayerUtils.send(sender, prefix + "You must be ingame to use this command.");
 				}
 			} else {
-				Utils.send(sender, prefix + "You did not specify a search query.");
+				PlayerUtils.send(sender, prefix + "You did not specify a search query.");
 			}
 		} else {
-			Utils.send(sender, prefix + "You did not specify a search query.");
+			PlayerUtils.send(sender, prefix + "You did not specify a search query.");
 		}
 	}
 

@@ -9,8 +9,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.CitizensUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.OfflinePlayer;
@@ -36,7 +36,7 @@ public class PodiumsCommand extends CustomCommand {
 	@Path("<position> <player> <title...>")
 	void update(Position position, OfflinePlayer player, String title) {
 		CitizensUtils.updateNameAndSkin(getNpc(position), "&l" + player.getName());
-		Utils.runCommandAsConsole("hd setline podium_" + position + " 1 " + title);
+		PlayerUtils.runCommandAsConsole("hd setline podium_" + position + " 1 " + title);
 		send(PREFIX + "Podium updated");
 	}
 

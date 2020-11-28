@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.ticket.Ticket;
 import me.pugabyte.nexus.models.ticket.TicketService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
@@ -35,7 +36,7 @@ public class TicketsDiscordCommand extends Command {
 			final String PREFIX = "**[Tickets]** ";
 			try {
 				DiscordUser user = new DiscordService().checkVerified(event.getAuthor().getId());
-				OfflinePlayer player = Utils.getPlayer(user.getUuid());
+				OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 
 				String[] args = event.getArgs().split(" ");
 				if (args.length == 0 || !args[0].toLowerCase().matches("(view|close|reopen)"))

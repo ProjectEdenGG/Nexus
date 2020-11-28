@@ -55,8 +55,7 @@ public class Pugmas20 implements Listener {
 	public static final String region = "pugmas20";
 	@Getter
 	public static final World world = Bukkit.getWorld("safepvp");
-	@Getter
-	public static final String PREFIX = StringUtils.getPrefix("Pugmas20");
+	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2020");
 	public static final WorldGuardUtils WGUtils = new WorldGuardUtils(world);
 	public static final WorldEditUtils WEUtils = new WorldEditUtils(world);
 	// Dates

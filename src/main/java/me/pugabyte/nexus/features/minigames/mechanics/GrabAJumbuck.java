@@ -16,8 +16,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.matchdata.GrabAJumbuckMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.utils.ColorType;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -166,7 +166,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		GrabAJumbuckMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!matchData.getSheeps().contains(event.getRightClicked())) return;
 		if (getSheep(minigamer).size() == 3) {
-			Utils.send(minigamer.getPlayer(), Minigames.PREFIX + "You can only carry three sheep at a time!");
+			PlayerUtils.send(minigamer.getPlayer(), Minigames.PREFIX + "You can only carry three sheep at a time!");
 			return;
 		}
 		Sheep sheep = (Sheep) event.getRightClicked();

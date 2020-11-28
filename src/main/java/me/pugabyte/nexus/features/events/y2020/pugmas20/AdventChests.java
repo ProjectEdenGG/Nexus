@@ -13,6 +13,7 @@ import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
@@ -58,9 +59,9 @@ public class AdventChests implements Listener {
 	private static final String adventLootHeadTitle = "Pugmas Advent Skull";
 	private static final String adventLootHeadLore = "Day #";
 	//
-	private static final String wrongDay = Pugmas20.getPREFIX() + "You cannot open this chest, look for chest #<day>";
-	private static final String openPrevious = Pugmas20.getPREFIX() + "Need to find the rest to open this one";
-	private static final String alreadyFound = Pugmas20.getPREFIX() + "Already opened this chest!";
+	private static final String wrongDay = Pugmas20.PREFIX + "You cannot open this chest, look for chest #<day>";
+	private static final String openPrevious = Pugmas20.PREFIX + "Need to find the rest to open this one";
+	private static final String alreadyFound = Pugmas20.PREFIX + "Already opened this chest!";
 
 	public AdventChests() {
 		Nexus.registerListener(this);
@@ -147,7 +148,7 @@ public class AdventChests implements Listener {
 
 		event.setCancelled(true);
 		if (!Quests.hasRoomFor(player, 1)) {
-			Utils.send(player, Quests.fullInvError);
+			PlayerUtils.send(player, Quests.fullInvError);
 			return;
 		}
 
@@ -163,6 +164,9 @@ public class AdventChests implements Listener {
 			if (isPastPugmas(now)) return;
 		}
 
+		user.getLocatedDays().add(chestDay);
+		service.save(user);
+
 		boolean openChest = false;
 		String reason = "";
 		if (user.getFoundDays().contains(chestDay))
@@ -173,20 +177,16 @@ public class AdventChests implements Listener {
 					openChest = true;
 				else
 					reason = openPrevious;
-			else {
+			else
 				if (chestDay == day)
 					openChest = true;
-				else {
-					reason = wrongDay;
-					user.getLocatedDays().add(chestDay);
-					service.save(user);
-				}
-			}
+				else
+					reason = wrongDay + "(" + adventChest.getDistrict().getName() + " District)";
 		}
 
 		if (!openChest) {
 			reason = reason.replaceAll("<day>", String.valueOf(day));
-			Utils.send(player, reason);
+			PlayerUtils.send(player, reason);
 			return;
 		}
 
@@ -239,7 +239,7 @@ public class AdventChests implements Listener {
 		Chest chest = (Chest) loc.getBlock().getState();
 		ItemStack[] contents = chest.getBlockInventory().getContents();
 		if (!Quests.hasRoomFor(player, contents)) {
-			Utils.send(player, Quests.fullInvError);
+			PlayerUtils.send(player, Quests.fullInvError);
 			Quests.sound_villagerNo(player);
 			return false;
 		}
@@ -264,7 +264,7 @@ public class AdventChests implements Listener {
 		if (leftover.size() == 0)
 			return;
 
-		Utils.send(player, Quests.leftoverItems);
+		PlayerUtils.send(player, Quests.leftoverItems);
 		ItemUtils.giveItems(player, leftover);
 	}
 
@@ -293,6 +293,5 @@ public class AdventChests implements Listener {
 		if (district != District.UNKNOWN)
 			ActionBarUtils.sendActionBar(player, "&c&lExiting " + district.getName() + " District");
 	}
-
 
 }

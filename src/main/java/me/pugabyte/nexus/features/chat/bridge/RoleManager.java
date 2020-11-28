@@ -4,7 +4,7 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.OfflinePlayer;
 
@@ -25,7 +25,7 @@ public class RoleManager {
 			return;
 
 		DiscordService service = new DiscordService();
-		OfflinePlayer player = Utils.getPlayer(user.getUuid());
+		OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 
 		if (ignore.contains(player.getName()))
 			return;

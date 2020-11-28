@@ -9,8 +9,8 @@ import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.framework.exceptions.BNException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.litebans.LiteBansService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
 import java.util.stream.Collectors;
@@ -37,10 +37,10 @@ public class AltsDiscordCommand extends Command {
 					throw new InvalidInputException("Correct usage: `/alts <player>`");
 
 				LiteBansService service = new LiteBansService();
-				OfflinePlayer player = Utils.getPlayer(args[0]);
+				OfflinePlayer player = PlayerUtils.getPlayer(args[0]);
 
 				String alts = service.getAlts(player.getUniqueId().toString()).stream()
-						.map(Utils::getPlayer).map(_player -> {
+						.map(PlayerUtils::getPlayer).map(_player -> {
 							if (service.isBanned(_player.getUniqueId().toString()))
 								return "**" + _player.getName() + "**";
 							else if (_player.isOnline())

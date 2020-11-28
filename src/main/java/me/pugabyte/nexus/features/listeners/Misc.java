@@ -22,10 +22,10 @@ import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -124,7 +124,7 @@ public class Misc implements Listener {
 
 		Tip tip = new TipService().get(event.getPlayer());
 		if (tip.show(TipType.LWC_FURNACE))
-			Utils.send(event.getPlayer(), Koda.getDmFormat() + "Your chest is protected with LWC! Use /lwcinfo to learn more. " +
+			PlayerUtils.send(event.getPlayer(), Koda.getDmFormat() + "Your chest is protected with LWC! Use /lwcinfo to learn more. " +
 					"Use &c/trust lock <player> &eto allow someone else to use it.");
 	}
 
@@ -138,7 +138,7 @@ public class Misc implements Listener {
 
 		Tip tip = new TipService().get(event.getPlayer());
 		if (tip.show(TipType.LWC_FURNACE))
-			Utils.send(event.getPlayer(), Koda.getDmFormat() + "Your furnace is protected with LWC! Use /lwcinfo to learn more. " +
+			PlayerUtils.send(event.getPlayer(), Koda.getDmFormat() + "Your furnace is protected with LWC! Use /lwcinfo to learn more. " +
 					"Use &c/trust lock <player> &eto allow someone else to use it.");
 	}
 
@@ -149,9 +149,9 @@ public class Misc implements Listener {
 			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
 				ActionBarUtils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get());
-				Utils.send(player, "");
-				Utils.send(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings");
-				Utils.send(player, "");
+				PlayerUtils.send(player, "");
+				PlayerUtils.send(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings");
+				PlayerUtils.send(player, "");
 			}
 		});
 	}
@@ -235,7 +235,7 @@ public class Misc implements Listener {
 		if (event.getPlayer().getUniqueId().toString().equalsIgnoreCase("5bff3b47-06f3-4766-9468-edfe19266997")) {
 			Setting setting = settingService.get(event.getPlayer(), "s6oobertTP");
 			if (!setting.getBoolean()) {
-				Utils.runCommand(event.getPlayer(), "home");
+				PlayerUtils.runCommand(event.getPlayer(), "home");
 				setting.setBoolean(true);
 				settingService.save(setting);
 			}
@@ -258,7 +258,7 @@ public class Misc implements Listener {
 				Tasks.wait(10, player::resetPlayerTime);
 				if (WorldGroup.get(event.getFrom()).equals(WorldGroup.CREATIVE) || WorldGroup.get(event.getFrom()).equals(WorldGroup.EVENT)) {
 					if (!player.hasPermission("essentials.speed"))
-						Utils.runCommandAsOp(player, "flyspeed 1");
+						PlayerUtils.runCommandAsOp(player, "flyspeed 1");
 					if (!player.hasPermission("essentials.fly"))
 						player.setFlying(false);
 				}
@@ -267,26 +267,26 @@ public class Misc implements Listener {
 
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
 			Tasks.wait(20, () -> {
-				Utils.send(player, "Removing pets, disguises and ptime changes");
-				Utils.runCommandAsConsole("undisguiseplayer " + player.getName());
-				Utils.runCommandAsConsole("petadmin remove " + player.getName());
-				Utils.runCommandAsConsole("mpet remove " + player.getName());
-				Utils.runCommandAsOp(player, "particles stopall");
-				Utils.runCommandAsOp(player, "powder cancel");
-				Utils.runCommandAsConsole("speed walk 1 " + player.getName());
+				PlayerUtils.send(player, "Removing pets, disguises and ptime changes");
+				PlayerUtils.runCommandAsConsole("undisguiseplayer " + player.getName());
+				PlayerUtils.runCommandAsConsole("petadmin remove " + player.getName());
+				PlayerUtils.runCommandAsConsole("mpet remove " + player.getName());
+				PlayerUtils.runCommandAsOp(player, "particles stopall");
+				PlayerUtils.runCommandAsOp(player, "powder cancel");
+				PlayerUtils.runCommandAsConsole("speed walk 1 " + player.getName());
 				player.resetPlayerTime();
 			});
 
 		if (player.getWorld().getName().equalsIgnoreCase("staff_world"))
-			Tasks.wait(20, () -> Utils.runCommand(player, "cheats off"));
+			Tasks.wait(20, () -> PlayerUtils.runCommand(player, "cheats off"));
 	}
 
 	public void joinMinigames(Player player) {
-		Utils.runCommand(player, "ch join m");
+		PlayerUtils.runCommand(player, "ch join m");
 	}
 
 	public void joinCreative(Player player) {
-		Utils.runCommand(player, "ch join c");
+		PlayerUtils.runCommand(player, "ch join c");
 	}
 
 	public static class PlayerDamageByPlayerEvent extends Event {

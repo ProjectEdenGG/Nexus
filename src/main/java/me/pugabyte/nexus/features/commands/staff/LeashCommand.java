@@ -4,8 +4,8 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -35,7 +35,7 @@ public class LeashCommand extends CustomCommand {
 	@Path("(stopAll|cancelAll)")
 	void stopAll() {
 		for (Map.Entry<UUID, Integer> leash : leashes.entrySet())
-			stopLeash(Utils.getPlayer(leash.getKey()).getPlayer(), "Leash cancelled by &e" + sender().getName());
+			stopLeash(PlayerUtils.getPlayer(leash.getKey()).getPlayer(), "Leash cancelled by &e" + sender().getName());
 		send(PREFIX + "All leashed cancelled");
 	}
 

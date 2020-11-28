@@ -11,8 +11,8 @@ import me.pugabyte.nexus.models.home.Home;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -69,7 +69,7 @@ public class HomesMenu {
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {
-						home.allow(Utils.getPlayer(lines[0]));
+						home.allow(PlayerUtils.getPlayer(lines[0]));
 						new HomeService().save(home.getOwner());
 					}
 					onResponse.accept(lines);
@@ -82,7 +82,7 @@ public class HomesMenu {
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {
-						home.remove(Utils.getPlayer(lines[0]));
+						home.remove(PlayerUtils.getPlayer(lines[0]));
 						new HomeService().save(home.getOwner());
 					}
 					onResponse.accept(lines);
@@ -106,7 +106,7 @@ public class HomesMenu {
 								itemStack = new ItemStack(material);
 							} else {
 								try {
-									OfflinePlayer offlinePlayer = Utils.getPlayer(input);
+									OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(input);
 									if (offlinePlayer != null) {
 										itemStack = new ItemBuilder(Material.PLAYER_HEAD).build();
 										SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
@@ -118,7 +118,7 @@ public class HomesMenu {
 						}
 
 						if (itemStack == null) {
-							Utils.send(home.getPlayer(), HomesFeature.PREFIX + "&cCould not parse item");
+							PlayerUtils.send(home.getPlayer(), HomesFeature.PREFIX + "&cCould not parse item");
 							displayItem(home, onResponse);
 						} else {
 							home.setItem(itemStack);
@@ -137,7 +137,7 @@ public class HomesMenu {
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						if (home.getOwner().getHome(lines[0]).isPresent())
-							Utils.send(home.getPlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
+							PlayerUtils.send(home.getPlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
 							home.setName(lines[0]);
 							new HomeService().save(home.getOwner());
@@ -154,7 +154,7 @@ public class HomesMenu {
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						if (homeOwner.getHome(lines[0]).isPresent())
-							Utils.send(homeOwner.getPlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
+							PlayerUtils.send(homeOwner.getPlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
 							homeOwner.add(Home.builder()
 									.uuid(homeOwner.getUuid())

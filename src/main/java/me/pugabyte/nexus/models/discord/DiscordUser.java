@@ -6,7 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
@@ -33,7 +33,7 @@ public class DiscordUser {
 	}
 
 	public String getBridgeName() {
-		OfflinePlayer player = Utils.getPlayer(uuid);
+		OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 		String name = "**" + discordize(player.getName()) + "**";
 		if (roleId != null)
 			name = "<@&&f" + roleId + ">";
@@ -41,7 +41,7 @@ public class DiscordUser {
 	}
 
 	public OfflinePlayer getOfflinePlayer() {
-		return Utils.getPlayer(uuid);
+		return PlayerUtils.getPlayer(uuid);
 	}
 
 	public String getIngameName() {

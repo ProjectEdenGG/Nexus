@@ -14,10 +14,10 @@ import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 
@@ -46,7 +46,7 @@ public class SuggestDiscordCommand extends Command {
 				if (args.length == 0)
 					throw new InvalidInputException("Correct usage: `/suggest <player>`");
 
-				Nerd nerd = new NerdService().get(Utils.getPlayer(args[0]));
+				Nerd nerd = new NerdService().get(PlayerUtils.getPlayer(args[0]));
 				if (!Arrays.asList(Rank.MEMBER, Rank.TRUSTED).contains(nerd.getRank()))
 					throw new InvalidInputException(nerd.getName() + " is not eligible for promotion (They are " + nerd.getRank().plain() + ")");
 

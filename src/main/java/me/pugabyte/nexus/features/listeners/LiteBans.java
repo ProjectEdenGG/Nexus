@@ -15,9 +15,9 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
@@ -36,18 +36,18 @@ public class LiteBans implements Listener {
 	public void onLiteBansBan(BanEvent event) {
 		try {
 			Entry entry = event.getEntry();
-			OfflinePlayer player = Utils.getPlayer(entry.getUuid());
-			OfflinePlayer executor = Utils.getPlayer(entry.getExecutorUUID());
+			OfflinePlayer player = PlayerUtils.getPlayer(entry.getUuid());
+			OfflinePlayer executor = PlayerUtils.getPlayer(entry.getExecutorUUID());
 
-			OfflinePlayer pug = Utils.getPlayer("Pugabyte");
+			OfflinePlayer pug = PlayerUtils.getPlayer("Pugabyte");
 			if (player.equals(pug) && !executor.equals(pug) && executor.isOnline()) {
-				Utils.runCommandAsConsole("unban Pugabyte");
-				Utils.runCommandAsConsole("ban " + executor.getName() + " No.");
+				PlayerUtils.runCommandAsConsole("unban Pugabyte");
+				PlayerUtils.runCommandAsConsole("ban " + executor.getName() + " No.");
 			}
 
 			if (player.getUniqueId().version() != 4) {
 				if (executor.isOnline() && executor.getPlayer() != null)
-					Utils.send(executor, "&4&lUnknown player, check your spelling");
+					PlayerUtils.send(executor, "&4&lUnknown player, check your spelling");
 
 			} else {
 
@@ -61,14 +61,14 @@ public class LiteBans implements Listener {
 						delayedBan.setDuration(entry.getDurationString());
 						delayedBanService.save(delayedBan);
 
-						Utils.runCommandAsConsole("unban " + player.getName());
+						PlayerUtils.runCommandAsConsole("unban " + player.getName());
 
 						Tasks.wait(10, () -> {
-							Utils.runCommandAsConsole("prunehistory " + player.getName() + " 2minutes");
+							PlayerUtils.runCommandAsConsole("prunehistory " + player.getName() + " 2minutes");
 
 							Tasks.wait(10, () -> {
 								String message = "&e" + player.getName() + " &3will be banned upon login for &e" + entry.getReason() + " &3for &e" + entry.getDurationString();
-								Utils.sendStaff(DelayedBanCommand.PREFIX + message);
+								PlayerUtils.sendStaff(DelayedBanCommand.PREFIX + message);
 								Discord.log("**[DelayedBan]** " + stripColor(message));
 							});
 						});
@@ -113,7 +113,7 @@ public class LiteBans implements Listener {
 								&& (message.contains("tempbanned") || message.contains("unbanned"))) {
 
 							String[] messageSplit = message.split(" ");
-							OfflinePlayer offlinePlayer = Utils.getPlayer(stripColor(messageSplit[2]));
+							OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(stripColor(messageSplit[2]));
 
 							DelayedBanService delayedBanService = new DelayedBanService();
 							if (delayedBanService.hasQueuedBan(offlinePlayer))

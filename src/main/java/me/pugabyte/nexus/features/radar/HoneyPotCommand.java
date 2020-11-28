@@ -20,7 +20,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGriefer;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGrieferService;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -193,12 +193,12 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + getHP(region) + "`", StaticChannel.STAFF);
 
 			if (triggered > 9) {
-				Utils.runCommandAsConsole("sudo " + player.getName() + " ticket [HoneyPot] Grief trap triggered! " +
+				PlayerUtils.runCommandAsConsole("sudo " + player.getName() + " ticket [HoneyPot] Grief trap triggered! " +
 						"Please make sure the area has been fully repaired, and take the blocks from their inventory. " +
 						"(HP: " + getHP(region) + ")");
 				fixHP(region, player.getWorld());
 				triggered = 0;
-				Utils.runCommandAsConsole("ban " + player.getName() + " 10h You have been automatically banend " +
+				PlayerUtils.runCommandAsConsole("ban " + player.getName() + " 10h You have been automatically banend " +
 						"by a grief trap. Griefing is not allowed! (HP: " + getHP(region) + ")");
 			}
 

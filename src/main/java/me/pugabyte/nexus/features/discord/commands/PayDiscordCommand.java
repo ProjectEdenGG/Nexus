@@ -9,6 +9,7 @@ import me.pugabyte.nexus.framework.exceptions.BNException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -35,8 +36,8 @@ public class PayDiscordCommand extends Command {
 				if (args.length != 2 || !Utils.isDouble(args[1]))
 					throw new InvalidInputException("Correct usage: `/pay <player> <amount>`");
 
-				OfflinePlayer player = Utils.getPlayer(user.getUuid());
-				OfflinePlayer target = Utils.getPlayer(args[0]);
+				OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
+				OfflinePlayer target = PlayerUtils.getPlayer(args[0]);
 				double amount = Double.parseDouble(args[1]);
 
 				if (player.getUniqueId().equals(target.getUniqueId()))
@@ -59,7 +60,7 @@ public class PayDiscordCommand extends Command {
 
 				String formatted = NumberFormat.getCurrencyInstance().format(amount);
 				if (target.isOnline() && target.getPlayer() != null)
-					Utils.send(target, "&a" + formatted + " has been received from " + player.getName());
+					PlayerUtils.send(target, "&a" + formatted + " has been received from " + player.getName());
 
 				event.reply("Successfully sent " + formatted + " to " + target.getName());
 			} catch (Exception ex) {

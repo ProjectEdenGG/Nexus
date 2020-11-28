@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.listeners;
 
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -89,6 +89,6 @@ public class CommandSigns implements Listener {
 	}
 
 	private void trash(Player player) {
-		Utils.runCommand(player, "trash");
+		PlayerUtils.runCommand(player, "trash");
 	}
 }

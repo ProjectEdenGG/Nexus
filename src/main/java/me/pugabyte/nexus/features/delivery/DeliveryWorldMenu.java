@@ -9,7 +9,7 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -58,7 +58,7 @@ public class DeliveryWorldMenu extends MenuUtils implements InventoryProvider {
 			service.save(delivery);
 
 			menu.close(player);
-			Utils.send(player, DeliveryCommand.PREFIX + "Your items have been delivered to &e" + camelCase(worldGroup));
+			PlayerUtils.send(player, DeliveryCommand.PREFIX + "Your items have been delivered to &e" + camelCase(worldGroup));
 		};
 
 		contents.set(new SlotPos(1, 2), ClickableItem.from(survival, e -> save.accept(WorldGroup.SURVIVAL)));

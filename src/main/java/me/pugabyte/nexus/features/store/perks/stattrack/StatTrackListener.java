@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.store.perks.stattrack.models.StatIncreaseEvent
 import me.pugabyte.nexus.features.store.perks.stattrack.models.StatItem;
 import me.pugabyte.nexus.features.store.perks.stattrack.utils.StatTrackUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -41,7 +41,7 @@ public class StatTrackListener implements Listener {
 	}
 
 	private void checkStats(Player player, Block block, Stat... stats) {
-		if (!player.equals(Utils.puga())) return;
+		if (!player.equals(PlayerUtils.puga())) return;
 		if (player.getGameMode() != GameMode.SURVIVAL) return;
 		final ItemStack tool = ItemUtils.getTool(player);
 		if (tool == null || !new StatItem(tool).isEnabled()) return;

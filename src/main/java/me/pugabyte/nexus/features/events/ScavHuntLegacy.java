@@ -2,8 +2,8 @@ package me.pugabyte.nexus.features.events;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
@@ -56,11 +56,11 @@ public class ScavHuntLegacy implements Listener {
 		Sign sign = (Sign) block.getState();
 		Player player = event.getPlayer();
 		if ("[Scav Hunt '16]".equals(stripColor(sign.getLine(0)))) {
-			Utils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eSummer 2016 &3scavenger hunt!");
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eSummer 2016 &3scavenger hunt!");
 		} else if ("[Scav Hunt '18]".equals(stripColor(sign.getLine(0)))) {
-			Utils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eFebruary 2018 &3scavenger hunt!");
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eFebruary 2018 &3scavenger hunt!");
 		} else if ("[Easter 2020]".equals(stripColor(sign.getLine(0)))) {
-			Utils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg Hunt!");
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg Hunt!");
 		}
 	}
 
@@ -76,9 +76,9 @@ public class ScavHuntLegacy implements Listener {
 		if (skull.getOwningPlayer() == null) return;
 		Player player = event.getPlayer();
 		if (easter17.contains(skull.getOwningPlayer().getUniqueId().toString())) {
-			Utils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2017 Easter egg Hunt!");
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2017 Easter egg Hunt!");
 		} else if (easter19.contains(skull.getOwningPlayer().getUniqueId().toString())) {
-			Utils.send(player, SCAVHUNT_PREFIX + "You've found a bunny from the &e2019 Easter event!");
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found a bunny from the &e2019 Easter event!");
 		}
 	}
 

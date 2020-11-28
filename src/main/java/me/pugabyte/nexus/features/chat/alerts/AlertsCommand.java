@@ -6,8 +6,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.alerts.Alerts;
 import me.pugabyte.nexus.models.alerts.AlertsService;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -101,7 +101,7 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
 				+ (partialMatching ? "enabled" : "disabled"));
 		line();
-		Tasks.wait(2, () -> Utils.runCommand(player(), "alerts edit"));
+		Tasks.wait(2, () -> PlayerUtils.runCommand(player(), "alerts edit"));
 	}
 
 	@Path("clear")

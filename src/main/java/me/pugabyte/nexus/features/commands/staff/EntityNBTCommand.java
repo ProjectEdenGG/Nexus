@@ -5,8 +5,6 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.entity.LivingEntity;
 
 @Permission("group.staff")
 public class EntityNBTCommand extends CustomCommand {
@@ -17,8 +15,7 @@ public class EntityNBTCommand extends CustomCommand {
 
 	@Path
 	void nbt() {
-		LivingEntity targetEntity = Utils.getTargetEntity(player());
-		NBTEntity nbtEntity = new NBTEntity(targetEntity);
+		NBTEntity nbtEntity = new NBTEntity(getTargetEntityRequired());
 		send(nbtEntity.asNBTString());
 	}
 }

@@ -31,7 +31,6 @@ import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -361,7 +360,7 @@ public final class Thimble extends TeamlessMechanic {
 
 		ThimbleArena arena = minigamer.getMatch().getArena();
 		if (event.getRegion().getId().equalsIgnoreCase(arena.getProtectedRegion("pool").getId())) {
-			if (!Utils.isInWater(player)) return;
+			if (!player.isInWater()) return;
 			if (player.getInventory().getHelmet() == null) return;
 
 			ThimbleMatchData matchData = minigamer.getMatch().getMatchData();

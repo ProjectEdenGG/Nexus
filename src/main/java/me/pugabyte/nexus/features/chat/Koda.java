@@ -13,11 +13,11 @@ import me.pugabyte.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -81,7 +81,7 @@ public class Koda {
 	}
 
 	public static void dm(Player player, String message) {
-		Utils.send(player, dmFormat + message);
+		PlayerUtils.send(player, dmFormat + message);
 	}
 
 	@Getter

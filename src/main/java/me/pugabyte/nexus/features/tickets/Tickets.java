@@ -3,8 +3,8 @@ package me.pugabyte.nexus.features.tickets;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.models.ticket.Ticket;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -50,7 +50,7 @@ public class Tickets {
 		if (ticket.getOwner() instanceof Player)
 			uuids.add(((Player) ticket.getOwner()).getUniqueId());
 
-		uuids.forEach(uuid -> Utils.send(uuid, PREFIX + message));
+		uuids.forEach(uuid -> PlayerUtils.send(uuid, PREFIX + message));
 	}
 
 }

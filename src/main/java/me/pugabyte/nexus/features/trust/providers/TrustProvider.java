@@ -12,7 +12,7 @@ import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.Trust.Type;
 import me.pugabyte.nexus.models.trust.TrustService;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -67,7 +67,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		trust.getAll().stream()
-				.map(Utils::getPlayer)
+				.map(PlayerUtils::getPlayer)
 				.sorted(Comparator.comparing(OfflinePlayer::getName))
 				.collect(Collectors.toList())
 				.forEach(_player -> {
@@ -97,7 +97,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 						.prefix(Features.get(TrustFeature.class).getPrefix())
 						.response(lines -> {
 							if (lines[0].length() > 0) {
-								OfflinePlayer trusted = Utils.getPlayer(lines[0]);
+								OfflinePlayer trusted = PlayerUtils.getPlayer(lines[0]);
 								TrustPlayerProvider.open(player, trusted);
 							} else
 								openMenu(player);

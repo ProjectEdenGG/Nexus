@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -42,11 +42,11 @@ public class Poof {
 	}
 
 	public OfflinePlayer getSenderPlayer() {
-		return Utils.getPlayer(sender);
+		return PlayerUtils.getPlayer(sender);
 	}
 
 	public OfflinePlayer getReceiverPlayer() {
-		return Utils.getPlayer(receiver);
+		return PlayerUtils.getPlayer(receiver);
 	}
 
 	public enum PoofType {

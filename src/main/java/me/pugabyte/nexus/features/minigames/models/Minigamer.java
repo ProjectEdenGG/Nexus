@@ -27,9 +27,9 @@ import org.bukkit.util.Vector;
 
 import java.util.Objects;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.hidePlayer;
+import static me.pugabyte.nexus.utils.PlayerUtils.showPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.Utils.hidePlayer;
-import static me.pugabyte.nexus.utils.Utils.showPlayer;
 
 @Data
 @EqualsAndHashCode(exclude = "match")

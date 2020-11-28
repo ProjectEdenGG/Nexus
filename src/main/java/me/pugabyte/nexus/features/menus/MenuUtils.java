@@ -15,8 +15,8 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.BNException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,7 +42,7 @@ public abstract class MenuUtils {
 	public void open(Player viewer, int page) {}
 
 	protected ItemStack addGlowing(ItemStack itemStack) {
-		return Utils.addGlowing(itemStack);
+		return ItemBuilder.glow(itemStack);
 	}
 
 	public int getRows(int items) {
@@ -74,11 +74,11 @@ public abstract class MenuUtils {
 	}
 
 	protected void warp(Player player, String warp) {
-		Utils.runCommand(player, "warp " + warp);
+		PlayerUtils.runCommand(player, "warp " + warp);
 	}
 
 	public void command(Player player, String command) {
-		Utils.runCommand(player, command);
+		PlayerUtils.runCommand(player, command);
 	}
 
 	public static String getLocationLore(Location location) {
@@ -108,11 +108,11 @@ public abstract class MenuUtils {
 
 	public static void handleException(Player player, String prefix, Throwable ex) {
 		if (ex.getCause() != null && ex.getCause() instanceof BNException)
-			Utils.send(player, prefix + "&c" + ex.getCause().getMessage());
+			PlayerUtils.send(player, prefix + "&c" + ex.getCause().getMessage());
 		else if (ex instanceof BNException)
-			Utils.send(player, prefix + "&c" + ex.getMessage());
+			PlayerUtils.send(player, prefix + "&c" + ex.getMessage());
 		else {
-			Utils.send(player, "&cAn internal error occurred while attempting to execute this command");
+			PlayerUtils.send(player, "&cAn internal error occurred while attempting to execute this command");
 			ex.printStackTrace();
 		}
 	}

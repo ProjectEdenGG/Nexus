@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -36,17 +36,17 @@ public class SignListener implements Listener {
 						Arena arena = ArenaManager.find(sign.getLine(2));
 						PlayerManager.get(event.getPlayer()).join(arena);
 					} catch (Exception ex) {
-						Utils.send(event.getPlayer(), Minigames.PREFIX + ex.getMessage());
+						PlayerUtils.send(event.getPlayer(), Minigames.PREFIX + ex.getMessage());
 					}
 					break;
 				case "quit":
 					PlayerManager.get(event.getPlayer()).quit();
 					break;
 				case "lobby":
-					Utils.runCommand(event.getPlayer(), "warp minigames");
+					PlayerUtils.runCommand(event.getPlayer(), "warp minigames");
 					break;
 				case "force start":
-					Utils.runCommandAsOp(event.getPlayer(), "newmgm start");
+					PlayerUtils.runCommandAsOp(event.getPlayer(), "newmgm start");
 					break;
 			}
 		}

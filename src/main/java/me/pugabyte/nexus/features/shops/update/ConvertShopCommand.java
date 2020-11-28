@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
@@ -100,7 +101,7 @@ public class ConvertShopCommand extends CustomCommand {
 			data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(":")[0]));
 			data.setMoneyInSign(Double.parseDouble(lines[1].split(":")[1]));
 			data.setStock(Integer.parseInt(lines[2].split(" ")[1].split(":")[1]));
-			data.setPlayer(Utils.getPlayer(StringUtils.stripColor(lines[3])));
+			data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
 
 			String idForSale = lines[2].split(" ")[1].split(":")[0];
 
@@ -125,14 +126,14 @@ public class ConvertShopCommand extends CustomCommand {
 			data.setItem(new ItemBuilder(Material.ENCHANTED_BOOK)
 					.enchant(getEnchantFromShort(lines[2].split(" ")[0]), Integer.parseInt(lines[2].split(" ")[1])).build());
 			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
-			data.setPlayer(Utils.getPlayer(StringUtils.stripColor(lines[3])));
+			data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
 			return data;
 		}
 
 		if (StringUtils.stripColor(lines[0]).equals("[Potion Trade]")) {
 			data.setPrice(Integer.parseInt(lines[1].replace("$", "").split(" \\| ")[0]));
 			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
-			data.setPlayer(Utils.getPlayer(StringUtils.stripColor(lines[3])));
+			data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
 
 			boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
 			boolean isMultiplied = isMultiplied(lines[2]);
@@ -159,7 +160,7 @@ public class ConvertShopCommand extends CustomCommand {
 		if (StringUtils.stripColor(lines[0]).equals("[Arrow Trade]")) {
 			data.setPrice(Integer.parseInt(lines[1].replace("$", "").split(" \\| ")[0]));
 			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
-			data.setPlayer(Utils.getPlayer(StringUtils.stripColor(lines[3])));
+			data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
 
 			boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
 			boolean isMultiplied = isMultiplied(lines[2]);

@@ -6,7 +6,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
-import me.pugabyte.nexus.utils.Utils.IteratableEnum;
+import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 
 import java.util.function.Predicate;
 

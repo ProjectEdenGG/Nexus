@@ -3,7 +3,7 @@ package me.pugabyte.nexus.models.lwc;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -32,7 +32,7 @@ public class LWCProtection {
 	private String rights;
 
 	public OfflinePlayer getPlayer() {
-		return Utils.getPlayer(UUID.fromString(owner));
+		return PlayerUtils.getPlayer(UUID.fromString(owner));
 	}
 
 	public Location getLocation() {

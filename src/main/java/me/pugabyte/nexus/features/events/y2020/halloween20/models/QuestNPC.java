@@ -6,9 +6,9 @@ import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -56,7 +56,7 @@ public enum QuestNPC {
 							builder.shulkerBox(pumpkin.getOriginal().getBlock().getDrops().toArray(new ItemStack[0]));
 						ItemUtils.giveItem(player, builder.build());
 						Nexus.getEcon().depositPlayer(player, 5000);
-						Utils.send(player, "&a$5,000 has been added to your account.");
+						PlayerUtils.send(player, "&a$5,000 has been added to your account.");
 					});
 					return Arrays.asList(
 							"You found all my pumpkins! Thank you so much.",
@@ -329,7 +329,7 @@ public enum QuestNPC {
 				}
 				String message = "&3" + npcName.get() + " &7> &f" + line;
 				Tasks.wait(wait.get(), () -> {
-					Utils.send(player, message);
+					PlayerUtils.send(player, message);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 				});
 			}

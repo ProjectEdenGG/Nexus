@@ -1,39 +1,19 @@
 package me.pugabyte.nexus.utils;
 
 import com.google.common.base.Strings;
-import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.annotations.Environments;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
-import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
-import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.util.Vector;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.InvocationTargetException;
@@ -52,152 +32,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static me.pugabyte.nexus.utils.StringUtils.camelCase;
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class Utils {
-
-	public static Player puga() {
-		return Bukkit.getPlayer("Pugabyte");
-	}
-
-	public static Player wakka() {
-		return Bukkit.getPlayer("WakkaFlocka");
-	}
-
-	public static Player blast() {
-		return Bukkit.getPlayer("Blast");
-	}
-
-	public static Player zani() {
-		return Bukkit.getPlayer("Zanitaeni");
-	}
-
-	public static Player vroom() {
-		return Bukkit.getPlayer("Camaros");
-	}
-
-	public static Player lexi() {
-		return Bukkit.getPlayer("lexikiq");
-	}
-
-	public static void puga(String message) {
-		send(puga(), message);
-	}
-
-	public static void wakka(String message) {
-		send(wakka(), message);
-	}
-
-	public static void blast(String message) {
-		send(blast(), message);
-	}
-
-	public static void zani(String message) {
-		send(zani(), message);
-	}
-
-	public static void vroom(String message){
-		send(vroom(), message);
-	}
-
-	public static void lexi(String message){
-		send(lexi(), message);
-	}
-
-	public static boolean isVanished(Player player) {
-		for (MetadataValue meta : player.getMetadata("vanished"))
-			return (meta.asBoolean());
-		return false;
-	}
-
-	public static boolean canSee(OfflinePlayer viewer, OfflinePlayer target) {
-		if (!viewer.isOnline() || !target.isOnline()) return false;
-		return (canSee(viewer.getPlayer(), target.getPlayer()));
-	}
-
-	public static boolean canSee(Player viewer, Player target) {
-		return !isVanished(target) || viewer.hasPermission("pv.see");
-	}
-
-	public static List<String> getOnlineUuids() {
-		return Bukkit.getOnlinePlayers().stream()
-				.map(p -> p.getUniqueId().toString())
-				.collect(Collectors.toList());
-	}
-
-	public static OfflinePlayer getPlayer(UUID uuid) {
-		return Bukkit.getOfflinePlayer(uuid);
-	}
-
-	public static OfflinePlayer getPlayer(String partialName) {
-		if (partialName == null || partialName.length() == 0)
-			throw new InvalidInputException("No player name given");
-
-		String original = partialName;
-		partialName = partialName.toLowerCase().trim();
-
-		if (partialName.length() == 36)
-			return getPlayer(UUID.fromString(partialName));
-
-		for (Player player : Bukkit.getOnlinePlayers())
-			if (player.getName().toLowerCase().startsWith(partialName))
-				return player;
-		for (Player player : Bukkit.getOnlinePlayers())
-			if (player.getName().toLowerCase().contains((partialName)))
-				return player;
-
-		NerdService nerdService = new NerdService();
-
-		OfflinePlayer fromNickname = nerdService.getFromNickname(partialName);
-		if (fromNickname != null)
-			return fromNickname;
-
-		List<Nerd> matches = nerdService.find(partialName);
-		if (matches.size() > 0) {
-			Nerd nerd = matches.get(0);
-			if (nerd != null && nerd.getUuid() != null)
-				return nerd.getOfflinePlayer();
-		}
-
-		throw new PlayerNotFoundException(original);
-	}
-
-	public static Player getNearestPlayer(Player player) {
-		Player nearest = null;
-		double distance = Double.MAX_VALUE;
-		for (Player _player : player.getWorld().getPlayers()) {
-			if (player.getLocation().getWorld() != _player.getLocation().getWorld()) continue;
-			double _distance = player.getLocation().distance(_player.getLocation());
-			if (_distance < distance) {
-				distance = _distance;
-				nearest = _player;
-			}
-		}
-		return nearest;
-	}
-
-	@SneakyThrows
-	public static int getPing(Player player) {
-		Object entityPlayer = player.getClass().getMethod("getHandle").invoke(player);
-		return (int) entityPlayer.getClass().getField("ping").get(entityPlayer);
-	}
-
-	public static void deposit(Player player, double amount) {
-		Nexus.getEcon().depositPlayer(player, amount);
-	}
-
-	public static void withdraw(Player player, double amount) {
-		Nexus.getEcon().withdrawPlayer(player, amount);
-	}
 
 	public static EntityType getSpawnEggType(Material type) {
 		return EntityType.valueOf(type.toString().split("_SPAWN_EGG")[0]);
@@ -245,32 +88,6 @@ public class Utils {
 				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
 	}
 
-	public static <T extends Entity> T getTargetEntity(final LivingEntity entity) {
-		if (entity instanceof Creature)
-			return (T) ((Creature) entity).getTarget();
-
-		T target = null;
-		double targetDistanceSquared = 0;
-		final double radiusSquared = 1;
-		final Vector l = entity.getEyeLocation().toVector();
-		final Vector n = entity.getLocation().getDirection().normalize();
-		final double cos45 = Math.cos(Math.PI / 4);
-
-		for (final T other : (List<T>) entity.getNearbyEntities(50, 50, 50)) {
-			if (other == null || other == entity)
-				continue;
-			if (target == null || targetDistanceSquared > other.getLocation().distanceSquared(entity.getLocation())) {
-				final Vector t = other.getLocation().add(0, 1, 0).toVector().subtract(l);
-				if (n.clone().crossProduct(t).lengthSquared() < radiusSquared && t.normalize().dot(n) >= cos45) {
-					target = other;
-					targetDistanceSquared = target.getLocation().distanceSquared(entity.getLocation());
-				}
-			}
-		}
-
-		return target;
-	}
-
 	public static Map<String, String> dump(Object object) {
 		Map<String, String> output = new HashMap<>();
 		List<Method> methods = Arrays.asList(object.getClass().getDeclaredMethods());
@@ -285,24 +102,6 @@ public class Utils {
 		}
 
 		return output;
-	}
-
-	public static void runCommand(CommandSender sender, String commandNoSlash) {
-//		if (sender instanceof Player)
-//			Utils.callEvent(new PlayerCommandPreprocessEvent((Player) sender, "/" + command));
-		Bukkit.dispatchCommand(sender, commandNoSlash);
-	}
-
-	public static void runCommandAsOp(CommandSender sender, String commandNoSlash) {
-		boolean deop = !sender.isOp();
-		sender.setOp(true);
-		runCommand(sender, commandNoSlash);
-		if (deop)
-			sender.setOp(false);
-	}
-
-	public static void runCommandAsConsole(String commandNoSlash) {
-		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
 	}
 
 	public static LocalDateTime epochSecond(String timestamp) {
@@ -371,103 +170,6 @@ public class Utils {
 		return -1;
 	}
 
-	public static boolean isInWater(Entity entity) {
-		Location location = entity.getLocation();
-		Block block = location.getBlock();
-		Location locationBelow = location.subtract(0.0, 1.0, 0.0);
-		if (Material.WATER.equals(block.getType())) {
-			return true;
-		} else if (Material.AIR.equals(block.getType()) && Material.WATER.equals(locationBelow.getBlock().getType())) {
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean isInLava(Player player) {
-		Location location = player.getLocation();
-		Block block = location.getBlock();
-		Location locationBelow = location.subtract(0.0, 1.0, 0.0);
-		if (Material.LAVA.equals(block.getType())) {
-			return true;
-		} else if (Material.AIR.equals(block.getType()) && Material.LAVA.equals(locationBelow.getBlock().getType())) {
-			return true;
-		}
-		return false;
-	}
-
-	public static void send(String UUID, String message) {
-		send(getPlayer(UUID), message);
-	}
-
-	public static void send(UUID uuid, String message) {
-		OfflinePlayer offlinePlayer = getPlayer(uuid);
-		send(offlinePlayer, message);
-	}
-
-	public static void send(OfflinePlayer offlinePlayer, String message) {
-		if (offlinePlayer.getPlayer() != null)
-			send(offlinePlayer.getPlayer(), message);
-	}
-
-	public static void send(Player player, String message) {
-		if (player != null && player.isOnline())
-			player.sendMessage(colorize(message));
-	}
-
-	public static void send(CommandSender sender, String message) {
-		if (sender instanceof Player)
-			send((Player) sender, message);
-		else if (sender instanceof OfflinePlayer) {
-			OfflinePlayer offlinePlayer = (OfflinePlayer) sender;
-			if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null)
-				send(offlinePlayer.getPlayer(), message);
-		} else
-			sender.sendMessage(colorize(message));
-	}
-
-	public static void send(Player player, JsonBuilder builder) {
-		if (player.isOnline())
-			player.sendMessage(builder.build());
-	}
-
-	public static void send(CommandSender sender, JsonBuilder builder) {
-		sender.sendMessage(builder.build());
-	}
-
-	public static void send(Player player, BaseComponent... baseComponents) {
-		if (player.isOnline())
-			player.sendMessage(baseComponents);
-	}
-
-	public static void send(CommandSender sender, BaseComponent... baseComponents) {
-		sender.sendMessage(baseComponents);
-	}
-
-	public static void sendStaff(String message) {
-		for (Player staff : Bukkit.getOnlinePlayers()) {
-			if (!staff.hasPermission("group.moderator")) continue;
-			send(staff, message);
-		}
-	}
-
-	public static void sendStaff(String message, Player exclude) {
-		sendStaff(message, Collections.singletonList(exclude));
-	}
-
-	public static void sendStaff(String message, List<Player> exclude) {
-		List<UUID> excludedUuids = new ArrayList<>();
-		for (Player player : exclude)
-			excludedUuids.add(player.getUniqueId());
-
-		for (Player staff : Bukkit.getOnlinePlayers()) {
-			UUID uuid = staff.getUniqueId();
-			if (excludedUuids.contains(uuid)) continue;
-			if (!staff.hasPermission("group.moderator")) continue;
-
-			send(staff, message);
-		}
-	}
-
 	public enum MapRotation {
 		DEGREE_0,
 		DEGREE_90,
@@ -510,14 +212,6 @@ public class Utils {
 		}
 	}
 
-	public static ItemStack addGlowing(ItemStack itemStack) {
-		itemStack.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
-		ItemMeta meta = itemStack.getItemMeta();
-		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		itemStack.setItemMeta(meta);
-		return itemStack;
-	}
-
 	public static boolean attempt(int times, BooleanSupplier to) {
 		int count = 0;
 		while (++count <= times)
@@ -543,172 +237,6 @@ public class Utils {
 			return true;
 		} catch (Exception ex) {
 			return false;
-		}
-	}
-
-	public static HidePlayer hidePlayer(Player player) {
-		return new HidePlayer(player);
-	}
-
-	public static HidePlayer hidePlayer(Minigamer minigamer) {
-		return new HidePlayer(minigamer.getPlayer());
-	}
-
-	public static ShowPlayer showPlayer(Player player) {
-		return new ShowPlayer(player);
-	}
-
-	public static ShowPlayer showPlayer(Minigamer minigamer) {
-		return new ShowPlayer(minigamer.getPlayer());
-	}
-
-	public static class HidePlayer {
-		private Player player;
-
-		public HidePlayer(Player player) {
-			this.player = player;
-		}
-
-		public void from(Minigamer minigamer) {
-			from(minigamer.getPlayer());
-		}
-
-		public void from(Player player) {
-			player.hidePlayer(Nexus.getInstance(), this.player);
-		}
-	}
-
-	public static class ShowPlayer {
-		private Player player;
-
-		public ShowPlayer(Player player) {
-			this.player = player;
-		}
-
-		public void to(Minigamer minigamer) {
-			to(minigamer.getPlayer());
-		}
-
-		public void to(Player player) {
-			player.showPlayer(Nexus.getInstance(), this.player);
-		}
-	}
-
-	public static class EnumUtils {
-		public static <T> T valueOf(Class<? extends T> clazz, String value) {
-			T[] values = clazz.getEnumConstants();
-			for (T enumValue : values)
-				if (((Enum<?>) enumValue).name().equalsIgnoreCase(value))
-					return enumValue;
-			throw new IllegalArgumentException();
-		}
-
-		public static <T> T next(Class<? extends T> clazz, int ordinal) {
-			T[] values = clazz.getEnumConstants();
-			return values[Math.min(values.length - 1, ordinal + 1 % values.length)];
-		}
-
-		public static <T> T previous(Class<? extends T> clazz, int ordinal) {
-			T[] values = clazz.getEnumConstants();
-			return values[Math.max(0, ordinal - 1 % values.length)];
-		}
-
-		public static <T> T nextWithLoop(Class<? extends T> clazz, int ordinal) {
-			T[] values = clazz.getEnumConstants();
-			int next = ordinal + 1 % values.length;
-			return next >= values.length ? values[0] : values[next];
-		}
-
-		public static <T> T previousWithLoop(Class<? extends T> clazz, int ordinal) {
-			T[] values = clazz.getEnumConstants();
-			int previous = ordinal - 1 % values.length;
-			return previous < 0 ? values[values.length - 1] : values[previous];
-		}
-
-		public static <T> T random(Class<? extends T> clazz) {
-			return RandomUtils.randomElement(clazz.getEnumConstants());
-		}
-
-		public static <T> List<String> valueNameList(Class<? extends T> clazz) {
-			return Arrays.stream(Env.values()).map(Env::name).collect(Collectors.toList());
-		}
-
-		public static <T> List<Enum<?>> valuesExcept(Class<? extends T> clazz, Enum<?>... exclude) {
-			List<Enum<?>> excluded = Arrays.asList(exclude);
-			List<Enum<?>> values = new ArrayList<>();
- 			for (T enumValue : clazz.getEnumConstants())
-				if (!excluded.contains(enumValue))
-					values.add((Enum<?>) enumValue);
-
-			return values;
-		}
-
-		public static String prettyName(String name) {
-			if (!name.contains("_"))
-				return camelCase(name);
-
-			List<String> words = new ArrayList<>(Arrays.asList(name.split("_")));
-
-			String first = words.get(0);
-			String last = words.get(words.size() - 1);
-			words.remove(0);
-			words.remove(words.size() - 1);
-
-			StringBuilder result = new StringBuilder(camelCase(first));
-			for (String word : words) {
-				String character = interpolate(word);
-				if (character != null)
-					result.append(character);
-				else if (word.toLowerCase().matches("and|for|the|a|or|of|from|in|as"))
-					result.append(" ").append(word.toLowerCase());
-				else
-					result.append(" ").append(camelCase(word));
-			}
-
-			String character = interpolate(last);
-			if (character != null)
-				result.append(character);
-			else
-				result.append(" ").append(last.charAt(0)).append(last.substring(1).toLowerCase());
-			return result.toString().trim();
-		}
-
-		private static String interpolate(String word) {
-			String character = null;
-			switch (word.toLowerCase()) {
-				case "period":
-					character = ".";
-					break;
-				case "excl":
-					character = "!";
-					break;
-				case "comma":
-					character = ",";
-					break;
-			}
-			return character;
-		}
-	}
-
-	public interface IteratableEnum {
-		int ordinal();
-
-		String name();
-
-		default <T extends Enum<?>> T next() {
-			return (T) EnumUtils.next(this.getClass(), ordinal());
-		}
-
-		default <T extends Enum<?>> T previous() {
-			return (T) EnumUtils.previous(this.getClass(), ordinal());
-		}
-
-		default <T extends Enum<?>> T nextWithLoop() {
-			return (T) EnumUtils.nextWithLoop(this.getClass(), ordinal());
-		}
-
-		default <T extends Enum<?>> T previousWithLoop() {
-			return (T) EnumUtils.previousWithLoop(this.getClass(), ordinal());
 		}
 	}
 

@@ -23,9 +23,9 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.MissingArgumentExcep
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.objenesis.ObjenesisStd;
@@ -355,9 +355,9 @@ public abstract class ICustomCommand {
 		if (method == null) {
 			Fallback fallback = event.getCommand().getClass().getAnnotation(Fallback.class);
 			if (fallback != null)
-				Utils.runCommand(event.getSender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
+				PlayerUtils.runCommand(event.getSender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
 			else if (!event.getArgsString().equalsIgnoreCase("help"))
-				Utils.runCommand(event.getSender(), event.getAliasUsed() + " help");
+				PlayerUtils.runCommand(event.getSender(), event.getAliasUsed() + " help");
 			else
 				throw new InvalidInputException("No matching path");
 		}

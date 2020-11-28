@@ -14,10 +14,10 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.purchase.PurchaseService;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.Env;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import net.ess3.api.events.UserBalanceUpdateEvent;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
@@ -33,10 +33,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
-import static me.pugabyte.nexus.utils.Utils.runCommandAsConsole;
 
 @NoArgsConstructor
 public class Leaderboards implements Listener {
@@ -79,7 +79,7 @@ public class Leaderboards implements Listener {
 			@Override
 			Map<UUID, String> getTop() {
 				return new HoursService().getActivePlayers().stream()
-						.collect(Collectors.toMap(OfflinePlayer::getUniqueId, player -> Nexus.getEcon().getBalance(Utils.getPlayer(player.getUniqueId()))))
+						.collect(Collectors.toMap(OfflinePlayer::getUniqueId, player -> Nexus.getEcon().getBalance(PlayerUtils.getPlayer(player.getUniqueId()))))
 						.entrySet()
 						.stream()
 						.sorted(Entry.<UUID, Double>comparingByValue().reversed())
@@ -96,7 +96,7 @@ public class Leaderboards implements Listener {
 			Map<UUID, String> getTop() {
 				return mcMMO.getDatabaseManager().readLeaderboard(null, 1, 3).subList(0, 3).stream()
 						.collect(Collectors.toMap(
-								playerStat -> Utils.getPlayer(playerStat.name).getUniqueId(),
+								playerStat -> PlayerUtils.getPlayer(playerStat.name).getUniqueId(),
 								playerStat -> String.valueOf(playerStat.statVal),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
@@ -107,7 +107,7 @@ public class Leaderboards implements Listener {
 			Map<UUID, String> getTop() {
 				return new PurchaseService().getRecent(3).stream()
 						.collect(Collectors.toMap(
-								purchase -> Utils.getPlayer(purchase.getUuid()).getUniqueId(),
+								purchase -> PlayerUtils.getPlayer(purchase.getUuid()).getUniqueId(),
 								purchase -> {
 									String name = "";
 									Package purchasedPackage = Package.getPackage(purchase.getPackageId());

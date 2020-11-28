@@ -5,8 +5,8 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -62,7 +62,7 @@ public class Restrictions implements Listener {
 		if (!(clickedMaterial.equals(Material.OBSIDIAN) || clickedMaterial.equals(Material.NETHERRACK)))
 			if (!player.hasPermission("use.fire")) {
 				event.setCancelled(true);
-				Utils.send(player, PREFIX + "Sorry, but you are not a high enough rank to light fire! Please create a &c/ticket &fto ask a staff member to light fire for you");
+				PlayerUtils.send(player, PREFIX + "Sorry, but you are not a high enough rank to light fire! Please create a &c/ticket &fto ask a staff member to light fire for you");
 			}
 	}
 
@@ -75,8 +75,8 @@ public class Restrictions implements Listener {
 		Player player = event.getPlayer();
 		if (!player.hasPermission("use.fire")) {
 			event.setCancelled(true);
-			Utils.send(player, PREFIX + "Hey " + player.getName() + "! I noticed that you are trying to place lava. Unfortunately lava placing is disabled for Member and below due to grief and safety issues");
-			Tasks.wait(20, () -> Utils.send(player, PREFIX + "However, a staff member will be happy to place it for you. Please create a &c/ticket &fand a staff member will be with your shortly! :)"));
+			PlayerUtils.send(player, PREFIX + "Hey " + player.getName() + "! I noticed that you are trying to place lava. Unfortunately lava placing is disabled for Member and below due to grief and safety issues");
+			Tasks.wait(20, () -> PlayerUtils.send(player, PREFIX + "However, a staff member will be happy to place it for you. Please create a &c/ticket &fand a staff member will be with your shortly! :)"));
 		}
 	}
 
@@ -89,7 +89,7 @@ public class Restrictions implements Listener {
 		Player player = event.getPlayer();
 		if (!player.hasPermission("use.fire")) {
 			event.setCancelled(true);
-			Utils.send(player, PREFIX + "Sorry, but you can't use TNT! You must be Member or above");
+			PlayerUtils.send(player, PREFIX + "Sorry, but you can't use TNT! You must be Member or above");
 		}
 	}
 
@@ -101,7 +101,7 @@ public class Restrictions implements Listener {
 		Player player = (Player) event.getWhoClicked();
 		if (!player.hasPermission("use.fire")) {
 			event.setCancelled(true);
-			Utils.send(player, PREFIX + "Sorry, but you can't use TNT! You must be Member or above");
+			PlayerUtils.send(player, PREFIX + "Sorry, but you can't use TNT! You must be Member or above");
 		}
 	}
 
@@ -120,7 +120,7 @@ public class Restrictions implements Listener {
 
 		if (!ItemUtils.isNullOrAir(event.getItem()) && event.getItem().getType().equals(Material.END_CRYSTAL)) {
 			event.setCancelled(true);
-			Utils.send(player, PREFIX + "Sorry, but you can't use Ender Crystals! You must be Member or above");
+			PlayerUtils.send(player, PREFIX + "Sorry, but you can't use Ender Crystals! You must be Member or above");
 		}
 	}
 
@@ -137,7 +137,7 @@ public class Restrictions implements Listener {
 
 		if (!player.hasPermission("use.fire")) {
 			event.setCancelled(true);
-			Utils.send(player, PREFIX + "Sorry, but you can't use Ender Crystals! You must be Member or above");
+			PlayerUtils.send(player, PREFIX + "Sorry, but you can't use Ender Crystals! You must be Member or above");
 		}
 
 	}
@@ -172,7 +172,7 @@ public class Restrictions implements Listener {
 
 		if (!player.hasPermission("group.staff")) {
 			event.setCancelled(true);
-			Utils.send(player, PREFIX + "Sorry, but you can't place beds here! They will go boom!");
+			PlayerUtils.send(player, PREFIX + "Sorry, but you can't place beds here! They will go boom!");
 		}
 	}
 
@@ -195,9 +195,9 @@ public class Restrictions implements Listener {
 
 		if (!used.isEmpty()) {
 			event.setCancelled(true);
-			Utils.send(event.getPlayer(), "&cYou cannot use the following materials with WorldEdit:");
+			PlayerUtils.send(event.getPlayer(), "&cYou cannot use the following materials with WorldEdit:");
 			used.forEach(material ->
-					Utils.send(event.getPlayer(), "&7 - &c" + camelCase(material.name())));
+					PlayerUtils.send(event.getPlayer(), "&7 - &c" + camelCase(material.name())));
 		}
 	}
 

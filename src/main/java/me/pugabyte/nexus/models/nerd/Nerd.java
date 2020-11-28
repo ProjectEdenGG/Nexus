@@ -13,6 +13,7 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
@@ -47,11 +48,11 @@ public class Nerd {
 	private boolean meetMeVideo;
 
 	public Nerd(String name) {
-		this(Utils.getPlayer(name));
+		this(PlayerUtils.getPlayer(name));
 	}
 
 	public Nerd(UUID uuid) {
-		this(Utils.getPlayer(uuid));
+		this(PlayerUtils.getPlayer(uuid));
 	}
 
 	public Nerd(OfflinePlayer player) {
@@ -77,11 +78,11 @@ public class Nerd {
 	}
 
 	public OfflinePlayer getOfflinePlayer() {
-		return Utils.getPlayer(uuid);
+		return PlayerUtils.getPlayer(uuid);
 	}
 
 	public Player getPlayer() {
-		return Utils.getPlayer(uuid).getPlayer();
+		return PlayerUtils.getPlayer(uuid).getPlayer();
 	}
 
 	public long getTimeOffline(ChronoUnit unit) {
@@ -124,7 +125,7 @@ public class Nerd {
 	}
 
 	public boolean isVanished() {
-		return Utils.isVanished(getPlayer());
+		return PlayerUtils.isVanished(getPlayer());
 	}
 
 	@SneakyThrows

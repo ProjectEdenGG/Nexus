@@ -5,9 +5,9 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,7 +41,7 @@ public class Translator implements Listener {
 
 				String translated = handler.translate(event.getMessage(), language, Language.EN);
 				for (UUID uuid : map.get(sender.getUniqueId())) {
-					Player translating = Utils.getPlayer(uuid).getPlayer();
+					Player translating = PlayerUtils.getPlayer(uuid).getPlayer();
 
 					if (uuid == sender.getUniqueId()) continue;
 					if (!event.wasSentTo(translating)) continue;
@@ -54,7 +54,7 @@ public class Translator implements Listener {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				for (UUID uuid : map.get(sender.getUniqueId())) {
-					Utils.send(uuid, PREFIX + "Failed to translate message from " + sender.getDisplayName() + ".");
+					PlayerUtils.send(uuid, PREFIX + "Failed to translate message from " + sender.getDisplayName() + ".");
 				}
 			}
 		});
@@ -64,7 +64,7 @@ public class Translator implements Listener {
 	public void onTranslatedDisconnect(PlayerQuitEvent event) {
 		if (!map.containsKey(event.getPlayer().getUniqueId())) return;
 		for (UUID uuid : map.get(event.getPlayer().getUniqueId()))
-			Utils.send(uuid, PREFIX + event.getPlayer().getDisplayName() + " has logged out. Disabling translation.");
+			PlayerUtils.send(uuid, PREFIX + event.getPlayer().getDisplayName() + " has logged out. Disabling translation.");
 
 		map.remove(event.getPlayer().getUniqueId());
 	}

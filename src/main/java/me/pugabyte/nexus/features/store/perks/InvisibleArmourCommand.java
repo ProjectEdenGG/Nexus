@@ -25,8 +25,8 @@ import me.pugabyte.nexus.models.invisiblearmour.InvisibleArmour;
 import me.pugabyte.nexus.models.invisiblearmour.InvisibleArmourService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -180,7 +180,7 @@ public class InvisibleArmourCommand extends CustomCommand {
 
 	private static void sendPackets(InvisibleArmour invisibleArmour, ItemSlot slot) {
 		if (true) return;
-		Player player = Utils.getPlayer(invisibleArmour.getUuid()).getPlayer();
+		Player player = PlayerUtils.getPlayer(invisibleArmour.getUuid()).getPlayer();
 		PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(Server.ENTITY_EQUIPMENT);
 		packet.getItemSlots().write(0, slot);
 		packet.getEntityModifier(player.getWorld()).write(0, player);

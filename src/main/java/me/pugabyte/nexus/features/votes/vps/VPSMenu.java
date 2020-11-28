@@ -69,7 +69,7 @@ public enum VPSMenu {
 							}}, LocalDateTime.now().plusDays(3)));
 						})
 						.close(true));
-				put(34, VPSSlot.builder()
+				put(25, VPSSlot.builder()
 						.name("Uncraftable Banners")
 						.display(new ItemBuilder(Material.CYAN_BANNER)
 								.lore("&3Pre-selected banners or")
@@ -83,6 +83,16 @@ public enum VPSMenu {
 								.lore("&6Price: &e5-10vp"))
 						.command("warp banners")
 						.close(true));
+//				put(34, VPSSlot.builder()
+//						.name("Easel")
+//						.display(new ItemBuilder(Material.ARMOR_STAND))
+//						.command("artmap give [player] easel")
+//						.price(5));
+//				put(43, VPSSlot.builder()
+//						.name("Canvas")
+//						.display(new ItemBuilder(Material.PAPER))
+//						.consoleCommand("artmap give [player] canvas")
+//						.price(10));
 
 				put(28, VPSSlot.builder()
 						.name("Full Diamond Armor Set")

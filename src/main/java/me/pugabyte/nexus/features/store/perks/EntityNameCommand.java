@@ -9,7 +9,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
-import me.pugabyte.nexus.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.LivingEntity;
 
@@ -19,13 +18,12 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 @Aliases("nameentity")
 @Permission("entityname.use")
 public class EntityNameCommand extends CustomCommand {
-	private final LivingEntity targetEntity;
+	private LivingEntity targetEntity;
 
 	public EntityNameCommand(@NonNull CommandEvent event) {
 		super(event);
-		targetEntity = Utils.getTargetEntity(player());
-		if (!(event instanceof TabEvent) && targetEntity == null)
-			error("You must be looking at an entity");
+		if (!(event instanceof TabEvent))
+			targetEntity = getTargetLivingEntityRequired();
 	}
 
 	@Path("(null|none|reset)")

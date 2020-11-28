@@ -6,9 +6,9 @@ import me.pugabyte.nexus.features.events.aeveonproject.sets.lobby.Lobby;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.sialia.Sialia;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.sialiaCrashing.SialiaCrashing;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -61,7 +61,7 @@ public class Effects implements Listener {
 		if (!(new CooldownService().check(player, "AeveonProject_Sit", Time.SECOND.x(2)))) return;
 
 		if (clicked.getType().equals(Material.NETHER_BRICK_STAIRS)) {
-			Utils.runCommandAsOp(player, "sit");
+			PlayerUtils.runCommandAsOp(player, "sit");
 		}
 	}
 }

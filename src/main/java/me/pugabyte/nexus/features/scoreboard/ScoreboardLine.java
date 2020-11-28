@@ -18,9 +18,9 @@ import me.pugabyte.nexus.models.scoreboard.ScoreboardUser;
 import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -36,16 +36,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.left;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
-import static me.pugabyte.nexus.utils.Utils.isVanished;
 
 public enum ScoreboardLine {
 	ONLINE {
 		@Override
 		public String render(Player player) {
-			long count = Bukkit.getOnlinePlayers().stream().filter(_player -> Utils.canSee(player, _player)).count();
+			long count = Bukkit.getOnlinePlayers().stream().filter(_player -> PlayerUtils.canSee(player, _player)).count();
 			return "&3Online nerds: &e" + count;
 		}
 	},

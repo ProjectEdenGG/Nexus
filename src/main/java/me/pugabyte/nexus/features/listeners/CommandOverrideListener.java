@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,8 +23,8 @@ public class CommandOverrideListener implements Listener {
 		if (args.size() == 0) return;
 		String argsString = event.getMessage().replace(args.get(0) + " ", "");
 
-		Consumer<String> redirect = command -> Utils.runCommand(player, trimFirst(command));
-		Consumer<String> send = message -> Utils.send(player, message);
+		Consumer<String> redirect = command -> PlayerUtils.runCommand(player, trimFirst(command));
+		Consumer<String> send = message -> PlayerUtils.send(player, message);
 
 		switch (args.get(0)) {
 			case "/fill":

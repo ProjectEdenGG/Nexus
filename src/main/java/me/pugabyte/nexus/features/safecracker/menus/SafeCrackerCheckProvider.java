@@ -10,8 +10,8 @@ import me.pugabyte.nexus.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerPlayer;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerPlayerService;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,11 +33,11 @@ public class SafeCrackerCheckProvider extends MenuUtils implements InventoryProv
 		int found = 0;
 
 		for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
-			ItemStack item = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Utils.getPlayer(npc.getName())).name("&e???").build();
+			ItemStack item = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(PlayerUtils.getPlayer(npc.getName())).name("&e???").build();
 			if (safeCrackerPlayer.getGames().get(game.getName()).getNpcs().containsKey(npc.getName())) {
 				++found;
 				SafeCrackerPlayer.SafeCrackerPlayerNPC playerNPC = safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(npc.getName());
-				item = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Utils.getPlayer(npc.getName())).name("&e" + npc.getName())
+				item = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(PlayerUtils.getPlayer(npc.getName())).name("&e" + npc.getName())
 						.lore("&3Found: &e" + StringUtils.shortDateTimeFormat(playerNPC.getFound()))
 						.lore("&3Question: &e" + npc.getQuestion())
 						.lore("&3Answer: &e" + playerNPC.getAnswer())

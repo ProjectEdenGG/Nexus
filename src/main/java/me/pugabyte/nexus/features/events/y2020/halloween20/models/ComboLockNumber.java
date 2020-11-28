@@ -5,7 +5,7 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.Halloween20;
 import me.pugabyte.nexus.features.events.y2020.halloween20.quest.menus.Halloween20Menus;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -74,19 +74,19 @@ public enum ComboLockNumber {
 		Halloween20User user = service.get(player);
 		switch (user.getCombinationStage()) {
 			case NOT_STARTED:
-				Utils.send(player, PREFIX + "This looks like a number from the combination lock close to where I entered this place...");
+				PlayerUtils.send(player, PREFIX + "This looks like a number from the combination lock close to where I entered this place...");
 				break;
 			case STARTED:
 				if (user.getFoundComboLockNumbers().contains(this)) {
-					Utils.send(player, PREFIX + "You already know of this number. Maybe there’s some more.");
+					PlayerUtils.send(player, PREFIX + "You already know of this number. Maybe there’s some more.");
 					break;
 				}
 				user.getFoundComboLockNumbers().add(this);
-				Utils.send(player, PREFIX + "&e" + this.getNumericalValue() + "&3 can now be used on the combination lock at the entrance to the city.");
+				PlayerUtils.send(player, PREFIX + "&e" + this.getNumericalValue() + "&3 can now be used on the combination lock at the entrance to the city.");
 				service.save(user);
 				player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1f, 1f);
 				if (user.getFoundComboLockNumbers().size() == 11)
-					Utils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");
+					PlayerUtils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");
 				break;
 		}
 	}
