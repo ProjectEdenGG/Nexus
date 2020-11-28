@@ -250,6 +250,8 @@ class PathParser {
 			this.type = clazz;
 			if (Commands.getTabCompleters().containsKey(clazz))
 				this.tabCompleter = Commands.getTabCompleters().get(clazz);
+			if (this.tabCompleter == null && clazz == Boolean.TYPE)
+				this.tabCompleter = Commands.getTabCompleters().get(Boolean.class);
 		}
 
 	}

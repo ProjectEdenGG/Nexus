@@ -57,6 +57,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
@@ -592,6 +593,13 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Bukkit.getWorlds().stream()
 				.filter(world -> world.getName().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(World::getName)
+				.collect(Collectors.toList());
+	}
+
+	@TabCompleterFor({Boolean.class})
+	List<String> tabCompleteBoolean(String filter) {
+		return Stream.of("true", "false")
+				.filter(bool -> bool.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 
