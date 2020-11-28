@@ -414,6 +414,9 @@ public class BattleshipMatchData extends MatchData {
 			}
 
 			private void sendChat() {
+				if (ship == null)
+					return;
+
 				String target = "&eYour " + ship.getName() + " &ewas " + (ship.getHealth() == 0 ? "sunk" : "hit");
 				String shooter = ship.getHealth() == 0 ? "&eYou sunk their " + ship.getName() : "&eYou hit an enemy ship";
 

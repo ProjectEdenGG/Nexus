@@ -19,8 +19,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,11 +29,12 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecond
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class AdventProvider extends MenuUtils implements InventoryProvider {
-	@NonNull
-	private LocalDateTime date;
 	private static final ItemBuilder locked = AdventMenu.lockedHead.clone();
 	private static final ItemBuilder missed = AdventMenu.missedHead.clone();
 	private static final ItemBuilder toFind = AdventMenu.toFindHead.clone();
+
+	@NonNull
+	private LocalDateTime date;
 	private final Pugmas20Service service = new Pugmas20Service();
 	private Pugmas20User user;
 	private AdventChest adventChest;
@@ -67,20 +68,20 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 				located = user.getLocatedDays().contains(dayIndex);
 
 				if (user.getFoundDays().contains(dayIndex))
-					found(contents, slotPos, skull, name, district);
+					found(contents, slotPos, adventChest, skull, name, district, located);
 				else {
 					if (isSecondChance(date)) {
 						if (dayIndex != 25 || user.getFoundDays().size() == 24)
-							find(contents, slotPos, name, district);
+							find(contents, slotPos, adventChest, name, district, located);
 						else
-							locked25(contents, slotPos, name);
+							locked25(contents, slotPos, adventChest, name, located);
 					} else {
 						if (dayIndex == day)
-							find(contents, slotPos, name, district);
+							find(contents, slotPos, adventChest, name, district, located);
 						else if (dayIndex < day)
-							missed(contents, slotPos, name);
+							missed(contents, slotPos, adventChest, name, located);
 						else
-							locked(contents, slotPos, name);
+							locked(contents, slotPos, adventChest, name, located);
 					}
 				}
 			}
@@ -89,51 +90,51 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 		});
 	}
 
-	private void found(InventoryContents contents, SlotPos slotPos, ItemBuilder skull, String name, String district) {
+	private void found(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, ItemBuilder skull, String name, String district, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(skull.clone().name(name).lore(showWaypoint(Collections.singletonList(district))).build(),
+			contents.set(slotPos, ClickableItem.from(skull.clone().name(name).lore(showWaypoint(district)).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(skull.clone().name(name).lore(district).build()));
 	}
 
-	private void find(InventoryContents contents, SlotPos slotPos, String name, String district) {
+	private void find(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, String district, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(toFind.clone().name(name).lore(showWaypoint(Arrays.asList("&aFind me!", district))).build(),
+			contents.set(slotPos, ClickableItem.from(toFind.clone().name(name).lore(showWaypoint("&aFind me!", district)).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
 		else
-			contents.set(slotPos, ClickableItem.empty(toFind.clone().name(name).lore(Arrays.asList("&aFind me!", district)).build()));
+			contents.set(slotPos, ClickableItem.empty(toFind.clone().name(name).lore("&aFind me!", district).build()));
 	}
 
-	private void locked(InventoryContents contents, SlotPos slotPos, String name) {
+	private void locked(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint(Collections.singletonList("&7Locked"))).build(),
+			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked")).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
 		else
-			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore(Collections.singletonList("&7Locked")).build()));
+			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked").build()));
 	}
 
-	private void locked25(InventoryContents contents, SlotPos slotPos, String name) {
+	private void locked25(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint(Arrays.asList("&7Locked", "", "&cOpen all previous||&cchests to unlock"))).build(),
+			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked", "", "&cOpen all previous||&cchests to unlock")).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
 		else
-			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore(Arrays.asList("&7Locked", "", "&cOpen all previous||&cchests to unlock")).build()));
-
+			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked", "", "&cOpen all previous||&cchests to unlock").build()));
 	}
 
-	private void missed(InventoryContents contents, SlotPos slotPos, String name) {
+	private void missed(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(missed.clone().name(name).lore(showWaypoint(Collections.singletonList("&cMissed"))).build(),
+			contents.set(slotPos, ClickableItem.from(missed.clone().name(name).lore(showWaypoint("&cMissed")).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
 		else
-			contents.set(slotPos, ClickableItem.empty(missed.clone().name(name).lore(Collections.singletonList("&cMissed")).build()));
+			contents.set(slotPos, ClickableItem.empty(missed.clone().name(name).lore("&cMissed").build()));
 	}
 
 	@NotNull
-	private List<String> showWaypoint(List<String> lines) {
-		lines.add("&f||&aClick to show waypoint");
-		return lines;
+	private List<String> showWaypoint(String... lines) {
+		return new ArrayList<String>(Arrays.asList(lines)) {{
+			add("&f||&aClick to show waypoint");
+		}};
 	}
 
 	@Override

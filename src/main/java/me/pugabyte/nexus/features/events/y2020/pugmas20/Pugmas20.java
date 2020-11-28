@@ -238,7 +238,7 @@ public class Pugmas20 implements Listener {
 		if (!BlockUtils.isNullOrAir(chest)) {
 			Location blockLoc = getCenteredLocation(chestLoc);
 			World blockWorld = blockLoc.getWorld();
-			FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, chest.getType().createBlockData());
+			FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, Material.RED_CONCRETE.createBlockData());
 			fallingBlock.setDropItem(false);
 			fallingBlock.setGravity(false);
 			fallingBlock.setInvulnerable(true);
@@ -255,7 +255,7 @@ public class Pugmas20 implements Listener {
 						fallingBlock.remove();
 						for (Player _player : Bukkit.getOnlinePlayers())
 							if (_player.getWorld() == blockWorld)
-								_player.sendBlockChange(blockLoc, chest.getType().createBlockData());
+								_player.sendBlockChange(chestLoc, chest.getBlockData());
 					})
 					.start();
 		}
