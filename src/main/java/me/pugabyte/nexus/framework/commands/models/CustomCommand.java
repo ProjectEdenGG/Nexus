@@ -554,7 +554,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		for (Class<? extends MongoService> service : services) {
 			PlayerClass annotation = service.getAnnotation(PlayerClass.class);
 			if (annotation == null) {
-				Nexus.log(service.getSimpleName() + " does not have @PlayerClass annotation");
+				Nexus.warn(service.getSimpleName() + " does not have @PlayerClass annotation");
 				continue;
 			}
 
