@@ -13,6 +13,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.PugmasTreeType;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas20Quest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas20QuestStageHelper;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines.OreType;
@@ -64,9 +65,49 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send("Soon™ (" + timeLeft + ")");
 	}
 
-	@Path("progress")
-	void progress() {
-		//
+	@Path("progress [player] [day]")
+	void progress(@Arg("self") Pugmas20User user, @Arg(min = 1, max = 25, permission = "group.staff") Integer day) {
+		LocalDateTime now = LocalDateTime.now();
+		if (day != null)
+			now = now.withYear(2020).withMonth(12).withDayOfMonth(day);
+
+		if (isPastPugmas(now))
+			error("Next year!");
+
+		if (isSecondChance(now))
+			now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
+
+		day = now.getDayOfMonth();
+		if (user.getFoundDays().size() == 25) {
+			send("Found all the chests");
+		} else {
+			if (user.getFoundDays().contains(day)) {
+				send("Found today's chests");
+			} else {
+				if (day == 25) {
+					if (user.getFoundDays().size() != 24) {
+						send("Find all chests before 25");
+					} else {
+						send("Find the last chest");
+					}
+				} else {
+					send("Find today's chest (#" + day + ")");
+				}
+			}
+		}
+
+		for (Pugmas20QuestStageHelper quest : Pugmas20QuestStageHelper.values()) {
+			QuestStage stage = quest.getter().apply(user);
+			String instructions = Pugmas20Quest.valueOf(quest.name()).getInstructions(stage);
+
+			if (stage == QuestStage.NOT_STARTED) {
+				send(camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &e(" + instructions + ")"));
+			} else if (stage == QuestStage.COMPLETE) {
+				send(camelCase(quest) + " &a- Complete");
+			} else {
+				send(camelCase(quest) + " &7- &e" + (instructions == null ? "&cnull" : instructions));
+			}
+		}
 	}
 
 	@Path("advent [day]")
@@ -94,13 +135,6 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.admin")
-	@Path("waypoint give <day>")
-	void waypointGive(int day) {
-		user.getLocatedDays().add(day);
-		service.save(user);
-	}
-
-	@Permission("group.admin")
 	@Path("advent open <day>")
 	void adventOpenDay(int day) {
 		AdventChests.openAdventLootInv(player(), day);
@@ -121,13 +155,30 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getName() + " District"));
 	}
 
+	@Permission("group.admin")
+	@Path("waypoint give <day>")
+	void waypointGive(int day) {
+		user.getLocatedDays().add(day);
+		service.save(user);
+	}
+
 	@Path("waypoint <day>")
 	void waypoint(int day) {
 		if (!user.getLocatedDays().contains(day))
 			error("You have not located that chest yet");
 
 		AdventChest adventChest = AdventChests.getAdventChest(day);
+		if (adventChest == null)
+			error("Advent chest is null");
+
 		showWaypoint(adventChest, player());
+	}
+
+	@Permission("group.admin")
+	@Path("waypoints")
+	void waypoint() {
+		for (AdventChest adventChest : AdventChests.adventChestList)
+			showWaypoint(adventChest, player());
 	}
 
 	@Permission("group.admin")
