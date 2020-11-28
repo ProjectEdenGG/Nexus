@@ -71,7 +71,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 	private QuestStage ornamentVendorStage = QuestStage.NOT_STARTED;
 
 	// Quest - The Mines
-	private QuestStage minesStage = QuestStage.NOT_STARTED;
+	private QuestStage minesStage = QuestStage.INELIGIBLE;
 
 	@Embedded
 	private List<ItemStack> inventory = new ArrayList<>();

@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.models;
 
 public enum QuestStage {
+	INELIGIBLE,
 	NOT_STARTED,
 	STARTED,
 	STEP_ONE,

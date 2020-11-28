@@ -18,6 +18,7 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -174,32 +175,31 @@ public enum QuestNPC {
 						Script.wait(0, "For the steel you will need the blacksmiths help, " +
 								"he'll make the steel for you, if you give him the required coal and iron."),
 
-						Script.wait(0, "His workshop is located in the plaza.")
+						Script.wait(0, "His workshop is located in the Plaza District.")
 				);
 			}
 
-			if (user.getLightTreeStage().equals(QuestStage.COMPLETE)) {
-				switch (user.getMinesStage()) {
-					case NOT_STARTED:
-						return Arrays.asList(
-								Script.wait(0, "Since you’re already cleared for the mine, wanna do me a favor?"),
 
-								Script.wait(0, "There's always a rush of last minute demands for materials by the workshop- " +
-										"things that need to be fixed, production that came up a little short."),
+			switch (user.getMinesStage()) {
+				case NOT_STARTED:
+					return Arrays.asList(
+							Script.wait(0, "Since you’re already cleared for the mine, wanna do me a favor?"),
 
-								Script.wait(0, "And almost all my mine-elves have been sent to help in the wrapping and sled loading."),
+							Script.wait(0, "There's always a rush of last minute demands for materials by the workshop- " +
+									"things that need to be fixed, production that came up a little short."),
 
-								Script.wait(0, "If you bring me ingots and put them in this crate here, I’ll see you get paid.")
-						);
-					case STARTED:
-						return Arrays.asList(
-								Script.wait(0, "If you bring me ingots and put them in this crate here, I’ll see you get paid.")
-						);
-					case COMPLETE:
-						return Arrays.asList(
-								Script.wait(0, "complete message")  // TODO PUGMAS
-						);
-				}
+							Script.wait(0, "And almost all my mine-elves have been sent to help in the wrapping and sled loading."),
+
+							Script.wait(0, "If you bring me ingots and put them in this crate here, I’ll see you get paid.")
+					);
+				case STARTED:
+					return Arrays.asList(
+							Script.wait(0, "If you bring me ingots and put them in this crate here, I’ll see you get paid.")
+					);
+				case COMPLETE:
+					return Arrays.asList(
+							Script.wait(0, "complete message")  // TODO PUGMAS
+					);
 			}
 
 			return Arrays.asList(
@@ -232,18 +232,8 @@ public enum QuestNPC {
 							Script.wait(0, "If you could just play a round or two of each, that would be perfect.")
 					);
 				case STARTED:
-					List<String> leftover = new ArrayList<>();
-					if (!user.isMasterMind())
-						leftover.add("MasterMind");
-					if (!user.isBattleship())
-						leftover.add("Battleship");
-					if (!user.isConnectFour())
-						leftover.add("Connect4");
-					if (!user.isTicTacToe())
-						leftover.add("TicTacToe");
-
 					return Arrays.asList(
-							Script.wait(0, "You still need to test " + String.join(", ", leftover))
+							Script.wait(0, "You still need to test " + getUnplayedToys(user))
 					);
 				case STEPS_DONE:
 					user.setToyTestingStage(QuestStage.COMPLETE);
@@ -342,6 +332,20 @@ public enum QuestNPC {
 		}
 	};
 
+	@NotNull
+	public static String getUnplayedToys(Pugmas20User user) {
+		List<String> leftover = new ArrayList<>();
+		if (!user.isMasterMind())
+			leftover.add("MasterMind");
+		if (!user.isBattleship())
+			leftover.add("Battleship");
+		if (!user.isConnectFour())
+			leftover.add("Connect4");
+		if (!user.isTicTacToe())
+			leftover.add("TicTacToe");
+		return String.join(", ", leftover);
+	}
+
 	@Getter
 	int id;
 
@@ -390,7 +394,7 @@ public enum QuestNPC {
 
 	public abstract List<Script> getScript(Player player);
 
-	private String getName() {
+	public String getName() {
 		return getName(new AtomicReference<>(""));
 	}
 
