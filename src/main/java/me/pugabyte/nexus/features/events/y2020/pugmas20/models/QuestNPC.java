@@ -6,10 +6,10 @@ import me.pugabyte.nexus.features.events.models.Script;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.GiftGiver;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -127,7 +127,7 @@ public enum QuestNPC {
 				case STEP_THREE:
 					ItemStack lighter = getItem(player, LightTheTree.lighter_broken);
 					ItemStack steelIngot = getItem(player, LightTheTree.steel_ingot);
-					ItemStack flint = getItem(player, Ores.getFlint());
+					ItemStack flint = getItem(player, TheMines.getFlint());
 					if (lighter == null || steelIngot == null || flint == null) {
 						return Arrays.asList(
 								Script.wait(0, "In order to fix the Ceremonial Lighter, I need a piece of flint and a steel ingot.")

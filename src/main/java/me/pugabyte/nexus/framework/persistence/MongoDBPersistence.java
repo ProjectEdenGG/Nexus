@@ -17,6 +17,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConve
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.QuestConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import org.reflections.Reflections;
 
@@ -53,6 +54,7 @@ public class MongoDBPersistence {
 		morphia.getMapper().getConverters().addConverter(new LocalDateConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new LocalDateTimeConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new LocationConverter(morphia.getMapper()));
+		morphia.getMapper().getConverters().addConverter(new QuestConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new UUIDConverter(morphia.getMapper()));
 		databases.put(dbType, datastore);
 	}

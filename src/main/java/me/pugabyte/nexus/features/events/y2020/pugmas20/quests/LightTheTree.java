@@ -275,13 +275,13 @@ public class LightTheTree implements Listener {
 			return;
 
 		boolean gavePickaxe = false, gaveSieve = false;
-		if (!player.getInventory().contains(Ores.getMinersPickaxe())) {
-			ItemUtils.giveItem(player, Ores.getMinersPickaxe());
+		if (!player.getInventory().contains(TheMines.getMinersPickaxe())) {
+			ItemUtils.giveItem(player, TheMines.getMinersPickaxe());
 			gavePickaxe = true;
 		}
 
-		if (!player.getInventory().contains(Ores.getMinersSieve())) {
-			ItemUtils.giveItem(player, Ores.getMinersSieve());
+		if (!player.getInventory().contains(TheMines.getMinersSieve())) {
+			ItemUtils.giveItem(player, TheMines.getMinersSieve());
 			gaveSieve = true;
 		}
 

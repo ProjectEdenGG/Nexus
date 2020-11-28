@@ -17,14 +17,14 @@ public class ItemStackConverter extends TypeConverter implements SimpleValueConv
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
-		if (value == null)
-			return null;
+		if (value == null) return null;
 
 		return BasicDBObject.parse(JSON.serializeItemStack((ItemStack) value));
 	}
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
+		if (value == null) return null;
 		return JSON.deserializeItemStack(((BasicDBObject) value).toJson());
 	}
 

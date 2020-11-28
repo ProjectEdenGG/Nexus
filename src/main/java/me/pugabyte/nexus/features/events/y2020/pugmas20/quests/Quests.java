@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import me.pugabyte.nexus.features.events.models.Quest;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
@@ -16,7 +18,9 @@ import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -28,23 +32,32 @@ public class Quests {
 		new Reflections(getClass().getPackage().getName()).getSubTypesOf(Listener.class).forEach(Utils::tryRegisterListener);
 	}
 
+	@Getter
+	@AllArgsConstructor
 	@Accessors(fluent = true)
-	public enum Pugmas20Quest {
+	public enum Pugmas20QuestStageHelper {
 		GIFT_GIVER(Pugmas20User::getGiftGiverStage, Pugmas20User::setGiftGiverStage),
 		LIGHT_THE_TREE(Pugmas20User::getLightTreeStage, Pugmas20User::setLightTreeStage),
 		ORNAMENT_VENDOR(Pugmas20User::getOrnamentVendorStage, Pugmas20User::setOrnamentVendorStage),
 		THE_MINES(Pugmas20User::getMinesStage, Pugmas20User::setMinesStage),
 		TOY_TESTING(Pugmas20User::getToyTestingStage, Pugmas20User::setToyTestingStage);
 
-		@Getter
 		private final Function<Pugmas20User, QuestStage> getter;
-		@Getter
 		private final BiConsumer<Pugmas20User, QuestStage> setter;
+	}
 
-		Pugmas20Quest(Function<Pugmas20User, QuestStage> getQuestStage, BiConsumer<Pugmas20User, QuestStage> setQuestStage) {
-			this.getter = getQuestStage;
-			this.setter = setQuestStage;
-		}
+	@Getter
+	@AllArgsConstructor
+	public enum Pugmas20Quest implements Quest {
+		GIFT_GIVER(new HashMap<>()),
+		LIGHT_THE_TREE(new HashMap<QuestStage, String>() {{
+			put(QuestStage.STEPS_DONE, "Light the torches");
+		}}),
+		ORNAMENT_VENDOR(new HashMap<>()),
+		THE_MINES(new HashMap<>()),
+		TOY_TESTING(new HashMap<>());
+
+		private final Map<QuestStage, String> instructions;
 	}
 
 	public static void sound_obtainItem(Player player) {
@@ -79,4 +92,5 @@ public class Quests {
 
 		return (slotsUsed <= (36 - slots));
 	}
+
 }

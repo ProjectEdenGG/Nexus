@@ -18,9 +18,7 @@ public class ColorConverter extends TypeConverter implements SimpleValueConverte
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
-		if (value == null)
-			return null;
-
+		if (value == null) return null;
 		return new BasicDBObject(new HashMap<String, Integer>() {{
 			put("r", ((Color) value).getRed());
 			put("g", ((Color) value).getGreen());
@@ -30,6 +28,7 @@ public class ColorConverter extends TypeConverter implements SimpleValueConverte
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
+		if (value == null) return null;
 		Map<String, Integer> color = ((BasicDBObject) value).toMap();
 		return Color.fromRGB(color.get("r"), color.get("g"), color.get("b"));
 	}

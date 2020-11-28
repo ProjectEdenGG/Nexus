@@ -10,12 +10,12 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Ores.OreType;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas20Quest;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Trees.PugmasTreeType;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.PugmasTreeType;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas20QuestStageHelper;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines.OreType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -224,7 +224,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("kit lumberjacks axe")
 	void kitLumberjacksAxe() {
-		ItemUtils.giveItem(player(), Trees.getLumberjacksAxe());
+		ItemUtils.giveItem(player(), OrnamentVendor.getLumberjacksAxe());
 	}
 
 	@Permission("group.admin")
@@ -237,13 +237,13 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("kit miners pickaxe")
 	void kitMinersPickaxe() {
-		ItemUtils.giveItem(player(), Ores.getMinersPickaxe());
+		ItemUtils.giveItem(player(), TheMines.getMinersPickaxe());
 	}
 
 	@Permission("group.admin")
 	@Path("kit miners sieve")
 	void kitMinersSieve() {
-		ItemUtils.giveItem(player(), Ores.getMinersSieve());
+		ItemUtils.giveItem(player(), TheMines.getMinersSieve());
 	}
 
 	@Permission("group.admin")
@@ -289,7 +289,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 
 	@Permission("group.admin")
 	@Path("quests stage set <quest> <stage>")
-	void questStageSet(Pugmas20Quest quest, QuestStage stage) {
+	void questStageSet(Pugmas20QuestStageHelper quest, QuestStage stage) {
 		quest.setter().accept(user, stage);
 		service.save(user);
 		send(PREFIX + "Quest stage for Quest " + camelCase(quest) + " set to " + camelCase(stage));
@@ -297,7 +297,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 
 	@Permission("group.admin")
 	@Path("quests stage get <quest>")
-	void questStageSet(Pugmas20Quest quest) {
+	void questStageSet(Pugmas20QuestStageHelper quest) {
 		send(PREFIX + "Quest stage for Quest " + camelCase(quest) + ": " + quest.getter().apply(user));
 	}
 

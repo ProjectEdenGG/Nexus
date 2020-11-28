@@ -19,9 +19,9 @@ public class LocationConverter extends TypeConverter implements SimpleValueConve
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
+		if (value == null) return null;
 		Location location = (Location) value;
-		if (location == null || location.getWorld() == null)
-			return null;
+		if (location.getWorld() == null) return null;
 		return new BasicDBObject() {{
 			put("world", location.getWorld().getName());
 			put("x", BigDecimal.valueOf(location.getX()).setScale(3, RoundingMode.HALF_UP).doubleValue());
@@ -34,6 +34,7 @@ public class LocationConverter extends TypeConverter implements SimpleValueConve
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
+		if (value == null) return null;
 		BasicDBObject deserialized = (BasicDBObject) value;
 		return new Location(
 				Bukkit.getWorld(deserialized.getString("world")),

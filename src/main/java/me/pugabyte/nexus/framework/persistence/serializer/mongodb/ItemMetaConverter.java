@@ -16,14 +16,13 @@ public class ItemMetaConverter extends TypeConverter implements SimpleValueConve
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
-		if (value == null)
-			return null;
-
+		if (value == null) return null;
 		return BasicDBObject.parse(JSON.serializeItemMeta((ItemMeta) value));
 	}
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
+		if (value == null) return null;
 		return JSON.deserializeItemMeta(((BasicDBObject) value).toMap());
 	}
 

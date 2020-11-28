@@ -14,9 +14,7 @@ public class ChatColorConverter extends TypeConverter implements SimpleValueConv
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
-		if (value == null)
-			return null;
-
+		if (value == null) return null;
 		return "&#" + Integer.toHexString(((ChatColor) value).getColor().getRGB()).substring(2);
 	}
 

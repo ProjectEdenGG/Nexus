@@ -15,11 +15,13 @@ public class UUIDConverter extends TypeConverter implements SimpleValueConverter
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
+		if (value == null) return null;
 		return value.toString();
 	}
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
+		if (value == null) return null;
 		return UUID.fromString((String) value);
 	}
 
