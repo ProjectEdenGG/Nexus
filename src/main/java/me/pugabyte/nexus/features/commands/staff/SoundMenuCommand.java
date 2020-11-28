@@ -122,10 +122,8 @@ public class SoundMenuCommand extends CustomCommand {
 		float pitch = (float) getPitchDouble(player());
 		Sound sound = getSound(string);
 
-		if (sound == null) {
+		if (sound == null)
 			error("Couldn't find sound: " + string);
-			return; // I know this is unnecessary
-		}
 
 		if (playToOthers.contains(player().getUniqueId()))
 			loc.getWorld().playSound(loc, sound, 1F, pitch);

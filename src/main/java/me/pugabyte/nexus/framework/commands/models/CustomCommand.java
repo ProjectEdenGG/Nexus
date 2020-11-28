@@ -46,6 +46,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
@@ -213,6 +214,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return StringUtils.toPrettyString(object);
 	}
 
+	@Contract("_ -> fail")
 	public void error(String error) {
 		throw new InvalidInputException(error);
 	}
