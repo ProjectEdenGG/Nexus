@@ -144,7 +144,7 @@ public class AdventChests implements Listener {
 
 		event.setCancelled(true);
 		if (!Quests.hasRoomFor(player, 1)) {
-			PlayerUtils.send(player, Quests.fullInvError);
+			PlayerUtils.send(player, Quests.fullInvError_open);
 			return;
 		}
 
@@ -160,6 +160,7 @@ public class AdventChests implements Listener {
 			if (isPastPugmas(now)) return;
 		}
 
+		boolean waypoint = !user.getLocatedDays().contains(chestDay);
 		user.getLocatedDays().add(chestDay);
 		service.save(user);
 
@@ -182,7 +183,10 @@ public class AdventChests implements Listener {
 
 		if (!openChest) {
 			reason = reason.replaceAll("<day>", String.valueOf(day));
-			PlayerUtils.send(player, reason);
+			user.send(reason);
+
+			if (waypoint)
+				user.send("Chest #" + chestDay + " saved as a waypoint");
 			return;
 		}
 
@@ -235,7 +239,7 @@ public class AdventChests implements Listener {
 		Chest chest = (Chest) loc.getBlock().getState();
 		ItemStack[] contents = chest.getBlockInventory().getContents();
 		if (!Quests.hasRoomFor(player, contents)) {
-			PlayerUtils.send(player, Quests.fullInvError);
+			PlayerUtils.send(player, Quests.fullInvError_open);
 			Quests.sound_villagerNo(player);
 			return false;
 		}

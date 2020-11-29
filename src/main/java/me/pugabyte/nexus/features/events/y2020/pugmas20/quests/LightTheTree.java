@@ -73,7 +73,16 @@ public class LightTheTree implements Listener {
 		if (!user.getLightTreeStage().equals(QuestStage.STEP_ONE)) return;
 
 		event.setCancelled(true);
+
+		if (!Quests.hasRoomFor(player, lighter_broken)) {
+			user.send(Quests.fullInvError_obtain);
+			Quests.sound_villagerNo(player);
+			return;
+		}
+
 		ItemUtils.giveItem(player, lighter_broken);
+		Quests.sound_obtainItem(player);
+
 		user.setLightTreeStage(QuestStage.STEP_TWO);
 		service.save(user);
 	}
@@ -95,7 +104,6 @@ public class LightTheTree implements Listener {
 		Pugmas20Service service = new Pugmas20Service();
 		Pugmas20User user = service.get(player);
 
-		// TODO PUGMAS Better wording?
 		Countdown timer = Countdown.builder()
 				.duration(timerTicks)
 				.onStart(() -> {
@@ -298,6 +306,12 @@ public class LightTheTree implements Listener {
 		if (user.getLightTreeStage() != QuestStage.STEP_THREE)
 			return;
 
+		if (!Quests.hasRoomFor(player, TheMines.getMinersPickaxe(), TheMines.getMinersSieve())) {
+			user.send(Quests.fullInvError_obtain);
+			Quests.sound_villagerNo(player);
+			return;
+		}
+
 		boolean gavePickaxe = false, gaveSieve = false;
 		if (!player.getInventory().contains(TheMines.getMinersPickaxe())) {
 			ItemUtils.giveItem(player, TheMines.getMinersPickaxe());
@@ -309,8 +323,20 @@ public class LightTheTree implements Listener {
 			gaveSieve = true;
 		}
 
-		if (gavePickaxe || gaveSieve)
+		if (gavePickaxe || gaveSieve) {
+			String pickName = TheMines.getMinersPickaxe().getItemMeta().getDisplayName();
+			String sieveName = TheMines.getMinersSieve().getItemMeta().getDisplayName();
+			String obtained = Pugmas20.PREFIX + " You have obtained a ";
+
+			if (gavePickaxe && gaveSieve)
+				user.send(obtained + pickName + " and a " + sieveName);
+			else if (gavePickaxe)
+				user.send(obtained + pickName);
+			else
+				user.send(obtained + sieveName);
+
 			Quests.sound_obtainItem(player);
+		}
 	}
 
 }
