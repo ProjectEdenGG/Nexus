@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.models;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.models.Script;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.GiftGiver;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
@@ -10,12 +11,15 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines;
+import me.pugabyte.nexus.models.eventuser.EventUser;
+import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -33,54 +37,54 @@ public enum QuestNPC {
 	ELF1(3078) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20Service service = new Pugmas20Service();
-			Pugmas20User user = service.get(player);
+			Pugmas20Service pugmasService = new Pugmas20Service();
+			Pugmas20User pugmasUser = pugmasService.get(player);
 
-			switch (user.getLightTreeStage()) {
+			switch (pugmasUser.getLightTreeStage()) {
 				case STARTED:
-					user.setLightTreeStage(QuestStage.STEP_ONE);
-					service.save(user);
+					pugmasUser.setLightTreeStage(QuestStage.STEP_ONE);
+					pugmasService.save(pugmasUser);
 
 					return Arrays.asList(
-							Script.wait(0, getGreeting()),
+							Script.wait(getGreeting()),
 
-							Script.wait(0, "I can’t find the Ceremonial Lighter… Ooooh Santa is gonna be SO mad at me if I’ve lost it."),
+							Script.wait(5, "I can’t find the Ceremonial Lighter… Ooooh Santa is gonna be SO mad at me if I’ve lost it."),
 
-							Script.wait(0, "We haven't used it since last year. Could you search in the basement to help me find it?")
+							Script.wait(5, "We haven't used it since last year. Could you search in the basement to help me find it?")
 					);
 				case STEP_ONE:
 					return Arrays.asList(
-							Script.wait(0, "Did you find the Ceremonial Lighter in the basement?")
+							Script.wait("Did you find the Ceremonial Lighter in the basement?")
 					);
 				case STEP_TWO:
 					if (!hasItem(player, LightTheTree.lighter_broken)) {
 						return Arrays.asList(
-								Script.wait(0, "Did you find the Ceremonial Lighter in the basement?")
+								Script.wait("Did you find the Ceremonial Lighter in the basement?")
 						);
 					}
 
 					return Arrays.asList(
-							Script.wait(0, "The mechanism is broken! How could I have been so careless."),
+							Script.wait("The mechanism is broken! How could I have been so careless."),
 
-							Script.wait(0, "The ceremony is supposed to start soon, but there might be enough time- " +
+							Script.wait(5, "The ceremony is supposed to start soon, but there might be enough time- " +
 									"hurry to the tree and find " + ELF2.getName() + " they will know how to fix this.")
 					);
 
 				case STEPS_DONE:
 					return Arrays.asList(
-							Script.wait(0, "You have it! Just in the nick of time. The ceremony shall now begin."),
+							Script.wait("You have it! Just in the nick of time. The ceremony shall now begin."),
 
-							Script.wait(0, "Light all the torches around Santa’s Workshop leading up to the tree using the ceremonial lighter, " +
+							Script.wait(5, "Light all the torches around Santa’s Workshop leading up to the tree using the ceremonial lighter, " +
 									"don’t forget the one at the base of the tree! You will be timed, so hurry!")
 					);
 				case COMPLETE:
 					return Arrays.asList(
-							Script.wait(0, "complete message")  // TODO PUGMAS
+							Script.wait(getThanks())
 					);
 			}
 
 			return Arrays.asList(
-					Script.wait(0, getGreeting())
+					Script.wait(getGreeting())
 			);
 		}
 	},
@@ -97,22 +101,22 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, getGreeting()),
+							Script.wait(getGreeting()),
 
-							Script.wait(0, "It's time for our annual tree lighting ceremony, but " + ELF1.getName() +
+							Script.wait(5, "It's time for our annual tree lighting ceremony, but " + ELF1.getName() +
 									" still hasn’t returned with the Ceremonial Lighter!"),
 
-							Script.wait(0, "Would you mind finding him for me? He should be in the workshop.")
+							Script.wait(5, "Would you mind finding him for me? He should be in the workshop.")
 					);
 				case STARTED:
 					return Arrays.asList(
-							Script.wait(0, "Have you found " + ELF1.getName() + "? He should be in the workshop.")
+							Script.wait("Have you found " + ELF1.getName() + "? He should be in the workshop.")
 					);
 
 				case STEP_TWO:
 					if (!hasItem(player, LightTheTree.lighter_broken)) {
 						return Arrays.asList(
-								Script.wait(0, "Did you find " + ELF1.getName() + " in the workshop?")
+								Script.wait("Did you find " + ELF1.getName() + " in the workshop?")
 						);
 					}
 
@@ -121,13 +125,13 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, "Dangit " + ELF1.getName() + ", I *told* him to be careful with this."),
+							Script.wait("Dangit " + ELF1.getName() + ", I *told* him to be careful with this."),
 
-							Script.wait(0, "Hmm, yes, it is fixable, just needs a new flint wheel and a steel striker."),
+							Script.wait(5, "Hmm, yes, it is fixable, just needs a new flint wheel and a steel striker."),
 
-							Script.wait(0, "If you get me a piece of flint and a steel ingot, I can make both fast."),
+							Script.wait(5, "If you get me a piece of flint and a steel ingot, I can make both fast."),
 
-							Script.wait(0, "Head to the coal mine and you should be able to get both- ask the " + FORELF.getName() + " for help.")
+							Script.wait(5, "Head to the coal mine and you should be able to get both- ask the " + FORELF.getName() + " for help.")
 					);
 				case STEP_THREE:
 					ItemStack lighter = getItem(player, LightTheTree.lighter_broken);
@@ -135,7 +139,7 @@ public enum QuestNPC {
 					ItemStack flint = getItem(player, TheMines.getFlint());
 					if (lighter == null || steelIngot == null || flint == null) {
 						return Arrays.asList(
-								Script.wait(0, "In order to fix the Ceremonial Lighter, I need a piece of flint and a steel ingot.")
+								Script.wait("In order to fix the Ceremonial Lighter, I need a piece of flint and a steel ingot.")
 						);
 					}
 
@@ -146,17 +150,17 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, "There you go, right as rain. Now give this back to " +
+							Script.wait("There you go, right as rain. Now give this back to " +
 									ELF1.getName() + " and tell him to be careful with it this time!")
 					);
 				case STEPS_DONE:
 					return Arrays.asList(
-							Script.wait(0, "Have you returned the Ceremonial Lighter to " + ELF1.getName() + "?")
+							Script.wait("Have you returned the Ceremonial Lighter to " + ELF1.getName() + "?")
 					);
 			}
 
 			return Arrays.asList(
-					Script.wait(0, getGreeting())
+					Script.wait(getGreeting())
 			);
 		}
 	},
@@ -168,18 +172,18 @@ public enum QuestNPC {
 
 			if (user.getLightTreeStage() == QuestStage.STEP_THREE) {
 				return Arrays.asList(
-						Script.wait(0, "Eh? What? Oh, right, lemme take the ear plugs out."),
+						Script.wait("Eh? What? Oh, right, lemme take the ear plugs out."),
 
-						Script.wait(0, "Sorry, we don’t have any flint or steel available right now but " +
+						Script.wait(5, "Sorry, we don’t have any flint or steel available right now but " +
 								"you can certainly go grab your own."),
 
-						Script.wait(0, "Grab a sieve and a pick from this equipment stand. You will need " +
+						Script.wait(5, "Grab a sieve and a pick from this equipment stand. You will need " +
 								"to sift the gravel piles for flint."),
 
-						Script.wait(0, "For the steel you will need the blacksmiths help, " +
+						Script.wait(5, "For the steel you will need the blacksmiths help, " +
 								"he'll make the steel for you, if you give him the required coal and iron."),
 
-						Script.wait(0, "His workshop is located in the Plaza District.")
+						Script.wait(5, "His workshop is located in the Plaza District.")
 				);
 			}
 
@@ -189,27 +193,23 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, "Since you’re already cleared for the mine, wanna do me a favor?"),
+							Script.wait("Since you’re already cleared for the mine, wanna do me a favor?"),
 
-							Script.wait(0, "There's always a rush of last minute demands for materials by the workshop- " +
+							Script.wait(5, "There's always a rush of last minute demands for materials by the workshop- " +
 									"things that need to be fixed, production that came up a little short."),
 
-							Script.wait(0, "And almost all my mine-elves have been sent to help in the wrapping and sled loading."),
+							Script.wait(5, "And almost all my mine-elves have been sent to help in the wrapping and sled loading."),
 
-							Script.wait(0, "If you bring me ingots and put them in this crate here, I’ll see you get paid.")
+							Script.wait(5, "If you bring me ingots and put them in this crate here, I’ll see you get paid.")
 					);
 				case STARTED:
 					return Arrays.asList(
-							Script.wait(0, "If you bring me ingots and put them in this crate here, I’ll see you get paid.")
-					);
-				case COMPLETE:
-					return Arrays.asList(
-							Script.wait(0, "complete message")  // TODO PUGMAS
+							Script.wait("If you bring me ingots and put them in this crate here, I’ll see you get paid.")
 					);
 			}
 
 			return Arrays.asList(
-					Script.wait(0, getGreeting())
+					Script.wait(getGreeting())
 			);
 		}
 	},
@@ -219,46 +219,57 @@ public enum QuestNPC {
 			Pugmas20Service service = new Pugmas20Service();
 			Pugmas20User user = service.get(player);
 
+			EventUserService eventUserService = new EventUserService();
+			EventUser eventUser = eventUserService.get(player);
+
 			switch (user.getToyTestingStage()) {
 				case NOT_STARTED:
 					user.setToyTestingStage(QuestStage.STARTED);
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, "Hey kid, I need a favor! After last year’s debacle with the sled, " +
+							Script.wait(getGreeting()),
+
+							Script.wait(5, "Hey kid, I need a favor! After last year’s debacle with the sled, " +
 									"half of the Quality Assurance team was fired, and the other half have spent all year " +
 									"on making sure that the Sled won’t fall apart again."),
 
-							Script.wait(0, "But that's left just me to try and keep up with testing all the toys " +
+							Script.wait(5, "But that's left just me to try and keep up with testing all the toys " +
 									"that come off the line. I’m way, way behind and Pugmas is coming fast."),
 
-							Script.wait(0, "Think you can help an elf out? You might need to find a friend to help you, " +
+							Script.wait(5, "Think you can help an elf out? You might need to find a friend to help you, " +
 									"the games on the table there need to be tested before they can be added to the present piles."),
 
-							Script.wait(0, "If you could just play a round or two of each, that would be perfect.")
+							Script.wait(5, "If you could just play a round or two of each, that would be perfect.")
 					);
 				case STARTED:
 					return Arrays.asList(
-							Script.wait(0, "You still need to test " + getUnplayedToys(user))
+							Script.wait("You still need to test " + getUnplayedToys(user))
 					);
 				case STEPS_DONE:
 					user.setToyTestingStage(QuestStage.COMPLETE);
 					user.getNextStepNPCs().remove(getId());
 					service.save(user);
 
-					return Arrays.asList(
-							Script.wait(0, "They all work! Excellent! You have the thanks of many children and one overworked elf."),
+					Tasks.wait(0, () -> {
+						eventUser.giveTokens(300);
+						eventUserService.save(eventUser);
+						eventUser.send(Pugmas20.PREFIX + " You have received 300 Event Tokens!");
+					});
 
-							Script.wait(0, "Have this too... <prize>") // TODO PUGMAS - prize
+					return Arrays.asList(
+							Script.wait("They all work! Excellent! You have the thanks of many children and one overworked elf."),
+
+							Script.wait(5, "Here, have this...")
 					);
 				case COMPLETE:
 					return Arrays.asList(
-							Script.wait(0, "Thanks again for the help!")
+							Script.wait(getThanks())
 					);
 			}
 
 			return Arrays.asList(
-					Script.wait(0, getGreeting())
+					Script.wait(getGreeting())
 			);
 		}
 	},
@@ -268,6 +279,9 @@ public enum QuestNPC {
 			Pugmas20Service service = new Pugmas20Service();
 			Pugmas20User user = service.get(player);
 
+			EventUserService eventUserService = new EventUserService();
+			EventUser eventUser = eventUserService.get(player);
+
 			switch (user.getOrnamentVendorStage()) {
 				case NOT_STARTED:
 					user.setOrnamentVendorStage(QuestStage.STARTED);
@@ -275,25 +289,25 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait(0, getGreeting()),
+							Script.wait(getGreeting()),
 
-							Script.wait(0, "This tree is so big it takes a lot of ornaments to fill, " +
+							Script.wait(5, "This tree is so big it takes a lot of ornaments to fill, " +
 									"and I may have uh, lost some of them from last year."),
 
-							Script.wait(0, "Don’t tell Santa! Just help me out. Here in town is an ornament vendor, " +
+							Script.wait(5, "Don’t tell Santa! Just help me out. Here in town is an ornament vendor, " +
 									"he trades different wood types that we need for the factory for spare pugmas ornaments."),
 
-							Script.wait(0, "I’d just ask him for some extra myself, but he’s mean and would tell Santa I " +
+							Script.wait(5, "I’d just ask him for some extra myself, but he’s mean and would tell Santa I " +
 									"lost the town’s ornaments. If you bring me one of each of the 10 ornaments, I'll reward you."),
 
-							Script.wait(0, "Find the LumberJack in the orchid, he can help you out with obtaining the necessary logs.")
+							Script.wait(5, "Find the LumberJack in the orchid, he can help you out with obtaining the necessary logs.")
 					);
 				case STARTED:
 					List<ItemStack> ornaments = OrnamentVendor.getOrnaments(player);
 
 					if (ornaments.size() != Ornament.values().length) {
 						return Arrays.asList(
-								Script.wait(0, "If you trade with the ornament vendor, and bring me one of each of the 10 ornaments, I'll reward you.")
+								Script.wait("If you trade with the ornament vendor, and bring me one of each of the 10 ornaments, I'll reward you.")
 						);
 					}
 
@@ -304,17 +318,23 @@ public enum QuestNPC {
 					for (ItemStack ornament : ornaments)
 						player.getInventory().removeItem(ornament);
 
+					Tasks.wait(Time.SECOND, () -> {
+						eventUser.giveTokens(300);
+						eventUserService.save(eventUser);
+						eventUser.send(Pugmas20.PREFIX + " You have received 300 Event Tokens!");
+					});
+
 					return Arrays.asList(
-							Script.wait(0, "steps done message")  // TODO PUGMAS
+							Script.wait("I am so grateful, thank you! Here, for all the trouble, have this...")
 					);
 				case COMPLETE:
 					return Arrays.asList(
-							Script.wait(0, "already complete message")  // TODO PUGMAS
+							Script.wait(getThanks())
 					);
 			}
 
 			return Arrays.asList(
-					Script.wait(0, getGreeting())
+					Script.wait(getGreeting())
 			);
 		}
 	},
@@ -326,16 +346,16 @@ public enum QuestNPC {
 
 			if (user.getLightTreeStage().equals(QuestStage.STARTED)) {
 				return Arrays.asList(
-						Script.wait(0, getGreeting()),
+						Script.wait(getGreeting()),
 
-						Script.wait(0, "So you need some logs huh? We'll you're in luck, the soil that this orchid was built on is magical, and the trees grow back in only a few minutes."),
+						Script.wait(5, "So you need some logs huh? We'll you're in luck, the soil that this orchid was built on is magical, and the trees grow back in only a few minutes."),
 
-						Script.wait(0, "So grab an extra axe from my workshop and start choppin' down some trees!")
+						Script.wait(5, "So grab an extra axe from my workshop and start choppin' down some trees!")
 				);
 			}
 
 			return Arrays.asList(
-					Script.wait(0, getGreeting())
+					Script.wait(getGreeting())
 			);
 		}
 	},
@@ -353,12 +373,12 @@ public enum QuestNPC {
 				GiftGiver.giveGift(player);
 
 				return Arrays.asList(
-						Script.wait(0, "Spread some cheer and give this gift to another player!")
+						Script.wait("Spread some cheer and give this gift to another player!")
 				);
 			}
 
 			return Arrays.asList(
-					Script.wait(0, getGreeting())
+					Script.wait(getGreeting())
 			);
 		}
 	};
@@ -463,8 +483,18 @@ public enum QuestNPC {
 				"Happy holidays!",
 				"Yuletide greetings!",
 				"Season’s greetings!",
-				"Happy New Year!");
+				"Happy New Year!",
+				"Merry Pugmas!");
 
 		return RandomUtils.randomElement(greetings);
+	}
+
+	private static String getThanks() {
+		List<String> thanks = Arrays.asList(
+				"Thanks again for the help!",
+				"I appreciate your help.",
+				"I am grateful for your assistance.");
+
+		return RandomUtils.randomElement(thanks);
 	}
 }

@@ -12,6 +12,10 @@ public class Script {
 	int delay;
 	List<String> lines;
 
+	public static Script wait(String... lines) {
+		return wait(0, Arrays.asList(lines));
+	}
+
 	public static Script wait(int delay, String... lines) {
 		return wait(delay, Arrays.asList(lines));
 	}

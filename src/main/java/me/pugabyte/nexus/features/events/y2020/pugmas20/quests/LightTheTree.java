@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
+import me.pugabyte.nexus.models.eventuser.EventUser;
+import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ActionBarUtils;
@@ -191,8 +193,18 @@ public class LightTheTree implements Listener {
 				user.getNextStepNPCs().remove(QuestNPC.ELF1.getId());
 				user.getNextStepNPCs().remove(QuestNPC.ELF2.getId());
 				service.save(user);
+
 				// TODO PUGMAS Better wording
 				user.send(PREFIX + "You lit the tree!");
+
+				Tasks.wait(Time.SECOND, () -> {
+					EventUserService eventUserService = new EventUserService();
+					EventUser eventUser = eventUserService.get(player);
+					eventUser.giveTokens(300);
+					eventUserService.save(eventUser);
+
+					eventUser.send(Pugmas20.PREFIX + " You have received 300 Event Tokens!");
+				});
 			});
 		}
 	}
