@@ -87,11 +87,7 @@ public class AdventChests implements Listener {
 		}
 	}
 
-	// TODO PUGMAS - Add all chest locations
 	private void loadlocationations() {
-//		adventChestList.add(new AdventChest(1, location(867, 46, 588)));
-		Location todo = location(867, 46, 588);
-
 		// @formatter:off
 		adventChestList.add(new AdventChest(1,  location(913, 50, 411))); 	// Plaza
 		adventChestList.add(new AdventChest(2,  location(900, 45, 580))); 	// Harbor
