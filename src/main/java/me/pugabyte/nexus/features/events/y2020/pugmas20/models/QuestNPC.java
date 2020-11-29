@@ -42,6 +42,8 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
+							Script.wait(0, getGreeting()),
+
 							Script.wait(0, "I can’t find the Ceremonial Lighter… Ooooh Santa is gonna be SO mad at me if I’ve lost it."),
 
 							Script.wait(0, "We haven't used it since last year. Could you search in the basement to help me find it?")
@@ -95,6 +97,8 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
+							Script.wait(0, getGreeting()),
+
 							Script.wait(0, "It's time for our annual tree lighting ceremony, but " + ELF1.getName() +
 									" still hasn’t returned with the Ceremonial Lighter!"),
 
@@ -271,6 +275,8 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
+							Script.wait(0, getGreeting()),
+
 							Script.wait(0, "This tree is so big it takes a lot of ornaments to fill, " +
 									"and I may have uh, lost some of them from last year."),
 
@@ -278,7 +284,9 @@ public enum QuestNPC {
 									"he trades different wood types that we need for the factory for spare pugmas ornaments."),
 
 							Script.wait(0, "I’d just ask him for some extra myself, but he’s mean and would tell Santa I " +
-									"lost the town’s ornaments. If you bring me one of each of the 10 ornaments, I'll reward you.")
+									"lost the town’s ornaments. If you bring me one of each of the 10 ornaments, I'll reward you."),
+
+							Script.wait(0, "Find the LumberJack in the orchid, he can help you out with obtaining the necessary logs.")
 					);
 				case STARTED:
 					List<ItemStack> ornaments = OrnamentVendor.getOrnaments(player);
@@ -303,6 +311,27 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait(0, "already complete message")  // TODO PUGMAS
 					);
+			}
+
+			return Arrays.asList(
+					Script.wait(0, getGreeting())
+			);
+		}
+	},
+	LUMBERJACK(3108) {
+		@Override
+		public List<Script> getScript(Player player) {
+			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20User user = service.get(player);
+
+			if (user.getLightTreeStage().equals(QuestStage.STARTED)) {
+				return Arrays.asList(
+						Script.wait(0, getGreeting()),
+
+						Script.wait(0, "So you need some logs huh? We'll you're in luck, the soil that this orchid was built on is magical, and the trees grow back in only a few minutes."),
+
+						Script.wait(0, "So grab an extra axe from my workshop and start choppin' down some trees!")
+				);
 			}
 
 			return Arrays.asList(

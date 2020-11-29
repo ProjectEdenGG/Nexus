@@ -117,9 +117,14 @@ public class OrnamentVendor implements Listener {
 			return;
 
 		if (!player.getInventory().contains(getLumberjacksAxe())) {
-			ItemUtils.giveItem(player, getLumberjacksAxe());
-			Quests.sound_obtainItem(player);
-			user.send("Message"); // TODO PUGMAS
+			if (Quests.hasRoomFor(player, getLumberjacksAxe())) {
+				ItemUtils.giveItem(player, getLumberjacksAxe());
+				Quests.sound_obtainItem(player);
+				user.send(Pugmas20.PREFIX + " You have obtained a " + lumberjacksAxe.getItemMeta().getDisplayName());
+			} else {
+				Quests.sound_villagerNo(player);
+				user.send(Quests.fullInvError_obtain);
+			}
 		}
 	}
 

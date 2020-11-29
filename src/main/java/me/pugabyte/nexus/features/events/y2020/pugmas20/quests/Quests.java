@@ -26,7 +26,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class Quests {
-	public static final String fullInvError = Pugmas20.PREFIX + "&cYour inventory is too full to open this!";
+	public static final String fullInvError_obtain = Pugmas20.PREFIX + "&cYour inventory is too full to get this!";
+	public static final String fullInvError_open = Pugmas20.PREFIX + "&cYour inventory is too full to open this!";
 	public static final String leftoverItems = Pugmas20.PREFIX + "Giving leftover items...";
 
 	public Quests() {

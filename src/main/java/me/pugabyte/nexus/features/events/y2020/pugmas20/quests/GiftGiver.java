@@ -97,7 +97,7 @@ public class GiftGiver implements Listener {
 		Chest chest = (Chest) loc.getBlock().getState();
 		ItemStack[] contents = chest.getBlockInventory().getContents();
 		if (!Quests.hasRoomFor(player, contents)) {
-			PlayerUtils.send(player, Quests.fullInvError);
+			PlayerUtils.send(player, Quests.fullInvError_open);
 			Quests.sound_villagerNo(player);
 			return;
 		}

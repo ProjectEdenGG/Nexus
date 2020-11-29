@@ -398,7 +398,6 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("quests light_the_tree teleportToStart")
-	// TODO PUGMAS Better wording?
 	void questLightTheTreeTeleportToStart() {
 		if (user.isLightingTorches())
 			error("You cannot teleport during the lighting ceremony");
