@@ -154,7 +154,7 @@ public class AdventChests implements Listener {
 
 		int chestDay = adventChest.getDay();
 		LocalDateTime now = LocalDateTime.now();
-		int day = LocalDate.now().getDayOfMonth();
+		int today = LocalDate.now().getDayOfMonth();
 
 		if (!player.hasPermission("group.admin")) {
 			if (isBeforePugmas(now)) return;
@@ -175,15 +175,15 @@ public class AdventChests implements Listener {
 					openChest = true;
 				else
 					reason = openPrevious;
-			else
-				if (chestDay == day)
-					openChest = true;
-				else
-					reason = wrongDay + " (" + adventChest.getDistrict().getName() + " District)";
+			else if (chestDay == today)
+				openChest = true;
+			else {
+				reason = wrongDay + " (" + AdventChests.getAdventChest(today).getDistrict().getName() + " District)";
+			}
 		}
 
 		if (!openChest) {
-			reason = reason.replaceAll("<day>", String.valueOf(day));
+			reason = reason.replaceAll("<day>", String.valueOf(today));
 			user.send(reason);
 
 			if (waypoint)
