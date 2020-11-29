@@ -93,25 +93,25 @@ public class AdventChests implements Listener {
 		Location todo = location(867, 46, 588);
 
 		// @formatter:off
-		adventChestList.add(new AdventChest(1,  todo)); // Plaza
+		adventChestList.add(new AdventChest(1,  location(913, 50, 411))); 	// Plaza
 		adventChestList.add(new AdventChest(2,  location(900, 45, 580))); 	// Harbor
 		adventChestList.add(new AdventChest(3,  location(997, 50, 497))); 	// Frozen
-		adventChestList.add(new AdventChest(4,  todo)); // Plaza
+		adventChestList.add(new AdventChest(4,  location(966, 51, 400))); 	// Plaza
 		adventChestList.add(new AdventChest(5,  location(987, 74, 346))); 	// Gardens
-		adventChestList.add(new AdventChest(6,  todo)); // Plaza
+		adventChestList.add(new AdventChest(6,  location(860, 50, 441))); 	// Plaza
 		adventChestList.add(new AdventChest(7,  location(1001, 58, 534))); 	// Frozen
 		adventChestList.add(new AdventChest(8,  location(847, 54, 583))); 	// Harbor
 		adventChestList.add(new AdventChest(9,  location(986, 61, 415))); 	// Plaza
-		adventChestList.add(new AdventChest(10, todo)); // Harbor
+		adventChestList.add(new AdventChest(10, location(840, 60, 606))); 	// Harbor
 		adventChestList.add(new AdventChest(11, location(1051, 49, 569))); 	// Frozen
 		adventChestList.add(new AdventChest(12, location(839, 52, 542))); 	// Harbor
 		adventChestList.add(new AdventChest(13, location(898, 58, 352))); 	// Plaza
 		adventChestList.add(new AdventChest(14, location(1062, 60, 424))); 	// Gardens
-		adventChestList.add(new AdventChest(15, todo)); // Plaza
+		adventChestList.add(new AdventChest(15, location(964, 52, 441))); 	// Plaza
 		adventChestList.add(new AdventChest(16, location(1009, 47, 567))); 	// Frozen
 		adventChestList.add(new AdventChest(17, location(828, 51, 515))); 	// Harbor
-		adventChestList.add(new AdventChest(18, todo)); // Plaza
-		adventChestList.add(new AdventChest(19, todo)); // Harbor
+		adventChestList.add(new AdventChest(18, location(862, 58, 457))); 	// Plaza
+		adventChestList.add(new AdventChest(19, location(812, 52, 538))); 	// Harbor
 		adventChestList.add(new AdventChest(20, location(849, 55, 384))); 	// Plaza
 		adventChestList.add(new AdventChest(21, location(809, 68, 565))); 	// Harbor
 		adventChestList.add(new AdventChest(22, location(1094, 45, 386))); 	// Gardens
