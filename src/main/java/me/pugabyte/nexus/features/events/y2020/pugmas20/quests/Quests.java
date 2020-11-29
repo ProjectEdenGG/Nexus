@@ -63,6 +63,7 @@ public class Quests {
 		THE_MINES(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.INELIGIBLE, "Complete Light The Tree");
 			put(QuestStage.NOT_STARTED, "Talk to " + QuestNPC.FORELF.getName() + " in the coal mine");
+			// TODO PUGMAS Show how much they can trade today
 			put(QuestStage.STARTED, "Trade ingots in the sell crate next to " + QuestNPC.FORELF.getName());
 		}}),
 

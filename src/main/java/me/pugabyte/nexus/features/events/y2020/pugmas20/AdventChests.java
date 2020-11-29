@@ -177,7 +177,7 @@ public class AdventChests implements Listener {
 				if (chestDay == day)
 					openChest = true;
 				else
-					reason = wrongDay + "(" + adventChest.getDistrict().getName() + " District)";
+					reason = wrongDay + " (" + adventChest.getDistrict().getName() + " District)";
 		}
 
 		if (!openChest) {

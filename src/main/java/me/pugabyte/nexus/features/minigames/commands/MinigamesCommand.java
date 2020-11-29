@@ -107,7 +107,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	@Path("signs join <arena>")
 	void joinSign(Arena arena) {
-		Sign sign = getTargetSign();
+		Sign sign = getTargetSignRequired();
 		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
 		sign.setLine(1, StringUtils.colorize("&aJoin"));
 		String arenaName = arena.getName();
@@ -125,7 +125,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	@Path("signs quit")
 	void quitSign() {
-		Sign sign = getTargetSign();
+		Sign sign = getTargetSignRequired();
 		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
 		sign.setLine(1, StringUtils.colorize("&aQuit"));
 		sign.setLine(2, "");
@@ -136,7 +136,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	@Path("signs lobby")
 	void lobbySign() {
-		Sign sign = getTargetSign();
+		Sign sign = getTargetSignRequired();
 		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
 		sign.setLine(1, StringUtils.colorize("&aLobby"));
 		sign.setLine(2, "");
@@ -320,7 +320,7 @@ public class MinigamesCommand extends CustomCommand {
 			inviteCommand = "warp screenshot";
 			inviteMessage = "take a screenshot";
 		} else {
-			Sign sign = getTargetSign();
+			Sign sign = getTargetSignRequired();
 			String line2 = stripColor(sign.getLine(1)).toLowerCase();
 			if (line2.contains("screenshot"))
 				error("Stand in the screenshot area then run the command (sign not needed)");

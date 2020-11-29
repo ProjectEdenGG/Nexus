@@ -227,6 +227,7 @@ public class LightTheTree implements Listener {
 						continue;
 					default:
 						updateAll(player, LightTheTree::air);
+						updateTreeLightBlocksAir(player);
 				}
 			}
 		});

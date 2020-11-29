@@ -7,12 +7,14 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -22,8 +24,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -71,6 +75,9 @@ public class Pugmas20User extends PlayerOwnedObject {
 
 	// Quest - Ornament Vendor
 	private QuestStage ornamentVendorStage = QuestStage.NOT_STARTED;
+	private Map<Ornament, Integer> ornamentTradeCount = new HashMap<>();
+	@Getter
+	private static final transient int maxOrnamentCount = 6;
 
 	// Quest - The Mines
 	private QuestStage minesStage = QuestStage.INELIGIBLE;
@@ -115,5 +122,10 @@ public class Pugmas20User extends PlayerOwnedObject {
 		lightingTorches = false;
 		Tasks.cancel(torchTimerTaskId);
 		torchTimerTaskId = -1;
+	}
+
+	public boolean canTradeOrnament(Ornament ornament) {
+		int count = ornamentTradeCount.getOrDefault(ornament, 0);
+		return count + 1 <= maxOrnamentCount;
 	}
 }

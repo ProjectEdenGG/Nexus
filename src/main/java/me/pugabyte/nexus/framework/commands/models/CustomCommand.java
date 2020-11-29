@@ -124,7 +124,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return targetBlock;
 	}
 
-	protected Sign getTargetSign() {
+	protected Sign getTargetSignRequired() {
 		Block targetBlock = getTargetBlock();
 		Material material = targetBlock.getType();
 		if (ItemUtils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))

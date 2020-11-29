@@ -32,7 +32,7 @@ public class SignLinesCommand extends CustomCommand {
 
 	@Path("[arguments...]")
 	void signLines(String arguments) {
-		Sign sign = getTargetSign();
+		Sign sign = getTargetSignRequired();
 
 		String uuid = player().getUniqueId().toString();
 		String[] lines = sign.getLines();

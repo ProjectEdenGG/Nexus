@@ -8,30 +8,31 @@ import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
-import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -51,34 +52,60 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugm
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
 import static me.pugabyte.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.RandomUtils.randomInt;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
 public class OrnamentVendor implements Listener {
 	public enum Ornament {
-		RED(PugmasTreeType.BLOODWOOD, -3), // 93
-		ORANGE(PugmasTreeType.MAHOGANY, -4), // 160
-		YELLOW(PugmasTreeType.EUCALYPTUS, -5), // 69
-		GREEN(PugmasTreeType.WILLOW, -6), // 556
-		CYAN(PugmasTreeType.CRYSTAL, -7), // 348
-		BLUE(PugmasTreeType.MAGIC, -8), // 164
-		PURPLE(PugmasTreeType.OAK, -9), // 537
-		MAGENTA(PugmasTreeType.TEAK, -10), // 93
-		GRAY(PugmasTreeType.MAPLE, -11), // 163
-		WHITE(PugmasTreeType.BLISTERWOOD, -12); // 249
+		RED(PugmasTreeType.BLOODWOOD, -3),
+		ORANGE(PugmasTreeType.MAHOGANY, -4),
+		YELLOW(PugmasTreeType.EUCALYPTUS, -5),
+		GREEN(PugmasTreeType.WILLOW, -6),
+		CYAN(PugmasTreeType.CRYSTAL, -7),
+		BLUE(PugmasTreeType.MAGIC, -8),
+		PURPLE(PugmasTreeType.OAK, -9),
+		MAGENTA(PugmasTreeType.TEAK, -10),
+		GRAY(PugmasTreeType.MAPLE, -11),
+		WHITE(PugmasTreeType.BLISTERWOOD, -12);
 
 		@Getter
 		private final PugmasTreeType treeType;
 		@Getter
-		private final ItemStack skull;
+		private final int relative;
+		@Getter
+		private ItemStack skull;
+
+		public static int logsPerOrnament = 48;
 
 		Ornament(PugmasTreeType treeType, int relative) {
 			this.treeType = treeType;
-			ItemStack itemStack = AdventMenu.origin.getRelative(relative, 0, 0).getDrops().stream().findFirst().orElse(null);
-			if (ItemUtils.isNullOrAir(itemStack))
-				this.skull = null;
-			else
-				this.skull = Pugmas20.item(itemStack).name(camelCase(name() + " Ornament")).build();
+			this.relative = relative;
+			reloadHead();
+		}
+
+		private void reloadHead() {
+			Tasks.wait(Time.SECOND, () -> {
+				ItemStack itemStack = AdventMenu.origin.getRelative(relative, 0, 0).getDrops().stream().findFirst().orElse(null);
+				if (ItemUtils.isNullOrAir(itemStack))
+					this.skull = null;
+				else
+					this.skull = Pugmas20.item(itemStack).name(camelCase(name() + " Ornament")).build();
+			});
+		}
+
+		public static void reloadHeads() {
+			for (Ornament ornament : Ornament.values())
+				ornament.reloadHead();
+		}
+
+		public static Ornament of(PugmasTreeType treeType) {
+			for (Ornament ornament : Ornament.values())
+				if (ornament.getTreeType() == treeType)
+					return ornament;
+
+			return null;
 		}
 	}
 
@@ -285,8 +312,6 @@ public class OrnamentVendor implements Listener {
 			return regions.get(id);
 		}
 
-		private static final ItemStack silk = new ItemBuilder(Material.DIAMOND_PICKAXE).enchant(Enchantment.SILK_TOUCH).build();
-
 		public void feller(Player player, int id) {
 			if (!new CooldownService().check(Nexus.getUUID0(), getRegion(id).getId(), Time.SECOND.x(3)))
 				return;
@@ -305,18 +330,17 @@ public class OrnamentVendor implements Listener {
 						if (poll == null)
 							break queueLoop;
 
-						Tasks.wait(wait, () -> {
-							Block block = poll.getBlock();
-							if (block.getType() == logs)
-								for (ItemStack itemStack : block.getDrops(silk)) {
-									PugmasTreeType treeType = PugmasTreeType.of(itemStack.getType());
-									if (treeType != null)
-										ItemUtils.giveItem(player, treeType.getLog());
-								}
-							block.setType(Material.AIR, this != CRYSTAL);
-						});
+						Tasks.wait(wait, () -> poll.getBlock().setType(Material.AIR, this != CRYSTAL));
 					}
 				}
+
+				Tasks.Countdown.builder()
+						.duration(randomInt(8, 12) * 4)
+						.onTick(i -> {
+							if (i % 4 == 0)
+								ItemUtils.giveItem(player, getLog());
+						})
+						.start();
 
 				Jingle.PUGMAS_TREE_FELLER.play(player);
 
@@ -330,7 +354,7 @@ public class OrnamentVendor implements Listener {
 			new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
 				put("tree", name());
 				put("id", id);
-			}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));
+			}}, LocalDateTime.now().plusSeconds(randomInt(3 * 60, 5 * 60))));
 		}
 
 		static {
@@ -348,7 +372,56 @@ public class OrnamentVendor implements Listener {
 				});
 			});
 		}
+	}
 
+	// TODO Create merchant trade event
+	@EventHandler
+	public void onMerchantTrade(InventoryClickEvent event) {
+		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) return;
+		if (!Utils.equalsInvViewTitle(event.getView(), camelCase(MerchantNPC.ORNAMENT_VENDOR.name()))) return;
+		if (event.getSlot() != 2) return;
+
+		Player player = (Player) event.getWhoClicked();
+		if (!isAtPugmas(player)) return;
+
+		if (Arrays.asList(ClickType.DROP, ClickType.CONTROL_DROP).contains(event.getClick())) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (event.getHotbarButton() > 0)
+			if (!isNullOrAir(player.getInventory().getItem(event.getHotbarButton())))
+				return;
+
+		ItemStack result = event.getCurrentItem();
+		if (isNullOrAir(result))
+			return;
+		if (result.getType() != Material.PLAYER_HEAD)
+			return;
+
+		ItemStack source = event.getInventory().getItem(0);
+		if (isNullOrAir(source))
+			source = event.getInventory().getItem(1);
+		if (isNullOrAir(source))
+			return;
+
+		PugmasTreeType treeType = PugmasTreeType.of(source.getType());
+		if (treeType == null)
+			return;
+
+		Ornament ornament = Ornament.of(treeType);
+		if (ornament == null)
+			return;
+
+		int resultAmount = 1;
+		if (event.isShiftClick())
+			resultAmount = source.getAmount() / Ornament.logsPerOrnament;
+
+		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20User user = service.get(player);
+
+		user.getOrnamentTradeCount().put(ornament, user.getOrnamentTradeCount().getOrDefault(ornament, 0) + resultAmount);
+		service.save(user);
 	}
 
 }

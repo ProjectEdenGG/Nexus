@@ -101,7 +101,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	@Permission("group.staff")
 	@Path("sign <player>")
 	void sign(String player) {
-		Sign sign = getTargetSign();
+		Sign sign = getTargetSignRequired();
 		sign.setLine(0, header);
 		sign.setLine(1, player);
 		sign.update();

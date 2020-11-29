@@ -120,7 +120,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 
 			if (stage == QuestStage.COMPLETE) {
 				send("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
-			} else if (stage == QuestStage.NOT_STARTED) {
+			} else if (stage == QuestStage.NOT_STARTED || stage == QuestStage.INELIGIBLE) {
 				send("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &7- " + instructions));
 			} else  {
 //				send("&f  &7☐ &3" + camelCase(quest) + " &7- &e" + (instructions == null ? "&cnull" : instructions));
@@ -298,42 +298,49 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.admin")
-	@Path("kit lumberjacks axe")
-	void kitLumberjacksAxe() {
-		ItemUtils.giveItem(player(), OrnamentVendor.getLumberjacksAxe());
-	}
-
-	@Permission("group.admin")
-	@Path("kit lumberjacks logs")
-	void kitLumberjacksLogs() {
-		for (Ornament ornament : Ornament.values())
-			ItemUtils.giveItem(player(), ornament.getTreeType().getLog(32));
-	}
-
-	@Permission("group.admin")
-	@Path("kit miners pickaxe")
+	@Path("kit the_mines pickaxe")
 	void kitMinersPickaxe() {
 		ItemUtils.giveItem(player(), TheMines.getMinersPickaxe());
 	}
 
 	@Permission("group.admin")
-	@Path("kit miners sieve")
+	@Path("kit the_mines sieve")
 	void kitMinersSieve() {
 		ItemUtils.giveItem(player(), TheMines.getMinersSieve());
 	}
 
 	@Permission("group.admin")
-	@Path("kit miners ores")
+	@Path("kit the_mines ores")
 	void kitMinersOres() {
 		for (OreType oreType : OreType.values())
 			ItemUtils.giveItem(player(), oreType.getOre());
 	}
 
 	@Permission("group.admin")
-	@Path("kit miners ingots")
+	@Path("kit the_mines ingots")
 	void kitMinersIngot() {
 		for (OreType oreType : OreType.values())
 			ItemUtils.giveItem(player(), oreType.getIngot());
+	}
+
+	@Permission("group.admin")
+	@Path("kit ornament_vendor ornaments")
+	void kitOrnamentVendorOrnaments() {
+		for (Ornament ornament : Ornament.values())
+			ItemUtils.giveItem(player(), ornament.getSkull());
+	}
+
+	@Permission("group.admin")
+	@Path("kit ornament_vendor axe")
+	void kitOrnamentVendorAxe() {
+		ItemUtils.giveItem(player(), OrnamentVendor.getLumberjacksAxe());
+	}
+
+	@Permission("group.admin")
+	@Path("kit ornament_vendor logs")
+	void kitOrnamentVendorLogs() {
+		for (Ornament ornament : Ornament.values())
+			ItemUtils.giveItem(player(), ornament.getTreeType().getLog(64));
 	}
 
 	@Permission("group.admin")
@@ -393,6 +400,21 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		user.resetLightTheTree();
 		service.save(user);
 		send(PREFIX + "Reset Light The Tree quest variables");
+	}
+
+	@Permission("group.admin")
+	@Path("quests ornament_vendor reset")
+	void questOrnamentVendorReset() {
+		user.getOrnamentTradeCount().clear();
+		service.save(user);
+		send(PREFIX + "Reset Ornament Vendor quest variables");
+	}
+
+	@Permission("group.admin")
+	@Path("quests ornament_vendor reloadHeads")
+	void questOrnamentVendorReloadHeads() {
+		Ornament.reloadHeads();
+		send(PREFIX + "Reloaded Ornament Vendor heads");
 	}
 
 	@HideFromHelp

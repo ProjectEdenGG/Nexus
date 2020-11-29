@@ -40,7 +40,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 	@Permission("group.staff")
 	@Path("set <player>")
 	void set(OfflinePlayer player) {
-		Sign sign = getTargetSign();
+		Sign sign = getTargetSignRequired();
 		sign.setLine(0, header);
 		sign.setLine(1, player.getName());
 		sign.update();

@@ -124,7 +124,7 @@ public class TheMines implements Listener {
 		String title = stripColor(event.getView().getTitle());
 		if (!title.contains(stripColor("Sell Crate - Ingots"))) return;
 
-		List<MerchantBuilder.TradeBuilder> tradeBuilders = MerchantNPC.THEMINES_SELLCRATE.getTrades();
+		List<MerchantBuilder.TradeBuilder> tradeBuilders = MerchantNPC.THEMINES_SELLCRATE.getTrades(null);
 
 		if (tradeBuilders == null || tradeBuilders.size() == 0) {
 			player.getInventory().addItem(event.getInventory().getContents());
@@ -260,7 +260,8 @@ public class TheMines implements Listener {
 			playSound(player, Sound.UI_STONECUTTER_TAKE_RESULT, .5F, .5F);
 		});
 
-		player.getInventory().addItem(flint);
+		if (RandomUtils.chanceOf(20))
+			player.getInventory().addItem(flint);
 
 		scheduleRegen(block);
 		block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);

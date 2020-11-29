@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Aliases("j")
@@ -18,7 +19,10 @@ public class JumpCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		player().teleport(getTargetBlockRequired().getLocation().add(0, 1, 0), TeleportCause.COMMAND);
+		Location location = getTargetBlockRequired().getLocation().add(0, 1, 0);
+		location.setYaw(player().getLocation().getYaw());
+		location.setPitch(player().getLocation().getPitch());
+		player().teleport(location, TeleportCause.COMMAND);
 	}
 
 }
