@@ -368,7 +368,7 @@ public class StringUtils {
 		LONG("year", "day", "hour", "minute", "second") {
 			@Override
 			public String get(String label, int value) {
-				return " " + label + (value == 1 ? "" : "s") + " ";
+				return " " + plural(label, value) + " ";
 			}
 		};
 

@@ -16,6 +16,7 @@ import java.util.List;
 public class MatchData {
 	@ToString.Exclude
 	protected Match match;
+	protected Arena arena;
 	protected WorldGuardUtils WGUtils;
 	protected WorldEditUtils WEUtils;
 
@@ -33,6 +34,7 @@ public class MatchData {
 
 	public MatchData(Match match) {
 		this.match = match;
+		this.arena = match.getArena();
 		WGUtils = match.getArena().getWGUtils();
 		WEUtils = match.getArena().getWEUtils();
 	}

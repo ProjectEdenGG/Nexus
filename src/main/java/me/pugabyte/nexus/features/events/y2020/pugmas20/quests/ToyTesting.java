@@ -34,12 +34,12 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 // TODO PUGMAS: teleport back to pugmas
 @NoArgsConstructor
 public class ToyTesting implements Listener {
-	private static final String error = "Minigame is full";
+	private static final String error = "Minigame has already started";
 
 	@AllArgsConstructor
 	private enum Toy {
 		BATTLESHIP(Pugmas20.location(930, 94, 321), "mgm join alphavsomega", Pugmas20User::setBattleship),
-		MASTER_MIND(Pugmas20.location(930, 94, 320), "mgm join mastermind", Pugmas20User::setMasterMind),
+		MASTERMIND(Pugmas20.location(930, 94, 320), "mgm join mastermind", Pugmas20User::setMasterMind),
 		CONNECT_4(Pugmas20.location(930, 94, 319), "warp connect4", Pugmas20User::setConnectFour),
 		TIC_TAC_TOE(Pugmas20.location(930, 94, 318), "warp tictactoe", Pugmas20User::setTicTacToe);
 
@@ -80,7 +80,7 @@ public class ToyTesting implements Listener {
 				PlayerUtils.send(player, error);
 				return;
 			}
-		} else if (toy.equals(Toy.MASTER_MIND)) {
+		} else if (toy.equals(Toy.MASTERMIND)) {
 			if (isStarted.test("MasterMind")) {
 				PlayerUtils.send(player, error);
 				return;
@@ -100,7 +100,7 @@ public class ToyTesting implements Listener {
 		if (arenaName.equalsIgnoreCase("AlphaVsOmega")) {
 			setPlayedGame(match.getPlayers(), Toy.BATTLESHIP);
 		} else if (arenaName.equalsIgnoreCase("MasterMind")) {
-			setPlayedGame(match.getPlayers(), Toy.MASTER_MIND);
+			setPlayedGame(match.getPlayers(), Toy.MASTERMIND);
 		}
 	}
 

@@ -5,10 +5,12 @@ import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas20Quest;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.testquestuser.TestQuestUser;
 import me.pugabyte.nexus.models.testquestuser.TestQuestUserService;
 
+@Permission("group.admin")
 public class TestQuestUserCommand extends CustomCommand {
 	private TestQuestUserService service = new TestQuestUserService();
 	private TestQuestUser user;

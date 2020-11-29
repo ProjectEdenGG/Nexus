@@ -123,7 +123,7 @@ public enum QuestNPC {
 
 							Script.wait(0, "If you get me a piece of flint and a steel ingot, I can make both fast."),
 
-							Script.wait(0, "Head to the coal mine and you should be able to get both- ask the mine forelf for help.")
+							Script.wait(0, "Head to the coal mine and you should be able to get both- ask the " + FORELF.getName() + " for help.")
 					);
 				case STEP_THREE:
 					ItemStack lighter = getItem(player, LightTheTree.lighter_broken);
@@ -179,9 +179,11 @@ public enum QuestNPC {
 				);
 			}
 
-
 			switch (user.getMinesStage()) {
 				case NOT_STARTED:
+					user.setMinesStage(QuestStage.STARTED);
+					service.save(user);
+
 					return Arrays.asList(
 							Script.wait(0, "Since you’re already cleared for the mine, wanna do me a favor?"),
 
@@ -368,9 +370,10 @@ public enum QuestNPC {
 	public void sendScript(Player player) {
 		List<Script> scripts = getScript(player);
 		if (scripts == null || scripts.isEmpty()) return;
-		AtomicReference<String> npcName = new AtomicReference<>("");
 
 		AtomicInteger wait = new AtomicInteger(0);
+
+		AtomicReference<String> npcName = new AtomicReference<>("");
 		getName(npcName);
 
 		scripts.forEach(script -> {
@@ -402,7 +405,7 @@ public enum QuestNPC {
 		if (npcName == null)
 			npcName = new AtomicReference<>("");
 
-		if (!npcName.get().isEmpty() && npcName.get().equalsIgnoreCase(QA_ELF.name()))
+		if (this == QA_ELF)
 			npcName.set("Q.A. Elf");
 		else
 			npcName.set(camelCase(name()));

@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
@@ -10,7 +11,10 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
+import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Time;
@@ -32,9 +36,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.PREFIX;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 
 @NoArgsConstructor
@@ -45,9 +51,11 @@ public class LightTheTree implements Listener {
 	public static final ItemStack lighter = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Ceremonial Lighter").glow().build();
 	public static final ItemStack steel_ingot = Pugmas20.questItem(Material.IRON_INGOT).name("Steel Ingot").glow().build();
 
-	public static final int timerTicks = Time.MINUTE.x(1);
-	public static final int torches = 9;
-	public static final int treeTorches = 7;
+	private static final int timerTicks = Time.MINUTE.x(2);
+	private static final int torches = 9;
+	private static final int treeTorches = 7;
+	@Getter
+	private static final Location resetLocation = Pugmas20.location(920.5, 86, 313.5, -25.50F, .00F);
 
 	@EventHandler
 	public void onFindBrokenLighter(PlayerInteractEntityEvent event) {
@@ -70,23 +78,37 @@ public class LightTheTree implements Listener {
 		service.save(user);
 	}
 
+	static {
+		// Cleanup
+		Tasks.async(() -> {
+			Pugmas20Service service = new Pugmas20Service();
+			List<Pugmas20User> users = service.getAll();
+			users.stream().filter(user -> user.isLightingTorches() && user.getLightTreeStage() == QuestStage.STEPS_DONE).forEach(user -> {
+				service.cache(user);
+				user.resetLightTheTree();
+				service.save(user);
+			});
+		});
+	}
+
 	public static void startTimer(Player player) {
 		Pugmas20Service service = new Pugmas20Service();
 		Pugmas20User user = service.get(player);
 
+		// TODO PUGMAS Better wording?
 		Countdown timer = Countdown.builder()
 				.duration(timerTicks)
 				.onStart(() -> {
 					user.setLightingTorches(true);
-					user.send("Timer started");
+					String format = TimespanFormatter.of(timerTicks / 20).formatType(TimespanFormatType.LONG).format();
+					user.send(PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
 				})
-				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&e" + i))
+				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&e" + TimespanFormatter.of(i).format()))
 				.onComplete(() -> {
-					user.send("You ran out of time!");
-					// TODO PUGMAS Click to teleport to start
-					user.setLightingTorches(false);
-					user.setTorchTimerTaskId(-1);
-					user.setTorchesLit(0);
+					user.resetLightTheTree();
+					service.save(user);
+					user.send(PREFIX + "You ran out of time!");
+					user.send(new JsonBuilder(PREFIX + "Click to teleport back to the start").command("/pugmas quests light_the_tree teleportToStart"));
 				})
 				.start();
 
@@ -116,7 +138,6 @@ public class LightTheTree implements Listener {
 		if (regions.isEmpty()) return;
 
 		int torch = Integer.parseInt(regions.iterator().next().getId().split("_")[2]);
-		user.send("Torch #" + torch);
 
 		if (torch == 1) {
 			user.setLightingTorches(true);
@@ -124,11 +145,12 @@ public class LightTheTree implements Listener {
 				startTimer(player);
 		}
 
+		// TODO PUGMAS Better wording
 		if (torch > user.getTorchesLit() + 1) {
-			user.send("You missed one!");
+			user.send(PREFIX + "You missed a torch!");
 			return;
 		} else if (torch == user.getTorchesLit() + 1) {
-			user.send("Found next torch");
+			user.send(PREFIX + "Torch &e#" + torch + " &3of " + torches + " lit");
 			SoundUtils.playSound(player, Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0.1F);
 			user.setTorchesLit(torch);
 			service.save(user);
@@ -137,13 +159,11 @@ public class LightTheTree implements Listener {
 		fire(player, placed.getLocation());
 
 		if (torch == 9) {
-			user.send("Done");
 			user.setLightTreeStage(QuestStage.FOUND_ALL);
-			Tasks.cancel(user.getTorchTimerTaskId());
-			user.setTorchTimerTaskId(-1);
-			user.setLightingTorches(false);
-			user.getPlayer().getInventory().removeItem(lighter);
+			user.resetLightTheTree();
 			service.save(user);
+
+			user.getPlayer().getInventory().removeItem(lighter);
 
 			animateTreeLightBlocks(player);
 
@@ -163,6 +183,8 @@ public class LightTheTree implements Listener {
 				user.getNextStepNPCs().remove(QuestNPC.ELF1.getId());
 				user.getNextStepNPCs().remove(QuestNPC.ELF2.getId());
 				service.save(user);
+				// TODO PUGMAS Better wording
+				user.send(PREFIX + "You lit the tree!");
 			});
 		}
 	}

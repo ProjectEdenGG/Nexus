@@ -50,37 +50,37 @@ public class Quests {
 	@Getter
 	@AllArgsConstructor
 	public enum Pugmas20Quest implements Quest {
-		GIFT_GIVER(new HashMap<QuestStage, String>() {{
+		GIFT_GIVER(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.GIFT_GIVER.getName() + " in the Workshop");
 		}}),
 
-		TOY_TESTING(new HashMap<QuestStage, String>() {{
+		TOY_TESTING(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.QA_ELF.getName() + " in the Workshop");
 			put(QuestStage.STARTED, "Talk to " + QuestNPC.QA_ELF.getName());
 			put(QuestStage.STEPS_DONE, "Talk to " + QuestNPC.QA_ELF.getName());
 		}}),
 
-		THE_MINES(new HashMap<QuestStage, String>() {{
+		THE_MINES(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.INELIGIBLE, "Complete Light The Tree");
 			put(QuestStage.NOT_STARTED, "Talk to " + QuestNPC.FORELF.getName() + " in the coal mine");
 			put(QuestStage.STARTED, "Trade ingots in the sell crate next to " + QuestNPC.FORELF.getName());
 		}}),
 
-		ORNAMENT_VENDOR(new HashMap<QuestStage, String>() {{
+		ORNAMENT_VENDOR(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.ELF3.getName() + " in the Harbor District");
 			put(QuestStage.STARTED, "Trade logs with the Ornament Vendor and bring each of the 10 ornaments to " + QuestNPC.ELF3.getName());
 		}}),
 
-		LIGHT_THE_TREE(new HashMap<QuestStage, String>() {{
+		LIGHT_THE_TREE(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.ELF2.getName() + " near the Pugmas tree");
 			put(QuestStage.STARTED, "Find " + QuestNPC.ELF1.getName() + " in the workshop");
 			put(QuestStage.STEP_ONE, "Help " + QuestNPC.ELF1.getName() + " find the Ceremonial Lighter in the basement");
 			put(QuestStage.STEP_TWO, "Talk to " + QuestNPC.ELF2.getName() + " near the Pugmas tree to fix the Ceremonial Lighter");
-			put(QuestStage.STEP_THREE, "Find " + QuestNPC.FORELF.getName() + "in the coal mine to get the necessary materials");
+			put(QuestStage.STEP_THREE, "Find " + QuestNPC.FORELF.getName() + " in the coal mine to get the necessary materials");
 			put(QuestStage.STEPS_DONE, "Talk to " + QuestNPC.ELF1.getName() + " in the workshop");
 		}});
 
-		private final Map<QuestStage, String> instructions;
+		private final Function<Pugmas20User, Map<QuestStage, String>> instructions;
 	}
 
 	public static void sound_obtainItem(Player player) {

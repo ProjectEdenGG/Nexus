@@ -17,6 +17,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -28,6 +29,7 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @NoArgsConstructor
@@ -84,8 +86,8 @@ public class Pugmas20User extends PlayerOwnedObject {
 			if (isNullOrAir(item) || item.getLore() == null || item.getLore().isEmpty())
 				continue;
 
-			if (item.getLore().get(0).contains(Pugmas20.getQuestLore())) {
-				playerInventory.remove(item);
+			if (item.getLore().get(0).contains(colorize(Pugmas20.getQuestLore()))) {
+				playerInventory.removeItem(item);
 				inventory.add(item);
 			}
 		}
@@ -106,6 +108,12 @@ public class Pugmas20User extends PlayerOwnedObject {
 			send(new JsonBuilder(Pugmas20.PREFIX + "Could not give all event items, clear up some inventory space and click here or re-enter the world")
 					.hover("Click to collect the rest of your event items")
 					.command("/pugmas20 inventory apply"));
+	}
 
+	public void resetLightTheTree() {
+		torchesLit = 0;
+		lightingTorches = false;
+		Tasks.cancel(torchTimerTaskId);
+		torchTimerTaskId = -1;
 	}
 }

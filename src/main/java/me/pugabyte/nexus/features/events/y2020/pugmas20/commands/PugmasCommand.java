@@ -21,9 +21,11 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
+import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
@@ -35,6 +37,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -113,16 +116,16 @@ public class PugmasCommand extends CustomCommand implements Listener {
 
 		for (Pugmas20QuestStageHelper quest : Pugmas20QuestStageHelper.values()) {
 			QuestStage stage = quest.getter().apply(user);
-			String instructions = Pugmas20Quest.valueOf(quest.name()).getInstructions(stage);
+			String instructions = Pugmas20Quest.valueOf(quest.name()).getInstructions(user, stage);
 
 			if (stage == QuestStage.COMPLETE) {
 				send("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
 			} else if (stage == QuestStage.NOT_STARTED) {
-				send("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &e(" + instructions + ")"));
+				send("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &7- " + instructions));
 			} else  {
 //				send("&f  &7☐ &3" + camelCase(quest) + " &7- &e" + (instructions == null ? "&cnull" : instructions));
-				JsonBuilder json = json("&f  &7☐ &3" + camelCase(quest) + " &7- ").group();
-				send(instructions == null ? json.next("&cnull").hover(camelCase(stage)) : json.next("&e" + instructions));
+				JsonBuilder json = json("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- ").group();
+				send(instructions == null ? json.next("&cnull").hover(camelCase(stage)) : json.next("&7" + instructions));
 			}
 		}
 
@@ -345,6 +348,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Path("inventory store")
 	void inventoryStore() {
 		user.storeInventory();
+		service.save(user);
 		send(PREFIX + "Stored inventory");
 	}
 
@@ -352,6 +356,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Path("inventory apply")
 	void inventoryApply() {
 		user.applyInventory();
+		service.save(user);
 	}
 
 	@Permission("group.admin")
@@ -376,10 +381,30 @@ public class PugmasCommand extends CustomCommand implements Listener {
 
 	@Permission("group.admin")
 	@Path("quests light_the_tree setTorchesLit <int>")
-	void questLighterSetLit(int lit) {
+	void questLightTheTreeSetLit(int lit) {
 		user.setTorchesLit(lit);
 		service.save(user);
 		send(PREFIX + "Set torches lit to " + lit);
+	}
+
+	@Permission("group.admin")
+	@Path("quests light_the_tree reset")
+	void questLightTheTreeReset() {
+		user.resetLightTheTree();
+		service.save(user);
+		send(PREFIX + "Reset Light The Tree quest variables");
+	}
+
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Path("quests light_the_tree teleportToStart")
+	// TODO PUGMAS Better wording?
+	void questLightTheTreeTeleportToStart() {
+		if (user.isLightingTorches())
+			error("You cannot teleport during the lighting ceremony");
+
+		player().teleport(LightTheTree.getResetLocation(), TeleportCause.COMMAND);
+		send(PREFIX + "Teleported to ceremony start");
 	}
 
 	@Permission("group.admin")

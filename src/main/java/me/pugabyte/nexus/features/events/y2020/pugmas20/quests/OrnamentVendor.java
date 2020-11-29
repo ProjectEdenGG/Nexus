@@ -56,16 +56,16 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 @NoArgsConstructor
 public class OrnamentVendor implements Listener {
 	public enum Ornament {
-		RED(PugmasTreeType.BLOODWOOD, -3),
-		ORANGE(PugmasTreeType.MAHOGANY, -4),
-		YELLOW(PugmasTreeType.EUCALYPTUS, -5),
-		GREEN(PugmasTreeType.WILLOW, -6),
-		CYAN(PugmasTreeType.CRYSTAL, -7),
-		BLUE(PugmasTreeType.MAGIC, -8),
-		PURPLE(PugmasTreeType.OAK, -9),
-		MAGENTA(PugmasTreeType.TEAK, -10),
-		GRAY(PugmasTreeType.MAPLE, -11),
-		WHITE(PugmasTreeType.BLISTERWOOD, -12);
+		RED(PugmasTreeType.BLOODWOOD, -3), // 93
+		ORANGE(PugmasTreeType.MAHOGANY, -4), // 160
+		YELLOW(PugmasTreeType.EUCALYPTUS, -5), // 69
+		GREEN(PugmasTreeType.WILLOW, -6), // 556
+		CYAN(PugmasTreeType.CRYSTAL, -7), // 348
+		BLUE(PugmasTreeType.MAGIC, -8), // 164
+		PURPLE(PugmasTreeType.OAK, -9), // 537
+		MAGENTA(PugmasTreeType.TEAK, -10), // 93
+		GRAY(PugmasTreeType.MAPLE, -11), // 163
+		WHITE(PugmasTreeType.BLISTERWOOD, -12); // 249
 
 		@Getter
 		private final PugmasTreeType treeType;

@@ -146,8 +146,12 @@ public class Pugmas20 implements Listener {
 		service.save(user);
 	}
 
-	public static Location location(int x, int y, int z) {
+	public static Location location(double x, double y, double z) {
 		return new Location(world, x, y, z);
+	}
+
+	public static Location location(double x, double y, double z, float yaw, float pitch) {
+		return new Location(world, x, y, z, yaw, pitch);
 	}
 
 	public static ItemBuilder questItem(Material material) {
@@ -221,12 +225,14 @@ public class Pugmas20 implements Listener {
 		if (isAtPugmas(event.getFrom()) && !isAtPugmas(event.getTo())) {
 			Pugmas20User user = service.get(event.getPlayer());
 			user.storeInventory();
+			service.save(user);
 		}
 
 		if (isAtPugmas(event.getTo()) && !isAtPugmas(event.getFrom())) {
 			Tasks.wait(1, () -> {
 				Pugmas20User user = service.get(event.getPlayer());
 				user.applyInventory();
+				service.save(user);
 			});
 		}
 	}

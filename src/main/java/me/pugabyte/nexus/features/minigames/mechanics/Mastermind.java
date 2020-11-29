@@ -54,6 +54,7 @@ public final class Mastermind extends SingleplayerMechanic {
 		Match match = event.getMatch();
 		MastermindMatchData matchData = match.getMatchData();
 		matchData.giveLoadout(event.getMinigamer());
+		matchData.resetResultsSign(match);
 	}
 
 	public void removeBlock(Minigamer minigamer, Block block) {
