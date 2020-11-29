@@ -58,6 +58,7 @@ public class Quests {
 		TOY_TESTING(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.QA_ELF.getName() + " in the Workshop");
 			put(QuestStage.STARTED, "Talk to " + QuestNPC.QA_ELF.getName());
+			// TODO PUGMAS show the games they have left to play
 			put(QuestStage.STEPS_DONE, "Talk to " + QuestNPC.QA_ELF.getName());
 		}}),
 
@@ -69,7 +70,7 @@ public class Quests {
 		}}),
 
 		ORNAMENT_VENDOR(user -> new HashMap<QuestStage, String>() {{
-			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.ELF3.getName() + " in the Harbor District");
+			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.ELF3.getName() + " near the Pugmas tree");
 			put(QuestStage.STARTED, "Trade logs with the Ornament Vendor and bring each of the 10 ornaments to " + QuestNPC.ELF3.getName());
 		}}),
 
