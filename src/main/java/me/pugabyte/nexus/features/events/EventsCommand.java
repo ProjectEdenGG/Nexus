@@ -29,12 +29,19 @@ public class EventsCommand extends CustomCommand {
 
 	// Token commands
 
+	private String plural(int tokens) {
+		return tokens + plural(" token", tokens);
+	}
+
 	@Path("tokens [player]")
 	public void tokens(@Arg("self") EventUser user) {
-		if (player().equals(user.getOfflinePlayer()))
-			send(PREFIX + "&3Total: &e" + user.getTokens());
-		else
-			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Total: &e" + user.getTokens());
+		if (isSelf(user)) {
+			send(PREFIX + "&3Current balance: &e" + plural(user.getTokens()));
+			line();
+			send("&3Event tokens are currency earned by participating in server events");
+			send("&3You can spend them at the &c/event store &3in exchange for unique rewards");
+		} else
+			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s current balance: &e" + plural(user.getTokens()));
 	}
 
 	@Async
@@ -74,8 +81,8 @@ public class EventsCommand extends CustomCommand {
 		fromUser.takeTokens(tokens);
 		toUser.giveTokens(tokens);
 
-		fromUser.send(PREFIX + "&e" + tokens + " Event Tokens &3have been sent to &e" + toUser.getOfflinePlayer().getName());
-		toUser.send(PREFIX + "&e" + tokens + " Event Tokens &3have been received from &e" + fromUser.getOfflinePlayer().getName());
+		fromUser.send(PREFIX + "&e" + tokens + " event tokens &3have been sent to &e" + toUser.getOfflinePlayer().getName());
+		toUser.send(PREFIX + "&e" + tokens + " event tokens &3have been received from &e" + fromUser.getOfflinePlayer().getName());
 
 		service.save(fromUser);
 		service.save(toUser);
@@ -86,7 +93,7 @@ public class EventsCommand extends CustomCommand {
 	public void tokensGive(EventUser user, int tokens) {
 		user.giveTokens(tokens);
 		service.save(user);
-		send(PREFIX + "&e" + tokens + plural(" token", tokens) + " &3given to &e" + user.getOfflinePlayer().getName());
+		send(PREFIX + "&e" + plural(tokens) + " &3given to &e" + user.getOfflinePlayer().getName());
 	}
 
 	@Path("tokens take <player> <tokens>")
@@ -94,7 +101,7 @@ public class EventsCommand extends CustomCommand {
 	public void tokensTake(EventUser user, int tokens) {
 		user.takeTokens(tokens);
 		service.save(user);
-		send(PREFIX + "&e" + tokens + plural(" token", tokens) + " &3taken from &e" + user.getOfflinePlayer().getName());
+		send(PREFIX + "&e" + plural(tokens) + " &3taken from &e" + user.getOfflinePlayer().getName());
 	}
 
 	@Path("tokens set <player> <tokens>")
@@ -102,7 +109,7 @@ public class EventsCommand extends CustomCommand {
 	public void tokensSet(EventUser user, int tokens) {
 		user.setTokens(tokens);
 		service.save(user);
-		send(PREFIX + "&3set &e" + user.getOfflinePlayer().getName() + "&3 to &e" + tokens + plural(" token", tokens));
+		send(PREFIX + "&3Set &e" + user.getOfflinePlayer().getName() + "&3's balance to &e" + plural(tokens));
 	}
 
 	@Path("tokens reset <player>")

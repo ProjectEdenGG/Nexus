@@ -432,6 +432,14 @@ public class OrnamentVendor implements Listener {
 		Pugmas20User user = service.get(player);
 
 		user.getOrnamentTradeCount().put(ornament, user.getOrnamentTradeCount().getOrDefault(ornament, 0) + resultAmount);
+
+		boolean done = true;
+		for (Ornament _ornament : Ornament.values())
+			if (user.canTradeOrnament(_ornament))
+				done = false;
+		if (done)
+			user.getNextStepNPCs().remove(MerchantNPC.ORNAMENT_VENDOR.getNpcId());
+
 		service.save(user);
 	}
 
