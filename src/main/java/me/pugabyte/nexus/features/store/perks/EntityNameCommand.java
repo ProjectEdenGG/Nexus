@@ -12,6 +12,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
@@ -21,12 +22,15 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @Aliases("nameentity")
 @Permission("entityname.use")
 public class EntityNameCommand extends CustomCommand {
-	private LivingEntity targetEntity;
+	private Entity targetEntity;
 
 	public EntityNameCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (!(event instanceof TabEvent))
-			targetEntity = getTargetLivingEntityRequired();
+		if (!(event instanceof TabEvent)) {
+			targetEntity = getTargetEntityRequired();
+			if (!(targetEntity instanceof LivingEntity) && !(targetEntity instanceof ItemFrame))
+				error("You must be looking at a living entity or an item frame");
+		}
 	}
 
 	@Path("(null|none|reset)")

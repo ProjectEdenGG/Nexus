@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -420,15 +421,16 @@ public class WorldEditUtils {
 			});
 		}
 
-		public void buildQueue() {
-			buildQueue(location -> () -> location.getBlock().setBlockData(blockDataMap.get(location)));
+		public CompletableFuture<Boolean> buildQueue() {
+			return buildQueue(location -> () -> location.getBlock().setBlockData(blockDataMap.get(location)));
 		}
 
-		public void buildQueueClientSide(Player player) {
-			buildQueue(location -> () -> player.sendBlockChange(location.getBlock().getLocation(), blockDataMap.get(location)));
+		public CompletableFuture<Boolean> buildQueueClientSide(Player player) {
+			return buildQueue(location -> () -> player.sendBlockChange(location.getBlock().getLocation(), blockDataMap.get(location)));
 		}
 
-		public void buildQueue(Function<Location, Runnable> action) {
+		public CompletableFuture<Boolean> buildQueue(Function<Location, Runnable> action) {
+			CompletableFuture<Boolean> future = new CompletableFuture<>();
 			Tasks.async(() -> {
 				if (blockDataMap.isEmpty())
 					findBlocks();
@@ -450,7 +452,11 @@ public class WorldEditUtils {
 						Tasks.wait(wait, action.apply(poll));
 					}
 				}
+
+				Tasks.wait(++wait, () -> future.complete(true));
 			});
+
+			return future;
 		}
 
 		public Map<Location, BlockData> findBlocks() {

@@ -13,7 +13,7 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.Arrays;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class EmotesCommand extends CustomCommand {
 	private final EmoteService service = new EmoteService();
@@ -26,7 +26,7 @@ public class EmotesCommand extends CustomCommand {
 
 	@Path("[page]")
 	void page(@Arg("1") int page) {
-		Function<Emotes, JsonBuilder> formatter = emote -> {
+		BiFunction<Emotes, Integer, JsonBuilder> formatter = (emote, index) -> {
 			JsonBuilder json = json();
 			if (emote.getColors().isEmpty()) {
 				if (user.isEnabled(emote))

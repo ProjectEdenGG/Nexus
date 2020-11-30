@@ -72,6 +72,7 @@ public class Merchants {
 		THEMINES_SELLCRATE(-1) {
 			@Override
 			public List<TradeBuilder> getTrades(Pugmas20User user) {
+				Ornament.loadHeads();
 				return new ArrayList<TradeBuilder>() {{
 					add(new TradeBuilder()
 							.result(Pugmas20.questItem(Material.GOLD_INGOT))

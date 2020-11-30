@@ -58,15 +58,13 @@ public class Quests {
 		TOY_TESTING(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.QA_ELF.getName() + " in the Workshop");
 			put(QuestStage.STARTED, "Talk to " + QuestNPC.QA_ELF.getName());
-			// TODO PUGMAS show the games they have left to play
 			put(QuestStage.STEPS_DONE, "Talk to " + QuestNPC.QA_ELF.getName());
 		}}),
 
 		THE_MINES(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.INELIGIBLE, "Complete Light The Tree");
 			put(QuestStage.NOT_STARTED, "Talk to " + QuestNPC.FORELF.getName() + " in the coal mine");
-			// TODO PUGMAS Show how much they can trade today
-			put(QuestStage.STARTED, "Trade ingots in the sell crate next to " + QuestNPC.FORELF.getName());
+			put(QuestStage.STARTED, "Trade ingots in the crate next to " + QuestNPC.FORELF.getName());
 		}}),
 
 		ORNAMENT_VENDOR(user -> new HashMap<QuestStage, String>() {{

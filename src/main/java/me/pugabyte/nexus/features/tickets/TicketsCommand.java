@@ -40,7 +40,7 @@ public class TicketsCommand extends CustomCommand {
 				.filter(ticket -> ticket.canBeSeenBy(player()))
 				.collect(Collectors.toList());
 
-		paginate(collect, ticket -> Tickets.formatTicket(player(), ticket), "/tickets page", page);
+		paginate(collect, (ticket, index) -> Tickets.formatTicket(player(), ticket), "/tickets page", page);
 	}
 
 	@Path("view <id>")

@@ -55,6 +55,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.RandomUtils.randomInt;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class OrnamentVendor implements Listener {
@@ -82,22 +83,21 @@ public class OrnamentVendor implements Listener {
 		Ornament(PugmasTreeType treeType, int relative) {
 			this.treeType = treeType;
 			this.relative = relative;
-			reloadHead();
+			loadHead();
+			Tasks.wait(Time.SECOND, this::loadHead);
 		}
 
-		private void reloadHead() {
-			Tasks.wait(Time.SECOND, () -> {
-				ItemStack itemStack = AdventMenu.origin.getRelative(relative, 0, 0).getDrops().stream().findFirst().orElse(null);
-				if (ItemUtils.isNullOrAir(itemStack))
-					this.skull = null;
-				else
-					this.skull = Pugmas20.item(itemStack).name(camelCase(name() + " Ornament")).build();
-			});
+		private void loadHead() {
+			ItemStack itemStack = AdventMenu.origin.getRelative(relative, 0, 0).getDrops().stream().findFirst().orElse(null);
+			if (ItemUtils.isNullOrAir(itemStack))
+				this.skull = null;
+			else
+				this.skull = Pugmas20.item(itemStack).name(camelCase(name() + " Ornament")).build();
 		}
 
-		public static void reloadHeads() {
+		public static void loadHeads() {
 			for (Ornament ornament : Ornament.values())
-				ornament.reloadHead();
+				ornament.loadHead();
 		}
 
 		public static Ornament of(PugmasTreeType treeType) {
@@ -147,7 +147,7 @@ public class OrnamentVendor implements Listener {
 			if (Quests.hasRoomFor(player, getLumberjacksAxe())) {
 				ItemUtils.giveItem(player, getLumberjacksAxe());
 				Quests.sound_obtainItem(player);
-				user.send(Pugmas20.PREFIX + " You have obtained a " + lumberjacksAxe.getItemMeta().getDisplayName());
+				user.send(Pugmas20.PREFIX + " You have obtained a &3&l" + stripColor(lumberjacksAxe.getItemMeta().getDisplayName()));
 			} else {
 				Quests.sound_villagerNo(player);
 				user.send(Quests.fullInvError_obtain);
@@ -264,7 +264,10 @@ public class OrnamentVendor implements Listener {
 		}
 
 		public void build(int id) {
-			getPaster(id).buildQueue();
+			Pugmas20.setTreeAnimating(true);
+			getPaster(id).buildQueue().thenAccept($ -> {
+				Pugmas20.setTreeAnimating(false);
+			});
 		}
 
 		private Queue<Location> getQueue(int id) {
@@ -321,6 +324,7 @@ public class OrnamentVendor implements Listener {
 			if (!new CooldownService().check(Nexus.getUUID0(), getRegion(id).getId(), Time.SECOND.x(3)))
 				return;
 
+			Pugmas20.setTreeAnimating(true);
 			Tasks.async(() -> {
 				Queue<Location> queue = new PriorityQueue<>(getQueue(id));
 
@@ -338,6 +342,8 @@ public class OrnamentVendor implements Listener {
 						Tasks.wait(wait, () -> poll.getBlock().setType(Material.AIR, this != CRYSTAL));
 					}
 				}
+
+				Tasks.wait(++wait, () -> Pugmas20.setTreeAnimating(false));
 
 				Tasks.Countdown.builder()
 						.duration(randomInt(8, 12) * 4)
