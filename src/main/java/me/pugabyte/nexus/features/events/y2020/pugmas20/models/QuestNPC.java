@@ -74,7 +74,7 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait(getGreeting()),
 
-							Script.wait(80, "I can’t find the Ceremonial Lighter… Ooooh Santa is gonna be SO mad at me if I’ve lost it."),
+							Script.wait(40, "I can’t find the Ceremonial Lighter… Ooooh Santa is gonna be SO mad at me if I’ve lost it."),
 
 							Script.wait(80, "We haven't used it since last year. Could you search in the basement to help me find it?")
 					);
@@ -129,7 +129,7 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait(getGreeting()),
 
-							Script.wait(80, "It's time for our annual tree lighting ceremony, but " + CINNAMON.getName() +
+							Script.wait(40, "It's time for our annual tree lighting ceremony, but " + CINNAMON.getName() +
 									" still hasn’t returned with the Ceremonial Lighter!"),
 
 							Script.wait(120, "Would you mind finding her for me? She should be in the workshop.")
@@ -256,7 +256,7 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait(getGreeting()),
 
-							Script.wait(80, "Hey kid, I need a favor! After last year’s debacle with the sled, " +
+							Script.wait(40, "Hey kid, I need a favor! After last year’s debacle with the sled, " +
 									"half of the Quality Assurance team was fired, and the other half have spent all year " +
 									"on making sure that the Sled won’t fall apart again."),
 
@@ -317,7 +317,7 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait(getGreeting()),
 
-							Script.wait(80, "This tree is so big it takes a lot of ornaments to fill, " +
+							Script.wait(40, "This tree is so big it takes a lot of ornaments to fill, " +
 									"and I may have uh, lost some of them from last year."),
 
 							Script.wait(160, "Don’t tell Santa! Just help me out. Here in town is an ornament vendor, " +
@@ -370,11 +370,11 @@ public enum QuestNPC {
 			Pugmas20Service service = new Pugmas20Service();
 			Pugmas20User user = service.get(player);
 
-			if (user.getLightTreeStage().equals(QuestStage.STARTED)) {
+			if (user.getOrnamentVendorStage().equals(QuestStage.STARTED)) {
 				return Arrays.asList(
 						Script.wait(getGreeting()),
 
-						Script.wait(80, "So you need some logs huh? We'll you're in luck, the soil that this orchid " +
+						Script.wait(40, "So you need some logs huh? We'll you're in luck, the soil that this orchid " +
 								"was built on is magical, and the trees grow back in only a few minutes."),
 
 						Script.wait(120, "So grab an extra axe from my workshop and start choppin' down some trees!")
