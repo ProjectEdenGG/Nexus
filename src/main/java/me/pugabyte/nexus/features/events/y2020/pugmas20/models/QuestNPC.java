@@ -44,11 +44,11 @@ public enum QuestNPC {
 			service.save(user);
 
 			return Arrays.asList(
-					Script.wait(getGreeting() + "and welcome to Pugmas, Bear Nation's month and a half long holiday event!"),
+					Script.wait("Welcome to Pugmas, Bear Nation's month and a half long holiday event!"),
 
 					Script.wait(80, "There is tons to explore and many quests to complete for rewards!"),
 
-					Script.wait(80, "The primary quest here is the advent calendar, where each day you can find and open the chest of today and receive its rewards."),
+					Script.wait(120, "The primary quest here is the advent calendar, where each day you can find and open the chest of today and receive its rewards."),
 
 					Script.wait(80, "Some quests you can repeat for their rewards."),
 
