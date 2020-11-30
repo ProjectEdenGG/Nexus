@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
@@ -130,6 +131,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 		long torchCount = all.stream().filter(pugmas20User -> pugmas20User.isOnline() && pugmas20User.isLightingTorches() && pugmas20User.getTorchTimerTaskId() > 0).count();
 		if (torchCount > 0)
 			error("There are " + torchCount + " people completing the Pugmas20 torch quest, cannot reload");
+
+		if (Pugmas20.isTreeAnimating())
+			error("Pugmas tree is animating, cannot reload");
 
 		runCommand("plugman reload Nexus");
 	}

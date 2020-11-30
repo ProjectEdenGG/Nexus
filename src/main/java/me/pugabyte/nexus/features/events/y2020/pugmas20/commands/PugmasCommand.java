@@ -465,7 +465,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("quests ornament_vendor reloadHeads")
 	void questOrnamentVendorReloadHeads() {
-		Ornament.reloadHeads();
+		Ornament.loadHeads();
 		send(PREFIX + "Reloaded Ornament Vendor heads");
 	}
 

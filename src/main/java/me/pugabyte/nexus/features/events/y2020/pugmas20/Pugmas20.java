@@ -4,6 +4,7 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import lombok.Getter;
+import lombok.Setter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
@@ -76,6 +77,9 @@ public class Pugmas20 implements Listener {
 	private static final Location initialSpawn = location(898.5, 52, 356.5);
 	@Getter
 	private static final Location subsequentSpawn = location(909.5, 52, 368.5);
+	@Getter
+	@Setter
+	private static boolean treeAnimating = false;
 
 	@Getter
 	private static final Map<String, Integer> tokenMaxes = new HashMap<>();
