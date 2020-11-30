@@ -127,7 +127,10 @@ public class Pugmas20User extends PlayerOwnedObject {
 	}
 
 	public boolean canTradeOrnament(Ornament ornament) {
-		int count = ornamentTradeCount.getOrDefault(ornament, 0);
-		return count + 1 <= maxOrnamentCount;
+		return ornamentTradesLeft(ornament) <= 0;
+	}
+
+	public int ornamentTradesLeft(Ornament ornament) {
+		return maxOrnamentCount - ornamentTradeCount.getOrDefault(ornament, 0);
 	}
 }

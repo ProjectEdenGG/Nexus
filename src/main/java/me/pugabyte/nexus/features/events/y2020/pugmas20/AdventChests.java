@@ -34,7 +34,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -153,7 +152,7 @@ public class AdventChests implements Listener {
 		Pugmas20User user = service.get(player);
 
 		int chestDay = adventChest.getDay();
-		LocalDateTime now = LocalDateTime.now();
+		LocalDate now = LocalDate.now();
 		int today = LocalDate.now().getDayOfMonth();
 
 		if (isBeforePugmas(now)) return;

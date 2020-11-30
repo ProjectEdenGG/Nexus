@@ -43,7 +43,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,9 +61,9 @@ public class Pugmas20 implements Listener {
 	public static final WorldGuardUtils WGUtils = new WorldGuardUtils(world);
 	public static final WorldEditUtils WEUtils = new WorldEditUtils(world);
 	// Dates
-	public static final LocalDateTime openingDay = LocalDateTime.of(2020, 12, 1, 0, 0, 0, 0);
-	public static final LocalDateTime secondChance = LocalDateTime.of(2020, 12, 25, 0, 0, 0, 0);
-	public static final LocalDateTime closingDay = LocalDateTime.of(2021, 1, 11, 0, 0, 0, 0);
+	public static final LocalDate openingDay = LocalDate.of(2020, 12, 1);
+	public static final LocalDate secondChance = LocalDate.of(2020, 12, 25);
+	public static final LocalDate closingDay = LocalDate.of(2021, 1, 11);
 
 	public static final List<Hologram> holograms = new ArrayList<>();
 	@Getter
@@ -187,17 +187,17 @@ public class Pugmas20 implements Listener {
 		return new ItemBuilder(itemStack).lore(itemLore);
 	}
 
-	public static boolean isBeforePugmas(LocalDateTime localDateTime) {
-		return localDateTime.isBefore(openingDay);
+	public static boolean isBeforePugmas(LocalDate localDate) {
+		return localDate.isBefore(openingDay);
 	}
 
-	public static boolean isPastPugmas(LocalDateTime localDateTime) {
-		return localDateTime.isAfter(closingDay);
+	public static boolean isPastPugmas(LocalDate localDate) {
+		return localDate.isAfter(closingDay);
 	}
 
-	public static boolean isSecondChance(LocalDateTime localDateTime) {
-		return ((localDateTime.isEqual(secondChance) || localDateTime.isAfter(secondChance))
-				&& !isPastPugmas(localDateTime));
+	public static boolean isSecondChance(LocalDate localDate) {
+		return ((localDate.isEqual(secondChance) || localDate.isAfter(secondChance))
+				&& !isPastPugmas(localDate));
 	}
 
 	public static boolean isAtPugmas(Player player) {

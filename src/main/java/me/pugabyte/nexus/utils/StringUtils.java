@@ -346,6 +346,10 @@ public class StringUtils {
 		return colorize(instance);
 	}
 
+	public static String timespanDiff(LocalDate from) {
+		return timespanDiff(from.atStartOfDay());
+	}
+
 	public static String timespanDiff(LocalDateTime from) {
 		LocalDateTime now = LocalDateTime.now();
 		if (from.isBefore(now))

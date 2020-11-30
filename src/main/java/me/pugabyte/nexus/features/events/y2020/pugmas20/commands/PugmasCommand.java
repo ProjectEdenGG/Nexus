@@ -35,14 +35,13 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +53,7 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPu
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
+import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @Aliases("pugmas")
 @NoArgsConstructor
@@ -61,7 +61,7 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC.g
 @Redirect(from = "/district", to = "/pugmas district")
 @Redirect(from = "/waypoint", to = "/pugmas waypoint")
 public class PugmasCommand extends CustomCommand implements Listener {
-	private final String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
+	private final String timeLeft = timespanDiff(Pugmas20.openingDay);
 	private final Pugmas20Service pugmasService = new Pugmas20Service();
 	private Pugmas20User pugmasUser;
 	private final EventUserService eventUserService = new EventUserService();
@@ -78,7 +78,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 
 	@Path
 	void pugmas() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDate now = LocalDate.now();
 		if (isBeforePugmas(now) && !player().hasPermission("group.staff"))
 			error("Soon™ (" + timeLeft + ")");
 
@@ -91,12 +91,10 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("progress [player] [day]")
+	@Path("progress [player]")
 	@Description("View your event progress")
-	void progress(@Arg("self") Pugmas20User user, @Arg(min = 1, max = 25, permission = "group.staff") Integer day) {
-		LocalDateTime now = LocalDateTime.now();
-		if (day != null)
-			now = now.withYear(2020).withMonth(12).withDayOfMonth(day);
+	void progress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
+		LocalDate now = LocalDate.now();
 
 		if (isBeforePugmas(now))
 			now = now.withYear(2020).withMonth(12).withDayOfMonth(1);
@@ -107,7 +105,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		if (isSecondChance(now))
 			now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
 
-		day = now.getDayOfMonth();
+		int day = now.getDayOfMonth();
 
 		line(2);
 
@@ -139,45 +137,40 @@ public class PugmasCommand extends CustomCommand implements Listener {
 			QuestStage stage = quest.getter().apply(user);
 			String instructions = Pugmas20Quest.valueOf(quest.name()).getInstructions(user, stage);
 			JsonBuilder json = json();
+			if (quest == Pugmas20QuestStageHelper.THE_MINES && stage == QuestStage.STARTED) {
+				List<String> tradesLeft = getIngotTradesLeft(user);
+				if (tradesLeft.isEmpty()) {
+					json.next("&f  &a☑ &3" + camelCase(quest) + " &7- &aCompleted daily quest &7- Come back tomorrow for more");
+				} else {
+					json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- " + instructions);
+					tradesLeft.add(0, "&6Today's available trades:");
+					json.next(" &7&o(Hover for info)").hover(String.join("\n", tradesLeft));
+				}
+			} else {
+				if (stage == QuestStage.COMPLETE) {
+					json.next("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
+				} else if (stage == QuestStage.NOT_STARTED || stage == QuestStage.INELIGIBLE) {
+					json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &7- " + instructions));
+				} else  {
+					json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- ");
+					if (instructions == null)
+						json.next("&c???").hover(camelCase(stage));
+					else
+						json.next("&7" + instructions);
+				}
 
-			if (stage == QuestStage.COMPLETE) {
-				json.next("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
-			} else if (stage == QuestStage.NOT_STARTED || stage == QuestStage.INELIGIBLE) {
-				json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &7- " + instructions));
-			} else  {
-				json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- ");
-				if (instructions == null)
-					json.next("&c???").hover(camelCase(stage));
-				else
-					json.next("&7" + instructions);
-
-				if (quest == Pugmas20QuestStageHelper.THE_MINES) {
-					List<String> tradesLeft = new ArrayList<>();
-					List<TradeBuilder> trades = MerchantNPC.THEMINES_SELLCRATE.getTrades(user);
-
-					for (OreType oreType : OreType.values()) {
-						Optional<Integer> amount = trades.stream()
-								.map(tradeBuilder -> tradeBuilder.getIngredients().iterator().next())
-								.filter(ingredient -> ingredient.getType() == oreType.getIngot().getType())
-								.map(ItemStack::getAmount)
-								.findFirst();
-
-						int tokensLeft = Math.abs(Pugmas20.checkDailyTokens(player(), "themines_" + oreType.name(), 0));
-						int perToken = amount.orElse(0);
-
-						int ingotsLeft = tokensLeft * perToken;
-						if (ingotsLeft > 0)
-							tradesLeft.add("&e" + ingotsLeft + " &f" + camelCase(oreType));
-					}
-
-					if (!tradesLeft.isEmpty()) {
-						tradesLeft.add(0, "&6Today's available trades:");
-						json.next(" &7&o(Hover for info)").hover(String.join("\n", tradesLeft));
-					}
-				} else if (quest == Pugmas20QuestStageHelper.TOY_TESTING && stage == QuestStage.STARTED) {
+				if (quest == Pugmas20QuestStageHelper.TOY_TESTING && stage == QuestStage.STARTED) {
 					List<String> toysLeft = getUnplayedToysList(user);
 					toysLeft.add(0, "&6Toys left to test:");
 					json.next(" &7&o(Hover for info)").hover(String.join("\n&f", toysLeft));
+				}
+
+				if (quest == Pugmas20QuestStageHelper.ORNAMENT_VENDOR && stage != QuestStage.NOT_STARTED) {
+					List<String> lore = getOrnamentTradesLeft(user);
+					if (!lore.isEmpty()) {
+						lore.add(0, "&6Available ornament trades:");
+						json.next(" &7&o(Hover for info)").hover(String.join("\n&f", lore));
+					}
 				}
 			}
 
@@ -185,12 +178,53 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		}
 
 		line();
+		if (day < 25) {
+			send("&3Next day begins in &e" + timespanDiff(now.plusDays(1)));
+			line();
+		}
+	}
+
+	private List<String> getOrnamentTradesLeft(Pugmas20User user) {
+		List<String> lore = new ArrayList<>();
+		for (Ornament ornament : Ornament.values()) {
+			if (!user.canTradeOrnament(ornament))
+				continue;
+
+			int tradesLeft = user.ornamentTradesLeft(ornament);
+			lore.add("&e" + tradesLeft + " &f" + plural(camelCase(ornament) + " Ornament", tradesLeft));
+		}
+		return lore;
+	}
+
+	private List<String> getIngotTradesLeft(Pugmas20User user) {
+		List<String> tradesLeft = new ArrayList<>();
+		List<TradeBuilder> trades = MerchantNPC.THEMINES_SELLCRATE.getTrades(user);
+
+		for (OreType oreType : OreType.values()) {
+			int ingotsLeft = getIngotsLeft(trades, oreType);
+			if (ingotsLeft > 0)
+				tradesLeft.add("&e" + ingotsLeft + " &f" + camelCase(oreType));
+		}
+		return tradesLeft;
+	}
+
+	private int getIngotsLeft(List<TradeBuilder> trades, OreType oreType) {
+		Optional<Integer> amount = trades.stream()
+				.map(tradeBuilder -> tradeBuilder.getIngredients().iterator().next())
+				.filter(ingredient -> ingredient.getType() == oreType.getIngot().getType())
+				.map(ItemStack::getAmount)
+				.findFirst();
+
+		int tokensLeft = Math.abs(Pugmas20.checkDailyTokens(player(), "themines_" + oreType.name(), 0));
+		int perToken = amount.orElse(0);
+
+		return tokensLeft * perToken;
 	}
 
 	@Path("advent")
 	@Description("Open the Advent menu")
 	void advent() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDate now = LocalDate.now();
 
 		if (isBeforePugmas(now))
 			error("Soon™ (" + timeLeft + ")");

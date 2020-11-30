@@ -11,7 +11,6 @@ import me.pugabyte.nexus.utils.MerchantBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,15 +44,10 @@ public class Merchants {
 						if (!user.canTradeOrnament(ornament))
 							continue;
 
-						ItemStack result = ornament.getSkull();
-						ItemStack ingredient = ornament.getTreeType().getLog(Ornament.logsPerOrnament);
-
-						int maxUses = Pugmas20User.getMaxOrnamentCount() - user.getOrnamentTradeCount().getOrDefault(ornament, 0);
-
 						add(new TradeBuilder()
-								.result(result)
-								.ingredient(ingredient)
-								.maxUses(maxUses));
+								.result(ornament.getSkull())
+								.ingredient(ornament.getTreeType().getLog(Ornament.logsPerOrnament))
+								.maxUses(user.ornamentTradesLeft(ornament)));
 					}
 				}};
 			}

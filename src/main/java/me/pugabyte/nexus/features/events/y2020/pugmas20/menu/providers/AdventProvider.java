@@ -18,7 +18,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +34,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 	private static final ItemBuilder toFind = AdventMenu.toFindHead.clone();
 
 	@NonNull
-	private LocalDateTime date;
+	private LocalDate date;
 	private final Pugmas20Service service = new Pugmas20Service();
 	private Pugmas20User user;
 	private AdventChest adventChest;

@@ -13,7 +13,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
@@ -55,7 +55,7 @@ public class AdventMenu {
 		}
 	}
 
-	public static void openAdvent(Player player, LocalDateTime date) {
+	public static void openAdvent(Player player, LocalDate date) {
 		SmartInventory.builder()
 				.title("Advent")
 				.size(6, 9)

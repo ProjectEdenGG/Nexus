@@ -57,7 +57,7 @@ public class Quests {
 
 		TOY_TESTING(user -> new HashMap<QuestStage, String>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.QA_ELF.getName() + " in the Workshop");
-			put(QuestStage.STARTED, "Talk to " + QuestNPC.QA_ELF.getName());
+			put(QuestStage.STARTED, "Test the remaining toys");
 			put(QuestStage.STEPS_DONE, "Talk to " + QuestNPC.QA_ELF.getName());
 		}}),
 
