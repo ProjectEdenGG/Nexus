@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -252,6 +253,14 @@ public class StringUtils {
 
 	public static boolean isUuid(String uuid) {
 		return uuid.matches(UUID_REGEX);
+	}
+
+	public static boolean isV4Uuid(UUID uuid) {
+		return isV4Uuid(uuid.toString());
+	}
+
+	public static boolean isV4Uuid(String uuid) {
+		return uuid.charAt(14) == '4';
 	}
 
 	public static String toPrettyString(Object object) {

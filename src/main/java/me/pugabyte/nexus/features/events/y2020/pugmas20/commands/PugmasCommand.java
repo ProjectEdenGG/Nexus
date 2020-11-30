@@ -36,7 +36,6 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -299,9 +298,18 @@ public class PugmasCommand extends CustomCommand implements Listener {
 
 	@Permission("group.admin")
 	@Path("database delete [player]")
-	void databaseDelete(@Arg("self") OfflinePlayer player) {
-		pugmasService.delete(pugmasUser);
-		send("Deleted data for " + player.getName());
+	void databaseDelete(@Arg("self") Pugmas20User user) {
+		pugmasService.clearCache();
+		pugmasService.delete(user);
+		pugmasService.clearCache();
+		send(PREFIX + "Deleted data for " + user.getName());
+	}
+
+	@Permission("group.admin")
+	@Path("database clearCache")
+	void databaseClearCache() {
+		pugmasService.clearCache();
+		send(PREFIX + "Cache cleared");
 	}
 
 	@Path("train")

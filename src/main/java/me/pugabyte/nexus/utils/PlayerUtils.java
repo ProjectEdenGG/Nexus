@@ -249,6 +249,23 @@ public class PlayerUtils {
 		}
 	}
 
+	public static long setPlayerTime(Player player, String time) {
+		long ticks;
+		try {
+			ticks = DescParseTickFormat.parse(time);
+		} catch (Exception ex) {
+			throw new InvalidInputException("Unable to process time " + time);
+		}
+		boolean move = !time.startsWith("@");
+		long dayTime = player.getPlayerTime();
+		dayTime -= dayTime % 24000;
+		dayTime += 24000 + ticks;
+		if (move)
+			dayTime -= player.getWorld().getTime();
+		player.setPlayerTime(dayTime, move);
+		return ticks;
+	}
+
 	public static HidePlayer hidePlayer(Player player) {
 		return new HidePlayer(player);
 	}

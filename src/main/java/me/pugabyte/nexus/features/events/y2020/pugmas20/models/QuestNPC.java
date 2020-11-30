@@ -164,7 +164,7 @@ public enum QuestNPC {
 					ItemStack steelIngot = LightTheTree.steel_ingot;
 					ItemStack flint = TheMines.getFlint();
 					PlayerInventory inv = player.getInventory();
-					if (!(inv.contains(lighter) && inv.contains(steelIngot) && inv.contains(flint))) {
+					if (!(inv.containsAtLeast(lighter, 1) && inv.containsAtLeast(steelIngot, 1) && inv.containsAtLeast(flint, 1))) {
 						return Arrays.asList(
 								Script.wait("In order to fix the Ceremonial Lighter, I need a piece of flint and a steel ingot.")
 						);

@@ -119,20 +119,26 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void fileLog(String file, String message) {
-		Tasks.async(() -> {
-			try {
-				Path path = Paths.get("plugins/Nexus/logs/" + file + ".log");
-				if (!path.toFile().exists())
-					path.toFile().createNewFile();
-				try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-					writer.append(System.lineSeparator()).append("[").append(StringUtils.shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+		Tasks.async(() -> fileLogActual(file, message));
+	}
+
+	public static void fileLogSync(String file, String message) {
+		Tasks.sync(() -> fileLogActual(file, message));
+	}
+
+	public static void fileLogActual(String file, String message) {
+		try {
+			Path path = Paths.get("plugins/Nexus/logs/" + file + ".log");
+			if (!path.toFile().exists())
+				path.toFile().createNewFile();
+			try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+				writer.append(System.lineSeparator()).append("[").append(StringUtils.shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-		});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public static void csvLog(String file, String message) {

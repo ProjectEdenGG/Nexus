@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.DescParseTickFormat;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
 @Aliases("ptime")
@@ -23,20 +24,7 @@ public class PlayerTimeCommand extends CustomCommand {
 
 	@Path("<time> [player]")
 	public void time(String time, @Arg("self") Player player) {
-		long ticks = 0;
-		try {
-			ticks = DescParseTickFormat.parse(time);
-		} catch (Exception ex) {
-			error("Unable to process time");
-		}
-		boolean move = !time.startsWith("@");
-		long dayTime = player.getPlayerTime();
-		dayTime -= dayTime % 24000;
-		dayTime += 24000 + ticks;
-		if (move) {
-			dayTime -= player.getWorld().getTime();
-		}
-		player.setPlayerTime(dayTime, move);
+		long ticks = PlayerUtils.setPlayerTime(player, time);
 		if (player == player().getPlayer())
 			send(PREFIX + "Player time set to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");
 		else {

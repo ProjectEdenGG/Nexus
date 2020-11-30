@@ -27,7 +27,7 @@ import java.util.Arrays;
 @Aliases({"pt", "powertools"})
 public class PowertoolCommand extends CustomCommand implements Listener {
 	private final PowertoolService service = new PowertoolService();
-	PowertoolUser user;
+	private PowertoolUser user;
 
 	public PowertoolCommand(@NonNull CommandEvent event) {
 		super(event);

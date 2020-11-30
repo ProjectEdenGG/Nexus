@@ -45,6 +45,7 @@ import org.inventivetalent.glow.GlowAPI;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +92,7 @@ public class Pugmas20 implements Listener {
 		new AdventChests();
 		new Quests();
 		new Train();
-		new Minecarts();
+//		new Minecarts();
 		createNpcHolograms();
 		npcParticles();
 	}
@@ -221,7 +222,7 @@ public class Pugmas20 implements Listener {
 	public void onNPCClick(NPCRightClickEvent event) {
 		Player player = event.getClicker();
 		if (!isAtPugmas(player)) return;
-		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", Time.SECOND.x(2))) return;
+		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", Time.SECOND.x(10))) return;
 
 		int id = event.getNPC().getId();
 		QuestNPC.startScript(player, id);
@@ -282,10 +283,10 @@ public class Pugmas20 implements Listener {
 		if (!isAtPugmas(player))
 			return;
 
-		if (!event.getNPC().getName().equals("Elf"))
+		if (!Arrays.asList("Mrs. Paws", "Santa", "Elf", "Miner Elf").contains(event.getNPC().getName()))
 			return;
 
-		PlayerUtils.send(player, QuestNPC.format("Elf", QuestNPC.getGreeting()));
+		PlayerUtils.send(player, QuestNPC.format(event.getNPC().getName(), QuestNPC.getGreeting()));
 		Quests.sound_npcAlert(player);
 	}
 

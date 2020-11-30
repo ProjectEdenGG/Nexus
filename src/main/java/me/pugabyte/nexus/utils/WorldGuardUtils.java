@@ -116,7 +116,7 @@ public class WorldGuardUtils {
 	}
 
 	public Collection<Player> getPlayersInRegion(ProtectedRegion region) {
-		return Bukkit.getOnlinePlayers().stream().filter(player -> isInRegion(player.getLocation(), region)).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream().filter(player -> isInRegion(player.getLocation(), region) && !CitizensUtils.isNPC(player)).collect(Collectors.toList());
 	}
 
 	public Collection<Entity> getEntitiesInRegion(org.bukkit.World world, String region) {
