@@ -39,6 +39,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
@@ -55,6 +56,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RedstoneRail;
@@ -134,6 +136,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		if (Pugmas20.isTreeAnimating())
 			error("Pugmas tree is animating, cannot reload");
+
+		if (player().equals(PlayerUtils.wakka()))
+			SoundUtils.playSound(PlayerUtils.wakka(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
 
 		runCommand("plugman reload Nexus");
 	}
