@@ -1,10 +1,14 @@
 package me.pugabyte.nexus.features.listeners;
 
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
+import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
+import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -17,6 +21,7 @@ import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 public class WorldGuardFlags implements Listener {
 
@@ -58,6 +63,19 @@ public class WorldGuardFlags implements Listener {
 		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), Flags.TAMING) == State.DENY) {
 			event.setCancelled(true);
 			PlayerUtils.send((Player) event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
+		}
+	}
+
+	@EventHandler
+	public void onInteractTrapDoor(PlayerInteractEvent event) {
+		Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block) || !(MaterialTag.TRAPDOORS.isTagged(block.getType())))
+			return;
+
+		if (WorldGuardFlagUtils.query(block, Flags.USE_TRAP_DOORS) == State.DENY) {
+			if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
+				return;
+			event.setCancelled(true);
 		}
 	}
 }

@@ -16,6 +16,7 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import lombok.AllArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import org.apache.commons.lang.Validate;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class WorldGuardFlagUtils {
@@ -27,7 +28,8 @@ public class WorldGuardFlagUtils {
 		GRASS_DECAY(registerFlag(new StateFlag("grass-decay", false))),
 		HOSTILE_SPAWN(registerFlag(new StateFlag("hostile-spawn", false))),
 		MOB_AGGRESSION(registerFlag(new StateFlag("mob-aggression", false))),
-		TAMING(registerFlag(new StateFlag("taming", false)));
+		TAMING(registerFlag(new StateFlag("taming", false))),
+		USE_TRAP_DOORS(registerFlag(new StateFlag("use-trap-doors", false)));
 
 		public final Flag<?> flag;
 
@@ -110,6 +112,10 @@ public class WorldGuardFlagUtils {
 
 	public static State query(org.bukkit.Location location, Flags flag) {
 		return query(location, (StateFlag) flag.get());
+	}
+
+	public static State query(Block block, Flags flag) {
+		return query(block.getLocation(), (StateFlag) flag.get());
 	}
 
 	public static State query(org.bukkit.Location location, StateFlag flag) {

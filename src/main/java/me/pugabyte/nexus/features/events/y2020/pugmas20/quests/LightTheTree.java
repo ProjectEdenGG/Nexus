@@ -73,7 +73,6 @@ public class LightTheTree implements Listener {
 
 		Pugmas20Service service = new Pugmas20Service();
 		Pugmas20User user = service.get(player);
-		if (!user.getLightTreeStage().equals(QuestStage.STEP_ONE)) return;
 
 		event.setCancelled(true);
 
