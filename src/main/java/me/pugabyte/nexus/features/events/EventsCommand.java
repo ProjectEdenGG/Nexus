@@ -2,22 +2,131 @@ package me.pugabyte.nexus.features.events;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.eventuser.EventUser;
+import me.pugabyte.nexus.models.eventuser.EventUserService;
 
-@Permission("group.admin")
+@Aliases("event")
 public class EventsCommand extends CustomCommand {
+	private final EventUserService service = new EventUserService();
+	private EventUser user;
 
 	public EventsCommand(@NonNull CommandEvent event) {
 		super(event);
+		if (isPlayer())
+			user = service.get(player());
 	}
 
-	@Path("debug [player]")
-	void debug(@Arg("self") EventUser eventUser) {
-		send(toPrettyString(eventUser));
+	@Path("store")
+	void store() {
+		error("Coming Soon™");
+	}
+
+	// Token commands
+
+	@Path("tokens [player]")
+	public void tokens(@Arg("self") EventUser user) {
+		if (player().equals(user.getOfflinePlayer()))
+			send(PREFIX + "&3Total: &e" + user.getTokens());
+		else
+			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Total: &e" + user.getTokens());
+	}
+
+	@Async
+	@Path("tokens top [page]")
+	public void tokensTop(@Arg("1") int page) {
+		paginate(service.getTopTokens(), (user, index) -> json("&3" + index + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTokens()), "/event tokens top", page);
+	}
+
+	/* TODO
+	@Path("tokens daily [player]")
+	public void tokensDaily(@Arg("self") EventUser user) {
+		if (player().equals(user.getOfflinePlayer()))
+			send(PREFIX + "&3Daily tokens:");
+		else
+			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Daily tokens:");
+
+		for (BFtokensource tokensource : BFtokensource.values()) {
+			Map<LocalDate, Integer> dailyMap = user.getTokensReceivedToday().get(tokensource);
+			int tokens = 0;
+			if (dailyMap != null)
+				tokens = dailyMap.getOrDefault(LocalDate.now(), 0);
+
+			int dailyMax = EventUser.DAILY_SOURCE_MAX;
+			String sourceColor = tokens == dailyMax ? "&a" : "&3";
+			String sourceName = StringUtils.camelCase(tokensource.name());
+			send(" " + sourceColor + sourceName + " &7- &e" + tokens + "&3/&e" + dailyMax);
+		}
+	}
+	*/
+
+	@Path("tokens pay <player> <tokens>")
+	public void tokensPay(EventUser toUser, int tokens) {
+		EventUser fromUser = service.get(player());
+		if (isSelf(toUser))
+			error("You cannot pay yourself");
+
+		fromUser.takeTokens(tokens);
+		toUser.giveTokens(tokens);
+
+		fromUser.send(PREFIX + "&e" + tokens + " Event Tokens &3have been sent to &e" + toUser.getOfflinePlayer().getName());
+		toUser.send(PREFIX + "&e" + tokens + " Event Tokens &3have been received from &e" + fromUser.getOfflinePlayer().getName());
+
+		service.save(fromUser);
+		service.save(toUser);
+	}
+
+	@Path("tokens give <player> <tokens>")
+	@Permission("group.admin")
+	public void tokensGive(EventUser user, int tokens) {
+		user.giveTokens(tokens);
+		service.save(user);
+		send(PREFIX + "&e" + tokens + plural(" token", tokens) + " &3given to &e" + user.getOfflinePlayer().getName());
+	}
+
+	@Path("tokens take <player> <tokens>")
+	@Permission("group.admin")
+	public void tokensTake(EventUser user, int tokens) {
+		user.takeTokens(tokens);
+		service.save(user);
+		send(PREFIX + "&e" + tokens + plural(" token", tokens) + " &3taken from &e" + user.getOfflinePlayer().getName());
+	}
+
+	@Path("tokens set <player> <tokens>")
+	@Permission("group.admin")
+	public void tokensSet(EventUser user, int tokens) {
+		user.setTokens(tokens);
+		service.save(user);
+		send(PREFIX + "&3set &e" + user.getOfflinePlayer().getName() + "&3 to &e" + tokens + plural(" token", tokens));
+	}
+
+	@Path("tokens reset <player>")
+	@Permission("group.admin")
+	public void tokensReset(EventUser user) {
+		user.setTokens(0);
+		user.getTokensReceivedToday().clear();
+		service.save(user);
+	}
+
+	// Database commands
+
+	@Path("database debug [player]")
+	@Permission("group.admin")
+	void debug(@Arg("self") EventUser user) {
+		send(toPrettyString(user));
+	}
+
+	@Path("database delete [player]")
+	@Permission("group.admin")
+	void delete(@Arg("self") EventUser user) {
+		service.clearCache();
+		service.delete(user);
+		send("Deleted data for " + user.getName());
 	}
 
 }

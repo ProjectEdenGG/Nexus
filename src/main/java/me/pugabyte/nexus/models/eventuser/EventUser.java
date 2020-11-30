@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.events.Events;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
@@ -71,9 +72,10 @@ public class EventUser extends PlayerOwnedObject {
 
 	public void giveTokens(int tokens, boolean actionBar) {
 		this.tokens += tokens;
+		send(Events.PREFIX + "You have received &e100 Event Tokens&3. New balance: &e" + this.tokens);
 
 		if (actionBar)
-			sendActionBar(getPlayer(), "&e+" + tokens + plural(" event token", tokens));
+			sendActionBar(getPlayer(), "&e+" + tokens + plural(" Event Token", tokens));
 	}
 
 	public void takeTokens(int tokens) {

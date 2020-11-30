@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Train;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
@@ -33,13 +34,18 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +53,7 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isBefore
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
 
 @Aliases("pugmas")
 @NoArgsConstructor
@@ -55,14 +62,18 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.showWayp
 @Redirect(from = "/waypoint", to = "/pugmas waypoint")
 public class PugmasCommand extends CustomCommand implements Listener {
 	private final String timeLeft = StringUtils.timespanDiff(Pugmas20.openingDay);
-	private final Pugmas20Service service = new Pugmas20Service();
-	private Pugmas20User user;
+	private final Pugmas20Service pugmasService = new Pugmas20Service();
+	private Pugmas20User pugmasUser;
+	private final EventUserService eventUserService = new EventUserService();
+	private EventUser eventUser;
 
 	public PugmasCommand(CommandEvent event) {
 		super(event);
 		PREFIX = Pugmas20.PREFIX;
-		if (isPlayer())
-			user = service.get(player());
+		if (isPlayer()) {
+			pugmasUser = pugmasService.get(player());
+			eventUser = eventUserService.get(player());
+		}
 	}
 
 	@Path
@@ -71,12 +82,12 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		if (isBeforePugmas(now) && !player().hasPermission("group.staff"))
 			error("Soon™ (" + timeLeft + ")");
 
-		if (user.isWarped()) {
+		if (pugmasUser.isWarped()) {
 			player().teleport(Pugmas20.getSubsequentSpawn());
 		} else {
 			player().teleport(Pugmas20.getInitialSpawn());
-			user.setWarped(true);
-			service.save(user);
+			pugmasUser.setWarped(true);
+			pugmasService.save(pugmasUser);
 		}
 	}
 
@@ -119,7 +130,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 			advent = "&7☐ &3Find today's chest (&e#" + day + " &3in the &e" + adventChest.getDistrict().getName() + " District&3)";
 
 		send("&6&lAdvent Chests");
-		send(json("&f  " + advent).hover("Click to open the Advent menu").command("/pugmas advent"));
+		send(json("&f  " + advent + " &7- Click for info").hover("Click to open the Advent menu").command("/pugmas advent"));
 
 		line();
 		send("&6&lQuests");
@@ -127,16 +138,50 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		for (Pugmas20QuestStageHelper quest : Pugmas20QuestStageHelper.values()) {
 			QuestStage stage = quest.getter().apply(user);
 			String instructions = Pugmas20Quest.valueOf(quest.name()).getInstructions(user, stage);
+			JsonBuilder json = json();
 
 			if (stage == QuestStage.COMPLETE) {
-				send("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
+				json.next("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
 			} else if (stage == QuestStage.NOT_STARTED || stage == QuestStage.INELIGIBLE) {
-				send("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &7- " + instructions));
+				json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &7- " + instructions));
 			} else  {
-//				send("&f  &7☐ &3" + camelCase(quest) + " &7- &e" + (instructions == null ? "&cnull" : instructions));
-				JsonBuilder json = json("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- ").group();
-				send(instructions == null ? json.next("&cnull").hover(camelCase(stage)) : json.next("&7" + instructions));
+				json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- ");
+				if (instructions == null)
+					json.next("&c???").hover(camelCase(stage));
+				else
+					json.next("&7" + instructions);
+
+				if (quest == Pugmas20QuestStageHelper.THE_MINES) {
+					List<String> tradesLeft = new ArrayList<>();
+					List<TradeBuilder> trades = MerchantNPC.THEMINES_SELLCRATE.getTrades(user);
+
+					for (OreType oreType : OreType.values()) {
+						Optional<Integer> amount = trades.stream()
+								.map(tradeBuilder -> tradeBuilder.getIngredients().iterator().next())
+								.filter(ingredient -> ingredient.getType() == oreType.getIngot().getType())
+								.map(ItemStack::getAmount)
+								.findFirst();
+
+						int tokensLeft = Math.abs(Pugmas20.checkDailyTokens(player(), "themines_" + oreType.name(), 0));
+						int perToken = amount.orElse(0);
+
+						int ingotsLeft = tokensLeft * perToken;
+						if (ingotsLeft > 0)
+							tradesLeft.add("&e" + ingotsLeft + " &f" + camelCase(oreType));
+					}
+
+					if (!tradesLeft.isEmpty()) {
+						tradesLeft.add(0, "&6Today's available trades:");
+						json.next(" &7&o(Hover for info)").hover(String.join("\n", tradesLeft));
+					}
+				} else if (quest == Pugmas20QuestStageHelper.TOY_TESTING && stage == QuestStage.STARTED) {
+					List<String> toysLeft = getUnplayedToysList(user);
+					toysLeft.add(0, "&6Toys left to test:");
+					json.next(" &7&o(Hover for info)").hover(String.join("\n&f", toysLeft));
+				}
 			}
+
+			send(json);
 		}
 
 		line();
@@ -177,7 +222,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Path("advent addDay <player> <day>")
 	void adventAddDay(Pugmas20User user, int day) {
 		user.getFoundDays().add(day);
-		service.save(user);
+		pugmasService.save(user);
 
 		send("Added day " + day + " to " + user.getName());
 	}
@@ -192,14 +237,14 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("waypoint give <day>")
 	void waypointGive(int day) {
-		user.getLocatedDays().add(day);
-		service.save(user);
+		pugmasUser.getLocatedDays().add(day);
+		pugmasService.save(pugmasUser);
 	}
 
 	@Path("waypoint <day>")
 	@Description("Get directions to a chest you have already found")
 	void waypoint(int day) {
-		if (!user.getLocatedDays().contains(day))
+		if (!pugmasUser.getLocatedDays().contains(day))
 			error("You have not located that chest yet");
 
 		AdventChest adventChest = AdventChests.getAdventChest(day);
@@ -219,10 +264,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("database delete [player]")
 	void databaseDelete(@Arg("self") OfflinePlayer player) {
-		service.delete(user);
-		EventUserService eventUserService = new EventUserService();
-		EventUser eventUser = eventUserService.get(player);
-		eventUserService.delete(eventUser);
+		pugmasService.delete(pugmasUser);
 		send("Deleted data for " + player.getName());
 	}
 
@@ -364,16 +406,16 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("inventory store")
 	void inventoryStore() {
-		user.storeInventory();
-		service.save(user);
+		pugmasUser.storeInventory();
+		pugmasService.save(pugmasUser);
 		send(PREFIX + "Stored inventory");
 	}
 
 	@Permission("group.admin")
 	@Path("inventory apply")
 	void inventoryApply() {
-		user.applyInventory();
-		service.save(user);
+		pugmasUser.applyInventory();
+		pugmasService.save(pugmasUser);
 	}
 
 	@Permission("group.admin")
@@ -385,38 +427,38 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("quests stage set <quest> <stage>")
 	void questStageSet(Pugmas20QuestStageHelper quest, QuestStage stage) {
-		quest.setter().accept(user, stage);
-		service.save(user);
+		quest.setter().accept(pugmasUser, stage);
+		pugmasService.save(pugmasUser);
 		send(PREFIX + "Quest stage for Quest " + camelCase(quest) + " set to " + camelCase(stage));
 	}
 
 	@Permission("group.admin")
 	@Path("quests stage get <quest>")
 	void questStageSet(Pugmas20QuestStageHelper quest) {
-		send(PREFIX + "Quest stage for Quest " + camelCase(quest) + ": " + quest.getter().apply(user));
+		send(PREFIX + "Quest stage for Quest " + camelCase(quest) + ": " + quest.getter().apply(pugmasUser));
 	}
 
 	@Permission("group.admin")
 	@Path("quests light_the_tree setTorchesLit <int>")
 	void questLightTheTreeSetLit(int lit) {
-		user.setTorchesLit(lit);
-		service.save(user);
+		pugmasUser.setTorchesLit(lit);
+		pugmasService.save(pugmasUser);
 		send(PREFIX + "Set torches lit to " + lit);
 	}
 
 	@Permission("group.admin")
 	@Path("quests light_the_tree reset")
 	void questLightTheTreeReset() {
-		user.resetLightTheTree();
-		service.save(user);
+		pugmasUser.resetLightTheTree();
+		pugmasService.save(pugmasUser);
 		send(PREFIX + "Reset Light The Tree quest variables");
 	}
 
 	@Permission("group.admin")
 	@Path("quests ornament_vendor reset")
 	void questOrnamentVendorReset() {
-		user.getOrnamentTradeCount().clear();
-		service.save(user);
+		pugmasUser.getOrnamentTradeCount().clear();
+		pugmasService.save(pugmasUser);
 		send(PREFIX + "Reset Ornament Vendor quest variables");
 	}
 
@@ -431,7 +473,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@TabCompleteIgnore
 	@Path("quests light_the_tree teleportToStart")
 	void questLightTheTreeTeleportToStart() {
-		if (user.isLightingTorches())
+		if (pugmasUser.isLightingTorches())
 			error("You cannot teleport during the lighting ceremony");
 
 		player().teleport(LightTheTree.getResetLocation(), TeleportCause.COMMAND);

@@ -58,7 +58,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -643,11 +644,11 @@ public abstract class CustomCommand extends ICustomCommand {
 		return material;
 	}
 
-	protected <T> void paginate(List<T> values, Function<T, JsonBuilder> formatter, String command, int page) {
+	protected <T> void paginate(List<T> values, BiFunction<T, Integer, JsonBuilder> formatter, String command, int page) {
 		paginate(values, formatter, command, page, 10);
 	}
 
-	protected <T> void paginate(List<T> values, Function<T, JsonBuilder> formatter, String command, int page, int amount) {
+	protected <T> void paginate(List<T> values, BiFunction<T, Integer, JsonBuilder> formatter, String command, int page, int amount) {
 		if (page < 1)
 			error("Page number must be 1 or more");
 
@@ -658,7 +659,8 @@ public abstract class CustomCommand extends ICustomCommand {
 		int end = Math.min(values.size(), start + amount);
 
 		line();
-		values.subList(start, end).forEach(t -> send(formatter.apply(t)));
+		AtomicInteger index = new AtomicInteger(start);
+		values.subList(start, end).forEach(t -> send(formatter.apply(t, index.getAndIncrement())));
 
 		boolean first = page == 1;
 		boolean last = end == values.size();

@@ -16,6 +16,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.coupon.CouponService;
 import me.pugabyte.nexus.models.coupon.Coupons;
 import me.pugabyte.nexus.models.coupon.Coupons.Coupon;
+import me.pugabyte.nexus.models.eventuser.EventUser;
+import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -26,7 +28,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.giveItem;
@@ -70,6 +72,15 @@ public class CouponCommand extends CustomCommand implements Listener {
 			void use(PlayerInteractEvent event) {
 				PlayerUtils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
 			}
+		},
+		PUGMAS20_100_EVENT_TOKENS(true) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				EventUserService eventUserService = new EventUserService();
+				EventUser user = eventUserService.get(event.getPlayer());
+				user.giveTokens(100);
+				eventUserService.save(user);
+			}
 		};
 
 		private final boolean autoremove;
@@ -84,16 +95,20 @@ public class CouponCommand extends CustomCommand implements Listener {
 			player.getInventory().removeItem(coupon.getItem());
 		}
 
-		public Coupon getCoupon() {
+		public Coupons getCoupons() {
 			final CouponService service = new CouponService();
-			final Coupons coupons = service.get(Nexus.getUUID0());
-			return coupons.of(name());
+			return service.get(Nexus.getUUID0());
+		}
+
+		public Coupon getCoupon() {
+			return getCoupons().of(name());
 		}
 
 		public void handle(PlayerInteractEvent event) {
 			use(event);
 			if (autoremove) {
 				getCoupon().use();
+				new CouponService().save(getCoupons());
 				removeItem(event.getPlayer());
 			}
 		}
@@ -120,7 +135,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Created coupons:");
 
-		Function<Coupon, JsonBuilder> json = coupon -> json()
+		BiFunction<Coupon, Integer, JsonBuilder> json = (coupon, index) -> json()
 				.next(" &e" + coupon.getId() + " &7- " + coupon.getUses())
 				.command("/coupons get " + coupon.getId())
 				.hover(coupon.getItem());
@@ -130,6 +145,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 
 	@Path("save <id>")
 	void save(@Arg(tabCompleter = Coupon.class, regex = "^[a-zA-Z0-9_]+$") String id) {
+		id = id.toLowerCase();
 		if (coupons.of(id) != null)
 			error("Coupon &e" + id + " &calready exists, use /coupon update <id>");
 

@@ -19,6 +19,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -268,6 +269,19 @@ public class Pugmas20 implements Listener {
 					})
 					.start();
 		}
+	}
+
+	@EventHandler
+	public void onNpcRightClick(NPCRightClickEvent event) {
+		Player player = event.getClicker();
+		if (!isAtPugmas(player))
+			return;
+
+		if (!event.getNPC().getName().equals("Elf"))
+			return;
+
+		PlayerUtils.send(player, QuestNPC.format("Elf", QuestNPC.getGreeting()));
+		Quests.sound_npcAlert(player);
 	}
 
 }

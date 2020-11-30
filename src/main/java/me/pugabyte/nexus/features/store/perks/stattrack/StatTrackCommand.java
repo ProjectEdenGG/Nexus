@@ -42,7 +42,7 @@ public class StatTrackCommand extends CustomCommand {
 	@Path("list [page]")
 	void list(@Arg("1") int page) {
 		send(PREFIX + "Currently tracked statistics:");
-		paginate(Arrays.asList(Stat.values()), stat -> json(" &7- &e" + stat), "/stattrack list", page);
+		paginate(Arrays.asList(Stat.values()), (stat, index) -> json(" &7- &e" + stat), "/stattrack list", page);
 	}
 
 }

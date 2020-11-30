@@ -156,10 +156,8 @@ public class AdventChests implements Listener {
 		LocalDateTime now = LocalDateTime.now();
 		int today = LocalDate.now().getDayOfMonth();
 
-		if (!player.hasPermission("group.admin")) {
-			if (isBeforePugmas(now)) return;
-			if (isPastPugmas(now)) return;
-		}
+		if (isBeforePugmas(now)) return;
+		if (isPastPugmas(now)) return;
 
 		boolean waypoint = !user.getLocatedDays().contains(chestDay);
 		user.getLocatedDays().add(chestDay);

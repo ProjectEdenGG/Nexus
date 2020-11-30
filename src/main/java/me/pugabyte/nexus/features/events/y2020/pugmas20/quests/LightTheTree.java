@@ -44,6 +44,7 @@ import java.util.function.BiConsumer;
 
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.PREFIX;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class LightTheTree implements Listener {
@@ -87,7 +88,7 @@ public class LightTheTree implements Listener {
 
 		ItemUtils.giveItem(player, lighter_broken);
 		Quests.sound_obtainItem(player);
-		user.send(PREFIX + "You have found the " + lighter_broken.getItemMeta().getDisplayName());
+		user.send(PREFIX + "You have found the &3&l" + stripColor(lighter_broken.getItemMeta().getDisplayName()));
 
 		user.setLightTreeStage(QuestStage.STEP_TWO);
 		service.save(user);
@@ -113,11 +114,12 @@ public class LightTheTree implements Listener {
 		Countdown timer = Countdown.builder()
 				.duration(timerTicks)
 				.onStart(() -> {
+					player.setPlayerTime(14000L, true);
 					user.setLightingTorches(true);
 					String format = TimespanFormatter.of(timerTicks / 20).formatType(TimespanFormatType.LONG).format();
 					user.send(PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
 				})
-				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&e" + TimespanFormatter.of(i).format()))
+				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + TimespanFormatter.of(i).format()))
 				.onComplete(() -> {
 					user.resetLightTheTree();
 					service.save(user);
@@ -206,8 +208,6 @@ public class LightTheTree implements Listener {
 					EventUser eventUser = eventUserService.get(player);
 					eventUser.giveTokens(300);
 					eventUserService.save(eventUser);
-
-					eventUser.send(Pugmas20.PREFIX + " You have received 300 Event Tokens!");
 				});
 			});
 		}
@@ -340,8 +340,8 @@ public class LightTheTree implements Listener {
 		}
 
 		if (gavePickaxe || gaveSieve) {
-			String pickName = TheMines.getMinersPickaxe().getItemMeta().getDisplayName();
-			String sieveName = TheMines.getMinersSieve().getItemMeta().getDisplayName();
+			String pickName = "&3&l" + stripColor(TheMines.getMinersPickaxe().getItemMeta().getDisplayName());
+			String sieveName = "&3&l" + stripColor(TheMines.getMinersSieve().getItemMeta().getDisplayName());
 			String obtained = Pugmas20.PREFIX + " You have obtained a ";
 
 			if (gavePickaxe && gaveSieve)

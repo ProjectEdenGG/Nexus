@@ -2,6 +2,7 @@ package me.pugabyte.nexus.models.pugmas20;
 
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
+import me.pugabyte.nexus.utils.Tasks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +20,10 @@ public class Pugmas20Service extends MongoService {
 
 	@Override
 	public <T> void save(T object) {
-		super.delete(object);
-		super.save(object);
+		Tasks.async(() -> {
+			super.deleteSync(object);
+			super.saveSync(object);
+		});
 	}
 
 }

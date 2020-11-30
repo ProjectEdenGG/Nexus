@@ -55,6 +55,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.RandomUtils.randomInt;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class OrnamentVendor implements Listener {
@@ -147,7 +148,7 @@ public class OrnamentVendor implements Listener {
 			if (Quests.hasRoomFor(player, getLumberjacksAxe())) {
 				ItemUtils.giveItem(player, getLumberjacksAxe());
 				Quests.sound_obtainItem(player);
-				user.send(Pugmas20.PREFIX + " You have obtained a " + lumberjacksAxe.getItemMeta().getDisplayName());
+				user.send(Pugmas20.PREFIX + " You have obtained a &3&l" + stripColor(lumberjacksAxe.getItemMeta().getDisplayName()));
 			} else {
 				Quests.sound_villagerNo(player);
 				user.send(Quests.fullInvError_obtain);

@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.models;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.models.Script;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.GiftGiver;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
@@ -22,6 +21,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -160,10 +160,11 @@ public enum QuestNPC {
 							Script.wait(80, "Head to the coal mine and you should be able to get both- ask the " + FORELF.getName() + " for help.")
 					);
 				case STEP_THREE:
-					ItemStack lighter = getItem(player, LightTheTree.lighter_broken);
-					ItemStack steelIngot = getItem(player, LightTheTree.steel_ingot);
-					ItemStack flint = getItem(player, TheMines.getFlint());
-					if (lighter == null || steelIngot == null || flint == null) {
+					ItemStack lighter = LightTheTree.lighter_broken;
+					ItemStack steelIngot = LightTheTree.steel_ingot;
+					ItemStack flint = TheMines.getFlint();
+					PlayerInventory inv = player.getInventory();
+					if (!(inv.contains(lighter) && inv.contains(steelIngot) && inv.contains(flint))) {
 						return Arrays.asList(
 								Script.wait("In order to fix the Ceremonial Lighter, I need a piece of flint and a steel ingot.")
 						);
@@ -280,7 +281,6 @@ public enum QuestNPC {
 					Tasks.wait(0, () -> {
 						eventUser.giveTokens(300);
 						eventUserService.save(eventUser);
-						eventUser.send(Pugmas20.PREFIX + " You have received 300 Event Tokens!");
 					});
 
 					return Arrays.asList(
@@ -347,7 +347,6 @@ public enum QuestNPC {
 					Tasks.wait(Time.SECOND, () -> {
 						eventUser.giveTokens(300);
 						eventUserService.save(eventUser);
-						eventUser.send(Pugmas20.PREFIX + " You have received 300 Event Tokens!");
 					});
 
 					return Arrays.asList(
@@ -411,7 +410,7 @@ public enum QuestNPC {
 	};
 
 	@NotNull
-	public static String getUnplayedToys(Pugmas20User user) {
+	public static List<String> getUnplayedToysList(Pugmas20User user) {
 		List<String> leftover = new ArrayList<>();
 		if (!user.isMasterMind())
 			leftover.add("MasterMind");
@@ -421,7 +420,12 @@ public enum QuestNPC {
 			leftover.add("Connect4");
 		if (!user.isTicTacToe())
 			leftover.add("TicTacToe");
-		return String.join(", ", leftover);
+		return leftover;
+	}
+
+	@NotNull
+	public static String getUnplayedToys(Pugmas20User user) {
+		return String.join(", ", getUnplayedToysList(user));
 	}
 
 	@Getter
@@ -462,13 +466,18 @@ public enum QuestNPC {
 					line = line.replaceAll("<self> ", "");
 				}
 
-				String message = "&3" + npcName.get() + " &7> &f" + line;
+				String message = format(npcName.get(), line);
 				Tasks.wait(wait.get(), () -> {
 					PlayerUtils.send(player, message);
 					Quests.sound_npcAlert(player);
 				});
 			});
 		});
+	}
+
+	@NotNull
+	public static String format(String name, String line) {
+		return "&3" + name + " &7> &f" + line;
 	}
 
 	public abstract List<Script> getScript(Player player);
@@ -505,7 +514,7 @@ public enum QuestNPC {
 		return null;
 	}
 
-	private static String getGreeting() {
+	public static String getGreeting() {
 		List<String> greetings = Arrays.asList(
 				"Happy holidays!",
 				"Yuletide greetings!",

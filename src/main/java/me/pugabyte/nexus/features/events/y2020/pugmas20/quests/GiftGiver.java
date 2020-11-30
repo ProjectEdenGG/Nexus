@@ -152,7 +152,7 @@ public class GiftGiver implements Listener {
 		event.setCancelled(true);
 		if (ActionGroup.LEFT_CLICK.applies(event)) {
 			openGift(event.getPlayer(), gift);
-		} else
+		} else if (!ActionGroup.PHYSICAL.applies(event))
 			PlayerUtils.send(event.getPlayer(), error);
 	}
 

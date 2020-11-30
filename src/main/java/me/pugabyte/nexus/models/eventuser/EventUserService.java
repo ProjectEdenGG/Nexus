@@ -1,9 +1,11 @@
 package me.pugabyte.nexus.models.eventuser;
 
+import dev.morphia.query.Sort;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,6 +15,12 @@ public class EventUserService extends MongoService {
 
 	public Map<UUID, EventUser> getCache() {
 		return cache;
+	}
+
+	public List<EventUser> getTopTokens() {
+		return database.createQuery(EventUser.class)
+				.order(Sort.descending("tokens"))
+				.find().toList();
 	}
 
 }
