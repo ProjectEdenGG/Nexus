@@ -82,8 +82,12 @@ public class LightTheTree implements Listener {
 			return;
 		}
 
+		if (player.getInventory().contains(lighter_broken))
+			return;
+
 		ItemUtils.giveItem(player, lighter_broken);
 		Quests.sound_obtainItem(player);
+		user.send(PREFIX + "You have found the " + lighter_broken.getItemMeta().getDisplayName());
 
 		user.setLightTreeStage(QuestStage.STEP_TWO);
 		service.save(user);

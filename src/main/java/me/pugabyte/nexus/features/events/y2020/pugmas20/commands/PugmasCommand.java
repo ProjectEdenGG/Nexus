@@ -65,9 +65,19 @@ public class PugmasCommand extends CustomCommand implements Listener {
 			user = service.get(player());
 	}
 
-	@Path()
+	@Path
 	void pugmas() {
-		send("Soon™ (" + timeLeft + ")");
+		LocalDateTime now = LocalDateTime.now();
+		if (isBeforePugmas(now) && !player().hasPermission("group.staff"))
+			error("Soon™ (" + timeLeft + ")");
+
+		if (user.isWarped()) {
+			player().teleport(Pugmas20.getSubsequentSpawn());
+		} else {
+			player().teleport(Pugmas20.getInitialSpawn());
+			user.setWarped(true);
+			service.save(user);
+		}
 	}
 
 	@Path("progress [player] [day]")

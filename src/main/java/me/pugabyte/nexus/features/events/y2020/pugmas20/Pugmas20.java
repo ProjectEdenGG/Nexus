@@ -70,7 +70,11 @@ public class Pugmas20 implements Listener {
 	private static final String itemLore = "&ePugmas 2020 Item";
 	@Getter
 	private static final String adventLore = "&ePugmas 2020 Advent Item";
-	// Advent Menu
+
+	@Getter
+	private static final Location initialSpawn = location(898.5, 52, 356.5);
+	@Getter
+	private static final Location subsequentSpawn = location(909.5, 52, 368.5);
 
 	@Getter
 	private static final Map<String, Integer> tokenMaxes = new HashMap<>();

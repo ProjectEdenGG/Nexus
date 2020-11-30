@@ -46,6 +46,8 @@ public class Pugmas20User extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
+	private boolean warped = false;
+
 	// Advent
 	@Embedded
 	private Set<Integer> foundDays = new HashSet<>();

@@ -133,7 +133,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected Entity getTargetEntity() {
-		return player().getTargetEntity(500);
+		return player().getTargetEntity(120);
 	}
 
 	protected Entity getTargetEntityRequired() {

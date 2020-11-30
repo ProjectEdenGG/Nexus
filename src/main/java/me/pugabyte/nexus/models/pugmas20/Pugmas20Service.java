@@ -16,4 +16,11 @@ public class Pugmas20Service extends MongoService {
 	public Map<UUID, Pugmas20User> getCache() {
 		return cache;
 	}
+
+	@Override
+	public <T> void save(T object) {
+		super.delete(object);
+		super.save(object);
+	}
+
 }
