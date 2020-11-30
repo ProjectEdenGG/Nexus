@@ -127,7 +127,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 	}
 
 	public boolean canTradeOrnament(Ornament ornament) {
-		return ornamentTradesLeft(ornament) <= 0;
+		return ornamentTradesLeft(ornament) > 0;
 	}
 
 	public int ornamentTradesLeft(Ornament ornament) {

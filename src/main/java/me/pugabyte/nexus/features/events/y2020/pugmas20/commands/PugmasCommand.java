@@ -169,6 +169,10 @@ public class PugmasCommand extends CustomCommand implements Listener {
 					List<String> lore = getOrnamentTradesLeft(user);
 					if (!lore.isEmpty()) {
 						lore.add(0, "&6Available ornament trades:");
+						if (stage == QuestStage.COMPLETE)
+							json.next(" &7- More trades available");
+						lore.add("&f");
+						lore.add("&fYou get to keep any extra ornaments");
 						json.next(" &7&o(Hover for info)").hover(String.join("\n&f", lore));
 					}
 				}
