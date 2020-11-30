@@ -18,6 +18,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas20Qu
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas20QuestStageHelper;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines.OreType;
+import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.ToyTesting;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -294,6 +295,15 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	void waypoint() {
 		for (AdventChest adventChest : AdventChests.adventChestList)
 			showWaypoint(adventChest, player());
+	}
+
+	@HideFromHelp
+	@Path("toys")
+	void toys() {
+		if (pugmasUser.getToyTestingStage() == QuestStage.NOT_STARTED)
+			error(PREFIX + "You cannot use this");
+
+		player().teleport(ToyTesting.getBackLocation());
 	}
 
 	@Permission("group.admin")

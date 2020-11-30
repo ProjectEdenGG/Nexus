@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
@@ -35,13 +36,15 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 @NoArgsConstructor
 public class ToyTesting implements Listener {
 	private static final String error = "Minigame has already started";
+	@Getter
+	private static final Location backLocation = location(931.50, 93.00, 328.50, 180.00F, .00F);
 
 	@AllArgsConstructor
 	private enum Toy {
-		BATTLESHIP(Pugmas20.location(930, 94, 321), "mgm join alphavsomega", Pugmas20User::setBattleship),
-		MASTERMIND(Pugmas20.location(930, 94, 320), "mgm join mastermind", Pugmas20User::setMasterMind),
-		CONNECT_4(Pugmas20.location(930, 94, 319), "warp connect4", Pugmas20User::setConnectFour),
-		TIC_TAC_TOE(Pugmas20.location(930, 94, 318), "warp tictactoe", Pugmas20User::setTicTacToe);
+		BATTLESHIP(location(930, 94, 321), "mgm join alphavsomega", Pugmas20User::setBattleship),
+		MASTERMIND(location(930, 94, 320), "mgm join mastermind", Pugmas20User::setMasterMind),
+		CONNECT_4(location(930, 94, 319), "warp connect4", Pugmas20User::setConnectFour),
+		TIC_TAC_TOE(location(930, 94, 318), "warp tictactoe", Pugmas20User::setTicTacToe);
 
 		@Getter
 		private final Location location;
@@ -87,8 +90,16 @@ public class ToyTesting implements Listener {
 			}
 		}
 
+		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20User user = service.get(player);
+
+		String lore = null;
+		if (user.getToyTestingStage() != QuestStage.NOT_STARTED)
+			lore = "&f||&fUse &c/pugmas toys &fto return to this location";
+
 		ConfirmationMenu.builder()
 				.title("Play " + camelCase(toy) + "?")
+				.confirmLore(lore)
 				.onConfirm(e -> PlayerUtils.runCommandAsOp(player, toy.getCommand()))
 				.open(player);
 	}
