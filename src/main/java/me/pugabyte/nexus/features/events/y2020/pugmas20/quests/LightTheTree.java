@@ -173,6 +173,7 @@ public class LightTheTree implements Listener {
 		}
 
 		fire(player, placed.getLocation());
+		Tasks.wait(3, () -> fire(player, placed.getLocation()));
 
 		if (torch == 9) {
 			user.setLightTreeStage(QuestStage.FOUND_ALL);
@@ -243,7 +244,7 @@ public class LightTheTree implements Listener {
 						updateTreeLightBlocksAir(player);
 						continue;
 					case FOUND_ALL:
-						updateFound(user);
+						updateAllTorches(player, LightTheTree::fire);
 						continue;
 					case COMPLETE:
 						updateAll(player, LightTheTree::fire);
