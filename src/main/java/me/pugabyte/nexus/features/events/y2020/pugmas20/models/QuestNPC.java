@@ -132,11 +132,11 @@ public enum QuestNPC {
 							Script.wait(80, "It's time for our annual tree lighting ceremony, but " + CINNAMON.getName() +
 									" still hasn’t returned with the Ceremonial Lighter!"),
 
-							Script.wait(120, "Would you mind finding him for me? He should be in the workshop.")
+							Script.wait(120, "Would you mind finding her for me? She should be in the workshop.")
 					);
 				case STARTED:
 					return Arrays.asList(
-							Script.wait("Have you found " + CINNAMON.getName() + "? He should be in the workshop.")
+							Script.wait("Have you found " + CINNAMON.getName() + "? She should be in the workshop.")
 					);
 
 				case STEP_TWO:
@@ -151,7 +151,7 @@ public enum QuestNPC {
 					service.save(user);
 
 					return Arrays.asList(
-							Script.wait("Dangit " + CINNAMON.getName() + ", I *told* him to be careful with this."),
+							Script.wait("Dangit " + CINNAMON.getName() + ", I *told* her to be careful with this."),
 
 							Script.wait(80, "Hmm, yes, it is fixable, just needs a new flint wheel and a steel striker."),
 
@@ -177,7 +177,7 @@ public enum QuestNPC {
 
 					return Arrays.asList(
 							Script.wait("There you go, right as rain. Now give this back to " +
-									CINNAMON.getName() + " and tell him to be careful with it this time!")
+									CINNAMON.getName() + " and tell her to be careful with it this time!")
 					);
 				case STEPS_DONE:
 					return Arrays.asList(
