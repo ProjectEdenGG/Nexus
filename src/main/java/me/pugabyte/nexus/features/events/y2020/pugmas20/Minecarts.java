@@ -12,6 +12,7 @@ import org.bukkit.block.data.Rail;
 import org.bukkit.block.data.Rail.Shape;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public class Minecarts {
 			// Empty
 			Location loc = spawnLoc_empty;
 			Entity minecart = loc.getWorld().spawnEntity(loc, EntityType.MINECART);
+			LivingEntity livingEntity = (LivingEntity) minecart;
+			livingEntity.setRemoveWhenFarAway(true);
 
 			Entity finalMinecart = minecart;
 			Location finalLoc = loc;
@@ -43,6 +46,8 @@ public class Minecarts {
 			// Full
 			loc = RandomUtils.randomElement(spawnLoc_full);
 			minecart = loc.getWorld().spawnEntity(loc, EntityType.MINECART_CHEST);
+			LivingEntity livingEntity1 = (LivingEntity) minecart;
+			livingEntity1.setRemoveWhenFarAway(true);
 
 			Entity finalMinecart1 = minecart;
 			Location finalLoc1 = loc;
