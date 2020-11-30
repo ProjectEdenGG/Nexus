@@ -57,7 +57,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 	// Active Quest NPCs
 	@Embedded
 	private Set<Integer> nextStepNPCs = Sets.newHashSet(
-			QuestNPC.ELF2.getId(), QuestNPC.QA_ELF.getId(), QuestNPC.ELF3.getId(), QuestNPC.GIFT_GIVER.getId());
+			QuestNPC.NOUGAT.getId(), QuestNPC.QA_ELF.getId(), QuestNPC.HAZELNUT.getId(), QuestNPC.JADE.getId(), QuestNPC.TICKET_MASTER.getId());
 
 	// Quest - Gift Giver
 	private QuestStage giftGiverStage = QuestStage.NOT_STARTED;

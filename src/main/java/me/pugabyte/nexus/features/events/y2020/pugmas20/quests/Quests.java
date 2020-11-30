@@ -52,7 +52,7 @@ public class Quests {
 	@AllArgsConstructor
 	public enum Pugmas20Quest implements Quest {
 		GIFT_GIVER(user -> new HashMap<QuestStage, String>() {{
-			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.GIFT_GIVER.getName() + " in the Workshop");
+			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.JADE.getName() + " in the Workshop");
 		}}),
 
 		TOY_TESTING(user -> new HashMap<QuestStage, String>() {{
@@ -70,17 +70,17 @@ public class Quests {
 		}}),
 
 		ORNAMENT_VENDOR(user -> new HashMap<QuestStage, String>() {{
-			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.ELF3.getName() + " near the Pugmas tree");
-			put(QuestStage.STARTED, "Trade logs with the Ornament Vendor and bring each of the 10 ornaments to " + QuestNPC.ELF3.getName());
+			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.HAZELNUT.getName() + " near the Pugmas tree");
+			put(QuestStage.STARTED, "Trade logs with the Ornament Vendor and bring each of the 10 ornaments to " + QuestNPC.HAZELNUT.getName());
 		}}),
 
 		LIGHT_THE_TREE(user -> new HashMap<QuestStage, String>() {{
-			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.ELF2.getName() + " near the Pugmas tree");
-			put(QuestStage.STARTED, "Find " + QuestNPC.ELF1.getName() + " in the workshop");
-			put(QuestStage.STEP_ONE, "Help " + QuestNPC.ELF1.getName() + " find the Ceremonial Lighter in the basement");
-			put(QuestStage.STEP_TWO, "Talk to " + QuestNPC.ELF2.getName() + " near the Pugmas tree to fix the Ceremonial Lighter");
+			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.NOUGAT.getName() + " near the Pugmas tree");
+			put(QuestStage.STARTED, "Find " + QuestNPC.CINNAMON.getName() + " in the workshop");
+			put(QuestStage.STEP_ONE, "Help " + QuestNPC.CINNAMON.getName() + " find the Ceremonial Lighter in the basement");
+			put(QuestStage.STEP_TWO, "Talk to " + QuestNPC.NOUGAT.getName() + " near the Pugmas tree to fix the Ceremonial Lighter");
 			put(QuestStage.STEP_THREE, "Find " + QuestNPC.FORELF.getName() + " in the coal mine to get the necessary materials");
-			put(QuestStage.STEPS_DONE, "Talk to " + QuestNPC.ELF1.getName() + " in the workshop");
+			put(QuestStage.STEPS_DONE, "Talk to " + QuestNPC.CINNAMON.getName() + " in the workshop");
 		}});
 
 		private final Function<Pugmas20User, Map<QuestStage, String>> instructions;

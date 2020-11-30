@@ -194,8 +194,8 @@ public class LightTheTree implements Listener {
 				SoundUtils.playSound(player, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1F, 0.1F);
 				user.setLightTreeStage(QuestStage.COMPLETE);
 				user.setMinesStage(QuestStage.NOT_STARTED);
-				user.getNextStepNPCs().remove(QuestNPC.ELF1.getId());
-				user.getNextStepNPCs().remove(QuestNPC.ELF2.getId());
+				user.getNextStepNPCs().remove(QuestNPC.CINNAMON.getId());
+				user.getNextStepNPCs().remove(QuestNPC.NOUGAT.getId());
 				service.save(user);
 
 				// TODO PUGMAS Better wording
