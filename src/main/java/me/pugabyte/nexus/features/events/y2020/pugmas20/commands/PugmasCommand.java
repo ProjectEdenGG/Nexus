@@ -132,7 +132,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 				send("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
 			} else if (stage == QuestStage.NOT_STARTED || stage == QuestStage.INELIGIBLE) {
 				send("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &7- " + instructions));
-			} else  {
+			} else {
 //				send("&f  &7☐ &3" + camelCase(quest) + " &7- &e" + (instructions == null ? "&cnull" : instructions));
 				JsonBuilder json = json("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- ").group();
 				send(instructions == null ? json.next("&cnull").hover(camelCase(stage)) : json.next("&7" + instructions));
@@ -142,14 +142,12 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		line();
 	}
 
-	@Path("advent [day]")
+	@Path("advent")
 	@Description("Open the Advent menu")
-	void advent(@Arg(min = 1, max = 25, permission = "group.staff") Integer day) {
+	void advent() {
 		LocalDateTime now = LocalDateTime.now();
-		if (day != null)
-			now = now.withYear(2020).withMonth(12).withDayOfMonth(day);
 
-		if (isBeforePugmas(now) && !player().hasPermission("group.staff"))
+		if (isBeforePugmas(now))
 			error("Soon™ (" + timeLeft + ")");
 
 		if (isPastPugmas(now))
