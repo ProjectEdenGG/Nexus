@@ -48,9 +48,9 @@ public enum QuestNPC {
 
 					Script.wait(80, "There is tons to explore and many quests to complete for rewards!"),
 
-					Script.wait(120, "The primary quest here is the advent calendar, where each day you can find and open the chest of today and receive its rewards."),
+					Script.wait(80, "The primary quest here is the advent calendar, where each day you can find and open the chest of today and receive its rewards."),
 
-					Script.wait(80, "Some quests you can repeat for their rewards."),
+					Script.wait(120, "Some quests you can repeat for their rewards."),
 
 					Script.wait(80, "To see your progress through the event, and what you need to do next, use: /pugmas progress"),
 
@@ -132,7 +132,7 @@ public enum QuestNPC {
 							Script.wait(80, "It's time for our annual tree lighting ceremony, but " + CINNAMON.getName() +
 									" still hasn’t returned with the Ceremonial Lighter!"),
 
-							Script.wait(80, "Would you mind finding him for me? He should be in the workshop.")
+							Script.wait(120, "Would you mind finding him for me? He should be in the workshop.")
 					);
 				case STARTED:
 					return Arrays.asList(
@@ -203,13 +203,13 @@ public enum QuestNPC {
 						Script.wait(80, "Sorry, we don’t have any flint or steel available right now but " +
 								"you can certainly go grab your own."),
 
-						Script.wait(80, "Grab a sieve and a pick from this equipment stand. You will need " +
+						Script.wait(160, "Grab a sieve and a pick from this equipment stand. You will need " +
 								"to sift the gravel piles for flint."),
 
-						Script.wait(80, "For the steel you will need the blacksmiths help, " +
+						Script.wait(160, "For the steel you will need the blacksmiths help, " +
 								"he'll make the steel for you, if you give him the required coal and iron."),
 
-						Script.wait(80, "His workshop is located in the Plaza District.")
+						Script.wait(160, "His workshop is located in the Plaza District.")
 				);
 			}
 
@@ -224,7 +224,7 @@ public enum QuestNPC {
 							Script.wait(80, "There's always a rush of last minute demands for materials by the workshop- " +
 									"things that need to be fixed, production that came up a little short."),
 
-							Script.wait(80, "And almost all my mine-elves have been sent to help in the wrapping and sled loading."),
+							Script.wait(160, "And almost all my mine-elves have been sent to help in the wrapping and sled loading."),
 
 							Script.wait(80, "If you bring me ingots and put them in this crate here, I’ll see you get paid.")
 					);
@@ -260,13 +260,13 @@ public enum QuestNPC {
 									"half of the Quality Assurance team was fired, and the other half have spent all year " +
 									"on making sure that the Sled won’t fall apart again."),
 
-							Script.wait(80, "But that's left just me to try and keep up with testing all the toys " +
+							Script.wait(160, "But that's left just me to try and keep up with testing all the toys " +
 									"that come off the line. I’m way, way behind and Pugmas is coming fast."),
 
-							Script.wait(80, "Think you can help an elf out? You might need to find a friend to help you, " +
+							Script.wait(160, "Think you can help an elf out? You might need to find a friend to help you, " +
 									"the games on the table there need to be tested before they can be added to the present piles."),
 
-							Script.wait(80, "If you could just play a round or two of each, that would be perfect.")
+							Script.wait(160, "If you could just play a round or two of each, that would be perfect.")
 					);
 				case STARTED:
 					return Arrays.asList(
@@ -320,13 +320,13 @@ public enum QuestNPC {
 							Script.wait(80, "This tree is so big it takes a lot of ornaments to fill, " +
 									"and I may have uh, lost some of them from last year."),
 
-							Script.wait(80, "Don’t tell Santa! Just help me out. Here in town is an ornament vendor, " +
+							Script.wait(160, "Don’t tell Santa! Just help me out. Here in town is an ornament vendor, " +
 									"he trades different wood types that we need for the factory for spare pugmas ornaments."),
 
-							Script.wait(80, "I’d just ask him for some extra myself, but he’s mean and would tell Santa I " +
+							Script.wait(160, "I’d just ask him for some extra myself, but he’s mean and would tell Santa I " +
 									"lost the town’s ornaments. If you bring me one of each of the 10 ornaments, I'll reward you."),
 
-							Script.wait(80, "Find the LumberJack in the orchid, he can help you out with obtaining the necessary logs.")
+							Script.wait(160, "Find the LumberJack in the orchid, he can help you out with obtaining the necessary logs.")
 					);
 				case STARTED:
 					List<ItemStack> ornaments = OrnamentVendor.getOrnaments(player);
@@ -374,9 +374,10 @@ public enum QuestNPC {
 				return Arrays.asList(
 						Script.wait(getGreeting()),
 
-						Script.wait(80, "So you need some logs huh? We'll you're in luck, the soil that this orchid was built on is magical, and the trees grow back in only a few minutes."),
+						Script.wait(80, "So you need some logs huh? We'll you're in luck, the soil that this orchid " +
+								"was built on is magical, and the trees grow back in only a few minutes."),
 
-						Script.wait(80, "So grab an extra axe from my workshop and start choppin' down some trees!")
+						Script.wait(120, "So grab an extra axe from my workshop and start choppin' down some trees!")
 				);
 			}
 
