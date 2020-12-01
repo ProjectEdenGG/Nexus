@@ -565,7 +565,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("debug <player>")
 	void debugUser(@Arg("self") Pugmas20User user) {
-		send(user.toPrettyString());
+		send(user.toString());
 	}
 
 }
