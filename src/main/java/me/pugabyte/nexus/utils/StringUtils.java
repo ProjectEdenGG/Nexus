@@ -264,7 +264,11 @@ public class StringUtils {
 	}
 
 	public static String toPrettyString(Object object) {
-		return new GsonBuilder().setPrettyPrinting().create().toJson(object);
+		return getPrettyPrinter().toJson(object);
+	}
+
+	public static Gson getPrettyPrinter() {
+		return new GsonBuilder().setPrettyPrinting().create();
 	}
 
 	public static String pretty(ItemStack item) {
@@ -592,6 +596,18 @@ public class StringUtils {
 		try (Response response = new OkHttpClient().newCall(request).execute()) {
 			PasteResult result = new Gson().fromJson(response.body().string(), PasteResult.class);
 			return HASTEBIN + result.getKey();
+		}
+	}
+
+	@NonNull
+	public static String getPaste(String code) throws InvalidInputException {
+		try {
+			Request request = new Request.Builder().url(HASTEBIN + "raw/" + code).get().build();
+			try (Response response = new OkHttpClient().newCall(request).execute()) {
+				return response.body().string();
+			}
+		} catch (Exception ex) {
+			throw new InvalidInputException("An error occurred while retrieving the paste data: " + ex.getMessage());
 		}
 	}
 

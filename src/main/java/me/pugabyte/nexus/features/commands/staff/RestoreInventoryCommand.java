@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.GameMode;
@@ -22,10 +23,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +48,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 	void code(Player owner, String code) {
 		Tasks.async(() -> {
 			try {
-				String data = getPaste(code);
+				String data = StringUtils.getPaste(code);
 
 				JsonConfiguration jsonConfig = new JsonConfiguration();
 				jsonConfig.loadFromString(data);
@@ -184,24 +181,6 @@ public class RestoreInventoryCommand extends CustomCommand {
 
 	private double getExp(ConfigurationSection gamemode) {
 		return Double.parseDouble(gamemode.getConfigurationSection("stats").getString("txp"));
-	}
-
-	public String getPaste(String code) throws InvalidInputException {
-		try {
-			URL paste = new URL("https://paste.bnn.gg/raw/" + code);
-
-			HttpURLConnection connection = (HttpURLConnection) paste.openConnection();
-			BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String line;
-			StringBuilder response = new StringBuilder();
-			while ((line = rd.readLine()) != null) {
-				response.append(line.trim());
-			}
-			connection.disconnect();
-			return response.toString();
-		} catch (Exception ex) {
-			throw new InvalidInputException("An error occurred while retrieving the paste data: " + ex.getMessage());
-		}
 	}
 
 	private Map<String, Object> convertSection(ConfigurationSection section) {

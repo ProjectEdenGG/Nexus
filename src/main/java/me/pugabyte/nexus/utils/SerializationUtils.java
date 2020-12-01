@@ -66,6 +66,7 @@ public class SerializationUtils {
 
 			serialized.computeIfPresent("meta", ($, itemMeta) -> serializeItemMeta(((ItemMeta) itemMeta).serialize()));
 			serialized.computeIfAbsent("amount", $ -> item.getAmount());
+			serialized.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ItemStack.class.getName());
 
 			return gson.toJson(gson.toJsonTree(serialized));
 		}
@@ -116,6 +117,10 @@ public class SerializationUtils {
 							return ((Number) metaValue).intValue();
 						return metaValue;
 					}));
+
+			deserialized.computeIfPresent("enchants", ($, metaValue) -> new HashMap<String, Integer>() {{
+				((Map<String, Number>) metaValue).forEach(((id, level) -> put(id, level.intValue())));
+			}});
 		}
 
 		/** LOCATION */
