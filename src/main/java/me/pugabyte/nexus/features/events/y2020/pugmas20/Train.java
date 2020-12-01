@@ -354,7 +354,8 @@ public class Train {
 					if (trackNdx.get() <= 165 - (trainFrameTime * 10))
 						playTrainSound(front, players);
 				} else {
-					if (trackNdx.get() <= (202 + (trainFrameTime * 10)))
+//					if (trackNdx.get() <= (202 + (trainFrameTime * 10)))
+					if (trackNdx.get() <= (202 + (trainLength - (trainLength / 3))))
 						playTrainSound(front, players);
 				}
 			}
@@ -362,7 +363,7 @@ public class Train {
 	}
 
 	private static void playTrainSound(Location location, Collection<Player> players) {
-		float volume = 6F;
+		float volume = 1.5F;
 		float pitch = 0.1F;
 		players.forEach(player -> player.playSound(location, Sound.ENTITY_MINECART_INSIDE, SoundCategory.AMBIENT, volume, pitch));
 	}
