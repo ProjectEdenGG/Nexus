@@ -18,7 +18,9 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -33,8 +35,14 @@ public class SerializeTest extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Location location;
+
 	private ItemStack itemStack;
 	@Embedded
 	private List<ItemStack> itemStacks;
+
+	@Embedded
+	private Map<String, String> initializedMap = new HashMap<>();
+	@Embedded
+	private Map<String, String> uninitializedMap;
 
 }

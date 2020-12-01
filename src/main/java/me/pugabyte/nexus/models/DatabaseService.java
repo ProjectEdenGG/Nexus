@@ -36,7 +36,7 @@ public abstract class DatabaseService {
 	abstract public <T> List<T> getAll();
 
 	public <T> void save(T object) {
-		if (Bukkit.getServer().isPrimaryThread())
+		if (Bukkit.isPrimaryThread())
 			Tasks.async(() -> saveSync(object));
 		else
 			saveSync(object);
@@ -45,7 +45,7 @@ public abstract class DatabaseService {
 	abstract public <T> void saveSync(T object);
 
 	public <T> void delete(T object) {
-		if (Bukkit.getServer().isPrimaryThread())
+		if (Bukkit.isPrimaryThread())
 			Tasks.async(() -> deleteSync(object));
 		else
 			deleteSync(object);
@@ -54,7 +54,7 @@ public abstract class DatabaseService {
 	abstract public <T> void deleteSync(T object);
 
 	public void deleteAll() {
-		if (Bukkit.getServer().isPrimaryThread())
+		if (Bukkit.isPrimaryThread())
 			Tasks.async(this::deleteAllSync);
 		else
 			deleteAllSync();

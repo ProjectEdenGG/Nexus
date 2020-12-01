@@ -41,7 +41,7 @@ public class MongoDBPersistence {
 		DatabaseConfig config = new DatabaseConfig("mongodb");
 
 		// Paper compat
-		morphia.getMapper().setOptions(MapperOptions.builder().classLoader(Nexus.getInstance().getClass().getClassLoader()).build());
+		morphia.getMapper().setOptions(MapperOptions.builder().storeEmpties(true).classLoader(Nexus.getInstance().getClass().getClassLoader()).build());
 		new Reflections("me.pugabyte.nexus.models").getTypesAnnotatedWith(Entity.class);
 
 		MongoCredential root = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
