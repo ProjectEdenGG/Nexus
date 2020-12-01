@@ -2,6 +2,7 @@ package me.pugabyte.nexus.utils;
 
 import com.google.gson.Gson;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -111,7 +112,7 @@ public class SerializationUtils {
 
 		// MongoDB deserializes some properties as the wrong class, do conversion
 		public static void fixMetaClasses(Map<String, Object> deserialized) {
-			Arrays.asList("power", "repair-cost", "Damage").forEach(key ->
+			Arrays.asList("power", "repair-cost", "Damage", "map-id").forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) -> {
 						if (metaValue instanceof Number)
 							return ((Number) metaValue).intValue();
@@ -121,6 +122,15 @@ public class SerializationUtils {
 			deserialized.computeIfPresent("enchants", ($, metaValue) -> new HashMap<String, Integer>() {{
 				((Map<String, Number>) metaValue).forEach(((id, level) -> put(id, level.intValue())));
 			}});
+
+			deserialized.computeIfPresent("display-map-color", ($, metaValue) -> {
+				Map<String, Object> map = (Map<String, Object>) metaValue;
+				// Why are they negative? who knows...
+				int r = Math.abs(((Number) map.getOrDefault("red", map.getOrDefault("r", 0))).intValue());
+				int g = Math.abs(((Number) map.getOrDefault("green", map.getOrDefault("g", 0))).intValue());
+				int b = Math.abs(((Number) map.getOrDefault("blue", map.getOrDefault("b", 0))).intValue());
+				return Color.fromBGR(r, g, b);
+			});
 		}
 
 		/** LOCATION */

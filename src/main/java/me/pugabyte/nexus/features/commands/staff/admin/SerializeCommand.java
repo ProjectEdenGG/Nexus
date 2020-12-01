@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands.staff.admin;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.serializetest.SerializeTest;
 import me.pugabyte.nexus.models.serializetest.SerializeTestService;
@@ -14,12 +15,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@Permission("group.admin")
 public class SerializeCommand extends CustomCommand {
 	private final SerializeTestService service = new SerializeTestService();
 	private SerializeTest test;
 
 	public SerializeCommand(@NonNull CommandEvent event) {
 		super(event);
+		test = service.get(player());
+	}
+
+	private void reload() {
+		service.saveSync(test);
+		service.clearCache();
 		test = service.get(player());
 	}
 
@@ -52,7 +60,7 @@ public class SerializeCommand extends CustomCommand {
 	}
 
 	@Path("hashmap initialized database")
-	void hashmapInitializedPutDatabase() {
+	void hashmapInitializedDatabase() {
 		Map<String, String> initializedMap = test.getInitializedMap();
 		initializedMap.put("1", "1");
 		initializedMap.put("2", "2");
@@ -69,7 +77,7 @@ public class SerializeCommand extends CustomCommand {
 	}
 
 	@Path("hashmap uninitialized database")
-	void hashmapUninitializedPutDatabase() {
+	void hashmapUninitializedDatabase() {
 		Map<String, String> map = new HashMap<>();
 		map.put("1", "1");
 		map.put("2", "2");
@@ -84,12 +92,6 @@ public class SerializeCommand extends CustomCommand {
 		test.setUninitializedMap(null);
 		reload();
 		send("Nulled: " + test.getUninitializedMap());
-	}
-
-	private void reload() {
-		service.saveSync(test);
-		service.clearCache();
-		test = service.get(player());
 	}
 
 }
