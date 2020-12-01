@@ -134,7 +134,6 @@ public abstract class MongoService extends DatabaseService {
 			} catch (BNException ex) {
 				StringWriter sw = new StringWriter();
 				ex.printStackTrace(new PrintWriter(sw));
-				Bukkit.isPrimaryThread();
 				Nexus.fileLogSync("pugmas-db-debug", "[Primary thread: " + Bukkit.isPrimaryThread() + "] MongoDB Pugmas20 " + name + "\n" + sw.toString() + "\n");
 			}
 		} catch (Exception ex) {

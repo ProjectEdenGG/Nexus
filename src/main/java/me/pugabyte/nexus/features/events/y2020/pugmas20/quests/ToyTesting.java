@@ -95,7 +95,7 @@ public class ToyTesting implements Listener {
 
 		String lore = null;
 		if (user.getToyTestingStage() != QuestStage.NOT_STARTED)
-			lore = "&f||&fUse &c/pugmas toys &fto return to this location";
+			lore = "&f||&fUse &c/pugmas toys &fto||&freturn to this location";
 
 		ConfirmationMenu.builder()
 				.title("Play " + camelCase(toy) + "?")

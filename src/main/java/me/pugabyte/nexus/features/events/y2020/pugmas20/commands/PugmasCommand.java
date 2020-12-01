@@ -19,6 +19,7 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas20Qu
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines.OreType;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.ToyTesting;
+import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -91,9 +92,19 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("progress [player]")
+	@Path("progress")
 	@Description("View your event progress")
-	void progress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
+	void progress() {
+		progress(pugmasUser);
+	}
+
+	@Permission("group.staff")
+	@Path("admin progress <player>")
+	void adminProgress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
+		progress(user);
+	}
+
+	void progress(Pugmas20User user) {
 		LocalDate now = LocalDate.now();
 
 		if (isBeforePugmas(now))
@@ -301,18 +312,35 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Path("toys")
 	void toys() {
 		if (pugmasUser.getToyTestingStage() == QuestStage.NOT_STARTED)
-			error(PREFIX + "You cannot use this");
+			error("You cannot use this");
 
-		player().teleport(ToyTesting.getBackLocation());
+		player().teleport(ToyTesting.getBackLocation(), TeleportCause.COMMAND);
 	}
 
 	@Permission("group.admin")
 	@Path("database delete [player]")
 	void databaseDelete(@Arg("self") Pugmas20User user) {
-		pugmasService.clearCache();
-		pugmasService.delete(user);
-		pugmasService.clearCache();
-		send(PREFIX + "Deleted data for " + user.getName());
+		ConfirmationMenu.builder()
+				.onConfirm(e -> {
+					pugmasService.clearCache();
+					pugmasService.delete(user);
+					pugmasService.clearCache();
+					send(PREFIX + "Deleted data for " + user.getName());
+				})
+				.open(player());
+	}
+
+	@Permission("group.admin")
+	@Path("database deleteAll")
+	void databaseDelete() {
+		ConfirmationMenu.builder()
+				.onConfirm(e -> {
+					pugmasService.clearCache();
+					pugmasService.deleteAll();
+					pugmasService.clearCache();
+					send(PREFIX + "Deleted all data");
+				})
+				.open(player());
 	}
 
 	@Permission("group.admin")
