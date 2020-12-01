@@ -18,9 +18,7 @@ public class EventUserService extends MongoService {
 	}
 
 	public List<EventUser> getTopTokens() {
-		return database.createQuery(EventUser.class)
-				.order(Sort.descending("tokens"))
-				.find().toList();
+		return getAllSortedBy(Sort.descending("tokens"));
 	}
 
 }

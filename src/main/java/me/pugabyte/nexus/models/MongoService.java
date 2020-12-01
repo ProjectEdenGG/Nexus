@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.models;
 
 import dev.morphia.Datastore;
+import dev.morphia.query.Sort;
 import dev.morphia.query.UpdateException;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.BNException;
@@ -87,6 +88,12 @@ public abstract class MongoService extends DatabaseService {
 	@Override
 	public <T> List<T> getAll() {
 		return (List<T>) database.createQuery(getPlayerClass()).find().toList();
+	}
+
+	public <T> List<T> getAllSortedBy(Sort... sorts) {
+		return (List<T>) database.createQuery(getPlayerClass())
+				.order(sorts)
+				.find().toList();
 	}
 
 	@Override

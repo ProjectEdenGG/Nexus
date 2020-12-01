@@ -8,6 +8,7 @@ import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import dev.morphia.annotations.Entity;
 import dev.morphia.mapping.MapperOptions;
+import dev.morphia.mapping.MapperOptions.Builder;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ChatColorConverter;
@@ -41,7 +42,10 @@ public class MongoDBPersistence {
 		DatabaseConfig config = new DatabaseConfig("mongodb");
 
 		// Paper compat
-		morphia.getMapper().setOptions(MapperOptions.builder().storeEmpties(true).classLoader(Nexus.getInstance().getClass().getClassLoader()).build());
+		Builder options = MapperOptions.builder().classLoader(Nexus.getInstance().getClass().getClassLoader());
+		// Properly merge deleted hashmaps
+		options.storeEmpties(true);
+		morphia.getMapper().setOptions(options.build());
 		new Reflections("me.pugabyte.nexus.models").getTypesAnnotatedWith(Entity.class);
 
 		MongoCredential root = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
