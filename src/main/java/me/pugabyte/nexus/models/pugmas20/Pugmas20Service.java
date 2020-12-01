@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static me.pugabyte.nexus.utils.StringUtils.isV4Uuid;
+
 @PlayerClass(Pugmas20User.class)
 public class Pugmas20Service extends MongoService {
 
@@ -33,7 +35,11 @@ public class Pugmas20Service extends MongoService {
 	public <T> void deleteSync(T object) {
 		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
 		log("DeleteSync " + playerOwnedObject.getName() + " [" + playerOwnedObject.getUuid().toString() + "]");
-		super.deleteSync(object);
+
+		if (!isV4Uuid(playerOwnedObject.getUuid()))
+			return;
+
+		database.delete(object);
 	}
 
 }

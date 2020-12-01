@@ -76,6 +76,7 @@ public class ItemUtils {
 
 	public static void giveItems(Player player, Collection<ItemStack> items, String nbt) {
 		List<ItemStack> finalItems = new ArrayList<>(items);
+		finalItems.removeIf(ItemUtils::isNullOrAir);
 		if (!Strings.isNullOrEmpty(nbt)) {
 			finalItems.clear();
 			NBTContainer nbtContainer = new NBTContainer(nbt);
@@ -92,7 +93,8 @@ public class ItemUtils {
 	public static List<ItemStack> giveItemsGetExcess(Player player, List<ItemStack> finalItems) {
 		List<ItemStack> excess = new ArrayList<>();
 		for (ItemStack item : finalItems)
-			excess.addAll(player.getInventory().addItem(item).values());
+			if (!isNullOrAir(item))
+				excess.addAll(player.getInventory().addItem(item).values());
 
 		return excess;
 	}
