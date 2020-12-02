@@ -278,7 +278,7 @@ public enum QuestNPC {
 					user.getNextStepNPCs().remove(getId());
 					service.save(user);
 
-					Tasks.wait(0, () -> {
+					Tasks.wait(90, () -> {
 						eventUser.giveTokens(300);
 						eventUserService.save(eventUser);
 					});
