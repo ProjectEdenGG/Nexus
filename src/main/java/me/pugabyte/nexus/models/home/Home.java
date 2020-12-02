@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.homes.HomesFeature;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -29,7 +28,7 @@ import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
+@Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
 public class Home extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;

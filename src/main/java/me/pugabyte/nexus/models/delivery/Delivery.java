@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.delivery.DeliveryWorldMenu;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -36,7 +35,7 @@ import static me.pugabyte.nexus.utils.SoundUtils.playSound;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
+@Converters({UUIDConverter.class, ItemStackConverter.class})
 public class Delivery extends PlayerOwnedObject {
 	@Id
 	@NonNull

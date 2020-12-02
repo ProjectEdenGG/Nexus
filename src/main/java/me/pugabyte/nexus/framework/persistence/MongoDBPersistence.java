@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ChatColorConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ColorConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
@@ -53,7 +52,6 @@ public class MongoDBPersistence {
 		Datastore datastore = morphia.createDatastore(mongoClient, config.getPrefix() + dbType.getDatabase());
 		morphia.getMapper().getConverters().addConverter(new ChatColorConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new ColorConverter(morphia.getMapper()));
-		morphia.getMapper().getConverters().addConverter(new ItemMetaConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new ItemStackConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new LocalDateConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new LocalDateTimeConverter(morphia.getMapper()));

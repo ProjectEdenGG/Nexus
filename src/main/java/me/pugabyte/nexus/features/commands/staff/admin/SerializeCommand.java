@@ -10,10 +10,19 @@ import me.pugabyte.nexus.models.serializetest.SerializeTestService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.SerializationUtils.JSON.serializeItemStack;
 
 @Permission("group.admin")
 public class SerializeCommand extends CustomCommand {
@@ -33,7 +42,7 @@ public class SerializeCommand extends CustomCommand {
 
 	@Path("item toJson")
 	void itemStackToJson() {
-		String serialized = JSON.serializeItemStack(getToolRequired());
+		String serialized = JSON.toString(serializeItemStack(getToolRequired()));
 		send(json(serialized).copy(serialized).hover("Click to copy"));
 	}
 
@@ -54,9 +63,20 @@ public class SerializeCommand extends CustomCommand {
 
 	@Path("inventory database")
 	void inventoryDatabase() {
-		test.setItemStacks(Arrays.asList(player().getInventory().getContents()));
+		Block targetBlock = getTargetBlock();
+		if (targetBlock.getType() != Material.CHEST)
+			error("You must be looking at a chest");
+
+		List<ItemStack> items = new ArrayList<>(Arrays.asList(player().getInventory().getContents()));
+		items.removeIf(ItemUtils::isNullOrAir);
+		test.setItemStacks(items);
 		reload();
-		ItemUtils.giveItems(player(), test.getItemStacks());
+
+		Chest state = (Chest) targetBlock.getState();
+		state.getInventory().clear();
+		for (ItemStack itemStack : test.getItemStacks())
+			if (!isNullOrAir(itemStack))
+				state.getInventory().addItem(itemStack);
 	}
 
 	@Path("hashmap initialized database")

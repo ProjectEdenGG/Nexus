@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -31,7 +30,7 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 @Entity("bearfair_user")
 @NoArgsConstructor
 @AllArgsConstructor
-@Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
+@Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
 public class BearFairUser extends PlayerOwnedObject {
 	@Id
 	@NonNull

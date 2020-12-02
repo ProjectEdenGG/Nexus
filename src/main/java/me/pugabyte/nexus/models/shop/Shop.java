@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -45,7 +44,7 @@ import static me.pugabyte.nexus.utils.StringUtils.pretty;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
+@Converters({UUIDConverter.class, ItemStackConverter.class})
 public class Shop extends PlayerOwnedObject {
 	@Id
 	@NonNull
@@ -94,7 +93,7 @@ public class Shop extends PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	@Converters({UUIDConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
+	@Converters({UUIDConverter.class, ItemStackConverter.class})
 	public static class Product {
 		private UUID uuid;
 		private ShopGroup shopGroup;
