@@ -309,7 +309,7 @@ public class Train {
 	}
 
 	private static void lightSound(Location location, float pitch) {
-		location.getWorld().playSound(location, Sound.BLOCK_NOTE_BLOCK_BELL, 1.5F, pitch);
+		location.getWorld().playSound(location, Sound.BLOCK_NOTE_BLOCK_BELL, .5F, pitch);
 	}
 
 	private static void switchLightsOff() {

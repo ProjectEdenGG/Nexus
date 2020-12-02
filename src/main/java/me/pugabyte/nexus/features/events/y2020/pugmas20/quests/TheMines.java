@@ -289,7 +289,7 @@ public class TheMines implements Listener {
 
 	@EventHandler
 	public void onBurn(FurnaceBurnEvent event) {
-		if (!isAtPugmas(event.getBlock().getLocation(), "cave"))
+		if (!isAtPugmas(event.getBlock().getLocation()))
 			return;
 
 		if (!(event.getBlock().getState() instanceof BlastFurnace))
