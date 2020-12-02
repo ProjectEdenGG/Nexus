@@ -14,6 +14,7 @@ import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -43,11 +44,11 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 		for (ItemStack item : event.getInventory().getContents()) {
 			if (ItemUtils.isNullOrAir(item)) continue;
 			if (!MaterialTag.CONCRETE_POWDERS.isTagged(item.getType())) {
-				event.getPlayer().getInventory().addItem(item);
+				ItemUtils.giveItem((Player) event.getPlayer(), item);
 				continue;
 			}
 			item.setType(Material.valueOf(item.getType().name().replace("_POWDER", "")));
-			event.getPlayer().getInventory().addItem(item);
+			ItemUtils.giveItem((Player) event.getPlayer(), item);
 		}
 	}
 

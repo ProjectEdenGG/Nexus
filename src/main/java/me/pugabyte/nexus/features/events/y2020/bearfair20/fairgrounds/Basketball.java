@@ -102,7 +102,7 @@ public class Basketball implements Listener {
 	}
 
 	private static void removeBasketballEntity(Player player) {
-		Collection<Entity> entities = WGUtils.getEntitiesInRegion(player.getWorld(), gameRg);
+		Collection<Entity> entities = WGUtils.getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
 			if (entity instanceof Item) {
 				Item item = (Item) entity;
@@ -116,7 +116,7 @@ public class Basketball implements Listener {
 	}
 
 	private static boolean regionContainsBasketball(Player player) {
-		Collection<Entity> entities = WGUtils.getEntitiesInRegion(player.getWorld(), gameRg);
+		Collection<Entity> entities = WGUtils.getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
 			if (entity instanceof Item) {
 				Item item = (Item) entity;
@@ -153,7 +153,7 @@ public class Basketball implements Listener {
 	}
 
 	private static Collection<Entity> getRegionEntities() {
-		return WGUtils.getEntitiesInRegion(world, gameRg);
+		return WGUtils.getEntitiesInRegion(gameRg);
 	}
 
 	private static void cleanupBasketballs() {

@@ -20,9 +20,9 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 public class AnimalTeleportPens {
-	String PREFIX = StringUtils.getPrefix("ATP");
-	Player player;
-	WorldGuardUtils WGUtils;
+	private final String PREFIX = StringUtils.getPrefix("ATP");
+	private Player player;
+	private WorldGuardUtils WGUtils;
 
 	public AnimalTeleportPens(Player player) {
 		this.player = player;
@@ -37,7 +37,7 @@ public class AnimalTeleportPens {
 
 	public List<Entity> getEntities() {
 		List<Entity> finalEntities = new ArrayList<>();
-		for (Entity entity : WGUtils.getEntitiesInRegion(player.getWorld(), getRegion(player).getId())) {
+		for (Entity entity : WGUtils.getEntitiesInRegion(getRegion(player).getId())) {
 			if (CitizensAPI.getNPCRegistry().isNPC(entity)) continue;
 			switch (entity.getType()) {
 				case BEE:

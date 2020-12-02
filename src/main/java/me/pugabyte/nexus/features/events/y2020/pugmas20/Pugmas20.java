@@ -203,12 +203,20 @@ public class Pugmas20 implements Listener {
 				&& !isPastPugmas(localDate));
 	}
 
+	public static boolean isInPugmasWorld(Player player) {
+		return isInPugmasWorld(player);
+	}
+
+	public static boolean isInPugmasWorld(Location location) {
+		return location.getWorld().equals(world);
+	}
+
 	public static boolean isAtPugmas(Player player) {
 		return isAtPugmas(player.getLocation());
 	}
 
 	public static boolean isAtPugmas(Location location) {
-		return WGUtils.isInRegion(location, region);
+		return isInPugmasWorld(location) && WGUtils.isInRegion(location, region);
 	}
 
 	public static boolean isAtPugmas(Player player, String name) {
@@ -216,7 +224,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static boolean isAtPugmas(Location location, String name) {
-		return !WGUtils.getRegionsLikeAt(getRegion() + "_" + name + "(_[0-9]+)?", location).isEmpty();
+		return isInPugmasWorld(location) && !WGUtils.getRegionsLikeAt(getRegion() + "_" + name + "(_[0-9]+)?", location).isEmpty();
 	}
 
 	@EventHandler

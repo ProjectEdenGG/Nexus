@@ -45,6 +45,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +128,7 @@ public class TheMines implements Listener {
 		List<MerchantBuilder.TradeBuilder> tradeBuilders = MerchantNPC.THEMINES_SELLCRATE.getTrades(null);
 
 		if (tradeBuilders == null || tradeBuilders.size() == 0) {
-			player.getInventory().addItem(event.getInventory().getContents());
+			ItemUtils.giveItems((Player) event.getPlayer(), Arrays.asList(event.getInventory().getContents()));
 			return;
 		}
 
@@ -185,7 +186,7 @@ public class TheMines implements Listener {
 			}
 
 			if (!foundTrade || leftovers || item.getAmount() > 0)
-				player.getInventory().addItem(item);
+				ItemUtils.giveItem(player, item);
 		}
 
 		EventUserService service = new EventUserService();
@@ -226,7 +227,8 @@ public class TheMines implements Listener {
 			return;
 
 		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
-		player.getInventory().addItem(oreType == OreType.COAL ? oreType.getIngot(RandomUtils.randomElement(1, 1, 2, 2, 2, 3)) : oreType.getOre());
+		ItemStack itemStack = oreType == OreType.COAL ? oreType.getIngot(RandomUtils.randomElement(1, 1, 2, 2, 2, 3)) : oreType.getOre();
+		ItemUtils.giveItem(player, itemStack);
 
 		scheduleRegen(block);
 		block.setType(Material.STONE);
@@ -261,7 +263,7 @@ public class TheMines implements Listener {
 		});
 
 		if (RandomUtils.chanceOf(20))
-			player.getInventory().addItem(flint);
+			ItemUtils.giveItem(event.getPlayer(), flint);
 
 		scheduleRegen(block);
 		block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);

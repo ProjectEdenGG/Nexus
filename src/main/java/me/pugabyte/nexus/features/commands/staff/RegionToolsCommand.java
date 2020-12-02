@@ -9,11 +9,17 @@ import me.pugabyte.nexus.utils.WorldGuardUtils;
 
 @Permission("group.staff")
 public class RegionToolsCommand extends CustomCommand {
-	WorldGuardUtils wgUtils;
+	private final WorldGuardUtils wgUtils;
 
 	public RegionToolsCommand(@NonNull CommandEvent event) {
 		super(event);
 		wgUtils = new WorldGuardUtils(player());
+	}
+
+	@Path("getRegionsAt")
+	void getRegionsAt() {
+		send(PREFIX + "Found regions:");
+		wgUtils.getRegionsAt(player().getLocation()).forEach(region -> send(region.getId()));
 	}
 
 	@Path("getRegionsLikeAt <filter>")

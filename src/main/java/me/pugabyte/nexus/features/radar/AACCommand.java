@@ -10,7 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.entity.Player;
 
-@Fallback("aac")
+@Fallback("aac5")
 @Permission("group.admin")
 public class AACCommand extends CustomCommand {
 
@@ -35,5 +35,10 @@ public class AACCommand extends CustomCommand {
 			Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, StaticChannel.STAFF);
 			Chat.broadcastDiscord("**[Radar]** " + message, StaticChannel.STAFF);
 		}
+	}
+
+	@Path("help")
+	void help() {
+		fallback();
 	}
 }

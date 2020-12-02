@@ -83,8 +83,7 @@ public class Pride20Command extends CustomCommand {
 			error("You have not joined the parade");
 
 		WorldGuardUtils wgUtils = new WorldGuardUtils(Bukkit.getWorld("safepvp"));
-		ProtectedRegion region = wgUtils.getProtectedRegion("pride20_parade");
-		for (Entity entity : wgUtils.getEntitiesInRegion(Bukkit.getWorld("safepvp"), "pride20_parade")) {
+		for (Entity entity : wgUtils.getEntitiesInRegion("pride20_parade")) {
 			if (!entity.hasMetadata("NPC")) continue;
 			if (entity.getName().equalsIgnoreCase(player.getName()))
 				CitizensAPI.getNPCRegistry().getNPC(entity).destroy();

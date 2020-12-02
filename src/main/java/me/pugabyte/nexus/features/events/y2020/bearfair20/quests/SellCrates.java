@@ -106,7 +106,7 @@ public class SellCrates implements Listener {
 
 		// Give items back if no trades found
 		if (tradeBuilders == null || tradeBuilders.size() == 0) {
-			event.getPlayer().getInventory().addItem(event.getInventory().getContents());
+			ItemUtils.giveItems((Player) event.getPlayer(), Arrays.asList(event.getInventory().getContents()));
 			return;
 		}
 
@@ -152,13 +152,12 @@ public class SellCrates implements Listener {
 			// If trade was not found for itemstack, give item back
 			// If there were leftovers, give the edited item back
 			if (!foundTrade || leftovers)
-				event.getPlayer().getInventory().addItem(item);
+				ItemUtils.giveItem((Player) event.getPlayer(), item);
 		}
 
 		if (profit.size() == 0) return;
 
-		for (ItemStack itemStack : profit) {
-			event.getPlayer().getInventory().addItem(itemStack);
-		}
+		for (ItemStack itemStack : profit)
+			ItemUtils.giveItem((Player) event.getPlayer(), itemStack);
 	}
 }

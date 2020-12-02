@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,10 +93,12 @@ public class WorldGuardUtils {
 	}
 
 	public Set<ProtectedRegion> getRegionsAt(Location location) {
+		if (!isSameWorld(location)) return new HashSet<>();
 		return manager.getApplicableRegions(toBlockVector3(location)).getRegions();
 	}
 
 	public Set<String> getRegionNamesAt(Location location) {
+		if (!isSameWorld(location)) return new HashSet<>();
 		return manager.getApplicableRegions(toBlockVector3(location)).getRegions().stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
 	}
 
@@ -104,11 +107,11 @@ public class WorldGuardUtils {
 	}
 
 	public boolean isInRegion(Location location, String region) {
-		return location.getWorld().equals(world) && getRegionNamesAt(location).contains(region);
+		return isSameWorld(location) && getRegionNamesAt(location).contains(region);
 	}
 
 	public boolean isInRegion(Location location, ProtectedRegion region) {
-		return location.getWorld().equals(world) && region.contains(toBlockVector3(location));
+		return isSameWorld(location) && region.contains(toBlockVector3(location));
 	}
 
 	public Collection<Player> getPlayersInRegion(String region) {
@@ -119,7 +122,7 @@ public class WorldGuardUtils {
 		return Bukkit.getOnlinePlayers().stream().filter(player -> isInRegion(player.getLocation(), region) && !CitizensUtils.isNPC(player)).collect(Collectors.toList());
 	}
 
-	public Collection<Entity> getEntitiesInRegion(org.bukkit.World world, String region) {
+	public Collection<Entity> getEntitiesInRegion(String region) {
 		if (world != null)
 			return world.getEntities().stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
 		return null;
@@ -131,7 +134,12 @@ public class WorldGuardUtils {
 	}
 
 	public Set<ProtectedRegion> getRegionsLikeAt(String name, Location location) {
+		if (!isSameWorld(location)) return new HashSet<>();
 		return getRegionsAt(location).stream().filter(region -> region.getId().matches(name.toLowerCase())).collect(Collectors.toSet());
+	}
+
+	public boolean isSameWorld(Location location) {
+		return location.getWorld().equals(world);
 	}
 
 	public ProtectedRegion getRegionLike(String name) {
