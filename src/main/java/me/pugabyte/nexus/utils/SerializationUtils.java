@@ -1,18 +1,19 @@
 package me.pugabyte.nexus.utils;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,27 +60,38 @@ public class SerializationUtils {
 
 	public static class JSON {
 
-		/** ITEM STACK */
-
-		public static String serializeItemStack(ItemStack item) {
+		public static String toString(Map<String, Object> map) {
 			Gson gson = new Gson();
-			Map<String, Object> serialized = item.serialize();
+			return gson.toJson(gson.toJsonTree(map, Map.class));
+		}
 
-			serialized.computeIfPresent("meta", ($, itemMeta) -> serializeItemMeta(((ItemMeta) itemMeta).serialize()));
+		public static Map<String, Object> fromString(String value) {
+			return new Gson().fromJson(value, Map.class);
+		}
+
+		/** Bukkit ConfigurationSerializable */
+
+		public static Map<String, Object> serialize(ConfigurationSerializable value) {
+			Map<String, Object> serialized = serializeRecursive(value.serialize());
+			serialized.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias(value.getClass()));
+			return serialized;
+		}
+
+		public static Map<String, Object> serializeItemStack(ItemStack item) {
+			Map<String, Object> serialized = serializeRecursive(item.serialize());
 			serialized.computeIfAbsent("amount", $ -> item.getAmount());
-			serialized.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ItemStack.class.getName());
-
-			return gson.toJson(gson.toJsonTree(serialized));
+			return serialized;
 		}
 
 		public static ItemStack deserializeItemStack(String value) {
-			return deserializeItemStack(new Gson().fromJson(value, Map.class));
+			return deserializeItemStack(fromString(value));
 		}
 
 		public static ItemStack deserializeItemStack(Map<String, Object> value) {
 			value.computeIfPresent("meta", ($, meta) -> {
-				fixMetaClasses((Map<String, Object>) meta);
-				return deserializeItemMeta((Map<String, Object>) meta);
+				Map<String, Object> metaMap = meta instanceof String ? fromString((String) meta) : (Map<String, Object>) meta;
+				fixMetaClasses(metaMap);
+				return deserializeRecursive(metaMap);
 			});
 
 			ItemStack deserialize = ItemStack.deserialize(value);
@@ -88,30 +100,60 @@ public class SerializationUtils {
 			return deserialize;
 		}
 
-		/** ITEM META */
-
-		public static String serializeItemMeta(ItemMeta itemMeta) {
-			Gson gson = new Gson();
-			Map<String, Object> serialized = serializeItemMeta(itemMeta.serialize());
-			return gson.toJson(gson.toJsonTree(serialized));
+		public static Map<String, Object> serializeRecursive(Map<String, Object> serialized) {
+			Map<String, Object> fixed = new HashMap<>(serialized);
+			serialized.forEach((key, value) -> fixed.put(key, serializeRecursive(value)));
+			return fixed;
 		}
 
-		public static Map<String, Object> serializeItemMeta(Map<String, Object> serialized) {
-			serialized = new HashMap<>(serialized);
-			serialized.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, "ItemMeta");
-			return serialized;
+		private static Object serializeRecursive(Object value) {
+			if (value == null)
+				return null;
+
+			if (value instanceof ConfigurationSerializable)
+				return serialize((ConfigurationSerializable) value);
+
+			if (Collection.class.isAssignableFrom(value.getClass()))
+				if (((Collection<?>) value).iterator().hasNext())
+					return ImmutableList.copyOf(new ArrayList<Object>() {{
+						for (Object object : ((Collection<?>) value))
+							add(serializeRecursive(object));
+					}});
+
+			if (Map.class.isAssignableFrom(value.getClass()))
+				return serializeRecursive((Map<String, Object>) value);
+
+			return value;
 		}
 
-		public static ItemMeta deserializeItemMeta(String value) {
-			return deserializeItemMeta(new Gson().fromJson(value, Map.class));
-		}
+		private static Object deserializeRecursive(Map<String, Object> meta) {
+			Map<String, Object> fixed = new HashMap<>(meta);
+			meta.forEach(((key, value) -> {
+				if (Collection.class.isAssignableFrom(value.getClass())) {
+					fixed.put(key, new ArrayList<Object>() {{
+						for (Object next : (Collection<?>) value) {
+							if (next == null || !Map.class.isAssignableFrom(next.getClass())) {
+								add(next);
+								continue;
+							}
 
-		public static ItemMeta deserializeItemMeta(Map<String, Object> meta) {
-			return (ItemMeta) ConfigurationSerialization.deserializeObject(meta);
+							add(deserializeRecursive((Map<String, Object>) next));
+						}
+					}});
+				}
+
+				if (Map.class.isAssignableFrom(value.getClass()))
+					fixed.put(key, deserializeRecursive((Map<String, Object>) value));
+			}));
+
+			if (fixed.containsKey("=="))
+				return ConfigurationSerialization.deserializeObject(fixed);
+
+			return fixed;
 		}
 
 		// MongoDB deserializes some properties as the wrong class, do conversion
-		public static void fixMetaClasses(Map<String, Object> deserialized) {
+		private static void fixMetaClasses(Map<String, Object> deserialized) {
 			Arrays.asList("power", "repair-cost", "Damage", "map-id").forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) -> {
 						if (metaValue instanceof Number)
@@ -119,21 +161,22 @@ public class SerializationUtils {
 						return metaValue;
 					}));
 
-			deserialized.computeIfPresent("enchants", ($, metaValue) -> new HashMap<String, Integer>() {{
-				((Map<String, Number>) metaValue).forEach(((id, level) -> put(id, level.intValue())));
-			}});
-
-			deserialized.computeIfPresent("display-map-color", ($, metaValue) -> {
-				Map<String, Object> map = (Map<String, Object>) metaValue;
-				// Why are they negative? who knows...
-				int r = Math.abs(((Number) map.getOrDefault("red", map.getOrDefault("r", 0))).intValue());
-				int g = Math.abs(((Number) map.getOrDefault("green", map.getOrDefault("g", 0))).intValue());
-				int b = Math.abs(((Number) map.getOrDefault("blue", map.getOrDefault("b", 0))).intValue());
-				return Color.fromBGR(r, g, b);
-			});
+			Arrays.asList("enchants", "display-map-color").forEach(key ->
+					deserialized.computeIfPresent(key, ($, metaValue) ->
+							toIntMap((Map<String, Object>) metaValue)));
 		}
 
-		/** LOCATION */
+		private static Map<String, Object> toIntMap(Map<String, Object> map) {
+			return new HashMap<String, Object>() {{
+				map.forEach((key, value) -> {
+					put(key, value);
+					if (value instanceof Number)
+						put(key, ((Number) value).intValue());
+				});
+			}};
+		}
+
+		/** Location */
 
 		@NotNull
 		public static String serializeLocation(Location location) {

@@ -15,7 +15,6 @@ import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemMetaConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -42,7 +41,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity("pugmas20_user")
-@Converters({UUIDConverter.class, ItemStackConverter.class, ItemMetaConverter.class})
+@Converters({UUIDConverter.class, ItemStackConverter.class})
 public class Pugmas20User extends PlayerOwnedObject {
 	@Id
 	@NonNull
