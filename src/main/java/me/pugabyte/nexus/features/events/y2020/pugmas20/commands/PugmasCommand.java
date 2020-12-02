@@ -162,7 +162,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 					json.next("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
 				} else if (stage == QuestStage.NOT_STARTED || stage == QuestStage.INELIGIBLE) {
 					json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &7- " + instructions));
-				} else  {
+				} else {
 					json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- ");
 					if (instructions == null)
 						json.next("&c???").hover(camelCase(stage));
@@ -216,21 +216,21 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		List<TradeBuilder> trades = MerchantNPC.THEMINES_SELLCRATE.getTrades(user);
 
 		for (OreType oreType : OreType.values()) {
-			int ingotsLeft = getIngotsLeft(trades, oreType);
+			int ingotsLeft = getIngotsLeft(user, trades, oreType);
 			if (ingotsLeft > 0)
 				tradesLeft.add("&e" + ingotsLeft + " &f" + camelCase(oreType));
 		}
 		return tradesLeft;
 	}
 
-	private int getIngotsLeft(List<TradeBuilder> trades, OreType oreType) {
+	private int getIngotsLeft(Pugmas20User user, List<TradeBuilder> trades, OreType oreType) {
 		Optional<Integer> amount = trades.stream()
 				.map(tradeBuilder -> tradeBuilder.getIngredients().iterator().next())
 				.filter(ingredient -> ingredient.getType() == oreType.getIngot().getType())
 				.map(ItemStack::getAmount)
 				.findFirst();
 
-		int tokensLeft = Math.abs(Pugmas20.checkDailyTokens(player(), "themines_" + oreType.name(), 0));
+		int tokensLeft = Math.abs(Pugmas20.checkDailyTokens(user.getOfflinePlayer(), "themines_" + oreType.name(), 0));
 		int perToken = amount.orElse(0);
 
 		return tokensLeft * perToken;

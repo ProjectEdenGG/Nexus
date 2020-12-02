@@ -363,7 +363,7 @@ public class Train {
 	}
 
 	private static void playTrainSound(Location location, Collection<Player> players) {
-		float volume = 1.5F;
+		float volume = .1F;
 		float pitch = 0.1F;
 		players.forEach(player -> player.playSound(location, Sound.ENTITY_MINECART_INSIDE, SoundCategory.AMBIENT, volume, pitch));
 	}

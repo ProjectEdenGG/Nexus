@@ -55,7 +55,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 			} else {
 				// Advent Days
 				int dayIndex = (index.get() - 7);
-				String name = "Day: " + dayIndex;
+				String name = "&6Day: " + dayIndex;
 
 				adventChest = AdventChests.getAdventChest(dayIndex);
 
@@ -63,7 +63,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 				if (adventChest != null)
 					districtName = adventChest.getDistrict().getName();
 
-				String district = "District: " + districtName;
+				String district = "&7District: &e" + districtName;
 
 				located = user.getLocatedDays().contains(dayIndex);
 
@@ -81,7 +81,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 						else if (dayIndex < day)
 							missed(contents, slotPos, adventChest, name, located);
 						else
-							locked(contents, slotPos, adventChest, name, located);
+							locked(contents, slotPos, adventChest, name, district, located);
 					}
 				}
 			}
@@ -106,9 +106,9 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 			contents.set(slotPos, ClickableItem.empty(toFind.clone().name(name).lore("&aFind me!", district).build()));
 	}
 
-	private void locked(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
+	private void locked(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, String district, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked")).build(),
+			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked", district)).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked").build()));
