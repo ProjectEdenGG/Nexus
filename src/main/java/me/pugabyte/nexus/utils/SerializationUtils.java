@@ -100,10 +100,10 @@ public class SerializationUtils {
 			return deserialize;
 		}
 
-		private static Map<String, Object> serializeRecursive(Map<String, Object> serialized) {
-			return new HashMap<String, Object>(serialized) {{
-				serialized.forEach((key, value) -> put(key, serializeRecursive(value)));
-			}};
+		public static Map<String, Object> serializeRecursive(Map<String, Object> serialized) {
+			Map<String, Object> fixed = new HashMap<>(serialized);
+			serialized.forEach((key, value) -> fixed.put(key, serializeRecursive(value)));
+			return fixed;
 		}
 
 		private static Object serializeRecursive(Object value) {
