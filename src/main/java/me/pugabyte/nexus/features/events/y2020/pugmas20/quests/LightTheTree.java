@@ -39,6 +39,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -320,7 +321,7 @@ public class LightTheTree implements Listener {
 		Pugmas20Service service = new Pugmas20Service();
 		Pugmas20User user = service.get(player);
 
-		if (user.getLightTreeStage() != QuestStage.STEP_THREE)
+		if (Arrays.asList(QuestStage.NOT_STARTED, QuestStage.STARTED, QuestStage.STEP_ONE, QuestStage.STEP_TWO).contains(user.getLightTreeStage()))
 			return;
 
 		if (!Quests.hasRoomFor(player, TheMines.getMinersPickaxe(), TheMines.getMinersSieve())) {

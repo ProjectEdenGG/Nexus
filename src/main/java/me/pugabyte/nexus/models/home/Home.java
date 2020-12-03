@@ -12,6 +12,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConve
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -46,7 +47,7 @@ public class Home extends PlayerOwnedObject {
 		this.uuid = uuid;
 		this.name = name;
 		this.location = location;
-		this.locked = getOwner().isAutoLock();
+		this.locked = getOwner().isAutoLock() || new Nerd(getOfflinePlayer()).getRank().isStaff();
 		this.item = item;
 
 		validateName(name);

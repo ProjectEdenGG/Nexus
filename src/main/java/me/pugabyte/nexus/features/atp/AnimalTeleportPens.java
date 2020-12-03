@@ -30,9 +30,7 @@ public class AnimalTeleportPens {
 	}
 
 	public boolean multiplePlayers() {
-		int size = WGUtils.getPlayersInRegion(getRegion(player).getId()).size();
-		if (size > 1) return true;
-		return false;
+		return WGUtils.getPlayersInRegion(getRegion(player).getId()).size() > 1;
 	}
 
 	public List<Entity> getEntities() {
@@ -134,7 +132,7 @@ public class AnimalTeleportPens {
 
 		ConfirmationMenu.builder()
 				.title(colorize("&3Teleport &e" + entities.size() + " &3entities for &e$" + price + "&3?"))
-				.onConfirm((e2) -> Tasks.wait(4, () -> teleportAll(entities, toLoc, price)))
+				.onConfirm(e -> Tasks.wait(4, () -> teleportAll(entities, toLoc, price)))
 				.open(player);
 	}
 

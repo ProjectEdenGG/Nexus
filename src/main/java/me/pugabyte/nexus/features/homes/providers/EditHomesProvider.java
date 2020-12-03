@@ -10,6 +10,7 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.trust.providers.TrustProvider;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -64,16 +65,21 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	public void format_AutoLock(InventoryContents contents) {
 		ItemBuilder item = new ItemBuilder(Material.REDSTONE);
 
-		if (homeOwner.isAutoLock())
-			item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked").glow();
-		else
-			item.name("&eAuto Lock &f| &cOFF").lore("&fAny new homes you set will be unlocked");
+		if (new Nerd(homeOwner.getOfflinePlayer()).getRank().isStaff()) {
+			item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked||&f||&cRequired for staff members").glow();
+			contents.set(0, 3, ClickableItem.empty(item.build()));
+		} else {
+			if (homeOwner.isAutoLock())
+				item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked").glow();
+			else
+				item.name("&eAuto Lock &f| &cOFF").lore("&fAny new homes you set will be unlocked");
 
-		contents.set(0, 3, ClickableItem.from(item.build(), e -> {
-			homeOwner.setAutoLock(!homeOwner.isAutoLock());
-			service.save(homeOwner);
-			refresh();
-		}));
+			contents.set(0, 3, ClickableItem.from(item.build(), e -> {
+				homeOwner.setAutoLock(!homeOwner.isAutoLock());
+				service.save(homeOwner);
+				refresh();
+			}));
+		}
 	}
 
 	public void format_LockAndUnlockAll(InventoryContents contents) {
