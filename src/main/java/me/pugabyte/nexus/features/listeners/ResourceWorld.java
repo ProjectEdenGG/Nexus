@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public class ResourceWorld implements Listener {
@@ -209,8 +210,6 @@ public class ResourceWorld implements Listener {
 	private static final int radius = 7500;
 
 	public static void reset(boolean test) {
-		test = true;
-
 		NPC filid = CitizensAPI.getNPCRegistry().getById(filidId);
 		filid.despawn();
 
@@ -224,14 +223,17 @@ public class ResourceWorld implements Listener {
 			File newFolder = Paths.get(root + "old_ " + worldName).toFile();
 
 			World world = Bukkit.getWorld(worldName);
-			if (world == null)
+			if (world == null) {
 				Nexus.severe("World " + finalWorldName + " not loaded");
+				return;
+			}
 
 			try {
 				Nexus.getMultiverseCore().getMVWorldManager().unloadWorld(worldName);
 			} catch (Exception ex) {
 				Nexus.severe("Error unloading world " + worldName);
 				ex.printStackTrace();
+				return;
 			}
 
 			boolean renameSuccess = worldFolder.renameTo(newFolder);
@@ -241,8 +243,10 @@ public class ResourceWorld implements Listener {
 			}
 
 			boolean deleteSuccess = Paths.get(newFolder.getAbsolutePath() + "/uid.dat").toFile().delete();
-			if (!deleteSuccess)
+			if (!deleteSuccess) {
 				Nexus.severe("Could not delete " + finalWorldName + " uid.dat file");
+				return;
+			}
 
 			HomesFeature.deleteFromWorld(worldName, null);
 
@@ -254,9 +258,9 @@ public class ResourceWorld implements Listener {
 				env = Environment.THE_END;
 			else
 				// TODO List of approved seeds
-				seed = null;
+				seed = "778704597681231";
 
-			Nexus.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.NORMAL, true, null);
+			Nexus.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.AMPLIFIED, true, null);
 		}
 
 		String worldName = (test ? "test_" : "") + "resource";
@@ -271,9 +275,9 @@ public class ResourceWorld implements Listener {
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
 		filid.spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
 
-		PlayerUtils.runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
-		PlayerUtils.runCommandAsConsole("bluemap purge " + worldName);
-		PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle");
+		runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
+		runCommandAsConsole("bluemap purge " + worldName);
+		runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle");
 	}
 
 }

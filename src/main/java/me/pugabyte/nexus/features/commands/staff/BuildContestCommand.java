@@ -100,7 +100,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	@Path("set <id>")
 	@Permission("group.admin")
 	void set(int newId) {
-		if (newId <= id)
+		if (newId < id)
 			error("The id must be " + id + " or higher.");
 		bcInfo.put("id", newId);
 		info.setJson(bcInfo);

@@ -6,6 +6,8 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
+import me.pugabyte.nexus.features.listeners.ResourceWorld;
+import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
@@ -165,6 +167,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Arenas: " + ArenaManager.getAll().size());
 		send("Mechanics: " + MechanicType.values().length);
 		send("Recipes: " + CustomRecipes.getRecipes().size());
+	}
+
+	@Path("resourceWorld reset <test>")
+	void resourceWorldReset(boolean test) {
+		ConfirmationMenu.builder()
+				.onConfirm(e -> ResourceWorld.reset(test))
+				.open(player());
 	}
 
 	@Path("listTest <player...>")
