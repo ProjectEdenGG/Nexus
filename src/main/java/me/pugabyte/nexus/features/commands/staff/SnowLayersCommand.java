@@ -64,7 +64,7 @@ public class SnowLayersCommand extends CustomCommand {
 	}
 
 	@Path("set <layers>")
-	void layers(int layers) {
+	void layers(@Arg(min = 0, max = 8) int layers) {
 		Block block = player().getLocation().getBlock();
 		block.setType(Material.SNOW, false);
 		Snow snow = (Snow) block.getBlockData();

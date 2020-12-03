@@ -34,6 +34,7 @@ public class Back extends PlayerOwnedObject {
 	private List<Location> locations = new ArrayList<>();
 
 	public void add(Location from) {
+		locations.removeIf(location -> location.getWorld() == null || !location.isWorldLoaded());
 		locations.add(0, from);
 	}
 
