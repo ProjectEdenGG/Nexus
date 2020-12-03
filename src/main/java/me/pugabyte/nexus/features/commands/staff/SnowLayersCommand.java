@@ -14,7 +14,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Snowable;
 import org.bukkit.block.data.type.Snow;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Permission("group.staff")
@@ -26,41 +25,75 @@ public class SnowLayersCommand extends CustomCommand {
 
 	@Path("overlay <radius> <topBlockOnly> <materials>")
 	void overlay(int radius, boolean topBlockOnly, @Arg(type = Material.class) List<Material> materials) {
-		BlockUtils.getBlocksInRadius(player().getLocation(), radius).forEach(block -> {
+		int placed = 0;
+		main:
+		for (Block block : BlockUtils.getBlocksInRadius(player().getLocation(), radius)) {
+
 			if (!materials.contains(block.getType()))
-				return;
+				continue;
 
 			if (topBlockOnly) {
 				Location up = block.getLocation();
 				for (int y = block.getY() + 1; y < 256; y++) {
 					up.setY(y);
 					if (up.getBlock().getType() != Material.AIR)
-						return;
+						continue main;
 				}
 			}
 
 			block.getRelative(BlockFace.UP).setType(Material.SNOW);
-		});
+			++placed;
+		}
+
+		send(PREFIX + "Placed " + placed + " snow");
 	}
 
 	@Path("fixGrass [radius]")
 	void fixGrass(@Arg("10") int radius) {
+		int fixedDirt = 0, fixedGrass = 0;
 		for (Block block : BlockUtils.getBlocksInRadius(player().getLocation(), radius)) {
-			if (!Arrays.asList(Material.GRASS_BLOCK, Material.DIRT).contains(block.getType()))
+			boolean grass = block.getType() == Material.GRASS_BLOCK;
+			boolean dirt = block.getType() == Material.DIRT;
+			if (!(dirt || grass))
 				continue;
 
-			Material above = block.getRelative(BlockFace.UP).getType();
-			boolean snowy = above == Material.SNOW;
+			boolean snowy = block.getRelative(BlockFace.UP).getType() == Material.SNOW;
 
-			if (snowy)
+			if (!snowy)
+				continue;
+
+			if (dirt) {
 				block.setType(Material.GRASS_BLOCK);
-			else if (block.getType() != Material.GRASS_BLOCK)
+				++fixedDirt;
+			}
+
+			Snowable snowable = (Snowable) block.getBlockData();
+			if (!snowable.isSnowy()) {
+				snowable.setSnowy(snowy);
+				block.setBlockData(snowable);
+				if (grass)
+					++fixedGrass;
+			}
+		}
+
+		send(PREFIX + "Fixed " + fixedDirt + " dirt and " + fixedGrass + " grass");
+	}
+
+	@Path("fixOverlay [radius]")
+	void fixOverlay(@Arg("10") int radius) {
+		int fixed = 0;
+		for (Block block : BlockUtils.getBlocksInRadius(player().getLocation(), radius)) {
+			if (block.getType() != Material.SNOW)
 				continue;
 
-			Snowable grass = (Snowable) block.getBlockData();
-			grass.setSnowy(snowy);
-			block.setBlockData(grass);
+			Block relative = block.getRelative(BlockFace.UP);
+			if (relative.getType() == Material.SNOW) {
+				relative.setType(Material.AIR);
+				++fixed;
+			}
 		}
+
+		send(PREFIX + "Fixed " + fixed + " blocks");
 	}
 
 	@Path("set <layers>")
