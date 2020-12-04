@@ -105,7 +105,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 						sendInventoryRestoreSuccessMessage(owner, "ender chest");
 						break;
 					case "exp":
-						owner.setTotalExperience((int) (owner.getTotalExperience() + getExp(gamemode)));
+						owner.setLevel(getExp(gamemode));
 						sendExperienceRestoreSuccessMessage(owner);
 						break;
 					default:
@@ -179,8 +179,8 @@ public class RestoreInventoryCommand extends CustomCommand {
 		return Sharables.OFF_HAND.getSerializer().deserialize(gamemode.get("offHandItem"));
 	}
 
-	private double getExp(ConfigurationSection gamemode) {
-		return Double.parseDouble(gamemode.getConfigurationSection("stats").getString("txp"));
+	private int getExp(ConfigurationSection gamemode) {
+		return Integer.parseInt(gamemode.getConfigurationSection("stats").getString("el"));
 	}
 
 	private Map<String, Object> convertSection(ConfigurationSection section) {

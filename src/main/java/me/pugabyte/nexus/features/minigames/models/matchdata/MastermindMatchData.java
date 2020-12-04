@@ -98,10 +98,17 @@ public class MastermindMatchData extends MatchData {
 
 	public void createAnswer() {
 		answer.clear();
+
+		int tryRepeat = 0;
 		while (answer.size() < answerLength) {
 			Material material = RandomUtils.randomElement(getMaterials());
 			if (!repeats && answer.contains(material))
 				continue;
+
+			if (repeats && !answer.contains(material))
+				if (++tryRepeat <= 4)
+					continue;
+
 			answer.add(material);
 		}
 	}
