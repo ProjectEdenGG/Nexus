@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features;
 
+import com.sk89q.worldedit.regions.Region;
 import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
@@ -251,6 +252,25 @@ public class NexusCommand extends CustomCommand implements Listener {
 					player().setExp(exp);
 				})
 				.start();
+	}
+
+	@Path("breakNaturally")
+	void breakNaturally() {
+		ConfirmationMenu.builder()
+				.onConfirm(e -> {
+					WorldEditUtils worldEditUtils = new WorldEditUtils(player());
+					Region selection = worldEditUtils.getPlayerSelection(player());
+					if (selection.getArea() > 50000)
+						error("Max selection size is 50000");
+
+					for (Block block : worldEditUtils.getBlocks(selection)) {
+						if (block.getType() == Material.AIR)
+							continue;
+
+						block.breakNaturally();
+					}
+				})
+				.open(player());
 	}
 
 	public void shutdownBossBars() {

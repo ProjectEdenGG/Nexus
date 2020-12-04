@@ -249,10 +249,12 @@ public class Pugmas20 implements Listener {
 		}
 
 		if (isAtPugmas(event.getTo()) && !isAtPugmas(event.getFrom())) {
-			Tasks.wait(1, () -> {
-				Pugmas20User user = service.get(event.getPlayer());
-				user.applyInventory();
-				service.save(user);
+			Tasks.wait(Time.SECOND, () -> {
+				if (isAtPugmas(event.getPlayer())) {
+					Pugmas20User user = service.get(event.getPlayer());
+					user.applyInventory();
+					service.save(user);
+				}
 			});
 		}
 	}
