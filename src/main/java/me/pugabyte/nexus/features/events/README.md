@@ -8,7 +8,7 @@
     - Cave with player ridable minecart track from coal mine to factory
   - Conveyor Belts -- Armorstands
 
-  - Event portal in spawn
-    - In mine corner hole?
-      - Fall through to event lobby
-      - Launch pad to get back
+- Event portal in spawn
+  - In mine corner hole?
+    - Fall through to event lobby
+    - Launch pad to get back
