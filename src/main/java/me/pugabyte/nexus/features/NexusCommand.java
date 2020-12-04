@@ -510,6 +510,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("motd reset")
 	void motdReset() {
 		motd = null;
+
 		send(PREFIX + "Motd Reset");
 	}
 
