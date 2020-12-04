@@ -274,12 +274,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 				.at(player().getLocation().add(-10, 0, 0))
 				.buildEntities();
 
-		Tasks.Countdown.builder()
-				.duration(Time.SECOND.x(seconds))
-				.onTick(i -> fallingBlocks.forEach(fallingBlock -> fallingBlock.setVelocity(new Vector(velocity, 0, 0))))
-				.start();
+		Tasks.wait(Time.SECOND.x(5), () -> {
+			Tasks.Countdown.builder()
+					.duration(Time.SECOND.x(seconds))
+					.onTick(i -> fallingBlocks.forEach(fallingBlock -> fallingBlock.setVelocity(new Vector(velocity, 0, 0))))
+					.start();
 
-		Tasks.wait(Time.SECOND.x(seconds), () -> fallingBlocks.forEach(Entity::remove));
+			Tasks.wait(Time.SECOND.x(seconds), () -> fallingBlocks.forEach(Entity::remove));
+		});
 	}
 
 	public void shutdownBossBars() {
@@ -499,9 +501,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	private static String motd = null;
 
-	@Path("motd <text>")
+	@Path("motd <text...>")
 	void motd(String text) {
-		motd = text;
+		motd = colorize(text.replace("\\n", System.lineSeparator()));
 		send(PREFIX + "Motd updated");
 	}
 
