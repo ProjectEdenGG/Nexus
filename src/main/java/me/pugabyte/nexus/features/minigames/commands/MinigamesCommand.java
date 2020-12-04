@@ -16,6 +16,7 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -231,19 +232,18 @@ public class MinigamesCommand extends CustomCommand {
 		send(PREFIX + "Reload time took " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
+	@Async
 	@Path("(save|write) [arena]")
 	@Permission("manage")
 	void save(Arena arena) {
-		Tasks.async(() -> {
-			long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 
-			if (arena == null)
-				ArenaManager.write();
-			else
-				ArenaManager.write(arena);
+		if (arena == null)
+			ArenaManager.write();
+		else
+			ArenaManager.write(arena);
 
-			send(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
-		});
+		send(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
 	@Path("autoreset [boolean]")

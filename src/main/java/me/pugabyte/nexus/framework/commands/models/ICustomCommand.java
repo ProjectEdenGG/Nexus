@@ -3,10 +3,12 @@ package me.pugabyte.nexus.framework.commands.models;
 import com.google.common.base.Strings;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
@@ -121,7 +123,7 @@ public abstract class ICustomCommand {
 	}
 
 	protected void invoke(Method method, CommandEvent event) {
-		Runnable run = () -> {
+		Runnable function = () -> {
 			try {
 				Object[] objects = getMethodParameters(method, event, true);
 				method.setAccessible(true);
@@ -131,10 +133,23 @@ public abstract class ICustomCommand {
 			}
 		};
 
-		if (method.getAnnotation(Async.class) != null)
-			Tasks.async(run);
-		else
+		Runnable run = () -> {
+			if (method.getAnnotation(Async.class) != null)
+				Tasks.async(function);
+			else
+				function.run();
+		};
+
+		Confirm confirm = method.getAnnotation(Confirm.class);
+		if (confirm != null) {
+			ConfirmationMenu.builder()
+					.onConfirm(e -> run.run())
+					.title(confirm.title())
+					.open(event.getPlayer());
+		} else {
 			run.run();
+		}
+
 	}
 
 	Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {

@@ -14,6 +14,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.warps.commands._WarpCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -366,15 +368,13 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		Interactables.strengthTest();
 	}
 
+	@Async
+	@Confirm
 	@Path("clearData [player]")
 	@Permission("group.admin")
 	void clearData(@Arg("self") Player player) {
-		MenuUtils.ConfirmationMenu.builder()
-				.onConfirm(e -> Tasks.async(() -> {
-					BearFairUser user = service.get(player);
-					service.delete(user);
-				}))
-				.open(player());
+		BearFairUser user = service.get(player);
+		service.delete(user);
 	}
 
 	// Command Blocks

@@ -8,7 +8,6 @@ import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.listeners.ResourceWorld;
-import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
@@ -17,6 +16,7 @@ import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
@@ -49,6 +49,7 @@ import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
@@ -170,11 +171,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Recipes: " + CustomRecipes.getRecipes().size());
 	}
 
+	@Confirm
 	@Path("resourceWorld reset <test>")
 	void resourceWorldReset(boolean test) {
-		ConfirmationMenu.builder()
-				.onConfirm(e -> ResourceWorld.reset(test))
-				.open(player());
+		ResourceWorld.reset(test);
 	}
 
 	@Path("listTest <player...>")
@@ -238,39 +238,30 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send(player.getName());
 	}
 
-	@Description("Generate an sample exp bar cooldown")
-	@Path("expCooldown <cooldown>")
-	void expCooldown(@Arg("20") int cooldown) {
-		final int level = player().getLevel();
-		final float exp = player().getExp();
-		Tasks.Countdown.builder()
-				.duration(cooldown)
-				.onStart(() -> player().setLevel(0))
-				.onTick(ticks -> player().setExp((float) ticks / cooldown))
-				.onComplete(() -> {
-					player().setLevel(level);
-					player().setExp(exp);
-				})
+	@Description("Generate an sample exp bar countdown")
+	@Path("expBarCountdown <duration>")
+	void expBarCountdown(@Arg("20") int duration) {
+		ExpBarCountdown.builder()
+				.duration(duration)
+				.player(player())
+				.restoreExp(true)
 				.start();
 	}
 
+	@Confirm
 	@Path("breakNaturally")
 	void breakNaturally() {
-		ConfirmationMenu.builder()
-				.onConfirm(e -> {
-					WorldEditUtils worldEditUtils = new WorldEditUtils(player());
-					Region selection = worldEditUtils.getPlayerSelection(player());
-					if (selection.getArea() > 50000)
-						error("Max selection size is 50000");
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
+		Region selection = worldEditUtils.getPlayerSelection(player());
+		if (selection.getArea() > 50000)
+			error("Max selection size is 50000");
 
-					for (Block block : worldEditUtils.getBlocks(selection)) {
-						if (block.getType() == Material.AIR)
-							continue;
+		for (Block block : worldEditUtils.getBlocks(selection)) {
+			if (block.getType() == Material.AIR)
+				continue;
 
-						block.breakNaturally();
-					}
-				})
-				.open(player());
+			block.breakNaturally();
+		}
 	}
 
 	public void shutdownBossBars() {

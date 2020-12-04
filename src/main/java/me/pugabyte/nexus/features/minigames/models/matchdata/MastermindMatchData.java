@@ -93,7 +93,7 @@ public class MastermindMatchData extends MatchData {
 		arena.regenerate();
 		minigamer.setScore(0);
 		giveLoadout(minigamer);
-		resetResultsSign(match);
+		resetResultsSign();
 	}
 
 	public void createAnswer() {
@@ -255,7 +255,7 @@ public class MastermindMatchData extends MatchData {
 		throw new MinigameException("Could not determine the direction of the wall");
 	}
 
-	public void resetResultsSign(Match match) {
+	public void resetResultsSign() {
 		Region resultsSignRegion = arena.getRegion("results_sign");
 		Block resultsSignBlock = WEUtils.toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
 		if (!(MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign))
