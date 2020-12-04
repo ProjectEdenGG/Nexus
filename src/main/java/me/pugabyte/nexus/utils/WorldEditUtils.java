@@ -461,6 +461,9 @@ public class WorldEditUtils {
 		}
 
 		public List<FallingBlock> buildEntities() {
+			if (blockDataMap.isEmpty())
+				findBlocks();
+
 			return new ArrayList<FallingBlock>() {{
 				blockDataMap.forEach((location, blockData) -> add(spawnFallingBlock(location, blockData)));
 			}};
