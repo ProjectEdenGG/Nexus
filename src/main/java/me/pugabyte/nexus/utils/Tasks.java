@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.inventivetalent.glow.GlowAPI;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class Tasks {
@@ -171,6 +172,42 @@ public class Tasks {
 			Tasks.wait(duration, () -> GlowAPI.setGlowing(entity, false, viewers));
 			if (onComplete != null)
 				Tasks.wait(duration + 1, onComplete);
+		}
+
+	}
+
+	public static class ExpBarCountdown {
+		private final AtomicReference<Countdown> countdown = new AtomicReference<>();
+
+		public int getTaskId() {
+			return countdown.get().getTaskId();
+		}
+
+		@Builder(buildMethodName = "start")
+		public ExpBarCountdown(Player player, int duration, boolean restoreExp) {
+			final int level = player.getLevel();
+			final float exp = player.getExp();
+
+			countdown.set(Tasks.Countdown.builder()
+					.duration(duration)
+					.onTick(ticks -> {
+						if (!player.isOnline())
+							countdown.get().stop();
+
+						int seconds = (ticks / 20) + 1;
+						player.setLevel(seconds > 59 ? seconds / 60 : seconds);
+						player.setExp((float) ticks / duration);
+					})
+					.onComplete(() -> {
+						if (!player.isOnline())
+							countdown.get().stop();
+
+						if (restoreExp) {
+							player.setLevel(level);
+							player.setExp(exp);
+						}
+					})
+					.start());
 		}
 
 	}

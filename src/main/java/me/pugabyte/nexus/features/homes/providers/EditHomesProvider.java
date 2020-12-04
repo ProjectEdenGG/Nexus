@@ -4,7 +4,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
-import fr.minuskube.inv.content.SlotIterator;
 import me.pugabyte.nexus.features.homes.HomesMenu;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.trust.providers.TrustProvider;
@@ -14,7 +13,6 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,16 +130,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		});
 
 		Pagination page = contents.pagination();
-		page.setItems(items.toArray(new ClickableItem[0]));
-		page.setItemsPerPage(36);
-		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
-
-		if (!page.isFirst())
-			contents.set(2, 0, ClickableItem.from(nameItem(new ItemStack(Material.PAPER, Math.max(page.getPage() - 1, 1)),
-					"&fPrevious Page"), e -> HomesMenu.edit(homeOwner, page.previous().getPage())));
-		if (!page.isLast())
-			contents.set(2, 8, ClickableItem.from(nameItem(new ItemStack(Material.PAPER, page.getPage() + 1),
-					"&fNext Page"), e -> HomesMenu.edit(homeOwner, page.next().getPage())));
+		addPagination(homeOwner.getPlayer(), contents, items, e -> HomesMenu.edit(homeOwner, page.previous().getPage()), e -> HomesMenu.edit(homeOwner, page.next().getPage()));
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.events.aeveonproject.sets.APSetType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -137,28 +138,27 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 		put(Material.TWISTING_VINES_PLANT, 00.50);
 	}};
 
+	@Async
 	@Path("flora [radius]")
 	public void flora(@Arg("5") int radius) {
-		Tasks.async(() -> {
-			final int finalRadius = Math.max(1, Math.min(radius, 25));
-			List<Block> placeFloraOn = new ArrayList<>();
-			List<Block> blocks = BlockUtils.getBlocksInRadius(player().getLocation(), finalRadius);
+		final int finalRadius = Math.max(1, Math.min(radius, 25));
+		List<Block> placeFloraOn = new ArrayList<>();
+		List<Block> blocks = BlockUtils.getBlocksInRadius(player().getLocation(), finalRadius);
 
-			for (Block block : blocks) {
-				Block above = block.getRelative(BlockFace.UP);
-				if (allowedFloraMaterials.contains(block.getType()) && BlockUtils.isNullOrAir(above))
-					placeFloraOn.add(above);
-			}
+		for (Block block : blocks) {
+			Block above = block.getRelative(BlockFace.UP);
+			if (allowedFloraMaterials.contains(block.getType()) && BlockUtils.isNullOrAir(above))
+				placeFloraOn.add(above);
+		}
 
-			for (Block block : placeFloraOn) {
-				Material material = getWeightedRandom(floraChanceMap);
-				Tasks.sync(() -> {
-					block.setType(material);
-					if (material.equals(Material.TWISTING_VINES_PLANT) && RandomUtils.chanceOf(75))
-						block.getRelative(BlockFace.UP).setType(Material.TWISTING_VINES);
-				});
-			}
-		});
+		for (Block block : placeFloraOn) {
+			Material material = getWeightedRandom(floraChanceMap);
+			Tasks.sync(() -> {
+				block.setType(material);
+				if (material.equals(Material.TWISTING_VINES_PLANT) && RandomUtils.chanceOf(75))
+					block.getRelative(BlockFace.UP).setType(Material.TWISTING_VINES);
+			});
+		}
 	}
 
 }

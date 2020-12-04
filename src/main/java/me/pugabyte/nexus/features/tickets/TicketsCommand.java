@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.tickets;
 
-import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -79,16 +79,13 @@ public class TicketsCommand extends CustomCommand {
 		});
 	}
 
+	@Confirm
 	@Path("confirmclose <id>")
 	void confirmClose(Ticket ticket) {
-		ConfirmationMenu.builder()
-				.onConfirm((e) -> {
-					if (service.get(ticket.getId()).isOpen())
-						close(ticket);
-					else
-						send(e.getPlayer(), PREFIX + "&cTicket already closed");
-				})
-				.open(player());
+		if (service.get(ticket.getId()).isOpen())
+			close(ticket);
+		else
+			send(player(), PREFIX + "&cTicket already closed");
 	}
 
 	@Path("close <id>")

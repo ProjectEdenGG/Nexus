@@ -8,7 +8,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.text.DecimalFormat;
 
 @Fallback("aac5")
 @Permission("group.admin")
@@ -23,15 +26,14 @@ public class AACCommand extends CustomCommand {
 		String name = player.getName();
 		WorldGroup worldGroup = WorldGroup.get(player);
 
-		if (worldGroup == WorldGroup.SURVIVAL)
-			if (reason.contains("interacting suspiciously") || reason.contains("attacking out of their line of sight"))
-				return;
+		int ping = player.spigot().getPing();
+		double tps = Bukkit.getTPS()[0];
 
-		String[] numbers = reason.substring(reason.indexOf("{worldgroup}")).replaceAll("[()VL:msTPS]", "").split(",");
-		double ping = Double.parseDouble(numbers[1].trim());
-		double tps = Double.parseDouble(numbers[2].trim());
 		if (ping < 200 && tps >= 18) {
-			String message = "&a" + name + " &f" + reason.replace("{worldgroup}", camelCase(worldGroup));
+			String message = "&a" + name + " &f" + reason
+					.replace("{worldgroup}", camelCase(worldGroup))
+					.replace("{ping}", String.valueOf(ping))
+					.replace("{tps}", new DecimalFormat("0.00").format(tps));
 			Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, StaticChannel.STAFF);
 			Chat.broadcastDiscord("**[Radar]** " + message, StaticChannel.STAFF);
 		}

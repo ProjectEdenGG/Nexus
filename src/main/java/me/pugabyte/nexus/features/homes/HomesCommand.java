@@ -1,15 +1,14 @@
 package me.pugabyte.nexus.features.homes;
 
-import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.home.Home;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
-import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
@@ -73,32 +72,28 @@ public class HomesCommand extends CustomCommand {
 		service.clearCache();
 	}
 
+	@Confirm
 	@Permission("group.admin")
 	@Path("deleteFromWorld <world>")
 	void deleteFromWorld(World world) {
-		ConfirmationMenu.builder()
-				.onConfirm(e ->
-						HomesFeature.deleteFromWorld(world.getName(), () ->
-								send(json(PREFIX + "Deleted &e" + HomesFeature.getDeleted().size() + " &3homes from null worlds or world &e" + world.getName() + "&3. ")
-										.next("&eClick here &3to restore them").command("/homes restoreDeleted"))))
-				.open(player());
+		HomesFeature.deleteFromWorld(world.getName(), () ->
+				send(json(PREFIX + "Deleted &e" + HomesFeature.getDeleted().size() + " &3homes from null worlds or world &e" + world.getName() + "&3. ")
+						.next("&eClick here &3to restore them").command("/homes restoreDeleted")));
 	}
 
+	@Async
+	@Confirm
 	@Permission("group.admin")
 	@Path("restoreDeleted")
 	void restoreDeleted() {
-		ConfirmationMenu.builder()
-				.onConfirm(e -> Tasks.async(() -> {
-					List<Home> deleted = HomesFeature.getDeleted();
-					deleted.forEach(home -> {
-						home.getOwner().add(home);
-						service.save(home.getOwner());
-					});
+		List<Home> deleted = HomesFeature.getDeleted();
+		deleted.forEach(home -> {
+			home.getOwner().add(home);
+			service.save(home.getOwner());
+		});
 
-					send(PREFIX + "Restored &e" + deleted.size() + " &3homes");
-					deleted.clear();
-				}))
-				.open(player());
+		send(PREFIX + "Restored &e" + deleted.size() + " &3homes");
+		deleted.clear();
 	}
 
 	@Async

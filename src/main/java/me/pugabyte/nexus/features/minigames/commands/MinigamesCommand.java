@@ -5,10 +5,10 @@ import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
+import me.pugabyte.nexus.features.minigames.mechanics.Mastermind;
 import me.pugabyte.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
-import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointMatchData;
@@ -16,6 +16,7 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -231,19 +232,18 @@ public class MinigamesCommand extends CustomCommand {
 		send(PREFIX + "Reload time took " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
+	@Async
 	@Path("(save|write) [arena]")
 	@Permission("manage")
 	void save(Arena arena) {
-		Tasks.async(() -> {
-			long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 
-			if (arena == null)
-				ArenaManager.write();
-			else
-				ArenaManager.write(arena);
+		if (arena == null)
+			ArenaManager.write();
+		else
+			ArenaManager.write(arena);
 
-			send(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
-		});
+		send(PREFIX + "Save time took " + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
 	@Path("autoreset [boolean]")
@@ -391,6 +391,9 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("mastermind showAnswer")
 	@Permission("group.admin")
 	void mastermindShowAnswer() {
+		if (!minigamer.isPlaying(Mastermind.class))
+			error("You must be playing Mastermind to use this command");
+
 		MastermindMatchData matchData = minigamer.getMatch().getMatchData();
 		send(matchData.getAnswer().toString());
 	}
@@ -399,20 +402,14 @@ public class MinigamesCommand extends CustomCommand {
 	@TabCompleteIgnore
 	@Path("mastermind playAgain")
 	void mastermindPlayAgain() {
-		MatchData matchData = minigamer.getMatch().getMatchData();
-		if (!(matchData instanceof MastermindMatchData))
+		if (!minigamer.isPlaying(Mastermind.class))
 			error("You must be playing Mastermind to use this command");
 
-		((MastermindMatchData) matchData).reset(minigamer);
+		MastermindMatchData matchData = minigamer.getMatch().getMatchData();
+		matchData.reset(minigamer);
 	}
 
 	private Match getRunningMatch(Arena arena) {
-		if (arena == null)
-			if (arg(2) == null)
-				error("You must supply an arena name");
-			else
-				error("Arena not found");
-
 		Match match = MatchManager.find(arena);
 
 		if (match == null)

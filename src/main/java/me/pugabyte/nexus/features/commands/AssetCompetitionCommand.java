@@ -1,9 +1,10 @@
 package me.pugabyte.nexus.features.commands;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -64,15 +65,13 @@ public class AssetCompetitionCommand extends CustomCommand {
 		player().teleport(assetCompetition.getLocation(), TeleportCause.COMMAND);
 	}
 
+	@Async
+	@Confirm
 	@Path("clear")
 	@Permission("group.seniorstaff")
 	void clear() {
-		ConfirmationMenu.builder()
-				.onConfirm(e -> {
-					service.deleteAll();
-					send(PREFIX + "All submissions cleared");
-				})
-				.open(player());
+		service.deleteAll();
+		send(PREFIX + "All submissions cleared");
 	}
 
 }

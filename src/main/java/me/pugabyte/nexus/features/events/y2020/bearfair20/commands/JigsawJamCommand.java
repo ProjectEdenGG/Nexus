@@ -6,11 +6,12 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -103,25 +104,21 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		clear(player().getLocation());
 	}
 
+	@Async
+	@Confirm
 	@Path("quit [player]")
 	void delete(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
-		ConfirmationMenu.builder()
-				.onConfirm(e -> Tasks.async(() -> {
-					service.delete(service.get(player));
-					send(PREFIX + "Quit game. Ask a staff member to reset the board.");
-				}))
-				.open(player());
+		service.delete(service.get(player));
+		send(PREFIX + "Quit game. Ask a staff member to reset the board.");
 	}
 
+	@Async
+	@Confirm
 	@Path("deleteAll")
 	@Permission("group.seniorstaff")
 	void deleteAll() {
-		ConfirmationMenu.builder()
-				.onConfirm(e -> Tasks.async(() -> {
-					service.deleteAll();
-					send(PREFIX + "Reset all");
-				}))
-				.open(player());
+		service.deleteAll();
+		send(PREFIX + "Reset all");
 	}
 
 	@Path("debug [player]")

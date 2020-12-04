@@ -1,9 +1,10 @@
 package me.pugabyte.nexus.features.dailyrewards;
 
-import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -11,7 +12,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownExce
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
-import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
@@ -91,41 +91,38 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	private static final String resetCooldownType = "dailyRewards-reset";
 
+	@Confirm
 	@Path("reset")
 	void reset() {
-		ConfirmationMenu.builder().onConfirm((e) -> {
-			try {
-				if (!new CooldownService().check(player(), resetCooldownType, Time.DAY))
-					throw new CommandCooldownException(player(), resetCooldownType);
+		try {
+			if (!new CooldownService().check(player(), resetCooldownType, Time.DAY))
+				throw new CommandCooldownException(player(), resetCooldownType);
 
-				dailyReward.setActive(false);
-				service.save(dailyReward);
-				send(e.getPlayer(), PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
-				e.getPlayer().closeInventory();
-			} catch (CommandCooldownException ex) {
-				send(e.getPlayer(), ex.getMessage());
-			}
-		})
-		.open(player());
+			dailyReward.setActive(false);
+			service.save(dailyReward);
+			send(player(), PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
+			player().closeInventory();
+		} catch (CommandCooldownException ex) {
+			send(player(), ex.getMessage());
+		}
 	}
 
+	@Async
 	@Path("top [page]")
 	void top(@Arg("1") int page) {
-		Tasks.async(() -> {
-			List<DailyReward> results = service.getPage(page);
-			if (results.size() == 0) {
-				send(PREFIX + "&cNo results on page " + page);
-				return;
-			}
+		List<DailyReward> results = service.getPage(page);
+		if (results.size() == 0) {
+			send(PREFIX + "&cNo results on page " + page);
+			return;
+		}
 
-			send("");
-			send(PREFIX + "Top streaks:");
-			int i = (page - 1) * 10 + 1;
-			for (DailyReward dailyReward : results) {
-				send("&3" + i + " &e" + dailyReward.getPlayer().getName() + " &7- " + dailyReward.getStreak());
-				++i;
-			}
-		});
+		send("");
+		send(PREFIX + "Top streaks:");
+		int i = (page - 1) * 10 + 1;
+		for (DailyReward dailyReward : results) {
+			send("&3" + i + " &e" + dailyReward.getPlayer().getName() + " &7- " + dailyReward.getStreak());
+			++i;
+		}
 	}
 
 }

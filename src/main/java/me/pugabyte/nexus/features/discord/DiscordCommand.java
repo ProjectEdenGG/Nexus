@@ -19,7 +19,6 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -44,17 +43,16 @@ public class DiscordCommand extends CustomCommand {
 		send(json().next("&e" + SocialMedia.BNSocialMediaSite.DISCORD.getUrl()));
 	}
 
+	@Async
 	@Path("link update roles")
 	@Permission("group.seniorstaff")
 	void updateRoles() {
-		Tasks.async(() -> {
-			Role verified = Discord.getGuild().getRoleById(DiscordId.Role.VERIFIED.getId());
-			new DiscordService().getAll().stream().filter(discordUser -> !isNullOrEmpty(discordUser.getUserId())).forEach(discordUser -> {
-				Member member = Discord.getGuild().retrieveMemberById(discordUser.getUserId()).complete();
-				if (member == null) return;
-				if (!member.getRoles().contains(verified))
-					Discord.addRole(discordUser.getUserId(), DiscordId.Role.VERIFIED);
-			});
+		Role verified = Discord.getGuild().getRoleById(DiscordId.Role.VERIFIED.getId());
+		new DiscordService().getAll().stream().filter(discordUser -> !isNullOrEmpty(discordUser.getUserId())).forEach(discordUser -> {
+			Member member = Discord.getGuild().retrieveMemberById(discordUser.getUserId()).complete();
+			if (member == null) return;
+			if (!member.getRoles().contains(verified))
+				Discord.addRole(discordUser.getUserId(), DiscordId.Role.VERIFIED);
 		});
 	}
 

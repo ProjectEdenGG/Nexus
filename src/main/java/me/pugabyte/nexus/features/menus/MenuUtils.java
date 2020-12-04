@@ -141,11 +141,14 @@ public abstract class MenuUtils {
 
 	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items) {
 		Pagination page = contents.pagination();
-		addPagination(player, contents, items, 36, e -> open(player, page.previous().getPage()), e -> open(player, page.next().getPage()));
+		addPagination(player, contents, items, e -> open(player, page.previous().getPage()), e -> open(player, page.next().getPage()));
 	}
 
-	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items, int perPage,
-								 Consumer<ItemClickData> previous, Consumer<ItemClickData> next) {
+	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items, Consumer<ItemClickData> previous, Consumer<ItemClickData> next) {
+		addPagination(player, contents, items, 36, previous, next);
+	}
+
+	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items, int perPage, Consumer<ItemClickData> previous, Consumer<ItemClickData> next) {
 		Pagination page = contents.pagination();
 		page.setItemsPerPage(perPage);
 		page.setItems(items.toArray(new ClickableItem[0]));
@@ -155,9 +158,9 @@ public abstract class MenuUtils {
 
 		int curPage = page.getPage() + 1;
 		if (!page.isFirst())
-			contents.set(5, 0, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, Math.max(curPage - 1, 1)), "&fPrevious Page"), previous));
+			contents.set(contents.inventory().getRows() - 1, 0, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, Math.max(curPage - 1, 1)), "&fPrevious Page"), previous));
 		if (!page.isLast())
-			contents.set(5, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, curPage + 1), "&fNext Page"), next));
+			contents.set(contents.inventory().getRows() - 1, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, curPage + 1), "&fNext Page"), next));
 	}
 
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {

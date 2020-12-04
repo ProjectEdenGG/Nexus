@@ -6,6 +6,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -44,23 +45,22 @@ public class RestoreInventoryCommand extends CustomCommand {
 		return restorers.get(restorer);
 	}
 
+	@Async
 	@Path("<player> <pastecode>")
 	void code(Player owner, String code) {
-		Tasks.async(() -> {
-			try {
-				String data = StringUtils.getPaste(code);
+		try {
+			String data = StringUtils.getPaste(code);
 
-				JsonConfiguration jsonConfig = new JsonConfiguration();
-				jsonConfig.loadFromString(data);
+			JsonConfiguration jsonConfig = new JsonConfiguration();
+			jsonConfig.loadFromString(data);
 
-				add(player(), new RestoreInventoryPlayer(player(), owner, jsonConfig, code));
+			add(player(), new RestoreInventoryPlayer(player(), owner, jsonConfig, code));
 
-				sendRestoreButtons("Survival");
-				sendRestoreButtons("Creative");
-			} catch (InvalidConfigurationException ex) {
-				error("An error occurred while loading the json configuration: " + ex.getMessage());
-			}
-		});
+			sendRestoreButtons("Survival");
+			sendRestoreButtons("Creative");
+		} catch (InvalidConfigurationException ex) {
+			error("An error occurred while loading the json configuration: " + ex.getMessage());
+		}
 	}
 
 	@HideFromHelp
@@ -105,7 +105,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 						sendInventoryRestoreSuccessMessage(owner, "ender chest");
 						break;
 					case "exp":
-						owner.setTotalExperience((int) (owner.getTotalExperience() + getExp(gamemode)));
+						owner.setLevel(getExp(gamemode));
 						sendExperienceRestoreSuccessMessage(owner);
 						break;
 					default:
@@ -179,8 +179,8 @@ public class RestoreInventoryCommand extends CustomCommand {
 		return Sharables.OFF_HAND.getSerializer().deserialize(gamemode.get("offHandItem"));
 	}
 
-	private double getExp(ConfigurationSection gamemode) {
-		return Double.parseDouble(gamemode.getConfigurationSection("stats").getString("txp"));
+	private int getExp(ConfigurationSection gamemode) {
+		return Integer.parseInt(gamemode.getConfigurationSection("stats").getString("el"));
 	}
 
 	private Map<String, Object> convertSection(ConfigurationSection section) {
