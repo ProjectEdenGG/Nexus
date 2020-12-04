@@ -68,6 +68,8 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -75,6 +77,7 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.IOException;
@@ -262,6 +265,21 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 			block.breakNaturally();
 		}
+	}
+
+	@Path("movingSchematicTest <schematic> <seconds> <velocity>")
+	void movingSchematicTest(String schematic, int seconds, double velocity) {
+		List<FallingBlock> fallingBlocks = worldEditUtils.paster()
+				.file(schematic)
+				.at(player().getLocation().add(-10, 0, 0))
+				.buildEntities();
+
+		Tasks.Countdown.builder()
+				.duration(Time.SECOND.x(seconds))
+				.onTick(i -> fallingBlocks.forEach(fallingBlock -> fallingBlock.setVelocity(new Vector(velocity, 0, 0))))
+				.start();
+
+		Tasks.wait(Time.SECOND.x(seconds), () -> fallingBlocks.forEach(Entity::remove));
 	}
 
 	public void shutdownBossBars() {

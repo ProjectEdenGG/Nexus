@@ -40,6 +40,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -457,6 +458,20 @@ public class WorldEditUtils {
 			});
 
 			return future;
+		}
+
+		public List<FallingBlock> buildEntities() {
+			return new ArrayList<FallingBlock>() {{
+				blockDataMap.forEach((location, blockData) -> add(spawnFallingBlock(location, blockData)));
+			}};
+		}
+
+		private FallingBlock spawnFallingBlock(Location location, BlockData blockData) {
+			FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(LocationUtils.getCenteredLocation(location), blockData);
+			fallingBlock.setDropItem(false);
+			fallingBlock.setGravity(false);
+			fallingBlock.setInvulnerable(true);
+			return fallingBlock;
 		}
 
 		public Map<Location, BlockData> findBlocks() {
