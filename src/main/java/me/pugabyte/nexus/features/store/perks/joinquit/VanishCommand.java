@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.store.perks.joinquit;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -9,13 +8,17 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Fallback("premiumvanish")
 @Redirect(from = {"/fj", "/fakejoin"}, to = "/nexus:vanish fj")
 @Redirect(from = {"/fq", "/fakequit"}, to = "/nexus:vanish fq")
 @Redirect(from = {"/ni", "/nointeract"}, to = "/nexus:vanish ni")
 @Redirect(from = {"/np", "/nopickup"}, to = "/nexus:vanish np")
 public class VanishCommand extends CustomCommand {
-	private static String pickupPermission = "pv.toggleitems";
+	private static final String pickupPermission = "pv.toggleitems";
+	private static final List<String> interact_permissions = Arrays.asList("pv.interact", "pv.useblocks", "pv.damage", "pv.breakblocks", "pv.placeblocks", "pv.dropitems");
 
 	public VanishCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -40,20 +43,14 @@ public class VanishCommand extends CustomCommand {
 	@Permission("pv.use")
 	void toggleInteract() {
 		if (player().hasPermission("pv.interact")) {
-			Nexus.getPerms().playerRemove(player(), "pv.interact");
-			Nexus.getPerms().playerRemove(player(), "pv.useblocks");
-			Nexus.getPerms().playerRemove(player(), "pv.damage");
-			Nexus.getPerms().playerRemove(player(), "pv.breakblocks");
-			Nexus.getPerms().playerRemove(player(), "pv.placeblocks");
-			Nexus.getPerms().playerRemove(player(), "pv.dropitems");
+			for (String perm : interact_permissions)
+				runCommandAsConsole("lp user " + player().getName() + " permission unset " + perm);
+
 			send(PREFIX + "Interaction disabled");
 		} else {
-			Nexus.getPerms().playerAdd(player(), "pv.interact");
-			Nexus.getPerms().playerAdd(player(), "pv.useblocks");
-			Nexus.getPerms().playerAdd(player(), "pv.damage");
-			Nexus.getPerms().playerAdd(player(), "pv.breakblocks");
-			Nexus.getPerms().playerAdd(player(), "pv.placeblocks");
-			Nexus.getPerms().playerAdd(player(), "pv.dropitems");
+			for (String perm : interact_permissions)
+				runCommandAsConsole("lp user " + player().getName() + " permission set " + perm);
+
 			send(PREFIX + "Interaction enabled");
 		}
 	}
