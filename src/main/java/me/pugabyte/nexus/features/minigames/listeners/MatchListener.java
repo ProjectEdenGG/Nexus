@@ -16,8 +16,6 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.FallingBlock;
@@ -42,19 +40,6 @@ import static me.pugabyte.nexus.utils.PlayerUtils.runCommand;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsOp;
 
 public class MatchListener implements Listener {
-
-	public MatchListener() {
-		registerWaterDamageTask();
-	}
-
-	private void registerWaterDamageTask() {
-		// TODO: Move to a task triggered by entering the region
-		Tasks.repeat(Time.SECOND, Time.SECOND, () ->
-			Minigames.getActiveMinigamers().forEach(minigamer -> {
-				if (minigamer.isInMatchRegion("waterdamage") && minigamer.getPlayer().isInWater())
-					minigamer.getPlayer().damage(1.25);
-		}));
-	}
 
 	@EventHandler
 	public void onInventoryOpen(InventoryOpenEvent event) {

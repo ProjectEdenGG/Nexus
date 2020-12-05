@@ -2,9 +2,12 @@ package me.pugabyte.nexus.features.listeners;
 
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
+import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Material;
@@ -64,6 +67,15 @@ public class WorldGuardFlags implements Listener {
 			event.setCancelled(true);
 			PlayerUtils.send((Player) event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
 		}
+	}
+
+	static {
+		Tasks.repeat(Time.SECOND, Time.SECOND, () ->
+				Minigames.getActiveMinigamers().forEach(minigamer -> {
+					if (minigamer.getPlayer().isInWater())
+						if (WorldGuardFlagUtils.query(minigamer.getPlayer().getLocation(), Flags.WATER_DAMAGE) == State.DENY)
+							minigamer.getPlayer().damage(1.25);
+				}));
 	}
 
 	@EventHandler
