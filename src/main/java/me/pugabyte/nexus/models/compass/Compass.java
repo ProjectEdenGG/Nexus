@@ -48,7 +48,7 @@ public class Compass extends PlayerOwnedObject {
 
 		bossBar = Bukkit.createBossBar(getCompass(), BarColor.BLUE, BarStyle.SEGMENTED_6);
 		bossBar.addPlayer(getPlayer());
-		taskId = Tasks.repeat(0, 1, () -> {
+		taskId = Tasks.repeat(0, 2, () -> {
 			if (!isOnline())
 				stop();
 			else if (bossBar != null) {

@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.radar;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -13,19 +12,18 @@ import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 
-@Fallback("aac5")
 @Permission("group.admin")
-public class AACCommand extends CustomCommand {
+public class AACNotifyCommand extends CustomCommand {
 
-	public AACCommand(CommandEvent event) {
+	public AACNotifyCommand(CommandEvent event) {
 		super(event);
 	}
 
-	@Path("notify <player> <message...>")
+	@Path("<player> <message...>")
 	void notify(Player player, String reason) {
 		String name = player.getName();
-		WorldGroup worldGroup = WorldGroup.get(player);
 
+		WorldGroup worldGroup = WorldGroup.get(player);
 		int ping = player.spigot().getPing();
 		double tps = Bukkit.getTPS()[0];
 
@@ -39,8 +37,4 @@ public class AACCommand extends CustomCommand {
 		}
 	}
 
-	@Path("help")
-	void help() {
-		fallback();
-	}
 }

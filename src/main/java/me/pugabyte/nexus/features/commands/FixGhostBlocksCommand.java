@@ -47,17 +47,17 @@ public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 		if (Arrays.asList(WorldGroup.CREATIVE, WorldGroup.MINIGAMES).contains(WorldGroup.get(player)))
 			return;
 
-		Tasks.wait(1, () -> {
+		Tasks.waitAsync(1, () -> {
 			fixGhostBlocks(player, event.getBlock().getLocation(), 3);
 			if (PlayerUtils.getPing(player) > 100)
-				Tasks.wait(3, () -> fixGhostBlocks(player, event.getBlock().getLocation(), 3));
+				Tasks.waitAsync(3, () -> fixGhostBlocks(player, event.getBlock().getLocation(), 3));
 		});
 	}
 
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
 		if (PlayerUtils.getPing(event.getPlayer()) > 100)
-			Tasks.wait(3, () -> fixGhostBlocks(event.getPlayer(), event.getBlock().getLocation(), 2));
+			Tasks.waitAsync(3, () -> fixGhostBlocks(event.getPlayer(), event.getBlock().getLocation(), 2));
 	}
 
 }
