@@ -34,14 +34,14 @@ public class SelCommand extends CustomCommand {
 		player().teleport(worldEditUtils.toLocation(playerSelection.getCenter()), TeleportCause.COMMAND);
 	}
 
-	@Path("c")
+	@Path("(c|cuboid)")
 	void cuboid() {
-		runCommand("/sel cuboid");
+		runCommand("rg sel -w gameworld minigamelobby");
 	}
 
-	@Path("p")
+	@Path("(p|poly)")
 	void poly() {
-		runCommand("/sel poly");
+		runCommand("rg sel -w gameworld icerally_frostedturbo_lobbyexit");
 	}
 
 	@Path("e")
