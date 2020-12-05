@@ -17,8 +17,8 @@ public abstract class Feature {
 	public void shutdown() {}
 
 	public void reload() {
-		startup();
 		shutdown();
+		startup();
 	}
 
 }
