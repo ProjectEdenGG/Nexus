@@ -4,11 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
+import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
 import me.pugabyte.nexus.utils.SerializationUtils;
+import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
@@ -45,8 +49,21 @@ public class Loadout implements ConfigurationSerializable {
 	public void apply(Minigamer minigamer) {
 		minigamer.clearState();
 		Player player = minigamer.getPlayer();
-		if (!isLoadoutEmpty)
-			player.getInventory().setContents(inventory.clone());
+
+		if (!isLoadoutEmpty) {
+			PlayerInventory inventory = player.getInventory();
+			inventory.setContents(this.inventory.clone());
+			ItemStack offHand = inventory.getItemInOffHand().clone();
+			if (offHand.getType() == Material.BOW) {
+				MinigamerSettingService service = new MinigamerSettingService();
+				MinigamerSetting settings = service.get(player);
+				if (!settings.isBowInOffHand()) {
+					inventory.setItemInOffHand(new ItemStack(Material.AIR));
+					inventory.addItem(offHand);
+				}
+			}
+		}
+
 		if (effects != null && effects.size() > 0)
 			player.addPotionEffects(effects);
 	}

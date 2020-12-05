@@ -27,6 +27,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
+import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
@@ -85,6 +87,18 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("use")
 	void quit() {
 		minigamer.quit();
+	}
+
+	@Path("settings bowInOffHand [boolean]")
+	@Permission("use")
+	void settings_bowInOffHand(Boolean offHand) {
+		MinigamerSettingService service = new MinigamerSettingService();
+		MinigamerSetting settings = service.get(player());
+		if (offHand == null)
+			offHand = !settings.isBowInOffHand();
+
+		settings.setBowInOffHand(offHand);
+		send(PREFIX + "Bows will now spawn in your " + (offHand ? "offhand" : "hotbar"));
 	}
 
 	@Path("start [arena]")
