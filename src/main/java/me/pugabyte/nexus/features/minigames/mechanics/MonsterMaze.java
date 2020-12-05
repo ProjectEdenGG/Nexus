@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.Nexus;
@@ -15,13 +16,11 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
@@ -154,8 +153,7 @@ public class MonsterMaze extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onPlayerJump(PlayerStatisticIncrementEvent event) {
-		if (event.getStatistic() != Statistic.JUMP) return;
+	public void onPlayerJump(PlayerJumpEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 

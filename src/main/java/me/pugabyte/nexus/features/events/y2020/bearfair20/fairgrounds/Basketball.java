@@ -55,7 +55,8 @@ public class Basketball implements Listener {
 	private BFPointSource SOURCE = BFPointSource.BASKETBALL;
 
 	static {
-		janitor();
+		// TODO BEARFAIR
+//		janitor();
 	}
 
 	public Basketball() {

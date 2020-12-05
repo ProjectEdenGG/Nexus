@@ -229,7 +229,7 @@ public class LightTheTree implements Listener {
 	}
 
 	static {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND, () -> {
+		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(2), () -> {
 			Pugmas20Service service = new Pugmas20Service();
 
 			for (Player player : Bukkit.getOnlinePlayers()) {

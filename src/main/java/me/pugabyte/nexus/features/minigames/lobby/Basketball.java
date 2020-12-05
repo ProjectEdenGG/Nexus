@@ -15,6 +15,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -32,10 +33,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
@@ -131,30 +130,28 @@ public class Basketball extends CustomCommand implements Listener {
 
 	private static void janitor() {
 		WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
-		Tasks.repeat(0, 20 * 20, () -> {
+		Tasks.repeat(0, Time.SECOND.x(20), () -> {
 			cleanupBasketballs();
 
-			List<Player> players = Bukkit.getOnlinePlayers().stream()
-					.filter(player -> player.getWorld() == world)
-					.collect(Collectors.toList());
+			Bukkit.getOnlinePlayers().stream()
+					.filter(player -> player.getWorld().equals(world))
+					.forEach(player -> {
+						if (wgUtils.isInRegion(player.getLocation(), region)) {
+							if (!hasBasketball(player)) {
+								boolean found = false;
+								for (Entity entity : getLobbyEntities())
+									if (wgUtils.isInRegion(entity.getLocation(), region)) {
+										found = true;
+										break;
+									}
 
-			players.forEach(player -> {
-				if (wgUtils.isInRegion(player.getLocation(), region)) {
-					if (!hasBasketball(player)) {
-						boolean found = false;
-						for (Entity entity : getLobbyEntities())
-							if (wgUtils.isInRegion(entity.getLocation(), region)) {
-								found = true;
-								break;
+								if (!found)
+									giveBasketball(player);
 							}
-
-						if (!found)
-							giveBasketball(player);
-					}
-				} else {
-					removeBasketball(player);
-				}
-			});
+						} else {
+							removeBasketball(player);
+						}
+					});
 		});
 	}
 
@@ -206,6 +203,7 @@ public class Basketball extends CustomCommand implements Listener {
 		void stop() {
 			Tasks.cancel(taskId);
 		}
+
 	}
 
 	@EventHandler

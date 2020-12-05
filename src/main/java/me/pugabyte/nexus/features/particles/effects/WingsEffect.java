@@ -52,7 +52,7 @@ public class WingsEffect {
 		Particle wingParticle = Particle.REDSTONE;
 
 		if (ticks == 0) ticks = Time.SECOND.x(5);
-		if (pulseDelay < 1) pulseDelay = 1;
+		if (pulseDelay < 1) pulseDelay = 2;
 
 		if (color1 == null)
 			color1 = Color.RED;
@@ -91,7 +91,7 @@ public class WingsEffect {
 		int finalTicks = ticks;
 		int finalFlapRange = flapRange;
 
-		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
+		taskId = Tasks.repeatAsync(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
 				((ParticleOwner) new ParticleService().get(player)).cancelTasks(taskId);
 				return;
@@ -167,13 +167,13 @@ public class WingsEffect {
 						target = newLoc.clone();
 						target.setX(x);
 						target.setY(y2);
-						vR = (target.toVector().subtract(newLoc.toVector()));
-						vL = (target.toVector().subtract(newLoc.toVector()));
-						v2 = (VectorUtils.getBackVector(newLoc));
+						vR = target.toVector().subtract(newLoc.toVector());
+						vL = target.toVector().subtract(newLoc.toVector());
+						v2 = VectorUtils.getBackVector(newLoc);
 						rightWing = Math.toRadians(newLoc.getYaw() + 90.0F - (wingAngle - flap[0]));
 						leftWing = Math.toRadians(newLoc.getYaw() + 90.0F + (wingAngle - flap[0]));
-						vR = (VectorUtils.rotateAroundAxisY(vR, -rightWing));
-						vL = (VectorUtils.rotateAroundAxisY(vL, -leftWing));
+						vR = VectorUtils.rotateAroundAxisY(vR, -rightWing);
+						vL = VectorUtils.rotateAroundAxisY(vL, -leftWing);
 						v2.setY(0).multiply(-0.2D);
 
 						Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, red2.get(), green2.get(), blue2.get());
@@ -194,13 +194,13 @@ public class WingsEffect {
 						target = newLoc.clone();
 						target.setX(x);
 						target.setY(y3);
-						vR = (target.toVector().subtract(newLoc.toVector()));
-						vL = (target.toVector().subtract(newLoc.toVector()));
-						v2 = (VectorUtils.getBackVector(newLoc));
+						vR = target.toVector().subtract(newLoc.toVector());
+						vL = target.toVector().subtract(newLoc.toVector());
+						v2 = VectorUtils.getBackVector(newLoc);
 						rightWing = Math.toRadians(newLoc.getYaw() + 90.0F - (wingAngle - flap[0]));
 						leftWing = Math.toRadians(newLoc.getYaw() + 90.0F + (wingAngle - flap[0]));
-						vR = (VectorUtils.rotateAroundAxisY(vR, -rightWing));
-						vL = (VectorUtils.rotateAroundAxisY(vL, -leftWing));
+						vR = VectorUtils.rotateAroundAxisY(vR, -rightWing);
+						vL = VectorUtils.rotateAroundAxisY(vL, -leftWing);
 						v2.setY(0).multiply(-0.2D);
 
 						Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, red3.get(), green3.get(), blue3.get());
