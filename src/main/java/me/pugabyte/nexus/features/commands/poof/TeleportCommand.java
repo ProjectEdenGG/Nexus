@@ -79,7 +79,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			if (y > 275) y = 275;
 
 			Location location = new Location(world, x, y, z, 0, 90);
-			player().teleport(location, TeleportCause.COMMAND);
+			player().teleportAsync(location, TeleportCause.COMMAND);
 			return;
 		}
 
@@ -100,7 +100,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 					location.setWorld(Bukkit.getWorld(arg(4)));
 			}
 
-			player().teleport(modifier.update(), TeleportCause.COMMAND);
+			player().teleportAsync(modifier.update(), TeleportCause.COMMAND);
 		} else if (isOfflinePlayerArg(1)) {
 			OfflinePlayer player1 = offlinePlayerArg(1);
 			Location location1 = new Nerd(player1).getLocation();
@@ -110,7 +110,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 					if (checkTeleportDisabled(player1.getPlayer(), player2))
 						return;
 
-					player1.getPlayer().teleport(new Nerd(player2).getLocation(), TeleportCause.COMMAND);
+					player1.getPlayer().teleportAsync(new Nerd(player2).getLocation(), TeleportCause.COMMAND);
 					send(PREFIX + "Poofing to &e" + player2.getName() + (player2.isOnline() ? "" : " &3(Offline)"));
 				} else
 					throw new PlayerNotOnlineException(player1);
@@ -118,7 +118,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 				if (checkTeleportDisabled(player(), player1))
 					return;
 
-				player().teleport(location1, TeleportCause.COMMAND);
+				player().teleportAsync(location1, TeleportCause.COMMAND);
 				send(PREFIX + "Poofing to &e" + player1.getName() + (player1.isOnline() ? "" : " &3(Offline)"));
 			}
 		} else {
@@ -170,7 +170,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	@Path("override <player>")
 	@Permission("group.seniorstaff")
 	void override(Player player) {
-		player().teleport(player);
+		player().teleportAsync(player.getLocation());
 		send(PREFIX + "Overriding teleport to &e" + player.getName());
 	}
 

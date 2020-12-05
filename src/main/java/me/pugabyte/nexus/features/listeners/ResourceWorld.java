@@ -55,9 +55,11 @@ public class ResourceWorld implements Listener {
 
 		if (event.getTo().getWorld().getName().startsWith("resource")) {
 			if (!WorldGroup.get(event.getFrom().getWorld()).equals(WorldGroup.SURVIVAL) || event.getFrom().getWorld().getName().startsWith("staff")) {
-				PlayerUtils.send(player, "&eYou can only enter the resource world from the Survival world");
-				event.setCancelled(true);
-				return;
+				if (!player.hasPermission("group.admin")) {
+					PlayerUtils.send(player, "&eYou can only enter the resource world from the Survival world");
+					event.setCancelled(true);
+					return;
+				}
 			}
 			List<Material> materials = new ShopService().getMarket().getProducts(Shop.ShopGroup.RESOURCE).stream()
 					.filter(product -> product.getExchangeType() == Shop.ExchangeType.BUY)

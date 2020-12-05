@@ -99,9 +99,9 @@ public class PoofCommand extends CustomCommand {
 			throw new PlayerNotOnlineException(fromPlayer);
 
 		if (request.getType() == Poof.PoofType.POOF)
-			fromPlayer.getPlayer().teleport(toPlayer.getPlayer(), TeleportCause.COMMAND);
+			fromPlayer.getPlayer().teleportAsync(toPlayer.getPlayer().getLocation(), TeleportCause.COMMAND);
 		else
-			fromPlayer.getPlayer().teleport(request.getTeleportLocation(), TeleportCause.COMMAND);
+			fromPlayer.getPlayer().teleportAsync(request.getTeleportLocation(), TeleportCause.COMMAND);
 
 		if (request.getType() == Poof.PoofType.POOF) {
 			send(toPlayer.getPlayer(), "&3You accepted &e" + fromPlayer.getName() + "'s &3poof request");

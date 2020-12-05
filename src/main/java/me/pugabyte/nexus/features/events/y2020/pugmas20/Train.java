@@ -8,6 +8,7 @@ import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -105,6 +106,9 @@ public class Train {
 
 	public static void animate() {
 		if (animating)
+			return;
+
+		if (Bukkit.getTPS()[0] < 19)
 			return;
 
 		animating = true;

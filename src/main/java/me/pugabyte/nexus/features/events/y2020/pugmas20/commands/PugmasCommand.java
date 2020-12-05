@@ -37,6 +37,7 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -349,6 +350,9 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	void train() {
 		if (Train.animating())
 			error("Train is animating!");
+
+		if (Bukkit.getTPS()[0] < 19)
+			error("TPS is too low, must be 19+");
 
 		Train.animate();
 	}

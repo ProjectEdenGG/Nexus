@@ -19,7 +19,7 @@ public class Warp {
 	private String type;
 
 	public void teleport(Player player) {
-		player.teleport(location, TeleportCause.COMMAND);
+		player.teleportAsync(location, TeleportCause.COMMAND);
 	}
 
 }

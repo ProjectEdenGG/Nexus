@@ -7,6 +7,8 @@
   - Workshop underground massive factory
     - Cave with player ridable minecart track from coal mine to factory
   - Conveyor Belts -- Armorstands
+  - Client side falling block entity train
+  - Custom hand held map for pugmas
 
 - Event portal in spawn
   - In mine corner hole?

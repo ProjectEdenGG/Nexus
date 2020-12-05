@@ -70,7 +70,7 @@ public class RTPCommand extends CustomCommand {
 				return;
 			}
 
-			PaperLib.teleportAsync(player(), LocationUtils.getCenteredLocation(highestBlock.getLocation().add(0, 1, 0)), TeleportCause.COMMAND);
+			player().teleportAsync(LocationUtils.getCenteredLocation(highestBlock.getLocation().add(0, 1, 0)), TeleportCause.COMMAND);
 		});
 	}
 
