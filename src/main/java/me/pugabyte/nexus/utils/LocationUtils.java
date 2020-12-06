@@ -212,8 +212,8 @@ public class LocationUtils {
 				location.setX((x.startsWith("~") ? location.getX() + trim(x) : trim(x)));
 				location.setY((y.startsWith("~") ? location.getY() + trim(y) : trim(y)));
 				location.setZ((z.startsWith("~") ? location.getZ() + trim(z) : trim(z)));
-				location.setYaw((float) (x.startsWith("~") ? location.getYaw() + trim(yaw) : trim(yaw)));
-				location.setPitch((float) (x.startsWith("~") ? location.getPitch() + trim(pitch) : trim(pitch)));
+				location.setYaw((float) (yaw.startsWith("~") ? location.getYaw() + trim(yaw) : trim(yaw)));
+				location.setPitch((float) (pitch.startsWith("~") ? location.getPitch() + trim(pitch) : trim(pitch)));
 				return location;
 			}
 		}

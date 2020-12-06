@@ -29,8 +29,8 @@ public class WorldGuardFlagUtils {
 		HOSTILE_SPAWN(registerFlag(new StateFlag("hostile-spawn", false))),
 		MOB_AGGRESSION(registerFlag(new StateFlag("mob-aggression", false))),
 		TAMING(registerFlag(new StateFlag("taming", false))),
-		WATER_DAMAGE(registerFlag(new StateFlag("water-damage", false))),
-		USE_TRAP_DOORS(registerFlag(new StateFlag("use-trap-doors", false)));
+		USE_TRAP_DOORS(registerFlag(new StateFlag("use-trap-doors", false))),
+		MINIGAMES_WATER_DAMAGE(registerFlag(new StateFlag("minigames-water-damage", false)));
 
 		public final Flag<?> flag;
 
