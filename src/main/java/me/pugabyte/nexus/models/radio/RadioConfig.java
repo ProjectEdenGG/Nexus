@@ -68,21 +68,24 @@ public class RadioConfig extends PlayerOwnedObject {
 		private int radius;
 		@Embedded
 		private Set<String> songs = new HashSet<>();
+
 		private transient SongPlayer songPlayer;
 
 		public Playlist getPlaylist() {
-			Set<String> radioSongs = getSongs();
-			Nexus.log("<" + getId() + "> " + radioSongs.size() + " Loaded Songs: " + radioSongs.toString());
+			Set<String> unloadedSongs = new HashSet<>(songs);
+			Set<File> loadedSongs = new HashSet<File>() {{
+				for (String songName : songs)
+					for (RadioSong song : RadioFeature.getAllSongs())
+						if (song.getName().equals(songName)) {
+							add(song.getFile());
+							unloadedSongs.remove(songName);
+							break;
+						}
+			}};
 
-			Set<File> loadedSongs = new HashSet<>();
-			for (String songFile : radioSongs) {
-				for (File song : RadioFeature.getSongs()) {
-					if (song.getName().equals(songFile)) {
-						loadedSongs.add(song);
-						break;
-					}
-				}
-			}
+			Nexus.log("[Radio] [" + id + "] " + loadedSongs.size() + " loaded songs: " + loadedSongs.toString());
+			if (!unloadedSongs.isEmpty())
+				Nexus.log("[Radio] [" + id + "] " + loadedSongs.size() + " unloaded songs: " + unloadedSongs.toString());
 
 			ArrayList<File> list = new ArrayList<>(loadedSongs);
 			Collections.shuffle(list);

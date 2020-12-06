@@ -10,12 +10,15 @@ import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
 import me.pugabyte.nexus.models.radio.RadioConfigService;
+import me.pugabyte.nexus.models.radio.RadioSong;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.List;
+import java.util.Optional;
 
 import static me.pugabyte.nexus.features.radio.Utils.setRadioDefaults;
 
@@ -26,16 +29,18 @@ public class RadioFeature extends Feature {
 	private static final File songsDirectory = Nexus.getFile("radio/songs");
 
 	@Getter
-	private static File[] songs;
+	private static List<RadioSong> allSongs;
 
 	RadioConfigService configService = new RadioConfigService();
 
 	@Override
 	public void startup() {
-		songs = null;
+		allSongs = null;
 		new Listeners();
 
-		songs = songsDirectory.listFiles();
+		for (File file : songsDirectory.listFiles())
+			allSongs.add(new RadioSong(file.getName(), file));
+
 		setupRadios();
 
 		loadListeners();
@@ -91,5 +96,11 @@ public class RadioFeature extends Feature {
 				radio.getSongPlayer().addPlayer(player);
 			}
 		}
+	}
+
+	public static Optional<RadioSong> getRadioSongByName(String name) {
+		return allSongs.stream()
+				.filter(radioSong -> radioSong.getName().equalsIgnoreCase(name))
+				.findFirst();
 	}
 }

@@ -117,7 +117,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@ConverterFor(Ticket.class)
-	public Ticket convertToTicket(String value) {
+	Ticket convertToTicket(String value) {
 		if (!Utils.isInt(value))
 			error("Ticket ID must be a number");
 

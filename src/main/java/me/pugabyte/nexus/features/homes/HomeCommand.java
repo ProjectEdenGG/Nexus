@@ -48,7 +48,7 @@ public class HomeCommand extends CustomCommand {
 	}
 
 	@ConverterFor(Home.class)
-	public Home convertToHome(String value, OfflinePlayer context) {
+	Home convertToHome(String value, OfflinePlayer context) {
 		if (context == null) context = player();
 		return ((HomeOwner) service.get(context)).getHome(value).orElseThrow(() -> new InvalidInputException("That home does not exist"));
 	}

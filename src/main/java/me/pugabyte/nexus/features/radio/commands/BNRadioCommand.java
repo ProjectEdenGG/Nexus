@@ -18,6 +18,7 @@ import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
 import me.pugabyte.nexus.models.radio.RadioConfigService;
+import me.pugabyte.nexus.models.radio.RadioSong;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
 import org.bukkit.Bukkit;
@@ -187,7 +188,7 @@ public class BNRadioCommand extends CustomCommand {
 	}
 
 	@ConverterFor(Radio.class)
-	public Radio convertToRadio(String value) {
+	Radio convertToRadio(String value) {
 		Radio radio = config.getById(value);
 		if (radio == null)
 			throw new InvalidInputException("Radio &e" + value + " &cnot found");
@@ -202,14 +203,23 @@ public class BNRadioCommand extends CustomCommand {
 				.collect(Collectors.toList());
 	}
 
+	@ConverterFor(RadioSong.class)
+	RadioSong convertToRadioSong(String value) {
+		return RadioFeature.getRadioSongByName(value)
+				.orElseThrow(() -> new InvalidInputException("Radio &e" + value + " &cnot found"));
+	}
+
+	@TabCompleterFor(RadioSong.class)
+	List<String> tabCompleteRadioSong(String filter) {
+		return RadioFeature.getAllSongs().stream()
+				.filter(song -> song.getName().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(RadioSong::getName)
+				.collect(Collectors.toList());
+	}
+
 	private int getSongPercent(SongPlayer radio) {
 		double songLen = radio.getSong().getLength();
 		double current = radio.getTick();
 		return (int) ((current / songLen) * 100.0);
-	}
-
-	public class RadioSong {
-		String name;
-		File file;
 	}
 }

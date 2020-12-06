@@ -42,11 +42,12 @@ public class WelcomeCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeat(0, Time.SECOND.x(60), () -> {
+		Tasks.repeat(Time.MINUTE, Time.MINUTE, () -> {
 			if (Bukkit.getOnlinePlayers().stream().filter(player ->
 					player.hasPermission("group.moderator") &&
 					!player.getName().equals("KodaBear") &&
-					!AFK.get(player).isAfk()).count() < 4)
+					!AFK.get(player).isAfk()
+			).count() < 4)
 				return;
 
 			if (!new CooldownService().check(Nexus.getUUID0(), "bumpReminder", Time.DAY))
