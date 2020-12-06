@@ -63,6 +63,7 @@ public class RadioConfig extends PlayerOwnedObject {
 	@Converters({UUIDConverter.class, LocationConverter.class})
 	public static class Radio {
 		private String id;
+		private RadioType type;
 		private boolean enabled = true;
 		private Location location;
 		private int radius;
@@ -99,6 +100,8 @@ public class RadioConfig extends PlayerOwnedObject {
 
 			return new Playlist(songList.toArray(new Song[0]));
 		}
+
+
 	}
 
 }

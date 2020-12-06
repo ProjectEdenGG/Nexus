@@ -1,13 +1,19 @@
 package me.pugabyte.nexus.features.radio;
 
+import com.xxmicloxx.NoteBlockAPI.event.PlayerRangeStateChangeEvent;
 import com.xxmicloxx.NoteBlockAPI.event.SongNextEvent;
 import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
+import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
+import me.pugabyte.nexus.models.radio.RadioUser;
+import me.pugabyte.nexus.models.radio.RadioUserService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Set;
@@ -22,19 +28,22 @@ public class Listeners implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-
-
 		SongPlayer radio = Utils.getListenedRadio(player, false);
 		if (radio != null)
 			Utils.removePlayer(player, radio);
 	}
 
-//	@EventHandler
-//	public void onPlayerJoin(PlayerJoinEvent event) {
-//		Player player = event.getPlayer();
-//		for (PositionSongPlayer radio : RadioFeature.getRadiusRadios())
-//			Utils.addPlayer(player, radio);
-//	}
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		for (Radio radio : Utils.getRadios()) {
+			SongPlayer songPlayer = radio.getSongPlayer();
+			if (songPlayer instanceof PositionSongPlayer) {
+				PositionSongPlayer positionSongPlayer = (PositionSongPlayer) songPlayer;
+				Utils.addPlayer(player, positionSongPlayer);
+			}
+		}
+	}
 
 	@EventHandler
 	public void onSongNext(SongNextEvent event) {
@@ -56,31 +65,32 @@ public class Listeners implements Listener {
 		}
 	}
 
-//	@EventHandler
-//	public void onRangeChange(PlayerRangeStateChangeEvent event) {
-//		Player player = event.getPlayer();
-//		SongPlayer radiusRadio = event.getSongPlayer();
-//		boolean isInRange = event.isInRange();
-//
-//		RadioUserService service = new RadioUserService();
-//		RadioUser user = service.get(player);
-//
-//		SongPlayer listenedRadio = Utils.getListenedRadio(player, true);
-//		RadioSongPlayer serverRadio = RadioFeature.getServerRadio();
-//
-//		if (listenedRadio == serverRadio && isInRange) {
-//			// Make the player leave the server radio if they are listening, and join the radius radio
-//			Utils.removePlayer(player, serverRadio);
-//			Utils.addPlayer(player, radiusRadio);
-//
-//		} else if (isInRange) {
-//			// Add the player to the radius radio, just in case.
-//			Utils.addPlayer(player, radiusRadio);
-//
-//		} else if (user.isListening()) {
-//			// If player had radio on before entering a radius radio, turn it back on
-//			Utils.addPlayer(player, serverRadio);
-//		}
-//	}
+	// When entering & exiting radius radios
+	@EventHandler
+	public void onRangeChange(PlayerRangeStateChangeEvent event) {
+		Player player = event.getPlayer();
+		SongPlayer radiusRadio = event.getSongPlayer();
+		boolean isInRange = event.isInRange();
+
+		RadioUserService service = new RadioUserService();
+		RadioUser user = service.get(player);
+
+		SongPlayer listenedRadio = Utils.getListenedRadio(player, true);
+
+		if (listenedRadio instanceof RadioSongPlayer && isInRange) {
+			// Make the player leave the their listened server radio, and join the radius radio
+			Utils.removePlayer(player, user.getRadio().getSongPlayer());
+			Utils.addPlayer(player, radiusRadio);
+
+		} else if (isInRange) {
+			// Add the player to the radius radio, just in case.
+			Utils.addPlayer(player, radiusRadio);
+
+		} else if (!user.getLastRadioId().isEmpty()) {
+			// If player had a server radio on before entering a radius radio, turn it back on
+			Utils.addPlayer(player, user.getLastRadio().getSongPlayer());
+
+		}
+	}
 
 }

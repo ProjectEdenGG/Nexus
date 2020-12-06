@@ -16,6 +16,8 @@ import me.pugabyte.nexus.models.radio.RadioUserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import org.bukkit.entity.Player;
 
+import java.util.Set;
+
 public class Utils {
 
 	public static void actionBar(Player player, String songTitle) {
@@ -67,11 +69,14 @@ public class Utils {
 		return radio.getTargetLocation().getWorld().equals(player.getWorld()) && radio.isInRange(player);
 	}
 
-	public static boolean isInRangeOfAnyRadiusRadio(Player player) {
+	public static Set<Radio> getRadios() {
 		RadioConfigService configService = new RadioConfigService();
 		RadioConfig config = configService.get(Nexus.getUUID0());
+		return config.getRadios();
+	}
 
-		for (Radio radio : config.getRadios()) {
+	public static boolean isInRangeOfAnyRadiusRadio(Player player) {
+		for (Radio radio : getRadios()) {
 			SongPlayer songPlayer = radio.getSongPlayer();
 			if (songPlayer instanceof PositionSongPlayer) {
 				PositionSongPlayer radiusRadio = (PositionSongPlayer) songPlayer;
@@ -119,5 +124,13 @@ public class Utils {
 			actionBar(player, "&c&lYou have left the server radio");
 		} else
 			player.sendMessage(RadioFeature.getPREFIX() + " &cYou are not listening to a radio!");
+	}
+
+	public static void removeRadio(Radio radio) {
+		RadioFeature.removeSongPlayer(radio.getSongPlayer());
+
+		RadioConfigService configService = new RadioConfigService();
+		RadioConfig config = configService.get(Nexus.getUUID0());
+		config.getRadios().remove(radio);
 	}
 }

@@ -6,6 +6,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.radio.RadioFeature;
 import me.pugabyte.nexus.features.radio.Utils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
@@ -19,8 +20,10 @@ import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
 import me.pugabyte.nexus.models.radio.RadioConfigService;
 import me.pugabyte.nexus.models.radio.RadioSong;
+import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -37,13 +40,13 @@ import static me.pugabyte.nexus.features.radio.Utils.removePlayer;
 // TODO on release: Remove admin perms, rename command to RadioCommand
 
 @Permission("group.admin")
-public class BNRadioCommand extends CustomCommand {
+public class NXRadioCommand extends CustomCommand {
 	RadioUserService userService = new RadioUserService();
 	RadioConfigService configService = new RadioConfigService();
 	RadioConfig config = configService.get(Nexus.getUUID0());
 	RadioUser user;
 
-	public BNRadioCommand(CommandEvent event) {
+	public NXRadioCommand(CommandEvent event) {
 		super(event);
 
 		if (isPlayer())
@@ -117,6 +120,8 @@ public class BNRadioCommand extends CustomCommand {
 		send(songList.toString());
 	}
 
+	// Staff Commands
+
 	@Path("players <radio>")
 	@Description("Lists all players listening to the server radio")
 	@Permission("group.staff")
@@ -140,6 +145,12 @@ public class BNRadioCommand extends CustomCommand {
 		send(playerList.toString());
 	}
 
+	@Path("debug <radio>")
+	@Permission("group.admin")
+	void debugRadio(Radio radio) {
+		send(StringUtils.toPrettyString(radio));
+	}
+
 	@Path("reload")
 	@Description("Reloads the config, and remakes every radio")
 	@Permission("group.admin")
@@ -148,42 +159,117 @@ public class BNRadioCommand extends CustomCommand {
 		send(RadioFeature.getPREFIX() + "Config reloaded!");
 	}
 
-	@Path("config create radius <id> <radius>")
-	void configCreateRadius(String id, int radius) {
-		config.add(Radio.builder()
-				.id(id)
-				.radius(radius)
-				.location(player().getLocation())
-				.build());
+	// Config Commands
 
-		send(PREFIX + "Radius radio &e" + id + " &3created");
+	@Path("config create <type> <id> [radius]")
+	@Description("Create a radio")
+	@Permission("group.admin")
+	void configCreate(RadioType type, String id, @Arg("0") int radius) {
+		if (type.equals(RadioType.RADIUS)) {
+			config.add(Radio.builder()
+					.id(id)
+					.type(RadioType.RADIUS)
+					.radius(radius)
+					.location(player().getLocation())
+					.enabled(false)
+					.build());
+
+		} else if (type.equals(RadioType.SERVER)) {
+			config.add(Radio.builder()
+					.id(id)
+					.type(RadioType.SERVER)
+					.enabled(false)
+					.build());
+
+		}
+		configService.save(config);
+
+		send(PREFIX + StringUtils.camelCase(type) + " Radio &e" + id + " &3created");
 	}
 
-	@Path("config create server <id>")
-	void configCreateServer(String id) {
-		config.add(Radio.builder()
-				.id(id)
-				.radius(0)
-				.location(null)
-				.build());
+	@Path("config setType <radio> <type>")
+	@Permission("group.admin")
+	void configSetLocation(Radio radio, RadioType type) {
+		radio.setType(type);
+		configService.save(radio);
 
-		send(PREFIX + "Server radio &e" + id + " &3created");
+		send(PREFIX + "Type set to " + radio.getType() + " on " + radio.getId());
+	}
+
+	@Path("config setRadius <radio> <radius>")
+	@Permission("group.admin")
+	void configSetLocation(Radio radio, int radius) {
+		if (!radio.getType().equals(RadioType.RADIUS))
+			error("Can only set radius of a radius radio");
+
+		radio.setRadius(radius);
+		configService.save(radio);
+
+		send(PREFIX + "Radius set to " + radio.getLocation() + " on " + radio.getId());
+	}
+
+	@Path("config setLocation <radio>")
+	@Permission("group.admin")
+	void configSetLocation(Radio radio) {
+		if (!radio.getType().equals(RadioType.RADIUS))
+			error("Can only set location of a radius radio");
+
+		radio.setLocation(player().getLocation());
+		configService.save(radio);
+
+		send(PREFIX + "Location set to " + radio.getLocation() + " on " + radio.getId());
 	}
 
 	@Path("config addSong <radio> <song>")
+	@Description("Add a song to a radio")
+	@Permission("group.admin")
 	void configAddSong(Radio radio, RadioSong radioSong) {
+		radio.getSongs().add(radioSong.getName());
+		configService.save(radio);
 
+		send(PREFIX + "Added " + radioSong.getName() + " to " + radio.getId());
 	}
 
 	@Path("config removeSong <radio> <song>")
-	void configRemoveSong(Radio radio, RadioSong radioSong) {
+	@Description("Remove a song from a radio")
+	@Permission("group.admin")
+	void configRemoveSong(Radio radio, @Arg(context = 1) RadioSong radioSong) {
+		radio.getSongs().remove(radioSong.getName());
+		configService.save(radio);
 
+		send(PREFIX + "Removed " + radioSong.getName() + " from " + radio.getId());
+	}
+
+	@Path("config enable <radio>")
+	@Description("Enable the radio")
+	@Permission("group.admin")
+	void configEnable(Radio radio) {
+		RadioFeature.verify(radio);
+
+		radio.setEnabled(true);
+		configService.save(radio);
+
+		send(PREFIX + "Enabled " + radio.getId());
+	}
+
+	@Path("config disable <radio>")
+	@Description("Disable the radio")
+	@Permission("group.admin")
+	void configDisable(Radio radio) {
+		radio.setEnabled(false);
+		configService.save(radio);
+
+		send(PREFIX + "Disabled " + radio.getId());
 	}
 
 	@Confirm
 	@Path("config delete <id>")
+	@Description("Delete the radio")
+	@Permission("group.admin")
 	void configDelete(Radio radio) {
-		config.getRadios().remove(radio);
+		Utils.removeRadio(radio);
+		configService.delete(radio);
+
 		send(PREFIX + "Radio &e" + radio.getId() + " &3deleted");
 	}
 
@@ -203,10 +289,17 @@ public class BNRadioCommand extends CustomCommand {
 				.collect(Collectors.toList());
 	}
 
-	@ConverterFor(RadioSong.class)
-	RadioSong convertToRadioSong(String value) {
-		return RadioFeature.getRadioSongByName(value)
-				.orElseThrow(() -> new InvalidInputException("Radio &e" + value + " &cnot found"));
+	@TabCompleterFor(RadioSong.class)
+	List<String> tabCompleteRadioSong(String filter, Radio context) {
+		return RadioFeature.getAllSongs().stream()
+				.filter(song -> song.getName().toLowerCase().startsWith(filter.toLowerCase()))
+				.filter(song -> {
+					if (context != null)
+						return context.getSongs().contains(song.getName());
+					return true;
+				})
+				.map(RadioSong::getName)
+				.collect(Collectors.toList());
 	}
 
 	@TabCompleterFor(RadioSong.class)

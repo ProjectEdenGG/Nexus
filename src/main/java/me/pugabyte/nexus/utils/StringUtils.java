@@ -264,7 +264,11 @@ public class StringUtils {
 	}
 
 	public static String toPrettyString(Object object) {
-		return getPrettyPrinter().toJson(object);
+		try {
+			return getPrettyPrinter().toJson(object);
+		} catch (Exception ignored) {
+			return object.toString();
+		}
 	}
 
 	public static Gson getPrettyPrinter() {

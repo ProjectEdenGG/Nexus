@@ -7,11 +7,13 @@ import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.annotations.Disabled;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
 import me.pugabyte.nexus.models.radio.RadioConfigService;
 import me.pugabyte.nexus.models.radio.RadioSong;
+import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.pugabyte.nexus.features.radio.Utils.setRadioDefaults;
+import static me.pugabyte.nexus.utils.Utils.isNullOrEmpty;
 
 @Disabled
 public class RadioFeature extends Feature {
@@ -52,10 +55,7 @@ public class RadioFeature extends Feature {
 	public void shutdown() {
 		RadioConfig radioConfig = configService.get(Nexus.getUUID0());
 		for (Radio radio : radioConfig.getRadios()) {
-			SongPlayer songPlayer = radio.getSongPlayer();
-			songPlayer.setAutoDestroy(true);
-			songPlayer.setPlaying(false);
-			songPlayer.destroy();
+			removeSongPlayer(radio.getSongPlayer());
 		}
 	}
 
@@ -104,5 +104,30 @@ public class RadioFeature extends Feature {
 		return allSongs.stream()
 				.filter(radioSong -> radioSong.getName().equalsIgnoreCase(name))
 				.findFirst();
+	}
+
+	public static void removeSongPlayer(SongPlayer songPlayer) {
+		songPlayer.setAutoDestroy(true);
+		songPlayer.setPlaying(false);
+		songPlayer.destroy();
+	}
+
+	public static void verify(Radio radio) {
+		if (radio == null)
+			throw new InvalidInputException("Radio is null");
+
+		String radioId = "Radio " + radio.getId();
+		if (radio.getType().equals(RadioType.RADIUS)) {
+			if (radio.getLocation() == null)
+				throw new InvalidInputException(radioId + ": Location is null");
+			if (radio.getRadius() <= 0)
+				throw new InvalidInputException(radioId + ": Radius is <= 0");
+		}
+
+		if (isNullOrEmpty(radio.getSongs()))
+			throw new InvalidInputException(radioId + ": Songs is null or empty");
+
+		if (radio.getSongPlayer() == null)
+			throw new InvalidInputException(radioId + ": SongPlayer is null");
 	}
 }
