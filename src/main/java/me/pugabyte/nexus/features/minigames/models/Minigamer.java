@@ -15,6 +15,8 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -61,6 +63,12 @@ public class Minigamer {
 	}
 
 	public void join(Arena arena) {
+		if (!WorldGroup.MINIGAMES.equals(WorldGroup.get(player.getWorld()))) {
+			toGamelobby();
+			Tasks.wait(10, () -> join(arena));
+			return;
+		}
+
 		if (match == null) {
 			match = MatchManager.get(arena);
 			if (!match.join(this))

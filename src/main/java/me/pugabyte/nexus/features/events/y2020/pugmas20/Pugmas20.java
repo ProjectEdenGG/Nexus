@@ -21,11 +21,13 @@ import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -299,6 +301,19 @@ public class Pugmas20 implements Listener {
 
 		PlayerUtils.send(player, QuestNPC.format(event.getNPC().getName(), QuestNPC.getGreeting()));
 		Quests.sound_npcAlert(player);
+	}
+
+	@EventHandler
+	public void onNpcLeftClick(NPCLeftClickEvent event) {
+		Player player = event.getClicker();
+		if (!isAtPugmas(player))
+			return;
+
+		if (!new CooldownService().check(player, "pugmas20-elf-punch", Time.SECOND.x(3)))
+			return;
+
+		String message = RandomUtils.randomElement("Ow!", "Stop that!", "Rude!");
+		PlayerUtils.send(player, QuestNPC.format(event.getNPC().getName(), message));
 	}
 
 }
