@@ -10,6 +10,7 @@ import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.arenas.CheckpointArena;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -61,7 +62,7 @@ public class CheckpointsCommand extends CustomCommand {
 
 	@SneakyThrows
 	@Path("(set|add|create) <number>")
-	void addCheckpoint(int number) {
+	void addCheckpoint(@Arg(min = 1) int number) {
 		Region selection = weUtils.getPlayerSelection(player());
 		selection.expand(weUtils.toBlockVector3(Direction.UP.toVector().multiply(4)));
 		String id = regionBase + number;

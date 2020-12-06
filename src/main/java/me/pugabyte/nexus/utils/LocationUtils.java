@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.utils;
 
-import com.google.common.base.Strings;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import lombok.Data;
 import lombok.Getter;
@@ -22,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class LocationUtils {
 	public static Location getCenteredLocation(Location location) {
@@ -212,17 +213,19 @@ public class LocationUtils {
 				location.setX((x.startsWith("~") ? location.getX() + trim(x) : trim(x)));
 				location.setY((y.startsWith("~") ? location.getY() + trim(y) : trim(y)));
 				location.setZ((z.startsWith("~") ? location.getZ() + trim(z) : trim(z)));
-				location.setYaw((float) (yaw.startsWith("~") ? location.getYaw() + trim(yaw) : trim(yaw)));
-				location.setPitch((float) (pitch.startsWith("~") ? location.getPitch() + trim(pitch) : trim(pitch)));
+				if (!isNullOrEmpty(yaw))
+					location.setYaw((float) (yaw.startsWith("~") ? location.getYaw() + trim(yaw) : trim(yaw)));
+				if (!isNullOrEmpty(pitch))
+					location.setPitch((float) (pitch.startsWith("~") ? location.getPitch() + trim(pitch) : trim(pitch)));
 				return location;
 			}
 		}
 
 		private static double trim(String string) {
-			if (Strings.isNullOrEmpty(string)) return 0;
+			if (isNullOrEmpty(string)) return 0;
 			if (Utils.isDouble(string)) return Double.parseDouble(string);
 			string = StringUtils.right(string, string.length() - 1);
-			if (Strings.isNullOrEmpty(string)) return 0;
+			if (isNullOrEmpty(string)) return 0;
 			return Double.parseDouble(string);
 		}
 	}

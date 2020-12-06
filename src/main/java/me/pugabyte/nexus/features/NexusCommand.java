@@ -27,6 +27,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Features;
+import me.pugabyte.nexus.models.balanceconverter.BalanceConverter;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
@@ -265,6 +266,56 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 			block.breakNaturally();
 		}
+	}
+
+//	@Async
+//	@Path("balances <count>")
+//	void balances(int limit) {
+//		int count = 0;
+//		for (UUID uuid : Nexus.getEssentials().getUserMap().getAllUniqueUsers()) {
+//			BalanceConverterService service = new BalanceConverterService();
+//			BalanceConverter converter = service.get(uuid);
+//			converter.findBalances();
+//			service.save(converter);
+//
+//			double sum = converter.sum();
+//			double max = converter.max();
+//			double diff = sum - max;
+//			if (diff < 5000)
+//				continue;
+//
+//			int size = converter.getBalances().size();
+//			String maxFormat = StringUtils.getDf().format(max);
+//			String sumFormat = StringUtils.getDf().format(sum);
+//			String diffFormat = StringUtils.getDf().format(diff);
+//
+//			send(converter.getName() + " - Amount: " + size + " / Max: " + maxFormat + " / Sum: " + sumFormat + " / Diff: " + diffFormat);
+//			if (++count > limit)
+//				error("Limit reached");
+//		}
+//	}
+//
+//	@Async
+//	@Path("balances set <count>")
+//	void balancesSet(int limit) {
+//		int count = 0;
+//		for (UUID uuid : Nexus.getEssentials().getUserMap().getAllUniqueUsers()) {
+//			BalanceConverterService service = new BalanceConverterService();
+//			BalanceConverter converter = service.get(uuid);
+//			converter.findBalances();
+//			service.save(converter);
+//
+//			Tasks.sync(() -> runCommandAsConsole("eco set " + converter.getUuid().toString() + " " + StringUtils.getDf().format(converter.sum())));
+//
+//			if (++count > limit)
+//				error("Limit reached");
+//		}
+//	}
+
+	@Async
+	@Path("balances debug <player>")
+	void balances(BalanceConverter converter) {
+		send(converter.toPrettyString());
 	}
 
 	@Path("movingSchematicTest <schematic> <seconds> <velocity>")

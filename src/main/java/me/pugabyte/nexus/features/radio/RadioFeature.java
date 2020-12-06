@@ -6,6 +6,7 @@ import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 import static me.pugabyte.nexus.features.radio.Utils.setRadioDefaults;
 
+@Disabled
 public class RadioFeature extends Feature {
 
 	@Getter
