@@ -41,7 +41,11 @@ public abstract class PlayerOwnedObject {
 	}
 
 	public String toPrettyString() {
-		return StringUtils.toPrettyString(this);
+		try {
+			return StringUtils.toPrettyString(this);
+		} catch (Exception ignored) {
+			return this.toString();
+		}
 	}
 
 }
