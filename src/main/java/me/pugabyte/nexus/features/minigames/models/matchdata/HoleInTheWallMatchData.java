@@ -60,7 +60,7 @@ public class HoleInTheWallMatchData extends MatchData {
 	}
 
 	public Track getTrack(ProtectedRegion region) {
-		return tracks.stream().filter(track -> Arena.getRegionTypeId(region) == track.getId()).findFirst().orElse(null);
+		return tracks.stream().filter(track -> Arena.getRegionNumber(region) == track.getId()).findFirst().orElse(null);
 	}
 
 	@Data
@@ -116,7 +116,7 @@ public class HoleInTheWallMatchData extends MatchData {
 		}
 
 		public int getId() {
-			return Arena.getRegionTypeId(region);
+			return Arena.getRegionNumber(region);
 		}
 
 		public void start() {

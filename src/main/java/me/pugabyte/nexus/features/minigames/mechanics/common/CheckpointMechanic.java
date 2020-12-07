@@ -58,7 +58,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 		CheckpointArena arena = minigamer.getMatch().getArena();
 
 		if (arena.ownsRegion(event.getRegion().getId(), "checkpoint")) {
-			int checkpointId = Arena.getRegionTypeId(event.getRegion());
+			int checkpointId = Arena.getRegionNumber(event.getRegion());
 			getMatchData(minigamer).setCheckpoint(minigamer, checkpointId);
 		}
 	}

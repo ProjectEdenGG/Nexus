@@ -119,7 +119,9 @@ public abstract class Mechanic implements Listener {
 			begin(beginEvent);
 	}
 
-	public void begin(MatchBeginEvent event) {}
+	public void begin(MatchBeginEvent event) {
+		event.getMatch().setBegun(true);
+	}
 
 	public void end(Match match) {
 		match.end();
@@ -177,7 +179,9 @@ public abstract class Mechanic implements Listener {
 
 	public void tellMapAndMechanic(Minigamer minigamer) {
 		Arena arena = minigamer.getMatch().getArena();
-		minigamer.tell("You are playing &e" + arena.getMechanic().getName() + " &3on &e" + arena.getDisplayName());
+		String mechanicName = arena.getMechanic().getName();
+		String arenaName = arena.getDisplayName();
+		minigamer.tell("You are playing &e" + mechanicName + (mechanicName.equals(arenaName) ? "" : " &3on &e" + arenaName));
 	}
 
 	public abstract void announceWinners(Match match);

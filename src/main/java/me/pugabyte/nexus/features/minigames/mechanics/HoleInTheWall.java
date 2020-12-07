@@ -83,7 +83,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 		HoleInTheWallArena arena = event.getMatch().getArena();
 		HoleInTheWallMatchData matchData = event.getMatch().getMatchData();
 		for (Location location : arena.getDesignHangerLocation()) {
-			Set<ProtectedRegion> trackRegions = arena.getNumberedRegionsLikeAt("track", location);
+			Set<ProtectedRegion> trackRegions = arena.getRegionsLikeAt("track", location);
 			if (trackRegions.size() != 1)
 				throw new MinigameException("Was expecting 1 track region at " + getLocationString(location) + ", but found " + trackRegions.size());
 
@@ -166,7 +166,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 		HoleInTheWallArena arena = match.getArena();
 		HoleInTheWallMatchData matchData = match.getMatchData();
 
-		Set<ProtectedRegion> answerRegions = arena.getNumberedRegionsLikeAt("answer", location);
+		Set<ProtectedRegion> answerRegions = arena.getRegionsLikeAt("answer", location);
 		if (answerRegions.size() == 1) {
 			Track track = matchData.getTrack(answerRegions.iterator().next());
 			return track != null && minigamer.equals(track.getMinigamer());

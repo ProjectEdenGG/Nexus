@@ -143,7 +143,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		UncivilEngineersMatchData matchData = minigamer.getMatch().getMatchData();
 
 		if (arena.ownsRegion(event.getRegion().getId(), "checkpoint")) {
-			int checkpointId = Arena.getRegionTypeId(event.getRegion());
+			int checkpointId = Arena.getRegionNumber(event.getRegion());
 			matchData.setCheckpoint(minigamer, checkpointId);
 		}
 	}

@@ -46,6 +46,8 @@ public final class Splegg extends SpleefMechanic {
 	@Override
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		super.onPlayerInteract(minigamer, event);
+		if (!minigamer.getMatch().isBegun())
+			return;
 
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!event.getAction().name().contains("RIGHT_CLICK")) return;

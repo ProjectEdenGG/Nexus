@@ -31,6 +31,9 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 	}
 
 	public boolean breakBlock(Match match, Location location) {
+		if (!match.isBegun())
+			return false;
+
 		for (ProtectedRegion region : match.getWGUtils().getRegionsAt(location.clone().add(0, .1, 0))) {
 			if (!match.getArena().ownsRegion(region.getId(), "floor")) continue;
 

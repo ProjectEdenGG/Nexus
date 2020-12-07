@@ -81,10 +81,12 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 			Tasks.cancel(taskIds.get(material));
 			taskIds.remove(material);
 		} else {
-			Vector vector = player.getLocation().getDirection();
 			Class<? extends Projectile> projectile = projectiles.get(material);
-			if (projectile == Arrow.class) vector.multiply(100);
-			int taskId = Tasks.repeat(0, 1, () -> player.launchProjectile(projectile, vector));
+			int taskId = Tasks.repeat(0, 1, () -> {
+				Vector vector = player.getLocation().getDirection();
+				if (projectile == Arrow.class) vector.multiply(20);
+				player.launchProjectile(projectile, vector);
+			});
 			taskIds.put(material, taskId);
 		}
 	}

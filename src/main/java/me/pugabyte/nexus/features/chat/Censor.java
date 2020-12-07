@@ -118,6 +118,9 @@ public class Censor {
 	}
 
 	private static void lowercase(ChatEvent event) {
+		if (event.getChannel() instanceof PublicChannel && !((PublicChannel) event.getChannel()).isCensor())
+			return;
+
 		String message = event.getMessage();
 		String characters = message.replaceAll(" ", "");
 		if (characters.length() == 0)

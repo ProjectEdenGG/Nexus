@@ -4,6 +4,8 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
@@ -11,6 +13,7 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -25,6 +28,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[autoreply...]")
+	@Cooldown(@Part(value = Time.SECOND, x = 5))
 	void afk(String autoreply) {
 		AFKPlayer player = AFK.get(player());
 

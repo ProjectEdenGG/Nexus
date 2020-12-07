@@ -64,6 +64,7 @@ public class Match {
 	private List<Minigamer> allMinigamers = new ArrayList<>();
 	private boolean initialized = false;
 	private boolean started = false;
+	private boolean begun = false;
 	private boolean ended = false;
 	private Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;

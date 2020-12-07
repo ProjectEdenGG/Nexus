@@ -47,7 +47,7 @@ public class EventsCommand extends CustomCommand {
 	@Async
 	@Path("tokens top [page]")
 	public void tokensTop(@Arg("1") int page) {
-		paginate(service.getTopTokens(), (user, index) -> json("&3" + index + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTokens()), "/event tokens top", page);
+		paginate(service.getTopTokens(), (user, index) -> json("&3" + (index + 1) + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTokens()), "/event tokens top", page);
 	}
 
 	/* TODO

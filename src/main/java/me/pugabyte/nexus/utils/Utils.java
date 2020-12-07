@@ -161,11 +161,18 @@ public class Utils {
 	public static int getFirstIndexOf(Collection<?> collection, Object object) {
 		Iterator<?> iterator = collection.iterator();
 		int index = 0;
-		while (iterator.hasNext())
-			if (iterator.next().equals(object))
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			if (next == null)
+				if (object == null)
+					return index;
+				else
+					++index;
+			else if (next.equals(object))
 				return index;
 			else
 				++index;
+		}
 
 		return -1;
 	}
