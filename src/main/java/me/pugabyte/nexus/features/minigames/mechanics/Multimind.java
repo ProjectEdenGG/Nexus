@@ -1,17 +1,13 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.Regenerating;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.nexus.features.minigames.models.matchdata.IMastermindMatchData;
-import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData;
+import me.pugabyte.nexus.features.minigames.models.matchdata.MultimindMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -19,6 +15,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -26,18 +23,16 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.function.Function;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 // TODO Lobby
 
 @Regenerating({"board", "guess"})
-public final class Mastermind extends SingleplayerMechanic {
+public final class Multimind extends SingleplayerMechanic {
 
 	@Override
 	public String getName() {
-		return "Mastermind";
+		return "Mastermind Duel";
 	}
 
 	@Override
@@ -56,12 +51,12 @@ public final class Mastermind extends SingleplayerMechanic {
 	}
 
 	@Override
-	public void onJoin(MatchJoinEvent event) {
-		super.onJoin(event);
+	public void onStart(MatchStartEvent event) {
+		super.onStart(event);
 
 		Match match = event.getMatch();
-		MastermindMatchData matchData = match.getMatchData();
-		matchData.giveLoadout(event.getMinigamer());
+		MultimindMatchData matchData = match.getMatchData();
+		match.getAliveMinigamers().forEach(matchData::giveLoadout);
 		matchData.resetResultsSign();
 	}
 
@@ -75,23 +70,7 @@ public final class Mastermind extends SingleplayerMechanic {
 	}
 
 	public boolean canBuild(Minigamer minigamer, Block block) {
-		IMastermindMatchData matchData = minigamer.getMatch().getMatchData();
-		boolean isInRegion = isInRegion(minigamer.getMatch(), block, "guess");
-		boolean canGuess = matchData.canGuess(minigamer);
-		Nexus.log("isInRegion: " + isInRegion + " / guess: " + matchData.getGuess(minigamer) + " / canGuess: " + canGuess);
-		return isInRegion && canGuess;
-	}
-
-	@EventHandler
-	public void onTick(MatchTimerTickEvent event) {
-		if (!event.getMatch().isMechanic(this)) return;
-
-		Match match = event.getMatch();
-		MastermindMatchData matchData = match.getMatchData();
-
-		Minigamer minigamer = match.getAliveMinigamers().iterator().next();
-		if (matchData.getGuess(minigamer) > 1 && matchData.getGuess(minigamer) <= 10)
-			event.getMatch().getMinigamers().forEach(Minigamer::scored);
+		return isInRegion(minigamer.getMatch(), block, "guess") && ((IMastermindMatchData) minigamer.getMatch().getMatchData()).canGuess(minigamer);
 	}
 
 	@EventHandler
@@ -110,11 +89,8 @@ public final class Mastermind extends SingleplayerMechanic {
 
 		if (Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) {
 			Match match = minigamer.getMatch();
-			MastermindMatchData matchData = match.getMatchData();
-			if (isInRegion(match, block, "button")) {
-				if (!MaterialTag.BUTTONS.isTagged(block.getType()))
-					return;
-
+			MultimindMatchData matchData = match.getMatchData();
+			if (MaterialTag.BUTTONS.isTagged(block.getType())) {
 				// TODO Cleanup
 				try {
 					matchData.guess(minigamer);
@@ -129,8 +105,10 @@ public final class Mastermind extends SingleplayerMechanic {
 
 			if (MaterialTag.SIGNS.isTagged(block.getType())) {
 				int guess = matchData.getGuess(minigamer);
+				Sign sign = (Sign) block.getState();
 
-				if (isInRegion(match, block, "colorblind")) {
+				String line1 = stripColor(sign.getLine(0));
+				if (line1.equals("< Colorblind >")) {
 					if (guess != 1) {
 						minigamer.tell("You cannot change colorblind mode in the middle of the game");
 						return;
@@ -141,23 +119,16 @@ public final class Mastermind extends SingleplayerMechanic {
 					match.getArena().regenerate();
 					return;
 				}
-				if (isInRegion(match, block, "repeats_off")) {
+				if (line1.equals("< Difficulty >")) {
 					if (guess != 1) {
 						minigamer.tell("You cannot change the difficulty mode in the middle of the game");
 						return;
 					}
-					matchData.setRepeats(false);
-					matchData.createAnswer();
-					match.getArena().regenerate();
-					minigamer.tell("Difficulty mode updated");
-					return;
-				}
-				if (isInRegion(match, block, "repeats_on")) {
-					if (guess != 1) {
-						minigamer.tell("You cannot change the difficulty mode in the middle of the game");
-						return;
-					}
-					matchData.setRepeats(true);
+					String line2 = stripColor(sign.getLine(1));
+					if (line2.equals("Easy"))
+						matchData.setRepeats(false);
+					else if (line2.equals("Hard"))
+						matchData.setRepeats(true);
 					matchData.createAnswer();
 					match.getArena().regenerate();
 					minigamer.tell("Difficulty mode updated");
@@ -168,45 +139,6 @@ public final class Mastermind extends SingleplayerMechanic {
 			Block placed = event.getClickedBlock().getRelative(event.getBlockFace());
 			if (!ItemUtils.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
 				event.setCancelled(true);
-		}
-	}
-
-	@Getter
-	@AllArgsConstructor
-	public enum MastermindColor {
-		RED(Material.RED_CONCRETE, Material.TNT),
-		ORANGE(Material.ORANGE_CONCRETE, Material.PUMPKIN),
-		YELLOW(Material.YELLOW_CONCRETE, Material.SPONGE),
-		LIME(Material.LIME_CONCRETE, Material.MELON),
-		LIGHT_BLUE(Material.LIGHT_BLUE_CONCRETE, Material.DIAMOND_BLOCK),
-		BLUE(Material.BLUE_CONCRETE, Material.DIRT), // TODO Can we change?
-		PURPLE(Material.PURPLE_CONCRETE, Material.PURPLE_WOOL),
-		PINK(Material.PINK_CONCRETE, Material.BRAIN_CORAL_BLOCK);
-
-		private final Material normal;
-		private final Material colorblind;
-
-		public static MastermindColor of(Material material) {
-			for (MastermindColor color : values())
-				if (color.getNormal() == material || color.getColorblind() == material)
-					return color;
-
-			return null;
-		}
-
-		public static Set<Material> getKit() {
-			return getMaterials(MastermindColor::getNormal);
-		}
-
-		public static Set<Material> getColorblindKit() {
-			return getMaterials(MastermindColor::getColorblind);
-		}
-
-		public static Set<Material> getMaterials(Function<MastermindColor, Material> function) {
-			return new LinkedHashSet<Material>() {{
-				for (MastermindColor color : values())
-					add(function.apply(color));
-			}};
 		}
 	}
 

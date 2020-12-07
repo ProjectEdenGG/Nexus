@@ -1,24 +1,35 @@
 package me.pugabyte.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Data;
 import me.pugabyte.nexus.features.minigames.mechanics.Mastermind;
+import me.pugabyte.nexus.features.minigames.mechanics.Multimind;
+import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+
+import java.util.Set;
 
 @Data
-@MatchDataFor(Mastermind.class)
-public class MastermindMatchData extends IMastermindMatchData {
+@MatchDataFor(Multimind.class)
+public class MultimindMatchData extends IMastermindMatchData {
 
-	public MastermindMatchData(Match match) {
+	public MultimindMatchData(Match match) {
 		super(match);
-		answerLength = match.getArena().getName().equals("Megamind") ? 5 : 4;
 		createAnswer();
+	}
+
+	public int getSectionNumber(Minigamer minigamer) {
+		Set<ProtectedRegion> section = arena.getRegionsLikeAt("section", minigamer.getPlayer().getLocation());
+		if (section.size() != 1)
+			throw new InvalidInputException("Could not determine which section you are in");
+
+		return Arena.getRegionNumber(section.iterator().next());
 	}
 
 	public void reset(Minigamer minigamer) {
@@ -34,9 +45,11 @@ public class MastermindMatchData extends IMastermindMatchData {
 		if (getGuess(minigamer) > maxGuesses)
 			return;
 
-		Region wallRegion = arena.getRegion("wall");
-		Region guessRegion = arena.getRegion("guess");
-		Region resultsSignRegion = arena.getRegion("results_sign");
+		int number = getSectionNumber(minigamer);
+
+		Region wallRegion = arena.getRegion("wall_" + number);
+		Region guessRegion = arena.getRegion("guess_" + number);
+		Region resultsSignRegion = arena.getRegion("results_sign_" + number);
 
 		validate(minigamer, wallRegion, guessRegion, resultsSignRegion);
 	}
@@ -44,15 +57,16 @@ public class MastermindMatchData extends IMastermindMatchData {
 	void lose(Minigamer minigamer) {
 		showAnswer(minigamer);
 		minigamer.tell("You were not able to crack the code! Better luck next time");
-		endOfGameChatButtons(minigamer);
+//		endOfGameChatButtons(minigamer);
 	}
 
 	void win(Minigamer minigamer) {
 		showAnswer(minigamer);
-		fireworks("fireworks");
+//		int number = getSectionNumber(minigamer);
+//		fireworks("fireworks_" + number);
 		guesses.put(minigamer, maxGuesses + 1);
 		minigamer.tell("You are the Mastermind! You cracked the code in " + TimespanFormatter.of(minigamer.getScore()).format());
-		Tasks.wait(Time.SECOND.x(4), () -> endOfGameChatButtons(minigamer));
+//		Tasks.wait(Time.SECOND.x(4), () -> endOfGameChatButtons(minigamer));
 	}
 
 	private void showAnswer(Minigamer minigamer) {
