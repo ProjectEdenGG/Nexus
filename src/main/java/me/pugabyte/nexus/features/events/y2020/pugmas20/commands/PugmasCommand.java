@@ -86,9 +86,9 @@ public class PugmasCommand extends CustomCommand implements Listener {
 			error("Soon™ (" + timeLeft + ")");
 
 		if (pugmasUser.isWarped()) {
-			player().teleport(Pugmas20.getSubsequentSpawn());
+			player().teleport(Pugmas20.getSubsequentSpawn(), TeleportCause.COMMAND);
 		} else {
-			player().teleport(Pugmas20.getInitialSpawn());
+			player().teleport(Pugmas20.getInitialSpawn(), TeleportCause.COMMAND);
 			pugmasUser.setWarped(true);
 			pugmasService.save(pugmasUser);
 		}

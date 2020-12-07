@@ -28,19 +28,17 @@ public class Listeners implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		SongPlayer radio = Utils.getListenedRadio(player, false);
+		Radio radio = RadioUtils.getListenedRadio(player);
 		if (radio != null)
-			Utils.removePlayer(player, radio);
+			RadioUtils.removePlayer(player, radio);
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		for (Radio radio : Utils.getRadios()) {
-			SongPlayer songPlayer = radio.getSongPlayer();
-			if (songPlayer instanceof PositionSongPlayer) {
-				PositionSongPlayer positionSongPlayer = (PositionSongPlayer) songPlayer;
-				Utils.addPlayer(player, positionSongPlayer);
+		for (Radio radio : RadioUtils.getRadios()) {
+			if (radio.getSongPlayer() instanceof PositionSongPlayer) {
+				RadioUtils.addPlayer(player, radio);
 			}
 		}
 	}
@@ -48,20 +46,21 @@ public class Listeners implements Listener {
 	@EventHandler
 	public void onSongNext(SongNextEvent event) {
 		SongPlayer songPlayer = event.getSongPlayer();
-		PositionSongPlayer radiusRadio;
 		String song = songPlayer.getSong().getTitle();
 		Set<UUID> UUIDList = songPlayer.getPlayerUUIDs();
 
 		for (UUID uuid : UUIDList) {
 			Player player = Bukkit.getPlayer(uuid);
-			if (player != null) {
-				if (songPlayer instanceof PositionSongPlayer) {
-					radiusRadio = (PositionSongPlayer) songPlayer;
-					if (Utils.isInRangeOfRadiusRadio(player, radiusRadio))
-						Utils.actionBar(player, song, true);
-				} else
-					Utils.actionBar(player, song, true);
-			}
+			if (player == null || !player.isOnline()) continue;
+
+			if (songPlayer instanceof PositionSongPlayer) {
+				Radio radio = RadioUtils.getRadio(songPlayer);
+				if (radio != null) {
+					if (RadioUtils.isInRangeOfRadiusRadio(player, radio))
+						RadioUtils.actionBar(player, song, true);
+				}
+			} else
+				RadioUtils.actionBar(player, song, true);
 		}
 	}
 
@@ -69,26 +68,30 @@ public class Listeners implements Listener {
 	@EventHandler
 	public void onRangeChange(PlayerRangeStateChangeEvent event) {
 		Player player = event.getPlayer();
-		SongPlayer radiusRadio = event.getSongPlayer();
+		SongPlayer radiusSongPlayer = event.getSongPlayer();
 		boolean isInRange = event.isInRange();
 
 		RadioUserService service = new RadioUserService();
 		RadioUser user = service.get(player);
 
-		SongPlayer listenedRadio = Utils.getListenedRadio(player, true);
+		Radio radiusRadio = RadioUtils.getRadio(radiusSongPlayer);
+		Radio listenedRadio = RadioUtils.getListenedRadio(player, true);
 
-		if (listenedRadio instanceof RadioSongPlayer && isInRange) {
+		if (listenedRadio == null) return;
+
+		SongPlayer listenedSongPlayer = listenedRadio.getSongPlayer();
+		if (listenedSongPlayer instanceof RadioSongPlayer && isInRange) {
 			// Make the player leave the their listened server radio, and join the radius radio
-			Utils.removePlayer(player, user.getRadio().getSongPlayer());
-			Utils.addPlayer(player, radiusRadio);
+			RadioUtils.removePlayer(player, listenedRadio);
+			RadioUtils.addPlayer(player, radiusRadio);
 
 		} else if (isInRange) {
 			// Add the player to the radius radio, just in case.
-			Utils.addPlayer(player, radiusRadio);
+			RadioUtils.addPlayer(player, radiusRadio);
 
-		} else if (!user.getLastRadioId().isEmpty()) {
+		} else if (user.getLastRadioId() != null && !user.getLastRadioId().isEmpty()) {
 			// If player had a server radio on before entering a radius radio, turn it back on
-			Utils.addPlayer(player, user.getLastRadio().getSongPlayer());
+			RadioUtils.addPlayer(player, listenedRadio);
 
 		}
 	}

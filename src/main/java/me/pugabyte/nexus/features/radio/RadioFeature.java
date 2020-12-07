@@ -6,7 +6,6 @@ import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.radio.RadioConfig;
@@ -20,27 +19,26 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static me.pugabyte.nexus.features.radio.Utils.setRadioDefaults;
+import static me.pugabyte.nexus.features.radio.RadioUtils.setRadioDefaults;
 import static me.pugabyte.nexus.utils.Utils.isNullOrEmpty;
 
-@Disabled
 public class RadioFeature extends Feature {
 
 	@Getter
 	private static final String PREFIX = StringUtils.getPrefix("Radio");
-	private static final File songsDirectory = Nexus.getFile("radio/songs");
+	private static final File songsDirectory = Nexus.getFile("songs");
 
 	@Getter
 	private static List<RadioSong> allSongs;
 
-	RadioConfigService configService = new RadioConfigService();
-
 	@Override
 	public void startup() {
-		allSongs = null;
+		allSongs = new ArrayList<>();
 		new Listeners();
 
 		for (File file : songsDirectory.listFiles())
@@ -53,13 +51,17 @@ public class RadioFeature extends Feature {
 
 	@Override
 	public void shutdown() {
+		RadioConfigService configService = new RadioConfigService();
 		RadioConfig radioConfig = configService.get(Nexus.getUUID0());
 		for (Radio radio : radioConfig.getRadios()) {
-			removeSongPlayer(radio.getSongPlayer());
+			if (radio.getSongPlayer() != null)
+				removeSongPlayer(radio.getSongPlayer());
 		}
+		configService.save(radioConfig);
 	}
 
 	private void setupRadios() {
+		RadioConfigService configService = new RadioConfigService();
 		RadioConfig radioConfig = configService.get(Nexus.getUUID0());
 		for (Radio radio : radioConfig.getRadios()) {
 			if (!radio.isEnabled())
@@ -71,33 +73,45 @@ public class RadioFeature extends Feature {
 				continue;
 			}
 
-			if (radio.getRadius() > 0) {
-				Location location = radio.getLocation();
-				int radius = radio.getRadius();
+			createSongPlayer(radio, playlist);
+		}
+		configService.save(radioConfig);
+	}
 
-				PositionSongPlayer positionSongPlayer = new PositionSongPlayer(playlist);
-				positionSongPlayer.setTargetLocation(location);
-				positionSongPlayer.setDistance(radius);
-				setRadioDefaults(positionSongPlayer);
+	public static void createSongPlayer(Radio radio, Playlist playlist) {
+		Collections.shuffle(playlist.getSongList());
+		if (radio.getType().equals(RadioType.RADIUS)) {
+			Location location = radio.getLocation();
+			int radius = radio.getRadius();
 
-				radio.setSongPlayer(positionSongPlayer);
-			} else {
-				RadioSongPlayer radioSongPlayer = new RadioSongPlayer(playlist);
-				setRadioDefaults(radioSongPlayer);
+			PositionSongPlayer positionSongPlayer = new PositionSongPlayer(playlist);
+			positionSongPlayer.setTargetLocation(location);
+			positionSongPlayer.setDistance(radius);
+			setRadioDefaults(positionSongPlayer);
 
-				radio.setSongPlayer(radioSongPlayer);
-			}
+			radio.setSongPlayer(positionSongPlayer);
+		} else {
+			RadioSongPlayer radioSongPlayer = new RadioSongPlayer(playlist);
+			setRadioDefaults(radioSongPlayer);
+
+			radio.setSongPlayer(radioSongPlayer);
 		}
 	}
 
 	private void loadListeners() {
+		RadioConfigService configService = new RadioConfigService();
 		RadioConfig radioConfig = configService.get(Nexus.getUUID0());
 
 		for (Radio radio : radioConfig.getRadios()) {
+			if (!radio.isEnabled()) continue;
+			if (!radio.getType().equals(RadioType.RADIUS)) continue;
+
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				radio.getSongPlayer().addPlayer(player);
 			}
 		}
+
+		configService.save(radioConfig);
 	}
 
 	public static Optional<RadioSong> getRadioSongByName(String name) {
@@ -116,7 +130,7 @@ public class RadioFeature extends Feature {
 		if (radio == null)
 			throw new InvalidInputException("Radio is null");
 
-		String radioId = "Radio " + radio.getId();
+		String radioId = StringUtils.camelCase(radio.getType()) + " Radio " + radio.getId();
 		if (radio.getType().equals(RadioType.RADIUS)) {
 			if (radio.getLocation() == null)
 				throw new InvalidInputException(radioId + ": Location is null");
@@ -126,8 +140,5 @@ public class RadioFeature extends Feature {
 
 		if (isNullOrEmpty(radio.getSongs()))
 			throw new InvalidInputException(radioId + ": Songs is null or empty");
-
-		if (radio.getSongPlayer() == null)
-			throw new InvalidInputException(radioId + ": SongPlayer is null");
 	}
 }

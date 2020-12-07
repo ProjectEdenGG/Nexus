@@ -20,7 +20,9 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,13 +66,32 @@ public class RadioConfig extends PlayerOwnedObject {
 	public static class Radio {
 		private String id;
 		private RadioType type;
-		private boolean enabled = true;
+		private boolean enabled = false;
 		private Location location;
 		private int radius;
 		@Embedded
 		private Set<String> songs = new HashSet<>();
 
 		private transient SongPlayer songPlayer;
+
+		public void setEnabled(boolean bool) {
+			this.enabled = bool;
+
+			if (bool) {
+				RadioFeature.createSongPlayer(this, getPlaylist());
+				if (type.equals(RadioType.RADIUS)) {
+					for (Player player : Bukkit.getOnlinePlayers())
+						getSongPlayer().addPlayer(player);
+				}
+			} else
+				getSongPlayer().setPlaying(false);
+		}
+
+		public Set<String> getSongs() {
+			if (this.songs == null)
+				return new HashSet<>();
+			return this.songs;
+		}
 
 		public Playlist getPlaylist() {
 			Set<String> unloadedSongs = new HashSet<>(songs);
@@ -102,6 +123,10 @@ public class RadioConfig extends PlayerOwnedObject {
 		}
 
 
+		public void reload() {
+			setEnabled(false);
+			setEnabled(true);
+		}
 	}
 
 }
