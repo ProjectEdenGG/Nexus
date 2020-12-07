@@ -89,7 +89,7 @@ public abstract class MongoService extends DatabaseService {
 	@Override
 	public <T> void saveSync(T object) {
 		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
-		if (!isV4Uuid(playerOwnedObject.getUuid()))
+		if (!isV4Uuid(playerOwnedObject.getUuid()) && !playerOwnedObject.getUuid().equals(Nexus.getUUID0()))
 			return;
 
 		try {
@@ -111,7 +111,7 @@ public abstract class MongoService extends DatabaseService {
 	public <T> void deleteSync(T object) {
 		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
 
-		if (!isV4Uuid(playerOwnedObject.getUuid()))
+		if (!isV4Uuid(playerOwnedObject.getUuid()) && !playerOwnedObject.getUuid().equals(Nexus.getUUID0()))
 			return;
 
 		database.delete(object);
