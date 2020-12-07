@@ -335,6 +335,15 @@ public class NexusCommand extends CustomCommand implements Listener {
 		});
 	}
 
+	@Path("schem buildQueue <schematic> <seconds>")
+	void schemBuildQueue(String schematic, int seconds) {
+		worldEditUtils.paster()
+				.file(schematic)
+				.at(player().getLocation().add(-10, 0, 0))
+				.duration(Time.SECOND.x(seconds))
+				.buildQueue();
+	}
+
 	public void shutdownBossBars() {
 		bossBars.forEach((player, bossBar) -> {
 			bossBar.setVisible(false);

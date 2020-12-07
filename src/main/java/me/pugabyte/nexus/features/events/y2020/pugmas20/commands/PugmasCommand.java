@@ -45,6 +45,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -264,6 +265,19 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Path("advent open <day>")
 	void adventOpenDay(int day) {
 		AdventChests.openAdventLootInv(player(), day);
+	}
+
+	@Permission("group.admin")
+	@Path("advent foundCounts")
+	void adventFoundAll() {
+		send(PREFIX + "Found counts:");
+		new HashMap<Integer, List<String>>() {{
+			pugmasService.<Pugmas20User>getAll().forEach(user -> {
+				List<String> names = getOrDefault(user.getLocatedDays().size(), new ArrayList<>());
+				names.add(user.getName());
+				put(user.getLocatedDays().size(), names);
+			});
+		}}.forEach(((day, names) -> send("&3" + day + " &e" + String.join(", ", names))));
 	}
 
 	@Permission("group.admin")
