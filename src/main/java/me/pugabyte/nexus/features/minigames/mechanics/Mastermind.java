@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -76,10 +75,7 @@ public final class Mastermind extends SingleplayerMechanic {
 
 	public boolean canBuild(Minigamer minigamer, Block block) {
 		IMastermindMatchData matchData = minigamer.getMatch().getMatchData();
-		boolean isInRegion = isInRegion(minigamer.getMatch(), block, "guess");
-		boolean canGuess = matchData.canGuess(minigamer);
-		Nexus.log("isInRegion: " + isInRegion + " / guess: " + matchData.getGuess(minigamer) + " / canGuess: " + canGuess);
-		return isInRegion && canGuess;
+		return isInRegion(minigamer.getMatch(), block, "guess") && matchData.canGuess(minigamer);
 	}
 
 	@EventHandler

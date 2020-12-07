@@ -7,14 +7,9 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.BNException;
 import me.pugabyte.nexus.framework.persistence.MongoDBDatabase;
 import me.pugabyte.nexus.framework.persistence.MongoDBPersistence;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -46,8 +41,6 @@ public abstract class MongoService extends DatabaseService {
 	@Override
 	@NotNull
 	public <T> T get(UUID uuid) {
-		if (this.getClass() == Pugmas20Service.class)
-			log("Get " + PlayerUtils.getPlayer(uuid).getName() + " [" + uuid.toString() + "]");
 //		if (isEnableCache())
 			return (T) getCache(uuid);
 //		else
@@ -65,11 +58,8 @@ public abstract class MongoService extends DatabaseService {
 
 	protected <T extends PlayerOwnedObject> T getNoCache(UUID uuid) {
 		Object object = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
-		if (object == null) {
-			if (this.getClass() == Pugmas20Service.class)
-				log("Creating new object " + PlayerUtils.getPlayer(uuid).getName() + " [" + uuid.toString() + "]");
+		if (object == null)
 			object = createPlayerObject(uuid);
-		}
 		if (object == null)
 			Nexus.log("New instance of " + getPlayerClass().getSimpleName() + " is null");
 		return (T) object;
@@ -134,6 +124,7 @@ public abstract class MongoService extends DatabaseService {
 		clearCache();
 	}
 
+	/*
 	public void log(String name) {
 		try {
 			try {
@@ -147,4 +138,5 @@ public abstract class MongoService extends DatabaseService {
 			ex.printStackTrace();
 		}
 	}
+	*/
 }

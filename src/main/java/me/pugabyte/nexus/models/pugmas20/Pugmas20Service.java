@@ -2,7 +2,6 @@ package me.pugabyte.nexus.models.pugmas20;
 
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,20 +15,6 @@ public class Pugmas20Service extends MongoService {
 	@Override
 	public Map<UUID, Pugmas20User> getCache() {
 		return cache;
-	}
-
-	@Override
-	public <T> void save(T object) {
-		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
-		log("Save " + playerOwnedObject.getName() + " [" + playerOwnedObject.getUuid().toString() + "]");
-		super.save(object);
-	}
-
-	@Override
-	public <T> void deleteSync(T object) {
-		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
-		log("DeleteSync " + playerOwnedObject.getName() + " [" + playerOwnedObject.getUuid().toString() + "]");
-		super.deleteSync(object);
 	}
 
 }
