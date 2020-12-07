@@ -1,8 +1,12 @@
 package me.pugabyte.nexus.features.listeners;
 
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,6 +16,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -55,7 +60,25 @@ public class EasterEggs implements Listener {
 				tark(clicker, heldItem, clicked);
 				break;
 		}
+	}
 
+	@EventHandler
+	public void onPigDamage(EntityDamageByEntityEvent event) {
+		if (event.getEntity().getType() != EntityType.PIG)
+			return;
+		if (!(event.getDamager() instanceof Player))
+			return;
+
+		Player player = (Player) event.getDamager();
+		if (!player.getName().equals("Porkeroni"))
+			return;
+
+		if (!new CooldownService().check(player, "pork-pig-easter-egg", Time.SECOND.x(5)))
+			return;
+
+		PlayerUtils.send(player, "&d&lPIG > &fFucking traitor.");
+		SoundUtils.playSound(player, Sound.ENTITY_PIG_DEATH);
+		Tasks.wait(3, () -> SoundUtils.playSound(player, Sound.ENTITY_PIGLIN_DEATH));
 	}
 
 	private void pug(Player player, ItemStack heldItem, Player clicked) {

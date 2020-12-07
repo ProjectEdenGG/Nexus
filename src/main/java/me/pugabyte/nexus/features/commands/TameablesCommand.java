@@ -11,8 +11,10 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
@@ -86,8 +88,25 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Path("count <entityType>")
 	@Description("Count the animals you own (Must be in loaded chunks)")
 	void count(TameableEntity entityType) {
-		List<Entity> entities = find(entityType);
-		send(PREFIX + "Found &e" + entities.size() + " " + camelCase(entityType) + " &3in loaded chunks belonging to you");
+		send(PREFIX + "Found &e" + find(entityType).size() + " " + camelCase(entityType) + " &3in loaded chunks belonging to you");
+	}
+
+	@Permission("group.admin")
+	@Path("trustPorkAndBri")
+	void trustPorkAndBri() {
+		int tamed = 0;
+		for (Entity entity : player().getLocation().getNearbyEntities(50, 50, 50)) {
+			if (entity.getType() != EntityType.FOX)
+				continue;
+
+			Fox fox = (Fox) entity;
+			fox.setFirstTrustedPlayer(PlayerUtils.getPlayer("Porkeroni"));
+			fox.setSecondTrustedPlayer(PlayerUtils.getPlayer("Akhali"));
+
+			++tamed;
+		}
+
+		send(PREFIX + "Tamed &e" + tamed + " &3foxes");
 	}
 
 	@Path("summon <entityType>")
