@@ -50,18 +50,36 @@ public class NXRadioCommand extends CustomCommand {
 
 	public NXRadioCommand(CommandEvent event) {
 		super(event);
+		PREFIX = RadioFeature.PREFIX;
 
 		if (isPlayer())
 			user = userService.get(player());
 	}
 
-	@Path("join <radio>")
+	@Path("join [radio]")
 	@Description("Join a radio")
 	void joinRadio(Radio radio) {
-		if (isInRangeOfRadiusRadio(player()))
-			error("You are too close to another radio!");
+		if (user.isMute())
+			error("You've muted all radios!");
+
+		if (radio == null) {
+			radio = RadioUtils.getRadiusRadio(player());
+			if (radio == null)
+				error("You're not near a radio!");
+		}
+
+		if (radio.getType().equals(RadioType.RADIUS) && !isInRangeOfRadiusRadio(player(), radio))
+			error("You're not near that radio!");
+
 		if (!radio.isEnabled())
 			error("That radio is not enabled!");
+
+		Radio listenedRadio = getListenedRadio(player(), true);
+		if (listenedRadio != null)
+			removePlayer(player(), listenedRadio);
+
+		if (radio.getType().equals(RadioType.RADIUS))
+			user.getLeftRadiusRadios().remove(radio.getId());
 
 		addPlayer(player(), radio);
 	}
@@ -69,17 +87,27 @@ public class NXRadioCommand extends CustomCommand {
 	@Path("leave")
 	@Description("Leave the listened radio")
 	void leaveRadio() {
-		if (isInRangeOfRadiusRadio(player()))
-			error("You cannot leave this radio!");
+		Radio radio = getListenedRadio(player(), true);
+		if (radio == null)
+			return;
 
-		removePlayer(player(), getListenedRadio(player()));
+		removePlayer(player(), radio);
+		if (radio.getType().equals(RadioType.RADIUS))
+			user.getLeftRadiusRadios().add(radio.getId());
+		else
+			user.setLastServerRadioId(null);
+
+		if (user.getLastServerRadio() != null)
+			addPlayer(player(), user.getLastServerRadio());
+
+		userService.save(user);
 	}
 
 	@Path("toggle")
 	@Description("Toggles in between joining and leaving the server radio")
 	void toggleRadio() {
-		if (isNullOrEmpty(user.getRadioId()))
-			joinRadio(user.getLastRadio());
+		if (isNullOrEmpty(user.getServerRadioId()))
+			joinRadio(user.getLastServerRadio());
 		else
 			leaveRadio();
 	}
@@ -125,6 +153,15 @@ public class NXRadioCommand extends CustomCommand {
 		send(songList.toString());
 	}
 
+	@Path("mute")
+	@Description("Mute all radios")
+	void mute() {
+		user.setMute(true);
+		userService.save(user);
+
+		send(PREFIX + "Muted all radios.");
+	}
+
 	// Staff Commands
 
 	@Path("players <radio>")
@@ -148,6 +185,14 @@ public class NXRadioCommand extends CustomCommand {
 
 		send(PREFIX + "Players listening:");
 		send(playerList.toString());
+	}
+
+	@Path("teleport <radio>")
+	@Permission("group.staff")
+	void teleport(Radio radio) {
+		if (!radio.getType().equals(RadioType.RADIUS))
+			error("You can only teleport to a radius radio");
+		player().teleport(radio.getLocation());
 	}
 
 	@Path("debugUser <player>")
@@ -185,7 +230,7 @@ public class NXRadioCommand extends CustomCommand {
 	@Permission("group.admin")
 	void reloadConfig() {
 		Features.get(RadioFeature.class).reload();
-		send(RadioFeature.getPREFIX() + "Config reloaded!");
+		send(PREFIX + "Config reloaded!");
 	}
 
 	// Config Commands
@@ -235,7 +280,7 @@ public class NXRadioCommand extends CustomCommand {
 	@Permission("group.admin")
 	void configSetRadius(Radio radio, int radius) {
 		if (!radio.getType().equals(RadioType.RADIUS))
-			error("Can only set radius of a radius radio");
+			error("You can only set radius of a radius radio");
 
 		radio.setRadius(radius);
 		radio.reload();
@@ -249,7 +294,7 @@ public class NXRadioCommand extends CustomCommand {
 	@Permission("group.admin")
 	void configSetLocation(Radio radio) {
 		if (!radio.getType().equals(RadioType.RADIUS))
-			error("Can only set location of a radius radio");
+			error("You can only set location of a radius radio");
 
 		radio.setLocation(player().getLocation());
 		radio.reload();
@@ -262,11 +307,12 @@ public class NXRadioCommand extends CustomCommand {
 	@Path("config addSong <radio> <song>")
 	@Description("Add a song to a radio")
 	@Permission("group.admin")
-	void configAddSong(Radio radio, RadioSong radioSong) {
-		radio.getSongs().add(radioSong.getName());
+	void configAddSong(Radio radio, @Arg(type = RadioSong.class) List<RadioSong> radioSongs) {
+		for (RadioSong radioSong : radioSongs)
+			radio.getSongs().add(radioSong.getName());
 		configService.save(config);
 
-		send(PREFIX + "Added " + radioSong.getName() + " to " + radio.getId());
+		send(PREFIX + "Added " + radioSongs.stream().map(RadioSong::getName).collect(Collectors.joining(", ")) + " to " + radio.getId());
 	}
 
 	@Path("config removeSong <radio> <song>")

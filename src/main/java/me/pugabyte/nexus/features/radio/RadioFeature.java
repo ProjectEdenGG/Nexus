@@ -13,7 +13,11 @@ import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
 import me.pugabyte.nexus.models.radio.RadioConfigService;
 import me.pugabyte.nexus.models.radio.RadioSong;
 import me.pugabyte.nexus.models.radio.RadioType;
+import me.pugabyte.nexus.models.radio.RadioUser;
+import me.pugabyte.nexus.models.radio.RadioUserService;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -24,13 +28,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static me.pugabyte.nexus.features.radio.RadioUtils.addPlayer;
+import static me.pugabyte.nexus.features.radio.RadioUtils.getRadios;
+import static me.pugabyte.nexus.features.radio.RadioUtils.isInRangeOfRadiusRadio;
+import static me.pugabyte.nexus.features.radio.RadioUtils.isListening;
+import static me.pugabyte.nexus.features.radio.RadioUtils.removePlayer;
 import static me.pugabyte.nexus.features.radio.RadioUtils.setRadioDefaults;
 import static me.pugabyte.nexus.utils.Utils.isNullOrEmpty;
 
 public class RadioFeature extends Feature {
 
-	@Getter
-	private static final String PREFIX = StringUtils.getPrefix("Radio");
+	public static final String PREFIX = StringUtils.getPrefix("Radio");
 	private static final File songsDirectory = Nexus.getFile("songs");
 
 	@Getter
@@ -46,7 +54,33 @@ public class RadioFeature extends Feature {
 
 		setupRadios();
 
-		loadListeners();
+		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+			RadioUserService service = new RadioUserService();
+			for (Radio radio : getRadios()) {
+				if (!(radio.getSongPlayer() instanceof PositionSongPlayer))
+					continue;
+
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					RadioUser user = service.get(player);
+
+					if (user.isMute()) continue;
+					if (user.getLeftRadiusRadios().contains(radio.getId())) continue;
+
+					boolean isInRange = isInRangeOfRadiusRadio(player, radio);
+					boolean isListening = isListening(player, radio);
+
+					if (isInRange && !isListening) {
+						if (user.getServerRadio() != null)
+							removePlayer(player, user.getServerRadio());
+						addPlayer(player, radio);
+					} else if (!isInRange && isListening) {
+						removePlayer(player, radio);
+						if (user.getLastServerRadio() != null)
+							addPlayer(player, user.getLastServerRadio());
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -96,22 +130,6 @@ public class RadioFeature extends Feature {
 
 			radio.setSongPlayer(radioSongPlayer);
 		}
-	}
-
-	private void loadListeners() {
-		RadioConfigService configService = new RadioConfigService();
-		RadioConfig radioConfig = configService.get(Nexus.getUUID0());
-
-		for (Radio radio : radioConfig.getRadios()) {
-			if (!radio.isEnabled()) continue;
-			if (!radio.getType().equals(RadioType.RADIUS)) continue;
-
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				radio.getSongPlayer().addPlayer(player);
-			}
-		}
-
-		configService.save(radioConfig);
 	}
 
 	public static Optional<RadioSong> getRadioSongByName(String name) {

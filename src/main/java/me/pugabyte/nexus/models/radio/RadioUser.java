@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.models.radio;
 
 import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,8 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -26,18 +29,28 @@ public class RadioUser extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	String radioId;
-	String lastRadioId;
+	private boolean mute = false;
 
-	public Radio getRadio() {
-		RadioConfigService configService = new RadioConfigService();
-		RadioConfig config = configService.get(Nexus.getUUID0());
-		return config.getById(radioId);
+	private String serverRadioId;
+	private String lastServerRadioId;
+
+	@Embedded
+	private Set<String> leftRadiusRadios = new HashSet<>();
+
+	public void setServerRadioId(String serverRadioId) {
+		this.lastServerRadioId = this.serverRadioId;
+		this.serverRadioId = serverRadioId;
 	}
 
-	public Radio getLastRadio() {
+	public Radio getServerRadio() {
 		RadioConfigService configService = new RadioConfigService();
 		RadioConfig config = configService.get(Nexus.getUUID0());
-		return config.getById(lastRadioId);
+		return config.getById(serverRadioId);
+	}
+
+	public Radio getLastServerRadio() {
+		RadioConfigService configService = new RadioConfigService();
+		RadioConfig config = configService.get(Nexus.getUUID0());
+		return config.getById(lastServerRadioId);
 	}
 }

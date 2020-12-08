@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.radio;
 
 import com.xxmicloxx.NoteBlockAPI.model.FadeType;
 import com.xxmicloxx.NoteBlockAPI.model.RepeatMode;
+import com.xxmicloxx.NoteBlockAPI.model.Song;
 import com.xxmicloxx.NoteBlockAPI.model.SoundCategory;
 import com.xxmicloxx.NoteBlockAPI.songplayer.Fade;
 import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
@@ -11,6 +12,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
 import me.pugabyte.nexus.models.radio.RadioConfigService;
+import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
@@ -20,14 +22,14 @@ import java.util.Set;
 
 public class RadioUtils {
 
-	public static void actionBar(Player player, String songTitle) {
-		actionBar(player, songTitle, false);
+	public static void actionBar(Player player, Song song) {
+		actionBar(player, song, false);
 	}
 
-	public static void actionBar(Player player, String songTitle, boolean nowPlaying) {
+	public static void actionBar(Player player, Song song, boolean nowPlaying) {
 		String message = "&2&lCurrently Playing: &a";
 		if (nowPlaying) message = "&2&lNow Playing: &a";
-		message += " " + songTitle;
+		message += " " + song.getTitle();
 		ActionBarUtils.sendActionBar(player, message);
 	}
 
@@ -59,26 +61,6 @@ public class RadioUtils {
 		}
 
 		return null;
-	}
-
-	public static boolean isInRangeOfRadiusRadio(Player player, Radio radio) {
-		SongPlayer songPlayer = radio.getSongPlayer();
-		if (songPlayer == null) return false;
-		if (!(songPlayer instanceof PositionSongPlayer)) return false;
-
-		PositionSongPlayer positionSongPlayer = (PositionSongPlayer) songPlayer;
-		if (positionSongPlayer.getTargetLocation() == null) return false;
-		if (positionSongPlayer.getTargetLocation().getWorld() == null) return false;
-		return positionSongPlayer.getTargetLocation().getWorld().equals(player.getWorld()) && positionSongPlayer.isInRange(player);
-	}
-
-	public static boolean isInRangeOfRadiusRadio(Player player) {
-		for (Radio radio : getRadios()) {
-			if (isInRangeOfRadiusRadio(player, radio))
-				return true;
-		}
-
-		return false;
 	}
 
 	public static Set<Radio> getRadios() {
@@ -118,39 +100,75 @@ public class RadioUtils {
 		if (!RadioUtils.isListening(player, radio)) {
 			RadioUserService userService = new RadioUserService();
 			RadioUser user = userService.get(player);
-			user.setRadioId(radio.getId());
-			userService.save(user);
+
+			if (radio.getType().equals(RadioType.SERVER)) {
+				user.setServerRadioId(radio.getId());
+				userService.save(user);
+			}
 
 			SongPlayer songPlayer = radio.getSongPlayer();
 			songPlayer.addPlayer(player);
-			if (songPlayer instanceof PositionSongPlayer) {
+			if (songPlayer instanceof RadioSongPlayer)
+				actionBar(player, songPlayer.getSong());
+			else if (songPlayer instanceof PositionSongPlayer) {
 				if (RadioUtils.isInRangeOfRadiusRadio(player, radio))
-					actionBar(player, songPlayer.getSong().getTitle());
+					actionBar(player, songPlayer.getSong());
 			}
 		}
 	}
 
 	public static void removePlayer(Player player, Radio radio) {
+		if (radio == null)
+			return;
+
 		if (RadioUtils.isListening(player, radio)) {
 			RadioUserService userService = new RadioUserService();
 			RadioUser user = userService.get(player);
-			user.setRadioId(null);
-			user.setLastRadioId(radio.getId());
-			userService.save(user);
+
+			if (radio.getType().equals(RadioType.SERVER)) {
+				user.setServerRadioId(null);
+				userService.save(user);
+			}
 
 			SongPlayer songPlayer = radio.getSongPlayer();
 			songPlayer.removePlayer(player);
-			actionBar(player, "&c&lYou have left the server radio");
-		} else
-			player.sendMessage(RadioFeature.getPREFIX() + " &cYou are not listening to a radio!");
+			if (radio.getSongPlayer() instanceof RadioSongPlayer)
+				ActionBarUtils.sendActionBar(player, "&c&lYou have left the server radio");
+		}
 	}
 
 	public static void removeRadio(Radio radio) {
+		if (radio == null)
+			return;
+
 		RadioFeature.removeSongPlayer(radio.getSongPlayer());
 
 		RadioConfigService configService = new RadioConfigService();
 		RadioConfig config = configService.get(Nexus.getUUID0());
 		config.getRadios().remove(radio);
 		configService.save(config);
+	}
+
+	public static boolean isInRangeOfRadiusRadio(Player player) {
+		return getRadiusRadio(player) != null;
+	}
+
+	public static Radio getRadiusRadio(Player player) {
+		for (Radio radio : getRadios()) {
+			if (isInRangeOfRadiusRadio(player, radio))
+				return radio;
+		}
+		return null;
+	}
+
+	public static boolean isInRangeOfRadiusRadio(Player player, Radio radio) {
+		SongPlayer songPlayer = radio.getSongPlayer();
+		if (songPlayer == null) return false;
+		if (!(songPlayer instanceof PositionSongPlayer)) return false;
+
+		PositionSongPlayer positionSongPlayer = (PositionSongPlayer) songPlayer;
+		if (positionSongPlayer.getTargetLocation() == null) return false;
+		if (positionSongPlayer.getTargetLocation().getWorld() == null) return false;
+		return positionSongPlayer.getTargetLocation().getWorld().equals(player.getWorld()) && positionSongPlayer.isInRange(player);
 	}
 }

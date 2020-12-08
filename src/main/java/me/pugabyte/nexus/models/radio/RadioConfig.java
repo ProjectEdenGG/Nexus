@@ -20,9 +20,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -80,10 +78,6 @@ public class RadioConfig extends PlayerOwnedObject {
 
 			if (bool) {
 				RadioFeature.createSongPlayer(this, getPlaylist());
-				if (type.equals(RadioType.RADIUS)) {
-					for (Player player : Bukkit.getOnlinePlayers())
-						getSongPlayer().addPlayer(player);
-				}
 			} else
 				getSongPlayer().setPlaying(false);
 		}
@@ -122,7 +116,6 @@ public class RadioConfig extends PlayerOwnedObject {
 
 			return new Playlist(songList.toArray(new Song[0]));
 		}
-
 
 		public void reload() {
 			setEnabled(false);
