@@ -27,6 +27,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.io.File;
 import java.util.List;
@@ -192,7 +193,7 @@ public class NXRadioCommand extends CustomCommand {
 	void teleport(Radio radio) {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only teleport to a radius radio");
-		player().teleport(radio.getLocation());
+		player().teleportAsync(radio.getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("debugUser <player>")
