@@ -239,6 +239,8 @@ public class NXRadioCommand extends CustomCommand {
 	@Description("Recreate a radio")
 	@Permission("group.admin")
 	void configReload(Radio radio) {
+		if (!radio.isEnabled())
+			error("Radio is not enabled.");
 		radio.reload();
 		send(PREFIX + StringUtils.camelCase(radio.getType()) + " Radio &e" + radio.getId() + " &3reloaded");
 	}
@@ -283,7 +285,8 @@ public class NXRadioCommand extends CustomCommand {
 			error("You can only set radius of a radius radio");
 
 		radio.setRadius(radius);
-		radio.reload();
+		if (radio.isEnabled())
+			radio.reload();
 
 		configService.save(config);
 
@@ -297,7 +300,8 @@ public class NXRadioCommand extends CustomCommand {
 			error("You can only set location of a radius radio");
 
 		radio.setLocation(player().getLocation());
-		radio.reload();
+		if (radio.isEnabled())
+			radio.reload();
 
 		configService.save(config);
 
