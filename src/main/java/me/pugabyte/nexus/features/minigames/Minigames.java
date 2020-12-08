@@ -13,7 +13,11 @@ import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.menus.MinigamesMenus;
 import me.pugabyte.nexus.features.minigames.models.Match;
+import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
+import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -32,8 +36,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.reflections.Reflections;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Minigames extends Feature {
@@ -58,6 +66,7 @@ public class Minigames extends Feature {
 	@Override
 	public void startup() {
 		registerSerializables();
+		registerMatchDatas();
 		ArenaManager.read();
 		registerListeners();
 		Tasks.repeat(Time.SECOND.x(5), 10, MatchManager::janitor);
@@ -115,6 +124,32 @@ public class Minigames extends Feature {
 			String alias = clazz.getAnnotation(SerializableAs.class).value();
 			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
 		});
+	}
+
+	@Getter
+	private static final Map<Mechanic, Constructor<?>> matchDataMap = new HashMap<>();
+
+	public static void registerMatchDatas() {
+		try {
+			String path = Minigames.class.getPackage().getName();
+			Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".models.matchdata")
+					.getSubTypesOf(MatchData.class);
+
+			for (Class<?> matchDataType : matchDataTypes)
+				if (matchDataType.getAnnotation(MatchDataFor.class) != null)
+					for (MechanicType mechanicType : MechanicType.values())
+						for (Class<? extends Mechanic> superclass : mechanicType.get().getSuperclasses())
+							if (matchDataType.getAnnotation(MatchDataFor.class).value().equals(superclass))
+								try {
+									Constructor<?> constructor = matchDataType.getConstructor(Match.class);
+									constructor.setAccessible(true);
+									matchDataMap.put(mechanicType.get(), constructor);
+								} catch (NoSuchMethodException ex) {
+									Nexus.warn("MatchData " + matchDataType.getSimpleName() + " has no Match constructor");
+								}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

@@ -9,10 +9,10 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
-import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
@@ -40,8 +40,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.reflections.Reflections;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,7 +49,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -258,18 +257,14 @@ public class Match {
 
 	@SneakyThrows
 	private void initializeMatchData() {
-		String path = this.getClass().getPackage().getName();
-		Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".matchdata")
-				.getSubTypesOf(MatchData.class);
+		Map<Mechanic, Constructor<?>> matchDataMap = Minigames.getMatchDataMap();
+		if (matchDataMap.isEmpty())
+			Minigames.registerMatchDatas();
 
-		matchDataTypes:
-		for (Class<?> matchDataType : matchDataTypes)
-			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses())
-				if (matchDataType.getAnnotation(MatchDataFor.class) != null)
-					if (matchDataType.getAnnotation(MatchDataFor.class).value().equals(superclass)) {
-						matchData = (MatchData) matchDataType.getConstructor(Match.class).newInstance(this);
-						break matchDataTypes;
-					}
+		if (matchDataMap.containsKey(arena.getMechanic()))
+			matchData = (MatchData) matchDataMap.get(arena.getMechanic()).newInstance(this);
+		else
+			matchData = new MatchData(this);
 	}
 
 	private void startTimer() {
