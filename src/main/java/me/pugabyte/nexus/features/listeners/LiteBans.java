@@ -4,6 +4,8 @@ import com.google.common.base.Strings;
 import litebans.api.Entry;
 import litebans.api.Events;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.commands.staff.DelayedBanCommand;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -68,8 +70,8 @@ public class LiteBans implements Listener {
 
 							Tasks.wait(10, () -> {
 								String message = "&e" + player.getName() + " &3will be banned upon login for &e" + entry.getReason() + " &3for &e" + entry.getDurationString();
-								PlayerUtils.sendStaff(DelayedBanCommand.PREFIX + message);
-								Discord.log("**[DelayedBan]** " + stripColor(message));
+								Chat.broadcastIngame(DelayedBanCommand.PREFIX + message, StaticChannel.STAFF);
+								Chat.broadcastDiscord("**[DelayedBan]** " + stripColor(message), StaticChannel.STAFF);
 							});
 						});
 					}

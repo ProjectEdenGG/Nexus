@@ -7,6 +7,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import net.dv8tion.jda.annotations.ReplaceWith;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -14,8 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -224,41 +223,10 @@ public class PlayerUtils {
 		sender.sendMessage(baseComponents);
 	}
 
+	@Deprecated
+	@ReplaceWith("Chat.broadcast(message, StaticChannel.STAFF)")
 	public static void sendStaff(String message) {
-		sendStaff(new JsonBuilder(message));
-	}
-
-	public static void sendStaff(String message, Player exclude) {
-		sendStaff(new JsonBuilder(message), exclude);
-	}
-
-	public static void sendStaff(String message, List<Player> exclude) {
-		sendStaff(new JsonBuilder(message), exclude);
-	}
-
-	public static void sendStaff(JsonBuilder message) {
-		for (Player staff : Bukkit.getOnlinePlayers()) {
-			if (!staff.hasPermission("group.moderator")) continue;
-			send(staff, message);
-		}
-	}
-
-	public static void sendStaff(JsonBuilder message, Player exclude) {
-		sendStaff(message, Collections.singletonList(exclude));
-	}
-
-	public static void sendStaff(JsonBuilder message, List<Player> exclude) {
-		List<UUID> excludedUuids = new ArrayList<>();
-		for (Player player : exclude)
-			excludedUuids.add(player.getUniqueId());
-
-		for (Player staff : Bukkit.getOnlinePlayers()) {
-			UUID uuid = staff.getUniqueId();
-			if (excludedUuids.contains(uuid)) continue;
-			if (!staff.hasPermission("group.moderator")) continue;
-
-			send(staff, message);
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	public static long setPlayerTime(Player player, String time) {
