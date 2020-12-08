@@ -225,17 +225,29 @@ public class PlayerUtils {
 	}
 
 	public static void sendStaff(String message) {
+		sendStaff(new JsonBuilder(message));
+	}
+
+	public static void sendStaff(String message, Player exclude) {
+		sendStaff(new JsonBuilder(message), exclude);
+	}
+
+	public static void sendStaff(String message, List<Player> exclude) {
+		sendStaff(new JsonBuilder(message), exclude);
+	}
+
+	public static void sendStaff(JsonBuilder message) {
 		for (Player staff : Bukkit.getOnlinePlayers()) {
 			if (!staff.hasPermission("group.moderator")) continue;
 			send(staff, message);
 		}
 	}
 
-	public static void sendStaff(String message, Player exclude) {
+	public static void sendStaff(JsonBuilder message, Player exclude) {
 		sendStaff(message, Collections.singletonList(exclude));
 	}
 
-	public static void sendStaff(String message, List<Player> exclude) {
+	public static void sendStaff(JsonBuilder message, List<Player> exclude) {
 		List<UUID> excludedUuids = new ArrayList<>();
 		for (Player player : exclude)
 			excludedUuids.add(player.getUniqueId());

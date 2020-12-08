@@ -650,7 +650,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected <T> void paginate(List<T> values, BiFunction<T, Integer, JsonBuilder> formatter, String command, int page, int amount) {
 		if (page < 1)
-			error("Page number must be 1 or more");
+			error("Page number must be 1 or greater");
 
 		int start = (page - 1) * amount;
 		if (values.size() < start)
@@ -661,9 +661,13 @@ public abstract class CustomCommand extends ICustomCommand {
 		line();
 		AtomicInteger index = new AtomicInteger(start);
 		values.subList(start, end).forEach(t -> send(formatter.apply(t, index.getAndIncrement())));
+		line();
 
 		boolean first = page == 1;
 		boolean last = end == values.size();
+
+		if (first && last)
+			return;
 
 		JsonBuilder buttons = json();
 		if (first)
