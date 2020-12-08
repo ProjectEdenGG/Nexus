@@ -11,7 +11,8 @@ public class ProtectionCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		line();
 		send(json()
 				.next("&3  Which protection type?  &3|| ")

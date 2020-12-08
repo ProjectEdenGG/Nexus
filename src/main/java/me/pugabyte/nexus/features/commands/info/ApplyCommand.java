@@ -11,7 +11,8 @@ public class ApplyCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		line();
 		send("&3Ready to apply for &b&oModerator&3?");
 		send("&3How does your name look in blue, &b&o" + player().getName() + "&3? :)");

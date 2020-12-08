@@ -11,7 +11,8 @@ public class HomeHelpCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		line();
 		send(json("&3[+] &c/sethome [homename]").hover("&eSet a home.\n&3Excluding a home name will set your default \n&3home. It can be teleported to with &c/h").suggest("/sethome "));
 		send(json("&3[+] &c/delhome [homename]").hover("&eDelete a home.").suggest("/delhome "));

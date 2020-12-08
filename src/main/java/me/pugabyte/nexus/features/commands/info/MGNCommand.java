@@ -12,7 +12,8 @@ public class MGNCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		NextMGN mgn = isPlayer() ? new NextMGN(player()) : new NextMGN();
 
 		line();

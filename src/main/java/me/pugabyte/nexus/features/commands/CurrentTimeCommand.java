@@ -79,8 +79,9 @@ public class CurrentTimeCommand extends CustomCommand {
 		return format;
 	}
 
-	@Path()
-	void help() {
+	@Path
+	@Override
+	public void help() {
 		send(PREFIX + "This command shows you what time it is for other players.");
 		send(json("&eClick here &3to change the time format.")
 				.hover("&3The valid formats are &e12 &3and &e24 &3hours. It defaults to &e12 &3hours.")

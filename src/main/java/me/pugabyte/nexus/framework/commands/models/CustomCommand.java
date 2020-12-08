@@ -686,7 +686,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	@Path("help")
-	void help() {
+	protected void help() {
 		List<String> aliases = getAllAliases();
 		if (aliases.size() > 1)
 			send(PREFIX + "Aliases: " + String.join("&e, &3", aliases));

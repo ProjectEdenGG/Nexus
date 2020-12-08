@@ -33,7 +33,8 @@ public class OnlineCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		List<Rank> ranks = Arrays.asList(Rank.values());
 		Collections.reverse(ranks);
 

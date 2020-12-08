@@ -34,7 +34,8 @@ public class TicketCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		send("&3To request &ehelp &3or report &egrief&3, stand at the &erelevant location &3and open a &c/ticket " +
 				"&3with an &einformative description &3of the issue.");
 		send("&3Please be &epatient&3, as staff can be very busy!");

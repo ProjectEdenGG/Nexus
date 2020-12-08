@@ -53,7 +53,8 @@ public class CheckpointsCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		// TODO
 		// Stand in correct spot
 		// Select floor of checkpoint area

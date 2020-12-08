@@ -11,7 +11,8 @@ public class MGMSCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		line();
 		send("&3Join us on &eSaturdays&3, &e4&3-&e6 &ePM &eEST &3for &eMinigame Nights&3!");
 		line();

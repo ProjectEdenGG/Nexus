@@ -43,6 +43,12 @@ public class ModReviewCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path
+	@Override
+	public void help() {
+		super.help();
+	}
+
 	@Path("<mod>")
 	@Description("View detailed information on a mod and it's verdict")
 	void check(Mod mod) {
@@ -71,6 +77,9 @@ public class ModReviewCommand extends CustomCommand {
 				.hover("&3Click for more info");
 
 		paginate(mods, formatter, "/modreview list", page);
+
+		if (page == 1)
+			send(PREFIX + "&3If your mod is not on this list, request it to be reviewed with &c/modreview request <name> [notes...]");
 	}
 
 	@Cooldown(@Part(value = Time.SECOND, x = 30))

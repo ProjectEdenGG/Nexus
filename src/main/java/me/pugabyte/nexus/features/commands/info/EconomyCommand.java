@@ -33,7 +33,8 @@ public class EconomyCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		line(3);
 		send("&3Each player starts out with &e$500&3.");
 		send("&3There are multiple ways to make money, such as:");

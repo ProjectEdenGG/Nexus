@@ -68,7 +68,8 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("help")
-	void help() {
+	@Override
+	public void help() {
 		line(2);
 		send("&3These are all the commands available to you in the build contest world.");
 		send(json("&3[+] &c/hdb").hover("&eFind decorative heads!").suggest("/hdb"));

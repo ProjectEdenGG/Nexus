@@ -41,8 +41,9 @@ public class LWCInfoCommand extends CustomCommand {
 
 	}
 
-	@Path()
-	void help() {
+	@Path
+	@Override
+	public void help() {
 		send("&6&lLWC &3protects all &estorage &3and &edoor related &3blocks from being used by other players without your permission.");
 		line();
 		send("&3A private protection is created &eautomatically&3. Change it by &eright clicking &3on the protection &eafter &3using the command.");

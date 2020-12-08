@@ -13,7 +13,8 @@ public class StaffHelpCommand extends CustomCommand {
 	}
 
 	@Path
-	void help() {
+	@Override
+	public void help() {
 		line();
 		send("&eStaff Help Commands");
 		line();
