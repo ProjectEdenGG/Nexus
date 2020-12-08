@@ -12,10 +12,12 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirec
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation.Modify;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -26,6 +28,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -131,6 +134,14 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		SettingService settingService = new SettingService();
 		Setting setting = settingService.get(to, "tpDisable");
 		if (setting.getBoolean()) {
+			Rank fromRank = new Nerd(from).getRank();
+			Rank toRank = new Nerd(to).getRank();
+			if (fromRank.ordinal() > toRank.ordinal())
+				if (!(Arrays.asList(Rank.BUILDER, Rank.ARCHITECT).contains(toRank) && fromRank == Rank.MODERATOR))
+					return false;
+
+			PlayerUtils.send(to, PREFIX + "&c" + from.getName() + " tried to teleport to you, but you have teleports disabled");
+
 			send(PREFIX + "&cThat player has teleports disabled. Sending a request instead");
 			runCommand(from, "tpa " + argsString());
 			return true;
