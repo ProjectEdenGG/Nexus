@@ -23,6 +23,7 @@ import me.pugabyte.nexus.models.radio.RadioSong;
 import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -40,16 +41,13 @@ import static me.pugabyte.nexus.features.radio.RadioUtils.getListenedRadio;
 import static me.pugabyte.nexus.features.radio.RadioUtils.isInRangeOfRadiusRadio;
 import static me.pugabyte.nexus.features.radio.RadioUtils.removePlayer;
 
-// TODO on release: Remove admin perms, rename command to RadioCommand
-
-@Permission("group.admin")
-public class NXRadioCommand extends CustomCommand {
-	RadioUserService userService = new RadioUserService();
+public class RadioCommand extends CustomCommand {
 	RadioConfigService configService = new RadioConfigService();
 	RadioConfig config = configService.get(Nexus.getUUID0());
+	RadioUserService userService = new RadioUserService();
 	RadioUser user;
 
-	public NXRadioCommand(CommandEvent event) {
+	public RadioCommand(CommandEvent event) {
 		super(event);
 		PREFIX = RadioFeature.PREFIX;
 
@@ -200,21 +198,27 @@ public class NXRadioCommand extends CustomCommand {
 	@Permission("group.admin")
 	void debugUser(OfflinePlayer player) {
 		RadioUser user = userService.get(player);
-		try {
-			send(StringUtils.toPrettyString(user));
-		} catch (StackOverflowError | Exception ignored) {
-			send(user.toString());
-		}
+		send("&3User: &e" + PlayerUtils.getPlayer(user.getUuid()));
+		send("&3Mute: &e" + user.isMute());
+		send("&3ServerRadioId: &e" + user.getServerRadioId());
+		send("&3LastServerRadioId: &e" + user.getLastServerRadioId());
+		send("&3LeftRadiusRadios: &e" + user.getLeftRadiusRadios());
 	}
 
 	@Path("debugRadio <radio>")
 	@Permission("group.admin")
 	void debugRadio(Radio radio) {
-		try {
-			send(StringUtils.toPrettyString(radio));
-		} catch (StackOverflowError | Exception ignored) {
-			send(radio.toString());
+		send("&3Id: &e" + radio.getId());
+		send("&3Type: &e" + StringUtils.camelCase(radio.getType()));
+		if (radio.getType().equals(RadioType.RADIUS)) {
+			send("&3Location: &e" + StringUtils.getShortLocationString(radio.getLocation()));
+			send("&3Radius: &e" + radio.getRadius());
 		}
+		send("&3Enabled: &e" + radio.isEnabled());
+
+		send("&3Playlist: ");
+		for (String songName : radio.getSongs())
+			send(" - &e" + songName);
 	}
 
 	@Path("songs")
@@ -268,6 +272,36 @@ public class NXRadioCommand extends CustomCommand {
 		configService.save(config);
 
 		send(PREFIX + StringUtils.camelCase(type) + " Radio &e" + id + " &3created");
+	}
+
+	@Path("config setId <radio> <id>")
+	@Permission("group.admin")
+	void configSetType(Radio radio, String id) {
+		String oldId = radio.getId();
+		radio.setId(id);
+		configService.save(config);
+
+		String newId = radio.getId();
+		userService.clearCache();
+
+		List<RadioUser> radioUsers = userService.getAll();
+		for (RadioUser user : radioUsers) {
+			if (user.getServerRadioId() != null && user.getServerRadioId().equalsIgnoreCase(oldId))
+				user.setServerRadioId(newId);
+
+			if (user.getLastServerRadioId() != null && user.getLastServerRadioId().equalsIgnoreCase(oldId))
+				user.setLastServerRadioId(newId);
+
+			if (user.getLeftRadiusRadios() != null && user.getLeftRadiusRadios().contains(oldId)) {
+				user.getLeftRadiusRadios().remove(oldId);
+				user.getLeftRadiusRadios().add(newId);
+			}
+
+			userService.save(user);
+		}
+
+
+		send(PREFIX + "Id set to " + radio.getId());
 	}
 
 	@Path("config setType <radio> <type>")

@@ -6,15 +6,19 @@ import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
+import me.pugabyte.nexus.models.radio.RadioUser;
+import me.pugabyte.nexus.models.radio.RadioUserService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Set;
 import java.util.UUID;
 
+import static me.pugabyte.nexus.features.radio.RadioUtils.addPlayer;
 import static me.pugabyte.nexus.features.radio.RadioUtils.removePlayer;
 
 public class Listeners implements Listener {
@@ -29,6 +33,15 @@ public class Listeners implements Listener {
 		Radio radio = RadioUtils.getListenedRadio(player);
 		if (radio != null)
 			removePlayer(player, radio);
+	}
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		RadioUserService userService = new RadioUserService();
+		RadioUser user = userService.get(event.getPlayer());
+		Radio radio = user.getLastServerRadio();
+		if (radio != null)
+			addPlayer(user.getPlayer(), radio);
 	}
 
 	@EventHandler
