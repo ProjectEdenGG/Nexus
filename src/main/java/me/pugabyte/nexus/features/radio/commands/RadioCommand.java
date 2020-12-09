@@ -23,7 +23,6 @@ import me.pugabyte.nexus.models.radio.RadioSong;
 import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -198,16 +197,20 @@ public class RadioCommand extends CustomCommand {
 	@Permission("group.admin")
 	void debugUser(OfflinePlayer player) {
 		RadioUser user = userService.get(player);
-		send("&3User: &e" + PlayerUtils.getPlayer(user.getUuid()));
-		send("&3Mute: &e" + user.isMute());
+
+		send(PREFIX + "&3User Debug: ");
+		send("&3Player: &e" + player.getName());
+		send("&3Is Mute: &e" + user.isMute());
 		send("&3ServerRadioId: &e" + user.getServerRadioId());
 		send("&3LastServerRadioId: &e" + user.getLastServerRadioId());
 		send("&3LeftRadiusRadios: &e" + user.getLeftRadiusRadios());
+		line();
 	}
 
 	@Path("debugRadio <radio>")
 	@Permission("group.admin")
 	void debugRadio(Radio radio) {
+		send(PREFIX + "&3Radio Debug: ");
 		send("&3Id: &e" + radio.getId());
 		send("&3Type: &e" + StringUtils.camelCase(radio.getType()));
 		if (radio.getType().equals(RadioType.RADIUS)) {
@@ -218,7 +221,8 @@ public class RadioCommand extends CustomCommand {
 
 		send("&3Playlist: ");
 		for (String songName : radio.getSongs())
-			send(" - &e" + songName);
+			send(" &3- &e" + songName);
+		line();
 	}
 
 	@Path("songs")
@@ -431,9 +435,9 @@ public class RadioCommand extends CustomCommand {
 				.collect(Collectors.toList());
 	}
 
-	private int getSongPercent(SongPlayer radio) {
-		double songLen = radio.getSong().getLength();
-		double current = radio.getTick();
+	private int getSongPercent(SongPlayer songPlayer) {
+		double songLen = songPlayer.getSong().getLength();
+		double current = songPlayer.getTick();
 		return (int) ((current / songLen) * 100.0);
 	}
 }

@@ -36,8 +36,6 @@ import static me.pugabyte.nexus.features.radio.RadioUtils.removePlayer;
 import static me.pugabyte.nexus.features.radio.RadioUtils.setRadioDefaults;
 import static me.pugabyte.nexus.utils.Utils.isNullOrEmpty;
 
-// TODO - if player joins server radio while in a radius radio, radius radio overrides
-
 public class RadioFeature extends Feature {
 
 	public static final String PREFIX = StringUtils.getPrefix("Radio");
@@ -67,6 +65,7 @@ public class RadioFeature extends Feature {
 
 					if (user.isMute()) continue;
 					if (user.getLeftRadiusRadios().contains(radio.getId())) continue;
+					if (user.getServerRadioId() != null) continue;
 
 					boolean isInRange = isInRangeOfRadiusRadio(player, radio);
 					boolean isListening = isListening(player, radio);
