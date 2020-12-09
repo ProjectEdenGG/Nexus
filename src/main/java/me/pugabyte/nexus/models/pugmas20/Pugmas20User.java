@@ -48,6 +48,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 	private UUID uuid;
 
 	private boolean warped = false;
+	private boolean muteTrain = false;
 
 	// Advent
 	@Embedded

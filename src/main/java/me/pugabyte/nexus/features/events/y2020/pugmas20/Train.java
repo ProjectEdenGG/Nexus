@@ -2,6 +2,8 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -369,13 +371,29 @@ public class Train {
 	private static void playTrainSound(Location location, Collection<Player> players) {
 		float volume = .1F;
 		float pitch = 0.1F;
-		players.forEach(player -> player.playSound(location, Sound.ENTITY_MINECART_INSIDE, SoundCategory.AMBIENT, volume, pitch));
+		players.forEach(player -> {
+			if (isTrainMuted(player))
+				return;
+
+			player.playSound(location, Sound.ENTITY_MINECART_INSIDE, SoundCategory.AMBIENT, volume, pitch);
+		});
 	}
 
 	private static void playStationSound(Location location, Collection<Player> players) {
 		float volume = 6F;
 		float pitch = 0.1F;
-		players.forEach(player -> player.playSound(location, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.AMBIENT, volume, pitch));
+		players.forEach(player -> {
+			if (isTrainMuted(player))
+				return;
+
+			player.playSound(location, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.AMBIENT, volume, pitch);
+		});
+	}
+
+	private static boolean isTrainMuted(Player player) {
+		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20User pugmasUser = service.get(player);
+		return pugmasUser.isMuteTrain();
 	}
 
 }

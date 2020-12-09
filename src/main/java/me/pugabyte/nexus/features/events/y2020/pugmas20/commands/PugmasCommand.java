@@ -100,6 +100,17 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		progress(pugmasUser);
 	}
 
+	@Path("muteTrain [muted]")
+	@Description("Mute train sounds")
+	void muteTrain(Boolean muted) {
+		if (muted == null)
+			muted = !pugmasUser.isMuteTrain();
+
+		pugmasUser.setMuteTrain(muted);
+		pugmasService.save(pugmasUser);
+		send(PREFIX + "Train " + (muted ? "muted" : "unmuted"));
+	}
+
 	@Permission("group.staff")
 	@Path("admin progress <player>")
 	void adminProgress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
