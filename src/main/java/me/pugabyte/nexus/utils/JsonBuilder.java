@@ -61,8 +61,11 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder group() {
-		for (String line : lore)
-			addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder(loreize ? StringUtils.loreize(line) : line).create())));
+		List<String> lore = new ArrayList<>();
+		for (String line : this.lore)
+			lore.add(loreize ? StringUtils.loreize(line) : line);
+
+		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder(String.join("\n", lore)).create())));
 
 		result.append(builder.create(), FormatRetention.NONE);
 		builder = new ComponentBuilder("");
