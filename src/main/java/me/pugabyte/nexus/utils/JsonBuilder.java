@@ -18,13 +18,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.getLastColor;
-import static me.pugabyte.nexus.utils.StringUtils.loreize;
 
 public class JsonBuilder {
 	private final ComponentBuilder result = new ComponentBuilder("");
 	private ComponentBuilder builder = new ComponentBuilder("");
+
+	private final List<String> lore = new ArrayList<>();
+	private boolean loreize = true;
+
 	// Helper boolean for loops and stuff
 	private boolean initialized;
 
@@ -55,6 +61,9 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder group() {
+		for (String line : lore)
+			addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder(loreize ? StringUtils.loreize(line) : line).create())));
+
 		result.append(builder.create(), FormatRetention.NONE);
 		builder = new ComponentBuilder("");
 		return this;
@@ -99,15 +108,18 @@ public class JsonBuilder {
 		return this;
 	}
 
+	public JsonBuilder loreize(boolean loreize) {
+		this.loreize = loreize;
+		return this;
+	}
+
 	public JsonBuilder hover(String text) {
-		BaseComponent[] components = new ComponentBuilder(loreize(text).replaceAll("\\|\\|", "\n")).create();
-		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(components)));
+		lore.add(text.replaceAll("\\|\\|", "\n"));
 		return this;
 	}
 
 	public JsonBuilder hover(String text, ChatColor color) {
-		BaseComponent[] components = new ComponentBuilder(loreize(text).replaceAll("\\|\\|", "\n")).color(color).create();
-		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(components)));
+		lore.add(text.replaceAll("\\|\\|", "\n"));
 		return this;
 	}
 

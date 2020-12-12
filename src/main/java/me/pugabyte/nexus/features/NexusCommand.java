@@ -478,6 +478,16 @@ public class NexusCommand extends CustomCommand implements Listener {
 				.open(player());
 	}
 
+	@Path("loreizeTest")
+	void loreizeTest() {
+		String lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
+				"labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris " +
+				"nisi ut aliquip ex ea commodo consequat.";
+
+		send(json("Test 1").hover(lorem));
+		send(json("Test 2").hover(lorem).loreize(false));
+	}
+
 	@Description("A command with a 5.75s cooldown")
 	@Path("cooldown")
 	@Cooldown({

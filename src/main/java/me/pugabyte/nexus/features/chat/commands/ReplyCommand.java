@@ -29,4 +29,15 @@ public class ReplyCommand extends CustomCommand {
 		else
 			chatter.say(chatter.getLastPrivateMessage(), message);
 	}
+
+	@Override
+	@Path("help")
+	public void help() {
+		reply(arg(1));
+	}
+
+	@Path("help [message...]")
+	public void help(String message) {
+		reply(arg(1) + " " + arg(2));
+	}
 }
