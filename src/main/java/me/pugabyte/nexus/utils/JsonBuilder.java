@@ -118,8 +118,9 @@ public class JsonBuilder {
 		return this;
 	}
 
-	public JsonBuilder hover(String text, ChatColor color) {
-		lore.add(text.replaceAll("\\|\\|", "\n"));
+	public JsonBuilder hover(List<String> lines) {
+		for (String line : lines)
+			hover(line);
 		return this;
 	}
 
