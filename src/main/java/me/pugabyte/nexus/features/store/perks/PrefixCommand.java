@@ -8,10 +8,10 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import java.util.regex.Matcher;
@@ -73,7 +73,7 @@ public class PrefixCommand extends CustomCommand {
 	}
 
 	@Path("gradient <color1> <color2> <prefix...>")
-	void gradient(ChatColor color1, ChatColor color2, String input) {
+	void gradient(ColorType color1, ColorType color2, String input) {
 		prefix(Gradient.of(color1, color2).apply(input));
 	}
 
