@@ -53,7 +53,7 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (event.getPlayer().hasPermission(permission))
-			runCommandAsConsole("lp user " + player().getName() + " permission set " + permission + " false");
+			runCommandAsConsole("lp user " + event.getPlayer().getName() + " permission set " + permission + " false");
 	}
 
 	@ConverterFor(Flag.class)
