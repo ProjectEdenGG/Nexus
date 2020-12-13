@@ -62,7 +62,9 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder group() {
-		String lore = this.lore.stream().map(line -> colorize(loreize ? StringUtils.loreize(line) : line).replaceAll("\\|\\|", "\n")).collect(Collectors.joining("\n"));
+		String lore = this.lore.stream()
+				.map(line -> colorize(loreize ? StringUtils.loreize(line) : line).replaceAll("\\|\\|", "\n"))
+				.collect(Collectors.joining("\n"));
 
 		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder(lore).create())));
 

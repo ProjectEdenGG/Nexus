@@ -134,7 +134,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onEntitySpawn(CreatureSpawnEvent event) {
-		if (event.getSpawnReason() == SpawnReason.SPAWNER || event.getSpawnReason() == SpawnReason.SPAWNER_EGG)
+		if (Arrays.asList(SpawnReason.SPAWNER, SpawnReason.SPAWNER_EGG, SpawnReason.NETHER_PORTAL).contains(event.getSpawnReason()))
 			event.getEntity().setMetadata("killermoney-spawner", new FixedMetadataValue(Nexus.getInstance(), true));
 	}
 
