@@ -15,6 +15,7 @@ import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -136,6 +137,9 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onEntityTarget(final EntityTargetLivingEntityEvent event) {
+		if (event.getEntity().getType() == EntityType.EXPERIENCE_ORB)
+			return;
+
 		if (event.getTarget() instanceof Player) {
 			Player player = (Player) event.getTarget();
 			Godmode godmode = new GodmodeService().get(player);
