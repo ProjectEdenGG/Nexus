@@ -1,10 +1,8 @@
-package me.pugabyte.nexus.features.radio.commands;
+package me.pugabyte.nexus.features.radio;
 
 import com.xxmicloxx.NoteBlockAPI.model.Song;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.radio.RadioFeature;
-import me.pugabyte.nexus.features.radio.RadioUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
@@ -23,13 +21,11 @@ import me.pugabyte.nexus.models.radio.RadioSong;
 import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -58,16 +54,17 @@ public class RadioCommand extends CustomCommand {
 	@Description("Join a radio")
 	void joinRadio(Radio radio) {
 		if (user.isMute())
-			error("You've muted all radios!");
+			error("You have muted all radios!");
 
 		if (radio == null) {
 			radio = RadioUtils.getRadiusRadio(player());
 			if (radio == null)
-				error("You're not near a radio!");
+				error("You are not near a radio!\nChoices: &e"
+						+ RadioUtils.getServerRadios().stream().map(Radio::getId).collect(Collectors.joining("&3, &e")));
 		}
 
 		if (radio.getType().equals(RadioType.RADIUS) && !isInRangeOfRadiusRadio(player(), radio))
-			error("You're not near that radio!");
+			error("You are not near that radio!");
 
 		if (!radio.isEnabled())
 			error("That radio is not enabled!");
@@ -110,8 +107,17 @@ public class RadioCommand extends CustomCommand {
 			leaveRadio();
 	}
 
-	@Path("song")
-	@Description("Shows the song info of the current song you are listening to")
+	@Path("volume <number>")
+	@Description("Sets the volume for all radios")
+	void volume(@Arg(value = "0", min = 0, max = 100) byte volume) {
+		user.setVolume(volume);
+		userService.save(user);
+
+		send(PREFIX + "Volume set to: &e" + user.getVolume());
+	}
+
+	@Path("info")
+	@Description("Shows info about the radio you are listening to")
 	void songInfo() {
 		Radio radio = RadioUtils.getListenedRadio(player(), true);
 
@@ -120,44 +126,49 @@ public class RadioCommand extends CustomCommand {
 
 		SongPlayer songPlayer = radio.getSongPlayer();
 		Song song = songPlayer.getSong();
-		send(PREFIX + "Current Song Playing:");
-		send("&3Title:&e " + song.getTitle());
-		send("&3Author:&e " + song.getAuthor());
-		send("&3Progress:&e " + getSongPercent(songPlayer) + "&e%");
-		send("");
+
+		send(PREFIX + "Radio Info:");
+		send("&3Radio: &e" + StringUtils.camelCase(radio.getId()));
+
+		List<String> list = RadioUtils.getPlaylistHover(radio);
+		send(json("&3Songs: &e[" + list.size() + "]").hover(list));
+
+		send("&3Playing: &e" + song.getTitle() + " &3by &e" + song.getAuthor() + " &3(" + getSongPercent(songPlayer) + "%)");
+		line();
 	}
 
-	@Path("playlist")
-	@Description("Shows the playlist of the radio you are listening to")
-	void playlist() {
-		Radio listenedRadio = RadioUtils.getListenedRadio(player(), true);
-		if (listenedRadio == null)
-			error("You are not listening to a radio!");
+//	@Path("playlist")
+//	@Description("Shows the playlist of the radio you are listening to")
+//	void playlist() {
+//		Radio listenedRadio = RadioUtils.getListenedRadio(player(), true);
+//		if (listenedRadio == null)
+//			error("You are not listening to a radio!");
+//
+//		List<Song> songs = listenedRadio.getSongPlayer().getPlaylist().getSongList();
+//		int songListSize = songs.size();
+//		if (songListSize == 0)
+//			error("No songs in playlist");
+//
+//		send(PREFIX + "&3Playlist: ");
+//		int ndx = 1;
+//		for (Song song : songs) {
+//			send("&3" + ndx++ + " &e" + song.getTitle());
+//		}
+//	}
 
-		List<Song> songs = listenedRadio.getSongPlayer().getPlaylist().getSongList();
-		int songListSize = songs.size();
-		if (songListSize == 0)
-			error("No songs in playlist");
-
-
-		StringBuilder songList = new StringBuilder();
-		int ndx = 1;
-		for (Song tempSong : songs) {
-			File songFile = tempSong.getPath();
-			songList.append(ndx).append(" &e").append(songFile.getName());
-			ndx++;
-		}
-		send(PREFIX + "Songs in playlist:");
-		send(songList.toString());
-	}
-
-	@Path("mute")
+	@Path("mute [enable]")
 	@Description("Mute all radios")
-	void mute() {
-		user.setMute(true);
-		userService.save(user);
+	void mute(Boolean enable) {
+		if (enable) {
+			user.setMute(true);
+			leaveRadio();
+			send(PREFIX + "Muted all radios.");
+		} else {
+			user.setMute(false);
+			send(PREFIX + "Unmuted all radios.");
+		}
 
-		send(PREFIX + "Muted all radios.");
+		userService.save(user);
 	}
 
 	// Staff Commands
@@ -168,21 +179,13 @@ public class RadioCommand extends CustomCommand {
 	void listListeners(Radio radio) {
 		Set<UUID> uuids = radio.getSongPlayer().getPlayerUUIDs();
 		if (uuids.size() == 0)
-			error("No players are listening.");
+			error("No players are listening to " + radio.getId());
 
-		StringBuilder playerList = new StringBuilder();
+		send(PREFIX + "Players listening to " + radio.getId() + ":");
 		int ndx = 1;
 		for (UUID uuid : uuids) {
-			Player player = Bukkit.getPlayer(uuid);
-			if (player == null)
-				continue;
-
-			playerList.append(ndx).append(" &e").append(player.getName());
-			ndx++;
+			send("&3" + ndx++ + " &e" + PlayerUtils.getPlayer(uuid).getName());
 		}
-
-		send(PREFIX + "Players listening:");
-		send(playerList.toString());
 	}
 
 	@Path("teleport <radio>")
@@ -212,26 +215,19 @@ public class RadioCommand extends CustomCommand {
 	void debugRadio(Radio radio) {
 		send(PREFIX + "&3Radio Debug: ");
 		send("&3Id: &e" + radio.getId());
+		send("&3Enabled: &e" + radio.isEnabled());
 		send("&3Type: &e" + StringUtils.camelCase(radio.getType()));
+
 		if (radio.getType().equals(RadioType.RADIUS)) {
 			send("&3Location: &e" + StringUtils.getShortLocationString(radio.getLocation()));
 			send("&3Radius: &e" + radio.getRadius());
+			send("&3Particles: &e" + radio.isParticles());
 		}
-		send("&3Enabled: &e" + radio.isEnabled());
 
-		send("&3Playlist: ");
-		for (String songName : radio.getSongs())
-			send(" &3- &e" + songName);
+		List<String> list = RadioUtils.getPlaylistHover(radio);
+		send(json("&3Songs: &e[" + list.size() + "]").hover(list));
+
 		line();
-	}
-
-	@Path("songs")
-	@Permission("group.admin")
-	void listSongs() {
-		send("Loaded Songs: ");
-		for (RadioSong radioSong : RadioFeature.getAllSongs()) {
-			send("- " + radioSong.getName());
-		}
 	}
 
 	@Path("reload")
@@ -278,6 +274,78 @@ public class RadioCommand extends CustomCommand {
 		send(PREFIX + StringUtils.camelCase(type) + " Radio &e" + id + " &3created");
 	}
 
+	@Path("config setParticles <radio> <enable>")
+	@Permission("group.admin")
+	void configSetParticles(Radio radio, boolean enable) {
+		if (!radio.getType().equals(RadioType.RADIUS))
+			error("You can only set particles of a radius radio");
+
+		radio.setParticles(enable);
+		configService.save(config);
+
+		send(PREFIX + "Particles set to " + radio.isParticles() + " for " + radio.getId());
+	}
+
+	@Path("config setType <radio> <type>")
+	@Permission("group.admin")
+	void configSetType(Radio radio, RadioType type) {
+		radio.setType(type);
+		configService.save(config);
+
+		send(PREFIX + "Type set to " + radio.getType() + " for " + radio.getId());
+	}
+
+	@Path("config setRadius <radio> <radius>")
+	@Permission("group.admin")
+	void configSetRadius(Radio radio, int radius) {
+		if (!radio.getType().equals(RadioType.RADIUS))
+			error("You can only set radius of a radius radio");
+
+		radio.setRadius(radius);
+		if (radio.isEnabled())
+			radio.reload();
+
+		configService.save(config);
+
+		send(PREFIX + "Radius set to " + radio.getRadius() + " for " + radio.getId());
+	}
+
+	@Path("config setLocation <radio>")
+	@Permission("group.admin")
+	void configSetLocation(Radio radio) {
+		if (!radio.getType().equals(RadioType.RADIUS))
+			error("You can only set location of a radius radio");
+
+		radio.setLocation(player().getLocation());
+		if (radio.isEnabled())
+			radio.reload();
+
+		configService.save(config);
+
+		send(PREFIX + "Location set to " + StringUtils.getShortLocationString(radio.getLocation()) + " for " + radio.getId());
+	}
+
+	@Path("config addSong <radio> <song>")
+	@Description("Add a song to a radio")
+	@Permission("group.admin")
+	void configAddSong(Radio radio, @Arg(type = RadioSong.class) List<RadioSong> radioSongs) {
+		for (RadioSong radioSong : radioSongs)
+			radio.getSongs().add(radioSong.getName());
+		configService.save(config);
+
+		send(PREFIX + "Added " + radioSongs.stream().map(RadioSong::getName).collect(Collectors.joining(", ")) + " to " + radio.getId());
+	}
+
+	@Path("config removeSong <radio> <song>")
+	@Description("Remove a song from a radio")
+	@Permission("group.admin")
+	void configRemoveSong(Radio radio, @Arg(context = 1) RadioSong radioSong) {
+		radio.getSongs().remove(radioSong.getName());
+		configService.save(config);
+
+		send(PREFIX + "Removed " + radioSong.getName() + " from " + radio.getId());
+	}
+
 	@Path("config setId <radio> <id>")
 	@Permission("group.admin")
 	void configSetType(Radio radio, String id) {
@@ -306,66 +374,6 @@ public class RadioCommand extends CustomCommand {
 
 
 		send(PREFIX + "Id set to " + radio.getId());
-	}
-
-	@Path("config setType <radio> <type>")
-	@Permission("group.admin")
-	void configSetType(Radio radio, RadioType type) {
-		radio.setType(type);
-		configService.save(config);
-
-		send(PREFIX + "Type set to " + radio.getType() + " on " + radio.getId());
-	}
-
-	@Path("config setRadius <radio> <radius>")
-	@Permission("group.admin")
-	void configSetRadius(Radio radio, int radius) {
-		if (!radio.getType().equals(RadioType.RADIUS))
-			error("You can only set radius of a radius radio");
-
-		radio.setRadius(radius);
-		if (radio.isEnabled())
-			radio.reload();
-
-		configService.save(config);
-
-		send(PREFIX + "Radius set to " + radio.getRadius() + " on " + radio.getId());
-	}
-
-	@Path("config setLocation <radio>")
-	@Permission("group.admin")
-	void configSetLocation(Radio radio) {
-		if (!radio.getType().equals(RadioType.RADIUS))
-			error("You can only set location of a radius radio");
-
-		radio.setLocation(player().getLocation());
-		if (radio.isEnabled())
-			radio.reload();
-
-		configService.save(config);
-
-		send(PREFIX + "Location set to " + StringUtils.getShortLocationString(radio.getLocation()) + " on " + radio.getId());
-	}
-
-	@Path("config addSong <radio> <song>")
-	@Description("Add a song to a radio")
-	@Permission("group.admin")
-	void configAddSong(Radio radio, @Arg(type = RadioSong.class) List<RadioSong> radioSongs) {
-		for (RadioSong radioSong : radioSongs)
-			radio.getSongs().add(radioSong.getName());
-		configService.save(config);
-
-		send(PREFIX + "Added " + radioSongs.stream().map(RadioSong::getName).collect(Collectors.joining(", ")) + " to " + radio.getId());
-	}
-
-	@Path("config removeSong <radio> <song>")
-	@Description("Remove a song from a radio")
-	@Permission("group.admin")
-	void configRemoveSong(Radio radio, @Arg(context = 1) RadioSong radioSong) {
-		radio.getSongs().remove(radioSong.getName());
-		configService.save(config);
-
-		send(PREFIX + "Removed " + radioSong.getName() + " from " + radio.getId());
 	}
 
 	@Path("config enable <radio>")

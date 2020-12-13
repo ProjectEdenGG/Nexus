@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.radio;
 
 import com.xxmicloxx.NoteBlockAPI.model.FadeType;
+import com.xxmicloxx.NoteBlockAPI.model.Playlist;
 import com.xxmicloxx.NoteBlockAPI.model.RepeatMode;
 import com.xxmicloxx.NoteBlockAPI.model.Song;
 import com.xxmicloxx.NoteBlockAPI.model.SoundCategory;
@@ -18,7 +19,12 @@ import me.pugabyte.nexus.models.radio.RadioUserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class RadioUtils {
 
@@ -69,6 +75,15 @@ public class RadioUtils {
 		return config.getRadios();
 	}
 
+	public static Set<Radio> getServerRadios() {
+		Set<Radio> result = new HashSet<>();
+		for (Radio radio : getRadios()) {
+			if (radio.getType().equals(RadioType.SERVER))
+				result.add(radio);
+		}
+		return result;
+	}
+
 	public static Radio getRadio(SongPlayer songPlayer) {
 		for (Radio radio : getRadios()) {
 			if (songPlayer.equals(radio.getSongPlayer()))
@@ -89,9 +104,7 @@ public class RadioUtils {
 		fadeOut.setType(FadeType.LINEAR);
 		fadeOut.setFadeDuration(60);
 
-		radio.setRandom(true);
 		radio.setRepeatMode(RepeatMode.ALL);
-
 		radio.setCategory(SoundCategory.RECORDS);
 		radio.setPlaying(true);
 	}
@@ -170,5 +183,17 @@ public class RadioUtils {
 		if (positionSongPlayer.getTargetLocation() == null) return false;
 		if (positionSongPlayer.getTargetLocation().getWorld() == null) return false;
 		return positionSongPlayer.getTargetLocation().getWorld().equals(player.getWorld()) && positionSongPlayer.isInRange(player);
+	}
+
+	public static Playlist shufflePlaylist(Playlist playlist) {
+		List<Song> songList = playlist.getSongList();
+		Collections.shuffle(songList);
+		return new Playlist(songList.toArray(new Song[0]));
+	}
+
+	public static List<String> getPlaylistHover(Radio radio) {
+		AtomicInteger ndx = new AtomicInteger(1);
+		List<Song> songList = radio.getSongPlayer().getPlaylist().getSongList();
+		return songList.stream().map(song -> "&3" + ndx.getAndIncrement() + " &e" + song.getTitle()).collect(Collectors.toList());
 	}
 }

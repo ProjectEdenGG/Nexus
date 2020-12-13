@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.radio;
 
+import com.xxmicloxx.NoteBlockAPI.NoteBlockAPI;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
@@ -29,6 +30,7 @@ public class RadioUser extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
+	private byte volume = 100;
 	private boolean mute = false;
 
 	private String serverRadioId;
@@ -36,6 +38,11 @@ public class RadioUser extends PlayerOwnedObject {
 
 	@Embedded
 	private Set<String> leftRadiusRadios = new HashSet<>();
+
+	public void setVolume(byte volume) {
+		this.volume = volume;
+		NoteBlockAPI.setPlayerVolume(uuid, volume);
+	}
 
 	public void setServerRadioId(String serverRadioId) {
 		this.lastServerRadioId = this.serverRadioId;

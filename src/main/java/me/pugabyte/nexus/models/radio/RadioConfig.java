@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -66,12 +65,19 @@ public class RadioConfig extends PlayerOwnedObject {
 		private String id;
 		private RadioType type;
 		private boolean enabled = false;
+		private boolean particles = false;
 		private Location location;
 		private int radius;
 		@Embedded
 		private Set<String> songs = new HashSet<>();
 
 		private transient SongPlayer songPlayer;
+
+		public Location getLocation() {
+			if (this.location == null)
+				return null;
+			return this.location.clone();
+		}
 
 		public void setEnabled(boolean bool) {
 			this.enabled = bool;
@@ -100,9 +106,9 @@ public class RadioConfig extends PlayerOwnedObject {
 						}
 			}};
 
-			Nexus.log("[Radio] [" + id + "] " + loadedSongs.size() + " loaded songs: " + loadedSongs.stream().map(File::getName).collect(Collectors.joining(", ")));
 			if (!unloadedSongs.isEmpty())
 				Nexus.log("[Radio] [" + id + "] " + loadedSongs.size() + " unloaded songs: " + String.join(", ", unloadedSongs));
+			Nexus.log("[Radio] " + id + " loaded");
 
 			ArrayList<File> list = new ArrayList<>(loadedSongs);
 			Collections.shuffle(list);

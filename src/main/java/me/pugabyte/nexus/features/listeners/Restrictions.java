@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.listeners;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -42,17 +43,11 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onInteractHoldingSpawnEgg(PlayerInteractEvent event) {
-		if (ItemUtils.isNullOrAir(event.getItem()))
-			return;
-
-		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType()))
-			return;
-
-		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-			return;
-
-		if (!event.getClickedBlock().getType().equals(Material.SPAWNER))
-			return;
+		if (ItemUtils.isNullOrAir(event.getItem())) return;
+		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType())) return;
+		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
+		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
+		if (!event.getClickedBlock().getType().equals(Material.SPAWNER)) return;
 
 		if (!event.getPlayer().hasPermission("group.seniorstaff"))
 			event.setCancelled(true);

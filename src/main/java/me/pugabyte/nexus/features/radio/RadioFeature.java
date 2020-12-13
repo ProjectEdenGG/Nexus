@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.radio;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.xxmicloxx.NoteBlockAPI.model.Playlist;
 import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
@@ -20,11 +21,11 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,9 @@ import static me.pugabyte.nexus.features.radio.RadioUtils.isListening;
 import static me.pugabyte.nexus.features.radio.RadioUtils.removePlayer;
 import static me.pugabyte.nexus.features.radio.RadioUtils.setRadioDefaults;
 import static me.pugabyte.nexus.utils.Utils.isNullOrEmpty;
+
+// TODO: fix bugs when switching between local and server radios
+// TODO: display what song of the playlist is currently player
 
 public class RadioFeature extends Feature {
 
@@ -54,6 +58,23 @@ public class RadioFeature extends Feature {
 
 		setupRadios();
 
+		// Radio Particles Task
+		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+			RadioConfigService configService = new RadioConfigService();
+			RadioConfig config = configService.get(Nexus.getUUID0());
+			for (Radio radio : config.getRadios()) {
+				if (!radio.getType().equals(RadioType.RADIUS)) continue;
+				if (!radio.isEnabled()) continue;
+				if (!radio.isParticles()) continue;
+				new ParticleBuilder(Particle.NOTE)
+						.count(7)
+						.offset(0.25, 0.25, 0.25)
+						.location(radio.getLocation().add(0, 1, 0))
+						.spawn();
+			}
+		});
+
+		// Radius Radio User Task
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			RadioUserService service = new RadioUserService();
 			for (Radio radio : getRadios()) {
@@ -65,7 +86,6 @@ public class RadioFeature extends Feature {
 
 					if (user.isMute()) continue;
 					if (user.getLeftRadiusRadios().contains(radio.getId())) continue;
-					if (user.getServerRadioId() != null) continue;
 
 					boolean isInRange = isInRangeOfRadiusRadio(player, radio);
 					boolean isListening = isListening(player, radio);
@@ -114,7 +134,8 @@ public class RadioFeature extends Feature {
 	}
 
 	public static void createSongPlayer(Radio radio, Playlist playlist) {
-		Collections.shuffle(playlist.getSongList());
+		playlist = RadioUtils.shufflePlaylist(playlist);
+
 		if (radio.getType().equals(RadioType.RADIUS)) {
 			Location location = radio.getLocation();
 			int radius = radio.getRadius();

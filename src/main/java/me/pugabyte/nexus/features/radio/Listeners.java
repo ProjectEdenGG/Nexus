@@ -42,6 +42,8 @@ public class Listeners implements Listener {
 		Radio radio = user.getLastServerRadio();
 		if (radio != null)
 			addPlayer(user.getPlayer(), radio);
+
+		user.getLeftRadiusRadios().clear();
 	}
 
 	@EventHandler
