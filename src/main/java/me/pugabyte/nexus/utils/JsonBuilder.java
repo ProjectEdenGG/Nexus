@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.getLastColor;
@@ -61,11 +62,9 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder group() {
-		List<String> lore = new ArrayList<>();
-		for (String line : this.lore)
-			lore.add(loreize ? StringUtils.loreize(line) : line);
+		String lore = this.lore.stream().map(line -> colorize(loreize ? StringUtils.loreize(line) : line).replaceAll("\\|\\|", "\n")).collect(Collectors.joining("\n"));
 
-		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder(String.join("\n", lore)).create())));
+		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder(lore).create())));
 
 		result.append(builder.create(), FormatRetention.NONE);
 		builder = new ComponentBuilder("");
@@ -117,13 +116,12 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder hover(String text) {
-		lore.add(text.replaceAll("\\|\\|", "\n"));
+		lore.add(text);
 		return this;
 	}
 
 	public JsonBuilder hover(List<String> lines) {
-		for (String line : lines)
-			hover(line);
+		lines.forEach(this::hover);
 		return this;
 	}
 

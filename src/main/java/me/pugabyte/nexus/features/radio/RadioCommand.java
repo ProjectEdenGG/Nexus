@@ -131,7 +131,7 @@ public class RadioCommand extends CustomCommand {
 		send("&3Radio: &e" + StringUtils.camelCase(radio.getId()));
 
 		List<String> list = RadioUtils.getPlaylistHover(radio);
-		send(json("&3Songs: &e[" + list.size() + "]").hover(list));
+		send(json("&3Songs: &e[" + list.size() + "]").hover(list).loreize(false));
 
 		send("&3Playing: &e" + song.getTitle() + " &3by &e" + song.getAuthor() + " &3(" + getSongPercent(songPlayer) + "%)");
 		line();
