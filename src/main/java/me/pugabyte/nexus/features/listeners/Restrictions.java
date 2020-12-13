@@ -9,11 +9,9 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -51,22 +49,6 @@ public class Restrictions implements Listener {
 
 		if (!event.getPlayer().hasPermission("group.seniorstaff"))
 			event.setCancelled(true);
-	}
-
-	@EventHandler
-	public void onPlaceBed(BlockPlaceEvent event) {
-		if (!MaterialTag.BEDS.isTagged(event.getBlock().getType()))
-			return;
-
-		Player player = event.getPlayer();
-		String worldName = player.getWorld().getName().toLowerCase();
-		if (!(worldName.endsWith("nether") || worldName.endsWith("the_end")))
-			return;
-
-		if (!player.hasPermission("group.staff")) {
-			event.setCancelled(true);
-			PlayerUtils.send(player, PREFIX + "Sorry, but you can't place beds here! They will go boom!");
-		}
 	}
 
 	// TODO This should be handled by WE but its broken
