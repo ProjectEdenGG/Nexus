@@ -2,6 +2,7 @@ package me.pugabyte.nexus.framework.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.DoubleSlash;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -67,6 +68,9 @@ class CommandMapUtils {
 		pluginCommand.setAliases(customCommand.getAliases());
 		pluginCommand.setExecutor(handler);
 		pluginCommand.setTabCompleter(handler);
+		Permission permission = customCommand.getClass().getAnnotation(Permission.class);
+		if (permission != null)
+			pluginCommand.setPermission(permission.value());
 
 		getCommandMap().register(plugin.getDescription().getName(), pluginCommand);
 		getKnownCommandMap().put(plugin.getDescription().getName().toLowerCase() + ":" + name, pluginCommand);
