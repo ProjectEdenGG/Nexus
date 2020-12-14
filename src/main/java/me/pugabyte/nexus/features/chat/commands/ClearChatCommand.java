@@ -27,5 +27,4 @@ public class ClearChatCommand extends CustomCommand {
 		Koda.say("Chat has been cleared, sorry for any inconvenience.");
 	}
 
-
 }
