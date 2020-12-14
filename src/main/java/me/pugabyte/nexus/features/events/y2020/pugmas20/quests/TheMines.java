@@ -31,6 +31,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -194,11 +195,10 @@ public class TheMines implements Listener {
 		user.send(Pugmas20.PREFIX + "New event token balance: " + user.getTokens());
 	}
 
-
 	public static String taskId = "pugmas-ore-regen";
 
 	@Getter
-	private static final ItemStack minersPickaxe = questItem(Material.IRON_PICKAXE).name("Miner's Pickaxe").build();
+	private static final ItemStack minersPickaxe = questItem(Material.IRON_PICKAXE).name("Miner's Pickaxe").enchant(Enchantment.DIG_SPEED, 4).build();
 	@Getter
 	private static final ItemStack minersSieve = questItem(Material.HOPPER).name("Miner's Sieve").build();
 	@Getter
@@ -225,6 +225,8 @@ public class TheMines implements Listener {
 
 		if (!isFuzzyMatch(minersPickaxe, player.getInventory().getItemInMainHand()))
 			return;
+
+		player.getInventory().getItemInMainHand().addEnchantment(Enchantment.DIG_SPEED, 4);
 
 		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
 		ItemStack itemStack = oreType == OreType.COAL ? oreType.getIngot(RandomUtils.randomElement(1, 1, 2, 2, 2, 3)) : oreType.getOre();
