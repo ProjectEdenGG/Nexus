@@ -26,7 +26,7 @@ public enum Package {
 	@Id("2730030")
 	@Permission("set.my.prefix")
 	@ExpirationDays(30)
-	@ExpirationCommand("/prefix expire [player]")
+	@ExpirationCommand("prefix expire [player]")
 	CUSTOM_PREFIX_ONE_MONTH,
 
 	@Id("2019251")

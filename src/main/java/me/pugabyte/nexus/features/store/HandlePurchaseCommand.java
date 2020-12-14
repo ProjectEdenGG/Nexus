@@ -51,11 +51,17 @@ public class HandlePurchaseCommand extends CustomCommand {
 					return;
 				}
 
-				packageType.getPermissions().forEach(permission -> Nexus.getPerms().playerRemove(null, PlayerUtils.getPlayer(uuid), permission));
+				OfflinePlayer player = PlayerUtils.getPlayer(uuid);
+				if (player == null || player.getName() == null) {
+					Nexus.severe("Tried to expire a package for a player that doesn't exist: UUID: " + uuid);
+					return;
+				}
+
+				packageType.getPermissions().forEach(permission -> Nexus.getPerms().playerRemove(null, player, permission));
 				packageType.getExpirationCommands().stream()
 						.map(StringUtils::trimFirst)
-						.map(command -> command.replaceAll("\\[player]", PlayerUtils.getPlayer(uuid).getName()))
-						.forEach(PlayerUtils::runCommandAsConsole);
+						.map(command -> command.replaceAll("\\[player]", player.getName()))
+						.forEach(command -> Tasks.sync(() -> PlayerUtils.runCommandAsConsole(command)));
 
 				service.complete(task);
 			});

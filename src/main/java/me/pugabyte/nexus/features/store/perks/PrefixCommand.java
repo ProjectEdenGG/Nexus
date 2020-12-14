@@ -21,9 +21,9 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.StringUtils.stripFormat;
 
 public class PrefixCommand extends CustomCommand {
-	SettingService service = new SettingService();
-	Setting checkmark = null;
-	Setting prefix = null;
+	private final SettingService service = new SettingService();
+	private Setting checkmark = null;
+	private Setting prefix = null;
 
 	public PrefixCommand(CommandEvent event) {
 		super(event);
