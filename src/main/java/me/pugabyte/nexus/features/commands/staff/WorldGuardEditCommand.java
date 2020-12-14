@@ -48,7 +48,8 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 
 	private void off() {
 		Nexus.getPerms().playerRemove(player(), permission);
-		runCommandAsConsole("lp user " + player().getName() + " permission set " + permission + " false");
+		runCommandAsConsole("lp user " + player().getName() + " permission unset " + permission + " world=" + player().getLocation().getWorld().getName());
+		runCommandAsConsole("lp user " + player().getName() + " permission unset " + permission);
 		send("&eWorldGuard editing &cdisabled");
 	}
 
@@ -56,7 +57,8 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (event.getPlayer().hasPermission(permission)) {
 			Nexus.getPerms().playerRemove(event.getPlayer(), permission);
-			runCommandAsConsole("lp user " + event.getPlayer().getName() + " permission set " + permission + " false");
+			runCommandAsConsole("lp user " + player().getName() + " permission unset " + permission + " world=" + player().getLocation().getWorld().getName());
+			runCommandAsConsole("lp user " + player().getName() + " permission unset " + permission);
 		}
 	}
 
