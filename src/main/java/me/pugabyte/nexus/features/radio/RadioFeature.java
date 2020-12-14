@@ -39,6 +39,7 @@ import static me.pugabyte.nexus.utils.Utils.isNullOrEmpty;
 
 // TODO: fix bugs when switching between local and server radios
 // TODO: display what song of the playlist is currently player
+// TODO: re-add players to radios they were previously listening to over reload/restart
 
 public class RadioFeature extends Feature {
 
