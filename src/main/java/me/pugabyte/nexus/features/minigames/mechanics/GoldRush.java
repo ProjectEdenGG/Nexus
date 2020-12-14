@@ -84,9 +84,8 @@ public final class GoldRush extends TeamlessMechanic {
 		super.onEnd(event);
 		if (event.getMatch().isStarted()) {
 			GoldRushArena goldRushArena = event.getMatch().getArena();
-			for (Location location : event.getMatch().getAliveTeams().get(0).getSpawnpoints()) {
+			for (Location location : event.getMatch().getAliveTeams().get(0).getSpawnpoints())
 				removeMineStacks(goldRushArena.getMineStackHeight(), location);
-			}
 		}
 	}
 
@@ -107,9 +106,8 @@ public final class GoldRush extends TeamlessMechanic {
 		WEUtils.replace(region, Collections.singleton(BlockTypes.AIR), pattern);
 
 		Clipboard schematic = WEUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
-		for (Location location : locations) {
+		for (Location location : locations)
 			WEUtils.paster().clipboard(schematic).at(WEUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0))).paste();
-		}
 	}
 
 	public void removeMineStacks(int mineStackHeight, Location loc) {

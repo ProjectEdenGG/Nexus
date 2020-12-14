@@ -42,9 +42,8 @@ public class MongoDBPersistence {
 
 		// Paper compat
 		Builder options = MapperOptions.builder().classLoader(Nexus.getInstance().getClass().getClassLoader());
-		// Properly merge deleted hashmaps
-		options.storeEmpties(true);
-		options.storeNulls(true);
+		// Properly merge deleted hashmaps and null vars
+		options.storeEmpties(true).storeNulls(true);
 		morphia.getMapper().setOptions(options.build());
 		new Reflections("me.pugabyte.nexus.models").getTypesAnnotatedWith(Entity.class);
 
