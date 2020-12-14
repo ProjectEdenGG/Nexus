@@ -61,7 +61,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 				File file = Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html").toFile();
 				if (!file.exists())
 					file.createNewFile();
-				Files.write(file.toPath(), html.getBytes(), StandardOpenOption.CREATE);
+				Files.write(file.toPath(), html.getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

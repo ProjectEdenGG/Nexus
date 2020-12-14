@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
@@ -46,14 +47,17 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	private void off() {
+		Nexus.getPerms().playerRemove(player(), permission);
 		runCommandAsConsole("lp user " + player().getName() + " permission set " + permission + " false");
 		send("&eWorldGuard editing &cdisabled");
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		if (event.getPlayer().hasPermission(permission))
+		if (event.getPlayer().hasPermission(permission)) {
+			Nexus.getPerms().playerRemove(event.getPlayer(), permission);
 			runCommandAsConsole("lp user " + event.getPlayer().getName() + " permission set " + permission + " false");
+		}
 	}
 
 	@ConverterFor(Flag.class)
