@@ -71,7 +71,7 @@ public class LuckPermsUtils {
 			public void run() {
 				String command = "lp user " + uuid.toString() + " permission " + type + " " + permission;
 				if (type == PermissionChangeType.SET)
-					command += value;
+					command += " " + value;
 
 				if (world != null)
 					command += " world=" + world.getName();
