@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class JsonBuilder {
 	private final ComponentBuilder result = new ComponentBuilder("");
 	private ComponentBuilder builder = new ComponentBuilder("");
 
-	private final List<String> lore = new ArrayList<>();
+	private List<String> lore = new ArrayList<>();
 	private boolean loreize = true;
 
 	// Helper boolean for loops and stuff
@@ -118,12 +119,22 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder hover(String text) {
+		lore = Collections.singletonList(text);
+		return this;
+	}
+
+	public JsonBuilder addHover(String text) {
 		lore.add(text);
 		return this;
 	}
 
 	public JsonBuilder hover(List<String> lines) {
-		lines.forEach(this::hover);
+		lore = lines;
+		return this;
+	}
+
+	public JsonBuilder addHover(List<String> lines) {
+		lore.addAll(lines);
 		return this;
 	}
 
