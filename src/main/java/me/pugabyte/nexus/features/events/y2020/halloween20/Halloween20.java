@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.quest.menus.Halloween
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -32,8 +33,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 
 public class Halloween20 implements Listener {
 	@Getter
@@ -134,7 +133,7 @@ public class Halloween20 implements Listener {
 		if (user.getFoundButtons().size() != SoundButton.values().length)
 			return;
 
-		runCommandAsConsole("lp user " + event.getPlayer().getName() + " permission set powder.powder.spookyscaryskeletons true");
+		PermissionChange.set().player(event.getPlayer()).permission("powder.powder.spookyscaryskeletons").run();
 		user.send(PREFIX + "You have unlocked the Spooky Scary Skeletons song! &c/songs");
 	}
 

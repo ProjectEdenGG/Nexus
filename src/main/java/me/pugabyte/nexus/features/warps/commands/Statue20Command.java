@@ -19,6 +19,7 @@ import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
@@ -200,7 +201,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 			ItemStack beePet = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Pet").lore("&3Click here to receive")
 					.lore("&3the bee pet: &c/pets").build();
 			contents.set(1, 3, ClickableItem.from(beePet, e -> {
-				runCommandAsConsole("lp user " + player.getName() + " permission set miniaturepets.pet.Bee true");
+				PermissionChange.set().player(player).permission("miniaturepets.pet.Bee").run();
 				send(player, "&3You have claimed the &eBee Pet");
 				StatueHuntService service = new StatueHuntService();
 				StatueHunt statueHunt = service.get(player);
@@ -212,8 +213,9 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 			ItemStack beeDis = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Disguise").lore("&3Click here to receive")
 					.lore("&3the bee disguise: &c/disguise bee").build();
+
 			contents.set(1, 5, ClickableItem.from(beeDis, e -> {
-				runCommandAsConsole("lp user " + player.getName() + " permission set libsdisguises.disguise.bee.setBeeAnger.setFlipped.setHasNectar.setHasStung.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning true");
+				PermissionChange.set().player(player).permission("libsdisguises.disguise.bee.setBeeAnger.setFlipped.setHasNectar.setHasStung.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning").run();
 				send(player, "&3You have claimed the &eBee Disguise");
 				StatueHuntService service = new StatueHuntService();
 				StatueHunt statueHunt = service.get(player);

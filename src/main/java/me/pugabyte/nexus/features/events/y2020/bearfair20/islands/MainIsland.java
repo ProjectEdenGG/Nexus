@@ -15,6 +15,7 @@ import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -471,7 +472,7 @@ public class MainIsland implements Listener, Island {
 		user.givePoints(500);
 		service.save(user);
 
-		PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " permission set powder.powder.OrientalDiscoBathtub");
+		PermissionChange.set().player(player).permission("powder.powder.OrientalDiscoBathtub").run();
 
 		String prefix = "&8&l[&eBearFair&8&l] &3";
 		BearFair20.send("", player);

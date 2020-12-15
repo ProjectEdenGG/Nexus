@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 
 public class PushCommand extends CustomCommand {
 	@Getter
@@ -23,10 +24,10 @@ public class PushCommand extends CustomCommand {
 	@SneakyThrows
 	void push(boolean enable) {
 		if (enable) {
-			runCommandAsConsole("lp user " + player().getName() + " permission set " + perm + " true");
+			PermissionChange.set().player(player()).permission(perm).run();
 			send("&ePushing will be turned &aon&e shortly.");
 		} else {
-			runCommandAsConsole("lp user " + player().getName() + " permission set " + perm + " false");
+			PermissionChange.set().player(player()).permission(perm).value(false).run();
 			send("&ePushing will be turned &coff&e shortly.");
 		}
 	}

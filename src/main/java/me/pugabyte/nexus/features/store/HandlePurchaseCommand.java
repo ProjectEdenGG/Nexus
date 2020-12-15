@@ -16,6 +16,7 @@ import me.pugabyte.nexus.models.purchase.Purchase;
 import me.pugabyte.nexus.models.purchase.PurchaseService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -119,8 +120,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 			}
 
 			OfflinePlayer permsUser = PlayerUtils.getPlayer(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
-			packageType.getPermissions().forEach(permission ->
-					runCommandAsConsole("lp user " + permsUser.getUniqueId().toString() + " permission set " + permission + " true"));
+			packageType.getPermissions().forEach(permission -> PermissionChange.set().player(permsUser).permission(permission).run());
 
 			packageType.getCommands().stream()
 					.map(command -> command.replaceAll("\\[player]", PlayerUtils.getPlayer(purchase.getUuid()).getName()))

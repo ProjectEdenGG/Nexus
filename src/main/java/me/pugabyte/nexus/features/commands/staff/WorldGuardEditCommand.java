@@ -13,6 +13,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -35,31 +37,29 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	void toggle(Boolean enable) {
 		if (enable == null) enable = !player().hasPermission(permission);
 
-		if (enable)
-			on();
-		else
-			off();
+		if (enable) {
+			on(player());
+			send("&eWorldGuard editing &aenabled");
+		} else {
+			off(player());
+			send("&eWorldGuard editing &cdisabled");
+		}
 	}
 
-	private void on() {
-		runCommandAsConsole("lp user " + player().getName() + " permission set " + permission + " true");
-		send("&eWorldGuard editing &aenabled");
+	private void on(Player player) {
+		PermissionChange.set().player(player).permission(permission).run();
 	}
 
-	private void off() {
-		Nexus.getPerms().playerRemove(player(), permission);
-		runCommandAsConsole("lp user " + player().getName() + " permission unset " + permission + " world=" + player().getLocation().getWorld().getName());
-		runCommandAsConsole("lp user " + player().getName() + " permission unset " + permission);
-		send("&eWorldGuard editing &cdisabled");
+	private void off(Player player) {
+		Nexus.getPerms().playerRemove(player, permission);
+		PermissionChange.unset().player(player).permission(permission).world(player.getLocation()).run();
+		PermissionChange.unset().player(player).permission(permission).run();
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		if (event.getPlayer().hasPermission(permission)) {
-			Nexus.getPerms().playerRemove(event.getPlayer(), permission);
-			runCommandAsConsole("lp user " + player().getName() + " permission unset " + permission + " world=" + player().getLocation().getWorld().getName());
-			runCommandAsConsole("lp user " + player().getName() + " permission unset " + permission);
-		}
+		if (event.getPlayer().hasPermission(permission))
+			off(event.getPlayer());
 	}
 
 	@ConverterFor(Flag.class)
