@@ -12,6 +12,7 @@ import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -90,4 +92,20 @@ public class WorldGuardFlags implements Listener {
 			event.setCancelled(true);
 		}
 	}
+
+	@EventHandler
+	public void onSoilMoistureChange(MoistureChangeEvent event) {
+		Block block = event.getBlock();
+		if (!block.getType().equals(Material.FARMLAND))
+			return;
+
+		Farmland from = (Farmland) block.getBlockData();
+		Farmland to = (Farmland) event.getNewState().getBlockData();
+		if (from.getMoisture() <= to.getMoisture())
+			return;
+
+		if (WorldGuardFlagUtils.query(block.getLocation(), com.sk89q.worldguard.protection.flags.Flags.SOIL_DRY) == State.DENY)
+			event.setCancelled(true);
+	}
+
 }
