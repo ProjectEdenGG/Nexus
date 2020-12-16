@@ -197,7 +197,7 @@ public class Nexus extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		try { broadcastReload();										} catch (Throwable ex) { ex.printStackTrace(); }
-		try { PlayerUtils.runCommandAsConsole("save-all");					} catch (Throwable ex) { ex.printStackTrace(); }
+		try { PlayerUtils.runCommandAsConsole("save-all");				} catch (Throwable ex) { ex.printStackTrace(); }
 		try { cron.stop();												} catch (Throwable ex) { ex.printStackTrace(); }
 		try { LiteBans.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { BFQuests.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }

@@ -1,10 +1,13 @@
 package me.pugabyte.nexus.utils;
 
+import lombok.Getter;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
 import java.util.Arrays;
+import java.util.List;
 
+@Getter
 public enum WorldGroup {
 	SURVIVAL("world", "world_nether", "world_the_end",
 			"survival", "survival_nether", "survival_the_end",
@@ -17,16 +20,17 @@ public enum WorldGroup {
 	SKYBLOCK("skyblock", "skyblock_nether"),
 	ADVENTURE("stranded", "aeveon_project"),
 	EVENT("2y"),
+	STAFF("buildadmin", "jail"),
 	UNKNOWN;
 
-	private final String[] worlds;
+	private List<String> worlds;
 
 	WorldGroup() {
 		this(new String[0]);
 	}
 
 	WorldGroup(String... worlds) {
-		this.worlds = worlds;
+		this.worlds = Arrays.asList(worlds);
 	}
 
 	@Override
@@ -34,8 +38,12 @@ public enum WorldGroup {
 		return StringUtils.camelCase(name());
 	}
 
-	public String[] getWorlds() {
-		return worlds;
+	public boolean contains(World world) {
+		return contains(world.getName());
+	}
+
+	public boolean contains(String world) {
+		return worlds.contains(world);
 	}
 
 	public static WorldGroup get(Entity entity) {
@@ -49,7 +57,7 @@ public enum WorldGroup {
 	public static WorldGroup get(String world) {
 		for (WorldGroup group : values())
 			if (group.getWorlds() != null)
-				if (Arrays.asList(group.getWorlds()).contains(world.toLowerCase()))
+				if (group.contains(world))
 					return group;
 
 		if (world.toLowerCase().startsWith("build"))
