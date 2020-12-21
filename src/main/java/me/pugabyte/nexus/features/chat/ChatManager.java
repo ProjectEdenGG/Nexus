@@ -11,6 +11,7 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 
@@ -54,7 +55,7 @@ public class ChatManager {
 
 		message = message.trim();
 
-		if (!chatter.getPlayer().hasPermission("group.admin"))
+		if (!PlayerUtils.isAdmin(chatter.getPlayer()))
 			message = stripColor(message);
 
 		if (message.length() == 0)

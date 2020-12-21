@@ -137,25 +137,6 @@ public class RadioCommand extends CustomCommand {
 		line();
 	}
 
-//	@Path("playlist")
-//	@Description("Shows the playlist of the radio you are listening to")
-//	void playlist() {
-//		Radio listenedRadio = RadioUtils.getListenedRadio(player(), true);
-//		if (listenedRadio == null)
-//			error("You are not listening to a radio!");
-//
-//		List<Song> songs = listenedRadio.getSongPlayer().getPlaylist().getSongList();
-//		int songListSize = songs.size();
-//		if (songListSize == 0)
-//			error("No songs in playlist");
-//
-//		send(PREFIX + "&3Playlist: ");
-//		int ndx = 1;
-//		for (Song song : songs) {
-//			send("&3" + ndx++ + " &e" + song.getTitle());
-//		}
-//	}
-
 	@Path("mute [enable]")
 	@Description("Mute all radios")
 	void mute(Boolean enable) {

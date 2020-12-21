@@ -31,7 +31,7 @@ public class HatCommand extends CustomCommand {
 
 		if (!isNullOrAir(hat))
 			if (hat.getEnchantments().containsKey(Enchantment.BINDING_CURSE))
-				if (!player().hasPermission("group.staff"))
+				if (!isStaff())
 					error("You cannot remove your hat, as it has the Curse of Binding!");
 
 		if (isNullOrAir(hand))

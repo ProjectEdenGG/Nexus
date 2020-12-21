@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.PlayerUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +35,7 @@ public class Godmode extends PlayerOwnedObject {
 	private static final List<String> disabledWorlds = Arrays.asList("gameworld", "deathswap");
 
 	public boolean isEnabled() {
-		if (isOnline() && !getPlayer().hasPermission("group.staff"))
+		if (isOnline() && !PlayerUtils.isStaff(getPlayer()))
 			return false;
 		if (isOnline() && disabledWorlds.contains(getPlayer().getWorld().getName()))
 			return false;

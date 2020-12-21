@@ -15,6 +15,7 @@ import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
@@ -76,7 +77,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("points [player]")
 	void points(@Arg("self") OfflinePlayer player) {
-		if (player().hasPermission("group.moderator")) {
+		if (PlayerUtils.isModerator(player())) {
 			Voter voter = new VoteService().get(player);
 			send("&e" + player.getName() + " &3has &e" + voter.getPoints() + " &3vote points");
 		} else

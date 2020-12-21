@@ -29,7 +29,7 @@ public class ShopCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		if (player().hasPermission("group.seniorstaff"))
+		if (isSeniorStaff())
 			new MainMenuProvider(null).open(player());
 		else
 			send("&cComing soon!");

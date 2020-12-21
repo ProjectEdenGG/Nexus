@@ -35,6 +35,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -434,7 +435,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		// TODO - BearFairStore: Couldn't get DeliveryService to work
 		boolean disableDelivery = true;
 		if (disableDelivery) {
-			if (player.hasPermission("group.admin")) {
+			if (PlayerUtils.isAdmin(player)) {
 				BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
 				ItemUtils.giveItem(player, bearFairStoreMap.getSplatterMap());
 			} else {

@@ -16,7 +16,7 @@ public class SuicideCommand extends CustomCommand {
 	void suicide() {
 		if (!WorldGroup.get(player()).equals(WorldGroup.SURVIVAL))
 			error("You can only do this command in the survival world.");
-		if (player().hasPermission("group.staff"))
+		if (isStaff())
 			runCommand("god off");
 		player().setGameMode(GameMode.SURVIVAL);
 		player().setHealth(0.0);

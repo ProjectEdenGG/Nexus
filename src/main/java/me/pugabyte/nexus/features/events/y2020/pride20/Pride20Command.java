@@ -34,7 +34,7 @@ public class Pride20Command extends CustomCommand {
 
 	@Path("parade join [player]")
 	void joinParade(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
-		if (!player().hasPermission("group.staff"))
+		if (!isStaff())
 			player = player();
 
 		Setting setting = service.get(player, "pride20Parade");
@@ -75,7 +75,7 @@ public class Pride20Command extends CustomCommand {
 
 	@Path("parade leave [player]")
 	void leaveParade(@Arg("self") OfflinePlayer player) {
-		if (!player().hasPermission("group.staff"))
+		if (!isStaff())
 			player = player();
 
 		Setting setting = service.get(player, "pride20Parade");

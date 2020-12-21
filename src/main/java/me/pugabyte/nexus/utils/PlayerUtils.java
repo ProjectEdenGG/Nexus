@@ -77,6 +77,54 @@ public class PlayerUtils {
 		return false;
 	}
 
+	public static boolean isGuest(Player player) {
+		return player.hasPermission("group.guest");
+	}
+
+	public static boolean isMember(Player player) {
+		return player.hasPermission("group.member");
+	}
+
+	public static boolean isTrusted(Player player) {
+		return player.hasPermission("group.trusted");
+	}
+
+	public static boolean isElite(Player player) {
+		return player.hasPermission("group.elite");
+	}
+
+	public static boolean isVeteran(Player player) {
+		return player.hasPermission("group.veteran");
+	}
+
+	public static boolean isArchitect(Player player) {
+		return player.hasPermission("group.architect");
+	}
+
+	public static boolean isStaff(Player player) {
+		return player.hasPermission("group.staff");
+	}
+
+	public static boolean isModerator(Player player) {
+		return player.hasPermission("group.moderator");
+	}
+
+	public static boolean isSeniorStaff(Player player) {
+		return player.hasPermission("group.seniorstaff");
+	}
+
+	public static boolean isOperator(Player player) {
+		return player.hasPermission("group.operator");
+	}
+
+	public static boolean isAdmin(Player player) {
+		return player.hasPermission("group.admin");
+	}
+
+	public static boolean isOwner(Player player) {
+		return player.hasPermission("group.owner");
+	}
+
 	public static boolean canSee(OfflinePlayer viewer, OfflinePlayer target) {
 		if (!viewer.isOnline() || !target.isOnline()) return false;
 		return (canSee(viewer.getPlayer(), target.getPlayer()));

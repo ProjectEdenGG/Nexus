@@ -23,6 +23,7 @@ import me.pugabyte.nexus.models.modreview.ModReview.Mod.ModVerdict;
 import me.pugabyte.nexus.models.modreview.ModReview.ModReviewRequest;
 import me.pugabyte.nexus.models.modreview.ModReviewService;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Time;
 
 import java.util.HashSet;
@@ -102,7 +103,7 @@ public class ModReviewCommand extends CustomCommand {
 		BiFunction<ModReviewRequest, Integer, JsonBuilder> formatter = (request, index) -> {
 			JsonBuilder json = json("&3" + (index + 1) + " &3" + getPlayer(request.getRequester()).getName() + " &e" + request.getName() +
 					(isNullOrEmpty(request.getNotes()) ? "" : " &7- " + request.getNotes()));
-			if (player().hasPermission("group.admin"))
+			if (PlayerUtils.isAdmin(player()))
 				json.suggest("/modreview add " + request.getName() + " ").hover("&3Click to review");
 			return json;
 		};

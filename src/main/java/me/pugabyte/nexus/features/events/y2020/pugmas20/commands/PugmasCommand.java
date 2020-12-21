@@ -82,7 +82,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Path
 	void pugmas() {
 		LocalDate now = LocalDate.now();
-		if (isBeforePugmas(now) && !player().hasPermission("group.staff"))
+		if (isBeforePugmas(now) && !isStaff())
 			error("Soon™ (" + timeLeft + ")");
 
 		if (pugmasUser.isWarped()) {

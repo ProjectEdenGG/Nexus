@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirec
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
@@ -67,7 +68,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerJoinEvent event) {
-		if (!event.getPlayer().hasPermission("group.staff")) return;
+		if (!PlayerUtils.isStaff(event.getPlayer())) return;
 		User user = Nexus.getEssentials().getUser(event.getPlayer().getUniqueId());
 		boolean enabled = user.isGodModeEnabledRaw();
 		if (enabled) {

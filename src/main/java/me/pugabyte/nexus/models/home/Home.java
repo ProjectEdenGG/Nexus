@@ -88,7 +88,7 @@ public class Home extends PlayerOwnedObject {
 	public boolean hasAccess(Player player) {
 		if (!locked)
 			return true;
-		if (player.hasPermission("group.staff"))
+		if (PlayerUtils.isStaff(player))
 			return true;
 		if (player.getUniqueId().equals(getOfflinePlayer().getUniqueId()))
 			return true;

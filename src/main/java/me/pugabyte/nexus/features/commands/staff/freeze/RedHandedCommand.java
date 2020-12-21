@@ -37,7 +37,7 @@ public class RedHandedCommand extends CustomCommand {
 		}
 
 		if (player().getGameMode().equals(GameMode.SPECTATOR))
-			if (player().hasPermission("group.seniorstaff"))
+			if (isSeniorStaff())
 				player().setGameMode(GameMode.CREATIVE);
 			else
 				player().setGameMode(GameMode.SURVIVAL);

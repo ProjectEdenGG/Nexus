@@ -55,7 +55,7 @@ public class ResourceWorld implements Listener {
 
 		if (event.getTo().getWorld().getName().startsWith("resource")) {
 			if (!WorldGroup.get(event.getFrom().getWorld()).equals(WorldGroup.SURVIVAL) || event.getFrom().getWorld().getName().startsWith("staff")) {
-				if (!player.hasPermission("group.admin")) {
+				if (!PlayerUtils.isAdmin(player)) {
 					PlayerUtils.send(player, "&eYou can only enter the resource world from the Survival world");
 					event.setCancelled(true);
 					return;

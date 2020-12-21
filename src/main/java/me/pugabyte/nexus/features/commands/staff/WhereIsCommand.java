@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.whereis.WhereIs;
 import me.pugabyte.nexus.models.whereis.WhereIsService;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -83,7 +84,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void process(Player viewer) {
-		if (!viewer.hasPermission("group.staff")) {
+		if (!PlayerUtils.isStaff(viewer)) {
 			unglow(viewer);
 			return;
 		}

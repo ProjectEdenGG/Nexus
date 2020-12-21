@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.entity.Player;
@@ -53,7 +54,7 @@ public class StaffAlerts implements Listener {
 	}
 
 	private void readyToStalk(Player player, String type) {
-		if (player.hasPermission("group.moderator")) {
+		if (PlayerUtils.isModerator(player)) {
 			boolean alert = false;
 			Set<Player> trackedPlayers = tracking.keySet();
 			for (Player tracked : trackedPlayers) {

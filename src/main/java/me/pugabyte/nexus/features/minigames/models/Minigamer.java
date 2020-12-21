@@ -15,6 +15,7 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -165,7 +166,7 @@ public class Minigamer {
 	}
 
 	public void toGamelobby() {
-		boolean staff = player.hasPermission("group.staff");
+		boolean staff = PlayerUtils.isStaff(player);
 
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setFallDistance(0f);

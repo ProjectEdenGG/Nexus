@@ -7,6 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -21,7 +22,7 @@ public class ClearChatCommand extends CustomCommand {
 	@Path
 	void run() {
 		for (Player player : Bukkit.getOnlinePlayers())
-			if (!player.hasPermission("group.staff"))
+			if (!PlayerUtils.isStaff(player))
 				line(player, 40);
 
 		Koda.say("Chat has been cleared, sorry for any inconvenience.");

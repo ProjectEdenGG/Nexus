@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -44,9 +45,9 @@ public class WelcomeCommand extends CustomCommand {
 	static {
 		Tasks.repeat(Time.MINUTE, Time.MINUTE, () -> {
 			if (Bukkit.getOnlinePlayers().stream().filter(player ->
-					player.hasPermission("group.moderator") &&
-					!player.getName().equals("KodaBear") &&
-					!AFK.get(player).isAfk()
+					PlayerUtils.isModerator(player) &&
+							!player.getName().equals("KodaBear") &&
+							!AFK.get(player).isAfk()
 			).count() < 4)
 				return;
 
@@ -63,7 +64,7 @@ public class WelcomeCommand extends CustomCommand {
 	@Path("[player]")
 	void welcome(Player player) {
 		if (player != null) {
-			if (!player.hasPermission("rank.guest"))
+			if (!PlayerUtils.isGuest(player))
 				error("Prevented accidental welcome");
 			if (((Hours) new HoursService().get(player)).getTotal() > (60 * 60))
 				error("Prevented accidental welcome");

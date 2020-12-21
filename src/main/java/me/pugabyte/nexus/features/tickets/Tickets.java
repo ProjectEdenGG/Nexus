@@ -43,7 +43,7 @@ public class Tickets {
 
 		Set<UUID> uuids = new HashSet<>();
 		for (Player staff : Bukkit.getOnlinePlayers())
-			if (staff.hasPermission("group.moderator"))
+			if (PlayerUtils.isModerator(staff))
 				if (player == null || !staff.getUniqueId().equals(player.getUniqueId()))
 					uuids.add(staff.getUniqueId());
 

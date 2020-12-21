@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.freeze.FreezeService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -203,7 +204,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
-		if (event.getPlayer().hasPermission("group.staff")) return;
+		if (PlayerUtils.isStaff(event.getPlayer())) return;
 		switch (event.getMessage().split(" ")[0]) {
 			case "/rules":
 			case "/ch":

@@ -18,7 +18,7 @@ public class BreakCommand extends CustomCommand {
 
 	@Path
 	void fuck() {
-		if (player().hasPermission("group.staff")) {
+		if (isStaff()) {
 			Block block = getTargetBlockRequired();
 
 			final BlockBreakEvent event = new BlockBreakEvent(block, player());
@@ -26,9 +26,8 @@ public class BreakCommand extends CustomCommand {
 				error("Cannot break that block");
 
 			block.setType(Material.AIR);
-		} else
-			if ("fuck".equalsIgnoreCase(getAliasUsed()))
-				send("&4rude.");
+		} else if ("fuck".equalsIgnoreCase(getAliasUsed()))
+			send("&4rude.");
 			else
 				permissionError();
 	}

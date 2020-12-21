@@ -59,7 +59,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	@Path("<player> [player]")
 	void run(@Arg(tabCompleter = OfflinePlayer.class) String arg1, @Arg(tabCompleter = OfflinePlayer.class) String arg2) {
-		if (!player().hasPermission("group.staff")) {
+		if (!isStaff()) {
 			runCommand("tpa " + argsString());
 			return;
 		}

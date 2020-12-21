@@ -5,6 +5,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.event.EventHandler;
@@ -68,7 +69,7 @@ public class FetchCommand extends CustomCommand implements Listener {
 
 	@Path()
 	void usage() {
-		send(PREFIX + "&cCorrect usage: on/off" + (player().hasPermission("group.staff") ? "/enable/disable" : ""));
+		send(PREFIX + "&cCorrect usage: on/off" + (PlayerUtils.isStaff(player()) ? "/enable/disable" : ""));
 	}
 
 	@EventHandler

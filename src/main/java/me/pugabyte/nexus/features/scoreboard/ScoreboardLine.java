@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.isStaff;
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.left;
@@ -256,23 +257,23 @@ public enum ScoreboardLine {
 
 	public static Map<ScoreboardLine, Boolean> getDefaultLines(Player player) {
 		return new HashMap<ScoreboardLine, Boolean>() {{
-			if (ScoreboardLine.ONLINE.hasPermission(player))		put(ScoreboardLine.ONLINE, true);
-			if (ScoreboardLine.TICKETS.hasPermission(player))		put(ScoreboardLine.TICKETS, true);
-			if (ScoreboardLine.TPS.hasPermission(player))			put(ScoreboardLine.TPS, true);
-			if (ScoreboardLine.PING.hasPermission(player))			put(ScoreboardLine.PING, true);
-			if (ScoreboardLine.CHANNEL.hasPermission(player))		put(ScoreboardLine.CHANNEL, true);
-			if (ScoreboardLine.VANISHED.hasPermission(player))		put(ScoreboardLine.VANISHED, true);
-			if (ScoreboardLine.MCMMO.hasPermission(player))			put(ScoreboardLine.MCMMO, !player.hasPermission("group.staff"));
-			if (ScoreboardLine.BALANCE.hasPermission(player))		put(ScoreboardLine.BALANCE, !player.hasPermission("group.staff"));
-			if (ScoreboardLine.VOTE_POINTS.hasPermission(player))	put(ScoreboardLine.VOTE_POINTS, !player.hasPermission("group.staff"));
-			if (ScoreboardLine.GAMEMODE.hasPermission(player))		put(ScoreboardLine.GAMEMODE, true);
-			if (ScoreboardLine.WORLD.hasPermission(player))			put(ScoreboardLine.WORLD, true);
-			if (ScoreboardLine.BIOME.hasPermission(player))			put(ScoreboardLine.BIOME, false);
-			if (ScoreboardLine.COMPASS.hasPermission(player))		put(ScoreboardLine.COMPASS, true);
-			if (ScoreboardLine.COORDINATES.hasPermission(player))	put(ScoreboardLine.COORDINATES, true);
-			if (ScoreboardLine.HOURS.hasPermission(player))			put(ScoreboardLine.HOURS, true);
-			if (ScoreboardLine.HELP.hasPermission(player))			put(ScoreboardLine.HELP, !player.hasPermission("group.staff"));
-			if (ScoreboardLine.AFK.hasPermission(player))			put(ScoreboardLine.AFK, true);
+			if (ScoreboardLine.ONLINE.hasPermission(player)) put(ScoreboardLine.ONLINE, true);
+			if (ScoreboardLine.TICKETS.hasPermission(player)) put(ScoreboardLine.TICKETS, true);
+			if (ScoreboardLine.TPS.hasPermission(player)) put(ScoreboardLine.TPS, true);
+			if (ScoreboardLine.PING.hasPermission(player)) put(ScoreboardLine.PING, true);
+			if (ScoreboardLine.CHANNEL.hasPermission(player)) put(ScoreboardLine.CHANNEL, true);
+			if (ScoreboardLine.VANISHED.hasPermission(player)) put(ScoreboardLine.VANISHED, true);
+			if (ScoreboardLine.MCMMO.hasPermission(player)) put(ScoreboardLine.MCMMO, !isStaff(player));
+			if (ScoreboardLine.BALANCE.hasPermission(player)) put(ScoreboardLine.BALANCE, !isStaff(player));
+			if (ScoreboardLine.VOTE_POINTS.hasPermission(player)) put(ScoreboardLine.VOTE_POINTS, !isStaff(player));
+			if (ScoreboardLine.GAMEMODE.hasPermission(player)) put(ScoreboardLine.GAMEMODE, true);
+			if (ScoreboardLine.WORLD.hasPermission(player)) put(ScoreboardLine.WORLD, true);
+			if (ScoreboardLine.BIOME.hasPermission(player)) put(ScoreboardLine.BIOME, false);
+			if (ScoreboardLine.COMPASS.hasPermission(player)) put(ScoreboardLine.COMPASS, true);
+			if (ScoreboardLine.COORDINATES.hasPermission(player)) put(ScoreboardLine.COORDINATES, true);
+			if (ScoreboardLine.HOURS.hasPermission(player)) put(ScoreboardLine.HOURS, true);
+			if (ScoreboardLine.HELP.hasPermission(player)) put(ScoreboardLine.HELP, !isStaff(player));
+			if (ScoreboardLine.AFK.hasPermission(player)) put(ScoreboardLine.AFK, true);
 		}};
 	}
 

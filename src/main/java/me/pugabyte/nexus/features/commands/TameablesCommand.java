@@ -241,7 +241,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	private void checkOwner(Player player, Entity tameable) {
-		if (!isOwner(player, tameable) && !player.hasPermission("group.seniorstaff"))
+		if (!isOwner(player, tameable) && !isSeniorStaff())
 			error("You do not own that animal!");
 	}
 

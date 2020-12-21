@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.powertool.PowertoolService;
 import me.pugabyte.nexus.models.powertool.PowertoolUser;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -85,7 +86,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerInteract(final PlayerInteractEvent event) {
-		if (!event.getPlayer().hasPermission("group.staff")) return;
+		if (!PlayerUtils.isStaff(event.getPlayer())) return;
 
 		if (Arrays.asList(Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK).contains(event.getAction())) {
 			ItemStack item = ItemUtils.getTool(event.getPlayer());
@@ -105,7 +106,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 		if (!DamageCause.ENTITY_ATTACK.equals(event.getCause())) return;
 
 		Player player = (Player) event.getDamager();
-		if (!player.hasPermission("group.staff")) return;
+		if (!PlayerUtils.isStaff(player)) return;
 
 		ItemStack item = ItemUtils.getTool(player);
 		if (item == null) return;

@@ -11,6 +11,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -74,7 +75,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	private void tellStaff(String message) {
 		Discord.send(message, Channel.STAFF_BRIDGE, Channel.STAFF_LOG);
 		for (Player player : Bukkit.getOnlinePlayers())
-			if (player.hasPermission("group.moderator"))
+			if (PlayerUtils.isModerator(player))
 				send(player, message);
 	}
 
