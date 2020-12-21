@@ -182,7 +182,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		Nexus.getEcon().depositPlayer(player, money);
 		if (!km.isMuted())
 			send(player, "&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
-					"&3 and received &e$" + formatter.format(money).substring(1));
+					"&3 and received &e" + formatter.format(money));
 	}
 
 	@Getter

@@ -178,7 +178,7 @@ public class Nexus extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		Locale.setDefault(Locale.ENGLISH);
+		Locale.setDefault(Locale.US);
 
 		new Timer("Enable", () -> {
 			new Timer(" Config", this::setupConfig);
