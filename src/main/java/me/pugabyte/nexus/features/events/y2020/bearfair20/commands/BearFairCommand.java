@@ -435,7 +435,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		// TODO - BearFairStore: Couldn't get DeliveryService to work
 		boolean disableDelivery = true;
 		if (disableDelivery) {
-			if (PlayerUtils.isAdmin(player)) {
+			if (PlayerUtils.isAdminGroup(player)) {
 				BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
 				ItemUtils.giveItem(player, bearFairStoreMap.getSplatterMap());
 			} else {

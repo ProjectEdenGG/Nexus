@@ -52,6 +52,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Locale;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -177,6 +178,8 @@ public class Nexus extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		Locale.setDefault(Locale.ENGLISH);
+
 		new Timer("Enable", () -> {
 			new Timer(" Config", this::setupConfig);
 			new Timer(" Databases", this::databases);

@@ -18,7 +18,7 @@ public class SlabBreak implements Listener {
 	@EventHandler
 	public void onSlabBreak(BlockBreakEvent event) {
 		if (event.isCancelled()) return;
-		if (!PlayerUtils.isStaff(event.getPlayer())) return;
+		if (!PlayerUtils.isStaffGroup(event.getPlayer())) return;
 
 		Material type = event.getBlock().getType();
 		Material handType = event.getPlayer().getInventory().getItemInMainHand().getType();

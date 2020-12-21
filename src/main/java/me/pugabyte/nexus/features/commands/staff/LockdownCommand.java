@@ -75,7 +75,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	private void tellStaff(String message) {
 		Discord.send(message, Channel.STAFF_BRIDGE, Channel.STAFF_LOG);
 		for (Player player : Bukkit.getOnlinePlayers())
-			if (PlayerUtils.isModerator(player))
+			if (PlayerUtils.isModeratorGroup(player))
 				send(player, message);
 	}
 

@@ -17,11 +17,6 @@ public class MurderCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void redirectToSkript() {
-		runCommand("skmurder " + String.join(" ", event.getArgs()));
-	}
-
 	@Path("kit")
 	void kit() {
 		player().getInventory().addItem(Murder.getKnife());

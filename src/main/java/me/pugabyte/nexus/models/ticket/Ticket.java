@@ -59,7 +59,7 @@ public class Ticket {
 	}
 	
 	public boolean canBeSeenBy(Player player) {
-		return PlayerUtils.isModerator(player) || ownsTicket(player);
+		return PlayerUtils.isModeratorGroup(player) || ownsTicket(player);
 	}
 
 	public void setOpen(boolean open) {

@@ -83,7 +83,7 @@ public class SocialListener implements Listener {
 	}
 
 	private static void checkRank(Player player) {
-		if (!player.hasPermission("skriptrank.member"))
+		if (player.hasPermission("rank.member"))
 			Achievement.MEMBER_OF_SOCIETY.check(player);
 	}
 

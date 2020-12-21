@@ -103,7 +103,7 @@ public class ModReviewCommand extends CustomCommand {
 		BiFunction<ModReviewRequest, Integer, JsonBuilder> formatter = (request, index) -> {
 			JsonBuilder json = json("&3" + (index + 1) + " &3" + getPlayer(request.getRequester()).getName() + " &e" + request.getName() +
 					(isNullOrEmpty(request.getNotes()) ? "" : " &7- " + request.getNotes()));
-			if (PlayerUtils.isAdmin(player()))
+			if (PlayerUtils.isAdminGroup(player()))
 				json.suggest("/modreview add " + request.getName() + " ").hover("&3Click to review");
 			return json;
 		};

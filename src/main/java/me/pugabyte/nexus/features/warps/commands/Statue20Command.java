@@ -59,7 +59,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 		int found = statueHunt.getFound().size();
 		send(PREFIX + player.getName() + " has found &e" + found + " &3statue" + (found > 1 ? "s" : ""));
-		if (PlayerUtils.isStaff(player()) && found > 0) {
+		if (PlayerUtils.isStaffGroup(player()) && found > 0) {
 			String foundString = "";
 			for (String s : statueHunt.getFound()) {
 				foundString += "&3" + s + "\n";

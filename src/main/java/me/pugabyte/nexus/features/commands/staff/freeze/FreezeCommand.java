@@ -204,7 +204,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		if (!isFrozen(event.getPlayer())) return;
-		if (PlayerUtils.isStaff(event.getPlayer())) return;
+		if (PlayerUtils.isStaffGroup(event.getPlayer())) return;
 		switch (event.getMessage().split(" ")[0]) {
 			case "/rules":
 			case "/ch":

@@ -17,7 +17,6 @@ public @interface Permission {
 	Groups:
 		group.admin         - admin+
 		group.seniorstaff   - operator+
-		group.moderator     - moderator+
 		group.builder       - builder/architect
 		group.staff         - staff + builders
 		group.nonstaff      - guest - veteran

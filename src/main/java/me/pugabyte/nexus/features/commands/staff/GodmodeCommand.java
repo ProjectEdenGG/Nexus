@@ -68,7 +68,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerJoinEvent event) {
-		if (!PlayerUtils.isStaff(event.getPlayer())) return;
+		if (!PlayerUtils.isStaffGroup(event.getPlayer())) return;
 		User user = Nexus.getEssentials().getUser(event.getPlayer().getUniqueId());
 		boolean enabled = user.isGodModeEnabledRaw();
 		if (enabled) {

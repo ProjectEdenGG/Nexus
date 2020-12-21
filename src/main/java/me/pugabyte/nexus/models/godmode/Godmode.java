@@ -35,7 +35,7 @@ public class Godmode extends PlayerOwnedObject {
 	private static final List<String> disabledWorlds = Arrays.asList("gameworld", "deathswap");
 
 	public boolean isEnabled() {
-		if (isOnline() && !PlayerUtils.isStaff(getPlayer()))
+		if (isOnline() && !PlayerUtils.isStaffGroup(getPlayer()))
 			return false;
 		if (isOnline() && disabledWorlds.contains(getPlayer().getWorld().getName()))
 			return false;

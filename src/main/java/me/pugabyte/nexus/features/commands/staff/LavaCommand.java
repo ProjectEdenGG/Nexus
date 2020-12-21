@@ -47,7 +47,7 @@ public class LavaCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlaceLava(PlayerBucketEmptyEvent event) {
 		Player player = event.getPlayer();
-		if (!PlayerUtils.isStaff(player))
+		if (!PlayerUtils.isStaffGroup(player))
 			return;
 
 		Material material = event.getBucket();

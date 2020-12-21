@@ -77,7 +77,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("points [player]")
 	void points(@Arg("self") OfflinePlayer player) {
-		if (PlayerUtils.isModerator(player())) {
+		if (PlayerUtils.isModeratorGroup(player())) {
 			Voter voter = new VoteService().get(player);
 			send("&e" + player.getName() + " &3has &e" + voter.getPoints() + " &3vote points");
 		} else

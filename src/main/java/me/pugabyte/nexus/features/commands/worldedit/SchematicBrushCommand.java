@@ -49,7 +49,7 @@ public class SchematicBrushCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onUseSchemBrush(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!PlayerUtils.isStaff(player)) return;
+		if (!PlayerUtils.isStaffGroup(player)) return;
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 

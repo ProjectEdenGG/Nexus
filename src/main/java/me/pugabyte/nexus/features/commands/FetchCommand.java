@@ -69,7 +69,7 @@ public class FetchCommand extends CustomCommand implements Listener {
 
 	@Path()
 	void usage() {
-		send(PREFIX + "&cCorrect usage: on/off" + (PlayerUtils.isStaff(player()) ? "/enable/disable" : ""));
+		send(PREFIX + "&cCorrect usage: on/off" + (PlayerUtils.isStaffGroup(player()) ? "/enable/disable" : ""));
 	}
 
 	@EventHandler

@@ -178,7 +178,7 @@ public class Koda {
 			case "canibestaff":
 				if (event.getChatter() != null && event.getChatter().getOfflinePlayer().isOnline()) {
 					Player player = event.getChatter().getPlayer();
-					if (PlayerUtils.isGuest(player)) {
+					if (player.hasPermission("rank.guest")) {
 						String command = "staff";
 						if (event.getMessage().contains("mod")) command = "moderator";
 						if (event.getMessage().contains(" op")) command = "operator";

@@ -54,7 +54,7 @@ public class StaffAlerts implements Listener {
 	}
 
 	private void readyToStalk(Player player, String type) {
-		if (PlayerUtils.isModerator(player)) {
+		if (PlayerUtils.isModeratorGroup(player)) {
 			boolean alert = false;
 			Set<Player> trackedPlayers = tracking.keySet();
 			for (Player tracked : trackedPlayers) {

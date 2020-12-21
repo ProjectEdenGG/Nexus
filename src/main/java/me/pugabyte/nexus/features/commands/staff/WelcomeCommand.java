@@ -45,7 +45,7 @@ public class WelcomeCommand extends CustomCommand {
 	static {
 		Tasks.repeat(Time.MINUTE, Time.MINUTE, () -> {
 			if (Bukkit.getOnlinePlayers().stream().filter(player ->
-					PlayerUtils.isModerator(player) &&
+					PlayerUtils.isModeratorGroup(player) &&
 							!player.getName().equals("KodaBear") &&
 							!AFK.get(player).isAfk()
 			).count() < 4)
@@ -64,7 +64,7 @@ public class WelcomeCommand extends CustomCommand {
 	@Path("[player]")
 	void welcome(Player player) {
 		if (player != null) {
-			if (!PlayerUtils.isGuest(player))
+			if (!player.hasPermission("rank.guest"))
 				error("Prevented accidental welcome");
 			if (((Hours) new HoursService().get(player)).getTotal() > (60 * 60))
 				error("Prevented accidental welcome");

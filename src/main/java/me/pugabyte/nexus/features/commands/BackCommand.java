@@ -79,7 +79,7 @@ public class BackCommand extends CustomCommand implements Listener {
 		if (CitizensUtils.isNPC(player)) return;
 		if (TeleportCause.COMMAND != event.getCause()) return;
 
-		if (!PlayerUtils.isStaff(player))
+		if (!PlayerUtils.isStaffGroup(player))
 			if (Minigames.isMinigameWorld(player.getWorld()))
 				return;
 
@@ -92,7 +92,7 @@ public class BackCommand extends CustomCommand implements Listener {
 	public void onDeath(EntityDeathEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
 		Player player = (Player) event.getEntity();
-		if (!PlayerUtils.isStaff(player)) return;
+		if (!PlayerUtils.isStaffGroup(player)) return;
 		if (CitizensUtils.isNPC(player)) return;
 
 		Back back = new BackService().get(player);

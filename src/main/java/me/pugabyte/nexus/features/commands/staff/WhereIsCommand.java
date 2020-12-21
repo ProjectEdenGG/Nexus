@@ -84,7 +84,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void process(Player viewer) {
-		if (!PlayerUtils.isStaff(viewer)) {
+		if (!PlayerUtils.isStaffGroup(viewer)) {
 			unglow(viewer);
 			return;
 		}

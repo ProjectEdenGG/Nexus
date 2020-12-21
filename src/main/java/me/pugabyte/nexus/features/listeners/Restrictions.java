@@ -47,7 +47,7 @@ public class Restrictions implements Listener {
 		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
 		if (!event.getClickedBlock().getType().equals(Material.SPAWNER)) return;
 
-		if (!PlayerUtils.isSeniorStaff(event.getPlayer()))
+		if (!PlayerUtils.isSeniorStaffGroup(event.getPlayer()))
 			event.setCancelled(true);
 	}
 

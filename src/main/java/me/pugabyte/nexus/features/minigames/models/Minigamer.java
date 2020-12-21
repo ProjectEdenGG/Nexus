@@ -166,7 +166,7 @@ public class Minigamer {
 	}
 
 	public void toGamelobby() {
-		boolean staff = PlayerUtils.isStaff(player);
+		boolean staff = PlayerUtils.isStaffGroup(player);
 
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setFallDistance(0f);
