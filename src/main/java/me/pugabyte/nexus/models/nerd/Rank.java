@@ -39,24 +39,24 @@ public enum Rank {
 	OWNER(ChatColor.of("#915bf5"), GlowAPI.Color.DARK_PURPLE, true, true, true, true, true, Color.decode("#915bf5"));
 
 	@Getter
-	private ChatColor color;
+	private final ChatColor color;
 	@Getter
-	private GlowAPI.Color glowColor;
-	@Getter
-	@Accessors(fluent = true)
-	private boolean hasPrefix;
+	private final GlowAPI.Color glowColor;
 	@Getter
 	@Accessors(fluent = true)
-	private boolean isStaff;
+	private final boolean hasPrefix;
 	@Getter
 	@Accessors(fluent = true)
-	private boolean isMod;
+	private final boolean isStaff;
+	@Getter
+	@Accessors(fluent = true)
+	private final boolean isMod;
 	@Getter
 	@Accessors(fluent = true)
 	private boolean isSeniorStaff;
 	@Getter
 	@Accessors(fluent = true)
-	private boolean isActive;
+	private final boolean isActive;
 	@Getter
 	private Color discordColor;
 
