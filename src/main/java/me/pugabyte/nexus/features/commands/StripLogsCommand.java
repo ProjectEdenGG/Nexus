@@ -36,8 +36,12 @@ public class StripLogsCommand extends CustomCommand implements Listener {
 	public void onStripLogs(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 
-		Material material = event.getBlockPlaced().getType();
-		if (!MaterialTag.STRIPPED_LOGS.isTagged(material))
+		Material before = event.getBlockReplacedState().getType();
+		if (!MaterialTag.LOGS.isTagged(before))
+			return;
+
+		Material after = event.getBlockPlaced().getType();
+		if (!MaterialTag.STRIPPED_LOGS.isTagged(after))
 			return;
 
 		StripLogs stripLogs = new StripLogsService().get(player);
