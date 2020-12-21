@@ -194,4 +194,13 @@ public class HallOfHistoryCommand extends CustomCommand {
 		send(PREFIX + "Set your about to: &e" + nerd.getAbout());
 	}
 
+	@Path("preferredName <name...>")
+	void preferredName(String name) {
+		NerdService service = new NerdService();
+		Nerd nerd = service.get(player());
+		nerd.setPreferredName(stripColor(name));
+		service.save(nerd);
+		send(PREFIX + "Set your preferred name to: &e" + nerd.getPreferredName());
+	}
+
 }

@@ -83,16 +83,20 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void process(Player viewer) {
-		if (!viewer.hasPermission("group.staff"))
+		if (!viewer.hasPermission("group.staff")) {
+			unglow(viewer);
 			return;
+		}
 
-		if (!WorldGroup.STAFF.contains(viewer.getWorld()))
+		if (!WorldGroup.STAFF.contains(viewer.getWorld())) {
+			unglow(viewer);
 			return;
+		}
 
 		WhereIsService service = new WhereIsService();
 		WhereIs whereIs = service.get(viewer);
 		if (!whereIs.isEnabled()) {
-			Bukkit.getOnlinePlayers().forEach(glower -> unglow(glower, viewer));
+			unglow(viewer);
 			return;
 		}
 
@@ -110,6 +114,10 @@ public class WhereIsCommand extends CustomCommand {
 			else
 				unglow(glower, viewer);
 		}
+	}
+
+	private static void unglow(Player viewer) {
+		Bukkit.getOnlinePlayers().forEach(glower -> unglow(glower, viewer));
 	}
 
 	private static void glow(Player glower, Player viewer) {
