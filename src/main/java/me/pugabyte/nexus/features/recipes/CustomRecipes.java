@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
@@ -18,7 +17,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
@@ -27,14 +25,16 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.pugabyte.nexus.utils.ItemUtils.isFuzzyMatch;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class CustomRecipes extends Feature implements Listener {
 	@Getter
 	private static final Map<NamespacedKey, Recipe> recipes = new HashMap<>();
 	@Getter
-	private static final ItemStack infiniteWaterBucket = new ItemBuilder(Material.WATER_BUCKET).name("Infinite Bucket of Water").amount(1).build();
+	private static final ItemStack infiniteWaterBucket = new ItemBuilder(Material.WATER_BUCKET).name("Infinite Bucket of Water").build();
 
 	@Override
 	public void startup() {
@@ -86,7 +86,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public ShapelessRecipe createShapelessRecipe(Material ingredient1, Material ingredient2, ItemStack outputItemStack) {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_" + outputItemStack.getItemMeta().getDisplayName().toLowerCase().replaceAll(" ", "_").trim());
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_" + outputItemStack.getItemMeta().getDisplayName().toLowerCase().replaceAll(" ", "_").trim()));
 		ShapelessRecipe recipe = new ShapelessRecipe(key, outputItemStack);
 		recipe.addIngredient(ingredient1);
 		recipe.addIngredient(ingredient2);
@@ -276,14 +276,14 @@ public class CustomRecipes extends Feature implements Listener {
 	@EventHandler
 	public void onPlaceInfiniteWater(PlayerBucketEmptyEvent event) {
 		Player player = event.getPlayer();
-		ItemStack waterBucket = event.getItemStack();
-		if (ItemUtils.isNullOrAir(waterBucket))
+		ItemStack waterBucket = player.getInventory().getItem(event.getHand()).clone();
+
+		if (isNullOrAir(waterBucket))
 			return;
-		if (!ItemUtils.isFuzzyMatch(infiniteWaterBucket, waterBucket))
+		if (!isFuzzyMatch(infiniteWaterBucket, waterBucket))
 			return;
 
-		PlayerInventory playerInv = player.getInventory();
-		Tasks.wait(1, () -> playerInv.setItemInMainHand(waterBucket));
+		Tasks.wait(1, () -> player.getInventory().setItemInMainHand(waterBucket));
 	}
 
 	@EventHandler
@@ -292,7 +292,7 @@ public class CustomRecipes extends Feature implements Listener {
 		if (isNullOrAir(result))
 			return;
 
-		if (ItemUtils.isFuzzyMatch(infiniteWaterBucket, result)) {
+		if (isFuzzyMatch(infiniteWaterBucket, result)) {
 			Tasks.wait(1, () -> {
 				ItemStack[] matrix = event.getInventory().getMatrix();
 				for (ItemStack itemStack : matrix) {
