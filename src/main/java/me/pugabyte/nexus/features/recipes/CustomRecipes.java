@@ -1,16 +1,24 @@
 package me.pugabyte.nexus.features.recipes;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
@@ -19,25 +27,30 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.HashMap;
 import java.util.Map;
 
-@Disabled
-public class CustomRecipes extends Feature {
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+
+@NoArgsConstructor
+public class CustomRecipes extends Feature implements Listener {
 	@Getter
-	public static Map<NamespacedKey, Recipe> recipes = new HashMap<>();
+	private static final Map<NamespacedKey, Recipe> recipes = new HashMap<>();
+	@Getter
+	private static final ItemStack infiniteWaterBucket = new ItemBuilder(Material.WATER_BUCKET).name("Infinite Bucket of Water").amount(1).build();
 
 	@Override
 	public void startup() {
-		Tasks.async(() -> {
-			slabsToBlocks();
-			quartsUncrafting();
-			stoneBricksUncrafting();
-			concretePowderDying();
-			stainedGlassDying();
-			stainedGlassPaneDying();
-			terracottaDying();
-			bedDying();
-			setWoolUndyingRecipe();
-			misc();
-		});
+		infiniteWaterBucket();
+//		Tasks.async(() -> {
+//			slabsToBlocks();
+//			quartsUncrafting();
+//			stoneBricksUncrafting();
+//			concretePowderDying();
+//			stainedGlassDying();
+//			stainedGlassPaneDying();
+//			terracottaDying();
+//			bedDying();
+//			setWoolUndyingRecipe();
+//			misc();
+//		});
 	}
 
 	public static void addRecipe(Recipe recipe) {
@@ -68,6 +81,15 @@ public class CustomRecipes extends Feature {
 		ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(outputItem, outputAmount));
 		recipe.addIngredient(requiredAmount, inputItem);
 		type.getList().add(new CraftingRecipeMenu.CraftingRecipe(inputItem, requiredAmount, outputItem, outputAmount));
+		recipes.put(key, recipe);
+		return recipe;
+	}
+
+	public ShapelessRecipe createShapelessRecipe(Material ingredient1, Material ingredient2, ItemStack outputItemStack) {
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_" + outputItemStack.getItemMeta().getDisplayName().toLowerCase().replaceAll(" ", "_").trim());
+		ShapelessRecipe recipe = new ShapelessRecipe(key, outputItemStack);
+		recipe.addIngredient(ingredient1);
+		recipe.addIngredient(ingredient2);
 		recipes.put(key, recipe);
 		return recipe;
 	}
@@ -245,6 +267,44 @@ public class CustomRecipes extends Feature {
 		addRecipe(woolUndyingRecipe);
 		recipes.put(new NamespacedKey(Nexus.getInstance(), "custom_whiteWool"), woolUndyingRecipe);
 		CraftingMenuType.WOOL.getList().add(new CraftingRecipeMenu.CraftingRecipe(wool, Material.WATER_BUCKET, 1, Material.WHITE_WOOL, 8));
+	}
+
+	private void infiniteWaterBucket() {
+		addRecipe(createShapelessRecipe(Material.WATER_BUCKET, Material.WATER_BUCKET, infiniteWaterBucket));
+	}
+
+	@EventHandler
+	public void onPlaceInfiniteWater(PlayerBucketEmptyEvent event) {
+		Player player = event.getPlayer();
+		ItemStack waterBucket = event.getItemStack();
+		if (ItemUtils.isNullOrAir(waterBucket))
+			return;
+		if (!ItemUtils.isFuzzyMatch(infiniteWaterBucket, waterBucket))
+			return;
+
+		PlayerInventory playerInv = player.getInventory();
+		Tasks.wait(1, () -> playerInv.setItemInMainHand(waterBucket));
+	}
+
+	@EventHandler
+	public void onCraft(CraftItemEvent event) {
+		ItemStack result = event.getInventory().getResult();
+		if (isNullOrAir(result))
+			return;
+
+		if (ItemUtils.isFuzzyMatch(infiniteWaterBucket, result)) {
+			Tasks.wait(1, () -> {
+				ItemStack[] matrix = event.getInventory().getMatrix();
+				for (ItemStack itemStack : matrix) {
+					if (isNullOrAir(itemStack))
+						continue;
+
+					if (Material.BUCKET.equals(itemStack.getType()))
+						itemStack.setType(Material.AIR);
+				}
+				event.getInventory().setMatrix(matrix);
+			});
+		}
 	}
 
 }

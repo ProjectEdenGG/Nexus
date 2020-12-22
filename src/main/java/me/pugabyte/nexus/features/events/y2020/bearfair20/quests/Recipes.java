@@ -29,7 +29,7 @@ public class Recipes {
 		for (Ingredient ingredient : ingredients) {
 			recipe.setIngredient(ingredient.getCharacter(), ingredient.getItemStack());
 		}
-		CustomRecipes.recipes.put(key, recipe);
+		CustomRecipes.getRecipes().put(key, recipe);
 		return recipe;
 	}
 
