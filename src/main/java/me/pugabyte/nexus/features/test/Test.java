@@ -21,6 +21,8 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+
 @NoArgsConstructor
 public class Test extends Feature implements Listener {
 	static ItemStack infiniteWaterBucket = new ItemBuilder(Material.WATER_BUCKET).name("Infinite Bucket of Water").amount(1).build();
@@ -69,7 +71,7 @@ public class Test extends Feature implements Listener {
 	@EventHandler
 	public void onCraft(CraftItemEvent event) {
 		ItemStack result = event.getInventory().getResult();
-		if (ItemUtils.isNullOrAir(result))
+		if (isNullOrAir(result))
 			return;
 
 		if (ItemUtils.isFuzzyMatch(infiniteWaterBucket, result)) {
@@ -78,7 +80,10 @@ public class Test extends Feature implements Listener {
 
 				ItemStack[] matrix = event.getInventory().getMatrix();
 				for (ItemStack itemStack : matrix) {
-					if (itemStack.getType().equals(Material.BUCKET))
+					if (isNullOrAir(itemStack))
+						continue;
+
+					if (Material.BUCKET.equals(itemStack.getType()))
 						itemStack.setType(Material.AIR);
 				}
 				event.getInventory().setMatrix(matrix);
