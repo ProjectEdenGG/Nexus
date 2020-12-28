@@ -93,6 +93,10 @@ public class StringUtils {
 		return input.replaceAll(colorChar, altColorChar);
 	}
 
+	public static String toHex(ChatColor color) {
+		return "#" + Integer.toHexString(color.getColor().getRGB()).substring(2);
+	}
+
 	public static String stripColor(String input) {
 		return ChatColor.stripColor(colorize(input));
 	}

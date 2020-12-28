@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.utils.StringUtils.toHex;
+
 @AllArgsConstructor
 public enum Rank {
 	GUEST(ChatColor.of("#aaaaaa"), GlowAPI.Color.GRAY, false, false, false, true),
@@ -78,6 +80,10 @@ public enum Rank {
 
 	public String withColor() {
 		return color + StringUtils.camelCase(name());
+	}
+
+	public String getHex() {
+		return "&" + toHex(color);
 	}
 
 	public String plain() {

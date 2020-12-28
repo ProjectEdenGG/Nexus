@@ -1,9 +1,11 @@
 package me.pugabyte.nexus.utils;
 
+import me.pugabyte.nexus.Nexus;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -53,4 +55,14 @@ public class CitizensUtils {
 	public static boolean isNPC(Entity entity) {
 		return entity.hasMetadata("NPC");
 	}
+
+	public static NPC getSelectedNPC(Player player) {
+		return Nexus.getCitizens().getNPCSelector().getSelected(player);
+	}
+
+	/* Doesnt work
+	public static void setSelectedNPC(Player player, NPC npc) {
+		Nexus.getCitizens().getNPCSelector().select(player, npc);
+	}
+	*/
 }

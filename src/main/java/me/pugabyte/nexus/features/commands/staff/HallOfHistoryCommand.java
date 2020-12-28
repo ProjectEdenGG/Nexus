@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands.staff;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -14,14 +15,24 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.dateFormat;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -201,6 +212,43 @@ public class HallOfHistoryCommand extends CustomCommand {
 		nerd.setPreferredName(stripColor(name));
 		service.save(nerd);
 		send(PREFIX + "Set your preferred name to: &e" + nerd.getPreferredName());
+	}
+
+	@Path("staffTime [page]")
+	public void staffTime(@Arg("1") int page) {
+		HallOfHistoryService service = new HallOfHistoryService();
+		Map<UUID, Integer> staffTimeMap = new HashMap<>();
+
+		for (HallOfHistory hallOfHistory : service.<HallOfHistory>getAll()) {
+			int maxSeconds = 0;
+			for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
+				LocalDate from = rankHistory.getPromotionDate();
+				LocalDate to = rankHistory.getResignationDate();
+
+				if (from == null)
+					continue;
+				if (to == null)
+					to = LocalDate.now();
+
+				int seconds = Long.valueOf(from.until(to, ChronoUnit.DAYS)).intValue() * (Time.DAY.get() / 20);
+				if (seconds > maxSeconds)
+					maxSeconds = seconds;
+			}
+
+			if (maxSeconds == 0)
+				continue;
+
+			staffTimeMap.put(hallOfHistory.getUuid(), maxSeconds);
+		}
+
+		send(PREFIX + "Staff times");
+		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) -> {
+			String time = TimespanFormatter.of(staffTimeMap.get(uuid)).format();
+			return json("&3" + (index + 1) + " &e" + time + " &7- &3" + getPlayer(uuid).getName());
+		};
+
+		Set<UUID> uuids = Utils.sortByValueReverse(staffTimeMap).keySet();
+		paginate(new ArrayList<>(uuids), formatter, "/hoh staffTime", page);
 	}
 
 }
