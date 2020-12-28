@@ -1,8 +1,7 @@
-package me.pugabyte.nexus.features.commands.staff;
+package me.pugabyte.nexus.features.test;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.event.Listener;
@@ -30,10 +29,10 @@ public class TestCommand extends CustomCommand implements Listener {
 //		});
 	}
 
-	@Path("gravity fix")
-	public void fixgravity() {
-		player().setGravity(true);
-	}
+//	@Path("gravity fix")
+//	public void fixgravity() {
+//		player().setGravity(true);
+//	}
 
 //	@Path("minecart join")
 //	public void minecartJoin(){
