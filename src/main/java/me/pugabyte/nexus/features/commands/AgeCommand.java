@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands;
 
 import lombok.Data;
+import lombok.Getter;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -35,11 +36,12 @@ public class AgeCommand extends CustomCommand {
 
 	@Data
 	public static class ServerAge {
+		@Getter
+		private static final LocalDateTime epoch = LocalDateTime.now().withMonth(6).withDayOfMonth(29).withYear(2015).withHour(12).withMinute(52);
 		private final double dogYears, years, months, weeks, days, hours, minutes, seconds;
 
 		public ServerAge() {
-			LocalDateTime bn = LocalDateTime.now().withMonth(6).withDayOfMonth(29).withYear(2015).withHour(12).withMinute(52);
-			Duration age = Duration.between(bn, LocalDateTime.now());
+			Duration age = Duration.between(epoch, LocalDateTime.now());
 			seconds = age.getSeconds();
 			minutes = seconds / 60.0;
 			hours = minutes / 60;

@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -116,6 +117,14 @@ public class Utils {
 		return Instant.ofEpochMilli(timestamp)
 				.atZone(ZoneId.systemDefault())
 				.toLocalDateTime();
+	}
+
+	public static boolean isBetween(LocalDateTime dateTime, LocalDateTime start, LocalDateTime end) {
+		return !(dateTime.isBefore(start) || dateTime.isAfter(end));
+	}
+
+	public static boolean isBetween(LocalDate dateTime, LocalDate start, LocalDate end) {
+		return !(dateTime.isBefore(start) || dateTime.isAfter(end));
 	}
 
 	public static boolean canEnable(Class<?> clazz) {

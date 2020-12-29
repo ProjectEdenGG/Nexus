@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import me.pugabyte.nexus.features.commands.AgeCommand.ServerAge;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -23,7 +24,6 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 
-import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.dateFormat;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -214,37 +213,42 @@ public class HallOfHistoryCommand extends CustomCommand {
 		send(PREFIX + "Set your preferred name to: &e" + nerd.getPreferredName());
 	}
 
+	@Async
 	@Path("staffTime [page]")
 	public void staffTime(@Arg("1") int page) {
+		LocalDate now = LocalDate.now();
 		HallOfHistoryService service = new HallOfHistoryService();
-		Map<UUID, Integer> staffTimeMap = new HashMap<>();
+		Map<UUID, Long> staffTimeMap = new HashMap<>();
 
 		for (HallOfHistory hallOfHistory : service.<HallOfHistory>getAll()) {
-			int maxSeconds = 0;
-			for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
-				LocalDate from = rankHistory.getPromotionDate();
-				LocalDate to = rankHistory.getResignationDate();
+			long days = 0;
+			days: for (LocalDate date = ServerAge.getEpoch().toLocalDate(); date.isBefore(now); date = date.plusDays(1)) {
+				for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
+					LocalDate from = rankHistory.getPromotionDate();
+					LocalDate to = rankHistory.getResignationDate();
 
-				if (from == null)
-					continue;
-				if (to == null)
-					to = LocalDate.now();
+					if (from == null)
+						continue;
+					if (to == null)
+						to = now;
 
-				int seconds = Long.valueOf(from.until(to, ChronoUnit.DAYS)).intValue() * (Time.DAY.get() / 20);
-				if (seconds > maxSeconds)
-					maxSeconds = seconds;
+					if (Utils.isBetween(date, from, to)) {
+						++days;
+						continue days;
+					}
+				}
 			}
 
-			if (maxSeconds == 0)
+			if (days == 0)
 				continue;
 
-			staffTimeMap.put(hallOfHistory.getUuid(), maxSeconds);
+			staffTimeMap.put(hallOfHistory.getUuid(), days);
 		}
 
 		send(PREFIX + "Staff times");
 		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) -> {
-			String time = TimespanFormatter.of(staffTimeMap.get(uuid)).format();
-			return json("&3" + (index + 1) + " &e" + time + " &7- &3" + getPlayer(uuid).getName());
+			String time = TimespanFormatter.of(staffTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
+			return json("&3" + (index + 1) + " &e" + time + " &7- " + new Nerd(uuid).getRankFormat());
 		};
 
 		Set<UUID> uuids = Utils.sortByValueReverse(staffTimeMap).keySet();
