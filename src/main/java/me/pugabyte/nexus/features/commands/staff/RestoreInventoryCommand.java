@@ -16,17 +16,17 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static me.pugabyte.nexus.utils.ItemUtils.isInventoryEmpty;
 
 @Aliases("restoreinv")
 @Permission("group.seniorstaff")
@@ -85,7 +85,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 			try {
 				switch (type.toLowerCase()) {
 					case "inventory":
-						if (!inventoryIsEmpty(owner.getInventory())) {
+						if (!isInventoryEmpty(owner.getInventory())) {
 							sendInventoryRestoreNotEmptyMessage(owner, "inventory");
 							break;
 						}
@@ -96,7 +96,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 						sendInventoryRestoreSuccessMessage(owner, "inventory");
 						break;
 					case "enderchest":
-						if (!inventoryIsEmpty(owner.getEnderChest())) {
+						if (!isInventoryEmpty(owner.getEnderChest())) {
 							sendInventoryRestoreNotEmptyMessage(owner, "ender chest");
 							break;
 						}
@@ -136,28 +136,21 @@ public class RestoreInventoryCommand extends CustomCommand {
 	}
 
 	private void sendInventoryRestoreNotEmptyMessage(Player owner, String type) throws InvalidInputException {
-		send(owner, PREFIX + ChatColor.RED + player().getName() + " is trying to restore your " + type + ", " +
-				" your current " + type + " must be " + ChatColor.YELLOW + "empty " + ChatColor.RED + "to avoid lost items!");
-		throw new InvalidInputException(ChatColor.RED + "The player's " + type + " contents must be empty to complete a restore. " +
+		send(owner, PREFIX + "&c" + player().getName() + " is trying to restore your " + type + ", " +
+				" your current " + type + " must be &eempty &cto avoid lost items!");
+		throw new InvalidInputException("&cThe player's " + type + " contents must be empty to complete a restore. " +
 				"They have been asked to empty their " + type + ".");
 	}
 
 	private void sendInventoryRestoreSuccessMessage(Player owner, String type) {
-		send(owner, PREFIX + ChatColor.YELLOW + player().getName() + ChatColor.DARK_AQUA + " has successfully restored your " + type + ". " +
+		send(owner, PREFIX + "&e" + player().getName() + " &3has successfully restored your " + type + ". " +
 				"Please confirm that all your items are present.");
-		send(player(), PREFIX + "Successfully restored " + type + " of " + ChatColor.YELLOW + owner.getName());
+		send(player(), PREFIX + "Successfully restored " + type + " of &e" + owner.getName());
 	}
 
 	private void sendExperienceRestoreSuccessMessage(Player owner) {
 		send(owner, PREFIX + "Successfully added your lost experience to your current experience");
-		send(player(), PREFIX + "Successfully added " + ChatColor.YELLOW + owner.getName() + ChatColor.DARK_AQUA + "'s lost experience to their current experience");
-	}
-
-	private boolean inventoryIsEmpty(Inventory inventory) {
-		for (ItemStack itemStack : inventory.getContents())
-			if (itemStack != null)
-				return false;
-		return true;
+		send(player(), PREFIX + "Successfully added &e" + owner.getName() + "&3's lost experience to their current experience");
 	}
 
 	private ItemStack[] getEnderChest(ConfigurationSection gamemode) {

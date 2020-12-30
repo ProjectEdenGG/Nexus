@@ -85,6 +85,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +98,8 @@ import static me.pugabyte.nexus.utils.BlockUtils.getBlocksInRadius;
 import static me.pugabyte.nexus.utils.BlockUtils.getDirection;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.utils.StringUtils.parseDate;
+import static me.pugabyte.nexus.utils.StringUtils.parseDateTime;
 import static me.pugabyte.nexus.utils.StringUtils.parseShortDate;
 import static me.pugabyte.nexus.utils.StringUtils.paste;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
@@ -679,8 +682,15 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@ConverterFor(LocalDate.class)
 	LocalDate convertToLocalDate(String value) {
-		try { return parseShortDate(value); } catch (Exception ignore) {}
+		try { return parseShortDate(value); } catch (DateTimeParseException ignore) {}
+		try { return parseDate(value); } catch (DateTimeParseException ignore) {}
 		throw new InvalidInputException("Could not parse date, correct format is MM/DD/YYYY");
+	}
+
+	@ConverterFor(LocalDateTime.class)
+	LocalDateTime convertToLocalDateTime(String value) {
+		try { return parseDateTime(value); } catch (DateTimeParseException ignore) {}
+		throw new InvalidInputException("Could not parse date, correct format is YYYY-MM-DDTHH:MM:SS.ZZZ");
 	}
 
 	@ConverterFor(Enchantment.class)

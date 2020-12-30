@@ -43,7 +43,7 @@ public class AgeCommand extends CustomCommand {
 		public ServerAge() {
 			Duration age = Duration.between(epoch, LocalDateTime.now());
 			seconds = age.getSeconds();
-			minutes = seconds / 60.0;
+			minutes = seconds / 60;
 			hours = minutes / 60;
 			days = hours / 24;
 			weeks = days / 7;

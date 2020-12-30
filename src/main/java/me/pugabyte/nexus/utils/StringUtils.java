@@ -181,8 +181,8 @@ public class StringUtils {
 		return last;
 	}
 
-	public static String plural(String label, double number) {
-		return label + (number == 1 ? "" : "s");
+	public static String plural(String label, Number number) {
+		return label + (number.doubleValue() == 1 ? "" : "s");
 	}
 
 	public static String trimFirst(String string) {
@@ -534,6 +534,13 @@ public class StringUtils {
 		return LocalDate.from(DateTimeFormatter.ofPattern("M/d/yyyy").parse(input));
 	}
 
+	public static LocalDate parseDate(String input) {
+		return LocalDate.parse(input);
+	}
+	public static LocalDateTime parseDateTime(String input) {
+		return LocalDateTime.parse(input);
+	}
+
 	public static String getNumberWithSuffix(int number) {
 		String text = String.valueOf(number);
 		if (text.endsWith("1"))
@@ -577,7 +584,7 @@ public class StringUtils {
 	}
 
 	public static String getShortLocationString(Location loc) {
-		return df.format(loc.getX()) + " " + df.format(loc.getY()) + " " +  df.format(loc.getZ()) + " " + loc.getWorld().getName();
+		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ() + " " + loc.getWorld().getName();
 	}
 
 	public static void sendJsonLocation(String message, Location location, Player player) {

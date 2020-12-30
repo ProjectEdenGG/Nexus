@@ -7,6 +7,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -144,6 +145,13 @@ public class ItemUtils {
 
 	public static boolean isNullOrAir(Material material) {
 		return material == null || material.equals(Material.AIR);
+	}
+
+	public static boolean isInventoryEmpty(Inventory inventory) {
+		for (ItemStack itemStack : inventory.getContents())
+			if (!isNullOrAir(itemStack))
+				return false;
+		return true;
 	}
 
 	public static @Nullable UUID getSkullOwner(ItemStack skull) {

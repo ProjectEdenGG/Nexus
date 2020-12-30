@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.minigames.menus.teams.loadout;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotPos;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.models.Arena;
@@ -111,53 +110,7 @@ public class LoadoutMenu extends MenuUtils implements InventoryProvider {
 			),
 			e -> menus.getTeamMenus().openDeleteLoadoutMenu(player, arena, team)));
 
-		ItemStack redPane = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-		contents.set(4, 4, ClickableItem.empty(nameItem(redPane.clone(), "&eArmor ➝")));
-		contents.set(4, 1, ClickableItem.empty(nameItem(redPane.clone(), "&e← Offhand")));
-		contents.fillRect(4, 2, 4, 3, ClickableItem.empty(nameItem(redPane.clone(), "&e⬇ Hot Bar ⬇")));
-
-		if (team.getLoadout().getInventory() == null || team.getLoadout().getInventory().length == 0) return;
-
-		// Hotbar
-		for (int i = 0; i < 9; i++) {
-			contents.setEditable(SlotPos.of(5, i), true);
-			if (team.getLoadout().getInventory()[i] == null) continue;
-			contents.set(5, i, ClickableItem.empty(team.getLoadout().getInventory()[i]));
-		}
-
-		// Inventory
-		int row = 1;
-		int column = 0;
-		for (int i = 9; i < 36; i++) {
-			contents.setEditable(SlotPos.of(row, column), true);
-			if (team.getLoadout().getInventory()[i] != null)
-				contents.set(row, column, ClickableItem.empty(team.getLoadout().getInventory()[i]));
-
-			if (column != 8) {
-				++column;
-			} else {
-				column = 0;
-				++row;
-			}
-		}
-
-		// Offhand
-		contents.setEditable(SlotPos.of(4, 0), true);
-		if (team.getLoadout().getInventory()[40] != null)
-			contents.set(4, 0, ClickableItem.empty(team.getLoadout().getInventory()[40]));
-
-		// Armor
-		column = 8;
-		for (int i = 36; i < 40; i++) {
-			contents.setEditable(SlotPos.of(4, column), true);
-			if (team.getLoadout().getInventory()[i] != null) {
-				contents.set(4, column, ClickableItem.empty(team.getLoadout().getInventory()[i]));
-
-			}
-			--column;
-		}
-
-
+		formatInventoryContents(contents, team.getLoadout().getInventory());
 	}
 
 	@Override

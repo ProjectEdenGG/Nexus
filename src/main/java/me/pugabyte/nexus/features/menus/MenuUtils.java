@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
+import fr.minuskube.inv.content.SlotPos;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -242,7 +243,67 @@ public abstract class MenuUtils {
 		@Override
 		public void update(Player player, InventoryContents inventoryContents) {
 		}
+	}
 
+	public void formatInventoryContents(InventoryContents contents, ItemStack[] inventory) {
+		formatInventoryContents(contents, inventory, true);
+	}
+
+	public void formatInventoryContents(InventoryContents contents, ItemStack[] inventory, boolean editable) {
+		ItemStack redPane = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+		contents.set(4, 4, ClickableItem.empty(nameItem(redPane.clone(), "&eArmor ➝")));
+		contents.set(4, 1, ClickableItem.empty(nameItem(redPane.clone(), "&e← Offhand")));
+		contents.fillRect(4, 2, 4, 3, ClickableItem.empty(nameItem(redPane.clone(), "&e⬇ Hot Bar ⬇")));
+
+		if (inventory == null || inventory.length == 0)
+			return;
+
+		// Hotbar
+		for (int i = 0; i < 9; i++) {
+			if (editable)
+				contents.setEditable(SlotPos.of(5, i), true);
+
+			if (inventory[i] == null)
+				continue;
+
+			contents.set(5, i, ClickableItem.empty(inventory[i]));
+		}
+
+		// Inventory
+		int row = 1;
+		int column = 0;
+		for (int i = 9; i < 36; i++) {
+			if (editable)
+				contents.setEditable(SlotPos.of(row, column), true);
+
+			if (inventory[i] != null)
+				contents.set(row, column, ClickableItem.empty(inventory[i]));
+
+			if (column != 8)
+				++column;
+			else {
+				column = 0;
+				++row;
+			}
+		}
+
+		// Offhand
+		if (editable)
+			contents.setEditable(SlotPos.of(4, 0), true);
+
+		if (inventory[40] != null)
+			contents.set(4, 0, ClickableItem.empty(inventory[40]));
+
+		// Armor
+		column = 8;
+		for (int i = 36; i < 40; i++) {
+			if (editable)
+				contents.setEditable(SlotPos.of(4, column), true);
+
+			if (inventory[i] != null)
+				contents.set(4, column, ClickableItem.empty(inventory[i]));
+			--column;
+		}
 	}
 
 }

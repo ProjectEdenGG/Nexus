@@ -94,7 +94,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return StringUtils.camelCase(string);
 	}
 
-	protected String plural(String string, double number) {
+	protected String plural(String string, Number number) {
 		return StringUtils.plural(string, number);
 	}
 
