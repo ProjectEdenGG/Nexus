@@ -15,7 +15,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.framework.exceptions.BNException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.models.home.Home;
 import org.bukkit.OfflinePlayer;
 
 import java.lang.reflect.Method;
@@ -94,7 +93,7 @@ class PathParser {
 							arg.setContextArg(command.getMethodParameters(method, event, false)[annotation.context() - 1]);
 					}
 
-					if (PlayerOwnedObject.class.isAssignableFrom(arg.getType()) && arg.getType() != Home.class) // TODO Find better solution
+					if (PlayerOwnedObject.class.isAssignableFrom(arg.getType()) && arg.getTabCompleter() == null)
 						arg.setTabCompleter(OfflinePlayer.class);
 
 					if (finalTabCompleter == null) {
