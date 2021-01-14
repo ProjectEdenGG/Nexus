@@ -8,5 +8,4 @@ import org.bukkit.event.Listener;
 @Disabled
 public class Test extends Feature implements Listener {
 
-
 }

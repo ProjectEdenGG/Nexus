@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.test;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -8,6 +9,7 @@ import org.bukkit.event.Listener;
 
 @NoArgsConstructor
 @Permission("group.staff")
+@Disabled
 public class TestCommand extends CustomCommand implements Listener {
 //	List<Player> controlMinecart = new ArrayList<>();
 
