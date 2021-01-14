@@ -72,8 +72,10 @@ public class CurrentTimeCommand extends CustomCommand {
 
 	@NotNull
 	private DateFormat getDateFormat() {
-		Setting setting = settingService.get(player(), "timezoneFormat");
 		DateFormat format = new SimpleDateFormat("h:mm aa");
+		if (!isPlayer()) return format;
+
+		Setting setting = settingService.get(player(), "timezoneFormat");
 		if (setting.getValue() != null && setting.getValue().equalsIgnoreCase("24"))
 			format = new SimpleDateFormat("HH:mm");
 		return format;
