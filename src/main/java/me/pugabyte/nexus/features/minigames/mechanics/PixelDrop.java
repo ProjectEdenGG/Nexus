@@ -93,6 +93,11 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
+	public void kill(Minigamer minigamer) {
+		minigamer.spawn();
+	}
+
+	@Override
 	public void onEnd(MatchEndEvent event) {
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();

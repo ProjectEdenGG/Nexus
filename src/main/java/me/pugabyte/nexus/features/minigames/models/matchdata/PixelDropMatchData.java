@@ -10,13 +10,16 @@ import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.features.minigames.models.arenas.PixelDropArena;
+import me.pugabyte.nexus.framework.exceptions.BNException;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 
 import java.util.ArrayList;
@@ -185,7 +188,11 @@ public class PixelDropMatchData extends MatchData {
 	}
 
 	public String getWord(Location location) {
-		Sign sign = (Sign) location.getBlock().getState();
+		BlockState blockState = location.getBlock().getState();
+		if (!(blockState instanceof Sign))
+			throw new BNException("PixelDrop could not parse sign at: " + StringUtils.getLocationString(location));
+
+		Sign sign = (Sign) blockState;
 		String[] lines = sign.getLines();
 		StringBuilder word = new StringBuilder();
 		for (String line : lines) {
@@ -227,7 +234,7 @@ public class PixelDropMatchData extends MatchData {
 						String newHint = String.valueOf(chars);
 						hint.set(newHint);
 						if (newHint.equalsIgnoreCase(word)) {
-							PixelDrop pixelDrop = (PixelDrop) match.getArena().getMechanic();
+							PixelDrop pixelDrop = match.getArena().getMechanic();
 							pixelDrop.endTheRound(match);
 						}
 					}
