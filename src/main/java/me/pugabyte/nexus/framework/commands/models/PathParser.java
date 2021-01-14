@@ -83,18 +83,18 @@ class PathParser {
 							break;
 
 					arg.setTabCompleter(parameter.getType());
-					if (arg.getTabCompleter() == null && PlayerOwnedObject.class.isAssignableFrom(parameter.getType()))
-						arg.setTabCompleter(OfflinePlayer.class);
-
 					arg.setList(Collection.class.isAssignableFrom(parameter.getType()));
 					if (annotation != null) {
-						if (List.class.isAssignableFrom(parameter.getType()) && annotation.type() != void.class)
+						if (annotation.type() != void.class)
 							arg.setTabCompleter(annotation.type());
 						if (annotation.tabCompleter() != void.class)
 							arg.setTabCompleter(annotation.tabCompleter());
 						if (annotation.context() > 0)
 							arg.setContextArg(command.getMethodParameters(method, event, false)[annotation.context() - 1]);
 					}
+
+					if (PlayerOwnedObject.class.isAssignableFrom(arg.getType()))
+						arg.setTabCompleter(OfflinePlayer.class);
 
 					if (finalTabCompleter == null) {
 						if (arg.getPathArg() != null && arg.getPathArg().contains("...")) {
