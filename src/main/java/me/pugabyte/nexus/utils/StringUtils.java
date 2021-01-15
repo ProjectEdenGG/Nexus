@@ -42,7 +42,7 @@ public class StringUtils {
 	@Getter
 	private static final String colorCharsRegex = "[" + colorChar + altColorChar + "]";
 	@Getter
-	private static final Pattern colorPattern = Pattern.compile(colorCharsRegex + "[0-9a-fA-f]");
+	private static final Pattern colorPattern = Pattern.compile(colorCharsRegex + "[0-9a-fA-F]");
 	@Getter
 	private static final Pattern formatPattern = Pattern.compile(colorCharsRegex + "[k-orK-OR]");
 	@Getter
