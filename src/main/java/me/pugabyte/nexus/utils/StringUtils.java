@@ -2,10 +2,18 @@ package me.pugabyte.nexus.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import net.md_5.bungee.api.ChatColor;
-import okhttp3.*;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,8 +25,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.*;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -175,7 +186,7 @@ public class StringUtils {
 	}
 
 	public static String trimFirst(String string) {
-		return right(string, string.length() - 1);
+		return string.substring(1);
 	}
 
 	public static String right(String string, int number) {
@@ -280,6 +291,10 @@ public class StringUtils {
 			format = left(format, format.length() - 3);
 
 		return format;
+	}
+
+	public static String stripTrailingZeros(String number) {
+		return number.contains(".") ? number.replaceAll("0*$","").replaceAll("\\.$","") : number;
 	}
 
 	public enum ProgressBarStyle {
