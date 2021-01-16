@@ -70,7 +70,7 @@ public class SuggestDiscordCommand extends Command {
 				embed.setColor(next.getDiscordColor());
 
 				event.reply(new MessageBuilder()
-						.setContent(event.getAuthor().getAsMention() + " is suggesting **" + nerd.getName() + "** for **" + camelCase(next.plain()) + "**")
+						.setContent("@here " + event.getAuthor().getAsMention() + " is suggesting **" + nerd.getName() + "** for **" + camelCase(next.plain()) + "**")
 						.setEmbed(embed.build())
 						.build());
 			} catch (Exception ex) {
