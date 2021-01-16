@@ -27,7 +27,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
@@ -251,8 +250,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 			return json("&3" + (index + 1) + " &e" + time + " &7- " + new Nerd(uuid).getRankFormat());
 		};
 
-		Set<UUID> uuids = Utils.sortByValueReverse(staffTimeMap).keySet();
-		paginate(new ArrayList<>(uuids), formatter, "/hoh staffTime", page);
+		paginate(new ArrayList<>(Utils.sortByValueReverse(staffTimeMap).keySet()), formatter, "/hoh staffTime", page);
 	}
 
 }

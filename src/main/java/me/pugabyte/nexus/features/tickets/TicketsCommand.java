@@ -5,6 +5,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.ticket.Ticket;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -52,11 +52,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("view <id>")
-	void view(int id) {
-		Ticket ticket = service.get(id);
-		if (!ticket.canBeSeenBy(player()))
-			error("You can't view that ticket");
-
+	void view(Ticket ticket) {
 		send(PREFIX + "&c#" + ticket.getId());
 		send("&3Owner: &e" + ticket.getOwnerName());
 		send("&3When: &e" + ticket.getTimespan() + " &3ago");
@@ -125,9 +121,10 @@ public class TicketsCommand extends CustomCommand {
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &areopened");
 	}
 
-	@Path("stats [page]")
-	void stats(@Arg("1") int page) {
-		Map<String, Integer> ticketMap = new HashMap<>();
+	@Path("stats closed [page]")
+	@Permission("group.moderator")
+	void statsClosed(@Arg("1") int page) {
+		Map<UUID, Integer> closers = new HashMap<>();
 		for (Ticket ticket : service.getAll()) {
 			if (ticket.isOpen())
 				continue;
@@ -135,19 +132,16 @@ public class TicketsCommand extends CustomCommand {
 			if (ticket.getClosedByUuid() == null)
 				continue;
 
-			String staffUuid = ticket.getClosedByUuid();
-			ticketMap.put(staffUuid, ticketMap.getOrDefault(staffUuid, 0) + 1);
+			if (ticket.getClosedByUuid().equals(ticket.getUuid()))
+				continue;
+
+			UUID closedByUuid = UUID.fromString(ticket.getClosedByUuid());
+			closers.put(closedByUuid, closers.getOrDefault(closedByUuid, 0) + 1);
 		}
 
-		Map<UUID, Integer> staffMap = new HashMap<>();
-		ticketMap.forEach((uuid, count) -> staffMap.put(UUID.fromString(uuid), count));
-
-		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) -> {
-			int count = staffMap.get(uuid);
-			return json("&3" + (index + 1) + " &e" + new Nerd(uuid).getRankFormat() + " &7- " + count);
-		};
-		Set<UUID> uuids = Utils.sortByValueReverse(staffMap).keySet();
-		paginate(new ArrayList<>(uuids), formatter, "/tickets stats", page);
+		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) ->
+				json("&3" + (index + 1) + " &e" + new Nerd(uuid).getRankFormat() + " &7- " + closers.get(uuid));
+		paginate(new ArrayList<>(Utils.sortByValueReverse(closers).keySet()), formatter, "/tickets stats closed", page);
 	}
 
 	@ConverterFor(Ticket.class)

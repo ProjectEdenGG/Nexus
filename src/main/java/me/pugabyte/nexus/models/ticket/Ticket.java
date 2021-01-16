@@ -4,7 +4,7 @@ import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -60,7 +60,7 @@ public class Ticket {
 	}
 	
 	public boolean canBeSeenBy(Player player) {
-		return PlayerUtils.isModeratorGroup(player) || ownsTicket(player);
+		return new Nerd(player).getRank().isMod() || ownsTicket(player);
 	}
 
 	public void setOpen(boolean open) {
