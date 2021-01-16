@@ -6,14 +6,22 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.ticket.Ticket;
 import me.pugabyte.nexus.models.ticket.TicketService;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class TicketsCommand extends CustomCommand {
@@ -94,6 +102,7 @@ public class TicketsCommand extends CustomCommand {
 			error("Ticket already closed");
 
 		ticket.setOpen(false);
+		ticket.setClosedByUuid(player().getUniqueId().toString());
 		service.save(ticket);
 
 		String message = "&e" + player().getName() + " &cclosed &3ticket &e#" + ticket.getId();
@@ -114,6 +123,31 @@ public class TicketsCommand extends CustomCommand {
 		Tickets.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &areopened");
+	}
+
+	@Path("stats [page]")
+	void stats(@Arg("1") int page) {
+		Map<String, Integer> ticketMap = new HashMap<>();
+		for (Ticket ticket : service.getAll()) {
+			if (ticket.isOpen())
+				continue;
+
+			if (ticket.getClosedByUuid() == null)
+				continue;
+
+			String staffUuid = ticket.getClosedByUuid();
+			ticketMap.put(staffUuid, ticketMap.getOrDefault(staffUuid, 0) + 1);
+		}
+
+		Map<UUID, Integer> staffMap = new HashMap<>();
+		ticketMap.forEach((uuid, count) -> staffMap.put(UUID.fromString(uuid), count));
+
+		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) -> {
+			int count = staffMap.get(uuid);
+			return json("&3" + (index + 1) + " &e" + new Nerd(uuid).getRankFormat() + " &7- " + count);
+		};
+		Set<UUID> uuids = Utils.sortByValueReverse(staffMap).keySet();
+		paginate(new ArrayList<>(uuids), formatter, "/tickets stats", page);
 	}
 
 	@ConverterFor(Ticket.class)

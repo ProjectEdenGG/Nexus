@@ -23,6 +23,7 @@ public class Ticket {
 	@GeneratedValue
 	private int id;
 	private String uuid;
+	private String closedByUuid;
 	private boolean open;
 	private LocalDateTime timeOpened;
 	private LocalDateTime timeClosed;
