@@ -7,6 +7,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -75,8 +76,10 @@ public class CommandSigns implements Listener {
 				disposal(player, sign);
 				break;
 			case "[Trash]":
-				event.setCancelled(true);
-				trash(player);
+				if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+					event.setCancelled(true);
+					trash(player);
+				}
 				break;
 		}
 	}
