@@ -10,5 +10,6 @@ public enum WarpType {
 	STAFF,
 	STATUE_HUNT20,
 	QUEST,
+	WEEKLY_WAKKA,
 	XRAY
 }
