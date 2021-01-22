@@ -56,7 +56,7 @@ public class ColorUtilsCommand extends CustomCommand {
 
 	@Path("setNpcName withColor <player>")
 	void setNpcNameWithColor(Nerd nerd) {
-		runCommand("npc rename &" + nerd.getRank().getHex() + nerd.getName());
+		runCommand("npc rename " + nerd.getRank().getHex() + nerd.getName());
 	}
 
 	@Path("recreateNpc withColor <player>")
