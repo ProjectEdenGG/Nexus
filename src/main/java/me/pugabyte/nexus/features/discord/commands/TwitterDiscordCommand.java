@@ -5,7 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Bot.HandledBy;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.utils.Tasks;
 import twitter4j.Query;
 import twitter4j.Status;
@@ -35,7 +35,7 @@ public class TwitterDiscordCommand extends Command {
 				event.reply(reply.toString());
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof BNException))
+				if (!(ex instanceof NexusException))
 					ex.printStackTrace();
 			}
 		});

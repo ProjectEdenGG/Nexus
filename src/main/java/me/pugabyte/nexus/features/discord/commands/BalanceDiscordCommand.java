@@ -5,7 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Bot.HandledBy;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -40,7 +40,7 @@ public class BalanceDiscordCommand extends Command {
 				event.reply("Balance" + (isSelf ? "" : " of " + player.getName()) + ": " + formatted);
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof BNException))
+				if (!(ex instanceof NexusException))
 					ex.printStackTrace();
 			}
 		});

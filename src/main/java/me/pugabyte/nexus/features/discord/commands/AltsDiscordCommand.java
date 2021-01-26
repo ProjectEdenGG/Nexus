@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Bot.HandledBy;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -51,7 +51,7 @@ public class AltsDiscordCommand extends Command {
 				event.reply("Alts of `" + player.getName() + "` [_Online_ Offline **Banned**]:" + System.lineSeparator() + alts);
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof BNException))
+				if (!(ex instanceof NexusException))
 					ex.printStackTrace();
 			}
 		});

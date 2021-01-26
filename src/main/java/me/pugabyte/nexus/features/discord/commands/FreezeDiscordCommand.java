@@ -10,7 +10,7 @@ import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Bot.HandledBy;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
@@ -79,13 +79,13 @@ public class FreezeDiscordCommand extends Command {
 						PlayerUtils.send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));
-						if (!(ex instanceof BNException))
+						if (!(ex instanceof NexusException))
 							ex.printStackTrace();
 					}
 				}
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof BNException))
+				if (!(ex instanceof NexusException))
 					ex.printStackTrace();
 			}
 		});
