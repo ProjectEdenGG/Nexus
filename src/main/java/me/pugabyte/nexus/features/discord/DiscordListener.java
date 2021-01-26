@@ -7,7 +7,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -72,7 +72,7 @@ public class DiscordListener extends ListenerAdapter {
 						}
 					} catch (Exception ex) {
 						event.getChannel().sendMessage(stripColor(ex.getMessage())).queue();
-						if (!(ex instanceof BNException))
+						if (!(ex instanceof NexusException))
 							ex.printStackTrace();
 					}
 				}

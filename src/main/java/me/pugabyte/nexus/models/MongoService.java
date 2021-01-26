@@ -4,7 +4,7 @@ import dev.morphia.Datastore;
 import dev.morphia.query.Sort;
 import dev.morphia.query.UpdateException;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.persistence.MongoDBDatabase;
 import me.pugabyte.nexus.framework.persistence.MongoDBPersistence;
 import org.apache.commons.lang.Validate;
@@ -71,7 +71,7 @@ public abstract class MongoService extends DatabaseService {
 			constructor.setAccessible(true);
 			return constructor.newInstance(uuid);
 		} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException ex) {
-			throw new BNException(this.getClass().getSimpleName() + " not implemented correctly");
+			throw new NexusException(this.getClass().getSimpleName() + " not implemented correctly");
 		}
 	}
 

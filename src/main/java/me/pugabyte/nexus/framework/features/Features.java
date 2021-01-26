@@ -2,7 +2,7 @@ package me.pugabyte.nexus.framework.features;
 
 import lombok.Getter;
 import me.pugabyte.nexus.framework.annotations.Disabled;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.utils.Time.Timer;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.plugin.Plugin;
@@ -30,7 +30,7 @@ public class Features {
 	}
 
 	public static <T extends Feature> T get(Class<? extends Feature> clazz) {
-		return (T) Optional.of(features.get(clazz)).orElseThrow(() -> new BNException("Feature " + prettyName(clazz) + " not found"));
+		return (T) Optional.of(features.get(clazz)).orElseThrow(() -> new NexusException("Feature " + prettyName(clazz) + " not found"));
 	}
 
 	public static String prettyName(Feature feature) {

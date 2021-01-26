@@ -10,7 +10,7 @@ import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.features.minigames.models.arenas.PixelDropArena;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -190,7 +190,7 @@ public class PixelDropMatchData extends MatchData {
 	public String getWord(Location location) {
 		BlockState blockState = location.getBlock().getState();
 		if (!(blockState instanceof Sign))
-			throw new BNException("PixelDrop could not parse sign at: " + StringUtils.getLocationString(location));
+			throw new NexusException("PixelDrop could not parse sign at: " + StringUtils.getLocationString(location));
 
 		Sign sign = (Sign) blockState;
 		String[] lines = sign.getLines();

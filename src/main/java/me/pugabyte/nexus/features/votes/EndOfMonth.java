@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
 import me.pugabyte.nexus.features.menus.rewardchests.RewardChestType;
 import me.pugabyte.nexus.features.menus.rewardchests.mysterychest.MysteryChest;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.vote.TopVoter;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -52,7 +52,7 @@ public class EndOfMonth {
 				data.getEco30kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(PlayerUtils.getPlayer(topVoter.getUuid()), 30000));
 				data.getEco20kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(PlayerUtils.getPlayer(topVoter.getUuid()), 20000));
 				data.getEco15kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(PlayerUtils.getPlayer(topVoter.getUuid()), 15000));
-			} catch (BNException ex) {
+			} catch (NexusException ex) {
 				Nexus.warn("[Votes] [End Of Month] " + ex.getMessage());
 			}
 		});
@@ -86,7 +86,7 @@ public class EndOfMonth {
 			total = topVoters.stream().map(TopVoter::getCount).mapToInt(Long::intValue).sum();
 			scores = topVoters.stream().map(TopVoter::getCount).map(Long::intValue).distinct().collect(Collectors.toList());
 			if (scores.size() < 3)
-				throw new BNException("Not enough top scores, something must be wrong. (Scores: " + scores + ")");
+				throw new NexusException("Not enough top scores, something must be wrong. (Scores: " + scores + ")");
 
 			first = getVotersAt(scores.get(0));
 			second = getVotersAt(scores.get(1));

@@ -6,7 +6,7 @@ import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,7 +40,7 @@ public class CommandEvent extends Event implements Cancellable {
 		sender.sendMessage(colorize(message));
 	}
 
-	public Player getPlayer() throws BNException {
+	public Player getPlayer() throws NexusException {
 		if (!(sender instanceof Player))
 			throw new MustBeIngameException();
 
@@ -80,9 +80,9 @@ public class CommandEvent extends Event implements Cancellable {
 		if (isNullOrEmpty(prefix))
 			prefix = Commands.getPrefix(command);
 
-		if (ex.getCause() != null && ex.getCause() instanceof BNException)
+		if (ex.getCause() != null && ex.getCause() instanceof NexusException)
 			reply(prefix + "&c" + ex.getCause().getMessage());
-		else if (ex instanceof BNException)
+		else if (ex instanceof NexusException)
 			reply(prefix + "&c" + ex.getMessage());
 		else if (ex instanceof IllegalArgumentException && ex.getMessage() != null && ex.getMessage().contains("type mismatch"))
 			reply(prefix + "&c" + getUsageMessage());

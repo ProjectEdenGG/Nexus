@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -108,9 +108,9 @@ public abstract class MenuUtils {
 	}
 
 	public static void handleException(Player player, String prefix, Throwable ex) {
-		if (ex.getCause() != null && ex.getCause() instanceof BNException)
+		if (ex.getCause() != null && ex.getCause() instanceof NexusException)
 			PlayerUtils.send(player, prefix + "&c" + ex.getCause().getMessage());
-		else if (ex instanceof BNException)
+		else if (ex instanceof NexusException)
 			PlayerUtils.send(player, prefix + "&c" + ex.getMessage());
 		else {
 			PlayerUtils.send(player, "&cAn internal error occurred while attempting to execute this command");

@@ -16,7 +16,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -248,7 +248,7 @@ public abstract class ICustomCommand {
 				else if (converter.getParameterCount() == 2)
 					return converter.invoke(command, value, context);
 				else
-					throw new BNException("Unknown converter parameters in " + converter.getName());
+					throw new NexusException("Unknown converter parameters in " + converter.getName());
 			} else if (type.isEnum()) {
 				return convertToEnum(value, (Class<? extends Enum<?>>) type);
 			} else if (PlayerOwnedObject.class.isAssignableFrom(type)) {
@@ -431,7 +431,7 @@ public abstract class ICustomCommand {
 
 	@SneakyThrows
 	protected Enum<?> convertToEnum(String filter, Class<? extends Enum<?>> clazz) {
-		if (filter == null) throw new InvocationTargetException(new BNException("Missing argument"));
+		if (filter == null) throw new InvocationTargetException(new NexusException("Missing argument"));
 		return Arrays.stream(clazz.getEnumConstants())
 				.filter(value -> value.name().toLowerCase().startsWith(filter.toLowerCase()))
 				.findFirst()

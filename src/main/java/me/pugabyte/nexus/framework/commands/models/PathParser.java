@@ -13,7 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
-import me.pugabyte.nexus.framework.exceptions.BNException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
 
@@ -221,7 +221,7 @@ class PathParser {
 				} else if (tabCompleter.getParameterCount() == 2)
 					results.addAll((List<String>) tabCompleter.invoke(tabCompleteCommand, realArg.toLowerCase(), contextArg));
 				else
-					throw new BNException("Unknown converter parameters in " + tabCompleter.getName());
+					throw new NexusException("Unknown converter parameters in " + tabCompleter.getName());
 			} else if (type != null && type.isEnum())
 				results.addAll(command.tabCompleteEnum((Class<? extends Enum<?>>) type, realArg.toLowerCase()));
 
