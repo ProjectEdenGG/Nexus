@@ -3,15 +3,14 @@ package me.pugabyte.nexus.utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 
 @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
@@ -255,23 +254,23 @@ public class SoundUtils {
 	@AllArgsConstructor
 	@RequiredArgsConstructor
 	public static class SoundArgs {
-		@Nonnull
+		@NonNull
 		Sound sound;
 		SoundCategory category;
-		@Nonnull
+		@NonNull
 		Float volume;
-		@Nonnull
+		@NonNull
 		Float pitch;
 		int delay = 0;
 
-		public SoundArgs(@NotNull Sound sound, float volume, float pitch, int delay) {
+		public SoundArgs(@NonNull Sound sound, float volume, float pitch, int delay) {
 			this.sound = sound;
 			this.volume = volume;
 			this.pitch = pitch;
 			this.delay = delay;
 		}
 
-		public SoundArgs(@NotNull Sound sound, SoundCategory category, float volume, float pitch) {
+		public SoundArgs(@NonNull Sound sound, SoundCategory category, float volume, float pitch) {
 			this.sound = sound;
 			this.category = category;
 			this.volume = volume;

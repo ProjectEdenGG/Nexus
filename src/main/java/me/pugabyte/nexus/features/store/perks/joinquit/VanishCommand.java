@@ -28,15 +28,15 @@ public class VanishCommand extends CustomCommand {
 	@Path("(fj|fakejoin)")
 	@Permission("vanish.fakeannounce")
 	void fakeJoin() {
-		runCommand("vanish off");
 		JoinQuit.join(player());
+		runCommand("vanish off");
 	}
 
 	@Path("(fq|fakequit)")
 	@Permission("vanish.fakeannounce")
 	void fakeQuit() {
-		runCommand("vanish on");
 		JoinQuit.quit(player());
+		runCommand("vanish on");
 	}
 
 	@Path("(ni|nointeract)")

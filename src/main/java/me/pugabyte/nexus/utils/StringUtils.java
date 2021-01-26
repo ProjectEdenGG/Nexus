@@ -294,7 +294,14 @@ public class StringUtils {
 	}
 
 	public static String stripTrailingZeros(String number) {
-		return number.contains(".") ? number.replaceAll("0*$","").replaceAll("\\.$","") : number;
+		return number.contains(".") ? number.replaceAll("0*$", "").replaceAll("\\.$", "") : number;
+	}
+
+	public static String bool(boolean b) {
+		if (b)
+			return "&atrue";
+		else
+			return "&cfalse";
 	}
 
 	public enum ProgressBarStyle {
