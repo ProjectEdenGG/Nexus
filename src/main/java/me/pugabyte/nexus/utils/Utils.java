@@ -23,15 +23,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
@@ -106,7 +99,14 @@ public class Utils {
 	}
 
 	public static LocalDateTime epochSecond(String timestamp) {
-		return epochSecond(Long.parseLong(timestamp));
+		// try catch for MinecraftServers.Biz giving timestamp instead of epoch second
+		try {
+			return epochSecond(Long.parseLong(timestamp));
+		} catch (NumberFormatException ex) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss xxxx");
+			LocalDateTime dateTime = LocalDateTime.parse(timestamp, formatter);
+			return dateTime;
+		}
 	}
 
 	public static LocalDateTime epochSecond(long timestamp) {

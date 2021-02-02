@@ -5,8 +5,10 @@ import lombok.Getter;
 public enum VoteSite {
 	PMC("PlanetMinecraft.com", "http://www.planetminecraft.com/server/bear-nation/vote/", 24),
 	MCMP("Minecraft-MP.com", "http://minecraft-mp.com/server/88565/vote/", 24),
+	MCBIZ("MinecraftServers.biz", "https://minecraftservers.biz/servers/891/", 24),
 	MCSL("MCSL", "http://minecraft-server-list.com/server/314528/vote/", 24),
 	MCSO("MinecraftServers.org", "http://minecraftservers.org/vote/248930", 24),
+	MCSN("Minecraft-Server.net", "https://minecraft-server.net/vote/BearNation/", 24),
 	TMCS("TopMinecraftServers", "https://topminecraftservers.org/vote/3738", 24),
 	TOPG("TopG.org", "https://topg.org/Minecraft/in-505487", 24);
 
