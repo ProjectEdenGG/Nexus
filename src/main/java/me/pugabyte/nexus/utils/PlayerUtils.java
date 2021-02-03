@@ -71,6 +71,24 @@ public class PlayerUtils {
 		return Bukkit.getPlayer("lexikiq");
 	}
 
+	public static boolean isPuga(Player player) {
+		return isPlayer(puga(), player);
+	}
+
+	public static boolean isWakka(Player player) {
+		return isPlayer(wakka(), player);
+	}
+
+	public static boolean isBlast(Player player) {
+		return isPlayer(blast(), player);
+	}
+
+	private static boolean isPlayer(Player player1, Player player2) {
+		if (player1 == null || player2 == null)
+			return false;
+		return player1.equals(player2);
+	}
+
 	public static boolean isVanished(Player player) {
 		for (MetadataValue meta : player.getMetadata("vanished"))
 			return (meta.asBoolean());

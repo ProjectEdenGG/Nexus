@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Nullable;
@@ -169,6 +170,20 @@ public class ItemUtils {
 			return null;
 
 		return skullMeta.getPlayerProfile().getId();
+	}
+
+	public static ItemStack setDurability(ItemStack item, int percentage) {
+		ItemMeta meta = item.getItemMeta();
+		if (meta instanceof Damageable) {
+			Damageable damageable = (Damageable) meta;
+			double maxDurability = item.getType().getMaxDurability();
+			double damage = (percentage / 100.0) * maxDurability;
+			damageable.setDamage((int) damage);
+
+			item.setItemMeta((ItemMeta) damageable);
+		}
+
+		return item;
 	}
 
 }
