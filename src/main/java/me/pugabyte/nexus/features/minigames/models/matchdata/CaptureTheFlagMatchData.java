@@ -15,16 +15,15 @@ import java.util.Optional;
 @Data
 @MatchDataFor(CaptureTheFlag.class)
 public class CaptureTheFlagMatchData extends MatchData {
-	Map<Team, Flag> flags = new HashMap<>();
+	private Map<Team, Flag> flags = new HashMap<>();
 
 	public CaptureTheFlagMatchData(Match match) {
 		super(match);
 	}
 
 	public Flag getFlag(Team team) {
-		if (flags.containsKey(team)) {
+		if (flags.containsKey(team))
 			return flags.get(team);
-		}
 		return null;
 	}
 

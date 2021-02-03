@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
+import me.pugabyte.nexus.features.minigames.mechanics.CaptureTheFlag;
+import me.pugabyte.nexus.features.minigames.mechanics.OneFlagCaptureTheFlag;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
@@ -28,6 +30,7 @@ public class Flag {
 	@NonNull
 	private String[] lines;
 	@NonNull
+	private Match match;
 	private Team team;
 
 	// Carrier data
@@ -37,6 +40,19 @@ public class Flag {
 	private Location currentLocation;
 	private BlockState blockBelowState;
 	private int taskId = -1;
+
+	public Flag(Sign sign, Match match) {
+		this(sign, match, null);
+	}
+
+	public Flag(Sign sign, Match match, Team team) {
+		this.spawnLocation = sign.getLocation();
+		this.material = sign.getType();
+		this.blockData = sign.getBlockData();
+		this.lines = sign.getLines();
+		this.match = match;
+		this.team = team;
+	}
 
 	public void respawn() {
 		if (currentLocation != null) {
@@ -51,9 +67,8 @@ public class Flag {
 
 		Sign sign = (Sign) block.getState();
 
-		for (int line = 0; line <= 3; line++) {
+		for (int line = 0; line <= 3; line++)
 			sign.setLine(line, lines[line]);
-		}
 
 		sign.update();
 	}
@@ -77,29 +92,30 @@ public class Flag {
 
 		Sign sign = (Sign) block.getState();
 
-		for (int line = 0; line <= 3; line++) {
+		for (int line = 0; line <= 3; line++)
 			sign.setLine(line, lines[line]);
-		}
 
 		sign.update();
-		Match match = carrier.getMatch();
-		taskId = carrier.getMatch().getTasks().wait(Time.SECOND.x(60), () -> {
+		taskId = match.getTasks().wait(Time.SECOND.x(60), () -> {
 			respawn();
-			match.broadcast(team.getColoredName() + "&3's flag has returned");
+			if (match.getArena().getMechanic() instanceof CaptureTheFlag)
+				match.broadcast(team.getColoredName() + "&3's flag has respawned");
+			else if (match.getArena().getMechanic() instanceof OneFlagCaptureTheFlag)
+				match.broadcast("The flag has respawned");
 		});
 	}
 
 	public Location getSuitableLocation(Location originalLocation) {
 		Location location = originalLocation.clone();
 		if (location.getBlock().isLiquid()) {
-			while (location.getBlock().isLiquid()) {
+			while (location.getBlock().isLiquid() && location.getY() <= 255)
 				location.add(0, 1, 0);
-			}
 			return location;
 		}
-		while (location.getBlock().getType() != Material.AIR && !location.getBlock().getType().isSolid()) {
-			location.add(1, 0, 0);
-		}
+
+		while (location.getBlock().getType() != Material.AIR && !location.getBlock().getType().isSolid())
+			location.add(0, 1, 0);
+
 		Block below = location.clone().subtract(0, 1, 0).getBlock();
 		while ((below.getType() == Material.AIR || location.getBlock().getType() != Material.AIR) &&
 				ArenaManager.getFromLocation(originalLocation).getRegion().contains(new WorldGuardUtils(Minigames.getWorld()).toBlockVector3(location))) {

@@ -6,13 +6,12 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
-import org.bukkit.Location;
 
 @Data
 @MatchDataFor(OneFlagCaptureTheFlag.class)
 public class OneFlagCaptureTheFlagMatchData extends MatchData {
-	Location originalFlagLocation;
-	Minigamer flagCarrier;
+	private Flag flag;
+	private Minigamer flagCarrier;
 
 	public OneFlagCaptureTheFlagMatchData(Match match) {
 		super(match);

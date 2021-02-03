@@ -2,10 +2,13 @@ package me.pugabyte.nexus.features.minigames.mechanics.common;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
+import me.pugabyte.nexus.features.minigames.mechanics.CaptureTheFlag;
+import me.pugabyte.nexus.features.minigames.mechanics.OneFlagCaptureTheFlag;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
-import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.Flag;
+import me.pugabyte.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
+import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
@@ -48,30 +51,36 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 	public void onRegionEvent(RegionEnteredEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
-		if (!event.getRegion().equals(minigamer.getMatch().getArena().getProtectedRegion("kill"))) return;
-		CaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
-		Flag carriedFlag = matchData.getFlagByCarrier(minigamer);
-		if (carriedFlag != null) {
-			carriedFlag.drop(minigamer.getPlayer().getLocation());
+		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion(), "kill")) return;
 
-			matchData.removeFlagCarrier(minigamer);
-			Tasks.wait(5, () -> minigamer.getMatch().broadcast(minigamer.getColoredName() + " &3dropped " + carriedFlag.getTeam().getColoredName() + "&3's flag outside the map"));
+		// TODO Better abstraction
+		Flag flag = null;
+		Mechanic mechanic = minigamer.getMatch().getArena().getMechanic();
+		if (mechanic instanceof CaptureTheFlag) {
+			CaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
+			flag = matchData.getFlagByCarrier(minigamer);
+		} else if (mechanic instanceof OneFlagCaptureTheFlag) {
+			OneFlagCaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
+			flag = matchData.getFlag();
 		}
-	}
 
-	@Override
-	public void onDeath(MinigamerDeathEvent event) {
-		Minigamer minigamer = event.getMinigamer();
-		CaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
-		Flag carriedFlag = matchData.getFlagByCarrier(minigamer);
-		if (carriedFlag != null) {
-			carriedFlag.drop(minigamer.getPlayer().getLocation());
+		if (flag != null) {
+			flag.drop(minigamer.getPlayer().getLocation());
 
-			matchData.removeFlagCarrier(minigamer);
+			String flagName = null;
+			if (mechanic instanceof CaptureTheFlag) {
+				CaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
+				matchData.removeFlagCarrier(minigamer);
+				flagName = flag.getTeam().getColoredName() + "&3's";
+			} else if (mechanic instanceof OneFlagCaptureTheFlag) {
+				OneFlagCaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
+				matchData.setFlagCarrier(null);
+				flagName = "the";
+			}
 
-			event.getMatch().broadcast(minigamer.getColoredName() + " &3dropped " + carriedFlag.getTeam().getColoredName() + "&3's flag");
+			String finalFlagName = flagName;
+			Tasks.wait(5, () -> minigamer.getMatch().broadcast(minigamer.getColoredName() + " &3dropped " + finalFlagName + "&3's flag outside the map"));
 		}
-		super.onDeath(event);
 	}
 
 }
