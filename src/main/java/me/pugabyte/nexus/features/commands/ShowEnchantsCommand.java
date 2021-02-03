@@ -86,7 +86,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 					.next(channel.getChatterFormat(chatter))
 					.group()
 					.next((isNullOrEmpty(message) ? "" : message + " "))
-					.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "]")
+					.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
 					.hover(item);
 
 			channel.broadcastIngame(chatter, json);
