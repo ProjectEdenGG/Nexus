@@ -168,6 +168,12 @@ public class MinigamesCommand extends CustomCommand {
 		minigamer.getMatch().getTimer().broadcastTimeLeft();
 	}
 
+	@Path("flagParticle")
+	@Permission("manage")
+	void flagParticle() {
+		me.pugabyte.nexus.features.minigames.models.matchdata.Flag.particle(minigamer);
+	}
+
 	@Path("create <name>")
 	@Permission("manage")
 	void create(String name) {

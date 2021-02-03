@@ -67,6 +67,16 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
+	public void doFlagParticles(Match match) {
+		CaptureTheFlagMatchData matchData = match.getMatchData();
+
+		matchData.getFlags().values().forEach(flag -> {
+			if (flag.getCarrier() != null)
+				Flag.particle(flag.getCarrier());
+		});
+	}
+
+	@Override
 	public void onDeath(MinigamerDeathEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		CaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();

@@ -387,7 +387,7 @@ public class Match {
 	}
 
 	public boolean isMechanic(Class<? extends Mechanic> mechanic) {
-		return mechanic.isInstance(getArena().getMechanic());
+		return getArena().getMechanic().getClass().isAssignableFrom(mechanic);
 	}
 
 	public <T extends Entity> T spawn(Location location, Class<T> type) {
@@ -424,6 +424,8 @@ public class Match {
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
 						match.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, TimespanFormatter.of(time).format(), 2, false));
+						MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
+						event.callEvent();
 					} else {
 						match.end();
 						stop();

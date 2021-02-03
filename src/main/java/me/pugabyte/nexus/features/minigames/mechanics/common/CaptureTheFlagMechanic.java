@@ -4,7 +4,9 @@ import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.mechanics.CaptureTheFlag;
 import me.pugabyte.nexus.features.minigames.mechanics.OneFlagCaptureTheFlag;
+import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.Flag;
 import me.pugabyte.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
@@ -47,6 +49,8 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 
 	public abstract void onFlagInteract(Minigamer minigamer, Sign sign);
 
+	public abstract void doFlagParticles(Match match);
+
 	@EventHandler
 	public void onRegionEvent(RegionEnteredEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
@@ -81,6 +85,15 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 			String finalFlagName = flagName;
 			Tasks.wait(5, () -> minigamer.getMatch().broadcast(minigamer.getColoredName() + " &3dropped " + finalFlagName + "&3's flag outside the map"));
 		}
+	}
+
+	@EventHandler
+	public void onMatchTimerTick(MatchTimerTickEvent event) {
+		if (event.getMatch().isMechanic(this)) return;
+		if (event.getTime() % 2 != 0) return;
+
+		CaptureTheFlagMechanic mechanic = event.getMatch().getArena().getMechanic();
+		mechanic.doFlagParticles(event.getMatch());
 	}
 
 }

@@ -42,7 +42,7 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 
 			takeFlag(minigamer);
 		} else if ((ChatColor.GREEN + "Capture").equalsIgnoreCase(sign.getLine(2))) {
-			if (!matchData.getFlagCarrier().equals(minigamer))
+			if (!minigamer.equals(matchData.getFlagCarrier()))
 				return;
 
 			if (sign.getLine(3).equalsIgnoreCase(minigamer.getTeam().getColoredName())) {
@@ -55,19 +55,27 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
+	public void doFlagParticles(Match match) {
+		OneFlagCaptureTheFlagMatchData matchData = match.getMatchData();
+		if (matchData.getFlagCarrier() == null)
+			return;
+
+		Flag.particle(matchData.getFlagCarrier());
+	}
+
+	@Override
 	public void onDeath(MinigamerDeathEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		OneFlagCaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
-		if (!matchData.getFlagCarrier().equals(minigamer))
-			return;
+		if (minigamer.equals(matchData.getFlagCarrier())) {
+			Flag flag = matchData.getFlag();
+			if (flag != null) {
+				flag.drop(minigamer.getPlayer().getLocation());
 
-		Flag flag = matchData.getFlag();
-		if (flag != null) {
-			flag.drop(minigamer.getPlayer().getLocation());
+				matchData.setFlagCarrier(null);
 
-			matchData.setFlagCarrier(null);
-
-			event.getMatch().broadcast(minigamer.getColoredName() + " &3dropped the flag");
+				event.getMatch().broadcast(minigamer.getColoredName() + " &3dropped the flag");
+			}
 		}
 
 		super.onDeath(event);
