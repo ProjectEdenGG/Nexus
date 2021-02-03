@@ -154,6 +154,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		runCommand("plugman reload Nexus");
 	}
 
+	@Path("debug")
+	void debug() {
+		Nexus.setDebug(!Nexus.isDebug());
+		send(PREFIX + "Debugging " + (Nexus.isDebug() ? "&aenabled" : "&cdisabled"));
+	}
+
 	private static final LocalDateTime lastReload = LocalDateTime.now();
 
 	@Path("lastReload")

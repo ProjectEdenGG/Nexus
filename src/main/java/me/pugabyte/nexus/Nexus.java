@@ -6,6 +6,7 @@ import com.earth2me.essentials.Essentials;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
@@ -86,6 +87,15 @@ public class Nexus extends JavaPlugin {
 			Nexus.severe("Defaulting to " + Env.DEV.name() + " environment");
 			return Env.DEV;
 		}
+	}
+
+	@Getter
+	@Setter
+	private static boolean debug = false;
+
+	public static void debug(String message) {
+		if (debug)
+			getInstance().getLogger().info("[DEBUG] " + stripColor(message));
 	}
 
 	public static void log(String message) {
