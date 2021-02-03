@@ -77,13 +77,11 @@ public class Votes extends Feature implements Listener {
 		});
 	}
 
-	private static final MessageEmbed voteLinksEmbed;
-
-	static {
+	private static MessageEmbed createEmbed(String username) {
 		EmbedBuilder builder = new EmbedBuilder().setTitle("https://bnn.gg/vote").setDescription("");
 		for (VoteSite value : VoteSite.values())
-			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl() + ")");
-		voteLinksEmbed = builder.build();
+			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
+		return builder.build();
 	}
 
 	private void sendVoteReminder(Vote vote) {
@@ -100,8 +98,9 @@ public class Votes extends Feature implements Listener {
 
 		User user = Bot.KODA.jda().retrieveUserById(discordUser.getUserId()).complete();
 		if (user != null && user.getMutualGuilds().size() > 0) {
-			Nexus.log("[Votes] Sending vote reminder to " + PlayerUtils.getPlayer(vote.getUuid()).getName());
-			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(voteLinksEmbed);
+			String username = PlayerUtils.getPlayer(vote.getUuid()).getName();
+			Nexus.log("[Votes] Sending vote reminder to " + username);
+			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(createEmbed(username));
 			user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
 		}
 	}
