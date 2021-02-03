@@ -13,6 +13,7 @@ import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -26,18 +27,26 @@ import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class WorldGuardFlags implements Listener {
 
 	@EventHandler
 	public void onItemFrameBreak(HangingBreakEvent event) {
+		if (RemoveCause.ENTITY.equals(event.getCause()))
+			return;
+
 		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), Flags.HANGING_BREAK) == State.DENY)
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onItemFrameBreak(HangingBreakByEntityEvent event) {
+		Entity remover = event.getRemover();
+		if (remover instanceof Player)
+			return;
+
 		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), Flags.HANGING_BREAK) == State.DENY)
 			event.setCancelled(true);
 	}
