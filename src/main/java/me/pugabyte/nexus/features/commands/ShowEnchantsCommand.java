@@ -80,17 +80,15 @@ public class ShowEnchantsCommand extends CustomCommand {
 		PublicChannel channel = (PublicChannel) chatter.getActiveChannel();
 
 		// Ingame
-		{
-			ChatColor color = channel.getMessageColor();
-			JsonBuilder json = json()
-					.next(channel.getChatterFormat(chatter))
-					.group()
-					.next((isNullOrEmpty(message) ? "" : message + " "))
-					.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
-					.hover(item);
+		ChatColor color = channel.getMessageColor();
+		JsonBuilder json = json()
+				.next(channel.getChatterFormat(chatter))
+				.group()
+				.next((isNullOrEmpty(message) ? "" : message + " "))
+				.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
+				.hover(item);
 
-			channel.broadcastIngame(chatter, json);
-		}
+		channel.broadcastIngame(chatter, json);
 
 		// Discord
 		if (channel.getDiscordChannel() != null) {

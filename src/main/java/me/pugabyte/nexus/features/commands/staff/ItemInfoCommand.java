@@ -24,7 +24,6 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.Utils.dump;
 
 @Aliases({"nbt", "itemdb"})
-@Permission("group.staff")
 public class ItemInfoCommand extends CustomCommand {
 
 	public ItemInfoCommand(CommandEvent event) {
@@ -39,6 +38,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("extended [material]")
+	@Permission("group.staff")
 	void extended(Material material) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 		material = tool.getType();
@@ -100,6 +100,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("serialize json [material] [amount]")
+	@Permission("group.staff")
 	void serializeJson(Material material, @Arg("1") int amount) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 
@@ -137,6 +138,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("notItems")
+	@Permission("group.staff")
 	void notItems() {
 		for (Material material : Material.values()) {
 			if (!material.isLegacy() && !material.isItem())
