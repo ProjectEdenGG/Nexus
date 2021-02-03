@@ -63,11 +63,13 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder group() {
-		String lore = this.lore.stream()
-				.map(line -> colorize(loreize ? StringUtils.loreize(line) : line).replaceAll("\\|\\|", "\n"))
-				.collect(Collectors.joining("\n"));
+		if (!this.lore.isEmpty()) {
+			String lore = this.lore.stream()
+					.map(line -> colorize(loreize ? StringUtils.loreize(line) : line).replaceAll("\\|\\|", "\n"))
+					.collect(Collectors.joining("\n"));
 
-		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder(lore).create())));
+			addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder(lore).create())));
+		}
 
 		result.append(builder.create(), FormatRetention.NONE);
 		builder = new ComponentBuilder("");
