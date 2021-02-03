@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.matchdata;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.minigames.Minigames;
@@ -9,11 +10,11 @@ import me.pugabyte.nexus.features.minigames.mechanics.OneFlagCaptureTheFlag;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -56,7 +57,12 @@ public class Flag {
 	}
 
 	public static void particle(Minigamer carrier) {
-		PlayerUtils.send(carrier.getPlayer(), "* Particle *");
+		new ParticleBuilder(Particle.FLAME)
+				.location(carrier.getPlayer().getLocation().add(0, 1, 0))
+				.offset(0.35, 0.75, 0.35)
+				.extra(0)
+				.count(25)
+				.spawn();
 	}
 
 	public void respawn() {
