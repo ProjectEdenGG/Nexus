@@ -58,7 +58,7 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 
 	@EventHandler
 	public void onMatchTimerTick(MatchTimerTickEvent event) {
-		if (event.getMatch().isMechanic(this)) return;
+		if (!event.getMatch().isMechanic(this)) return;
 		if (event.getTime() % 2 != 0) return;
 
 		CaptureTheFlagMechanic mechanic = event.getMatch().getMechanic();
