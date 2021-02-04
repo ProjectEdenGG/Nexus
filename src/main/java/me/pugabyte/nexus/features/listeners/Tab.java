@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.listeners;
 
 import me.pugabyte.nexus.features.afk.AFK;
+import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
 import me.pugabyte.nexus.models.afk.events.AFKEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -49,7 +50,7 @@ public class Tab implements Listener {
 	public static String getFormat(Player player) {
 		Nerd nerd = new Nerd(player);
 		String name = nerd.getRank().getColor() + nerd.getName();
-		if ("KodaBear".equals(nerd.getName())) name = "&5KodaBear";
+		if ("KodaBear".equals(nerd.getName())) name = Koda.getNameFormat();
 		if (AFK.get(player).isAfk())
 			name += " &7&o[AFK]";
 		if (nerd.isVanished())

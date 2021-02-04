@@ -33,7 +33,7 @@ public class Koda {
 	@Getter
 	private static final String PREFIX = StringUtils.getPrefix("KodaBear");
 	@Getter
-	private static final String nameFormat = "&5&oKodaBear";
+	private static final String nameFormat = "&5KodaBear";
 	@Getter
 	private static final String globalFormat = "&2[G] " + nameFormat + " &2&l> &f";
 	@Getter

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.setting.Setting;
@@ -103,7 +104,7 @@ public class Nerd {
 
 	public String getChatFormat() {
 		if ("KodaBear".equals(name))
-			return "&5KodaBear";
+			return Koda.getNameFormat();
 
 		Rank rank = getRank();
 		String prefix = null;
