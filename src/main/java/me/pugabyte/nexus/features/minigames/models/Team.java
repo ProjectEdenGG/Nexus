@@ -98,7 +98,7 @@ public class Team implements ConfigurationSerializable {
 		if (members.isEmpty()) return;
 
 		members.forEach(minigamer -> {
-			minigamer.getPlayer().setGameMode(minigamer.getMatch().getArena().getMechanic().getGameMode());
+			minigamer.getPlayer().setGameMode(minigamer.getMatch().getMechanic().getGameMode());
 			minigamer.getPlayer().getInventory().setHeldItemSlot(0);
 		});
 
@@ -122,7 +122,7 @@ public class Team implements ConfigurationSerializable {
 		int SAFETY = 0;
 		while (members.size() > 0) {
 			List<Location> locs = new ArrayList<>(spawnpoints);
-			if (members.get(0).getMatch().getArena().getMechanic().shuffleSpawnpoints())
+			if (members.get(0).getMatch().getMechanic().shuffleSpawnpoints())
 				Collections.shuffle(locs);
 
 			List<Minigamer> toRemove = new ArrayList<>();

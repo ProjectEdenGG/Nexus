@@ -139,7 +139,8 @@ public class Minigames extends Feature {
 				if (matchDataType.getAnnotation(MatchDataFor.class) != null)
 					for (MechanicType mechanicType : MechanicType.values())
 						for (Class<? extends Mechanic> superclass : mechanicType.get().getSuperclasses())
-							if (matchDataType.getAnnotation(MatchDataFor.class).value().equals(superclass))
+							for (Class<? extends Mechanic> applicableMechanic : matchDataType.getAnnotation(MatchDataFor.class).value())
+							if (applicableMechanic.equals(superclass))
 								try {
 									Constructor<?> constructor = matchDataType.getConstructor(Match.class);
 									constructor.setAccessible(true);

@@ -407,7 +407,7 @@ public class Battleship extends BalancedTeamMechanic {
 		public KitPlacer(Match match, Minigamer minigamer, Team team, ShipType shipType, Location location, BlockFace direction) {
 			this.match = match;
 			this.matchData = match.getMatchData();
-			this.mechanic = match.getArena().getMechanic();
+			this.mechanic = match.getMechanic();
 			this.minigamer = minigamer;
 			this.team = team;
 			this.grid = matchData.getGrid(team);

@@ -93,15 +93,15 @@ public class Minigamer {
 	}
 
 	public boolean isIn(Match match) {
-		return isIn(match.getArena().getMechanic()) && match.equals(this.match);
+		return isIn(match.getMechanic()) && match.equals(this.match);
 	}
 
 	public boolean isInLobby(Match match) {
-		return isInLobby(match.getArena().getMechanic()) && match.equals(this.match);
+		return isInLobby(match.getMechanic()) && match.equals(this.match);
 	}
 
 	public boolean isPlaying(Match match) {
-		return isPlaying(match.getArena().getMechanic()) && match.equals(this.match);
+		return isPlaying(match.getMechanic()) && match.equals(this.match);
 	}
 
 	public boolean isIn(Mechanic mechanic) {
@@ -118,19 +118,19 @@ public class Minigamer {
 
 	public boolean isIn(Class<? extends Mechanic> mechanic) {
 		if (match != null)
-			return mechanic.isInstance(match.getArena().getMechanic());
+			return mechanic.isInstance(match.getMechanic());
 		return false;
 	}
 
 	public boolean isPlaying(Class<? extends Mechanic> mechanic) {
 		if (match != null)
-			return mechanic.isInstance(match.getArena().getMechanic()) && match.isStarted() && isAlive();
+			return mechanic.isInstance(match.getMechanic()) && match.isStarted() && isAlive();
 		return false;
 	}
 
 	public boolean isInLobby(Class<? extends Mechanic> mechanic) {
 		if (match != null)
-			return mechanic.isInstance(match.getArena().getMechanic()) && !match.isStarted();
+			return mechanic.isInstance(match.getMechanic()) && !match.isStarted();
 		return false;
 	}
 
@@ -292,14 +292,14 @@ public class Minigamer {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		// TODO: Unvanish
 		clearGameModeState();
-		player.setGameMode(match.getArena().getMechanic().getGameMode());
+		player.setGameMode(match.getMechanic().getGameMode());
 		clearGameModeState();
 
 		unhideAll();
 	}
 
 	private void clearGameModeState() {
-		Mechanic mechanic = match.getArena().getMechanic();
+		Mechanic mechanic = match.getMechanic();
 
 		player.setFireTicks(0);
 		player.resetMaxHealth();

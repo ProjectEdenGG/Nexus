@@ -234,7 +234,7 @@ public class PixelDropMatchData extends MatchData {
 						String newHint = String.valueOf(chars);
 						hint.set(newHint);
 						if (newHint.equalsIgnoreCase(word)) {
-							PixelDrop pixelDrop = match.getArena().getMechanic();
+							PixelDrop pixelDrop = match.getMechanic();
 							pixelDrop.endTheRound(match);
 						}
 					}

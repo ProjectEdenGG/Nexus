@@ -273,7 +273,7 @@ public class MinigamesCommand extends CustomCommand {
 		if (!minigamer.isPlaying())
 			error("You must be playing a checkpoint game to use that command");
 
-		if (!(match.getArena().getMechanic() instanceof CheckpointMechanic))
+		if (!(match.getMechanic() instanceof CheckpointMechanic))
 			error("You are not in a checkpoint game");
 
 		CheckpointMatchData matchData = match.getMatchData();

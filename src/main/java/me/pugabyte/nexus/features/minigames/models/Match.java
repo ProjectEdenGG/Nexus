@@ -102,6 +102,10 @@ public class Match {
 		return (T) matchData;
 	}
 
+	public <T extends Mechanic> T getMechanic() {
+		return arena.getMechanic();
+	}
+
 	public World getWorld() {
 		return arena.getWorld();
 	}
@@ -387,7 +391,7 @@ public class Match {
 	}
 
 	public boolean isMechanic(Class<? extends Mechanic> mechanic) {
-		return getArena().getMechanic().getClass().isAssignableFrom(mechanic);
+		return getMechanic().getClass().isAssignableFrom(mechanic);
 	}
 
 	public <T extends Entity> T spawn(Location location, Class<T> type) {

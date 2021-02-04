@@ -7,12 +7,13 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.Flag;
 import me.pugabyte.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
+import me.pugabyte.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
-public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
+public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 
 	@Override
 	public String getName() {
@@ -30,7 +31,7 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public void onFlagInteract(Minigamer minigamer, Sign sign) {
+	protected void onFlagInteract(Minigamer minigamer, Sign sign) {
 		Match match = minigamer.getMatch();
 		OneFlagCaptureTheFlagMatchData matchData = match.getMatchData();
 
@@ -41,21 +42,30 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 				matchData.setFlag(new Flag(sign, match));
 
 			takeFlag(minigamer);
-		} else if ((ChatColor.GREEN + "Capture").equalsIgnoreCase(sign.getLine(2))) {
-			if (!minigamer.equals(matchData.getFlagCarrier()))
-				return;
+		} else if ((ChatColor.GREEN + "Capture").equalsIgnoreCase(sign.getLine(2)))
+			if (minigamer.equals(matchData.getFlagCarrier()))
+				if (sign.getLine(3).equalsIgnoreCase(minigamer.getTeam().getColoredName()))
+					minigamer.tell("&cYou must capture the flag at the other team's base");
+				else
+					captureFlag(minigamer);
+	}
 
-			if (sign.getLine(3).equalsIgnoreCase(minigamer.getTeam().getColoredName())) {
-				minigamer.tell("&cYou must capture the flag at the other team's base");
-				return;
-			}
+	@Override
+	protected void onEnterKillRegion(Minigamer minigamer) {
+		OneFlagCaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
+		Flag flag = matchData.getFlag();
 
-			captureFlag(minigamer);
+		if (flag != null) {
+			flag.drop(minigamer.getPlayer().getLocation());
+
+			matchData.setFlagCarrier(null);
+
+			Tasks.wait(5, () -> minigamer.getMatch().broadcast(minigamer.getColoredName() + " &3dropped the flag outside the map"));
 		}
 	}
 
 	@Override
-	public void doFlagParticles(Match match) {
+	protected void doFlagParticles(Match match) {
 		OneFlagCaptureTheFlagMatchData matchData = match.getMatchData();
 		if (matchData.getFlagCarrier() == null)
 			return;
@@ -81,7 +91,7 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 		super.onDeath(event);
 	}
 
-	private void captureFlag(Minigamer minigamer) {
+	protected void captureFlag(Minigamer minigamer) {
 		Match match = minigamer.getMatch();
 		OneFlagCaptureTheFlagMatchData matchData = match.getMatchData();
 
@@ -97,7 +107,7 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 			match.end();
 	}
 
-	private void takeFlag(Minigamer minigamer) {
+	protected void takeFlag(Minigamer minigamer) {
 		Match match = minigamer.getMatch();
 		OneFlagCaptureTheFlagMatchData matchData = match.getMatchData();
 
@@ -115,7 +125,8 @@ public final class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 		super.onEnd(event);
 
 		OneFlagCaptureTheFlagMatchData matchData = event.getMatch().getMatchData();
-		matchData.getFlag().respawn();
+		if (matchData.getFlag() != null)
+			matchData.getFlag().respawn();
 	}
 
 }

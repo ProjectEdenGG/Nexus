@@ -77,7 +77,7 @@ public class Gun {
 			if (notTargetingSelf && inGunRange && sameMatch)
 				if (Vector3D.hasIntersection(observerStart, observerEnd, minimum, maximum)) {
 					minigamer.getPlayer().playSound(location, Sound.ENTITY_SHULKER_BULLET_HIT, 1, 1);
-					minigamer.getMatch().getArena().getMechanic().kill(PlayerManager.get(target), minigamer);
+					minigamer.getMatch().getMechanic().kill(PlayerManager.get(target), minigamer);
 				}
 		}
 

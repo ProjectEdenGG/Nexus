@@ -46,7 +46,7 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = PlayerManager.get((Player) event.getPlayer());
 		if (minigamer.getMatch() == null) return;
 		if (event.getInventory().getLocation() == null) return;
-		if (minigamer.getMatch().getArena().getMechanic().canOpenInventoryBlocks()) return;
+		if (minigamer.getMatch().getMechanic().canOpenInventoryBlocks()) return;
 		event.setCancelled(true);
 	}
 
@@ -106,7 +106,7 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying()) return;
 
-		minigamer.getMatch().getArena().getMechanic().onPlayerInteract(minigamer, event);
+		minigamer.getMatch().getMechanic().onPlayerInteract(minigamer, event);
 	}
 
 	@EventHandler
@@ -124,7 +124,7 @@ public class MatchListener implements Listener {
 		if (!minigamer.isPlaying()) return;
 
 		ItemStack item = event.getItemDrop().getItemStack();
-		if (!minigamer.getMatch().getArena().getMechanic().canDropItem(item))
+		if (!minigamer.getMatch().getMechanic().canDropItem(item))
 			event.setCancelled(true);
 	}
 
@@ -177,7 +177,7 @@ public class MatchListener implements Listener {
 
 		if (attacker == null || victim.getMatch().equals(attacker.getMatch())) {
 			// Same match
-			Mechanic mechanic = victim.getMatch().getArena().getMechanic();
+			Mechanic mechanic = victim.getMatch().getMechanic();
 			if (attacker != null && victim.getTeam().equals(attacker.getTeam()) && mechanic.isTeamGame()) {
 				// Friendly fire
 				event.setCancelled(true);
@@ -241,7 +241,7 @@ public class MatchListener implements Listener {
 		}
 
 		if (!victim.isPlaying() || !victim.isAlive()) return;
-		Mechanic mechanic = victim.getMatch().getArena().getMechanic();
+		Mechanic mechanic = victim.getMatch().getMechanic();
 
 		if (victim.isRespawning() || !victim.getMatch().isStarted()) {
 			event.setCancelled(true);
@@ -276,7 +276,7 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying()) return;
 		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;
-		Mechanic mechanic = minigamer.getMatch().getArena().getMechanic();
+		Mechanic mechanic = minigamer.getMatch().getMechanic();
 
 		Arena arena = minigamer.getMatch().getArena();
 		if (arena.ownsRegion(event.getRegion().getId(), "kill"))

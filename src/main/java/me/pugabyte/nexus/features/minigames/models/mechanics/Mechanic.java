@@ -205,7 +205,7 @@ public abstract class Mechanic implements Listener {
 	public Map<String, Integer> getScoreboardLines(Match match) {
 		Map<String, Integer> lines = new HashMap<>();
 
-		if (match.getArena().getMechanic() instanceof TeamMechanic)
+		if (match.getMechanic() instanceof TeamMechanic)
 			for (Team team : match.getAliveTeams())
 				lines.put("- " + team.getColoredName(), team.getScore(match));
 

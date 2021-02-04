@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.Flag;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +36,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public void onFlagInteract(Minigamer minigamer, Sign sign) {
+	protected void onFlagInteract(Minigamer minigamer, Sign sign) {
 		Match match = minigamer.getMatch();
 		CaptureTheFlagMatchData matchData = match.getMatchData();
 		Arena arena = match.getArena();
@@ -67,7 +68,21 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public void doFlagParticles(Match match) {
+	protected void onEnterKillRegion(Minigamer minigamer) {
+		CaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
+		Flag flag = matchData.getFlagByCarrier(minigamer);
+
+		if (flag != null) {
+			flag.drop(minigamer.getPlayer().getLocation());
+
+			matchData.removeFlagCarrier(minigamer);
+
+			Tasks.wait(5, () -> minigamer.getMatch().broadcast(minigamer.getColoredName() + " &3dropped " + flag.getTeam().getColoredName() + "&3's flag outside the map"));
+		}
+	}
+
+	@Override
+	protected void doFlagParticles(Match match) {
 		CaptureTheFlagMatchData matchData = match.getMatchData();
 
 		matchData.getFlags().values().forEach(flag -> {

@@ -96,8 +96,6 @@ public class Flag {
 	public void drop(Location location) {
 		currentLocation = getSuitableLocation(location);
 
-		// TODO: Make sure flag is on a solid block and in an empty space
-
 		Block block = currentLocation.getBlock();
 		block.setType(Material.OAK_SIGN);
 
@@ -109,9 +107,9 @@ public class Flag {
 		sign.update();
 		taskId = match.getTasks().wait(Time.SECOND.x(60), () -> {
 			respawn();
-			if (match.getArena().getMechanic() instanceof CaptureTheFlag)
+			if (match.getMechanic() instanceof CaptureTheFlag)
 				match.broadcast(team.getColoredName() + "&3's flag has respawned");
-			else if (match.getArena().getMechanic() instanceof OneFlagCaptureTheFlag)
+			else if (match.getMechanic() instanceof OneFlagCaptureTheFlag)
 				match.broadcast("The flag has respawned");
 		});
 	}

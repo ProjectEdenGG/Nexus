@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features;
 
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.Region;
 import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.NoArgsConstructor;
@@ -454,6 +455,23 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void schemPaste(String name) {
 		worldEditUtils.paster().file(name).at(player().getLocation()).pasteAsync();
 		send("Pasted schematic " + name);
+	}
+
+	private static final Map<UUID, Clipboard> clipboards = new HashMap<>();
+
+	@Path("clipboard copy")
+	void clipboardCopy() {
+		clipboards.put(uuid(), worldEditUtils.copy(worldEditUtils.getPlayerSelection(player())));
+		send("Copied selection");
+	}
+
+	@Path("clipboard paste")
+	void clipboardPaste() {
+		if (!clipboards.containsKey(uuid()))
+			error("You have not copied anything");
+
+		worldEditUtils.paster().clipboard(clipboards.get(uuid())).at(player().getLocation()).pasteAsync();
+		send("Pasted clipboard");
 	}
 
 	@Path("allowedRegionsTest")

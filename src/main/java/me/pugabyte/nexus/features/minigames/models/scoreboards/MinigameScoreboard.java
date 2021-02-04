@@ -27,7 +27,7 @@ public interface MinigameScoreboard {
 	class Factory {
 		@SneakyThrows
 		public static MinigameScoreboard create(Match match) {
-			Scoreboard annotation = match.getArena().getMechanic().getAnnotation(Scoreboard.class);
+			Scoreboard annotation = match.getMechanic().getAnnotation(Scoreboard.class);
 			Class<? extends MinigameScoreboard> type = Type.MATCH.getType();
 			if (annotation != null)
 				type = annotation.sidebarType().getType();
@@ -64,7 +64,7 @@ public interface MinigameScoreboard {
 		public static class Factory {
 			@SneakyThrows
 			public static Teams create(Match match) {
-				Scoreboard annotation = match.getArena().getMechanic().getAnnotation(Scoreboard.class);
+				Scoreboard annotation = match.getMechanic().getAnnotation(Scoreboard.class);
 				boolean doTeams = annotation == null || annotation.teams();
 
 				if (doTeams)

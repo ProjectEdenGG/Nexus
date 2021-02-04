@@ -12,13 +12,13 @@ public class MatchSidebar implements MinigameScoreboard {
 
 	public MatchSidebar(Match match) {
 		this.match = match;
-		this.scoreboard = new BNScoreboard(match.getArena().getMechanic().getScoreboardTitle(match));;
+		this.scoreboard = new BNScoreboard(match.getMechanic().getScoreboardTitle(match));;
 	}
 
 	@Override
 	public void update() {
-		scoreboard.setTitle(match.getArena().getMechanic().getScoreboardTitle(match));
-		scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match));
+		scoreboard.setTitle(match.getMechanic().getScoreboardTitle(match));
+		scoreboard.setLines(match.getMechanic().getScoreboardLines(match));
 
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (!match.getPlayers().contains(player))

@@ -29,6 +29,7 @@ public enum MechanicType {
 	PIXEL_DROP(new PixelDrop()),
 	PIXEL_PAINTERS(new PixelPainters()),
 	QUAKE(new Quake()),
+	SIEGE(new Siege()),
 	SPLEEF(new Spleef()),
 	SPLEGG(new Splegg()),
 	TEAM_DEATHMATCH(new TeamDeathmatch()),

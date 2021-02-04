@@ -20,7 +20,7 @@ public class AnnotationListener implements Listener {
 
 	@EventHandler
 	public void onMatchStart_AntiCamp(MatchStartEvent event) {
-		AntiCamp antiCamp = event.getMatch().getArena().getMechanic().getAnnotation(AntiCamp.class);
+		AntiCamp antiCamp = event.getMatch().getMechanic().getAnnotation(AntiCamp.class);
 		if (antiCamp != null)
 			new AntiCampingTask(event.getMatch());
 	}
@@ -41,7 +41,7 @@ public class AnnotationListener implements Listener {
 		if (!minigamer.isPlaying()) return;
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
-		Railgun railgun = minigamer.getMatch().getArena().getMechanic().getAnnotation(Railgun.class);
+		Railgun railgun = minigamer.getMatch().getMechanic().getAnnotation(Railgun.class);
 		if (railgun == null) return;
 
 		if (!minigamer.getPlayer().getInventory().getItemInMainHand().getType().name().contains("HOE")) return;

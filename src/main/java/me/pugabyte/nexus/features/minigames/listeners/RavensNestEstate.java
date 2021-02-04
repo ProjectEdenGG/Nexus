@@ -138,7 +138,7 @@ public class RavensNestEstate implements Listener {
 		Match match = minigamer.getMatch();
 		if (!event.getRegion().getId().equalsIgnoreCase(match.getArena().getProtectedRegion("deathzone").getId()))
 			return;
-		match.getArena().getMechanic().kill(minigamer);
+		match.getMechanic().kill(minigamer);
 
 	}
 

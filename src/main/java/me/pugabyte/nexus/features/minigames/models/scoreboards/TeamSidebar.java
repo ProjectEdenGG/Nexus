@@ -19,7 +19,7 @@ public class TeamSidebar implements MinigameScoreboard {
 	private BNScoreboard createScoreboard(Team team) {
 		return new BNScoreboard(
 				team.getName() + "-" + match.getArena().getName(),
-				match.getArena().getMechanic().getScoreboardTitle(match)
+				match.getMechanic().getScoreboardTitle(match)
 		);
 	}
 
@@ -29,8 +29,8 @@ public class TeamSidebar implements MinigameScoreboard {
 				scoreboards.computeIfAbsent(team, this::createScoreboard));
 
 		scoreboards.forEach((team, scoreboard) -> {
-			scoreboard.setTitle(match.getArena().getMechanic().getScoreboardTitle(match));
-			scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(match, team));
+			scoreboard.setTitle(match.getMechanic().getScoreboardTitle(match));
+			scoreboard.setLines(match.getMechanic().getScoreboardLines(match, team));
 		});
 
 		match.getArena().getTeams().forEach(team ->

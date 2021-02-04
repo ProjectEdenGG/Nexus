@@ -18,7 +18,7 @@ public class MinigamerSidebar implements MinigameScoreboard {
 	private BNScoreboard createScoreboard(Minigamer minigamer) {
 		return new BNScoreboard(
 				minigamer.getName() + "-" + minigamer.getMatch().getArena().getName(),
-				match.getArena().getMechanic().getScoreboardTitle(match),
+				match.getMechanic().getScoreboardTitle(match),
 				minigamer.getPlayer()
 		);
 	}
@@ -30,8 +30,8 @@ public class MinigamerSidebar implements MinigameScoreboard {
 						createScoreboard(minigamer)));
 
 		scoreboards.forEach((minigamer, scoreboard) -> {
-			scoreboard.setTitle(match.getArena().getMechanic().getScoreboardTitle(minigamer.getMatch()));
-			scoreboard.setLines(match.getArena().getMechanic().getScoreboardLines(minigamer));
+			scoreboard.setTitle(match.getMechanic().getScoreboardTitle(minigamer.getMatch()));
+			scoreboard.setLines(match.getMechanic().getScoreboardLines(minigamer));
 		});
 	}
 
