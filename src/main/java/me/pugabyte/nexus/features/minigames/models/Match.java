@@ -391,7 +391,7 @@ public class Match {
 	}
 
 	public boolean isMechanic(Class<? extends Mechanic> mechanic) {
-		return getMechanic().getClass().isAssignableFrom(mechanic);
+		return mechanic.isAssignableFrom(getMechanic().getClass());
 	}
 
 	public <T extends Entity> T spawn(Location location, Class<T> type) {

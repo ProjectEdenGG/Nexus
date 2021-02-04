@@ -41,8 +41,7 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 
 		if ((ChatColor.DARK_BLUE + "[Minigame]").equalsIgnoreCase(sign.getLine(0)))
 			if ((ChatColor.GREEN + "Flag").equalsIgnoreCase(sign.getLine(1))) {
-				CaptureTheFlagMechanic mechanic = minigamer.getMatch().getMechanic();
-				mechanic.onFlagInteract(minigamer, sign);
+				onFlagInteract(minigamer, sign);
 			}
 	}
 
@@ -52,8 +51,7 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion(), "kill")) return;
 
-		CaptureTheFlagMechanic mechanic = minigamer.getMatch().getMechanic();
-		mechanic.onEnterKillRegion(minigamer);
+		onEnterKillRegion(minigamer);
 	}
 
 	@EventHandler
@@ -61,8 +59,7 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 		if (!event.getMatch().isMechanic(this)) return;
 		if (event.getTime() % 2 != 0) return;
 
-		CaptureTheFlagMechanic mechanic = event.getMatch().getMechanic();
-		mechanic.doFlagParticles(event.getMatch());
+		doFlagParticles(event.getMatch());
 	}
 
 }
