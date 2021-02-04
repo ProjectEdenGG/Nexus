@@ -495,7 +495,7 @@ public enum VPSMenu {
 			add(VPSPage.builder()
 					.rows(3)
 					.items(new HashMap<Integer, VPSSlotBuilder>() {{
-						put(11, VPSSlot.builder()
+						put(13, VPSSlot.builder()
 								.name("+1 Plot")
 								.display(new ItemBuilder(Material.SANDSTONE_SLAB)
 										.lore("&3You may purchase up to")
@@ -505,24 +505,6 @@ public enum VPSMenu {
 										.lore("")
 										.lore("&6Price: &e150vp"))
 								.command("vps buy plot"));
-						put(13, VPSSlot.builder()
-								.name("Player Heads")
-								.display(new ItemBuilder(Material.PLAYER_HEAD)
-										.lore("&6Price &3(Non-Staff): &e6vp")
-										.lore("&6Price &3(Staff): &e9vp"))
-								.command("vps buy head")
-								.close(true));
-						put(15, VPSSlot.builder()
-								.name("Uncraftable Banners")
-								.display(new ItemBuilder(Material.CYAN_BANNER)
-										.lore("&eClick to teleport &3to the")
-										.lore("&3banner display area")
-										.lore("")
-										.lore("&3Read the &ehologram&3!")
-										.lore("")
-										.lore("&6Price: &e5-10vp"))
-								.command("warp banners")
-								.close(true));
 					}}).build());
 		}};
 	},

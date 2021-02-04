@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.votes;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -103,15 +104,18 @@ public class BannerCommand extends CustomCommand implements Listener {
 		if (!MaterialTag.BANNERS.isTagged(banner.getType()))
 			return;
 
-		try {
-			new VoteService().takePoints(event.getPlayer().getUniqueId().toString(), 5);
-		} catch (InvalidInputException ex) {
-			send(event.getPlayer(), ex.getMessage());
-			return;
-		}
+		ConfirmationMenu.builder()
+				.onConfirm(e -> {
+					try {
+						new VoteService().takePoints(event.getPlayer().getUniqueId().toString(), 5);
+					} catch (InvalidInputException ex) {
+						send(event.getPlayer(), ex.getMessage());
+						return;
+					}
 
-		ItemUtils.giveItems(event.getPlayer(), banner.getDrops());
-		send(event.getPlayer(), StringUtils.getPrefix("VPS") + colorize("You purchased banner &e" + id + " &3for &e5 vote points"));
+					ItemUtils.giveItems(event.getPlayer(), banner.getDrops());
+					send(event.getPlayer(), StringUtils.getPrefix("VPS") + colorize("You purchased banner &e" + id + " &3for &e5 vote points"));
+				}).open(event.getPlayer());
 	}
 
 }

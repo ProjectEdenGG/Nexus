@@ -99,6 +99,7 @@ public class MinigamesCommand extends CustomCommand {
 
 		settings.setBowInOffHand(offHand);
 		send(PREFIX + "Bows will now spawn in your " + (offHand ? "offhand" : "hotbar"));
+		service.save(settings);
 	}
 
 	@Path("start [arena]")

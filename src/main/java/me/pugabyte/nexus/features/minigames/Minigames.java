@@ -8,6 +8,7 @@ import me.lucko.helper.scoreboard.PacketScoreboardProvider;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.lobby.ActionBar;
 import me.pugabyte.nexus.features.minigames.lobby.Basketball;
+import me.pugabyte.nexus.features.minigames.lobby.Parkour;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
@@ -73,6 +74,7 @@ public class Minigames extends Feature {
 
 		new ActionBar();
 		new Basketball();
+		new Parkour();
 	}
 
 	@Override

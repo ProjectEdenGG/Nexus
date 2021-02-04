@@ -76,6 +76,8 @@ public enum Package {
 
 	@Id("2559650")
 	@Permission("citizens.help")
+	@Permission("citizens.npc")
+	@Permission("citizens.npc.help")
 	@Permission("citizens.npc.create")
 	@Permission("citizens.npc.create.*")
 	@Permission("citizens.npc.profession")

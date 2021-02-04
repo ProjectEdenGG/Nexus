@@ -84,8 +84,8 @@ public class HomeListener implements Listener {
 
 		Koda.dm(player, "Uh oh! You died without a home set! On Bear Nation we have a system called Homes that allow " +
 				"you to save your location. I saved a home for you where you died, and you can teleport back to it with " +
-				"&c/home " + homeName + " &f- but be careful! I can only do this once for you! Use &c/sethome [name] &fand &c/homes edit " +
-				"&fto manage your homes in the future. Good luck!");
+				"&c/home " + homeName + " &e- but be careful! I can only do this once for you! Use &c/sethome [name] &eand &c/homes edit " +
+				"&eto manage your homes in the future. Good luck!");
 
 		homeOwner.setUsedDeathHome(true);
 		deathLocations.remove(uuid);
