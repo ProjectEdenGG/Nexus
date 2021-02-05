@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.Utils.sortByValueReverse;
 
@@ -48,7 +49,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Path
 	void run() {
-		JsonBuilder json = new JsonBuilder().next("&6Choose one:").newline();
+		JsonBuilder json = json();
 		for (Referral.Origin origin : Referral.Origin.values())
 			json.next("&3" + origin.getDisplay())
 					.hover("&e" + origin.getLink())
@@ -86,14 +87,28 @@ public class ReferralCommand extends CustomCommand implements Listener {
 						send(PREFIX + "Thank you for your feedback!");
 					})
 					.open(player());
-		} else {
+		} else
 			send(PREFIX + "Thank you for your feedback!");
-		}
 	}
 
 	@Path("debug [player]")
 	void debug(@Arg("self") Referral referral) {
 		send(toPrettyString(referral));
+	}
+
+	@Async
+	@Path("extraInputs")
+	void others() {
+		List<Referral> referrals = service.<Referral>getAll().stream()
+				.filter(_referral -> !isNullOrEmpty(_referral.getExtra()))
+				.collect(Collectors.toList());
+
+		if (referrals.isEmpty())
+			error("No referrals with extra content found");
+
+		send(PREFIX + "Extra input: ");
+		for (Referral _referral : referrals)
+			send(" &e" + _referral.getName() + " &7" + _referral.getExtra());
 	}
 
 	@Async
