@@ -26,7 +26,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.balanceconverter.BalanceConverter;
 import me.pugabyte.nexus.models.hours.HoursService;
@@ -41,7 +40,6 @@ import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
-import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -56,11 +54,9 @@ import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -69,7 +65,6 @@ import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -84,10 +79,7 @@ import org.bukkit.util.Vector;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,9 +91,6 @@ import static me.pugabyte.nexus.utils.BlockUtils.getBlocksInRadius;
 import static me.pugabyte.nexus.utils.BlockUtils.getDirection;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.StringUtils.parseDate;
-import static me.pugabyte.nexus.utils.StringUtils.parseDateTime;
-import static me.pugabyte.nexus.utils.StringUtils.parseShortDate;
 import static me.pugabyte.nexus.utils.StringUtils.paste;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
@@ -681,52 +670,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 				.filter(player -> new Nerd(player).getRank().isStaff())
 				.map(OfflinePlayer::getName)
 				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
-	}
-
-	@ConverterFor(ChatColor.class)
-	ChatColor convertToChatColor(String value) {
-		if (StringUtils.getHexPattern().matcher(value).matches())
-			return ChatColor.of(value.replaceFirst("&", ""));
-
-		try {
-			return ColorType.valueOf(value.toUpperCase()).getChatColor();
-		} catch (IllegalArgumentException ex) {
-			throw new InvalidInputException("Color &e" + value + "&c not found");
-		}
-	}
-
-	@TabCompleterFor(ChatColor.class)
-	List<String> tabCompleteChatColor(String filter) {
-		return Arrays.stream(ColorType.values())
-				.map(colorType -> colorType.name().toLowerCase())
-				.filter(name -> name.startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
-	}
-
-	@ConverterFor(LocalDate.class)
-	LocalDate convertToLocalDate(String value) {
-		try { return parseShortDate(value); } catch (DateTimeParseException ignore) {}
-		try { return parseDate(value); } catch (DateTimeParseException ignore) {}
-		throw new InvalidInputException("Could not parse date, correct format is MM/DD/YYYY");
-	}
-
-	@ConverterFor(LocalDateTime.class)
-	LocalDateTime convertToLocalDateTime(String value) {
-		try { return parseDateTime(value); } catch (DateTimeParseException ignore) {}
-		throw new InvalidInputException("Could not parse date, correct format is YYYY-MM-DDTHH:MM:SS.ZZZ");
-	}
-
-	@ConverterFor(Enchantment.class)
-	Enchantment convertToEnchantment(String value) {
-		return Enchantment.getByKey(NamespacedKey.minecraft(value));
-	}
-
-	@TabCompleterFor(Enchantment.class)
-	List<String> tabCompleteEnchantment(String filter) {
-		return Arrays.stream(Enchantment.values())
-				.filter(enchantment -> enchantment.getKey().getKey().toLowerCase().startsWith(filter.toLowerCase()))
-				.map(enchantment -> enchantment.getKey().getKey())
 				.collect(Collectors.toList());
 	}
 

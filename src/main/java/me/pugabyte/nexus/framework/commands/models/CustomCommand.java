@@ -27,15 +27,18 @@ import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -43,6 +46,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -51,6 +55,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.reflections.Reflections;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,6 +71,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.StringUtils.parseDate;
+import static me.pugabyte.nexus.utils.StringUtils.parseDateTime;
+import static me.pugabyte.nexus.utils.StringUtils.parseShortDate;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
 
 @NoArgsConstructor
@@ -642,6 +652,52 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (material == null)
 			throw new InvalidInputException("Material from " + value + " not found");
 		return material;
+	}
+
+	@ConverterFor(ChatColor.class)
+	ChatColor convertToChatColor(String value) {
+		if (StringUtils.getHexPattern().matcher(value).matches())
+			return ChatColor.of(value.replaceFirst("&", ""));
+
+		try {
+			return ColorType.valueOf(value.toUpperCase()).getChatColor();
+		} catch (IllegalArgumentException ex) {
+			throw new InvalidInputException("Color &e" + value + "&c not found");
+		}
+	}
+
+	@TabCompleterFor(ChatColor.class)
+	List<String> tabCompleteChatColor(String filter) {
+		return Arrays.stream(ColorType.values())
+				.map(colorType -> colorType.name().toLowerCase())
+				.filter(name -> name.startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
+	}
+
+	@ConverterFor(LocalDate.class)
+	public LocalDate convertToLocalDate(String value) {
+		try { return parseShortDate(value); } catch (DateTimeParseException ignore) {}
+		try { return parseDate(value); } catch (DateTimeParseException ignore) {}
+		throw new InvalidInputException("Could not parse date, correct format is MM/DD/YYYY");
+	}
+
+	@ConverterFor(LocalDateTime.class)
+	public LocalDateTime convertToLocalDateTime(String value) {
+		try { return parseDateTime(value); } catch (DateTimeParseException ignore) {}
+		throw new InvalidInputException("Could not parse date, correct format is YYYY-MM-DDTHH:MM:SS.ZZZ");
+	}
+
+	@ConverterFor(Enchantment.class)
+	Enchantment convertToEnchantment(String value) {
+		return Enchantment.getByKey(NamespacedKey.minecraft(value));
+	}
+
+	@TabCompleterFor(Enchantment.class)
+	List<String> tabCompleteEnchantment(String filter) {
+		return Arrays.stream(Enchantment.values())
+				.filter(enchantment -> enchantment.getKey().getKey().toLowerCase().startsWith(filter.toLowerCase()))
+				.map(enchantment -> enchantment.getKey().getKey())
+				.collect(Collectors.toList());
 	}
 
 	protected <T> void paginate(List<T> values, BiFunction<T, Integer, JsonBuilder> formatter, String command, int page) {
