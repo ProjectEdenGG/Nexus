@@ -20,7 +20,8 @@ import java.util.Map;
 
 public class ItemTags extends Feature {
 	private static final Map<Enchantment, List<Level>> enchantsConfigMap = new HashMap<>();
-	private static final Map<Enchantment, Integer> customEnchantsConfigMap = new HashMap<>();
+	//	private static final Map<Enchantment, Integer> customEnchantsConfigMap = new HashMap<>();
+	private static final Map<String, Integer> customEnchantsConfigMap = new HashMap<>();
 	private static final Map<String, Integer> armorConfigMap = new HashMap<>();
 	private static final Map<String, Integer> toolConfigMap = new HashMap<>();
 
@@ -72,12 +73,19 @@ public class ItemTags extends Feature {
 		return 0;
 	}
 
-	public static int getCustomEnchantVal(Enchantment enchant) {
+	public static int getCustomEnchantVal(String enchant) {
 		if (!customEnchantsConfigMap.containsKey(enchant))
 			return 0;
 
 		return customEnchantsConfigMap.get(enchant);
 	}
+
+//	public static int getCustomEnchantVal(Enchantment enchant) {
+//		if (!customEnchantsConfigMap.containsKey(enchant))
+//			return 0;
+//
+//		return customEnchantsConfigMap.get(enchant);
+//	}
 
 	public static Integer getArmorMaterialVal(Material material) {
 		String type = parseMaterial(material.name());
@@ -132,13 +140,22 @@ public class ItemTags extends Feature {
 			}
 		}
 
+//		ConfigurationSection customEnchants = config.getConfigurationSection("ItemTags.CustomEnchants");
+//		if (customEnchants != null) {
+//			for (String key : customEnchants.getKeys(false)) {
+//				Enchantment enchant = parseEnchantment(key);
+//				int value = customEnchants.getInt(key);
+//
+//				customEnchantsConfigMap.put(enchant, value);
+//			}
+//		}
+
 		ConfigurationSection customEnchants = config.getConfigurationSection("ItemTags.CustomEnchants");
 		if (customEnchants != null) {
 			for (String key : customEnchants.getKeys(false)) {
-				Enchantment enchant = parseEnchantment(key);
 				int value = customEnchants.getInt(key);
 
-				customEnchantsConfigMap.put(enchant, value);
+				customEnchantsConfigMap.put(key, value);
 			}
 		}
 	}

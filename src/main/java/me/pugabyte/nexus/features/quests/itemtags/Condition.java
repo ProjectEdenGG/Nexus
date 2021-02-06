@@ -5,6 +5,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,18 +24,45 @@ public enum Condition {
 	@Getter
 	private final int max;
 
-	public static Condition of(ItemStack tool) {
-		if (!ItemTagsUtils.isArmor(tool) && !ItemTagsUtils.isTool(tool))
+	public static Condition of(ItemStack itemStack) {
+		if (!ItemTagsUtils.isArmor(itemStack) && !ItemTagsUtils.isTool(itemStack))
 			return null;
 
-		if (ItemTagsUtils.isMythicMobsItem(tool))
+		if (ItemTagsUtils.isMythicMobsItem(itemStack))
 			return null;
 
-		ItemMeta meta = tool.getItemMeta();
+		ItemMeta meta = itemStack.getItemMeta();
 		if (meta instanceof Damageable) {
 			Damageable damageable = (Damageable) meta;
 			double damage = damageable.getDamage();
-			double maxDurability = tool.getType().getMaxDurability();
+			double maxDurability = itemStack.getType().getMaxDurability();
+
+			for (Condition condition : values()) {
+				double min = (condition.getMin() / 100.0) * maxDurability;
+				double max = (condition.getMax() / 100.0) * maxDurability;
+
+				if (damage >= min && damage <= max)
+					return condition;
+			}
+		}
+
+		return null;
+	}
+
+	public static Condition debug(ItemStack itemStack, Player debugger) {
+		if (!ItemTagsUtils.isArmor(itemStack) && !ItemTagsUtils.isTool(itemStack))
+			return null;
+
+		if (ItemTagsUtils.isMythicMobsItem(itemStack))
+			return null;
+
+		ItemMeta meta = itemStack.getItemMeta();
+		if (meta instanceof Damageable) {
+			Damageable damageable = (Damageable) meta;
+			double damage = damageable.getDamage();
+			debugger.sendMessage("Damage: " + damage);
+			double maxDurability = itemStack.getType().getMaxDurability();
+			debugger.sendMessage("Max Durability: " + maxDurability);
 
 			for (Condition condition : values()) {
 				double min = (condition.getMin() / 100.0) * maxDurability;

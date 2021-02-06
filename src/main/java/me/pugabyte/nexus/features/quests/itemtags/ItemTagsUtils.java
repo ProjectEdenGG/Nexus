@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.quests.itemtags;
 
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -11,6 +12,23 @@ import java.util.List;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class ItemTagsUtils {
+
+	public static void debugItem(ItemStack itemStack, Player debugger) {
+		debugger.sendMessage("====");
+		debugger.sendMessage("Condition Debug:");
+		Condition condition = Condition.debug(itemStack, debugger);
+		if (condition != null)
+			debugger.sendMessage("Tag: " + condition.getTag());
+
+		debugger.sendMessage("");
+
+		debugger.sendMessage("Rarity Debug:");
+		Rarity rarity = Rarity.debug(itemStack, debugger);
+		if (rarity != null)
+			debugger.sendMessage("Tag: " + rarity.getTag());
+
+		debugger.sendMessage("====");
+	}
 
 	public static ItemStack updateItem(ItemStack itemStack) {
 		Condition condition = Condition.of(itemStack);

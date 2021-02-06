@@ -15,11 +15,11 @@ import static me.pugabyte.nexus.features.quests.itemtags.ItemTagsUtils.addRarity
 import static me.pugabyte.nexus.features.quests.itemtags.ItemTagsUtils.finalizeItem;
 import static me.pugabyte.nexus.features.quests.itemtags.ItemTagsUtils.updateItem;
 
-@Aliases({"itemtags"})
+@Aliases({"itemtag"})
 @Permission("group.admin")
-public class ItemTagCommand extends CustomCommand {
+public class ItemTagsCommand extends CustomCommand {
 
-	public ItemTagCommand(CommandEvent event) {
+	public ItemTagsCommand(CommandEvent event) {
 		super(event);
 	}
 
@@ -85,6 +85,12 @@ public class ItemTagCommand extends CustomCommand {
 
 		int heldSlot = player().getInventory().getHeldItemSlot();
 		player().getInventory().setItem(heldSlot, updated);
+	}
+
+	@Path("debugItem")
+	void debugItem() {
+		ItemStack tool = getToolRequired();
+		ItemTagsUtils.debugItem(tool, player());
 	}
 
 	@Path("reload")

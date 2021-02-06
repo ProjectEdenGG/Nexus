@@ -5,6 +5,7 @@ import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -47,25 +48,68 @@ public enum Rarity {
 		this.max = null;
 	}
 
-	public static Rarity of(ItemStack tool) {
-		if (!ItemTagsUtils.isArmor(tool) && !ItemTagsUtils.isTool(tool))
+	public static Rarity of(ItemStack itemStack) {
+		if (!ItemTagsUtils.isArmor(itemStack) && !ItemTagsUtils.isTool(itemStack))
 			return null;
 
-		if (ItemTagsUtils.isMythicMobsItem(tool))
+		if (ItemTagsUtils.isMythicMobsItem(itemStack))
 			return null;
 
-		Rarity currentRarity = getRarityFromLore(tool.getLore());
+		Rarity currentRarity = getRarityFromLore(itemStack.getLore());
 
 		// Calculate new rarity, if current rarity is craftable
 		if (currentRarity == null || currentRarity.isCraftable()) {
-			Integer val_material = getMaterialVal(tool);
-			int val_enchants = getEnchantsVal(tool);
-			int val_customEnchants = getCustomEnchantsVal(tool);
+			Integer val_material = getMaterialVal(itemStack);
+			int val_enchants = getEnchantsVal(itemStack);
+			int val_customEnchants = getCustomEnchantsVal(itemStack);
 
 			if (val_material == null)
 				return null;
 
 			int sum = val_material + val_enchants + val_customEnchants;
+
+			if (sum <= COMMON.getMin())
+				return COMMON;
+
+			if (sum >= LEGENDARY.getMax())
+				return LEGENDARY;
+
+			for (Rarity rarity : Rarity.values()) {
+				int min = rarity.getMin();
+				int max = rarity.getMax();
+
+				if (sum >= min && sum <= max)
+					return rarity;
+			}
+		}
+
+		// Item is not craftable, return current rarity
+		return currentRarity;
+	}
+
+	public static Rarity debug(ItemStack itemStack, Player debugger) {
+		if (!ItemTagsUtils.isArmor(itemStack) && !ItemTagsUtils.isTool(itemStack))
+			return null;
+
+		if (ItemTagsUtils.isMythicMobsItem(itemStack))
+			return null;
+
+		Rarity currentRarity = getRarityFromLore(itemStack.getLore());
+
+		// Calculate new rarity, if current rarity is craftable
+		if (currentRarity == null || currentRarity.isCraftable()) {
+			Integer val_material = getMaterialVal(itemStack);
+			debugger.sendMessage("Material Val: " + val_material);
+			int val_enchants = getEnchantsVal(itemStack);
+			debugger.sendMessage("Vanilla Enchants Val: " + val_enchants);
+			int val_customEnchants = getCustomEnchantsVal(itemStack);
+			debugger.sendMessage("Custom Enchants Val: " + val_customEnchants);
+
+			if (val_material == null)
+				return null;
+
+			int sum = val_material + val_enchants + val_customEnchants;
+			debugger.sendMessage("Sum: " + sum);
 
 			if (sum <= COMMON.getMin())
 				return COMMON;
@@ -120,13 +164,23 @@ public enum Rarity {
 	private static int getCustomEnchantsVal(ItemStack itemStack) {
 		int result = 0;
 
-		ItemMeta meta = itemStack.getItemMeta();
-		if (meta.hasEnchants()) {
-			Map<Enchantment, Integer> enchantMap = meta.getEnchants();
-			Set<Enchantment> enchants = enchantMap.keySet();
-			for (Enchantment enchant : enchants) {
-				int val = ItemTags.getCustomEnchantVal(enchant);
+//		ItemMeta meta = itemStack.getItemMeta();
+//		if (meta.hasEnchants()) {
+//			Map<Enchantment, Integer> enchantMap = meta.getEnchants();
+//			Set<Enchantment> enchants = enchantMap.keySet();
+//			for (Enchantment enchant : enchants) {
+//				int val = ItemTags.getCustomEnchantVal(enchant);
+//
+//				result += val;
+//			}
+//		}
 
+		ItemMeta meta = itemStack.getItemMeta();
+		List<String> lore = meta.getLore();
+		if (lore != null && !lore.isEmpty()) {
+			for (String line : lore) {
+				String enchant = StringUtils.stripColor(line).replaceAll("[0-9]+", "").trim();
+				int val = ItemTags.getCustomEnchantVal(enchant);
 				result += val;
 			}
 		}
