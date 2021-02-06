@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.RandomUtils.randomInt;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
+import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
 import static me.pugabyte.nexus.utils.Utils.epochSecond;
 
 @NoArgsConstructor
@@ -116,7 +118,16 @@ public class Votes extends Feature implements Listener {
 
 		Nexus.log("[Votes] Vote received from " + event.getVote().getServiceName() + ": " + username + " (" + name + " | " + uuid + ")");
 
-		Vote vote = new Vote(uuid, site, extraVotePoints(), epochSecond(event.getVote().getTimeStamp()));
+		// MCBIZ is sending votes with a timestamp of an hour ago ??
+		LocalDateTime timestamp = epochSecond(event.getVote().getTimeStamp());
+		if (site == VoteSite.MCBIZ) {
+			Nexus.log("MCBIZ Timestamp: " + shortDateTimeFormat(timestamp));
+			long minutes = timestamp.until(LocalDateTime.now(), ChronoUnit.MINUTES);
+			if (minutes > 55 && minutes < 65)
+				timestamp = timestamp.plusHours(1);
+		}
+
+		Vote vote = new Vote(uuid, site, extraVotePoints(), timestamp);
 		new VoteService().save(vote);
 
 		if (new CooldownService().check(UUID.fromString(uuid), "vote-announcement", Time.HOUR)) {
