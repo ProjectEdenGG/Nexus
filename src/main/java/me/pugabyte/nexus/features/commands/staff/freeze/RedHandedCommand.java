@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.freeze;
 
-import me.pugabyte.nexus.features.chat.ChatManager;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -19,8 +19,8 @@ import java.util.List;
 @Aliases("rh")
 @Permission("group.staff")
 public class RedHandedCommand extends CustomCommand {
-	ChatService chatService = new ChatService();
-	Channel local = ChatManager.getChannel("l");
+	private final ChatService chatService = new ChatService();
+	private final Channel local = StaticChannel.LOCAL.getChannel();
 
 	public RedHandedCommand(CommandEvent event) {
 		super(event);
