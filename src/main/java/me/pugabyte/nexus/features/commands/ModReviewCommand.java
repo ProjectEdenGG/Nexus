@@ -202,7 +202,7 @@ public class ModReviewCommand extends CustomCommand {
 	List<String> tabCompleteModReviewRequest(String filter) {
 		return requests.stream()
 				.map(ModReviewRequest::getName)
-				.filter(request -> request.startsWith(filter.toLowerCase()))
+				.filter(request -> request.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 

@@ -232,7 +232,7 @@ public abstract class Mechanic implements Listener {
 		if (ActionGroup.CLICK_BLOCK.applies(event))
 			if (event.getClickedBlock() != null)
 				if (!canUseBlock(minigamer, event.getClickedBlock())) {
-					Nexus.log("Cancelling interact");
+					Nexus.debug("Cancelling interact");
 					event.setCancelled(true);
 					return;
 				}

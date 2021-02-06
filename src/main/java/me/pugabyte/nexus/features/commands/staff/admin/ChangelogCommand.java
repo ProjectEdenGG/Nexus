@@ -69,6 +69,7 @@ public class ChangelogCommand extends CustomCommand {
 		};
 		paginate(changelog.getEntries(), formatter, "/changelog list ", page);
 	}
+
 	@Path("database debug <entry>")
 	void databaseDebug(ChangelogEntry entry) {
 		send(StringUtils.toPrettyString(entry));

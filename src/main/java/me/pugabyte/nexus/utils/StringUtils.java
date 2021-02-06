@@ -297,6 +297,13 @@ public class StringUtils {
 		return number.contains(".") ? number.replaceAll("0*$", "").replaceAll("\\.$", "") : number;
 	}
 
+	public static String ellipsis(String text, int length) {
+		if (text.length() > length)
+			return text.substring(length) + "...";
+		else
+			return text;
+	}
+
 	public static String bool(boolean b) {
 		if (b)
 			return "&atrue";
