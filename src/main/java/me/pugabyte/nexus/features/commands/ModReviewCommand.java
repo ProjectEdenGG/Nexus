@@ -44,12 +44,6 @@ public class ModReviewCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	@Override
-	public void help() {
-		super.help();
-	}
-
 	@Path("<mod>")
 	@Description("View detailed information on a mod and it's verdict")
 	void check(Mod mod) {
