@@ -1,7 +1,8 @@
 package me.pugabyte.nexus.features.warps;
 
-import me.pugabyte.nexus.models.setting.Setting;
-import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.models.buildcontest.BuildContest;
+import me.pugabyte.nexus.models.buildcontest.BuildContestService;
 
 public enum WarpMenu {
 	MAIN(4),
@@ -24,9 +25,8 @@ public enum WarpMenu {
 
 	public int getSize() {
 		if (this == MAIN) {
-			SettingService service = new SettingService();
-			Setting bc = service.get("buildcontest", "info");
-			if (bc != null && bc.getJson().containsKey("active") && (Boolean) bc.getJson().get("active"))
+			BuildContest buildContest = new BuildContestService().get(Nexus.getUUID0());
+			if (buildContest.isActive())
 				return size + 2;
 		}
 		return size;

@@ -3,25 +3,23 @@ package me.pugabyte.nexus.features.warps.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.warps.WarpMenu;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.features.warps.WarpsMenu;
-import me.pugabyte.nexus.models.setting.Setting;
-import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.models.buildcontest.BuildContest;
+import me.pugabyte.nexus.models.buildcontest.BuildContestService;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Map;
 
 public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 	private WarpMenu menu;
@@ -50,7 +48,6 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 		}
 
 		WarpService warpService = new WarpService();
-		SettingService settingService = new SettingService();
 
 		switch (menu) {
 			case MAIN:
@@ -72,13 +69,9 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				contents.set(1, 7, ClickableItem.empty(skyblock));
 				contents.set(2, 4, ClickableItem.from(other, e -> WarpsMenu.open(player, WarpMenu.OTHER)));
 
-				Setting buildContestSetting = settingService.get("buildcontest", "info");
-				Map<String, Object> bcInfo = buildContestSetting.getJson();
-				if (bcInfo != null && bcInfo.get("item") != null && ((boolean) bcInfo.get("active"))) {
-					contents.set(4, 4, ClickableItem.from(JSON.deserializeItemStack((String) bcInfo.get("item")), e -> {
-						warp(player, "buildcontest");
-					}));
-				}
+				BuildContest buildContest = new BuildContestService().get(Nexus.getUUID0());
+				if (buildContest.isActive() && buildContest.getItemStack() != null)
+					contents.set(4, 4, ClickableItem.from(buildContest.getItemStack(), e -> warp(player, "buildcontest")));
 				break;
 
 			case SURVIVAL:

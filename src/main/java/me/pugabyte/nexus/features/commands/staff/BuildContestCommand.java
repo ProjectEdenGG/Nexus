@@ -10,13 +10,12 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.setting.Setting;
-import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.models.buildcontest.BuildContest;
+import me.pugabyte.nexus.models.buildcontest.BuildContestService;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,30 +25,17 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Aliases("bc")
 @NoArgsConstructor
 public class BuildContestCommand extends CustomCommand implements Listener {
 	private final WarpService warpService = new WarpService();
-	private final SettingService settingService = new SettingService();
-	private final Setting info = settingService.get("buildcontest", "info");
-	private Map<String, Object> bcInfo = info.getJson();
-	private int id;
+	private final BuildContestService service = new BuildContestService();
+	private final BuildContest buildContest = service.get(Nexus.getUUID0());
 
 	public BuildContestCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (info == null || bcInfo == null) {
-			bcInfo = new HashMap<>();
-			bcInfo.put("id", 6);
-			bcInfo.put("active", false);
-			bcInfo.put("item", null);
-			info.setJson(bcInfo);
-			settingService.save(info);
-		}
-		id = Double.valueOf((double) bcInfo.get("id")).intValue();
 	}
 
 	static {
@@ -58,13 +44,14 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 
 	@Path
 	void buildcontest() {
-		if (!(Boolean) bcInfo.get("active"))
+		if (!buildContest.isActive())
 			error("There are no active build contests running");
-		Warp warp = warpService.get("buildcontest" + id, WarpType.NORMAL);
+
+		Warp warp = warpService.get("buildcontest" + buildContest.getId(), WarpType.NORMAL);
 		if (warp == null)
 			error("That warp is not set.");
 		warp.teleport(player());
-		send(PREFIX + "Warping to build contest &e" + bcInfo.get("theme"));
+		send(PREFIX + "Warping to build contest &e" + buildContest.getTheme());
 	}
 
 	@Path("help")
@@ -73,7 +60,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		line(2);
 		send("&3These are all the commands available to you in the build contest world.");
 		send(json("&3[+] &c/hdb").hover("&eFind decorative heads!").suggest("/hdb"));
-		send(json("&3[+] &c/plots home buildcontest" + id).hover("&eTeleport to your plot").suggest("/plots home"));
+		send(json("&3[+] &c/plots home buildcontest" + buildContest.getId()).hover("&eTeleport to your plot").suggest("/plots home"));
 		send(json("&3[+] &c/plots setbiome <biome>").hover("&eChange the biome of your plot").suggest("/plots setbiome "));
 		send(json("&3[+] &c/plots middle").hover("&&eTeleport to the middle of your current plot").suggest("/plots middle"));
 		send(json("&3[+] &c/plots clear").hover("&eClear your plot of all builds").suggest("/plots delete"));
@@ -91,22 +78,26 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	@Path("end")
 	@Permission("group.admin")
 	void end() {
-		bcInfo.put("active", false);
-		info.setJson(bcInfo);
-		settingService.save(bcInfo);
+		buildContest.setActive(false);
+		save();
 		runCommand("warps delete buildcontest");
 		send(PREFIX + "Build contest ended.");
 	}
 
 	@Path("set <id>")
 	@Permission("group.admin")
-	void set(int newId) {
-		if (newId < id)
-			error("The id must be " + id + " or higher.");
-		bcInfo.put("id", newId);
-		info.setJson(bcInfo);
-		settingService.save(info);
-		send(PREFIX + "Contest set to &e" + newId);
+	void set(int id) {
+		if (id < buildContest.getId())
+			error("The id must be " + buildContest.getId() + " or higher.");
+
+		buildContest.setId(id);
+		buildContest.setActive(true);
+		save();
+		send(PREFIX + "Contest number set to &e#" + id);
+	}
+
+	private void save() {
+		service.save(buildContest);
 	}
 
 	@Path("setup")
@@ -122,7 +113,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	@Path("setup steps")
 	@Permission("group.admin")
 	void setupSteps() {
-		String worldName = "buildcontest" + id;
+		String worldName = "buildcontest" + buildContest.getId();
 		List<Runnable> tasks = new ArrayList<>();
 
 		send("&ePlease wait while I do some automatic configuration...");
@@ -163,30 +154,26 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		ItemBuilder.setName(item, "&6&lBuild Contest");
 		ItemBuilder.addLore(item, "&e&lJoin our latest build contest!");
 		ItemBuilder.addLore(item, "&e&lTheme: &6&l" + theme);
-		bcInfo.put("item", JSON.serializeItemStack(item));
-		info.setJson(bcInfo);
-		settingService.save(info);
+		buildContest.setTheme(theme);
+		save();
 		send(PREFIX + "Saved the item to the item in your hand");
 	}
 
 	@Path("setup finalize")
 	@Permission("group.admin")
 	void _finalize() {
-		send("&3Please wait while I finish the configuration...");
-		bcInfo.put("active", true);
-		info.setJson(bcInfo);
-		settingService.save(info);
-		send(PREFIX + "Build contest " + id + " setup completed!");
+		buildContest.setActive(true);
+		save();
+		send(PREFIX + "Build contest " + buildContest.getId() + " setup completed!");
 	}
 
 	@EventHandler
 	public void onPlotCommand(PlayerCommandPreprocessEvent event) {
 		if (!event.getMessage().contains("plot setup buildcontest")) return;
-		String message = event.getMessage().replace("plot setup buildcontest", "");
-		bcInfo.put("id", Integer.parseInt(message));
-		info.setJson(bcInfo);
-		settingService.save(info);
-		runCommand("buildcontests setup steps");
+		String message = event.getMessage().replace("/plot setup buildcontest", "");
+		buildContest.setId(Integer.parseInt(message));
+		save();
+		runCommand(event.getPlayer(), "buildcontest setup steps");
 	}
 
 }
