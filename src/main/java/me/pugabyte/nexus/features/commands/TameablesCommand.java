@@ -11,14 +11,15 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks.GlowTask;
+import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -28,8 +29,10 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,45 +91,38 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Path("count <entityType>")
 	@Description("Count the animals you own (Must be in loaded chunks)")
 	void count(TameableEntity entityType) {
-		send(PREFIX + "Found &e" + find(entityType).size() + " " + camelCase(entityType) + " &3in loaded chunks belonging to you");
-	}
-
-	@Permission("group.admin")
-	@Path("trustPorkAndBri")
-	void trustPorkAndBri() {
-		int tamed = 0;
-		for (Entity entity : player().getLocation().getNearbyEntities(50, 50, 50)) {
-			if (entity.getType() != EntityType.FOX)
-				continue;
-
-			Fox fox = (Fox) entity;
-			fox.setFirstTrustedPlayer(PlayerUtils.getPlayer("Porkeroni"));
-			fox.setSecondTrustedPlayer(PlayerUtils.getPlayer("Akhali"));
-
-			++tamed;
-		}
-
-		send(PREFIX + "Tamed &e" + tamed + " &3foxes");
+		send(PREFIX + "Found &e" + list(entityType).size() + " " + camelCase(entityType) + " &3in loaded chunks belonging to you");
 	}
 
 	@Path("summon <entityType>")
 	@Description("Summon the animals you own (Must be in loaded chunks)")
 	void summon(SummonableTameableEntity entityType) {
-		List<Entity> entities = find(entityType);
+		List<Entity> entities = list(entityType);
 		entities.forEach(entity -> entity.teleport(player()));
 		send(PREFIX + "Summoned &e" + entities.size() + " " + camelCase(entityType) + "s &3in loaded chunks to your location");
 	}
 
-	private List<Entity> find(TameableEntityList entityType) {
+	@Path("find [entityType]")
+	@Description("Make your nearby animals glow so you can find them")
+	void find(TameableEntity entityType) {
+		List<Entity> entities = list(entityType);
+		entities.forEach(entity -> GlowTask.builder()
+				.entity(entity)
+				.color(Color.RED)
+				.viewers(Collections.singletonList(player()))
+				.duration(Time.SECOND.x(10))
+				.start());
+		send(PREFIX + "Highlighted &e" + entities.size() + " " + (entityType == null ? "animals" : camelCase(entityType) + "s") + " &3in loaded chunks");
+	}
+
+	private List<Entity> list(TameableEntityList entityType) {
 		List<Entity> entities = new ArrayList<>();
-		Bukkit.getWorlds().forEach(world -> {
+		for (World world : Bukkit.getWorlds())
 			if (WorldGroup.get(world) == WorldGroup.get(player()))
-				world.getEntities().forEach(entity -> {
-					if (entityType.name().equals(entity.getType().name()))
+				for (Entity entity : world.getEntities())
+					if (entityType == null || entityType.name().equals(entity.getType().name()))
 						if (TameableEntity.isTameable(entity.getType()) && isOwner(player(), entity))
 							entities.add(entity);
-			});
-		});
 
 		if (entities.isEmpty())
 			error("Could not find any " + camelCase(entityType.name()) + " in loaded chunks belonging to you");
@@ -241,7 +237,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	private void checkOwner(Player player, Entity tameable) {
-		if (!isOwner(player, tameable) && !isSeniorStaff())
+		if (!isOwner(player, tameable) && !isSeniorStaff(player))
 			error("You do not own that animal!");
 	}
 
