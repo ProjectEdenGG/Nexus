@@ -3,6 +3,8 @@ package me.pugabyte.nexus.models.announcement;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,12 +51,16 @@ public class AnnouncementConfig extends PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@RequiredArgsConstructor
 	@Converters(LocalDateTimeConverter.class)
 	public static class Announcement {
+		@NonNull
 		private String id;
+		@NonNull
 		private String text;
-		private List<String> showPermissions = new ArrayList<>();
-		private List<String> hidePermissions = new ArrayList<>();
+		private boolean enabled = true;
+		private Set<String> showPermissions = new HashSet<>();
+		private Set<String> hidePermissions = new HashSet<>();
 		private LocalDateTime startTime;
 		private LocalDateTime endTime;
 		private AnnouncementCondition condition;

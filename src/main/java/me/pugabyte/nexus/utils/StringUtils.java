@@ -51,6 +51,10 @@ public class StringUtils {
 	private static final Pattern hexColorizedPattern = Pattern.compile(colorCharsRegex + "x(" + colorCharsRegex + "[a-fA-F0-9]){6}");
 	@Getter
 	private static final Pattern colorGroupPattern = Pattern.compile("(" + colorPattern + "|(" + hexPattern + "|" + hexColorizedPattern + "))((" + formatPattern + ")+)?");
+	@Getter
+	public static final String CHECK = "&a✔";
+	@Getter
+	public static final String X = "&c✗";
 
 	public static String getPrefix(Class<?> clazz) {
 		return getPrefix(clazz.getSimpleName());

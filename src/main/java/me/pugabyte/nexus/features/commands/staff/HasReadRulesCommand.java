@@ -7,6 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.rule.HasReadRules;
 import me.pugabyte.nexus.models.rule.RuleService;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
 @Aliases("hrr")
@@ -19,8 +20,8 @@ public class HasReadRulesCommand extends CustomCommand {
 		super(event);
 	}
 
-	String CHECK = "&a✔ ";
-	String X = "&c✗ ";
+	String CHECK = StringUtils.getCHECK() + " ";
+	String X = StringUtils.getX() + " ";
 
 	@Path("<player>")
 	void hrr(OfflinePlayer player) {
