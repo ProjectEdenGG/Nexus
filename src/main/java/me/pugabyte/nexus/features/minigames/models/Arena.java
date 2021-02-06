@@ -52,6 +52,8 @@ public class Arena implements ConfigurationSerializable {
 	@NonNull
 	private String displayName;
 	@NonNull
+	private boolean testMode = false;
+	@NonNull
 	private MechanicType mechanicType = MechanicType.FREE_FOR_ALL;
 	@NonNull
 	private List<Team> teams = new ArrayList<Team>() {{ add(new Team()); }};

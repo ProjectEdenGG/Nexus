@@ -89,6 +89,20 @@ public class MinigamesCommand extends CustomCommand {
 		minigamer.quit();
 	}
 
+	@Path("testMode [boolean]")
+	@Permission("manage")
+	void testMode(Boolean enable) {
+		if (enable == null)
+			enable = !Minigames.getTestModePlayers().contains(uuid());
+
+		if (enable)
+			Minigames.getTestModePlayers().add(uuid());
+		else
+			Minigames.getTestModePlayers().remove(uuid());
+
+		send(PREFIX + "Testing mode " + (enable ? "&aenabled" : "&cdisabled"));
+	}
+
 	@Path("settings bowInOffHand [boolean]")
 	@Permission("use")
 	void settings_bowInOffHand(Boolean offHand) {

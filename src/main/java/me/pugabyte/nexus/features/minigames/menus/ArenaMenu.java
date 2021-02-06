@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.features.minigames.Minigames.menus;
 
 public class ArenaMenu extends MenuUtils implements InventoryProvider {
+	private final Arena arena;
 
-	Arena arena;
 	public ArenaMenu(@NonNull Arena arena) {
 		this.arena = arena;
 	}
@@ -55,7 +55,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		},
 		NAME(1, 1, Material.NAME_TAG),
 		DISPLAY_NAME(1, 2, Material.PAPER),
-		MECHANIC_TYPE(1, 5, Material.REDSTONE) {
+		MECHANIC_TYPE(1, 4, Material.REDSTONE) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				menus.openMechanicsMenu(player, arena);
@@ -68,7 +68,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				return "";
 			}
 		},
-		CUSTOM_MECHANIC_SETTINGS(1, 6, Material.WRITABLE_BOOK) {
+		CUSTOM_MECHANIC_SETTINGS(1, 5, Material.WRITABLE_BOOK) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				menus.openCustomSettingsMenu(player, arena);
@@ -77,6 +77,19 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			@Override
 			String getLore(Player player, Arena arena) {
 				return null;
+			}
+		},
+		TEST_MODE(1, 7, Material.LEVER) {
+			@Override
+			void onClick(Player player, Arena arena) {
+				arena.setTestMode(!arena.isTestMode());
+				arena.write();
+				menus.openArenaMenu(player, arena);
+			}
+
+			@Override
+			String getLore(Player player, Arena arena) {
+				return "||&eCurrent value: &3" + (arena.isTestMode() ? "&cEnabled" : "&aDisabled");
 			}
 		},
 		TEAMS(2, 1, Material.WHITE_WOOL) {

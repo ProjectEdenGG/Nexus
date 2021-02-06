@@ -40,9 +40,11 @@ import org.reflections.Reflections;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Minigames extends Feature {
@@ -63,6 +65,8 @@ public class Minigames extends Feature {
 	public static final MinigamesMenus menus = new MinigamesMenus();
 	@Getter
 	public static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
+	@Getter
+	private static final Set<UUID> testModePlayers = new HashSet<>();
 
 	@Override
 	public void startup() {
