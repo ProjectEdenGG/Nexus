@@ -46,7 +46,6 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.RandomUtils.randomInt;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
 import static me.pugabyte.nexus.utils.Utils.epochSecond;
 
 @NoArgsConstructor
@@ -121,7 +120,6 @@ public class Votes extends Feature implements Listener {
 		// MCBIZ is sending votes with a timestamp of an hour ago ??
 		LocalDateTime timestamp = epochSecond(event.getVote().getTimeStamp());
 		if (site == VoteSite.MCBIZ) {
-			Nexus.log("MCBIZ Timestamp: " + shortDateTimeFormat(timestamp));
 			long minutes = timestamp.until(LocalDateTime.now(), ChronoUnit.MINUTES);
 			if (minutes > 55 && minutes < 65)
 				timestamp = timestamp.plusHours(1);

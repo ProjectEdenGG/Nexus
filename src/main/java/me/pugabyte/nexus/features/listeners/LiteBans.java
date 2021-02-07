@@ -71,7 +71,7 @@ public class LiteBans implements Listener {
 							Tasks.wait(10, () -> {
 								String message = "&e" + player.getName() + " &3will be banned upon login for &e" + entry.getReason() + " &3for &e" + entry.getDurationString();
 								Chat.broadcastIngame(DelayedBanCommand.PREFIX + message, StaticChannel.STAFF);
-								Chat.broadcastDiscord("**[DelayedBan]** " + stripColor(message), StaticChannel.STAFF);
+								Discord.log("**[DelayedBan]** " + stripColor(message));
 							});
 						});
 					}
