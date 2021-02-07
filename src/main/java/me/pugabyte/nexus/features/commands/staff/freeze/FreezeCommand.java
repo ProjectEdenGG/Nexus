@@ -13,6 +13,7 @@ import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -68,22 +69,28 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	void freeze(@Arg(type = Freeze.class) List<Freeze> players) {
 		for (Freeze freeze : players) {
 			try {
-				Player player = freeze.getPlayer();
+				OfflinePlayer player = freeze.getOfflinePlayer();
 				if (freeze.isFrozen()) {
-					if (player.getVehicle() != null && player.getVehicle() instanceof ArmorStand)
+					if (!freeze.isOnline())
 						runCommand("unfreeze " + player.getName());
 					else
-						freezePlayer(player);
+						if (player.getPlayer().getVehicle() != null && player.getPlayer().getVehicle() instanceof ArmorStand)
+							runCommand("unfreeze " + player.getName());
+						else
+							freezePlayer(player.getPlayer());
 					continue;
 				}
 
 				freeze.setFrozen(true);
 				service.save(freeze);
-				freezePlayer(player);
+
+				if (freeze.isOnline()) {
+					freezePlayer(player.getPlayer());
+					send(player.getPlayer(), "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
+				}
 
 				Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName(), StaticChannel.STAFF);
 				Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has frozen " + player.getName(), StaticChannel.STAFF);
-				send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 			} catch (Exception ex) {
 				event.handleException(ex);
 			}

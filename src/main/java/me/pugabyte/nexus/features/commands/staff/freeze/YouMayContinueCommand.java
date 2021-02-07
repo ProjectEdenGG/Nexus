@@ -8,7 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 @Aliases("ymc")
 @Permission("group.staff")
@@ -20,7 +20,7 @@ public class YouMayContinueCommand extends CustomCommand {
 	}
 
 	@Path("<player> [warn...]")
-	void player(Player player, String reason) {
+	void player(OfflinePlayer player, String reason) {
 		line(2);
 		runCommand("unfreeze " + player.getName());
 		runCommand("vanish on");

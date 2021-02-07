@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.utils.StringUtils;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
@@ -25,8 +26,8 @@ public class UnfreezeCommand extends CustomCommand {
 	}
 
 	@Path("<players...>")
-	void unfreeze(@Arg(type = Player.class) List<Player> players) {
-		for (Player player : players) {
+	void unfreeze(@Arg(type = Player.class) List<OfflinePlayer> players) {
+		for (OfflinePlayer player : players) {
 			try {
 				Freeze freeze = new FreezeService().get(player);
 				if (!freeze.isFrozen()) {
@@ -37,10 +38,13 @@ public class UnfreezeCommand extends CustomCommand {
 				freeze.setFrozen(false);
 				service.save(freeze);
 
-				if (player.getVehicle() != null && player.getVehicle() instanceof ArmorStand)
-					player.getVehicle().remove();
+				if (player.isOnline() && player.getPlayer() != null) {
+					if (player.getPlayer().getVehicle() != null && player.getPlayer().getVehicle() instanceof ArmorStand)
+						player.getPlayer().getVehicle().remove();
 
-				send(player, "&cYou have been unfrozen.");
+					send(player.getPlayer(), "&cYou have been unfrozen.");
+				}
+
 				Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
 				Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has unfrozen " + player.getName(), StaticChannel.STAFF);
 			} catch (Exception ex) {
