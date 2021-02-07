@@ -73,11 +73,13 @@ public class PrefixCommand extends CustomCommand {
 	}
 
 	@Path("gradient <color1> <color2> <prefix...>")
+	@Permission("set.my.prefix")
 	void gradient(ColorType color1, ColorType color2, String input) {
 		prefix(Gradient.of(color1, color2).apply(input));
 	}
 
 	@Path("rainbow <prefix...>")
+	@Permission("set.my.prefix")
 	void rainbow(String input) {
 		prefix(Rainbow.apply(input));
 	}
