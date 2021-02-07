@@ -44,7 +44,7 @@ public class BackCommand extends CustomCommand implements Listener {
 		if (location == null)
 			error("You have no back location");
 
-		player().teleport(location, TeleportCause.COMMAND);
+		player().teleportAsync(location, TeleportCause.COMMAND);
 	}
 
 	@Path("locations")
