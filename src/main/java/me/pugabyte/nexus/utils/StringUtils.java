@@ -303,7 +303,7 @@ public class StringUtils {
 
 	public static String ellipsis(String text, int length) {
 		if (text.length() > length)
-			return text.substring(length) + "...";
+			return text.substring(0, length) + "...";
 		else
 			return text;
 	}

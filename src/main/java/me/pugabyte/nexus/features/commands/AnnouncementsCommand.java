@@ -1,12 +1,11 @@
 package me.pugabyte.nexus.features.commands;
 
-import java.time.LocalDateTime;
-import java.util.Set;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -21,7 +20,9 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -42,23 +43,12 @@ public class AnnouncementsCommand extends CustomCommand {
 		service.save(config);
 	}
 
-	@Path("info <announcement>")
-	void info(Announcement announcement) {
-		send(PREFIX + announcement.getId() + " announcement");
-		send(" &eText: &3" + announcement.getText());
-		if (!announcement.getShowPermissions().isEmpty())
-			send(" &eShow permissions: &3" + String.join(", ", announcement.getShowPermissions()));
-		if (!announcement.getHidePermissions().isEmpty())
-			send(" &eHide permissions: &3" + String.join(", ", announcement.getHidePermissions()));
-		if (announcement.getStartTime() != null)
-			send(" &eStart time: &3" + shortDateTimeFormat(announcement.getStartTime()));
-		if (announcement.getEndTime() != null)
-			send(" &eEnd time: &3" + shortDateTimeFormat(announcement.getEndTime()));
-		if (announcement.getCondition() != null)
-			send(" &eCondition: &3" + camelCase(announcement.getCondition()));
+	private void saveAndEdit(Announcement announcement) {
+		service.save(config);
+		edit(announcement);
 	}
 
-	@Path("create <id> <text>")
+	@Path("create <id> <text...>")
 	void create(String id, String text) {
 		Announcement announcement = new Announcement(id, text);
 		config.getAnnouncements().add(announcement);
@@ -66,109 +56,118 @@ public class AnnouncementsCommand extends CustomCommand {
 		send(PREFIX + "Announcement &e" + announcement.getId() + " &3created");
 	}
 
+	@Confirm
+	@Path("delete <id>")
+	void delete(Announcement announcement) {
+		config.getAnnouncements().remove(announcement);
+		save();
+		send(PREFIX + "Announcement &e" + announcement.getId() + " &cdeleted");
+	}
+
+	@Path("edit <id>")
+	void edit(Announcement announcement) {
+		send(json(PREFIX + "Edit announcement &e" + announcement.getId() + " &f &f ").group()
+				.next("&6⟳").command("/announcements edit " + announcement.getId()).group()
+				.next(" ").group()
+				.next("&c✖").command("/announcements delete " + announcement.getId()));
+
+		line();
+		send(json(" &3Text: &7" + announcement.getText()).suggest("/announcements edit text " + announcement.getId() + " " + announcement.getText()));
+		line();
+
+		if (announcement.isEnabled())
+			send(json(" " + StringUtils.CHECK + " Enabled").hover("&3Click to &cdisable").command("/announcements disable " + announcement.getId()));
+		else
+			send(json(" " + StringUtils.X + " Disabled").hover("&3Click to &aenable").command("/announcements enable " + announcement.getId()));
+
+		send(json(" &3Show permissions ").group().next("&a[+]").suggest("/announcements edit showPermissions add " + announcement.getId() + " "));
+		showPermissionsEdit(announcement, announcement.getShowPermissions(), "showPermissions");
+
+		send(json(" &3Hide permissions ").group().next("&a[+]").suggest("/announcements edit hidePermissions add " + announcement.getId() + " "));
+		showPermissionsEdit(announcement, announcement.getHidePermissions(), "hidePermissions");
+
+		send(json(" &3Start time: &e" + (announcement.getStartTime() == null ? "None" : shortDateTimeFormat(announcement.getStartTime())))
+				.suggest("/announcements edit startTime " + announcement.getId() + " MM/DD/YYYY"));
+		send(json(" &3End time: &e" + (announcement.getEndTime() == null ? "None" : shortDateTimeFormat(announcement.getEndTime())))
+				.suggest("/announcements edit endTime " + announcement.getId() + " MM/DD/YYYY"));
+
+		send(json(" &3Condition: &e" + (announcement.getCondition() == null ? "None" : camelCase(announcement.getCondition())))
+				.suggest("/announcements edit condition " + announcement.getId() + " "));
+		line();
+	}
+
+	private void showPermissionsEdit(Announcement announcement, Set<String> hidePermissions, String command) {
+		if (hidePermissions.isEmpty())
+			send("   &cNone");
+		else
+			for (String permission : hidePermissions)
+				send(json("   &c[-]").command("/announcements edit " + command + " remove " + announcement.getId() + " " + permission).group().next(" &3" + permission));
+	}
+
 	@Path("enable <id>")
 	void enable(Announcement announcement) {
 		announcement.setEnabled(true);
-		save();
-		send(PREFIX + "Announcement &e" + announcement.getId() + " &aenabled");
+		saveAndEdit(announcement);
 	}
 
 	@Path("disable <id>")
 	void disable(Announcement announcement) {
 		announcement.setEnabled(false);
-		save();
-		send(PREFIX + "Announcement &e" + announcement.getId() + " &cdisabled");
+		saveAndEdit(announcement);
 	}
 
-	@Path("edit <id>")
-	void edit(Announcement announcement) {
-		send(PREFIX + "Edit announcement &e" + announcement.getId());
-		if (announcement.isEnabled())
-			send(json(" " + StringUtils.CHECK + "Enabled").hover("&3Click to &cdisable"));
-		else
-			send(json(" " + StringUtils.X + "Disabled").hover("&3Click to &aenable"));
-
-		send(json(" &3Show permissions ").group().next("&a[+]").suggest("/announcement edit showPermissions add " + announcement.getId() + " "));
-		showPermissionsEdit(announcement, announcement.getShowPermissions(), "showPermissions");
-
-		send(json(" &3Hide permissions ").group().next("&a[+]").suggest("/announcement edit hidePermissions add " + announcement.getId() + " "));
-		showPermissionsEdit(announcement, announcement.getHidePermissions(), "hidePermissions");
-
-		// TODO Rest of properties
+	@Path("edit id <id> <newId>")
+	void editId(Announcement announcement, String newId) {
+		announcement.setId(newId);
+		saveAndEdit(announcement);
 	}
 
-	private void showPermissionsEdit(Announcement announcement, Set<String> hidePermissions, String command) {
-		if (hidePermissions.isEmpty())
-			send(" &cNone");
-		else
-			for (String permission : hidePermissions)
-				send(json(" &c[-]").suggest("/announcements edit " + command + " remove " + announcement.getId()).group().next(" &3" + permission));
-	}
-
-	@Path("edit text <id> <text>")
+	@Path("edit text <id> <text...>")
 	void editText(Announcement announcement, String text) {
 		announcement.setText(text);
-		save();
-		send(PREFIX + "Text for announcement &e" + announcement.getId() + " &3set to:");
-		send("&7" + announcement.getText());
+		saveAndEdit(announcement);
 	}
 
 	@Path("edit showPermissions add <id> <permission(s)>")
-	void editShowPermissionsAdd(Announcement announcement, List<String> permissions) {
+	void editShowPermissionsAdd(Announcement announcement, @Arg(type = String.class) List<String> permissions) {
 		announcement.getShowPermissions().addAll(permissions);
-		save();
-		sendPermissions(announcement, "Show", announcement.getShowPermissions());
+		saveAndEdit(announcement);
 	}
 
 	@Path("edit showPermissions remove <id> <permission(s)>")
-	void editShowPermissionsRemove(Announcement announcement, List<String> permissions) {
+	void editShowPermissionsRemove(Announcement announcement, @Arg(type = String.class) List<String> permissions) {
 		announcement.getShowPermissions().removeAll(permissions);
-		save();
-		sendPermissions(announcement, "Show", announcement.getShowPermissions());
+		saveAndEdit(announcement);
 	}
 
 	@Path("edit hidePermissions add <id> <permission(s)>")
-	void editHidePermissionsAdd(Announcement announcement, Set<String> permissions) {
+	void editHidePermissionsAdd(Announcement announcement, @Arg(type = String.class) Set<String> permissions) {
 		announcement.getShowPermissions().addAll(permissions);
-		save();
-		sendPermissions(announcement, "Hide", announcement.getHidePermissions());
+		saveAndEdit(announcement);
 	}
 
 	@Path("edit hidePermissions remove <id> <permission(s)>")
-	void editHidePermissionsRemove(Announcement announcement, Set<String> permissions) {
+	void editHidePermissionsRemove(Announcement announcement, @Arg(type = String.class) Set<String> permissions) {
 		announcement.getShowPermissions().removeAll(permissions);
-		save();
-		sendPermissions(announcement, "Hide", announcement.getHidePermissions());
-	}
-
-	private void sendPermissions(Announcement announcement, String type, Set<String> permissions) {
-		send(PREFIX + type + " permissions for announcement &e" + announcement.getId() + "&3:");
-		if (permissions.isEmpty())
-			send(" &cNone");
-		else
-			for (String permission : permissions)
-				send(" &3" + permission);
+		saveAndEdit(announcement);
 	}
 
 	@Path("edit startTime <id> [time]")
 	void editStartTime(Announcement announcement, LocalDateTime startTime) {
 		announcement.setStartTime(startTime);
-		save();
-		send(PREFIX + "Start time for announcement &e" + announcement.getId() + " &3set to &e" + (startTime == null ? "null" : shortDateTimeFormat(startTime)));
+		saveAndEdit(announcement);
 	}
 
 	@Path("edit endTime <id> [time]")
 	void editEndTime(Announcement announcement, LocalDateTime endTime) {
 		announcement.setEndTime(endTime);
-		save();
-		send(PREFIX + "Start time for announcement &e" + announcement.getId() + " &3set to &e" + (endTime == null ? "null" : shortDateTimeFormat(endTime)));
+		saveAndEdit(announcement);
 	}
 
 	@Path("edit condition <id> [condition]")
 	void editCondition(Announcement announcement, AnnouncementCondition condition) {
 		announcement.setCondition(condition);
-		save();
-		send(PREFIX + "Condition for announcement &e" + announcement.getId() + " &3set to &e" + (condition == null ? "null" : camelCase(condition)));
+		saveAndEdit(announcement);
 	}
 
 	@Path("list [page]")
@@ -178,15 +177,19 @@ public class AnnouncementsCommand extends CustomCommand {
 
 		send(PREFIX + "Announcements");
 		BiFunction<Announcement, Integer, JsonBuilder> formatter = (announcement, index) ->
-				json("&3" + (index + 1) + " &e" + announcement.getId() + " &7- " + ellipsis(announcement.getText(), 20))
+				json("&3" + (index + 1) + " &e" + announcement.getId() + " &7- " + ellipsis(announcement.getText(), 50))
 						.addHover("&7" + announcement.getText())
-						.command("/announcements info " + announcement.getId());
-		paginate(config.getAnnouncements(), formatter, "/announcements list ", page);
+						.command("/announcements edit " + announcement.getId());
+		paginate(config.getAnnouncements(), formatter, "/announcements list", page);
 	}
 
 	@Path("test <player> <announcement>")
-	void testCriteria(Player player, AnnouncementCondition condition) {
-		send(PREFIX + player.getName() + " &ewould" + (condition.test(player) ? "" : " not") + " &3receive the &e" + camelCase(condition) + " &3announcement");
+	void testCriteria(Player player, Announcement announcement) {
+		if (announcement.getCondition() == null)
+			error("Announcement &e" + announcement.getId() + " &cdoes not have a condition so players will always receive it");
+
+		send(PREFIX + player.getName() + " &ewould" + (announcement.getCondition().test(player) ? "" : " not")
+				+ " &3receive the &e" + camelCase(announcement.getCondition()) + " &3announcement");
 	}
 
 	@ConverterFor(Announcement.class)

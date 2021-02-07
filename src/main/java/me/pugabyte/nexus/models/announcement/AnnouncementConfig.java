@@ -3,8 +3,6 @@ package me.pugabyte.nexus.models.announcement;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +22,10 @@ import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -40,7 +40,7 @@ public class AnnouncementConfig extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private List<Announcement> announcements;
+	private List<Announcement> announcements = new ArrayList<>();
 
 	public Optional<Announcement> findRequestMatch(String id) {
 		return announcements.stream()
