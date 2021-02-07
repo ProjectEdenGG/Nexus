@@ -58,13 +58,15 @@ public class NearbyEntitiesCommand extends CustomCommand {
 				});
 	}
 
-	@Path("report [radius]")
-	void report(@Arg("200") int radius) {
+	@Path("report [radius] [type]")
+	void report(@Arg("200") int radius, EntityType type) {
 		sortByValue(new HashMap<Player, Integer>() {{
 			for (Player player : Bukkit.getOnlinePlayers())
-				put(player, player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius).size());
-		}}).forEach((player, count) ->
-				send(json("&e" + player.getName() + " &7- " + count).command("/tp " + player.getName())));
+				put(player, player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius, entity -> type == null || type == entity.getType()).size());
+		}}).forEach((player, count) -> {
+			if (count > 0)
+				send(json("&e" + player.getName() + " &7- " + count).command("/tp " + player.getName()));
+		});
 	}
 
 	@Path("villagers")
