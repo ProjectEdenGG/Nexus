@@ -11,6 +11,7 @@ import me.pugabyte.nexus.models.poof.Poof;
 import me.pugabyte.nexus.models.poof.PoofService;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -43,8 +44,11 @@ public class PoofCommand extends CustomCommand {
 
 	@Path("<player>")
 	void player(Player target) {
-		if (target == player().getPlayer())
+		if (isSelf(target))
 			error("You cannot poof to yourself");
+
+		if (!isStaff() && WorldGroup.get(target).equals(WorldGroup.STAFF))
+			error("Cannot teleport to " + target.getName() + ", they are in a staff world");
 
 		Poof request = new Poof(player(), target, Poof.PoofType.POOF);
 		service.save(request);

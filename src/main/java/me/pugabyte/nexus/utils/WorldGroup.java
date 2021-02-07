@@ -15,12 +15,12 @@ public enum WorldGroup {
 			"resource", "resource_nether", "resource_the_end",
 			"staff_world", "staff_world_nether", "staff_world_the_end",
 			"safepvp", "wither"),
-	CREATIVE("creative", "buildcontest", "buildadmin", "jail", "pirate", "tiger"),
+	CREATIVE("creative", "buildcontest"),
 	MINIGAMES("gameworld", "blockball", "deathswap"),
 	SKYBLOCK("skyblock", "skyblock_nether"),
 	ADVENTURE("stranded", "aeveon_project"),
 	EVENT("2y"),
-	STAFF("buildadmin", "jail"),
+	STAFF("buildadmin", "jail", "pirate", "tiger"),
 	UNKNOWN;
 
 	private List<String> worlds;

@@ -15,14 +15,17 @@ import java.util.Set;
 
 public enum Rarity {
 	// @formatter:off
-	COMMON(ColorType.LIGHT_GREEN.getChatColor(),	 0 ,10),
+	COMMON(ColorType.LIGHT_GREEN.getChatColor(),	 0, 10),
 	UNCOMMON(ColorType.GREEN.getChatColor(), 		11, 19),
 	RARE(ColorType.PINK.getChatColor(),				20, 24),
-	EPIC(ColorType.PURPLE.getChatColor(),			25, 29),
-	LEGENDARY(ColorType.ORANGE.getChatColor(),		30, 40),
-	EXOTIC(ColorType.YELLOW.getChatColor()),
+	EXOTIC(ColorType.PURPLE.getChatColor(),			25, 29),
+	EPIC(ColorType.YELLOW.getChatColor(),			30, 40),
+	// Uncraftable
+	LEGENDARY(ColorType.ORANGE.getChatColor()),
 	MYTHIC(ColorType.CYAN.getChatColor()),
-	ARTIFACT(ColorType.LIGHT_RED.getChatColor());
+	ARTIFACT(ColorType.LIGHT_RED.getChatColor()),
+	// Code Related
+	UNIQUE(ColorType.LIGHT_BLUE.getChatColor());
 	// @formatter:on
 
 	@Getter
