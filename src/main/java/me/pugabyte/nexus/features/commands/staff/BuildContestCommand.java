@@ -38,10 +38,6 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	static {
-		Nexus.registerListener(new BuildContestCommand());
-	}
-
 	@Path
 	void buildcontest() {
 		if (!buildContest.isActive())
