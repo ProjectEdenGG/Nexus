@@ -27,6 +27,7 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -68,6 +69,16 @@ import static me.pugabyte.nexus.utils.ItemUtils.getTool;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 public class Misc implements Listener {
+
+	static {
+		for (World world : Bukkit.getWorlds()) {
+			// Skip main world
+			if (world.equals(Bukkit.getWorlds().get(0)))
+				continue;
+
+			world.setKeepSpawnInMemory(false);
+		}
+	}
 
 	@EventHandler
 	public void onCoralDeath(BlockFadeEvent event) {
