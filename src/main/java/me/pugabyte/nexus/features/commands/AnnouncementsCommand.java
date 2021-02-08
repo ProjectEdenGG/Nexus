@@ -72,12 +72,12 @@ public class AnnouncementsCommand extends CustomCommand {
 	@Path("edit <id>")
 	void edit(Announcement announcement) {
 		send(json(PREFIX + "Edit announcement &e" + announcement.getId() + " &f &f ").group()
-				.next("&6⟳").command("/announcements edit " + announcement.getId()).group()
+				.next("&6⟳").hover("&6Refresh").command("/announcements edit " + announcement.getId()).group()
 				.next(" ").group()
-				.next("&c✖").command("/announcements delete " + announcement.getId()));
+				.next("&c✖").hover("&cDelete").command("/announcements delete " + announcement.getId()));
 
 		line();
-		send(json(" &3Text: &7" + announcement.getText()).suggest("/announcements edit text " + announcement.getId() + " " + announcement.getText()));
+		send(json(" &3Text: &7" + announcement.getText()).hover("&3Click to edit").suggest("/announcements edit text " + announcement.getId() + " " + announcement.getText()));
 		line();
 
 		if (announcement.isEnabled())
@@ -85,19 +85,19 @@ public class AnnouncementsCommand extends CustomCommand {
 		else
 			send(json(" " + StringUtils.X + " Disabled").hover("&3Click to &aenable").command("/announcements enable " + announcement.getId()));
 
-		send(json(" &3Show permissions ").group().next("&a[+]").suggest("/announcements edit showPermissions add " + announcement.getId() + " "));
+		send(json(" &3Show permissions ").group().next("&a[+]").hover("&aAdd permission").suggest("/announcements edit showPermissions add " + announcement.getId() + " "));
 		showPermissionsEdit(announcement, announcement.getShowPermissions(), "showPermissions");
 
-		send(json(" &3Hide permissions ").group().next("&a[+]").suggest("/announcements edit hidePermissions add " + announcement.getId() + " "));
+		send(json(" &3Hide permissions ").group().next("&a[+]").hover("&aAdd permission").suggest("/announcements edit hidePermissions add " + announcement.getId() + " "));
 		showPermissionsEdit(announcement, announcement.getHidePermissions(), "hidePermissions");
 
 		send(json(" &3Start time: &e" + (announcement.getStartTime() == null ? "None" : shortDateTimeFormat(announcement.getStartTime())))
-				.suggest("/announcements edit startTime " + announcement.getId() + " YYYY-MM-DDTHH:MM:SS.ZZZ"));
+				.hover("&3Click to edit").suggest("/announcements edit startTime " + announcement.getId() + " YYYY-MM-DDTHH:MM:SS.ZZZ"));
 		send(json(" &3End time: &e" + (announcement.getEndTime() == null ? "None" : shortDateTimeFormat(announcement.getEndTime())))
-				.suggest("/announcements edit endTime " + announcement.getId() + " YYYY-MM-DDTHH:MM:SS.ZZZ"));
+				.hover("&3Click to edit").suggest("/announcements edit endTime " + announcement.getId() + " YYYY-MM-DDTHH:MM:SS.ZZZ"));
 
 		send(json(" &3Condition: &e" + (announcement.getCondition() == null ? "None" : camelCase(announcement.getCondition())))
-				.suggest("/announcements edit condition " + announcement.getId() + " "));
+				.hover("&3Click to edit").suggest("/announcements edit condition " + announcement.getId() + " "));
 		line();
 	}
 
@@ -106,7 +106,7 @@ public class AnnouncementsCommand extends CustomCommand {
 			send("   &cNone");
 		else
 			for (String permission : hidePermissions)
-				send(json("   &c[-]").command("/announcements edit " + command + " remove " + announcement.getId() + " " + permission).group().next(" &e" + permission));
+				send(json("   &c[-]").hover("&cRemove permission").command("/announcements edit " + command + " remove " + announcement.getId() + " " + permission).group().next(" &e" + permission));
 	}
 
 	@Path("enable <id>")
