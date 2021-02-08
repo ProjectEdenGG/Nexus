@@ -33,7 +33,7 @@ public class Watchlisted extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private boolean active = true;
+	private boolean active;
 	private LocalDateTime watchlistedOn;
 	private String reason;
 	private List<Note> notes = new ArrayList<>();

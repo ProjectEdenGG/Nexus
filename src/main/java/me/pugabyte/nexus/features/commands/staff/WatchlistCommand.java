@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
@@ -21,6 +22,7 @@ import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.time.LocalDateTime;
@@ -30,8 +32,9 @@ import java.util.function.BiFunction;
 import static me.pugabyte.nexus.utils.StringUtils.ellipsis;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
 
+@NoArgsConstructor
 @Permission("group.staff")
-public class WatchlistCommand extends CustomCommand {
+public class WatchlistCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Watchlist");
 	private final WatchlistedService service = new WatchlistedService();
 
@@ -97,17 +100,16 @@ public class WatchlistCommand extends CustomCommand {
 
 			WatchlistedService service = new WatchlistedService();
 
-			if (!new Nerd(player).getRank().isStaff()) {
-				Watchlisted watchlisted = service.get(player);
-				if (watchlisted.isActive())
-					Chat.broadcast(watchlisted.getMessage(), StaticChannel.STAFF);
-			} else
-				if (new Nerd(player).getRank().isStaff())
-					for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-						Watchlisted watchlisted = service.get(onlinePlayer);
-						if (watchlisted.isActive())
-							PlayerUtils.send(player, watchlisted.getMessage());
-					}
+			if (new Nerd(player).getRank().isStaff())
+				for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+					Watchlisted watchlisted = service.get(onlinePlayer);
+					if (watchlisted.isActive())
+						PlayerUtils.send(player, watchlisted.getMessage());
+				}
+
+			Watchlisted watchlisted = service.get(player);
+			if (watchlisted.isActive())
+				Chat.broadcast(watchlisted.getMessage(), StaticChannel.STAFF);
 		});
 	}
 
