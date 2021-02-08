@@ -17,7 +17,12 @@ import me.pugabyte.nexus.models.announcement.AnnouncementConfig.Announcement;
 import me.pugabyte.nexus.models.announcement.AnnouncementConfig.Announcement.AnnouncementCondition;
 import me.pugabyte.nexus.models.announcement.AnnouncementConfigService;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -87,9 +92,9 @@ public class AnnouncementsCommand extends CustomCommand {
 		showPermissionsEdit(announcement, announcement.getHidePermissions(), "hidePermissions");
 
 		send(json(" &3Start time: &e" + (announcement.getStartTime() == null ? "None" : shortDateTimeFormat(announcement.getStartTime())))
-				.suggest("/announcements edit startTime " + announcement.getId() + " MM/DD/YYYY"));
+				.suggest("/announcements edit startTime " + announcement.getId() + " YYYY-MM-DDTHH:MM:SS.ZZZ"));
 		send(json(" &3End time: &e" + (announcement.getEndTime() == null ? "None" : shortDateTimeFormat(announcement.getEndTime())))
-				.suggest("/announcements edit endTime " + announcement.getId() + " MM/DD/YYYY"));
+				.suggest("/announcements edit endTime " + announcement.getId() + " YYYY-MM-DDTHH:MM:SS.ZZZ"));
 
 		send(json(" &3Condition: &e" + (announcement.getCondition() == null ? "None" : camelCase(announcement.getCondition())))
 				.suggest("/announcements edit condition " + announcement.getId() + " "));
@@ -101,7 +106,7 @@ public class AnnouncementsCommand extends CustomCommand {
 			send("   &cNone");
 		else
 			for (String permission : hidePermissions)
-				send(json("   &c[-]").command("/announcements edit " + command + " remove " + announcement.getId() + " " + permission).group().next(" &3" + permission));
+				send(json("   &c[-]").command("/announcements edit " + command + " remove " + announcement.getId() + " " + permission).group().next(" &e" + permission));
 	}
 
 	@Path("enable <id>")
@@ -141,14 +146,14 @@ public class AnnouncementsCommand extends CustomCommand {
 	}
 
 	@Path("edit hidePermissions add <id> <permission(s)>")
-	void editHidePermissionsAdd(Announcement announcement, @Arg(type = String.class) Set<String> permissions) {
-		announcement.getShowPermissions().addAll(permissions);
+	void editHidePermissionsAdd(Announcement announcement, @Arg(type = String.class) List<String> permissions) {
+		announcement.getHidePermissions().addAll(permissions);
 		saveAndEdit(announcement);
 	}
 
 	@Path("edit hidePermissions remove <id> <permission(s)>")
-	void editHidePermissionsRemove(Announcement announcement, @Arg(type = String.class) Set<String> permissions) {
-		announcement.getShowPermissions().removeAll(permissions);
+	void editHidePermissionsRemove(Announcement announcement, @Arg(type = String.class) List<String> permissions) {
+		announcement.getHidePermissions().removeAll(permissions);
 		saveAndEdit(announcement);
 	}
 
@@ -203,6 +208,64 @@ public class AnnouncementsCommand extends CustomCommand {
 				.map(Announcement::getId)
 				.filter(request -> request.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
+	}
+
+	private static final int interval = Time.SECOND.x(30);
+
+	static {
+		Tasks.repeatAsync(interval, interval, () -> {
+			if (true) return;
+			AnnouncementConfigService service = new AnnouncementConfigService();
+			AnnouncementConfig config = service.get(Nexus.getUUID0());
+
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				if (!PlayerUtils.isPuga(player))
+					continue;
+
+				Utils.attempt(100, () -> {
+					Announcement announcement = config.getRandomAnnouncement();
+
+					if (!announcement.isEnabled())
+						return false;
+
+					if (!announcement.getShowPermissions().isEmpty()) {
+						boolean canSee = false;
+						for (String showPermission : announcement.getShowPermissions())
+							if (player.hasPermission(showPermission)) {
+								canSee = true;
+								break;
+							}
+
+						if (!canSee)
+							return false;
+					}
+
+					if (!announcement.getHidePermissions().isEmpty()) {
+						boolean canHide = false;
+						for (String hidePermission : announcement.getHidePermissions())
+							if (player.hasPermission(hidePermission)) {
+								canHide = true;
+								break;
+							}
+
+						if (canHide)
+							return false;
+					}
+
+					if (announcement.getStartTime() != null && announcement.getStartTime().isAfter(LocalDateTime.now()))
+						return false;
+
+					if (announcement.getEndTime() != null && announcement.getEndTime().isBefore(LocalDateTime.now()))
+						return false;
+
+					if (announcement.getCondition() != null && !announcement.getCondition().test(player))
+						return false;
+
+					announcement.send(player);
+					return true;
+				});
+			}
+		});
 	}
 
 }

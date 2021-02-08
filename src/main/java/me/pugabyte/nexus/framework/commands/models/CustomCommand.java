@@ -362,11 +362,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isStaff(Player player) {
-		return isPlayer() && new Nerd(player).getRank().isStaff();
+		return isPlayer(player) && new Nerd(player).getRank().isStaff();
 	}
 
 	protected boolean isStaff(OfflinePlayer player) {
-		return isPlayer() && new Nerd(player).getRank().isStaff();
+		return isPlayer(player) && new Nerd(player).getRank().isStaff();
 	}
 
 	protected boolean isSeniorStaff() {
@@ -374,11 +374,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isSeniorStaff(Player player) {
-		return isPlayer() && new Nerd(player).getRank().isSeniorStaff();
+		return isPlayer(player) && new Nerd(player).getRank().isSeniorStaff();
 	}
 
 	protected boolean isSeniorStaff(OfflinePlayer player) {
-		return isPlayer() && new Nerd(player).getRank().isSeniorStaff();
+		return isPlayer(player) && new Nerd(player).getRank().isSeniorStaff();
 	}
 
 	protected boolean isNullOrEmpty(String string) {

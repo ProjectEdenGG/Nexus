@@ -18,6 +18,8 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -48,6 +50,10 @@ public class AnnouncementConfig extends PlayerOwnedObject {
 				.findFirst();
 	}
 
+	public Announcement getRandomAnnouncement() {
+		return RandomUtils.randomElement(announcements);
+	}
+
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
@@ -64,6 +70,12 @@ public class AnnouncementConfig extends PlayerOwnedObject {
 		private LocalDateTime startTime;
 		private LocalDateTime endTime;
 		private AnnouncementCondition condition;
+
+		public void send(Player player) {
+			PlayerUtils.send(player, "");
+			PlayerUtils.send(player, "&8&l[&b⚡&8&l] &7" + text);
+			PlayerUtils.send(player, "");
+		}
 
 		public enum AnnouncementCondition {
 			VOTE(player -> {
