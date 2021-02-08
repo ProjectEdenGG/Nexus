@@ -31,8 +31,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.ellipsis;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
+import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
 
 @NoArgsConstructor
 @Permission("group.staff")
@@ -50,6 +52,7 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 			error(watchlisted.getName() + " is already watchlisted for &7" + watchlisted.getReason());
 
 		watchlisted.setActive(true);
+		watchlisted.setWatchlister(uuid());
 		watchlisted.setWatchlistedOn(LocalDateTime.now());
 		watchlisted.setReason(reason);
 		service.save(watchlisted);
@@ -82,15 +85,15 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 		List<Note> notes = watchlisted.getNotes();
 
 		line();
-		send("&3Watchlist info on &e" + playerName);
+		send(PREFIX + playerName);
 		send("&3Active: &e" + active);
 		send("&3Date: &e" + date);
 		send("&3Reason: &e" + watchlisted.getReason());
 		send("&3Notes: ");
 		for (Note entry : notes) {
-			String author = PlayerUtils.getPlayer(entry.getAuthor()).getName();
-			String timestamp = StringUtils.shortDateTimeFormat(entry.getTimestamp());
-			send(json("&3- " + author + ": &e" + entry.getNote()).hover("&e" + timestamp));
+			String author = getPlayer(entry.getAuthor()).getName();
+			String timestamp = shortDateFormat(entry.getTimestamp().toLocalDate());
+			send(json("&7- " + timestamp + " &3" + author + ": &e" + entry.getNote()).hover("&e" + shortDateTimeFormat(entry.getTimestamp())));
 		}
 		line();
 	}
@@ -124,13 +127,14 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 				for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 					Watchlisted watchlisted = service.get(onlinePlayer);
 					if (watchlisted.isActive())
-						PlayerUtils.send(player, PREFIX + watchlisted.getNotification());
+						PlayerUtils.send(player, json(PREFIX).next(watchlisted.getNotification()));
 				}
 
 			Watchlisted watchlisted = service.get(player);
 			if (watchlisted.isActive()) {
-				Chat.broadcastIngame(PREFIX + watchlisted.getNotification(), StaticChannel.STAFF);
-				Chat.broadcastDiscord("**" + PREFIX.trim() + "** " + watchlisted.getNotification(), StaticChannel.STAFF);
+				JsonBuilder notification = watchlisted.getNotification();
+				Chat.broadcastIngame(json(PREFIX).next(notification), StaticChannel.STAFF);
+				Chat.broadcastDiscord("**" + PREFIX.trim() + "** " + notification, StaticChannel.STAFF);
 			}
 		});
 	}

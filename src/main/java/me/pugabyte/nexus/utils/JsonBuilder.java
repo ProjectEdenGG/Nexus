@@ -62,6 +62,11 @@ public class JsonBuilder {
 		return this;
 	}
 
+	public JsonBuilder next(JsonBuilder json) {
+		builder.append(json.build(), FormatRetention.NONE);
+		return this;
+	}
+
 	public JsonBuilder group() {
 		if (!this.lore.isEmpty()) {
 			String lore = this.lore.stream()
