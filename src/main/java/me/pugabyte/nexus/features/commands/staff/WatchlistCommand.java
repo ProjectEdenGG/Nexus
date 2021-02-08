@@ -4,6 +4,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -52,6 +54,7 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 		watchlisted.setReason(reason);
 		service.save(watchlisted);
 		send(PREFIX + "Added &e" + watchlisted.getName() + " &3to the watchlist");
+		Discord.send("**" + PREFIX.trim() + "** " + player().getName() + " added " + watchlisted.getName() + " to the watchlist for " + watchlisted.getReason(), Channel.STAFF_WATCHLIST);
 	}
 
 	@Path("remove <player>")
@@ -85,7 +88,8 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Watchlisted players");
 		BiFunction<Watchlisted, Integer, JsonBuilder> formatter = (watchlisted, index) ->
-				json("&3" + (index + 1) + " &7" + shortDateFormat(watchlisted.getWatchlistedOn().toLocalDate()) + " &e" + watchlisted.getName() + " &7- " + ellipsis(watchlisted.getReason(), 50))
+				json("&3" + (index + 1) + " &7" + shortDateFormat(watchlisted.getWatchlistedOn().toLocalDate()) + " &e"
+						+ watchlisted.getName() + " &7- " + ellipsis(watchlisted.getReason(), 50))
 						.addHover("&7" + watchlisted.getReason())
 						.command("/watchlist info " + watchlisted.getName());
 		paginate(watchlistedPlayers, formatter, "/watchlist list", page);
@@ -104,12 +108,14 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 				for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 					Watchlisted watchlisted = service.get(onlinePlayer);
 					if (watchlisted.isActive())
-						PlayerUtils.send(player, watchlisted.getMessage());
+						PlayerUtils.send(player, PREFIX + watchlisted.getNotification());
 				}
 
 			Watchlisted watchlisted = service.get(player);
-			if (watchlisted.isActive())
-				Chat.broadcast(watchlisted.getMessage(), StaticChannel.STAFF);
+			if (watchlisted.isActive()) {
+				Chat.broadcastIngame(PREFIX + watchlisted.getNotification(), StaticChannel.STAFF);
+				Chat.broadcastDiscord("**" + PREFIX.trim() + "** " + watchlisted.getNotification(), StaticChannel.STAFF);
+			}
 		});
 	}
 

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.features.commands.staff.WatchlistCommand.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
 
 @Data
@@ -38,8 +37,8 @@ public class Watchlisted extends PlayerOwnedObject {
 	private String reason;
 	private List<Note> notes = new ArrayList<>();
 
-	public JsonBuilder getMessage() {
-		return new JsonBuilder(PREFIX + "&c" + getName() + " was watchlisted for &e" + reason + " &con " + shortDateFormat(watchlistedOn.toLocalDate()))
+	public JsonBuilder getNotification() {
+		return new JsonBuilder("&c" + getName() + " was watchlisted for &e" + reason + " &con " + shortDateFormat(watchlistedOn.toLocalDate()))
 				.command("/watchlist info " + getName());
 	}
 
