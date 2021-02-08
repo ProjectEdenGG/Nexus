@@ -40,7 +40,7 @@ public class Watchlisted extends PlayerOwnedObject {
 	private List<Note> notes = new ArrayList<>();
 
 	public JsonBuilder getNotification() {
-		return new JsonBuilder("&c" + getName() + " was watchlisted for &e" + reason + " &cby &e"
+		return new JsonBuilder("&e" + getName() + " &cwas watchlisted for &e" + reason + " &cby &e"
 				+ PlayerUtils.getPlayer(watchlister).getName() + " &con &e" + shortDateFormat(watchlistedOn.toLocalDate()))
 				.command("/watchlist info " + getName());
 	}
