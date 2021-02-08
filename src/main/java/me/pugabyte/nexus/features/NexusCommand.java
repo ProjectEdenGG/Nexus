@@ -267,6 +267,19 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	@Path("smartReplace <from> <to>")
+	void smartReplace(Material from, Material to) {
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
+		Region selection = worldEditUtils.getPlayerSelection(player());
+
+		for (Block block : worldEditUtils.getBlocks(selection)) {
+			if (block.getType() != from)
+				continue;
+
+			block.setBlockData(Bukkit.createBlockData(block.getBlockData().getAsString().replace(from.name().toLowerCase(), to.name().toLowerCase())));
+		}
+	}
+
 //	@Async
 //	@Path("balances <count>")
 //	void balances(int limit) {
