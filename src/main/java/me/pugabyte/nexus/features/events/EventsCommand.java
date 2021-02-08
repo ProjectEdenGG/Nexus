@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events;
 
+import fr.minuskube.inv.SmartInventory;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -24,7 +25,15 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("store")
 	void store() {
-		error("Coming Soon™");
+		if (!isStaff())
+			error("Coming Soon™");
+
+		SmartInventory menu = SmartInventory.builder()
+				.title("&3Event Store")
+				.size(6, 9)
+				.provider(new EventStoreProvider())
+				.build();
+		menu.open(player());
 	}
 
 	// Token commands
