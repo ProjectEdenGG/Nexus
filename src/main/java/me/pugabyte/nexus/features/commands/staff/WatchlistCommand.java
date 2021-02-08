@@ -76,7 +76,23 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 
 	@Path("info <player>")
 	void info(Watchlisted watchlisted) {
-		send(watchlisted.toPrettyString());
+		String playerName = watchlisted.getOfflinePlayer().getName();
+		String active = StringUtils.bool(watchlisted.isActive());
+		String date = StringUtils.shortDateTimeFormat(watchlisted.getWatchlistedOn());
+		List<Note> notes = watchlisted.getNotes();
+
+		line();
+		send("&3Watchlist info on &e" + playerName);
+		send("&3Active: &e" + active);
+		send("&3Date: &e" + date);
+		send("&3Reason: &e" + watchlisted.getReason());
+		send("&3Notes: ");
+		for (Note entry : notes) {
+			String author = PlayerUtils.getPlayer(entry.getAuthor()).getName();
+			String timestamp = StringUtils.shortDateTimeFormat(entry.getTimestamp());
+			send(json("&3- " + author + ": &e" + entry.getNote()).hover("&e" + timestamp));
+		}
+		line();
 	}
 
 	@Async
