@@ -7,6 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.watchlist.Watchlisted;
@@ -29,6 +30,7 @@ import java.util.function.BiFunction;
 import static me.pugabyte.nexus.utils.StringUtils.ellipsis;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
 
+@Permission("group.staff")
 public class WatchlistCommand extends CustomCommand {
 	public static final String PREFIX = StringUtils.getPrefix("Watchlist");
 	private final WatchlistedService service = new WatchlistedService();
