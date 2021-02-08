@@ -50,6 +50,7 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 			error(watchlisted.getName() + " is already watchlisted for &7" + watchlisted.getReason());
 
 		watchlisted.setActive(true);
+		watchlisted.setWatchlister(uuid());
 		watchlisted.setWatchlistedOn(LocalDateTime.now());
 		watchlisted.setReason(reason);
 		service.save(watchlisted);

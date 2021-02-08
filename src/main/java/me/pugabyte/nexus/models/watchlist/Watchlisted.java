@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeC
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,13 +33,15 @@ public class Watchlisted extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+	private UUID watchlister;
 	private boolean active;
 	private LocalDateTime watchlistedOn;
 	private String reason;
 	private List<Note> notes = new ArrayList<>();
 
 	public JsonBuilder getNotification() {
-		return new JsonBuilder("&c" + getName() + " was watchlisted for &e" + reason + " &con " + shortDateFormat(watchlistedOn.toLocalDate()))
+		return new JsonBuilder("&c" + getName() + " was watchlisted for &e" + reason + " &cby &e"
+				+ PlayerUtils.getPlayer(watchlister).getName() + " &con &e" + shortDateFormat(watchlistedOn.toLocalDate()))
 				.command("/watchlist info " + getName());
 	}
 
