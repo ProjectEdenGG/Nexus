@@ -9,7 +9,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.CitizensUtils;
-import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
@@ -71,7 +70,7 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("gradient <color1> <color2> <input>")
-	void gradient(ColorType color1, ColorType color2, String input) {
+	void gradient(ChatColor color1, ChatColor color2, String input) {
 		send(Gradient.of(color1, color2).apply(input));
 	}
 

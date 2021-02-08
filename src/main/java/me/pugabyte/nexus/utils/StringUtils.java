@@ -651,13 +651,9 @@ public class StringUtils {
 	@RequiredArgsConstructor
 	public static class Gradient {
 		@NonNull
-		private final ColorType color1, color2;
+		private final ChatColor color1, color2;
 
 		public static Gradient of(ChatColor color1, ChatColor color2) {
-			return new Gradient(ColorType.of(color1), ColorType.of(color2));
-		}
-
-		public static Gradient of(ColorType color1, ColorType color2) {
 			return new Gradient(color1, color2);
 		}
 
