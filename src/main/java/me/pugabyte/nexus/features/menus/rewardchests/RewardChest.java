@@ -2,18 +2,9 @@ package me.pugabyte.nexus.features.menus.rewardchests;
 
 import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.nexus.models.mysterychest.MysteryChestPlayer;
 import me.pugabyte.nexus.models.mysterychest.MysteryChestService;
-import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils.ActionGroup;
-import me.pugabyte.nexus.utils.WorldGroup;
-import me.pugabyte.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -22,9 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.reflections.Reflections;
 
@@ -53,32 +42,32 @@ public class RewardChest implements Listener {
 		});
 	}
 
-	@EventHandler
-	public void onMysteryChestClick(PlayerInteractEvent event) {
-		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
-		if (event.getClickedBlock() == null) return;
-		if (event.getHand() == null) return;
-		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
-		if (event.getClickedBlock().getType() != Material.END_PORTAL_FRAME) return;
-
-		WorldGuardUtils utils = new WorldGuardUtils(Bukkit.getWorld("Survival"));
-		if (!utils.isInRegion(event.getClickedBlock().getLocation(), "spawn")) return;
-
-		if (event.getItem() == null) return;
-		ItemStack item = event.getItem();
-		if (item.getType() != Material.TRIPWIRE_HOOK) return;
-		if (item.getLore() == null) return;
-		if (!item.getLore().get(1).contains(StringUtils.colorize("&3Type: &e"))) return;
-
-		RewardChestType type;
-		try {
-			type = RewardChestType.valueOf(item.getLore().get(1).replace(StringUtils.colorize("&3Type: &e"), "").toUpperCase());
-		} catch (Exception ignore) {
-			return;
-		}
-		RewardChest.getInv(MysteryChest.getAllActiveRewardsByType(type)).open(event.getPlayer());
-		event.getItem().setAmount(event.getItem().getAmount() - 1);
-	}
+//	@EventHandler
+//	public void onMysteryChestClick(PlayerInteractEvent event) {
+//		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
+//		if (event.getClickedBlock() == null) return;
+//		if (event.getHand() == null) return;
+//		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
+//		if (event.getClickedBlock().getType() != Material.END_PORTAL_FRAME) return;
+//
+//		WorldGuardUtils utils = new WorldGuardUtils(Bukkit.getWorld("Survival"));
+//		if (!utils.isInRegion(event.getClickedBlock().getLocation(), "spawn")) return;
+//
+//		if (event.getItem() == null) return;
+//		ItemStack item = event.getItem();
+//		if (item.getType() != Material.TRIPWIRE_HOOK) return;
+//		if (item.getLore() == null) return;
+//		if (!item.getLore().get(1).contains(StringUtils.colorize("&3Type: &e"))) return;
+//
+//		RewardChestType type;
+//		try {
+//			type = RewardChestType.valueOf(item.getLore().get(1).replace(StringUtils.colorize("&3Type: &e"), "").toUpperCase());
+//		} catch (Exception ignore) {
+//			return;
+//		}
+//		RewardChest.getInv(MysteryChest.getAllActiveRewardsByType(type)).open(event.getPlayer());
+//		event.getItem().setAmount(event.getItem().getAmount() - 1);
+//	}
 
 	public void processEvent(PlayerEvent event) {
 		Player player = event.getPlayer();

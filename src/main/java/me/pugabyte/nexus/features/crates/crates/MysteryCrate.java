@@ -22,8 +22,6 @@ public class MysteryCrate extends Crate {
 		return new ArrayList<String>() {{
 			add("&3&l--=[+]=--");
 			add("&3[+] &e&lMystery Crate &3[+]");
-			add("&3|                      |");
-			add("&3Use a &eCrate Key &3to claim rewards");
 			add("&3&l--=[+]=--");
 		}};
 	}

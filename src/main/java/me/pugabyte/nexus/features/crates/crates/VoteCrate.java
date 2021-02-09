@@ -21,8 +21,6 @@ public class VoteCrate extends Crate {
 		return new ArrayList<String>() {{
 			add("&3&l--=[+]=--");
 			add("&3[+] &e&lVote Crate &3[+]");
-			add("&3|                      |");
-			add("&3Use a &eVote Crate Key &3to claim rewards");
 			add("&3&l--=[+]=--");
 		}};
 	}
