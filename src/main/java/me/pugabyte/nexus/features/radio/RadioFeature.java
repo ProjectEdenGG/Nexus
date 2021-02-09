@@ -50,7 +50,7 @@ public class RadioFeature extends Feature {
 	private static List<RadioSong> allSongs;
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		allSongs = new ArrayList<>();
 		new Listeners();
 
@@ -106,7 +106,7 @@ public class RadioFeature extends Feature {
 	}
 
 	@Override
-	public void shutdown() {
+	public void onStop() {
 		RadioConfigService configService = new RadioConfigService();
 		RadioConfig radioConfig = configService.get(Nexus.getUUID0());
 		for (Radio radio : radioConfig.getRadios()) {

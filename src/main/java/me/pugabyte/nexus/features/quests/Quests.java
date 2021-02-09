@@ -5,7 +5,7 @@ import me.pugabyte.nexus.framework.features.Feature;
 public class Quests extends Feature {
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		new RegenRegions();
 	}
 

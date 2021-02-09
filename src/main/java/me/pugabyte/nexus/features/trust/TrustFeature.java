@@ -18,13 +18,13 @@ import java.util.Map;
 public class TrustFeature extends Feature {
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		LWC.getInstance().getModuleLoader().registerModule(Nexus.getInstance(), new LWCTrustModule());
 	}
 
 	@Override
 	@SneakyThrows
-	public void shutdown() {
+	public void onStop() {
 		// LWC's ModuleLoader does not have a way to unload modules from their cache, so lets hack it
 		ModuleLoader loader = LWC.getInstance().getModuleLoader();
 		Class<? extends ModuleLoader> clazz = loader.getClass();

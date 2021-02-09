@@ -34,7 +34,7 @@ public class Discord extends Feature {
 	private static final Map<String, DiscordUser> codes = new HashMap<>();
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		if (Nexus.getEnv() != Env.PROD)
 			return;
 
@@ -55,7 +55,7 @@ public class Discord extends Feature {
 	}
 
 	@Override
-	public void shutdown() {
+	public void onStop() {
 		try {
 			for (Bot bot : Bot.values())
 				bot.shutdown();

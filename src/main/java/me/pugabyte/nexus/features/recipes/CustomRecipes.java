@@ -37,7 +37,7 @@ public class CustomRecipes extends Feature implements Listener {
 	private static final ItemStack infiniteWaterBucket = new ItemBuilder(Material.WATER_BUCKET).name("Infinite Bucket of Water").build();
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		infiniteWaterBucket();
 //		Tasks.async(() -> {
 //			slabsToBlocks();

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Particles extends Feature {
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		Tasks.async(() -> Bukkit.getOnlinePlayers().forEach(Particles::startParticles));
 	}
 

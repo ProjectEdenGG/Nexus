@@ -37,7 +37,7 @@ public class SocialMedia extends Feature implements Listener {
 	private static Twitter twitter;
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		try {
 			FileConfiguration config = Nexus.getInstance().getConfig();
 			ConfigurationBuilder twitterConfig = new ConfigurationBuilder();

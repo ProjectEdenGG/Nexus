@@ -16,7 +16,7 @@ public class HomesFeature extends Feature {
 	public final static int maxHomes = 100;
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		new HomeListener();
 	}
 

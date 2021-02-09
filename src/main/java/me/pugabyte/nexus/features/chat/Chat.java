@@ -28,7 +28,7 @@ public class Chat extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Chat");
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		new Timer("    addChannels", this::addChannels);
 		new Timer("    ChatListener", () -> Nexus.registerListener(new ChatListener()));
 		new Timer("    IngameBridgeListener", () -> Nexus.registerListener(new IngameBridgeListener()));
@@ -37,7 +37,7 @@ public class Chat extends Feature {
 	}
 
 	@Override
-	public void shutdown() {
+	public void onStop() {
 		new HashMap<>(new ChatService().getCache()).forEach((uuid, chatter) -> new ChatService().saveSync(chatter));
 	}
 

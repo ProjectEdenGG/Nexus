@@ -37,7 +37,7 @@ public class ItemTags extends Feature {
 	}
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		reloadConfig();
 
 		if (!config.isConfigurationSection("ItemTags"))

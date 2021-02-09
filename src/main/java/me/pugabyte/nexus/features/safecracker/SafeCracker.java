@@ -17,7 +17,7 @@ public class SafeCracker extends Feature {
 	public static Map<Player, String> adminQuestionMap = new HashMap<>();
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		Nexus.registerListener(new NPCHandler());
 	}
 

@@ -13,7 +13,7 @@ import java.util.HashSet;
 public class McMMO extends Feature {
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		new McMMOListener();
 
 		// Remove when updating to mcmmo 2.2

@@ -52,7 +52,7 @@ import static me.pugabyte.nexus.utils.Utils.epochSecond;
 public class Votes extends Feature implements Listener {
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		scheduler();
 
 		new Timer("    EndOfMonth", () -> Nexus.getCron().schedule("00 00 1 * *", EndOfMonth::run));

@@ -8,17 +8,20 @@ public abstract class Feature {
 	public String getName() {
 		return Features.prettyName(this);
 	}
+
 	public String getPrefix() {
 		return PREFIX;
 	}
 
-	public void startup() {}
+	public void onStart() {
+	}
 
-	public void shutdown() {}
+	public void onStop() {
+	}
 
 	public void reload() {
-		shutdown();
-		startup();
+		onStop();
+		onStart();
 	}
 
 }

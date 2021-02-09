@@ -16,7 +16,7 @@ public class Achievements extends Feature {
 	// - Add more achievements
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		Tasks.wait(Time.SECOND.x(5), () -> {
 			for (World world : Bukkit.getWorlds())
 				world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);

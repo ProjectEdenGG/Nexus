@@ -19,7 +19,7 @@ public class AFK extends Feature {
 	static Map<UUID, AFKPlayer> players = new AFKService().getMap();
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream().map(AFK::get).forEach(player -> {
 			try {
 				if (!isSameLocation(player.getLocation(), player.getPlayer().getLocation()) && player.getPlayer().getVehicle() == null)
@@ -37,7 +37,7 @@ public class AFK extends Feature {
 	}
 
 	@Override
-	public void shutdown() {
+	public void onStop() {
 		new AFKService().saveAll();
 	}
 

@@ -40,7 +40,7 @@ public class DailyRewardsFeature extends Feature {
 	private static List<Reward> rewards3 = new ArrayList<>();
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		setupDailyRewards();
 		scheduler();
 		Nexus.getCron().schedule("00 00 * * *", DailyRewardsFeature::dailyReset);
