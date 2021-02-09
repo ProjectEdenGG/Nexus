@@ -144,15 +144,18 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("smartInvs")
 	void smartInvs() {
-		List<String> collect = Bukkit.getOnlinePlayers().stream()
+		Map<String, String> playerInventoryMap = new HashMap<>();
+		Bukkit.getOnlinePlayers().stream()
 				.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
-				.map(Player::getName)
-				.collect(Collectors.toList());
+				.forEach(player -> playerInventoryMap.put(player.getName(),
+						SmartInvsPlugin.manager().getInventory(player).get().getTitle()));
 
-		if (collect.isEmpty())
+		if (playerInventoryMap.isEmpty())
 			error("No SmartInvs open");
 
-		send(PREFIX + "Open SmartInvs: &7" + String.join(", ", collect));
+		send(PREFIX + "Open SmartInvs:");
+		for (Map.Entry<String, String> entry : playerInventoryMap.entrySet())
+			send(" &7- " + entry.getKey() + " - " + entry.getValue());
 	}
 
 	@Path("stats")
