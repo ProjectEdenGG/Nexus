@@ -117,7 +117,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 				error("Someone is opening a crate, cannot reload");
 
 		if (player().equals(PlayerUtils.wakka()) || player().equals(PlayerUtils.blast()))
-			SoundUtils.playSound(PlayerUtils.wakka(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
+			SoundUtils.playSound(player(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
 
 		runCommand("plugman reload Nexus");
 	}
