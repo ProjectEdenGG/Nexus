@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands;
 
 import lombok.Data;
+import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.chat.Koda;
@@ -18,6 +19,7 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.hours.HoursService.PageResult;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
@@ -30,8 +32,11 @@ import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @Aliases({"playtime", "days", "minutes", "seconds"})
 public class HoursCommand extends CustomCommand {
@@ -54,6 +59,7 @@ public class HoursCommand extends CustomCommand {
 		send("&3Total: &e" + TimespanFormatter.of(hours.getTotal()).noneDisplay(true).format());
 		send("&7- &3Today: &e" + TimespanFormatter.of(hours.getDaily()).noneDisplay(true).format());
 		send("&7- &3This month: &e" + TimespanFormatter.of(hours.getMonthly()).noneDisplay(true).format());
+		send("&7- &3This year: &e" + TimespanFormatter.of(hours.getYearly()).noneDisplay(true).format());
 
 		if (Rank.getHighestRank(player) == Rank.GUEST) {
 
@@ -71,26 +77,26 @@ public class HoursCommand extends CustomCommand {
 		send(service.get(player).toString());
 	}
 
+	// TODO Update paginate to support database-level pagination
 	@Async
-	@Path("top [page]")
-	void top(@Arg("1") int page) {
-//		String type = isIntArg(2) ? "total" : arg(2);
-//		int page = isIntArg(2) ? intArg(2) : isIntArg(3) ? intArg(3) : 1;
-
-//		final HoursType hoursType = service.getType(type);
-
-//		List<Hours> results = service.getPage(hoursType, page);
-
-		List<PageResult> results = service.getPage(page);
+	@Path("top [args...]")
+	void top2(@Arg("1") HoursTopArguments args) {
+		int page = args.getPage();
+		List<PageResult> results = service.getPage(args);
 		if (results.size() == 0)
 			error("&cNo results on page " + page);
 
-		send("");
-//		send(PREFIX + "Total: " + StringUtils.timespanFormat(service.total(hoursType)) + (page > 1 ? "&e  |  &3Page " + page : ""));
-		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
-		int i = (page - 1) * 10 + 1;
+		int totalHours = 0;
 		for (PageResult result : results)
-			send("&3" + i++ + " &e" + result.getOfflinePlayer().getName() + " &7- " + TimespanFormatter.of(result.getTotal()).format());
+			totalHours += result.getTotal();
+
+		send("");
+		send(PREFIX + "Total: " + TimespanFormatter.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
+
+		BiFunction<PageResult, Integer, JsonBuilder> formatter = (result, index) ->
+				json("&3" + (index + 1) + " &e" + result.getOfflinePlayer().getName() + " &7- " + TimespanFormatter.of(result.getTotal()).format());
+
+		paginate(results, formatter, "/hours top", page);
 	}
 
 	@Data
@@ -100,10 +106,17 @@ public class HoursCommand extends CustomCommand {
 		private int day = -1;
 		private int page = 1;
 
+		public HoursTopArguments() {
+			this("");
+		}
+
 		public HoursTopArguments(String input) {
 			LocalDate now = LocalDate.now();
 
-			switch (input) {
+			String[] args = input.split(" ");
+			String[] split = args[0].split("-");
+
+			switch (args[0]) {
 				case "day":
 				case "daily":
 					day = now.getDayOfMonth();
@@ -120,74 +133,89 @@ public class HoursCommand extends CustomCommand {
 					year = now.getYear();
 					break;
 				default:
-					String[] args = input.split(" ");
-					String[] split = args[0].split("-");
-					if (split[0].length() > 0 && Utils.isInt(split[0])) {
-						int yearInput = Integer.parseInt(split[0]);
-						if (yearInput >= 2015)
-							if (yearInput <= 2019)
-								throw new InvalidInputException("Years 2015-2019 are not supported");
-							else
-								if (yearInput > now.getYear())
+					if (split[0].length() > 0) {
+						if (Utils.isInt(split[0])) {
+							int yearInput = Integer.parseInt(split[0]);
+							if (yearInput >= 2015)
+								if (yearInput <= 2019)
+									throw new InvalidInputException("Years 2015-2019 are not supported");
+								else if (yearInput > now.getYear())
 									throw new InvalidInputException("Year &e" + yearInput + " &cis in the future");
 								else
 									year = yearInput;
-						else {
-							page = yearInput;
-							break;
-						}
-
-						if (split.length >= 2) {
-							if (split[1].length() > 0 && Utils.isInt(split[1])) {
-								int monthInput = Integer.parseInt(split[1]);
-								if (monthInput >= 1 && monthInput <= 12)
-									if (YearMonth.of(year, monthInput).isAfter(YearMonth.now()))
-										throw new InvalidInputException("Month &e" + yearInput + "-" + monthInput + " &cis in the future");
-									else
-										month = monthInput;
-								else
-									throw new InvalidInputException("Invalid month &e" + monthInput);
-							} else
-								throw new InvalidInputException("Invalid month &e" + split[1]);
-
-							if (split.length >= 3) {
-								if (split[2].length() > 0 && Utils.isInt(split[2])) {
-									int dayInput = Integer.parseInt(split[2]);
-									if (YearMonth.of(year, month).isValidDay(dayInput))
-										if (LocalDate.of(year, month, dayInput).isAfter(now))
-											throw new InvalidInputException("Day &e" + year + "-" + month + "-" + dayInput + " &cis in the future");
-										else
-											day = dayInput;
-									else
-										throw new InvalidInputException("Invalid day of month &e" + dayInput);
-								} else
-									throw new InvalidInputException("Invalid day &e" + split[2]);
+							else {
+								page = yearInput;
+								break;
 							}
-						}
-					} else
-						throw new InvalidInputException("Invalid year &e" + split[0]);
 
-					if (args.length >= 2 && Utils.isInt(args[1]))
-						page = Integer.parseInt(args[1]);
+							if (split.length >= 2) {
+								if (split[1].length() > 0 && Utils.isInt(split[1])) {
+									int monthInput = Integer.parseInt(split[1]);
+									if (monthInput >= 1 && monthInput <= 12)
+										if (YearMonth.of(year, monthInput).isAfter(YearMonth.now()))
+											throw new InvalidInputException("Month &e" + yearInput + "-" + monthInput + " &cis in the future");
+										else
+											month = monthInput;
+									else
+										throw new InvalidInputException("Invalid month &e" + monthInput);
+								} else
+									throw new InvalidInputException("Invalid month &e" + split[1]);
 
-					if (year == 2020) {
-						if (month == -1)
-							throw new InvalidInputException("Year 2020 is not supported");
-						else if (month <= 5)
-							throw new InvalidInputException("Months Jan-May of 2020 are not supported");
+								if (split.length >= 3) {
+									if (split[2].length() > 0 && Utils.isInt(split[2])) {
+										int dayInput = Integer.parseInt(split[2]);
+										if (YearMonth.of(year, month).isValidDay(dayInput))
+											if (LocalDate.of(year, month, dayInput).isAfter(now))
+												throw new InvalidInputException("Day &e" + year + "-" + month + "-" + dayInput + " &cis in the future");
+											else
+												day = dayInput;
+										else
+											throw new InvalidInputException("Invalid day of month &e" + dayInput);
+									} else
+										throw new InvalidInputException("Invalid day &e" + split[2]);
+								}
+							}
+						} else
+							throw new InvalidInputException("Invalid year &e" + split[0]);
+					} else {
+						year = now.getYear();
+						month = now.getMonthValue();
+						day = now.getDayOfMonth();
+						page = 1;
 					}
-
-					if (page < 1)
-						throw new InvalidInputException("Page cannot be less than 1");
 			}
-		}
-	}
 
-	@Async
-	@Permission("group.admin")
-	@Path("top2 [args...]")
-	void top2(@Arg("1") HoursTopArguments args) {
-		send(args.toString());
+			if (args.length >= 2 && Utils.isInt(args[1]))
+				page = Integer.parseInt(args[1]);
+
+			if (year == 2020) {
+				if (month == -1)
+					throw new InvalidInputException("Year 2020 is not supported");
+				else if (month <= 5)
+					throw new InvalidInputException("Months Jan-May of 2020 are not supported");
+			}
+
+			if (page < 1)
+				throw new InvalidInputException("Page cannot be less than 1");
+		}
+
+		@ToString.Include
+		public String getRegex() {
+			if (year <= 0)
+				return ".*";
+
+			String regex = year + "-";
+			if (month > 0) {
+				regex += String.format("%02d", month) + "-";
+				if (day > 0)
+					regex += String.format("%02d", day);
+				else
+					regex += ".*";
+			} else
+				regex += ".*";
+
+			return regex;
+		}
 	}
 
 	@ConverterFor(HoursTopArguments.class)
@@ -197,7 +225,21 @@ public class HoursCommand extends CustomCommand {
 
 	@TabCompleterFor(HoursTopArguments.class)
 	List<String> tabCompleteHoursTopArgument(String filter) {
-		return new ArrayList<>();
+		Set<String> completions = new HashSet<>();
+		LocalDate now = LocalDate.now();
+		LocalDate start = LocalDate.of(2020, 6, 1);
+		while (!start.isAfter(now)) {
+			completions.add(String.valueOf(start.getYear()));
+			completions.add(start.getYear() + "-" + String.format("%02d", start.getMonthValue()));
+			completions.add(start.getYear() + "-" + String.format("%02d", start.getMonthValue()) + "-" + String.format("%02d", start.getDayOfMonth()));
+			start = start.plusDays(1);
+		}
+
+		completions.add("daily");
+		completions.add("monthly");
+		completions.add("yearly");
+
+		return completions.stream().filter(completion -> completion.toLowerCase().startsWith(filter)).collect(Collectors.toList());
 	}
 
 	private static final int INTERVAL = 5;

@@ -3,11 +3,13 @@ package me.pugabyte.nexus.models.hours;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.BsonField;
 import com.mongodb.client.model.Sorts;
 import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.commands.HoursCommand.HoursTopArguments;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
@@ -29,13 +31,14 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static com.mongodb.client.model.Aggregates.group;
 import static com.mongodb.client.model.Aggregates.limit;
+import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Aggregates.project;
-import static com.mongodb.client.model.Aggregates.skip;
 import static com.mongodb.client.model.Aggregates.sort;
+import static com.mongodb.client.model.Aggregates.unwind;
+import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Projections.computed;
-import static com.mongodb.client.model.Projections.fields;
-import static com.mongodb.client.model.Projections.include;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @PlayerClass(Hours.class)
@@ -71,10 +74,6 @@ public class HoursService extends MongoService {
 		);
 	}
 
-//	public int total(HoursType type) {
-//		return database.select("sum(" + type.columnName() + ")").table("hours").first(Double.class).intValue();
-//	}
-
 	@Data
 	@AllArgsConstructor
 	public static class PageResult extends PlayerOwnedObject {
@@ -84,11 +83,12 @@ public class HoursService extends MongoService {
 		private int total;
 	}
 
-	public List<PageResult> getPage(int page) {
-		List<Bson> arguments = getTopArguments();
-		arguments.add(skip((page - 1) * 10));
-		arguments.add(limit(10));
+	public List<PageResult> getPage() {
+		return getPage(new HoursTopArguments());
+	}
 
+	public List<PageResult> getPage(HoursTopArguments args) {
+		List<Bson> arguments = getTopArguments(args);
 		return getPageResults(collection.aggregate(arguments));
 	}
 
@@ -102,16 +102,16 @@ public class HoursService extends MongoService {
 
 	@NotNull
 	public List<Bson> getTopArguments() {
+		return getTopArguments(new HoursTopArguments());
+	}
+
+	@NotNull
+	public List<Bson> getTopArguments(HoursTopArguments args) {
 		return new ArrayList<>(Arrays.asList(
-				project(fields(
-						include("_id"),
-						computed("times", new BasicDBObject("$objectToArray", "$times"))
-				)),
-//				project(match(regex("times.k", "2020-05-.*"))),
-				project(fields(
-						include("_id"),
-						computed("total", new BasicDBObject("$sum", "$times.v"))
-				)),
+				project(computed("times", new BasicDBObject("$objectToArray", "$times"))),
+				unwind("$times"),
+				match(regex("times.k", args.getRegex())),
+				group("$_id", new BsonField("total", new BasicDBObject("$sum", "$times.v"))),
 				sort(Sorts.descending("total"))
 		));
 	}
