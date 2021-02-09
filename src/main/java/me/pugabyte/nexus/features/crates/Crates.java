@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.crates.menus.CrateEditMenu;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
+import me.pugabyte.nexus.features.crates.models.CrateOpeningException;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -111,15 +112,21 @@ public class Crates extends Feature implements Listener {
 
 		CrateType keyType = CrateType.fromKey(event.getItem());
 		if (locationType != keyType && locationType != CrateType.ALL) {
-			if (keyType == CrateType.VOTE) {
+			if (locationType == CrateType.VOTE) {
 				PlayerUtils.send(event.getPlayer(), PREFIX + "Coming soon...");
 				return;
 			}
 			locationType.previewDrops(null).open(event.getPlayer());
 		} else if (keyType != null)
-			if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
-				keyType.getCrateClass().openMultiple(location, event.getPlayer(), event.getItem().getAmount());
-			else
-				keyType.getCrateClass().openCrate(location, event.getPlayer());
+			try {
+				if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
+					keyType.getCrateClass().openMultiple(location, event.getPlayer(), event.getItem().getAmount());
+				else
+					keyType.getCrateClass().openCrate(location, event.getPlayer());
+			} catch (CrateOpeningException ex) {
+				if (ex.getMessage() != null)
+					PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
+				keyType.getCrateClass().reset();
+			}
 	}
 }

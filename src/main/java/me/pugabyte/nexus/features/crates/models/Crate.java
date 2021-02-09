@@ -5,43 +5,38 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.crates.Crates;
+import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Data
-@NoArgsConstructor
-public abstract class Crate {
+public abstract class Crate implements Listener {
 
 	public Player player;
 	public boolean inUse = false;
 	public CrateLoot loot;
 	public List<Hologram> crateHologram;
 	public Item spawnedItem;
+
+	public Crate() {
+		Nexus.registerListener(this);
+	}
 
 	public abstract CrateType getCrateType();
 
@@ -90,7 +85,10 @@ public abstract class Crate {
 			playFinalParticle(finalLocation);
 			spawnItem(finalLocation, loot.getDisplayItem());
 		});
-		Tasks.wait(Time.SECOND.x(7), this::reset);
+		Tasks.wait(Time.SECOND.x(7), () -> {
+			giveItems();
+			reset();
+		});
 	}
 
 	public void openMultiple(Location location, Player player, int amount) {
@@ -100,34 +98,44 @@ public abstract class Crate {
 				.title("Open " + amount + " Crates?")
 				.onConfirm(e -> {
 					player.closeInventory();
-					pickCrateLoot();
-					if (!canHoldItems(player)) return;
-					takeKey();
-					hideHologram();
-					playAnimation(location).thenAccept(finalLocation -> {
-						AtomicInteger wait = new AtomicInteger(0);
-						Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
-							playFinalParticle(finalLocation);
-							spawnItem(finalLocation, loot.getDisplayItem());
-						});
-						List<Integer> tasks = new ArrayList<>();
-						for (int i = 0; i < amount - 1; i++) {
-							int j = i;
-							tasks.add(Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
-								pickCrateLoot();
-								if (!canHoldItems(player)) {
-									tasks.forEach(Tasks::cancel);
-									return;
-								}
-								removeItem();
-								takeKey();
+					try {
+						pickCrateLoot();
+						if (!canHoldItems(player)) return;
+						takeKey();
+						hideHologram();
+						playAnimation(location).thenAccept(finalLocation -> {
+							AtomicInteger wait = new AtomicInteger(0);
+							Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
 								playFinalParticle(finalLocation);
 								spawnItem(finalLocation, loot.getDisplayItem());
-								if (j == amount - 2)
-									Tasks.wait(Time.SECOND.x(3), this::reset);
-							}));
-						}
-					});
+							});
+							List<Integer> tasks = new ArrayList<>();
+							for (int i = 0; i < amount - 1; i++) {
+								int j = i;
+								tasks.add(Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
+									giveItems();
+									removeItem();
+									pickCrateLoot();
+									if (!canHoldItems(player)) {
+										tasks.forEach(Tasks::cancel);
+										return;
+									}
+									takeKey();
+									playFinalParticle(finalLocation);
+									spawnItem(finalLocation, loot.getDisplayItem());
+									if (j == amount - 2)
+										Tasks.wait(Time.SECOND.x(3), () -> {
+											giveItems();
+											reset();
+										});
+								}));
+							}
+						});
+					} catch (CrateOpeningException ex) {
+						if (ex.getMessage() != null)
+							PlayerUtils.send(player, Crates.PREFIX + ex.getMessage());
+						reset();
+					}
 				})
 				.open(player);
 	}
@@ -145,6 +153,9 @@ public abstract class Crate {
 		Map<CrateLoot, Double> original = new HashMap<>();
 		Crates.getLootByType(getCrateType()).stream().filter(CrateLoot::isActive)
 				.forEach(crateLoot -> original.put(crateLoot, crateLoot.getWeight()));
+
+		if (original.size() == 0)
+			throw new CrateOpeningException("&3Coming soon...");
 
 		LinkedHashMap<CrateLoot, Double> sorted = new LinkedHashMap<>();
 		original.entrySet().stream().sorted(Map.Entry.comparingByValue())
@@ -243,11 +254,16 @@ public abstract class Crate {
 		item.setCustomNameVisible(true);
 		item.setCustomName(StringUtils.colorize(loot.getTitle()));
 		spawnedItem = item;
+		new CrateSpawnItemEvent(player, loot).callEvent();
 		return item;
 	}
 
 	public void removeItem() {
-		spawnedItem.remove();
+		if (spawnedItem != null)
+			spawnedItem.remove();
+	}
+
+	public void giveItems() {
 		ItemUtils.giveItems(player, loot.getItems());
 	}
 
