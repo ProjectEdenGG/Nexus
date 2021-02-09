@@ -7,8 +7,10 @@ import me.pugabyte.nexus.features.crates.menus.CrateEditMenu;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
@@ -101,6 +103,7 @@ public class Crates extends Feature implements Listener {
 		CrateType locationType = CrateType.fromLocation(event.getClickedBlock().getLocation());
 		if (locationType == null) return;
 		event.setCancelled(true);
+		Location location = LocationUtils.getCenteredLocation(event.getClickedBlock().getLocation());
 
 		if (event.getHand() == null) return;
 		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
@@ -110,8 +113,8 @@ public class Crates extends Feature implements Listener {
 			locationType.previewDrops(null).open(event.getPlayer());
 		else if (keyType != null)
 			if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
-				keyType.getCrateClass().openMultiple(event.getPlayer(), event.getItem().getAmount());
+				keyType.getCrateClass().openMultiple(location, event.getPlayer(), event.getItem().getAmount());
 			else
-				keyType.getCrateClass().openCrate(event.getPlayer());
+				keyType.getCrateClass().openCrate(location, event.getPlayer());
 	}
 }

@@ -32,7 +32,6 @@ public abstract class Crate {
 	public boolean inUse = false;
 	public CrateLoot loot;
 	public List<Hologram> crateHologram;
-	public Location location;
 	public Item spawnedItem;
 
 	public abstract CrateType getCrateType();
@@ -70,10 +69,9 @@ public abstract class Crate {
 			hologram.getVisibilityManager().setVisibleByDefault(false);
 	}
 
-	public void openCrate(Player player) {
+	public void openCrate(Location location, Player player) {
 		if (inUse) return;
 		this.player = player;
-		this.location = getCrateType().getCenteredLocation();
 		inUse = true;
 		pickCrateLoot();
 		if (!canHoldItems(player)) return;
@@ -86,10 +84,9 @@ public abstract class Crate {
 		Tasks.wait(Time.SECOND.x(7), this::reset);
 	}
 
-	public void openMultiple(Player player, int amount) {
+	public void openMultiple(Location location, Player player, int amount) {
 		if (inUse) return;
 		this.player = player;
-		this.location = getCrateType().getCenteredLocation();
 		MenuUtils.ConfirmationMenu.builder()
 				.title("Open " + amount + " Crates?")
 				.onConfirm(e -> {
