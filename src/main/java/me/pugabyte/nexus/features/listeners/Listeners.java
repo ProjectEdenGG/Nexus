@@ -10,7 +10,7 @@ import org.reflections.Reflections;
 public class Listeners extends Feature {
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		new Reflections(getClass().getPackage().getName()).getSubTypesOf(Listener.class).forEach(listener -> {
 			try {
 				if (listener.getAnnotation(Disabled.class) == null)

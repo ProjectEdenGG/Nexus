@@ -69,7 +69,7 @@ public class Minigames extends Feature {
 	private static final Set<UUID> testModePlayers = new HashSet<>();
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		registerSerializables();
 		registerMatchDatas();
 		ArenaManager.read();
@@ -82,7 +82,7 @@ public class Minigames extends Feature {
 	}
 
 	@Override
-	public void shutdown() {
+	public void onStop() {
 		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
 		ArenaManager.write();
 	}

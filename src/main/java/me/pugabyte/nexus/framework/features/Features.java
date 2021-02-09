@@ -70,7 +70,7 @@ public class Features {
 
 		new Timer("  Register feature " + feature.getName(), () -> {
 			try {
-				feature.startup();
+				feature.onStart();
 				Utils.tryRegisterListener(feature);
 				features.put(feature.getClass(), feature);
 			} catch (Exception ex) {
@@ -104,7 +104,7 @@ public class Features {
 	public void unregister(Feature feature) {
 		new Timer("  Unregister feature " + feature.getName(), () -> {
 			try {
-				feature.shutdown();
+				feature.onStop();
 			} catch (Exception ex) {
 				plugin.getLogger().info("Error while unregistering feature " + feature.getName());
 				ex.printStackTrace();

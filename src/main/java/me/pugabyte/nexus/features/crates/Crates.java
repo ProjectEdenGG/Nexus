@@ -33,7 +33,7 @@ public class Crates extends Feature implements Listener {
 	public static List<CrateLoot> lootCache = new ArrayList<>();
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		ConfigurationSerialization.registerClass(CrateLoot.class);
 		config = Nexus.getConfig("crates.yml");
 		spawnAllHolograms();
@@ -42,7 +42,7 @@ public class Crates extends Feature implements Listener {
 	}
 
 	@Override
-	public void shutdown() {
+	public void onStop() {
 		deleteAllHolograms();
 	}
 

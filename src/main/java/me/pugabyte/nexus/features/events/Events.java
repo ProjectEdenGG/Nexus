@@ -14,7 +14,7 @@ public class Events extends Feature {
 	private Pugmas20 pugmas20;
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		new ScavHuntLegacy();
 
 		new AeveonProject();
@@ -24,7 +24,7 @@ public class Events extends Feature {
 	}
 
 	@Override
-	public void shutdown() {
+	public void onStop() {
 		pugmas20.shutdown();
 	}
 

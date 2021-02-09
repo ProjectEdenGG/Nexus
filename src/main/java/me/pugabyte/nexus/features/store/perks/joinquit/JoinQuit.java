@@ -39,7 +39,7 @@ public class JoinQuit extends Feature implements Listener {
 	private static List<String> quitMessages = new ArrayList<>();
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		reloadConfig();
 	}
 

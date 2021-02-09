@@ -17,7 +17,7 @@ public class Shops extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Shops");
 
 	@Override
-	public void startup() {
+	public void onStart() {
 		new ShopDisabler();
 		new Market();
 	}
