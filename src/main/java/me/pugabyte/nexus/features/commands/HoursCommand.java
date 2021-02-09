@@ -32,9 +32,11 @@ import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @Aliases({"playtime", "days", "minutes", "seconds"})
 public class HoursCommand extends CustomCommand {
@@ -221,10 +223,23 @@ public class HoursCommand extends CustomCommand {
 		return new HoursTopArguments(value);
 	}
 
-
 	@TabCompleterFor(HoursTopArguments.class)
 	List<String> tabCompleteHoursTopArgument(String filter) {
-		return new ArrayList<>();
+		Set<String> completions = new HashSet<>();
+		LocalDate now = LocalDate.now();
+		LocalDate start = LocalDate.of(2020, 6, 1);
+		while (!start.isAfter(now)) {
+			completions.add(String.valueOf(start.getYear()));
+			completions.add(start.getYear() + "-" + String.format("%02d", start.getMonthValue()));
+			completions.add(start.getYear() + "-" + String.format("%02d", start.getMonthValue()) + "-" + String.format("%02d", start.getDayOfMonth()));
+			start = start.plusDays(1);
+		}
+
+		completions.add("daily");
+		completions.add("monthly");
+		completions.add("yearly");
+
+		return completions.stream().filter(completion -> completion.toLowerCase().startsWith(filter)).collect(Collectors.toList());
 	}
 
 	private static final int INTERVAL = 5;
