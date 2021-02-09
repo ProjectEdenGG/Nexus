@@ -109,7 +109,7 @@ public class Crates extends Feature implements Listener {
 		if (locationType != keyType && locationType != CrateType.ALL)
 			locationType.previewDrops(null).open(event.getPlayer());
 		else if (keyType != null)
-			if (event.getPlayer().isSneaking())
+			if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
 				keyType.getCrateClass().openMultiple(event.getPlayer(), event.getItem().getAmount());
 			else
 				keyType.getCrateClass().openCrate(event.getPlayer());
