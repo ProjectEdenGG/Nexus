@@ -455,12 +455,20 @@ public abstract class CustomCommand extends ICustomCommand {
 		}
 	}
 
+	protected int asInt(String input) {
+		try {
+			return Integer.parseInt(input);
+		} catch (NumberFormatException ex) {
+			throw new InvalidInputException("Argument &e" + input + " &cis not a valid integer");
+		}
+	}
+
 	protected Integer intArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		try {
 			return Integer.parseInt(arg(i));
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument #" + i + " is not a valid integer");
+			throw new InvalidInputException("Argument &e#" + i + " &cis not a valid integer");
 		}
 	}
 
@@ -478,12 +486,20 @@ public abstract class CustomCommand extends ICustomCommand {
 		}
 	}
 
+	protected double asDouble(String input) {
+		try {
+			return Double.parseDouble(input);
+		} catch (NumberFormatException ex) {
+			throw new InvalidInputException("Argument &e" + input + " &cis not a valid double");
+		}
+	}
+
 	protected Double doubleArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		try {
 			return Double.parseDouble(arg(i));
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument #" + i + " is not a valid double");
+			throw new InvalidInputException("Argument &e#" + i + " &cis not a valid double");
 		}
 	}
 
@@ -501,12 +517,20 @@ public abstract class CustomCommand extends ICustomCommand {
 		}
 	}
 
+	protected float asFloat(String input) {
+		try {
+			return Float.parseFloat(input);
+		} catch (NumberFormatException ex) {
+			throw new InvalidInputException("Argument &e" + input + " &cis not a valid float");
+		}
+	}
+
 	protected Float floatArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		try {
 			return Float.parseFloat(arg(i));
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("Argument #" + i + " is not a valid float");
+			throw new InvalidInputException("Argument &e#" + i + " &cis not a valid float");
 		}
 	}
 
