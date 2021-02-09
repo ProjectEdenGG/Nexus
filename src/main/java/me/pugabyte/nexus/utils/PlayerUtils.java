@@ -13,8 +13,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -259,6 +262,27 @@ public class PlayerUtils {
 
 	public static void send(CommandSender sender, BaseComponent... baseComponents) {
 		sender.sendMessage(baseComponents);
+	}
+
+	public static boolean hasRoomFor(Player player, ItemStack... items) {
+		List<ItemStack> itemList = new ArrayList<>();
+		for (ItemStack item : new ArrayList<>(Arrays.asList(items))) {
+			if (!ItemUtils.isNullOrAir(item))
+				itemList.add(item);
+		}
+
+		return hasRoomFor(player, itemList.size());
+	}
+
+	public static boolean hasRoomFor(Player player, int slots) {
+		ItemStack[] contents = player.getInventory().getContents();
+		int slotsUsed = 0;
+		for (ItemStack content : contents) {
+			if (!ItemUtils.isNullOrAir(content))
+				slotsUsed++;
+		}
+
+		return (slotsUsed <= (36 - slots));
 	}
 
 	@Deprecated

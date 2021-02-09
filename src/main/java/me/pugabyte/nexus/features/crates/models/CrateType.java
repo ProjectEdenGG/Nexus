@@ -1,0 +1,64 @@
+package me.pugabyte.nexus.features.crates.models;
+
+import fr.minuskube.inv.SmartInventory;
+import lombok.Getter;
+import me.pugabyte.nexus.features.crates.crates.MysteryCrate;
+import me.pugabyte.nexus.features.crates.crates.VoteCrate;
+import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+@Getter
+public enum CrateType {
+	ALL(null, null),
+	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("buildadmin"), 1228.00, 4.00, -390.00, .00F, .00F)),
+	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("buildadmin"), 1228.00, 4.00, -384.00, .00F, .00F));
+
+	Crate crateClass;
+	Location location;
+
+	CrateType(Crate crateClass, Location location) {
+		this.crateClass = crateClass;
+		this.location = location;
+	}
+
+
+	public Location getCenteredLocation() {
+		return LocationUtils.getCenteredLocation(this.location);
+	}
+
+	@Getter
+	ItemStack key = new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eCrate Key")
+			.lore(" ").lore("&3Type: &e" + StringUtils.camelCase(name()))
+			.lore("&7Use me on the Crate at").lore("&7spawn to receive a reward").build();
+
+	public static CrateType fromLocation(Location location) {
+		for (CrateType type : values())
+			if (location.equals(type.location))
+				return type;
+		return null;
+	}
+
+	public static CrateType fromKey(ItemStack item) {
+		if (ItemUtils.isNullOrAir(item)) return null;
+		for (CrateType type : values())
+			if (ItemUtils.isFuzzyMatch(item, type.getKey()))
+				return type;
+		return null;
+	}
+
+	public SmartInventory previewDrops(CrateLoot loot) {
+		return SmartInventory.builder()
+				.size(6, 9)
+				.provider(new CratePreviewProvider(this, loot))
+				.title(StringUtils.camelCase(name()) + " Crate Rewards")
+				.build();
+	}
+
+}
