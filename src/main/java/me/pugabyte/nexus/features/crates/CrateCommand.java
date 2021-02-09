@@ -22,9 +22,10 @@ public class CrateCommand extends CustomCommand {
 		type.give(player, amount);
 		if (player.isOnline())
 			send(player.getPlayer(), Crates.PREFIX + "You have been given &e" + amount + " " + StringUtils.camelCase(type.name()) +
-					" Crate Keys");
+					" Crate Key" + (amount == 1 ? "" : "s"));
 		if (!isSelf(player))
-			send(Crates.PREFIX + "You gave &e" + amount + " " + StringUtils.camelCase(type.name()) + " Crate Keys &3to &e" + player.getName());
+			send(Crates.PREFIX + "You gave &e" + amount + " " + StringUtils.camelCase(type.name()) + " Crate Key" +
+					(amount == 1 ? "" : "s") + "  &3to &e" + player.getName());
 	}
 
 	@Path("edit")
