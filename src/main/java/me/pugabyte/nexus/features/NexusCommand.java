@@ -164,6 +164,19 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Garbage collected");
 	}
 
+	@Path("smartInvs")
+	void smartInvs() {
+		List<String> collect = Bukkit.getOnlinePlayers().stream()
+				.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
+				.map(Player::getName)
+				.collect(Collectors.toList());
+
+		if (collect.isEmpty())
+			error("No SmartInvs open");
+
+		send(PREFIX + "Open SmartInvs: &7" + String.join(", ", collect));
+	}
+
 	@Path("stats")
 	void stats() {
 		send("Features: " + Features.getFeatures().size());

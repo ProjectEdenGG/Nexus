@@ -67,6 +67,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 
 	@Path("<players...>")
 	void freeze(@Arg(type = Freeze.class) List<Freeze> players) {
+		error("Temporarily disabled");
 		for (Freeze freeze : players) {
 			try {
 				OfflinePlayer player = freeze.getOfflinePlayer();
