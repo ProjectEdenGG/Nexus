@@ -7,7 +7,12 @@ import me.pugabyte.nexus.features.crates.crates.VoteCrate;
 import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
 import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,8 +22,8 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public enum CrateType {
 	ALL(null, null),
-	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("buildadmin"), 1228.00, 4.00, -390.00, .00F, .00F)),
-	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("buildadmin"), 1228.00, 4.00, -384.00, .00F, .00F));
+	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 8.00, 15.00, 11.00, .00F, .00F)),
+	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("survival"), 11.00, 15.00, 8.00, .00F, .00F));
 
 	Crate crateClass;
 	Location location;

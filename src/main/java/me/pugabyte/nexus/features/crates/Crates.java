@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Location;
@@ -109,9 +110,13 @@ public class Crates extends Feature implements Listener {
 		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 
 		CrateType keyType = CrateType.fromKey(event.getItem());
-		if (locationType != keyType && locationType != CrateType.ALL)
+		if (locationType != keyType && locationType != CrateType.ALL) {
+			if (keyType == CrateType.VOTE) {
+				PlayerUtils.send(event.getPlayer(), PREFIX + "Coming soon...");
+				return;
+			}
 			locationType.previewDrops(null).open(event.getPlayer());
-		else if (keyType != null)
+		} else if (keyType != null)
 			if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
 				keyType.getCrateClass().openMultiple(location, event.getPlayer(), event.getItem().getAmount());
 			else
