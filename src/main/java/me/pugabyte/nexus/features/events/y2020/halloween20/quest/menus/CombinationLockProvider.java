@@ -11,8 +11,6 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.Halloween20;
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.halloween20.quest.Gate;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.features.menus.rewardchests.RewardChestType;
-import me.pugabyte.nexus.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -116,7 +114,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 			Tasks.wait(Time.SECOND.x(5), () -> {
 				Nexus.getEcon().depositPlayer(player, 10000);
 				PlayerUtils.send(player, "&a$10,000 has been added to your account.");
-				new MysteryChest(player).give(2, RewardChestType.MYSTERY);
+				//new MysteryChest(player).give(2, RewardChestType.MYSTERY);
 			});
 		});
 	}

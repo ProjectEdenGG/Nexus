@@ -3,9 +3,8 @@ package me.pugabyte.nexus.features.votes;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
+import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
-import me.pugabyte.nexus.features.menus.rewardchests.RewardChestType;
-import me.pugabyte.nexus.features.menus.rewardchests.mysterychest.MysteryChest;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.vote.TopVoter;
 import me.pugabyte.nexus.models.vote.VoteService;
@@ -47,7 +46,7 @@ public class EndOfMonth {
 				writeHtml(data);
 
 				if (data.getMysteryChestWinner() != null)
-					new MysteryChest(PlayerUtils.getPlayer(data.getMysteryChestWinner().getUuid())).give(1, RewardChestType.VOTE);
+					CrateType.MYSTERY.give(PlayerUtils.getPlayer(data.getMysteryChestWinner().getUuid()));
 
 				data.getEco30kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(PlayerUtils.getPlayer(topVoter.getUuid()), 30000));
 				data.getEco20kWinners().forEach(topVoter -> Nexus.getEcon().depositPlayer(PlayerUtils.getPlayer(topVoter.getUuid()), 20000));
