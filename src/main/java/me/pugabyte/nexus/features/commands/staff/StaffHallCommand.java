@@ -24,9 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 
-import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+import static me.pugabyte.nexus.utils.StringUtils.*;
 
 @NoArgsConstructor
 public class StaffHallCommand extends CustomCommand implements Listener {
@@ -121,7 +119,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		else if (npc.getId() == 2697)
 			runCommand(event.getClicker(), "filidwelc");
 		else if (npc.getId() == 2990)
-			runCommand(event.getClicker(), "mysterychest");
+			runCommand(event.getClicker(), "crates");
 	}
 
 
