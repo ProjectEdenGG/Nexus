@@ -18,6 +18,7 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -112,11 +113,11 @@ public class JWitherCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onSpawn(CreatureSpawnEvent event) {
 		if (!event.getEntity().getType().equals(EntityType.WITHER)) return;
-		if (event.getLocation().getWorld().getName().equalsIgnoreCase("wither")) return;
+		World world = event.getLocation().getWorld();
+		if (world.getName().equalsIgnoreCase("wither") || world.getName().contains("resource")) return;
 		if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) return;
-		if (!enabled) {
+		if (!enabled)
 			event.setCancelled(true);
-		}
 		event.setCancelled(true);
 	}
 
