@@ -7,8 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.ItemUtils;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.OfflinePlayer;
 
 @Permission("group.admin")
 public class CrateCommand extends CustomCommand {
@@ -17,11 +16,9 @@ public class CrateCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<type> [amount]")
-	void key(CrateType type, @Arg("1") Integer amount) {
-		ItemStack key = type.getKey();
-		key.setAmount(amount);
-		ItemUtils.giveItem(player(), key);
+	@Path("give <type> [player] [amount]")
+	void key(CrateType type, @Arg("self") OfflinePlayer player, @Arg("1") Integer amount) {
+		type.give(player, amount);
 	}
 
 	@Path("edit")

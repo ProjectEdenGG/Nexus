@@ -5,13 +5,13 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.crates.crates.MysteryCrate;
 import me.pugabyte.nexus.features.crates.crates.VoteCrate;
 import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
-import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.models.delivery.Delivery;
+import me.pugabyte.nexus.models.delivery.DeliveryService;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
@@ -59,6 +59,23 @@ public enum CrateType {
 				.provider(new CratePreviewProvider(this, loot))
 				.title(StringUtils.camelCase(name()) + " Crate Rewards")
 				.build();
+	}
+
+	public void give(OfflinePlayer player) {
+		give(player, 1);
+	}
+
+	public void give(OfflinePlayer player, int amount) {
+		ItemStack item = getKey().clone();
+		item.setAmount(amount);
+		if (player.isOnline() && WorldGroup.get(player.getPlayer()) == WorldGroup.SURVIVAL && PlayerUtils.hasRoomFor(player.getPlayer(), item))
+			player.getPlayer().getInventory().addItem(item);
+		else {
+			DeliveryService service = new DeliveryService();
+			Delivery delivery = service.get(player);
+			delivery.add(WorldGroup.SURVIVAL, item);
+			service.save(delivery);
+		}
 	}
 
 }

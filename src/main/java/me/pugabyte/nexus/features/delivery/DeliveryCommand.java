@@ -2,20 +2,26 @@ package me.pugabyte.nexus.features.delivery;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
-import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor
-@Permission("group.admin")
 public class DeliveryCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Delivery");
 	private final DeliveryService service = new DeliveryService();
@@ -38,38 +44,29 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 		new DeliveryMenu(delivery, worldGroup).open(player());
 	}
 
-	@Path("clear")
-	void clearDatabase() {
-		service.clearCache();
-		service.deleteAll();
-		service.clearCache();
+	@EventHandler
+	public void onWorldChange(PlayerChangedWorldEvent event) {
+		processEvent(event);
 	}
 
-	@Path("test [material] [amount]")
-	void test(Material material, @Arg("1") int amount) {
-		delivery.setupDelivery(material == null ? getToolRequired() : new ItemStack(material, amount));
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		processEvent(event);
 	}
 
-//	@EventHandler
-//	public void onWorldChange(PlayerChangedWorldEvent event) {
-//		Player player = event.getPlayer();
-//		WorldGroup worldGroup = WorldGroup.get(player);
-//		Delivery delivery = service.get(player);
-//		List<ItemStack> items = new ArrayList<>();
-//
-//		if (WorldGroup.SURVIVAL.equals(worldGroup))
-//			items = delivery.getSurvivalItems();
-//		else if (WorldGroup.SKYBLOCK.equals(worldGroup))
-//			items = delivery.getSkyblockItems();
-//
-//		if (items.size() == 0) return;
-////		if (!new CooldownService().check(player, "deliveryReminder", Time.HOUR.x(1))) return;
-//
-////		send(player, "\nSize3: " + items.size());
-////		send(player, stripColor(items.toString());
-//
-//		send(player, PREFIX + "&3You have an unclaimed delivery, use &e/delivery &3to claim it!");
-//	}
+	public void processEvent(PlayerEvent event) {
+		Player player = event.getPlayer();
+		WorldGroup worldGroup = WorldGroup.get(player);
+		Delivery delivery = service.get(player);
+		if (!delivery.getItems().containsKey(worldGroup)) return;
+		if (delivery.getItems().get(worldGroup) == null) return;
+		List<ItemStack> items = new ArrayList<>(delivery.getItems().get(worldGroup));
+
+		if (items.size() == 0) return;
+		if (!new CooldownService().check(player, "deliveryReminder", Time.HOUR.x(1))) return;
+
+		send(player, PREFIX + "&3You have an unclaimed delivery, use &e/delivery &3to claim it!");
+	}
 
 }
 
