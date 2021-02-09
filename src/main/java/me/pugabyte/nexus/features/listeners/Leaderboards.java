@@ -45,7 +45,7 @@ public class Leaderboards implements Listener {
 		PLAYTIME_TOTAL(2709, 2708, 2707) {
 			@Override
 			Map<UUID, String> getTop() {
-				return new HoursService().getPage(1).subList(0, 3).stream()
+				return new HoursService().getPage().subList(0, 3).stream()
 						.collect(Collectors.toMap(
 								PageResult::getUuid,
 								hours -> TimespanFormatter.of(hours.getTotal()).format(),
