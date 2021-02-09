@@ -5,6 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.menus.itemeditor.ItemEditMenu;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,18 +30,6 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 
 	private void customEnchant(Player player, String enchant, String level) {
 		PlayerUtils.runCommand(player, "customenchantments:ce enchant " + enchant + " " + level);
-	}
-
-	public List<Enchantment> getApplicableEnchantments(ItemStack item) {
-		List<Enchantment> applicable = new ArrayList<>();
-		for (Enchantment enchantment : Enchantment.values()) {
-			try {
-				item = new ItemStack(item.getType());
-				item.addEnchantment(enchantment, 1);
-				applicable.add(enchantment); // if it gets here it hasnt errored, so its valid
-			} catch (Exception ex) { /* Not applicable, do nothing */ }
-		}
-		return applicable;
 	}
 
 	// click event once set, it not changing
@@ -226,7 +214,7 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 				ItemStack enchantItem;
 				slot = player.getInventory().getHeldItemSlot();
 				heldItem = player.getInventory().getItem(slot);
-				List<Enchantment> applicable = getApplicableEnchantments(heldItem);
+				List<Enchantment> applicable = ItemUtils.getApplicableEnchantments(heldItem);
 
 				int bookRow = 1;
 				int bookCol = 1;

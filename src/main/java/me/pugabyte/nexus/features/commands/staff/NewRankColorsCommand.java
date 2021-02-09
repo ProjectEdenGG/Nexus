@@ -18,6 +18,8 @@ import org.bukkit.entity.EntityType;
 import java.awt.*;
 import java.util.Arrays;
 
+import static me.pugabyte.nexus.utils.StringUtils.decolorize;
+
 @Permission("group.staff")
 public class NewRankColorsCommand extends CustomCommand {
 	private final NewRankColorsService service = new NewRankColorsService();
@@ -49,7 +51,7 @@ public class NewRankColorsCommand extends CustomCommand {
 	}
 
 	@Path("reset <rank>")
-	void reset(Rank rank, String color) {
+	void reset(Rank rank) {
 		newRankColors.getColors().remove(rank);
 		service.save(newRankColors);
 		send("Reset color for " + camelCase(rank));
@@ -67,7 +69,7 @@ public class NewRankColorsCommand extends CustomCommand {
 		line(5);
 		Arrays.asList(Rank.values()).forEach(rank -> {
 			if (!rank.isActive()) return;
-			String color = newRankColors.getColors().getOrDefault(rank, rank.getColor().toString());
+			String color = decolorize(newRankColors.getColors().getOrDefault(rank, rank.getColor().toString()));
 			String hex;
 			if (StringUtils.getHexPattern().matcher(color).matches()) {
 				hex = color.replace("&", "");

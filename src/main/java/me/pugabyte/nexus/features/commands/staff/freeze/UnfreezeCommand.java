@@ -12,7 +12,6 @@ import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class UnfreezeCommand extends CustomCommand {
 	}
 
 	@Path("<players...>")
-	void unfreeze(@Arg(type = Player.class) List<OfflinePlayer> players) {
+	void unfreeze(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		for (OfflinePlayer player : players) {
 			try {
 				Freeze freeze = new FreezeService().get(player);

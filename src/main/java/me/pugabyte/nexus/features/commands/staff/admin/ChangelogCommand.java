@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
 
+@Permission("group.admin")
 public class ChangelogCommand extends CustomCommand {
 	private final ChangelogService service = new ChangelogService();
 	private final Changelog changelog = service.get(Nexus.getUUID0());

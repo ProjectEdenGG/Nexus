@@ -5,6 +5,7 @@ import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -184,6 +185,18 @@ public class ItemUtils {
 		}
 
 		return item;
+	}
+
+	public static List<Enchantment> getApplicableEnchantments(ItemStack item) {
+		List<Enchantment> applicable = new ArrayList<>();
+		for (Enchantment enchantment : Enchantment.values()) {
+			try {
+				item = new ItemStack(item.getType());
+				item.addEnchantment(enchantment, 1);
+				applicable.add(enchantment); // if it gets here it hasnt errored, so its valid
+			} catch (Exception ex) { /* Not applicable, do nothing */ }
+		}
+		return applicable;
 	}
 
 }
