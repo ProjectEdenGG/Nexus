@@ -13,22 +13,21 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -70,6 +69,7 @@ public class MobHeads extends Feature implements Listener {
 
 			double chance = Double.parseDouble(sign.getLine(3));
 
+			skull = new ItemBuilder(skull).name("&e" + StringUtils.camelCase(type) + " Head").build();
 			mobHeads.put(type, skull);
 			mobChance.put(type, chance);
 		}
@@ -95,52 +95,47 @@ public class MobHeads extends Feature implements Listener {
 		//
 
 		EntityType type = victim.getType();
-		ItemStack skull;
+		ItemStack skull = mobHeads.get(type);
 
 		if (victim instanceof Player)
-			skull = new ItemBuilder(Material.PLAYER_HEAD).skullOwner((OfflinePlayer) victim).build();
-		else
-			skull = new ItemBuilder(mobHeads.get(type)).name("&e" + StringUtils.camelCase(type) + " Head").build();
+			skull = new ItemBuilder(skull).name("&e" + ((Player) victim).getDisplayName() + "'s Head").skullOwner((OfflinePlayer) victim).build();
 
 		if (skull != null && RandomUtils.chanceOf(mobChance.get(type)))
 			ItemUtils.giveItem(killer, skull);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onBreakPlayerSkull(BlockBreakEvent event) {
+	public void onPickupPlayerSkull(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player))
+			return;
+
+		Player player = (Player) event.getEntity();
 		// TODO: Remove when done
-		if (!PlayerUtils.isWakka(event.getPlayer()))
+		if (!PlayerUtils.isWakka(player))
 			return;
 		//
 
-		Block block = event.getBlock();
-		if (!MaterialTag.SKULLS.isTagged(event.getBlock().getType()))
+		Item item = event.getItem();
+		ItemStack itemStack = item.getItemStack();
+		if (!MaterialTag.SKULLS.isTagged(itemStack.getType()))
 			return;
 
-		Skull skull = (Skull) block.getState();
-		if (skull.getOwningPlayer() == null)
-			return;
-		UUID skullOwner = skull.getOwningPlayer().getUniqueId();
+		UUID skullOwner = ItemUtils.getSkullOwner(itemStack);
 
-		for (ItemStack mobhead : mobHeads.values()) {
-			if (!MaterialTag.SKULLS.isTagged(mobhead.getType()))
+		for (ItemStack mobHead : mobHeads.values()) {
+			if (!MaterialTag.SKULLS.isTagged(mobHead.getType()))
 				continue;
 
-			UUID mobOwner = ItemUtils.getSkullOwner(mobhead);
+			UUID mobOwner = ItemUtils.getSkullOwner(mobHead);
+
 			if (mobOwner == null)
 				continue;
 
-			// TODO: it's not dropping the correct skull
 			if (mobOwner.equals(skullOwner)) {
-				event.setDropItems(false);
-				event.getBlock().getDrops().clear();
-				block.getWorld().dropItemNaturally(block.getLocation(), mobhead.clone());
-				PlayerUtils.wakka("dropping mob head instead");
+				item.setItemStack(mobHead.clone());
 				break;
 			}
-
 		}
-
 	}
 
 
