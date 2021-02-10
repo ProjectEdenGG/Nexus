@@ -44,10 +44,10 @@ public class CrateCommand extends CustomCommand {
 					(amount == 1 ? "" : "s") + "  &3to &e" + player.getName());
 	}
 
-	@Path("edit")
+	@Path("edit [filter]")
 	@Permission("group.admin")
-	void edit() {
-		CrateEditMenu.getMenu(CrateType.ALL, null).open(player());
+	void edit(@Arg("ALL") CrateType filter) {
+		CrateEditMenu.getMenu(filter, null).open(player());
 	}
 
 }
