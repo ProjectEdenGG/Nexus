@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;
@@ -56,7 +57,7 @@ public class MaterialTagCommand extends CustomCommand {
 				.collect(Collectors.toList());
 	}
 
-	private class MaterialTagMaterialsMenu extends MenuUtils implements InventoryProvider {
+	public static class MaterialTagMaterialsMenu extends MenuUtils implements InventoryProvider {
 		private final Tag<Material> materialTag;
 
 		public MaterialTagMaterialsMenu(Tag<Material> materialTag) {
@@ -67,7 +68,7 @@ public class MaterialTagCommand extends CustomCommand {
 		public void open(Player viewer, int page) {
 			SmartInventory.builder()
 					.provider(this)
-					.title(colorize("&3" + camelCase(materialTag.getKey().getKey())))
+					.title(colorize("&3" + StringUtils.camelCase(materialTag.getKey().getKey())))
 					.size(6, 9)
 					.build()
 					.open(viewer, page);
@@ -83,7 +84,7 @@ public class MaterialTagCommand extends CustomCommand {
 				if (material.isItem())
 					item = new ItemStack(material);
 				else
-					item = new ItemBuilder(Material.BARRIER).name(camelCase(material)).build();
+					item = new ItemBuilder(Material.BARRIER).name(StringUtils.camelCase(material)).build();
 
 				items.add(ClickableItem.empty(item));
 			});

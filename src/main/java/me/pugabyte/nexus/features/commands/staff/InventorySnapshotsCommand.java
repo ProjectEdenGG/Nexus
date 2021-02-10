@@ -30,7 +30,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
@@ -97,10 +96,10 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		takeSnapshot(event.getEntity(), SnapshotReason.DEATH);
 	}
 
-	@EventHandler
-	public void onWorldChange(PlayerChangedWorldEvent event) {
-		takeSnapshot(event.getPlayer(), SnapshotReason.WORLD_CHANGE);
-	}
+//	@EventHandler
+//	public void onWorldChange(PlayerChangedWorldEvent event) {
+//		takeSnapshot(event.getPlayer(), SnapshotReason.WORLD_CHANGE);
+//	}
 
 	public void takeSnapshot(Player player, SnapshotReason reason) {
 		InventoryHistoryService service = new InventoryHistoryService();

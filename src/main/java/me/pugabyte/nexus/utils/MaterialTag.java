@@ -39,6 +39,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag CONCRETE_POWDERS = new MaterialTag("_CONCRETE_POWDER", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_CONCRETES = new MaterialTag("CONCRETE", MatchMode.CONTAINS);
 	public static final MaterialTag SHULKER_BOXES = new MaterialTag("_SHULKER_BOX", MatchMode.SUFFIX).append(SHULKER_BOX);
+	public static final MaterialTag BOOKS = new MaterialTag("BOOK", MatchMode.CONTAINS);
 
 	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, ALL_BANNERS,
 			ALL_STAINED_GLASS, ALL_TERRACOTTAS, ALL_CONCRETES, SHULKER_BOXES);
@@ -66,6 +67,17 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag TOOLS_GOLD = new MaterialTag("GOLDEN_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_CHAINMAIL = new MaterialTag("CHAINMAIL_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_LEATHER = new MaterialTag("LEATHER_", MatchMode.PREFIX, MaterialTag.TOOLS);
+
+	public static final MaterialTag CHESTS = new MaterialTag(CHEST, TRAPPED_CHEST, BARREL);
+	public static final MaterialTag FURNACES = new MaterialTag(FURNACE, BLAST_FURNACE, SMOKER);
+	public static final MaterialTag INVENTORY_BLOCKS = new MaterialTag(HOPPER, DISPENSER, DROPPER)
+			.append(CHESTS)
+			.append(FURNACES)
+			.append(SHULKER_BOXES)
+			.append(LECTERN);
+
+	public static final MaterialTag COMMAND_BLOCKS = new MaterialTag("COMMAND_BLOCK", MatchMode.CONTAINS);
+	public static final MaterialTag MINECARTS = new MaterialTag("_MINECART", MatchMode.SUFFIX);
 
 	public static final MaterialTag UNOBTAINABLE = new MaterialTag(WATER, LAVA, AIR,
 			STRUCTURE_BLOCK, STRUCTURE_VOID, JIGSAW, BARRIER, BEDROCK,
@@ -188,6 +200,15 @@ public class MaterialTag implements Tag<Material> {
 
 	private final EnumSet<Material> materials;
 	private NamespacedKey key = null;
+
+	public MaterialTag() {
+		this.materials = EnumSet.noneOf(Material.class);
+	}
+
+	public MaterialTag(NamespacedKey key) {
+		this.materials = EnumSet.noneOf(Material.class);
+		this.key = key;
+	}
 
 	public MaterialTag(EnumSet<Material> materials) {
 		this.materials = materials.clone();

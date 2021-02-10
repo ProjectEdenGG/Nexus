@@ -177,7 +177,7 @@ public class LiteBans implements Listener {
 
 	public static class EntryEvent extends Event {
 		private static final HandlerList handlers = new HandlerList();
-		private Entry entry;
+		private final Entry entry;
 
 		public EntryEvent(final Entry entry) {
 			this.entry = entry;
@@ -223,8 +223,8 @@ public class LiteBans implements Listener {
 
 	public static class BroadcastEvent extends Event {
 		private static final HandlerList handlers = new HandlerList();
-		private String message;
-		private String type;
+		private final String message;
+		private final String type;
 
 		public BroadcastEvent(final String message, final String type) {
 			this.message = message;

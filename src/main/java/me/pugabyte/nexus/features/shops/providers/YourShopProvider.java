@@ -44,7 +44,9 @@ public class YourShopProvider extends _ShopProvider {
 
 		contents.set(0, 4, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add item"), e -> new AddProductProvider(this).open(player)));
 
-		contents.set(0, 6, ClickableItem.from(nameItem(Material.WRITABLE_BOOK, "Shop history"), e -> {}));
+		// TODO
+		contents.set(0, 6, ClickableItem.from(nameItem(Material.WRITABLE_BOOK, "&6Shop history"), e -> {}));
+		// TODO
 		contents.set(0, 7, ClickableItem.from(nameItem(Material.CYAN_SHULKER_BOX, "&6Collect items"), e -> {}));
 
 		if (shop.getProducts() == null || shop.getProducts().size() == 0) return;

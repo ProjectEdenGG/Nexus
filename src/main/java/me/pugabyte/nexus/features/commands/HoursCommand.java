@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -177,11 +178,6 @@ public class HoursCommand extends CustomCommand {
 							}
 						} else
 							throw new InvalidInputException("Invalid year &e" + split[0]);
-					} else {
-						year = now.getYear();
-						month = now.getMonthValue();
-						day = now.getDayOfMonth();
-						page = 1;
 					}
 			}
 
@@ -225,6 +221,9 @@ public class HoursCommand extends CustomCommand {
 
 	@TabCompleterFor(HoursTopArguments.class)
 	List<String> tabCompleteHoursTopArgument(String filter) {
+		if (filter.contains(" "))
+			return new ArrayList<>();
+
 		Set<String> completions = new HashSet<>();
 		LocalDate now = LocalDate.now();
 		LocalDate start = LocalDate.of(2020, 6, 1);
@@ -256,6 +255,9 @@ public class HoursCommand extends CustomCommand {
 					service.update(hours);
 
 					if (Rank.getHighestRank(player) == Rank.GUEST) {
+						if (player.hasPermission("set.my.rank"))
+							continue;
+
 						if (hours.getTotal() > DAY) {
 							Tasks.sync(() -> {
 								PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
