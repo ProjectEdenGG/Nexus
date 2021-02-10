@@ -12,6 +12,7 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -20,8 +21,11 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 @NoArgsConstructor
-public class CreativeItemLimitsCommand extends CustomCommand implements Listener {
+public class CreativeFilterCommand extends CustomCommand implements Listener {
 	private static final MaterialTag NO_META_ALLOWED = new MaterialTag(new NamespacedKey(Nexus.getInstance(), "NO_META_ALLOWED"))
 			.append(
 					MaterialTag.BOOKS,
@@ -37,13 +41,9 @@ public class CreativeItemLimitsCommand extends CustomCommand implements Listener
 			.append(
 					Material.SPAWNER,
 					Material.FIREWORK_ROCKET
-			)
-			.exclude(
-					Material.FLINT_AND_STEEL,
-					Material.LEAD
 			);
 
-	public CreativeItemLimitsCommand(@NonNull CommandEvent event) {
+	public CreativeFilterCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -52,51 +52,39 @@ public class CreativeItemLimitsCommand extends CustomCommand implements Listener
 		new MaterialTagMaterialsMenu(NO_META_ALLOWED).open(player());
 	}
 
+	private boolean shouldFilterItems(HumanEntity whoClicked) {
+		return WorldGroup.get(whoClicked.getWorld()) == WorldGroup.CREATIVE && whoClicked.hasPermission("rank.guest");
+	}
+
+	private void filter(Supplier<HumanEntity> player, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
+		if (!shouldFilterItems(player.get()))
+			return;
+
+		ItemStack item = getter.get();
+		if (item != null && NO_META_ALLOWED.isTagged(item.getType()))
+			setter.accept(new ItemStack(item.getType(), item.getAmount()));
+	}
+
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		if (WorldGroup.get(event.getWhoClicked().getWorld()) != WorldGroup.CREATIVE) return;
-		if (!event.getWhoClicked().hasPermission("rank.guest")) return;
-
-		if (event.getCurrentItem() != null)
-			if (NO_META_ALLOWED.isTagged(event.getCurrentItem().getType()))
-				event.setCurrentItem(clearMeta(event.getCurrentItem()));
-		if (NO_META_ALLOWED.isTagged(event.getCursor().getType()))
-			event.setCursor(clearMeta(event.getCursor()));
+		filter(event::getWhoClicked, event::getCurrentItem, event::setCurrentItem);
+		filter(event::getWhoClicked, event::getCursor, event::setCursor);
 	}
 
 	@EventHandler
 	public void onInventoryCreative(InventoryCreativeEvent event) {
-		if (WorldGroup.get(event.getWhoClicked().getWorld()) != WorldGroup.CREATIVE) return;
-		if (!event.getWhoClicked().hasPermission("rank.guest")) return;
-
-		if (event.getCurrentItem() != null)
-			if (NO_META_ALLOWED.isTagged(event.getCurrentItem().getType()))
-				event.setCurrentItem(clearMeta(event.getCurrentItem()));
-		if (NO_META_ALLOWED.isTagged(event.getCursor().getType()))
-			event.setCursor(clearMeta(event.getCursor()));
+		filter(event::getWhoClicked, event::getCurrentItem, event::setCurrentItem);
+		filter(event::getWhoClicked, event::getCursor, event::setCursor);
 	}
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (WorldGroup.get(event.getPlayer().getWorld()) != WorldGroup.CREATIVE) return;
-		if (!event.getPlayer().hasPermission("rank.guest")) return;
-
-		if (NO_META_ALLOWED.isTagged(event.getItemInHand().getType()))
-			event.getPlayer().getInventory().setItem(event.getHand(), clearMeta(event.getItemInHand()));
+		filter(event::getPlayer, event::getItemInHand, item -> event.getPlayer().getInventory().setItem(event.getHand(), item));
 	}
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (WorldGroup.get(event.getPlayer().getWorld()) != WorldGroup.CREATIVE) return;
-		if (!event.getPlayer().hasPermission("rank.guest")) return;
-
-		if (event.getItem() == null) return;
-		if (NO_META_ALLOWED.isTagged(event.getItem().getType()))
-			event.getItem().setItemMeta(Bukkit.getItemFactory().getItemMeta(event.getItem().getType()));
-	}
-
-	private ItemStack clearMeta(ItemStack item) {
-		return new ItemStack(item.getType());
+		filter(event::getPlayer, event::getItem, item -> item.setItemMeta(Bukkit.getItemFactory().getItemMeta(item.getType())));
 	}
 
 }
