@@ -43,6 +43,10 @@ public class LuckPermsUtils {
 				return this;
 			}
 
+			public PermissionChangeBuilder uuid(String uuid) {
+				return uuid(UUID.fromString(uuid));
+			}
+
 			public PermissionChangeBuilder uuid(UUID uuid) {
 				this.uuid = uuid;
 				return this;

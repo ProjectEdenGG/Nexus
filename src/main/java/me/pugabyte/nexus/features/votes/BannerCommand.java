@@ -37,7 +37,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Permission("group.staff")
+	@Permission("nexus.banners")
 	@Path("<baseColor> <patternColor> [input...]")
 	void all(DyeColor baseColor, DyeColor patternColor, @Arg("*") String input) {
 		ItemBuilder baseBanner = new ItemBuilder(ColorType.of(baseColor).getBanner());
