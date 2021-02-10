@@ -201,7 +201,7 @@ public class Discord extends Feature {
 
 		return "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
-					String name = discordize(player.getName());
+					String name = discordize(new Nerd(player).getName());
 					if (AFK.get(player).isAfk())
 						name += " _[AFK]_";
 					return name.trim();
@@ -225,7 +225,7 @@ public class Discord extends Feature {
 
 		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
-					String name = discordize(player.getName());
+					String name = discordize(new Nerd(player).getName());
 					if (PlayerUtils.isVanished(player))
 						name += " _[V]_";
 					if (AFK.get(player).isAfk())
