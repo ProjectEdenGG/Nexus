@@ -61,6 +61,7 @@ public class CrateEditMenu {
 				// Weight Item
 				contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.ANVIL).name("&eWeight")
 						.lore("&3Current Value: &e" + editing.getWeight()).build(), e -> {
+					save(player.getOpenInventory().getTopInventory(), editing);
 					new AnvilGUI.Builder()
 							.text("" + editing.getWeight())
 							.onComplete((player1, text) -> {
@@ -82,6 +83,7 @@ public class CrateEditMenu {
 				// CrateType Item
 				contents.set(0, 3, ClickableItem.from(new ItemBuilder(Material.PAPER).name("&eCrate Type")
 						.lore("&3" + StringUtils.camelCase(editing.getType().name())).build(), e -> {
+					save(player.getOpenInventory().getTopInventory(), editing);
 					editing.setType(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()));
 					editing.update();
 					CrateEditMenu.getMenu(filter, editing).open(player);
@@ -90,6 +92,7 @@ public class CrateEditMenu {
 				// Title Item
 				contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.WRITABLE_BOOK).name("&eDisplay Name")
 						.lore("&3" + editing.getTitle()).build(), e -> {
+					save(player.getOpenInventory().getTopInventory(), editing);
 					new AnvilGUI.Builder()
 							.text(editing.getTitle())
 							.onComplete(((player1, text) -> {
@@ -112,6 +115,7 @@ public class CrateEditMenu {
 							.lore("&3item that spawns on crate opening")
 							.build();
 				contents.set(0, 5, ClickableItem.from(displayItem, e -> {
+					save(player.getOpenInventory().getTopInventory(), editing);
 					editing.setDisplayItem(((InventoryClickEvent) e.getEvent()).getCursor());
 					editing.update();
 					Tasks.wait(1, () -> {
@@ -125,6 +129,7 @@ public class CrateEditMenu {
 				// Toggle Active Item
 				contents.set(0, 6, ClickableItem.from(new ItemBuilder(editing.isActive() ? Material.ENDER_CHEST : Material.CHEST)
 						.name("&eToggle Active").lore("&3" + editing.isActive()).build(), e -> {
+					save(player.getOpenInventory().getTopInventory(), editing);
 					editing.setActive(!editing.isActive());
 					editing.update();
 					CrateEditMenu.getMenu(filter, editing).open(player);
