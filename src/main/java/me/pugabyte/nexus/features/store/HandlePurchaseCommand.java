@@ -109,7 +109,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 							"Enjoy your " + purchase.getPackageName() + " perk!");
 
 				if (purchase.getPurchaserUuid().length() == 36) {
-					Nexus.getPerms().playerAdd(null, PlayerUtils.getPlayer(purchase.getPurchaserUuid()), "donated");
+					PermissionChange.set().uuid(purchase.getPurchaserUuid()).permission("donated").run();
 
 					DiscordUser user = new DiscordService().get(purchase.getPurchaserUuid());
 					if (user.getUserId() != null)

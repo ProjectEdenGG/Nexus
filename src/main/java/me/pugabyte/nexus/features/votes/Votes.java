@@ -175,7 +175,7 @@ public class Votes extends Feature implements Listener {
 				for (TopVoter topVoter : topVoters) {
 					if (++index <= 3) {
 						String name = "Unknown";
-						try { name = PlayerUtils.getPlayer(topVoter.getUuid()).getName(); } catch (PlayerNotFoundException ignore) {}
+						try { name = new Nerd(topVoter.getUuid()).getName(); } catch (PlayerNotFoundException ignore) {}
 
 						writer.write("<div class=\"col-sm-4\">" + System.lineSeparator());
 						writer.write("  <h3 style=\"text-align: center;\">#" + index + "</h3>" + System.lineSeparator());
@@ -197,7 +197,7 @@ public class Votes extends Feature implements Listener {
 						if (index < 54) {
 							String name = "Unknown";
 							try {
-								name = PlayerUtils.getPlayer(topVoter.getUuid()).getName();
+								name = new Nerd(topVoter.getUuid()).getName();
 							} catch (PlayerNotFoundException ignore) {}
 
 							writer.write("  <tr>" + System.lineSeparator());
@@ -222,7 +222,7 @@ public class Votes extends Feature implements Listener {
 					if (++index <= 50) {
 						String name = "Unknown";
 						try {
-							name = PlayerUtils.getPlayer(topVoter.getUuid()).getName();
+							name = new Nerd(topVoter.getUuid()).getName();
 						} catch (PlayerNotFoundException ignore) {}
 
 						writer.write("  <tr>" + System.lineSeparator());
