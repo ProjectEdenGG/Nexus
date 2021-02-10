@@ -130,7 +130,6 @@ public class MobHeads extends Feature implements Listener {
 
 				UUID mobOwner = ItemUtils.getSkullOwner(mobHead);
 				if (mobOwner != null && mobOwner.equals(skullOwner)) {
-					PlayerUtils.wakka("owners match");
 					item.setItemStack(mobHead.clone());
 					break;
 				}
@@ -144,16 +143,13 @@ public class MobHeads extends Feature implements Listener {
 				case ZOMBIE_HEAD:
 				case CREEPER_HEAD:
 				case DRAGON_HEAD:
-					PlayerUtils.wakka("vanilla skull type");
 					vanillaSkull = true;
 					break;
 			}
 
-			// Should only be triggered by player heads, another plugin (HDB i think?) handles it as needed.
-			if (!vanillaSkull) {
-				PlayerUtils.wakka("vanilla skull type not used");
+			// Should only be triggered by player heads, another plugin handles it as needed.
+			if (!vanillaSkull)
 				return;
-			}
 
 			ItemStack skull = mobHeads.values()
 					.stream()
