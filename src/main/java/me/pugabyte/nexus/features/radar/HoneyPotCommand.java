@@ -33,6 +33,7 @@ import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -46,6 +47,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -220,15 +222,12 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	private static final String nbtTag = "honeyPotItem";
 
 	private static boolean isHoneyPotItem(ItemStack item) {
-		return new NBTItem(item).getBoolean(nbtTag);
+		return !isNullOrAir(item) && new NBTItem(item).getBoolean(nbtTag);
 	}
 
 	public int removeHoneyPotItems(Player player) {
 		int count = 0;
 		for (ItemStack item : player.getInventory().getContents()) {
-			if (isNullOrAir(item))
-				continue;
-
 			if (isHoneyPotItem(item)) {
 				player.getInventory().remove(item);
 				++count;
@@ -252,6 +251,19 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (event.getPlayer().hasPermission("honeypot.bypass")) return;
 		incrementPlayer(event.getPlayer(), event.getBlock().getLocation());
+	}
+
+	@EventHandler
+	public void onCraftItem(CraftItemEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player)) return;
+		Player player = (Player) event.getView().getPlayer();
+		if (player.hasPermission("honeypot.bypass")) return;
+
+		for (ItemStack ingredient : event.getInventory().getMatrix())
+			if (isHoneyPotItem(ingredient)) {
+				event.getInventory().setResult(new ItemStack(Material.AIR));
+				break;
+			}
 	}
 
 	@EventHandler

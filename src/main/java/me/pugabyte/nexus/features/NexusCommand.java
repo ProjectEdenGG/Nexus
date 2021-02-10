@@ -28,6 +28,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.features.Features;
+import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.balanceconverter.BalanceConverter;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -77,6 +78,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
+import org.reflections.Reflections;
 
 import java.io.File;
 import java.io.IOException;
@@ -241,6 +243,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("getEnv")
 	void getEnv() {
 		send(Nexus.getEnv().name());
+	}
+
+	@Path("clearCache <service>")
+	void clearCache(MongoService service) {
+		service.clearCache();
+		send(PREFIX + service.getClass().getSimpleName() + " cached cleared");
 	}
 
 	@Async
@@ -707,6 +715,33 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@TabCompleterFor(Nerd.class)
 	List<String> tabCompleteNerd(String value) {
 		return tabCompletePlayer(value);
+	}
+
+	private static final Map<String, MongoService> services = new HashMap<>();
+
+	static {
+		Reflections reflections = new Reflections(Nexus.class.getPackage().getName() + ".models");
+		for (Class<? extends MongoService> service : reflections.getSubTypesOf(MongoService.class)) {
+			try {
+				services.put(service.getSimpleName(), service.newInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@ConverterFor(MongoService.class)
+	MongoService convertToMongoService(String value) {
+		if (!services.containsKey(value))
+			error("Service &e" + value + " &cnot found");
+		return services.get(value);
+	}
+
+	@TabCompleterFor(MongoService.class)
+	List<String> tabCompleteMongoService(String value) {
+		return services.keySet().stream()
+				.filter(serviceName -> serviceName.toLowerCase().startsWith(value.toLowerCase()))
+				.collect(Collectors.toList());
 	}
 
 	@ConverterFor(StaffMember.class)
