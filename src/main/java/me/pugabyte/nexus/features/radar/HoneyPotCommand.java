@@ -22,6 +22,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.honeypot.HoneyPotBans;
+import me.pugabyte.nexus.models.honeypot.HoneyPotBansService;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGriefer;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGrieferService;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -44,8 +46,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -59,8 +61,10 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 @Permission("group.staff")
 @Aliases({"hp", "honeypots"})
 public class HoneyPotCommand extends CustomCommand implements Listener {
-	private final HoneyPotGrieferService service = new HoneyPotGrieferService();
+	private final HoneyPotGrieferService grieferService = new HoneyPotGrieferService();
 	private HoneyPotGriefer griefer;
+	private final HoneyPotBansService bansService = new HoneyPotBansService();
+	private final HoneyPotBans honeyPotBans = bansService.get(Nexus.getUUID0());
 
 	private WorldGuardUtils WGUtils;
 	private WorldEditUtils WEUtils;
@@ -76,16 +80,16 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	@Path("check <player>")
 	@Permission("group.seniorstaff")
 	void check(@Arg("self") OfflinePlayer player) {
-		griefer = service.get(player);
+		griefer = grieferService.get(player);
 		send(PREFIX + "&e" + player.getName() + "&3 has griefed &e" + griefer.getTriggered() + " times");
 	}
 
 	@Path("set <player> <int>")
 	@Permission("group.seniorstaff")
 	void set(OfflinePlayer player, int value) {
-		griefer = service.get(player);
+		griefer = grieferService.get(player);
 		griefer.setTriggered(value);
-		service.save(griefer);
+		grieferService.save(griefer);
 		send(PREFIX + "Successfully set grief count of &e" + player.getName() + " &3to &e" + value);
 	}
 
@@ -137,16 +141,18 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@Path("list [page]")
 	void list(@Arg("1") int page) {
-		List<ProtectedRegion> regions = new ArrayList<>(WGUtils.getRegionsLike("hp_"));
+		List<ProtectedRegion> regions = new ArrayList<>(WGUtils.getRegionsLike("hp_.*"));
 
 		if (regions.isEmpty())
 			error("There are no Honey Pots in your world.");
 
 		send(PREFIX + "Honey Pots in your world:");
-		BiFunction<ProtectedRegion, Integer, JsonBuilder> formatter = (region, index) ->
-				json("&3" + (index + 1) + ".&e" + region.getId())
-						.command("/honeypots teleport " + getName(region))
-						.hover("&3Click to Teleport");
+		BiFunction<ProtectedRegion, Integer, JsonBuilder> formatter = (region, index) -> {
+			int bans = honeyPotBans.get(region.getId()).getBans();
+			return json("&3" + (index + 1) + " &e" + region.getId() + " &7- " + bans + plural(" ban", bans))
+					.command("/honeypots teleport " + getName(region))
+					.hover("&3Click to Teleport");
+		};
 		paginate(regions, formatter, "/honeypots list", page);
 	}
 
@@ -180,10 +186,6 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 						entity.remove();
 	}
 
-	private static boolean isHoneyPotItem(ItemStack item) {
-		return new NBTItem(item).getBoolean(nbtTag);
-	}
-
 	public static ProtectedRegion getSchemRegen(ProtectedRegion region, World world) {
 		String name = region.getId().replace("hp_", "hpregen_");
 		return new WorldGuardUtils(world).getProtectedRegion(name);
@@ -201,12 +203,13 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		removeHoneyPotItems(event.getPlayer());
+		Tasks.wait(10, () -> removeHoneyPotItems(event.getPlayer()));
 	}
 
 	@EventHandler
-	public void onChangeWorld(PlayerChangedWorldEvent event) {
+	public void onTeleport(PlayerTeleportEvent event) {
 		removeHoneyPotItems(event.getPlayer());
+		Tasks.wait(10, () -> removeHoneyPotItems(event.getPlayer()));
 	}
 
 	@Path("removeItems <player>")
@@ -215,6 +218,10 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	private static final String nbtTag = "honeyPotItem";
+
+	private static boolean isHoneyPotItem(ItemStack item) {
+		return new NBTItem(item).getBoolean(nbtTag);
+	}
 
 	public int removeHoneyPotItems(Player player) {
 		int count = 0;
@@ -279,7 +286,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 				continue;
 
 			String name = getName(region);
-			HoneyPotGriefer griefer = service.get(player);
+			HoneyPotGriefer griefer = grieferService.get(player);
 			int triggered = griefer.getTriggered() + 1;
 
 			if (new CooldownService().check(player, "hp_" + name, Time.MINUTE.x(10))) {
@@ -292,6 +299,11 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			}
 
 			if (triggered > 9) {
+				final HoneyPotBansService bansService = new HoneyPotBansService();
+				final HoneyPotBans honeyPotBans = bansService.get(Nexus.getUUID0());
+				honeyPotBans.get(region.getId()).addBan();
+				bansService.save(honeyPotBans);
+
 				Tasks.wait(Time.SECOND, () -> fix(region, player.getWorld()));
 				triggered = 0;
 				PlayerUtils.runCommandAsConsole("ban " + player.getName() + " 10h You have been automatically banned " +
@@ -299,7 +311,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			}
 
 			griefer.setTriggered(triggered);
-			service.save(griefer);
+			grieferService.save(griefer);
 			return true;
 		}
 

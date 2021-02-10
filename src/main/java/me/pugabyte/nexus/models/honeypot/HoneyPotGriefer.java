@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-@Entity("honeypot")
+@Entity("honeypot_griefer")
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor

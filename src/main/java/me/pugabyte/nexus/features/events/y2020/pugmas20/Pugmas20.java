@@ -240,7 +240,7 @@ public class Pugmas20 implements Listener {
 		Merchants.openMerchant(player, id);
 	}
 
-	@EventHandler
+//	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
 		Pugmas20Service service = new Pugmas20Service();
 
