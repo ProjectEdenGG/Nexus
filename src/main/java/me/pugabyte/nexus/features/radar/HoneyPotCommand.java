@@ -116,11 +116,12 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		Region selection = WEUtils.getPlayerSelection(player());
 		ProtectedRegion region = new ProtectedCuboidRegion("hp_" + honeyPot, selection.getMinimumPoint(), selection.getMaximumPoint());
 		region.setFlag(Flags.PASSTHROUGH, StateFlag.State.ALLOW);
-		region.setFlag(Flags.BUILD, StateFlag.State.ALLOW);
-		region.setPriority(1);
 		regionManager.addRegion(region);
+
 		ExpandAllCommand.expandAll(player(), expand);
+
 		ProtectedRegion schemRegion = new ProtectedCuboidRegion("hpregen_" + honeyPot, selection.getMinimumPoint(), selection.getMaximumPoint());
+		schemRegion.setFlag(Flags.PASSTHROUGH, StateFlag.State.ALLOW);
 		regionManager.addRegion(schemRegion);
 
 //		TODO when API saving works again
