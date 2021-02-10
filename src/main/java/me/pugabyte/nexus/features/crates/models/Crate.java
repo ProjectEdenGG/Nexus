@@ -8,6 +8,7 @@ import lombok.Data;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
+import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.utils.*;
 import org.bukkit.*;
@@ -315,14 +316,19 @@ public abstract class Crate implements Listener {
 	}
 
 	public Item spawnItem(Location location, ItemStack itemStack) {
-		Item item = location.getWorld().dropItem(location, itemStack);
-		item.setVelocity(new Vector(0, 0, 0));
-		item.setCanPlayerPickup(false);
-		item.setCustomNameVisible(true);
-		item.setCustomName(StringUtils.colorize(loot.getTitle()));
-		spawnedItem = item;
-		new CrateSpawnItemEvent(player, loot).callEvent();
-		return item;
+		try {
+			Item item = location.getWorld().dropItem(location, itemStack);
+			item.setVelocity(new Vector(0, 0, 0));
+			item.setCanPlayerPickup(false);
+			item.setCustomNameVisible(true);
+			item.setCustomName(StringUtils.colorize(loot.getTitle()));
+			spawnedItem = item;
+			new CrateSpawnItemEvent(player, loot).callEvent();
+			return item;
+		} catch (Exception ex) {
+			player.getInventory().addItem(getCrateType().getKey());
+			throw new ClassCastException("There was an error while trying to play the crate animation");
+		}
 	}
 
 	public void removeItem() {
@@ -335,12 +341,16 @@ public abstract class Crate implements Listener {
 	}
 
 	public void takeKey() {
-		ItemStack key = getCrateType().getKey();
-		for (ItemStack item : player.getInventory().getContents())
-			if (ItemUtils.isFuzzyMatch(key, item)) {
-				item.setAmount(item.getAmount() - 1);
-				break;
-			}
+		try {
+			ItemStack key = getCrateType().getKey();
+			for (ItemStack item : player.getInventory().getContents())
+				if (ItemUtils.isFuzzyMatch(key, item)) {
+					item.setAmount(item.getAmount() - 1);
+					break;
+				}
+		} catch (Exception ex) {
+			throw new ClassCastException("You must have a key in your inventory");
+		}
 	}
 
 	public void reset() {

@@ -1,4 +1,6 @@
-package me.pugabyte.nexus.features.crates.models;
+package me.pugabyte.nexus.features.crates.models.exceptions;
+
+import me.pugabyte.nexus.features.crates.models.Crate;
 
 public class CrateOpeningException extends RuntimeException {
 
