@@ -12,6 +12,7 @@ import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
@@ -63,7 +64,7 @@ public class JoinQuit extends Feature implements Listener {
 		final String finalMessage = message;
 
 		if (player.isOnline()) {
-			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + player.getName() + "&5");
+			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + new Nerd(player).getName() + "&5");
 
 			// TODO: mutemenu
 			Bukkit.getOnlinePlayers().forEach(_player -> {
@@ -79,7 +80,7 @@ public class JoinQuit extends Feature implements Listener {
 				DiscordUser user = new DiscordService().get(player);
 				RoleManager.update(user);
 
-				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + player.getName() + "**"));
+				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + new Nerd(player).getName() + "**"));
 				Discord.send(":arrow_right: " + discord, Channel.BRIDGE);
 			});
 		}
@@ -95,7 +96,7 @@ public class JoinQuit extends Feature implements Listener {
 
 		final String finalMessage = message;
 
-		final String ingame = "&4 <&4&m &4&m &4&m &5 " + finalMessage.replaceAll("\\[player]", "&c" + player.getName() + "&5");
+		final String ingame = "&4 <&4&m &4&m &4&m &5 " + finalMessage.replaceAll("\\[player]", "&c" + new Nerd(player).getName() + "&5");
 
 		// TODO: mutemenu
 		Bukkit.getOnlinePlayers().forEach(_player -> {
@@ -107,7 +108,7 @@ public class JoinQuit extends Feature implements Listener {
 			DiscordUser user = new DiscordService().get(player);
 			RoleManager.update(user);
 
-			final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + player.getName() + "**"));
+			final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + new Nerd(player).getName() + "**"));
 			Discord.send("<:red_arrow_left:331808021267218432> " + discord, Channel.BRIDGE);
 		});
 	}
@@ -120,8 +121,8 @@ public class JoinQuit extends Feature implements Listener {
 	public void onJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
-			Koda.replyIngame("&lWelcome to Bear Nation, " + player.getName() + "!");
-			Koda.replyDiscord("**Welcome to Bear Nation, " + discordize(player.getName()) + "!**");
+			Koda.replyIngame("&lWelcome to Bear Nation, " + new Nerd(player).getName() + "!");
+			Koda.replyDiscord("**Welcome to Bear Nation, " + discordize(new Nerd(player).getName()) + "!**");
 		}
 
 		if (!PlayerUtils.isVanished(player))

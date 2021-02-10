@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.vote.Vote;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
@@ -47,7 +48,7 @@ public class VoteCommand extends CustomCommand {
 		line();
 		JsonBuilder builder = json("&3 Links");
 		for (VoteSite site : VoteSite.values())
-			builder.next(" &3|| &e").next("&e" + site.name()).url(site.getUrl(player().getName())).group();
+			builder.next(" &3|| &e").next("&e" + site.name()).url(site.getUrl(new Nerd(player()).getName())).group();
 		send(builder);
 		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
 				.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
@@ -70,7 +71,7 @@ public class VoteCommand extends CustomCommand {
 				LocalDateTime expirationTime = first.get().getTimestamp().plusHours(site.getExpirationHours());
 				send("&e" + site.name() + " &7- &3You can vote in &e" + StringUtils.timespanDiff(expirationTime));
 			} else {
-				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl(player().getName())));
+				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl(new Nerd(player()).getName())));
 			}
 		}
 	}

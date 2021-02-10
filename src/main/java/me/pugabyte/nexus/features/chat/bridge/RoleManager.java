@@ -27,7 +27,8 @@ public class RoleManager {
 		DiscordService service = new DiscordService();
 		OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 
-		if (ignore.contains(player.getName()))
+		String username = new Nerd(player).getName();
+		if (ignore.contains(username))
 			return;
 
 		Color roleColor = new Nerd(player).getRank().getDiscordColor();
@@ -43,20 +44,20 @@ public class RoleManager {
 			role = Discord.getGuild().getRoleById(user.getRoleId());
 
 		if (user.getRoleId() == null || role == null) {
-			List<Role> rolesByName = Discord.getGuild().getRolesByName(player.getName(), true);
+			List<Role> rolesByName = Discord.getGuild().getRolesByName(username, true);
 			if (rolesByName.size() > 0)
 				user.setRoleId(rolesByName.get(0).getId());
 			else
 				Discord.getGuild().createRole()
-						.setName(player.getName())
+						.setName(username)
 						.setColor(new Nerd(player).getRank().getDiscordColor())
 						.setMentionable(true)
 						.queue();
 		} else {
 			if (role.getColor() != roleColor)
 				role.getManager().setColor(roleColor).queue();
-			if (!role.getName().equals(player.getName()))
-				role.getManager().setName(player.getName()).queue();
+			if (!role.getName().equals(username))
+				role.getManager().setName(username).queue();
 		}
 	}
 

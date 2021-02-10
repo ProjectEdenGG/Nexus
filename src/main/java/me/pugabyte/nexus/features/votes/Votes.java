@@ -12,6 +12,7 @@ import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.vote.TopVoter;
@@ -99,7 +100,7 @@ public class Votes extends Feature implements Listener {
 
 		User user = Bot.KODA.jda().retrieveUserById(discordUser.getUserId()).complete();
 		if (user != null && user.getMutualGuilds().size() > 0) {
-			String username = PlayerUtils.getPlayer(vote.getUuid()).getName();
+			String username = new Nerd(vote.getUuid()).getName();
 			Nexus.log("[Votes] Sending vote reminder to " + username);
 			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(createEmbed(username));
 			user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
