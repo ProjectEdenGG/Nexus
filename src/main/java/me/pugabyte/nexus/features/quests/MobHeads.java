@@ -13,6 +13,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -33,6 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class MobHeads extends Feature implements Listener {
@@ -121,22 +123,45 @@ public class MobHeads extends Feature implements Listener {
 			return;
 
 		UUID skullOwner = ItemUtils.getSkullOwner(itemStack);
+		if (skullOwner != null) {
+			for (ItemStack mobHead : mobHeads.values()) {
+				if (!MaterialTag.SKULLS.isTagged(mobHead.getType()))
+					continue;
 
-		for (ItemStack mobHead : mobHeads.values()) {
-			if (!MaterialTag.SKULLS.isTagged(mobHead.getType()))
-				continue;
-
-			UUID mobOwner = ItemUtils.getSkullOwner(mobHead);
-
-			if (mobOwner == null)
-				continue;
-
-			if (mobOwner.equals(skullOwner)) {
-				item.setItemStack(mobHead.clone());
-				break;
+				UUID mobOwner = ItemUtils.getSkullOwner(mobHead);
+				if (mobOwner != null && mobOwner.equals(skullOwner)) {
+					PlayerUtils.wakka("owners match");
+					item.setItemStack(mobHead.clone());
+					break;
+				}
 			}
+		} else {
+			Material itemType = itemStack.getType();
+			boolean vanillaSkull = false;
+			switch (itemType) {
+				case SKELETON_SKULL:
+				case WITHER_SKELETON_SKULL:
+				case ZOMBIE_HEAD:
+				case CREEPER_HEAD:
+				case DRAGON_HEAD:
+					PlayerUtils.wakka("vanilla skull type");
+					vanillaSkull = true;
+					break;
+			}
+
+			// Should only be triggered by player heads, another plugin (HDB i think?) handles it as needed.
+			if (!vanillaSkull) {
+				PlayerUtils.wakka("vanilla skull type not used");
+				return;
+			}
+
+			ItemStack skull = mobHeads.values()
+					.stream()
+					.filter(mobHead -> mobHead.getType().equals(itemType))
+					.collect(Collectors.toList())
+					.get(0);
+			item.setItemStack(skull);
 		}
 	}
-
 
 }
