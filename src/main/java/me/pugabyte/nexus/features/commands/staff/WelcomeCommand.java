@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -54,9 +55,10 @@ public class WelcomeCommand extends CustomCommand {
 			if (!new CooldownService().check(Nexus.getUUID0(), "bumpReminder", Time.DAY))
 				return;
 
+			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";
 			Chat.broadcastIngame("", StaticChannel.STAFF);
-			Chat.broadcastIngame("&eHi Staff. &3It looks like there's a few of you online. Could you consider &ebumping the server?", StaticChannel.STAFF);
-			Chat.broadcastIngame("&3Instructions: &ehttps://bnn.gg/mod", StaticChannel.STAFF);
+			Chat.broadcastIngame("&eHi Staff. &3It looks like there's a few of you online. Time to &ebump the server!", StaticChannel.STAFF);
+			Chat.broadcastIngame(new JsonBuilder("&eClick me").url(url).group().next(" &3for the instructions"), StaticChannel.STAFF);
 			Chat.broadcastIngame("", StaticChannel.STAFF);
 		});
 	}
