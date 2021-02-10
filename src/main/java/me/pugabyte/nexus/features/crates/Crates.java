@@ -45,6 +45,14 @@ public class Crates extends Feature implements Listener {
 		Nexus.registerListener(new CrateEditMenu.CrateEditProvider());
 	}
 
+	public void writeCache() {
+		for (int i = 0; i < lootCache.size(); i++) {
+			CrateLoot loot = lootCache.get(i);
+			loot.setId(i);
+			loot.update();
+		}
+	}
+
 	@Override
 	public void onStop() {
 		deleteAllHolograms();
@@ -111,13 +119,9 @@ public class Crates extends Feature implements Listener {
 		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 
 		CrateType keyType = CrateType.fromKey(event.getItem());
-		if (locationType != keyType && locationType != CrateType.ALL) {
-			if (locationType == CrateType.VOTE) {
-				PlayerUtils.send(event.getPlayer(), PREFIX + "Coming soon...");
-				return;
-			}
+		if (locationType != keyType && locationType != CrateType.ALL)
 			locationType.previewDrops(null).open(event.getPlayer());
-		} else if (keyType != null)
+		else if (keyType != null)
 			try {
 				if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
 					keyType.getCrateClass().openMultiple(location, event.getPlayer(), event.getItem().getAmount());

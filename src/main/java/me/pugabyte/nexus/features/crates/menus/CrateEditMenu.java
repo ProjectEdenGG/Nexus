@@ -183,8 +183,9 @@ public class CrateEditMenu {
 							.lore("&eRight-Click &3to enable/disable")
 							.lore("&cShift-Click to Delete")
 							.build();
-					items.add(ClickableItem.of(item, e -> {
-						if (e.isShiftClick()) {
+					items.add(ClickableItem.from(item, e -> {
+						InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
+						if (event.isShiftClick()) {
 							ConfirmationMenu.builder()
 									.title("Delete " + loot.getTitle() + "?")
 									.onConfirm(e2 -> {
@@ -193,11 +194,11 @@ public class CrateEditMenu {
 									}).open(player);
 							return;
 						}
-						if (e.isLeftClick()) {
+						if (event.isLeftClick()) {
 							CrateEditMenu.getMenu(filter, loot).open(player);
 							return;
 						}
-						if (e.isRightClick()) {
+						if (event.isRightClick()) {
 							loot.setActive(!loot.isActive());
 							loot.update();
 							CrateEditMenu.getMenu(filter, null).open(player, page.getPage());
@@ -210,10 +211,10 @@ public class CrateEditMenu {
 
 				// Arrows
 				if (!page.isFirst())
-					contents.set(0, 3, ClickableItem.from(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
-							CrateEditMenu.getMenu(filter, null).open(player, page.last().getPage())));
+					contents.set(5, 0, ClickableItem.from(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
+							CrateEditMenu.getMenu(filter, null).open(player, page.previous().getPage())));
 				if (!page.isLast())
-					contents.set(5, 3, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
+					contents.set(5, 8, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
 							CrateEditMenu.getMenu(filter, null).open(player, page.next().getPage())));
 			}
 		}

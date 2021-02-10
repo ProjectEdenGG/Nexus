@@ -10,9 +10,7 @@ import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.utils.*;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -24,6 +22,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.SoundUtils.getPitch;
 
 @Data
 public abstract class Crate implements Listener {
@@ -81,7 +81,9 @@ public abstract class Crate implements Listener {
 		if (!canHoldItems(player)) return;
 		takeKey();
 		hideHologram();
+		playAnimationSound(location);
 		playAnimation(location).thenAccept(finalLocation -> {
+			playFinalSound(location);
 			playFinalParticle(finalLocation);
 			spawnItem(finalLocation, loot.getDisplayItem());
 		});
@@ -103,9 +105,11 @@ public abstract class Crate implements Listener {
 						if (!canHoldItems(player)) return;
 						takeKey();
 						hideHologram();
+						playAnimationSound(location);
 						playAnimation(location).thenAccept(finalLocation -> {
 							AtomicInteger wait = new AtomicInteger(0);
 							Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
+								playFinalSound(location);
 								playFinalParticle(finalLocation);
 								spawnItem(finalLocation, loot.getDisplayItem());
 							});
@@ -121,6 +125,7 @@ public abstract class Crate implements Listener {
 										return;
 									}
 									takeKey();
+									playFinalSound(location);
 									playFinalParticle(finalLocation);
 									spawnItem(finalLocation, loot.getDisplayItem());
 									if (j == amount - 2)
@@ -230,6 +235,68 @@ public abstract class Crate implements Listener {
 		});
 
 		return finalLocation;
+	}
+
+	public void playAnimationSound(Location location) {
+		int wait = 3;
+		float volume = .6F;
+		World w = location.getWorld();
+		Tasks.wait(wait += 0, () -> {
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .6F, getPitch(3));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(3));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(7));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(10));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
+		});
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(3)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(5)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(6)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
+		Tasks.wait(wait += 3, () -> {
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(5));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(9));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(12));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
+		});
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(5)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(8)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
+		Tasks.wait(wait += 3, () -> {
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(7));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(10));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(14));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
+		});
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(10)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(11)));
+		Tasks.wait(wait += 3, () -> {
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(9));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(13));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(16));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
+		});
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(11)));
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(12)));
+		Tasks.wait(wait + 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(13)));
+	}
+
+	public void playFinalSound(Location location) {
+		int wait = 0;
+		float volume = .6F;
+		World w = location.getWorld();
+		Tasks.wait(wait += 3, () -> {
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(13));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(17));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(8));
+			w.playSound(location, Sound.BLOCK_NOTE_BLOCK_SNARE, volume, getPitch(24));
+		});
+		Tasks.wait(wait += 3, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(18)));
+		Tasks.wait(wait += 2, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(20)));
+		Tasks.wait(wait + 2, () -> w.playSound(location, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(25)));
 	}
 
 	public void playFinalParticle(Location location) {

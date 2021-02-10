@@ -1,10 +1,6 @@
 package me.pugabyte.nexus.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -219,6 +215,63 @@ public class SoundUtils {
 				});
 				Tasks.wait(6, () -> {
 					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, volume, 2);
+				});
+			}
+		},
+		CRATE_OPEN {
+			@Override
+			public void play(Player player) {
+				int wait = 3;
+				Tasks.wait(wait += 0, () -> {
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(3));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(7));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(10));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
+				});
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(3)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(5)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(6)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
+				Tasks.wait(wait += 3, () -> {
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(5));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(9));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(12));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
+				});
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(5)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(8)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
+				Tasks.wait(wait += 3, () -> {
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(7));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(10));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(14));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
+				});
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(10)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(11)));
+				Tasks.wait(wait += 3, () -> {
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(9));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(13));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(16));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
+				});
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(11)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(12)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(13)));
+				Tasks.wait(wait += 3, () -> {
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(13));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(17));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(8));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
+				});
+				Tasks.wait(wait += 3, () -> {
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(20));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(12));
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(15));
 				});
 			}
 		};
