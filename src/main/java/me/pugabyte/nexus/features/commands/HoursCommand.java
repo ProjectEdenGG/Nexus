@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
@@ -80,6 +81,7 @@ public class HoursCommand extends CustomCommand {
 
 	// TODO Update paginate to support database-level pagination
 	@Async
+	@Description("View the play time leaderboard for any year, month, or day")
 	@Path("top [args...]")
 	void top2(@Arg("1") HoursTopArguments args) {
 		int page = args.getPage();
@@ -239,6 +241,7 @@ public class HoursCommand extends CustomCommand {
 		completions.add("daily");
 		completions.add("monthly");
 		completions.add("yearly");
+		completions.remove("2020");
 
 		return completions.stream().filter(completion -> completion.toLowerCase().startsWith(filter)).collect(Collectors.toList());
 	}

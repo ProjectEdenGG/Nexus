@@ -16,8 +16,16 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.features.recipes.CustomRecipes;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.*;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
+import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
+import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.balanceconverter.BalanceConverter;
@@ -31,13 +39,28 @@ import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.PacketUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import me.pugabyte.nexus.utils.StringUtils.*;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
+import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
+import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RedstoneRail;
@@ -59,14 +82,20 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 import static me.pugabyte.nexus.utils.BlockUtils.getBlocksInRadius;
 import static me.pugabyte.nexus.utils.BlockUtils.getDirection;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.StringUtils.*;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.utils.StringUtils.paste;
+import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")
@@ -441,9 +470,26 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Updated");
 	}
 
+	@Path("schem saveReal <name>")
+	void schemSaveReal(String name) {
+		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
+		send("Saved schematic " + name);
+	}
+
 	@Path("schem save <name>")
 	void schemSave(String name) {
-		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
+		GameMode originalGameMode = player().getGameMode();
+		Location originalLocation = player().getLocation().clone();
+		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
+		player().setGameMode(GameMode.SPECTATOR);
+		player().teleport(location);
+		runCommand("mcmd /copy ;; wait 10 ;; /schem save " + name + " -f");
+		Tasks.wait(20, () -> {
+			player().teleport(originalLocation);
+			player().setGameMode(originalGameMode);
+		});
+
 		send("Saved schematic " + name);
 	}
 

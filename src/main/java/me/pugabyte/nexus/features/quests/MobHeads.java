@@ -103,7 +103,7 @@ public class MobHeads extends Feature implements Listener {
 			skull = new ItemBuilder(skull).name("&e" + ((Player) victim).getDisplayName() + "'s Head").skullOwner((OfflinePlayer) victim).build();
 
 		if (skull != null && RandomUtils.chanceOf(mobChance.get(type)))
-			ItemUtils.giveItem(killer, skull);
+			killer.getWorld().dropItemNaturally(victim.getLocation(), skull);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -136,16 +136,7 @@ public class MobHeads extends Feature implements Listener {
 			}
 		} else {
 			Material itemType = itemStack.getType();
-			boolean vanillaSkull = false;
-			switch (itemType) {
-				case SKELETON_SKULL:
-				case WITHER_SKELETON_SKULL:
-				case ZOMBIE_HEAD:
-				case CREEPER_HEAD:
-				case DRAGON_HEAD:
-					vanillaSkull = true;
-					break;
-			}
+			boolean vanillaSkull = new MaterialTag(MaterialTag.SKULLS).exclude(Material.PLAYER_HEAD).isTagged(itemType);
 
 			// Should only be triggered by player heads, another plugin handles it as needed.
 			if (!vanillaSkull)

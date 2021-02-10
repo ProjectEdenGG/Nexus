@@ -6,35 +6,54 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.commands.worldedit.ExpandAllCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGriefer;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGrieferService;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
+
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
 @Permission("group.staff")
@@ -77,32 +96,36 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		if (region == null)
 			error("That honey pot does not exist");
 
-		fixHP(region, player().getWorld());
+		fix(region, player().getWorld());
 		send(PREFIX + "Successfully repaired the honey pot: &e" + honeyPot);
 	}
 
 	@SneakyThrows
 	@Path("create <honeypot> [schemSize]")
-	void create(String honeyPot, @Arg("10") int expand) {
+	void create(@Arg(regex = "[_a-zA-Z0-9]+_[0-9]+") String honeyPot, @Arg("10") int expand) {
 		honeyPot = honeyPot.toLowerCase();
+		if (honeyPot.startsWith("hp_"))
+			honeyPot = honeyPot.substring(2);
+
 		Region selection = WEUtils.getPlayerSelection(player());
 		ProtectedRegion region = new ProtectedCuboidRegion("hp_" + honeyPot, selection.getMinimumPoint(), selection.getMaximumPoint());
 		region.setFlag(Flags.PASSTHROUGH, StateFlag.State.ALLOW);
 		region.setFlag(Flags.BUILD, StateFlag.State.ALLOW);
 		region.setPriority(1);
 		regionManager.addRegion(region);
-		WEUtils.expandAll(selection, expand);
+		ExpandAllCommand.expandAll(player(), expand);
 		ProtectedRegion schemRegion = new ProtectedCuboidRegion("hpregen_" + honeyPot, selection.getMinimumPoint(), selection.getMaximumPoint());
 		regionManager.addRegion(schemRegion);
 
 //		TODO when API saving works again
 //		WEUtils.save("hp/" + honeyPot, selection);
-		runCommand("nexus schem save " + honeyPot);
+		runCommand("nexus schem save hp/" + honeyPot);
 
 		regionManager.save();
 		send(PREFIX + "Successfully created the honey pot: &e" + honeyPot);
 	}
 
+	@Confirm
 	@SneakyThrows
 	@Path("(delete|remove) <honeypot>")
 	void delete(String honeyPot) {
@@ -112,19 +135,19 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Successfully removed the honey pot: &e" + honeyPot);
 	}
 
-	@Path("list")
-	void list() {
-		Set<ProtectedRegion> regions = WGUtils.getRegionsLike("hp_");
-		if (regions.size() == 0)
+	@Path("list [page]")
+	void list(@Arg("1") int page) {
+		List<ProtectedRegion> regions = new ArrayList<>(WGUtils.getRegionsLike("hp_"));
+
+		if (regions.isEmpty())
 			error("There are no Honey Pots in your world.");
 
 		send(PREFIX + "Honey Pots in your world:");
-		int i = 0;
-		for (ProtectedRegion region : regions) {
-			json("&3" + ++i + ".&e" + region.getId())
-					.command("/honeypots teleport " + getHP(region))
-					.hover("&3Click to Teleport");
-		}
+		BiFunction<ProtectedRegion, Integer, JsonBuilder> formatter = (region, index) ->
+				json("&3" + (index + 1) + ".&e" + region.getId())
+						.command("/honeypots teleport " + getName(region))
+						.hover("&3Click to Teleport");
+		paginate(regions, formatter, "/honeypots list", page);
 	}
 
 	@Path("(teleport|tp) <honeypot>")
@@ -137,18 +160,28 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		send(PREFIX + "You have been teleported to Honey Pot:&e " + honeyPot);
 	}
 
-	public static String getHP(ProtectedRegion region) {
+	public static String getName(ProtectedRegion region) {
 		return region.getId().replace("hp_", "");
 	}
 
-	public static void fixHP(ProtectedRegion region, World world) {
+	public static void fix(ProtectedRegion region, World world) {
 		WorldEditUtils WEUtils = new WorldEditUtils(world);
-		String fileName = region.getId().replace("_", "/");
+		String fileName = region.getId().replace("hp_", "hp/");
 		try {
 			WEUtils.paster().file(fileName).at(getSchemRegen(region, world).getMinimumPoint()).paste();
 		} catch (InvalidInputException ex) {
 			Nexus.log(ex.getMessage());
 		}
+
+		for (Entity entity : world.getEntities())
+			if (entity instanceof Item)
+				if (new WorldGuardUtils(world).isInRegion(entity.getLocation(), region))
+					if (isHoneyPotItem(((Item) entity).getItemStack()))
+						entity.remove();
+	}
+
+	private static boolean isHoneyPotItem(ItemStack item) {
+		return new NBTItem(item).getBoolean(nbtTag);
 	}
 
 	public static ProtectedRegion getSchemRegen(ProtectedRegion region, World world) {
@@ -159,7 +192,53 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.getPlayer().hasPermission("honeypot.bypass")) return;
-		incrementPlayer(event.getPlayer(), event.getBlock().getLocation());
+		Block block = event.getBlock();
+		if (incrementPlayer(event.getPlayer(), block.getLocation())) {
+			event.setDropItems(false);
+			addHoneyPotItemTag(new ArrayList<>(block.getDrops()), block.getLocation());
+		}
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		removeHoneyPotItems(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onChangeWorld(PlayerChangedWorldEvent event) {
+		removeHoneyPotItems(event.getPlayer());
+	}
+
+	@Path("removeItems <player>")
+	void removeItems(Player player) {
+		send(PREFIX + "Removed " + removeHoneyPotItems(player) + " honey pot items from " + player.getName() + "'s inventory");
+	}
+
+	private static final String nbtTag = "honeyPotItem";
+
+	public int removeHoneyPotItems(Player player) {
+		int count = 0;
+		for (ItemStack item : player.getInventory().getContents()) {
+			if (isNullOrAir(item))
+				continue;
+
+			if (isHoneyPotItem(item)) {
+				player.getInventory().remove(item);
+				++count;
+				break;
+			}
+		}
+
+		return count;
+	}
+
+	public void addHoneyPotItemTag(List<ItemStack> drops, Location location) {
+		for (ItemStack drop : drops) {
+			NBTItem nbtItem = new NBTItem(drop);
+			nbtItem.setBoolean(nbtTag, true);
+			drop = nbtItem.getItem();
+			location.getWorld().dropItemNaturally(location, drop);
+		}
 	}
 
 	@EventHandler
@@ -177,34 +256,54 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		incrementPlayer(player, event.getEntity().getLocation());
 	}
 
-	public void incrementPlayer(Player player, Location location) {
+	@EventHandler
+	public void onEntityKill(EntityDeathEvent event) {
+		if (!(event.getEntity() instanceof Animals)) return;
+
+		Location location = event.getEntity().getLocation();
 		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
 		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
 		for (ProtectedRegion region : regions) {
-			if (!region.getId().contains("hp_")) continue;
+			if (!region.getId().contains("hp_"))
+				continue;
+
+			addHoneyPotItemTag(event.getDrops(), location);
+		}
+	}
+
+	public boolean incrementPlayer(Player player, Location location) {
+		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
+		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
+		for (ProtectedRegion region : regions) {
+			if (!region.getId().contains("hp_"))
+				continue;
+
+			String name = getName(region);
 			HoneyPotGriefer griefer = service.get(player);
 			int triggered = griefer.getTriggered() + 1;
 
-			Chat.broadcastIngame(json("&7&l[&cRadar&7&l] &a" + player.getName() + " &fhas triggered a Honey Pot &e(HP: " + getHP(region) + ")")
-					.next(" &e[Click to Teleport]")
-					.command("mcmd vanish on ;; tp " + player.getName())
-					.hover("This will automatically vanish you"), StaticChannel.STAFF);
+			if (new CooldownService().check(player, "hp_" + name, Time.MINUTE.x(10))) {
+				Chat.broadcastIngame(json("&7&l[&cRadar&7&l] &a" + player.getName() + " &fhas triggered a Honey Pot &e(HP: " + name + ")")
+						.next(" &e[Click to Teleport]")
+						.command("mcmd vanish on ;; tp " + player.getName())
+						.hover("This will automatically vanish you"), StaticChannel.STAFF);
 
-			Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + getHP(region) + "`", StaticChannel.STAFF);
+				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + name + "`", StaticChannel.STAFF);
+			}
 
 			if (triggered > 9) {
-				PlayerUtils.runCommandAsConsole("sudo " + player.getName() + " ticket [HoneyPot] Grief trap triggered! " +
-						"Please make sure the area has been fully repaired, and take the blocks from their inventory. " +
-						"(HP: " + getHP(region) + ")");
-				fixHP(region, player.getWorld());
+				Tasks.wait(Time.SECOND, () -> fix(region, player.getWorld()));
 				triggered = 0;
-				PlayerUtils.runCommandAsConsole("ban " + player.getName() + " 10h You have been automatically banend " +
-						"by a grief trap. Griefing is not allowed! (HP: " + getHP(region) + ")");
+				PlayerUtils.runCommandAsConsole("ban " + player.getName() + " 10h You have been automatically banned " +
+						"by a grief trap. Griefing is not allowed! (HP: " + name + ")");
 			}
 
 			griefer.setTriggered(triggered);
 			service.save(griefer);
+			return true;
 		}
+
+		return false;
 	}
 
 

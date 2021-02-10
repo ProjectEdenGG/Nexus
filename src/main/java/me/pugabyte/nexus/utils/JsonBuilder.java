@@ -211,6 +211,7 @@ public class JsonBuilder {
 	}
 
 	private String getColoredWords(String text) {
+		if (text == null) return null;
 		StringBuilder builder = new StringBuilder();
 		for (String word : text.split(" "))
 			builder.append(getLastColor(builder.toString())).append(word).append(" ");

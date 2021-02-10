@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -141,6 +142,7 @@ public class ItemUtils {
 		return hand;
 	}
 
+	@Contract("null -> true")
 	public static boolean isNullOrAir(ItemStack itemStack) {
 		return itemStack == null || itemStack.getType().equals(Material.AIR);
 	}
