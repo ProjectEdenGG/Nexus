@@ -327,7 +327,7 @@ public abstract class Crate implements Listener {
 			return item;
 		} catch (Exception ex) {
 			player.getInventory().addItem(getCrateType().getKey());
-			throw new ClassCastException("There was an error while trying to play the crate animation");
+			throw new CrateOpeningException("There was an error while trying to play the crate animation");
 		}
 	}
 
@@ -349,7 +349,7 @@ public abstract class Crate implements Listener {
 					break;
 				}
 		} catch (Exception ex) {
-			throw new ClassCastException("You must have a key in your inventory");
+			throw new CrateOpeningException("You must have a key in your inventory");
 		}
 	}
 
