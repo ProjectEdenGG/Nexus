@@ -6,26 +6,26 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
-import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
-import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.*;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.coupon.CouponService;
 import me.pugabyte.nexus.models.coupon.Coupons;
 import me.pugabyte.nexus.models.coupon.Coupons.Coupon;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
+import me.pugabyte.nexus.models.vote.VoteService;
+import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -43,6 +43,33 @@ public class CouponCommand extends CustomCommand implements Listener {
 	@Getter
 	@AllArgsConstructor
 	public enum CouponEvent {
+		ECO(false) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				int amount = extractValue(event.getItem());
+				PlayerUtils.runCommandAsConsole("eco give " + event.getPlayer().getName() + " " + amount);
+				ItemStack item = event.getItem();
+				item.setAmount(item.getAmount() - 1);
+			}
+		},
+		VPS(false) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				int amount = extractValue(event.getItem());
+				Voter voter = new VoteService().get(event.getPlayer());
+				voter.addPoints(amount);
+				PlayerUtils.send(event.getPlayer(), "&3You have been given &e" + amount + "&3 vote points");
+				ItemStack item = event.getItem();
+				item.setAmount(item.getAmount() - 1);
+			}
+		},
+		MCMMO(false) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				// TODO: McMMO Menu
+				PlayerUtils.send(event.getPlayer(), "&3Coming soon! &eContact an admin to redeem for now");
+			}
+		},
 		PUGMAS20_ADVENT_PAINTING(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
@@ -80,6 +107,12 @@ public class CouponCommand extends CustomCommand implements Listener {
 				EventUser user = eventUserService.get(event.getPlayer());
 				user.giveTokens(100);
 				eventUserService.save(user);
+			}
+		},
+		EXPERIENCE_75(true) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				event.getPlayer().giveExpLevels(75);
 			}
 		};
 
@@ -122,6 +155,13 @@ public class CouponCommand extends CustomCommand implements Listener {
 				return null;
 			}
 		}
+
+		public int extractValue(ItemStack item) {
+			List<String> lore = item.getLore();
+			return Integer.parseInt(lore.get(0).split(StringUtils.colorize(": &e"))[1]);
+		}
+
+
 	}
 
 	public CouponCommand(CommandEvent event) {
@@ -172,6 +212,19 @@ public class CouponCommand extends CustomCommand implements Listener {
 	void get(Coupon coupon) {
 		giveItem(player(), coupon.getItem());
 		send(PREFIX + "Giving coupon &e" + coupon.getId() + " &3(" + coupon.getUses() + " uses)");
+	}
+
+	@Path("get (eco|vps|mcmmo) <amount>")
+	void generic(Integer amount) {
+		String type = arg(2);
+		Coupon coupon = coupons.of(type);
+		ItemStack itemStack = coupon.getItem().clone();
+		ItemMeta meta = itemStack.getItemMeta();
+		List<String> lore = meta.getLore();
+		lore.set(0, StringUtils.colorize("&3Amount: &e" + amount));
+		meta.setLore(lore);
+		itemStack.setItemMeta(meta);
+		player().getInventory().addItem(itemStack);
 	}
 
 	@ConverterFor(Coupon.class)
