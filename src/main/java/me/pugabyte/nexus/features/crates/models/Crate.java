@@ -108,33 +108,52 @@ public abstract class Crate implements Listener {
 						hideHologram();
 						playAnimationSound(location);
 						playAnimation(location).thenAccept(finalLocation -> {
-							AtomicInteger wait = new AtomicInteger(0);
-							Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
-								playFinalSound(location);
-								playFinalParticle(finalLocation);
-								spawnItem(finalLocation, loot.getDisplayItem());
-							});
-							List<Integer> tasks = new ArrayList<>();
-							for (int i = 0; i < amount - 1; i++) {
-								int j = i;
-								tasks.add(Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
-									giveItems();
-									removeItem();
-									pickCrateLoot();
-									if (!canHoldItems(player)) {
-										tasks.forEach(Tasks::cancel);
-										return;
+							try {
+								AtomicInteger wait = new AtomicInteger(0);
+								Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
+									try {
+										playFinalSound(location);
+										playFinalParticle(finalLocation);
+										spawnItem(finalLocation, loot.getDisplayItem());
+									} catch (CrateOpeningException ex) {
+										if (ex.getMessage() != null)
+											PlayerUtils.send(player, Crates.PREFIX + ex.getMessage());
+										reset();
 									}
-									takeKey();
-									playFinalSound(location);
-									playFinalParticle(finalLocation);
-									spawnItem(finalLocation, loot.getDisplayItem());
-									if (j == amount - 2)
-										Tasks.wait(Time.SECOND.x(3), () -> {
+								});
+								List<Integer> tasks = new ArrayList<>();
+								for (int i = 0; i < amount - 1; i++) {
+									int j = i;
+									tasks.add(Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
+										try {
 											giveItems();
+											removeItem();
+											pickCrateLoot();
+											if (!canHoldItems(player)) {
+												tasks.forEach(Tasks::cancel);
+												return;
+											}
+											takeKey();
+											playFinalSound(location);
+											playFinalParticle(finalLocation);
+											spawnItem(finalLocation, loot.getDisplayItem());
+											if (j == amount - 2)
+												Tasks.wait(Time.SECOND.x(3), () -> {
+													giveItems();
+													reset();
+												});
+										} catch (CrateOpeningException ex) {
+											if (ex.getMessage() != null)
+												PlayerUtils.send(player, Crates.PREFIX + ex.getMessage());
+											tasks.forEach(Tasks::cancel);
 											reset();
-										});
-								}));
+										}
+									}));
+								}
+							} catch (CrateOpeningException ex) {
+								if (ex.getMessage() != null)
+									PlayerUtils.send(player, Crates.PREFIX + ex.getMessage());
+								reset();
 							}
 						});
 					} catch (CrateOpeningException ex) {
