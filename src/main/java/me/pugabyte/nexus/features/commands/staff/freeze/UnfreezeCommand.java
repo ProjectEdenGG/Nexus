@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands.staff.freeze;
 
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.commands.SpeedCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -12,6 +13,7 @@ import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
@@ -38,6 +40,9 @@ public class UnfreezeCommand extends CustomCommand {
 				service.save(freeze);
 
 				if (player.isOnline() && player.getPlayer() != null) {
+					SpeedCommand.resetSpeed(player.getPlayer());
+					player.getPlayer().removePotionEffect(PotionEffectType.JUMP);
+
 					if (player.getPlayer().getVehicle() != null && player.getPlayer().getVehicle() instanceof ArmorStand)
 						player.getPlayer().getVehicle().remove();
 

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands.staff.freeze;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.commands.SpeedCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -31,6 +32,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.List;
@@ -67,7 +70,6 @@ public class FreezeCommand extends CustomCommand implements Listener {
 
 	@Path("<players...>")
 	void freeze(@Arg(type = Freeze.class) List<Freeze> players) {
-		error("Temporarily disabled");
 		for (Freeze freeze : players) {
 			try {
 				OfflinePlayer player = freeze.getOfflinePlayer();
@@ -99,6 +101,11 @@ public class FreezeCommand extends CustomCommand implements Listener {
 	}
 
 	public static void freezePlayer(Player player) {
+		SpeedCommand.setSpeed(player, 0, false);
+		SpeedCommand.setSpeed(player, 0, true);
+		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 9999999, 200, true, true, false));
+		if (true) return;
+
 		if (player.getVehicle() != null)
 			player.getVehicle().removePassenger(player);
 		Location spawnLoc = player.getLocation().clone().subtract(0, 1, 0);
