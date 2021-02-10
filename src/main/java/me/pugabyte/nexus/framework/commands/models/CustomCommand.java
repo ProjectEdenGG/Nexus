@@ -625,8 +625,8 @@ public abstract class CustomCommand extends ICustomCommand {
 	public List<String> tabCompletePlayer(String filter) {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
-				.filter(player -> player.getName().toLowerCase().startsWith(filter.toLowerCase()))
-				.map(Player::getName)
+				.map(player -> new Nerd(player).getName())
+				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 
