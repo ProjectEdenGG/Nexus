@@ -60,6 +60,12 @@ public class Nerd {
 		fromPlayer(player);
 	}
 
+	public String getName() {
+		if ("IMissedIt".equals(name))
+			return "ShadowSB";
+		return name;
+	}
+
 	public void send(String message) {
 		getPlayer().sendMessage(colorize(message));
 	}

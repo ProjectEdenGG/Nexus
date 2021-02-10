@@ -6,7 +6,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.admin.MaterialTagCommand.MaterialTagMaterialsMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -21,7 +20,6 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-@Permission("")
 @NoArgsConstructor
 public class CreativeItemLimitsCommand extends CustomCommand implements Listener {
 	private static final MaterialTag NO_META_ALLOWED = new MaterialTag(new NamespacedKey(Nexus.getInstance(), "NO_META_ALLOWED"))
