@@ -56,6 +56,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		line(2);
 		send("&3These are all the commands available to you in the build contest world.");
 		send(json("&3[+] &c/hdb").hover("&eFind decorative heads!").suggest("/hdb"));
+		send(json("&3[+] &c/banners").hover("&eCreate alphanumeric banners").suggest("/banners"));
 		send(json("&3[+] &c/plots home buildcontest" + buildContest.getId()).hover("&eTeleport to your plot").suggest("/plots home"));
 		send(json("&3[+] &c/plots setbiome <biome>").hover("&eChange the biome of your plot").suggest("/plots setbiome "));
 		send(json("&3[+] &c/plots middle").hover("&&eTeleport to the middle of your current plot").suggest("/plots middle"));

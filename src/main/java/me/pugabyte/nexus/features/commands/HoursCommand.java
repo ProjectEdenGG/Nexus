@@ -97,7 +97,7 @@ public class HoursCommand extends CustomCommand {
 		BiFunction<PageResult, Integer, JsonBuilder> formatter = (result, index) ->
 				json("&3" + (index + 1) + " &e" + result.getOfflinePlayer().getName() + " &7- " + TimespanFormatter.of(result.getTotal()).format());
 
-		paginate(results, formatter, "/hours top", page);
+		paginate(results, formatter, "/hours top " + args.getInput(), page);
 	}
 
 	@Data
@@ -106,6 +106,7 @@ public class HoursCommand extends CustomCommand {
 		private int month = -1;
 		private int day = -1;
 		private int page = 1;
+		private String input;
 
 		public HoursTopArguments() {
 			this("");
@@ -116,6 +117,7 @@ public class HoursCommand extends CustomCommand {
 
 			String[] args = input.split(" ");
 			String[] split = args[0].split("-");
+			this.input = args[0];
 
 			switch (args[0]) {
 				case "day":
