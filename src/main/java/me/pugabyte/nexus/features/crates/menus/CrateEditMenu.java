@@ -73,7 +73,7 @@ public class CrateEditMenu {
 									PlayerUtils.send(player1, Crates.PREFIX + "Weight must be a number value");
 								}
 								CrateEditMenu.getMenu(filter, editing).open(player);
-								return AnvilGUI.Response.text(text);
+								return AnvilGUI.Response.close();
 							})
 							.onClose(player1 -> CrateEditMenu.getMenu(filter, editing).open(player))
 							.plugin(Nexus.getInstance())
@@ -116,10 +116,12 @@ public class CrateEditMenu {
 							.build();
 				contents.set(0, 5, ClickableItem.from(displayItem, e -> {
 					save(player.getOpenInventory().getTopInventory(), editing);
-					editing.setDisplayItem(((InventoryClickEvent) e.getEvent()).getCursor());
+					InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
+					ItemStack display = ItemUtils.isNullOrAir(event.getCursor()) ? null : event.getCursor();
+					editing.setDisplayItem(display);
 					editing.update();
 					Tasks.wait(1, () -> {
-						ItemStack item = ((InventoryClickEvent) e.getEvent()).getCursor();
+						ItemStack item = event.getCursor();
 						player.setItemOnCursor(null);
 						CrateEditMenu.getMenu(filter, editing).open(player);
 						player.setItemOnCursor(item);
@@ -162,6 +164,7 @@ public class CrateEditMenu {
 				contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(),
 						e -> {
 							CrateLoot loot = new CrateLoot(null, new ArrayList<>(), 20, filter, null);
+							loot.setId(Crates.getNextId());
 							loot.update();
 							Crates.lootCache.add(loot);
 							CrateEditMenu.getMenu(filter, loot).open(player);
@@ -171,7 +174,7 @@ public class CrateEditMenu {
 				Pagination page = contents.pagination();
 				List<ClickableItem> items = new ArrayList<>();
 				Crates.getLootByType(filter).forEach(loot -> {
-					ItemStack item = new ItemBuilder(loot.getDisplayItemWithNull() != null ? loot.getDisplayItem().getType() :
+					ItemStack item = new ItemBuilder(loot.getDisplayItem() != null ? loot.getDisplayItem().getType() :
 							(loot.isActive() ? Material.ENDER_CHEST : Material.CHEST))
 							.name(loot.getTitle())
 							.lore("&3Type: &e" + StringUtils.camelCase(loot.getType()))
