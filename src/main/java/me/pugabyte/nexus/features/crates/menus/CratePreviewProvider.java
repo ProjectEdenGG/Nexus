@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.crates.menus;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
@@ -13,6 +14,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -34,21 +36,22 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 		Pagination page = contents.pagination();
 
 		List<ClickableItem> items = new ArrayList<>();
-		if (loot == null)
-			Crates.getLootByType(type).stream().sorted(Comparator.comparingDouble(CrateLoot::getWeight).reversed())
+		if (loot == null) {
+			List<CrateLoot> crateLoots = Crates.getLootByType(type);
+			DecimalFormat format = new DecimalFormat("#0.00");
+			AtomicDouble weightSum = new AtomicDouble(0);
+			for (CrateLoot loot : crateLoots)
+				weightSum.getAndAdd(loot.getWeight());
+			crateLoots.stream().sorted(Comparator.comparingDouble(CrateLoot::getWeight).reversed())
 					.forEachOrdered(crateLoot -> {
 						ItemBuilder builder = new ItemBuilder(crateLoot.getDisplayItem())
 								.name("&e" + crateLoot.getTitle())
 								.amount(1)
-								.lore("&3Chance: &e" + crateLoot.getWeight());
-						if (crateLoot.getItems().size() > 1)
-							builder.lore("&7&oClick for more");
-						items.add(ClickableItem.from(builder.build(), e -> {
-							if (crateLoot.getItems().size() > 1)
-								type.previewDrops(crateLoot).open(player);
-						}));
+								.lore("&3Chance: &e" + format.format(((crateLoot.getWeight() / weightSum.get()) * 100)) + "%")
+								.lore("&7&oClick for more");
+						items.add(ClickableItem.from(builder.build(), e -> type.previewDrops(crateLoot).open(player)));
 					});
-		else {
+		} else {
 			loot.getItems().forEach(itemStack -> items.add(ClickableItem.empty(itemStack)));
 			addBackItem(contents, e -> type.previewDrops(null).open(player));
 		}
