@@ -40,7 +40,7 @@ public class VoteCrate extends Crate {
 	public void onItemSpawn(CrateSpawnItemEvent event) {
 		CrateLoot loot = event.getCrateLoot();
 		if (loot.getWeight() > .25) return;
-		Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() + " &3has gotten " + loot.getTitle() + " &3from the &eMystery Crate");
-		Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten " + StringUtils.stripColor(loot.getTitle()) + " from the Mystery Chest");
+		Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() + " &3has gotten " + loot.getTitle() + " &3from the &eVote Crate");
+		Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten " + StringUtils.stripColor(loot.getTitle()) + " from the Vote Crate");
 	}
 }
