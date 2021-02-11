@@ -10,7 +10,6 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.nexus.models.bearfair.BearFairService;
 import me.pugabyte.nexus.models.bearfair.BearFairUser;
-import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -506,10 +505,7 @@ public class MainIsland implements Listener, Island {
 				break;
 			default:
 				reward = "30 Vote Points";
-				VoteService voteService = new VoteService();
-				Voter voter = voteService.get(player);
-				voter.addPoints(30);
-				voteService.save(voter);
+				new Voter(player).givePoints(30);
 				break;
 		}
 		return reward;

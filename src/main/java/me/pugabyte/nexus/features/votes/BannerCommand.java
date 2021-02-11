@@ -10,7 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.vote.VoteService;
+import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -107,7 +107,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		ConfirmationMenu.builder()
 				.onConfirm(e -> {
 					try {
-						new VoteService().takePoints(event.getPlayer().getUniqueId().toString(), 5);
+						new Voter(event.getPlayer()).takePoints(5);
 					} catch (InvalidInputException ex) {
 						send(event.getPlayer(), ex.getMessage());
 						return;

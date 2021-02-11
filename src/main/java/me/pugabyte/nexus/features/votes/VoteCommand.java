@@ -16,7 +16,6 @@ import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
@@ -30,8 +29,8 @@ import static me.pugabyte.nexus.utils.StringUtils.progressBar;
 
 @Aliases("votes")
 public class VoteCommand extends CustomCommand {
-	Voter voter;
-	String PLUS = "&e[+] &3";
+	private final String PLUS = "&e[+] &3";
+	private Voter voter;
 
 	public VoteCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -39,8 +38,8 @@ public class VoteCommand extends CustomCommand {
 			voter = new VoteService().get(player());
 	}
 
-	@Async
 	@Path
+	@Async
 	void run() {
 		line(3);
 		send(json("&3Support the server by voting daily! Each vote gives you &e1 Vote point &3to spend in the " +
@@ -78,35 +77,35 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("points [player]")
 	void points(@Arg("self") OfflinePlayer player) {
-		if (PlayerUtils.isModeratorGroup(player())) {
-			Voter voter = new VoteService().get(player);
-			send("&e" + player.getName() + " &3has &e" + voter.getPoints() + " &3vote points");
+		if (!isSelf(player)) {
+			voter = new Voter(player);
+			send("&e" + player.getName() + " &3has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 		} else
-			send("&3You have &e" + voter.getPoints() + " &3vote points");
+			send("&3You have &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
+	@Permission("group.seniorstaff")
 	@Path("points set <player> <number>")
-	@Permission("group.seniorstaff")
 	void setPoints(OfflinePlayer player, int number) {
-		Voter voter = new VoteService().get(player);
+		Voter voter = new Voter(player);
 		voter.setPoints(number);
-		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
+		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
+	@Permission("group.seniorstaff")
 	@Path("points add <player> <number>")
-	@Permission("group.seniorstaff")
 	void addPoints(OfflinePlayer player, int number) {
-		Voter voter = new VoteService().get(player);
-		voter.addPoints(number);
-		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
+		Voter voter = new Voter(player);
+		voter.givePoints(number);
+		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
-	@Path("points take <player> <number>")
 	@Permission("group.seniorstaff")
+	@Path("points take <player> <number>")
 	void takePoints(OfflinePlayer player, int number) {
-		Voter voter = new VoteService().get(player);
+		Voter voter = new Voter(player);
 		voter.takePoints(number);
-		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + " &3vote points");
+		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
 	@Path("endOfMonth [month]")

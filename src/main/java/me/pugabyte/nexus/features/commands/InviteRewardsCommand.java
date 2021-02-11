@@ -10,7 +10,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
-import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -138,8 +137,7 @@ public class InviteRewardsCommand extends CustomCommand {
 	}
 
 	private void reward(Player inviter) {
-		Voter voter = new VoteService().get(inviter);
-		voter.addPoints(15);
+		new Voter(inviter).givePoints(15);
 	}
 
 	private long getMinutesPlayed(Player player) {

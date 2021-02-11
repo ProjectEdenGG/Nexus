@@ -16,7 +16,6 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.scoreboard.ScoreboardUser;
 import me.pugabyte.nexus.models.ticket.TicketService;
-import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -180,7 +179,7 @@ public enum ScoreboardLine {
 	VOTE_POINTS {
 		@Override
 		public String render(Player player) {
-			return "&3Vote Points: &e" + ((Voter) new VoteService().get(player)).getPoints();
+			return "&3Vote Points: &e" + new Voter(player).getPoints();
 		}
 	},
 

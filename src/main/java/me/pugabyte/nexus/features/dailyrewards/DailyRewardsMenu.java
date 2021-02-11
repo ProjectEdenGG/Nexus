@@ -10,7 +10,6 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
 import me.pugabyte.nexus.models.dailyreward.Reward;
-import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -167,8 +166,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			if (votePoints != null) {
-				Voter voter = new VoteService().get(player);
-				voter.addPoints(votePoints);
+				new Voter(player).givePoints(votePoints);
 				PlayerUtils.send(player, PREFIX + "&e" + votePoints + " &3vote points has been added to your balance");
 			}
 

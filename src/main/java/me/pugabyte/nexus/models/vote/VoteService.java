@@ -2,7 +2,6 @@ package me.pugabyte.nexus.models.vote;
 
 import com.dieselpoint.norm.Query;
 import lombok.Data;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.MySQLService;
 
 import java.time.LocalDateTime;
@@ -14,7 +13,7 @@ public class VoteService extends MySQLService {
 
 	@Override
 	public Voter get(String uuid) {
-		return new Voter(uuid, getTotalVotes(uuid), getActiveVotes(uuid), getPoints(uuid));
+		return new Voter(uuid, getTotalVotes(uuid), getActiveVotes(uuid));
 	}
 
 	public int getTotalVotes() {
@@ -42,26 +41,6 @@ public class VoteService extends MySQLService {
 	public List<Vote> getRecentVotes() {
 		Query query = database.where("expired = 0").orderBy("timestamp desc");
 		return query.results(Vote.class);
-	}
-
-	public int getPoints(String uuid) {
-		Integer first = database.select("balance").table("vote_point").where("uuid = ?", uuid).first(Integer.class);
-		return first == null ? 0 : first;
-	}
-
-	public void givePoints(String uuid, int amount) {
-		int balance = getPoints(uuid) + amount;
-		if (balance < 0)
-			throw new InvalidInputException("You do not have enough vote points");
-		setPoints(uuid, balance);
-	}
-
-	public void takePoints(String uuid, int amount) {
-		givePoints(uuid, -amount);
-	}
-
-	public void setPoints(String uuid, int balance) {
-		database.sql("insert into vote_point values (?, ?) on duplicate key update balance = values(balance)", uuid, balance).execute();
 	}
 
 	public List<TopVoter> getTopVoters(Month month) {

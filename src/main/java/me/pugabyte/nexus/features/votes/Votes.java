@@ -140,9 +140,8 @@ public class Votes extends Feature implements Listener {
 		}
 
 		if (player != null && player.hasPlayedBefore()) {
-			Voter voter = new VoteService().get(player);
 			int points = vote.getExtra() + basePoints;
-			voter.addPoints(points);
+			new Voter(player).givePoints(points);
 			if (player.isOnline() && player.getPlayer() != null)
 				PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}

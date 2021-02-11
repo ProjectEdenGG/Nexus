@@ -14,7 +14,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.statuehunt.StatueHunt;
 import me.pugabyte.nexus.models.statuehunt.StatueHuntService;
-import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpType;
@@ -158,10 +157,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		int found = statueHunt.getFound().size();
 
 		if (found == 5) {
-			VoteService voteService = new VoteService();
-			Voter voter = voteService.get(event.getPlayer());
-			voter.addPoints(10);
-			voteService.save(voter);
+			new Voter(event.getPlayer()).givePoints(10);
 			send(event.getPlayer(), PREFIX + "You also received &e10 Vote Points &3for finding 5 statues in total");
 			return;
 		}

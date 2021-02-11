@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -16,19 +18,34 @@ public class Voter {
 	private String uuid;
 	private int votes;
 	private List<Vote> activeVotes = new ArrayList<>();
-	private int points;
 
-	public void takePoints(int points) {
-		setPoints(this.points - points);
+	public Voter(OfflinePlayer player) {
+		this.uuid = player.getUniqueId().toString();
 	}
 
-	public void addPoints(int points) {
-		setPoints(this.points + points);
+	public Voter(UUID uuid) {
+		this.uuid = uuid.toString();
+	}
+
+	public int getPoints() {
+		VotePointsService service = new VotePointsService();
+		VotePoints votePoints = service.get(UUID.fromString(uuid));
+		return votePoints.getPoints();
+	}
+
+	public void takePoints(int points) {
+		setPoints(getPoints() - points);
+	}
+
+	public void givePoints(int points) {
+		setPoints(getPoints() + points);
 	}
 
 	public void setPoints(int points) {
-		this.points = points;
-		new VoteService().setPoints(uuid, points);
+		VotePointsService service = new VotePointsService();
+		VotePoints votePoints = service.get(UUID.fromString(uuid));
+		votePoints.setPoints(points);
+		new VotePointsService().save(votePoints);
 	}
 
 }
