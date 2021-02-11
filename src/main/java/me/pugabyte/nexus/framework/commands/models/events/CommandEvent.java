@@ -8,6 +8,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -19,7 +21,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 public class CommandEvent extends Event implements Cancellable {
@@ -37,7 +38,11 @@ public class CommandEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	public void reply(String message) {
-		sender.sendMessage(colorize(message));
+		reply(new JsonBuilder(message));
+	}
+
+	public void reply(JsonBuilder json) {
+		PlayerUtils.send(sender, json);
 	}
 
 	public Player getPlayer() throws NexusException {
@@ -81,9 +86,9 @@ public class CommandEvent extends Event implements Cancellable {
 			prefix = Commands.getPrefix(command);
 
 		if (ex.getCause() != null && ex.getCause() instanceof NexusException)
-			reply(prefix + "&c" + ex.getCause().getMessage());
+			reply(new JsonBuilder(prefix + "&c").next(((NexusException) ex.getCause()).getJson()));
 		else if (ex instanceof NexusException)
-			reply(prefix + "&c" + ex.getMessage());
+			reply(new JsonBuilder(prefix + "&c").next(((NexusException) ex).getJson()));
 		else if (ex instanceof IllegalArgumentException && ex.getMessage() != null && ex.getMessage().contains("type mismatch"))
 			reply(prefix + "&c" + getUsageMessage());
 		else {

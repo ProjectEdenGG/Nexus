@@ -42,6 +42,7 @@ import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -69,7 +70,9 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -117,35 +120,36 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("reload")
 	void reload() {
+		JsonBuilder retry = json(" ").group().next("&e⟳").command("/nexus reload");
 		File file = Paths.get("plugins/Nexus.jar").toFile();
 		if (!file.exists())
-			error("Nexus.jar doesn't exist, cannot reload");
+			error(json("Nexus.jar doesn't exist, cannot reload").next(retry));
 
 		try {
 			new ZipFile(file).entries();
 		} catch (IOException ex) {
-			error("Nexus.jar is not complete, cannot reload");
+			error(json("Nexus.jar is not complete, cannot reload").next(retry));
 		}
 
 		long matchCount = MatchManager.getAll().stream().filter(match -> match.isStarted() && !match.isEnded()).count();
 		if (matchCount > 0)
-			error("There are " + matchCount + " active matches, cannot reload");
+			error(json("There are " + matchCount + " active matches, cannot reload").next(retry));
 
 		long invCount = Bukkit.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
 		if (invCount > 0)
-			error("There are " + invCount + " SmartInvs menus open, cannot reload");
+			error(json("There are " + invCount + " SmartInvs menus open, cannot reload").next(retry));
 
 		List<Pugmas20User> all = new Pugmas20Service().getAll();
 		long torchCount = all.stream().filter(pugmas20User -> pugmas20User.isOnline() && pugmas20User.isLightingTorches() && pugmas20User.getTorchTimerTaskId() > 0).count();
 		if (torchCount > 0)
-			error("There are " + torchCount + " people completing the Pugmas20 torch quest, cannot reload");
+			error(json("There are " + torchCount + " people completing the Pugmas20 torch quest, cannot reload").next(retry));
 
 		if (Pugmas20.isTreeAnimating())
-			error("Pugmas tree is animating, cannot reload");
+			error(json("Pugmas tree is animating, cannot reload").next(retry));
 
 		for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList()))
 			if (crateType.getCrateClass().isInUse())
-				error("Someone is opening a crate, cannot reload");
+				error(json("Someone is opening a crate, cannot reload").next(retry));
 
 		if (player().equals(PlayerUtils.wakka()) || player().equals(PlayerUtils.blast()))
 			SoundUtils.playSound(player(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
@@ -705,6 +709,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 			itemMeta.setDisplayName(trimmed);
 			content.setItemMeta(itemMeta);
 		}
+	}
+
+	@Path("nonLivingEntities")
+	void nonLivingEntities() {
+		for (EntityType value : EntityType.values())
+			if (value.getEntityClass() != null && !LivingEntity.class.isAssignableFrom(value.getEntityClass()))
+				send(camelCase(value));
 	}
 
 	@ConverterFor(Nerd.class)

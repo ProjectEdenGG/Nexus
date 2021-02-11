@@ -63,7 +63,7 @@ public class JsonBuilder {
 	}
 
 	public JsonBuilder next(JsonBuilder json) {
-		builder.append(json.build(), FormatRetention.NONE);
+		builder.append(json.build(), FormatRetention.FORMATTING);
 		return this;
 	}
 

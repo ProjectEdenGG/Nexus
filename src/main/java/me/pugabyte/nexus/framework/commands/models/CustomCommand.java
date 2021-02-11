@@ -257,6 +257,11 @@ public abstract class CustomCommand extends ICustomCommand {
 		throw new InvalidInputException(error);
 	}
 
+	@Contract("_ -> fail")
+	public void error(JsonBuilder error) {
+		throw new InvalidInputException(error);
+	}
+
 	public void permissionError() {
 		throw new NoPermissionException();
 	}
