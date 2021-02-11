@@ -7,12 +7,7 @@ import me.pugabyte.nexus.features.crates.crates.VoteCrate;
 import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
 import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,7 +34,7 @@ public enum CrateType {
 	}
 
 	@Getter
-	ItemStack key = new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eCrate Key")
+	ItemStack key = new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eCrate Key").glow()
 			.lore(" ").lore("&3Type: &e" + StringUtils.camelCase(name()))
 			.lore("&7Use me on the Crate at").lore("&7spawn to receive a reward").build();
 

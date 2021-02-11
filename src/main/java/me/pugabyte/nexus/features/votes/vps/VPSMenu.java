@@ -5,6 +5,7 @@ import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.nexus.features.commands.KillerMoneyCommand;
+import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import me.pugabyte.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
 import me.pugabyte.nexus.models.killermoney.KillerMoney;
@@ -19,11 +20,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -69,6 +66,28 @@ public enum VPSMenu {
 							}}, LocalDateTime.now().plusDays(3)));
 						})
 						.close(true));
+
+				put(19, VPSSlot.builder()
+						.name("1 Vote Crate Key")
+						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(1))
+						.price(2)
+						.onPurchase((player, item) -> CrateType.VOTE.give(player, 1)));
+				put(20, VPSSlot.builder()
+						.name("5 Vote Crate Key")
+						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(5))
+						.price(10)
+						.onPurchase((player, item) -> CrateType.VOTE.give(player, 5)));
+				put(21, VPSSlot.builder()
+						.name("10 Vote Crate Key")
+						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(10))
+						.price(20)
+						.onPurchase((player, item) -> CrateType.VOTE.give(player, 10)));
+				put(22, VPSSlot.builder()
+						.name("25 Vote Crate Key")
+						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(25))
+						.price(50)
+						.onPurchase((player, item) -> CrateType.VOTE.give(player, 25)));
+
 				put(25, VPSSlot.builder()
 						.name("Uncraftable Banners")
 						.display(new ItemBuilder(Material.CYAN_BANNER)
