@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static me.pugabyte.nexus.features.discord.Discord.discordize;
+import static me.pugabyte.nexus.utils.PlayerUtils.isPuga;
 
 @NoArgsConstructor
 public class IngameBridgeListener implements Listener {
@@ -55,19 +56,13 @@ public class IngameBridgeListener implements Listener {
 		return message;
 	}
 
-	// TODO needed
-//	@EventHandler
-//	public void onRankChange(PermissionEntityEvent event) {
-//		if (event.getAction() != Action.RANK_CHANGED) return;
-//
-//		if (event.getEntity() instanceof PermissionUser) {
-//			OfflinePlayer player = Utils.getPlayer(event.getEntity().getName());
-//			RoleManager.update(new DiscordService().get(player));
-//		}
-//	}
-
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
+		if (isPuga(event.getEntity())) {
+			event.setDeathMessage(null);
+			return;
+		}
+
 		if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
 			Chat.broadcastDiscord(discordize(event.getDeathMessage()));
 	}
