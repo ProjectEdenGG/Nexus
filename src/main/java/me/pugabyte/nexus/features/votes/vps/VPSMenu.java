@@ -73,20 +73,20 @@ public enum VPSMenu {
 						.price(2)
 						.onPurchase((player, item) -> CrateType.VOTE.give(player, 1)));
 				put(20, VPSSlot.builder()
-						.name("5 Vote Crate Key")
-						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(5))
-						.price(10)
-						.onPurchase((player, item) -> CrateType.VOTE.give(player, 5)));
+						.name("8 Vote Crate Key")
+						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(8))
+						.price(16)
+						.onPurchase((player, item) -> CrateType.VOTE.give(player, 8)));
 				put(21, VPSSlot.builder()
-						.name("10 Vote Crate Key")
-						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(10))
-						.price(20)
-						.onPurchase((player, item) -> CrateType.VOTE.give(player, 10)));
+						.name("16 Vote Crate Key")
+						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(16))
+						.price(32)
+						.onPurchase((player, item) -> CrateType.VOTE.give(player, 16)));
 				put(22, VPSSlot.builder()
-						.name("25 Vote Crate Key")
-						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(25))
-						.price(50)
-						.onPurchase((player, item) -> CrateType.VOTE.give(player, 25)));
+						.name("32 Vote Crate Key")
+						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(32))
+						.price(64)
+						.onPurchase((player, item) -> CrateType.VOTE.give(player, 32)));
 
 				put(25, VPSSlot.builder()
 						.name("Uncraftable Banners")

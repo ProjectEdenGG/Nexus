@@ -3,15 +3,14 @@ package me.pugabyte.nexus.features.crates;
 import me.pugabyte.nexus.features.crates.menus.CrateEditMenu;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
-import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.*;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.*;
+
+import java.util.Arrays;
 
 import static me.pugabyte.nexus.utils.SoundUtils.getPitch;
 
@@ -113,6 +112,16 @@ public class CrateCommand extends CustomCommand {
 	@Permission("group.admin")
 	void edit(@Arg("ALL") CrateType filter) {
 		CrateEditMenu.getMenu(filter, null).open(player());
+	}
+
+	@Path("reset [crate]")
+	@Permission("group.admin")
+	@Description("Resets a crate (or all crates if no crate is specified) if it is stuck or errors")
+	void reset(CrateType type) {
+		if (type == null)
+			Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).forEach(crateType -> type.getCrateClass().reset());
+		else
+			type.getCrateClass().reset();
 	}
 
 }

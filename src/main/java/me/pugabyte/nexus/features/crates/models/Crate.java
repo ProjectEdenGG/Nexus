@@ -102,6 +102,7 @@ public abstract class Crate implements Listener {
 				.onConfirm(e -> {
 					player.closeInventory();
 					try {
+						inUse = true;
 						pickCrateLoot();
 						if (!canHoldItems(player)) return;
 						takeKey();
