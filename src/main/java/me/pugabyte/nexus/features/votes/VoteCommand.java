@@ -93,8 +93,8 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Permission("group.seniorstaff")
-	@Path("points add <player> <number>")
-	void addPoints(OfflinePlayer player, int number) {
+	@Path("points give <player> <number>")
+	void givePoints(OfflinePlayer player, int number) {
 		Voter voter = new Voter(player);
 		voter.givePoints(number);
 		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
