@@ -7,11 +7,17 @@ import me.pugabyte.nexus.features.crates.crates.VoteCrate;
 import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
 import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
@@ -63,6 +69,24 @@ public enum CrateType {
 
 	public void give(OfflinePlayer player) {
 		give(player, 1);
+	}
+
+	public boolean giveVPS(Player player, int amount) {
+		ItemStack item = getKey().clone();
+		item.setAmount(amount);
+
+		if (WorldGroup.get(player) != WorldGroup.SURVIVAL) {
+			PlayerUtils.send(player, "&cYou must be in survival to buy this");
+			return false;
+		}
+
+		if (!PlayerUtils.hasRoomFor(player.getPlayer(), item)) {
+			PlayerUtils.send(player, "&cYou don't have enough space in your inventory");
+			return false;
+		}
+
+		player.getInventory().addItem(item);
+		return true;
 	}
 
 	public void give(OfflinePlayer player, int amount) {
