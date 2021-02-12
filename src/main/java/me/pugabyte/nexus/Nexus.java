@@ -40,12 +40,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,10 +56,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+import static org.reflections.ReflectionUtils.getMethods;
+import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class Nexus extends JavaPlugin {
 	private Commands commands;
@@ -112,11 +119,15 @@ public class Nexus extends JavaPlugin {
 
 	@Getter
 	private static int listenerCount = 0;
+	@Getter
+	private static List<Class<? extends Event>> eventHandlers = new ArrayList<>();
 
 	public static void registerListener(Listener listener) {
 		if (getInstance().isEnabled()) {
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
 			++listenerCount;
+			for (Method method : getMethods(listener.getClass(), withAnnotation(EventHandler.class)))
+				eventHandlers.add((Class<? extends Event>) method.getParameters()[0].getType());
 		} else
 			log("Could not register listener " + listener.toString() + "!");
 	}

@@ -54,6 +54,7 @@ import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
@@ -74,6 +75,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -87,11 +89,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
@@ -198,9 +202,27 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Features: " + Features.getFeatures().size());
 		send("Commands: " + Commands.getCommands().size());
 		send("Listeners: " + Nexus.getListenerCount());
+		send("EventHandlers: " + Nexus.getEventHandlers().size());
 		send("Arenas: " + ArenaManager.getAll().size());
 		send("Mechanics: " + MechanicType.values().length);
 		send("Recipes: " + CustomRecipes.getRecipes().size());
+	}
+
+	@Path("stats eventHandlers [page]")
+	void eventHandlers(@Arg("1") int page) {
+		Map<Class<? extends Event>, Integer> counts = new HashMap<>();
+		for (Class<? extends Event> eventHandler : Nexus.getEventHandlers())
+			counts.put(eventHandler, counts.getOrDefault(eventHandler, 0) + 1);
+
+		if (counts.isEmpty())
+			error("No event handlers found");
+
+		Map<Class<? extends Event>, Integer> sorted = Utils.sortByValueReverse(counts);
+
+		send(PREFIX + "Event Handlers");
+		BiFunction<Class<? extends Event>, Integer, JsonBuilder> formatter = (clazz, index) ->
+				json("&3" + (index + 1) + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz));
+		paginate(new ArrayList<>(sorted.keySet()), formatter, "/nexus stats eventHandlers", page);
 	}
 
 	@Confirm
