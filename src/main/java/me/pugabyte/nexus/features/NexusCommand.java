@@ -34,6 +34,7 @@ import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.models.setting.Setting;
@@ -743,6 +744,18 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("closeInventory [player]")
 	void closeInventory(@Arg("self") Player player) {
 		player.closeInventory();
+	}
+
+	@Path("fixStaffJoins")
+	void fixStaffJoins() {
+		List<Rank> ranks = Rank.getStaff();
+		NerdService service = new NerdService();
+		ranks.forEach(rank -> {
+			rank.getNerds().forEach(nerd -> {
+				nerd.setFirstJoin(Utils.epochSecond(nerd.getOfflinePlayer().getFirstPlayed()));
+				service.save(nerd);
+			});
+		});
 	}
 
 	@ConverterFor(Nerd.class)
