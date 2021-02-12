@@ -27,15 +27,11 @@ import java.util.Map;
 @Permission("group.moderator")
 public class CommandWatchCommand extends CustomCommand implements Listener {
 	private static final Map<Player, List<Player>> watchMap = new HashMap<>();
-	private static final List<String> messageAliases;
+	private static final List<String> messageAliases = Arrays.asList(MessageCommand.class.getAnnotation(Aliases.class).value());
 	private static final String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public CommandWatchCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		messageAliases = Arrays.asList(MessageCommand.class.getAnnotation(Aliases.class).value());
 	}
 
 	@Path("<player>")
@@ -63,13 +59,9 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 
 		String message = event.getMessage();
 		String command = message.split(" ")[0].replace("/", "");
-		boolean isMessage = false;
-		if (messageAliases.contains(command))
-			isMessage = true;
 
-		boolean isMessageFinal = isMessage;
 		watchMap.get(player).forEach(staff -> {
-			if (isMessageFinal) {
+			if (messageAliases.contains(command)) {
 				if (PlayerUtils.isAdminGroup(staff))
 					send(staff, PREFIX + player.getName() + ":&7 " + message);
 			} else
@@ -83,8 +75,7 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 		if (!watchMap.containsKey(player))
 			return;
 
-		watchMap.get(player).forEach(staff ->
-				send(staff, PREFIX + "&c" + player.getName() + " went offline"));
+		watchMap.get(player).forEach(staff -> send(staff, PREFIX + "&c" + player.getName() + " went offline"));
 		watchMap.remove(player);
 	}
 }
