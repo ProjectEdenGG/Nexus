@@ -27,6 +27,7 @@ import me.pugabyte.nexus.models.honeypot.HoneyPotBansService;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGriefer;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGrieferService;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -198,7 +199,8 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.getPlayer().hasPermission("honeypot.bypass")) return;
 		Block block = event.getBlock();
-		if (incrementPlayer(event.getPlayer(), block.getLocation())) {
+		double amount = MaterialTag.CROPS.isTagged(event.getBlock().getType()) ? .5 : 1;
+		if (incrementPlayer(event.getPlayer(), block.getLocation(), amount)) {
 			event.setDropItems(false);
 			addHoneyPotItemTag(new ArrayList<>(block.getDrops()), block.getLocation());
 		}
@@ -249,9 +251,25 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
+	public void onEntityKill(EntityDeathEvent event) {
+		if (!(event.getEntity() instanceof Animals)) return;
+
+		Location location = event.getEntity().getLocation();
+		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
+		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
+		for (ProtectedRegion region : regions) {
+			if (!region.getId().contains("hp_"))
+				continue;
+
+			addHoneyPotItemTag(event.getDrops(), location);
+		}
+	}
+
+	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (event.getPlayer().hasPermission("honeypot.bypass")) return;
-		incrementPlayer(event.getPlayer(), event.getBlock().getLocation());
+		double amount = MaterialTag.CROPS.isTagged(event.getBlock().getType()) ? -.5 : .5;
+		incrementPlayer(event.getPlayer(), event.getBlock().getLocation(), amount);
 	}
 
 	@EventHandler
@@ -273,25 +291,10 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		if (!(event.getEntity() instanceof Animals)) return;
 		Player player = (Player) event.getDamager();
 		if (player.hasPermission("honeypot.bypass")) return;
-		incrementPlayer(player, event.getEntity().getLocation());
+		incrementPlayer(player, event.getEntity().getLocation(), 1);
 	}
 
-	@EventHandler
-	public void onEntityKill(EntityDeathEvent event) {
-		if (!(event.getEntity() instanceof Animals)) return;
-
-		Location location = event.getEntity().getLocation();
-		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
-		for (ProtectedRegion region : regions) {
-			if (!region.getId().contains("hp_"))
-				continue;
-
-			addHoneyPotItemTag(event.getDrops(), location);
-		}
-	}
-
-	public boolean incrementPlayer(Player player, Location location) {
+	public boolean incrementPlayer(Player player, Location location, double amount) {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
 		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
 		for (ProtectedRegion region : regions) {
@@ -300,9 +303,9 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 			String name = getName(region);
 			HoneyPotGriefer griefer = grieferService.get(player);
-			int triggered = griefer.getTriggered() + 1;
+			double triggered = Math.max(griefer.getTriggered() + amount, 0);
 
-			if (new CooldownService().check(player, "hp_" + name, Time.MINUTE.x(10))) {
+			if (amount > 0 && new CooldownService().check(player, "hp_" + name, Time.MINUTE.x(10))) {
 				Chat.broadcastIngame(json("&7&l[&cRadar&7&l] &a" + player.getName() + " &fhas triggered a Honey Pot &e(HP: " + name + ")")
 						.next(" &e[Click to Teleport]")
 						.command("mcmd vanish on ;; tp " + player.getName())
@@ -311,7 +314,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + name + "`", StaticChannel.STAFF);
 			}
 
-			if (triggered > 9) {
+			if (triggered >= 10) {
 				final HoneyPotBansService bansService = new HoneyPotBansService();
 				final HoneyPotBans honeyPotBans = bansService.get(Nexus.getUUID0());
 				honeyPotBans.get(region.getId()).addBan();

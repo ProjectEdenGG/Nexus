@@ -25,6 +25,6 @@ public class HoneyPotGriefer extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private int triggered;
+	private double triggered;
 
 }
