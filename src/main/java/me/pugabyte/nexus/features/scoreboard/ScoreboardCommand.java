@@ -22,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -141,6 +142,13 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getPlayer());
 		user.pause();
+	}
+
+	@EventHandler
+	public void onWorldChange(PlayerChangedWorldEvent event) {
+		ScoreboardService service = new ScoreboardService();
+		ScoreboardUser user = service.get(event.getPlayer());
+		user.on();
 	}
 
 	@EventHandler

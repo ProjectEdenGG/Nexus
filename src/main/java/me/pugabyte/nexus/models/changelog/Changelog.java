@@ -9,8 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -46,11 +44,12 @@ public class Changelog extends PlayerOwnedObject {
 		entries.add(0, new ChangelogEntry(entries.size() + 1));
 	}
 
-	public void diff() {
-		diff(entries.get(1), entries.get(0));
+	public String diff() {
+		return diff(entries.get(1), entries.get(0));
 	}
 
-	public void diff(ChangelogEntry from, ChangelogEntry to) {
+	@SuppressWarnings("StringConcatenationInLoop")
+	public String diff(ChangelogEntry from, ChangelogEntry to) {
 		if (from.getTimestamp().isAfter(to.getTimestamp()))
 			throw new InvalidInputException("First entry cannot be before second entry");
 
@@ -97,7 +96,7 @@ public class Changelog extends PlayerOwnedObject {
 			message += nl;
 		}
 
-		Discord.send(message, Channel.TEST);
+		return message;
 	}
 
 	@Data

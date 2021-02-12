@@ -718,6 +718,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 				send(camelCase(value));
 	}
 
+	@Path("closeInventory [player]")
+	void closeInventory(@Arg("self") Player player) {
+		player.closeInventory();
+	}
+
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
 		return new NerdService().get(convertToOfflinePlayer(value));

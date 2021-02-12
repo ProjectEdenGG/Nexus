@@ -2,8 +2,11 @@ package me.pugabyte.nexus.features.commands.staff.admin;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -44,14 +47,24 @@ public class ChangelogCommand extends CustomCommand {
 		send(PREFIX + "Generated");
 	}
 
+	@Confirm
 	@Path("diff [from] [to]")
 	void diff(ChangelogEntry from, ChangelogEntry to) {
+		Discord.send(getMessage(from, to), Channel.CHANGELOG);
+	}
+
+	@Path("diff test [from] [to]")
+	void diffTest(ChangelogEntry from, ChangelogEntry to) {
+		Discord.send(getMessage(from, to), Channel.TEST);
+	}
+
+	private String getMessage(ChangelogEntry from, ChangelogEntry to) {
 		if (from == null)
 			from = changelog.getEntries().get(1);
 		if (to == null)
 			to = changelog.getEntries().get(0);
 
-		changelog.diff(from, to);
+		return changelog.diff(from, to);
 	}
 
 	@Path("list [page]")
