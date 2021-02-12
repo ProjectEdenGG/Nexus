@@ -22,9 +22,9 @@ import java.util.Map;
 @NoArgsConstructor
 @Permission("group.moderator")
 public class CPSWatchCommand extends CustomCommand implements Listener {
-	private static Map<Player, Integer> cpsMap = new HashMap<>();
-	private static Map<Player, List<Player>> watchMap = new HashMap<>();
-	private static String PREFIX = "&7&l[&cRadar&7&l]&f ";
+	private static final Map<Player, Integer> cpsMap = new HashMap<>();
+	private static final Map<Player, List<Player>> watchMap = new HashMap<>();
+	private static final String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public CPSWatchCommand(@NonNull CommandEvent event) {
 		super(event);

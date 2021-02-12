@@ -27,6 +27,7 @@ import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -384,6 +385,18 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected boolean isSeniorStaff(OfflinePlayer player) {
 		return isPlayer(player) && new Nerd(player).getRank().isSeniorStaff();
+	}
+
+	protected boolean isAdmin() {
+		return isPlayer() && isAdmin(player());
+	}
+
+	protected boolean isAdmin(Player player) {
+		return isPlayer(player) && (new Nerd(player).getRank().equals(Rank.ADMIN) || new Nerd(player).getRank().equals(Rank.OWNER));
+	}
+
+	protected boolean isAdmin(OfflinePlayer player) {
+		return isPlayer(player) && (new Nerd(player).getRank().equals(Rank.ADMIN) || new Nerd(player).getRank().equals(Rank.OWNER));
 	}
 
 	protected boolean isNullOrEmpty(String string) {

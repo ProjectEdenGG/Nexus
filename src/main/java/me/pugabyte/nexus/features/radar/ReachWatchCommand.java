@@ -25,9 +25,9 @@ import java.util.Map;
 @NoArgsConstructor
 @Permission("group.moderator")
 public class ReachWatchCommand extends CustomCommand implements Listener {
-	static Map<Player, List<Player>> watchMap = new HashMap<>();
-	private DecimalFormat nf = new DecimalFormat("#.00");
-	private static String PREFIX = "&7&l[&cRadar&7&l]&f ";
+	private static final Map<Player, List<Player>> watchMap = new HashMap<>();
+	private final DecimalFormat nf = new DecimalFormat("#.00");
+	private static final String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public ReachWatchCommand(@NonNull CommandEvent event) {
 		super(event);
