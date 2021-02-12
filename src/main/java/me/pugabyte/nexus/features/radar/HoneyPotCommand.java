@@ -96,10 +96,10 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Successfully set grief count of &e" + player.getName() + " &3to &e" + value);
 	}
 
-	@Path("(repair|reset) <honeyPot>")
+	@Path("fix <honeyPot>")
 	@Permission("group.seniorstaff")
 	void repair(String honeyPot) {
-		ProtectedRegion region = WGUtils.getProtectedRegion("hpregen_" + honeyPot);
+		ProtectedRegion region = WGUtils.getProtectedRegion("hp_" + honeyPot);
 		if (region == null)
 			error("That honey pot does not exist");
 

@@ -539,7 +539,6 @@ public enum VPSMenu {
 			add(VPSPage.builder()
 					.rows(5)
 					.items(new HashMap<Integer, VPSSlotBuilder>() {{
-
 						put(10, VPSSlot.builder()
 								.name("5 dirt")
 								.displayAndGive(Material.DIRT, 5)
