@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.votes.vps.VPSMenu.VPSPage;
+import me.pugabyte.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -14,6 +15,12 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static me.pugabyte.nexus.features.votes.vps.VPS.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
@@ -71,6 +78,8 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 							+ " on &e" + stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining.");
 				}
 
+				log(player, item);
+
 				if (item.isClose())
 					player.closeInventory();
 				else
@@ -91,6 +100,20 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void update(Player player, InventoryContents contents) {}
+	public void update(Player player, InventoryContents contents) {
+	}
+
+
+	public void log(Player player, VPSSlot vpsSlot) {
+		List<String> columns = new ArrayList<>(Arrays.asList(
+				DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
+				player.getUniqueId().toString(),
+				player.getName(),
+				vpsSlot.getName(),
+				String.valueOf(vpsSlot.getPrice())
+		));
+
+		Nexus.csvLog("vps", String.join(",", columns));
+	}
 
 }
