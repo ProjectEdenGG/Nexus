@@ -52,14 +52,16 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 					return;
 				}
 
+				if (item.getOnPurchase() != null)
+					if (!item.getOnPurchase().test(player, item))
+						return;
+
 				if (item.getMoney() > 0)
 					Nexus.getEcon().depositPlayer(player, item.getMoney());
 				if (item.getConsoleCommand() != null && item.getConsoleCommand().length() > 0)
 					PlayerUtils.runCommandAsConsole(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getCommand() != null && item.getCommand().length() > 0)
 					PlayerUtils.runCommand(player, item.getCommand().replaceAll("\\[player]", player.getName()));
-				if (item.getOnPurchase() != null)
-					item.getOnPurchase().accept(player, item);
 				if (item.getItems() != null && item.getItems().size() > 0)
 					ItemUtils.giveItems(player, item.getItems());
 
