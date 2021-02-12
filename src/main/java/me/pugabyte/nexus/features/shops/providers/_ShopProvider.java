@@ -13,7 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.StringUtils.pretty;
+import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 public abstract class _ShopProvider extends MenuUtils implements InventoryProvider {
 	protected ShopService service = new ShopService();
@@ -45,7 +45,7 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 		else
 			addBackItem(contents, e -> previousMenu.open(player));
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.GOLD_INGOT).name("&e&lBalance")
-				.lore("&f$" + pretty(Nexus.getEcon().getBalance(player))).build()));
+				.lore("&f" + prettyMoney(Nexus.getEcon().getBalance(player))).build()));
 	}
 
 	@Override

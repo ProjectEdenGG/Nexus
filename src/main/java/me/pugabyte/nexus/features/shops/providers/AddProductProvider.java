@@ -25,6 +25,7 @@ import java.util.function.Function;
 
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
+import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 public class AddProductProvider extends _ShopProvider {
 	private final AtomicReference<ItemStack> item = new AtomicReference<>();
@@ -76,9 +77,9 @@ public class AddProductProvider extends _ShopProvider {
 			} else
 				if (price > 0) {
 					if (exchangeType == ExchangeType.BUY)
-						confirm.name("&3Buy &e" + pretty(item.get()) + " &3from").lore("&3customers for &e$" + pretty(price));
+						confirm.name("&3Buy &e" + pretty(item.get()) + " &3from").lore("&3customers for &e" + prettyMoney(price));
 					else if (exchangeType == ExchangeType.SELL)
-						confirm.name("&3Sell &e" + pretty(item.get()) + " &3to").lore("&3customers for &e$" + pretty(price));
+						confirm.name("&3Sell &e" + pretty(item.get()) + " &3to").lore("&3customers for &e" + prettyMoney(price));
 					product.set(new Product(player.getUniqueId(), ShopGroup.get(player), item.get(), 0, exchangeType, price));
 				}
 
@@ -98,7 +99,7 @@ public class AddProductProvider extends _ShopProvider {
 		if (price <= 0)
 			item.name("&eClick to specify a dollar amount");
 		else
-			item.name("&e$" + pretty(price));
+			item.name("&e" + prettyMoney(price));
 
 		contents.set(3, 4, ClickableItem.from(item.build(), e ->
 				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount").prefix(Shops.PREFIX).response(lines -> {

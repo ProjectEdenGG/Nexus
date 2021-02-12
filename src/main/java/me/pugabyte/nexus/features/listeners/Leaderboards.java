@@ -36,7 +36,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
-import static me.pugabyte.nexus.utils.StringUtils.pretty;
+import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 @NoArgsConstructor
 public class Leaderboards implements Listener {
@@ -86,7 +86,7 @@ public class Leaderboards implements Listener {
 						.limit(3)
 						.collect(Collectors.toMap(
 								Entry::getKey,
-								entry -> "$" + pretty(entry.getValue()),
+								entry -> prettyMoney(entry.getValue()),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}

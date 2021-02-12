@@ -11,6 +11,7 @@ import dev.morphia.mapping.MapperOptions;
 import dev.morphia.mapping.MapperOptions.Builder;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.BigDecimalConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ChatColorConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ColorConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -50,6 +51,7 @@ public class MongoDBPersistence {
 		MongoCredential root = MongoCredential.createScramSha1Credential(config.getUsername(), "admin", config.getPassword().toCharArray());
 		MongoClient mongoClient = new MongoClient(new ServerAddress(), root, MongoClientOptions.builder().build());
 		Datastore datastore = morphia.createDatastore(mongoClient, config.getPrefix() + dbType.getDatabase());
+		morphia.getMapper().getConverters().addConverter(new BigDecimalConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new ChatColorConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new ColorConverter(morphia.getMapper()));
 		morphia.getMapper().getConverters().addConverter(new ItemStackConverter(morphia.getMapper()));

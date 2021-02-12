@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.features.shops.ShopUtils.giveItem;
 import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
+import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 @Data
 @Builder
@@ -204,13 +205,13 @@ public class Shop extends PlayerOwnedObject {
 				Nexus.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
 			giveItem(customer, product.getItem());
 			new ShopService().save(product.getShop());
-			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for $" + pretty(price));
+			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + prettyMoney(price));
 		}
 
 		@Override
 		public List<String> getLore(Product product) {
 			int stock = (int) product.getStock();
-			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price);
+			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price);
 
 			if (product.getUuid().equals(Nexus.getUUID0()))
 				return Arrays.asList(
@@ -229,7 +230,7 @@ public class Shop extends PlayerOwnedObject {
 		public List<String> getOwnLore(Product product) {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
-					"&7Selling &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price),
+					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price),
 					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
 					"",
 					"&7Click to edit"
@@ -324,12 +325,12 @@ public class Shop extends PlayerOwnedObject {
 			if (!isMarket(product))
 				product.getShop().getHolding().add(product.getItem());
 			new ShopService().save(product.getShop());
-			PlayerUtils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for $" + pretty(price));
+			PlayerUtils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for " + prettyMoney(price));
 		}
 
 		@Override
 		public List<String> getLore(Product product) {
-			String desc = "&7Sell &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price);
+			String desc = "&7Sell &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price);
 			if (product.getUuid().equals(Nexus.getUUID0()))
 				return Arrays.asList(
 						desc,
@@ -338,7 +339,7 @@ public class Shop extends PlayerOwnedObject {
 			else
 				return Arrays.asList(
 						desc,
-						"&7Stock: &e$" + pretty(product.getStock()),
+						"&7Stock: &e" + prettyMoney(product.getStock()),
 						"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
 				);
 		}
@@ -346,8 +347,8 @@ public class Shop extends PlayerOwnedObject {
 		@Override
 		public List<String> getOwnLore(Product product) {
 			return Arrays.asList(
-					"&7Buying &e" + product.getItem().getAmount() + " &7for &a$" + pretty(price),
-					"&7Stock: &e$" + pretty(product.getStock()),
+					"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price),
+					"&7Stock: &e" + prettyMoney(product.getStock()),
 					"",
 					"&7Click to edit"
 			);

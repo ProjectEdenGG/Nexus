@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.awt.*;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -289,16 +290,41 @@ public class StringUtils {
 
 	private static final NumberFormat moneyFormat = NumberFormat.getCurrencyInstance();
 
-	public static String pretty(Number price) {
-		String format = trimFirst(moneyFormat.format(price));
+	public static String pretty(Number number) {
+		String format = trimFirst(moneyFormat.format(number));
 		if (format.endsWith(".00"))
 			format = left(format, format.length() - 3);
 
 		return format;
 	}
 
+	public static String prettyMoney(Number number) {
+		return "$" + pretty(number);
+	}
+
 	public static String stripTrailingZeros(String number) {
 		return number.contains(".") ? number.replaceAll("0*$", "").replaceAll("\\.$", "") : number;
+	}
+
+	// Attempt to strip symbols and support euro formatting
+	public static String asParsableDecimal(String value) {
+		if (value == null)
+			return "0";
+
+		value = value.replace("$", "");
+		if (value.contains(",") && value.contains("."))
+			if (value.indexOf(",") < value.indexOf("."))
+				value = value.replaceAll(",", "");
+			else {
+				value = value.replaceAll("\\.", "");
+				value = value.replaceAll(",", ".");
+			}
+		else if (value.contains(",") && value.indexOf(",") == value.lastIndexOf(","))
+			if (value.indexOf(",") == value.length() - 3)
+				value = value.replace(",", ".");
+			else
+				value = value.replace(",", "");
+		return value;
 	}
 
 	public static String ellipsis(String text, int length) {
@@ -597,6 +623,7 @@ public class StringUtils {
 		if (Short.class == type || Short.TYPE == type) return nf;
 		if (Long.class == type || Long.TYPE == type) return nf;
 		if (Byte.class == type || Byte.TYPE == type) return nf;
+		if (BigDecimal.class == type) return df;
 		throw new InvalidInputException("No formatter found for class " + type.getSimpleName());
 	}
 

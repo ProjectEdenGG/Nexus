@@ -38,6 +38,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +55,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getPathString;
+import static me.pugabyte.nexus.utils.StringUtils.asParsableDecimal;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
@@ -204,6 +206,9 @@ public abstract class ICustomCommand {
 	private Object convert(String value, Object context, Class<?> type, Parameter parameter, String name, CommandEvent event, boolean required) {
 		Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 
+		double argMinDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
+		double argMaxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
+
 		if (annotation != null) {
 			if (annotation.regex().length() > 0)
 				if (!value.matches(annotation.regex()))
@@ -214,8 +219,8 @@ public abstract class ICustomCommand {
 					DecimalFormat formatter = StringUtils.getFormatter(Integer.class);
 					String min = formatter.format(annotation.min());
 					String max = formatter.format(annotation.max());
-					double minDefault = (Double) annotation.getClass().getDeclaredMethod("min").getDefaultValue();
-					double maxDefault = (Double) annotation.getClass().getDeclaredMethod("max").getDefaultValue();
+					double minDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
+					double maxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
 					String error = camelCase(name) + " length must be ";
 					if (annotation.min() == minDefault && annotation.max() != maxDefault)
@@ -285,19 +290,49 @@ public abstract class ICustomCommand {
 			if (Short.class == type || Short.TYPE == type) number = Short.parseShort(value);
 			if (Long.class == type || Long.TYPE == type) number = Long.parseLong(value);
 			if (Byte.class == type || Byte.TYPE == type) number = Byte.parseByte(value);
+			if (BigDecimal.class == type) number = BigDecimal.valueOf(Double.parseDouble(asParsableDecimal(value)));
 
 			if (number != null) {
 				if (annotation != null) {
-					if (number.doubleValue() < annotation.min() || number.doubleValue() > annotation.max()) {
+
+					double annotationDefaultMin = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
+					double annotationDefaultMax = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
+
+					double annotationConfiguredMin = annotation.min();
+					double annotationConfiguredMax = annotation.max();
+
+					Number classDefaultMin = getMinValue(type);
+					Number classDefaultMax = getMaxValue(type);
+
+					BigDecimal min = (annotationConfiguredMin != annotationDefaultMin ? BigDecimal.valueOf(annotationConfiguredMin) : new BigDecimal(classDefaultMin.toString()));
+					BigDecimal max = (annotationConfiguredMax != annotationDefaultMax ? BigDecimal.valueOf(annotationConfiguredMax) : new BigDecimal(classDefaultMax.toString()));
+
+					int minComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(min);
+					int maxComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(max);
+
+					if (minComparison < 0 || maxComparison > 0) {
 						DecimalFormat formatter = StringUtils.getFormatter(type);
-						throw new InvalidInputException(camelCase(name) + " must be between &e" + formatter.format(annotation.min()) + " &cand &e" + formatter.format(annotation.max()));
+
+						boolean usingDefaultMin = annotationDefaultMin == annotationConfiguredMin;
+						boolean usingDefaultMax = annotationDefaultMax == annotationConfiguredMax;
+
+						String minFormatted = formatter.format(annotation.min());
+						String maxFormatted = formatter.format(annotation.max());
+
+						String error = camelCase(name) + " must be ";
+						if (usingDefaultMin && !usingDefaultMax)
+							throw new InvalidInputException(error + "&e" + maxFormatted + " &cor less");
+						else if (!usingDefaultMin && usingDefaultMax)
+							throw new InvalidInputException(error + "&e" + minFormatted + " &cor greater");
+						else
+							throw new InvalidInputException(error + "between &e" + minFormatted + " &cand &e" + maxFormatted);
 					}
 				}
 
 				return number;
 			}
 		} catch (NumberFormatException ex) {
-			throw new InvalidInputException("'" + value + "' is not a number");
+			throw new InvalidInputException("&e" + value + " &cis not a valid " + (type == BigDecimal.class ? "number" : type.getSimpleName().toLowerCase()));
 		}
 		return value;
 	}
@@ -306,13 +341,35 @@ public abstract class ICustomCommand {
 		return Arrays.asList(Integer.TYPE, Double.TYPE, Float.TYPE, Short.TYPE, Long.TYPE, Byte.TYPE).contains(type);
 	}
 
+	@SneakyThrows
+	private Number getMaxValue(Class<?> type) {
+		return (Number) getMinMaxHolder(type).getDeclaredField("MAX_VALUE").get(null);
+	}
+
+	@SneakyThrows
+	private Number getMinValue(Class<?> type) {
+		return (Number) getMinMaxHolder(type).getDeclaredField("MIN_VALUE").get(null);
+	}
+
+	private Class<?> getMinMaxHolder(Class<?> type) {
+		if (Integer.class == type || Integer.TYPE == type) return Integer.class;
+		if (Double.class == type || Double.TYPE == type) return Double.class;
+		if (Float.class == type || Float.TYPE == type) return Float.class;
+		if (Short.class == type || Short.TYPE == type) return Short.class;
+		if (Long.class == type || Long.TYPE == type) return Long.class;
+		if (Byte.class == type || Byte.TYPE == type) return Byte.class;
+		if (BigDecimal.class == type) return Double.class;
+		throw new InvalidInputException("No min/max holder defined for " + type.getSimpleName());
+	}
+
 	private boolean isNumber(Class<?> type) {
 		return Integer.class == type || Integer.TYPE == type ||
 				Double.class == type || Double.TYPE == type ||
 				Float.class == type || Float.TYPE == type ||
 				Short.class == type || Short.TYPE == type ||
 				Long.class == type || Long.TYPE == type ||
-				Byte.class == type || Byte.TYPE == type;
+				Byte.class == type || Byte.TYPE == type ||
+				BigDecimal.class == type;
 	}
 
 	@SneakyThrows
