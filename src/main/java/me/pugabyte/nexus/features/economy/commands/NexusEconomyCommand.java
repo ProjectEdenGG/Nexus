@@ -1,14 +1,19 @@
 package me.pugabyte.nexus.features.economy.commands;
 
+import com.earth2me.essentials.User;
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
@@ -40,6 +45,26 @@ public class NexusEconomyCommand extends CustomCommand {
 		banker.withdraw(balance);
 		service.save(banker);
 		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + banker.getName() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted());
+	}
+
+	@Async
+	@Path("convertBalances")
+	void convertBalance() {
+		int wait = 0;
+		for (UUID uuid : Nexus.getEssentials().getUserMap().getAllUniqueUsers()) {
+			int count = 0;
+			User user = Nexus.getEssentials().getUser(uuid);
+			Banker banker = service.get(uuid);
+			if (user.getMoney().doubleValue() > 550 || user.getMoney().doubleValue() < 450) {
+				++count;
+				Tasks.wait(wait, () -> {
+					banker.setBalance(user.getMoney());
+					service.save(banker);
+				});
+				if (count > 200)
+					wait += 3;
+			}
+		}
 	}
 
 }

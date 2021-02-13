@@ -21,7 +21,7 @@ public class NexusBalanceCommand extends CustomCommand {
 		if (isSelf(banker))
 			send(PREFIX + "Your balance: &e" + banker.getBalanceFormatted());
 		else
-			send(PREFIX + banker.getName() + "'s balance: " + banker.getBalanceFormatted());
+			send(PREFIX + "&e" + banker.getName() + "'s &3balance: &e" + banker.getBalanceFormatted());
 	}
 
 }

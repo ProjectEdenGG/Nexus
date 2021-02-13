@@ -120,7 +120,7 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private static int listenerCount = 0;
 	@Getter
-	private static List<Class<? extends Event>> eventHandlers = new ArrayList<>();
+	private static final List<Class<? extends Event>> eventHandlers = new ArrayList<>();
 
 	public static void registerListener(Listener listener) {
 		if (getInstance().isEnabled()) {
@@ -229,6 +229,7 @@ public class Nexus extends JavaPlugin {
 		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }
+		try { Bukkit.getServicesManager().unregisterAll(this);			} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MySQLPersistence.shutdown();								} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MongoDBPersistence.shutdown();							} catch (Throwable ex) { ex.printStackTrace(); }
 	}
