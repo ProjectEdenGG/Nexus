@@ -24,7 +24,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
@@ -110,7 +118,7 @@ public class Utils {
 	}
 
 	public static LocalDateTime epochSecond(long timestamp) {
-		return epochMilli(timestamp * 1000);
+		return epochMilli(String.valueOf(timestamp).length() == 13 ? timestamp : timestamp * 1000);
 	}
 
 	public static LocalDateTime epochMilli(long timestamp) {

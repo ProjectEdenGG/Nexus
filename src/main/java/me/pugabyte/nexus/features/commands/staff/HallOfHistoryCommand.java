@@ -16,6 +16,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -24,9 +25,13 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.OptionalDouble;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
@@ -251,6 +256,37 @@ public class HallOfHistoryCommand extends CustomCommand {
 		};
 
 		paginate(new ArrayList<>(Utils.sortByValueReverse(staffTimeMap).keySet()), formatter, "/hoh staffTime", page);
+	}
+
+	@Path("promotionTimes [page]")
+	void promotionTimes(@Arg("1") int page) {
+		NerdService nerdService = new NerdService();
+		HallOfHistoryService service = new HallOfHistoryService();
+		Map<UUID, Long> promotionTimeMap = new HashMap<>();
+
+		for (HallOfHistory hallOfHistory : service.<HallOfHistory>getAll()) {
+			Nerd nerd = nerdService.get(hallOfHistory.getUuid());
+			List<RankHistory> history = hallOfHistory.getRankHistory();
+			history.sort(Comparator.comparing(RankHistory::getPromotionDate));
+
+			if (nerd.getFirstJoin().isBefore(ServerAge.getEpoch().minusYears(1)))
+				continue;
+
+			long days = nerd.getFirstJoin().toLocalDate().until(history.get(0).getPromotionDate(), ChronoUnit.DAYS);
+
+			if (days > 0)
+				promotionTimeMap.put(hallOfHistory.getUuid(), days);
+		}
+
+		OptionalDouble average = promotionTimeMap.values().stream().mapToLong(Long::valueOf).average();
+
+		send(PREFIX + "Promotion times  |  Average: " + StringUtils.getNf().format(average.orElse(0)) + " days");
+		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) -> {
+			String time = TimespanFormatter.of(promotionTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
+			return json("&3" + (index + 1) + " &e" + new Nerd(uuid).getName() + " &7- " + time);
+		};
+
+		paginate(new ArrayList<>(Utils.sortByValue(promotionTimeMap).keySet()), formatter, "/hoh promotionTime", page);
 	}
 
 }

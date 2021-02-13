@@ -47,9 +47,9 @@ public class BackCommand extends CustomCommand implements Listener {
 		player().teleportAsync(location, TeleportCause.COMMAND);
 	}
 
-	@Path("locations")
+	@Path("locations [player]")
 	@Permission("group.staff")
-	void view() {
+	void view(@Arg("self") Back back) {
 		if (back.getLocations() == null || back.getLocations().size() == 0)
 			error("You have no back locations");
 
