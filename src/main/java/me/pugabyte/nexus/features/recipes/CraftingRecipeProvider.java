@@ -66,11 +66,15 @@ public class CraftingRecipeProvider extends MenuUtils implements InventoryProvid
 			contents.set(inputSlots[0], ClickableItem.empty(new ItemStack(RandomUtils.randomElement(recipe.getChoice().getChoices()))));
 			contents.set(inputSlots[1], ClickableItem.empty(new ItemStack(recipe.getIngredient())));
 			contents.set(1, 6, ClickableItem.empty(new ItemStack(recipe.getOutput(), recipe.getOutputAmount())));
+		} else if (menu == CraftingMenuType.MISC && recipe.getInputItems() != null) {
+			for (int i = 0; i < recipe.getInputItems().size(); i++)
+				if (recipe.getInputItems().get(i) != null)
+					contents.set(inputSlots[i], ClickableItem.empty(recipe.getInputItems().get(i)));
+			contents.set(1, 6, ClickableItem.empty(recipe.getCustomOutput()));
 		} else {
-			for (int i = 0; i < recipe.getIngredientAmount(); i++) {
+			for (int i = 0; i < recipe.getIngredientAmount(); i++)
 				contents.set(inputSlots[i], ClickableItem.empty(new ItemStack(recipe.getIngredient())));
-				contents.set(1, 6, ClickableItem.empty(new ItemStack(recipe.getOutput(), recipe.getOutputAmount())));
-			}
+			contents.set(1, 6, ClickableItem.empty(new ItemStack(recipe.getOutput(), recipe.getOutputAmount())));
 		}
 
 

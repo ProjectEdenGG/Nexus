@@ -1,13 +1,11 @@
 package me.pugabyte.nexus.features.recipes;
 
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.Bukkit;
 
-@Disabled
 public class CustomRecipesCommand extends CustomCommand {
 
 	public CustomRecipesCommand(CommandEvent event) {
@@ -27,7 +25,7 @@ public class CustomRecipesCommand extends CustomCommand {
 		int amount = CustomRecipes.getRecipes().size();
 		CustomRecipes.getRecipes().keySet().forEach(Bukkit::removeRecipe);
 		CustomRecipes.getRecipes().clear();
-		new CustomRecipes();
+		new CustomRecipes().onStart();
 		send(PREFIX + "Successfully reloaded &e" + amount + "&3 custom recipes");
 	}
 

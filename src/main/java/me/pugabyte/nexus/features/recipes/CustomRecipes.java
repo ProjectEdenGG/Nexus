@@ -16,12 +16,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.*;
+import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,18 +37,18 @@ public class CustomRecipes extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		infiniteWaterBucket();
-//		Tasks.async(() -> {
-//			slabsToBlocks();
-//			quartsUncrafting();
-//			stoneBricksUncrafting();
-//			concretePowderDying();
-//			stainedGlassDying();
-//			stainedGlassPaneDying();
-//			terracottaDying();
-//			bedDying();
-//			setWoolUndyingRecipe();
-//			misc();
-//		});
+		Tasks.async(() -> {
+			slabsToBlocks();
+			quartsUncrafting();
+			stoneBricksUncrafting();
+			concretePowderDying();
+			stainedGlassDying();
+			stainedGlassPaneDying();
+			terracottaDying();
+			bedDying();
+			setWoolUndyingRecipe();
+			misc();
+		});
 	}
 
 	public static void addRecipe(Recipe recipe) {
@@ -122,6 +120,17 @@ public class CustomRecipes extends Feature implements Listener {
 		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_RED_SANDSTONE, 1, Material.RED_SANDSTONE_SLAB, 2, CraftingMenuType.MISC));
 		addRecipe(createSingleItemShapelessRecipe(Material.CHISELED_SANDSTONE, 1, Material.SANDSTONE_SLAB, 2, CraftingMenuType.MISC));
 		addRecipe(createSingleItemShapelessRecipe(Material.HONEYCOMB_BLOCK, 1, Material.HONEYCOMB, 4, CraftingMenuType.MISC));
+		// IFrames
+		CraftingMenuType.MISC.getList().add(new CraftingRecipeMenu.CraftingRecipe(
+				new ArrayList<ItemStack>() {{
+					for (int i = 0; i < 4; i++)
+						add(new ItemStack(Material.ITEM_FRAME));
+					add(new ItemBuilder(Material.LINGERING_POTION).potionEffect(PotionEffectType.INVISIBILITY).build());
+					for (int i = 0; i < 4; i++)
+						add(new ItemStack(Material.ITEM_FRAME));
+				}},
+				new ItemBuilder(Material.ITEM_FRAME).name("Invisible Item Frame").amount(8).glow().build()
+		));
 	}
 
 	public void slabsToBlocks() {
@@ -157,14 +166,8 @@ public class CustomRecipes extends Feature implements Listener {
 		addRecipe(createSingleItemShapelessRecipe(Material.MOSSY_STONE_BRICKS, 1, Material.STONE_BRICKS, 1, CraftingMenuType.STONE_BRICK));
 	}
 
-	RecipeChoice.MaterialChoice wool = new RecipeChoice.MaterialChoice(MaterialTag.WOOL.toArray());
-	RecipeChoice.MaterialChoice concretePowder = new RecipeChoice.MaterialChoice(MaterialTag.CONCRETE_POWDERS.toArray());
-	RecipeChoice.MaterialChoice stainedGlass = new RecipeChoice.MaterialChoice(MaterialTag.STAINED_GLASS.toArray());
-	RecipeChoice.MaterialChoice stainedGlassPane = new RecipeChoice.MaterialChoice(MaterialTag.STAINED_GLASS_PANES.toArray());
-	RecipeChoice.MaterialChoice terracotta = new RecipeChoice.MaterialChoice(MaterialTag.COLORED_TERRACOTTAS.toArray());
-	RecipeChoice.MaterialChoice bed = new RecipeChoice.MaterialChoice(MaterialTag.BEDS.toArray());
-
 	public void concretePowderDying() {
+		RecipeChoice.MaterialChoice concretePowder = new RecipeChoice.MaterialChoice(MaterialTag.CONCRETE_POWDERS.toArray());
 		addRecipe(createColorChangingRecipe(concretePowder, Material.WHITE_DYE, Material.WHITE_CONCRETE_POWDER));
 		addRecipe(createColorChangingRecipe(concretePowder, Material.BLACK_DYE, Material.BLACK_CONCRETE_POWDER));
 		addRecipe(createColorChangingRecipe(concretePowder, Material.BLUE_DYE, Material.BLUE_CONCRETE_POWDER));
@@ -184,6 +187,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void stainedGlassDying() {
+		RecipeChoice.MaterialChoice stainedGlass = new RecipeChoice.MaterialChoice(MaterialTag.STAINED_GLASS.toArray());
 		addRecipe(createColorChangingRecipe(stainedGlass, Material.WHITE_DYE, Material.WHITE_STAINED_GLASS));
 		addRecipe(createColorChangingRecipe(stainedGlass, Material.BLACK_DYE, Material.BLACK_STAINED_GLASS));
 		addRecipe(createColorChangingRecipe(stainedGlass, Material.BLUE_DYE, Material.BLUE_STAINED_GLASS));
@@ -203,6 +207,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void stainedGlassPaneDying() {
+		RecipeChoice.MaterialChoice stainedGlassPane = new RecipeChoice.MaterialChoice(MaterialTag.STAINED_GLASS_PANES.toArray());
 		addRecipe(createColorChangingRecipe(stainedGlassPane, Material.WHITE_DYE, Material.WHITE_STAINED_GLASS_PANE));
 		addRecipe(createColorChangingRecipe(stainedGlassPane, Material.BLACK_DYE, Material.BLACK_STAINED_GLASS_PANE));
 		addRecipe(createColorChangingRecipe(stainedGlassPane, Material.BLUE_DYE, Material.BLUE_STAINED_GLASS_PANE));
@@ -222,6 +227,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void terracottaDying() {
+		RecipeChoice.MaterialChoice terracotta = new RecipeChoice.MaterialChoice(MaterialTag.COLORED_TERRACOTTAS.toArray());
 		addRecipe(createColorChangingRecipe(terracotta, Material.WHITE_DYE, Material.WHITE_TERRACOTTA));
 		addRecipe(createColorChangingRecipe(terracotta, Material.BLACK_DYE, Material.BLACK_TERRACOTTA));
 		addRecipe(createColorChangingRecipe(terracotta, Material.BLUE_DYE, Material.BLUE_TERRACOTTA));
@@ -241,6 +247,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void bedDying() {
+		RecipeChoice.MaterialChoice bed = new RecipeChoice.MaterialChoice(MaterialTag.BEDS.toArray());
 		addRecipe(createShapelessRecipe(bed, Material.WHITE_DYE, Material.WHITE_BED, CraftingMenuType.BEDS));
 		addRecipe(createShapelessRecipe(bed, Material.BLACK_DYE, Material.BLACK_BED, CraftingMenuType.BEDS));
 		addRecipe(createShapelessRecipe(bed, Material.BLUE_DYE, Material.BLUE_BED, CraftingMenuType.BEDS));
@@ -260,6 +267,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void setWoolUndyingRecipe() {
+		RecipeChoice.MaterialChoice wool = new RecipeChoice.MaterialChoice(MaterialTag.WOOL.toArray());
 		ShapedRecipe woolUndyingRecipe = new ShapedRecipe(new NamespacedKey(Nexus.getInstance(), "custom_whiteWool"), new ItemStack(Material.WHITE_WOOL, 8));
 		woolUndyingRecipe.shape("www", "wbw", "www");
 		woolUndyingRecipe.setIngredient('w', wool);
