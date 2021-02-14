@@ -235,6 +235,8 @@ public abstract class ICustomCommand {
 
 		if (Collection.class.isAssignableFrom(type)) {
 			List<Object> values = new ArrayList<>();
+			if (value.contains(","))
+				value = value.replaceAll(" ", "");
 			for (String index : value.split("[, ]"))
 				values.add(convert(index, context, annotation.type(), parameter, name, event, required));
 			values.removeIf(Objects::isNull);

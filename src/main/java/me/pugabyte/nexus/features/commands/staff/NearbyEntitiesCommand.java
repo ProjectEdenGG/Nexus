@@ -18,9 +18,9 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import static me.pugabyte.nexus.utils.EntityUtils.getNearbyEntities;
+import static me.pugabyte.nexus.utils.EntityUtils.getNearbyEntityTypes;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-import static me.pugabyte.nexus.utils.Utils.getNearbyEntities;
-import static me.pugabyte.nexus.utils.Utils.getNearbyEntityTypes;
 import static me.pugabyte.nexus.utils.Utils.sortByValue;
 
 @Permission("group.staff")

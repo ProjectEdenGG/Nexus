@@ -4,10 +4,8 @@ import com.google.common.base.Strings;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.annotations.Environments;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -78,16 +75,6 @@ public class Utils {
 		Collections.reverse(keys);
 		keys.forEach(key -> reverse.put(key, sorted.get(key)));
 		return reverse;
-	}
-
-	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, int radius) {
-		return sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
-				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
-	}
-
-	public static LinkedHashMap<EntityType, Long> getNearbyEntityTypes(Location location, int radius) {
-		return sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
-				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
 	}
 
 	public static Map<String, String> dump(Object object) {

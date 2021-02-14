@@ -13,10 +13,10 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.DeathSwapMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.DeathSwapMatchData.Swap;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -196,7 +196,7 @@ public final class DeathSwap extends TeamlessMechanic {
 
 	public void aggroMobs(Match match) {
 		match.getMinigamers().stream().filter(Minigamer::isAlive).collect(Collectors.toList()).forEach(player ->
-				Utils.getNearbyEntities(player.getPlayer().getLocation(), 10).keySet().stream()
+				EntityUtils.getNearbyEntities(player.getPlayer().getLocation(), 10).keySet().stream()
 						.filter(entity -> entity instanceof Mob)
 						.map(entity -> (Mob) entity)
 						.filter(mob -> mob.getTarget() instanceof Player)

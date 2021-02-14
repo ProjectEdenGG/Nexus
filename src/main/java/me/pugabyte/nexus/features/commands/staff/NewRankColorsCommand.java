@@ -9,9 +9,9 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.newrankcolors.NewRankColors;
 import me.pugabyte.nexus.models.newrankcolors.NewRankColorsService;
+import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.EntityType;
 
@@ -36,7 +36,7 @@ public class NewRankColorsCommand extends CustomCommand {
 			error("Hex code must be in format &e&&e#123456");
 
 		String format = (rank.isMod() ? "&o" : "");
-		Utils.getNearbyEntities(player().getLocation(), 500).forEach((entity, distance) -> {
+		EntityUtils.getNearbyEntities(player().getLocation(), 500).forEach((entity, distance) -> {
 			if (entity.getType() == EntityType.PLAYER)
 				send(entity, "&2[G] &8&l[" + hex + format + camelCase(rank) + "&8&l] " + hex + format + player().getName() + " &2&l> &fTesting");
 		});

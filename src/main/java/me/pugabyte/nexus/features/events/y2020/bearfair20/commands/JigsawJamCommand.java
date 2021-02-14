@@ -20,6 +20,7 @@ import me.pugabyte.nexus.models.bearfair.BearFairUser;
 import me.pugabyte.nexus.models.jigsawjam.JigsawJamService;
 import me.pugabyte.nexus.models.jigsawjam.JigsawJammer;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LocationUtils.Axis;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -27,7 +28,6 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.Utils.MapRotation;
 import me.pugabyte.nexus.utils.WorldEditUtils;
@@ -255,7 +255,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	private void clear(Location location) {
 		List<ItemFrame> maps = new ArrayList<>();
 
-		for (Entity entity : Utils.getNearbyEntities(location, 10).keySet())
+		for (Entity entity : EntityUtils.getNearbyEntities(location, 10).keySet())
 			if (entity.getType() == EntityType.ITEM_FRAME)
 				maps.add((ItemFrame) entity);
 
@@ -346,7 +346,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 				validate.setZ(answer.getZ());
 
 			for (int j = 0; j < length; j++) {
-				for (Entity entity : Utils.getNearbyEntities(validate, 1).keySet())
+				for (Entity entity : EntityUtils.getNearbyEntities(validate, 1).keySet())
 					if (entity.getType() == EntityType.ITEM_FRAME)
 						if (isEntityAtLocation(entity, validate)) {
 							ItemFrame itemFrame = (ItemFrame) entity;
@@ -380,7 +380,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 				check.setZ(attempt.getZ());
 
 			for (int j = 0; j < length; j++) {
-				for (Entity entity : Utils.getNearbyEntities(check, 1).keySet())
+				for (Entity entity : EntityUtils.getNearbyEntities(check, 1).keySet())
 					if (entity.getType() == EntityType.ITEM_FRAME)
 						if (isEntityAtLocation(entity, check)) {
 							ItemFrame itemFrame = (ItemFrame) entity;
@@ -433,7 +433,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	private Location getAdjacentItemFrame(Location location) {
-		for (Entity entity : Utils.getNearbyEntities(location, 3).keySet())
+		for (Entity entity : EntityUtils.getNearbyEntities(location, 3).keySet())
 			if (entity.getType() == EntityType.ITEM_FRAME)
 				if (Math.floor(location.getY()) == Math.floor(entity.getLocation().getY()))
 					if (Axis.getAxis(location, entity.getLocation()) != null)
