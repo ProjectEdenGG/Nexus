@@ -740,6 +740,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 				send(camelCase(value));
 	}
 
+	@Path("hasPlayedBefore")
+	void hasPlayedBefore(Player player) {
+		send("hasPlayedBefore: " + player.hasPlayedBefore());
+	}
+
 	@Path("closeInventory [player]")
 	void closeInventory(@Arg("self") Player player) {
 		player.closeInventory();

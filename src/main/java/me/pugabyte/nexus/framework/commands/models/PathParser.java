@@ -201,12 +201,11 @@ class PathParser {
 			String realArg = this.realArg;
 			List<String> results = new ArrayList<>();
 
-			String splitter = (realArg.contains(",") ? "," : " ");
 			if (isList) {
-				if (realArg.lastIndexOf(splitter) == realArg.length() - 1)
+				if (realArg.lastIndexOf(",") == realArg.length() - 1)
 					realArg = "";
 				else {
-					String[] split = realArg.split(splitter);
+					String[] split = realArg.split(",");
 					realArg = split[split.length - 1];
 				}
 			}
@@ -226,12 +225,12 @@ class PathParser {
 				results.addAll(command.tabCompleteEnum((Class<? extends Enum<?>>) type, realArg.toLowerCase()));
 
 			if (isList) {
-				List<String> realArgs = new ArrayList<>(Arrays.asList(this.realArg.split(splitter)));
-				if (!this.realArg.endsWith(splitter))
+				List<String> realArgs = new ArrayList<>(Arrays.asList(this.realArg.split(",")));
+				if (!this.realArg.endsWith(","))
 					realArgs.remove(realArgs.size() - 1);
-				String realArgBeginning = String.join(splitter, realArgs);
+				String realArgBeginning = String.join(",", realArgs);
 				if (realArgs.size() > 0)
-					realArgBeginning += splitter;
+					realArgBeginning += ",";
 
 				ArrayList<String> strings = new ArrayList<>(results);
 				results.clear();
