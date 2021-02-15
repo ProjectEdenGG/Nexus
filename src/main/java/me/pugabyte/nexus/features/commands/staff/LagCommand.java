@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -33,11 +34,11 @@ public class LagCommand extends CustomCommand {
 		else if (tps >= 15.0)
 			color = ChatColor.YELLOW;
 
-		send("Uptime: " + StringUtils.shortDateTimeFormat(Utils.epochSecond(ManagementFactory.getRuntimeMXBean().getStartTime())));
-		send("TPS: " + color + Bukkit.getTPS()[0]);
-		send("Max ram: " + Runtime.getRuntime().maxMemory() / 1024 / 1024);
-		send("Allocated ram: " + Runtime.getRuntime().totalMemory() / 1024 / 1024);
-		send("Free ram: " + Runtime.getRuntime().freeMemory() / 1024 / 1024);
+		send("&3Uptime: " + StringUtils.shortDateTimeFormat(Utils.epochSecond(ManagementFactory.getRuntimeMXBean().getStartTime())));
+		send(ScoreboardLine.TPS.render(player()));
+		send("&3Max ram: &e" + Runtime.getRuntime().maxMemory() / 1024 / 1024);
+		send("&3Allocated ram: &e" + Runtime.getRuntime().totalMemory() / 1024 / 1024);
+		send("&3Free ram: &e" + Runtime.getRuntime().freeMemory() / 1024 / 1024);
 
 		List<World> worlds = Bukkit.getWorlds();
 		for (World world : worlds) {
@@ -63,10 +64,10 @@ public class LagCommand extends CustomCommand {
 				Nexus.severe("Corrupted chunk data on world: " + world.getName());
 			}
 
-			send(type + " \"" + world.getName() + "\": "
-					+ world.getLoadedChunks().length + " chunks, "
-					+ world.getEntities().size() + " entities, "
-					+ tileEntities + " tiles");
+			send("&3" + type + " \"&e" + world.getName() + "\"&3: "
+					+ "&e" + world.getLoadedChunks().length + " &3chunks, "
+					+ "&e" + world.getEntities().size() + " &3entities, "
+					+ "&e" + tileEntities + " &3tiles");
 		}
 	}
 
