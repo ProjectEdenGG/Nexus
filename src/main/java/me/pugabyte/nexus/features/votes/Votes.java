@@ -139,7 +139,7 @@ public class Votes extends Feature implements Listener {
 			Chat.broadcastDiscord(":star: **" + name + "** received **" + vote.getExtra() + "** extra vote points!");
 		}
 
-		if (player != null && player.hasPlayedBefore()) {
+		if (player != null) {
 			int points = vote.getExtra() + basePoints;
 			new Voter(player).givePoints(points);
 			if (player.isOnline() && player.getPlayer() != null)

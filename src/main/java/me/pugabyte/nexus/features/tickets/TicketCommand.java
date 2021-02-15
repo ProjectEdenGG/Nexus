@@ -23,7 +23,6 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
-@Cooldown(@Part(Time.MINUTE))
 @Aliases({"helpop", "report"})
 public class TicketCommand extends CustomCommand {
 	private TicketService service = new TicketService();
@@ -41,6 +40,7 @@ public class TicketCommand extends CustomCommand {
 		send("&3Please be &epatient&3, as staff can be very busy!");
 	}
 
+	@Cooldown(@Part(Time.MINUTE))
 	@Path("<description...>")
 	void ticket(String description) {
 		if (Arrays.asList("help", "info", "pls", "plz", "please").contains(description))

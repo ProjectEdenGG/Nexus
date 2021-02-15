@@ -41,6 +41,8 @@ public class VoteCrate extends Crate {
 		CrateLoot loot = event.getCrateLoot();
 		if (loot.getWeight() > .25) return;
 		Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() + " &3has gotten " + loot.getTitle() + " &3from the &eVote Crate");
-		Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten " + StringUtils.stripColor(loot.getTitle()) + " from the Vote Crate");
+		Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten " +
+				(loot.getItems().contains(CrateType.MYSTERY.getKey()) ? "a " : "") +
+				StringUtils.stripColor(loot.getTitle()) + " from the Vote Crate");
 	}
 }
