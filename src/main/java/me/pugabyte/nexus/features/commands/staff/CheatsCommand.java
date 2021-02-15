@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
+import org.bukkit.World.Environment;
 
 @Permission("group.staff")
 @Redirect(from = "/nocheats", to = "/cheats off")
@@ -26,8 +27,10 @@ public class CheatsCommand extends CustomCommand {
 		if (enabled) {
 			if (player().hasPermission("essentials.gamemode.creative"))
 				player().setGameMode(GameMode.CREATIVE);
-			player().setAllowFlight(true);
-			player().setFlying(true);
+			if (!player().getWorld().getEnvironment().equals(Environment.THE_END)) {
+				player().setAllowFlight(true);
+				player().setFlying(true);
+			}
 			godmode.setEnabled(true);
 			godmodeService.save(godmode);
 			runCommand("vanish on");
@@ -38,10 +41,12 @@ public class CheatsCommand extends CustomCommand {
 			godmode.setEnabled(false);
 			godmodeService.save(godmode);
 			if (WorldGroup.get(player()) != WorldGroup.CREATIVE) {
+				if (!player().getWorld().getEnvironment().equals(Environment.THE_END)) {
+					player().setAllowFlight(false);
+					player().setFlying(false);
+				}
 				player().setGameMode(GameMode.SURVIVAL);
 				player().setFallDistance(0);
-				player().setAllowFlight(false);
-				player().setFlying(false);
 			}
 
 			send(PREFIX + "&cDisabled");

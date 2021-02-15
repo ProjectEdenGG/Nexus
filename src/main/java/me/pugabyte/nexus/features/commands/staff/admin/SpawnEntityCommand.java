@@ -26,8 +26,8 @@ public class SpawnEntityCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<entityType...>")
-	void spawnEntity(@Arg(type = EntityType.class, tabCompleter = LivingEntity.class) List<EntityType> entityTypes) {
+	@Path("<entityType...> [amount]")
+	void spawnEntity(@Arg(type = EntityType.class, tabCompleter = LivingEntity.class) List<EntityType> entityTypes, @Arg(min = 1) int amount) {
 		Location location;
 		if (isPlayer())
 			location = getTargetBlockRequired().getRelative(BlockFace.UP).getLocation();
