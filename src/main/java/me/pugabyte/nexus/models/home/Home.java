@@ -80,7 +80,7 @@ public class Home extends PlayerOwnedObject {
 			Location location = this.location.clone();
 			if (isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
 				location.add(0, .5, 0);
-			player.teleport(location, TeleportCause.COMMAND);
+			player.teleportAsync(location, TeleportCause.COMMAND);
 		} else
 			PlayerUtils.send(player, HomesFeature.PREFIX + "&cYou don't have access to that home");
 	}

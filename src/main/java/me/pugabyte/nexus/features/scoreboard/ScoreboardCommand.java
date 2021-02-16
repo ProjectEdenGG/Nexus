@@ -148,7 +148,8 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getPlayer());
-		user.on();
+		if (user.isActive())
+			user.on();
 	}
 
 	@EventHandler

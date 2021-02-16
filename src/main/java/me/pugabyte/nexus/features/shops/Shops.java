@@ -25,7 +25,7 @@ public class Shops extends Feature {
 	private static class Market {
 
 		public Market() {
-			Tasks.async(this::setup);
+			Tasks.waitAsync(5, this::setup);
 		}
 
 		private void setup() {

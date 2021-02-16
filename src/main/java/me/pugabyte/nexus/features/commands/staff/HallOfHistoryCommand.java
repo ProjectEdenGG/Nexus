@@ -286,7 +286,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 			return json("&3" + (index + 1) + " &e" + new Nerd(uuid).getName() + " &7- " + time);
 		};
 
-		paginate(new ArrayList<>(Utils.sortByValue(promotionTimeMap).keySet()), formatter, "/hoh promotionTime", page);
+		paginate(new ArrayList<>(Utils.sortByValue(promotionTimeMap).keySet()), formatter, "/hoh promotionTimes", page);
 	}
 
 }

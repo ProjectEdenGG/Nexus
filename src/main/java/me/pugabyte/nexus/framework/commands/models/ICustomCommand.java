@@ -490,7 +490,7 @@ public abstract class ICustomCommand {
 	protected Enum<?> convertToEnum(String filter, Class<? extends Enum<?>> clazz) {
 		if (filter == null) throw new InvocationTargetException(new NexusException("Missing argument"));
 		return Arrays.stream(clazz.getEnumConstants())
-				.filter(value -> value.name().toLowerCase().startsWith(filter.toLowerCase()))
+				.filter(value -> value.name().equalsIgnoreCase(filter))
 				.findFirst()
 				.orElseThrow(() -> new InvalidInputException(clazz.getSimpleName() + " from " + filter + " not found"));
 	}

@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.BNScoreboard;
@@ -52,14 +54,23 @@ public class ScoreboardUser extends PlayerOwnedObject {
 	}
 
 	public void on() {
-		off();
+		if (UUID.fromString("75d63edb-84cc-4d4a-b761-4f81c91b2b7a").equals(uuid)) {
+			try {
+				throw new NexusException("Turning on keyhole's scoreboard");
+			} catch (NexusException ex) {
+				Nexus.log(ex.getMessage());
+				ex.printStackTrace();
+			}
+		}
+
+		pause();
 		if (scoreboard == null)
 			scoreboard = new BNScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Bear Nation &e<", getPlayer());
 		else
 			scoreboard.subscribe(getPlayer());
 		active = true;
 		Tasks.cancel(headerTaskId);
-		headerTaskId = Tasks.repeatAsync(0, (ScoreboardLine.getHeaderFrames().size() + 1) * HEADER_UPDATE_INTERVAL, new Header(getPlayer()));
+		headerTaskId = Tasks.repeatAsync(0, (long) (ScoreboardLine.getHeaderFrames().size() + 1) * HEADER_UPDATE_INTERVAL, new Header(getPlayer()));
 		startTasks();
 	}
 
