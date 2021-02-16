@@ -19,7 +19,7 @@ public enum WorldGroup {
 	MINIGAMES("gameworld", "blockball", "deathswap"),
 	SKYBLOCK("skyblock", "skyblock_nether"),
 	ADVENTURE("stranded", "aeveon_project"),
-	EVENT("2y"),
+	EVENT("2y", "events"),
 	STAFF("buildadmin", "jail", "pirate", "tiger"),
 	UNKNOWN;
 
