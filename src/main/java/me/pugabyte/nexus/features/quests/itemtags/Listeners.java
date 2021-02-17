@@ -29,9 +29,7 @@ public class Listeners implements Listener {
 
 	public static boolean isNotTesting(Player player) {
 		try {
-			return !PlayerUtils.wakka().equals(player)
-					|| !PlayerUtils.blast().equals(player)
-					|| !PlayerUtils.puga().equals(player);
+			return !PlayerUtils.wakka().equals(player);
 		} catch (Exception ignored) {
 			return true;
 		}
