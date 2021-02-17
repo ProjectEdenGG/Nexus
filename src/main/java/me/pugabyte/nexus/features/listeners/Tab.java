@@ -44,14 +44,6 @@ public class Tab implements Listener {
 				"" +
 				System.lineSeparator() +
 				"&3Join us on &c/discord" +
-				System.lineSeparator() +
-				System.lineSeparator() +
-				"&eCurrent event:" +
-				System.lineSeparator() +
-				"&6Valentine's Day Build Contest" +
-				System.lineSeparator() +
-				System.lineSeparator() +
-				"&eUse &c/bc &eto join" +
 				System.lineSeparator();
 	}
 
