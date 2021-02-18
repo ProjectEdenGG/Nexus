@@ -132,7 +132,7 @@ public class Wiki {
 					});
 
 				} else {
-					PlayerUtils.send(sender, prefix + "You must be ingame to use this command.");
+					PlayerUtils.send(sender, prefix + "You must be in-game to use this command.");
 				}
 			} else {
 				PlayerUtils.send(sender, prefix + "You did not specify a search query.");

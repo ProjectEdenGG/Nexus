@@ -202,7 +202,7 @@ public final class DescParseTickFormat {
 		// But we will simulate that the server started with 0 at midnight.
 		ticks = ticks - ticksAtMidnight + ticksPerDay;
 
-		// How many ingame days have passed since the server start?
+		// How many in-game days have passed since the server start?
 		final long days = ticks / ticksPerDay;
 		ticks -= days * ticksPerDay;
 
