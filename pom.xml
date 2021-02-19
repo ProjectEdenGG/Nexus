@@ -131,8 +131,11 @@
         </repository>
         <repository>
             <id>jcenter-repo</id>
-            <name>jcenter-bintray</name>
             <url>https://jcenter.bintray.com</url>
+        </repository>
+        <repository>
+            <id>floodgate-repo</id>
+            <url>https://repo.nukkitx.com/maven-snapshots/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -478,6 +481,19 @@
             <groupId>com.github.BlueMap-Minecraft</groupId>
             <artifactId>BlueMapAPI</artifactId>
             <version>v1.3.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Floodgate API -->
+        <dependency>
+            <groupId>org.geysermc</groupId>
+            <artifactId>floodgate-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geysermc</groupId>
+            <artifactId>floodgate-bukkit</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
