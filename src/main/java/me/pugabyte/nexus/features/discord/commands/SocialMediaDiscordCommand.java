@@ -10,9 +10,9 @@ import me.pugabyte.nexus.utils.Tasks;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.KODA)
-public class SocialMediaCommand extends Command {
+public class SocialMediaDiscordCommand extends Command {
 
-	public SocialMediaCommand() {
+	public SocialMediaDiscordCommand() {
 		this.name = "socialmedia";
 		this.aliases = new String[]{"sm"};
 		this.guildOnly = true;

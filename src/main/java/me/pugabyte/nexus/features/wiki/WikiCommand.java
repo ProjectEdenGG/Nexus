@@ -14,7 +14,7 @@ public class WikiCommand extends CustomCommand {
 	@Override
 	public void help() {
 		send("&eVisit our wiki at &3https://wiki.bnn.gg");
-		send("&eOr use &c/wiki search <query> &eto search the wiki from ingame.");
+		send("&eOr use &c/wiki search <query> &eto search the wiki from in-game.");
 	}
 
 	@Path("search <query...>")

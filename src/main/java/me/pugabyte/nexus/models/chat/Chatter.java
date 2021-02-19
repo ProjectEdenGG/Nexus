@@ -62,7 +62,7 @@ public class Chatter extends PlayerOwnedObject {
 	}
 
 	public boolean canJoin(PublicChannel channel) {
-		boolean hasPerm = false;
+		boolean hasPerm;
 		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
 			hasPerm = getOfflinePlayer().getPlayer().hasPermission(channel.getPermission());
 		else

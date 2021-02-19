@@ -65,15 +65,15 @@ public class DiscordDiscordCommand extends Command {
 								if (author.getUserId().equals(fromInput.getUserId()))
 									throw new InvalidInputException("You are already linked to that minecraft account");
 								else
-									throw new InvalidInputException("That minecraft account is already linked to a different discord account. Type `/discord unlink` ingame to remove the link.");
+									throw new InvalidInputException("That minecraft account is already linked to a different discord account. Type `/discord unlink` in-game to remove the link.");
 							else
-								throw new InvalidInputException("You are already linked to a different minecraft account. Use `/discord unlink` ingame to remove the link.");
+								throw new InvalidInputException("You are already linked to a different minecraft account. Use `/discord unlink` in-game to remove the link.");
 						if (!Strings.isNullOrEmpty(fromInput.getUserId()))
 							// Provided name is already linked
 							if (fromInput.getUserId().equals(event.getAuthor().getId()))
 								throw new InvalidInputException("This should never happen <@" + User.PUGABYTE.getId() + ">"); // Lookup by user id failed?
 							else
-								throw new InvalidInputException("That minecraft account is already linked to a different discord account. Type `/discord unlink` ingame to remove the link.");
+								throw new InvalidInputException("That minecraft account is already linked to a different discord account. Type `/discord unlink` in-game to remove the link.");
 
 						String code = RandomStringUtils.randomAlphabetic(6);
 						Discord.getCodes().put(code, new DiscordUser(player.getUniqueId().toString(), event.getAuthor().getId()));

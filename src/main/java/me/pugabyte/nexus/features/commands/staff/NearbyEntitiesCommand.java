@@ -10,7 +10,9 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -42,20 +44,20 @@ public class NearbyEntitiesCommand extends CustomCommand {
 
 	@Path("find <type> [radius]")
 	void find(EntityType type, @Arg("200") int radius) {
-		getNearbyEntities(player().getLocation(), radius).entrySet().stream()
-				.filter(entry -> entry.getKey().getType() == type)
-				.forEach(entry -> {
-					Entity entity = entry.getKey();
-					Location location = entity.getLocation();
+		getNearbyEntities(player().getLocation(), radius).forEach((entity, count) -> {
+			if (entity.getType() != type)
+				return;
 
-					String name = StringUtils.camelCase(entity.getType().name());
-					if (!Strings.isNullOrEmpty(entity.getCustomName()))
-						name = name + " named " + stripColor(entity.getCustomName());
+			Location location = entity.getLocation();
 
-					new JsonBuilder("&e" + name)
-							.command("/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ())
-							.send(player());
-				});
+			String name = StringUtils.camelCase(entity.getType().name());
+			if (!Strings.isNullOrEmpty(entity.getCustomName()))
+				name = name + " named " + stripColor(entity.getCustomName());
+
+			new JsonBuilder("&e" + name)
+					.command("/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ())
+					.send(player());
+		});
 	}
 
 	@Path("report [radius] [type]")
@@ -69,14 +71,17 @@ public class NearbyEntitiesCommand extends CustomCommand {
 		});
 	}
 
-	@Path("villagers")
-	void report() {
-		sortByValue(new HashMap<Player, Integer>() {{
-			for (Player player : Bukkit.getOnlinePlayers())
-				put(player, (int) player.getWorld().getNearbyEntities(player.getLocation(), 200, 200, 200).stream()
-						.filter(entity -> entity.getType() == EntityType.VILLAGER).count());
-		}}).forEach((player, count) ->
-				send(json("&e" + player.getName() + " &7- " + count).command("/tp " + player.getName())));
+	@Path("chunkCount [world] [type]")
+	void count(World world, EntityType type) {
+		sortByValue(new HashMap<Chunk, Integer>() {{
+			for (Entity entity : world.getEntities()) {
+				if (entity.getType() == type)
+					put(entity.getChunk(), getOrDefault(entity.getChunk(), 0) + 1);
+			}
+		}}).forEach((chunk, count) -> {
+			if (count > 0)
+				send(json("&e" + chunk.getX() + ", " + chunk.getZ() + " &7- " + count).command("/tppos " + (chunk.getX() * 16) + " 100 " + (chunk.getZ() * 16)));
+		});
 	}
 
 }

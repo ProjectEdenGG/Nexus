@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
+import com.destroystokyo.paper.Title;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import lombok.Getter;
@@ -159,7 +160,10 @@ public class Misc implements Listener {
 			Player player = event.getPlayer();
 			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
-				ActionBarUtils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get());
+				int titleTime = Time.SECOND.x(10);
+				player.sendTitle(new Title("&4&lWARNING", "&4You have chat disabled!", 10, titleTime, 10));
+				ActionBarUtils.sendActionBar(player, "&4Turn it on in your settings", titleTime);
+				Tasks.wait(titleTime, () -> ActionBarUtils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get()));
 				PlayerUtils.send(player, "");
 				PlayerUtils.send(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings");
 				PlayerUtils.send(player, "");
