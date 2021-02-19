@@ -5,7 +5,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import org.bukkit.Location;
@@ -27,7 +26,7 @@ public class SpawnEntityCommand extends CustomCommand {
 	}
 
 	@Path("<entityType> [amount]")
-	void spawnEntity(@Arg(type = EntityType.class, tabCompleter = LivingEntity.class) List<EntityType> entityTypes, @Arg(min = 1) int amount) {
+	void spawnEntity(@Arg(type = EntityType.class, tabCompleter = LivingEntity.class) List<EntityType> entityTypes, @Arg(value = "1", min = 1) int amount) {
 		Location location;
 		if (isPlayer())
 			location = getTargetBlockRequired().getRelative(BlockFace.UP).getLocation();
@@ -47,17 +46,5 @@ public class SpawnEntityCommand extends CustomCommand {
 				entity = passenger;
 			}
 		}
-	}
-
-	@TabCompleterFor(LivingEntity.class)
-	List<String> tabCompleteLivingEntity(String value) {
-		List<String> completions = new ArrayList<>();
-		for (EntityType entityType : EntityType.values()) {
-			Class<? extends Entity> entityClass = entityType.getEntityClass();
-			if (entityClass != null && entityClass.isAssignableFrom(LivingEntity.class))
-				completions.add(entityType.name().toLowerCase());
-		}
-
-		return completions;
 	}
 }

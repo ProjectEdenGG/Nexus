@@ -495,7 +495,7 @@ public abstract class ICustomCommand {
 				.orElseThrow(() -> new InvalidInputException(clazz.getSimpleName() + " from " + filter + " not found"));
 	}
 
-	List<String> tabCompleteEnum(Class<? extends Enum<?>> clazz, String filter) {
+	protected List<String> tabCompleteEnum(String filter, Class<? extends Enum<?>> clazz) {
 		return Arrays.stream(clazz.getEnumConstants())
 				.map(value -> value.name().toLowerCase())
 				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))

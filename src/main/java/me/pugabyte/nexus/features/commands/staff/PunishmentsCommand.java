@@ -16,7 +16,7 @@ public class PunishmentsCommand extends CustomCommand {
 	@Path
 	void run() {
 		send("&eGriefing");
-		send("    &c/calcban <## of past griefing bans> <## of blocks griefed>");
+		send("    &c/calcban <# of past griefing bans> <# of blocks griefed>");
 		line();
 		send("&eChat");
 		send("    &3Try to keep it to &cmutes &3for established members of the community. Give them time to cool down. Otherwise short bans");

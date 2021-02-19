@@ -222,7 +222,7 @@ class PathParser {
 				else
 					throw new NexusException("Unknown converter parameters in " + tabCompleter.getName());
 			} else if (type != null && type.isEnum())
-				results.addAll(command.tabCompleteEnum((Class<? extends Enum<?>>) type, realArg.toLowerCase()));
+				results.addAll(command.tabCompleteEnum(realArg.toLowerCase(), (Class<? extends Enum<?>>) type));
 
 			if (isList) {
 				List<String> realArgs = new ArrayList<>(Arrays.asList(this.realArg.split(",")));

@@ -49,6 +49,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -263,13 +264,20 @@ public abstract class CustomCommand extends ICustomCommand {
 		throw new InvalidInputException(error);
 	}
 
+	@Deprecated
+	public void error(Player player, String error) {
+		player.sendMessage(StringUtils.colorize("&c" + error));
+	}
+
 	public void permissionError() {
 		throw new NoPermissionException();
 	}
 
-	@Deprecated
-	public void error(Player player, String error) {
-		player.sendMessage(StringUtils.colorize("&c" + error));
+	public boolean hasPermission(String permission) {
+		if (isCommandBlock() || isConsole())
+			return true;
+		else
+			return player().hasPermission(permission);
 	}
 
 	public void showUsage() {
@@ -740,6 +748,18 @@ public abstract class CustomCommand extends ICustomCommand {
 				.filter(enchantment -> enchantment.getKey().getKey().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(enchantment -> enchantment.getKey().getKey())
 				.collect(Collectors.toList());
+	}
+
+	@TabCompleterFor(LivingEntity.class)
+	protected List<String> tabCompleteLivingEntity(String value) {
+		List<String> completions = new ArrayList<>();
+		for (EntityType entityType : EntityType.values()) {
+			Class<? extends Entity> entityClass = entityType.getEntityClass();
+			if (entityClass != null && entityClass.isAssignableFrom(LivingEntity.class))
+				completions.add(entityType.name().toLowerCase());
+		}
+
+		return completions;
 	}
 
 	protected <T> void paginate(List<T> values, BiFunction<T, Integer, JsonBuilder> formatter, String command, int page) {
