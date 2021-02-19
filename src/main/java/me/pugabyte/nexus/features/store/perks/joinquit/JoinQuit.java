@@ -16,6 +16,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,6 +25,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerQuitEvent.QuitReason;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -87,6 +89,10 @@ public class JoinQuit extends Feature implements Listener {
 	}
 
 	public static void quit(Player player) {
+		quit(player, QuitReason.DISCONNECTED);
+	}
+
+	public static void quit(Player player, QuitReason reason) {
 		if (isDuplicate(player, "quit"))
 			return;
 
@@ -100,7 +106,11 @@ public class JoinQuit extends Feature implements Listener {
 
 		// TODO: mutemenu
 		Bukkit.getOnlinePlayers().forEach(_player -> {
-			PlayerUtils.send(_player, ingame);
+			if (reason != QuitReason.DISCONNECTED && PlayerUtils.isStaffGroup(_player))
+				PlayerUtils.send(_player, ingame + " (" + StringUtils.camelCase(reason.name()) + ")");
+			else
+				PlayerUtils.send(_player, ingame);
+
 			Jingle.QUIT.playAll();
 		});
 
@@ -133,7 +143,7 @@ public class JoinQuit extends Feature implements Listener {
 	public void onQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		if (!vanished.contains(player))
-			quit(player);
+			quit(player, event.getReason());
 	}
 
 	// Can't use Utils#isVanished on player in quit event
