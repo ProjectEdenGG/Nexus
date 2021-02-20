@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -65,6 +66,20 @@ public class AnnouncementConfig extends PlayerOwnedObject {
 
 	public List<Announcement> getMotds() {
 		return announcements.stream().filter(Announcement::isMotd).collect(Collectors.toList());
+	}
+
+	public void add(Announcement announcement) {
+		if (findRequestMatch(announcement.getId()).isPresent())
+			throw new InvalidInputException("An announcement with id &e" + announcement.getId() + " &calready exists");
+
+		announcements.add(announcement);
+	}
+
+	public void remove(String id) {
+		if (!findRequestMatch(id).isPresent())
+			throw new InvalidInputException("Announcement with id &e" + id + " &cnot found");
+
+		announcements.removeIf(announcement -> announcement.getId().equalsIgnoreCase(id));
 	}
 
 	@Data

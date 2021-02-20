@@ -60,16 +60,15 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 
 	@Path("create <id> <text...>")
 	void create(String id, String text) {
-		Announcement announcement = new Announcement(id, text);
-		config.getAllAnnouncements().add(announcement);
+		config.add(new Announcement(id, text));
 		save();
-		send(PREFIX + "Announcement &e" + announcement.getId() + " &3created");
+		send(PREFIX + "Announcement &e" + id + " &3created");
 	}
 
 	@Confirm
 	@Path("delete <id>")
 	void delete(Announcement announcement) {
-		config.getAllAnnouncements().remove(announcement);
+		config.remove(announcement.getId());
 		save();
 		send(PREFIX + "Announcement &e" + announcement.getId() + " &cdeleted");
 	}
