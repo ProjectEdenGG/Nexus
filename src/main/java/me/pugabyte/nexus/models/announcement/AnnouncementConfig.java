@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -51,7 +52,19 @@ public class AnnouncementConfig extends PlayerOwnedObject {
 	}
 
 	public Announcement getRandomAnnouncement() {
-		return RandomUtils.randomElement(announcements);
+		return RandomUtils.randomElement(getAnnouncements());
+	}
+
+	public List<Announcement> getAllAnnouncements() {
+		return announcements;
+	}
+
+	public List<Announcement> getAnnouncements() {
+		return announcements.stream().filter(announcement -> !announcement.isMotd()).collect(Collectors.toList());
+	}
+
+	public List<Announcement> getMotds() {
+		return announcements.stream().filter(Announcement::isMotd).collect(Collectors.toList());
 	}
 
 	@Data
@@ -65,6 +78,7 @@ public class AnnouncementConfig extends PlayerOwnedObject {
 		@NonNull
 		private String text;
 		private boolean enabled = true;
+		private boolean motd;
 		private Set<String> showPermissions = new HashSet<>();
 		private Set<String> hidePermissions = new HashSet<>();
 		private LocalDateTime startTime;
@@ -72,9 +86,53 @@ public class AnnouncementConfig extends PlayerOwnedObject {
 		private AnnouncementCondition condition;
 
 		public void send(Player player) {
-			PlayerUtils.send(player, "");
-			PlayerUtils.send(player, "&8&l[&b⚡&8&l] &7" + text);
-			PlayerUtils.send(player, "");
+			if (motd) {
+				PlayerUtils.send(player, text);
+			} else {
+				PlayerUtils.send(player, "");
+				PlayerUtils.send(player, "&8&l[&b⚡&8&l] &7" + text);
+				PlayerUtils.send(player, "");
+			}
+		}
+
+		public boolean test(Player player) {
+			if (!enabled)
+				return false;
+
+			if (!showPermissions.isEmpty()) {
+				boolean canSee = false;
+				for (String showPermission : showPermissions)
+					if (player.hasPermission(showPermission)) {
+						canSee = true;
+						break;
+					}
+
+				if (!canSee)
+					return false;
+			}
+
+			if (!hidePermissions.isEmpty()) {
+				boolean canHide = false;
+				for (String hidePermission : hidePermissions)
+					if (player.hasPermission(hidePermission)) {
+						canHide = true;
+						break;
+					}
+
+				if (canHide)
+					return false;
+			}
+
+			if (startTime != null && startTime.isAfter(LocalDateTime.now()))
+				return false;
+
+			if (endTime != null && endTime.isBefore(LocalDateTime.now()))
+				return false;
+
+			if (condition != null && !condition.test(player))
+				return false;
+
+			return true;
 		}
 
 		public enum AnnouncementCondition {

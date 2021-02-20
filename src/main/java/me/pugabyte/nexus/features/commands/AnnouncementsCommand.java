@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -24,6 +25,9 @@ import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,9 +38,10 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.utils.StringUtils.ellipsis;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
 
-@Permission("group.seniorstaff")
+@NoArgsConstructor
 @Aliases("announcement")
-public class AnnouncementsCommand extends CustomCommand {
+@Permission("group.seniorstaff")
+public class AnnouncementsCommand extends CustomCommand implements Listener {
 	private final AnnouncementConfigService service = new AnnouncementConfigService();
 	private final AnnouncementConfig config = service.get(Nexus.getUUID0());
 
@@ -56,7 +61,7 @@ public class AnnouncementsCommand extends CustomCommand {
 	@Path("create <id> <text...>")
 	void create(String id, String text) {
 		Announcement announcement = new Announcement(id, text);
-		config.getAnnouncements().add(announcement);
+		config.getAllAnnouncements().add(announcement);
 		save();
 		send(PREFIX + "Announcement &e" + announcement.getId() + " &3created");
 	}
@@ -64,7 +69,7 @@ public class AnnouncementsCommand extends CustomCommand {
 	@Confirm
 	@Path("delete <id>")
 	void delete(Announcement announcement) {
-		config.getAnnouncements().remove(announcement);
+		config.getAllAnnouncements().remove(announcement);
 		save();
 		send(PREFIX + "Announcement &e" + announcement.getId() + " &cdeleted");
 	}
@@ -84,6 +89,11 @@ public class AnnouncementsCommand extends CustomCommand {
 			send(json(" " + StringUtils.CHECK + " Enabled").hover("&3Click to &cdisable").command("/announcements disable " + announcement.getId()));
 		else
 			send(json(" " + StringUtils.X + " Disabled").hover("&3Click to &aenable").command("/announcements enable " + announcement.getId()));
+
+		if (announcement.isMotd())
+			send(json(" &3Type: &eMOTD").hover("&3Click to toggle").command("/announcements edit motd " + announcement.getId() + " false"));
+		else
+			send(json(" &3Type: &eAnnouncement").hover("&3Click to toggle").command("/announcements edit motd " + announcement.getId() + " true"));
 
 		send(json(" &3Show permissions ").group().next("&a[+]").hover("&aAdd permission").suggest("/announcements edit showPermissions add " + announcement.getId() + " "));
 		showPermissionsEdit(announcement, announcement.getShowPermissions(), "showPermissions");
@@ -133,6 +143,14 @@ public class AnnouncementsCommand extends CustomCommand {
 		saveAndEdit(announcement);
 	}
 
+	@Path("edit motd <id> [enable]")
+	void editMotd(Announcement announcement, Boolean enable) {
+		if (enable == null)
+			enable = !announcement.isMotd();
+		announcement.setMotd(enable);
+		saveAndEdit(announcement);
+	}
+
 	@Path("edit showPermissions add <id> <permission(s)>")
 	void editShowPermissionsAdd(Announcement announcement, @Arg(type = String.class) List<String> permissions) {
 		announcement.getShowPermissions().addAll(permissions);
@@ -177,15 +195,16 @@ public class AnnouncementsCommand extends CustomCommand {
 
 	@Path("list [page]")
 	void list(@Arg("1") int page) {
-		if (config.getAnnouncements().isEmpty())
+		if (config.getAllAnnouncements().isEmpty())
 			error("No announcements have been created");
 
 		send(PREFIX + "Announcements");
 		BiFunction<Announcement, Integer, JsonBuilder> formatter = (announcement, index) ->
-				json("&3" + (index + 1) + " &e" + announcement.getId() + " &7- " + ellipsis(announcement.getText(), 50))
+				json("&3" + (index + 1) + " " + (announcement.isMotd() ? "&6➤" : "&b⚡") + " &e" + announcement.getId() + " &7- " + ellipsis(announcement.getText(), 50))
+						.addHover("&3Type: &e" + (announcement.isMotd() ? "MOTD" : "Announcement"))
 						.addHover("&7" + announcement.getText())
 						.command("/announcements edit " + announcement.getId());
-		paginate(config.getAnnouncements(), formatter, "/announcements list", page);
+		paginate(config.getAllAnnouncements(), formatter, "/announcements list", page);
 	}
 
 	@Path("test <player> <announcement>")
@@ -204,7 +223,7 @@ public class AnnouncementsCommand extends CustomCommand {
 
 	@TabCompleterFor(Announcement.class)
 	List<String> tabCompleteAnnouncement(String filter) {
-		return config.getAnnouncements().stream()
+		return config.getAllAnnouncements().stream()
 				.map(Announcement::getId)
 				.filter(request -> request.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
@@ -225,40 +244,7 @@ public class AnnouncementsCommand extends CustomCommand {
 				Utils.attempt(100, () -> {
 					Announcement announcement = config.getRandomAnnouncement();
 
-					if (!announcement.isEnabled())
-						return false;
-
-					if (!announcement.getShowPermissions().isEmpty()) {
-						boolean canSee = false;
-						for (String showPermission : announcement.getShowPermissions())
-							if (player.hasPermission(showPermission)) {
-								canSee = true;
-								break;
-							}
-
-						if (!canSee)
-							return false;
-					}
-
-					if (!announcement.getHidePermissions().isEmpty()) {
-						boolean canHide = false;
-						for (String hidePermission : announcement.getHidePermissions())
-							if (player.hasPermission(hidePermission)) {
-								canHide = true;
-								break;
-							}
-
-						if (canHide)
-							return false;
-					}
-
-					if (announcement.getStartTime() != null && announcement.getStartTime().isAfter(LocalDateTime.now()))
-						return false;
-
-					if (announcement.getEndTime() != null && announcement.getEndTime().isBefore(LocalDateTime.now()))
-						return false;
-
-					if (announcement.getCondition() != null && !announcement.getCondition().test(player))
+					if (!announcement.test(player))
 						return false;
 
 					announcement.send(player);
@@ -266,6 +252,16 @@ public class AnnouncementsCommand extends CustomCommand {
 				});
 			}
 		});
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		AnnouncementConfigService service = new AnnouncementConfigService();
+		AnnouncementConfig config = service.get(Nexus.getUUID0());
+
+		for (Announcement motd : config.getMotds())
+			if (motd.test(event.getPlayer()))
+				motd.send(event.getPlayer());
 	}
 
 }
