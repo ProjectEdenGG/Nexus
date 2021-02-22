@@ -7,11 +7,13 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.DoubleSlash;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
 
 @DoubleSlash
+@Permission("group.staff")
 public class DelVillageCommand extends CustomCommand {
 
 	public DelVillageCommand(CommandEvent event) {
