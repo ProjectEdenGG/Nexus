@@ -74,8 +74,8 @@ public enum Rarity {
 			if (sum <= COMMON.getMin())
 				return COMMON;
 
-			if (sum >= LEGENDARY.getMax())
-				return LEGENDARY;
+			if (sum >= EPIC.getMax())
+				return EPIC;
 
 			for (Rarity rarity : Rarity.values()) {
 				int min = rarity.getMin();
