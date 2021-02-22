@@ -2,11 +2,16 @@ package me.pugabyte.nexus.utils;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Location;
+import com.sk89q.worldedit.world.entity.EntityType;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.domains.Association;
 import com.sk89q.worldguard.protection.DelayedRegionOverlapAssociation;
+import com.sk89q.worldguard.protection.association.Associables;
 import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.RegistryFlag;
+import com.sk89q.worldguard.protection.flags.SetFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
@@ -19,6 +24,8 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.Set;
+
 public class WorldGuardFlagUtils {
 
 	@AllArgsConstructor
@@ -27,6 +34,7 @@ public class WorldGuardFlagUtils {
 		HANGING_BREAK(registerFlag(new StateFlag("hanging-break", false))),
 		GRASS_DECAY(registerFlag(new StateFlag("grass-decay", false))),
 		HOSTILE_SPAWN(registerFlag(new StateFlag("hostile-spawn", false))),
+		ALLOW_SPAWN(registerFlag(new SetFlag("allow-spawn", new RegistryFlag(null, com.sk89q.worldedit.world.entity.EntityType.REGISTRY)))),
 		MOB_AGGRESSION(registerFlag(new StateFlag("mob-aggression", false))),
 		TAMING(registerFlag(new StateFlag("taming", false))),
 		USE_TRAP_DOORS(registerFlag(new StateFlag("use-trap-doors", false))),
@@ -126,6 +134,15 @@ public class WorldGuardFlagUtils {
 		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
 		RegionQuery query = container.createQuery();
 		return query.queryState(loc, new DelayedRegionOverlapAssociation(query, loc), flag);
+	}
+
+	public static Set<EntityType> queryValue(org.bukkit.Location location, Flags flag) {
+		Validate.notNull(flag, "Flag cannot be null");
+
+		Location loc = BukkitAdapter.adapt(location);
+		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+		RegionQuery query = container.createQuery();
+		return query.queryValue(loc, Associables.constant(Association.NON_MEMBER), (SetFlag<EntityType>) Flags.ALLOW_SPAWN.get());
 	}
 
 }

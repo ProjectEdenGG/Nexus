@@ -3,12 +3,7 @@ package me.pugabyte.nexus.features.listeners;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.minigames.Minigames;
-import me.pugabyte.nexus.utils.BlockUtils;
-import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
+import me.pugabyte.nexus.utils.*;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,6 +25,10 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 public class WorldGuardFlags implements Listener {
 
 	@EventHandler
@@ -39,6 +38,25 @@ public class WorldGuardFlags implements Listener {
 
 		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), Flags.HANGING_BREAK) == State.DENY)
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onCreatureSpawnAllow(CreatureSpawnEvent event) {
+		try {
+			Set<com.sk89q.worldedit.world.entity.EntityType> entityTypeSet = WorldGuardFlagUtils.queryValue(event.getLocation(), Flags.ALLOW_SPAWN);
+			List<EntityType> entityTypeList = new ArrayList<>();
+			if (entityTypeSet == null) return;
+			entityTypeSet.forEach(entityType -> {
+				try {
+					entityTypeList.add(EntityType.valueOf(entityType.getName().toUpperCase().replace("MINECRAFT:", "")));
+				} catch (Exception ig) {
+				}
+			});
+			if (entityTypeList.isEmpty()) return;
+			if (!entityTypeList.contains(event.getEntityType()))
+				event.setCancelled(true);
+		} catch (Exception ig) {
+		}
 	}
 
 	@EventHandler

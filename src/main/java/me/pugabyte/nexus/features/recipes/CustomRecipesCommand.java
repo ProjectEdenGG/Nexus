@@ -1,10 +1,13 @@
 package me.pugabyte.nexus.features.recipes;
 
+import me.pugabyte.nexus.features.recipes.menu.CustomRecipesMenu;
+import me.pugabyte.nexus.features.recipes.models.RecipeType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 
 public class CustomRecipesCommand extends CustomCommand {
 
@@ -12,10 +15,9 @@ public class CustomRecipesCommand extends CustomCommand {
 		super(event);
 	}
 
-
-	@Path()
+	@Path
 	void open() {
-		CraftingRecipeMenu.open(CraftingMenuType.MAIN, player());
+		CustomRecipesMenu.open(RecipeType.MAIN, player());
 	}
 
 	@Path("reload")
@@ -23,7 +25,7 @@ public class CustomRecipesCommand extends CustomCommand {
 	void reload() {
 		send(PREFIX + "Reloading all recipes...");
 		int amount = CustomRecipes.getRecipes().size();
-		CustomRecipes.getRecipes().keySet().forEach(Bukkit::removeRecipe);
+		CustomRecipes.getRecipes().forEach(nexusRecipe -> Bukkit.removeRecipe(((Keyed) nexusRecipe.getRecipe()).getKey()));
 		CustomRecipes.getRecipes().clear();
 		new CustomRecipes().onStop();
 		new CustomRecipes().onStart();

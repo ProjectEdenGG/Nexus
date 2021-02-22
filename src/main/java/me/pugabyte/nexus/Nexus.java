@@ -23,13 +23,8 @@ import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.EnumUtils;
-import me.pugabyte.nexus.utils.Env;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.*;
 import me.pugabyte.nexus.utils.Time.Timer;
-import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
@@ -42,6 +37,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -130,6 +126,15 @@ public class Nexus extends JavaPlugin {
 				eventHandlers.add((Class<? extends Event>) method.getParameters()[0].getType());
 		} else
 			log("Could not register listener " + listener.toString() + "!");
+	}
+
+	public static void unregisterListener(Listener listener) {
+		try {
+			HandlerList.unregisterAll(listener);
+		} catch (Exception ex) {
+			log("Could not unregister listener " + listener.toString() + "!");
+			ex.printStackTrace();
+		}
 	}
 
 	public static void registerCommand(String command, CommandExecutor executor) {

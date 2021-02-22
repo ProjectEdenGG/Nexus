@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.events.y2020.bearfair20.quests;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.models.Ingredient;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.models.RecipeObject;
-import me.pugabyte.nexus.features.recipes.CustomRecipes;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -29,7 +28,7 @@ public class Recipes {
 		for (Ingredient ingredient : ingredients) {
 			recipe.setIngredient(ingredient.getCharacter(), ingredient.getItemStack());
 		}
-		CustomRecipes.getRecipes().put(key, recipe);
+		// CustomRecipes.getRecipes().put(key, recipe);
 		return recipe;
 	}
 
