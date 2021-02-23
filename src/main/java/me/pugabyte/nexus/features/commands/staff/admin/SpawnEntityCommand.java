@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTEntity;
 import lombok.AllArgsConstructor;
@@ -34,49 +35,48 @@ public class SpawnEntityCommand extends CustomCommand {
 	}
 
 	@Path("<entityType> [amount]")
-	void spawnEntity(@Arg(type = EntityData.class, tabCompleter = LivingEntity.class) List<EntityData> entities, @Arg(value = "1", min = 1) int amount) {
+	void spawnEntity(@Arg(type = EntitySpawnData.class, tabCompleter = LivingEntity.class) List<EntitySpawnData> entities, @Arg(value = "1", min = 1) int amount) {
 		for (int i = 0; i < amount; i++) {
-			List<EntityData> copy = new ArrayList<>(entities);
-			Entity entity = spawn(copy.remove(0));
+			List<EntitySpawnData> copy = new ArrayList<>(entities);
+			Entity entity = copy.remove(0).spawn();
 
-			for (EntityData data : copy) {
-				Entity passenger = spawn(data);
-
+			for (EntitySpawnData spawnData : copy) {
+				Entity passenger = spawnData.spawn();
 				entity.addPassenger(passenger);
 				entity = passenger;
 			}
 		}
 	}
 
-	private Entity spawn(EntityData entityData) {
-		Entity entity = entityData.getLocation().getWorld().spawnEntity(entityData.getLocation(), entityData.getType());
-
-		if (!isNullOrEmpty(entityData.getData())) {
-			if ("baby".equalsIgnoreCase(entityData.getData()) && entity instanceof Ageable)
-				((Ageable) entity).setBaby();
-
-			else if (StringUtils.isValidJson(entityData.getData())) {
-				NBTEntity nbtEntity = new NBTEntity(entity);
-				nbtEntity.mergeCompound(new NBTContainer(entityData.getData()));
-			}
-		}
-
-		return entity;
-	}
-
 	@Data
 	@AllArgsConstructor
 	@RequiredArgsConstructor
-	private class EntityData {
+	public static class EntitySpawnData {
 		@NonNull
 		private final EntityType type;
 		@NonNull
 		private final Location location;
 		private String data;
+
+		public Entity spawn() {
+			Entity entity = location.getWorld().spawnEntity(location, type);
+
+			if (!Strings.isNullOrEmpty(data)) {
+				if ("baby".equalsIgnoreCase(data) && entity instanceof Ageable)
+					((Ageable) entity).setBaby();
+
+				else if (StringUtils.isValidJson(data)) {
+					NBTEntity nbtEntity = new NBTEntity(entity);
+					nbtEntity.mergeCompound(new NBTContainer(data));
+				}
+			}
+
+			return entity;
+		}
 	}
 
-	@ConverterFor(EntityData.class)
-	EntityData convertToEntityData(String value) {
+	@ConverterFor(EntitySpawnData.class)
+	EntitySpawnData convertToEntitySpawnData(String value) {
 		Location location;
 		if (isPlayer())
 			location = getTargetBlockRequired().getRelative(BlockFace.UP).getLocation();
@@ -85,14 +85,14 @@ public class SpawnEntityCommand extends CustomCommand {
 		else
 			throw new MustBeIngameException();
 
-		EntityData entityData;
+		EntitySpawnData spawnData;
 		if (value.contains(":")) {
 			String[] split = value.split(":", 2);
-			entityData = new EntityData((EntityType) convertToEnum(split[0], EntityType.class), location, split[1]);
+			spawnData = new EntitySpawnData((EntityType) convertToEnum(split[0], EntityType.class), location, split[1]);
 		} else
-			entityData = new EntityData((EntityType) convertToEnum(value, EntityType.class), location);
+			spawnData = new EntitySpawnData((EntityType) convertToEnum(value, EntityType.class), location);
 
-		return entityData;
+		return spawnData;
 	}
 
 }
