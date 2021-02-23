@@ -67,7 +67,7 @@ public class SerializeCommand extends CustomCommand {
 		if (targetBlock.getType() != Material.CHEST)
 			error("You must be looking at a chest");
 
-		List<ItemStack> items = new ArrayList<>(Arrays.asList(player().getInventory().getContents()));
+		List<ItemStack> items = new ArrayList<>(Arrays.asList(inventory().getContents()));
 		items.removeIf(ItemUtils::isNullOrAir);
 		test.setItemStacks(items);
 		reload();

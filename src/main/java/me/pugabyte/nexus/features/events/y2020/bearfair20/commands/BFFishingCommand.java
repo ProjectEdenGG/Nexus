@@ -55,7 +55,7 @@ public class BFFishingCommand extends CustomCommand {
 
 	@Path("start")
 	public void startFishing() {
-		UUID uuid = player().getUniqueId();
+		UUID uuid = uuid();
 		if (timestamps.containsKey(uuid))
 			error("You're already fishing!");
 		timestamps.put(uuid, LocalDateTime.now());
@@ -66,17 +66,17 @@ public class BFFishingCommand extends CustomCommand {
 
 	@Path("stop")
 	public void stopFishing() {
-		UUID uuid = player().getUniqueId();
+		UUID uuid = uuid();
 		if (!timestamps.containsKey(uuid))
 			error("You're aren't fishing!");
 
-		LocalDateTime then = timestamps.get(player().getUniqueId());
+		LocalDateTime then = timestamps.get(uuid());
 		String timeSpan = StringUtils.timespanDiff(then);
-		timestamps.remove(player().getUniqueId());
+		timestamps.remove(uuid());
 
 		String region = getIslandRegion(location());
 
-		ItemStack[] contents = player().getInventory().getContents();
+		ItemStack[] contents = inventory().getContents();
 		List<ItemStack> loot = getLoot(contents);
 		int trash = countTrash(loot);
 		int treasure = countTreasure(loot);

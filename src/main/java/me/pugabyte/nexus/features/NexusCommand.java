@@ -253,7 +253,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("taskTest <message...>")
 	void taskTest(String message) {
 		new TaskService().save(new Task("command-test", new HashMap<String, Object>() {{
-			put("uuid", player().getUniqueId().toString());
+			put("uuid", uuid().toString());
 			put("message", message);
 		}}, LocalDateTime.now().plusMinutes(1)));
 	}
@@ -563,7 +563,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("removeTest")
 	void removeTest() {
-		PlayerInventory inventory = player().getInventory();
+		PlayerInventory inventory = inventory();
 		inventory.remove(new ItemStack(Material.DIRT, 2));
 		inventory.removeItem(new ItemStack(Material.COBBLESTONE, 4));
 		inventory.removeItemAnySlot(new ItemStack(Material.STONE, 6));

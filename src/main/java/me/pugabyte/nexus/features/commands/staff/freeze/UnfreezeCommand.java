@@ -49,8 +49,8 @@ public class UnfreezeCommand extends CustomCommand {
 					send(player.getPlayer(), "&cYou have been unfrozen.");
 				}
 
-				Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
-				Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has unfrozen " + player.getName(), StaticChannel.STAFF);
+				Chat.broadcastIngame(PREFIX + "&e" + name() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
+				Chat.broadcastDiscord("**[Freeze]** " + name() + " has unfrozen " + player.getName(), StaticChannel.STAFF);
 			} catch (Exception ex) {
 				event.handleException(ex);
 			}

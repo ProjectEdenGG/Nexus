@@ -26,7 +26,7 @@ public class LeashCommand extends CustomCommand {
 
 	@Path("(stop|cancel)")
 	void stop() {
-		if (!leashes.containsKey(player().getUniqueId()))
+		if (!leashes.containsKey(uuid()))
 			error("You are not currently leashed to a player. Use &c/leash <player>");
 
 		stopLeash(player(), "&3You are no longer leashed to the player.");
@@ -41,7 +41,7 @@ public class LeashCommand extends CustomCommand {
 
 	@Path("<target>")
 	void leash(Player target) {
-		if (leashes.containsKey(player().getUniqueId()))
+		if (leashes.containsKey(uuid()))
 			error("You are already leashed to another player");
 
 		send(PREFIX + "&3You are now leashed to &e" + target.getPlayer().getDisplayName());

@@ -69,7 +69,7 @@ public class AlertsCommand extends CustomCommand {
 
 	@Path("add <highlight...>")
 	void add(String highlight) {
-		if (highlight.equalsIgnoreCase(player().getName()))
+		if (highlight.equalsIgnoreCase(name()))
 			error("Your name is automatically included in your alerts list");
 
 		if (!alerts.add(highlight))

@@ -33,19 +33,19 @@ public class SoundMenuCommand extends CustomCommand {
 		JsonBuilder json = new JsonBuilder();
 
 		if (page == null)
-			page = pageMap.getOrDefault(player().getUniqueId(), 1);
+			page = pageMap.getOrDefault(uuid(), 1);
 		else {
 			if (page < 1)
 				page = 88;
 			else if (page > 88)
 				page = 1;
-			pageMap.put(player().getUniqueId(), page);
+			pageMap.put(uuid(), page);
 		}
 
 		int index = 3;
 		int soundIndex = ((page - 1) * 11) + 1;
 
-		String playTo = playToOthers.contains(player().getUniqueId()) ? "[Others]" : "[You]";
+		String playTo = playToOthers.contains(uuid()) ? "[Others]" : "[You]";
 
 		json.next("&3Play To: &6&l" + playTo)
 				.hover("&eClick to toggle")
@@ -125,28 +125,28 @@ public class SoundMenuCommand extends CustomCommand {
 		if (sound == null)
 			error("Couldn't find sound: " + string);
 
-		if (playToOthers.contains(player().getUniqueId()))
+		if (playToOthers.contains(uuid()))
 			loc.getWorld().playSound(loc, sound, 1F, pitch);
 		else
 			player().playSound(loc, sound, 1F, pitch);
 
-		bookMenu(pageMap.get(player().getUniqueId()));
+		bookMenu(pageMap.get(uuid()));
 	}
 
 	@Path("togglePlayTo")
 	public void togglePlayTo() {
-		if (playToOthers.contains(player().getUniqueId()))
-			playToOthers.remove(player().getUniqueId());
+		if (playToOthers.contains(uuid()))
+			playToOthers.remove(uuid());
 		else
-			playToOthers.add(player().getUniqueId());
+			playToOthers.add(uuid());
 
-		bookMenu(pageMap.get(player().getUniqueId()));
+		bookMenu(pageMap.get(uuid()));
 	}
 
 	@Path("changePitch <number>")
 	public void changePitch(Double number) {
-		pitchMap.put(player().getUniqueId(), number);
-		bookMenu(pageMap.get(player().getUniqueId()));
+		pitchMap.put(uuid(), number);
+		bookMenu(pageMap.get(uuid()));
 	}
 
 	private String getPitchJson(Player player, double number) {

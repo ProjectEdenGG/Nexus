@@ -358,8 +358,8 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	@Path("recipes")
 	@Permission("group.admin")
 	void recipes() {
-		runCommandAsConsole("minecraft:recipe take " + player().getName() + " nexus:custom_bearfair_anzac_biscuit");
-		runCommandAsConsole("minecraft:recipe give " + player().getName() + " nexus:custom_bearfair_anzac_biscuit");
+		runCommandAsConsole("minecraft:recipe take " + name() + " nexus:custom_bearfair_anzac_biscuit");
+		runCommandAsConsole("minecraft:recipe give " + name() + " nexus:custom_bearfair_anzac_biscuit");
 	}
 
 	@Path("strengthTest")

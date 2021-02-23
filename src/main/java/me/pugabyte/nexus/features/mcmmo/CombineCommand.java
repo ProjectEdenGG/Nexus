@@ -15,24 +15,24 @@ public class CombineCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		for (int slot = 0; slot < player().getInventory().getContents().length; slot++) {
-			if (player().getInventory().getContents()[slot] == null) continue;
-			if (!player().getInventory().getContents()[slot].getType().name().contains("POTION")) continue;
-			ItemStack potion = player().getInventory().getContents()[slot].clone();
+		for (int slot = 0; slot < inventory().getContents().length; slot++) {
+			if (inventory().getContents()[slot] == null) continue;
+			if (!inventory().getContents()[slot].getType().name().contains("POTION")) continue;
+			ItemStack potion = inventory().getContents()[slot].clone();
 			int potionNumber = potion.getAmount();
-			for (int i = 0; i < player().getInventory().getContents().length; i++) {
-				if (player().getInventory().getContents()[i] == null) continue;
+			for (int i = 0; i < inventory().getContents().length; i++) {
+				if (inventory().getContents()[i] == null) continue;
 				if (i == slot) continue;
 				potion.setAmount(1);
-				ItemStack temp = player().getInventory().getContents()[i].clone();
+				ItemStack temp = inventory().getContents()[i].clone();
 				temp.setAmount(1);
 				if (temp.equals(potion)) {
-					potionNumber += player().getInventory().getContents()[i].getAmount();
-					player().getInventory().setItem(i, null);
+					potionNumber += inventory().getContents()[i].getAmount();
+					inventory().setItem(i, null);
 				}
 			}
 			potion.setAmount(potionNumber);
-			player().getInventory().setItem(slot, potion);
+			inventory().setItem(slot, potion);
 		}
 		send(PREFIX + "Combined all alike potions in your inventory!");
 	}

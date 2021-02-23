@@ -55,6 +55,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.reflections.Reflections;
 
@@ -172,11 +173,15 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected World world() {
-		return world();
+		return player().getWorld();
 	}
 
 	protected Location location() {
-		return location();
+		return player().getLocation();
+	}
+
+	protected PlayerInventory inventory() {
+		return player().getInventory();
 	}
 
 	protected void send(CommandSender sender, String message) {
@@ -308,14 +313,15 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (!isPlayer())
 			throw new MustBeIngameException();
 
-		return Bukkit.getOfflinePlayer(player().getUniqueId());
+		return Bukkit.getOfflinePlayer(uuid());
 	}
 
 	protected UUID uuid() {
-		if (!isPlayer())
-			throw new MustBeIngameException();
+		return player().getUniqueId();
+	}
 
-		return ((Player) event.getSender()).getUniqueId();
+	protected String name() {
+		return new Nerd(player()).getName();
 	}
 
 	protected ConsoleCommandSender console() {
@@ -641,7 +647,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@ConverterFor(OfflinePlayer.class)
 	public OfflinePlayer convertToOfflinePlayer(String value) {
-		if ("self".equalsIgnoreCase(value)) value = player().getUniqueId().toString();
+		if ("self".equalsIgnoreCase(value)) value = uuid().toString();
 		return PlayerUtils.getPlayer(value);
 	}
 

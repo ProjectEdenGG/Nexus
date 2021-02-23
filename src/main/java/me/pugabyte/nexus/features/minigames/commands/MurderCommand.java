@@ -19,15 +19,15 @@ public class MurderCommand extends CustomCommand {
 
 	@Path("kit")
 	void kit() {
-		player().getInventory().addItem(Murder.getKnife());
-		player().getInventory().addItem(Murder.getGun());
-		player().getInventory().addItem(Murder.getScrap());
-		player().getInventory().addItem(Murder.getFakeScrap());
-		player().getInventory().addItem(Murder.getCompass());
-		player().getInventory().addItem(Murder.getBloodlust());
-		player().getInventory().addItem(Murder.getTeleporter());
-		player().getInventory().addItem(Murder.getAdrenaline());
-		player().getInventory().addItem(Murder.getRetriever());
+		inventory().addItem(Murder.getKnife());
+		inventory().addItem(Murder.getGun());
+		inventory().addItem(Murder.getScrap());
+		inventory().addItem(Murder.getFakeScrap());
+		inventory().addItem(Murder.getCompass());
+		inventory().addItem(Murder.getBloodlust());
+		inventory().addItem(Murder.getTeleporter());
+		inventory().addItem(Murder.getAdrenaline());
+		inventory().addItem(Murder.getRetriever());
 		send(PREFIX + "Giving murder kit");
 	}
 

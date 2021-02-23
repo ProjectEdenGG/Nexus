@@ -43,7 +43,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 		LockdownCommand.reason = reason;
 
 		// TODO: Announcer helpers
-		tellStaff(PREFIX + player().getName() + " initiated lockdown: &c" + reason);
+		tellStaff(PREFIX + name() + " initiated lockdown: &c" + reason);
 
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (!canBypass(player.getUniqueId())) {
@@ -60,7 +60,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 		lockdown = false;
 		reason = null;
 
-		tellStaff(PREFIX + player().getName() + " ended lockdown");
+		tellStaff(PREFIX + name() + " ended lockdown");
 	}
 
 	@EventHandler

@@ -15,7 +15,7 @@ public class HelpCommand extends CustomCommand {
 	@Path
 	@Override
 	public void help() {
-		send("&eHello there, and welcome to the server, &b" + player().getName() + "&e.");
+		send("&eHello there, and welcome to the server, &b" + name() + "&e.");
 		send("&eGot a question? &3Just ask! or &e&lclick below &3for the fastest, most in-depth answers:");
 		line();
 		send(json("&3[+] &eFAQ").command("/faq"));

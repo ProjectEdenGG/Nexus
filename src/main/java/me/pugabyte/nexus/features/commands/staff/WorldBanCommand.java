@@ -72,7 +72,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			worldList.add(worldGroup);
 			service.save(worldBan);
 
-			String message = "&a" + player().getName() + " &fhas world banned &a" + player.getName() + " &ffrom &a" + worldGroup.toString();
+			String message = "&a" + name() + " &fhas world banned &a" + player.getName() + " &ffrom &a" + worldGroup.toString();
 			new NerdService().getOnlineNerdsWith("group.moderator").forEach(staff -> staff.send(message));
 			Discord.send(message, DiscordId.Channel.STAFF_BRIDGE, DiscordId.Channel.STAFF_LOG);
 

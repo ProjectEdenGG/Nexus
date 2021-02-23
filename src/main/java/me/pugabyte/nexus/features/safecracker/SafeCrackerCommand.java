@@ -105,7 +105,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 //			safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).setScore(score);
 //			playerService.save(safeCrackerPlayer);
 //			send(PREFIX + "You correctly solved the riddle. You finished with a score of &e" + score);
-//			Discord.staffLog("```[SafeCracker] " + player().getName() + " - " + score + "```");
+//			Discord.staffLog("```[SafeCracker] " + name() + " - " + score + "```");
 //		} else send(PREFIX + "&c" + Utils.getRandomElement(SafeCracker.wrongResponses));
 //	}
 

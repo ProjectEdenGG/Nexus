@@ -81,7 +81,7 @@ public class BoopCommand extends CustomCommand {
 			toBooped += "&eSomebody &3booped you" + message;
 		} else {
 			toBooper += "&3You booped &e" + booped.getName() + message;
-			toBooped += "&e" + player().getName() + " &3booped you" + message;
+			toBooped += "&e" + name() + " &3booped you" + message;
 		}
 
 		send(toBooper);

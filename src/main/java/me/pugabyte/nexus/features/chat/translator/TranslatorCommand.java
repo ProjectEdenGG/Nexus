@@ -23,8 +23,8 @@ public class TranslatorCommand extends CustomCommand {
 	void remove(Player player) {
 		if (player != null) {
 			ArrayList<UUID> translators = Translator.getMap().get(player.getUniqueId());
-			if (translators != null && translators.contains(player().getUniqueId())) {
-				Translator.getMap().get(player.getUniqueId()).remove(player().getUniqueId());
+			if (translators != null && translators.contains(uuid())) {
+				Translator.getMap().get(player.getUniqueId()).remove(uuid());
 				send(PREFIX + "You are no longer translating " + player.getDisplayName());
 			} else {
 				send(PREFIX + "You are not translating that player");
@@ -33,7 +33,7 @@ public class TranslatorCommand extends CustomCommand {
 		}
 
 		for (UUID uuid : Translator.getMap().keySet())
-			Translator.getMap().get(uuid).remove(player().getUniqueId());
+			Translator.getMap().get(uuid).remove(uuid());
 
 		send(PREFIX + "Stopping all active translations.");
 	}
@@ -45,7 +45,7 @@ public class TranslatorCommand extends CustomCommand {
 			throw new InvalidInputException("You cannot translate yourself");
 
 		ArrayList<UUID> uuids = new ArrayList<UUID>() {{
-			add(player().getUniqueId());
+			add(uuid());
 			if (Translator.getMap().containsKey(player.getUniqueId()))
 				addAll(Translator.getMap().get(player.getUniqueId()));
 		}};

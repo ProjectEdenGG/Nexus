@@ -53,7 +53,7 @@ public class PoofCommand extends CustomCommand {
 		Poof request = new Poof(player(), target, Poof.PoofType.POOF);
 		service.save(request);
 		send(json("&ePoof &3request sent to " + target.getName() + ". ").next("&eClick to cancel").command("poof cancel"));
-		send(target, "  &e" + player().getName() + " &3is asking to poof &eto you&3.");
+		send(target, "  &e" + name() + " &3is asking to poof &eto you&3.");
 		send(target, json("&3  Click one  ||  &a&lAccept")
 				.command("/poof accept")
 				.hover("&eClick &3to accept")

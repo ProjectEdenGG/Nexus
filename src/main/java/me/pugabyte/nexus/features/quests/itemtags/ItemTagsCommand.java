@@ -46,14 +46,14 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemStack tool = getToolRequired();
 
 		ItemStack updated = updateItem(tool);
-		int heldSlot = player().getInventory().getHeldItemSlot();
-		player().getInventory().setItem(heldSlot, updated);
+		int heldSlot = inventory().getHeldItemSlot();
+		inventory().setItem(heldSlot, updated);
 	}
 
 	@Path("updateInv")
 	@Description("Update item tags on all items in inventory")
 	void updateInv() {
-		ItemStack[] contents = player().getInventory().getContents();
+		ItemStack[] contents = inventory().getContents();
 		int count = 0;
 		for (ItemStack item : contents) {
 			if (ItemUtils.isNullOrAir(item))
@@ -72,8 +72,8 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemStack tool = getToolRequired();
 
 		ItemStack updated = finalizeItem(addRarity(tool, rarity, true));
-		int heldSlot = player().getInventory().getHeldItemSlot();
-		player().getInventory().setItem(heldSlot, updated);
+		int heldSlot = inventory().getHeldItemSlot();
+		inventory().setItem(heldSlot, updated);
 	}
 
 	@Path("setCondition <condition>")
@@ -83,8 +83,8 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemStack updated = finalizeItem(addCondition(tool, condition, true));
 		ItemUtils.setDurability(updated, RandomUtils.randomInt(condition.getMin(), condition.getMax()));
 
-		int heldSlot = player().getInventory().getHeldItemSlot();
-		player().getInventory().setItem(heldSlot, updated);
+		int heldSlot = inventory().getHeldItemSlot();
+		inventory().setItem(heldSlot, updated);
 	}
 
 	@Path("debugItem")

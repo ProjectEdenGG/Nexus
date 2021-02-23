@@ -23,10 +23,10 @@ public class GlowingLevelCommand extends CustomCommand {
 		McMMOPrestige prestige = service.getPrestige(player.getUniqueId().toString());
 		int level = prestige.getPrestige(McMMOResetProvider.ResetSkillType.MINING.name());
 
-		if (!player().getInventory().getItemInMainHand().getType().name().toLowerCase().contains("helmet"))
+		if (!inventory().getItemInMainHand().getType().name().toLowerCase().contains("helmet"))
 			error("You must be holding a helemt to execute this command");
 
-		for (String lore : player().getInventory().getItemInMainHand().getLore())
+		for (String lore : inventory().getItemInMainHand().getLore())
 			if (lore.contains("Glowing"))
 				runCommand("ce remove glowing");
 		runCommand("ce enchant glowing " + level);

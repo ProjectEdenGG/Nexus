@@ -92,8 +92,8 @@ public class FreezeCommand extends CustomCommand implements Listener {
 					send(player.getPlayer(), "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 				}
 
-				Chat.broadcastIngame(PREFIX + "&e" + player().getName() + " &3has frozen &e" + player.getName(), StaticChannel.STAFF);
-				Chat.broadcastDiscord("**[Freeze]** " + player().getName() + " has frozen " + player.getName(), StaticChannel.STAFF);
+				Chat.broadcastIngame(PREFIX + "&e" + name() + " &3has frozen &e" + player.getName(), StaticChannel.STAFF);
+				Chat.broadcastDiscord("**[Freeze]** " + name() + " has frozen " + player.getName(), StaticChannel.STAFF);
 			} catch (Exception ex) {
 				event.handleException(ex);
 			}

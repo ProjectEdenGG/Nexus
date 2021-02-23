@@ -57,7 +57,7 @@ public class Basketball extends CustomCommand implements Listener {
 
 	@Path("save")
 	void save() {
-		ItemStack basketball = player().getInventory().getItemInMainHand();
+		ItemStack basketball = inventory().getItemInMainHand();
 		ItemMeta meta = basketball.getItemMeta();
 		meta.setDisplayName(colorize("&6&lBasketball"));
 		meta.setLore(Collections.singletonList(colorize("&eMinigame Lobby Basketball")));

@@ -85,7 +85,7 @@ public class ModReviewCommand extends CustomCommand {
 		modReview.request(request);
 		save();
 		send(PREFIX + "Requested mod &e" + name + " &3to be reviewed");
-		Chat.broadcast(json(PREFIX + "&e" + player().getName() + " &3has requested mod &e" + name + " &3to be reviewed").command("/modreview requests"), StaticChannel.STAFF);
+		Chat.broadcast(json(PREFIX + "&e" + name() + " &3has requested mod &e" + name + " &3to be reviewed").command("/modreview requests"), StaticChannel.STAFF);
 	}
 
 	@Permission("group.staff")

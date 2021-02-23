@@ -11,8 +11,12 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.MaterialTag.MatchMode;
+import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -20,7 +24,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -53,19 +62,19 @@ public class JWitherCommand extends CustomCommand implements Listener {
 
 	@Path("claim")
 	void claim() {
-		if (!playerWhoWonStars.contains(player().getPlayer()))
+		if (!playerWhoWonStars.contains(player()))
 			error("You have not won any stars");
 		ItemUtils.giveItem(player(), new ItemStack(Material.NETHER_STAR));
 		Nexus.getEcon().withdrawPlayer(player(), 50000);
-		playerWhoWonStars.remove(player().getPlayer());
+		playerWhoWonStars.remove(player());
 		send(PREFIX + "You have received your nether star. If you do not have room in your inventory, it may be dropped at your feet.");
 	}
 
 	@Path("pass")
 	void pass() {
-		if (!playerWhoWonStars.contains(player().getPlayer()))
+		if (!playerWhoWonStars.contains(player()))
 			error("You have not won any stars");
-		playerWhoWonStars.remove(player().getPlayer());
+		playerWhoWonStars.remove(player());
 		send(PREFIX + "You have passed on receiving your nether star.");
 	}
 

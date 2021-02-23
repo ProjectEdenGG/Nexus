@@ -25,7 +25,7 @@ public class OpCommand extends CustomCommand {
 		OfflinePlayer player = staffMember.getOfflinePlayer();
 		Nerd nerd = new Nerd(player);
 
-		String oper = player().getName();
+		String oper = name();
 		String opee = nerd.getName();
 
 		if (!nerd.getRank().isStaff())

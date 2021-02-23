@@ -33,16 +33,16 @@ public class FetchCommand extends CustomCommand implements Listener {
 	@Path("on")
 	void on() {
 		if (!enabled) error("Fetch is not currently enabled");
-		if (fetchers.contains(player().getUniqueId())) error("You are already playing fetch");
-		fetchers.add(player().getUniqueId());
+		if (fetchers.contains(uuid())) error("You are already playing fetch");
+		fetchers.add(uuid());
 		send(PREFIX + "You are now playing fetch");
 	}
 
 	@Path("off")
 	void off() {
 		if (!enabled) error("Fetch is not currently enabled");
-		if (!fetchers.contains(player().getUniqueId())) error("You are not playing fetch");
-		fetchers.remove(player().getUniqueId());
+		if (!fetchers.contains(uuid())) error("You are not playing fetch");
+		fetchers.remove(uuid());
 		send(PREFIX + "You are no longer playing fetch");
 	}
 

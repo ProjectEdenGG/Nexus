@@ -204,7 +204,7 @@ public class ConvertShopCommand extends CustomCommand {
 			return item.getType();
 		} catch (Exception e) {
 			error("Could not parse item from essentials aliases");
-			Nexus.warn("Could not convert the shop from player " + player().getName());
+			Nexus.warn("Could not convert the shop from player " + name());
 		}
 		return null;
 	}
