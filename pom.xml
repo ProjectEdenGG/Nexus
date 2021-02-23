@@ -483,18 +483,5 @@
             <version>v1.3.1</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Floodgate API -->
-        <dependency>
-            <groupId>org.geysermc</groupId>
-            <artifactId>floodgate-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.geysermc</groupId>
-            <artifactId>floodgate-bukkit</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 </project>
