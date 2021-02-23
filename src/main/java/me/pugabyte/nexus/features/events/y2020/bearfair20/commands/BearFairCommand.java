@@ -137,7 +137,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 
 		ProtectedRegion pugmasRegion = WGUtils.getProtectedRegion(IslandType.PUGMAS.get().getRegion());
 		ProtectedRegion mainRegion = WGUtils.getProtectedRegion(IslandType.MAIN.get().getRegion());
-		if (!WGUtils.getRegionsAt(player().getLocation()).contains(pugmasRegion) && !WGUtils.getRegionsAt(player().getLocation()).contains(mainRegion))
+		if (!WGUtils.getRegionsAt(location()).contains(pugmasRegion) && !WGUtils.getRegionsAt(location()).contains(mainRegion))
 			return;
 		switch (string) {
 			// Main
@@ -345,7 +345,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	@Path("warps tp nearest")
 	public void teleportNearest() {
 		player();
-		getNearestWarp(player().getLocation()).ifPresent(warp -> warp.teleport(player()));
+		getNearestWarp(location()).ifPresent(warp -> warp.teleport(player()));
 	}
 
 	@Override
@@ -358,8 +358,8 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	@Path("recipes")
 	@Permission("group.admin")
 	void recipes() {
-		runCommandAsConsole("minecraft:recipe take " + player().getName() + " nexus:custom_bearfair_anzac_biscuit");
-		runCommandAsConsole("minecraft:recipe give " + player().getName() + " nexus:custom_bearfair_anzac_biscuit");
+		runCommandAsConsole("minecraft:recipe take " + name() + " nexus:custom_bearfair_anzac_biscuit");
+		runCommandAsConsole("minecraft:recipe give " + name() + " nexus:custom_bearfair_anzac_biscuit");
 	}
 
 	@Path("strengthTest")

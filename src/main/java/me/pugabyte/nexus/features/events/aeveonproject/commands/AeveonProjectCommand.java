@@ -114,7 +114,7 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 
 			double finalPitch = pitch;
 			Tasks.wait(2 * i, () ->
-					player().getWorld().playSound(player().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 2F, (float) finalPitch));
+					world().playSound(location(), Sound.BLOCK_NOTE_BLOCK_BIT, 2F, (float) finalPitch));
 		}
 	}
 
@@ -143,7 +143,7 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 	public void flora(@Arg("5") int radius) {
 		final int finalRadius = Math.max(1, Math.min(radius, 25));
 		List<Block> placeFloraOn = new ArrayList<>();
-		List<Block> blocks = BlockUtils.getBlocksInRadius(player().getLocation(), finalRadius);
+		List<Block> blocks = BlockUtils.getBlocksInRadius(location(), finalRadius);
 
 		for (Block block : blocks) {
 			Block above = block.getRelative(BlockFace.UP);

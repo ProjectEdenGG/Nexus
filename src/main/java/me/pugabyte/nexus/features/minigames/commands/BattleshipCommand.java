@@ -144,7 +144,7 @@ public class BattleshipCommand extends CustomCommand {
 	@Permission("minigames.manage")
 	@Path("pasteShip <shipType> <direction>")
 	void pasteShip(ShipType shipType, CardinalDirection direction) {
-		mechanic.pasteShip(shipType, player().getLocation(), direction);
+		mechanic.pasteShip(shipType, location(), direction);
 	}
 
 	@Permission("minigames.manage")

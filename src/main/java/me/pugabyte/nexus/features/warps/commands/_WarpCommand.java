@@ -54,14 +54,14 @@ public abstract class _WarpCommand extends CustomCommand {
 		if (warp != null)
 			error("That warp is already set.");
 
-		service.save(new Warp(name, player().getLocation(), getWarpType().name()));
+		service.save(new Warp(name, location(), getWarpType().name()));
 		send(PREFIX + "&e" + name + " &3set to your current location");
 	}
 
 	@Path("reset <name>")
 	@Permission(value = "group.staff", absolute = true)
 	public void reset(@Arg(tabCompleter = Warp.class) String name) {
-		service.save(new Warp(name, player().getLocation(), getWarpType().name()));
+		service.save(new Warp(name, location(), getWarpType().name()));
 		send(PREFIX + "&e" + name + " &3set to your current location");
 	}
 
@@ -85,15 +85,15 @@ public abstract class _WarpCommand extends CustomCommand {
 
 	@Path("tp nearest")
 	public void teleportNearest() {
-		getNearestWarp(player().getLocation()).ifPresent(this::teleport);
+		getNearestWarp(location()).ifPresent(this::teleport);
 	}
 
 	@Path("nearest")
 	public void nearest() {
-		Optional<Warp> warp = getNearestWarp(player().getLocation());
+		Optional<Warp> warp = getNearestWarp(location());
 		if (!warp.isPresent())
 			error("No nearest warp found");
-		send(PREFIX + "Nearest warp is &e" + warp.get().getName() + " &3(&e" + (int) warp.get().getLocation().distance(player().getLocation()) + " &3blocks away)");
+		send(PREFIX + "Nearest warp is &e" + warp.get().getName() + " &3(&e" + (int) warp.get().getLocation().distance(location()) + " &3blocks away)");
 	}
 
 	public Optional<Warp> getNearestWarp(Location location) {

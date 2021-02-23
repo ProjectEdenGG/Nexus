@@ -38,7 +38,7 @@ public class NearestBlockCommand extends CustomCommand {
 
 		int finalRadius = radius;
 		Tasks.async(() -> {
-			Location location = player().getLocation();
+			Location location = location();
 			double minDistance = finalRadius;
 			Block nearestBlock = null;
 			for (int x = -finalRadius; x <= finalRadius; x++) {

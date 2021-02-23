@@ -38,14 +38,14 @@ public class TestCommand extends CustomCommand implements Listener {
 
 //	@Path("minecart join")
 //	public void minecartJoin(){
-//		if(!controlMinecart.contains(player().getPlayer()))
-//			controlMinecart.add(player().getPlayer());
+//		if(!controlMinecart.contains(player()))
+//			controlMinecart.add(player());
 //		send("joined");
 //	}
 //
 //	@Path("minecart leave")
 //	public void minecartLeave(){
-//		controlMinecart.remove(player().getPlayer());
+//		controlMinecart.remove(player());
 //		send("left");
 //	}
 

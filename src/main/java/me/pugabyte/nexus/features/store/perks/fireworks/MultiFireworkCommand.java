@@ -26,7 +26,7 @@ public class MultiFireworkCommand extends CustomCommand {
 				.duration(Time.SECOND.x(20))
 				.onSecond(i -> {
 					if (i % 2 == 0)
-						FireworkLauncher.random(player().getLocation()).launch();
+						FireworkLauncher.random(location()).launch();
 				})
 				.doZero(true)
 				.start();

@@ -16,7 +16,7 @@ public class MyRankCommand extends CustomCommand {
 
 	@Path("<rank>")
 	void set(Rank rank) {
-		runCommandAsConsole("lp user " + player().getName() + " parent set " + rank.name());
+		runCommandAsConsole("lp user " + name() + " parent set " + rank.name());
 		send(PREFIX + "Set your rank to " + rank.withColor());
 	}
 

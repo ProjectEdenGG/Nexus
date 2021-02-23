@@ -64,7 +64,7 @@ public class PodiumsCommand extends CustomCommand {
 	@Path("(s|summon) <position>")
 	void tphere(Position position) {
 		runCommand("blockcenter");
-		getNpc(position).getEntity().teleport(player().getLocation());
+		getNpc(position).getEntity().teleport(location());
 	}
 
 	private static NPC getNpc(int podiumId) {

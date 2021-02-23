@@ -16,7 +16,7 @@ public class EmptyCommand extends CustomCommand {
 
 	@Path
 	void empty() {
-		PlayerInventory playerInv = player().getInventory();
+		PlayerInventory playerInv = inventory();
 		ItemStack bucket = new ItemStack(Material.BUCKET);
 
 		ItemStack heldItem = playerInv.getItem(playerInv.getHeldItemSlot());
@@ -30,7 +30,7 @@ public class EmptyCommand extends CustomCommand {
 
 	@Path("[string]")
 	void emptyType(String type) {
-		PlayerInventory playerInv = player().getInventory();
+		PlayerInventory playerInv = inventory();
 		ItemStack bucket = new ItemStack(Material.BUCKET);
 
 		ItemStack bucketType;

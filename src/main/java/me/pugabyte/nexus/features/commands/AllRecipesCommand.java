@@ -14,10 +14,10 @@ public class AllRecipesCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommandAsConsole("minecraft:recipe give " + player().getName() + " *");
+		runCommandAsConsole("minecraft:recipe give " + name() + " *");
 
 		for (RecipeObject recipe : Recipes.recipes)
-			runCommandAsConsole("minecraft:recipe take " + player().getName() + " nexus:custom_bearfair_" + recipe.getKey());
+			runCommandAsConsole("minecraft:recipe take " + name() + " nexus:custom_bearfair_" + recipe.getKey());
 	}
 
 }

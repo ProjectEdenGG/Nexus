@@ -76,10 +76,10 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 			npc.setCorrect(correct);
 
 			if (correct) {
-				player().playSound(player().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
+				player().playSound(location(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
 				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&e " + RandomUtils.randomElement(SafeCracker.correctResponses));
 			} else {
-				player().playSound(player().getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 2F);
+				player().playSound(location(), Sound.ENTITY_VILLAGER_NO, 1F, 2F);
 				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&c " + RandomUtils.randomElement(SafeCracker.wrongResponses));
 			}
 
@@ -105,7 +105,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 //			safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).setScore(score);
 //			playerService.save(safeCrackerPlayer);
 //			send(PREFIX + "You correctly solved the riddle. You finished with a score of &e" + score);
-//			Discord.staffLog("```[SafeCracker] " + player().getName() + " - " + score + "```");
+//			Discord.staffLog("```[SafeCracker] " + name() + " - " + score + "```");
 //		} else send(PREFIX + "&c" + Utils.getRandomElement(SafeCracker.wrongResponses));
 //	}
 

@@ -17,7 +17,7 @@ public class BlockCenterCommand extends CustomCommand {
 
 	public BlockCenterCommand(CommandEvent event) {
 		super(event);
-		centered = getCenteredLocation(player().getLocation());
+		centered = getCenteredLocation(location());
 	}
 
 	@Path
@@ -27,21 +27,21 @@ public class BlockCenterCommand extends CustomCommand {
 
 	@Path("yaw")
 	void yaw() {
-		Location newLocation = player().getLocation().clone();
+		Location newLocation = location().clone();
 		newLocation.setYaw(centered.getYaw());
 		player().teleport(newLocation);
 	}
 
 	@Path("pitch")
 	void pitch() {
-		Location newLocation = player().getLocation().clone();
+		Location newLocation = location().clone();
 		newLocation.setPitch(centered.getPitch());
 		player().teleport(newLocation);
 	}
 
 	@Path("look")
 	void look() {
-		Location newLocation = player().getLocation().clone();
+		Location newLocation = location().clone();
 		newLocation.setYaw(centered.getYaw());
 		newLocation.setPitch(centered.getPitch());
 		player().teleport(newLocation);
@@ -49,13 +49,13 @@ public class BlockCenterCommand extends CustomCommand {
 
 	@Path("corner")
 	void corner() {
-		centered.setX(Math.round(player().getLocation().getX()));
-		centered.setZ(Math.round(player().getLocation().getZ()));
+		centered.setX(Math.round(location().getX()));
+		centered.setZ(Math.round(location().getZ()));
 		player().teleport(centered);
 	}
 
 	@Path("java")
 	void java() {
-		send(asJava(getCenteredLocation(player().getLocation())));
+		send(asJava(getCenteredLocation(location())));
 	}
 }

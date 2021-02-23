@@ -303,7 +303,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Path("district")
 	@Description("View which district you are currently in")
 	void district() {
-		District district = District.of(player().getLocation());
+		District district = District.of(location());
 		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getName() + " District"));
 	}
 

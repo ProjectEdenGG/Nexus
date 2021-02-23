@@ -34,7 +34,7 @@ public class SignLinesCommand extends CustomCommand {
 	void signLines(String arguments) {
 		Sign sign = getTargetSignRequired();
 
-		String uuid = player().getUniqueId().toString();
+		String uuid = uuid().toString();
 		String[] lines = sign.getLines();
 
 		if (arg(1).equalsIgnoreCase("read")) {

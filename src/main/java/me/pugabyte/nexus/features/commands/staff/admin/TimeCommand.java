@@ -18,7 +18,7 @@ public class TimeCommand extends CustomCommand {
 
 	@Path
 	void tellTime() {
-		World world = player().getWorld();
+		World world = world();
 		long ticks = world.getTime();
 		send(PREFIX + "The world time for &e" + world.getName() + " &3is &e" + DescParseTickFormat.format24(ticks) +
 				" &3or &e" + DescParseTickFormat.format12(ticks) + " &3 or &e" + ticks + " ticks");

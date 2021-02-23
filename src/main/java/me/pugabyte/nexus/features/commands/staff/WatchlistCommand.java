@@ -57,7 +57,7 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 		watchlisted.setReason(reason);
 		service.save(watchlisted);
 		send(PREFIX + "Added &e" + watchlisted.getName() + " &3to the watchlist");
-		Discord.send("**" + PREFIX.trim() + "** " + player().getName() + " added " + watchlisted.getName() + " to the watchlist for " + watchlisted.getReason(), Channel.STAFF_WATCHLIST);
+		Discord.send("**" + PREFIX.trim() + "** " + name() + " added " + watchlisted.getName() + " to the watchlist for " + watchlisted.getReason(), Channel.STAFF_WATCHLIST);
 	}
 
 	@Path("remove <player>")

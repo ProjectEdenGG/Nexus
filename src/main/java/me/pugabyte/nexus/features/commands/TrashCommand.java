@@ -38,8 +38,8 @@ public class TrashCommand extends CustomCommand implements Listener {
 		Dumpster dumpster = dumpsterService.get();
 
 		for (Material material : materials) {
-			dumpster.add(player().getInventory().all(material).values());
-			player().getInventory().remove(material);
+			dumpster.add(inventory().all(material).values());
+			inventory().remove(material);
 		}
 
 		dumpsterService.save(dumpster);

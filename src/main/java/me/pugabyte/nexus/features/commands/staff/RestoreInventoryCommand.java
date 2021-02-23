@@ -116,7 +116,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 			}
 		});
 
-		Discord.log(PREFIX + player().getName() + " restored " + owner.getName() + "'s " + gameMode.name().toLowerCase()
+		Discord.log(PREFIX + name() + " restored " + owner.getName() + "'s " + gameMode.name().toLowerCase()
 				+ " " + type + " from <https://paste.bnn.gg/" + code + ".json>");
 	}
 
@@ -136,14 +136,14 @@ public class RestoreInventoryCommand extends CustomCommand {
 	}
 
 	private void sendInventoryRestoreNotEmptyMessage(Player owner, String type) throws InvalidInputException {
-		send(owner, PREFIX + "&c" + player().getName() + " is trying to restore your " + type + ", " +
+		send(owner, PREFIX + "&c" + name() + " is trying to restore your " + type + ", " +
 				" your current " + type + " must be &eempty &cto avoid lost items!");
 		throw new InvalidInputException("&cThe player's " + type + " contents must be empty to complete a restore. " +
 				"They have been asked to empty their " + type + ".");
 	}
 
 	private void sendInventoryRestoreSuccessMessage(Player owner, String type) {
-		send(owner, PREFIX + "&e" + player().getName() + " &3has successfully restored your " + type + ". " +
+		send(owner, PREFIX + "&e" + name() + " &3has successfully restored your " + type + ". " +
 				"Please confirm that all your items are present.");
 		send(player(), PREFIX + "Successfully restored " + type + " of &e" + owner.getName());
 	}

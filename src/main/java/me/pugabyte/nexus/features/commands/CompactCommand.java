@@ -21,7 +21,7 @@ public class CompactCommand extends CustomCommand {
 
 	@Path()
 	void compact() {
-		if (player().getInventory().firstEmpty() == -1)
+		if (inventory().firstEmpty() == -1)
 			error("There is no empty space in your inventory");
 		compactAll();
 		combineItems();
@@ -30,42 +30,42 @@ public class CompactCommand extends CustomCommand {
 	}
 
 	public void compactAll() {
-		for (ItemStack item : player().getInventory().getContents()) {
+		for (ItemStack item : inventory().getContents()) {
 			compact(item);
 		}
 	}
 
 	public void combineItems() {
 		Loop:
-		for (int slot = 0; slot < player().getInventory().getContents().length; slot++) {
-			if (ItemUtils.isNullOrAir(player().getInventory().getContents()[slot])) continue;
-			if (player().getInventory().getContents()[slot].getMaxStackSize() == 1) continue;
-			ItemStack item = player().getInventory().getContents()[slot].clone();
+		for (int slot = 0; slot < inventory().getContents().length; slot++) {
+			if (ItemUtils.isNullOrAir(inventory().getContents()[slot])) continue;
+			if (inventory().getContents()[slot].getMaxStackSize() == 1) continue;
+			ItemStack item = inventory().getContents()[slot].clone();
 			int amount = item.getAmount();
 			Matcher:
-			for (int i = 0; i < player().getInventory().getContents().length; i++) {
-				if (player().getInventory().getContents()[i] == null) continue Matcher;
+			for (int i = 0; i < inventory().getContents().length; i++) {
+				if (inventory().getContents()[i] == null) continue Matcher;
 				if (i == slot) continue Matcher;
 				item.setAmount(1);
-				ItemStack temp = player().getInventory().getContents()[i].clone();
+				ItemStack temp = inventory().getContents()[i].clone();
 				temp.setAmount(1);
 				if (temp.equals(item)) {
-					amount += player().getInventory().getContents()[i].getAmount();
+					amount += inventory().getContents()[i].getAmount();
 					if (item.getMaxStackSize() < amount || amount > 64)
 						continue Loop;
-					player().getInventory().setItem(i, null);
+					inventory().setItem(i, null);
 				}
 			}
 			item.setAmount(amount);
-			player().getInventory().setItem(slot, item);
+			inventory().setItem(slot, item);
 		}
 	}
 
 	@Path("hand")
 	void hand() {
-		if (ItemUtils.isNullOrAir(player().getInventory().getItemInMainHand()))
+		if (ItemUtils.isNullOrAir(inventory().getItemInMainHand()))
 			error("You cannot be holding air while running this command");
-		compact(player().getInventory().getItemInMainHand());
+		compact(inventory().getItemInMainHand());
 	}
 
 	public void compact(ItemStack item) {
@@ -75,7 +75,7 @@ public class CompactCommand extends CustomCommand {
 			if (item.getAmount() < compactable.getRequiredAmount()) return;
 			int leftOver = item.getAmount() % compactable.getRequiredAmount();
 			int crafted = item.getAmount() / compactable.getRequiredAmount();
-			if (leftOver != 0 && player().getInventory().firstEmpty() == -1)
+			if (leftOver != 0 && inventory().firstEmpty() == -1)
 				error("There is not enough space in your inventory to compact items");
 			item.setAmount(leftOver);
 			ItemStack craftedItem = new ItemStack(compactable.getResult(), crafted);

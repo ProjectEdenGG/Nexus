@@ -37,7 +37,7 @@ public class WorldUnbanCommand extends CustomCommand {
 		if (worldGroup != null && !worldList.contains(worldGroup))
 			error(player.getName() + " is not world banned from " + worldGroup.toString());
 
-		String message = "&a" + player().getName() + " &fhas world unbanned &a" + player.getName() + " &ffrom &a";
+		String message = "&a" + name() + " &fhas world unbanned &a" + player.getName() + " &ffrom &a";
 		if (worldGroup != null) {
 			message += worldGroup.toString();
 			worldList.remove(worldGroup);

@@ -171,7 +171,7 @@ public class OceanWorldCommand extends CustomCommand implements Listener {
 
 	@Path("processChunk [radius]")
 	void processChunk(@Arg("1") int radius) {
-		Chunk origin = player().getLocation().getChunk();
+		Chunk origin = location().getChunk();
 		if (radius > 1) {
 			int count = 0;
 			for (Chunk chunk : getChunksInRadius(origin, radius)) {

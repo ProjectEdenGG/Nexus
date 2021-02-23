@@ -227,7 +227,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		lore.set(0, StringUtils.colorize("&3Amount: &e" + amount));
 		meta.setLore(lore);
 		itemStack.setItemMeta(meta);
-		player().getInventory().addItem(itemStack);
+		inventory().addItem(itemStack);
 	}
 
 	@ConverterFor(Coupon.class)

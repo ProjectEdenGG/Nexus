@@ -28,10 +28,10 @@ public class StatTrackCommand extends CustomCommand {
 	@Path("start")
 	void start() {
 		EquipmentSlot hand = getHandWithToolRequired();
-		ItemStack item = player().getInventory().getItem(hand);
+		ItemStack item = inventory().getItem(hand);
 		for (Tool tool : Tool.values()) {
 			if (tool.getTools().contains(item.getType())) {
-				player().getInventory().setItem(hand, new StatItem(item).write().getItem());
+				inventory().setItem(hand, new StatItem(item).write().getItem());
 				send(PREFIX + "Enabled statistic tracking on " + camelCase(item.getType()));
 				return;
 			}

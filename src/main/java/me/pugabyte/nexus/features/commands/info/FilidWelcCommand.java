@@ -13,7 +13,7 @@ public class FilidWelcCommand extends CustomCommand {
 	@Path
 	void run() {
 		line(2);
-		send("&eGreetings &b" + player().getName() + "&e!");
+		send("&eGreetings &b" + name() + "&e!");
 		send("&3Welcome to Bear Nation. My name is Filid. Glad to meet you :)");
 		send("&3Here are some of the most important aspects of our &ecommunity &3and what makes Bear Nation unique.");
 		line();
@@ -30,7 +30,7 @@ public class FilidWelcCommand extends CustomCommand {
 		send(json("&3[+] &eWebsite").url("https://bnn.gg/").hover("&eThe homepage for the server"));
 		send(json("&3[+] &eVoting").command("/vote").hover("&eVote for our server to support us!"));
 		line();
-		runCommandAsConsole("curiosity cake " + player().getName());
+		runCommandAsConsole("curiosity cake " + name());
 
 	}
 

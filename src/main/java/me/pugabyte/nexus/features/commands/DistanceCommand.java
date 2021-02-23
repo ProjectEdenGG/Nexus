@@ -16,15 +16,15 @@ public class DistanceCommand extends CustomCommand {
 
 	@Path("<player>")
 	void distance(Player target) {
-		if (Minigames.isMinigameWorld(player().getWorld()))
+		if (Minigames.isMinigameWorld(world()))
 			error("You can't use that here, that's cheating!");
 
-		if (!player().getWorld().equals(target.getWorld()))
+		if (!world().equals(target.getWorld()))
 			error("Player is not in the same world.");
 
 		if (PlayerUtils.isVanished(target) && !player().hasPermission("pv.see"))
 			throw new PlayerNotOnlineException(target);
 
-		send(PREFIX + player().getLocation().distance(target.getLocation()) + " blocks.");
+		send(PREFIX + location().distance(target.getLocation()) + " blocks.");
 	}
 }

@@ -85,7 +85,7 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	@Path("dot")
 	@Permission("group.admin")
 	void dot() {
-		Location loc = getCenteredLocation(player().getLocation()).add(0, 1, 0);
+		Location loc = getCenteredLocation(location()).add(0, 1, 0);
 		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();
 	}
 }

@@ -28,7 +28,7 @@ public class DeopCommand extends CustomCommand {
 	public void deop(ServerOperator op) {
 		OfflinePlayer player = (OfflinePlayer) op;
 
-		String oper = player().getName();
+		String oper = name();
 		String opee = player.getName();
 		if (!player.isOp())
 			error(opee + " is not op");

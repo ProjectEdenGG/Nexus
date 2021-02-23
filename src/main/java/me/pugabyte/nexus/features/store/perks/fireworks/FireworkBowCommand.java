@@ -17,7 +17,7 @@ public class FireworkBowCommand extends CustomCommand {
 		if (!(player().hasPermission("fireworkbow.single") || player().hasPermission("fireworkbow.infinite")))
 			permissionError();
 
-		if (player().getInventory().getItemInMainHand().getType() != Material.BOW)
+		if (inventory().getItemInMainHand().getType() != Material.BOW)
 			error("You must be holding a bow");
 
 		runCommandAsOp("ce enchant firework");

@@ -103,7 +103,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		if (region == null)
 			error("That honey pot does not exist");
 
-		fix(region, player().getWorld());
+		fix(region, world());
 		send(PREFIX + "Successfully repaired the honey pot: &e" + honeyPot);
 	}
 

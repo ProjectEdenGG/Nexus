@@ -23,7 +23,7 @@ public class HatCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		final PlayerInventory inv = player().getInventory();
+		final PlayerInventory inv = inventory();
 		final ItemStack hat = inv.getHelmet();
 		final EquipmentSlot slot = getHandWithTool();
 		if (slot == null) return;
@@ -52,7 +52,7 @@ public class HatCommand extends CustomCommand {
 
 	@Path("remove")
 	void remove() {
-		final PlayerInventory inv = player().getInventory();
+		final PlayerInventory inv = inventory();
 		final ItemStack hat = inv.getHelmet();
 		final ItemStack hand = getTool();
 		final ItemStack air = new ItemStack(Material.AIR);

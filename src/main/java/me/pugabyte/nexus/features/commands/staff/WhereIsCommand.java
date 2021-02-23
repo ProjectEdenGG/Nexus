@@ -38,10 +38,10 @@ public class WhereIsCommand extends CustomCommand {
 
 		Location playerArgLoc = playerArg.getLocation().clone();
 
-		if (!player().getWorld().equals(playerArg.getWorld()))
+		if (!world().equals(playerArg.getWorld()))
 			error(playerArg.getName() + " is in " + StringUtils.camelCase(playerArg.getWorld().getName()));
 
-		double distance = player().getLocation().distance(playerArgLoc);
+		double distance = location().distance(playerArgLoc);
 		if (distance > Chat.getLocalRadius())
 			error(StringUtils.camelCase(playerArg.getName() + " not found"));
 

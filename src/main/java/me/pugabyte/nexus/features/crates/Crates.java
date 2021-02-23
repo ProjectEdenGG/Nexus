@@ -17,6 +17,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
@@ -134,5 +135,11 @@ public class Crates extends Feature implements Listener {
 					PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
 				keyType.getCrateClass().reset();
 			}
+	}
+
+	@EventHandler
+	public void onPlaceKey(BlockPlaceEvent event) {
+		if (CrateType.fromKey(event.getItemInHand()) == null) return;
+		event.setCancelled(true);
 	}
 }

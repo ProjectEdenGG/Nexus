@@ -72,23 +72,23 @@ public class DiscordCommand extends CustomCommand {
 				send(PREFIX + "Hello! Looking to &elink &3your &eDiscord &3and &eMinecraft &3accounts? Here's how:");
 				line();
 				send("&3Step 1: &eOpen our Discord server");
-				send("&3Step 2: Type &c/discord link " + player().getName() + " &3in any channel");
+				send("&3Step 2: Type &c/discord link " + name() + " &3in any channel");
 				send("&3Step 3: &eCopy the command &3that appears in your &eDMs &3and &epaste it &3into Minecraft");
 			}
 		} else {
 			if (Discord.getCodes().containsKey(code)) {
 				DiscordUser newUser = Discord.getCodes().get(code);
-				if (!player().getUniqueId().toString().equals(newUser.getUuid()))
+				if (!uuid().toString().equals(newUser.getUuid()))
 					error("There is no pending confirmation with this account");
 
 				String name = newUser.getName();
 				String discrim = newUser.getDiscrim();
-				Bot.KODA.jda().retrieveUserById(newUser.getUserId()).complete().openPrivateChannel().complete().sendMessage("You have successfully linked your Discord account with the Minecraft account **" + player().getName() + "**").queue();
+				Bot.KODA.jda().retrieveUserById(newUser.getUserId()).complete().openPrivateChannel().complete().sendMessage("You have successfully linked your Discord account with the Minecraft account **" + name() + "**").queue();
 				send(PREFIX + "You have successfully linked your Minecraft account with the Discord account &e" + name + "#" + discrim);
 				Discord.addRole(newUser.getUserId(), DiscordId.Role.VERIFIED);
 				user.setUserId(newUser.getUserId());
 				service.save(user);
-				Discord.staffLog("**" + player().getName() + "** has linked their discord account to **" + name + "#" + discrim + "**");
+				Discord.staffLog("**" + name() + "** has linked their discord account to **" + name + "#" + discrim + "**");
 				Discord.getCodes().remove(code);
 			} else
 				error("Invalid confirmation code");
@@ -105,13 +105,13 @@ public class DiscordCommand extends CustomCommand {
 			String name = user.getName();
 			String discrim = user.getDiscrim();
 
-			userById.openPrivateChannel().complete().sendMessage("This Discord account has been unlinked from the Minecraft account **" + player().getName() + "**").queue();
+			userById.openPrivateChannel().complete().sendMessage("This Discord account has been unlinked from the Minecraft account **" + name() + "**").queue();
 			send(PREFIX + "Successfully unlinked this Minecraft account from Discord account " + name);
-			Discord.staffLog("**" + player().getName() + "** has unlinked their account from **" + name + "#" + discrim + "**");
+			Discord.staffLog("**" + name() + "** has unlinked their account from **" + name + "#" + discrim + "**");
 		} catch (ErrorResponseException ex) {
 			if (ex.getErrorCode() == 10007) {
 				send(PREFIX + "Successfully unlinked this Minecraft account from an unknown Discord account");
-				Discord.staffLog("**" + player().getName() + "** has unlinked their account from an unknown Discord account");
+				Discord.staffLog("**" + name() + "** has unlinked their account from an unknown Discord account");
 			}
 		}
 

@@ -29,7 +29,7 @@ public class CalcSpeedCommand extends CustomCommand {
 							.doZero(true)
 							.onTick(i -> {
 								if (i % 5 == 0)
-									locations[i / 5] = player().getLocation();
+									locations[i / 5] = location();
 							})
 							.onComplete(this::calculate)
 							.start();

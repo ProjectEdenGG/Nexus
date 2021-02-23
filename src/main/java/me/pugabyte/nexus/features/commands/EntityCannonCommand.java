@@ -28,7 +28,7 @@ public class EntityCannonCommand extends CustomCommand {
 		if (!isSeniorStaff() && type == EntityType.THROWN_EXP_BOTTLE)
 			permissionError();
 
-		final Entity entity = player().getWorld().spawnEntity(player().getEyeLocation(), type);
+		final Entity entity = world().spawnEntity(player().getEyeLocation(), type);
 		entity.setInvulnerable(true);
 
 		if (type.getEntityClass() != null && type.getEntityClass().isInstance(LivingEntity.class))

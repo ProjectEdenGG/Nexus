@@ -42,7 +42,7 @@ public class UnlimitedElytraCommand extends CustomCommand {
 
 	@Path("[enable]")
 	public void elytra(Boolean enable) {
-		UUID uuid = player().getUniqueId();
+		UUID uuid = uuid();
 
 		if (enable == null)
 			enable = !flyingPlayers.contains(uuid);

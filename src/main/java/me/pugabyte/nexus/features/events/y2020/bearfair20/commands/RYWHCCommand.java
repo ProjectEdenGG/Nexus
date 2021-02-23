@@ -27,7 +27,7 @@ public class RYWHCCommand extends CustomCommand {
 		}
 		send("Working with a range of " + range + "...");
 		AtomicInteger amount = new AtomicInteger(0);
-		BlockUtils.getBlocksInRadius(player().getLocation(), range).forEach(block -> {
+		BlockUtils.getBlocksInRadius(location(), range).forEach(block -> {
 			if (block.getType() == Material.YELLOW_WOOL) {
 				block.setType(Material.HONEYCOMB_BLOCK);
 				amount.incrementAndGet();

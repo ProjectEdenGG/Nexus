@@ -17,8 +17,8 @@ public class FixPotionLauncherCommand extends CustomCommand {
 		ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
 		if (item.getType() == Material.HOPPER) {
 			if (item.getItemMeta().getDisplayName().equalsIgnoreCase("&8Potion Launcher")) {
-				player().getInventory().remove(item);
-				runCommand("ce give " + player().getName() + " hopper potionlauncher");
+				inventory().remove(item);
+				runCommand("ce give " + name() + " hopper potionlauncher");
 				return;
 			}
 		}

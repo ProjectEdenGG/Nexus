@@ -36,7 +36,7 @@ public class RTPCommand extends CustomCommand {
 	@Path
 	@Async
 	void rtp() {
-		if (!Arrays.asList("world", "survival", "resource").contains(player().getWorld().getName()))
+		if (!Arrays.asList("world", "survival", "resource").contains(world().getName()))
 			error("You must be in the survival world to run this command");
 
 		if (!running) {
@@ -46,7 +46,7 @@ public class RTPCommand extends CustomCommand {
 		count.getAndIncrement();
 
 		int radius = 0;
-		switch (player().getWorld().getName()) {
+		switch (world().getName()) {
 			case "world": radius = 17500; break;
 			case "survival": radius = 7500; break;
 			case "resource": radius = 2500; break;
@@ -54,7 +54,7 @@ public class RTPCommand extends CustomCommand {
 		}
 
 		int range = 250;
-		List<Location> locationList = LocationUtils.getRandomPointInCircle(player().getWorld(), radius);
+		List<Location> locationList = LocationUtils.getRandomPointInCircle(world(), radius);
 
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);
@@ -64,7 +64,7 @@ public class RTPCommand extends CustomCommand {
 		}
 
 		PaperLib.getChunkAtAsync(best, true).thenAccept(chunk -> {
-			Block highestBlock = player().getWorld().getHighestBlockAt(best);
+			Block highestBlock = world().getHighestBlockAt(best);
 			if (!highestBlock.getType().isSolid() && count.get() < 10) {
 				Tasks.async(this::rtp);
 				return;

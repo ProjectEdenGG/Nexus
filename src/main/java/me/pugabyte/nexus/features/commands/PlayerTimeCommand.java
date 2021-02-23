@@ -25,7 +25,7 @@ public class PlayerTimeCommand extends CustomCommand {
 	@Path("<time> [player]")
 	public void time(String time, @Arg("self") Player player) {
 		long ticks = PlayerUtils.setPlayerTime(player, time);
-		if (player == player().getPlayer())
+		if (isSelf(player))
 			send(PREFIX + "Player time set to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");
 		else {
 			send(player, PREFIX + "Player time set to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");

@@ -20,8 +20,8 @@ public class JumpCommand extends CustomCommand {
 	@Path
 	void run() {
 		Location location = getTargetBlockRequired().getLocation().add(0, 1, 0);
-		location.setYaw(player().getLocation().getYaw());
-		location.setPitch(player().getLocation().getPitch());
+		location.setYaw(location().getYaw());
+		location.setPitch(location().getPitch());
 		player().teleport(location, TeleportCause.COMMAND);
 	}
 

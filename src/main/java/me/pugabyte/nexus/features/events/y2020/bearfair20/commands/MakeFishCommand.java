@@ -32,7 +32,7 @@ public class MakeFishCommand extends CustomCommand {
 	@Path()
 	public void run() {
 		String cmd = RandomUtils.randomElement(cmds);
-		int rot = (int) player().getPlayer().getLocation().getYaw();
+		int rot = (int) location().getYaw();
 		cmd = cmd.replaceAll("<rot>", String.valueOf(rot));
 		runCommandAsOp(cmd);
 		send("Fish made.");

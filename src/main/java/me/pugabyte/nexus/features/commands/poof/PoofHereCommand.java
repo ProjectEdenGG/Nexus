@@ -18,13 +18,13 @@ public class PoofHereCommand extends CustomCommand {
 
 	@Path("<player>")
 	void player(Player target) {
-		if (target == player().getPlayer())
+		if (isSelf(target))
 			error("You cannot poof to yourself");
 
 		Poof request = new Poof(player(), target, Poof.PoofType.POOF_HERE);
 		service.save(request);
 		send(json("&ePoof-here &3request sent to " + target.getName() + ". ").next("&eClick to cancel").command("poof cancel"));
-		send(target, "  &e" + player().getName() + " &3is asking you to poof &eto them&3.");
+		send(target, "  &e" + name() + " &3is asking you to poof &eto them&3.");
 		send(target, json("&3  Click one  ||  &a&lAccept")
 				.command("/poof accept")
 				.hover("&eClick &3to accept")
