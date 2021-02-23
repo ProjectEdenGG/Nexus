@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.crates.models.events;
 
 import lombok.Data;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
+import me.pugabyte.nexus.features.crates.models.CrateType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -15,11 +16,13 @@ public abstract class CrateEvent extends Event {
 
 	public Player player;
 	public CrateLoot crateLoot;
+	public CrateType crateType;
 	private static final HandlerList handlers = new HandlerList();
 
-	public CrateEvent(Player player, CrateLoot crateLoot) {
+	public CrateEvent(Player player, CrateLoot crateLoot, CrateType type) {
 		this.player = player;
 		this.crateLoot = crateLoot;
+		this.crateType = type;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.CauldronLevelChangeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
@@ -91,6 +92,21 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 				event.getInventory().setMatrix(matrix);
 			});
 		}
+	}
+
+	@EventHandler
+	public void onCauldron(CauldronLevelChangeEvent event) {
+		if (event.getReason() != CauldronLevelChangeEvent.ChangeReason.BUCKET_EMPTY) return;
+		if (!(event.getEntity() instanceof Player)) return;
+		Player player = (Player) event.getEntity();
+		ItemStack item = player.getInventory().getItemInMainHand().clone();
+
+		if (isNullOrAir(item))
+			return;
+		if (!isFuzzyMatch(infiniteWaterBucket, item))
+			return;
+
+		Tasks.wait(1, () -> player.getInventory().setItemInMainHand(item));
 	}
 
 }

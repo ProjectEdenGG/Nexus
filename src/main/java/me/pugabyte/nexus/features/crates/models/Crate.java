@@ -47,10 +47,17 @@ public abstract class Crate implements Listener {
 		return new Color[]{Color.WHITE, Color.WHITE};
 	}
 
+	public Location getHologramLocation() {
+		Location loc = getCrateType().getCenteredLocation().clone().add(0, 1, 0);
+		for (String string : getCrateHologramLines())
+			loc.add(0, 5 / 16d, 0);
+		return loc;
+	}
+
 	public void spawnHologram() {
 		List<Hologram> holograms = new ArrayList<>();
 		for (int i = 0; i < 2; i++) {
-			Hologram hologram = HologramsAPI.createHologram(Nexus.getInstance(), getCrateType().getCenteredLocation().clone().add(0, 2, 0));
+			Hologram hologram = HologramsAPI.createHologram(Nexus.getInstance(), getHologramLocation());
 			for (String line : getCrateHologramLines())
 				hologram.appendTextLine(StringUtils.colorize(line));
 			hologram.getVisibilityManager().setVisibleByDefault(true);
@@ -343,7 +350,7 @@ public abstract class Crate implements Listener {
 			item.setCustomNameVisible(true);
 			item.setCustomName(StringUtils.colorize(loot.getTitle()));
 			spawnedItem = item;
-			new CrateSpawnItemEvent(player, loot).callEvent();
+			new CrateSpawnItemEvent(player, loot, getCrateType()).callEvent();
 			return item;
 		} catch (Exception ex) {
 			player.getInventory().addItem(getCrateType().getKey());
@@ -362,12 +369,17 @@ public abstract class Crate implements Listener {
 
 	public void takeKey() {
 		try {
+			boolean took = false;
 			ItemStack key = getCrateType().getKey();
-			for (ItemStack item : player.getInventory().getContents())
+			for (ItemStack item : player.getInventory().getContents()) {
+				if (ItemUtils.isNullOrAir(item)) continue;
 				if (ItemUtils.isFuzzyMatch(key, item)) {
 					item.setAmount(item.getAmount() - 1);
+					took = true;
 					break;
 				}
+			}
+			if (!took) throw new CrateOpeningException("no key present");
 		} catch (Exception ex) {
 			throw new CrateOpeningException("You must have a key in your inventory");
 		}

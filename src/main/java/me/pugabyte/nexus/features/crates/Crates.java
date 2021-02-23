@@ -45,14 +45,6 @@ public class Crates extends Feature implements Listener {
 		Nexus.registerListener(new CrateEditMenu.CrateEditProvider());
 	}
 
-	public void writeCache() {
-		for (int i = 0; i < lootCache.size(); i++) {
-			CrateLoot loot = lootCache.get(i);
-			loot.setId(i);
-			loot.update();
-		}
-	}
-
 	@Override
 	public void onStop() {
 		deleteAllHolograms();
@@ -66,12 +58,22 @@ public class Crates extends Feature implements Listener {
 	@SneakyThrows
 	public void spawnAllHolograms() {
 		for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList()))
-			crateType.getCrateClass().spawnHologram();
+			try {
+				crateType.getCrateClass().spawnHologram();
+			} catch (Exception ex) {
+				Nexus.log("Could not setup crate: " + crateType.name());
+				ex.printStackTrace();
+			}
 	}
 
 	public void deleteAllHolograms() {
 		for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList())) {
-			crateType.getCrateClass().deleteHologram();
+			try {
+				crateType.getCrateClass().deleteHologram();
+			} catch (Exception ex) {
+				Nexus.log("Could not setup crate: " + crateType.name());
+				ex.printStackTrace();
+			}
 		}
 	}
 
