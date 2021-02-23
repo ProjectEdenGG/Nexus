@@ -17,6 +17,9 @@ import okhttp3.Response;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.math.BigDecimal;
@@ -270,6 +273,19 @@ public class StringUtils {
 
 	public static boolean isV4Uuid(String uuid) {
 		return uuid.charAt(14) == '4';
+	}
+
+	public static boolean isValidJson(String json) {
+		try {
+			new JSONObject(json);
+		} catch (JSONException ex) {
+			try {
+				new JSONArray(json);
+			} catch (JSONException ex1) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static String toPrettyString(Object object) {
