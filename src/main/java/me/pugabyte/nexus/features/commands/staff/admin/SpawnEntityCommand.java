@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -53,13 +52,10 @@ public class SpawnEntityCommand extends CustomCommand {
 		Entity entity = entityData.getLocation().getWorld().spawnEntity(entityData.getLocation(), entityData.getType());
 
 		if (!isNullOrEmpty(entityData.getData())) {
-			Nexus.log("Data: " + entityData.getData());
 			if ("baby".equalsIgnoreCase(entityData.getData()) && entity instanceof Ageable)
 				((Ageable) entity).setBaby();
 
-
 			else if (StringUtils.isValidJson(entityData.getData())) {
-				Nexus.log("Adding json");
 				NBTEntity nbtEntity = new NBTEntity(entity);
 				nbtEntity.mergeCompound(new NBTContainer(entityData.getData()));
 			}
