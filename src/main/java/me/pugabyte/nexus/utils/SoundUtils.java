@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
-import org.geysermc.floodgate.FloodgateAPI;
 
 import java.util.Collection;
 
@@ -35,8 +34,7 @@ public class SoundUtils {
 	}
 
 	public static void playSound(Player player, Sound sound, SoundCategory category, float volume, float pitch) {
-		if (!FloodgateAPI.isBedrockPlayer(player))
-			player.playSound(player.getLocation(), sound, category, volume, pitch);
+		player.playSound(player.getLocation(), sound, category, volume, pitch);
 	}
 
 	public static void playSound(Location location, Sound sound) {
